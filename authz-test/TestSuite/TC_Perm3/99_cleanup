@@ -1,0 +1,22 @@
+expect 200,404
+as testid_1@test.com
+# TC_Perm3.99.2.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_Perm3.@[user.name]_1
+
+# TC_Perm3.99.3.POS Print Namespaces
+ns list name com.test.TC_Perm3.@[user.name]_1
+
+as testid_2@test.com
+# TC_Perm3.99.4.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_Perm3.@[user.name]_2
+
+# TC_Perm3.99.5.POS Print Namespaces
+ns list name com.test.TC_Perm3.@[user.name]_2
+
+
+as testunused@aaf.att.com
+# TC_Perm3.99.6.POS Remove Namespace from other company
+force ns delete com.att.TC_Perm3.@[user.name]
+
+# TC_Perm3.99.7.POS Print Namespace from other company
+ns list name com.att.TC_Perm3.@[user.name]

@@ -1,0 +1,49 @@
+# TC_NS1.50.1.NEG Adding a Bogus ID
+expect 403
+ns admin add com.test.TC_NS1.@[user.name] bogus
+
+# TC_NS1.50.2.NEG Adding a Bogus ID, full Domain
+expect 403
+ns admin add com.test.TC_NS1.@[user.name] bogus@csp.att.com
+
+# TC_NS1.50.3.NEG Adding an OK ID, bad domain
+expect 403
+ns admin add com.test.TC_NS1.@[user.name] xz9914@bogus.test.com
+
+# TC_NS1.50.4.NEG Deleting an OK ID, but not an admin
+expect 404
+ns admin del com.test.TC_NS1.@[user.name] XX@NS
+
+sleep @[NFR]
+# TC_NS1.50.10.POS Adding an OK ID
+expect 201
+ns admin add com.test.TC_NS1.@[user.name] XX@NS
+
+# TC_NS1.50.11.POS Deleting One of Two
+expect 200
+ns admin del com.test.TC_NS1.@[user.name] testid@aaf.att.com
+
+# TC_NS1.50.12.NEG testid@aaf.att.com no longer Admin
+expect 404
+ns admin del com.test.TC_NS1.@[user.name] testid@aaf.att.com
+
+# TC_NS1.50.13.POS Add ID back in
+expect 201
+ns admin add com.test.TC_NS1.@[user.name] testid@aaf.att.com
+
+# TC_NS1.50.14.POS Deleting original
+expect 200
+ns admin del com.test.TC_NS1.@[user.name] XX@NS
+
+# TC_NS1.50.15.NEG Can't remove twice
+expect 404
+ns admin del com.test.TC_NS1.@[user.name] XX@NS
+
+# TC_NS1.50.20.NEG User Role Add should obey same "addAdmin" restrictions
+expect 403
+role user add com.test.TC_NS1.@[user.name].admin m88888@i.have.no.domain
+
+# TC_NS1.50.21.NEG Role User Add should obey same "addAdmin" restrictions
+expect 403
+user role add m88888@i.have.no.domain com.test.TC_NS1.@[user.name].admin 
+

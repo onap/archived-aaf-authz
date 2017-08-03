@@ -1,0 +1,554 @@
+set XX@NS <pass>
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set bogus boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_Perm2.10.0.POS Print NS to prove ok
+ns list name com.test.TC_Perm2.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_Perm2.10.1.POS Create Namespace with valid IDs and Responsible Parties
+ns create com.test.TC_Perm2.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+as testid@aaf.att.com
+# TC_Perm2.20.1.POS List Data on non-Empty NS
+ns list name com.test.TC_Perm2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Perm2.@[THE_USER].admin                                          
+        com.test.TC_Perm2.@[THE_USER].owner                                          
+    Permissions
+        com.test.TC_Perm2.@[THE_USER].access *                        *              
+        com.test.TC_Perm2.@[THE_USER].access *                        read           
+
+# TC_Perm2.20.10.POS Add Perms with specific Instance and Action
+perm create com.test.TC_Perm2.@[user.name].p.A myInstance myAction
+** Expect 201 **
+Created Permission
+
+# TC_Perm2.20.11.POS Add Perms with specific Instance and Star
+perm create com.test.TC_Perm2.@[user.name].p.A myInstance *
+** Expect 201 **
+Created Permission
+
+# TC_Perm2.20.12.POS Add Perms with Stars for Instance and Action
+perm create com.test.TC_Perm2.@[user.name].p.A * *
+** Expect 201 **
+Created Permission
+
+perm create com.test.TC_Perm2.@[user.name].p.phoneCalls * spy
+** Expect 201 **
+Created Permission
+
+# TC_Perm2.20.20.POS Create role 
+role create com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 201 **
+Created Role
+
+role create com.test.TC_Perm2.@[user.name].p.secret
+** Expect 201 **
+Created Role
+
+# TC_Perm2.20.21.POS Grant sub-NS perms to role
+perm grant com.test.TC_Perm2.@[user.name].p.A myInstance myAction com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 201 **
+Granted Permission [com.test.TC_Perm2.@[THE_USER].p.A|myInstance|myAction] to Role [com.test.TC_Perm2.@[THE_USER].p.superUser]
+
+perm grant com.test.TC_Perm2.@[user.name].p.A myInstance * com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 201 **
+Granted Permission [com.test.TC_Perm2.@[THE_USER].p.A|myInstance|*] to Role [com.test.TC_Perm2.@[THE_USER].p.superUser]
+
+perm grant com.test.TC_Perm2.@[user.name].p.A * * com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 201 **
+Granted Permission [com.test.TC_Perm2.@[THE_USER].p.A|*|*] to Role [com.test.TC_Perm2.@[THE_USER].p.superUser]
+
+perm grant com.test.TC_Perm2.@[user.name].p.phoneCalls * spy com.test.TC_Perm2.@[user.name].p.secret
+** Expect 201 **
+Granted Permission [com.test.TC_Perm2.@[THE_USER].p.phoneCalls|*|spy] to Role [com.test.TC_Perm2.@[THE_USER].p.secret]
+
+# TC_Perm2.20.30.POS List Data on non-Empty NS
+ns list name com.test.TC_Perm2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Perm2.@[THE_USER].admin                                          
+        com.test.TC_Perm2.@[THE_USER].owner                                          
+        com.test.TC_Perm2.@[THE_USER].p.secret                                       
+        com.test.TC_Perm2.@[THE_USER].p.superUser                                    
+    Permissions
+        com.test.TC_Perm2.@[THE_USER].access *                        *              
+        com.test.TC_Perm2.@[THE_USER].access *                        read           
+        com.test.TC_Perm2.@[THE_USER].p.A   *                        *              
+        com.test.TC_Perm2.@[THE_USER].p.A   myInstance               *              
+        com.test.TC_Perm2.@[THE_USER].p.A   myInstance               myAction       
+        com.test.TC_Perm2.@[THE_USER].p.phoneCalls *                        spy            
+
+# TC_Perm2.20.40.POS Create role
+role create com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 201 **
+Created Role
+
+as XX@NS
+# TC_Perm2.20.50.POS Grant view perms to watcher role
+perm create com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:myInstance:myAction view com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 201 **
+Created Permission
+Granted Permission [com.att.aaf.perm|:com.test.TC_Perm2.@[THE_USER].p.A:myInstance:myAction|view] to Role [com.test.TC_Perm2.@[THE_USER].p.watcher]
+
+perm create com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:*:* view com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 201 **
+Created Permission
+Granted Permission [com.att.aaf.perm|:com.test.TC_Perm2.@[THE_USER].p.A:*:*|view] to Role [com.test.TC_Perm2.@[THE_USER].p.watcher]
+
+as testid@aaf.att.com
+# TC_Perm2.30.1.POS List Data on non-Empty NS
+ns list name com.test.TC_Perm2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Perm2.@[THE_USER].admin                                          
+        com.test.TC_Perm2.@[THE_USER].owner                                          
+        com.test.TC_Perm2.@[THE_USER].p.secret                                       
+        com.test.TC_Perm2.@[THE_USER].p.superUser                                    
+        com.test.TC_Perm2.@[THE_USER].p.watcher                                      
+    Permissions
+        com.test.TC_Perm2.@[THE_USER].access *                        *              
+        com.test.TC_Perm2.@[THE_USER].access *                        read           
+        com.test.TC_Perm2.@[THE_USER].p.A   *                        *              
+        com.test.TC_Perm2.@[THE_USER].p.A   myInstance               *              
+        com.test.TC_Perm2.@[THE_USER].p.A   myInstance               myAction       
+        com.test.TC_Perm2.@[THE_USER].p.phoneCalls *                        spy            
+
+# TC_Perm2.30.2.POS Create Sub-ns when Roles that exist
+ns create com.test.TC_Perm2.@[user.name].p @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_Perm2.30.3.POS List Data on NS with sub-roles
+ns list name com.test.TC_Perm2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Perm2.@[THE_USER].admin                                          
+        com.test.TC_Perm2.@[THE_USER].owner                                          
+    Permissions
+        com.test.TC_Perm2.@[THE_USER].access *                        *              
+        com.test.TC_Perm2.@[THE_USER].access *                        read           
+
+ns list name com.test.TC_Perm2.@[user.name].p
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER].p]
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Perm2.@[THE_USER].p.admin                                        
+        com.test.TC_Perm2.@[THE_USER].p.owner                                        
+        com.test.TC_Perm2.@[THE_USER].p.secret                                       
+        com.test.TC_Perm2.@[THE_USER].p.superUser                                    
+        com.test.TC_Perm2.@[THE_USER].p.watcher                                      
+    Permissions
+        com.test.TC_Perm2.@[THE_USER].p.A   *                        *              
+        com.test.TC_Perm2.@[THE_USER].p.A   myInstance               *              
+        com.test.TC_Perm2.@[THE_USER].p.A   myInstance               myAction       
+        com.test.TC_Perm2.@[THE_USER].p.access *                        *              
+        com.test.TC_Perm2.@[THE_USER].p.access *                        read           
+        com.test.TC_Perm2.@[THE_USER].p.phoneCalls *                        spy            
+
+as testunused@aaf.att.com
+# TC_Perm2.40.1.NEG Non-admin, not granted user should not view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+as testid@aaf.att.com
+# Tens test user granted to permission
+# TC_Perm2.40.10.POS Add user to superUser role
+user role add testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 201 **
+Added Role [com.test.TC_Perm2.@[THE_USER].p.superUser] to User [testunused@aaf.att.com]
+
+as testunused@aaf.att.com
+# TC_Perm2.40.11.POS Non-admin, granted user should view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   *                              *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+as testid@aaf.att.com
+# TC_Perm2.40.12.POS Ungrant perm with wildcards
+perm ungrant com.test.TC_Perm2.@[user.name].p.A * * com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 200 **
+UnGranted Permission [com.test.TC_Perm2.@[THE_USER].p.A|*|*] from Role [com.test.TC_Perm2.@[THE_USER].p.superUser]
+
+as testunused@aaf.att.com
+# TC_Perm2.40.13.POS Non-admin, granted user should view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+as testid@aaf.att.com
+# TC_Perm2.40.19.POS Remove user from superUser role
+user role del testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 200 **
+Removed Role [com.test.TC_Perm2.@[THE_USER].p.superUser] from User [testunused@aaf.att.com]
+
+# Twenties test user granted explicit view permission
+# TC_Perm2.40.20.POS Add user to watcher role
+user role add testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 201 **
+Added Role [com.test.TC_Perm2.@[THE_USER].p.watcher] to User [testunused@aaf.att.com]
+
+as testunused@aaf.att.com
+# TC_Perm2.40.21.NEG Non-admin, granted explicit view perm user should view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+as XX@NS
+# TC_Perm2.40.22.POS Ungrant perm with wildcards
+perm ungrant com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:*:* view com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 200 **
+UnGranted Permission [com.att.aaf.perm|:com.test.TC_Perm2.@[THE_USER].p.A:*:*|view] from Role [com.test.TC_Perm2.@[THE_USER].p.watcher]
+
+as testunused@aaf.att.com
+# TC_Perm2.40.23.POS Non-admin, granted user should view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+as testid@aaf.att.com
+# TC_Perm2.40.29.POS Remove user from watcher role
+user role del testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 200 **
+Removed Role [com.test.TC_Perm2.@[THE_USER].p.watcher] from User [testunused@aaf.att.com]
+
+# Thirties test admin user 
+# TC_Perm2.40.30.POS Admin should be able to view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   *                              *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+# TC_Perm2.40.31.POS Add new admin for sub-NS
+ns admin add com.test.TC_Perm2.@[user.name].p testunused@aaf.att.com
+** Expect 201 **
+Admin testunused@aaf.att.com added to com.test.TC_Perm2.@[THE_USER].p
+
+# TC_Perm2.40.32.POS Remove admin from sub-NS
+ns admin del com.test.TC_Perm2.@[user.name].p testid@aaf.att.com
+** Expect 200 **
+Admin testid@aaf.att.com deleted from com.test.TC_Perm2.@[THE_USER].p
+
+# TC_Perm2.40.34.POS Admin of parent NS should be able to view
+perm list name com.test.TC_Perm2.@[user.name].p.A
+** Expect 200 **
+
+List Child Permissions[com.test.TC_Perm2.@[THE_USER].p.A]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   *                              *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+# TC_Perm2.40.80.POS Add new admin for sub-NS
+ns admin add com.test.TC_Perm2.@[user.name].p testid@aaf.att.com
+** Expect 201 **
+Admin testid@aaf.att.com added to com.test.TC_Perm2.@[THE_USER].p
+
+# TC_Perm2.40.81.POS Remove admin from sub-NS
+ns admin del com.test.TC_Perm2.@[user.name].p testunused@aaf.att.com
+** Expect 200 **
+Admin testunused@aaf.att.com deleted from com.test.TC_Perm2.@[THE_USER].p
+
+# TC_Perm2.41.1.POS Add user to some roles with perms attached
+as testid@aaf.att.com
+user role add testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 201 **
+Added Role [com.test.TC_Perm2.@[THE_USER].p.superUser] to User [testunused@aaf.att.com]
+
+user role add testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 201 **
+Added Role [com.test.TC_Perm2.@[THE_USER].p.watcher] to User [testunused@aaf.att.com]
+
+user role add XX@NS com.test.TC_Perm2.@[user.name].p.secret
+** Expect 201 **
+Added Role [com.test.TC_Perm2.@[THE_USER].p.secret] to User [XX@NS]
+
+# TC_Perm2.41.10.POS List by User when Same as Caller
+as testunused@aaf.att.com
+perm list user testunused@aaf.att.com
+** Expect 200 **
+
+List Permissions by User[testunused@aaf.att.com]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.att.aaf.perm               :com.test.TC_Perm2.@[THE_USER].p.A:myInstance:myAction view      
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+# TC_NS2.41.15.POS List by User when not same as Caller, but own/admin namespace of Roles
+as testid@aaf.att.com
+perm list user testunused@aaf.att.com
+** Expect 200 **
+
+List Permissions by User[testunused@aaf.att.com]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+# TC_Perm2.41.20.POS List by User when not same as Caller, but parent owner/admin of Namespace
+as XX@NS
+perm list user testunused@aaf.att.com
+** Expect 200 **
+
+List Permissions by User[testunused@aaf.att.com]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.att.aaf.perm               :com.test.TC_Perm2.@[THE_USER].p.A:myInstance:myAction view      
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+# TC_Perm2.41.80.NEG List by User when not Caller nor associated to Namespace (nothing should be shown)
+as testunused@aaf.att.com
+perm list user XX@NS
+** Expect 200 **
+
+List Permissions by User[XX@NS]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+# TC_Perm2.41.99.POS Remove users from roles for later test
+as testid@aaf.att.com
+user role del testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 200 **
+Removed Role [com.test.TC_Perm2.@[THE_USER].p.superUser] from User [testunused@aaf.att.com]
+
+user role del testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 200 **
+Removed Role [com.test.TC_Perm2.@[THE_USER].p.watcher] from User [testunused@aaf.att.com]
+
+user role del XX@NS com.test.TC_Perm2.@[user.name].p.secret
+** Expect 200 **
+Removed Role [com.test.TC_Perm2.@[THE_USER].p.secret] from User [XX@NS]
+
+# TC_Perm2.42.10.POS List Roles from NS when not allowed to see NS
+as testid@aaf.att.com
+perm list ns com.test.TC_Perm2.@[user.name].p
+** Expect 200 **
+
+List Perms by NS [com.test.TC_Perm2.@[THE_USER].p]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   *                              *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+com.test.TC_Perm2.@[THE_USER].p.access *                              *         
+com.test.TC_Perm2.@[THE_USER].p.access *                              read      
+com.test.TC_Perm2.@[THE_USER].p.phoneCalls *                              spy       
+
+
+# TC_Perm2.42.20.NEG Don't List Roles from NS when not allowed to see NS
+as testunused@aaf.att.com
+perm list ns com.test.TC_Perm2.@[user.name].p
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not read in NS [com.test.TC_Perm2.@[THE_USER].p]
+
+# TC_Perm2.43.10.POS List perms when allowed to see Role
+as testid@aaf.att.com
+perm list role com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 200 **
+
+List Perms by Role [com.test.TC_Perm2.@[THE_USER].p.superUser]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     *         
+com.test.TC_Perm2.@[THE_USER].p.A   myInstance                     myAction  
+
+
+perm list role com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 200 **
+
+List Perms by Role [com.test.TC_Perm2.@[THE_USER].p.watcher]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+perm list role com.test.TC_Perm2.@[user.name].p.secret
+** Expect 200 **
+
+List Perms by Role [com.test.TC_Perm2.@[THE_USER].p.secret]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Perm2.@[THE_USER].p.phoneCalls *                              spy       
+
+
+# TC_Perm2.43.20.NEG Don't List perms when not allowed to see Role
+as testunused@aaf.att.com
+perm list role com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not read Role [com.test.TC_Perm2.@[THE_USER].p.superUser]
+
+perm list role com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not read Role [com.test.TC_Perm2.@[THE_USER].p.watcher]
+
+perm list role com.test.TC_Perm2.@[user.name].p.secret
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not read Role [com.test.TC_Perm2.@[THE_USER].p.secret]
+
+as testid@aaf.att.com
+# TC_Perm2.99.1.POS Namespace Admin can delete Namepace defined Roles
+force perm delete com.test.TC_Perm2.@[user.name].p.A myInstance myAction
+** Expect 200,404 **
+Deleted Permission
+
+force perm delete com.test.TC_Perm2.@[user.name].p.A myInstance *
+** Expect 200,404 **
+Deleted Permission
+
+force perm delete com.test.TC_Perm2.@[user.name].p.A * *
+** Expect 200,404 **
+Deleted Permission
+
+force perm delete com.test.TC_Perm2.@[user.name].p.phoneCalls * spy
+** Expect 200,404 **
+Deleted Permission
+
+force role delete com.test.TC_Perm2.@[user.name].p.watcher
+** Expect 200,404 **
+Deleted Role
+
+force role delete com.test.TC_Perm2.@[user.name].p.superUser
+** Expect 200,404 **
+Deleted Role
+
+force role delete com.test.TC_Perm2.@[user.name].p.secret
+** Expect 200,404 **
+Deleted Role
+
+as XX@NS
+force perm delete com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:*:* view
+** Expect 200,404 **
+Deleted Permission
+
+force perm delete com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:myInstance:myAction view
+** Expect 200,404 **
+Deleted Permission
+
+# TC_Perm2.99.2.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_Perm2.@[user.name].p
+** Expect 200,404 **
+Deleted Namespace
+
+force ns delete com.test.TC_Perm2.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+# TC_Perm2.99.3.POS Print Namespaces
+ns list name com.test.TC_Perm2.@[user.name].p
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER].p]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.test.TC_Perm2.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_Perm2.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

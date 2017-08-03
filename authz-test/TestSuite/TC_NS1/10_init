@@ -1,0 +1,30 @@
+
+as testid@aaf.att.com
+# TC_NS1.10.0.POS Check for Existing Data
+expect 200
+ns list name com.test.TC_NS1.@[user.name]
+
+# TC_NS1.10.1.POS Create Namespace with valid IDs and Responsible Parties
+expect 201
+ns create com.test.TC_NS1.@[user.name] @[user.name] testid@aaf.att.com
+
+# TC_NS1.10.40.POS Expect Namespace to be created
+expect 200
+ns list name com.test.TC_NS1.@[user.name] 
+
+# TC_NS1.10.41.POS Expect Namespace to be created
+expect 200
+perm list role com.test.TC_NS1.@[user.name].admin
+
+# TC_NS1.10.42.POS Expect Namespace to be created
+expect 200
+perm list role com.test.TC_NS1.@[user.name].owner
+
+# TC_NS1.10.43.POS Expect Namespace to be created
+expect 200
+role list perm com.test.TC_NS1.@[user.name].access * *
+
+# TC_NS1.10.44.POS Expect Namespace to be created
+expect 200
+role list perm com.test.TC_NS1.@[user.name].access * read
+

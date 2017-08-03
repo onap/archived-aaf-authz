@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ============LICENSE_START====================================================
+  * org.onap.aai
+  * ===========================================================================
+  * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
+  * Copyright © 2017 Amdocs
+  * ===========================================================================
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  * 
+   *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+   * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  * ============LICENSE_END====================================================
+  *
+  * ECOMP is a trademark and service mark of AT&T Intellectual Property.
+  *
+-->
+<descriptor version="1" xmlns="http://aft.att.com/swm/descriptor">
+	<platforms>
+		<platform architecture="*" os="*" osVersions="*"/> 
+	</platforms>
+	<paths>
+		<path name="/opt/app/aft/auth/${artifactId}/${version}" type="d" user="aft" group="aft" permissions="0755" recursive="true"/>
+	</paths>
+	<actions>
+		<action type="INIT">
+			<proc stage="PRE" user="aft" group="aft"/>
+			<proc stage="POST" user="aft" group="aft"/>
+		</action>
+		<action type="INST">
+			<proc stage="PRE" user="aft" group="aft"/>
+			<proc stage="POST" user="aft" group="aft"/>
+		</action>
+		<action type="DINST">
+			<proc stage="PRE" user="aft" group="aft"/>
+			<proc stage="POST" user="aft" group="aft"/>
+		</action>
+		<action type="FALL">
+			<proc stage="PRE" user="aft" group="aft"/>
+			<proc stage="POST" user="aft" group="aft"/>
+		</action>
+	</actions>
+</descriptor>

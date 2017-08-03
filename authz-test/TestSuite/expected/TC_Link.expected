@@ -1,0 +1,253 @@
+set testid <pass>
+set testid@aaf.att.com <pass>
+set XX@NS <pass>
+set testunused <pass>
+set bogus boguspass
+#delay 10
+set NFR 0
+# TC_05
+ns list name com.test.TC_Link_1.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_Link_1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.test.TC_Link_2.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_Link_2.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+perm list role com.test.TC_Link_1.@[user.name].myRole
+** Expect 200,404 **
+
+List Perms by Role [com.test.TC_Link_1.@[THE_USER].myRole]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+role list perm com.test.TC_Link_2.@[user.name].myPerm myInstance myAction
+** Expect 200,404 **
+
+List Roles by Perm com.test.TC_Link_2.@[THE_USER].myPerm|myInstance|myAction
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+
+# TC_10
+as XX@NS
+ns create com.test.TC_Link_1.@[user.name] @[user.name] XX@NS
+** Expect 201 **
+Created Namespace
+
+ns create com.test.TC_Link_2.@[user.name] @[user.name] XX@NS
+** Expect 201 **
+Created Namespace
+
+role create com.test.TC_Link_1.@[user.name].myRole
+** Expect 201 **
+Created Role
+
+perm create com.test.TC_Link_2.@[user.name].myPerm myInstance myAction
+** Expect 201 **
+Created Permission
+
+perm grant com.test.TC_Link_2.@[user.name].myPerm myInstance myAction com.test.TC_Link_1.@[user.name].myRole
+** Expect 201 **
+Granted Permission [com.test.TC_Link_2.@[THE_USER].myPerm|myInstance|myAction] to Role [com.test.TC_Link_1.@[THE_USER].myRole]
+
+# 15_print
+ns list name com.test.TC_Link_1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Link_1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Link_1.@[THE_USER]
+    Administrators
+        XX@NS                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Link_1.@[THE_USER].admin                                         
+        com.test.TC_Link_1.@[THE_USER].myRole                                        
+        com.test.TC_Link_1.@[THE_USER].owner                                         
+    Permissions
+        com.test.TC_Link_1.@[THE_USER].access *                        *              
+        com.test.TC_Link_1.@[THE_USER].access *                        read           
+
+ns list name com.test.TC_Link_2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Link_2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Link_2.@[THE_USER]
+    Administrators
+        XX@NS                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Link_2.@[THE_USER].admin                                         
+        com.test.TC_Link_2.@[THE_USER].owner                                         
+    Permissions
+        com.test.TC_Link_2.@[THE_USER].access *                        *              
+        com.test.TC_Link_2.@[THE_USER].access *                        read           
+        com.test.TC_Link_2.@[THE_USER].myPerm myInstance               myAction       
+
+perm list role com.test.TC_Link_1.@[user.name].myRole
+** Expect 200 **
+
+List Perms by Role [com.test.TC_Link_1.@[THE_USER].myRole]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Link_2.@[THE_USER].myPerm myInstance                     myAction  
+
+
+role list perm com.test.TC_Link_2.@[user.name].myPerm myInstance myAction
+** Expect 200 **
+
+List Roles by Perm com.test.TC_Link_2.@[THE_USER].myPerm|myInstance|myAction
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_Link_1.@[THE_USER].myRole                  
+   com.test.TC_Link_2.@[THE_USER].myPerm myInstance                     myAction       
+
+role delete com.test.TC_Link_1.@[user.name].myRole
+** Expect 200 **
+Deleted Role
+
+# 15_print
+ns list name com.test.TC_Link_1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Link_1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Link_1.@[THE_USER]
+    Administrators
+        XX@NS                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Link_1.@[THE_USER].admin                                         
+        com.test.TC_Link_1.@[THE_USER].owner                                         
+    Permissions
+        com.test.TC_Link_1.@[THE_USER].access *                        *              
+        com.test.TC_Link_1.@[THE_USER].access *                        read           
+
+ns list name com.test.TC_Link_2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Link_2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Link_2.@[THE_USER]
+    Administrators
+        XX@NS                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Link_2.@[THE_USER].admin                                         
+        com.test.TC_Link_2.@[THE_USER].owner                                         
+    Permissions
+        com.test.TC_Link_2.@[THE_USER].access *                        *              
+        com.test.TC_Link_2.@[THE_USER].access *                        read           
+        com.test.TC_Link_2.@[THE_USER].myPerm myInstance               myAction       
+
+perm list role com.test.TC_Link_1.@[user.name].myRole
+** Expect 200 **
+
+List Perms by Role [com.test.TC_Link_1.@[THE_USER].myRole]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+
+
+role list perm com.test.TC_Link_2.@[user.name].myPerm myInstance myAction
+** Expect 200 **
+
+List Roles by Perm com.test.TC_Link_2.@[THE_USER].myPerm|myInstance|myAction
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+
+role create com.test.TC_Link_1.@[user.name].myRole
+** Expect 201 **
+Created Role
+
+perm grant com.test.TC_Link_2.@[user.name].myPerm myInstance myAction com.test.TC_Link_1.@[user.name].myRole
+** Expect 201 **
+Granted Permission [com.test.TC_Link_2.@[THE_USER].myPerm|myInstance|myAction] to Role [com.test.TC_Link_1.@[THE_USER].myRole]
+
+# 15_print
+ns list name com.test.TC_Link_1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Link_1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Link_1.@[THE_USER]
+    Administrators
+        XX@NS                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Link_1.@[THE_USER].admin                                         
+        com.test.TC_Link_1.@[THE_USER].myRole                                        
+        com.test.TC_Link_1.@[THE_USER].owner                                         
+    Permissions
+        com.test.TC_Link_1.@[THE_USER].access *                        *              
+        com.test.TC_Link_1.@[THE_USER].access *                        read           
+
+ns list name com.test.TC_Link_2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Link_2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Link_2.@[THE_USER]
+    Administrators
+        XX@NS                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Link_2.@[THE_USER].admin                                         
+        com.test.TC_Link_2.@[THE_USER].owner                                         
+    Permissions
+        com.test.TC_Link_2.@[THE_USER].access *                        *              
+        com.test.TC_Link_2.@[THE_USER].access *                        read           
+        com.test.TC_Link_2.@[THE_USER].myPerm myInstance               myAction       
+
+perm list role com.test.TC_Link_1.@[user.name].myRole
+** Expect 200 **
+
+List Perms by Role [com.test.TC_Link_1.@[THE_USER].myRole]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_Link_2.@[THE_USER].myPerm myInstance                     myAction  
+
+
+role list perm com.test.TC_Link_2.@[user.name].myPerm myInstance myAction
+** Expect 200 **
+
+List Roles by Perm com.test.TC_Link_2.@[THE_USER].myPerm|myInstance|myAction
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_Link_1.@[THE_USER].myRole                  
+   com.test.TC_Link_2.@[THE_USER].myPerm myInstance                     myAction       
+
+as XX@NS
+force ns delete com.test.TC_Link_2.@[user.name] 
+** Expect 200,404 **
+Deleted Namespace
+
+force ns delete com.test.TC_Link_1.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+

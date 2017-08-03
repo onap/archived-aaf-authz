@@ -1,0 +1,82 @@
+#!/bin/bash
+TS=`echo $0 | sed "s/\/tc//"`
+
+mkdir -p runs
+
+function failed {
+     echo "FAILED TEST! $*"
+     exit 1
+}
+
+if [ "$1" == "-a" ]; then 
+  OPTS=$OPTS" -a";
+  shift
+elif [ "$1" == "clean" ]; then 
+  CLEAN="TRUE"
+  shift
+fi
+
+if [[ -z $USER ]]; then
+	THE_USER=`whoami`
+elif [[ -n "$SUDO_USER" ]]; then
+    THE_USER=$SUDO_USER
+elif [[ -n "$USER" ]]; then
+    THE_USER=$USER
+fi
+
+if [ "$1" == "" ]; then
+  DIRS=`find $TS -maxdepth 2 -type d -name "TC_*" | sed "s/^$TS\///" | sort`
+  if [ "$DIRS" == "" ] ; then 
+    echo "Usage: tc <TestCase> [expected]"
+    echo "  expected - create the expected response for future comparison"
+    exit 1
+  fi
+else
+  DIRS=$1
+  shift
+fi
+
+if [ "$1" == "-a" ]; then 
+  OPTS=$OPTS" -a";
+  shift
+elif [ "$1" == "clean" ]; then 
+  CLEAN="TRUE"
+  shift
+fi
+
+if [ -e tc.delay ]; then
+  OPTS=$OPTS" -delayAll "`cat tc.delay`
+fi
+
+
+SUFFIX=`date "+%Y-%m-%d_%H:%M:%S"`
+for TC in $DIRS; do
+  echo $TC
+  if [ "$CLEAN" = "TRUE" ]; then 
+    cat $TS/$TC/00* $TS/$TC/99* | aafcli -i -a -t -n
+    rm -f last
+    ln -s runs/$TC.CLEAN.$SUFFIX last
+  elif [ "$1" = "expected" ]; then
+    SUFFIX=$1
+    cat $TS/$TC/[0-9]* | aafcli -i -t 2>&1 | sed -e "/$THE_USER/s//@[THE_USER]/g" | tee $TS/expected/$TC.$SUFFIX
+  elif [ -d "$TS/$TC" ]; then
+    if [ "$1" = "dryrun" ]; then
+        cat $TS/$TC/[0-9]* > temp
+        cat $TS/$TC/[0-9]* | aafcli -i -t 
+    else 
+        rm -f last
+        > runs/$TC.$SUFFIX
+        ln -s runs/$TC.$SUFFIX last
+    	cat $TS/$TC/[0-9]* | aafcli -i -t $OPTS | sed -e "/$THE_USER/s//@[THE_USER]/g" -e "s///"  2>&1 > runs/$TC.$SUFFIX 
+  
+		diff --ignore-blank-lines -w runs/$TC.$SUFFIX $TS/expected/$TC.expected || failed "[$TC.$SUFFIX]"
+		echo "SUCCESS! [$TC.$SUFFIX]"
+   fi
+  elif [ -f "$TS/$TC" ]; then
+    cat $TS/$TC | aafcli -i -t $OPTS 
+  else
+    echo missed dir
+  fi
+done
+
+exit 0

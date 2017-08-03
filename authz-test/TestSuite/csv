@@ -1,0 +1,13 @@
+# /bin/bash
+if [ "$1" == "" ]; then
+   DIRS=`ls -d TC*`
+else
+   DIRS=$1
+fi
+
+echo '"Test Case","Description"'
+for DIR in $DIRS; do 
+  grep -h "^# $DIR" $DIR/[0-9]* | cut -d ' ' -f 2- | sed -e 's/ /,"/' -e 's/$/"/'
+done
+cd ..
+exit 0

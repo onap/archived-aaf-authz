@@ -1,0 +1,10 @@
+expect 0
+set testid@aaf.att.com=<pass>
+set testunused@aaf.att.com=<pass>
+set XX@NS=<pass>
+set m99999@@[user.name].delg.test.com=password123
+set bogus@aaf.att.com=boguspass
+
+#delay 10
+set NFR=0
+

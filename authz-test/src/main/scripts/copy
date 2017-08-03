@@ -1,0 +1,17 @@
+# /bin/bash
+if [ "$2" != "" ] ; then 
+  if [ -e $2 ]; then
+     echo "$2 exists, copy aborted"
+     exit 1
+  fi
+  mkdir -p TestCases/$2
+  for FILE in TestCases/$1/*; do 
+     FILE2=`echo $FILE | sed -e "s/$1/$2/"`
+     echo $FILE2
+     sed -e "s/$1/$2/g" $FILE > $FILE2
+  done
+else
+  echo 'Usage: copy <Source TestCase> <Target TestCase>'
+fi
+
+exit 0

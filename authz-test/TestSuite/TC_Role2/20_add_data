@@ -1,0 +1,39 @@
+##############
+# Testing Model
+# We are making a Testing model based loosely on George Orwell's Animal Farm
+# In Animal Farm, Animals did all the work but didn't get any priviledges.
+#   In our test, the animals can't see anything but their own role, etc
+# Dogs were supervisors, and ostensibly did something, though mostly laid around
+#   In our test, they have Implicit Permissions by being Admins
+# Pigs were the Elite.  They did nothing, but watch everyone and eat the produce
+#   In our test, they have Explicit Permissions to see everything they want
+##############
+as testid@aaf.att.com:<pass>
+# TC_Role2.20.1.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_Role2.@[user.name]
+
+# TC_Role2.20.10.POS Create Orwellian Roles
+expect 201
+role create com.test.TC_Role2.@[user.name].r.animals 
+role create com.test.TC_Role2.@[user.name].r.dogs
+role create com.test.TC_Role2.@[user.name].r.pigs 
+
+# TC_Role2.20.20.POS Create and Grant Perms to Dog Roles
+expect 201
+perm create com.test.TC_Role2.@[user.name].r.A garbage eat com.test.TC_Role2.@[user.name].r.animals
+perm create com.test.TC_Role2.@[user.name].r.A grain eat com.test.TC_Role2.@[user.name].r.dogs
+perm create com.test.TC_Role2.@[user.name].r.A grain * com.test.TC_Role2.@[user.name].r.dogs
+perm create com.test.TC_Role2.@[user.name].r.A * * com.test.TC_Role2.@[user.name].r.dogs
+
+# TC_Role2.20.25.POS Create and Grant Animal Farm Priviledges to Pigs
+expect 201
+as XX@NS:<pass>
+perm create com.att.aaf.role com.test.TC_Role2.@[user.name].r.animals view com.test.TC_Role2.@[user.name].r.pigs
+perm create com.att.aaf.role com.test.TC_Role2.@[user.name].r.dogs view com.test.TC_Role2.@[user.name].r.pigs
+
+# TC_Role2.20.60.POS List Data on non-Empty NS
+expect 200
+as testid@aaf.att.com:<pass>
+ns list name com.test.TC_Role2.@[user.name]
+

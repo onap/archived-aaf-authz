@@ -1,0 +1,30 @@
+as m99999@@[user.name].TC_Wild.att.com
+
+# TC_Wild.32.1.NEG Fail to create a role in NS
+expect 403
+role create com.att.TC_Wild.@[user.name].tool.myRole
+
+# TC_Wild.32.3.POS Add "access role" based Wild Card with specific Action
+as XX@NS
+expect 201
+perm create com.att.TC_Wild.@[user.name].access :role:* * com.att.TC_Wild.@[user.name].service
+
+# TC_Wild.32.5.POS Print Perms
+as m99999@@[user.name].TC_Wild.att.com
+expect 200
+perm list user m99999@@[user.name].TC_Wild.att.com
+
+# TC_Wild.32.7.POS Now able to create a role in NS
+expect 201
+role create com.att.TC_Wild.@[user.name].tool.myRole
+
+# TC_Wild.32.8.POS May Print Role
+expect 200
+role list role com.att.TC_Wild.@[user.name].tool.myRole
+
+as XX@NS
+# TC_Wild.32.10.POS Delete Perms Created
+expect 200
+force perm delete com.att.TC_Wild.@[user.name].access :role:* *
+force role delete com.att.TC_Wild.@[user.name].tool.myRole
+

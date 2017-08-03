@@ -1,0 +1,82 @@
+
+as testunused@aaf.att.com
+# TC_Perm2.40.1.NEG Non-admin, not granted user should not view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+as testid@aaf.att.com
+# Tens test user granted to permission
+# TC_Perm2.40.10.POS Add user to superUser role
+expect 201
+user role add testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.superUser
+
+as testunused@aaf.att.com
+# TC_Perm2.40.11.POS Non-admin, granted user should view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+as testid@aaf.att.com
+# TC_Perm2.40.12.POS Ungrant perm with wildcards
+expect 200
+perm ungrant com.test.TC_Perm2.@[user.name].p.A * * com.test.TC_Perm2.@[user.name].p.superUser
+
+as testunused@aaf.att.com
+# TC_Perm2.40.13.POS Non-admin, granted user should view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+as testid@aaf.att.com
+# TC_Perm2.40.19.POS Remove user from superUser role
+expect 200
+user role del testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.superUser
+
+# Twenties test user granted explicit view permission
+# TC_Perm2.40.20.POS Add user to watcher role
+expect 201
+user role add testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.watcher
+
+as testunused@aaf.att.com
+# TC_Perm2.40.21.NEG Non-admin, granted explicit view perm user should view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+as XX@NS
+# TC_Perm2.40.22.POS Ungrant perm with wildcards
+expect 200
+perm ungrant com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:*:* view com.test.TC_Perm2.@[user.name].p.watcher
+
+as testunused@aaf.att.com
+# TC_Perm2.40.23.POS Non-admin, granted user should view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+as testid@aaf.att.com
+# TC_Perm2.40.29.POS Remove user from watcher role
+expect 200
+user role del testunused@aaf.att.com com.test.TC_Perm2.@[user.name].p.watcher
+
+# Thirties test admin user 
+# TC_Perm2.40.30.POS Admin should be able to view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+# TC_Perm2.40.31.POS Add new admin for sub-NS
+expect 201
+ns admin add com.test.TC_Perm2.@[user.name].p testunused@aaf.att.com
+
+# TC_Perm2.40.32.POS Remove admin from sub-NS
+expect 200
+ns admin del com.test.TC_Perm2.@[user.name].p testid@aaf.att.com
+
+# TC_Perm2.40.34.POS Admin of parent NS should be able to view
+expect 200
+perm list name com.test.TC_Perm2.@[user.name].p.A
+
+# TC_Perm2.40.80.POS Add new admin for sub-NS
+expect 201
+ns admin add com.test.TC_Perm2.@[user.name].p testid@aaf.att.com
+
+# TC_Perm2.40.81.POS Remove admin from sub-NS
+expect 200
+ns admin del com.test.TC_Perm2.@[user.name].p testunused@aaf.att.com
+

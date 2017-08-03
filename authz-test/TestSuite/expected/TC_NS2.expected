@@ -1,0 +1,389 @@
+set XX@NS <pass>
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set bogus@aaf.att.com boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_NS2.10.0.POS Check for Existing Data
+ns list name com.test.TC_NS2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_NS2.10.1.POS Create Namespace with valid IDs and Responsible Parties
+ns create com.test.TC_NS2.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+ns create com.test.TC_NS2.@[user.name].project @[user.name] testunused@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_NS2.10.10.POS Create role to assign mechid perm to
+role create com.test.TC_NS2.@[user.name].cred_admin testid@aaf.att.com
+** Expect 201 **
+Created Role
+Added User [testid@aaf.att.com] to Role [com.test.TC_NS2.@[THE_USER].cred_admin]
+
+as XX@NS
+# TC_NS2.10.11.POS Assign role to mechid perm
+perm grant com.att.aaf.mechid com.att create com.test.TC_NS2.@[user.name].cred_admin
+** Expect 201 **
+Granted Permission [com.att.aaf.mechid|com.att|create] to Role [com.test.TC_NS2.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+ns list name com.test.TC_NS2.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS2.@[THE_USER].admin                                            
+        com.test.TC_NS2.@[THE_USER].cred_admin                                       
+        com.test.TC_NS2.@[THE_USER].owner                                            
+    Permissions
+        com.test.TC_NS2.@[THE_USER].access  *                        *              
+        com.test.TC_NS2.@[THE_USER].access  *                        read           
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+perm list role com.test.TC_NS2.@[user.name].admin
+** Expect 200 **
+
+List Perms by Role [com.test.TC_NS2.@[THE_USER].admin]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].access  *                              *         
+
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+perm list role com.test.TC_NS2.@[user.name].owner
+** Expect 200 **
+
+List Perms by Role [com.test.TC_NS2.@[THE_USER].owner]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].access  *                              read      
+
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+role list perm com.test.TC_NS2.@[user.name].access * *
+** Expect 200 **
+
+List Roles by Perm com.test.TC_NS2.@[THE_USER].access|*|*
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].admin                      
+   com.test.TC_NS2.@[THE_USER].access  *                              *              
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+role list perm com.test.TC_NS2.@[user.name].access * read
+** Expect 200 **
+
+List Roles by Perm com.test.TC_NS2.@[THE_USER].access|*|read
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].owner                      
+   com.test.TC_NS2.@[THE_USER].access  *                              read           
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+ns list name com.test.TC_NS2.@[user.name].project
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER].project]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project
+    Administrators
+        testunused@aaf.att.com                                                  
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS2.@[THE_USER].project.admin                                    
+        com.test.TC_NS2.@[THE_USER].project.owner                                    
+    Permissions
+        com.test.TC_NS2.@[THE_USER].project.access *                        *              
+        com.test.TC_NS2.@[THE_USER].project.access *                        read           
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+perm list role com.test.TC_NS2.@[user.name].project.admin
+** Expect 200 **
+
+List Perms by Role [com.test.TC_NS2.@[THE_USER].project.admin]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project.access *                              *         
+
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+perm list role com.test.TC_NS2.@[user.name].project.owner
+** Expect 200 **
+
+List Perms by Role [com.test.TC_NS2.@[THE_USER].project.owner]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project.access *                              read      
+
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+role list perm com.test.TC_NS2.@[user.name].project.access * *
+** Expect 200 **
+
+List Roles by Perm com.test.TC_NS2.@[THE_USER].project.access|*|*
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project.admin              
+   com.test.TC_NS2.@[THE_USER].project.access *                              *              
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+role list perm com.test.TC_NS2.@[user.name].project.access * read
+** Expect 200 **
+
+List Roles by Perm com.test.TC_NS2.@[THE_USER].project.access|*|read
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project.owner              
+   com.test.TC_NS2.@[THE_USER].project.access *                              read           
+
+as testid@aaf.att.com
+# TC_NS2.20.1.POS Create roles
+role create com.test.TC_NS2.@[user.name].watcher
+** Expect 201 **
+Created Role
+
+role create com.test.TC_NS2.@[user.name].myRole
+** Expect 201 **
+Created Role
+
+# TC_NS2.20.2.POS Create permissions
+perm create com.test.TC_NS2.@[user.name].myType myInstance myAction
+** Expect 201 **
+Created Permission
+
+perm create com.test.TC_NS2.@[user.name].myType * *
+** Expect 201 **
+Created Permission
+
+# TC_NS2.20.3.POS Create mechid
+user cred add m99990@@[user.name].TC_NS2.test.com password123
+** Expect 201 **
+Added Credential [m99990@@[THE_USER].TC_NS2.test.com]
+
+as XX@NS
+# TC_NS2.20.10.POS Grant view perms to watcher role
+perm create com.att.aaf.ns :com.test.TC_NS2.@[user.name]:ns read com.test.TC_NS2.@[user.name].watcher
+** Expect 201 **
+Created Permission
+Granted Permission [com.att.aaf.ns|:com.test.TC_NS2.@[THE_USER]:ns|read] to Role [com.test.TC_NS2.@[THE_USER].watcher]
+
+as testunused@aaf.att.com
+# TC_NS2.40.1.NEG Non-admin, not granted user should not view
+ns list name com.test.TC_NS2.@[user.name]
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not read in NS [com.test.TC_NS2.@[THE_USER]]
+
+as testid@aaf.att.com
+# Tens test user granted to permission
+# TC_NS2.40.10.POS Add user to watcher role
+user role add testunused@aaf.att.com com.test.TC_NS2.@[user.name].watcher
+** Expect 201 **
+Added Role [com.test.TC_NS2.@[THE_USER].watcher] to User [testunused@aaf.att.com]
+
+as testunused@aaf.att.com
+# TC_NS2.40.11.POS Non-admin, granted user should view
+ns list name com.test.TC_NS2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS2.@[THE_USER].admin                                            
+        com.test.TC_NS2.@[THE_USER].cred_admin                                       
+        com.test.TC_NS2.@[THE_USER].myRole                                           
+        com.test.TC_NS2.@[THE_USER].owner                                            
+        com.test.TC_NS2.@[THE_USER].watcher                                          
+    Permissions
+        com.test.TC_NS2.@[THE_USER].access  *                        *              
+        com.test.TC_NS2.@[THE_USER].access  *                        read           
+        com.test.TC_NS2.@[THE_USER].myType  *                        *              
+        com.test.TC_NS2.@[THE_USER].myType  myInstance               myAction       
+    Credentials
+        m99990@@[THE_USER].TC_NS2.test.com                                           
+
+as testid@aaf.att.com
+# TC_NS2.40.19.POS Remove user from watcher role
+user role del testunused@aaf.att.com com.test.TC_NS2.@[user.name].watcher
+** Expect 200 **
+Removed Role [com.test.TC_NS2.@[THE_USER].watcher] from User [testunused@aaf.att.com]
+
+# Thirties test admin user 
+# TC_NS2.40.20.POS Admin should be able to view
+ns list name com.test.TC_NS2.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS2.@[THE_USER].admin                                            
+        com.test.TC_NS2.@[THE_USER].cred_admin                                       
+        com.test.TC_NS2.@[THE_USER].myRole                                           
+        com.test.TC_NS2.@[THE_USER].owner                                            
+        com.test.TC_NS2.@[THE_USER].watcher                                          
+    Permissions
+        com.test.TC_NS2.@[THE_USER].access  *                        *              
+        com.test.TC_NS2.@[THE_USER].access  *                        read           
+        com.test.TC_NS2.@[THE_USER].myType  *                        *              
+        com.test.TC_NS2.@[THE_USER].myType  myInstance               myAction       
+    Credentials
+        m99990@@[THE_USER].TC_NS2.test.com                                           
+
+# TC_NS2.40.21.POS Admin of parent NS should be able to view
+ns list name com.test.TC_NS2.@[user.name].project
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER].project]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project
+    Administrators
+        testunused@aaf.att.com                                                  
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS2.@[THE_USER].project.admin                                    
+        com.test.TC_NS2.@[THE_USER].project.owner                                    
+    Permissions
+        com.test.TC_NS2.@[THE_USER].project.access *                        *              
+        com.test.TC_NS2.@[THE_USER].project.access *                        read           
+
+# TC_NS2.41.10.POS List by User when Same as Caller
+as testunused@aaf.att.com
+ns list admin testunused@aaf.att.com
+** Expect 200 **
+
+List Namespaces with admin privileges for [testunused@aaf.att.com]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project
+
+# TC_NS2.41.15.POS List by User when not same as Caller, but own/admin namespace of Roles
+as testid@aaf.att.com
+ns list admin testunused@aaf.att.com
+** Expect 200 **
+
+List Namespaces with admin privileges for [testunused@aaf.att.com]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project
+
+# TC_NS2.41.20.POS List by User when not same as Caller, but parent owner of Namespace
+as XX@NS
+ns list admin testunused@aaf.att.com
+** Expect 200 **
+
+List Namespaces with admin privileges for [testunused@aaf.att.com]
+--------------------------------------------------------------------------------
+com.test.TC_NS2.@[THE_USER].project
+
+# TC_NS2.41.80.NEG List by User when not Caller nor associated to Namespace 
+as testunused@aaf.att.com
+ns list admin XX@NS
+** Expect 200 **
+
+List Namespaces with admin privileges for [XX@NS]
+--------------------------------------------------------------------------------
+com
+com.att
+com.att.aaf
+com.test
+
+as testid@aaf.att.com
+# TC_NS2.99.1.POS Namespace Admin can delete Namepace defined Roles & Perms
+role delete com.test.TC_NS2.@[user.name].myRole
+** Expect 200,404 **
+Deleted Role
+
+role delete com.test.TC_NS2.@[user.name].watcher
+** Expect 200,404 **
+Deleted Role
+
+perm delete com.test.TC_NS2.@[user.name].myType myInstance myAction
+** Expect 200,404 **
+Deleted Permission
+
+perm delete com.test.TC_NS2.@[user.name].myType * *
+** Expect 200,404 **
+Deleted Permission
+
+user cred del m99990@@[user.name].TC_NS2.test.com
+** Expect 200,404 **
+Deleted Credential [m99990@@[THE_USER].TC_NS2.test.com]
+
+as XX@NS
+force perm delete com.att.aaf.ns :com.test.TC_NS2.@[user.name]:ns read
+** Expect 200,404 **
+Deleted Permission
+
+# TC_NS2.99.15.POS Remove ability to create creds
+perm ungrant com.att.aaf.mechid com.att create com.test.TC_NS2.@[user.name].cred_admin
+** Expect 200,404 **
+UnGranted Permission [com.att.aaf.mechid|com.att|create] from Role [com.test.TC_NS2.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+force role delete com.test.TC_NS2.@[user.name].cred_admin
+** Expect 200,404 **
+Deleted Role
+
+# TC_NS2.99.90.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_NS2.@[user.name].project
+** Expect 200,404 **
+Deleted Namespace
+
+force ns delete com.test.TC_NS2.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+sleep 0
+# TC_NS2.99.99.POS Check Clean Namespace
+ns list name com.test.TC_NS2.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_NS2.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

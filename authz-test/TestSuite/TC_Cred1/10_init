@@ -1,0 +1,36 @@
+as testid@aaf.att.com
+# TC_Cred1.10.0.POS List NS to prove ok
+expect 200
+ns list name com.test.TC_Cred1.@[user.name]
+
+# TC_Cred1.10.1.POS Create Personalized Namespace to add Credentials
+expect 201
+ns create com.test.TC_Cred1.@[user.name] @[user.name] testid@aaf.att.com
+
+# TC_Cred1.10.10.POS Create role to assign mechid perm to
+expect 201
+role create com.test.TC_Cred1.@[user.name].cred_admin testid@aaf.att.com
+role create com.test.TC_Cred1.@[user.name].pw_reset 
+
+# TC_Cred1.10.11.POS Assign roles to perms
+as XX@NS
+expect 201
+perm create com.att.aaf.password com.test reset com.test.TC_Cred1.@[user.name].pw_reset
+perm create com.att.aaf.mechid com.test create com.test.TC_Cred1.@[user.name].cred_admin 
+perm grant com.att.aaf.mechid com.att create com.test.TC_Cred1.@[user.name].cred_admin
+
+as testid@aaf.att.com
+# TC_Cred1.10.30.POS Assign user for creating creds
+expect 201
+user cred add m99999@@[user.name].TC_Cred1.test.com password123
+set m99999@@[user.name].TC_Cred1.test.com=password123
+
+
+# TC_Cred1.10.31.POS Credential used to similate non-admin Tier1 user with reset and create permissions
+expect 201
+user role add m99999@@[user.name].TC_Cred1.test.com com.test.TC_Cred1.@[user.name].pw_reset,com.test.TC_Cred1.@[user.name].cred_admin
+
+# TC_Cred1.10.32.POS Remove create rights for testing
+expect 200
+user role del testid@aaf.att.com com.test.TC_Cred1.@[user.name].cred_admin 
+

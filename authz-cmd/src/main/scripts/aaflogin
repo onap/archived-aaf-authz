@@ -1,0 +1,199 @@
+#!/bin/bash
+JAVA_HOME=_JAVA_HOME_
+JAVA=${JAVA_HOME}/bin/java
+DEFAULT_DOMAIN=XXX_DOMAIN
+###
+# Give some help hints if first run
+#
+if [ "`declare -f aaflogout`" = "" ] || [ "$1" = "-h" ]; then
+  echo
+  echo "  COMMANDS:"
+  echo "    aaflogin -f = Redo Local Login"
+  echo "    aaflogout   = Logout from Environment"
+  echo "    aaflogin -r = Reset Password on AAF Service"
+  echo "    aaflogin -h = Help"
+  echo "    aafcli      = AAF Management Tool"
+  echo
+fi
+
+if [ "$1" != "-h" ]; then
+
+
+###
+# Load User/Password for aafcli, and create in function.
+# 
+# To use, source aaflogin
+#
+#   ex:   . ./aaflogin
+#
+#  -f = force relogin
+#  -r = reset password sequence
+#
+#  see aaflogout to logout
+###
+
+###
+# Gather Classpath - warning, DME2 doesn't work with -Djava.ext.dirs
+###
+AAF_CP=_ROOT_DIR_/etc
+for JAR in `find _ROOT_DIR_/lib -name "*.jar"` ; do
+  AAF_CP="$AAF_CP:$JAR"
+done
+
+###
+# Create Keyfile to use temporarily, if not exists
+###
+if [ ! -e $HOME/.aaf/keyfile ]; then 
+  mkdir -p $HOME/.aaf
+  ${JAVA} -cp $AAF_CP com.att.cadi.CmdLine keygen $HOME/.aaf/keyfile
+  chmod 400 $HOME/.aaf/keyfile 
+fi
+  
+###
+# Obtain User ID from AAF_ID, or SUDO_USER or USER, that order
+###
+if [ "$AAF_ID" == "" ] || [ "$1" == "-f" ] ; then
+   if [ "$AAF_ID" == "" ] ; then
+	   if [ "$SUDO_USER" != "" ] ; then 
+	      AAF_ID=$SUDO_USER
+	   else if [ "$USER" != "" ] ; then 
+	      AAF_ID=$USER
+	      fi
+	   fi
+   fi
+
+   echo -n "Enter AAF ID [$AAF_ID]: "
+   read TEMP
+   if [ "$TEMP" != "" ] ; then
+      AAF_ID=$TEMP
+   fi 
+   export AAF_ID
+fi
+
+###
+# Add Function to remove AAF Vars and Functions from the Shell
+#
+function aaflogout {
+	unset AAF_ID
+	unset AAF_PASS
+	unset AAF_CP
+	unset -f aafcli
+	unset -f cmcli
+	unset -f aaflogout
+	rm -f $HOME/.aaf/keyfile
+}
+
+
+###
+# Load the Password
+###
+if [ "$AAF_PASS" == "" ] || [ "$1" == "-f" ] ; then
+   # Ask for User and Password.  Assuming Unix and availability of "stty"
+   if [[ "$AAF_ID" == *"@$DEFAULT_DOMAIN" ]] || [[ "$AAF_ID" != *"@"* ]] ; then
+   	  PASS_PROMPT="AT&T Global Login"
+	  AAF_DEFAULT_DOMAIN="-Daaf_default_domain=$DEFAULT_DOMAIN"
+   else 
+      PASS_PROMPT="AAF"
+      AAF_DEFAULT_DOMAIN=""
+   fi
+  
+   
+   read -ers -p "Enter "$PASS_PROMPT" Password for $AAF_ID: " AAF_PASS
+   echo 
+   AAF_PASS=enc:`$JAVA -cp $AAF_CP $AAF_DEFAULT_DOMAIN com.att.cadi.CmdLine digest "$AAF_PASS" $HOME/.aaf/keyfile`
+   export AAF_PASS
+fi
+
+
+
+###
+# load aafcli function in the Shell
+###
+
+function aafcli {
+  # for separating VM_ARGS in aafcli 
+  AAF_SPACE=" "
+  THE_ID=$AAF_ID
+  if [ "${AAF_ID}" = "${AAF_ID/@/%}" ]; then
+	THE_ID+="@$DEFAULT_DOMAIN"
+  fi
+  _JAVA_HOME_/bin/java \
+  -cp $AAF_CP \
+  -Daaf_url=https://DME2RESOLVE/service=com.att.authz.AuthorizationService/version=_MAJOR_VER_._MINOR_VER_/envContext=_ENV_CONTEXT_/routeOffer=_ROUTE_OFFER_ \
+  -DAFT_LATITUDE=_AFT_LATITUDE_ \
+  -DAFT_LONGITUDE=_AFT_LONGITUDE_ \
+  -DAFT_ENVIRONMENT=_AFT_ENVIRONMENT_ \
+  -Daaf_id=$THE_ID \
+  -Daaf_password=$AAF_PASS \
+  -Daaf_dme_timeout=60000 \
+  -Dcadi_keyfile=$HOME/.aaf/keyfile \
+  -Daaf_default_realm=$DEFAULT_DOMAIN \
+  -DDEPLOYED_VERSION=_ARTIFACT_VERSION_ \
+  _DME2_FS_ \
+  com.att.cmd.AAFcli $*  
+  unset THE_ID
+  unset AAF_SPACE
+}
+
+###
+# load cmcli function in the Shell
+###
+
+function cmcli {
+  # for separating VM_ARGS in cmcli 
+  AAF_SPACE=" "
+  THE_ID=$AAF_ID
+  if [ "${AAF_ID}" = "${AAF_ID/@/%}" ]; then
+	THE_ID+="@$DEFAULT_DOMAIN"
+  fi
+  CM_URL=_CM_URL_
+  if [ "${CM_URL}" = "" ]; then
+    CM_URL=https://DME2RESOLVE/service=com.att.authz.Certman/version=_MAJOR_VER_._MINOR_VER_/envContext=_ENV_CONTEXT_/routeOffer=_ROUTE_OFFER_
+  fi
+  
+  _JAVA_HOME_/bin/java \
+  -cp $AAF_CP \
+  -DAFT_LATITUDE=_AFT_LATITUDE_ \
+  -DAFT_LONGITUDE=_AFT_LONGITUDE_ \
+  -DAFT_ENVIRONMENT=_AFT_ENVIRONMENT_ \
+  -Daaf_dme_timeout=60000 \
+  -Daaf_default_realm=$DEFAULT_DOMAIN \
+  -DDEPLOYED_VERSION=_ARTIFACT_VERSION_ \
+  _DME2_FS_ \
+  com.att.cadi.cm.CmAgent cm_url=${CM_URL} aaf_id=$THE_ID aaf_password="$AAF_PASS" \
+    cadi_keyfile=$HOME/.aaf/keyfile $*  
+  unset THE_ID
+  unset AAF_SPACE
+  unset CM_URL
+}
+
+
+###
+# if "-r" the do Remote Password Reset
+###
+if [ "$1" == "-r" ] ; then
+   # Ask for User and Password.  Assuming Unix and availability of "stty"
+   read -ers -p "Enter New AAF Password for $AAF_ID: " AAF_NEWPASS
+   echo 
+   read -ers -p "Reenter New AAF Password for $AAF_ID: " AAF_NEWPASS2
+   echo
+   if [ "$AAF_NEWPASS" == "$AAF_NEWPASS2" ] ; then
+	   RESP=`aafcli user resetCred "$AAF_ID@aaf.att.com" $AAF_NEWPASS`
+	   echo $RESP
+	   if [ "$RESP" == "Reset Credential [$AAF_ID@aaf.att.com]" ] ; then
+	      export AAF_PASS=enc:`$JAVA -cp $AAF_CP com.att.cadi.CmdLine digest $AAF_NEWPASS $HOME/.aaf/keyfile`
+	   fi
+   else     
+        echo "Passwords don't match!"
+   fi
+fi
+
+###
+# Export key variables for use in other Scripts
+###
+export AAF_ID 
+export AAF_PASS
+export AAF_CP
+export -f aafcli
+export -f aaflogout
+fi

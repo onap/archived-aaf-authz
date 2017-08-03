@@ -1,0 +1,35 @@
+
+as testid@aaf.att.com
+
+expect 200,404
+
+# TC_Appr2.99.10.POS Delete UserRoles if exists
+user role del @[user.name]@@[user.name].appr.test.com com.test.appr.@[user.name].deleteThisRole
+user role del @[user.name]@@[user.name].appr.test.com com.test.appr.@[user.name].addToUserRole
+
+# TC_Appr2.10.11.POS Delete Roles if exists
+set force=true role delete com.test.appr.@[user.name].addToUserRole
+set force=true role delete com.test.appr.@[user.name].grantToPerm
+set force=true role delete com.test.appr.@[user.name].ungrantFromPerm
+role delete com.test.appr.@[user.name].grantedRole
+role delete com.test.appr.@[user.name].approvedRole
+role delete com.test.appr.@[user.name].approvedRole2
+role delete com.test.appr.@[user.name].grantFirstPerm
+role delete com.test.appr.@[user.name].grantSecondPerm
+
+# TC_Appr2.10.12.POS Delete Permissions if exists
+perm delete com.test.appr.@[user.name].ungrantFromRole myInstance myAction com.test.appr.@[user.name].grantedRole
+perm delete com.test.appr.@[user.name].grantToRole myInstance myAction
+perm delete com.test.appr.@[user.name].deleteThisPerm myInstance myAction com.test.appr.@[user.name].grantedRole
+perm delete com.test.appr.@[user.name].approvedPerm myInstance myAction
+perm delete com.test.appr.@[user.name].approvedPerm * *
+perm delete com.test.appr.@[user.name].approvedPerm2 myInstance myAction
+perm delete com.test.appr.@[user.name].grantTwoRoles myInstance myAction
+perm delete com.test.appr.@[user.name].ungrantTwoRoles myInstance myAction
+
+
+# TC_Appr2.99.80.POS Delete Namespaces for TestSuite if exists
+ns delete com.test.appr.@[user.name].myProject
+set force=true ns delete com.test.appr.@[user.name] 
+set force=true ns delete com.test.appr
+

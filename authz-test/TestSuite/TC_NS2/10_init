@@ -1,0 +1,71 @@
+
+as testid@aaf.att.com
+# TC_NS2.10.0.POS Check for Existing Data
+expect 200
+ns list name com.test.TC_NS2.@[user.name]
+
+# TC_NS2.10.1.POS Create Namespace with valid IDs and Responsible Parties
+expect 201
+ns create com.test.TC_NS2.@[user.name] @[user.name] testid@aaf.att.com
+ns create com.test.TC_NS2.@[user.name].project @[user.name] testunused@aaf.att.com
+
+# TC_NS2.10.10.POS Create role to assign mechid perm to
+expect 201
+role create com.test.TC_NS2.@[user.name].cred_admin testid@aaf.att.com
+
+as XX@NS:<pass>
+# TC_NS2.10.11.POS Assign role to mechid perm
+expect 201
+perm grant com.att.aaf.mechid com.att create com.test.TC_NS2.@[user.name].cred_admin
+
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+expect 200
+ns list name com.test.TC_NS2.@[user.name] 
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+expect 200
+perm list role com.test.TC_NS2.@[user.name].admin
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+expect 200
+perm list role com.test.TC_NS2.@[user.name].owner
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+expect 200
+role list perm com.test.TC_NS2.@[user.name].access * *
+
+as testid@aaf.att.com
+# TC_NS2.10.70.POS Expect Namespace to be created
+expect 200
+role list perm com.test.TC_NS2.@[user.name].access * read
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+expect 200
+ns list name com.test.TC_NS2.@[user.name].project
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+expect 200
+perm list role com.test.TC_NS2.@[user.name].project.admin
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+expect 200
+perm list role com.test.TC_NS2.@[user.name].project.owner
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+expect 200
+role list perm com.test.TC_NS2.@[user.name].project.access * *
+
+as testid@aaf.att.com
+# TC_NS2.10.80.POS Expect Namespace to be created
+expect 200
+role list perm com.test.TC_NS2.@[user.name].project.access * read
+

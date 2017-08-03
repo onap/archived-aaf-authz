@@ -1,0 +1,28 @@
+expect 200,404
+as testid@aaf.att.com
+
+# TC_Realm1.99.1.POS Delete delgates
+user delegate del @[user.name]
+
+# TC_Realm1.99.2.POS Delete user roles
+role user del com.test.TC_Realm1.@[user.name].role1 @[user.name]
+user role del @[user.name] com.test.TC_Realm1.@[user.name].role2 
+
+# TC_Realm1.99.3.POS Delete roles
+role delete com.test.TC_Realm1.@[user.name].role1
+role delete com.test.TC_Realm1.@[user.name].role2
+
+as XX@NS
+# TC_Realm1.99.10.POS UnGrant ability to change delegates
+perm ungrant com.att.aaf.delg com.att change com.test.TC_Realm1.@[user.name].change_delg
+
+as testid@aaf.att.com
+# TC_Realm1.99.11.POS Delete role to change delegates
+set force=true role delete com.test.TC_Realm1.@[user.name].change_delg
+
+# TC_Realm1.99.98.POS Delete Namespaces
+ns delete com.test.TC_Realm1.@[user.name]
+ns delete com.test.TC_Realm1.@[user.name].project1
+
+# TC_Realm1.99.99.POS Verify Cleaned NS
+ns list name com.test.TC_Realm1.@[user.name]

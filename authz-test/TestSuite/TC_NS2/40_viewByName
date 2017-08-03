@@ -1,0 +1,31 @@
+
+as testunused@aaf.att.com
+# TC_NS2.40.1.NEG Non-admin, not granted user should not view
+expect 403
+ns list name com.test.TC_NS2.@[user.name]
+
+as testid@aaf.att.com
+# Tens test user granted to permission
+# TC_NS2.40.10.POS Add user to watcher role
+expect 201
+user role add testunused@aaf.att.com com.test.TC_NS2.@[user.name].watcher
+
+as testunused@aaf.att.com
+# TC_NS2.40.11.POS Non-admin, granted user should view
+expect 200
+ns list name com.test.TC_NS2.@[user.name]
+
+as testid@aaf.att.com
+# TC_NS2.40.19.POS Remove user from watcher role
+expect 200
+user role del testunused@aaf.att.com com.test.TC_NS2.@[user.name].watcher
+
+# Thirties test admin user 
+# TC_NS2.40.20.POS Admin should be able to view
+expect 200
+ns list name com.test.TC_NS2.@[user.name]
+
+# TC_NS2.40.21.POS Admin of parent NS should be able to view
+expect 200
+ns list name com.test.TC_NS2.@[user.name].project
+

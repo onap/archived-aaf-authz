@@ -1,0 +1,42 @@
+as testid@aaf.att.com
+# TC_NSdelete1.30.1.POS Create valid Role in my Namespace
+expect 201
+role create com.@[user.name].r.A
+
+# TC_NSdelete1.30.2.NEG Delete Company with role attached
+expect 424
+ns delete com.@[user.name]
+
+# TC_NSdelete1.30.3.POS Namespace Admin can delete Namepace defined Roles
+expect 200
+role delete com.@[user.name].r.A
+
+# TC_NSdelete1.30.10.POS Create valid permission 
+expect 201
+perm create com.@[user.name].p.A myInstance myAction
+
+# TC_NSdelete1.30.11.NEG Delete Company with permission attached
+expect 424
+ns delete com.@[user.name]
+
+# TC_NSdelete1.30.12.POS Namespace Admin can delete Namepace defined Perms
+expect 200
+perm delete com.@[user.name].p.A myInstance myAction
+
+# TC_NSdelete1.30.20.POS Create valid Credential in my namespace 
+expect 201
+user cred add m99990@@[user.name].com password123
+
+# TC_NSdelete1.30.21.NEG Delete Company with credential attached
+expect 424
+ns delete com.@[user.name]
+
+# TC_NSdelete1.30.22.POS Namespace admin can remove Cred
+expect 200
+set force=true
+user cred del m99990@@[user.name].com
+
+# TC_NSdelete1.30.30.POS Delete Company with no roles or perms attached
+expect 200
+ns delete com.@[user.name]
+

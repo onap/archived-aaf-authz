@@ -1,0 +1,25 @@
+##
+## AUTHZ Certman (authz-certman) Properties
+##
+
+hostname=_HOSTNAME_
+
+## DISCOVERY (DME2) Parameters on the Command Line
+AFT_LATITUDE=_AFT_LATITUDE_
+AFT_LONGITUDE=_AFT_LONGITUDE_
+AFT_ENVIRONMENT=_AFT_ENVIRONMENT_
+DEPLOYED_VERSION=_ARTIFACT_VERSION_
+
+## Pull in common/security properties
+
+cadi_prop_files=_COMMON_DIR_/com.att.aaf.common.props;_COMMON_DIR_/com.att.aaf.props
+
+##DME2 related parameters
+DMEServiceName=service=com.att.authz.certman/version=_MAJOR_VER_._MINOR_VER_._PATCH_VER_/envContext=_ENV_CONTEXT_/routeOffer=_ROUTE_OFFER_
+AFT_DME2_PORT_RANGE=_AUTHZ_CERTMAN_PORT_RANGE_
+
+# Turn on both AAF TAF & LUR 2.0                                                
+aaf_url=https://DME2RESOLVE/service=com.att.authz.AuthorizationService/version=_MAJOR_VER_._MINOR_VER_/envContext=_ENV_CONTEXT_/routeOffer=_ROUTE_OFFER_
+
+
+

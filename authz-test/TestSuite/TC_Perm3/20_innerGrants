@@ -1,0 +1,29 @@
+as testid_1@test.com
+
+# TC_Perm3.20.0.POS User1 Create a Perm
+expect 201
+perm create com.test.TC_Perm3.@[user.name]_1.dev.myPerm_a myInstance myAction
+
+# TC_Perm3.20.5.NEG User1 should not be able to create Role in other group
+expect 403
+role create com.test.TC_Perm3.@[user.name]_2.dev.myRole_a
+
+# TC_Perm3.20.6.POS User2 should be able to create Role in own group
+as testid_2@test.com
+expect 201
+role create com.test.TC_Perm3.@[user.name]_2.dev.myRole_a
+
+# TC_Perm3.20.7.NEG User2 should not be able to grant Perm to own Role
+expect 403
+perm grant com.test.TC_Perm3.@[user.name]_1.dev.myPerm_a myInstance myAction com.test.TC_Perm3.@[user.name]_2.dev.myRole_a
+
+# TC_Perm3.20.8.NEG User2 cannot create Role in NS 2
+as testid_2@test.com
+expect 403
+perm grant com.test.TC_Perm3.@[user.name]_1.dev.myPerm_a myInstance myAction com.test.TC_Perm3.@[user.name]_2.dev.myRole_a
+
+# TC_Perm3.20.9.POS Role created, but can't grant... has to be testid_1
+expect 201
+as testid_1@test.com
+perm grant com.test.TC_Perm3.@[user.name]_1.dev.myPerm_a myInstance myAction com.test.TC_Perm3.@[user.name]_2.dev.myRole_a
+

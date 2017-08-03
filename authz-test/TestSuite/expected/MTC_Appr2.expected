@@ -1,0 +1,24 @@
+# TC_Appr2.99.1.POS Delete User Role, if exists
+user role del testunused@aaf.att.com com.test.appr.@[user.name].myRole
+** Expect 200,404 **
+Failed [SVC1404]: Cannot delete non-existent User Role
+
+# TC_Appr2.99.79.POS Delete Role
+role delete com.test.appr.@[user.name].myRole
+** Expect 200,404 **
+Deleted Role
+
+# TC_Appr2.99.80.POS Delete Namespaces for TestSuite 
+ns delete com.test.appr
+** Expect 200,404 **
+Deleted Namespace
+
+ns delete com.test.appr.@[user.name] 
+** Expect 200,404 **
+Deleted Namespace
+
+# TC_Appr2.99.81.POS Delete Credential used to generate approvals
+as XX@NS:<pass> user cred del testbatch@aaf.att.com
+** Expect 200,404 **
+Deleted Credential [testbatch@aaf.att.com]
+

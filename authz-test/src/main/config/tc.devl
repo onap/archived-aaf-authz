@@ -1,0 +1,16 @@
+# Load Passwords needed
+function aafcli {
+  java \
+  -Daaf_id=testid \
+  -Daaf_pass=<pass> \
+  -Daaf_url=DMEServiceName=service=com.att.authz.AuthorizationService/version=_MAJOR_VER_._MINOR_VER_/envContext=_AFT_ENVIRONMENT_/routeOffer=_ROUTE_OFFER_ \
+  -DAFT_LATITUDE=_AFT_LATITUDE_ \
+  -DAFT_LONGITUDE=_AFT_LONGITUDE_ \
+  -DAFT_ENVIRONMENT=_AFT_ENVIRONMENT_ \
+  -Dtestid=<pass> \
+  -Dbogus=xxx \
+  -Dm12345=<pass> \
+  -jar \
+   /Volumes/Data/src/authz/authz-cmd/target/authz-cmd-2.0.2-SNAPSHOT-jar-with-dependencies.jar \
+   $*
+}

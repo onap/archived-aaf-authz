@@ -1,0 +1,144 @@
+set testid@aaf.att.com <pass>
+set XX@NS <pass>
+set testunused@aaf.att.com <pass>
+set bogus boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_Appr1.10.0.POS List NS to prove ok
+ns list name com.test.appr
+** Expect 200 **
+
+List Namespaces by Name[com.test.appr]
+--------------------------------------------------------------------------------
+
+ns list name com.test.appr.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.appr.@[THE_USER]]
+--------------------------------------------------------------------------------
+
+# TC_Appr1.10.1.POS Create Personalized Namespace to add Approvals
+ns create com.test.appr.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_Appr1.10.2.POS Create General Namespace to add Approvals
+ns create com.test.appr @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_Appr1.10.10.POS Create Roles in Namespace
+role create com.test.appr.@[user.name].addToUserRole
+** Expect 201 **
+Created Role
+
+role create com.test.appr.@[user.name].grantToPerm
+** Expect 201 **
+Created Role
+
+role create com.test.appr.@[user.name].ungrantFromPerm
+** Expect 201 **
+Created Role
+
+role create com.test.appr.@[user.name].grantFirstPerm
+** Expect 201 **
+Created Role
+
+role create com.test.appr.@[user.name].grantSecondPerm
+** Expect 201 **
+Created Role
+
+# TC_Appr1.10.12.POS Create Permissions in Namespace
+perm create com.test.appr.@[user.name].ungrantFromRole myInstance myAction com.test.appr.@[user.name].ungrantFromPerm
+** Expect 201 **
+Created Permission
+Granted Permission [com.test.appr.@[THE_USER].ungrantFromRole|myInstance|myAction] to Role [com.test.appr.@[THE_USER].ungrantFromPerm]
+
+perm create com.test.appr.@[user.name].grantToRole myInstance myAction
+** Expect 201 **
+Created Permission
+
+force perm create com.test.appr.@[user.name].deleteThisPerm myInstance myAction com.test.appr.@[user.name].grantedRole
+** Expect 201 **
+Created Permission
+Granted Permission [com.test.appr.@[THE_USER].deleteThisPerm|myInstance|myAction] to Role [com.test.appr.@[THE_USER].grantedRole] (Created)
+
+perm create com.test.appr.@[user.name].grantTwoRoles myInstance myAction
+** Expect 201 **
+Created Permission
+
+perm create com.test.appr.@[user.name].ungrantTwoRoles myInstance myAction com.test.appr.@[user.name].grantFirstPerm,com.test.appr.@[user.name].grantSecondPerm
+** Expect 201 **
+Created Permission
+Granted Permission [com.test.appr.@[THE_USER].ungrantTwoRoles|myInstance|myAction] to Role [com.test.appr.@[THE_USER].grantFirstPerm]
+Granted Permission [com.test.appr.@[THE_USER].ungrantTwoRoles|myInstance|myAction] to Role [com.test.appr.@[THE_USER].grantSecondPerm]
+
+as testunused@aaf.att.com
+# TC_Appr1.15.01.NEG Create Future and Approvals with non-admin request
+user role add @[user.name]@@[user.name].appr.test.com com.test.appr.@[user.name].addToUserRole
+** Expect 403 **
+Failed [SVC2403]: Approvals required, but not requested by Client
+
+# TC_Appr1.15.02.NEG Create Approval for NS create
+ns create com.test.appr.@[user.name].myProject @[user.name]
+** Expect 403 **
+Failed [SVC2403]: Approvals required, but not requested by Client
+
+# TC_Appr1.15.03.NEG Generate Approval for granting permission to role
+perm grant com.test.appr.@[user.name].grantToRole myInstance myAction com.test.appr.@[user.name].grantToPerm
+** Expect 403 **
+Failed [SVC2403]: Approvals required, but not requested by Client
+
+# TC_Appr1.15.04.NEG Generate Approval for ungranting permission from role
+perm ungrant com.test.appr.@[user.name].ungrantFromRole myInstance myAction com.test.appr.@[user.name].ungrantFromPerm
+** Expect 403 **
+Failed [SVC2403]: Approvals required, but not requested by Client
+
+# TC_Appr1.15.05.NEG Generate Approval for granting permission to role
+perm grant com.test.appr.@[user.name].grantTwoRoles myInstance myAction com.test.appr.@[user.name].grantFirstPerm,com.test.appr.@[user.name].grantSecondPerm
+** Expect 403 **
+Failed [SVC2403]: Approvals required, but not requested by Client
+Failed [SVC2403]: Approvals required, but not requested by Client
+
+# TC_Appr1.15.06.NEG Generate Approval for ungranting permission from role
+perm ungrant com.test.appr.@[user.name].ungrantTwoRoles myInstance myAction com.test.appr.@[user.name].grantFirstPerm,com.test.appr.@[user.name].grantSecondPerm
+** Expect 403 **
+Failed [SVC2403]: Approvals required, but not requested by Client
+Failed [SVC2403]: Approvals required, but not requested by Client
+
+# TC_Appr1.15.51.POS Create Future and Approvals with non-admin request
+set request true
+set request=true user role add @[user.name]@@[user.name].appr.test.com com.test.appr.@[user.name].addToUserRole
+** Expect 202 **
+UserRole Creation Accepted, but requires Approvals before actualizing
+
+# TC_Appr1.15.52.POS Create Approval for NS create
+set request true
+set request=true ns create com.test.appr.@[user.name].myProject @[user.name]
+** Expect 202 **
+Namespace Creation Accepted, but requires Approvals before actualizing
+
+# TC_Appr1.15.53.POS Generate Approval for granting permission to role
+set request true
+set request=true perm grant com.test.appr.@[user.name].grantToRole myInstance myAction com.test.appr.@[user.name].grantToPerm
+** Expect 202 **
+Permission Role Granted Accepted, but requires Approvals before actualizing
+
+# TC_Appr1.15.54.POS Generate Approval for ungranting permission from role
+request perm ungrant com.test.appr.@[user.name].ungrantFromRole myInstance myAction com.test.appr.@[user.name].ungrantFromPerm
+** Expect 202 **
+Permission Role Ungranted Accepted, but requires Approvals before actualizing
+
+# TC_Appr1.15.55.POS Generate Approval for granting permission to role
+request perm grant com.test.appr.@[user.name].grantTwoRoles myInstance myAction com.test.appr.@[user.name].grantFirstPerm,com.test.appr.@[user.name].grantSecondPerm
+** Expect 202 **
+Permission Role Granted Accepted, but requires Approvals before actualizing
+Permission Role Granted Accepted, but requires Approvals before actualizing
+
+# TC_Appr1.15.56.POS Generate Approval for ungranting permission from role
+request perm ungrant com.test.appr.@[user.name].ungrantTwoRoles myInstance myAction com.test.appr.@[user.name].grantFirstPerm,com.test.appr.@[user.name].grantSecondPerm
+** Expect 202 **
+Permission Role Ungranted Accepted, but requires Approvals before actualizing
+Permission Role Ungranted Accepted, but requires Approvals before actualizing
+

@@ -1,0 +1,31 @@
+as testid@aaf.att.com
+# TC_UR1.10.0.POS Validate no NS
+expect 200
+ns list name com.test.TC_UR1.@[user.name] 
+
+# TC_UR1.10.1.POS Create Namespace to add IDs
+expect 201
+ns create com.test.TC_UR1.@[user.name] @[user.name] testid@aaf.att.com
+
+# TC_Role1.10.10.POS Create role to assign mechid perm to
+expect 201
+role create com.test.TC_UR1.@[user.name].cred_admin
+
+as XX@NS
+# TC_Role1.10.11.POS Assign role to mechid perm
+expect 201
+perm grant com.att.aaf.mechid com.att create com.test.TC_UR1.@[user.name].cred_admin
+
+as testid@aaf.att.com
+# TC_Role1.10.12.POS Assign user for creating creds
+expect 201
+user role add testid@aaf.att.com com.test.TC_UR1.@[user.name].cred_admin
+
+# TC_UR1.10.20.POS Create two Credentials
+user cred add m00001@@[user.name].TC_UR1.test.com "abc123sd"
+user cred add m00002@@[user.name].TC_UR1.test.com "abc123sd"
+
+# TC_UR1.10.21.POS Create two Roles
+role create com.test.TC_UR1.@[user.name].r1
+role create com.test.TC_UR1.@[user.name].r2
+

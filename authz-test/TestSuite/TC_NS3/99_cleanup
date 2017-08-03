@@ -1,0 +1,14 @@
+expect 200,404
+as testid_1@test.com
+# TC_NS3.99.2.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_NS3.@[user.name]_1
+
+# TC_NS3.99.3.POS Print Namespaces
+ns list name com.test.TC_NS3.@[user.name]_1
+
+# TC_NS3.99.10.POS Remove Special Permissions
+as XX@NS
+force perm delete com.att.aaf.attrib :com.att.*:TC_NS3_swm write
+
+force perm delete com.att.aaf.attrib :com.att.*:* read
+

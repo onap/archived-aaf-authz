@@ -1,0 +1,3 @@
+expect 200
+role delete com.test.TC_Link_1.@[user.name].myRole
+

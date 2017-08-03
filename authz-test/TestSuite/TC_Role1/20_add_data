@@ -1,0 +1,40 @@
+# TC_Role1.20.1.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_Role1.@[user.name]
+
+# TC_Role1.20.2.POS Add Roles 
+expect 201
+role create com.test.TC_Role1.@[user.name].r.A
+role create com.test.TC_Role1.@[user.name].r.B
+
+# TC_Role1.20.3.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_Role1.@[user.name]
+
+# TC_Role1.20.4.NEG Don't write over Role
+expect 409
+role create com.test.TC_Role1.@[user.name].r.A
+
+# TC_Role1.20.5.NEG Don't allow non-user to create
+expect 401
+as bogus
+role create com.test.TC_Role1.@[user.name].r.No
+
+# TC_Role1.20.6.NEG Don't allow non-user to create without Approval
+expect 403
+as testunused@aaf.att.com
+role create com.test.TC_Role1.@[user.name].r.No
+
+# TC_Role1.20.10.NEG Non-admins can't change description
+expect 403
+as testunused@aaf.att.com
+role describe com.test.TC_Role1.@[user.name].r.A Description A
+
+# TC_Role1.20.11.NEG Role must exist to change description
+expect 404
+as testid@aaf.att.com
+role describe com.test.TC_Role1.@[user.name].r.C Description C
+
+# TC_Role1.20.12.POS Admin can change description
+expect 200
+role describe com.test.TC_Role1.@[user.name].r.A Description A

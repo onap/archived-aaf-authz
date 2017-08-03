@@ -1,0 +1,10 @@
+# TC_Perm2.42.10.POS List Roles from NS when not allowed to see NS
+as testid@aaf.att.com
+expect 200
+perm list ns com.test.TC_Perm2.@[user.name].p
+
+# TC_Perm2.42.20.NEG Don't List Roles from NS when not allowed to see NS
+as testunused@aaf.att.com
+expect 403
+perm list ns com.test.TC_Perm2.@[user.name].p
+

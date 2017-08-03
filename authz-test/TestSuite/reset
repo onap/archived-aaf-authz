@@ -1,0 +1,4 @@
+set m12345=<pass>
+as m12345
+ns create com.test testid@test.com
+

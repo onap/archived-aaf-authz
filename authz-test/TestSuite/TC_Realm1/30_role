@@ -1,0 +1,20 @@
+# TC_Realm1.30.1.POS Create role to add to users
+expect 201
+role create com.test.TC_Realm1.@[user.name].role1
+
+# TC_Realm1.30.2.NEG Add user, but default domain wrong
+expect 403
+role user add com.test.TC_Realm1.@[user.name].role1 testunused
+
+# TC_Realm1.30.3.POS Add user, with default domain appended
+expect 201
+role user add com.test.TC_Realm1.@[user.name].role1 @[user.name]
+
+# TC_Realm1.30.10.POS Role list, with default domain added
+expect 200
+role list user testunused
+
+# TC_Realm1.30.80.POS Delete user, with default domain appended
+expect 200
+role user del com.test.TC_Realm1.@[user.name].role1 @[user.name]
+

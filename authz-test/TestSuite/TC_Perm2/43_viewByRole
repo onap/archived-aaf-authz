@@ -1,0 +1,15 @@
+# TC_Perm2.43.10.POS List perms when allowed to see Role
+as testid@aaf.att.com
+expect 200
+perm list role com.test.TC_Perm2.@[user.name].p.superUser
+perm list role com.test.TC_Perm2.@[user.name].p.watcher
+perm list role com.test.TC_Perm2.@[user.name].p.secret
+
+# TC_Perm2.43.20.NEG Don't List perms when not allowed to see Role
+as testunused@aaf.att.com
+expect 403
+perm list role com.test.TC_Perm2.@[user.name].p.superUser
+perm list role com.test.TC_Perm2.@[user.name].p.watcher
+perm list role com.test.TC_Perm2.@[user.name].p.secret
+
+

@@ -1,0 +1,13 @@
+expect 201
+# TC_10
+as XX@NS
+ns create com.test.TC_Link_1.@[user.name] @[user.name] XX@NS
+ns create com.test.TC_Link_2.@[user.name] @[user.name] XX@NS
+
+role create com.test.TC_Link_1.@[user.name].myRole
+
+perm create com.test.TC_Link_2.@[user.name].myPerm myInstance myAction
+
+perm grant com.test.TC_Link_2.@[user.name].myPerm myInstance myAction com.test.TC_Link_1.@[user.name].myRole
+
+

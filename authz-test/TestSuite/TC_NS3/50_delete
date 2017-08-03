@@ -1,0 +1,27 @@
+as testid_1@test.com
+expect Exception
+# TC_NS3.50.2.NEG Too Short after Command
+ns attrib del
+
+# TC_NS3.50.3.NEG Too Short after Namespace
+ns attrib del com.test.TC_NS3.@[user.name]
+
+# TC_NS3.50.5.NEG No Permission
+expect 403
+ns attrib del com.test.TC_NS3.@[user.name]_1 TC_NS3_swm 
+
+# TC_NS3.50.6.POS Create Permission
+as XX@NS
+expect 201
+perm grant com.att.aaf.attrib :com.att.*:TC_NS3_swm write com.test.TC_NS3.@[user.name]_1.admin
+
+# TC_NS3.50.7.POS Attribute added
+as testid_1@test.com
+expect 200
+ns attrib del com.test.TC_NS3.@[user.name]_1 TC_NS3_swm 
+
+# TC_NS3.50.8.POS Remove Permission
+as XX@NS
+expect 200
+perm ungrant com.att.aaf.attrib :com.att.*:TC_NS3_swm write com.test.TC_NS3.@[user.name]_1.admin
+

@@ -1,0 +1,14 @@
+# TC_NS1.30.10.NEG Non-admins can't change description
+expect 403
+as testunused@aaf.att.com
+ns describe com.test.TC_NS1.@[user.name] Description for my Namespace
+
+# TC_NS1.30.11.NEG Namespace must exist to change description
+expect 404
+as testid@aaf.att.com
+ns describe com.test.TC_NS1.@[user.name].project1 Description for my project
+
+# TC_NS1.30.12.POS Admin can change description
+expect 200
+ns describe com.test.TC_NS1.@[user.name] Description for my Namespace
+
