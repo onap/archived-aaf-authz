@@ -1,6 +1,6 @@
 DIR=`pwd`
 DME2REG=$DIR/../dme2reg
-CLASSPATH=etc:target/authz-cmd-2.0.15-jar-with-dependencies.jar
+CLASSPATH=etc:target/authz-cmd-1.0.0-SNAPSHOT-jar-with-dependencies.jar
 
 java -cp $CLASSPATH \
 	-Dcadi_prop_files=../authz-service/src/main/sample/authAPI.props \
