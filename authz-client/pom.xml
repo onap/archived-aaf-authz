@@ -30,7 +30,7 @@
 	<artifactId>authz-client</artifactId>
 	<name>Authz Client</name>
 	<description>Client and XSD Generated code for Authz</description>
-	<groupId>com.att.authz</groupId>
+	<groupId>org.onap.aaf.authz</groupId>
 	<version>2.6</version>
 	<packaging>jar</packaging>
 	<url>https://github.com/att/AAF</url>
@@ -172,37 +172,11 @@
 			</execution>
 		      </executions>
 		    </plugin>
-			
-		<plugin>
-			<groupId>org.sonatype.plugins</groupId>
-			<artifactId>nexus-staging-maven-plugin</artifactId>
-			<version>1.6.7</version>
-			<extensions>true</extensions>
-			<configuration>
-			<serverId>ossrhdme</serverId>
-			<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-			<autoReleaseAfterClose>true</autoReleaseAfterClose>
-			</configuration>
-		</plugin>
+	
 			</plugins>
 	</build>
 	
-	<distributionManagement>
-    		<snapshotRepository>
-      			<id>ossrhdme</id>
-      			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    		</snapshotRepository>
-    		<repository>
-      			<id>ossrhdme</id>
-      			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    		</repository>
-	</distributionManagement>
 	
-	<scm>
-		<connection>https://github.com/att/AAF.git</connection>
-		<developerConnection>${project.scm.connection}</developerConnection>
-		<url>http://github.com/att/AAF/tree/master</url>
-	</scm>
 
 </project>
 
