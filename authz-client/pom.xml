@@ -27,12 +27,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- No Parent on Purpose!!! -->
+	
+	
+	<groupId>org.onap.aaf.authz</groupId>
 	<artifactId>authz-client</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>Authz Client</name>
 	<description>Client and XSD Generated code for Authz</description>
-	<groupId>org.onap.aaf.authz</groupId>
-	<version>2.6</version>
-	<packaging>jar</packaging>
 	<url>https://github.com/att/AAF</url>
 	<licenses>
 		<license>
