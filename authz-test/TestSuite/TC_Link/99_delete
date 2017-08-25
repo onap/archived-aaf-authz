@@ -1,5 +1,0 @@
-as XX@NS:<pass>
-
-expect 200,404
-force ns delete com.test.TC_Link_2.@[user.name] 
-force ns delete com.test.TC_Link_1.@[user.name]

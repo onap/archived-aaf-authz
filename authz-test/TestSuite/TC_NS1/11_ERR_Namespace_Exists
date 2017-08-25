@@ -1,4 +1,0 @@
-# TC_NS1.11.1.NEG Create Namespace when exists
-expect 409
-ns create com.test.TC_NS1.@[user.name] @[user.name] testid@aaf.att.com
-
