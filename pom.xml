@@ -50,19 +50,13 @@
 		packaged.  This prevents duplication of these common artifacts, plugins, and 
 		other settings and provides a single place to support this configuration.
 	</description>
-		 <parent>
-		<groupId>org.onap.oparent</groupId>
-		<artifactId>oparent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skipTests>false</skipTests>
-		<project.interfaceVersion>2.6</project.interfaceVersion>
+		<project.interfaceVersion>1.0.0-SNAPSHOT</project.interfaceVersion>
 		<project.innoVersion>1.0.0-SNAPSHOT</project.innoVersion>
 		<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
 		<project.dme2Version>3.1.200</project.dme2Version>
-			<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
@@ -91,6 +85,43 @@
 						</configuration>        
 				</plugin>
 	
+				<plugin>
+				  <groupId>org.apache.maven.plugins</groupId>
+				  <artifactId>maven-surefire-plugin</artifactId>
+				  <version>2.17</version>
+				  <configuration>
+					<skipTests>${skipTests}</skipTests>
+					<includes>
+					  <include>**/JU*.java</include>
+					</includes>
+					<excludes>
+					<exclude>**/JU_DataFile.java</exclude>
+					<exclude>**/JU_ArtiDAO.java</exclude>
+					<exclude>**/JU_CertDAO.java</exclude>
+					<exclude>**/JU_FastCalling.java</exclude>
+					<exclude>**/JU_NsDAO.java</exclude>
+					  <!-- <exclude>**/authz-cass/**</exclude> -->
+					  <!-- <exclude>**/JU_UseCase1.java</exclude> -->
+					  <exclude>**/JU_RoleDAO.java</exclude>
+					  <exclude>**/JU_PermDAO.java</exclude>
+					   <exclude>**/JU_Question.java</exclude> 
+					  <!-- <exclude>**/JU_NS.java</exclude> -->
+					  <exclude>**/JU_HistoryDAO.java</exclude>				  
+					  <exclude>**/JU_DelegateDAO.java</exclude>
+					  <exclude>**/JU_CredDAO.java</exclude>
+					  <exclude>**/JU_CacheInfoDAO.java</exclude>
+					  <exclude>**/JU_ApprovalDAO.java</exclude>
+					  <exclude>**/JU_Define.java</exclude>
+					  <exclude>**/JU_AuthzTransFilter.java</exclude>
+					  <exclude>**/JU_CachingFileAccess.java</exclude>
+					  <!-- <exclude>**/AbsServiceTest.java</exclude> -->
+					  <exclude>**/JU_DefaultOrg.java</exclude>
+					  <!-- <exclude>**/JU_Perm_2_0*.java</exclude> -->
+					  <!-- <exclude>**/JU_Role_2_0*.java</exclude>				   -->
+					</excludes>
+	
+				  </configuration>
+				</plugin>
 	
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -126,7 +157,41 @@
 					</execution>
 				  </executions>
 				</plugin>
-				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jarsigner-plugin</artifactId>
+					<version>1.2</version>
+					<executions>
+						<execution>
+							<id>sign</id>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+							<configuration>
+								<!--  skip>${skipSigning}</skip -->
+								<archive>target/${project.artifactId}-${project.version}.jar</archive>
+							</configuration>
+						</execution>
+						<execution>
+							<id>verify</id>
+							<goals>
+								<goal>verify</goal>
+							</goals>
+							<configuration>
+								<archive>target/${project.artifactId}-${project.version}.jar</archive>
+							</configuration>
+						</execution>
+					</executions>
+					<configuration>
+						<skip>true</skip>
+						<alias>aaf</alias>
+						<keystore>/Volumes/Data/src/cadi/keys/aaf_cadi.jks</keystore>
+						<storepass>Surprise!</storepass>
+						<keypass>Surprise!</keypass>
+						<verbose>true</verbose>
+						<certs>true</certs>
+					</configuration>
+				</plugin>
 				
 							<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -158,6 +223,7 @@
 			</execution>
 		      </executions>
 		    </plugin>
+
 			
 		<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -217,9 +283,22 @@
 	</dependencies>    	
 
 	<modules>
-
+		<!-- 
+		   <module> auth-client</module>
+		   complile manually with mvn -N independently
+		-->
 		<module>authz-client</module>
-	
+		<module>authz-core</module>
+		<module>authz-cass</module>
+		<module>authz-defOrg</module>
+		<module>authz-service</module>
+ 		<module>authz-cmd</module>
+ 		<!--  <module>authz-batch</module>-->
+ 		<module>authz-test</module>
+ 		<!--  <module>authz-gui</module> -->
+ 		<module>authz-gw</module>
+ 		<module>authz-certman</module>
+ 		<module>authz-fs</module>
  	</modules>
 	
 	<dependencyManagement>
@@ -248,8 +327,68 @@
 				<version>${project.innoVersion}</version>
 			</dependency>
 			
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>cadi-core</artifactId>
+				<version>${project.cadiVersion}</version>
+			</dependency>
 
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>cadi-client</artifactId>
+				<version>${project.cadiVersion}</version>
+			</dependency>
 			
+			
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>cadi-aaf</artifactId>
+				<version>${project.cadiVersion}</version>
+				<exclusions>
+			      <exclusion> 
+					<groupId>org.apache.cassandra</groupId>
+		    		<artifactId>cassandra-all</artifactId>
+    		      </exclusion>
+			    </exclusions> 
+			</dependency>
+			
+			<dependency>
+				<groupId>org.onap.aaf.authz</groupId>
+				<artifactId>authz-client</artifactId>
+				<version>${project.interfaceVersion}</version>
+			</dependency>
+			
+			
+			<dependency>
+				<groupId>org.onap.aaf.authz</groupId>
+				<artifactId>authz-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+	            <groupId>org.onap.aaf.authz</groupId>
+	            <artifactId>authz-cass</artifactId>
+				<version>${project.version}</version>
+	        </dependency>
+	        
+	        <dependency>
+				<groupId>org.onap.aaf.authz</groupId>
+				<artifactId>authz-batch</artifactId>
+				<version>${project.interfaceVersion}</version>
+			</dependency>
+	    
+
+
+		    <dependency>
+	            <groupId>org.onap.aaf.authz</groupId>
+	            <artifactId>authz-cmd</artifactId>
+				<version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.onap.aaf.authz</groupId>
+	            <artifactId>authz-gw</artifactId>
+				<version>${project.version}</version>
+	        </dependency>
 
 			<dependency>
 				<groupId>com.att.aft</groupId>
@@ -317,8 +456,7 @@
 			
 		</dependencies>
 	</dependencyManagement>
-
-<distributionManagement>
+	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>
 			<name>AAF Release Repository</name>

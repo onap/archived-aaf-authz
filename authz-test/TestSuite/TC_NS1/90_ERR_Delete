@@ -1,0 +1,7 @@
+# TC_NS1.90.1.NEG Non Namespace Admin Delete Namespace
+expect 403
+as testunused@aaf.att.com
+ns delete com.test.TC_NS1.@[user.name]
+
+sleep @[NFR]
+

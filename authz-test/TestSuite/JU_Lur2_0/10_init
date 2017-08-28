@@ -1,0 +1,34 @@
+as testid@aaf.att.com:<pass>
+# JU_Lur2_0.10.0.POS List NS to prove ok
+expect 201,409
+ns create com.test.JU_Lur2_0Call @[user.name] testid@aaf.att.com
+
+# JU_Lur2_0.10.2.POS Create Role in Namespace
+role create com.test.JU_Lur2_0Call.role
+
+# JU_Lur2_0.10.10.POS Create MyInstance Perms
+perm create com.test.JU_Lur2_0Call.service myInstance write
+perm create com.test.JU_Lur2_0Call.service myInstance read
+perm create com.test.JU_Lur2_0Call.service myInstance *
+
+# JU_Lur2_0.10.11.POS Create kumquat Perms
+perm create com.test.JU_Lur2_0Call.service kumquat write
+perm create com.test.JU_Lur2_0Call.service kumquat read
+perm create com.test.JU_Lur2_0Call.service kumquat *
+perm create com.test.JU_Lur2_0Call.service kum.quat read
+
+# JU_Lur2_0.10.11.POS Create key delimited Perms
+perm create com.test.JU_Lur2_0Call.service :myCluster write
+perm create com.test.JU_Lur2_0Call.service :myCluster:myKeyspace write
+perm create com.test.JU_Lur2_0Call.service :myCluster:myKeyspace:myCF write
+perm create com.test.JU_Lur2_0Call.service :myCluster:*:myCF write
+perm create com.test.JU_Lur2_0Call.service :myCluster:myKeyspace:* write
+
+# JU_Lur2_0.10.20.POS Grant Some Perms to Role
+perm grant com.test.JU_Lur2_0Call.service myInstance * com.test.JU_Lur2_0Call.role
+perm grant com.test.JU_Lur2_0Call.service kumquat read com.test.JU_Lur2_0Call.role
+perm grant com.test.JU_Lur2_0Call.service kum.quat read com.test.JU_Lur2_0Call.role
+perm grant com.test.JU_Lur2_0Call.service :myCluster:*:myCF write com.test.JU_Lur2_0Call.role
+
+# JU_Lur2_0.30.1.POS Add User to ROle
+user role add testid@aaf.att.com com.test.JU_Lur2_0Call.role 

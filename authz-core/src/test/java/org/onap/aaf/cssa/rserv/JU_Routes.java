@@ -1,0 +1,72 @@
+/*******************************************************************************
+ * ============LICENSE_START====================================================
+ * * org.onap.aaf
+ * * ===========================================================================
+ * * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
+ * * ===========================================================================
+ * * Licensed under the Apache License, Version 2.0 (the "License");
+ * * you may not use this file except in compliance with the License.
+ * * You may obtain a copy of the License at
+ * * 
+ *  *      http://www.apache.org/licenses/LICENSE-2.0
+ * * 
+ *  * Unless required by applicable law or agreed to in writing, software
+ * * distributed under the License is distributed on an "AS IS" BASIS,
+ * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * * See the License for the specific language governing permissions and
+ * * limitations under the License.
+ * * ============LICENSE_END====================================================
+ * *
+ * * ECOMP is a trademark and service mark of AT&T Intellectual Property.
+ * *
+ ******************************************************************************/
+package org.onap.aaf.cssa.rserv;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.onap.aaf.cssa.rserv.CodeSetter;
+import org.onap.aaf.cssa.rserv.Route;
+import org.onap.aaf.cssa.rserv.Routes;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import org.onap.aaf.inno.env.Trans;
+
+@RunWith(PowerMockRunner.class)
+public class JU_Routes {
+	Routes routes;
+	@Mock
+	HttpServletRequest reqMock;
+	CodeSetter<Trans> codeSetterMock;
+	Route<Trans> routeObj;
+	
+	@Before
+	public void setUp(){
+		routes = new Routes();
+	}
+	
+	@Test
+	public void testRouteReport(){
+		List listVal = routes.routeReport(); 
+		System.out.println("value of Listval " +listVal);
+		assertNotNull(listVal);
+		
+	}
+	
+	@Test
+	public void testDerive() throws IOException, ServletException{
+		routeObj = routes.derive(reqMock, codeSetterMock);
+		System.out.println("value of routeObj" +routeObj);	
+	}
+	
+
+}

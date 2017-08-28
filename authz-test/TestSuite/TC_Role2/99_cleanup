@@ -1,0 +1,22 @@
+as XX@NS
+expect 200,404
+
+# TC_Role2.99.1.POS Delete Roles
+force role delete com.test.TC_Role2.@[user.name].r.animals
+force role delete com.test.TC_Role2.@[user.name].r.dogs
+force role delete com.test.TC_Role2.@[user.name].r.pigs
+
+# TC_Role2.99.2.POS Delete Perms
+force perm delete com.test.TC_Role2.@[user.name].r.A garbage eat
+force perm delete com.test.TC_Role2.@[user.name].r.A grain eat
+force perm delete com.test.TC_Role2.@[user.name].r.A grain *
+force perm delete com.test.TC_Role2.@[user.name].r.A * *
+force perm delete com.att.aaf.role com.test.TC_Role2.@[user.name].r.animals view
+force perm delete com.att.aaf.role com.test.TC_Role2.@[user.name].r.dogs view
+
+
+# TC_Role2.99.2.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_Role2.@[user.name]
+
+# TC_Role2.99.3.POS Print Namespaces
+ns list name com.test.TC_Role2.@[user.name]

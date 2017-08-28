@@ -1,0 +1,6 @@
+expect 200,404
+# TC_05
+ns list name com.test.TC_Link_1.@[user.name]
+ns list name com.test.TC_Link_2.@[user.name]
+perm list role com.test.TC_Link_1.@[user.name].myRole
+role list perm com.test.TC_Link_2.@[user.name].myPerm myInstance myAction

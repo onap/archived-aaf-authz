@@ -1,0 +1,223 @@
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set XX@NS <pass>
+set m99999@@[THE_USER].delg.test.com password123
+set bogus@aaf.att.com boguspass
+#delay 10
+set NFR 0
+# TC_DELG1.10.1.POS Check For Existing Data
+as testid@aaf.att.com
+ns list name com.test.delg.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.delg.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+as XX@NS
+perm create com.att.aaf.delg com.att * com.att.admin
+** Expect 201,409 **
+Failed [SVC1409]: Conflict Already Exists - Permission [com.att.aaf.delg|com.att|*] already exists.
+
+user list delegates delegate @[user.name]@csp.att.com
+** Expect 404 **
+Failed [SVC7404]: Not Found - Delegate [@[THE_USER]@csp.att.com] is not delegating for anyone.
+
+as testid@aaf.att.com
+# TC_DELG1.10.2.POS Create Namespace to add IDs
+ns create com.test.delg.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+as XX@NS
+# TC_DELG1.10.10.POS Grant ability to change delegates
+force perm grant com.att.aaf.mechid com.att create com.test.delg.@[user.name].change_delg
+** Expect 404 **
+Failed [SVC3404]: Not Found - Role [com.test.delg.@[THE_USER].change_delg] does not exist
+
+# TC_DELG1.10.11.POS Grant ability to change delegates
+role create com.test.delg.@[user.name].change_delg
+** Expect 201 **
+Created Role
+
+# TC_DELG1.10.12.POS Grant ability to change delegates
+force perm grant com.att.aaf.mechid com.att create com.test.delg.@[user.name].change_delg
+** Expect 201 **
+Granted Permission [com.att.aaf.mechid|com.att|create] to Role [com.test.delg.@[THE_USER].change_delg]
+
+# TC_DELG1.10.14.POS Create user role to change delegates
+user role add testid@aaf.att.com com.test.delg.@[user.name].change_delg
+** Expect 201 **
+Added Role [com.test.delg.@[THE_USER].change_delg] to User [testid@aaf.att.com]
+
+# TC_DELG1.10.15.POS Grant ability to create cred
+perm grant com.att.aaf.delg com.att create com.test.delg.@[user.name].change_delg
+** Expect 201 **
+Granted Permission [com.att.aaf.delg|com.att|create] to Role [com.test.delg.@[THE_USER].change_delg]
+
+as testid@aaf.att.com
+# TC_DELG1.10.30.POS Create cred that will change his own delg
+user cred add m99999@@[user.name].delg.test.com password123
+** Expect 201 **
+Added Credential [m99999@@[THE_USER].delg.test.com]
+
+as XX@NS
+Unknown Instruction "TC_DELG1.10.31.POS"
+perm ungrant com.att.aaf.mechid com.att create com.test.delg.@[user.name].change_delg
+** Expect 200 **
+UnGranted Permission [com.att.aaf.mechid|com.att|create] from Role [com.test.delg.@[THE_USER].change_delg]
+
+as testid@aaf.att.com
+# TC_DELG1.10.99.POS Check for Data as Correct
+ns list name com.test.delg.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.delg.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.delg.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.delg.@[THE_USER].admin                                              
+        com.test.delg.@[THE_USER].change_delg                                        
+        com.test.delg.@[THE_USER].owner                                              
+    Permissions
+        com.test.delg.@[THE_USER].access    *                        *              
+        com.test.delg.@[THE_USER].access    *                        read           
+    Credentials
+        m99999@@[THE_USER].delg.test.com                                             
+
+# TC_DELG1.20.10.NEG Cannot create delegate with unknown user ID
+user delegate add aa111q@csp.att.com @[user.name]@csp.att.com '2099-12-31 06:00'
+** Expect 404 **
+Failed [SVC5404]: Not Found - [aa111q@csp.att.com] is not a user in the company database.
+
+# TC_DELG1.20.11.NEG Cannot Create Delegate with unknown delegate
+user delegate add @[user.name]@csp.att.com aa111q@csp.att.com '2099-12-31 06:00'
+** Expect 404 **
+Failed [SVC5404]: Not Found - [aa111q@csp.att.com] is not a user in the company database.
+
+# TC_DELG1.20.20.NEG May not change user, no delegate permission
+as m99999@@[THE_USER].delg.test.com
+force user delegate add @[user.name]@csp.att.com @[user.name]@csp.att.com '2099-12-31 06:00'
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [m99999@@[THE_USER].delg.test.com] may not create a delegate for [@[THE_USER]@csp.att.com]
+
+as testid@aaf.att.com
+# TC_DELG1.20.21.NEG Fail to Update Delegate that doesnt exist
+user delegate upd @[user.name]@csp.att.com @[user.name]@csp.att.com '2099-12-31 06:00'
+** Expect 404 **
+Failed [SVC1404]: Not Found - [@[THE_USER]@csp.att.com] does not have a Delegate Record to [write].
+
+# TC_DELG1.20.22.NEG May not create delegate for self. 
+user delegate add @[user.name]@csp.att.com @[user.name]@csp.att.com '2099-12-31 06:00'
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - [@[THE_USER]@csp.att.com] cannot be a delegate for self
+
+# TC_DELG1.20.23.POS May create delegate for self for tests by forcing.
+force user delegate add @[user.name]@csp.att.com @[user.name]@csp.att.com '2099-12-31 06:00'
+** Expect 201 **
+Delegate Added
+
+as XX@NS
+# TC_DELG1.20.30.POS Expect Delegates for User
+user list delegates user @[user.name]@csp.att.com
+** Expect 200 **
+
+List Delegates by user[@[THE_USER]@csp.att.com]
+--------------------------------------------------------------------------------
+ User                      Delegate                   Expires   
+--------------------------------------------------------------------------------
+ @[THE_USER]@csp.att.com        @[THE_USER]@csp.att.com         XXXX-XX-XX
+
+as testid@aaf.att.com
+# TC_DELG1.20.35.NEG Fail Create when exists 
+user delegate add @[user.name]@csp.att.com @[user.name]@csp.att.com '2099-12-31 06:00'
+** Expect 409 **
+Failed [SVC1409]: Conflict Already Exists - [@[THE_USER]@csp.att.com] already delegates to [@[THE_USER]@csp.att.com]
+
+as XX@NS
+# TC_DELG1.20.40.POS Expect Delegates for User
+user list delegates user @[user.name]@csp.att.com
+** Expect 200 **
+
+List Delegates by user[@[THE_USER]@csp.att.com]
+--------------------------------------------------------------------------------
+ User                      Delegate                   Expires   
+--------------------------------------------------------------------------------
+ @[THE_USER]@csp.att.com        @[THE_USER]@csp.att.com         XXXX-XX-XX
+
+as testid@aaf.att.com
+# TC_DELG1.20.46.POS Update Delegate with new Date
+user delegate upd @[user.name]@csp.att.com @[user.name]@csp.att.com '2999-01-01 06:00'
+** Expect 200 **
+Delegate Updated
+
+as XX@NS
+# TC_DELG1.20.82.POS Expect Delegates for User
+user list delegates user @[user.name]@csp.att.com
+** Expect 200 **
+
+List Delegates by user[@[THE_USER]@csp.att.com]
+--------------------------------------------------------------------------------
+ User                      Delegate                   Expires   
+--------------------------------------------------------------------------------
+ @[THE_USER]@csp.att.com        @[THE_USER]@csp.att.com         XXXX-XX-XX
+
+# TC_DELG1.20.83.POS Expect Delegate to show up in list
+user list delegates delegate @[user.name]@csp.att.com
+** Expect 200 **
+
+List Delegates by delegate[@[THE_USER]@csp.att.com]
+--------------------------------------------------------------------------------
+ User                      Delegate                   Expires   
+--------------------------------------------------------------------------------
+ @[THE_USER]@csp.att.com        @[THE_USER]@csp.att.com         XXXX-XX-XX
+
+as XX@NS
+# TC_DELG1.99.0.POS Check for Data as Correct
+ns list name com.test.delg.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.delg.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.delg.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.delg.@[THE_USER].admin                                              
+        com.test.delg.@[THE_USER].change_delg                                        
+        com.test.delg.@[THE_USER].owner                                              
+    Permissions
+        com.test.delg.@[THE_USER].access    *                        *              
+        com.test.delg.@[THE_USER].access    *                        read           
+    Credentials
+        m99999@@[THE_USER].delg.test.com                                             
+
+# TC_DELG1.99.10.POS Delete Delegates
+user delegate del @[user.name]@csp.att.com 
+** Expect 200,404 **
+Delegate Deleted
+
+# TC_DELG1.99.30.POS Delete Namespace com.att.test.id
+force ns delete com.test.delg.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+# TC_DELG1.99.98.POS Check for Delegate Data as Correct
+user list delegates user @[user.name]@csp.att.com 
+** Expect 200,404 **
+Failed [SVC7404]: Not Found - No Delegate found for [@[THE_USER]@csp.att.com]
+
+# TC_DELG1.99.99.POS Check for NS Data as Correct
+ns list name com.test.delg.@[user.name] 
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.delg.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

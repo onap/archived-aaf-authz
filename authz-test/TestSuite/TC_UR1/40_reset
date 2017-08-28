@@ -1,0 +1,40 @@
+# TC_UR1.40.10.POS Create multiple UserRoles
+expect 200
+user role setTo m00001@@[user.name].TC_UR1.test.com com.test.TC_UR1.@[user.name].r1,com.test.TC_UR1.@[user.name].r2
+
+# TC_UR1.40.11.POS Reset userrole for a user
+expect 200
+user role setTo m00001@@[user.name].TC_UR1.test.com
+
+# TC_UR1.40.12.NEG Create userrole where Role doesn't exist
+expect 404
+user role setTo m00001@@[user.name].TC_UR1.test.com com.test.TC_UR1.@[user.name].r5
+
+# TC_UR1.40.13.NEG Create userrole where User doesn't exist
+expect 403
+user role setTo m99999@@[user.name].TC_UR1.test.com com.test.TC_UR1.@[user.name].r1
+
+as testunused@aaf.att.com
+# TC_UR1.40.19.NEG User without permission tries to add userrole
+expect 403
+user role setTo m00001@@[user.name].TC_UR1.test.com com.test.TC_UR1.@[user.name].r1
+
+# TC_UR1.40.20.NEG User without permission tries to add userrole
+expect 403
+role user setTo com.test.TC_UR1.@[user.name].r1 m00001@@[user.name].TC_UR1.test.com
+
+as testid@aaf.att.com
+# TC_UR1.40.22.POS Reset userrole for a user
+expect 200
+role user setTo com.test.TC_UR1.@[user.name].r1
+
+sleep @[NFR]
+# TC_UR1.40.23.NEG Create UserRole where Role doesn't exist
+expect 404
+role user setTo com.test.TC_UR1.@[user.name].r5 m00001@@[user.name].TC_UR1.test.com
+
+sleep @[NFR]
+# TC_UR1.40.24.NEG Create UserRole where User doesn't exist
+expect 403
+role user setTo com.test.TC_UR1.@[user.name].r1 m99999@@[user.name].TC_UR1.test.com
+

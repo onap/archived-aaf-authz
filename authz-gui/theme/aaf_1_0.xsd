@@ -1,0 +1,150 @@
+<!-- Used by AAF (ATT inc 2013) -->
+<xs:schema xmlns:aaf="urn:aaf:v1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:aaf:v1_0" elementFormDefault="qualified">
+	<xs:element name="error">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="response_data" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bool">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="value" type="xs:boolean"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="permkey">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="type" type="xs:string"/>
+			<xs:element name="action" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="permkeys">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="keys" type="aaf:permkey" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="user">
+		<xs:sequence>
+			<xs:element name="userName" type="xs:string"/>
+			<xs:element name="roleName" type="xs:string"/>
+			<xs:element name="userType" type="xs:string"/>
+			<xs:element name="createUser" type="xs:string"/>
+			<xs:element name="createTimestamp" type="xs:string"/>
+			<xs:element name="modifyUser" type="xs:string"/>
+			<xs:element name="modifyTimestamp" type="xs:string"/>
+			<xs:element ref="aaf:roles" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="role">
+		<xs:sequence>
+			<xs:element name="userName" type="xs:string"/>
+			<xs:element name="roleName" type="xs:string"/>
+			<xs:element name="userType" type="xs:string"/>
+			<xs:element name="createUser" type="xs:string"/>
+			<xs:element name="createTimestamp" type="xs:string"/>
+			<xs:element name="modifyUser" type="xs:string"/>
+			<xs:element name="modifyTimestamp" type="xs:string"/>
+			<xs:element ref="aaf:permissions" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="roles">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="roles" type="aaf:role" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="permission">
+		<xs:complexContent>
+			<xs:extension base="aaf:permkey">
+				<xs:sequence>
+					<xs:element name="grantedRole" type="xs:string"/>
+					<xs:element name="createUser" type="xs:string"/>
+					<xs:element name="createTimestamp" type="xs:string"/>
+					<xs:element name="modifyUser" type="xs:string"/>
+					<xs:element name="modifyTimestamp" type="xs:string"/>
+					<xs:element name="grantingRole" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="permissions">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="permissions" type="aaf:permission" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+		<xs:complexType name="delg">
+		<xs:sequence>
+			<xs:element name="user" type="xs:string"/>
+			<xs:element name="delegate" type="xs:string"/>
+			<xs:element name="start" type="xs:date"/>
+			<xs:element name="end" type="xs:date"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="delgs">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="delgs" type="aaf:delg" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="cred">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:string"/>
+				<xs:choice >
+					<xs:element name="password" type="xs:string" />
+					<xs:element name="cert" type = "xs:hexBinary" />
+				</xs:choice>
+				<xs:element name="start" type="xs:date" />
+				<xs:element name="end" type="xs:date" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- 
+	Approvals
+ 	-->
+ 	<xs:complexType name="approval">
+	   <xs:sequence>
+	       <xs:element name="user" type="xs:string"/>
+	       <xs:element name="role" type="xs:string"/>
+	       <xs:element name="status">
+			  <xs:simpleType>
+			    <xs:restriction base="xs:string">
+			      <xs:enumeration value="approve"/>
+			      <xs:enumeration value="reject"/>
+			    </xs:restriction>
+			  </xs:simpleType>
+		   </xs:element> 	
+	   </xs:sequence>
+	</xs:complexType>
+	<xs:element name="approvals">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="approvals" type="aaf:approval" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- 
+		Users 
+	-->	
+	<xs:element name="users">
+		<xs:complexType>
+		   <xs:sequence>
+		       <xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		   </xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
+

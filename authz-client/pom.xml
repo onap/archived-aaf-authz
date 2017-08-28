@@ -27,14 +27,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- No Parent on Purpose!!! -->
-	
-	
-	<groupId>org.onap.aaf.authz</groupId>
 	<artifactId>authz-client</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
 	<name>Authz Client</name>
 	<description>Client and XSD Generated code for Authz</description>
+	<groupId>org.onap.aaf.authz</groupId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<url>https://github.com/att/AAF</url>
 	<licenses>
 		<license>
@@ -51,7 +49,7 @@
 		</developer>
 	</developers>
 	
-	<properties>
+		<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<swm-distFiles-path>/opt/app/aft/${project.artifactId}/${project.version}</swm-distFiles-path>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
@@ -180,7 +178,8 @@
 			</execution>
 		      </executions>
 		    </plugin>
-	 <plugin>
+			
+			 <plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
 				<version>1.6.7</version>
@@ -238,6 +237,5 @@
 			<url>https://repository.jboss.org/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
-
 </project>
 

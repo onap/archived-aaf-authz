@@ -1,0 +1,29 @@
+as testunused@aaf.att.com
+# TC_User1.41.1.NEG Non-admin, user not in perm should not view
+expect 200
+user list perm com.test.TC_User1.@[user.name].supplies * move
+user list perm com.test.TC_User1.@[user.name].supplies * stock
+user list perm com.test.TC_User1.@[user.name].schedule worker create
+user list perm com.test.TC_User1.@[user.name].worker * annoy
+
+as m99990@@[user.name].TC_User1.test.com
+# TC_User1.41.2.POS Non-admin, user in perm can view himself
+expect 200
+user list perm com.test.TC_User1.@[user.name].supplies * move
+user list perm com.test.TC_User1.@[user.name].supplies * stock
+
+as m99990@@[user.name].TC_User1.test.com
+# TC_User1.41.3.NEG Non-admin, user in perm should not view
+expect 200
+user list perm com.test.TC_User1.@[user.name].schedule worker create
+user list perm com.test.TC_User1.@[user.name].worker * annoy
+
+as testid@aaf.att.com
+# TC_User1.41.10.POS admin should view
+expect 200
+user list perm com.test.TC_User1.@[user.name].supplies * move
+user list perm com.test.TC_User1.@[user.name].supplies * stock
+user list perm com.test.TC_User1.@[user.name].schedule worker create
+user list perm com.test.TC_User1.@[user.name].worker * annoy
+
+

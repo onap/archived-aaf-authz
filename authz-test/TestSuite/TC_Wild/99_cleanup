@@ -1,0 +1,25 @@
+as XX@NS
+expect 200,404
+
+# TC_Wild.99.80.POS Cleanup
+force perm delete com.att.aaf.ns :com.att.*:perm:*:* write 
+
+# TC_Wild.99.81.POS Cleanup
+force perm delete com.att.aaf.ns :com.att.*:perm:*:* * 
+
+# TC_Wild.99.82.POS Cleanup
+force perm delete com.att.aaf.ns :com.att.*:role:* write 
+
+# TC_Wild.99.83.POS Cleanup
+force perm delete com.att.aaf.ns :com.test:ns write
+
+# TC_Wild.99.90.POS Cleanup
+force ns delete com.test.TC_Wild.@[user.name]
+
+# TC_Wild.99.91.POS Cleanup
+force ns delete com.att.TC_Wild.@[user.name]
+
+# TC_Wild.99.99.POS List to prove clean Namespaces
+ns list name com.att.TC_Wild.@[user.name]
+ns list name com.test.TC_Wild.@[user.name]
+

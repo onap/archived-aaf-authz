@@ -1,0 +1,13 @@
+This is a targeted Test Case specifically to cover Inner and Outer Granting.
+
+APIs:	
+
+
+CLI:
+ns create
+ns delete
+perm create
+perm grant
+role create
+as
+

@@ -1,0 +1,40 @@
+# TC_PW1.21.1.NEG ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+expect 406
+user cred add m12345@@[user.name].TC_PW1.test.com 12345678
+
+# TC_PW1.21.2.NEG ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+expect 406
+user cred add m12345@@[user.name].TC_PW1.test.com abcdefgh
+
+# TC_PW1.21.3.NEG ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+expect 406
+user cred add m12345@@[user.name].TC_PW1.test.com "!@#%^()*"
+
+# TC_PW1.21.4.POS ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+expect 201
+user cred add m12345@@[user.name].TC_PW1.test.com "!@#a%^()*"
+
+sleep @[NFR]
+expect 200
+user cred del m12345@@[user.name].TC_PW1.test.com
+
+# TC_PW1.21.5.POS ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+expect 201
+user cred add m12345@@[user.name].TC_PW1.test.com "!@#2%^()*"
+
+sleep @[NFR]
+expect 200
+user cred del m12345@@[user.name].TC_PW1.test.com
+
+# TC_PW1.21.6.POS ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+expect 201
+user cred add m12345@@[user.name].TC_PW1.test.com "abc123sd"
+
+sleep @[NFR]
+expect 200
+user cred del m12345@@[user.name].TC_PW1.test.com
+
+# TC_PW1.21.10.NEG ASPR 1010 Passwords cannot be the same as the User ID
+expect 406
+user cred add m12345@@[user.name].TC_PW1.test.com m12345
+

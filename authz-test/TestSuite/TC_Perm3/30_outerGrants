@@ -1,0 +1,23 @@
+# TC_Perm3.30.0.POS User1 Create a Perm
+as testid_1@test.com
+expect 201
+perm create com.test.TC_Perm3.@[user.name]_1.dev.myPerm_b myInstance myAction
+
+# TC_Perm3.30.5.NEG User1 should not be able to create Role in other group
+expect 403
+role create com.test.TC_Perm3.@[user.name]_2.dev.myRole_b
+
+# TC_Perm3.30.6.POS User2 should be able to create Role in own group
+as testunused@aaf.att.com
+expect 201
+role create com.att.TC_Perm3.@[user.name].dev.myRole_b
+
+# TC_Perm3.30.7.NEG User2 should not be able to grant Perm to own Role
+expect 403
+perm grant com.test.TC_Perm3.@[user.name]_1.dev.myPerm_b myInstance myAction com.att.TC_Perm3.@[user.name].dev.myRole_b
+
+# TC_Perm3.30.8.POS User should be able to grant cross company only Double Perm
+as testid_1@test.com
+expect 403
+perm grant com.test.TC_Perm3.@[user.name]_1.dev.myPerm_b myInstance myAction com.att.TC_Perm3.@[user.name].dev.myRole_b
+

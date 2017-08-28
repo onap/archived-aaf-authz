@@ -1,0 +1,18 @@
+as testid@aaf.att.com
+# TC_NS2.20.1.POS Create roles
+expect 201
+role create com.test.TC_NS2.@[user.name].watcher
+role create com.test.TC_NS2.@[user.name].myRole
+
+# TC_NS2.20.2.POS Create permissions
+perm create com.test.TC_NS2.@[user.name].myType myInstance myAction
+perm create com.test.TC_NS2.@[user.name].myType * *
+
+# TC_NS2.20.3.POS Create mechid
+user cred add m99990@@[user.name].TC_NS2.test.com password123
+
+as XX@NS
+# TC_NS2.20.10.POS Grant view perms to watcher role
+expect 201
+perm create com.att.aaf.ns :com.test.TC_NS2.@[user.name]:ns read com.test.TC_NS2.@[user.name].watcher
+

@@ -1,0 +1,22 @@
+# Load Passwords needed
+
+DME2REG=../../dme2reg
+
+function aafcli {
+  java \
+  -Daaf_id=testid \
+  -Daaf_pass=<pass> \
+  -Daaf_url=https://DME2RESOLVE/service=com.att.authz.AuthorizationService/version=2.0.3/envContext=DEV/routeOffer=BAU_SE \
+  -Dkeyfile=../../common/keyfile \
+  -DAFT_LATITUDE=32.780140 \
+  -DAFT_LONGITUDE=-96.800451 \
+  -DAFT_ENVIRONMENT=AFTUAT \
+  -DAFT_DME2_EP_REGISTRY_FS_DIR=$DME2REG \
+  -DDME2_EP_REGISTRY_CLASS=DME2FS \
+  -Dtestid=<pass> \
+  -Dbogus=xxx \
+  -Dm12345=<pass> \
+  -jar \
+   ../../authz-cmd/target/authz-cmd-2.0.3-jar-with-dependencies.jar \
+   $*
+}

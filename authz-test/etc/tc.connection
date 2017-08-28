@@ -1,0 +1,32 @@
+# Load Passwords needed
+
+DME2REG=/Volumes/Data/src/authz/dme2reg
+
+# This is a fix for DME2 jar which doesn't register entries correctly
+function fix {
+   for FILE in `find $DME2REG -name "*.txt"`
+   do
+        sed -e"s/null/https/" $FILE > temp3555
+        cat temp3555 > $FILE
+        rm temp3555
+   done
+}
+
+function aafcli {
+  fix
+  java \
+  -Daaf_id=testid \
+  -Daaf_pass=<pass> \
+  -Daaf_url=https://DME2RESOLVE/service=com.att.authz.AuthorizationService/version=2.0.1/envContext=DEV/routeOffer=BAU_SE \
+  -DAFT_LATITUDE=32.780140 \
+  -DAFT_LONGITUDE=-96.800451 \
+  -DAFT_ENVIRONMENT=AFTUAT \
+  -DAFT_DME2_EP_REGISTRY_FS_DIR=$DME2REG \
+  -DDME2_EP_REGISTRY_CLASS=DME2FS \
+  -Dtestid=<pass> \
+  -Dbogus=xxx \
+  -Dm12345=<pass> \
+  -jar \
+   /Volumes/Data/src/authz/authz-cmd/target/authz-cmd-2.0.2-SNAPSHOT-jar-with-dependencies.jar \
+   $*
+}

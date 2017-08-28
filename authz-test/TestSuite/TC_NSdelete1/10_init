@@ -1,0 +1,35 @@
+as testid@aaf.att.com
+# TC_NSdelete1.10.0.POS Check for Existing Data
+expect 200
+ns list name com.test.TC_NSdelete1.@[user.name].app
+ns list name com.test.force.@[user.name]
+ns list name com.@[user.name]
+
+as XX@NS
+# TC_NSdelete1.10.1.POS Create Namespaces with valid IDs and Responsible Parties
+expect 201
+ns create com.test.TC_NSdelete1.@[user.name].app @[user.name] testid@aaf.att.com
+ns create com.@[user.name] @[user.name] testid@aaf.att.com
+ns create com.test.force.@[user.name] @[user.name] testid@aaf.att.com
+ns create com.test.TC_NSdelete1.@[user.name] @[user.name] testid@aaf.att.com
+
+# TC_NSdelete1.10.2.POS Expect Namespace to be created
+expect 200
+ns list name com.test.TC_NSdelete1.@[user.name].app 
+ns list name com.test.TC_NSdelete1.@[user.name]
+ns list name com.@[user.name]
+ns list name com.test.force.@[user.name]
+
+# TC_NSdelete1.10.10.POS Create role to assign mechid perm to
+expect 201
+role create com.test.TC_NSdelete1.@[user.name].cred_admin
+
+# TC_NSdelete1.10.11.POS Assign role to mechid perm
+expect 201
+perm grant com.att.aaf.mechid com.att create com.test.TC_NSdelete1.@[user.name].cred_admin
+
+as testid@aaf.att.com
+# TC_NSdelete1.10.12.POS Assign user for creating creds
+expect 201
+user role add testid@aaf.att.com com.test.TC_NSdelete1.@[user.name].cred_admin
+

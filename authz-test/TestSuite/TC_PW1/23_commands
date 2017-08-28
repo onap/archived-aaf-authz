@@ -1,0 +1,6 @@
+# TC_PW1.23.1.NEG Too Few Args for User Cred 1
+expect Exception
+user cred 
+
+# TC_PW1.23.2.NEG Too Few Args for User Cred add
+user cred add

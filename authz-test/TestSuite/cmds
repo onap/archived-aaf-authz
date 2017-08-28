@@ -1,0 +1,21 @@
+# /bin/bash
+. ~/.bashrc
+function failed {
+     echo "FAILED TEST! " $*
+     exit 1
+}
+
+if [ "$1" == "" ] ; then 
+  DIRS=`find . -name "TC_*" -maxdepth 1`" "`find . -name "MTC_*" -maxdepth 1`
+else
+  DIRS="$1"
+fi
+
+  for DIR in $DIRS; do 
+    for FILE in $DIR/[0-9]*; do 
+       echo "*** "$FILE" ***"
+       cat $FILE
+       echo
+    done
+   done
+exit 0

@@ -1,0 +1,33 @@
+as m99999@@[user.name].TC_Wild.att.com
+
+# TC_Wild.52.1.NEG Fail to create a NS
+expect 403
+ns create com.test.TC_Wild.@[user.name] @[user.name] testid@aaf.att.com
+
+
+# TC_Wild.52.3.POS Add "access role" based Wild Card with specific Action
+as XX@NS
+expect 201
+perm create com.att.aaf.ns :com.test:ns write com.att.TC_Wild.@[user.name].service
+
+# TC_Wild.52.5.POS Print Perms
+expect 200
+perm list user m99999@@[user.name].TC_Wild.att.com
+
+
+# TC_Wild.52.7.POS Now able to create an NS
+as m99999@@[user.name].TC_Wild.att.com
+expect 201
+ns create com.test.TC_Wild.@[user.name] @[user.name] testid@aaf.att.com
+
+
+# TC_Wild.52.8.POS Print Perms
+as XX@NS
+expect 200
+ns list name com.test.TC_Wild.@[user.name]
+
+# TC_Wild.52.10.POS Delete Perms Created
+expect 200
+force perm delete com.att.aaf.ns :com.test:ns write
+force ns delete com.test.TC_Wild.@[user.name]
+

@@ -1,0 +1,362 @@
+set XX@NS <pass>
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set bogus@aaf.att.com boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_NSdelete1.10.0.POS Check for Existing Data
+ns list name com.test.TC_NSdelete1.@[user.name].app
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NSdelete1.@[THE_USER].app]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.test.force.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.force.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+as XX@NS
+# TC_NSdelete1.10.1.POS Create Namespaces with valid IDs and Responsible Parties
+ns create com.test.TC_NSdelete1.@[user.name].app @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+ns create com.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+ns create com.test.force.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+ns create com.test.TC_NSdelete1.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_NSdelete1.10.2.POS Expect Namespace to be created
+ns list name com.test.TC_NSdelete1.@[user.name].app 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NSdelete1.@[THE_USER].app]
+--------------------------------------------------------------------------------
+com.test.TC_NSdelete1.@[THE_USER].app
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NSdelete1.@[THE_USER].app.admin                                  
+        com.test.TC_NSdelete1.@[THE_USER].app.owner                                  
+    Permissions
+        com.test.TC_NSdelete1.@[THE_USER].app.access *                        *              
+        com.test.TC_NSdelete1.@[THE_USER].app.access *                        read           
+
+ns list name com.test.TC_NSdelete1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NSdelete1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NSdelete1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NSdelete1.@[THE_USER].admin                                      
+        com.test.TC_NSdelete1.@[THE_USER].owner                                      
+    Permissions
+        com.test.TC_NSdelete1.@[THE_USER].access *                        *              
+        com.test.TC_NSdelete1.@[THE_USER].access *                        read           
+
+ns list name com.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.@[THE_USER].admin                                                        
+        com.@[THE_USER].owner                                                        
+    Permissions
+        com.@[THE_USER].access              *                        *              
+        com.@[THE_USER].access              *                        read           
+
+ns list name com.test.force.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.force.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.force.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.force.@[THE_USER].admin                                             
+        com.test.force.@[THE_USER].owner                                             
+    Permissions
+        com.test.force.@[THE_USER].access   *                        *              
+        com.test.force.@[THE_USER].access   *                        read           
+
+# TC_NSdelete1.10.10.POS Create role to assign mechid perm to
+role create com.test.TC_NSdelete1.@[user.name].cred_admin
+** Expect 201 **
+Created Role
+
+# TC_NSdelete1.10.11.POS Assign role to mechid perm
+perm grant com.att.aaf.mechid com.att create com.test.TC_NSdelete1.@[user.name].cred_admin
+** Expect 201 **
+Granted Permission [com.att.aaf.mechid|com.att|create] to Role [com.test.TC_NSdelete1.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+# TC_NSdelete1.10.12.POS Assign user for creating creds
+user role add testid@aaf.att.com com.test.TC_NSdelete1.@[user.name].cred_admin
+** Expect 201 **
+Added Role [com.test.TC_NSdelete1.@[THE_USER].cred_admin] to User [testid@aaf.att.com]
+
+as testid@aaf.att.com
+# TC_NSdelete1.20.1.POS Create valid Role in my Namespace
+role create com.test.TC_NSdelete1.@[user.name].app.r.A
+** Expect 201 **
+Created Role
+
+# TC_NSdelete1.20.2.POS Create valid permission 
+perm create com.test.TC_NSdelete1.@[user.name].app.p.A myInstance myAction
+** Expect 201 **
+Created Permission
+
+# TC_NSdelete1.20.3.POS Add credential to my namespace
+user cred add m99990@app.@[user.name].TC_NSdelete1.test.com password123
+** Expect 201 **
+Added Credential [m99990@app.@[THE_USER].TC_NSdelete1.test.com]
+
+# TC_NSdelete1.20.10.NEG Delete Program Should fail because of attached credential
+ns delete com.test.TC_NSdelete1.@[user.name].app
+** Expect 424 **
+Failed [SVC1424]: Failed Dependency - [com.test.TC_NSdelete1.@[THE_USER].app] contains users, permissions, roles.
+  Delete dependencies and try again.  Note: using force=true will delete all. force=move will delete Creds, but move Roles and Perms to parent.
+
+# TC_NSdelete1.20.11.POS Delete Credential
+set force true
+user cred del m99990@app.@[user.name].TC_NSdelete1.test.com
+** Expect 200 **
+Deleted Credential [m99990@app.@[THE_USER].TC_NSdelete1.test.com]
+
+# TC_NSdelete1.20.12.NEG Delete Program with role and permission attached
+ns delete com.test.TC_NSdelete1.@[user.name].app
+** Expect 424 **
+Failed [SVC1424]: Failed Dependency - [com.test.TC_NSdelete1.@[THE_USER].app] contains permissions, roles.
+  Delete dependencies and try again.  Note: using force=true will delete all. force=move will delete Creds, but move Roles and Perms to parent.
+
+# TC_NSdelete1.20.20.POS Expect role and permission to move to parent ns
+set force move
+set force=move ns list name com.test.TC_NSdelete1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NSdelete1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NSdelete1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NSdelete1.@[THE_USER].admin                                      
+        com.test.TC_NSdelete1.@[THE_USER].cred_admin                                 
+        com.test.TC_NSdelete1.@[THE_USER].owner                                      
+    Permissions
+        com.test.TC_NSdelete1.@[THE_USER].access *                        *              
+        com.test.TC_NSdelete1.@[THE_USER].access *                        read           
+
+as testid@aaf.att.com
+# TC_NSdelete1.30.1.POS Create valid Role in my Namespace
+role create com.@[user.name].r.A
+** Expect 201 **
+Created Role
+
+# TC_NSdelete1.30.2.NEG Delete Company with role attached
+ns delete com.@[user.name]
+** Expect 424 **
+Failed [SVC1424]: Failed Dependency - [com.@[THE_USER]] contains roles.
+  Delete dependencies and try again.  Note: using force=true will delete all. force=move will delete Creds, but move Roles and Perms to parent.
+
+# TC_NSdelete1.30.3.POS Namespace Admin can delete Namepace defined Roles
+role delete com.@[user.name].r.A
+** Expect 200 **
+Deleted Role
+
+# TC_NSdelete1.30.10.POS Create valid permission 
+perm create com.@[user.name].p.A myInstance myAction
+** Expect 201 **
+Created Permission
+
+# TC_NSdelete1.30.11.NEG Delete Company with permission attached
+ns delete com.@[user.name]
+** Expect 424 **
+Failed [SVC1424]: Failed Dependency - [com.@[THE_USER]] contains permissions.
+  Delete dependencies and try again.  Note: using force=true will delete all. force=move will delete Creds, but move Roles and Perms to parent.
+
+# TC_NSdelete1.30.12.POS Namespace Admin can delete Namepace defined Perms
+perm delete com.@[user.name].p.A myInstance myAction
+** Expect 200 **
+Deleted Permission
+
+# TC_NSdelete1.30.20.POS Create valid Credential in my namespace 
+user cred add m99990@@[user.name].com password123
+** Expect 201 **
+Added Credential [m99990@@[THE_USER].com]
+
+# TC_NSdelete1.30.21.NEG Delete Company with credential attached
+ns delete com.@[user.name]
+** Expect 424 **
+Failed [SVC1424]: Failed Dependency - [com.@[THE_USER]] contains users.
+  Delete dependencies and try again.  Note: using force=true will delete all. force=move will delete Creds, but move Roles and Perms to parent.
+
+# TC_NSdelete1.30.22.POS Namespace admin can remove Cred
+set force true
+user cred del m99990@@[user.name].com
+** Expect 200 **
+Deleted Credential [m99990@@[THE_USER].com]
+
+# TC_NSdelete1.30.30.POS Delete Company with no roles or perms attached
+ns delete com.@[user.name]
+** Expect 200 **
+Deleted Namespace
+
+# TC_NSdelete1.40.1.POS Create valid Role in my Namespace
+role create com.test.force.@[user.name].r.A
+** Expect 201 **
+Created Role
+
+# TC_NSdelete1.40.2.POS Create valid permission in my Namespace
+perm create com.test.force.@[user.name].p.A myInstance myAction
+** Expect 201 **
+Created Permission
+
+# TC_NSdelete1.40.3.POS Add credential to my namespace
+user cred add m99990@@[user.name].force.test.com password123
+** Expect 201 **
+Added Credential [m99990@@[THE_USER].force.test.com]
+
+# TC_NSdelete1.40.10.POS Delete Program in my Namespace
+set force true
+set force=true ns delete com.test.force.@[user.name]
+** Expect 200 **
+Deleted Namespace
+
+sleep 0
+# TC_NSdelete1.40.20.NEG Role and permission should not exist
+ns list name com.test.force.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.force.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_NSdelete1.40.22.NEG Credential should not exist
+set force true
+user cred del m99990@@[user.name].force.test.com
+** Expect 404 **
+Failed [SVC5404]: Not Found - Credential does not exist
+
+as testid@aaf.att.com
+# TC_NSdelete1.99.1.POS Namespace Admin can delete Namepace defined Roles
+role delete com.test.TC_NSdelete1.@[user.name].app.r.A
+** Expect 200,404 **
+Deleted Role
+
+# TC_NSdelete1.99.2.POS Namespace Admin can delete Namepace defined Roles
+perm delete com.test.TC_NSdelete1.@[user.name].app.p.A myInstance myAction
+** Expect 200,404 **
+Deleted Permission
+
+# TC_NSdelete1.99.3.POS Namespace Admin can remove Namepace defined Credentials
+set force true
+set force=true user cred del m99990@@app.[user.name].TC_NSdelete1.test.com
+** Expect 200,404 **
+Failed [SVC5404]: Not Found - Credential does not exist
+
+# TC_NSdelete1.99.10.POS Remove ability to create creds
+user role del testid@aaf.att.com com.test.TC_NSdelete1.@[user.name].cred_admin
+** Expect 200,404 **
+Removed Role [com.test.TC_NSdelete1.@[THE_USER].cred_admin] from User [testid@aaf.att.com]
+
+as XX@NS
+perm ungrant com.att.aaf.mechid com.att create com.test.TC_NSdelete1.@[user.name].cred_admin
+** Expect 200,404 **
+UnGranted Permission [com.att.aaf.mechid|com.att|create] from Role [com.test.TC_NSdelete1.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+set force true
+set force=true role delete com.test.TC_NSdelete1.@[user.name].cred_admin
+** Expect 200,404 **
+Deleted Role
+
+# TC_NSdelete1.99.97.POS Clean Namespace
+set force true
+set force=true ns delete com.test.TC_NSdelete1.@[user.name].app
+** Expect 200,404 **
+Deleted Namespace
+
+set force true
+set force=true ns delete com.test.TC_NSdelete1.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+set force true
+set force=true ns delete com.test.force.@[user.name]
+** Expect 200,404 **
+Failed [SVC2404]: Not Found - com.test.force.@[THE_USER] does not exist
+
+# TC_NSdelete1.99.98.POS Check Clean Namespace
+ns list name com.test.TC_NSdelete1.@[user.name].app
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_NSdelete1.@[THE_USER].app]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.test.TC_NSdelete1.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_NSdelete1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.test.force.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.force.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_NSdelete1.99.99.POS Clean and check Company Namespace
+as XX@NS
+set force true
+set force=true ns delete com.@[user.name]
+** Expect 200,404 **
+Failed [SVC2404]: Not Found - com.@[THE_USER] does not exist
+
+ns list name com.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

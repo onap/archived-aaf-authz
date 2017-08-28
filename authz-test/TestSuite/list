@@ -1,0 +1,2 @@
+# /bin/sh
+find . -maxdepth 1 -name "TC*" -exec sh cmds {} \; | grep \#

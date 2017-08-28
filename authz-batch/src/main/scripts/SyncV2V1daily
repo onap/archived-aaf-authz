@@ -1,0 +1,17 @@
+#!/bin/bash
+JAVA_HOME=_JAVA_HOME_
+PATH=${PATH}:${JAVA_HOME}/bin
+ROOT_DIR=_ROOT_DIR_
+
+cd $ROOT_DIR
+
+CP=${ROOT_DIR}/etc
+for FILE in `ls $ROOT_DIR/lib/*.jar`; do
+  CP=$CP:$FILE
+done
+
+CMD="SyncV2V1 v2 v1"
+echo $CMD >> $ROOT_DIR/cronlog
+date >> $ROOT_DIR/cronlog
+$JAVA_HOME/bin/java -Xmx2048m -classpath $CP com.att.authz.Batch $CMD  >> $ROOT_DIR/cronlog
+date >> $ROOT_DIR/cronlog

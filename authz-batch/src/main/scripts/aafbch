@@ -1,0 +1,21 @@
+#!/bin/bash
+JAVA_HOME=_JAVA_HOME_
+PATH=${PATH}:${JAVA_HOME}/bin
+ROOT_DIR=_ROOT_DIR_
+cd $ROOT_DIR
+
+if [ "$1" = "InnerConsistency" ]; then
+	CLS=com.att.authz.temp.InnerConsistency
+	shift
+else
+	CLS=com.att.authz.Batch
+fi 
+
+CP=${ROOT_DIR}/etc
+for FILE in `ls $ROOT_DIR/lib/*.jar`; do
+  CP=$CP:$FILE
+done
+
+date
+$JAVA_HOME/bin/java -Xmx2048m -classpath $CP $CLS $* 
+date

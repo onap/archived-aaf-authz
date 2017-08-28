@@ -1,0 +1,14 @@
+
+as testid@aaf.att.com
+# TC_NS1.01.0.POS Expect Clean Namespace to start
+expect 200
+ns list name com.test.TC_NS1.@[user.name] 
+
+# TC_NS1.01.1.NEG Create Namespace with mechID as Responsible Party
+expect 403
+ns create com.test.TC_NS1.@[user.name] testunused@aaf.att.com testid@aaf.att.com,XX@NS
+
+# TC_NS1.01.2.NEG Create Namespace with Bad ID for Admin
+expect 403
+ns create com.test.TC_NS1.@[user.name] @[user.name] bogus@aaf.att.com,XX@NS
+

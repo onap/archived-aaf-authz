@@ -1,0 +1,15 @@
+sleep @[NFR]
+# TC_NS1.80.1.POS List Data on Empty NS
+as testid@aaf.att.com
+
+expect 200
+ns list name com.test.TC_NS1.@[user.name] 
+
+# TC_NS1.80.2.POS Add Roles to NS for Listing
+expect 201
+role create com.test.TC_NS1.@[user.name].r.A
+role create com.test.TC_NS1.@[user.name].r.B
+
+# TC_NS1.80.3.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_NS1.@[user.name] 

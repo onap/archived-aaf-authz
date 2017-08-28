@@ -1,0 +1,26 @@
+
+as testid@aaf.att.com
+# TC_Realm1.20.1.NEG Fail to create - default domain wrong
+expect 403
+ns create com.test.TC_Realm1.@[user.name].project1 testunused
+
+# TC_Realm1.20.2.POS Create - default domain appended
+expect 201
+ns create com.test.TC_Realm1.@[user.name].project1 @[user.name] @[user.name]
+
+# TC_Realm1.20.3.NEG Fail to create - default domain wrong
+expect 403
+ns admin add com.test.TC_Realm1.@[user.name].project1 testunused
+
+# TC_Realm1.20.4.POS Create - full domain given
+expect 201
+ns admin add com.test.TC_Realm1.@[user.name].project1 testid@aaf.att.com
+
+# TC_Realm1.20.5.POS Delete - default domain appended
+expect 200
+ns admin del com.test.TC_Realm1.@[user.name].project1 @[user.name]
+
+# TC_Realm1.20.6.POS Add admin - default domain appended
+expect 201
+ns admin add com.test.TC_Realm1.@[user.name].project1 @[user.name]
+

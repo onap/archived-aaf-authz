@@ -1,0 +1,369 @@
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set XX@NS <pass>
+set bogus boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_Role1.10.0.POS Validate NS ok
+ns list name com.test.TC_Role1.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_Role1.10.1.POS Create Namespace with valid IDs and Responsible Parties
+ns create com.test.TC_Role1.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_Role1.10.10.POS Create role to assign mechid perm to
+role create com.test.TC_Role1.@[user.name].cred_admin
+** Expect 201 **
+Created Role
+
+as XX@NS
+# TC_Role1.10.11.POS Assign role to mechid perm
+perm grant com.att.aaf.mechid com.att create com.test.TC_Role1.@[user.name].cred_admin
+** Expect 201 **
+Granted Permission [com.att.aaf.mechid|com.att|create] to Role [com.test.TC_Role1.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+# TC_Role1.10.12.POS Assign user for creating creds
+user role add testid@aaf.att.com com.test.TC_Role1.@[user.name].cred_admin
+** Expect 201 **
+Added Role [com.test.TC_Role1.@[THE_USER].cred_admin] to User [testid@aaf.att.com]
+
+# TC_Role1.20.1.POS List Data on non-Empty NS
+ns list name com.test.TC_Role1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Role1.@[THE_USER].admin                                          
+        com.test.TC_Role1.@[THE_USER].cred_admin                                     
+        com.test.TC_Role1.@[THE_USER].owner                                          
+    Permissions
+        com.test.TC_Role1.@[THE_USER].access *                        *              
+        com.test.TC_Role1.@[THE_USER].access *                        read           
+
+# TC_Role1.20.2.POS Add Roles 
+role create com.test.TC_Role1.@[user.name].r.A
+** Expect 201 **
+Created Role
+
+role create com.test.TC_Role1.@[user.name].r.B
+** Expect 201 **
+Created Role
+
+# TC_Role1.20.3.POS List Data on non-Empty NS
+ns list name com.test.TC_Role1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Role1.@[THE_USER].admin                                          
+        com.test.TC_Role1.@[THE_USER].cred_admin                                     
+        com.test.TC_Role1.@[THE_USER].owner                                          
+        com.test.TC_Role1.@[THE_USER].r.A                                            
+        com.test.TC_Role1.@[THE_USER].r.B                                            
+    Permissions
+        com.test.TC_Role1.@[THE_USER].access *                        *              
+        com.test.TC_Role1.@[THE_USER].access *                        read           
+
+# TC_Role1.20.4.NEG Don't write over Role
+role create com.test.TC_Role1.@[user.name].r.A
+** Expect 409 **
+Failed [SVC1409]: Conflict Already Exists - Role [com.test.TC_Role1.@[THE_USER].r.A] already exists
+
+# TC_Role1.20.5.NEG Don't allow non-user to create
+as bogus
+role create com.test.TC_Role1.@[user.name].r.No
+** Expect 401 **
+Failed with code 401, Unauthorized
+
+# TC_Role1.20.6.NEG Don't allow non-user to create without Approval
+as testunused@aaf.att.com
+role create com.test.TC_Role1.@[user.name].r.No
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not write Role [com.test.TC_Role1.@[THE_USER].r.No]
+
+# TC_Role1.20.10.NEG Non-admins can't change description
+as testunused@aaf.att.com
+role describe com.test.TC_Role1.@[user.name].r.A Description A
+** Expect 403 **
+Failed [SVC1403]: Forbidden - You do not have approval to change com.test.TC_Role1.@[THE_USER].r.A
+
+# TC_Role1.20.11.NEG Role must exist to change description
+as testid@aaf.att.com
+role describe com.test.TC_Role1.@[user.name].r.C Description C
+** Expect 404 **
+Failed [SVC1404]: Not Found - Role [com.test.TC_Role1.@[THE_USER].r.C] does not exist
+
+# TC_Role1.20.12.POS Admin can change description
+role describe com.test.TC_Role1.@[user.name].r.A Description A
+** Expect 200 **
+Description added to role
+
+# TC_Role1.30.1.POS List Data on non-Empty NS
+as testid@aaf.att.com
+ns list name com.test.TC_Role1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Role1.@[THE_USER].admin                                          
+        com.test.TC_Role1.@[THE_USER].cred_admin                                     
+        com.test.TC_Role1.@[THE_USER].owner                                          
+        com.test.TC_Role1.@[THE_USER].r.A                                            
+        com.test.TC_Role1.@[THE_USER].r.B                                            
+    Permissions
+        com.test.TC_Role1.@[THE_USER].access *                        *              
+        com.test.TC_Role1.@[THE_USER].access *                        read           
+
+# TC_Role1.30.2.POS Create Sub-ns when Roles that exist
+ns create com.test.TC_Role1.@[user.name].r @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_Role1.30.3.POS List Data on NS with sub-roles
+ns list name com.test.TC_Role1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Role1.@[THE_USER].admin                                          
+        com.test.TC_Role1.@[THE_USER].cred_admin                                     
+        com.test.TC_Role1.@[THE_USER].owner                                          
+    Permissions
+        com.test.TC_Role1.@[THE_USER].access *                        *              
+        com.test.TC_Role1.@[THE_USER].access *                        read           
+
+ns list name com.test.TC_Role1.@[user.name].r
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER].r]
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER].r
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Role1.@[THE_USER].r.A                                            
+        com.test.TC_Role1.@[THE_USER].r.B                                            
+        com.test.TC_Role1.@[THE_USER].r.admin                                        
+        com.test.TC_Role1.@[THE_USER].r.owner                                        
+    Permissions
+        com.test.TC_Role1.@[THE_USER].r.access *                        *              
+        com.test.TC_Role1.@[THE_USER].r.access *                        read           
+
+# TC_Role1.40.01.POS List Data on non-Empty NS
+role list role com.test.TC_Role1.@[user.name].r.A
+** Expect 200 **
+
+List Roles for Role[com.test.TC_Role1.@[THE_USER].r.A]
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER].r.A                      
+
+# TC_Role1.40.20.POS Create a Perm, and add to Role
+perm create com.test.TC_Role1.@[user.name].samplePerm1 some.long(involved).text SELECT com.test.TC_Role1.@[user.name].r.A
+** Expect 201 **
+Created Permission
+Granted Permission [com.test.TC_Role1.@[THE_USER].samplePerm1|some.long(involved).text|SELECT] to Role [com.test.TC_Role1.@[THE_USER].r.A]
+
+# TC_Role1.40.25.POS List
+role list role com.test.TC_Role1.@[user.name].r.A
+** Expect 200 **
+
+List Roles for Role[com.test.TC_Role1.@[THE_USER].r.A]
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER].r.A                      
+   com.test.TC_Role1.@[THE_USER].samplePerm1 some.long(involved).text       SELECT         
+
+# TC_Role1.40.30.POS Create a Perm 
+perm create com.test.TC_Role1.@[user.name].samplePerm1 some.other_long(less.involved).text lower_case 
+** Expect 201 **
+Created Permission
+
+# TC_Role1.40.32.POS Separately Grant Perm
+perm grant com.test.TC_Role1.@[user.name].samplePerm1 some.other_long(less.involved).text lower_case com.test.TC_Role1.@[user.name].r.A
+** Expect 201 **
+Granted Permission [com.test.TC_Role1.@[THE_USER].samplePerm1|some.other_long(less.involved).text|lower_case] to Role [com.test.TC_Role1.@[THE_USER].r.A]
+
+# TC_Role1.40.35.POS List
+role list role com.test.TC_Role1.@[user.name].r.A
+** Expect 200 **
+
+List Roles for Role[com.test.TC_Role1.@[THE_USER].r.A]
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER].r.A                      
+   com.test.TC_Role1.@[THE_USER].samplePerm1 some.long(involved).text       SELECT         
+   com.test.TC_Role1.@[THE_USER].samplePerm1 some.other_long(less.involved).text lower_case     
+
+# TC_Role1.50.1.POS Create user to attach to role
+user cred add m00001@@[user.name].TC_Role1.test.com password123
+** Expect 201 **
+Added Credential [m00001@@[THE_USER].TC_Role1.test.com]
+
+# TC_Role1.50.2.POS Create new role
+role create com.test.TC_Role1.@[user.name].r.C
+** Expect 201 **
+Created Role
+
+# TC_Role1.50.3.POS Attach user to role
+user role add m00001@@[user.name].TC_Role1.test.com com.test.TC_Role1.@[user.name].r.C
+** Expect 201 **
+Added Role [com.test.TC_Role1.@[THE_USER].r.C] to User [m00001@@[THE_USER].TC_Role1.test.com]
+
+# TC_Role1.50.4.POS Create permission and attach to role
+perm create com.test.TC_Role1.@[user.name].p.C myInstance myAction com.test.TC_Role1.@[user.name].r.C
+** Expect 201 **
+Created Permission
+Granted Permission [com.test.TC_Role1.@[THE_USER].p.C|myInstance|myAction] to Role [com.test.TC_Role1.@[THE_USER].r.C]
+
+# TC_Role1.50.20.NEG Delete role with permission and user attached should fail
+role delete com.test.TC_Role1.@[user.name].r.C
+** Expect 424 **
+Failed [SVC1424]: Failed Dependency - Role [com.test.TC_Role1.@[THE_USER].r.C] cannot be deleted as it is used by 1 or more Users.
+
+# TC_Role1.50.21.POS Force delete role should work
+set force true
+set force=true role delete com.test.TC_Role1.@[user.name].r.C
+** Expect 200 **
+Deleted Role
+
+# TC_Role1.50.30.POS List Data on non-Empty NS
+ns list name com.test.TC_Role1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_Role1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_Role1.@[THE_USER].admin                                          
+        com.test.TC_Role1.@[THE_USER].cred_admin                                     
+        com.test.TC_Role1.@[THE_USER].owner                                          
+    Permissions
+        com.test.TC_Role1.@[THE_USER].access *                        *              
+        com.test.TC_Role1.@[THE_USER].access *                        read           
+        com.test.TC_Role1.@[THE_USER].p.C   myInstance               myAction       
+        com.test.TC_Role1.@[THE_USER].samplePerm1 some.long(involved).text SELECT         
+        com.test.TC_Role1.@[THE_USER].samplePerm1 some.other_long(less.involved).text lower_case     
+    Credentials
+        m00001@@[THE_USER].TC_Role1.test.com                                         
+
+# Need to let DB catch up on deletes
+sleep 0
+as testid@aaf.att.com
+# TC_Role1.99.05.POS Remove Permissions from "40_reports"
+set force true
+set force=true perm delete com.test.TC_Role1.@[user.name].samplePerm1 some.long(involved).text SELECT
+** Expect 200,404 **
+Deleted Permission
+
+set force true
+set force=true perm delete com.test.TC_Role1.@[user.name].samplePerm1 some.other_long(less.involved).text lower_case
+** Expect 200,404 **
+Deleted Permission
+
+# TC_Role1.99.10.POS Namespace Admin can delete Namepace defined Roles
+force role delete com.test.TC_Role1.@[user.name].r.A
+** Expect 200,404 **
+Deleted Role
+
+force role delete com.test.TC_Role1.@[user.name].r.B
+** Expect 200,404 **
+Deleted Role
+
+force role delete com.test.TC_Role1.@[user.name].r.C
+** Expect 200,404 **
+Failed [SVC3404]: Not Found - Role [com.test.TC_Role1.@[THE_USER].r.C] does not exist
+
+# TC_Role1.99.15.POS Remove ability to create creds
+user role del testid@aaf.att.com com.test.TC_Role1.@[user.name].cred_admin
+** Expect 200,404 **
+Removed Role [com.test.TC_Role1.@[THE_USER].cred_admin] from User [testid@aaf.att.com]
+
+as XX@NS
+perm ungrant com.att.aaf.mechid com.att create com.test.TC_Role1.@[user.name].cred_admin
+** Expect 200,404 **
+UnGranted Permission [com.att.aaf.mechid|com.att|create] from Role [com.test.TC_Role1.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+role delete com.test.TC_Role1.@[user.name].cred_admin
+** Expect 200,404 **
+Deleted Role
+
+# TC_Role1.99.20.POS Namespace Admin can delete permissions and credentials
+perm delete com.test.TC_Role1.@[user.name].p.C myInstance myAction
+** Expect 200,404 **
+Deleted Permission
+
+set force true
+user cred del m00001@@[user.name].TC_Role1.test.com
+** Expect 200,404 **
+Deleted Credential [m00001@@[THE_USER].TC_Role1.test.com]
+
+# TC_Role1.99.90.POS Namespace Admin can delete Namespace
+force ns delete com.test.TC_Role1.@[user.name].r
+** Expect 200,404 **
+Deleted Namespace
+
+force ns delete com.test.TC_Role1.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+# TC_Role1.99.99.POS List to prove clean Namespaces
+ns list name com.test.TC_Role1.@[user.name].r
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER].r]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+ns list name com.test.TC_Role1.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_Role1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

@@ -1,0 +1,22 @@
+# Load Passwords needed
+if [ -e ../../authz-service ]; then
+   CMD_DEPLOYED=authz-service
+else
+   CMD_DEPLOYED=authz-cmd
+fi
+function aafcli {
+  java \
+  -Daaf_id=testid \
+  -Daaf_pass=<pass> \
+  -Daaf_url=DMEServiceName=service=com.att.authz.AuthorizationService/version=2.0/envContext=AFTUAT/routeOffer=BAU_SE \
+  -Dkeyfile=/Volumes/Data/src/authz/common/keyfile \
+  -DAFT_LATITUDE=38.432930 \
+  -DAFT_LONGITUDE=-90.432480 \
+  -DAFT_ENVIRONMENT=AFTUAT \
+  -Dtestid=<pass> \
+  -Dbogus=xxx \
+  -Dm12345=<pass> \
+  -jar \
+   ../../${CMD_DEPLOYED}/2.0.2/lib/authz-cmd-2.0.2-jar-with-dependencies.jar \
+   $*
+}

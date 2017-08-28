@@ -1,0 +1,20 @@
+# TC_NS2.41.10.POS List by User when Same as Caller
+as testunused@aaf.att.com
+expect 200
+ns list admin testunused@aaf.att.com
+
+# TC_NS2.41.15.POS List by User when not same as Caller, but own/admin namespace of Roles
+as testid@aaf.att.com
+expect 200
+ns list admin testunused@aaf.att.com
+
+# TC_NS2.41.20.POS List by User when not same as Caller, but parent owner of Namespace
+as XX@NS
+expect 200
+ns list admin testunused@aaf.att.com
+
+# TC_NS2.41.80.NEG List by User when not Caller nor associated to Namespace 
+as testunused@aaf.att.com
+expect 200
+ns list admin XX@NS
+

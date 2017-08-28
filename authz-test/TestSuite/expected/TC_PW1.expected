@@ -1,0 +1,170 @@
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set XX@NS <pass>
+set bogus boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_PW1.10.0.POS Validate no NS
+ns list name com.test.TC_PW1.@[user.name] 
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_PW1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_PW1.10.1.POS Create Namespace to add IDs
+ns create com.test.TC_PW1.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_PW1.10.10.POS Create role to assign mechid perm to
+role create com.test.TC_PW1.@[user.name].cred_admin
+** Expect 201 **
+Created Role
+
+as XX@NS
+# TC_PW1.10.11.POS Assign role to mechid perm
+perm grant com.att.aaf.mechid com.att create com.test.TC_PW1.@[user.name].cred_admin
+** Expect 201 **
+Granted Permission [com.att.aaf.mechid|com.att|create] to Role [com.test.TC_PW1.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+# TC_PW1.10.12.POS Assign user for creating creds
+user role add testid@aaf.att.com com.test.TC_PW1.@[user.name].cred_admin
+** Expect 201 **
+Added Role [com.test.TC_PW1.@[THE_USER].cred_admin] to User [testid@aaf.att.com]
+
+# TC_PW1.20.1.NEG ASPR 1010 Passwords must be at least 8 characters in length
+user cred add m12345@TC_PW1.test.com 12
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Password must be 8 chars or greater in length (ASPR-1010),
+Passwords must include characters from at least two of these groupings: alpha, numeric and one of these special chars: !@#$%^*()-+?/,:;. (ASPR-1010)
+
+# TC_PW1.20.2.NEG ASPR 1010 Passwords must be at least 8 characters in length
+user cred add m12345@TC_PW1.test.com 1
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Password must be 8 chars or greater in length (ASPR-1010),
+Passwords must include characters from at least two of these groupings: alpha, numeric and one of these special chars: !@#$%^*()-+?/,:;. (ASPR-1010)
+
+# TC_PW1.20.3.NEG ASPR 1010 Passwords must be at least 8 characters in length
+user cred add m12345@TC_PW1.test.com 1234567
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Password must be 8 chars or greater in length (ASPR-1010),
+Passwords must include characters from at least two of these groupings: alpha, numeric and one of these special chars: !@#$%^*()-+?/,:;. (ASPR-1010)
+
+# TC_PW1.21.1.NEG ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+user cred add m12345@@[user.name].TC_PW1.test.com 12345678
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Passwords must include characters from at least two of these groupings: alpha, numeric and one of these special chars: !@#$%^*()-+?/,:;. (ASPR-1010)
+
+# TC_PW1.21.2.NEG ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+user cred add m12345@@[user.name].TC_PW1.test.com abcdefgh
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Passwords must include characters from at least two of these groupings: alpha, numeric and one of these special chars: !@#$%^*()-+?/,:;. (ASPR-1010)
+
+# TC_PW1.21.3.NEG ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+user cred add m12345@@[user.name].TC_PW1.test.com "!@#%^()*"
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Passwords must include characters from at least two of these groupings: alpha, numeric and one of these special chars: !@#$%^*()-+?/,:;. (ASPR-1010)
+
+# TC_PW1.21.4.POS ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+user cred add m12345@@[user.name].TC_PW1.test.com "!@#a%^()*"
+** Expect 201 **
+Added Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+sleep 0
+user cred del m12345@@[user.name].TC_PW1.test.com
+** Expect 200 **
+Deleted Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+# TC_PW1.21.5.POS ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+user cred add m12345@@[user.name].TC_PW1.test.com "!@#2%^()*"
+** Expect 201 **
+Added Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+sleep 0
+user cred del m12345@@[user.name].TC_PW1.test.com
+** Expect 200 **
+Deleted Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+# TC_PW1.21.6.POS ASPR 1010 Passwords must include chars from 2 groupings, alpha, numeric and special
+user cred add m12345@@[user.name].TC_PW1.test.com "abc123sd"
+** Expect 201 **
+Added Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+sleep 0
+user cred del m12345@@[user.name].TC_PW1.test.com
+** Expect 200 **
+Deleted Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+# TC_PW1.21.10.NEG ASPR 1010 Passwords cannot be the same as the User ID
+user cred add m12345@@[user.name].TC_PW1.test.com m12345
+** Expect 406 **
+Failed [SVC1406]: Not Acceptable - Password must be 8 chars or greater in length (ASPR-1010)
+
+# TC_PW1.23.1.NEG Too Few Args for User Cred 1
+user cred 
+** Expect -1 **
+Too few args: cred <add|del|reset|extend> <id> [password (! D|E)] [entry# (if multi)] 
+
+# TC_PW1.23.2.NEG Too Few Args for User Cred add
+user cred add
+** Expect -1 **
+Too few args: cred <add|del|reset|extend> <id> [password (! D|E)] [entry# (if multi)] 
+
+# TC_PW1.30.1.POS Create a Credential, with Temporary Time
+user cred add m12345@@[user.name].TC_PW1.test.com "abc123sd"
+** Expect 201 **
+Added Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+# TC_PW1.30.3.NEG Credential Exists
+user cred add m12345@@[user.name].TC_PW1.test.com "abc123sf"
+** Expect 409 **
+Failed [SVC1409]: Conflict Already Exists - Credential with same Expiration Date exists, use 'reset'
+
+# TC_PW1.30.8.POS Reset this Password
+user cred reset m12345@@[user.name].TC_PW1.test.com "ABC123SD" 1
+** Expect 200 **
+Reset Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+# TC_PW1.30.9.POS Delete a Credential
+user cred del m12345@@[user.name].TC_PW1.test.com 1
+** Expect 200 **
+Deleted Credential [m12345@@[THE_USER].TC_PW1.test.com]
+
+as testid@aaf.att.com
+# TC_PW1.99.1.NEG Delete ID m12345@@[user.name].TC_PW1.test.com
+set force true
+user cred del m12345@@[user.name].TC_PW1.test.com
+** Expect 200,404 **
+Failed [SVC5404]: Not Found - Credential does not exist
+
+# TC_PW1.99.2.POS Remove ability to create creds
+user role del testid@aaf.att.com com.test.TC_PW1.@[user.name].cred_admin
+** Expect 200,404 **
+Removed Role [com.test.TC_PW1.@[THE_USER].cred_admin] from User [testid@aaf.att.com]
+
+as XX@NS
+perm ungrant com.att.aaf.mechid com.att create com.test.TC_PW1.@[user.name].cred_admin
+** Expect 200,404 **
+UnGranted Permission [com.att.aaf.mechid|com.att|create] from Role [com.test.TC_PW1.@[THE_USER].cred_admin]
+
+as testid@aaf.att.com
+role delete com.test.TC_PW1.@[user.name].cred_admin
+** Expect 200,404 **
+Deleted Role
+
+# TC_PW1.99.98.POS Delete Namespace com..test.TC_PW1
+ns delete com.test.TC_PW1.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+# TC_PW1.99.99.POS Verify Cleaned NS
+ns list name com.test.TC_PW1.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_PW1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

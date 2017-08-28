@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ============LICENSE_START====================================================
+  * org.onap.aaf
+  * ===========================================================================
+  * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
+  * ===========================================================================
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  * 
+   *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+   * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  * ============LICENSE_END====================================================
+  *
+  * ECOMP is a trademark and service mark of AT&T Intellectual Property.
+  *
+-->
+<ns2:ManagedResourceList xmlns:ns2="http://scld.att.com/lrm/util" xmlns="http://scld.att.com/lrm/commontypes" xmlns:ns3="http://scld.att.com/lrm/types">
+    <ns2:ManagedResource>
+        <ResourceDescriptor>
+            <ResourceName>com.att.authz._ARTIFACT_ID_</ResourceName>
+            <ResourceVersion>
+                <Major>_MAJOR_VER_</Major>
+                <Minor>_MINOR_VER_</Minor>
+                <Patch>_PATCH_VER_</Patch>                
+            </ResourceVersion>
+            <RouteOffer>_ROUTE_OFFER_</RouteOffer>
+        </ResourceDescriptor>
+        <ResourceType>Java</ResourceType>
+        <ResourcePath>com.att.authz.cm.service.CertManAPI</ResourcePath>
+        <ResourceProps>
+            <Tag>process.workdir</Tag>
+            <Value>_ROOT_DIR_</Value>
+        </ResourceProps>    	       
+        <ResourceProps>
+            <Tag>jvm.version</Tag>
+            <Value>1.8</Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>jvm.args</Tag>
+            <Value>-DAFT_LATITUDE=_AFT_LATITUDE_ -DAFT_LONGITUDE=_AFT_LONGITUDE_ -DAFT_ENVIRONMENT=_AFT_ENVIRONMENT_ -Dplatform=_SCLD_PLATFORM_ -Dcom.sun.jndi.ldap.connect.pool.maxsize=20  -Dcom.sun.jndi.ldap.connect.pool.prefsize=10 -Dcom.sun.jndi.ldap.connect.pool.timeout=3000 </Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>jvm.classpath</Tag>
+            <Value>_ROOT_DIR_/etc:_ROOT_DIR_/lib/*:</Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>jvm.heap.min</Tag>
+            <Value>1024m</Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>jvm.heap.max</Tag>
+            <Value>2048m</Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>start.class</Tag>
+            <Value>com.att.authz.cm.service.CertManAPI</Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>stdout.redirect</Tag>
+            <Value>_ROOT_DIR_/logs/SystemOut.log</Value>
+        </ResourceProps>
+        <ResourceProps>
+            <Tag>stderr.redirect</Tag>
+            <Value>_ROOT_DIR_/logs/SystemErr.log</Value>
+        </ResourceProps>
+        <ResourceOSID>aft</ResourceOSID>
+        <ResourceStartType>AUTO</ResourceStartType>
+        <ResourceStartPriority>2</ResourceStartPriority>
+		<ResourceMinCount>_RESOURCE_MIN_COUNT_</ResourceMinCount>
+		<ResourceMaxCount>_RESOURCE_MAX_COUNT_</ResourceMaxCount>        
+		<ResourceRegistration>_RESOURCE_REGISTRATION_</ResourceRegistration>
+        <ResourceSWMComponent>com.att.authz:_ARTIFACT_ID_</ResourceSWMComponent>
+        <ResourceSWMComponentVersion>_ARTIFACT_VERSION_</ResourceSWMComponentVersion>
+    </ns2:ManagedResource>
+</ns2:ManagedResourceList>

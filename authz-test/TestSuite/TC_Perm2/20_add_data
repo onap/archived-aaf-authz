@@ -1,0 +1,44 @@
+as testid@aaf.att.com:<pass>
+# TC_Perm2.20.1.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_Perm2.@[user.name]
+
+# TC_Perm2.20.10.POS Add Perms with specific Instance and Action
+expect 201
+perm create com.test.TC_Perm2.@[user.name].p.A myInstance myAction
+
+# TC_Perm2.20.11.POS Add Perms with specific Instance and Star
+expect 201
+perm create com.test.TC_Perm2.@[user.name].p.A myInstance *
+
+# TC_Perm2.20.12.POS Add Perms with Stars for Instance and Action
+expect 201
+perm create com.test.TC_Perm2.@[user.name].p.A * *
+perm create com.test.TC_Perm2.@[user.name].p.phoneCalls * spy
+
+# TC_Perm2.20.20.POS Create role 
+expect 201
+role create com.test.TC_Perm2.@[user.name].p.superUser
+role create com.test.TC_Perm2.@[user.name].p.secret
+
+# TC_Perm2.20.21.POS Grant sub-NS perms to role
+expect 201
+perm grant com.test.TC_Perm2.@[user.name].p.A myInstance myAction com.test.TC_Perm2.@[user.name].p.superUser
+perm grant com.test.TC_Perm2.@[user.name].p.A myInstance * com.test.TC_Perm2.@[user.name].p.superUser
+perm grant com.test.TC_Perm2.@[user.name].p.A * * com.test.TC_Perm2.@[user.name].p.superUser
+perm grant com.test.TC_Perm2.@[user.name].p.phoneCalls * spy com.test.TC_Perm2.@[user.name].p.secret
+
+# TC_Perm2.20.30.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_Perm2.@[user.name]
+
+# TC_Perm2.20.40.POS Create role
+expect 201
+role create com.test.TC_Perm2.@[user.name].p.watcher
+
+as XX@NS
+# TC_Perm2.20.50.POS Grant view perms to watcher role
+expect 201
+perm create com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:myInstance:myAction view com.test.TC_Perm2.@[user.name].p.watcher
+perm create com.att.aaf.perm :com.test.TC_Perm2.@[user.name].p.A:*:* view com.test.TC_Perm2.@[user.name].p.watcher
+

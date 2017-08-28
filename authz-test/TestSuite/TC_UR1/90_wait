@@ -1,0 +1,2 @@
+# Need to let DB catch up on deletes
+sleep @[NFR]

@@ -1,0 +1,327 @@
+set testid@aaf.att.com <pass>
+set testunused@aaf.att.com <pass>
+set bogus@aaf.att.com boguspass
+#delay 10
+set NFR 0
+as testid@aaf.att.com
+# TC_NS1.01.0.POS Expect Clean Namespace to start
+ns list name com.test.TC_NS1.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_NS1.01.1.NEG Create Namespace with mechID as Responsible Party
+ns create com.test.TC_NS1.@[user.name] testunused@aaf.att.com testid@aaf.att.com,XX@NS
+** Expect 403 **
+Failed [SVC3403]: Forbidden - testunused@aaf.att.com does not have permission to assume test status at AT&T
+
+# TC_NS1.01.2.NEG Create Namespace with Bad ID for Admin
+ns create com.test.TC_NS1.@[user.name] @[user.name] bogus@aaf.att.com,XX@NS
+** Expect 403 **
+Failed [SVC2403]: Forbidden - bogus@aaf.att.com is not a valid AAF Credential
+
+as testid@aaf.att.com
+# TC_NS1.10.0.POS Check for Existing Data
+ns list name com.test.TC_NS1.@[user.name]
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+
+# TC_NS1.10.1.POS Create Namespace with valid IDs and Responsible Parties
+ns create com.test.TC_NS1.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 201 **
+Created Namespace
+
+# TC_NS1.10.40.POS Expect Namespace to be created
+ns list name com.test.TC_NS1.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS1.@[THE_USER].admin                                            
+        com.test.TC_NS1.@[THE_USER].owner                                            
+    Permissions
+        com.test.TC_NS1.@[THE_USER].access  *                        *              
+        com.test.TC_NS1.@[THE_USER].access  *                        read           
+
+# TC_NS1.10.41.POS Expect Namespace to be created
+perm list role com.test.TC_NS1.@[user.name].admin
+** Expect 200 **
+
+List Perms by Role [com.test.TC_NS1.@[THE_USER].admin]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER].access  *                              *         
+
+
+# TC_NS1.10.42.POS Expect Namespace to be created
+perm list role com.test.TC_NS1.@[user.name].owner
+** Expect 200 **
+
+List Perms by Role [com.test.TC_NS1.@[THE_USER].owner]
+--------------------------------------------------------------------------------
+PERM Type                      Instance                       Action    
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER].access  *                              read      
+
+
+# TC_NS1.10.43.POS Expect Namespace to be created
+role list perm com.test.TC_NS1.@[user.name].access * *
+** Expect 200 **
+
+List Roles by Perm com.test.TC_NS1.@[THE_USER].access|*|*
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER].admin                      
+   com.test.TC_NS1.@[THE_USER].access  *                              *              
+
+# TC_NS1.10.44.POS Expect Namespace to be created
+role list perm com.test.TC_NS1.@[user.name].access * read
+** Expect 200 **
+
+List Roles by Perm com.test.TC_NS1.@[THE_USER].access|*|read
+--------------------------------------------------------------------------------
+ROLE Name                                         
+   PERM Type                      Instance                       Action         
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER].owner                      
+   com.test.TC_NS1.@[THE_USER].access  *                              read           
+
+# TC_NS1.11.1.NEG Create Namespace when exists
+ns create com.test.TC_NS1.@[user.name] @[user.name] testid@aaf.att.com
+** Expect 409 **
+Failed [SVC1409]: Conflict Already Exists - Target Namespace already exists
+
+# TC_NS1.20.1.NEG Too Few Args for Create 1
+ns create 
+** Expect -1 **
+Too few args: create <name> <responsible (id[,id]*)> [admin (id[,id]*)] 
+
+# TC_NS1.20.2.NEG Too Few Args for Create 2
+ns create bogus
+** Expect -1 **
+Too few args: create <name> <responsible (id[,id]*)> [admin (id[,id]*)] 
+
+# TC_NS1.30.10.NEG Non-admins can't change description
+as testunused@aaf.att.com
+ns describe com.test.TC_NS1.@[user.name] Description for my Namespace
+** Expect 403 **
+Failed [SVC1403]: Forbidden - You do not have approval to change com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.30.11.NEG Namespace must exist to change description
+as testid@aaf.att.com
+ns describe com.test.TC_NS1.@[user.name].project1 Description for my project
+** Expect 404 **
+Failed [SVC1404]: Not Found - Namespace [com.test.TC_NS1.@[THE_USER].project1] does not exist
+
+# TC_NS1.30.12.POS Admin can change description
+ns describe com.test.TC_NS1.@[user.name] Description for my Namespace
+** Expect 200 **
+Description added to Namespace
+
+# TC_NS1.50.1.NEG Adding a Bogus ID
+ns admin add com.test.TC_NS1.@[user.name] bogus
+** Expect 403 **
+Failed [SVC1403]: Forbidden - AT&T reports that bogus@csp.att.com is a faulty ID
+
+# TC_NS1.50.2.NEG Adding a Bogus ID, full Domain
+ns admin add com.test.TC_NS1.@[user.name] bogus@csp.att.com
+** Expect 403 **
+Failed [SVC1403]: Forbidden - AT&T reports that bogus@csp.att.com is a faulty ID
+
+# TC_NS1.50.3.NEG Adding an OK ID, bad domain
+ns admin add com.test.TC_NS1.@[user.name] xz9914@bogus.test.com
+** Expect 403 **
+Failed [SVC2403]: Forbidden - xz9914@bogus.test.com is not a valid AAF Credential
+
+# TC_NS1.50.4.NEG Deleting an OK ID, but not an admin
+ns admin del com.test.TC_NS1.@[user.name] XX@NS
+** Expect 404 **
+Failed [SVC6404]: Not Found - UserRole [XX@NS] [com.test.TC_NS1.@[THE_USER].admin]
+
+sleep 0
+# TC_NS1.50.10.POS Adding an OK ID
+ns admin add com.test.TC_NS1.@[user.name] XX@NS
+** Expect 201 **
+Admin XX@NS added to com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.50.11.POS Deleting One of Two
+ns admin del com.test.TC_NS1.@[user.name] testid@aaf.att.com
+** Expect 200 **
+Admin testid@aaf.att.com deleted from com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.50.12.NEG testid@aaf.att.com no longer Admin
+ns admin del com.test.TC_NS1.@[user.name] testid@aaf.att.com
+** Expect 404 **
+Failed [SVC6404]: Not Found - UserRole [testid@aaf.att.com] [com.test.TC_NS1.@[THE_USER].admin]
+
+# TC_NS1.50.13.POS Add ID back in
+ns admin add com.test.TC_NS1.@[user.name] testid@aaf.att.com
+** Expect 201 **
+Admin testid@aaf.att.com added to com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.50.14.POS Deleting original
+ns admin del com.test.TC_NS1.@[user.name] XX@NS
+** Expect 200 **
+Admin XX@NS deleted from com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.50.15.NEG Can't remove twice
+ns admin del com.test.TC_NS1.@[user.name] XX@NS
+** Expect 404 **
+Failed [SVC6404]: Not Found - UserRole [XX@NS] [com.test.TC_NS1.@[THE_USER].admin]
+
+# TC_NS1.50.20.NEG User Role Add should obey same "addAdmin" restrictions
+role user add com.test.TC_NS1.@[user.name].admin m88888@i.have.no.domain
+** Expect 403 **
+Failed [SVC2403]: Forbidden - m88888@i.have.no.domain is not a valid AAF Credential
+
+# TC_NS1.50.21.NEG Role User Add should obey same "addAdmin" restrictions
+user role add m88888@i.have.no.domain com.test.TC_NS1.@[user.name].admin 
+** Expect 403 **
+Failed [SVC2403]: Forbidden - m88888@i.have.no.domain is not a valid AAF Credential
+
+# TC_NS1.60.1.NEG Adding a Bogus ID
+ns responsible add com.test.TC_NS1.@[user.name] bogus
+** Expect 403 **
+Failed [SVC3403]: Forbidden - AT&T reports that this is not a valid credential
+
+# TC_NS1.60.2.NEG Adding a Bogus ID, full Domain
+ns responsible add com.test.TC_NS1.@[user.name] bogus@csp.att.com
+** Expect 403 **
+Failed [SVC3403]: Forbidden - AT&T reports that this is not a valid credential
+
+# TC_NS1.60.3.NEG Adding an OK ID, bad domain
+ns responsible add com.test.TC_NS1.@[user.name] xz9914@bogus.test.com
+** Expect 403 **
+Failed [SVC3403]: Forbidden - AT&T reports that this is not a valid credential
+
+# TC_NS1.60.4.NEG Deleting an OK ID, short, but not existent
+ns responsible del com.test.TC_NS1.@[user.name] testid
+** Expect 404 **
+Failed [SVC6404]: Not Found - UserRole [testid@csp.att.com] [com.test.TC_NS1.@[THE_USER].owner]
+
+# TC_NS1.60.5.NEG Deleting an OK ID, long, but not existent
+ns responsible del com.test.TC_NS1.@[user.name] testid@aaf.att.com
+** Expect 404 **
+Failed [SVC6404]: Not Found - UserRole [testid@aaf.att.com] [com.test.TC_NS1.@[THE_USER].owner]
+
+sleep 0
+# TC_NS1.60.10.POS Adding an OK ID
+# Note: mw9749 used because we must have employee as responsible
+ns responsible add com.test.TC_NS1.@[user.name] mw9749
+** Expect 201 **
+mw9749@csp.att.com is now responsible for com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.60.11.POS Deleting One of Two
+ns responsible del com.test.TC_NS1.@[user.name] mw9749
+** Expect 200 **
+mw9749@csp.att.com is no longer responsible for com.test.TC_NS1.@[THE_USER]
+
+# TC_NS1.60.12.NEG mw9749 no longer Admin
+ns responsible del com.test.TC_NS1.@[user.name] mw9749
+** Expect 404 **
+Failed [SVC6404]: Not Found - UserRole [mw9749@csp.att.com] [com.test.TC_NS1.@[THE_USER].owner]
+
+# TC_NS1.60.20.NEG User Role Add should obey same "addResponsible" restrictions
+role user add com.test.TC_NS1.@[user.name].owner m88888@i.have.no.domain
+** Expect 403 **
+Failed [SVC3403]: Forbidden - AT&T reports that this is not a valid credential
+
+# TC_NS1.60.21.NEG Role User Add should obey same "addResponsible" restrictions
+user role add m88888@i.have.no.domain com.test.TC_NS1.@[user.name].owner
+** Expect 403 **
+Failed [SVC3403]: Forbidden - AT&T reports that this is not a valid credential
+
+sleep 0
+# TC_NS1.80.1.POS List Data on Empty NS
+as testid@aaf.att.com
+ns list name com.test.TC_NS1.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS1.@[THE_USER].admin                                            
+        com.test.TC_NS1.@[THE_USER].owner                                            
+    Permissions
+        com.test.TC_NS1.@[THE_USER].access  *                        *              
+        com.test.TC_NS1.@[THE_USER].access  *                        read           
+
+# TC_NS1.80.2.POS Add Roles to NS for Listing
+role create com.test.TC_NS1.@[user.name].r.A
+** Expect 201 **
+Created Role
+
+role create com.test.TC_NS1.@[user.name].r.B
+** Expect 201 **
+Created Role
+
+# TC_NS1.80.3.POS List Data on non-Empty NS
+ns list name com.test.TC_NS1.@[user.name] 
+** Expect 200 **
+
+List Namespaces by Name[com.test.TC_NS1.@[THE_USER]]
+--------------------------------------------------------------------------------
+com.test.TC_NS1.@[THE_USER]
+    Administrators
+        testid@aaf.att.com                                                      
+    Responsible Parties
+        @[THE_USER]@csp.att.com                                                      
+    Roles
+        com.test.TC_NS1.@[THE_USER].admin                                            
+        com.test.TC_NS1.@[THE_USER].owner                                            
+        com.test.TC_NS1.@[THE_USER].r.A                                              
+        com.test.TC_NS1.@[THE_USER].r.B                                              
+    Permissions
+        com.test.TC_NS1.@[THE_USER].access  *                        *              
+        com.test.TC_NS1.@[THE_USER].access  *                        read           
+
+# TC_NS1.90.1.NEG Non Namespace Admin Delete Namespace
+as testunused@aaf.att.com
+ns delete com.test.TC_NS1.@[user.name]
+** Expect 403 **
+Failed [SVC1403]: Forbidden - [testunused@aaf.att.com] may not write in NS [com.test.TC_NS1.@[THE_USER]]
+
+sleep 0
+as testid@aaf.att.com
+# TC_NS1.99.1.POS Namespace Admin can delete Namepace defined Roles
+role delete com.test.TC_NS1.@[user.name].r.A
+** Expect 200,404 **
+Deleted Role
+
+role delete com.test.TC_NS1.@[user.name].r.B
+** Expect 200,404 **
+Deleted Role
+
+# TC_NS1.99.2.POS Namespace Admin can delete Namespace
+ns delete com.test.TC_NS1.@[user.name]
+** Expect 200,404 **
+Deleted Namespace
+
+sleep 0
+# TC_NS1.99.99.POS Check Clean Namespace
+ns list name com.test.TC_NS1.@[user.name]
+** Expect 200,404 **
+
+List Namespaces by Name[com.test.TC_NS1.@[THE_USER]]
+--------------------------------------------------------------------------------
+    *** Namespace Not Found ***
+

@@ -1,0 +1,175 @@
+# TC_Perm1.26.1.POS Create another Namespace, not owned by testid, one in company, one not
+as XX@NS
+expect 201
+ns create com.test2.TC_Perm1.@[user.name] @[user.name] XX@NS
+ns create com.test.TC_Perm1.@[user.name]_2 @[user.name] XX@NS
+
+# TC_Perm1.26.2.POS Create ID in other Namespace
+expect 201
+user cred add m99990@@[user.name].TC_Perm1.test2.com aRealPass7
+
+# TC_Perm1.26.3.POS Create a Role in other Namespaces, not owned by testid
+expect 201
+role create com.test2.TC_Perm1.@[user.name].r.C
+role create com.test2.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.11.NEG Grant Perm to Role in Other Namespace, when Role ID
+expect 403
+as m99990@@[user.name].TC_Perm1.test2.com:aRealPass7
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.11a.NEG Grant Perm to Role in Other Namespace, when Role ID
+expect 202
+as m99990@@[user.name].TC_Perm1.test2.com:aRealPass7
+set request=true 
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.12.NEG Grant Perm to Role in Other Namespace, when Perm ID, but different Company
+as testid@aaf.att.com
+expect 403
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.13.NEG Fail Grant Perm to Role in Other Namespace, when Perm ID, but same Company
+as testid@aaf.att.com
+expect 404
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.14.POS Create Role
+as testid@aaf.att.com
+expect 201
+role create com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.15.POS Fail Create/Grant Perm to Role in Other Namespace, when Perm ID, but same Company
+expect 201
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.16.POS Print Info for Validation
+expect 200
+ns list name com.test.TC_Perm1.@[user.name]
+
+# TC_Perm1.26.17.POS Grant individual new Perm to new Role
+expect 201
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.18.NEG Already Granted Perm
+expect 409
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.19.POS UnGrant Perm from Role in Other Namespace, when Perm ID
+expect 200
+perm ungrant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.21.NEG No Permission to Grant Perm to Role with Unrelated ID
+expect 403
+as m99990@@[user.name].TC_Perm1.test2.com:aRealPass7
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.22.NEG No Permission to Grant Perm to Role with Unrelated ID
+expect 202
+set request=true 
+as m99990@@[user.name].TC_Perm1.test2.com:aRealPass7
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.25.NEG No Permission to UnGrant with Unrelated ID
+expect 403
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name].r.B
+
+# TC_Perm1.26.26.NEG No Permission to UnGrant with Unrelated ID
+expect 202
+set request=true 
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name].r.B
+
+
+# TC_Perm1.26.30.POS  Add ID to Role
+as XX@NS:<pass> 
+expect 201
+ns admin add com.test2.TC_Perm1.@[user.name] m99990@@[user.name].TC_Perm1.test2.com 
+as m99990@@[user.name].TC_Perm1.test2.com:aRealPass7
+sleep @[NFR]
+
+# TC_Perm1.26.31.NEG No Permission Grant Perm to Role if not Perm Owner
+expect 403
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.31.NEG No Permission Grant Perm to Role if not Perm Owner
+expect 202
+set request=true
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test2.TC_Perm1.@[user.name].r.C
+
+
+# TC_Perm1.26.32.POS Grant individual new Perm to Role in Other Namespace
+expect 201
+as testid@aaf.att.com
+perm grant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.34.POS Print Info for Validation
+expect 200
+ns list name com.test.TC_Perm1.@[user.name]
+
+as XX@NS
+# TC_Perm1.26.35.POS Print Info for Validation
+expect 200
+ns list name com.test2.TC_Perm1.@[user.name]  
+
+as testid@aaf.att.com
+# TC_Perm1.26.36.POS UnGrant individual new Perm to new Role
+as testid@aaf.att.com
+expect 200
+perm ungrant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.37.NEG Already UnGranted Perm
+expect 404
+perm ungrant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name]_2.r.C
+
+# TC_Perm1.26.40.POS Reset roles attached to permision with setTo
+expect 200
+perm setTo com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name].r.C,com.test.TC_Perm1.@[user.name].r.A
+
+# TC_Perm1.26.41.NEG Non-owner of permission cannot reset roles
+expect 403
+as m99990@@[user.name].TC_Perm1.test2.com:aRealPass7
+perm setTo com.test.TC_Perm1.@[user.name].p.C myInstance myAction
+
+# TC_Perm1.26.42.NEG Non-owner of permission cannot ungrant
+expect 403
+perm ungrant com.test.TC_Perm1.@[user.name].p.C myInstance myAction com.test.TC_Perm1.@[user.name].r.C
+
+# TC_Perm1.26.43.NEG Non-owner of permission cannot delete
+expect 403
+perm delete com.test.TC_Perm1.@[user.name].p.C myInstance myAction
+
+# TC_Perm1.26.45.POS Owner of permission can reset roles
+as testid@aaf.att.com
+expect 200
+perm setTo com.test.TC_Perm1.@[user.name].p.C myInstance myAction
+
+as XX@NS
+# TC_Perm1.26.97.POS List the Namespaces 
+expect 200
+ns list name com.test.TC_Perm1.@[user.name]
+ns list name com.test2.TC_Perm1.@[user.name]
+
+as testid@aaf.att.com
+# TC_Perm1.26.98.POS Cleanup
+expect 200
+role delete com.test.TC_Perm1.@[user.name].r.A
+role delete com.test.TC_Perm1.@[user.name].r.B
+role delete com.test.TC_Perm1.@[user.name].r.C
+role delete com.test.TC_Perm1.@[user.name]_2.r.C
+as XX@NS
+role delete com.test2.TC_Perm1.@[user.name]_2.r.C
+role delete com.test2.TC_Perm1.@[user.name].r.C
+as testid@aaf.att.com
+perm delete com.test.TC_Perm1.@[user.name].p.A myInstance myAction
+perm delete com.test.TC_Perm1.@[user.name].p.B myInstance myAction
+perm delete com.test.TC_Perm1.@[user.name].p.C myInstance myAction
+force ns delete com.test.TC_Perm1.@[user.name]_2
+as XX@NS
+set force=true user cred del m99990@@[user.name].TC_Perm1.test2.com 
+ns delete com.test2.TC_Perm1.@[user.name]
+
+# TC_Perm1.26.99.POS List the Now Empty Namespaces 
+expect 200
+ns list name com.test.TC_Perm1.@[user.name]
+ns list name com.test2.TC_Perm1.@[user.name]
+

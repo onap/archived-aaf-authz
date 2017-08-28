@@ -1,0 +1,16 @@
+This Testcase Tests the essentials of User Credentials
+
+APIs:	
+   POST /auth/cred
+   PUT /auth/cred
+   DELETE /auth/cred
+
+
+CLI:
+   Target
+	user cred add :user :password
+	user cred del :user 
+   Ancillary
+	ns create 
+	ns delete 
+

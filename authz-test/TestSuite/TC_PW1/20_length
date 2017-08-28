@@ -1,0 +1,10 @@
+# TC_PW1.20.1.NEG ASPR 1010 Passwords must be at least 8 characters in length
+expect 406
+user cred add m12345@TC_PW1.test.com 12
+
+# TC_PW1.20.2.NEG ASPR 1010 Passwords must be at least 8 characters in length
+user cred add m12345@TC_PW1.test.com 1
+
+# TC_PW1.20.3.NEG ASPR 1010 Passwords must be at least 8 characters in length
+user cred add m12345@TC_PW1.test.com 1234567
+

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2016 AT&T Intellectual Property. All rights reserved.
+ -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.att.authz</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+		
+	<artifactId>authz-batch</artifactId>
+	<name>Authz Batch</name>
+	<description>Batch Processing for Authz</description>
+	<packaging>jar</packaging>
+		<url>https://github.com/att/AAF</url>
+	<licenses>
+		<license>
+		<name>BSD License</name>
+		<url> </url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+		<name>Jonathan Gathman</name>
+		<email></email>
+	<organization>ATT</organization>
+	<organizationUrl></organizationUrl>
+		</developer>
+	</developers>
+
+	<properties>
+		<maven.test.failure.ignore>false</maven.test.failure.ignore>
+		<project.swmVersion>1</project.swmVersion>
+	</properties>
+	
+	<dependencies>
+
+		<dependency>
+			<groupId>org.onap.aaf.inno</groupId>
+			<artifactId>env</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.onap.aaf.inno</groupId>
+			<artifactId>rosetta</artifactId>
+		</dependency>
+		
+ 		<dependency>
+	        <groupId>org.onap.aaf.cadi</groupId>
+	        <artifactId>cadi-core</artifactId>
+	    </dependency>
+
+ 		<dependency>
+	        <groupId>org.onap.aaf.cadi</groupId>
+	        <artifactId>cadi-aaf</artifactId>
+	    </dependency>
+
+
+
+		<!--  <dependency>
+			<groupId>com.att.authz</groupId>
+			<artifactId>authz-att</artifactId>
+			<exclusions>
+				<exclusion> 
+ 					<groupId>javax.servlet</groupId>
+        			<artifactId>servlet-api</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.onap.aaf.cadi</groupId>
+        			<artifactId>cadi-aaf</artifactId>
+        		</exclusion>
+        		<exclusion>
+			        <groupId>org.onap.aaf.cadi</groupId>
+			        <artifactId>cadi-core</artifactId>
+			    </exclusion>
+			    <exclusion>
+		        	<groupId>org.onap.aaf.cadi</groupId>
+		        	<artifactId>cadi-client</artifactId>
+		        </exclusion>
+		    </exclusions>
+        		
+		</dependency>   -->
+		
+		<dependency>
+			<groupId>com.att.authz</groupId>
+			<artifactId>authz-cass</artifactId>
+			<exclusions>
+				<exclusion> 
+ 					<groupId>javax.servlet</groupId>
+        			<artifactId>servlet-api</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.onap.aaf.cadi</groupId>
+        			<artifactId>cadi-aaf</artifactId>
+        		</exclusion>
+        		<exclusion>
+			        <groupId>org.onap.aaf.cadi</groupId>
+			        <artifactId>cadi-core</artifactId>
+			    </exclusion>
+			    <exclusion>
+		        	<groupId>org.onap.aaf.cadi</groupId>
+		        	<artifactId>cadi-client</artifactId>
+		        </exclusion>
+        		
+			</exclusions> 
+		</dependency>
+
+	  	<dependency>
+	    		<groupId>org.joda</groupId>
+	    		<artifactId>joda-time</artifactId>
+	    		<version>2.5</version>
+	  	</dependency>
+
+	  	<dependency>
+	    		<groupId>org.slf4j</groupId>
+	    		<artifactId>slf4j-log4j12</artifactId>
+	  	</dependency>
+	  	
+	  	<!-- Data Migration 
+	  	         <dependency>
+	    <groupId>com.oracle</groupId>
+	    <artifactId>ojdbc6</artifactId>
+	    <version>11.2.0</version>
+	  </dependency>
+	  
+	  <dependency>
+	    <groupId>com.opencsv</groupId>
+	    <artifactId>opencsv</artifactId>
+	    <version>3.3</version>
+	  </dependency>
+	  	-->
+	</dependencies>
+
+	<build>
+		<plugins>
+			 	<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+			    	</plugin>
+			    
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.4</version>
+					
+					<configuration>
+						<classifier>tests</classifier>
+						<archive>
+							<manifestEntries>
+								<Sealed>true</Sealed>
+							</manifestEntries>
+						</archive>
+					</configuration>
+					<executions>
+						<execution>
+							<id>depends</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+							<configuration>
+						        <descriptorRefs>
+						          <descriptorRef>jar-with-dependencies</descriptorRef>
+						        </descriptorRefs>
+						        <archive>
+						          <manifest>
+						            <mainClass>com.att.authz.Batch</mainClass>
+						          </manifest>
+						        </archive>
+							</configuration>
+						</execution>
+						<execution>
+							<id>swm</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+				      		<configuration>
+				      			<finalName>authz-batch-${project.version}.${project.swmVersion}</finalName>
+					      		 <descriptors>
+					          		<descriptor>../authz-service/src/main/assemble/swm.xml</descriptor>
+					        	</descriptors>
+					        	<archive>
+						        </archive>
+				      		</configuration>
+						</execution>
+					</executions>
+				</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+			<configuration>
+			<failOnError>false</failOnError>
+			</configuration>
+			<executions>
+				<execution>
+					<id>attach-javadocs</id>
+					<goals>
+						<goal>jar</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin> 
+	   
+	   
+	       <plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-source-plugin</artifactId>
+		      <version>2.2.1</version>
+		      <executions>
+			<execution>
+			  <id>attach-sources</id>
+			  <goals>
+			    <goal>jar-no-fork</goal>
+			  </goals>
+			</execution>
+		      </executions>
+		    </plugin>
+	
+
+	<plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-gpg-plugin</artifactId>
+	    <version>1.5</version>
+	    <executions>
+		<execution>
+		    <id>sign-artifacts</id>
+		    <phase>verify</phase>
+		    <goals>
+			<goal>sign</goal>
+		    </goals>
+		</execution>
+	    </executions>
+	  </plugin> 
+			
+		<plugin>
+			<groupId>org.sonatype.plugins</groupId>
+			<artifactId>nexus-staging-maven-plugin</artifactId>
+			<version>1.6.7</version>
+			<extensions>true</extensions>
+			<configuration>
+			<serverId>ossrhdme</serverId>
+			<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+			<autoReleaseAfterClose>true</autoReleaseAfterClose>
+			</configuration>
+		</plugin>
+			</plugins>
+	</build>
+</project>

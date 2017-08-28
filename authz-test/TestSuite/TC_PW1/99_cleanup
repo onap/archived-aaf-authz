@@ -1,0 +1,21 @@
+expect 200,404
+as testid@aaf.att.com
+
+# TC_PW1.99.1.NEG Delete ID m12345@@[user.name].TC_PW1.test.com
+set force=true
+user cred del m12345@@[user.name].TC_PW1.test.com
+
+# TC_PW1.99.2.POS Remove ability to create creds
+user role del testid@aaf.att.com com.test.TC_PW1.@[user.name].cred_admin
+
+as XX@NS
+perm ungrant com.att.aaf.mechid com.att create com.test.TC_PW1.@[user.name].cred_admin
+
+as testid@aaf.att.com
+role delete com.test.TC_PW1.@[user.name].cred_admin
+
+# TC_PW1.99.98.POS Delete Namespace com..test.TC_PW1
+ns delete com.test.TC_PW1.@[user.name]
+
+# TC_PW1.99.99.POS Verify Cleaned NS
+ns list name com.test.TC_PW1.@[user.name]

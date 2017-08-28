@@ -1,0 +1,10 @@
+This is a TEMPLATE testcase, to make creating new Test Cases easier.
+
+APIs:	
+
+
+CLI:
+ns create
+ns delete
+as
+

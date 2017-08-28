@@ -1,0 +1,28 @@
+# TC_Role1.50.1.POS Create user to attach to role
+expect 201
+user cred add m00001@@[user.name].TC_Role1.test.com password123
+
+# TC_Role1.50.2.POS Create new role
+expect 201
+role create com.test.TC_Role1.@[user.name].r.C
+
+# TC_Role1.50.3.POS Attach user to role
+expect 201
+user role add m00001@@[user.name].TC_Role1.test.com com.test.TC_Role1.@[user.name].r.C
+
+# TC_Role1.50.4.POS Create permission and attach to role
+expect 201
+perm create com.test.TC_Role1.@[user.name].p.C myInstance myAction com.test.TC_Role1.@[user.name].r.C
+
+# TC_Role1.50.20.NEG Delete role with permission and user attached should fail
+expect 424
+role delete com.test.TC_Role1.@[user.name].r.C
+
+# TC_Role1.50.21.POS Force delete role should work
+expect 200
+set force=true role delete com.test.TC_Role1.@[user.name].r.C
+
+# TC_Role1.50.30.POS List Data on non-Empty NS
+expect 200
+ns list name com.test.TC_Role1.@[user.name]
+

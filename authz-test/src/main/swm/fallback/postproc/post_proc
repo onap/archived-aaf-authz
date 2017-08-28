@@ -1,0 +1,6 @@
+#!/bin/sh
+######################################################################
+# $RCSfile$ - $Revision$
+# Copyright 2012 AT&T Intellectual Property. All rights reserved.
+######################################################################
+exec sh -x ../../common/install.sh

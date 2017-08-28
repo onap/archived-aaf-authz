@@ -1,0 +1,15 @@
+This Testcase Tests the essentials of the Namespace, and the NS Commands
+
+APIs:	POST /authz/ns
+	DELETE /authz/ns/:ns
+	GET /authz/roles/:role (where Role is NS + "*")
+
+CLI:
+   Target
+	ns create :ns :responsibleParty :admins
+	ns delete :ns
+	ns list :ns
+   Ancillary
+	role create :role
+	role list name :role.*
+
