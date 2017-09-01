@@ -178,34 +178,71 @@
 		      </executions>
 		    </plugin>
 	
-
-	<plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-gpg-plugin</artifactId>
-	    <version>1.5</version>
-	    <executions>
-		<execution>
-		    <id>sign-artifacts</id>
-		    <phase>verify</phase>
-		    <goals>
-			<goal>sign</goal>
-		    </goals>
-		</execution>
-	    </executions>
-	  </plugin> 
+<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<nexusUrl>${nexusproxy}</nexusUrl>
+					<stagingProfileId>176c31dfe190a</stagingProfileId>
+					<serverId>ecomp-staging</serverId>
+					<skipNexusStagingDeployMojo>${skip.staging.artifacts}</skipNexusStagingDeployMojo>
+				</configuration>
+			</plugin>		
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.7.201606060606</version>
+				<configuration>
+					<dumpOnExit>true</dumpOnExit>
+					<includes>
+						<include>org.onap.aaf.*</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
+							<!-- <append>true</append> -->
+						</configuration>
+					</execution>
+					<execution>
+						<id>pre-integration-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+							<!-- <append>true</append> -->
+						</configuration>
+					</execution>
+					<execution>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <fileSets>
+                                <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
+                                    <directory>${project.build.directory}/coverage-reports</directory>
+                                    <includes>
+                                        <include>*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <destFile>${project.build.directory}/jacoco-dev.exec</destFile>
+                        </configuration>
+                    </execution>
+				</executions>
+			</plugin>
 			
-		<plugin>
-			<groupId>org.sonatype.plugins</groupId>
-			<artifactId>nexus-staging-maven-plugin</artifactId>
-			<version>1.6.7</version>
-			<extensions>true</extensions>
-			<configuration>
-			<serverId>ossrhdme</serverId>
-			<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-			<autoReleaseAfterClose>true</autoReleaseAfterClose>
-			</configuration>
-		</plugin>
-		
+	
 		
 		</plugins>
 		<pluginManagement>
@@ -213,20 +250,4 @@
 		</pluginManagement>
 	</build>
 
-	<distributionManagement>
-    		<snapshotRepository>
-      			<id>ossrhdme</id>
-      			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    		</snapshotRepository>
-    		<repository>
-      			<id>ossrhdme</id>
-      			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    		</repository>
-	</distributionManagement>
-	
-	<scm>
-		<connection>https://github.com/att/AAF.git</connection>
-		<developerConnection>${project.scm.connection}</developerConnection>
-		<url>http://github.com/att/AAF/tree/master</url>
-	</scm>
 </project>
