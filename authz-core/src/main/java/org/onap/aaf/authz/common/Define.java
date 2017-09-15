@@ -27,7 +27,7 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.inno.env.Env;
 
 public class Define {
-	public static String ROOT_NS="NS.Not.Set";
+	public static String ROOT_NS="org.openecomp";
 	public static String ROOT_COMPANY=ROOT_NS;
 
 	public static void set(Env env) throws CadiException {

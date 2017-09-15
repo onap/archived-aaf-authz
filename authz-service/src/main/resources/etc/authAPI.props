@@ -1,0 +1,59 @@
+##
+## AUTHZ API (authz-service) Properties
+##
+#hostname=localhost
+hostname=0.0.0.0
+# Standard AFT for THIS box, and THIS box is in St Louis.  Put your own LAT/LONG in here.  Use "bing.com/maps" or 
+# SWMTools (geoloc for DataCenters) to get YOURs
+
+AFT_LATITUDE=32.780140
+AFT_LONGITUDE=-96.800451
+AFT_ENVIRONMENT=AFTUAT
+DEPLOYED_VERSION=2.0.SAMPLE
+
+##DME2 related parameters
+DMEServiceName=service=org.onap.aaf.authz.AuthorizationService/version=2.0/envContext=DEV/routeOffer=BAU_SE
+
+#DME2 can limit Port Ranges with the following:
+#AFT_DME2_PORT_RANGE=8101-8029,8100
+#DME2 picks any unused port in +1024 range
+#AFT_DME2_PORT=0
+AFT_DME2_ALLOW_PORT_CACHING=false
+aaf_root_ns=org.openecomp
+
+# Point to "Common" files, used between all the AAF Services. ... 
+
+
+
+
+# Cassandra
+# IP:Cass DataCenter:Latitude:Longitude,IP....
+cassandra.clusters=127.0.0.1
+cassandra.clusters.port=9042
+cassandra.clusters.user=authz
+cassandra.clusters.password=authz
+## Exceptions from Cassandra which require resetting the Cassandra Connections
+cassandra.reset.exceptions=com.datastax.driver.core.exceptions.NoHostAvailableException:"no host was tried":"Connection has been closed"
+
+# Consistency Settings
+cassandra.writeConsistency.ns=LOCAL_QUORUM
+cassandra.writeConsistency.perm=LOCAL_QUORUM
+cassandra.writeConsistency.role=LOCAL_QUORUM
+cassandra.writeConsistency.user_role=LOCAL_QUORUM
+cassandra.writeConsistency.cred=LOCAL_QUORUM
+cassandra.writeConsistency.ns_attrib=LOCAL_QUORUM
+
+## Supported Plugin Organizational Units
+Organization.com.osaaf=org.onap.aaf.osaaf.defOrg.DefaultOrg
+
+
+
+
+#cadi_prop_files=com.osaaf.common.props;com.osaaf.props
+cadi_prop_files=opt/app/aaf/authz-service/1.0.0-SNAPSHOT/etc/com.osaaf.common.props;opt/app/aaf/authz-service/1.0.0-SNAPSHOT/etc/com.osaaf.props
+CACHE_HIGH_COUNT=40000
+CACHE_CLEAN_INTERVAL=60000
+
+
+
+

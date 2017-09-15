@@ -54,6 +54,9 @@
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.swmVersion>1</project.swmVersion>
 			<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
+	    <dockerLocation>${basedir}/target/</dockerLocation>
+		<docker.registry>zlp11313.vci.att.com:5100</docker.registry>
+		<distFilesRootDirPath>opt/app/aaf/${project.artifactId}/${project.version}</distFilesRootDirPath>
 			<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
@@ -74,7 +77,11 @@
             <groupId>org.onap.aaf.authz</groupId>
             <artifactId>authz-client</artifactId>
         </dependency>
-
+		
+		<dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>authz-cmd</artifactId>
+        </dependency>		
         <dependency>
             <groupId>org.onap.aaf.authz</groupId>
             <artifactId>authz-core</artifactId>
@@ -122,15 +129,182 @@
 		<dependency>
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-aaf</artifactId>
-		</dependency>
-
-	
-
-       
+		</dependency>   
 	</dependencies>
 	
 	<build>
 	    <plugins>
+		<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-docker-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dockerLocation}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources/docker</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+			<plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.11</version>
+                <configuration>
+                    <imageName>onap/aaf/authz-service</imageName>
+                    <dockerDirectory>${dockerLocation}</dockerDirectory>
+                    <serverId>docker-hub</serverId>
+                     <registryUrl>https://${docker.registry}</registryUrl>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
+					     <resources>
+                                <resource>
+								<targetPath>/</targetPath>
+                                    <directory>/${basedir}/target/opt</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                    <forceTags>true</forceTags>
+                </configuration>
+            </plugin>
+			<plugin>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>2.7</version>
+    <executions>
+      <execution>
+        <id>copy-resources-1</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+         <outputDirectory>${project.build.directory}/opt/dme2reg/</outputDirectory>
+          <resources>
+            <resource>
+                        <directory>${project.basedir}/src/main/resources/dme2reg/</directory> 
+						 <includes>
+						 <include>**/*.txt</include>
+                        </includes>
+                    </resource>
+          </resources>
+        </configuration>
+      </execution>
+      <execution>
+        <id>copy-resources-2</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/etc</outputDirectory>
+          <resources>
+            <resource>
+                        <directory>${project.basedir}/src/main/resources/etc</directory>
+                        <includes>
+                            <include>**/**</include>
+                        </includes>
+                    </resource>
+          </resources>
+        </configuration>
+      </execution>
+	  
+	   <execution>
+        <id>copy-resources-3</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/lib</outputDirectory>
+          <resources>
+            <resource>
+                        <directory>${project.basedir}/../authz-cmd/target</directory>
+                        <includes>
+                            <include>**/authz-cmd-1.0.0-SNAPSHOT-jar-with-dependencies.jar</include>
+                        </includes>
+                    </resource>
+          </resources>
+        </configuration>
+      </execution>
+	  <execution>
+        <id>copy-resources-4</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}</outputDirectory>
+          <resources>
+            <resource>
+                        <directory>${project.basedir}/../authz-cmd</directory>
+                        <includes>
+                            <include>**/aafcli.sh</include>
+                        </includes>
+                    </resource>
+          </resources>
+        </configuration>
+      </execution>
+	   <execution>
+        <id>copy-resources-5</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/etc</outputDirectory>
+          <resources>
+            <resource>
+                        <directory>${project.basedir}/../authz-cmd/etc</directory>
+                        <includes>
+                            <include>**/**</include>
+                        </includes>
+                    </resource>
+          </resources>
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+				
 	            <plugin>
 	                <groupId>org.codehaus.mojo</groupId>
 	                <artifactId>exec-maven-plugin</artifactId>
