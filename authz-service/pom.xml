@@ -55,7 +55,7 @@
 		<project.swmVersion>1</project.swmVersion>
 			<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
 	    <dockerLocation>${basedir}/target/</dockerLocation>
-		<docker.registry>zlp11313.vci.att.com:5100</docker.registry>
+		<docker.registry>nexus3.onap.org</docker.registry>
 		<distFilesRootDirPath>opt/app/aaf/${project.artifactId}/${project.version}</distFilesRootDirPath>
 			<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -391,7 +391,6 @@
 					<nexusUrl>${nexusproxy}</nexusUrl>
 					<stagingProfileId>176c31dfe190a</stagingProfileId>
 					<serverId>ecomp-staging</serverId>
-					<skipNexusStagingDeployMojo>${skip.staging.artifacts}</skipNexusStagingDeployMojo>
 				</configuration>
 			</plugin>		
 			<plugin>
