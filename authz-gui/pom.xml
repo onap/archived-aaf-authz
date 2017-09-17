@@ -43,6 +43,7 @@
         <dependency>
             <groupId>com.att.authz</groupId>
             <artifactId>authz-core</artifactId>
+			<version>${project.version}</version>
             <exclusions>
 			  <exclusion> 
 					<groupId>javax.servlet</groupId>
@@ -54,6 +55,7 @@
         <dependency>
             <groupId>com.att.authz</groupId>
             <artifactId>authz-client</artifactId>
+			<version>${project.version}</version>
         </dependency>
         
      <!--    <dependency>
@@ -65,6 +67,7 @@
         <dependency>
             <groupId>com.att.authz</groupId>
             <artifactId>authz-cmd</artifactId>
+			<version>${project.version}</version>
             <exclusions>
 		      <exclusion> 
 		        <groupId>org.slf4j</groupId>
@@ -80,16 +83,19 @@
 		<dependency> 
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-aaf</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency> 
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-tguard</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency> 
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
@@ -100,6 +106,7 @@
 		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>xgen</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 	</dependencies>

@@ -74,11 +74,13 @@
     <dependency>
       <groupId>org.onap.aaf.cadi</groupId>
       <artifactId>cadi-core</artifactId>
+	  <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.onap.aaf.authz</groupId>
       <artifactId>authz-core</artifactId>
+	  <version>${project.version}</version>
     </dependency>
     
     <dependency>

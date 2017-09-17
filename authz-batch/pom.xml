@@ -43,21 +43,25 @@
 		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>env</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>rosetta</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
  		<dependency>
 	        <groupId>org.onap.aaf.cadi</groupId>
 	        <artifactId>cadi-core</artifactId>
+			<version>${project.version}</version>
 	    </dependency>
 
  		<dependency>
 	        <groupId>org.onap.aaf.cadi</groupId>
 	        <artifactId>cadi-aaf</artifactId>
+			<version>${project.version}</version>
 	    </dependency>
 
 
@@ -87,8 +91,9 @@
 		</dependency>   -->
 		
 		<dependency>
-			<groupId>com.att.authz</groupId>
+			<groupId>prg.onap.aaf.authz</groupId>
 			<artifactId>authz-cass</artifactId>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion> 
  					<groupId>javax.servlet</groupId>

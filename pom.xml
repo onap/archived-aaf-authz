@@ -348,7 +348,6 @@
 		<module>authz-core</module>
 		<module>authz-cass</module>
 		<module>authz-defOrg</module>
-		<module>authz-service</module>
  		<module>authz-cmd</module>
  		<!--  <module>authz-batch</module>-->
  		<module>authz-test</module>
@@ -356,6 +355,7 @@
  		<module>authz-gw</module>
  		<module>authz-certman</module>
  		<module>authz-fs</module>
+		<module>authz-service</module>
  	</modules>
 	
 	<dependencyManagement>

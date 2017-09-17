@@ -69,18 +69,22 @@
 		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>env</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>log4j</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>rosetta</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-aaf</artifactId>
+			<version>${project.version}</version>
 				<exclusions>
 				  <exclusion> 
  					<groupId>javax.servlet</groupId>
