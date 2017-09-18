@@ -15,94 +15,18 @@ DEPLOYED_VERSION=2.0.SAMPLE
 DMEServiceName=service=org.onap.aaf.authz.AuthorizationService/version=2.0/envContext=DEV/routeOffer=BAU_SE
 
 #DME2 can limit Port Ranges with the following:
-#AFT_DME2_PORT_RANGE=8101-8029,8100
+AFT_DME2_PORT_RANGE=8101-8101,8100
 #DME2 picks any unused port in +1024 range
 #AFT_DME2_PORT=0
 AFT_DME2_ALLOW_PORT_CACHING=false
-aaf_root_ns=org.openecomp
+
 
 # Point to "Common" files, used between all the AAF Services. ... 
 
-# DEVELOPER ONLY SETTING!!!!!  DO NOT USE on ANY BOX other than your Developer box, and it
-# would be better if you got a Cert for that, and remove this!  There is nothing stupider than
-# an unsecured Security Service.
-cadi_trust_all_x509=true
-
-# Public (i.e. Verisign) Key stores.
-# AFT_DME2_KEYSTORE=
-# AFT_DME2_KEYSTORE_PASSWORD=
-# AFT_DME2_KEY_PASSWORD=
-# cadi_truststore=
-# cadi_truststore_password=
-
-# Standard for this App/Machine
-aaf_env=DEV
-aaf_data_dir=../data
-cadi_loglevel=WARN
-aaf_id=<osaaf's Application Identity>
-aaf_password=enc:31-LFPNtP9Yl1DZKAz1rx8N8YfYVY8VKnnDr
-
-aaf_conn_timeout=6000
-aaf_timeout=10000
-aaf_user_expires=600000
-aaf_clean_interval=45000
-aaf_refresh_trigger_count=3
-aaf_high_count=30000
-
-# Basic Auth
-aaf_default_realm=openecomp.org
-#aaf_domain_support=.org
-basic_realm=openecomp.org
-basic_warn=false
-aaf_root_ns=org.openecomp
-localhost_deny=false
-
-
-# Cassandra
-# IP:Cass DataCenter:Latitude:Longitude,IP....
-cassandra.clusters=127.0.0.1
-cassandra.clusters.port=9042
-cassandra.clusters.user=authz
-cassandra.clusters.password=authz
-## Exceptions from Cassandra which require resetting the Cassandra Connections
-cassandra.reset.exceptions=com.datastax.driver.core.exceptions.NoHostAvailableException:"no host was tried":"Connection has been closed"
-
-# Consistency Settings
-cassandra.writeConsistency.ns=LOCAL_QUORUM
-cassandra.writeConsistency.perm=LOCAL_QUORUM
-cassandra.writeConsistency.role=LOCAL_QUORUM
-cassandra.writeConsistency.user_role=LOCAL_QUORUM
-cassandra.writeConsistency.cred=LOCAL_QUORUM
-cassandra.writeConsistency.ns_attrib=LOCAL_QUORUM
-
-## Supported Plugin Organizational Units
-Organization.com.osaaf=org.onap.aaf.osaaf.defOrg.DefaultOrg
-
-## Email Server settings for Def Organization.
-#Sender's email ID needs to be mentioned
-com.osaaf.mailFromUserId=mailid@bogus.com
-com.osaaf.supportEmail=support@bogus.com
-com.osaaf.mailHost=smtp.bogus.com
-
-# Standard AAF DME2 Props
-AFT_DME2_REMOVE_PERSISTENT_CACHE_ON_STARTUP=TRUE
-AFT_DME2_DISABLE_PERSISTENT_CACHE=TRUE
-AFT_DME2_DISABLE_PERSISTENT_CACHE_LOAD=TRUE
-
-## SSL OPTIONAL ONLY IN DEVELOPMENT PC/Local... WHATEVER YOU DO, don't use this on any box than your local PC
-AFT_DME2_SSL_ENABLE=false
-# for when you turn on SSL... Only TLSv1.1+ is secure as of 2016
-AFT_DME2_SSL_WANT_CLIENT_AUTH=TRUE
-AFT_DME2_SSL_INCLUDE_PROTOCOLS=TLSv1.1,TLSv1.2
-AFT_DME2_SSL_VALIDATE_CERTS=FALSE
-AFT_DME2_CLIENT_IGNORE_SSL_CONFIG=false
-
-## Extra CA Trusts, for Certifiate Manager to build truststore with external CAs
-cm_trust_cas=VerisignG3_CA.cer;VerisignG4_CA.cer;VerisignG5_CA.cer
 
 
 #cadi_prop_files=com.osaaf.common.props;com.osaaf.props
-cadi_prop_files=opt/app/aaf/authz-service/1.0.0-SNAPSHOT/etc/com.osaaf.common.props;opt/app/aaf/authz-service/1.0.0-SNAPSHOT/etc/com.osaaf.props
+cadi_prop_files=opt/app/aaf/authz-service/etc/com.osaaf.common.props:opt/app/aaf/authz-service/etc/com.osaaf.props
 CACHE_HIGH_COUNT=40000
 CACHE_CLEAN_INTERVAL=60000
 

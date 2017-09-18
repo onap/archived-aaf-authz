@@ -17,7 +17,7 @@ cadi_trust_all_x509=true
 
 # Standard for this App/Machine
 aaf_env=DEV
-aaf_data_dir=../data
+aaf_data_dir=opt/app/aaf/authz-service/etc/data
 cadi_loglevel=WARN
 aaf_id=<osaaf's Application Identity>
 aaf_password=enc:31-LFPNtP9Yl1DZKAz1rx8N8YfYVY8VKnnDr
@@ -56,7 +56,7 @@ cassandra.writeConsistency.cred=LOCAL_QUORUM
 cassandra.writeConsistency.ns_attrib=LOCAL_QUORUM
 
 ## Supported Plugin Organizational Units
-Organization.com.osaaf=org.onap.aaf.osaaf.defOrg.DefaultOrg
+Organization.org=org.onap.aaf.osaaf.defOrg.DefaultOrg
 
 ## Email Server settings for Def Organization.
 #Sender's email ID needs to be mentioned
