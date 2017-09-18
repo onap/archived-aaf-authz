@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>org.onap.aaf.authz</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 		
@@ -53,7 +53,8 @@
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.swmVersion>1</project.swmVersion>
-			<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
+			<project.innoVersion>1.0.0-SNAPSHOT</project.innoVersion>
+		<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
 	    <dockerLocation>${basedir}/target/</dockerLocation>
 		<docker.registry>nexus3.onap.org</docker.registry>
 		<distFilesRootDirPath>opt/app/aaf/${project.artifactId}/${project.version}</distFilesRootDirPath>
@@ -113,14 +114,14 @@
         <dependency > 
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>env</artifactId>
-			<version>${project.version}</version>
+			<version>${project.innoVersion}</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-core</artifactId>
-			<version>${project.version}</version>
+			<version>${project.cadiVersion}</version>
 		</dependency>
 
 		<dependency>
@@ -131,12 +132,12 @@
  		<dependency>
 			<groupId>org.onap.aaf.inno</groupId>
 			<artifactId>rosetta</artifactId>
-			<version>${project.version}</version>
+			<version>${project.innoVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-aaf</artifactId>
-			<version>${project.version}</version>
+			<version>${project.cadiVersion}</version>
 		</dependency>   
 	</dependencies>
 	
@@ -224,7 +225,7 @@
           <goal>copy-resources</goal>
         </goals>
         <configuration>
-          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/etc</outputDirectory>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/etc</outputDirectory>
           <resources>
             <resource>
                         <directory>${project.basedir}/src/main/resources/etc</directory>
@@ -243,12 +244,12 @@
           <goal>copy-resources</goal>
         </goals>
         <configuration>
-          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/lib</outputDirectory>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/lib</outputDirectory>
           <resources>
             <resource>
                         <directory>${project.basedir}/../authz-cmd/target</directory>
                         <includes>
-                            <include>**/authz-cmd-1.0.0-SNAPSHOT-jar-with-dependencies.jar</include>
+                            <include>**/*.jar</include>
                         </includes>
                     </resource>
           </resources>
@@ -261,7 +262,7 @@
           <goal>copy-resources</goal>
         </goals>
         <configuration>
-          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}</outputDirectory>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/</outputDirectory>
           <resources>
             <resource>
                         <directory>${project.basedir}/../authz-cmd</directory>
@@ -272,17 +273,17 @@
           </resources>
         </configuration>
       </execution>
-	   <execution>
+		<execution>
         <id>copy-resources-5</id>
         <phase>validate</phase>
         <goals>
           <goal>copy-resources</goal>
         </goals>
         <configuration>
-          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/etc</outputDirectory>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/etc/</outputDirectory>
           <resources>
             <resource>
-                        <directory>${project.basedir}/../authz-cmd/etc</directory>
+                        <directory>${project.basedir}/src/main/config</directory>
                         <includes>
                             <include>**/**</include>
                         </includes>
@@ -290,6 +291,24 @@
           </resources>
         </configuration>
       </execution>
+	  <execution>
+        <id>copy-resources-6</id>
+        <phase>validate</phase>
+        <goals>
+          <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+          <outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/etc/data</outputDirectory>
+          <resources>
+            <resource>
+                        <directory>${project.basedir}/../opt/app/aaf/data</directory>
+                        <includes>
+                            <include>**/**</include>
+                        </includes>
+                    </resource>
+          </resources>
+        </configuration>
+		</execution>
     </executions>
   </plugin>
 			<plugin>
@@ -304,7 +323,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/${project.version}/lib</outputDirectory>
+							<outputDirectory>${project.build.directory}/opt/app/aaf/authz-service/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -350,14 +369,7 @@
 					</configuration>
 					<version>2.3.1</version>
 				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
-			    </plugin>  
+ 
 
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>

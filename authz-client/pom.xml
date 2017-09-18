@@ -31,7 +31,7 @@
 	<name>Authz Client</name>
 	<description>Client and XSD Generated code for Authz</description>
 	<groupId>org.onap.aaf.authz</groupId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<url>https://github.com/att/AAF</url>
 	<licenses>
@@ -104,14 +104,7 @@
 						<target>1.6</target>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.5</version>
-					<configuration>
-						<skip>false</skip>
-					</configuration>
-				</plugin>
+				
 
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->

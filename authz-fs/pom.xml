@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>org.onap.aaf.authz</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 		
@@ -53,7 +53,8 @@
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.swmVersion>9</project.swmVersion>
-			<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
+		<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
+	     <project.innoVersion>1.0.0-SNAPSHOT</project.innoVersion>
 			<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
@@ -78,7 +79,7 @@
         <dependency> 
 			<groupId>org.onap.aaf.cadi</groupId>
 			<artifactId>cadi-core</artifactId>
-			<version>${project.version}</version>
+			<version>${project.cadiVersion}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.att.aft</groupId>
@@ -98,17 +99,8 @@
 					</configuration>
 					<version>2.3.1</version>
 				</plugin>
-
-			    <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
-			    </plugin>
 				
-				
-									<plugin>
+			<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-javadoc-plugin</artifactId>
 			<configuration>

@@ -1,8 +1,8 @@
 
-LIB=/opt/app/aaf/authz-service/1.0.0-SNAPSHOT/lib
+LIB=/media/sf_Users/sg481n/AAF-DOC/authz/authz-service/target/opt/app/aaf/authz-service/lib
 
-ETC=/opt/app/aaf/authz-service/1.0.0-SNAPSHOT/etc
-DME2REG=/opt/dme2reg
+ETC=/media/sf_Users/sg481n/AAF-DOC/authz/authz-service/target/opt/app/aaf/authz-service/etc
+DME2REG=/media/sf_Users/sg481n/AAF-DOC/authz/authz-service/target/opt/dme2reg
 
 echo "this is LIB" $LIB
 echo "this is ETC" $ETC

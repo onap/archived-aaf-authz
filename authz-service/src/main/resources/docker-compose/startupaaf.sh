@@ -1,9 +1,9 @@
 # lji: this startup file shadows the existing extry point startup.sh file of the container
 # because we need to pass in the cassandra cluster location 
 
-LIB=/opt/app/aaf/authz-service/2.0.15/lib
+LIB=/opt/app/aaf/authz-service/lib
 
-ETC=/opt/app/aaf/authz-service/2.0.15/etc
+ETC=/opt/app/aaf/authz-service/etc
 DME2REG=/opt/dme2reg
 
 echo "this is LIB" $LIB
@@ -15,7 +15,7 @@ for FILE in `find $LIB -name *.jar`; do
   CLASSPATH=$CLASSPATH:$FILE
 done
 
-FILEPATHS="/opt/app/aaf/common/com.osaaf.common.props /opt/app/aaf/authz-service/2.0.15/etc/com.osaaf.common.props"
+FILEPATHS="/opt/app/aaf/authz-service/etc/com.osaaf.common.props /opt/app/aaf/authz-service/etc/com.osaaf.common.props"
 for FILEPATH in $FILEPATHS: 
 do 
   if [ -e ${FILEPATH} ]; then
@@ -26,7 +26,9 @@ do
 done
 
 
-java -classpath $CLASSPATH -DDME2_EP_REGISTRY_CLASS=DME2FS -DAFT_DME2_EP_REGISTRY_FS_DIR=$DME2REG com.att.authz.service.AuthAPI
+java -classpath $CLASSPATH -DDME2_EP_REGISTRY_CLASS=DME2FS -DAFT_DME2_EP_REGISTRY_FS_DIR=$DME2REG org.onap.aaf.authz.service.AuthAPI
 
 # keet it running so we can check fs
 while sleep 2; do echo thinking; done
+
+
