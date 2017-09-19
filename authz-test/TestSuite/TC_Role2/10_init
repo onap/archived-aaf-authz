@@ -1,8 +1,0 @@
-as testid@aaf.att.com
-# TC_Role2.10.0.POS Print NS to prove ok
-expect 200
-ns list name com.test.TC_Role2.@[user.name] 
-
-# TC_Role2.10.1.POS Create Namespace with valid IDs and Responsible Parties
-expect 201
-ns create com.test.TC_Role2.@[user.name] @[user.name] testid@aaf.att.com

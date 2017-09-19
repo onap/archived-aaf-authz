@@ -1,8 +1,0 @@
-as XX@NS
-expect 200
-ns list name com.test.TC_NS3.@[user.name] 
-
-# TC_NS3.10.1.POS Create Namespace with User ID
-expect 201
-ns create com.test.TC_NS3.@[user.name]_1 @[user.name] testid_1@test.com
-
