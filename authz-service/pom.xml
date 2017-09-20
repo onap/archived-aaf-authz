@@ -141,6 +141,8 @@
 		</dependency>   
 	</dependencies>
 	
+<profiles>
+ <profile>
 	<build>
 	    <plugins>
 		<plugin>
@@ -468,7 +470,8 @@
 			</plugins>
 
 	</build>
-
+</profile>
+	</profiles>
 		<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>

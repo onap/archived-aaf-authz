@@ -89,7 +89,8 @@
       		<artifactId>mail</artifactId>
     	</dependency> 
   </dependencies>
-
+<profiles>
+	<profile>
 	<build>
 		<pluginManagement>
 		<plugins>
@@ -158,6 +159,8 @@
 		</plugins>
 		</pluginManagement>
 	</build>
+	</profile>
+	</profiles>
 	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>

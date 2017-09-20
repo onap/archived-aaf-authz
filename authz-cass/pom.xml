@@ -112,6 +112,8 @@
 		
 	
 	</dependencies>
+<profiles>
+	<profile>
 	<build>
 		<plugins>
 			<plugin>
@@ -214,6 +216,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	</profile>
+	</profiles>
 	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>
