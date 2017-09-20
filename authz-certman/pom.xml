@@ -100,7 +100,8 @@
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 	</dependencies>
-	
+	<profiles>
+	<profile>
 	<build>
 		<plugins>
             <plugin>
@@ -215,6 +216,8 @@
 			<plugins/>
 		</pluginManagement>
 	</build>
+	</profile>
+	</profiles>
 <distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>

@@ -112,7 +112,8 @@
 		</dependency>
 		
 	</dependencies>
-	
+	<profiles>
+	<profile>
 	<build>
 		<plugins>
             <plugin>
@@ -250,5 +251,6 @@
 			<plugins/>
 		</pluginManagement>
 	</build>
-
+</profile>
+	</profiles>
 </project>
