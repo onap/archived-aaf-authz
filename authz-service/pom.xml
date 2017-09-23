@@ -69,7 +69,7 @@
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
-		<sitePath>/content/sites/site/${project.groupId}/${project.artifactId}/${project.version}</sitePath>
+		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
 	</properties>
 	
 		
@@ -144,33 +144,7 @@
    <profile>	
 	<build>
 	    <plugins>
-		<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <id>copy-docker-file</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${dockerLocation}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources/docker</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+		
 			<plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -201,6 +175,26 @@
     <artifactId>maven-resources-plugin</artifactId>
     <version>2.7</version>
     <executions>
+	 <execution>
+                        <id>copy-docker-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dockerLocation}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources/docker</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
       <execution>
         <id>copy-resources-1</id>
         <phase>validate</phase>
@@ -375,6 +369,7 @@
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-javadoc-plugin</artifactId>
+			<version>2.10.4</version>
 			<configuration>
 			<failOnError>false</failOnError>
 			</configuration>
@@ -487,32 +482,5 @@
 			<url>dav:${nexusproxy}${sitePath}</url>
 		</site>
 	</distributionManagement>
-<pluginRepositories>
-        <pluginRepository>
-            <id>onap-plugin-snapshots</id>
-            <url>https://nexus.onap.org/content/repositories/snapshots/</url>
-        </pluginRepository>
-    </pluginRepositories>
-	
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Maven 2 repository 2</name>
-			<url>http://repo2.maven.org/maven2/</url>
-		</repository>
-		<repository>
-            <id>onap-jar-snapshots</id>
-            <url>https://nexus.onap.org/content/repositories/snapshots</url>
-        </repository>
-		<repository>
-			<id>spring-repo</id>
-			<name>Spring repo</name>
-			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
-		</repository>
-		<repository>
-			<id>repository.jboss.org-public</id>
-			<name>JBoss.org Maven repository</name>
-			<url>https://repository.jboss.org/nexus/content/groups/public</url>
-		</repository>
-	</repositories>
+
 </project>

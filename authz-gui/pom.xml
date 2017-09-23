@@ -36,8 +36,24 @@
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.swmVersion>28</project.swmVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<skipTests>false</skipTests>
+		<project.interfaceVersion>1.0.0-SNAPSHOT</project.interfaceVersion>
 		<project.innoVersion>1.0.0-SNAPSHOT</project.innoVersion>
 		<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
+		<project.dme2Version>3.1.200</project.dme2Version>
+		<sonar.language>java</sonar.language>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.surefire.reportsPath>${project.build.directory}/surefire-reports</sonar.surefire.reportsPath>
+		<sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${project.build.directory}/coverage-reports/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
+		<sonar.projectVersion>${project.version}</sonar.projectVersion>
+		<nexusproxy>https://nexus.onap.org</nexusproxy>
+		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
+		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
 	</properties>
 	
 		
@@ -152,6 +168,7 @@
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-javadoc-plugin</artifactId>
+			<version>2.10.4</version>
 			<configuration>
 			<failOnError>false</failOnError>
 			</configuration>
@@ -163,7 +180,7 @@
 					</goals>
 				</execution>
 			</executions>
-		</plugin> 
+		</plugin>  
 	   
 	   
 	       <plugin>
@@ -241,14 +258,23 @@
                         </configuration>
                     </execution>
 				</executions>
-			</plugin>
-			
-	
-		
+			</plugin>					
 		</plugins>
-		<pluginManagement>
-			<plugins/>
-		</pluginManagement>
 	</build>
-
+<distributionManagement>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>AAF Release Repository</name>
+			<url>${nexusproxy}${releaseNexusPath}</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexusproxy}${sitePath}</url>
+		</site>
+	</distributionManagement>
 </project>

@@ -2,7 +2,7 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright © 2017 AT&T Intellectual Property. All rights reserved.
 
-AAF - Application Authorization FrameworK
+AAF - Application Authorization Framework
 ==================================================
 .. The purpose of AAF (Application Authorization Framework) is to organize software authorizations so that applications, tools and services can match the access needed to perform job functions.  
 
@@ -15,14 +15,16 @@ To be effective during a computer transaction, Security must not only be secure,
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   
+   AAF-API-Documentation/AAF-API-Documentation
 
    
 Introduction
 ------------
 AAF contains some elements of Role Based Authorization, but includes Attribute Based Authorization elements as well. 
 
-.. image:: aaf-om.jpeg
+.. image:: aaf-object-model.jpeg
    :height: 600 px
    :width: 800 px
    :scale: 100 %
