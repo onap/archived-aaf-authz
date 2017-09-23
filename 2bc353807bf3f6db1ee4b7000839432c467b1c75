@@ -1,0 +1,8 @@
+Code-Review-1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: varun gudisena <vg411h@att.com>
+Verified+1: varun gudisena <vg411h@att.com>
+Submitted-by: varun gudisena <vg411h@att.com>
+Submitted-at: Sat, 23 Sep 2017 17:41:45 +0000
+Reviewed-on: http://gerrit.onap.org/r/14843
+Project: aaf/authz
+Branch: refs/heads/master
