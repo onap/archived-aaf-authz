@@ -24,12 +24,11 @@ Introduction
 ------------
 AAF contains some elements of Role Based Authorization, but includes Attribute Based Authorization elements as well. 
 
-.. image:: aaf-object-model.jpeg
-   :height: 600 px
-   :width: 800 px
-   :scale: 100 %
-   :alt: AAF highlevel Object Model
-   :align: center
+|image0|
+
+.. |image0| image:: aaf-object-model.jpeg
+   :height: 600px
+   :width: 800px
 
 
 Essential Components
