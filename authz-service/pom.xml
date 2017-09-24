@@ -155,7 +155,7 @@
         <version>1.0.0</version>
         <configuration>
           <imageName>onap/aaf/authz-service</imageName>
-         <dockerDirectory>src/main/resources/docker</dockerDirectory>
+         <dockerDirectory>${dockerLocation}</dockerDirectory>
           <imageTags>
             <imageTag>latest</imageTag>
             <imageTag>${project.docker.latesttagtimestamp.version}</imageTag>
