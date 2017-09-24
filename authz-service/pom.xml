@@ -70,11 +70,6 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-		
-        <docker.push.registry>localhost:5000</docker.push.registry>
-        <skip.docker.build>true</skip.docker.build>
-        <skip.docker.push>true</skip.docker.push>
-        <skip.staging.artifacts>false</skip.staging.artifacts>
 	</properties>
 	
 		
@@ -161,8 +156,6 @@
           <serverId>docker-hub</serverId>
           <imageTags>
             <imageTag>latest</imageTag>
-            <imageTag>${project.docker.latesttagtimestamp.version}</imageTag>
-            <imageTag>${project.docker.latesttag.version}</imageTag>
           </imageTags>
           <forceTags>true</forceTags>
 		  <resources>
@@ -177,87 +170,23 @@
          </resources>  
         </configuration>
         <executions>
-          <execution>
-            <id>build-image</id>
-            <phase>package</phase>
-            <goals>
-              <goal>build</goal>
-            </goals>
-            <configuration>
-              <skipDockerBuild>${skip.docker.build}</skipDockerBuild>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>tag-image-latest-timestamp</id>
-            <phase>package</phase>
-            <goals>
-              <goal>tag</goal>
-            </goals>
-            <configuration>
-              <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</newName>
-              <skipDockerTag>${skip.docker.push}</skipDockerTag>
-            </configuration>
-          </execution>
-          <execution>
-            <id>push-image-latest-timestamp</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>push</goal>
-            </goals>
-            <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</imageName>
-              <skipDockerPush>${skip.docker.push}</skipDockerPush>
-            </configuration>
-          </execution>
-          <execution>
-            <id>tag-image-latest</id>
-            <phase>package</phase>
-            <goals>
-              <goal>tag</goal>
-            </goals>
-            <configuration>
-              <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</newName>
-              <skipDockerTag>${skip.docker.push}</skipDockerTag>
-            </configuration>
-          </execution>
-          <execution>
-            <id>push-image-latest</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>push</goal>
-            </goals>
-            <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</imageName>
-              <skipDockerPush>${skip.docker.push}</skipDockerPush>
-            </configuration>
-          </execution>
-          <execution>
-            <id>tag-image</id>
-            <phase>package</phase>
-            <goals>
-              <goal>tag</goal>
-            </goals>
-            <configuration>
-              <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:latest</newName>
-              <skipDockerTag>${skip.docker.push}</skipDockerTag>
-            </configuration>
-          </execution>
-          <execution>
-            <id>push-image</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>push</goal>
-            </goals>
-            <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:latest</imageName>
-              <skipDockerPush>${skip.docker.push}</skipDockerPush>
-            </configuration>
-          </execution>
-        </executions>
+					<execution>
+						<id>generate-image</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+					
+					<execution>
+						<id>push-image</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
       </plugin>
 
 			<plugin>
