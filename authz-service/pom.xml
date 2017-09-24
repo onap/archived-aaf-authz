@@ -175,7 +175,7 @@
 		 
 		 </configuration>
         <executions>
-          <execution>
+       <!--   <execution>
             <id>build-image</id>
             <phase>package</phase>
             <goals>
@@ -184,7 +184,7 @@
             <configuration>
               <skipDockerBuild>${skip.docker.build}</skipDockerBuild>
             </configuration>
-          </execution>
+          </execution>  -->
 
           <execution>
             <id>tag-image-latest-timestamp</id>
