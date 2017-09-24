@@ -156,7 +156,6 @@
         <configuration>
           <imageName>onap/aaf/authz-service</imageName>
          <dockerDirectory>src/main/resources/docker</dockerDirectory>
-          <serverId>docker-hub</serverId>
           <imageTags>
             <imageTag>latest</imageTag>
             <imageTag>${project.docker.latesttagtimestamp.version}</imageTag>
