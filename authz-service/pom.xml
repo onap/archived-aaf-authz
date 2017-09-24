@@ -70,11 +70,6 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-		
-        <docker.push.registry>localhost:5000</docker.push.registry>
-        <skip.docker.build>true</skip.docker.build>
-        <skip.docker.push>true</skip.docker.push>
-        <skip.staging.artifacts>false</skip.staging.artifacts>
 	</properties>
 	
 		
@@ -183,9 +178,6 @@
             <goals>
               <goal>build</goal>
             </goals>
-            <configuration>
-              <skipDockerBuild>${skip.docker.build}</skipDockerBuild>
-            </configuration>
           </execution>
 
           <execution>
@@ -196,8 +188,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</newName>
-              <skipDockerTag>${skip.docker.push}</skipDockerTag>
+              <newName>onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</newName>
             </configuration>
           </execution>
           <execution>
@@ -207,8 +198,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</imageName>
-              <skipDockerPush>${skip.docker.push}</skipDockerPush>
+              <imageName>onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</imageName>
             </configuration>
           </execution>
           <execution>
@@ -219,8 +209,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</newName>
-              <skipDockerTag>${skip.docker.push}</skipDockerTag>
+              <newName>onap/aaf/authz-service:${project.docker.latesttag.version}</newName>
             </configuration>
           </execution>
           <execution>
@@ -230,9 +219,8 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</imageName>
-              <skipDockerPush>${skip.docker.push}</skipDockerPush>
-            </configuration>
+              <imageName>onap/aaf/authz-service:${project.docker.latesttag.version}</imageName>
+             </configuration>
           </execution>
           <execution>
             <id>tag-image</id>
@@ -242,9 +230,8 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:latest</newName>
-              <skipDockerTag>${skip.docker.push}</skipDockerTag>
-            </configuration>
+              <newName>onap/aaf/authz-service:latest</newName>
+             </configuration>
           </execution>
           <execution>
             <id>push-image</id>
@@ -253,8 +240,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:latest</imageName>
-              <skipDockerPush>${skip.docker.push}</skipDockerPush>
+              <imageName>onap/aaf/authz-service:latest</imageName>
             </configuration>
           </execution>
         </executions>
