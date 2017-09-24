@@ -56,7 +56,7 @@
 		<project.swmVersion>1</project.swmVersion>
 			<project.innoVersion>1.0.0-SNAPSHOT</project.innoVersion>
 		<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
-	    <dockerLocation>${basedir}/target/</dockerLocation>
+	    <!--<dockerLocation>${basedir}/target/</dockerLocation>  -->
 		<distFilesRootDirPath>opt/app/aaf/${project.artifactId}/${project.version}</distFilesRootDirPath>
 			<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -70,8 +70,6 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-		
-        <docker.push.registry>localhost:5000</docker.push.registry>
         <skip.docker.build>true</skip.docker.build>
         <skip.docker.push>true</skip.docker.push>
         <skip.staging.artifacts>false</skip.staging.artifacts>
@@ -157,7 +155,7 @@
         <version>1.0.0</version>
         <configuration>
           <imageName>onap/aaf/authz-service</imageName>
-          <dockerDirectory>${dockerLocation}</dockerDirectory>
+         <dockerDirectory>src/main/resources/docker</dockerDirectory>
           <serverId>docker-hub</serverId>
           <imageTags>
             <imageTag>latest</imageTag>
@@ -175,7 +173,8 @@
                             </includes>
             </resource>
          </resources>  
-        </configuration>
+		 
+		 </configuration>
         <executions>
           <execution>
             <id>build-image</id>
@@ -196,7 +195,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</newName>
+              <newName>onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</newName>
               <skipDockerTag>${skip.docker.push}</skipDockerTag>
             </configuration>
           </execution>
@@ -207,7 +206,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</imageName>
+              <imageName>onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</imageName>
               <skipDockerPush>${skip.docker.push}</skipDockerPush>
             </configuration>
           </execution>
@@ -219,7 +218,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</newName>
+              <newName>onap/aaf/authz-service:${project.docker.latesttag.version}</newName>
               <skipDockerTag>${skip.docker.push}</skipDockerTag>
             </configuration>
           </execution>
@@ -230,7 +229,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</imageName>
+              <imageName>onap/aaf/authz-service:${project.docker.latesttag.version}</imageName>
               <skipDockerPush>${skip.docker.push}</skipDockerPush>
             </configuration>
           </execution>
@@ -242,7 +241,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>${docker.push.registry}/onap/aaf/authz-service:latest</newName>
+              <newName>onap/aaf/authz-service:latest</newName>
               <skipDockerTag>${skip.docker.push}</skipDockerTag>
             </configuration>
           </execution>
@@ -253,18 +252,18 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>${docker.push.registry}/onap/aaf/authz-service:latest</imageName>
+              <imageName>onap/aaf/authz-service:latest</imageName>
               <skipDockerPush>${skip.docker.push}</skipDockerPush>
             </configuration>
           </execution>
         </executions>
       </plugin>
 
-			<plugin>
+
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
               <executions>
-	              <execution>
+	             <!-- <execution>
                         <id>copy-docker-file</id>
                         <phase>package</phase>
                         <goals>
@@ -283,7 +282,7 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
+                    </execution>  -->
       <execution>
         <id>copy-resources-1</id>
         <phase>validate</phase>
