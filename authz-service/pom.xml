@@ -70,6 +70,9 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
+        <skip.docker.build>false</skip.docker.build>
+        <skip.docker.tag>false</skip.docker.tag>
+        <skip.docker.push>false</skip.docker.push>
 	</properties>
 	
 		
@@ -141,23 +144,25 @@
 		</dependency>   
 	</dependencies>
 
-	
+	<profiles>
+    <profile>
+      
 	<build>
 	    <plugins>
 		
-			<plugin>
+		<plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.11</version>
                 <configuration>
                     <imageName>onap/aaf/authz-service</imageName>
                     <dockerDirectory>${dockerLocation}</dockerDirectory>
-                    <serverId>docker-hub</serverId>
-                     <registryUrl>https://${docker.registry}</registryUrl>
+					<serverId>docker-hub</serverId>
                     <imageTags>
                         <imageTag>${project.version}</imageTag>
                         <imageTag>latest</imageTag>
                     </imageTags>
+					 <forceTags>true</forceTags>
 					     <resources>
                                 <resource>
 								<targetPath>/</targetPath>
@@ -167,15 +172,44 @@
                                         <include>**/*</include>
                                     </includes>
                                 </resource>
-                            </resources>
-                    <forceTags>true</forceTags>
+                            </resources>                  
                 </configuration>
+				<executions>
+          <execution>
+            <id>build-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <skipDockerBuild>${skip.docker.build}</skipDockerBuild>
+              <buildArgs>
+                <http_proxy>${env.HTTP_PROXY}</http_proxy>
+                <https_proxy>${env.HTTPS_PROXY}</https_proxy>
+              </buildArgs>
+            </configuration>
+          </execution>
+		  <execution>
+            <id>docker</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <imageName>onap/aaf/authz-service</imageName>
+              <skipDockerPush>${skip.docker.push}</skipDockerPush>
+            </configuration>
+          </execution>
+          
+		  </executions>
             </plugin>
+			
+			
 			<plugin>
-    <artifactId>maven-resources-plugin</artifactId>
-    <version>2.7</version>
-    <executions>
-	 <execution>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+              <executions>
+	              <execution>
                         <id>copy-docker-file</id>
                         <phase>package</phase>
                         <goals>
@@ -464,15 +498,6 @@
 			</plugins>
 
 	</build>
-	<profiles>
-    <profile>
-      <id>docker</id>
-      <properties>
-        <skip.staging.artifacts>true</skip.staging.artifacts>
-        <skip.docker.build>false</skip.docker.build>
-        <skip.docker.tag>false</skip.docker.tag>
-        <skip.docker.push>false</skip.docker.push>
-      </properties>
     </profile>
   </profiles>
 
