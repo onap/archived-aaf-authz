@@ -155,27 +155,39 @@
         <version>1.0.0</version>
         <configuration>
           <imageName>onap/aaf/authz-service</imageName>
-         <dockerDirectory>${dockerLocation}</dockerDirectory>
+         <!-- <dockerDirectory>${dockerLocation}</dockerDirectory> -->
+		  <dockerDirectory>${basedir}/src/main/resources/docker</dockerDirectory>
           <imageTags>
             <imageTag>latest</imageTag>
             <imageTag>${project.docker.latesttagtimestamp.version}</imageTag>
             <imageTag>${project.docker.latesttag.version}</imageTag>
           </imageTags>
           <forceTags>true</forceTags>
-		  <resources>
+		 <!-- <resources>
             <resource>
 			    <targetPath>/</targetPath>
                     <directory>${project.build.directory}/opt</directory>
                     <filtering>true</filtering>
                      <includes>
-                        <include>**/*</include>
+                        <include>**/**</include>
                             </includes>
             </resource>
-         </resources>  
-		 
+         </resources>  -->		 
+		   <resources>
+            <resource>
+              <targetPath>/</targetPath>
+              <directory>${project.build.directory}/opt</directory>
+              <include>${project.build.finalName}.jar</include>
+            </resource>
+            <resource>
+              <targetPath>/</targetPath>
+              <directory>${project.build.directory}</directory>
+              <include>**/**</include>
+            </resource>
+          </resources>
 		 </configuration>
         <executions>
-       <!--   <execution>
+       <execution>
             <id>build-image</id>
             <phase>package</phase>
             <goals>
@@ -184,7 +196,7 @@
             <configuration>
               <skipDockerBuild>${skip.docker.build}</skipDockerBuild>
             </configuration>
-          </execution>  -->
+          </execution> 
 
           <execution>
             <id>tag-image-latest-timestamp</id>
