@@ -51,12 +51,12 @@
 	</developers>
 
 	<properties>
+	<maven.build.timestamp.format>yyyy.MM.dd'T'hh.mm.ss'Z'</maven.build.timestamp.format>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<project.swmVersion>1</project.swmVersion>
 			<project.innoVersion>1.0.0-SNAPSHOT</project.innoVersion>
 		<project.cadiVersion>1.0.0-SNAPSHOT</project.cadiVersion>
 	    <dockerLocation>${basedir}/target/</dockerLocation>
-		<docker.registry>nexus3.onap.org</docker.registry>
 		<distFilesRootDirPath>opt/app/aaf/${project.artifactId}/${project.version}</distFilesRootDirPath>
 			<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -70,9 +70,11 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-        <skip.docker.build>false</skip.docker.build>
-        <skip.docker.tag>false</skip.docker.tag>
-        <skip.docker.push>false</skip.docker.push>
+		
+        <docker.push.registry>localhost:5000</docker.push.registry>
+        <skip.docker.build>true</skip.docker.build>
+        <skip.docker.push>true</skip.docker.push>
+        <skip.staging.artifacts>false</skip.staging.artifacts>
 	</properties>
 	
 		
@@ -144,37 +146,37 @@
 		</dependency>   
 	</dependencies>
 
-	<profiles>
-    <profile>
-      
+
 	<build>
 	    <plugins>
+	
 		
-		<plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.11</version>
-                <configuration>
-                    <imageName>onap/aaf/authz-service</imageName>
-                    <dockerDirectory>${dockerLocation}</dockerDirectory>
-					<serverId>docker-hub</serverId>
-                    <imageTags>
-                        <imageTag>${project.version}</imageTag>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-					 <forceTags>true</forceTags>
-					     <resources>
-                                <resource>
-								<targetPath>/</targetPath>
-                                    <directory>/${basedir}/target/opt</directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>                  
-                </configuration>
-				<executions>
+<plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <imageName>onap/aaf/authz-service</imageName>
+          <dockerDirectory>${dockerLocation}</dockerDirectory>
+          <serverId>docker-hub</serverId>
+          <imageTags>
+            <imageTag>latest</imageTag>
+            <imageTag>${project.docker.latesttagtimestamp.version}</imageTag>
+            <imageTag>${project.docker.latesttag.version}</imageTag>
+          </imageTags>
+          <forceTags>true</forceTags>
+		  <resources>
+            <resource>
+			    <targetPath>/</targetPath>
+                    <directory>/${basedir}/target/opt</directory>
+                    <filtering>true</filtering>
+                     <includes>
+                        <include>**/*</include>
+                            </includes>
+            </resource>
+         </resources>  
+        </configuration>
+        <executions>
           <execution>
             <id>build-image</id>
             <phase>package</phase>
@@ -189,21 +191,83 @@
               </buildArgs>
             </configuration>
           </execution>
-		  <execution>
-            <id>docker</id>
+
+          <execution>
+            <id>tag-image-latest-timestamp</id>
+            <phase>package</phase>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <image>onap/aaf/authz-service</image>
+              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</newName>
+              <skipDockerTag>${skip.docker.push}</skipDockerTag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image-latest-timestamp</id>
             <phase>deploy</phase>
             <goals>
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>onap/aaf/authz-service</imageName>
+              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttagtimestamp.version}</imageName>
               <skipDockerPush>${skip.docker.push}</skipDockerPush>
             </configuration>
           </execution>
-          
-		  </executions>
-            </plugin>
-			
+          <execution>
+            <id>tag-image-latest</id>
+            <phase>package</phase>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <image>onap/aaf/authz-service</image>
+              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</newName>
+              <skipDockerTag>${skip.docker.push}</skipDockerTag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image-latest</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.docker.latesttag.version}</imageName>
+              <skipDockerPush>${skip.docker.push}</skipDockerPush>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tag-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>tag</goal>
+            </goals>
+            <configuration>
+              <image>onap/aaf/authz-service</image>
+              <newName>${docker.push.registry}/onap/aaf/authz-service:latest</newName>
+              <skipDockerTag>${skip.docker.push}</skipDockerTag>
+            </configuration>
+          </execution>
+          <execution>
+            <id>push-image</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <imageName>${docker.push.registry}/onap/aaf/authz-service:latest</imageName>
+              <skipDockerPush>${skip.docker.push}</skipDockerPush>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+
+		
 			
 			<plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -498,8 +562,7 @@
 			</plugins>
 
 	</build>
-    </profile>
-  </profiles>
+
 
 		<distributionManagement>
 		<repository>
@@ -517,5 +580,15 @@
 			<url>dav:${nexusproxy}${sitePath}</url>
 		</site>
 	</distributionManagement>
-
+ <profiles>
+    <profile>
+      <id>docker</id>
+      <properties>
+        <skip.staging.artifacts>true</skip.staging.artifacts>
+        <skip.docker.build>false</skip.docker.build>
+        <skip.docker.tag>false</skip.docker.tag>
+        <skip.docker.push>false</skip.docker.push>
+      </properties>
+    </profile>
+  </profiles>
 </project>
