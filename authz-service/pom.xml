@@ -66,6 +66,7 @@
 		<sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
 		<sonar.projectVersion>${project.version}</sonar.projectVersion>
         <nexusproxy>https://nexus.onap.org</nexusproxy>
+		<docker.push.registry>localhost:5000</docker.push.registry>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
@@ -146,6 +147,7 @@
 
 
 	<build>
+	<finalName>authz-service</finalName>
 	    <plugins>
 	
 		
@@ -206,7 +208,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>onap/aaf/authz-service:${project.version}</newName>
+              <newName>${docker.push.registry}/onap/aaf/authz-service:${project.version}</newName>
               <skipDockerTag>${skip.docker.push}</skipDockerTag>
             </configuration>
           </execution>
@@ -219,7 +221,7 @@
             </goals>
             <configuration>
               <image>onap/aaf/authz-service</image>
-              <newName>onap/aaf/authz-service:latest</newName>
+              <newName>${docker.push.registry}/onap/aaf/authz-service:latest</newName>
               <skipDockerTag>${skip.docker.push}</skipDockerTag>
             </configuration>
           </execution>
@@ -231,7 +233,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>onap/aaf/authz-service:${project.version}</imageName>
+              <imageName>${docker.push.registry}/onap/aaf/authz-service:${project.version}</imageName>
               <skipDockerPush>${skip.docker.push}</skipDockerPush>
             </configuration>
           </execution>
@@ -243,7 +245,7 @@
               <goal>push</goal>
             </goals>
             <configuration>
-              <imageName>onap/aaf/authz-service:latest</imageName>
+              <imageName>${docker.push.registry}/onap/aaf/authz-service:latest</imageName>
               <skipDockerPush>${skip.docker.push}</skipDockerPush>
             </configuration>
           </execution>
