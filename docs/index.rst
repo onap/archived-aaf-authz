@@ -18,6 +18,7 @@ To be effective during a computer transaction, Security must not only be secure,
    :maxdepth: 2
    
    AAF-API-Documentation/AAF-API-Documentation
+    AAF-API-Documentation/Connecting-to-AAF
 
    
 Introduction
@@ -26,7 +27,7 @@ AAF contains some elements of Role Based Authorization, but includes Attribute B
 
 |image0|
 
-.. |image0| image:: aaf-object-model.jpeg
+.. |image0| image:: aaf-object-model.jpg
    :height: 600px
    :width: 800px
 
