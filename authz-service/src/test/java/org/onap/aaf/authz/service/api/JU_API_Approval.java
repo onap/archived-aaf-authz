@@ -26,11 +26,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.onap.aaf.authz.facade.AuthzFacade;
 import org.onap.aaf.authz.service.AuthAPI;
 import org.onap.aaf.authz.service.api.API_Approval;
-
+import org.powermock.modules.junit4.PowerMockRunner;
+@RunWith(PowerMockRunner.class)
 public class JU_API_Approval {
 	API_Approval api_Approval;
 	

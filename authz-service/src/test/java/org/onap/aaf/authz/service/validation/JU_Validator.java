@@ -22,31 +22,26 @@
  ******************************************************************************/
 package org.onap.aaf.authz.service.validation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.aaf.authz.cadi.DirectAAFLur.PermPermission;
-import org.onap.aaf.authz.env.AuthzTrans;
 import org.onap.aaf.authz.layer.Result;
-import org.onap.aaf.authz.org.Organization;
-import org.onap.aaf.authz.service.validation.Validator;
-import org.onap.aaf.dao.aaf.cass.CredDAO;
-import org.onap.aaf.dao.aaf.cass.DelegateDAO;
-import org.onap.aaf.dao.aaf.cass.Namespace;
 import org.onap.aaf.dao.aaf.cass.PermDAO;
 import org.onap.aaf.dao.aaf.cass.RoleDAO;
-import org.onap.aaf.dao.aaf.cass.UserRoleDAO;
 
 public class JU_Validator {
-	
-	@Before
-	public void setUp(){
-		Validator validator = new Validator();
-	}
 
+	Validator validator;
+
+	@Before
+	public void setUp() {
+		validator = new Validator();
+	}
 
 	@Test
 	public void test() {
@@ -57,14 +52,14 @@ public class JU_Validator {
 		assertFalse(Validator.INST_CHARS.matcher("Howd?yDoody").matches());
 		assertTrue(Validator.INST_CHARS.matcher("_HowdyDoody").matches());
 
-		//		
+		//
 		assertTrue(Validator.ACTION_CHARS.matcher("*").matches());
 		assertTrue(Validator.INST_CHARS.matcher("*").matches());
 		assertFalse(Validator.ACTION_CHARS.matcher(":*").matches());
 		assertTrue(Validator.INST_CHARS.matcher(":*").matches());
 		assertFalse(Validator.ACTION_CHARS.matcher(":*:*").matches());
 		assertTrue(Validator.INST_CHARS.matcher(":*:*").matches());
-		
+
 		assertFalse(Validator.ACTION_CHARS.matcher(":hello").matches());
 		assertTrue(Validator.INST_CHARS.matcher(":hello").matches());
 		assertFalse(Validator.INST_CHARS.matcher("hello:").matches());
@@ -91,7 +86,6 @@ public class JU_Validator {
 		assertFalse(Validator.INST_CHARS.matcher(":h:*:*h").matches());
 		assertTrue(Validator.INST_CHARS.matcher(":com.test.*:ns:*").matches());
 
-		
 		assertFalse(Validator.ACTION_CHARS.matcher("1234+235gd").matches());
 		assertTrue(Validator.ACTION_CHARS.matcher("1234-235gd").matches());
 		assertTrue(Validator.ACTION_CHARS.matcher("1234-23_5gd").matches());
@@ -105,7 +99,7 @@ public class JU_Validator {
 		assertFalse(Validator.ACTION_CHARS.matcher("").matches());
 		assertFalse(Validator.ACTION_CHARS.matcher(" ").matches());
 
-		// Allow % and =   (Needed for Escaping & Base64 usages) jg 
+		// Allow % and = (Needed for Escaping & Base64 usages) jg
 		assertTrue(Validator.ACTION_CHARS.matcher("1234%235g=d").matches());
 		assertFalse(Validator.ACTION_CHARS.matcher(":1234%235g=d").matches());
 		assertTrue(Validator.INST_CHARS.matcher("1234%235g=d").matches());
@@ -116,7 +110,7 @@ public class JU_Validator {
 		assertTrue(Validator.INST_CHARS.matcher(":1234%235g=d:==%20:*").matches());
 		assertTrue(Validator.INST_CHARS.matcher(":*:==%20:*").matches());
 
-		// Allow / instead of :  (more natural instance expression) jg 
+		// Allow / instead of : (more natural instance expression) jg
 		assertFalse(Validator.INST_CHARS.matcher("1234/a").matches());
 		assertTrue(Validator.INST_CHARS.matcher("/1234/a").matches());
 		assertTrue(Validator.INST_CHARS.matcher("/1234/*/a/").matches());
@@ -124,7 +118,6 @@ public class JU_Validator {
 		assertFalse(Validator.ACTION_CHARS.matcher("1234/a").matches());
 		assertFalse(Validator.ACTION_CHARS.matcher("/1234/*/a/").matches());
 		assertFalse(Validator.ACTION_CHARS.matcher("1234//a").matches());
-
 
 		assertFalse(Validator.INST_CHARS.matcher("1234+235gd").matches());
 		assertTrue(Validator.INST_CHARS.matcher("1234-235gd").matches());
@@ -136,40 +129,91 @@ public class JU_Validator {
 		assertFalse(Validator.INST_CHARS.matcher("123#4-23@5g:d").matches());
 		assertFalse(Validator.INST_CHARS.matcher("").matches());
 
-		
-		for( char c=0x20;c<0x7F;++c) {
+		for (char c = 0x20; c < 0x7F; ++c) {
 			boolean b;
-			switch(c) {
-				case '?':
-				case '|':
-				case '*':
-					continue; // test separately
-				case '~':
-				case ',':
-					b = false;
-					break;
-				default:
-					b=true;
+			switch (c) {
+			case '?':
+			case '|':
+			case '*':
+				continue; // test separately
+			case '~':
+			case ',':
+				b = false;
+				break;
+			default:
+				b = true;
 			}
 		}
-		
+
 		assertFalse(Validator.ID_CHARS.matcher("abc").matches());
 		assertFalse(Validator.ID_CHARS.matcher("").matches());
 		assertTrue(Validator.ID_CHARS.matcher("abc@att.com").matches());
 		assertTrue(Validator.ID_CHARS.matcher("ab-me@att.com").matches());
 		assertTrue(Validator.ID_CHARS.matcher("ab-me_.x@att._-com").matches());
-		
+
 		assertFalse(Validator.NAME_CHARS.matcher("ab-me_.x@att._-com").matches());
 		assertTrue(Validator.NAME_CHARS.matcher("ab-me").matches());
 		assertTrue(Validator.NAME_CHARS.matcher("ab-me_.xatt._-com").matches());
 
-		
 		// 7/22/2016
-		assertTrue(Validator.INST_CHARS.matcher(
-				"/!com.att.*/role/write").matches());
-		assertTrue(Validator.INST_CHARS.matcher(
-				":!com.att.*:role:write").matches());
+		assertTrue(Validator.INST_CHARS.matcher("/!com.att.*/role/write").matches());
+		assertTrue(Validator.INST_CHARS.matcher(":!com.att.*:role:write").matches());
 
+	}
+
+	@Test
+	public void permNotOk() {
+
+		Result<PermDAO.Data> rpd = Result.err(1, "ERR_Security");
+
+		validator.perm(rpd);
+		assertTrue(validator.errs().equals("ERR_Security\n"));
+
+	}
+
+	@Test
+	public void permOkNull() {
+
+		Result rpd = Result.ok();
+
+		validator.perm(rpd);
+		assertTrue(validator.errs().equals("Perm Data is null.\n"));
+
+	}
+
+	@Test
+	public void roleOkNull() {
+
+		Result rrd = Result.ok();
+
+		validator.role(rrd);
+		assertTrue(validator.errs().equals("Role Data is null.\n"));
+	}
+
+	@Test
+	public void roleOk() {
+		RoleDAO.Data to = new RoleDAO.Data();
+		to.ns = "namespace";
+		to.name = "name";
+		to.description = "description";
+		Set<String> permissions = new HashSet<String>();
+		permissions.add("perm1");
+		to.perms = permissions;
+
+		Result<RoleDAO.Data> rrd = Result.ok(to);
+
+		validator.role(rrd);
+		assertTrue(
+				validator.errs().equals("Perm [perm1] in Role [namespace.name] is not correctly separated with '|'\n"));
+	}
+
+	@Test
+	public void roleNotOk() {
+
+		Result rrd = Result.err(1, "ERR_Security");
+
+		validator.role(rrd);
+		assertTrue(validator.errs().equals("ERR_Security\n"));
 	}
 
 }
