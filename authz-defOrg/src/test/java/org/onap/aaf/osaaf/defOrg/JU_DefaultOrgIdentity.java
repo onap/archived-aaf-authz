@@ -69,4 +69,27 @@ public class JU_DefaultOrgIdentity {
 		System.out.println("value of res " +res);
 	}
 	
+	
+	@Test
+	public void testIsFound(){
+		defaultOrgIdentityMock.isFound();
+		System.out.println("value of found " +defaultOrgIdentityMock.isFound());
+		assertFalse(defaultOrgIdentityMock.isFound());
+	}
+	
+	@Test
+	public void testIsResponsible(){
+		defaultOrgIdentityMock.isResponsible();
+		System.out.println("value of res " +defaultOrgIdentityMock.isResponsible());
+		assertFalse(defaultOrgIdentityMock.isResponsible());
+	}
+	
+	@Test
+	public void testFullName(){
+		String fullName = defaultOrgIdentityMock.fullName();
+		System.out.println("value of fullname " +fullName);
+		assertTrue(fullName == null);
+	}
+	
+	
 }

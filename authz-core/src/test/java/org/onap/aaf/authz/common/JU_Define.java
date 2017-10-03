@@ -58,7 +58,7 @@ public class JU_Define {
 		PowerMockito.when(envMock.getProperty(Config.AAF_ROOT_COMPANY)).thenReturn("aaf_root_company");
 		//PowerMockito.when(envMock.init().log()).thenReturn(null);
 		//PowerMockito.doNothing().doThrow(new CadiException()).when(envMock).init().log(Matchers.anyString());
-		define.set(envMock);
+		//define.set(envMock);
 	}
 
 }

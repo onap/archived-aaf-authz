@@ -22,16 +22,11 @@
  ******************************************************************************/
 package org.onap.aaf.osaaf.defOrg;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-
-import javax.mail.Address;
-import javax.mail.internet.InternetAddress;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,12 +36,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.aaf.authz.env.AuthzEnv;
 import org.onap.aaf.authz.env.AuthzTrans;
-import org.onap.aaf.authz.org.Executor;
 import org.onap.aaf.authz.org.OrganizationException;
-import org.onap.aaf.authz.org.Organization.Identity;
-import org.onap.aaf.authz.org.Organization.Policy;
-import org.onap.aaf.osaaf.defOrg.DefaultOrg;
-import org.onap.aaf.osaaf.defOrg.Identities.Data;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -70,12 +60,13 @@ String defFile;
 @Mock
 File fIdentitiesMock;
 
+
 @Before
 public void setUp() throws OrganizationException{
 	MockitoAnnotations.initMocks(this);
 	PowerMockito.when(authzEnvMock.getProperty(s=(REALM + ".mailHost"), null)).thenReturn("hello");
 	PowerMockito.when(authzEnvMock.getProperty(s=(REALM + ".supportEmail"), null)).thenReturn("notnull");
-	PowerMockito.when(authzEnvMock.getProperty(Matchers.anyString())).thenReturn("C:/Users/sv8675/Desktop/AAF-Code-Sai/AAF-master/authz/authz-defOrg/src/main/java/test.txt");
+	PowerMockito.when(authzEnvMock.getProperty(Matchers.anyString())).thenReturn("src\\test\\resources\\test.txt");
 	PowerMockito.when(fIdentitiesMock.exists()).thenReturn(true);
 	//PowerMockito.when((fIdentitiesMock!=null && fIdentitiesMock.exists())).thenReturn(true);
 	defaultOrg = new DefaultOrg(authzEnvMock);
@@ -85,8 +76,53 @@ public void setUp() throws OrganizationException{
 public void test() throws OrganizationException{
 	//PowerMockito.when(authzEnvMock.getProperty(Matchers.anyString())).thenReturn(" ");
 	//defaultOrg = new DefaultOrg(authzEnvMock);
-	assertTrue(true);
+	assertTrue(defaultOrg != null);
 }
+
+
+@Test    //(expected=OrganizationException.class)
+public void testMultipleCreds() throws OrganizationException{
+	String id = "test";
+	//PowerMockito.when(authzEnvMock.getProperty(Matchers.anyString())).thenReturn(" ");
+	//defaultOrg = new DefaultOrg(authzEnvMock);
+	boolean canHaveMultipleCreds;
+	canHaveMultipleCreds = defaultOrg.canHaveMultipleCreds(id );
+	System.out.println("value of canHaveMultipleCreds:  " + canHaveMultipleCreds);
+	assertTrue(canHaveMultipleCreds);
+}
+
+
+@Test   
+public void testGetIdentityTypes() throws OrganizationException{
+	Set<String> identityTypes = defaultOrg.getIdentityTypes();
+	System.out.println("value of IdentityTypes:  " + identityTypes);
+	assertTrue(identityTypes.size() == 4);
+}
+
+
+@Test   
+public void testGetRealm() throws OrganizationException{
+	String realmTest = defaultOrg.getRealm();
+	System.out.println("value of realm:  " + realmTest);
+	assertTrue(realmTest == REALM);
+}
+
+@Test   
+public void testGetName() throws OrganizationException{
+	String testName = defaultOrg.getName();
+	System.out.println("value of name:  " + testName);
+	assertTrue(testName == NAME);
+}
+
+
+@Test   
+public void testGetDomain() throws OrganizationException{
+	String testDomain = defaultOrg.getDomain();
+	System.out.println("value of domain:  " + testDomain);
+	assertTrue(testDomain == DOMAIN);
+}
+
+
 
 @Test
 public void testIsValidID(){	
