@@ -124,7 +124,7 @@
 					  <exclude>**/JU_AuthzTransFilter.java</exclude>
 					  <exclude>**/JU_CachingFileAccess.java</exclude>
 					  <!-- <exclude>**/AbsServiceTest.java</exclude> -->
-					 <!--  <exclude>**/JU_DefaultOrg.java</exclude> -->
+					  <exclude>**/JU_DefaultOrg.java</exclude>
 					  <exclude>**/JU_FileServer.java</exclude>
 					  <exclude>**/JU_DirectAAFLur.java</exclude>
 					  <exclude>**/JU_AuthAPI.java</exclude>
