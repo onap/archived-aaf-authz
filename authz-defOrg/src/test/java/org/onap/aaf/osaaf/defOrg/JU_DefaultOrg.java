@@ -66,7 +66,7 @@ public void setUp() throws OrganizationException{
 	MockitoAnnotations.initMocks(this);
 	PowerMockito.when(authzEnvMock.getProperty(s=(REALM + ".mailHost"), null)).thenReturn("hello");
 	PowerMockito.when(authzEnvMock.getProperty(s=(REALM + ".supportEmail"), null)).thenReturn("notnull");
-	PowerMockito.when(authzEnvMock.getProperty(Matchers.anyString())).thenReturn("src\\test\\resources\\test.txt");
+	PowerMockito.when(authzEnvMock.getProperty(Matchers.anyString())).thenReturn("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.txt");
 	PowerMockito.when(fIdentitiesMock.exists()).thenReturn(true);
 	//PowerMockito.when((fIdentitiesMock!=null && fIdentitiesMock.exists())).thenReturn(true);
 	defaultOrg = new DefaultOrg(authzEnvMock);
