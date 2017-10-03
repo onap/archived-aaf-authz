@@ -119,12 +119,11 @@
 					  <exclude>**/JU_CredDAO.java</exclude>
 					  <exclude>**/JU_CacheInfoDAO.java</exclude>
 					  <exclude>**/JU_ApprovalDAO.java</exclude>
-					<!--  <exclude>**/JU_Define.java</exclude>  -->
-					<exclude>**/JU_Identities.java</exclude>
+					<!--  <exclude>**/JU_Define.java</exclude> -->
 					  <exclude>**/JU_AuthzTransFilter.java</exclude>
 					  <exclude>**/JU_CachingFileAccess.java</exclude>
 					  <!-- <exclude>**/AbsServiceTest.java</exclude> -->
-					  <exclude>**/JU_DefaultOrg.java</exclude>
+					 <!--  <exclude>**/JU_DefaultOrg.java</exclude> -->
 					  <exclude>**/JU_FileServer.java</exclude>
 					  <exclude>**/JU_DirectAAFLur.java</exclude>
 					  <exclude>**/JU_AuthAPI.java</exclude>
