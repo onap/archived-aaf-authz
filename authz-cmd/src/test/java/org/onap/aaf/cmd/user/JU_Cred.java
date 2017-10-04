@@ -27,13 +27,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaf.cmd.AAFcli;
+import org.onap.aaf.cmd.Cmd;
 import org.onap.aaf.cmd.user.Cred;
 import org.onap.aaf.cmd.user.User;
-
+import org.onap.aaf.authz.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.inno.env.APIException;
@@ -43,29 +49,32 @@ public class JU_Cred {
 
 	private static Cred testCred;
 	private static User testUser;
+	private static AuthzEnv env;
 
 
 	@BeforeClass
-	public static void setUp() {
+	public static void setUp() throws FileNotFoundException, APIException {
+		
 		testCred = mock(Cred.class);
 		testUser = mock(User.class);
-		try {
-			when(testCred._exec(4, "String1","String2","String3","String4")).thenReturn(10);
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		env = mock(AuthzEnv.class);
+		Mockito.when(env.getProperty(Cmd.STARTDATE,null)).thenReturn(null);
+		Mockito.when(env.getProperty(Cmd.ENDDATE,null)).thenReturn(null);
+		
 	}
 
 	@Test
-	public void exec() throws CadiException, APIException, LocatorException {
-		assertEquals(testCred._exec(4, "String1","String2","String3","String4"), 10);
+	public void exec() throws CadiException, APIException, LocatorException, FileNotFoundException {
+		boolean isNullpointer=false;
+		AAFcli aaFcli=	new AAFcli(env, new PrintWriter("temp"), null, null, null);
+	User user= new User(aaFcli);
+	 Cred testCred= new Cred(user);
+	try {
+		testCred._exec(0, "add", "del", "reset", "extend");
+	} catch (Exception e) {
+		isNullpointer=true;
+	} 
+	assertEquals(isNullpointer, true);
 	}
 
 

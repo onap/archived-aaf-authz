@@ -62,10 +62,31 @@ public class JU_Help {
 	@Test
 	public void exec_HTTP_200() {
 		try {
-			assertEquals(help._exec(0, "helps"), HttpStatus.OK_200);
+			assertEquals(help._exec(1, "helps"), HttpStatus.OK_200);
 		} catch (CadiException | APIException | LocatorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void exec_HTTP_200_1() {
+		try {
+			assertEquals(help._exec(1, "helps","help"), HttpStatus.OK_200);
+		} catch (CadiException | APIException | LocatorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void detailhelp() {
+		boolean hasError=false;
+		try {
+			help.detailedHelp(2, new StringBuilder("detail help test"));
+		} catch (Exception e) {
+			hasError=true;
+		}
+		assertEquals(hasError,false);
 	}
 }
