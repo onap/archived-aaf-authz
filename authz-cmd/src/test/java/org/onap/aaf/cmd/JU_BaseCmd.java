@@ -58,6 +58,12 @@ public class JU_BaseCmd {
 
 	@Test
 	public void exec() throws CadiException, APIException, LocatorException {
+		assertEquals(bCmd._exec(4, "add", "del", "reset", "extend"), 0);
+
+	}
+	
+	@Test
+	public void exec1() throws CadiException, APIException, LocatorException {
 		assertEquals(bCmd._exec(0, "add", "del", "reset", "extend"), 0);
 
 	}
