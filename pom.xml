@@ -37,12 +37,7 @@
         <version>0.1.1</version>
     </parent>
 	
-	<licenses>
-		<license>
-		<name>BSD License</name>
-		<url> </url>
-		</license>
-	</licenses>
+
 	<developers>
 		<developer>
 		<name>Jonathan Gathman</name>

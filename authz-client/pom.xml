@@ -42,12 +42,7 @@
 	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<url>https://github.com/att/AAF</url>
-	<licenses>
-		<license>
-		<name>BSD License</name>
-		<url> </url>
-		</license>
-	</licenses>
+
 	<developers>
 		<developer>
 		<name>Jonathan Gathman</name>

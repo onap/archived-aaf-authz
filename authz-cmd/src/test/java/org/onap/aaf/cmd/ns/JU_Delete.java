@@ -23,51 +23,47 @@
 package org.onap.aaf.cmd.ns;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mock;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cmd.AAFcli;
 import org.onap.aaf.cmd.JU_AAFCli;
-import org.onap.aaf.cmd.ns.Delete;
-import org.onap.aaf.cmd.ns.NS;
-
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.inno.env.APIException;
 
-@RunWith(MockitoJUnitRunner.class)
 public class JU_Delete {
-	
-	private static Delete del;
-	
+
+	private static Delete delete;
+
 	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
 		AAFcli cli = JU_AAFCli.getAAfCli();
 		NS ns = new NS(cli);
-		del = new Delete(ns);
+		delete = new Delete(ns);
+
 	}
-	
+
 	@Test
 	public void exec() {
 		try {
-			assertEquals(del._exec(0, "add","del","reset","extend"),500);
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			delete._exec(0, "del", "del", "del");
+		} catch (Exception e) {
+			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
 		}
 	}
-}
 
+	@Test
+	public void detailedHelp() {
+		boolean hasNoError = true;
+		try {
+			delete.detailedHelp(1, new StringBuilder("test"));
+		} catch (Exception e) {
+			hasNoError = false;
+		}
+		assertEquals(hasNoError, true);
+	}
+
+}

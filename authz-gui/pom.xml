@@ -17,12 +17,7 @@
 	<name>Authz GUI (Mobile First)</name>
 	<description>GUI for Authz Management</description>
 		<url>https://github.com/att/AAF</url>
-	<licenses>
-		<license>
-		<name>BSD License</name>
-		<url> </url>
-		</license>
-	</licenses>
+	
 	<developers>
 		<developer>
 		<name>Jonathan Gathman</name>

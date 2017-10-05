@@ -36,12 +36,7 @@
   <description>Command Line Processor for Authz</description>
   <packaging>jar</packaging>
   	<url>https://github.com/att/AAF</url>
-	<licenses>
-		<license>
-		<name>BSD License</name>
-		<url> </url>
-		</license>
-	</licenses>
+
 	<developers>
 		<developer>
 		<name>Jonathan Gathman</name>

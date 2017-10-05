@@ -36,12 +36,7 @@
 	<description>TestCase Suite for Authz/Authn</description>
 	<packaging>jar</packaging>
 		<url>https://github.com/att/AAF</url>
-	<licenses>
-		<license>
-		<name>BSD License</name>
-		<url> </url>
-		</license>
-	</licenses>
+	
 	<developers>
 		<developer>
 		<name>Jonathan Gathman</name>
