@@ -78,7 +78,7 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |   :type/:action    | Delete the Permission referenced by :type         |
 |                    |                    |                    | :instance: action                                 |
 |                    |                    |                    | You cannot normally delete a permission which     |
-|                    |                    |                    |  is still granted to roles, however the           |
+|                    |                    |                    | is still granted to roles, however the           |
 |                    |                    |                    | "force" property  allows you to do                |
 |                    |                    |                    | just that. To do this: Add  'force=true' as a     |
 |                    |                    |                    | query parameter                                   |
@@ -96,11 +96,12 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    | 404, 406                                          |
 +--------------------+--------------------+--------------------+---------------------------------------------------+
 |                    | PUT                | /authz/perm/:type/ | Update a Permission                               |
-|                    |                    | :instance/:action  |  Rename the Permission referenced by              |
-|                    |                    |                    | :type :instance :action, and  rename              |
+|                    |                    | :instance/:action  | Rename the Permission referenced                  |
+|                    |                    |                    | by :type :instance :action, and  rename           |
 |                    |                    |                    | (copy/delete) to the Permission described in      |
 |                    |                    |                    | PermRequest                                       |
-|                    |                    |                    | -----------------------------------------------   |
+|                    |                    |                    |                                                   |
+|                    |                    |                    |---------------------------------------------------|
 |                    |                    |                    | Parameters                                        |
 |                    |                    |                    | type : string (Required)                          |
 |                    |                    |                    | instance : string (Required)                      |
@@ -123,8 +124,9 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    | 404, 406                                          |
 +--------------------+--------------------+--------------------+---------------------------------------------------+
 |                    | GET                | /authz/perms/:type | Get Permissions by  Key                           |
-|                    |                    | /:instance/:action |  List Permissions  that match key;                |
+|                    |                    | /:instance/:action | List Permissions  that match key;                 |
 |                    |                    |                    | :type, :instance and :action                      |
+|                    |                    |                    |                                                   |
 |                    |                    |                    | --------------------------------------------------|
 |                    |                    |                    | Parameters                                        |
 |                    |                    |                    | type : string (Required)                          |
@@ -166,12 +168,12 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    | Caller is Granted this specific Permission, and   |
 |                    |                    |                    | the Permission is valid for the User, it will be  |
 |                    |                    |                    | included in response permissions,along with all   |
-|                    |                    |                    |  the normal permissions on the 'GET' version of   |
-|                    |                    |                    |  this call. If it is not valid,or caller does not |
+|                    |                    |                    | the normal permissions on the 'GET' version of    |
+|                    |                    |                    | this call. If it is not valid,or caller does not  |
 |                    |                    |                    | permission to see,  it will be removed from the   |
 |                    |                    |                    | list.                                             |
-|                    |                    |                    | \*Note: This design allows you to make one call   |
-|                    |                    |                    |  for all expected permissions                     |
+|                    |                    |                    | **Note**: This design allows you to make one      |
+|                    |                    |                    | call for all expected permissions                 |
 |                    |                    |                    |                                                   |
 |                    |                    |                    | The permission to be included MUST be:            |
 |                    |                    |                    | .access\|:[:key]\|                                |
@@ -213,7 +215,7 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    |                                                   |
 |                    |                    |                    | Roles do not include implied  permissions for an  |
 |                    |                    |                    | App. Instead, they contain explicit Granted       |
-|                    |                    |                    |  Permissions by any Namespace in AAF              |
+|                    |                    |                    | Permissions by any Namespace in AAF              |
 |                    |                    |                    | Restrictions on Role Names:                       |
 |                    |                    |                    | -  Must start with valid Namespace name,          |
 |                    |                    |                    |    terminated by .(dot/period)                    |
