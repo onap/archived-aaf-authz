@@ -4,15 +4,16 @@ AAF 2.0 RESTful interface
 Accessing RESTful
 -----------------
 
--AAF RESTful service is secured by the following:
--The Client must utilize HTTP/S. Non Secure HTTP is not acceptable
--The Client MUST supply an Identity validated by one of the following mechanisms
+AAF RESTful service is secured by the following:
 
-	-  Valid Global Login Cookie (CSP)
-	-  BASIC AUTH protocol using CSO Registered MechID, provisioned in AAF
-	-  BASIC AUTH protocol using ATTUID@csp.att.com, Global Login Password
-	-  (Available 3rd Qtr 2015) Valid tGuard Login Cookie
-	-  (Near Future) Application level Certificate
+ * The Client must utilize HTTP/S. Non Secure HTTP is not acceptable
+ * The Client MUST supply an Identity validated by one of the following mechanisms:
+
+   * Valid Global Login Cookie (CSP)
+   * BASIC AUTH protocol using CSO Registered MechID, provisioned in AAF
+   * BASIC AUTH protocol using ATTUID@csp.att.com, Global Login Password
+   * (Available 3rd Qtr 2015) Valid tGuard Login Cookie
+   * (Near Future) Application level Certificate
 
 Responses
 
@@ -41,17 +42,17 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 | PERMISSION         | POST               | /authz/perm        | Create a Permission                               |
 |                    |                    |                    | Permission consists of:                           |
 |                    |                    |                    | -  type - a Namespace qualified identifier        |
-|                    |                    |                    |   specifying what kind of resource is being       |
-|                    |                    |                    |     protected                                     |
+|                    |                    |                    | specifying what kind of resource is being         |
+|                    |                    |                    | protected                                         |
 |                    |                    |                    | -  instance - a key, possibly  multi-dimensional  |
-|                    |                    |                    |    that identifies a specific instance of the     |
-|                    |                    |                    |    type                                           |
+|                    |                    |                    | that identifies a specific instance of the        |
+|                    |                    |                    | type                                              |
 |                    |                    |                    | -  action - what kind of action  is allowed       |
 |                    |                    |                    | Note: instance and action can be an \*            |
 |                    |                    |                    | Expected HTTP Code                                |
 |                    |                    |                    | 201                                               |
 |                    |                    |                    | Explicit HTTP Error Codes                         |
-|                    |                    |                    | 403, 404, 406, 409                                | 
+|                    |                    |                    | 403, 404, 406, 409                                |
 +--------------------+--------------------+--------------------+---------------------------------------------------+
 |                    | PUT                | /authz/perm        | Set Description  for Permission                   |
 |                    |                    |                    | Add Description Data  to Perm                     |
@@ -70,7 +71,7 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    | **WARNING**: Using force will ungrant this        |
 |                    |                    |                    | permission from all roles. Use with care.         |
 |                    |                    |                    | Expected HTTP Code                                |
-|                    |                    |                    | 200                                               | 
+|                    |                    |                    | 200                                               |
 |                    |                    |                    | Explicit HTTP Error Codes                         |
 |                    |                    |                    | 404, 406                                          |
 +--------------------+--------------------+--------------------+---------------------------------------------------+
@@ -78,14 +79,14 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |   :type/:action    | Delete the Permission referenced by :type         |
 |                    |                    |                    | :instance: action                                 |
 |                    |                    |                    | You cannot normally delete a permission which     |
-|                    |                    |                    | is still granted to roles, however the           |
+|                    |                    |                    | is still granted to roles, however the            |
 |                    |                    |                    | "force" property  allows you to do                |
 |                    |                    |                    | just that. To do this: Add  'force=true' as a     |
 |                    |                    |                    | query parameter                                   |
 |                    |                    |                    |                                                   |
 |                    |                    |                    | WARNING: Using force will ungrant this permission |
 |                    |                    |                    | from all roles. Use with care.                    |
-|                    |                    |                    | ------------------------------------------------- |
+|                    |                    |                    | --------------------------------------------------|
 |                    |                    |                    | Parameters                                        |
 |                    |                    |                    | type : string (Required)                          |
 |                    |                    |                    | instance : string (Required)                      |
@@ -100,8 +101,7 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    | by :type :instance :action, and  rename           |
 |                    |                    |                    | (copy/delete) to the Permission described in      |
 |                    |                    |                    | PermRequest                                       |
-|                    |                    |                    |                                                   |
-|                    |                    |                    |---------------------------------------------------|
+|                    |                    |                    | --------------------------------------------------|
 |                    |                    |                    | Parameters                                        |
 |                    |                    |                    | type : string (Required)                          |
 |                    |                    |                    | instance : string (Required)                      |
@@ -115,7 +115,7 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    |                                                   |
 |                    |                    |                    | List All Permissions that match the :type         |
 |                    |                    |                    | element of the key                                |
-|                    |                    |                    | ------------------------------------------------- |
+|                    |                    |                    | --------------------------------------------------|
 |                    |                    |                    | Parameters                                        |
 |                    |                    |                    | type : string (Required)                          |
 |                    |                    |                    | Expected HTTP Code                                |
@@ -126,7 +126,6 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    | GET                | /authz/perms/:type | Get Permissions by  Key                           |
 |                    |                    | /:instance/:action | List Permissions  that match key;                 |
 |                    |                    |                    | :type, :instance and :action                      |
-|                    |                    |                    |                                                   |
 |                    |                    |                    | --------------------------------------------------|
 |                    |                    |                    | Parameters                                        |
 |                    |                    |                    | type : string (Required)                          |
@@ -209,18 +208,18 @@ Ask for a Consultation on how these are typically used, or, if your tool is the 
 |                    |                    |                    |                                                   |
 |                    |                    |                    | Roles are part of Namespaces                      |
 |                    |                    |                    | Examples:                                         |
-|                    |                    |                    |                                                   |
-|                    |                    |                    | -  com.att.aaf -  The team that   created and     |
-|                    |                    |                    |    maintains AAF                                  |
+|                    |                    |                    | -  com.att.aaf                                    |
+|                    |                    |                    | -  The team that created andmaintains AAF         |
 |                    |                    |                    |                                                   |
 |                    |                    |                    | Roles do not include implied  permissions for an  |
 |                    |                    |                    | App. Instead, they contain explicit Granted       |
-|                    |                    |                    | Permissions by any Namespace in AAF              |
+|                    |                    |                    | Permissions by any Namespace in AAF               |
 |                    |                    |                    | Restrictions on Role Names:                       |
 |                    |                    |                    | -  Must start with valid Namespace name,          |
-|                    |                    |                    |    terminated by .(dot/period)                    |
+|                    |                    |                    | terminated by .(dot/period)                       |
 |                    |                    |                    | -  Allowed Characters are a-zA-Z0-9._-            |
 |                    |                    |                    | -  role names are Case Sensitive                  |
+|                    |                    |                    |                                                   |
 |                    |                    |                    | Expected HTTP Code                                |
 |                    |                    |                    | 201                                               |
 |                    |                    |                    | Explicit HTTP  Error Codes                        |
