@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_337c8a20",
+        "filename": "docs/AAF-API-Documentation/AAF-API-Documentation.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-07T19:23:22Z",
+      "side": 1,
+      "message": "Tabulation to be removed",
+      "revId": "b7762012e26bbb875902bc0cac71d5a22052645e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_13798e2f",
+        "filename": "docs/AAF-API-Documentation/Connecting-to-AAF.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-07T19:23:22Z",
+      "side": 1,
+      "message": "Tabulation to be removed",
+      "revId": "b7762012e26bbb875902bc0cac71d5a22052645e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_f375d232",
+        "filename": "docs/AAF-API-Documentation/Connecting-to-AAF.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 269
+      },
+      "writtenOn": "2017-11-07T19:23:22Z",
+      "side": 1,
+      "message": "Tabulations to be removed",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 82
+      },
+      "revId": "b7762012e26bbb875902bc0cac71d5a22052645e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
