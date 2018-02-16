@@ -17,8 +17,6 @@ To be effective during a computer transaction, Security must not only be secure,
 .. toctree::
    :maxdepth: 3
    
-   AAF-API-Documentation/AAF-API-Documentation
-   AAF-API-Documentation/Connecting-to-AAF
 
    
 Introduction
