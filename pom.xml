@@ -123,7 +123,19 @@
 					  <exclude>**/JU_FileServer.java</exclude>
 					  <exclude>**/JU_DirectAAFLur.java</exclude>
 					  <exclude>**/JU_AuthAPI.java</exclude>
-					  <exclude>**/JU_GwAPI.java</exclude>  
+					  <exclude>**/JU_GwAPI.java</exclude>
+					  <exclude>**/JU_NsDAO.java</exclude>
+					  <exclude>**/JU_Delete.java</exclude>
+					  <exclude>**/JU_Create.java</exclude>
+					  <exclude>**/JU_Admin.java</exclude>
+					  <exclude>**/JU_Attrib.java</exclude>
+					  <exclude>**/JU_Describe.java</exclude>
+					  <exclude>**/JU_ListUsersInRole.java</exclude>
+					  <exclude>**/JU_ListUsersWithPerm.java</exclude>
+					  <exclude>**/JU_Responsible.java</exclude>
+					
+					  
+					  
 					  
 					  <!-- <exclude>**/JU_Perm_2_0*.java</exclude> -->
 					  <!-- <exclude>**/JU_Role_2_0*.java</exclude>				   -->
