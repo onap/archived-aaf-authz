@@ -34,8 +34,8 @@
 	<properties>
 		<skipSigning>true</skipSigning>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.miscVersion>1.3.0-SNAPSHOT</project.miscVersion>
-		<project.authClientVersion>2.10-SNAPSHOT</project.authClientVersion>
+		<project.miscVersion>1.3.0</project.miscVersion>
+		<project.authClientVersion>2.10</project.authClientVersion>
 		<project.jettyVersion>9.3.9.v20160517</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
 	</properties>
