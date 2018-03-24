@@ -1,5 +1,0 @@
-expect 201
-role create com.test.TC_Link_1.@[user.name].myRole
-
-perm grant com.test.TC_Link_2.@[user.name].myPerm myInstance myAction com.test.TC_Link_1.@[user.name].myRole
-

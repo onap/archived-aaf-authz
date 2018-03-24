@@ -1,0 +1,12 @@
+/target
+/.settings
+/dme2reg
+/src
+/.classpath
+/logs
+/bin/
+/temp
+/.project
+/assembly/
+/aaf_2.*/
+/aaf_2.1.0-SNAPSHOT.zip

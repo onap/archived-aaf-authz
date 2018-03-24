@@ -1,8 +1,0 @@
-#
-#Wed Nov 30 23:48:45 EST 2016
-alcdtl15rj6015,60498=latitude\=32.78014;longitude\=-96.800451;lease\=1480372013837;protocol\=http;contextPath\=/;routeOffer\=BAU_SE
-ALCDTL46RJ6015,55998=latitude\=32.78014;longitude\=-96.800451;lease\=1479687428093;protocol\=http;contextPath\=/;routeOffer\=BAU_SE
-localhost,42246=latitude\=32.78014;longitude\=-96.800451;lease\=1478985613892;protocol\=http;contextPath\=/;routeOffer\=BAU_SE
-localhost,39157=latitude\=32.78014;longitude\=-96.800451;lease\=1478811101528;protocol\=http;contextPath\=/;routeOffer\=BAU_SE
-alcdtl15rj6015,55889=latitude\=32.78014;longitude\=-96.800451;lease\=1480371829514;protocol\=http;contextPath\=/;routeOffer\=BAU_SE
-localhost,36473=latitude\=32.78014;longitude\=-96.800451;lease\=1478801682319;protocol\=http;contextPath\=/;routeOffer\=BAU_SE

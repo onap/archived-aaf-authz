@@ -1,0 +1,79 @@
+<!-- 
+ * ============LICENSE_START====================================================
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ *
+-->
+
+<xs:schema 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:locate="urn:locate:v1_0"
+	targetNamespace="urn:locate:v1_0" 
+	elementFormDefault="qualified">
+	
+	<xs:complexType name="endpoint">
+		<xs:sequence>
+			<!-- Must be set to "token" -->
+			<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="major" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="minor" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="patch" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="pkg" type="xs:int" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="latitude" type="xs:float" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="longitude" type="xs:float" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="protocol" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="subprotocol" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="hostname" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="port" type="xs:int" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+    	<xs:element name="endpoints">
+	    	<xs:complexType>
+	    		<xs:sequence>
+	    			<xs:element name="endpoint" type="locate:endpoint" minOccurs="0" maxOccurs="unbounded"/>
+	    		</xs:sequence>
+	    	</xs:complexType>
+	</xs:element>
+
+    <xs:complexType name="mgmt_endpoint">
+		<xs:complexContent>
+			<xs:extension base="locate:endpoint">
+				<xs:sequence>	
+					<xs:element name="special_ports"  minOccurs="0" maxOccurs="unbounded" >
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+								<xs:element name="port" type="xs:int" minOccurs="1" maxOccurs="1"/>
+								<xs:element name="protocol" type="xs:string" minOccurs="1" maxOccurs="1"/>
+								<xs:element name="protocol_versions" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>			
+	</xs:complexType>
+
+    	<xs:element name="mgmt_endpoints">
+	    	<xs:complexType>
+	    		<xs:sequence>
+	    			<xs:element name="mgmt_endpoint" type="locate:mgmt_endpoint" minOccurs="0" maxOccurs="unbounded"/>
+	    		</xs:sequence>
+	    	</xs:complexType>
+	</xs:element>
+</xs:schema>
