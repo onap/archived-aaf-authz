@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec sh -x ../../common/deinstall.sh

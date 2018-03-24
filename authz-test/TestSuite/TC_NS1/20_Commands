@@ -1,7 +1,0 @@
-# TC_NS1.20.1.NEG Too Few Args for Create 1
-expect Exception
-ns create 
-
-# TC_NS1.20.2.NEG Too Few Args for Create 2
-expect Exception
-ns create bogus
