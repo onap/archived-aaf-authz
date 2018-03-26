@@ -1,0 +1,209 @@
+/**
+ * ============LICENSE_START====================================================
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ *
+ */
+package org.onap.aaf.auth.cm.ca;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.onap.aaf.auth.cm.cert.CSRMeta;
+import org.onap.aaf.auth.cm.cert.RDN;
+import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.misc.env.Trans;
+import org.onap.aaf.misc.env.util.Split;
+
+public abstract class CA {
+	private static final String MUST_EXIST_TO_CREATE_CSRS_FOR = " must exist to create CSRs for ";
+	//TODO figuring out what is an Issuing CA is a matter of convention.  Consider SubClassing for Open Source
+	public static final String ISSUING_CA = "Issuing CA";
+	public static final String CM_CA_PREFIX = "cm_ca.";
+	public static final String CM_CA_BASE_SUBJECT = ".baseSubject";
+	protected static final String CM_PUBLIC_DIR = "cm_public_dir";
+	private static final String CM_TRUST_CAS = "cm_trust_cas";
+	protected static final String CM_BACKUP_CAS = "cm_backup_cas";
+
+	public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<String>());
+
+	
+	private final String name,env;
+	private MessageDigest messageDigest;
+	private final String permType;
+	private Set<String> caIssuerDNs;
+	private final ArrayList<String> idDomains;
+	private String[] trustedCAs;
+	private List<RDN> rdns; 
+
+
+	protected CA(Access access, String caName, String env) throws IOException, CertException {
+		trustedCAs = new String[4]; // starting array
+		this.name = caName;
+		this.env = env;
+		permType = access.getProperty(CM_CA_PREFIX + name + ".perm_type",null);
+		if(permType==null) {
+			throw new CertException(CM_CA_PREFIX + name + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
+		}
+		caIssuerDNs = new HashSet<String>();
+		
+		String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
+		
+		String fields = access.getProperty(tag, null);
+		if(fields==null) {
+			throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
+		}
+		for(RDN rdn : rdns = RDN.parse('/',fields)) {
+			if(rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
+				throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);
+			}
+		}
+		
+		idDomains = new ArrayList<String>();
+		StringBuilder sb = null;
+		for(String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
+			if(s.length()>0) {
+				if(sb==null) {
+					sb = new StringBuilder();
+				} else {
+					sb.append(", ");
+				}
+				idDomains.add(s);
+				sb.append(s);
+			}
+		}
+		if(sb!=null) {
+			access.printf(Level.INIT, "CA '%s' supports Personal Certificates for %s", caName, sb);
+		}
+		
+		String data_dir = access.getProperty(CM_PUBLIC_DIR,null);
+		if(data_dir!=null) {
+			File data = new File(data_dir);
+			byte[] bytes;
+			if(data.exists()) {
+				String trust_cas = access.getProperty(CM_TRUST_CAS,null);
+				if(trust_cas!=null) {
+					for(String fname : Split.splitTrim(',', trust_cas)) {
+						File crt = new File(data,fname);
+						if(crt.exists()) {
+							access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
+							bytes = new byte[(int)crt.length()];
+							FileInputStream fis = new FileInputStream(crt);
+							try {
+								fis.read(bytes);
+								addTrustedCA(new String(bytes));
+							} finally {
+								fis.close();
+							}
+						} else {
+							access.printf(Level.INIT, "FAILED to Load CA Cert from %s", crt.getAbsolutePath());
+						}
+					}
+				} else {
+					access.printf(Level.INIT, "Cannot load external TRUST CAs: No property %s",CM_TRUST_CAS);
+				}
+			} else {
+				access.printf(Level.INIT, "Cannot load external TRUST CAs: %s doesn't exist, or is not accessible",data.getAbsolutePath());
+			}
+		}
+	}
+
+	protected void addCaIssuerDN(String issuerDN) {
+		caIssuerDNs.add(issuerDN);
+	}
+	
+	protected synchronized void addTrustedCA(final String crtString) {
+		String crt;
+		if(crtString.endsWith("\n")) {
+			crt = crtString;
+		} else {
+			crt = crtString + '\n';
+		}
+		for(int i=0;i<trustedCAs.length;++i) {
+			if(trustedCAs[i]==null) {
+				trustedCAs[i]=crt;
+				return;
+			}
+		}
+		String[] temp = new String[trustedCAs.length+5];
+		System.arraycopy(trustedCAs,0,temp, 0, trustedCAs.length);
+		temp[trustedCAs.length]=crt;
+		trustedCAs = temp;
+	}
+	
+	public Set<String> getCaIssuerDNs() {
+		return caIssuerDNs;
+	}
+	
+	public String[] getTrustedCAs() {
+		return trustedCAs;
+	}
+	
+	public String getEnv() {
+		return env;
+	}
+
+	protected void setMessageDigest(MessageDigest md) {
+		messageDigest = md;
+	}
+
+	/*
+	 * End Required Constructor calls
+	 */
+
+	public String getName() {
+		return name;
+	}
+	
+	
+	public String getPermType() {
+		return permType;
+	}
+	
+	public abstract X509andChain sign(Trans trans, CSRMeta csrmeta) throws IOException, CertException;
+
+	/* (non-Javadoc)
+	 * @see org.onap.aaf.auth.cm.ca.CA#inPersonalDomains(java.security.Principal)
+	 */
+	public boolean inPersonalDomains(Principal p) {
+		int at = p.getName().indexOf('@');
+		if(at>=0) {
+			return idDomains.contains(p.getName().substring(at+1));
+		} else {
+			return false;
+		}
+	}
+
+	public MessageDigest messageDigest() {
+		return messageDigest;
+	}
+
+	public CSRMeta newCSRMeta() {
+		return new CSRMeta(rdns);
+	}
+}

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * ============LICENSE_START====================================================
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ *
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.onap.aaf.auth</groupId>
+		<artifactId>parent</artifactId>
+		<version>2.1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>auth-batch</artifactId>
+	<name>AAF Auth Batch</name>
+	<description>Batch Processing for AAF Auth</description>
+	<packaging>jar</packaging>
+
+	<developers>
+		<developer>
+			<name>Jonathan Gathman</name>
+			<email>jonathan.gathman@att.com</email>
+			<organization>ATT</organization>
+			<roles>
+				<role>Architect</role>
+				<role>Lead Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Gabe Maurer</name>
+			<email>gabe.maurer@att.com</email>
+			<organization>ATT</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Ian Howell</name>
+			<email>ian.howell@att.com</email>
+			<organization>ATT</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<properties>
+		<maven.test.failure.ignore>false</maven.test.failure.ignore>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.onap.aaf.misc</groupId>
+			<artifactId>aaf-misc-env</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.onap.aaf.cadi</groupId>
+			<artifactId>aaf-cadi-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.onap.aaf.misc</groupId>
+			<artifactId>aaf-misc-rosetta</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.onap.aaf.cadi</groupId>
+			<artifactId>aaf-cadi-aaf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.onap.aaf.auth</groupId>
+			<artifactId>aaf-auth-cass</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.joda</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
