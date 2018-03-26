@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * ============LICENSE_START====================================================
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ *
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.onap.aaf.cadi</groupId>
+	<artifactId>parent</artifactId>
+	<name>AAF CADI Parent (Code, Access, Data, Identity)</name>
+	<version>1.5.0-SNAPSHOT</version>
+	<inceptionYear>2015-07-20</inceptionYear>
+	<organization>
+		<name>ONAP</name>
+	</organization>
+	<packaging>pom</packaging>
+
+	<properties>
+		<skipSigning>true</skipSigning>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.miscVersion>1.3.0-SNAPSHOT</project.miscVersion>
+		<project.authClientVersion>2.10-SNAPSHOT</project.authClientVersion>
+		<project.jettyVersion>9.3.9.v20160517</project.jettyVersion>
+		<powermock.version>1.5.1</powermock.version>
+	</properties>
+
+	<!-- ============================================================== -->
+	<!-- Define the major contributors and developers of CADI -->
+	<!-- ============================================================== -->
+	<developers>
+		<developer>
+			<name>Jonathan Gathman</name>
+			<email>jonathan.gathman@att.com</email>
+			<organization>ATT</organization>
+			<roles>
+				<role>Architect</role>
+				<role>Lead Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Gabe Maurer</name>
+			<email>gabe.maurer@att.com</email>
+			<organization>ATT</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Ian Howell</name>
+			<email>ian.howell@att.com</email>
+			<organization>ATT</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+ 			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- ============================================================== -->
+	<!-- Define sub-projects (modules) -->
+	<!-- ============================================================== -->
+	<modules>
+		<module>core</module>
+		<module>client</module>
+		<module>aaf</module>
+		<module>cass</module>
+		
+		<module>oauth-enduser</module>
+		<module>shiro</module>
+	</modules>
+
+	<!-- ============================================================== -->
+	<!-- Define project-wide dependencies -->
+	<!-- ============================================================== -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.onap.aaf.auth</groupId>
+				<artifactId>aaf-auth-client</artifactId>
+				<version>${project.authClientVersion}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-oauth</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+
+			<!-- Prevent Cycles in Testing  -->
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-core</artifactId>
+				<version>${project.version}</version>
+				<classifier>tests</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-jetty</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-cass</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-aaf</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-aaf</artifactId>
+				<version>${project.version}</version>
+				<classifier>full</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.cadi</groupId>
+				<artifactId>aaf-cadi-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.misc</groupId>
+				<artifactId>aaf-misc-env</artifactId>
+				<version>${project.miscVersion}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.misc</groupId>
+				<artifactId>aaf-misc-rosetta</artifactId>
+				<version>${project.miscVersion}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.onap.aaf.misc</groupId>
+				<artifactId>aaf-misc-log4j</artifactId>
+				<version>${project.miscVersion}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-io</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-security</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-http</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-util</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+
+			<dependency>
+			    <groupId>javax.servlet</groupId>
+			    <artifactId>javax.servlet-api</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.5</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- ============================================================== -->
+	<!-- Define common plugins and make them available for all modules -->
+	<!-- ============================================================== -->
+	<build>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<plugins>
+		</plugins>
+		<pluginManagement>			
+			<plugins>
+				<plugin>
+					<inherited>true</inherited>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
+	
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<version>2.4</version>
+					<artifactId>maven-jar-plugin</artifactId>
+					<configuration>
+						<outputDirectory>target</outputDirectory>
+						<archive>
+							<manifestEntries>
+								<Sealed>true</Sealed>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+
+				<!-- Define the javadoc plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.10</version>
+					<configuration>
+						<excludePackageNames>org.opendaylight.*</excludePackageNames>
+					</configuration>
+				</plugin>
+	
+				<plugin>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.2</version>
+					<configuration>
+						<goals>-s ${mvn.settings} deploy</goals>
+					</configuration>
+				</plugin>
+	
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.5.5</version>
+				</plugin>
+	
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.1</version>
+					<configuration>
+						<skip>false</skip>
+					</configuration>
+	
+				</plugin>
+	
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.10</version>
+				</plugin>
+	
+				<!-- Maven surefire plugin for testing -->
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.17</version>
+					<configuration>
+						<skipTests>true</skipTests>
+					</configuration>
+				</plugin>
+				
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											jaxb2-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.3,)
+										</versionRange>
+										<goals>
+											<goal>xjc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				
+			</plugins>
+		</pluginManagement>			
+	</build>
+
+
+	<!-- ============================================================== -->
+	<!-- Maven Central Repository Information -->
+	<!-- ============================================================== -->
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>attarch-releases</name>
+			<url>http://mavencentral.it.att.com:8084/nexus/content/repositories/attarch-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>attarch-snapshots</name>
+			<url>http://mavencentral.it.att.com:8084/nexus/content/repositories/attarch-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
