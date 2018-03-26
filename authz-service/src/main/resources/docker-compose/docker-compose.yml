@@ -23,7 +23,7 @@
 version: '2'
 services:
   aaf_container:
-    image: attos/aaf
+    image: onap/aaf/authz-service
     ports:
       - "8101:8101"
 
