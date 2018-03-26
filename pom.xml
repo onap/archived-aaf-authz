@@ -26,6 +26,29 @@
 	<version>2.1.0-SNAPSHOT</version>
 	<name>AAF Overall Parent</name>
 	<packaging>pom</packaging>
+	
+	<parent>             
+        <groupId>org.onap.oparent</groupId>
+        <artifactId>oparent</artifactId>
+        <version>1.1.0</version>
+    </parent>
+	
+	<properties>
+	<!--  SONAR  -->
+		 <jacoco.version>0.7.7.201606060606</jacoco.version>
+	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
+	    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+	    <!-- Default Sonar configuration -->
+	    <sonar.jacoco.reportPath>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPath>
+	    <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
+	    <!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
+	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
+		<nexusproxy>https://nexus.onap.org</nexusproxy>
+		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
+		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -43,20 +66,22 @@
 		<module>cadi</module>
 		<module>auth</module>
  	</modules>
-	
-	
-	
+
 	<distributionManagement>
 		<repository>
-			<id>nexus</id>
-			<name>attarch-releases</name>
-			<url>http://mavencentral.it.att.com:8084/nexus/content/repositories/attarch-releases</url>
+			<id>ecomp-releases</id>
+			<name>AAF Release Repository</name>
+			<url>${nexusproxy}${releaseNexusPath}</url>
 		</repository>
 		<snapshotRepository>
-			<id>nexus</id>
-			<name>attarch-snapshots</name>
-			<url>http://mavencentral.it.att.com:8084/nexus/content/repositories/attarch-snapshots</url>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
 		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexusproxy}${sitePath}</url>
+		</site>
 	</distributionManagement>
 	
 </project>	

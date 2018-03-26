@@ -93,16 +93,5 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<name>attarch-releases</name>
-			<url>http://mavencentral.it.att.com:8084/nexus/content/repositories/attarch-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus</id>
-			<name>attarch-snapshots</name>
-			<url>http://mavencentral.it.att.com:8084/nexus/content/repositories/attarch-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+
 </project>
