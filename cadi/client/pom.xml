@@ -72,7 +72,7 @@
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+			<artifactId>servlet-api</artifactId>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
