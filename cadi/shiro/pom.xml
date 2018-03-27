@@ -83,4 +83,21 @@
 	<build>
 		<plugins />
 	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>AAF Release Repository</name>
+			<url>${nexusproxy}${releaseNexusPath}</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexusproxy}${sitePath}</url>
+		</site>
+	</distributionManagement>
 </project>

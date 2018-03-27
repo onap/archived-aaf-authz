@@ -54,7 +54,7 @@
 		</developer>
 		<developer>
 			<name>Ian Howell</name>
-			<email>ian.howell@att.com</email>
+ 			<email>ian.howell@att.com</email>
 			<organization>ATT</organization>
 			<roles>
 				<role>Developer</role>
@@ -108,5 +108,22 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+	
+	<distributionManagement>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>AAF Release Repository</name>
+			<url>${nexusproxy}${releaseNexusPath}</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexusproxy}${sitePath}</url>
+		</site>
+	</distributionManagement>
 </project>
 
