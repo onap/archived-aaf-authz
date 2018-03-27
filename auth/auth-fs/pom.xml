@@ -34,6 +34,7 @@
 	<description>Independent FileServer Component via HTTP (not S) for Public Files (i.e. CRLs) for AAF Auth</description>
 
 	<properties>
+	<skipTests>false</skipTests>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
