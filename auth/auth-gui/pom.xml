@@ -35,6 +35,20 @@
 
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
+		<!--  SONAR  -->
+		 <jacoco.version>0.7.7.201606060606</jacoco.version>
+	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
+	    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+	    <!-- Default Sonar configuration -->
+	    <sonar.jacoco.reportPath>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPath>
+	    <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
+	    <!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
+	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
+		<nexusproxy>https://nexus.onap.org</nexusproxy>
+		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
+		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
 	</properties>
 
 
@@ -124,8 +138,86 @@
 				</configuration>
 				
 			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<nexusUrl>${nexusproxy}</nexusUrl>
+					<stagingProfileId>176c31dfe190a</stagingProfileId>
+					<serverId>ecomp-staging</serverId>
+				</configuration>
+			</plugin>		
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.7.201606060606</version>
+				<configuration>
+					<dumpOnExit>true</dumpOnExit>
+					<includes>
+						<include>org.onap.aaf.*</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
+							<!-- <append>true</append> -->
+						</configuration>
+					</execution>
+					<execution>
+						<id>pre-integration-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+							<!-- <append>true</append> -->
+						</configuration>
+					</execution>
+					<execution>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <fileSets>
+                                <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
+                                    <directory>${project.build.directory}/coverage-reports</directory>
+                                    <includes>
+                                        <include>*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <destFile>${project.build.directory}/jacoco-dev.exec</destFile>
+                        </configuration>
+                    </execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
+	<distributionManagement>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>AAF Release Repository</name>
+			<url>${nexusproxy}${releaseNexusPath}</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexusproxy}${sitePath}</url>
+		</site>
+	</distributionManagement>
 
 </project>
