@@ -72,6 +72,7 @@
 
 
 	<properties>
+	<skipTests>true</skipTests>
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
@@ -110,6 +111,13 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
