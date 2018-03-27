@@ -5,6 +5,21 @@ INSERT INTO cred (id,ns,type,cred,expires)
   VALUES ('dgl@openecomp.org','org.openecomp',1,0xab3831f27b39d7a039f9a92aa2bbfe51,'2020-12-31');
 
 INSERT INTO cred (id,ns,type,cred,expires)
+  VALUES ('ryan@appc.onap.org','org.onap.appc',1,0x9fb680a2292b51d5dc40335cabfa1a9a,'2020-12-31');
+
+INSERT INTO cred (id,ns,type,cred,expires)
+  VALUES ('sai@onap.org','org.onap.appc',1,0x9fb680a2292b51d5dc40335cabfa1a9a,'2020-12-31');
+
+INSERT INTO cred (id,ns,type,cred,expires)
+  VALUES ('shi@portal.onap.org','org.onap.portal',1,0xab3831f27b39d7a039f9a92aa2bbfe51,'2020-12-31');
+
+INSERT INTO cred (id,ns,type,cred,expires)
+  VALUES ('admin@portal.onap.org','org.onap.portal',1,0x37c77980eee6a7d47050d199f7191ba9,'2020-12-31');
+
+INSERT INTO cred (id,ns,type,cred,expires)
+  VALUES ('clamp@clamp.onap.org','org.onap.clamp',1,0xe18977785f423b7c3e5d1f283fce4e2e,'2020-12-31');
+
+INSERT INTO cred (id,ns,type,cred,expires)
   VALUES ('m99751@dmaapBC.openecomp.org','org.openecomp.dmaapBC',1,0xab3831f27b39d7a039f9a92aa2bbfe51,'2020-12-31');
 
 INSERT INTO cred (id,ns,type,cred,expires)
@@ -21,10 +36,10 @@ INSERT INTO role(ns, name, perms, description)
 INSERT INTO role(ns, name, perms, description)
   VALUES('com','owner',{'com.access|*|read'},'Com Owners');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('com','access','*','read',{'com.owner'},'Com Read Access');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('com','access','*','*',{'com.admin'},'Com Write Access');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
@@ -49,10 +64,10 @@ INSERT INTO role(ns, name, perms, description)
 INSERT INTO role(ns, name, perms, description)
   VALUES('org','owner',{'org.access|*|read'},'Com Owners');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('org','access','*','read',{'org.owner'},'Com Read Access');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('org','access','*','*',{'org.admin'},'Com Write Access');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
@@ -73,10 +88,10 @@ INSERT INTO role(ns, name, perms,description)
 INSERT INTO role(ns, name, perms,description)
   VALUES('com.att','owner',{'com.att.access|*|read'},'AT&T Owners');
 
-INSERT INTO perm(ns, type, instance, action, roles,description) 
+INSERT INTO perm(ns, type, instance, action, roles,description)
   VALUES ('com.att','access','*','read',{'com.att.owner'},'AT&T Read Access');
 
-INSERT INTO perm(ns, type, instance, action, roles,description) 
+INSERT INTO perm(ns, type, instance, action, roles,description)
   VALUES ('com.att','access','*','*',{'com.att.admin'},'AT&T Write Access');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
@@ -96,17 +111,17 @@ INSERT INTO role(ns, name, perms, description)
 INSERT INTO role(ns, name, perms, description)
   VALUES('com.att.aaf','owner',{'com.att.aaf.access|*|read'},'AAF Owners');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('com.att.aaf','access','*','read',{'com.att.aaf.owner'},'AAF Read Access');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('com.att.aaf','access','*','*',{'com.att.aaf.admin'},'AAF Write Access');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('dgl@openecomp.org','com.att.aaf.admin','2020-12-31','com.att.aaf','admin');
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('dgl@openecomp.org','com.att.aaf.owner','2020-12-31','com.att.aaf','owner');
-  
+
 
 // Create org.openecomp
 INSERT INTO ns (name,scope,description,parent,type)
@@ -118,52 +133,74 @@ INSERT INTO role(ns, name, perms, description)
 INSERT INTO role(ns, name, perms, description)
   VALUES('org.openecomp','owner',{'org.openecomp.access|*|read'},'OpenEcomp Owners');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('org.openecomp','access','*','read',{'org.openecomp.owner'},'OpenEcomp Read Access');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('org.openecomp','access','*','*',{'org.openecomp.admin'},'OpenEcomp Write Access');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('dgl@openecomp.org','org.openecomp.admin','2020-12-31','org.openecomp','admin');
+
+
+
+
+// Create org.onap
+INSERT INTO ns (name,scope,description,parent,type)
+  VALUES('org.onap',2,'Open ONAP NS','com.att',2);
+
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap','admin',{'org.onap.access|*|*'},'onap Admins');
+
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap','owner',{'org.onap.access|*|read'},'onap Owners');
+
+INSERT INTO perm(ns, type, instance, action, roles, description)
+  VALUES ('org.onap','access','*','read',{'org.onap.owner'},'onap Read Access');
+
+INSERT INTO perm(ns, type, instance, action, roles, description)
+  VALUES ('org.onap','access','*','*',{'org.onap.admin'},'onap Write Access');
+
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('dgl@openecomp.org','org.onap.admin','2020-12-31','org.onap','admin');
+  
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('dgl@openecomp.org','org.onap.owner','2020-12-31','org.onap','admin');
+
 
 // Create org.openecomp.dmaapBC
 
 INSERT INTO ns (name,scope,description,parent,type)
   VALUES('org.openecomp.dmaapBC',3,'Application Authorization Framework','org.openecomp',3);
 
-//INSERT INTO role(ns, name, perms, description)
-//  VALUES('org.openecomp.dmaapBC','admin',{'org.openecomp.dmaapBC.access|*|*'},'AAF Admins');
 
-INSERT INTO role(ns, name, perms, description) 
-VALUES('org.openecomp.dmaapBC','admin',{'org.openecomp.dmaapBC.access|*|*','org.openecomp.dmaapBC.topicFactory|:org.openecomp.dmaapBC.topic:org.openecomp.dmaapBC|create','org.openecomp.dmaapBC.mr.topic|:topic.org.openecomp.dmaapBC.newtopic|sub','org.openecomp.dmaapBC.mr.topic|:topic.org.openecomp.dmaapBC.newtopic|pub'},'AAF Admins');
-
-//INSERT INTO role(ns, name, perms, description) 
-//VALUES('org.openecomp.dmaapBC','admin',{'org.openecomp.dmaapBC.access|*|*','org.openecomp.dmaapBC.mr.topic|:topic.org.openecomp.dmaapBC.newtopic|sub'},'AAF Admins');
-
-//INSERT INTO role(ns, name, perms, description) 
-//VALUES('org.openecomp.dmaapBC','admin',{'org.openecomp.dmaapBC.access|*|*','org.openecomp.dmaapBC.mr.topic|:topic.org.openecomp.dmaapBC.newtopic|pub'},'AAF Admins');
-
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.openecomp.dmaapBC','admin',{'org.openecomp.dmaapBC.access|*|*','org.openecomp.dmaapBC.topicFactory|:org.openecomp.dmaapBC.topic:org.openecomp.dmaapBC|create','org.openecomp.dmaapBC.mr.topic|:topic.org.openecomp.dmaapBC.newtopic|sub','org.openecomp.dmaapBC.mr.topic|:topic.org.openecomp.dmaapBC.newtopic|pub'},'AAF Admins');
 
 
 INSERT INTO role(ns, name, perms, description)
   VALUES('org.openecomp.dmaapBC','owner',{'org.openecomp.dmaapBC.access|*|read'},'AAF Owners');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('org.openecomp.dmaapBC','access','*','read',{'org.openecomp.dmaapBC.owner'},'AAF Read Access');
 
-INSERT INTO perm(ns, type, instance, action, roles, description) 
+INSERT INTO perm(ns, type, instance, action, roles, description)
   VALUES ('org.openecomp.dmaapBC','access','*','*',{'org.openecomp.dmaapBC.admin'},'AAF Write Access');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('dgl@openecomp.org','org.openecomp.dmaapBC.admin','2020-12-31','org.openecomp.dmaapBC','admin');
+  
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('dgl@openecomp.org','org.openecomp.dmaapBC.owner','2020-12-31','org.openecomp.dmaapBC','owner');
+  
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('m99751@dmaapBC.openecomp.org','org.openecomp.dmaapBC.admin','2020-12-31','org.openecomp.dmaapBC','admin');
+  
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('m99751@dmaapBC.openecomp.org','org.openecomp.dmaapBC.owner','2020-12-31','org.openecomp.dmaapBC','owner');
+  
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('m99501@dmaapBC.openecomp.org','org.openecomp.dmaapBC.admin','2020-12-31','org.openecomp.dmaapBC','admin');
+  
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('m99501@dmaapBC.openecomp.org','org.openecomp.dmaapBC.owner','2020-12-31','org.openecomp.dmaapBC','owner');
