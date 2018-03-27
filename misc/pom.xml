@@ -27,6 +27,12 @@
 	<name>AAF Misc Parent</name>
 	<version>1.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	
+	<parent>             
+        <groupId>org.onap.oparent</groupId>
+        <artifactId>oparent</artifactId>
+        <version>1.1.0</version>
+    </parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -230,6 +236,11 @@
 			<name>AAF Release Repository</name>
 			<url>${nexusproxy}${releaseNexusPath}</url>
 		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
+		</snapshotRepository>
 		<site>
 			<id>ecomp-site</id>
 			<url>dav:${nexusproxy}${sitePath}</url>
