@@ -72,6 +72,7 @@
 
 
 	<properties>
+	<skipTests>true</skipTests>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
 	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
@@ -128,6 +129,13 @@
 	
 	<build>
 	    <plugins>
+		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 	        <plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
