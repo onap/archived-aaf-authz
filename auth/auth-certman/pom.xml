@@ -34,6 +34,7 @@
 	<description>Certificate Manager API</description>
 
 	<properties>
+	<skipTests>true</skipTests>
 		<project.swmVersion>21</project.swmVersion>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
