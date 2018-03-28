@@ -22,10 +22,9 @@
 version: '2'
 services:
   aaf_container:
-    image: nexus3.onap.org:10001/onap/aaf/authz-service:1.0.1-SNAPSHOT
-    ports:
+    image: attos/aaf
+    ports
       - "8101:8101"
-
     links:
       - cassandra_container
     volumes:
