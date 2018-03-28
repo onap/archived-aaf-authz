@@ -21,7 +21,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>osaaf</groupId>
+	<groupId>org.onap.aaf.authz</groupId>
 	<artifactId>parent</artifactId>
 	<version>2.1.0-SNAPSHOT</version>
 	<name>AAF Overall Parent</name>
@@ -58,6 +58,81 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<nexusUrl>${nexusproxy}</nexusUrl>
+					<stagingProfileId>176c31dfe190a</stagingProfileId>
+					<serverId>ecomp-staging</serverId>
+				</configuration>
+			</plugin>		
+		<plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+          <configuration>
+            <excludes>
+              <exclude>**/gen/**</exclude>
+              <exclude>**/generated-sources/**</exclude>
+              <exclude>**/yang-gen/**</exclude>
+              <exclude>**/pax/**</exclude>
+            </excludes>
+          </configuration>
+          <executions>
+
+            <execution>
+              <id>pre-unit-test</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
+                <propertyName>surefireArgLine</propertyName>
+              </configuration>
+            </execution>
+            
+       
+            <execution>
+              <id>post-unit-test</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <configuration>
+                <dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
+                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>pre-integration-test</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+
+                <propertyName>failsafeArgLine</propertyName>
+              </configuration>
+            </execution>
+
+       
+            <execution>
+              <id>post-integration-test</id>
+              <phase>post-integration-test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <configuration>
+                <dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
+                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
 		</plugins>
     </build>	
 	<modules>
@@ -67,6 +142,21 @@
 		<module>auth</module>
  	</modules>
 
-	
+	<distributionManagement>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>AAF Release Repository</name>
+			<url>${nexusproxy}${releaseNexusPath}</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>AAF Snapshot Repository</name>
+			<url>${nexusproxy}${snapshotNexusPath}</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexusproxy}${sitePath}</url>
+		</site>
+	</distributionManagement>
 	
 </project>	
