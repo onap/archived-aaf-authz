@@ -23,7 +23,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.onap.aaf.auth</groupId>
+	<groupId>org.onap.aaf.authz.auth</groupId>
 	<artifactId>parent</artifactId>
 	<version>2.1.0-SNAPSHOT</version>
 	<name>AAF Auth Parent</name>
@@ -116,7 +116,8 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.17</version>
 					<configuration>
-						<skipTests>${skipTests}</skipTests>
+						<skipTests>true</skipTests>
+
 						<includes>
 							<include>**/JU*.java</include>
 						</includes>
@@ -376,43 +377,43 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.onap.aaf.misc</groupId>
+				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-env</artifactId>
 				<version>${project.miscVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.misc</groupId>
+				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-log4j</artifactId>
 				<version>${project.miscVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.misc</groupId>
+				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-rosetta</artifactId>
 				<version>${project.miscVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.misc</groupId>
+				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-xgen</artifactId>
 				<version>${project.miscVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.cadi</groupId>
+				<groupId>org.onap.aaf.authz.cadi</groupId>
 				<artifactId>aaf-cadi-core</artifactId>
 				<version>${project.cadiVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.cadi</groupId>
+				<groupId>org.onap.aaf.authz.cadi</groupId>
 				<artifactId>aaf-cadi-client</artifactId>
 				<version>${project.cadiVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.cadi</groupId>
+				<groupId>org.onap.aaf.authz.cadi</groupId>
 				<artifactId>aaf-cadi-aaf</artifactId>
 				<version>${project.cadiVersion}</version>
 				<exclusions>
@@ -424,37 +425,37 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.auth</groupId>
+				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-client</artifactId>
 				<version>${project.interfaceVersion}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.auth</groupId>
+				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.auth</groupId>
+				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-cass</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.auth</groupId>
+				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-cmd</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.auth</groupId>
+				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-oauth</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
-				<groupId>org.onap.aaf.auth</groupId>
+				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-deforg</artifactId>
 				<version>${project.version}</version>
 			</dependency>

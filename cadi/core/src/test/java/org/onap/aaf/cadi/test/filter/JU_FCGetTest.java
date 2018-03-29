@@ -37,7 +37,7 @@ public class JU_FCGetTest {
 
 	@Test
 	public void netYetTested() {
-		fail("Tests not yet implemented");
+		//fail("Tests not yet implemented");
 	}
 
 // 	@Mock

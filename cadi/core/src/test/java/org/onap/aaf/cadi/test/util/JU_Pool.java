@@ -37,15 +37,30 @@ public class JU_Pool {
 
 	private class IntegerCreator implements Creator<Integer> {
 		private int current = 0;
-		@Override public Integer create() { return current++; } 
-		@Override public void destroy(Integer t) { t = 0; } 
-		@Override public boolean isValid(Integer t) { return (t & 0x1) == 0; } 
-		@Override public void reuse(Integer t) { }
+
+		@Override
+		public Integer create() {
+			return current++;
+		}
+
+		@Override
+		public void destroy(Integer t) {
+			t = 0;
+		}
+
+		@Override
+		public boolean isValid(Integer t) {
+			return (t & 0x1) == 0;
+		}
+
+		@Override
+		public void reuse(Integer t) {
+		}
 	}
 
 	private class CustomLogger implements Log {
 		@Override
-		public void log(Object ... o) {
+		public void log(Object... o) {
 			for (Object item : o) {
 				sb.append(item.toString());
 			}
@@ -110,14 +125,14 @@ public class JU_Pool {
 		Pooled<Integer> gotten = intPool.get();
 		assertThat(gotten.content, is(0));
 
-		// finalize that item, then check the next one to make sure we actually purged the odd numbers
+		// finalize that item, then check the next one to make sure we actually purged
+		// the odd numbers
 		gotten = intPool.get();
 		assertThat(gotten.content, is(2));
 
 		intPool.drain();
 
 	}
-
 
 	@Test
 	public void setMaxTest() {

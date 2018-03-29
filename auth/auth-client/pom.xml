@@ -27,7 +27,7 @@
 	<artifactId>aaf-auth-client</artifactId>
 	<name>AAF Auth Client</name>
 	<description>XSD Generated classes for AAF Auth</description>
-	<groupId>org.onap.aaf.auth</groupId>
+	<groupId>org.onap.aaf.authz.auth</groupId>
 	<version>2.10-SNAPSHOT</version>
 	<packaging>jar</packaging>
 

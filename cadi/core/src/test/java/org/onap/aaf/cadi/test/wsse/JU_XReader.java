@@ -30,36 +30,34 @@ import org.onap.aaf.cadi.wsse.XEvent;
 import org.onap.aaf.cadi.wsse.XReader;
 
 public class JU_XReader {
-	//TODO: Gabe [JUnit] Class not found error
+	// TODO: Gabe [JUnit] Class not found error
 	@Test
 	public void test() throws Exception {
 		FileInputStream fis = new FileInputStream("test/CBUSevent.xml");
 		try {
 			XReader xr = new XReader(fis);
-			while(xr.hasNext()) {
+			while (xr.hasNext()) {
 				XEvent xe = xr.nextEvent();
-				switch(xe.getEventType()) {
-					case XMLEvent.START_DOCUMENT:
-						System.out.println("Start Document");
-						break;
-					case XMLEvent.START_ELEMENT:
-						System.out.println("Start Event: " + xe.asStartElement().getName());
-						break;
-					case XMLEvent.END_ELEMENT:
-						System.out.println("End Event: " + xe.asEndElement().getName());
-						break;
-					case XMLEvent.CHARACTERS:
-						System.out.println("Characters: " + xe.asCharacters().getData());
-						break;
-					case XMLEvent.COMMENT:
-						System.out.println("Comment: " + ((XEvent.Comment)xe).value);
-						break;
+				switch (xe.getEventType()) {
+				case XMLEvent.START_DOCUMENT:
+					System.out.println("Start Document");
+					break;
+				case XMLEvent.START_ELEMENT:
+					System.out.println("Start Event: " + xe.asStartElement().getName());
+					break;
+				case XMLEvent.END_ELEMENT:
+					System.out.println("End Event: " + xe.asEndElement().getName());
+					break;
+				case XMLEvent.CHARACTERS:
+					System.out.println("Characters: " + xe.asCharacters().getData());
+					break;
+				case XMLEvent.COMMENT:
+					System.out.println("Comment: " + ((XEvent.Comment) xe).value);
+					break;
 				}
 			}
 		} finally {
 			fis.close();
 		}
-		
 	}
-
 }

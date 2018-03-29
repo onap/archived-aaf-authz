@@ -23,7 +23,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.onap.aaf.auth</groupId>
+		<groupId>org.onap.aaf.authz.auth</groupId>
 		<artifactId>parent</artifactId>
 		<version>2.1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
@@ -35,6 +35,8 @@
 
 	<properties>
 	<skipTests>true</skipTests>
+
+
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
@@ -91,12 +93,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.onap.aaf.auth</groupId>
+			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-core</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.aaf.cadi</groupId>
+			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-core</artifactId>
 		</dependency>
 	</dependencies>
