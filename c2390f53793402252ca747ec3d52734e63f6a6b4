@@ -16,6 +16,24 @@
       "revId": "c2390f53793402252ca747ec3d52734e63f6a6b4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_981f7bb7",
+        "filename": "auth/auth-core/src/test/java/org/onap/aaf/auth/env/test/JU_AuthzEnv.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3649
+      },
+      "writtenOn": "2018-03-29T20:12:46Z",
+      "side": 1,
+      "message": "rt",
+      "parentUuid": "5a93c517_180ccb93",
+      "revId": "c2390f53793402252ca747ec3d52734e63f6a6b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
