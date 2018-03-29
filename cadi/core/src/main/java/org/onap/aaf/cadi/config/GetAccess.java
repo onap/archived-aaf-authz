@@ -48,12 +48,7 @@ public class GetAccess extends PropAccess {
 	 */
 	@Override
 	public String getProperty(String tag) {
-		String rv;
-		rv = super.getProperty(tag, null);
-		if(rv==null && getter!=null) {
-			rv = getter.get(tag, null, true);
-		}
-		return rv;
+		return getProperty(tag, null);
 	}
 
 	public Get get() {

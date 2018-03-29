@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,21 +21,20 @@
  ******************************************************************************/
 package org.onap.aaf.auth.env.test;
 
-import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import static org.mockito.Mockito.*;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.servlet.ServletRequest;
 
-import org.onap.aaf.cadi.principal.TaggedPrincipal;
-import org.onap.aaf.misc.env.Env;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -44,9 +43,8 @@ import org.onap.aaf.auth.env.AuthzTransOnlyFilter;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Connector;
 import org.onap.aaf.cadi.TrustChecker;
+import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.LogTarget;
-import org.onap.aaf.misc.env.Slot;
-import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.Trans.Metric;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,20 +57,20 @@ public class JU_AuthzTransOnlyFilter {
 	Object additionalTafLurs = mock(Object.class);
 	ServletRequest servletRequestMock = mock(ServletRequest.class);
 	AuthzTransOnlyFilter authzTransOnlyFilter;
-	
+
 	@Before
 	public void setUp(){
 		authzTransOnlyFilter = new AuthzTransOnlyFilter(authzEnvMock);
 	}
-	
+
 	/*@Test
 	public void testProtected() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Method newTransMethod = AuthzTransFilter.class.getDeclaredMethod("newTrans");
 		newTransMethod.setAccessible(true);
-		
+
 		newTransMethod.invoke(authzTransFilter);
 	}*/
-	
+
 	@Test
 	public void testStart() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
@@ -97,7 +95,7 @@ public class JU_AuthzTransOnlyFilter {
 		authenticatedMethod.setAccessible(true);
 		authenticatedMethod.invoke(aTF,authzTransMock, null);
 	}
-	
+
 	@Test
 	public void testTallyHo() throws CadiException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);

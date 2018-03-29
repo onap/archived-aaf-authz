@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,39 +21,34 @@
  ******************************************************************************/
 package org.onap.aaf.auth.rserv.test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.NavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.onap.aaf.auth.rserv.CachingFileAccess;
 import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.rserv.Match;
-
-//import org.onap.aaf.auth.rserv.CachingFileAccess.Content;
-import java.util.NavigableMap;
 import org.onap.aaf.misc.env.EnvJAXB;
 import org.onap.aaf.misc.env.LogTarget;
-import org.onap.aaf.misc.env.StaticSlot;
 import org.onap.aaf.misc.env.Store;
 import org.onap.aaf.misc.env.Trans;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -67,8 +62,8 @@ public class JU_CachingFileAccess {
 	HttpCode httpCode;
 	EnvJAXB envJ;
 	Trans trans;
-	
-	
+
+
 	@Before
 	public void setUp() throws IOException{
 		trans = mock(Trans.class);
@@ -85,7 +80,7 @@ public class JU_CachingFileAccess {
 		cachingFileAccess = new CachingFileAccess(envJ,"test");
 
 
-		
+
 	}
 
 	@Test
@@ -100,14 +95,14 @@ public class JU_CachingFileAccess {
 		cachingFileAccess.setEnv(store1, test1); //These don't reach all the branches for some reason
 		cachingFileAccess.setEnv(store2, test2);
 	}
-	
+
 	@Test
 	public void testHandle() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		HttpServletRequest req = mock(HttpServletRequest.class);
 		Trans trans = mock(Trans.class);
 		HttpServletResponse resp = mock(HttpServletResponse.class);
 		when(req.getPathInfo()).thenReturn("path/to/file");
-		
+
 		Field matchField = HttpCode.class.getDeclaredField("match");
 		matchField.setAccessible(true);
 		Match match = mock(Match.class);
@@ -117,27 +112,27 @@ public class JU_CachingFileAccess {
 		when(match.param(anyString(), anyString())).thenReturn("clear");
 		cachingFileAccess.handle(trans, req, resp);
 	}
-	
+
 	@Test
 	public void testWebPath() {
 		EnvJAXB envJ = mock(EnvJAXB.class);
 		String web_path_test = "TEST";
 		Assert.assertEquals(web_path_test, cachingFileAccess.webPath());
 	}
-	
+
 	@Test
 	public void testCleanupParams() {
 		NavigableMap<String,org.onap.aaf.auth.rserv.Content> content = new ConcurrentSkipListMap<String,org.onap.aaf.auth.rserv.Content>();
-		cachingFileAccess.cleanupParams(50, 500); //TODO: find right input	
+		cachingFileAccess.cleanupParams(50, 500); //TODO: find right input
 	}
-	
+
 	@Test
 	public void testLoad() throws IOException {
 		cachingFileAccess.load(null, null, "1220227200L/1220227200L", null, 1320227200L );
 		String filePath = "test/output_key";
 		File keyfile = new File(filePath);
 		RandomAccessFile randFile = new RandomAccessFile (keyfile,"rw");
-		
+
 		String dPath = "test/";
 		File directoryPath = new File(dPath);
 		directoryPath.mkdir();
@@ -152,14 +147,14 @@ public class JU_CachingFileAccess {
 		cachingFileAccess.load(null, filePath1, "-", "test", -1);
 		keyfile1.delete();
 	}
-	
+
 	@Test
 	public void testLoadOrDefault() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		String filePath = "test/output_key";
 		File keyfile = new File(filePath);
 		cachingFileAccess.loadOrDefault(trans, filePath, "-", null, null);
 		keyfile.delete();
-		
+
 		Trans trans = mock(Trans.class);
 
 		String filePath1 = "test/output_key.txt";
@@ -172,7 +167,7 @@ public class JU_CachingFileAccess {
 		//cachingFileAccess.loadOrDefault(trans, "bs", "also bs", "test", null);	//TODO: Needs more testing AAF-111
 		//keyfile1.delete();
 	}
-	
+
 	@Test
 	public void testInvalidate() {
 		//NavigableMap<String,org.onap.aaf.auth.rserv.Content> content = new ConcurrentSkipListMap<String,org.onap.aaf.auth.rserv.Content>();
