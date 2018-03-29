@@ -24,6 +24,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyStore;
+import java.security.KeyStore.PrivateKeyEntry;
+import java.security.Provider;
+import java.security.Security;
+import java.security.PrivateKey;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -33,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import sun.security.pkcs11.SunPKCS11;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
@@ -68,7 +74,7 @@ public class LocalCA extends CA {
 				KeyPurposeId.id_kp_serverAuth, // WebServer
 				KeyPurposeId.id_kp_clientAuth};// WebClient
 				
-	private final RSAPrivateKey caKey;
+	private final PrivateKey caKey;
 	private final X500Name issuer;
 	private final SecureRandom random = new SecureRandom();
 	private byte[] serialish;
@@ -78,16 +84,22 @@ public class LocalCA extends CA {
 		super(access, name, env);
 		serialish = new byte[24];
 		if(params.length<1 || params[0].length<2) {
-			throw new IOException("LocalCA expects cm_ca.<ca name>=org.onap.aaf.auth.cm.ca.LocalCA,<full path to key file>[;<Full Path to Trust Chain, ending with actual CA>]+");
+			throw new IOException("LocalCA expects cm_ca.<ca name>=org.onap.aaf.auth.cm.ca.LocalCA,<full path to pkcs11 config file>[;<Full Path to Trust Chain, ending with actual CA>]+");
 		}
-		
-		// Read in the Private Key
-		File f = new File(params[0][0]); // key
-		if(f.exists()) {
-			caKey = (RSAPrivateKey)Factory.toPrivateKey(NullTrans.singleton(),f);
-		} else {
-			throw new CertException("Private Key, " + f.getPath() + ", does not exist");
+
+		// add pkcs11 provider
+		Provider p = new SunPKCS11(params[0][0]);
+		if (p==null) {
+			throw new RuntimeException("could not get security provider");
 		}
+		Security.addProvider(p);
+		// Load the key store
+		char[] pin = "123456789".toCharArray();
+		KeyStore keyStore = KeyStore.getInstance("PKCS11", p);
+		keyStore.load(null, pin);
+		// get the Private Key
+		PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry) keyStore.getEntry("0x2222", null);
+		caKey = privateKeyEntry.getPrivateKey();
 
 		String dir = access.getProperty(CM_PUBLIC_DIR, "");
 		if(!"".equals(dir) && !dir.endsWith("/")) {
