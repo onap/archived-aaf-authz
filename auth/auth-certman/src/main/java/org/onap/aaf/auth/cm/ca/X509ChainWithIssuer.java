@@ -67,6 +67,21 @@ public class X509ChainWithIssuer extends X509andChain {
 		}
 	}
 	
+	public X509ChainWithIssuer(Certificate[] certs) throws IOException, CertException {
+		X509Certificate x509;
+		for(Certificate c : certs) {
+			x509=(X509Certificate)c;
+			Principal subject = x509.getSubjectDN();
+			if(subject!=null) {
+				if(cert==null) { // first in Trust Chain
+					issuerDN= subject.toString();
+				}
+				addTrustChainEntry(x509);
+				cert=x509; // adding each time makes sure last one is signer.
+			}
+		}
+	}
+
 	public String getIssuerDN() {
 		return issuerDN;
 	}

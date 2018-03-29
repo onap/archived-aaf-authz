@@ -21,13 +21,22 @@
 package org.onap.aaf.auth.cm.ca;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStore.Entry;
+import java.security.KeyStore.PrivateKeyEntry;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.SecureRandom;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,7 +77,7 @@ public class LocalCA extends CA {
 				KeyPurposeId.id_kp_serverAuth, // WebServer
 				KeyPurposeId.id_kp_clientAuth};// WebClient
 				
-	private final RSAPrivateKey caKey;
+	private final PrivateKey caKey;
 	private final X500Name issuer;
 	private final SecureRandom random = new SecureRandom();
 	private byte[] serialish;
@@ -82,38 +91,93 @@ public class LocalCA extends CA {
 		}
 		
 		// Read in the Private Key
-		File f = new File(params[0][0]); // key
-		if(f.exists()) {
-			caKey = (RSAPrivateKey)Factory.toPrivateKey(NullTrans.singleton(),f);
+		String configured;
+		File f = new File(params[0][0]);
+		if(f.exists() && f.isFile()) {
+			String fileName = f.getName();
+			if(fileName.endsWith(".key")) {
+				caKey = Factory.toPrivateKey(NullTrans.singleton(),f);
+				List<FileReader> frs = new ArrayList<FileReader>(params.length-1);
+				try {
+					String dir = access.getProperty(CM_PUBLIC_DIR, "");
+					if(!"".equals(dir) && !dir.endsWith("/")) {
+						dir = dir + '/';
+					}
+
+					String path;
+					for(int i=1; i<params[0].length; ++i) { // first param is Private Key, remainder are TrustChain
+						path = !params[0][i].contains("/")?dir+params[0][i]:params[0][i];
+						access.printf(Level.INIT, "Loading a TrustChain Member for %s from %s\n",name, path);
+						frs.add(new FileReader(path));
+					}
+					x509cwi = new X509ChainWithIssuer(frs);
+				} finally {
+					for(FileReader fr : frs) {
+						if(fr!=null) {
+							fr.close();
+						}
+					}
+				}
+				configured = "Configured with " + fileName;
+			} else {
+				if(params.length<1 || params[0].length<3) {
+					throw new CertException("LocalCA parameters must be <keystore [.p12|.pkcs12|.jks|.pkcs11(sun only)]; <alias>; enc:<encrypted Keystore Password>>");
+				}
+				try {
+					Provider p;
+					KeyStore keyStore;
+					if(fileName.endsWith(".pkcs11")) {
+						String ksType;
+						p = Factory.getSecurityProvider(ksType="PKCS11",params);
+						keyStore = KeyStore.getInstance(ksType,p);
+					} else if(fileName.endsWith(".jks")) {
+						keyStore = KeyStore.getInstance("JKS");
+					} else if(fileName.endsWith(".p12") || fileName.endsWith(".pkcs12")) {
+						keyStore = KeyStore.getInstance("PKCS12");
+					} else {
+						throw new CertException("Unknown Keystore type from filename " + fileName);
+					}
+					
+					FileInputStream fis = new FileInputStream(f);
+					KeyStore.ProtectionParameter keyPass;
+
+					try {
+						String pass = access.decrypt(params[0][2]/*encrypted passcode*/, true);
+						if(pass==null) {
+							throw new CertException("Passcode for " + fileName + " cannot be decrypted.");
+						}
+						char[] ksPass = pass.toCharArray();
+						//Assuming Key Pass is same as Keystore Pass
+						keyPass = new KeyStore.PasswordProtection(ksPass);
+
+						keyStore.load(fis,ksPass);
+					} finally {
+						fis.close();
+					}
+					Entry entry = keyStore.getEntry(params[0][1]/*alias*/, keyPass);
+					if(entry==null) {
+						throw new CertException("There is no Keystore entry with name '" + params[0][1] +'\'');
+					}
+					PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry)entry;
+					caKey = privateKeyEntry.getPrivateKey();
+					
+					x509cwi = new X509ChainWithIssuer(privateKeyEntry.getCertificateChain());
+					configured =  "keystore \"" + fileName + "\", alias " + params[0][1];
+				} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableEntryException e) {
+					throw new CertException("Exception opening Keystore " + fileName, e);
+				}
+			}
 		} else {
 			throw new CertException("Private Key, " + f.getPath() + ", does not exist");
 		}
-
-		String dir = access.getProperty(CM_PUBLIC_DIR, "");
-		if(!"".equals(dir) && !dir.endsWith("/")) {
-			dir = dir + '/';
+		
+		X500NameBuilder xnb = new X500NameBuilder();
+		for(RDN rnd : RDN.parse(',', x509cwi.getIssuerDN())) {
+			xnb.addRDN(rnd.aoi,rnd.value);
 		}
-		List<FileReader> frs = new ArrayList<FileReader>(params.length-1);
-		try {
-			String path;
-			for(int i=1; i<params[0].length; ++i) { // first param is Private Key, remainder are TrustChain
-				path = !params[0][i].contains("/")?dir+params[0][i]:params[0][i];
-				access.printf(Level.INIT, "Loading a TrustChain Member for %s from %s\n",name, path);
-				frs.add(new FileReader(path));
-			}
-			x509cwi = new X509ChainWithIssuer(frs);
-			X500NameBuilder xnb = new X500NameBuilder();
-			for(RDN rnd : RDN.parse(',', x509cwi.getIssuerDN())) {
-				xnb.addRDN(rnd.aoi,rnd.value);
-			}
-			issuer = xnb.build();
-		} finally {
-			for(FileReader fr : frs) {
-				if(fr!=null) {
-					fr.close();
-				}
-			}
-		}
+		issuer = xnb.build();
+		access.printf(Level.INIT, "LocalCA is configured with %s.  The Issuer DN is %s.",
+				configured, issuer.toString());
 	}
 
 	/* (non-Javadoc)

@@ -75,6 +75,7 @@ public class JU_AAFAuthnTest {
 	@Test
 	public void testAAFAuthnAAFConOfCLIENTAbsUserCacheOfAAFPermission() throws Exception {
 		AAFAuthn<HttpsURLConnection> auth = con.newAuthn(cache);
+		assertNotNull(auth);
 	}
 	//TODO broken JUNIT with MOCKITO
 	@Test
@@ -90,6 +91,7 @@ public class JU_AAFAuthnTest {
 	@Test
 	public void testAAFAuthnAAFConOfCLIENTAbsUserCacheOfAAFPermission1() throws Exception {
 		AAFAuthn<HttpsURLConnection> auth = con.newAuthn(cache);
+		assertNotNull(auth);
 	}
 	//TODO broken JUNIT with MOCKITO
 	@Test
@@ -105,6 +107,8 @@ public class JU_AAFAuthnTest {
 	@Test
 	public void testAAFAuthnAAFConOfCLIENTAbsUserCacheOfAAFPermission2() throws Exception {
 		AAFAuthn<HttpsURLConnection> auth = con.newAuthn(cache);
+		assertNotNull(auth);
+
 	}
 	//TODO broken JUNIT with MOCKITO
 	@Test
@@ -120,6 +124,8 @@ public class JU_AAFAuthnTest {
 	@Test
 	public void testAAFAuthnAAFConOfCLIENTAbsUserCacheOfAAFPermission3() throws Exception {
 		AAFAuthn<HttpsURLConnection> auth = con.newAuthn(cache);
+		assertNotNull(auth);
+
 	}
 	//TODO broken JUNIT with MOCKITO
 	@Test
@@ -135,6 +141,8 @@ public class JU_AAFAuthnTest {
 	@Test
 	public void testAAFAuthnAAFConOfCLIENTAbsUserCacheOfAAFPermission4() throws Exception {
 		AAFAuthn<HttpsURLConnection> auth = con.newAuthn(cache);
+		assertNotNull(auth);
+
 	}
 	//TODO broken JUNIT with MOCKITO
 	@Test
@@ -150,5 +158,7 @@ public class JU_AAFAuthnTest {
 	@Test
 	public void testAAFAuthnAAFConOfCLIENTAbsUserCacheOfAAFPermission5() throws Exception {
 		AAFAuthn<HttpsURLConnection> auth = con.newAuthn(cache);
+		assertNotNull(auth);
+
 	}
 }

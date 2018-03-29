@@ -1,2 +1,5 @@
 /authBatch.props
 /log4j.properties
+/.settings/
+/.project
+/target/

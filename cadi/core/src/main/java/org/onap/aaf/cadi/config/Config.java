@@ -347,23 +347,26 @@ public class Config {
 					if(AAF_TAF_CLASS_DEF.equals(aafTafClassName)) { 
 						try {
 							Class<?> aafTafClass = loadClass(access,aafTafClassName);
-		
-							Constructor<?> cstr = aafTafClass.getConstructor(Connector.class,boolean.class,AbsUserCache.class);
-							if(cstr!=null) {
-								if(lur instanceof AbsUserCache) {
-									aaftaf = (HttpTaf)cstr.newInstance(aafcon,basic_warn,lur);
-								} else {
-									cstr = aafTafClass.getConstructor(Connector.class,boolean.class);
-									if(cstr!=null) {
-										aaftaf = (HttpTaf)cstr.newInstance(aafcon,basic_warn);
+							if(aafTafClass!=null) {
+								Constructor<?> cstr = aafTafClass.getConstructor(Connector.class,boolean.class,AbsUserCache.class);
+								if(cstr!=null) {
+									if(lur instanceof AbsUserCache) {
+										aaftaf = (HttpTaf)cstr.newInstance(aafcon,basic_warn,lur);
+									} else {
+										cstr = aafTafClass.getConstructor(Connector.class,boolean.class);
+										if(cstr!=null) {
+											aaftaf = (HttpTaf)cstr.newInstance(aafcon,basic_warn);
+										}
+									}
+									if(aaftaf==null) {
+										access.log(Level.INIT,"ERROR! AAF TAF Failed construction.  NOT Configured");
+									} else {
+										access.log(Level.INIT,"AAF TAF Configured to ",aafURL);
+										// Note: will add later, after all others configured
 									}
 								}
-								if(aaftaf==null) {
-									access.log(Level.INIT,"ERROR! AAF TAF Failed construction.  NOT Configured");
-								} else {
-									access.log(Level.INIT,"AAF TAF Configured to ",aafURL);
-									// Note: will add later, after all others configured
-								}
+							} else {
+								access.log(Level.INIT, "There is no AAF TAF class available: %s. AAF TAF not configured.",aafTafClassName);
 							}
 						} catch(Exception e) {
 							access.log(Level.INIT,"ERROR! AAF TAF Failed construction.  NOT Configured",e);

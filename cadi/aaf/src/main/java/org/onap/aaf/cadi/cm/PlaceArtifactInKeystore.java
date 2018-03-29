@@ -41,12 +41,6 @@ import certman.v1_0.CertInfo;
 
 public class PlaceArtifactInKeystore extends ArtifactDir {
 	private String kst;
-	//TODO get ROOT DNs or Trusted DNs from Certificate Manager.
-//	private static String[] rootDNs = new String[]{			
-//			"CN=ATT CADI Root CA - Test, O=ATT, OU=CSO, C=US", // Lab.  delete eventually
-//			"CN=ATT AAF CADI TEST CA, OU=CSO, O=ATT, C=US",
-//			"CN=ATT AAF CADI CA, OU=CSO, O=ATT, C=US"
-//	};
 
 	public PlaceArtifactInKeystore(String kst) {
 		this.kst = kst;

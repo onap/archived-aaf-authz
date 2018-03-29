@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -41,8 +43,10 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
@@ -443,5 +447,40 @@ public class Factory {
 		} finally {
 			tt.done();
 		}	
+	}
+
+	/**
+	 * Get the Security Provider, or, if not exists yet, attempt to load
+	 * 
+	 * @param providerType
+	 * @param params
+	 * @return
+	 * @throws CertException
+	 */
+	public static synchronized Provider getSecurityProvider(String providerType, String[][] params) throws CertException {
+		Provider p = Security.getProvider(providerType);
+		if(p!=null) {
+			switch(providerType) {
+				case "PKCS12":
+					
+					break;
+				case "PKCS11": // PKCS11 only known to be supported by Sun
+					try {
+						Class<?> clsSunPKCS11 = Class.forName("sun.security.pkcs11.SunPKCS11");
+						Constructor<?> cnst = clsSunPKCS11.getConstructor(String.class);
+						Object sunPKCS11 = cnst.newInstance(params[0][0]);
+						if (sunPKCS11==null) {
+							throw new CertException("SunPKCS11 Provider cannot be constructed for " + params[0][0]);
+						}
+						Security.addProvider((Provider)sunPKCS11);
+					} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						throw new CertException(e);
+					}
+					break;
+				default:
+					throw new CertException(providerType + " is not a known Security Provider for your JDK.");
+			}
+		}
+		return p;
 	}
 }
