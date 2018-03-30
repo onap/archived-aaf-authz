@@ -5,7 +5,7 @@
 VERSION=2.1.0-SNAPSHOT
 # TODO add ability to do DEBUG settings
 
-if [ "$1" == "" ]; then
+if ["$1" == ""]; then
   AAF_COMPONENTS=`ls ../aaf_*HOT/bin | grep -v '\.'`
 else
   AAF_COMPONENTS=$1
