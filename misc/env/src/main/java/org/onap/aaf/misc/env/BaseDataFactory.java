@@ -54,7 +54,7 @@ import org.xml.sax.SAXException;
  * @param <T>
  */
 public class BaseDataFactory {
-
+	private static final Object LOCK = new Object();
 	/**
 	 * Generate a Schema Object for use in validation based on FileNames.
 	 * 
@@ -88,7 +88,7 @@ public class BaseDataFactory {
 		}
 		try {
 			//Note: SchemaFactory is not reentrant or very thread safe either... see docs
-			synchronized(XMLConstants.W3C_XML_SCHEMA_NS_URI) { // SchemaFactory is not reentrant
+			synchronized(LOCK) { // SchemaFactory is not reentrant
 				return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 				 	.newSchema(sources);
 			}

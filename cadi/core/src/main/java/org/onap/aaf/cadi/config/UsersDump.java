@@ -116,19 +116,24 @@ public class UsersDump {
 					try {
 						FileInputStream fis = new FileInputStream(file);
 						byte[] orig = new byte[(int)file.length()];
+						int read;
 						try {
-							fis.read(orig);
+							read = fis.read(orig);
 						} finally {
 							fis.close();
 						}
-						// Starting at third "<" (<tomcat-users> line)
-						int startA=0, startB=0;
-						for(int i=0;startA<orig.length && i<3;++startA) if(orig[startA]=='<')++i;
-						for(int i=0;startB<orig.length && i<3;++startB) if(postulate[startB]=='<')++i;
-						
-						writeIt=orig.length-startA!=postulate.length-startB; // first, check if remaining length is the same
-						while(!writeIt && startA<orig.length && startB<postulate.length) {
-							if(orig[startA++]!=postulate[startB++])writeIt = true;
+						if(read<=0) {
+							writeIt = false;
+						} else {
+							// Starting at third "<" (<tomcat-users> line)
+							int startA=0, startB=0;
+							for(int i=0;startA<orig.length && i<3;++startA) if(orig[startA]=='<')++i;
+							for(int i=0;startB<orig.length && i<3;++startB) if(postulate[startB]=='<')++i;
+							
+							writeIt=orig.length-startA!=postulate.length-startB; // first, check if remaining length is the same
+							while(!writeIt && startA<orig.length && startB<postulate.length) {
+								if(orig[startA++]!=postulate[startB++])writeIt = true;
+							}
 						}
 					} catch (Exception e) {
 						writeIt = true;

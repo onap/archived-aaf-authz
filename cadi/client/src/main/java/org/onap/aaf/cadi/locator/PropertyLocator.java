@@ -193,17 +193,21 @@ public class PropertyLocator implements Locator<URI> {
 								port = "https".equalsIgnoreCase(o.getScheme())?443:80;
 							}
 							socket.connect(new InetSocketAddress(realname,port),3000);
-							if(socket.isConnected()) {
-								n = new URI(
-										o.getScheme(),
-										o.getUserInfo(),
-										realname,
-										o.getPort(),
-										o.getPath(),
-										o.getQuery(),
-										o.getFragment()
-										);
-								resolve.add(n);
+							try {
+								if(socket.isConnected()) {
+									n = new URI(
+											o.getScheme(),
+											o.getUserInfo(),
+											realname,
+											o.getPort(),
+											o.getPath(),
+											o.getQuery(),
+											o.getFragment()
+											);
+									resolve.add(n);
+								}
+							} finally {
+								socket.close();
 							}
 						} catch (IOException e) {
 						} finally {

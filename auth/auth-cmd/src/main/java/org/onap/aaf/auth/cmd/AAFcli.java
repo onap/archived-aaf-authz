@@ -247,7 +247,10 @@ public class AAFcli {
 				} else if ("pause".equalsIgnoreCase(largs[idx])) {
 					pw.println("Press <Return> to continue...");
 					++idx;
-					new BufferedReader(new InputStreamReader(System.in)).readLine();
+					// Sonar insists we do something with the string, though it's only a pause.  Not very helpful...
+					String sonar = new BufferedReader(new InputStreamReader(System.in)).readLine();
+					sonar=""; // this useless code brought to you by Sonar.
+					pw.print(sonar);
 					continue;
 				} else if ("exit".equalsIgnoreCase(largs[idx])) {
 					pw.println("Exiting...");

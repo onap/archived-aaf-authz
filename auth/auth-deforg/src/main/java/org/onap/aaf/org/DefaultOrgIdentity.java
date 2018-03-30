@@ -87,6 +87,12 @@ public class DefaultOrgIdentity implements Identity {
 		return false;
 	}
 
+
+	@Override
+	public int hashCode() {
+		return identity.hashCode();
+	}
+
 	@Override
 	public String id() {
 		return identity.id;

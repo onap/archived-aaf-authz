@@ -176,12 +176,14 @@ public class SecurityInfo {
 					}
 				}
 				TrustManager tms[] = tmf.getTrustManagers();
-				tm = new X509TrustManager[tms==null?0:tms.length];
-				for(int i=0;i<tms.length;++i) {
-					try {
-						tm[i]=(X509TrustManager)tms[i];
-					} catch (ClassCastException e) {
-						access.log(Level.WARN, "Non X509 TrustManager", tm[i].getClass().getName(),"skipped in SecurityInfo");
+				if(tms!=null) {
+					tm = new X509TrustManager[tms==null?0:tms.length];
+					for(int i=0;i<tms.length;++i) {
+						try {
+							tm[i]=(X509TrustManager)tms[i];
+						} catch (ClassCastException e) {
+							access.log(Level.WARN, "Non X509 TrustManager", tm[i].getClass().getName(),"skipped in SecurityInfo");
+						}
 					}
 				}
 			}

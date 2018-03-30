@@ -168,11 +168,11 @@ public class DenialOfServiceTaf implements HttpTaf {
 			BufferedReader br;
 			try {
 				br = new BufferedReader(new FileReader(dosIP));
-				if(deniedIP==null) {
-					deniedIP=new HashMap<String,Counter>();
-				}
-
 				try {
+					if(deniedIP==null) {
+						deniedIP=new HashMap<String,Counter>();
+					}
+
 					String line;
 					while((line=br.readLine())!=null) {
 						deniedIP.put(line, new Counter(line));
@@ -258,10 +258,11 @@ public class DenialOfServiceTaf implements HttpTaf {
 			BufferedReader br;
 			try {
 				br = new BufferedReader(new FileReader(dosID));
-				if(deniedID==null) {
-					deniedID=new HashMap<String,Counter>();
-				}
 				try {
+					if(deniedID==null) {
+						deniedID=new HashMap<String,Counter>();
+					}
+					
 					String line;
 					while((line=br.readLine())!=null) {
 						deniedID.put(line, new Counter(line));

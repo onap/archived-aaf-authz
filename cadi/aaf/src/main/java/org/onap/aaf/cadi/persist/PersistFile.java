@@ -51,6 +51,7 @@ import org.onap.aaf.misc.rosetta.env.RosettaDF;
 public class PersistFile {
 
 	private static final String HASH_NO_MATCH = "Hash does not match in Persistence";
+	private static final Object LOCK = new Object();
 	
 	protected static Symm symm;
 	public Access access;
@@ -75,7 +76,7 @@ public class PersistFile {
 		} catch (IOException e) {
 			throw new CadiException(e);
 		}
-		synchronized(HASH_NO_MATCH) {
+		synchronized(LOCK) {
 			if(symm==null) {
 				symm = Symm.obtain(access);
 			}
@@ -174,14 +175,16 @@ public class PersistFile {
 								} else if(cred!=null && size!=cred.length) {
 									throw new CadiException(HASH_NO_MATCH);
 								}
-								byte[] array = new byte[size];
-								dis.read(array);
-								for(int i=0;i<size;++i) {
-									if(cred[i]!=array[i]) {
-										throw new CadiException(HASH_NO_MATCH);
+								if(cred!=null) {
+									byte[] array = new byte[size];
+									if(dis.read(array)>0) {
+										for(int i=0;i<size;++i) {
+											if(cred[i]!=array[i]) {
+												throw new CadiException(HASH_NO_MATCH);
+											}
+										}
 									}
 								}
-								
 								return df.newData().load(dis).asObject();
 							} finally {
 								dis.close();

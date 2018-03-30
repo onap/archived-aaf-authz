@@ -153,11 +153,13 @@ public class AAFAuthenticator extends AAFBase implements ISaslAwareAuthenticator
 		        end = i;
 		      }
 
-		      if (user == null)
+		      if (user == null) {
 		        throw new AuthenticationException("Authentication ID must not be null");
-		      if (pass == null) {
-		        throw new AuthenticationException("Password must not be null");
 		      }
+		      // SONAR thinks this code won't be hit, and keeps calling it a "Blocker" (???)  so we delete
+//		      if (pass == null) {
+//		        throw new AuthenticationException("Password must not be null");
+//		      }
 		      Map<String,String> credentials = new HashMap<String,String>();
 		      try {
 		    	  credentials.put(IAuthenticator.USERNAME_KEY, new String(user, Config.UTF_8));

@@ -60,6 +60,7 @@ public class CadiHTTPManip {
 	private static final String CADI_CACHE_PRINT = "/cadi/cache/print";
 	private static final String CADI_CACHE_CLEAR = "/cadi/cache/clear";
 	private static final String CADI_LOG_SET = "/cadi/log/set/";
+	private static final Object LOCK = new Object();
 	private Access access;
 	private HttpTaf taf;
 	private CredVal up;
@@ -70,7 +71,7 @@ public class CadiHTTPManip {
 
 
 	public CadiHTTPManip(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException {
-		synchronized(CADI) {
+		synchronized(LOCK) {
 			this.access = access;
 //			Get getter = new AccessGetter(access);
 			Config.setDefaultRealm(access);

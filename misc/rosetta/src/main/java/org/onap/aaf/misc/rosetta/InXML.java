@@ -96,6 +96,8 @@ public class InXML implements Parse<Reader, State> {
 					sb.append(c);
 				} else if(c=='&') {
 					XmlEscape.xmlEscape(sb,r);
+				} else if(c=='\\') {
+					escaped=true;
 				} else {
 					switch(c) {
 						case '<':

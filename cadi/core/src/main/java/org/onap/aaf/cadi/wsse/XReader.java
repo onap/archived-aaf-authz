@@ -140,7 +140,7 @@ public class XReader {
 																		// scoping behavior when used with the Stack
 									// drop through on purpose
 								case END_TAG:
-									ns = t.prefix==null?"":nss.get(t.prefix); // Get the namespace from prefix (if exists)
+									ns = t.prefix==null||nss==null?"":nss.get(t.prefix); // Get the namespace from prefix (if exists)
 									break;
 								default:
 									ns = "";
@@ -330,7 +330,9 @@ public class XReader {
 		if(type==0) {
 			type=START_TAG;
 		}
-		tag.state|=type;	// add the appropriate Tag States
+		if(tag!=null) {
+			tag.state|=type;	// add the appropriate Tag States
+		}
 		return tag;
 	}
 

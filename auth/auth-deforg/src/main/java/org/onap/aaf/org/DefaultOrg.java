@@ -108,7 +108,11 @@ public class DefaultOrg implements Organization {
 			if(fIdentities!=null && fIdentities.exists()) {
 				identities = new Identities(fIdentities);
 			} else {
-				throw new OrganizationException(fIdentities.getCanonicalPath() + " does not exist.");
+				if(fIdentities==null) {
+					throw new OrganizationException("No Identities");
+				} else {
+					throw new OrganizationException(fIdentities.getCanonicalPath() + " does not exist.");
+				}
 			}
 		} catch (IOException e) {
 			throw new OrganizationException(e);
@@ -391,20 +395,22 @@ public class DefaultOrg implements Organization {
 		}
 		
 		List<String> cc = new ArrayList<String>();
-		if(ccList!=null && !ccList.isEmpty()) {
-			for(String em : ccList) {
-				if(em.indexOf('@')<0) {
-					cc.add(new DefaultOrgIdentity(trans, em, this).email());
-				} else {
-					cc.add(em);
+		if(ccList!=null) {
+			if(!ccList.isEmpty()) {
+			
+				for(String em : ccList) {
+					if(em.indexOf('@')<0) {
+						cc.add(new DefaultOrgIdentity(trans, em, this).email());
+					} else {
+						cc.add(em);
+					}
 				}
 			}
-		}
-		
-	
-		// for now, I want all emails so we can see what goes out. Remove later
-		if (!ccList.contains(mailFrom)) {
-			ccList.add(mailFrom);
+			
+			// for now, I want all emails so we can see what goes out. Remove later
+			if (!ccList.contains(mailFrom)) {
+				ccList.add(mailFrom);
+			}
 		}
 
 		try {

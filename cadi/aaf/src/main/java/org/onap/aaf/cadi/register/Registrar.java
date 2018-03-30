@@ -34,6 +34,7 @@ public class Registrar<ENV extends BasicEnv> {
 	private static final String REGISTRAR = "Registrar";
 	private static final long INTERVAL = 15*60*1000; // 15 mins
 	private static final long START = 3000; // Start in 3 seconds
+	private static final Object LOCK = new Object();
 	private Deque<Registrant<ENV>> registrants;
 	private Timer timer, erroringTimer;
 
@@ -63,7 +64,7 @@ public class Registrar<ENV extends BasicEnv> {
 			for(Iterator<Registrant<ENV>> iter = registrants.iterator(); iter.hasNext();) {
 				Registrant<ENV> reg = iter.next();
 				Result<Void> rv = reg.update(env);
-				synchronized(REGISTRAR) {
+				synchronized(LOCK) {
 					if(rv.isOK()) {
 						if(erroringTimer!=null) {
 							erroringTimer.cancel();

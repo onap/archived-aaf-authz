@@ -542,24 +542,26 @@ public class Config {
 				} else {// There's an AAF_URL... try to configure an AAF
 					String aafLurClassStr = logProp(access,AAF_LUR_CLASS,"org.osaaf.cadi.aaf.v2_0.AAFLurPerm");
 					////////////AAF Lur 2.0 /////////////
-					if(aafLurClassStr.startsWith("org.osaaf.cadi.aaf.v2_0")) { 
+					if(aafLurClassStr!=null && aafLurClassStr.startsWith("org.osaaf.cadi.aaf.v2_0")) { 
 						try {
 							Object aafcon = loadAAFConnector(si, aafURL);
 							if(aafcon==null) {
 								access.log(Level.INIT,"AAF LUR class,",aafLurClassStr,"cannot be constructed without valid AAFCon object.");
 							} else {
 								Class<?> aafAbsAAFCon = loadClass(access, "org.osaaf.cadi.aaf.v2_0.AAFCon");
-								Method mNewLur = aafAbsAAFCon.getMethod("newLur");
-								Object aaflur = mNewLur.invoke(aafcon);
-			
-								if(aaflur==null) {
-									access.log(Level.INIT,"ERROR! AAF LUR Failed construction.  NOT Configured");
-								} else {
-									access.log(Level.INIT,"AAF LUR Configured to ",aafURL);
-									lurs.add((Lur)aaflur);
-									String debugIDs = logProp(access,Config.AAF_DEBUG_IDS, null);
-									if(debugIDs !=null && aaflur instanceof CachingLur) {
-										((CachingLur<?>)aaflur).setDebug(debugIDs);
+								if(aafAbsAAFCon!=null) {
+									Method mNewLur = aafAbsAAFCon.getMethod("newLur");
+									Object aaflur = mNewLur.invoke(aafcon);
+				
+									if(aaflur==null) {
+										access.log(Level.INIT,"ERROR! AAF LUR Failed construction.  NOT Configured");
+									} else {
+										access.log(Level.INIT,"AAF LUR Configured to ",aafURL);
+										lurs.add((Lur)aaflur);
+										String debugIDs = logProp(access,Config.AAF_DEBUG_IDS, null);
+										if(debugIDs !=null && aaflur instanceof CachingLur) {
+											((CachingLur<?>)aaflur).setDebug(debugIDs);
+										}
 									}
 								}
 							}
@@ -623,23 +625,25 @@ public class Config {
 				String aafConnector = access.getProperty(AAF_CONNECTOR_CLASS, COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP);
 			if(COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP.equals(aafConnector)) {
 					aafConClass = loadClass(access, COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP);
-					for(Constructor<?> c : aafConClass.getConstructors()) {
-						List<Object> lo = new ArrayList<Object>();
-						for(Class<?> pc : c.getParameterTypes()) {
-							if(pc.equals(PropAccess.class)) {
-								lo.add(access);
-							} else if(pc.equals(Locator.class)) {
-								lo.add(loadLocator(si, aafURL));
-							} else {
-								continue;
+					if(aafConClass!=null) {
+						for(Constructor<?> c : aafConClass.getConstructors()) {
+							List<Object> lo = new ArrayList<Object>();
+							for(Class<?> pc : c.getParameterTypes()) {
+								if(pc.equals(PropAccess.class)) {
+									lo.add(access);
+								} else if(pc.equals(Locator.class)) {
+									lo.add(loadLocator(si, aafURL));
+								} else {
+									continue;
+								}
 							}
+							if(c.getParameterTypes().length!=lo.size()) {
+								continue; // back to another Constructor
+							} else {
+								aafcon = c.newInstance(lo.toArray());
+							}
+							break;
 						}
-						if(c.getParameterTypes().length!=lo.size()) {
-							continue; // back to another Constructor
-						} else {
-							aafcon = c.newInstance(lo.toArray());
-						}
-						break;
 					}
 				}
 				if(aafcon!=null) {
@@ -680,16 +684,16 @@ public class Config {
 	@SuppressWarnings("unchecked")
 	public static Locator<URI> loadLocator(SecurityInfoC<HttpURLConnection> si, final String _url) {
 		Access access = si.access;
-		String url = _url, replacement;
-		int idxAAF_LOCATE_URL;
-		if((idxAAF_LOCATE_URL=_url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
-			url = replacement + "/locate" + _url.substring(idxAAF_LOCATE_URL+AAF_LOCATE_URL_TAG.length());
-		}
-
 		Locator<URI> locator = null;
-		if(url==null) {
+		if(_url==null) {
 			access.log(Level.INIT,"No URL passed to 'loadLocator'. Disabled");
 		} else {
+			String url = _url, replacement;
+			int idxAAF_LOCATE_URL;
+			if((idxAAF_LOCATE_URL=_url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
+				url = replacement + "/locate" + _url.substring(idxAAF_LOCATE_URL+AAF_LOCATE_URL_TAG.length());
+			}
+	
 			try {
 				Class<?> lcls = loadClass(access,"org.onap.aaf.cadi.aaf.v2_0.AAFLocator");
 				if(lcls==null) {

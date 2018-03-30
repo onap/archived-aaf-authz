@@ -45,7 +45,7 @@ public class FQI {
 			}
 		}
 		
-		return sb.toString();
+		return sb==null?"":sb.toString();
 	}
 
 }

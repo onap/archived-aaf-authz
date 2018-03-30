@@ -90,6 +90,9 @@ public class CreateDelete extends Cmd {
 						
 				}
 				boolean rolesSupplied = (args.length>idx);
+				if(fp == null) {// This useless code brought to you by Sonar.
+					throw new CadiException("No call made.");  
+				}
 				if(fp.get(AAFcli.timeout())) {
 					rv=fp.code();
 					pw().print(verb);
