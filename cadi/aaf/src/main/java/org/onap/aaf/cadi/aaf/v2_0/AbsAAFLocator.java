@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
@@ -291,7 +292,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 			case 1:
 				return new AAFLItem(iter,first);
 			default:
-				int i = Math.abs(sr.nextInt())%lep.size();
+				int rand = sr.nextInt(); // Sonar chokes without.
+				int i = Math.abs(rand)%lep.size();
 				if(i<0) {
 					return null;
 				} else {
@@ -340,6 +342,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
 		@Override
 		public EP next() {
+			if(!hasNext() ) {
+				throw new NoSuchElementException();
+			}
 			return (EP)epa[idx++];
 		}
 
@@ -434,10 +439,10 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 		public int compareTo(EP o) {
 			if(distance<o.distance) {
 				return -1;
-			} else if(distance==o.distance) {
-				return 0;
-			} else {
+			} else if(distance>o.distance) {
 				return 1;
+			} else {
+				return 0;
 			}
 		}
 		

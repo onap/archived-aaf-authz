@@ -79,10 +79,16 @@ public class OrganizationFactory {
 			if(orgClass == null) {
 				env.warn().log("There is no Organization." + orgNS + " property");
 			} else {
-				for(Organization o : orgs.values()) {
-					if(orgClass.equals(o.getClass().getName())) {
-						org = o;
+				try {
+					Class<?> orgCls = Class.forName(orgClass);
+					for(Organization o : orgs.values()) {
+						if(o.getClass().isAssignableFrom(orgCls)) {
+							org = o;
+						}
 					}
+				} catch (ClassNotFoundException e1) {
+					env.error().log(e1, orgClass + " is not on the Classpath.");
+					throw new OrganizationException(e1);
 				}
 				if(org==null) {
 					try {

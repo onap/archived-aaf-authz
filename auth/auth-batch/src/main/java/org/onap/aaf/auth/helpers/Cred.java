@@ -264,7 +264,7 @@ public class Cred  {
 		}
 
 		public long authCount(int idx) {
-			return basic_auth[idx]+basic_auth_256[idx];
+			return (long)basic_auth[idx]+basic_auth_256[idx];
 		}
 		
 		public long x509Count(int idx) {

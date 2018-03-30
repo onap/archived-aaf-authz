@@ -56,7 +56,7 @@ import aaf.v2_0.Users.User;
 
 public class AAFListedCertIdentity implements CertIdentity {
 	//TODO should 8 hours be configurable? 
-	private static final long EIGHT_HOURS = 1000*60*60*8; 
+	private static final long EIGHT_HOURS = 1000*60*60*8L; 
 			
 	private static Map<ByteArrayHolder,String> certs = null;
 	

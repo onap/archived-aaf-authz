@@ -58,11 +58,6 @@ import aaf.v2_0.UserRoles;
 public class RolesShow extends Page {
 	public static final String HREF = "/gui/myroles";
 	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd";
-	private static SimpleDateFormat expiresDF;
-	
-	static {
-		expiresDF = new SimpleDateFormat(DATE_TIME_FORMAT);
-	}
 	
 	public RolesShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
 		super(gui.env, "MyRoles",HREF, NO_FIELDS,
@@ -101,7 +96,7 @@ public class RolesShow extends Page {
 									if(u.getExpires().compare(Chrono.timeStamp()) < 0) {
 										AbsCell[] sa = new AbsCell[] {
 												new TextCell(u.getRole() + "*", "class=expired"),
-												new TextCell(expiresDF.format(u.getExpires().toGregorianCalendar().getTime()),"class=expired"),
+												new TextCell(new SimpleDateFormat(DATE_TIME_FORMAT).format(u.getExpires().toGregorianCalendar().getTime()),"class=expired"),
 												new RefCell("Extend",
 														UserRoleExtend.HREF + "?user="+trans.user()+"&role="+u.getRole(),
 														false,
@@ -118,7 +113,7 @@ public class RolesShow extends Page {
 												new RefCell(u.getRole(),
 														RoleDetail.HREF+"?role="+u.getRole(),
 														false),
-												new TextCell(expiresDF.format(u.getExpires().toGregorianCalendar().getTime())),
+												new TextCell(new SimpleDateFormat(DATE_TIME_FORMAT).format(u.getExpires().toGregorianCalendar().getTime())),
 												AbsCell.Null,
 												new RefCell("Remove",
 														UserRoleRemove.HREF + "?user="+trans.user()+"&role="+u.getRole(),

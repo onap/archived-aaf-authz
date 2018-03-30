@@ -71,7 +71,7 @@ public class LogFileNamer {
 	public void configure(String props) {
 		String fname;
 		if(new File(fname="etc/"+props).exists()) {
-			org.apache.log4j.PropertyConfigurator.configureAndWatch(fname,60*1000);
+			org.apache.log4j.PropertyConfigurator.configureAndWatch(fname,60*1000L);
 		} else {
 			URL rsrc = ClassLoader.getSystemResource(props);
 			if(rsrc==null) System.err.println("Neither File: " + fname + " or resource on Classpath " + props + " exist" );

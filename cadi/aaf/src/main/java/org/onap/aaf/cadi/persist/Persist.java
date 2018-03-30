@@ -48,8 +48,8 @@ import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
-	private static final long ONE_DAY = 86400000;
-	private static final long CLEAN_CHECK = 2*60*1000; // check every 2 mins
+	private static final long ONE_DAY = 86400000L;
+	private static final long CLEAN_CHECK = 2*60*1000L; // check every 2 mins
 	private static Timer clean;
 
 	// store all the directories to review

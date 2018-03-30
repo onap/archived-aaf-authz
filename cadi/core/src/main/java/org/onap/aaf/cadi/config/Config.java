@@ -380,7 +380,13 @@ public class Config {
 			/////////////////////////////////////////////////////
 			if(!hasOAuthDirectTAF) {
 				String oauth_token_url = logProp(access,Config.AAF_OAUTH2_TOKEN_URL,null);
-				if(additionalTafLurs!=null && additionalTafLurs.length>0 && additionalTafLurs[0].getClass().getName().equals("org.osaaf.authz.oauth.OAuthDirectTAF")) {
+				Class<?> oadtClss;
+				try {
+					oadtClss = Class.forName("org.osaaf.authz.oauth.OAuthDirectTAF");
+				} catch (ClassNotFoundException e1) {
+					oadtClss = null;
+				}
+				if(additionalTafLurs!=null && additionalTafLurs.length>0 && (oadtClss!=null && additionalTafLurs[0].getClass().isAssignableFrom(oadtClss))) {
 					htlist.add((HttpTaf)additionalTafLurs[0]);
 					String array[] = new String[additionalTafLurs.length-1];
 					if(array.length>0) {
@@ -428,9 +434,17 @@ public class Config {
 				if(additional instanceof HttpTaf) {
 					htlist.add((HttpTaf)additional);
 					access.printf(Level.INIT,"%s Authentication is enabled",additional.getClass().getSimpleName());
-				} else if(hasOAuthDirectTAF && additional.getClass().getSimpleName().equals("DirectAAFUserPass")) {
-					htlist.add(new BasicHttpTaf(access, (CredVal)additional , basic_realm, userExp, basic_warn));
-					access.printf(Level.INIT,"Direct BasicAuth Authentication is enabled",additional.getClass().getSimpleName());
+				} else if(hasOAuthDirectTAF) {
+					Class<?> daupCls;
+					try {
+						daupCls = Class.forName("org.onap.aaf.auth.direct.DirectAAFUserPass");
+					} catch (ClassNotFoundException e) {
+						daupCls = null;
+					}
+					if(daupCls != null && additional.getClass().isAssignableFrom(daupCls)) {
+						htlist.add(new BasicHttpTaf(access, (CredVal)additional , basic_realm, userExp, basic_warn));
+						access.printf(Level.INIT,"Direct BasicAuth Authentication is enabled",additional.getClass().getSimpleName());
+					}
 				}
 			}
 		}

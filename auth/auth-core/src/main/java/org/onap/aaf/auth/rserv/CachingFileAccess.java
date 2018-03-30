@@ -486,7 +486,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 		}
 		
 		public String toString() {
-			return data.toString();
+			return Arrays.toString(data);
 		}
 		
 		public void write(Writer writer) throws IOException {

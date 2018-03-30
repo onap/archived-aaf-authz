@@ -337,7 +337,7 @@ public class CmAgent {
 		String mechID = mechID(cmds);
 		String machine = machine(cmds);
 		String[] newmachs = machines(cmds);
-		if(newmachs==null || newmachs == null) {
+		if(machine==null || newmachs == null) {
 			trans.error().log("No machines listed to copy to");
 		} else {
 			TimeTaken tt = trans.start("Copy Artifact", Env.REMOTE);

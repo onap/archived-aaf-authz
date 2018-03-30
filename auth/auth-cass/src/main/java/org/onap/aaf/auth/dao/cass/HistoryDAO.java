@@ -56,9 +56,6 @@ import com.datastax.driver.core.Row;
 public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
 	private static final String TABLE = "history";
 
-	public static final SimpleDateFormat monthFormat = new SimpleDateFormat("yyyyMM");
-//	private static final SimpleDateFormat dayTimeFormat = new SimpleDateFormat("ddHHmmss");
-
 	private String[] helpers;
 
 	private HistLoader defLoader;
@@ -177,7 +174,8 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
 	public static Data newInitedData() {
 		Data data = new Data();
 		Date now = new Date();
-		data.yr_mon = Integer.parseInt(monthFormat.format(now));
+		// Sonar claims that SimpleDateFormat is not thread safe, so we can't be static
+		data.yr_mon = Integer.parseInt(new SimpleDateFormat("yyyyMM").format(now));
 		// data.day_time = Integer.parseInt(dayTimeFormat.format(now));
 		return data;		
 	}

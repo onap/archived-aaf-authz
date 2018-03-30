@@ -32,7 +32,7 @@ import org.onap.aaf.misc.env.impl.BasicEnv;
 
 public class Registrar<ENV extends BasicEnv> {
 	private static final String REGISTRAR = "Registrar";
-	private static final long INTERVAL = 15*60*1000; // 15 mins
+	private static final long INTERVAL = 15*60*1000L; // 15 mins
 	private static final long START = 3000; // Start in 3 seconds
 	private static final Object LOCK = new Object();
 	private Deque<Registrant<ENV>> registrants;

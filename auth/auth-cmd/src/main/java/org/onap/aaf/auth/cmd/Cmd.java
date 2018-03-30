@@ -56,7 +56,8 @@ import aaf.v2_0.Request;
 
 
 public abstract class Cmd {
-	private static final DateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+	// Sonar claims DateFormat is not thread safe.  Leave as Instance Variable.
+	private final DateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 	protected static final String BLANK = "";
 	protected static final String COMMA = ","; // for use in splits
 

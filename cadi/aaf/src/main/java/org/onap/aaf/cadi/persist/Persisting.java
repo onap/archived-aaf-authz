@@ -33,7 +33,7 @@ public class Persisting<T> implements Persistable<T> {
 	private static final byte[] EMPTY = new byte[0];
 	private final byte[] hash; // need to be able to validate disk entry
 
-	private static final long SYNC_TIME = 1000*60*1; // Checking File change max 1 min
+	private static final long SYNC_TIME = 1000*60*1L; // Checking File change max 1 min
 	private FileTime lastTouched;
 	private int count;
 	private long expires;

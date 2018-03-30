@@ -28,8 +28,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 
 import org.onap.aaf.cadi.util.Chmod;
@@ -159,7 +157,6 @@ public class CmdLine {
 									int idx;
 									if((idx = line.indexOf(' '))>=0 
 											&& (idx = line.indexOf(' ',++idx))>0
-											&& (idx = line.indexOf('=',++idx))>0
 											&& (idx = line.indexOf('=',++idx))>0
 											) {
 										System.out.println(line.substring(0, idx-5));

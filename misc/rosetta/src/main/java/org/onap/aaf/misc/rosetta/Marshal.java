@@ -22,6 +22,7 @@
 package org.onap.aaf.misc.rosetta;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -58,6 +59,9 @@ public abstract class Marshal<T> implements Parse<T, Marshal.State> {
 
 		@Override
 		public Void next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
 			return null;
 		}
 

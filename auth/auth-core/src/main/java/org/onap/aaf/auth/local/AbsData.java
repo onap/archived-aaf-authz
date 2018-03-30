@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.local.DataFile.Token;
@@ -87,7 +88,7 @@ public abstract class AbsData implements Iterable<String> {
 					try {
 						Thread.sleep(200);
 					} catch (InterruptedException e) {
-						break;
+						Thread.currentThread().interrupt();
 					}
 					begin = System.currentTimeMillis();
 				}
@@ -188,6 +189,9 @@ public abstract class AbsData implements Iterable<String> {
 
 		@Override
 		public String next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
 			reuse.reset();
 			int rec = tii.next();
 			reuse.pos(rec);

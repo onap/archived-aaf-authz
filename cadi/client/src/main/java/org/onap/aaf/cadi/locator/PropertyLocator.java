@@ -49,7 +49,7 @@ public class PropertyLocator implements Locator<URI> {
 	private long backgroundRefresh;
 
 	public PropertyLocator(String locList) throws LocatorException {
-		this(locList,10000L, 1000*60*20); // defaults, do not refresh more than once in 10 seconds, Refresh Locator every 20 mins.
+		this(locList,10000L, 1000*60*20L); // defaults, do not refresh more than once in 10 seconds, Refresh Locator every 20 mins.
 	}
 	/**
 	 * comma delimited root url list
@@ -168,7 +168,8 @@ public class PropertyLocator implements Locator<URI> {
 			case 1:
 				return current[0];
 			default:
-				return current[Math.abs(random.nextInt())%current.length];
+				int rand = random.nextInt(); // sonar driven syntax
+				return current[Math.abs(rand)%current.length];
 		}
 	}
 

@@ -180,9 +180,10 @@ public class API_History {
 	}
 	
 	// Get Common "yyyymm" parameter, or none
-	private static final SimpleDateFormat FMT = new SimpleDateFormat("yyyyMM");
 	
 	private static int[] getYears(HttpServletRequest req) throws NumberFormatException {
+		// Sonar says threading issues.
+		SimpleDateFormat FMT = new SimpleDateFormat("yyyyMM");
 		String yyyymm = req.getParameter("yyyymm");
 		ArrayList<Integer> ai= new ArrayList<Integer>();
 		if(yyyymm==null) {

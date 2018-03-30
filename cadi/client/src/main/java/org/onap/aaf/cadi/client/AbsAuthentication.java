@@ -51,7 +51,7 @@ public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT
 	protected static final String REPEAT_OFFENDER = "This call is aborted because of repeated usage of invalid Passwords";
 	private static final int MAX_TEMP_COUNT = 10;
 	private static final int MAX_SPAM_COUNT = 10000;
-	private static final long WAIT_TIME = 1000*60*4;
+	private static final long WAIT_TIME = 1000*60*4L;
 	private final byte[] headValue;
 	private String user;
 	protected final SecurityInfoC<CLIENT> securityInfo;

@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class InputIterator implements Iterable<String> {
 	private BufferedReader in;
@@ -57,6 +58,9 @@ public class InputIterator implements Iterable<String> {
 
 			@Override
 			public String next() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
 				return input;
 			}
 

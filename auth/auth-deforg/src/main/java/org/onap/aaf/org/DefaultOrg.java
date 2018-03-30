@@ -608,7 +608,7 @@ public class DefaultOrg implements Organization {
 							Identity mechid = getIdentity(trans, vars[0]);
 							if(mechid!=null) {
 								Identity sponsor = mechid.responsibleTo();
-								if(sponsor!=null && requestor.equals(sponsor.fullID())) {
+								if(sponsor!=null && requestor.fullID().equals(sponsor.fullID())) {
 									return null;
 								} else {
 									return trans.user() + " is not the Sponsor of MechID " + vars[0];

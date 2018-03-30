@@ -58,7 +58,7 @@ public class HRcli extends Rcli<HttpURLConnection> {
 	}
 
 	public HRcli(HMangr hman, URI uri, Item locItem, SecuritySetter<HttpURLConnection> secSet) {
-		locItem=item;
+		item=locItem;
 		this.uri = uri;
 		this.hman = hman;
 		ss=secSet;

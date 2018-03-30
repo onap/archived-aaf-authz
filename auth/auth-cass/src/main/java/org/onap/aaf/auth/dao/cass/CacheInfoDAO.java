@@ -321,6 +321,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
 					}
 				} catch (InterruptedException e1) {
 					go = false;
+					Thread.currentThread().interrupt();
 				}
 			} while(go);
 		}
@@ -353,6 +354,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
 				}
 			} catch (InterruptedException e) {
 				trans.error().log("Cache Notify Queue posting was interrupted" );
+				Thread.currentThread().interrupt();
 			}
 		}
 

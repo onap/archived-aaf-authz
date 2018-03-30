@@ -23,7 +23,6 @@ package org.onap.aaf.auth.gui.pages;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +59,6 @@ public class PendingRequestsShow extends Page {
 	public static final String HREF = "/gui/myrequests";
 	public static final String NAME = "MyRequests";
 	static final String WEBPHONE = "http://webphone.att.com/cgi-bin/webphones.pl?id=";
-	private static DateFormat createdDF = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public PendingRequestsShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
 		super(gui.env, NAME,HREF, NO_FIELDS,
@@ -153,7 +151,8 @@ public class PendingRequestsShow extends Page {
 											tsCell = AbsCell.Null;
 										} else {
 											UUID id = UUID.fromString(a.getId());
-											tsCell = new RefCell(createdDF.format((id.timestamp() - NUM_100NS_INTERVALS_SINCE_UUID_EPOCH)/10000),
+											// Sonar says SimpleDate should not be static
+											tsCell = new RefCell(new SimpleDateFormat("yyyy-MM-dd").format((id.timestamp() - NUM_100NS_INTERVALS_SINCE_UUID_EPOCH)/10000),
 													RequestDetail.HREF + "?ticket=" + ticket,false);
 											prevTicket = ticket;
 										}

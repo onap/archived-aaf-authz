@@ -22,6 +22,7 @@
 package org.onap.aaf.misc.rosetta.marshal;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.onap.aaf.misc.rosetta.Ladder;
 import org.onap.aaf.misc.rosetta.Marshal;
@@ -67,6 +68,9 @@ public class DocMarshal<T> extends Marshal<T> {
 
 		@Override
 		public Void next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
 			return null;
 		}
 

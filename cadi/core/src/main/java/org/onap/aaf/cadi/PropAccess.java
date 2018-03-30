@@ -38,7 +38,8 @@ import org.onap.aaf.cadi.config.SecurityInfo;
 import java.util.Properties;
 
 public class PropAccess implements Access {
-	private static final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	// Sonar says cannot be static... it's ok.  not too many PropAccesses created.
+	private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 	public static Level DEFAULT = Level.AUDIT;
 	

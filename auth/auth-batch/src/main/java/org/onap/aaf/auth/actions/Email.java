@@ -167,7 +167,7 @@ public class Email implements Action<Organization,Void, String>{
 			try {
 				Thread.sleep(wait);
 			} catch (InterruptedException e) {
-				return exec(trans,org,sb);
+				 Thread.currentThread().interrupt();
 			}
 		}
 		return exec(trans,org,sb);

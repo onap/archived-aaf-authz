@@ -2258,7 +2258,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 
 	}
 
-	private final long DAY_IN_MILLIS = 24*3600*1000;
+	private final long DAY_IN_MILLIS = 24*3600*1000L;
 	
 	@ApiDoc( 
 			method = POST,  
