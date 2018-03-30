@@ -36,7 +36,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-	<skipTests>true</skipTests>
 
 
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>

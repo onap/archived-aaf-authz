@@ -71,7 +71,6 @@
 	</developers>
 
 	<properties>
-	<skipTests>true</skipTests>
 
 
 		<!--  SONAR  -->

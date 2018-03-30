@@ -72,7 +72,6 @@
 
 
 	<properties>
-	<skipTests>true</skipTests>
 
 
 		<!--  SONAR  -->
