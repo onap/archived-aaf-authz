@@ -157,7 +157,6 @@
 						</excludes>
 					</configuration>
 					<executions>
-
 						<execution>
 							<id>pre-unit-test</id>
 							<goals>
@@ -168,8 +167,6 @@
 								<propertyName>surefireArgLine</propertyName>
 							</configuration>
 						</execution>
-
-
 						<execution>
 							<id>post-unit-test</id>
 							<phase>test</phase>
@@ -192,7 +189,6 @@
 								<propertyName>failsafeArgLine</propertyName>
 							</configuration>
 						</execution>
-
 						<execution>
 							<id>post-integration-test</id>
 							<phase>post-integration-test</phase>

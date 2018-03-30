@@ -21,7 +21,10 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.test;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import org.junit.*;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,11 +41,9 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 
-import org.junit.Test;
 import org.onap.aaf.cadi.AES;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Symm;
-import org.junit.Before;
 
 public class JU_AES {
 	private AES aes;
@@ -50,21 +52,31 @@ public class JU_AES {
 	private ByteArrayOutputStream baosEncrypt;
 	private ByteArrayOutputStream baosDecrypt;
 
+	private ByteArrayOutputStream errStream;
+
 	@Before
 	public void setup() throws Exception {
 	 	byte[] keyBytes = new byte[AES.AES_KEY_SIZE/8];
 	 	char[] codeset = Symm.base64.codeset;
-	 	int offset = (Math.abs(codeset[0])+47)%(codeset.length-keyBytes.length);
-	 	for(int i=0;i<keyBytes.length;++i) {
+	 	int offset = (Math.abs(codeset[0]) + 47) % (codeset.length - keyBytes.length);
+	 	for(int i = 0; i < keyBytes.length; ++i) {
 	 		keyBytes[i] = (byte)codeset[i+offset];
 	 	}
-	 	aes = new AES(keyBytes,0,keyBytes.length);
+	 	aes = new AES(keyBytes, 0, keyBytes.length);
+
+		errStream = new ByteArrayOutputStream();
+		System.setErr(new PrintStream(errStream));
+	}
+
+	@After
+	public void tearDown() {
+		System.setErr(System.err);
 	}
 
 	@Test
 	public void newKeyTest() throws Exception {
 		SecretKey secretKey = AES.newKey();
-		assertEquals(secretKey.getAlgorithm(), AES.class.getSimpleName());
+		assertThat(secretKey.getAlgorithm(), is(AES.class.getSimpleName()));
 	}
 
 	@Test
@@ -72,7 +84,7 @@ public class JU_AES {
 		String orig = "I'm a password, really";
 		byte[] encrypted = aes.encrypt(orig.getBytes());
 		byte[] decrypted = aes.decrypt(encrypted);
-		assertEquals(orig, new String(decrypted));
+		assertThat(new String(decrypted), is(orig));
  
 		Field aeskeySpec_field = AES.class.getDeclaredField("aeskeySpec");
 		aeskeySpec_field.setAccessible(true);
@@ -126,13 +138,14 @@ public class JU_AES {
 		cisDecrypt.close();
 
 		output = new String(baosDecrypt.toByteArray());
-		assertEquals(orig, output);
+		assertThat(output, is(orig));
 
 		Field aeskeySpec_field = AES.class.getDeclaredField("aeskeySpec");
 		aeskeySpec_field.setAccessible(true);
 		aeskeySpec_field.set(aes, null);
 
 		assertNull(aes.inputStream(baisEncrypt, true));
+		assertThat(errStream.toString(), is("Error creating Aes CipherInputStream\n"));
 	}
 
 	@Test
@@ -160,13 +173,14 @@ public class JU_AES {
 		cosDecrypt.close();
 
 		output = new String(baosDecrypt.toByteArray());
-		assertEquals(orig, output);
+		assertThat(output, is(orig));
 
 		Field aeskeySpec_field = AES.class.getDeclaredField("aeskeySpec");
 		aeskeySpec_field.setAccessible(true);
 		aeskeySpec_field.set(aes, null);
 
 		assertNull(aes.outputStream(baosEncrypt, true));
+		assertThat(errStream.toString(), is("Error creating Aes CipherOutputStream\n"));
 	}
 
 	public void transferFromInputStreamToOutputStream(InputStream is, OutputStream os) throws IOException {
