@@ -23,7 +23,7 @@ version: '2'
 services:
   aaf_container:
     image: attos/aaf
-    ports
+    ports:
       - "8101:8101"
     links:
       - cassandra_container
