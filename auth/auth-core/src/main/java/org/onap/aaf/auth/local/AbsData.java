@@ -71,7 +71,7 @@ public abstract class AbsData implements Iterable<String> {
 	
 	public void open(AuthzTrans trans, long timeout) throws IOException {
 		TimeTaken tt = trans.start("Open Data File", Env.SUB);
-		boolean opened = false, first = true;
+		boolean first = true;
 		try {
 				if(!dataf.exists()) {
 					throw new FileNotFoundException("Data File Missing:" + dataf.getCanonicalPath());
@@ -102,13 +102,9 @@ public abstract class AbsData implements Iterable<String> {
 					throw e;
 				}
 				ti.open();
-				opened = true;
 			
 		} finally {
 			tt.done();
-		}
-		if(!opened) {
-			throw new IOException("DataFile pair for " + name + " was not able to be opened in " + timeout + "ms");
 		}
 	}
 	

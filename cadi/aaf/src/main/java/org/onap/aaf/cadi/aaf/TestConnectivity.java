@@ -223,17 +223,20 @@ public class TestConnectivity {
 			if((uri = dl.get(li)) == null) {
 				System.out.println("Locator Item empty");
 			} else {
+				socket = new Socket();
 				try {
-					socket = new Socket();
-					socket.connect(new InetSocketAddress(uri.getHost(),  uri.getPort()),3000);
-					System.out.printf("Can Connect a Socket to %s %d\n",uri.getHost(),uri.getPort());
+					try {
+						socket.connect(new InetSocketAddress(uri.getHost(),  uri.getPort()),3000);
+						System.out.printf("Can Connect a Socket to %s %d\n",uri.getHost(),uri.getPort());
+					} catch (IOException e) {
+						System.out.printf("Cannot Connect a Socket to  %s %d: %s\n",uri.getHost(),uri.getPort(),e.getMessage());
+					}
+				} finally {
 					try {
 						socket.close();
 					} catch (IOException e1) {
 						System.out.printf("Could not close Socket Connection: %s\n",e1.getMessage());
 					}
-				} catch (IOException e) {
-					System.out.printf("Cannot Connect a Socket to  %s %d: %s\n",uri.getHost(),uri.getPort(),e.getMessage());
 				}
 			}
 		}

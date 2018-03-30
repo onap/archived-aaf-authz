@@ -37,12 +37,12 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.oauth.facade.DirectIntrospect;
 import org.onap.aaf.auth.rserv.TransFilter;
 import org.onap.aaf.cadi.CachedPrincipal;
+import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.CredVal.Type;
 import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
-import org.onap.aaf.cadi.CredVal.Type;
 import org.onap.aaf.cadi.Taf.LifeForm;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.oauth.OAuth2HttpTafResp;
@@ -50,8 +50,8 @@ import org.onap.aaf.cadi.oauth.OAuth2Principal;
 import org.onap.aaf.cadi.oauth.TokenClient;
 import org.onap.aaf.cadi.oauth.TokenClientFactory;
 import org.onap.aaf.cadi.oauth.TokenMgr;
-import org.onap.aaf.cadi.oauth.TokenPerm;
 import org.onap.aaf.cadi.oauth.TokenMgr.TokenPermLoader;
+import org.onap.aaf.cadi.oauth.TokenPerm;
 import org.onap.aaf.cadi.principal.OAuth2FormPrincipal;
 import org.onap.aaf.cadi.taf.HttpTaf;
 import org.onap.aaf.cadi.taf.TafResp;
@@ -137,7 +137,7 @@ public class DirectOAuthTAF implements HttpTaf {
 				}
 			}
 			
-			if(client_id==null && client_secret==null) {
+			if(client_id==null || client_secret==null) {
 				return new OAuth2HttpTafResp(access, null, "client_id and client_secret required", RESP.TRY_ANOTHER_TAF, resp, false);
 			}
 			

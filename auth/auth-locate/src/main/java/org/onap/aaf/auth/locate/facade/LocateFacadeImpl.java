@@ -275,6 +275,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> ex
 	}
 
 	public final static String GET_ENDPOINTS = "getEndpoints";
+	private final static Object LOCK = new Object();
 	/* (non-Javadoc)
 	 * @see org.onap.aaf.auth.locate.facade.GwFacade#getEndpoints(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -284,7 +285,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> ex
 		try {
 			String output=null;
 			long temp=System.currentTimeMillis();
-			synchronized(GET_ENDPOINTS) {
+			synchronized(LOCK) {
 				if(cacheClear<temp) {
 					epsCache.clear();
 					cacheClear = temp+1000*60*2; // 2 mins standard cache clear
@@ -302,7 +303,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> ex
 					return Result.err(reps);
 				} else {
 					output = epDF.newData(trans).load(reps.value).asString();
-					synchronized(GET_ENDPOINTS) {
+					synchronized(LOCK) {
 						epsCache.put(key, output);
 					}
 				}
@@ -338,7 +339,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> ex
 			Result<Void> rp = service.putMgmtEndPoints(trans, rreq);
 			switch(rp.status) {
 				case OK: 
-					synchronized(GET_ENDPOINTS) {
+					synchronized(LOCK) {
 						cacheClear = 0L;
 					}
 					setContentType(resp,mepDF.getOutType());
@@ -374,7 +375,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> ex
 			Result<Void> rp = service.removeMgmtEndPoints(trans, rreq);
 			switch(rp.status) {
 				case OK: 
-					synchronized(GET_ENDPOINTS) {
+					synchronized(LOCK) {
 						cacheClear = 0L;
 					}
 					setContentType(resp,mepDF.getOutType());

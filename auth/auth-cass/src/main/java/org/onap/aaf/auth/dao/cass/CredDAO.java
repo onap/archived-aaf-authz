@@ -182,9 +182,8 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
 			data.notes = readString(is,buff);
 			
 			int i = is.readInt();
-			if(i<0) {
-				data.cred=null;
-			} else {
+			data.cred=null;
+			if(i>=0) {
 				byte[] bytes = new byte[i]; // a bit dangerous, but lessened because of all the previous sized data reads
 				is.read(bytes);
 				data.cred = ByteBuffer.wrap(bytes);

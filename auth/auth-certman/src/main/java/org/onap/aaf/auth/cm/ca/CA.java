@@ -115,8 +115,10 @@ public abstract class CA {
 							bytes = new byte[(int)crt.length()];
 							FileInputStream fis = new FileInputStream(crt);
 							try {
-								fis.read(bytes);
-								addTrustedCA(new String(bytes));
+								int read = fis.read(bytes);
+								if(read>0) {	
+									addTrustedCA(new String(bytes));
+								}
 							} finally {
 								fis.close();
 							}

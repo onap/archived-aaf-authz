@@ -71,6 +71,7 @@ import org.onap.aaf.cadi.config.Config;
 public class Symm {
 	private static final byte[] DOUBLE_EQ = new byte[] {'=','='}; 
 	public static final String ENC = "enc:";
+	private static final Object LOCK = new Object();
 	private static final SecureRandom random = new SecureRandom();
 	
 	public final char[] codeset;
@@ -207,7 +208,7 @@ public class Symm {
 	}
 
 	public <T> T exec(SyncExec<T> exec) throws Exception {
-		synchronized(ENC) {
+		synchronized(LOCK) {
 			if(keyBytes == null) {
 				keyBytes = new byte[AES.AES_KEY_SIZE/8];
 				int offset = (Math.abs(codeset[0])+47)%(codeset.length-keyBytes.length);
@@ -388,7 +389,9 @@ public class Symm {
     }
 
     public void decode(InputStream is, OutputStream os, int skip) throws IOException {
-    	is.skip(skip);
+    	if(is.skip(skip)!=skip) {
+    		throw new IOException("Error skipping on IOStream in Symm");
+    	}
     	decode(is,os);
     }
 

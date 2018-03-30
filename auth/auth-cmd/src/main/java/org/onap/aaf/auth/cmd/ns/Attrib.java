@@ -83,15 +83,17 @@ public class Attrib extends BaseCmd<NS> {
 					default:
 						throw new CadiException("Bad Argument");
 				};
-			
-				if(fp.get(AAFcli.timeout())) {
-					pw().println(message);
+				if(fp==null) {
+					return 500;
 				} else {
-					error(fp);
-					return fp.code();
+					if(fp.get(AAFcli.timeout())) {
+						pw().println(message);
+					} else {
+						error(fp);
+					}
+						
+					return fp.code(); 
 				}
-					
-				return fp==null?500:fp.code();
 			}
 		});
 	}

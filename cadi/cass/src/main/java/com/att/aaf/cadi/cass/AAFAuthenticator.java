@@ -141,14 +141,15 @@ public class AAFAuthenticator extends AAFBase implements ISaslAwareAuthenticator
 		      byte[] user = null;
 		      byte[] pass = null;
 		      int end = bytes.length;
-		      for (int i = bytes.length - 1; i >= 0; i--)
-		      {
-		        if (bytes[i] != 0)
+		      for (int i = bytes.length - 1; i >= 0; i--) {
+		        if (bytes[i] != 0) {
 		          continue;
-		        if (pass == null)
+		        }
+		        if (pass == null) {
 		          pass = Arrays.copyOfRange(bytes, i + 1, end);
-		        else if (user == null)
+		        } else if (user == null) {
 		          user = Arrays.copyOfRange(bytes, i + 1, end);
+		        }        
 		        end = i;
 		      }
 

@@ -324,7 +324,7 @@ public class AAFcli {
 					try {
 						ret = c.exec(++idx, largs);
 						if (delay+globalDelay > 0) {
-							Thread.sleep(delay+globalDelay);
+							Thread.sleep((long)(delay+globalDelay));
 						}
 					} catch (Exception e) {
 						if (expect.contains(-1)) {

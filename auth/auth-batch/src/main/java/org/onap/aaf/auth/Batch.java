@@ -369,11 +369,15 @@ public abstract class Batch {
     	return ld;
     }
 	protected int count(String str, char c) {
-		int count=str==null||str.isEmpty()?0:1;
-		for(int i=str.indexOf(c);i>=0;i=str.indexOf(c,i+1)) {
-			++count;
+		if(str==null || str.isEmpty()) {
+			return 0;
+		} else {
+			int count=1;
+			for(int i=str.indexOf(c);i>=0;i=str.indexOf(c,i+1)) {
+				++count;
+			}
+			return count;
 		}
-		return count;
 	}
 
 	public final void close(AuthzTrans trans) {

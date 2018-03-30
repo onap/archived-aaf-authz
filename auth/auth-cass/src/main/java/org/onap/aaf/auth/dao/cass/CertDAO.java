@@ -163,12 +163,12 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
 			data.x509 = readString(is,buff);
 			data.ca = readString(is,buff);
 			int i = is.readInt();
-			if(i<0) {
-				data.serial=null;
-			} else {
+			data.serial=null;
+			if(i>=0) {
 				byte[] bytes = new byte[i]; // a bit dangerous, but lessened because of all the previous sized data reads
-				is.read(bytes);
-				data.serial = new BigInteger(bytes);
+				if(is.read(bytes)>0) {
+					data.serial = new BigInteger(bytes);
+				}
 			}
 		}
     }

@@ -185,7 +185,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
 	 */
 	public Result<DATA> create(TRANS trans, DATA data)  {
 		if(createPS==null) {
-			Result.err(Result.ERR_NotImplemented,"Create is disabled for %s",getClass().getSimpleName());
+			return Result.err(Result.ERR_NotImplemented,"Create is disabled for %s",getClass().getSimpleName());
 		}
 		if(async) /*ResultSetFuture */ {
 			Result<ResultSetFuture> rs = createPS.execAsync(trans, C_TEXT, data);
@@ -207,21 +207,21 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
 	 */
 	public Result<List<DATA>> read(TRANS trans, DATA data) {
 		if(readPS==null) {
-			Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
+			return Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
 		}
 		return readPS.read(trans, R_TEXT, data);
 	}
 
 	public Result<List<DATA>> read(TRANS trans, Object ... key) {
 		if(readPS==null) {
-			Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
+			return Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
 		}
 		return readPS.read(trans, R_TEXT, key);
 	}
 	
 	public Result<DATA> readPrimKey(TRANS trans, Object ... key) {
 		if(readPS==null) {
-			Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
+			return Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
 		}
 		Result<List<DATA>> rld = readPS.read(trans, R_TEXT, key);
 		if(rld.isOK()) {
@@ -241,7 +241,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
 
 	public Result<Void> update(TRANS trans, DATA data, boolean async) {
 		if(updatePS==null) {
-			Result.err(Result.ERR_NotImplemented,"Update is disabled for %s",getClass().getSimpleName());
+			return Result.err(Result.ERR_NotImplemented,"Update is disabled for %s",getClass().getSimpleName());
 		}
 		if(async)/* ResultSet rs =*/ {
 			Result<ResultSetFuture> rs = updatePS.execAsync(trans, U_TEXT, data);
@@ -262,7 +262,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
 	// This method Sig for Cached...
 	public Result<Void> delete(TRANS trans, DATA data, boolean reread) {
 		if(deletePS==null) {
-			Result.err(Result.ERR_NotImplemented,"Delete is disabled for %s",getClass().getSimpleName());
+			return Result.err(Result.ERR_NotImplemented,"Delete is disabled for %s",getClass().getSimpleName());
 		}
 		// Since Deleting will be stored off, for possible re-constitution, need the whole thing
 		if(reread) {

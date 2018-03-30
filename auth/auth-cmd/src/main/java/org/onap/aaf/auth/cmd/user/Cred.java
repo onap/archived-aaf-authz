@@ -109,6 +109,9 @@ public class Cred extends Cmd {
 //						case 4:
 //							return clean.exec(cleanIDX, args);
 				}
+				if(fp==null) {
+					return null; // get by Sonar check.
+				}
 				if(fp.get(AAFcli.timeout())) {
 					pw().print(verb);
 					pw().print(cr.getId());

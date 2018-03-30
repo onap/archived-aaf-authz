@@ -367,10 +367,14 @@ public class Question {
 		if (r.isOKhasData()) {
 			return Result.ok(r.value.get(0));
 		} else {
-			int dot = child == null ? -1 : child.lastIndexOf('.');
+			int dot;
+			if(child==null) {
+				return Result.err(Status.ERR_NsNotFound, "No Namespace");
+			} else {
+				dot = child.lastIndexOf('.');
+			}
 			if (dot < 0) {
-				return Result.err(Status.ERR_NsNotFound,
-						"No Namespace for [%s]", child);
+				return Result.err(Status.ERR_NsNotFound, "No Namespace for [%s]", child);
 			} else {
 				return deriveNs(trans, child.substring(0, dot));
 			}

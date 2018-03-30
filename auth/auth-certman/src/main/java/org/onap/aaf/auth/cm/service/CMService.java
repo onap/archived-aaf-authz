@@ -643,7 +643,7 @@ public class CMService {
 				|| trans.user().equals(sponsor)) {
 			return artiDAO.delete(trans, add, false);
 		}
-		return null;
+		return Result.err(Result.ERR_Denied, "%1 is not allowed to delete this item",trans.user());
 	}
 
 	public Result<Void> deleteArtifact(AuthzTrans trans, List<ArtiDAO.Data> list) {

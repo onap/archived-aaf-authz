@@ -2913,6 +2913,9 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 						}
 					}
 				}
+				if(udr==null) {
+					return Result.err(Result.ERR_NotFound,"No User Data found");
+				}
 				if (udr.isOK()) {
 					return Result.ok();
 				}

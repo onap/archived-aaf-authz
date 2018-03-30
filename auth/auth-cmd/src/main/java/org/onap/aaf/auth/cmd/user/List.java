@@ -53,7 +53,7 @@ public class List extends BaseCmd<User> {
 		Collections.sort(sorted, new Comparator<aaf.v2_0.Users.User>() {
 			@Override
 			public int compare(aaf.v2_0.Users.User u1, aaf.v2_0.Users.User u2) {
-				if(u2==null || u2 == null) {
+				if(u1==null || u2 == null) {
 					return -1;
 				}
 				return u1.getId().compareTo(u2.getId());

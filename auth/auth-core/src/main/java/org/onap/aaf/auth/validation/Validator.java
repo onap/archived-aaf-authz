@@ -146,8 +146,12 @@ public class Validator {
 	}
 
 	public final Validator permType(String type, String ns) {
-		if(nob(type,NAME_CHARS)) {
-			msg("Perm Type [" + (ns==null?"":ns+(type.length()==0?"":'.'))+type + "] is invalid.");
+		if(type==null) {
+			msg("Perm Type is null");
+		} else if(ns==null) {
+			msg("Perm NS is null");
+		} else if(nob(type,NAME_CHARS)) {
+			msg("Perm Type [" + (ns+(type.length()==0?"":'.'))+type + "] is invalid.");
 		}
 		return this;
 	}
@@ -175,7 +179,10 @@ public class Validator {
 	}
 
 	public final Validator ns(String ns) {
-		if(nob(ns,NAME_CHARS)){
+		if(ns==null) {
+			msg("NS is null");
+			return this;
+		} else if(nob(ns,NAME_CHARS)) {
 			msg("NS [" + ns + "] is invalid.");
 		} 
 		for(String s : nsKeywords) {

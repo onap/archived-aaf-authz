@@ -61,7 +61,7 @@ public class JscepCA extends CA {
 
 	private final static String MS_PROFILE="1";
 	private final static int MAX_RETRY=3;
-	public static final long INVALIDATE_TIME = 1000*60*10; // 10 mins
+	public static final long INVALIDATE_TIME = 1000*60*10L; // 10 mins
 
 	// package on purpose
 	private Map<String,X509ChainWithIssuer> mxcwi_s;

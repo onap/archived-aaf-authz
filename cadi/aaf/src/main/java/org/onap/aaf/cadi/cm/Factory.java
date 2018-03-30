@@ -229,13 +229,13 @@ public class Factory {
 	public static Collection<? extends Certificate> toX509Certificate(Trans trans, File file) throws CertificateException, FileNotFoundException {
 		FileInputStream fis = new FileInputStream(file);
 		try {
-			return toX509Certificate(fis);
-		} finally {
 			try {
-				fis.close();
-			} catch (IOException e) {
-				throw new CertificateException(e);
+				return toX509Certificate(fis);
+			} finally {
+					fis.close();
 			}
+		} catch (IOException e) {
+			throw new CertificateException(e);
 		}
 	}
 

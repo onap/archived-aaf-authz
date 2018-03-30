@@ -357,6 +357,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 	private static final String NEW_CASSANDRA_SESSION_CREATED = "New Cassandra Session Created";
 	private static final String NEW_CASSANDRA_CLUSTER_OBJECT_CREATED = "New Cassandra Cluster Object Created";
 	private static final String NEW_CASSANDRA_SESSION = "New Cassandra Session";
+	private static final Object LOCK = new Object();
 
 	private static class ResetRequest {
 		//package on purpose
@@ -398,7 +399,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 			Cluster tempCluster = null;
 			Session tempSession = null;
 			try {
-				synchronized(NEW_CASSANDRA_SESSION_CREATED) {
+				synchronized(LOCK) {
 					boolean reset = false;
 					for(ResetRequest r : resetDeque) {
 						if(r.session == session) {
