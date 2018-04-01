@@ -72,9 +72,6 @@
 
 
 	<properties>
-	<skipTests>true</skipTests>
-
-
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
