@@ -48,7 +48,7 @@ public class JU_Define {
 
 
 	@Before
-	public void setUp(){
+	public void setUp() throws CadiException{
 		acc = mock(Access.class);
 	}
 
@@ -65,7 +65,8 @@ public class JU_Define {
 	@Test
 	public void testSet() throws CadiException {
 		when(acc.getProperty(Config.AAF_ROOT_NS,"org.onap.aaf")).thenReturn(".ns_Test");
-		//when(acc.getProperty(Config.AAF_ROOT_COMPANY,null)).thenReturn("company_Test");
+		when(acc.getProperty(Config.AAF_ROOT_COMPANY,null)).thenReturn("company_Test");
+		//when(acc.getProperties().entrySet()).thenReturn(null);
 		//Define.set(acc);
 	}
 

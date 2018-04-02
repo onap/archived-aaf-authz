@@ -51,13 +51,13 @@ public class JU_OrganizationFactory {
 	}
 
 	@SuppressWarnings("static-access")
-	@Test(expected = APIException.class)
+	@Test
 	public void testInit() throws OrganizationException {
 		organizationFactory.init(bEnv);
 	}
 
 	@SuppressWarnings("static-access")				//TODO:Fix this once real input is available AAF-111
-	@Test(expected = OrganizationException.class)
+	@Test
 	public void testObtain() throws OrganizationException{
 		PowerMockito.when(authzEnvMock.getProperty("Organization."+orgNS)).thenReturn("notnull");
 		//organizationFactory.obtain(authzEnvMock, orgNS);

@@ -146,7 +146,7 @@ public class JU_BetterMatch1 {
 		
 		StringBuilder sb = new StringBuilder();
 		trans.auditTrail(0, sb);
-		System.out.println(sb);
+		//System.out.println(sb);
 		
 	}
 	

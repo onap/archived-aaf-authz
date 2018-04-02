@@ -149,7 +149,7 @@ public class JU_BetterMatch {
 		
 		StringBuilder sb = new StringBuilder();
 		trans.auditTrail(0, sb);
-		System.out.println(sb);
+		//System.out.println(sb);
 		
 	}
 	
