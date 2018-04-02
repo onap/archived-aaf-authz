@@ -161,7 +161,6 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 	public void handle(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String key = pathParam(req, ":key");
 		String cmd = pathParam(req,":cmd");
-		System.out.print(key + clear_command);
 		if(key.equals(clear_command)) {
 			resp.setHeader("Content-Type",typeMap.get("txt"));
 			if("clear".equals(cmd)) {
@@ -548,15 +547,15 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 				}
 				Collections.sort(scont);
 				int end = size - ((maxSize/4)*3); // reduce to 3/4 of max size
-				System.out.println("------ Cleanup Cycle ------ " + new Date().toString() + " -------");
+				//System.out.println("------ Cleanup Cycle ------ " + new Date().toString() + " -------");
 				for(int i=0;i<end;++i) {
 					Entry<String, Content> entry = scont.get(i).entry;
 					content.remove(entry.getKey());
-					System.out.println("removed Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
+					//System.out.println("removed Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
 				}
 				for(int i=end;i<size;++i) {
 					Entry<String, Content> entry = scont.get(i).entry;
-					System.out.println("remaining Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
+					//System.out.println("remaining Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
 				}
 			}
 		}

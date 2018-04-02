@@ -36,10 +36,10 @@ public class JU_DataFile {
 	public static void tearDownAfterClass() throws Exception {
 	}
 
-	@Test
-	public void netYetTested() {
-		fail("Tests not yet implemented");
-	}
+//	@Test
+//	public void netYetTested() {
+//		fail("Tests not yet implemented");
+//	}
 	
 //	@Test
 //	public void test() throws Exception {

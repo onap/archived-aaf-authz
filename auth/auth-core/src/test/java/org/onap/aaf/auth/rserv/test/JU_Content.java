@@ -123,7 +123,7 @@ public class JU_Content {
  		} finally {	
 			StringBuilder sb = new StringBuilder();
 			trans.auditTrail(0, sb);
-			System.out.println(sb);
+			//System.out.println(sb);
 		}
 	}
 //	

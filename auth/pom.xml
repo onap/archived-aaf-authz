@@ -478,12 +478,6 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-jmx</artifactId>
-				<version>${project.jettyVersion}</version>
-			</dependency>
-
-			<dependency>
 				<groupId>com.datastax.cassandra</groupId>
 				<artifactId>cassandra-all</artifactId>
 				<version>3.3.0</version>
@@ -498,11 +492,10 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+
 			<dependency>
 				<groupId>com.datastax.cassandra</groupId>
 				<artifactId>cassandra-driver-core</artifactId>
-				<!-- version>1.0.3</version -->
-				<!-- version>1.0.5</version -->
 				<version>3.3.0</version>
 				<exclusions>
 					<exclusion>

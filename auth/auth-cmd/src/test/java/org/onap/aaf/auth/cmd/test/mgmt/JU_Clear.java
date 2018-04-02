@@ -24,6 +24,7 @@ package org.onap.aaf.auth.cmd.test.mgmt;
 import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

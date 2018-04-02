@@ -42,16 +42,16 @@ public abstract class RosettaCompare<T> {
 	}
 	
 	private void compare(RosettaData<T> rdt, T t, RosettaCompare<T> comp) throws APIException {
-		System.out.println("########### Testing " + cls.getName() + " ##############");
+		//System.out.println("########### Testing " + cls.getName() + " ##############");
 		String s = rdt.load(t).out(TYPE.JSON).asString();
-		System.out.println(s);
+		//System.out.println(s);
 		T t2 = rdt.in(TYPE.JSON).load(s).asObject();
 		comp.compare(t, t2);
 		
-		System.out.println();
+		//System.out.println();
 		
 		s = rdt.load(t).out(TYPE.XML).asString();
-		System.out.println(s);
+		//System.out.println(s);
 		t2 = rdt.in(TYPE.XML).load(s).asObject();
 		comp.compare(t, t2);
 	}
