@@ -56,9 +56,9 @@ public class JU_API_User {
 		}
 	}
 
-	@Test
-	public void notYetImplemented() {
-		fail("Tests in this file should not be trusted");
-	}
+//	@Test
+//	public void notYetImplemented() {
+//		fail("Tests in this file should not be trusted");
+//	}
 
 }
