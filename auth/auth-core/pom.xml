@@ -72,9 +72,6 @@
 
 
 	<properties>
-	<skipTests>true</skipTests>
-
-
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
 	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
@@ -122,11 +119,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jmx</artifactId>
-			<scope>compile</scope>
-		</dependency>
+
 	</dependencies>
 	
 	<build>

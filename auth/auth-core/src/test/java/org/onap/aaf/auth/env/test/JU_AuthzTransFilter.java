@@ -67,23 +67,6 @@ Object additionalTafLurs = mock(Object.class);
 		
 		
 	}
-
-/*	@Test
-	public void testTallyHo(){
-		PowerMockito.when(authzTransMock.info().isLoggable()).thenReturn(true);
-		//TODO: Gabe [JUnit] Not visible for junit
-		//if(trans.info().isLoggable())
-		//authzTransFilter.tallyHo(authzTransMock);
-		
-	}*/
-
-	/*@Test
-	public void testProtected() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method newTransMethod = AuthzTransFilter.class.getDeclaredMethod("newTrans");
-		newTransMethod.setAccessible(true);
-		
-		newTransMethod.invoke(authzTransFilter);
-	}*/
 	
 	@Test
 	public void testAuthenticated() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, CadiException {

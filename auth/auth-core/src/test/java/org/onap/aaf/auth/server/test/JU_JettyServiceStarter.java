@@ -82,10 +82,10 @@ public class JU_JettyServiceStarter {
 		//jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(testService);
 	}
 	
-	@Test
-	public void netYetTested() {
-		fail("Tests not yet implemented");
-	}
+//	@Test
+//	public void netYetTested() {
+//		fail("Tests not yet implemented");
+//	}
 	
 	@Test
 	public void testPropertyAdjustment() {

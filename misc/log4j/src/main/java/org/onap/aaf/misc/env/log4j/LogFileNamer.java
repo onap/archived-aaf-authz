@@ -25,9 +25,7 @@ import java.io.File;
 import java.net.URL;
 
 public class LogFileNamer {
-	public static final int pid = PIDAccess.INSTANCE.getpid();
 	public final String root;
-	private boolean printPID;
 	
 	public LogFileNamer(String root) {
 		if(root==null || "".equals(root) || root.endsWith("/")) {
@@ -35,11 +33,9 @@ public class LogFileNamer {
 		} else {
 			this.root = root + "-";
 		}
-		printPID=true;
 	}
 	
 	public LogFileNamer noPID() {
-		printPID = false;
 		return this;
 	}
 	/**
@@ -57,12 +53,12 @@ public class LogFileNamer {
 			String rv;
 			System.setProperty(
 				"LOG4J_FILENAME_"+(rv=appender.substring(0,pipe)),
-				root + appender.substring(pipe+1) + (printPID?('-' + pid):"") + ".log");
+				root + appender.substring(pipe+1) + ".log");
 			return rv;
 		} else {
 			System.setProperty(
 				"LOG4J_FILENAME_"+appender,
-				root + appender + (printPID?('-' + pid):"") + ".log");
+				root + appender + ".log");
 			return appender;
 		}
 		

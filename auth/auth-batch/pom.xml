@@ -71,7 +71,7 @@
 	</developers>
 
 	<properties>
-	<skipTests>true</skipTests>
+	
 
 
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>

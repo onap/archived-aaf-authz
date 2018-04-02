@@ -21,6 +21,7 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
