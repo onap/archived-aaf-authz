@@ -22,41 +22,55 @@
 package org.onap.aaf.cadi.test.taf;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.*;
+import org.junit.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
 
-public class JU_NullTafRespTest {
+import org.onap.aaf.cadi.taf.NullTaf;
+
+public class JU_NullTaf {
+
+	// @Mock
+	// LifeFore lfMock;
 
 // 	@Before
-// 	public void setUp() throws Exception {
+// 	public void setup() throws Exception {
+// 		MockitoAnnotations.initMocks(this);
 // 	}
 
-// 	@Test
-// 	public void test() throws IOException {
-// 		TafResp singleton = NullTafResp.singleton();
-// 		TafResp singleton1 = NullTafResp.singleton();
+	@Test
+	public void test() throws IOException {
+		NullTaf nt = new NullTaf();
+		TafResp singleton1 = nt.validate(null);
+		TafResp singleton2 = nt.validate(null, null, null);
+		Resp singleton3 = nt.revalidate(null, null);
 		
-// 		assertEquals(singleton, singleton1);
+		assertThat(singleton1, is(singleton2));
 		
-// 		assertFalse(singleton.isValid());
+		assertFalse(singleton1.isValid());
 		
-// 		assertEquals(singleton.isAuthenticated(), RESP.NO_FURTHER_PROCESSING);
+		assertThat(singleton1.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
 		
-// 		assertEquals(singleton.desc(), "All Authentication denied");
+		assertThat(singleton1.desc(), is("All Authentication denied"));
 		
-// 		assertEquals(singleton.authenticate(), RESP.NO_FURTHER_PROCESSING);
+		assertThat(singleton1.authenticate(), is(RESP.NO_FURTHER_PROCESSING));
 		
-// 		assertNull(singleton.getPrincipal());
+		assertThat(singleton1.getPrincipal(), is(nullValue()));
 		
-// 		assertEquals(singleton.getAccess(), Access.NULL);
+		assertThat(singleton1.getAccess(), is(Access.NULL));
 		
-// 		assertEquals(singleton.isFailedAttempt(), true);
-// 	}
+		assertTrue(singleton1.isFailedAttempt());
+
+		assertThat(singleton3, is(Resp.NOT_MINE));
+	}
 
 }
