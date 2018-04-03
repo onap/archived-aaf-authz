@@ -119,7 +119,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
-				<plugin>
+			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
 				<extensions>true</extensions>
@@ -128,82 +128,76 @@
 					<stagingProfileId>176c31dfe190a</stagingProfileId>
 					<serverId>ecomp-staging</serverId>
 				</configuration>
-			</plugin>		
+			</plugin>
 			<plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco.version}</version>
-          <configuration>
-            <excludes>
-              <exclude>**/gen/**</exclude>
-              <exclude>**/generated-sources/**</exclude>
-              <exclude>**/yang-gen/**</exclude>
-              <exclude>**/pax/**</exclude>
-            </excludes>
-          </configuration>
-          <executions>
-
-            <execution>
-              <id>pre-unit-test</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-              <configuration>
-                <destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
-                <propertyName>surefireArgLine</propertyName>
-              </configuration>
-            </execution>
-            
-       
-            <execution>
-              <id>post-unit-test</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-              <configuration>
-                <dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
-                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-              </configuration>
-            </execution>
-            <execution>
-              <id>pre-integration-test</id>
-              <phase>pre-integration-test</phase>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-              <configuration>
-                <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
-
-                <propertyName>failsafeArgLine</propertyName>
-              </configuration>
-            </execution>
-
-       
-            <execution>
-              <id>post-integration-test</id>
-              <phase>post-integration-test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-              <configuration>
-                <dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
-                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-			<!-- We want to create a Jar with Rosetta built in (since I don't want 
-				a separate deployment at this time Use this one as the jar to put in SWM 
-				packages <plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
-				<classifier>tests</classifier> <archive> <manifest> <mainClass>org.onap.aaf.cadi.cm.CmAgent</mainClass> 
-				</manifest> <manifestEntries> <Sealed>true</Sealed> </manifestEntries> </archive> 
-				</configuration> <executions> <execution> <id>full</id> <phase>package</phase> 
-				<goals> <goal>single</goal> </goals> <configuration> <descriptors> <descriptor>src/assemble/cadi-aaf.xml</descriptor> 
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/gen/**</exclude>
+						<exclude>**/generated-sources/**</exclude>
+						<exclude>**/yang-gen/**</exclude>
+						<exclude>**/pax/**</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>pre-integration-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+							<propertyName>failsafeArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- We want to create a Jar with Rosetta built in (since I don't want
+				a separate deployment at this time Use this one as the jar to put in SWM
+				packages <plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration>
+				<classifier>tests</classifier> <archive> <manifest> <mainClass>org.onap.aaf.cadi.cm.CmAgent</mainClass>
+				</manifest> <manifestEntries> <Sealed>true</Sealed> </manifestEntries> </archive>
+				</configuration> <executions> <execution> <id>full</id> <phase>package</phase>
+				<goals> <goal>single</goal> </goals> <configuration> <descriptors> <descriptor>src/assemble/cadi-aaf.xml</descriptor>
 				</descriptors> </configuration> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>ecomp-releases</id>

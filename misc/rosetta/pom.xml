@@ -76,14 +76,14 @@
 		<sonar.exclusions>**/scripts/**/*,**.js</sonar.exclusions>
 		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
 		<enforcer.skip>true</enforcer.skip>
-		
+
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.onap.aaf.authz.misc</groupId>
@@ -119,69 +119,67 @@
 					<stagingProfileId>176c31dfe190a</stagingProfileId>
 					<serverId>ecomp-staging</serverId>
 				</configuration>
-			</plugin>		
+			</plugin>
 			<plugin>
-            <groupId>org.sonarsource.scanner.maven</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-            <version>3.2</version>
-        </plugin>
-		<!-- Jacoco -->
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.2</version>
+			</plugin>
+			<!-- Jacoco -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<!-- Override OParent version -->
-				<version>${jacocoVersion}</version>
+				<version>${jacoco.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/gen/**</exclude>
+						<exclude>**/generated-sources/**</exclude>
+						<exclude>**/yang-gen/**</exclude>
+						<exclude>**/pax/**</exclude>
+					</excludes>
+				</configuration>
 				<executions>
-					<!-- disable jacoco executions from oparent -->
 					<execution>
 						<id>pre-unit-test</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>post-unit-test</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>pre-integration-test</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>post-integration-test</id>
-						<phase>none</phase>
-					</execution>
-					<!-- Order matters -->
-					<execution>
-						<id>portal-prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<destFile>${sonar.jacoco.reportPath}</destFile>
+							<destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
+							<propertyName>surefireArgLine</propertyName>
 						</configuration>
 					</execution>
-					<!-- offline instrumentation for PowerMock -->
 					<execution>
-						<id>portal-offline-instrument</id>
-						<goals>
-							<goal>instrument</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>portal-restore-instrumented-classes</id>
-						<phase>test</phase>
-						<goals>
-							<goal>restore-instrumented-classes</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>portal-post-unit-test</id>
+						<id>post-unit-test</id>
 						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
 						<configuration>
-							<dataFile>${sonar.jacoco.reportPath}</dataFile>
-							<outputDirectory>${project.basedir}/target/site/jacoco</outputDirectory>
+							<dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>pre-integration-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+							<propertyName>failsafeArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -216,5 +214,5 @@
 			<url>dav:${nexusproxy}${sitePath}</url>
 		</site>
 	</distributionManagement>
-	
+
 </project>

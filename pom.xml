@@ -19,43 +19,43 @@
  *
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.onap.aaf.authz.authz</groupId>
 	<artifactId>parent</artifactId>
 	<version>2.1.0-SNAPSHOT</version>
 	<name>AAF Overall Parent</name>
 	<packaging>pom</packaging>
-	
-	<parent>             
-        <groupId>org.onap.oparent</groupId>
-        <artifactId>oparent</artifactId>
-        <version>1.1.0</version>
-    </parent>
-	
+
+	<parent>
+		<groupId>org.onap.oparent</groupId>
+		<artifactId>oparent</artifactId>
+		<version>1.1.0</version>
+	</parent>
+
 	<properties>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-		
+
 		<maven.test.failure.ignore>false</maven.test.failure.ignore>
 		<!--  SONAR  -->
-		 <jacoco.version>0.7.7.201606060606</jacoco.version>
-	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
-	    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-	    <!-- Default Sonar configuration -->
-	    <sonar.jacoco.reportPath>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPath>
-	    <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
-	    <!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
-	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
+		<jacoco.version>0.7.7.201606060606</jacoco.version>
+		<sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<!-- Default Sonar configuration -->
+		<sonar.jacoco.reportPath>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
+		<sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-		
+
 	</properties>
 	<build>
 		<plugins>
@@ -76,21 +76,23 @@
 					<stagingProfileId>176c31dfe190a</stagingProfileId>
 					<serverId>ecomp-staging</serverId>
 				</configuration>
-			</plugin>		
+			</plugin>
 			<plugin>
-	            <groupId>org.sonarsource.scanner.maven</groupId>
-	            <artifactId>sonar-maven-plugin</artifactId>
-	            <version>3.2</version>
-	        </plugin>
-        	<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.2</version>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.7.201606060606</version>
+				<version>${jacoco.version}</version>
 				<configuration>
-					<dumpOnExit>true</dumpOnExit>
-					<includes>
-						<include>org.onap.aaf.*</include>
-					</includes>
+					<excludes>
+						<exclude>**/gen/**</exclude>
+						<exclude>**/generated-sources/**</exclude>
+						<exclude>**/yang-gen/**</exclude>
+						<exclude>**/pax/**</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -99,8 +101,19 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
-							<!-- <append>true</append> -->
+							<destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -110,37 +123,32 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
-							<!-- <append>true</append> -->
+							<destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+							<propertyName>failsafeArgLine</propertyName>
 						</configuration>
 					</execution>
 					<execution>
-                        <goals>
-                            <goal>merge</goal>
-                        </goals>
-                        <phase>post-integration-test</phase>
-                        <configuration>
-                            <fileSets>
-                                <fileSet implementation="org.apache.maven.shared.model.fileset.FileSet">
-                                    <directory>${project.build.directory}/coverage-reports</directory>
-                                    <includes>
-                                        <include>*.exec</include>
-                                    </includes>
-                                </fileSet>
-                            </fileSets>
-                            <destFile>${project.build.directory}/jacoco-dev.exec</destFile>
-                        </configuration>
-                    </execution>
+						<id>post-integration-test</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
-    </build>	
+	</build>
 	<modules>
 		<module>auth/auth-client</module>
 		<module>misc</module>
 		<module>cadi</module>
 		<module>auth</module>
- 	</modules>
+	</modules>
 
 	<distributionManagement>
 		<repository>
@@ -158,5 +166,5 @@
 			<url>dav:${nexusproxy}${sitePath}</url>
 		</site>
 	</distributionManagement>
-	
-</project>	
+
+</project>

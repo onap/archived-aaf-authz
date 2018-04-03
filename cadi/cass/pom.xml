@@ -170,7 +170,6 @@
 						</goals>
 						<configuration>
 							<destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
-
 							<propertyName>failsafeArgLine</propertyName>
 						</configuration>
 					</execution>
