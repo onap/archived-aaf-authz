@@ -153,7 +153,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jarsigner-plugin</artifactId>
 				<configuration>
-					<skip>true</skip>
+					<skip>false</skip>
 				</configuration>
 				<executions>
 					<execution>
