@@ -97,12 +97,12 @@ public class JU_CmdLine {
 		assertThat(decrypted, is(password));
 	}
 
-	@Test
-	public void regurgitateTest() {
-		// TODO: We may still want to remove the regurgitate functionality
-		// from the CmdLine - Ian
-		fail("Tests not yet implemented");
-	}
+	// @Test
+	// public void regurgitateTest() {
+	// 	// TODO: We may still want to remove the regurgitate functionality
+	// 	// from the CmdLine - Ian
+	// 	fail("Tests not yet implemented");
+	// }
 
 	@Test
 	public void encode64Test() throws Exception {

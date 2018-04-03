@@ -27,6 +27,7 @@
  */
 package org.onap.aaf.cadi.util;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.onap.aaf.cadi.CadiException;
@@ -210,11 +211,12 @@ public class Pool<T> {
 	public boolean validate() {
 		boolean rv = true;
 		synchronized (list) {
-			for (Pooled<T> t : list) {
+			for (Iterator<Pooled<T>> iter = list.iterator(); iter.hasNext();) {
+				Pooled<T> t = iter.next();
 				if (!creator.isValid(t.content)) {
 					rv = false;
 					t.toss();
-					list.remove(t);
+					iter.remove();
 				}
 			}
 		}

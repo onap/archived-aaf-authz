@@ -1,28 +1,27 @@
-/*******************************************************************************
+/**
  * ============LICENSE_START====================================================
- * * org.onap.aaf
- * * ===========================================================================
- * * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
- * * ===========================================================================
- * * Licensed under the Apache License, Version 2.0 (the "License");
- * * you may not use this file except in compliance with the License.
- * * You may obtain a copy of the License at
- * * 
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
- *  * Unless required by applicable law or agreed to in writing, software
- * * distributed under the License is distributed on an "AS IS" BASIS,
- * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * * See the License for the specific language governing permissions and
- * * limitations under the License.
- * * ============LICENSE_END====================================================
- * *
- * *
- ******************************************************************************/
-package org.onap.aaf.cadi.lur.aaf.test;
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ *
+ */
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+package org.onap.aaf.cadi.aaf.test;
+
+import static org.junit.Assert.*;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -36,8 +35,6 @@ public class JU_PermEval {
 
 	@Test
 	public void test() {
-		assertTrue(PermEval.evalInstance(":com.att.temp:role:write",":!com.att.*:role:write"));
-		
 		// TRUE
 		assertTrue(PermEval.evalAction("fred","fred"));
 		assertTrue(PermEval.evalAction("fred,wilma","fred"));
@@ -55,20 +52,20 @@ public class JU_PermEval {
 		assertTrue(PermEval.evalInstance("*","fred"));
 		assertTrue(PermEval.evalInstance(":*:fred",":fred:fred"));
 		assertTrue(PermEval.evalInstance(":fred:*",":fred:fred"));
-		assertTrue(PermEval.evalInstance(":fred:fred",":!f.*:fred"));
-		assertTrue(PermEval.evalInstance(":fred:fred",":fred:!f.*"));
+		assertTrue(PermEval.evalInstance(":!f.*:fred",":fred:fred"));
+		assertTrue(PermEval.evalInstance(":fred:!f.*",":fred:fred"));
 		
 		/// FALSE
 		assertFalse(PermEval.evalInstance("fred","wilma"));
 		assertFalse(PermEval.evalInstance("fred,barney,betty","wilma"));
 		assertFalse(PermEval.evalInstance(":fred:fred",":fred:wilma"));
 		assertFalse(PermEval.evalInstance(":fred:fred",":wilma:fred"));
-		assertFalse(PermEval.evalInstance(":fred:fred",":wilma:!f.*"));
-		assertFalse(PermEval.evalInstance(":fred:fred",":!f.*:wilma"));
-		assertFalse(PermEval.evalInstance(":fred:fred",":!w.*:!f.*"));
-		assertFalse(PermEval.evalInstance(":fred:fred",":!f.*:!w.*"));
+		assertFalse(PermEval.evalInstance(":wilma:!f.*",":fred:fred"));
+		assertFalse(PermEval.evalInstance(":!f.*:wilma",":fred:fred"));
+		assertFalse(PermEval.evalInstance(":!w.*:!f.*",":fred:fred"));
+		assertFalse(PermEval.evalInstance(":!f.*:!w.*",":fred:fred"));
 
-		assertFalse(PermEval.evalInstance(":fred:fred",":fred:!x.*"));
+		assertFalse(PermEval.evalInstance(":fred:!x.*",":fred:fred"));
 
 		// MSO Tests 12/3/2015
 		assertFalse(PermEval.evalInstance("/v1/services/features/*","/v1/services/features"));
@@ -87,20 +84,35 @@ public class JU_PermEval {
 		assertTrue(PermEval.evalInstance("*","fred"));
 		assertTrue(PermEval.evalInstance("/*/fred","/fred/fred"));
 		assertTrue(PermEval.evalInstance("/fred/*","/fred/fred"));
-		assertTrue(PermEval.evalInstance("/fred/fred","/!f.*/fred"));
-		assertTrue(PermEval.evalInstance("/fred/fred","/fred/!f.*"));
+		assertTrue(PermEval.evalInstance("/!f.*/fred","/fred/fred"));
+		assertTrue(PermEval.evalInstance("/fred/!f.*","/fred/fred"));
 		
 		/// FALSE
 		assertFalse(PermEval.evalInstance("fred","wilma"));
 		assertFalse(PermEval.evalInstance("fred,barney,betty","wilma"));
 		assertFalse(PermEval.evalInstance("/fred/fred","/fred/wilma"));
 		assertFalse(PermEval.evalInstance("/fred/fred","/wilma/fred"));
-		assertFalse(PermEval.evalInstance("/fred/fred","/wilma/!f.*"));
-		assertFalse(PermEval.evalInstance("/fred/fred","/!f.*/wilma"));
-		assertFalse(PermEval.evalInstance("/fred/fred","/!w.*/!f.*"));
-		assertFalse(PermEval.evalInstance("/fred/fred","/!f.*/!w.*"));
+		assertFalse(PermEval.evalInstance("/wilma/!f.*","/fred/fred"));
+		assertFalse(PermEval.evalInstance("/!f.*/wilma","/fred/fred"));
+		assertFalse(PermEval.evalInstance("/!w.*/!f.*","/fred/fred"));
+		assertFalse(PermEval.evalInstance("/!f.*/!w.*","/fred/fred"));
 
-		assertFalse(PermEval.evalInstance("/fred/fred","/fred/!x.*"));
+		assertFalse(PermEval.evalInstance("/fred/!x.*","/fred/fred"));
+		
+		assertTrue(PermEval.evalInstance(":!com.att.*:role:write",":com.att.temp:role:write"));
+
+		// CPFSF-431 Group needed help with Wild Card
+		// They tried
+		assertTrue(PermEval.evalInstance(
+				":topic.com.att.ecomp_test.crm.pre*",
+				":topic.com.att.ecomp_test.crm.predemo100"
+				));
+
+		// Also can be
+		assertTrue(PermEval.evalInstance(
+				":!topic.com.att.ecomp_test.crm.pre.*",
+				":topic.com.att.ecomp_test.crm.predemo100"
+				));
 		
 	}
 

@@ -77,8 +77,8 @@ public class JU_SecurityInfoC {
 	
 	@Test
 	public void setTest() throws MalformedURLException, CadiException {
-		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
-		SecuritySetter<HttpURLConnection> ss = new SecuritySetterStub<HttpURLConnection>();
+		SecurityInfoC<HttpURLConnectionStub> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnectionStub.class);
+		SecuritySetter<HttpURLConnectionStub> ss = new SecuritySetterStub<HttpURLConnectionStub>();
 		assertThat(si.set(ss), is(si));
 		assertThat(si.defSS.getID(), is("Example ID"));
 		try {
