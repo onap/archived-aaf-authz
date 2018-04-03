@@ -1,0 +1,3 @@
+name = shsm
+library = /usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so 
+slot = 0
