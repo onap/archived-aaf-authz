@@ -101,6 +101,7 @@ public class DirectOAuthTAF implements HttpTaf {
 		}
 
 		if("application/x-www-form-urlencoded".equals(req.getContentType())) {
+			@SuppressWarnings("unchecked")
 			Map<String, String[]> map = req.getParameterMap();
 			String client_id=null,client_secret=null,username=null,password=null;
 			for(Map.Entry<String, String[]> es : map.entrySet()) {

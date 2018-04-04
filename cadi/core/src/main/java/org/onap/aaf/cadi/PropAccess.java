@@ -31,11 +31,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfo;
-
-import java.util.Properties;
 
 public class PropAccess implements Access {
 	// Sonar says cannot be static... it's ok.  not too many PropAccesses created.
@@ -70,18 +69,11 @@ public class PropAccess implements Access {
 	
 	public PropAccess(PrintStream ps, String[] args) {
 		logIt = new StreamLogIt(ps==null?System.out:ps);
-		Properties nprops=new Properties();
-		int eq;
-		for(String arg : args) {
-			if((eq=arg.indexOf('='))>0) {
-				nprops.setProperty(arg.substring(0, eq),arg.substring(eq+1));
-			}
-		}
-		init(nprops);
+		init(logIt,args);
 	}
 	
 	public PropAccess(LogIt logit, String[] args) {
-		logIt = logit;
+		init(logit, args);
 	}
 	
 	public PropAccess(Properties p) {
@@ -91,6 +83,18 @@ public class PropAccess implements Access {
 	public PropAccess(PrintStream ps, Properties p) {
 		logIt = new StreamLogIt(ps==null?System.out:ps);
 		init(p);
+	}
+	
+	protected void init(final LogIt logIt, final String[] args) {
+		this.logIt = logIt;
+		Properties nprops=new Properties();
+		int eq;
+		for(String arg : args) {
+			if((eq=arg.indexOf('='))>0) {
+				nprops.setProperty(arg.substring(0, eq),arg.substring(eq+1));
+			}
+		}
+		init(nprops);
 	}
 	
 	protected void init(Properties p) {
@@ -248,9 +252,13 @@ public class PropAccess implements Access {
 			logIt.push(level,elements);
 		}
 	}
-	
+
 	protected StringBuilder buildMsg(Level level, Object[] elements) {
-		StringBuilder sb = new StringBuilder(iso8601.format(new Date()));
+		return buildMsg(name,iso8601,level,elements);
+	}
+
+	public static StringBuilder buildMsg(final String name, final SimpleDateFormat sdf, Level level, Object[] elements) { 
+		StringBuilder sb = new StringBuilder(sdf.format(new Date()));
 		sb.append(' ');
 		sb.append(level.name());
 		sb.append(" [");

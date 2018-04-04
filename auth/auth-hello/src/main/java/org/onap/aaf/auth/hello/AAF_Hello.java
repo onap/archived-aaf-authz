@@ -22,6 +22,7 @@
 
 package org.onap.aaf.auth.hello;
 
+import java.io.File;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -34,6 +35,7 @@ import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.auth.server.AbsService;
 import org.onap.aaf.auth.server.JettyServiceStarter;
+import org.onap.aaf.auth.server.Log4JLogIt;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
@@ -116,10 +118,21 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
 	}
 
 	public static void main(final String[] args) {
-		PropAccess propAccess = new PropAccess(args);
 		try {
+			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
+			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
+			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
+			File logs = new File(log_dir);
+			if(!logs.isDirectory()) {
+				logs.delete();
+			}
+			if(!logs.exists()) {
+				logs.mkdirs();
+			}
+			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "hello");
+			PropAccess propAccess = new PropAccess(logIt,args);
+ 		
  			AAF_Hello service = new AAF_Hello(new AuthzEnv(propAccess));
-//			env.setLog4JNames("log4j.properties","authz","hello","audit","init","trace");
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.start();
 		} catch (Exception e) {
