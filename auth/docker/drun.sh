@@ -22,7 +22,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 	esac
 	
 #	if [ "`docker container ls | grep aaf_$AAF_COMPONENT:$VERSION`" == "" ]; then 
-		docker run \
+		echo docker run \
 		  --name aaf_$AAF_COMPONENT \
 		  --hostname="$HOSTNAME" \
 		  --add-host="$CASS_HOST" \

@@ -126,19 +126,21 @@ public class LocalCA extends CA {
 				try {
 					Provider p;
 					KeyStore keyStore;
+					FileInputStream fis = null;
 					if(fileName.endsWith(".pkcs11")) {
 						String ksType;
 						p = Factory.getSecurityProvider(ksType="PKCS11",params);
 						keyStore = KeyStore.getInstance(ksType,p);
 					} else if(fileName.endsWith(".jks")) {
 						keyStore = KeyStore.getInstance("JKS");
+					        fis = new FileInputStream(f);
 					} else if(fileName.endsWith(".p12") || fileName.endsWith(".pkcs12")) {
 						keyStore = KeyStore.getInstance("PKCS12");
+					        fis = new FileInputStream(f);
 					} else {
 						throw new CertException("Unknown Keystore type from filename " + fileName);
 					}
 					
-					FileInputStream fis = new FileInputStream(f);
 					KeyStore.ProtectionParameter keyPass;
 
 					try {
@@ -152,9 +154,15 @@ public class LocalCA extends CA {
 
 						keyStore.load(fis,ksPass);
 					} finally {
-						fis.close();
+						if (fis != null)
+							fis.close();
 					}
-					Entry entry = keyStore.getEntry(params[0][1]/*alias*/, keyPass);
+					Entry entry;
+					if(fileName.endsWith(".pkcs11")) {
+						entry = keyStore.getEntry(params[0][1]/*alias*/, null);
+					} else {
+						entry = keyStore.getEntry(params[0][1]/*alias*/, keyPass);
+					}
 					if(entry==null) {
 						throw new CertException("There is no Keystore entry with name '" + params[0][1] +'\'');
 					}
