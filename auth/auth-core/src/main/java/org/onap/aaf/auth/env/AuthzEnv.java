@@ -29,14 +29,11 @@ import java.util.Properties;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.PropAccess.LogIt;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.config.Config;
-import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Decryptor;
 import org.onap.aaf.misc.env.Encryptor;
-import org.onap.aaf.misc.env.impl.Log4JLogTarget;
-import org.onap.aaf.misc.env.log4j.LogFileNamer;
+import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 
@@ -79,39 +76,46 @@ public class AuthzEnv extends RosettaEnv implements Access {
 		access = pa;
 		times = new long[20];
 		idx = 0;
+		fatal = new AccessLogTarget(access, Level.ERROR);
+		error = fatal;
+		audit = new AccessLogTarget(access, Level.AUDIT);
+		init = new AccessLogTarget(access, Level.INIT);
+		warn = new AccessLogTarget(access, Level.WARN);
+		info = new AccessLogTarget(access, Level.INFO);
+		debug = new AccessLogTarget(access, Level.DEBUG);
+		trace = new AccessLogTarget(access, Level.TRACE);
 	}
 	
-	private class Log4JLogit implements LogIt {
+	private class AccessLogTarget implements LogTarget {
+		private final Level level;
+		private final Access access;
+		
+		public AccessLogTarget(final Access access, final Level level) {
+			this.level = level;
+			this.access = access;
+		}
 		
 		@Override
-		public void push(Level level, Object... elements) {
-			switch(level) {
-				case AUDIT:
-					audit.log(elements);
-					break;
-				case DEBUG:
-					debug.log(elements);
-					break;
-				case ERROR:
-					error.log(elements);
-					break;
-				case INFO:
-					info.log(elements);
-					break;
-				case INIT:
-					init.log(elements);
-					break;
-				case NONE:
-					break;
-				case WARN:
-					warn.log(elements);
-					break;
-			}
-			
+		public void log(Object... msgs) {
+			access.log(level, msgs);
+		}
+
+		@Override
+		public void log(Throwable e, Object... msgs) {
+			access.log(Level.ERROR, msgs);
+		}
+
+		@Override
+		public boolean isLoggable() {
+			return access.willLog(level);
+		}
+
+		@Override
+		public void printf(String fmt, Object... vars) {
+			access.printf(level, fmt, vars);
 		}
 		
 	}
-
 	@Override
 	public AuthzTransImpl newTrans() {
 		synchronized(this) {
@@ -191,29 +195,6 @@ public class AuthzEnv extends RosettaEnv implements Access {
 	@Override
 	public void setLogLevel(Level level) {
 		access.setLogLevel(level);
-	}
-
-	public void setLog4JNames(String path, String root, String _service, String _audit, String _init, String _trace) throws APIException {
-		LogFileNamer lfn = new LogFileNamer(root);
-		if(_service==null) {
-			throw new APIException("AuthzEnv.setLog4JNames \"_service\" required (as default).  Others can be null");
-		}
-		String service=_service=lfn.setAppender(_service); // when name is split, i.e. authz|service, the Appender is "authz", and "service"
-		String audit=_audit==null?service:lfn.setAppender(_audit);     // is part of the log-file name
-		String init=_init==null?service:lfn.setAppender(_init);
-		String trace=_trace==null?service:lfn.setAppender(_trace);
-		//TODO Validate path on Classpath
-		lfn.configure(path);
-		super.fatal = new Log4JLogTarget(service,org.apache.log4j.Level.FATAL);
-		super.error = new Log4JLogTarget(service,org.apache.log4j.Level.ERROR);
-		super.warn = new Log4JLogTarget(service,org.apache.log4j.Level.WARN);
-		super.audit = new Log4JLogTarget(audit,org.apache.log4j.Level.WARN);
-		super.init = new Log4JLogTarget(init,org.apache.log4j.Level.WARN);
-		super.info = new Log4JLogTarget(service,org.apache.log4j.Level.INFO);
-		super.debug = new Log4JLogTarget(service,org.apache.log4j.Level.DEBUG);
-		super.trace = new Log4JLogTarget(trace,org.apache.log4j.Level.TRACE);
-		
-		access.set(new Log4JLogit());
 	}
 	
 	private static final byte[] ENC="enc:".getBytes();

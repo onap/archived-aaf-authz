@@ -422,12 +422,7 @@ public abstract class Batch {
 			// Flow all Env Logs to Log4j, with ENV
 
 			LogFileNamer lfn;
-			if ((batchEnv = env.getProperty(CASS_ENV)) == null) {
-				lfn = new LogFileNamer(logDir()).noPID();
-			} else {
-				lfn = new LogFileNamer(logDir()).noPID();
-			}
-
+			lfn = new LogFileNamer(logDir(),"").noPID();
 			lfn.setAppender("authz-batch");
 			lfn.setAppender("aspr|ASPR");
 			lfn.setAppender("sync");

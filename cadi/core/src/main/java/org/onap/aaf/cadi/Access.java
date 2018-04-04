@@ -37,7 +37,7 @@ import java.util.Properties;
 public interface Access {
 	// levels to use
 	public enum Level {
-		DEBUG(0x1), INFO(0x10), AUDIT(0x100), WARN(0x2000), ERROR(0x4000), INIT(0x8000),NONE(0XFFFF);
+		DEBUG(0x1), INFO(0x10), AUDIT(0x100), WARN(0x2000), ERROR(0x4000), INIT(0x8000),TRACE(0x10000),NONE(0XFFFF);
 		private final int bit;
 		
 		Level(int ord) {
