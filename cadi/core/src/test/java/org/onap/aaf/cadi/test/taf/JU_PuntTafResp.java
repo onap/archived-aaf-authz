@@ -28,38 +28,27 @@ import org.junit.*;
 import java.io.IOException;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
-import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
 
-import org.onap.aaf.cadi.taf.NullTaf;
+import org.onap.aaf.cadi.taf.PuntTafResp;
 
-public class JU_NullTaf {
+
+public class JU_PuntTafResp {
 
 	@Test
 	public void test() throws IOException {
-		NullTaf nt = new NullTaf();
-		TafResp singleton1 = nt.validate(null);
-		TafResp singleton2 = nt.validate(null, null, null);
-		Resp singleton3 = nt.revalidate(null, null);
-		
-		assertThat(singleton1, is(singleton2));
-		
-		assertFalse(singleton1.isValid());
-		
-		assertThat(singleton1.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
-		
-		assertThat(singleton1.desc(), is("All Authentication denied"));
-		
-		assertThat(singleton1.authenticate(), is(RESP.NO_FURTHER_PROCESSING));
-		
-		assertThat(singleton1.getPrincipal(), is(nullValue()));
-		
-		assertThat(singleton1.getAccess(), is(Access.NULL));
-		
-		assertTrue(singleton1.isFailedAttempt());
+		String name = "name";
+		String explanation = "example explanation";
 
-		assertThat(singleton3, is(Resp.NOT_MINE));
+		PuntTafResp punt = new PuntTafResp(name, explanation);
+
+		assertFalse(punt.isValid());
+		assertThat(punt.isAuthenticated(), is(RESP.TRY_ANOTHER_TAF));
+		assertThat(punt.desc(), is(name + " is not processing this transaction: " + explanation));
+		assertThat(punt.authenticate(), is(RESP.TRY_ANOTHER_TAF));
+		assertThat(punt.getPrincipal(), is(nullValue()));
+		assertThat(punt.getAccess(), is(Access.NULL));
+		assertFalse(punt.isFailedAttempt());
 	}
 
 }

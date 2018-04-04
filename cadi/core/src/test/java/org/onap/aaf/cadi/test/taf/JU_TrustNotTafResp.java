@@ -23,43 +23,50 @@ package org.onap.aaf.cadi.test.taf;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.*;
 import org.junit.*;
+import org.mockito.*;
 
 import java.io.IOException;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
+import org.onap.aaf.cadi.taf.TrustNotTafResp;
+import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
-import org.onap.aaf.cadi.taf.NullTaf;
+public class JU_TrustNotTafResp {
 
-public class JU_NullTaf {
+	@Mock
+	TafResp delegateMock;
+
+	@Mock
+	TaggedPrincipal principalMock;
+
+	@Mock
+	Access accessMock;
+
+	private final String description = "Example Description";
+
+	@Before
+	public void setup() throws IOException {
+		MockitoAnnotations.initMocks(this);
+
+		when(delegateMock.getPrincipal()).thenReturn(principalMock);
+		when(delegateMock.getAccess()).thenReturn(accessMock);
+	}
 
 	@Test
 	public void test() throws IOException {
-		NullTaf nt = new NullTaf();
-		TafResp singleton1 = nt.validate(null);
-		TafResp singleton2 = nt.validate(null, null, null);
-		Resp singleton3 = nt.revalidate(null, null);
-		
-		assertThat(singleton1, is(singleton2));
-		
-		assertFalse(singleton1.isValid());
-		
-		assertThat(singleton1.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
-		
-		assertThat(singleton1.desc(), is("All Authentication denied"));
-		
-		assertThat(singleton1.authenticate(), is(RESP.NO_FURTHER_PROCESSING));
-		
-		assertThat(singleton1.getPrincipal(), is(nullValue()));
-		
-		assertThat(singleton1.getAccess(), is(Access.NULL));
-		
-		assertTrue(singleton1.isFailedAttempt());
-
-		assertThat(singleton3, is(Resp.NOT_MINE));
+		TrustNotTafResp ttr = new TrustNotTafResp(delegateMock, description);
+		assertThat(ttr.isValid(), is(false));
+		assertThat(ttr.desc(), is(description));
+		assertThat(ttr.authenticate(), is(RESP.NO_FURTHER_PROCESSING));
+		assertThat(ttr.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
+		assertThat(ttr.getPrincipal(), is(principalMock));
+		assertThat(ttr.getAccess(), is(accessMock));
+		assertThat(ttr.isFailedAttempt(), is(true));
+		assertThat(ttr.toString(), is(description));
 	}
 
 }
