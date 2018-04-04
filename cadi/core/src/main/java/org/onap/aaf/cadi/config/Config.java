@@ -73,6 +73,7 @@ public class Config {
 	public static final String HOSTNAME = "hostname";
 	public static final String CADI_PROP_FILES = "cadi_prop_files"; // Additional Properties files (separate with ;)
 	public static final String CADI_LOGLEVEL = "cadi_loglevel";
+	public static final String CADI_LOGDIR = "cadi_logdir";
 	public static final String CADI_LOGNAME = "cadi_logname";
 	public static final String CADI_KEYFILE = "cadi_keyfile";
 	public static final String CADI_KEYSTORE = "cadi_keystore";
@@ -81,6 +82,7 @@ public class Config {
 	public static final String CADI_LOGINPAGE_URL = "cadi_loginpage_url";
 	public static final String CADI_LATITUDE = "cadi_latitude";
 	public static final String CADI_LONGITUDE = "cadi_longitude";
+
 
 	public static final String CADI_KEY_PASSWORD = "cadi_key_password";
 	public static final String CADI_TRUSTSTORE = "cadi_truststore";

@@ -21,22 +21,20 @@
  ******************************************************************************/
 package org.onap.aaf.auth.env.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.onap.aaf.cadi.Access;
-import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.config.Config;
-import org.onap.aaf.misc.env.APIException;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import junit.framework.Assert;
@@ -83,12 +81,6 @@ public class JU_AuthzEnv {
 	public void checkgetProperties() { //TODO:[GABE]No setter for this, add?
 		Assert.assertNotNull(authzEnv.getProperties());
 		Assert.assertNotNull(authzEnv.getProperties("test"));
-	}
-
-	@Test(expected = APIException.class)
-	public void checkSetLog4JNames() throws APIException {//TODO: Find better way to test instead of just seeing if strings pass
-		authzEnv.setLog4JNames("path", "root","service","audit","init","trace");
-		authzEnv.setLog4JNames("path", "root",null,"audit","init","trace");
 	}
 
 	@Test

@@ -21,6 +21,8 @@
 
 package org.onap.aaf.auth.service;
 
+import java.io.File;
+
 import javax.servlet.Filter;
 
 import org.onap.aaf.auth.cache.Cache;
@@ -38,6 +40,7 @@ import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.auth.server.AbsService;
 import org.onap.aaf.auth.server.JettyServiceStarter;
+import org.onap.aaf.auth.server.Log4JLogIt;
 import org.onap.aaf.auth.service.api.API_Api;
 import org.onap.aaf.auth.service.api.API_Approval;
 import org.onap.aaf.auth.service.api.API_Creds;
@@ -59,6 +62,7 @@ import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
+import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Env;
@@ -68,12 +72,8 @@ import com.datastax.driver.core.Cluster;
 public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 
 	private static final String ORGANIZATION = "Organization.";
-	private static final String DOMAIN = "aaf.att.com";
 
-// TODO Add Service Metrics
-//	private Metric serviceMetric;
 	public final Question question;
-//	private final SessionFilter sessionFilter;
 	private AuthzFacade_2_0 facade;
 	private AuthzFacade_2_0 facade_XML;
 	private DirectAAFUserPass directAAFUserPass;
@@ -160,13 +160,14 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 	
 	@Override
 	public Filter[] filters() throws CadiException {
+		final String domain = FQI.reverseDomain(access.getProperty("aaf_root_ns","org.osaaf.aaf"));
 		try {
 				return new Filter[] {new AuthzTransFilter(env, null /* no connection to AAF... it is AAF */,
 						new AAFTrustChecker((Env)env),
 						new DirectAAFLur(env,question), // Note, this will be assigned by AuthzTransFilter to TrustChecker
 						//new DirectOAuthTAF(env,question,OAFacadeFactory.directV1_0(oauthService)),
 						new BasicHttpTaf(env, directAAFUserPass,
-							DOMAIN,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
+							domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
 							false)
 					)};
 		} catch (NumberFormatException e) {
@@ -214,10 +215,21 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 	 * Start up AAF_Service as Jetty Service
 	 */
 	public static void main(final String[] args) {
-		PropAccess propAccess = new PropAccess(args);
 		try {
- 			AAF_Service service = new AAF_Service(new AuthzEnv(propAccess));
-// 			service.env().setLog4JNames("log4j.properties","authz","authz|service","audit","init","trace");
+			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
+			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
+			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
+			File logs = new File(log_dir);
+			if(!logs.isDirectory()) {
+				logs.delete();
+			}
+			if(!logs.exists()) {
+				logs.mkdirs();
+			}
+			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "authz");
+			PropAccess propAccess = new PropAccess(logIt,args);
+ 		
+ 			AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.start();
 		} catch (Exception e) {

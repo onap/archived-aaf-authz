@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -42,6 +43,7 @@ import java.util.Properties;
 import org.onap.aaf.cadi.CmdLine;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.util.Chmod;
 
 public class JU_CmdLine {
 
@@ -67,11 +69,30 @@ public class JU_CmdLine {
 		p.setProperty("force_exit", "false");
 
 		CmdLine.access = new PropAccess(p);
-
-		password = "password";
+		File test = new File("test");
+		if(test.exists()) {
+			if(!test.isDirectory()) {
+				test.delete();
+				test.mkdirs();
+			}
+		} else {
+			test.mkdirs();
+		}
+		
+		File keyF= new File(test,"keyfile");
+		if(!keyF.exists()) {
+			FileOutputStream fos = new FileOutputStream(keyF);
+			try {
+				fos.write(Symm.keygen());
+				fos.flush();
+			} finally {
+				fos.close();
+			}
+		}
 		keyfile = "test/keyfile";
+		password = "password";
 
-		FileInputStream fis = new FileInputStream(keyfile);
+		FileInputStream fis = new FileInputStream(keyF);
 		try {
 			symm = Symm.obtain(fis);
 		} finally {

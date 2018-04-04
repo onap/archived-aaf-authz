@@ -44,7 +44,7 @@ public class JU_Access {
 		assertThat(Level.DEBUG.delFromMask(0x1), is(0x0));
 		assertThat(Level.DEBUG.toggle(0x2), is(0x3));
 		assertThat(Level.DEBUG.toggle(0x1), is(0x0));
-		assertThat(Level.DEBUG.maskOf(), is(57617));
+		assertThat(Level.DEBUG.maskOf(), is(123153));
 		assertThat(Level.NONE.maskOf(), is(0));
 	}
 
