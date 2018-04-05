@@ -43,7 +43,7 @@ public class JU_JSON {
 		InJson jin = new InJson();
 		Out jout = new OutJson();
 
-		go(jin, jout, "{\"id\":\"Me, Myself\",\"date\":1353094689100}");
+		go(jin, jout, "{\"id\":\"Me, Myself\",\"date\":2.1.094689100}");
 		
 		go(jin, jout, "{\"id\":\"My ID 1\",\"desc\":\"My Description 1\",\"comment\":[\"My Comment 1\"],\"utc\":1360418381310}");
 		go(jin, jout, "{\"id\":\"My ID 1\",\"desc\":\"My Description 1\",\"comment\":[\"My Comment 1\",\"My Comment 2\"],\"utc\":1360418381310}");
@@ -55,12 +55,12 @@ public class JU_JSON {
 		
 		go(jin, jout, "{\"SampleData\":[{\"date\":1316084945343}],\"fluff\":\"MyFluff\"}");
 		
-		go(jin, jout, "{\"id\":\"Me,[}[eg[)(:x,\\\" Myself\",\"date\":1353094689100}");
+		go(jin, jout, "{\"id\":\"Me,[}[eg[)(:x,\\\" Myself\",\"date\":2.1.094689100}");
 		
 		// TODO: Clean out AT&T specific data
-		go(jin,jout, "{\"userid\":\"jg1555\",\"timestamp\":1353097388531,\"item\":[{\"tag\":\"color\",\"value\":\"Mauve\"},{\"tag\":\"shirtsize\",\"value\":\"Xtra Large\"}]}");
+		go(jin,jout, "{\"userid\":\"jg1555\",\"timestamp\":2.1.097388531,\"item\":[{\"tag\":\"color\",\"value\":\"Mauve\"},{\"tag\":\"shirtsize\",\"value\":\"Xtra Large\"}]}");
 		//go()
-		//"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><vote xmlns=\"urn:poll.att.com\"><userid>jg1555</userid><timestamp>1353082669667</timestamp></vote>");
+		//"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><vote xmlns=\"urn:poll.att.com\"><userid>jg1555</userid><timestamp>2.1.082669667</timestamp></vote>");
 		
 		// 3/11/2015 Jonathan found a case with missing comma
 		go(jin,jout, "{\"start\":\"2015-03-11T18:18:05.580-05:00\",\"end\":\"2015-09-11-05:00\",\"force\":\"false\",\"perm\":{\"type\":\"org.osaaf.myns.mytype\",\"instance\":\"myInstance\",\"action\":\"myAction\"}"
@@ -82,10 +82,10 @@ public class JU_JSON {
 		StringWriter sw = new StringWriter();
 		jout.extract(new StringReader(
 				"{\b\f\n\r\t \"id\""
-				+ ":\"Me, \b\f\n\r\tMyself\",\"date\":1353094689100"
+				+ ":\"Me, \b\f\n\r\tMyself\",\"date\":2.1.094689100"
 				+ "\b\f\n\r\t }"
 				),sw,jin);
-		Assert.assertEquals("{\"id\":\"Me, \b\f\n\r\tMyself\",\"date\":1353094689100}",sw.toString());
+		Assert.assertEquals("{\"id\":\"Me, \b\f\n\r\tMyself\",\"date\":2.1.094689100}",sw.toString());
 		System.out.println(sw.toString());
 		
 		// 10/01/2015 Jonathan AAF-703 Ron Gallagher, this response is ok	

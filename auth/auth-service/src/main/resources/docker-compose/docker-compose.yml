@@ -33,9 +33,9 @@ services:
       - ./data2:/data
     # - ./runaafcli.sh:/opt/app/aaf/authz-service/2.0.15/runaafcli.sh
     #  - ./com.osaaf.common.props:/opt/app/aaf/authz-service/2.0.15/etc/com.osaaf.common.props
-    # - ./cadi-core-1.3.0.jar:/opt/app/aaf/authz-service/2.0.15/lib/cadi-core-1.3.0.jar
-    #  - ./cadi-aaf-1.3.0.jar:/opt/app/aaf/authz-service/2.0.15/lib/cadi-aaf-1.3.0.jar
-    # - ./cadi-client-1.3.0.jar:/opt/app/aaf/authz-service/2.0.15/lib/cadi-client-1.3.0.jar
+    # - ./cadi-core-2.1.0.jar:/opt/app/aaf/authz-service/2.0.15/lib/cadi-core-2.1.0.jar
+    #  - ./cadi-aaf-2.1.0.jar:/opt/app/aaf/authz-service/2.0.15/lib/cadi-aaf-2.1.0.jar
+    # - ./cadi-client-2.1.0.jar:/opt/app/aaf/authz-service/2.0.15/lib/cadi-client-2.1.0.jar
     # - ./authz-service-2.0.15.jar:/opt/app/aaf/authz-service/2.0.15/lib/authz-service-2.0.15.jar
     #  - ./dme2-3.1.200.jar:/opt/app/aaf/authz-service/2.0.15/lib/dme2-3.1.200.jar
     entrypoint: ["bash", "-c", "/tmp/wait_for_host_port.sh cassandra_container 9042; sleep 20; /bin/sh -c ./startup.sh"]

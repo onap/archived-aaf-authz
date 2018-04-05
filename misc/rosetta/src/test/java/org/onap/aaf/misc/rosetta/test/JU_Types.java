@@ -273,7 +273,7 @@ public class JU_Types {
 //		Parse<?> jin = new InJson();
 //		Out jout = new OutJson();
 //
-////		go(jin, jout, "{\"id\":\"Me, Myself\",\"date\":1353094689100}");
+////		go(jin, jout, "{\"id\":\"Me, Myself\",\"date\":2.1.094689100}");
 //			
 //	}
 	
