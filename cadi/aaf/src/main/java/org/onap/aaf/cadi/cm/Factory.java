@@ -60,6 +60,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Collection;
 import java.util.List;
 
+import sun.security.pkcs11.SunPKCS11;
+
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
@@ -458,28 +460,24 @@ public class Factory {
 	 * @throws CertException
 	 */
 	public static synchronized Provider getSecurityProvider(String providerType, String[][] params) throws CertException {
-		Provider p = Security.getProvider(providerType);
-		if(p!=null) {
-			switch(providerType) {
-				case "PKCS12":
-					
-					break;
-				case "PKCS11": // PKCS11 only known to be supported by Sun
-					try {
-						Class<?> clsSunPKCS11 = Class.forName("sun.security.pkcs11.SunPKCS11");
-						Constructor<?> cnst = clsSunPKCS11.getConstructor(String.class);
-						Object sunPKCS11 = cnst.newInstance(params[0][0]);
-						if (sunPKCS11==null) {
-							throw new CertException("SunPKCS11 Provider cannot be constructed for " + params[0][0]);
-						}
-						Security.addProvider((Provider)sunPKCS11);
-					} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						throw new CertException(e);
+		Provider p = null;
+		switch(providerType) {
+			case "PKCS12":
+				p = Security.getProvider(providerType);
+				break;
+			case "PKCS11": // PKCS11 only known to be supported by Sun
+				try {
+					p = new SunPKCS11(params[0][0]);
+					if (p==null) {
+						throw new CertException("SunPKCS11 Provider cannot be constructed for " + params[0][0]);
 					}
-					break;
-				default:
-					throw new CertException(providerType + " is not a known Security Provider for your JDK.");
-			}
+					Security.addProvider(p);
+				} catch (SecurityException | IllegalArgumentException e) {
+					throw new CertException(e);
+				}
+				break;
+			default:
+				throw new CertException(providerType + " is not a known Security Provider for your JDK.");
 		}
 		return p;
 	}
