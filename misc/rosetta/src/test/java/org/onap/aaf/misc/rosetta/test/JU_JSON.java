@@ -60,7 +60,7 @@ public class JU_JSON {
 		// TODO: Clean out AT&T specific data
 		go(jin,jout, "{\"userid\":\"jg1555\",\"timestamp\":1353097388531,\"item\":[{\"tag\":\"color\",\"value\":\"Mauve\"},{\"tag\":\"shirtsize\",\"value\":\"Xtra Large\"}]}");
 		//go()
-		//"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><vote xmlns=\"urn:poll.att.com\"><userid>jg1555</userid><timestamp>1353082669667</timestamp></vote>");
+		//"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><vote xmlns=\"urn:poll.att.com\"><userid>jg1555</userid><timestamp>2.1.082669667</timestamp></vote>");
 		
 		// 3/11/2015 Jonathan found a case with missing comma
 		go(jin,jout, "{\"start\":\"2015-03-11T18:18:05.580-05:00\",\"end\":\"2015-09-11-05:00\",\"force\":\"false\",\"perm\":{\"type\":\"org.osaaf.myns.mytype\",\"instance\":\"myInstance\",\"action\":\"myAction\"}"

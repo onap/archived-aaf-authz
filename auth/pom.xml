@@ -37,8 +37,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.interfaceVersion>2.10-SNAPSHOT</project.interfaceVersion>
-		<project.miscVersion>1.3.0-SNAPSHOT</project.miscVersion>
-		<project.cadiVersion>1.5.0-SNAPSHOT</project.cadiVersion>
+		<project.miscVersion>2.1.0-SNAPSHOT</project.miscVersion>
+		<project.cadiVersion>2.1.0-SNAPSHOT</project.cadiVersion>
 		<!-- >project.jettyVersion>9.3.22.v20171030</project.jettyVersion -->
 		<project.jettyVersion>9.4.8.v20171121</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
