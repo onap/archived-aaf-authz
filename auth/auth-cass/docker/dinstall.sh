@@ -1,10 +1,12 @@
 #!/bin/bash dinstall
 if ["`docker ps -a | grep aaf_cass`" == ""]; then
   docker run --name aaf_cass  -d cassandra:3.11
-else 
+  echo "Check for running Docker Container aaf_cass, then run again."
+  exit
+else
   docker exec aaf_cass mkdir -p /opt/app/cass_init
   docker cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
-fi
+fi 
 
 echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
 echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
@@ -16,7 +18,7 @@ echo " cqlsh -u root -p root -f osaaf.cql"
 echo ""
 echo "The following will give you a temporary identity with which to start working, or emergency"
 echo " cqlsh -u root -p root -f temp_identity.cql"
-echo "Sleeping 10 seconds to allow Cassandra to start"
+echo "Sleeping for 10 seconds"
 sleep 10
 docker exec -it aaf_cass bash -c '\
 cd /opt/app/cass_init; \
