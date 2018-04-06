@@ -1,0 +1,13 @@
+# Variables for building Docker entities
+ORG=onap
+PROJECT=aaf
+DOCKER_REPOSITORY=nexus3.onap.org:10003
+VERSION=2.1.0-SNAPSHOT
+CONF_ROOT_DIR=/opt/app/osaaf
+
+# Local Env info
+HOSTNAME=meriadoc.mithril.sbc.com
+HOST_IP=172.17.0.3
+CASS_HOST="cass.aaf.osaaf.org:172.17.0.2"
+
+
