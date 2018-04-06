@@ -110,8 +110,8 @@ public class DenialOfServiceTaf implements HttpTaf {
 	 *  
 	 */
 	public static Counter isDeniedIP(String ipvX) {
-		if(deniedID!=null) {
-			return deniedID.get(ipvX);
+		if(deniedIP!=null) {
+			return deniedIP.get(ipvX);
 		}
 		return null;
 	}

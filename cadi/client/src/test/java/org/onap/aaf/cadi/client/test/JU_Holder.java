@@ -19,37 +19,27 @@
  * *
  * *
  ******************************************************************************/
-package org.onap.aaf.client.test;
+package org.onap.aaf.cadi.client.test;
 
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-
-import org.junit.AfterClass;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import org.junit.Test;
-import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.locator.DNSLocator;
 
-public class JU_DNSLocator {
+import org.onap.aaf.cadi.client.Holder;
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+public class JU_Holder {
 
 	@Test
 	public void test() {
+		String str1 = "a string";
+		String str2 = "another string";
+		Holder<String> holder = new Holder<String>(str1);
+		assertThat(holder.get(), is(str1));
+		assertThat(holder.toString(), is(str1));
 		
-		DNSLocator dl = new DNSLocator(new PropAccess(), "https", "aaf.it.att.com","8150-8152");
-		try {
-			Item item = dl.best();
-			URI uri = dl.get(item);
-			URL url = uri.toURL();
-			URLConnection conn = url.openConnection();
-			conn.connect();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		holder.set(str2);
+		assertThat(holder.get(), is(str2));
+		assertThat(holder.toString(), is(str2));
 	}
 
 }

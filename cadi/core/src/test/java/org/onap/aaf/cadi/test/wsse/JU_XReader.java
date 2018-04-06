@@ -21,43 +21,142 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.test.wsse;
 
-import java.io.FileInputStream;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.junit.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.junit.Test;
 import org.onap.aaf.cadi.wsse.XEvent;
 import org.onap.aaf.cadi.wsse.XReader;
 
 public class JU_XReader {
-	// TODO: Gabe [JUnit] Class not found error
+
+	private final static String TEST_DIR_NAME = "test";
+	private final static String TEST_XML_NAME = "test.xml";
+	private static File testXML;
+
+	private final static String COMMENT = "a comment";
+	private final static String OUTER_TAG = "outerTag";
+	private final static String INNER_TAG = "innerTag";
+	private final static String DATA_TAG = "dataTag";
+	private final static String DATA = "some text that represents data";
+	private final static String SELF_CLOSING_TAG = "selfClosingTag";
+	private final static String PREFIX = "prefix";
+	private final static String SUFFIX = "suffix";
+
+	@BeforeClass
+	public static void setupOnce() throws IOException {
+		testXML = setupXMLFile();
+	}
+
+	@AfterClass
+	public static void tearDownOnce() {
+		testXML.delete();
+	}
+
 	@Test
-	public void test() throws Exception {
-		FileInputStream fis = new FileInputStream("test/CBUSevent.xml");
+	public void test() throws XMLStreamException, IOException {
+		FileInputStream fis = new FileInputStream(TEST_DIR_NAME + '/' + TEST_XML_NAME);
 		try {
 			XReader xr = new XReader(fis);
-			while (xr.hasNext()) {
-				XEvent xe = xr.nextEvent();
-				switch (xe.getEventType()) {
-				case XMLEvent.START_DOCUMENT:
-					System.out.println("Start Document");
-					break;
-				case XMLEvent.START_ELEMENT:
-					System.out.println("Start Event: " + xe.asStartElement().getName());
-					break;
-				case XMLEvent.END_ELEMENT:
-					System.out.println("End Event: " + xe.asEndElement().getName());
-					break;
-				case XMLEvent.CHARACTERS:
-					System.out.println("Characters: " + xe.asCharacters().getData());
-					break;
-				case XMLEvent.COMMENT:
-					System.out.println("Comment: " + ((XEvent.Comment) xe).value);
-					break;
-				}
-			}
+			assertThat(xr.hasNext(), is(true));
+			XEvent xe;
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_DOCUMENT));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.COMMENT));
+			assertThat(((XEvent.Comment)xe).value, is(COMMENT));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+			assertThat(xe.asStartElement().getName().toString(), is(OUTER_TAG));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+			assertThat(xe.asStartElement().getName().toString(), is(INNER_TAG));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+			assertThat(xe.asStartElement().getName().toString(), is(DATA_TAG));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.CHARACTERS));
+			assertThat(xe.asCharacters().getData().toString(), is(DATA));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
+			assertThat(xe.asEndElement().getName().toString(), is(DATA_TAG));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+			assertThat(xe.asStartElement().getName().toString(), is(SELF_CLOSING_TAG));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+			assertThat(xe.asStartElement().getName().toString(), is(SUFFIX));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
+			assertThat(xe.asEndElement().getName().toString(), is(INNER_TAG));
+
+			xe = getNextEvent(xr);
+			assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
+			assertThat(xe.asEndElement().getName().toString(), is(OUTER_TAG));
+
+			assertThat(xr.hasNext(), is(false));
+
 		} finally {
 			fis.close();
 		}
+	}
+
+	// @Test
+	// public void tagTest() {
+	// 	String prefix = "prefix";
+	// 	String name = "name";
+	// 	String value = "value";
+	// 	XReader.Tag tag = new Tag(prefix, name, value);
+
+	// 	assertThat(tag.toString(), is(prefix + ':' + name + "=\'" + value + "'"));
+	// }
+
+
+	private static XEvent getNextEvent(XReader xr) throws XMLStreamException {
+		if (xr.hasNext()) {
+			return xr.nextEvent();
+		}
+		return null;
+	}
+
+	private static File setupXMLFile() throws IOException {
+		File xmlFile = new File(TEST_DIR_NAME, TEST_XML_NAME);
+		PrintWriter writer = new PrintWriter(xmlFile);
+		writer.println("    ");  // Whitespace before the document - this is for coverage
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println("<!DOCTYPE xml>");
+		writer.println("<!--" + COMMENT + "-->");
+		writer.println("<" + OUTER_TAG + ">");
+		writer.println("  <" + INNER_TAG + ">");
+		writer.println("    <" + DATA_TAG + ">" + DATA + "</" + DATA_TAG + ">");
+		writer.println("    <" + SELF_CLOSING_TAG + " withAnAttribute=\"That has nested \\\" marks\" />");
+		writer.println("    <" + PREFIX + ":" + SUFFIX + "/>");
+		writer.println("  </" + INNER_TAG + ">");
+		writer.println("</" + OUTER_TAG + ">");
+		writer.flush();
+		writer.close();
+		return xmlFile;
 	}
 }

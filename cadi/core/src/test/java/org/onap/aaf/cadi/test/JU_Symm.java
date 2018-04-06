@@ -21,29 +21,38 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.test;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import java.lang.reflect.*;
+import org.junit.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 
-import java.lang.reflect.*;
-import org.junit.Before;
-import org.junit.Test;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 public class JU_Symm {
 	private Symm defaultSymm;
 
+	private ByteArrayOutputStream outStream;
+
 	@Before
 	public void setup() throws Exception {
-	defaultSymm = new Symm(
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
-			,76, "Use default!" ,true);
+		defaultSymm = new Symm(
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
+				,76, "Use default!" ,true);
+		outStream = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(outStream));
+	}
+
+	@After
+	public void tearDown() {
+		System.setOut(System.out);
 	}
 
 	@Test
