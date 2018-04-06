@@ -7,7 +7,7 @@ CONF_ROOT_DIR=/opt/app/osaaf
 
 # Local Env info
 HOSTNAME=meriadoc.mithril.sbc.com
-HOST_IP=172.17.0.3
+HOST_IP=192.168.99.102
 CASS_HOST=cass.aaf.osaaf.org:172.17.0.2
 
 

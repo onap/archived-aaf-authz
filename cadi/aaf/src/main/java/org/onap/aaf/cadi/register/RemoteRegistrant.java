@@ -27,10 +27,10 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
@@ -75,8 +75,17 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
 		mep = new MgmtEndpoint();
 		mep.setName(name);
 		mep.setPort(port);
-		
+
 		try {
+			String hostnameToRegister = access.getProperty(Config.CADI_REGISTRATION_HOSTNAME, null);
+			if(hostnameToRegister==null) {
+				hostnameToRegister = access.getProperty(Config.HOSTNAME, null);
+			}
+			if(hostnameToRegister==null) {
+				hostnameToRegister = Inet4Address.getLocalHost().getHostName();
+			}
+			mep.setHostname(hostnameToRegister);
+			
 			String latitude = access.getProperty(Config.CADI_LATITUDE, null);
 			if(latitude==null) {
 				latitude = access.getProperty("AFT_LATITUDE", null);
@@ -97,7 +106,6 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
 			mep.setMinor(split.length>1?Integer.parseInt(split[1]):0);
 			mep.setMajor(split.length>0?Integer.parseInt(split[0]):0);
 			
-			mep.setHostname(access.getProperty(Config.HOSTNAME, Inet4Address.getLocalHost().getHostName()));
 			String subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
 			if(subprotocols==null) {
 				mep.setProtocol("http");

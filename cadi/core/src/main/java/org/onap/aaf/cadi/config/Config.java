@@ -71,6 +71,7 @@ public class Config {
 	// As of 1.0.2, these have had the dots removed so as to be compatible with JavaBean style
 	// configurations as well as property list style.
 	public static final String HOSTNAME = "hostname";
+	public static final String CADI_REGISTRATION_HOSTNAME = "cadi_registration_hostname";
 	public static final String CADI_PROP_FILES = "cadi_prop_files"; // Additional Properties files (separate with ;)
 	public static final String CADI_LOGLEVEL = "cadi_loglevel";
 	public static final String CADI_LOGDIR = "cadi_log_dir";
@@ -476,7 +477,7 @@ public class Config {
 	public static String logProp(Access access,String tag, String def) {
 		String rv = access.getProperty(tag, def);
 		if(rv == null) {
-			access.log(Level.INIT,tag,"is not set");
+			access.log(Level.INIT,tag,"is not explicitly set");
 		} else {
 			access.log(Level.INIT,tag,"is set to",rv);
 		}
