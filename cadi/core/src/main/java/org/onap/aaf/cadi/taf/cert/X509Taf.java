@@ -130,7 +130,8 @@ public class X509Taf implements HttpTaf {
 			if(certarr!=null && certarr.length>0) {
 				si.checkClientTrusted(certarr);
 				// Note: If the Issuer is not in the TrustStore, it's not added to the Cert list
-				if(cadiIssuers.contains(certarr[0].getIssuerDN().toString())) {
+				String issuer = certarr[0].getIssuerDN().toString();
+				if(cadiIssuers.contains(issuer)) {
 					String subject = certarr[0].getSubjectDN().getName();
 					// avoiding extra object creation, since this is validated EVERY transaction with a Cert
 					int at = subject.indexOf('@');
