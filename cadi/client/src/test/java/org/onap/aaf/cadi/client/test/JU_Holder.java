@@ -19,44 +19,27 @@
  * *
  * *
  ******************************************************************************/
-package org.onap.aaf.cadi.test.taf;
+package org.onap.aaf.cadi.client.test;
 
 import static org.junit.Assert.*;
-
-import java.io.IOException;
-
-import org.junit.Before;
+import static org.hamcrest.CoreMatchers.*;
 import org.junit.Test;
-import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.taf.TafResp;
-import org.onap.aaf.cadi.taf.TafResp.RESP;
 
-public class JU_NullTafRespTest {
+import org.onap.aaf.cadi.client.Holder;
 
-// 	@Before
-// 	public void setUp() throws Exception {
-// 	}
+public class JU_Holder {
 
-// 	@Test
-// 	public void test() throws IOException {
-// 		TafResp singleton = NullTafResp.singleton();
-// 		TafResp singleton1 = NullTafResp.singleton();
+	@Test
+	public void test() {
+		String str1 = "a string";
+		String str2 = "another string";
+		Holder<String> holder = new Holder<String>(str1);
+		assertThat(holder.get(), is(str1));
+		assertThat(holder.toString(), is(str1));
 		
-// 		assertEquals(singleton, singleton1);
-		
-// 		assertFalse(singleton.isValid());
-		
-// 		assertEquals(singleton.isAuthenticated(), RESP.NO_FURTHER_PROCESSING);
-		
-// 		assertEquals(singleton.desc(), "All Authentication denied");
-		
-// 		assertEquals(singleton.authenticate(), RESP.NO_FURTHER_PROCESSING);
-		
-// 		assertNull(singleton.getPrincipal());
-		
-// 		assertEquals(singleton.getAccess(), Access.NULL);
-		
-// 		assertEquals(singleton.isFailedAttempt(), true);
-// 	}
+		holder.set(str2);
+		assertThat(holder.get(), is(str2));
+		assertThat(holder.toString(), is(str2));
+	}
 
 }
