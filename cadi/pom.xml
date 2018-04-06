@@ -136,7 +136,6 @@
 		<module>core</module>
 		<module>client</module>
 		<module>aaf</module>
-		<module>cass</module>
 		<module>oauth-enduser</module>
 		<module>shiro</module>
 	</modules>
