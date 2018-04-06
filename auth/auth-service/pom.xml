@@ -121,6 +121,7 @@
 							<name>service</name>
 							<commandLineArguments>
 								<commandLineArgument>cadi_prop_files=${project.conf_dir}/org.osaaf.service.props</commandLineArgument>
+								<commandLineArgument>cadi_log_dir=${project.ext_root_dir}/logs/service</commandLineArgument>
 							</commandLineArguments>
 						</program>
 					</programs>

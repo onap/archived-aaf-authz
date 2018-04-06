@@ -25,8 +25,6 @@ import static org.onap.aaf.auth.rserv.HttpMethods.GET;
 import static org.onap.aaf.auth.rserv.HttpMethods.POST;
 import static org.onap.aaf.auth.rserv.HttpMethods.PUT;
 
-import java.io.File;
-
 import javax.servlet.Filter;
 
 import org.onap.aaf.auth.cmd.Cmd;
@@ -258,19 +256,9 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
 
 	public static void main(final String[] args) {
 		try {
-			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
-			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
-			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
-			File logs = new File(log_dir);
-			if(!logs.isDirectory()) {
-				logs.delete();
-			}
-			if(!logs.exists()) {
-				logs.mkdirs();
-			}
-			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "authz");
+			Log4JLogIt logIt = new Log4JLogIt(args, "gui");
 			PropAccess propAccess = new PropAccess(logIt,args);
- 		
+
 			AAF_GUI service = new AAF_GUI(new AuthzEnv(propAccess));
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.start();

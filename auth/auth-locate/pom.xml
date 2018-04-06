@@ -97,7 +97,8 @@
 							<mainClass>org.onap.aaf.auth.locate.AAF_Locate</mainClass>
 							<id>locate</id>
 							<commandLineArguments>
-								<commandLineArgument>cadi_prop_files=${project.conf_dir}/org.osaaf.locate.props</commandLineArgument>
+								<commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.locate.props</commandLineArgument>
+								<commandLineArgument>cadi_log_dir=${project.ext_root_dir}/logs/locate</commandLineArgument>
 							</commandLineArguments>
 						</program>
 					</programs>

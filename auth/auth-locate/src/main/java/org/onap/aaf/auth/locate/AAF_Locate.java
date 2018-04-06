@@ -22,7 +22,6 @@
 
 package org.onap.aaf.auth.locate;
 
-import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
@@ -233,17 +232,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
 	public static void main(final String[] args) {
 		try {
-			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
-			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
-			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
-			File logs = new File(log_dir);
-			if(!logs.isDirectory()) {
-				logs.delete();
-			}
-			if(!logs.exists()) {
-				logs.mkdirs();
-			}
-			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "locate");
+			Log4JLogIt logIt = new Log4JLogIt(args, "locate");
 			PropAccess propAccess = new PropAccess(logIt,args);
 
  			AAF_Locate service = new AAF_Locate(new AuthzEnv(propAccess));

@@ -35,7 +35,7 @@ EOF
 	chmod 400 private/$FQI.key 
 	SIGN_IT=true
   else 
-	echo openssl req -newkey rsa:4096 -sha256 -keyout $FQI.key -out $FQI.csr -outform PEM -subj '"'$SUBJECT'"'
+	echo openssl req -newkey rsa:2048 -sha256 -keyout $FQI.key -out $FQI.csr -outform PEM -subj '"'$SUBJECT'"'
 	echo chmod 400 $FQI.key
 	echo "# All done, print result"
 	echo openssl req -verify -text -noout -in $FQI.csr
@@ -46,7 +46,8 @@ if [ "$SIGN_IT" = "true" ]; then
   # Sign it
   openssl ca -config ../openssl.conf -extensions server_cert -out $FQI.crt \
 	-cert certs/ca.crt -keyfile private/ca.key \
-	 -policy policy_loose \
+	-policy policy_loose \
+	-days 360 \
 	-infiles $FQI.csr
 fi
 

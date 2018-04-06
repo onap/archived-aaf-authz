@@ -12,9 +12,8 @@ fi
 
 # Add Cert AND Intermediate CAs (Clients will have Root CAs (or not))
   cat $MACH.crt  > $MACH.chain
-  for CA in `ls intermediateCAs`; do
-        cat "intermediateCAs/$CA" >> $MACH.chain
-  done
+  # Add THIS Intermediate CA into chain
+  cat "certs/ca.crt" >> $MACH.chain
 
   # Make a pkcs12 keystore, a jks keystore and a pem keystore
   rm -f $MACH.p12

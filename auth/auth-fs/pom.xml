@@ -112,7 +112,8 @@
 							<mainClass>org.onap.aaf.auth.fs.AAF_FS</mainClass>
 							<name>fs</name>
 							<commandLineArguments>
-								<commandLineArgument>cadi_prop_files=${project.conf_dir}/org.osaaf.fs.props</commandLineArgument>
+								<commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.fs.props</commandLineArgument>
+								<commandLineArgument>cadi_log_dir=${project.ext_root_dir}/logs/fs</commandLineArgument>
 							</commandLineArguments>
 						</program>
 					</programs>

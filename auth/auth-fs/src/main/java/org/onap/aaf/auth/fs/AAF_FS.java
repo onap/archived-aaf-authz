@@ -23,7 +23,6 @@ package org.onap.aaf.auth.fs;
 
 import static org.onap.aaf.auth.rserv.HttpMethods.GET;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -105,19 +104,9 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
 	
 	public static void main(final String[] args) {
 		try {
-			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
-			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
-			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
-			File logs = new File(log_dir);
-			if(!logs.isDirectory()) {
-				logs.delete();
-			}
-			if(!logs.exists()) {
-				logs.mkdirs();
-			}
-			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "fs");
+			Log4JLogIt logIt = new Log4JLogIt(args, "fs");
 			PropAccess propAccess = new PropAccess(logIt,args);
- 		
+
  			AAF_FS service = new AAF_FS(new AuthzEnv(propAccess));
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.insecure().start();

@@ -22,7 +22,6 @@
 
 package org.onap.aaf.auth.cm;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,10 +51,10 @@ import org.onap.aaf.auth.server.AbsService;
 import org.onap.aaf.auth.server.JettyServiceStarter;
 import org.onap.aaf.auth.server.Log4JLogIt;
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.v2_0.AAFAuthn;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
 import org.onap.aaf.cadi.aaf.v2_0.AAFTrustChecker;
@@ -229,19 +228,9 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
 	public static void main(final String[] args) {
 		try {
-			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
-			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
-			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
-			File logs = new File(log_dir);
-			if(!logs.isDirectory()) {
-				logs.delete();
-			}
-			if(!logs.exists()) {
-				logs.mkdirs();
-			}
-			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "cm");
+			Log4JLogIt logIt = new Log4JLogIt(args, "cm");
 			PropAccess propAccess = new PropAccess(logIt,args);
- 		
+
  			AAF_CM service = new AAF_CM(new AuthzEnv(propAccess));
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.start();

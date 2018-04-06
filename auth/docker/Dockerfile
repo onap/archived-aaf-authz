@@ -5,19 +5,20 @@ ENV VERSION=${AAF_VERSION}
 LABEL description="aaf ${AAF_COMPONENT}"
 LABEL version=${AAF_VERSION}
 
-RUN apt-get update
-RUN apt-get install -y softhsm2
-RUN apt-get install -y libsofthsm2
-RUN apt-get install -y opensc
+
+#RUN apt-get update
+#RUN apt-get install -y softhsm2
+#RUN apt-get install -y libsofthsm2
+#RUN apt-get install -y opensc
 
 COPY lib /opt/app/aaf/${AAF_COMPONENT}/lib
 COPY theme /opt/app/aaf/${AAF_COMPONENT}/theme
 COPY bin /opt/app/aaf/${AAF_COMPONENT}/bin
 
-CMD ["bash","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
+CMD ["/bin/bash","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
 
 # For Debugging installation
-# CMD ["bash"]     
+#CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
 # Java Debugging VM Args
 #     "-Xdebug",\
 #     "-Xnoagent",\
@@ -26,4 +27,3 @@ CMD ["bash","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
 # TLS Debugging VM Args
 #     "-Djavax.net.debug","ssl", \
      
-

@@ -21,8 +21,6 @@
 
 package org.onap.aaf.auth.service;
 
-import java.io.File;
-
 import javax.servlet.Filter;
 
 import org.onap.aaf.auth.cache.Cache;
@@ -216,19 +214,9 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 	 */
 	public static void main(final String[] args) {
 		try {
-			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
-			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
-			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
-			File logs = new File(log_dir);
-			if(!logs.isDirectory()) {
-				logs.delete();
-			}
-			if(!logs.exists()) {
-				logs.mkdirs();
-			}
-			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "authz");
+			Log4JLogIt logIt = new Log4JLogIt(args, "authz");
 			PropAccess propAccess = new PropAccess(logIt,args);
- 		
+			
  			AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.start();

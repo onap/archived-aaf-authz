@@ -67,19 +67,19 @@ public class LogFileNamer {
 		};
 		f.createNewFile();
 		System.setProperty(
-			"LOG4J_FILENAME_"+(appender),
+			"LOG4J_FILENAME_"+appender,
 			filename);
 		return appender;
 	}
 
-	public void configure(final String props, final String log_level) throws IOException {
-		String fname;
-		if(new File(fname="etc/"+props).exists()) {
-			org.apache.log4j.PropertyConfigurator.configureAndWatch(fname,60*1000L);
+	public void configure(final String path, final String fname, final String log_level) throws IOException {
+		final String fullPath=path+'/'+fname;
+		if(new File(fullPath).exists()) {
+			org.apache.log4j.PropertyConfigurator.configureAndWatch(fullPath,60*1000L);
 		} else {
-			URL rsrc = ClassLoader.getSystemResource(props);
+			URL rsrc = ClassLoader.getSystemResource(fname);
 			if(rsrc==null) {
-				String msg = "Neither File: " + fname + " or resource on Classpath " + props + " exist" ;
+				String msg = "Neither File: " + path + '/' + fname + " nor resource on Classpath " + fname + " exist" ;
 				throw new IOException(msg);
 			}
 			org.apache.log4j.PropertyConfigurator.configure(rsrc);

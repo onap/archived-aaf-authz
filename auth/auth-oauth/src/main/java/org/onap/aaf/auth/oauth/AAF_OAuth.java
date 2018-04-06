@@ -22,7 +22,6 @@
 
 package org.onap.aaf.auth.oauth;
 
-import java.io.File;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -59,8 +58,8 @@ import org.onap.aaf.cadi.oauth.TokenMgr;
 import org.onap.aaf.cadi.oauth.TokenMgr.TokenPermLoader;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.Data.TYPE;
+import org.onap.aaf.misc.env.Env;
 
 import com.datastax.driver.core.Cluster;
 
@@ -186,19 +185,9 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
 
 	public static void main(final String[] args) {
 		try {
-			String propsFile = getArg(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
-			String log_dir = getArg(Config.CADI_LOGDIR,args,"./logs");
-			String log_level = getArg(Config.CADI_LOGLEVEL,args,"INFO");
-			File logs = new File(log_dir);
-			if(!logs.isDirectory()) {
-				logs.delete();
-			}
-			if(!logs.exists()) {
-				logs.mkdirs();
-			}
-			Log4JLogIt logIt = new Log4JLogIt(log_dir,log_level,propsFile, "oauth");
+			Log4JLogIt logIt = new Log4JLogIt(args, "oauth");
 			PropAccess propAccess = new PropAccess(logIt,args);
- 		
+
  			AAF_OAuth service = new AAF_OAuth(new AuthzEnv(propAccess));
 			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
 			jss.start();

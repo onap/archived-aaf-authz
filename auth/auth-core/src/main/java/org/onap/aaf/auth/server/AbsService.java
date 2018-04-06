@@ -22,6 +22,7 @@
 package org.onap.aaf.auth.server;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -46,7 +47,6 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 
 public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> extends RServlet<TRANS> {
-	protected static final String AAF_LOG4J_PREFIX = "aaf_log4j_prefix";
 	public final Access access;
 	public final ENV env;
 	private AAFConHttp aafCon;
@@ -155,14 +155,25 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
 			return aafCon.hman().best(new HTransferSS(p,app_name, aafCon.securityInfo()), retryable);
 	}
 	
-	protected static final String getArg(final String tag, final String args[], final String def) {
-		String value = def;
+	protected static final String loadFromArgOrSystem(final Properties props, final String tag, final String args[], final String def) {
 		String tagEQ = tag + '=';
+		String value;
 		for(String arg : args) {
 			if(arg.startsWith(tagEQ)) {
-				value = arg.substring(tagEQ.length());
+				props.put(tag, value=arg.substring(tagEQ.length()));
+				return value;
 			}
 		}
-		return value;
+		// check System.properties
+		value = System.getProperty(tag);
+		if(value!=null) { 
+			props.put(tag, value);
+			return value;
+		}
+		
+		if(def!=null) {
+			props.put(tag,def);
+		}
+		return def;
 	}
 }
