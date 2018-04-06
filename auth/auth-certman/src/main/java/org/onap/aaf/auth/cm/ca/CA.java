@@ -78,6 +78,7 @@ public abstract class CA {
 		if(fields==null) {
 			throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
 		}
+		access.log(Level.INFO, tag, "=",fields);
 		for(RDN rdn : rdns = RDN.parse('/',fields)) {
 			if(rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
 				throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);

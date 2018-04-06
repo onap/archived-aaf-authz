@@ -52,7 +52,7 @@ public class RDN {
 			case "generationQualifier":	aoi = BCStyle.GENERATION; break;
 			case "serialNumber":			aoi = BCStyle.SERIALNUMBER; break;
 			default:
-				throw new CertException("Unknown ASN1ObjectIdentifier for " + tv[0]);
+				throw new CertException("Unknown ASN1ObjectIdentifier for " + tv[0] + " in " + tagValue);
 		}
 		tag = tv[0];
 		value = tv[1];
@@ -81,8 +81,10 @@ public class RDN {
 				if('"' == c) {
 					inQuotes=true;
 				} else if(delim==c) {
-					lrnd.add(new RDN(sb.toString()));
-					sb.setLength(0);
+					if(sb.length()>0) {
+						lrnd.add(new RDN(sb.toString()));
+						sb.setLength(0);
+					}
 				} else {
 					sb.append(dnString.charAt(i));
 				}
