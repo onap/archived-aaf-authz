@@ -38,8 +38,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.interfaceVersion>2.10-SNAPSHOT</project.interfaceVersion>
-		<project.miscVersion>2.1.0-SNAPSHOT</project.miscVersion>
-		<project.cadiVersion>2.1.0-SNAPSHOT</project.cadiVersion>
 		<!-- >project.jettyVersion>9.3.22.v20171030</project.jettyVersion -->
 		<project.jettyVersion>9.4.8.v20171121</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
@@ -386,43 +384,43 @@
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-env</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-log4j</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-rosetta</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-xgen</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.cadi</groupId>
 				<artifactId>aaf-cadi-core</artifactId>
-				<version>${project.cadiVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.cadi</groupId>
 				<artifactId>aaf-cadi-client</artifactId>
-				<version>${project.cadiVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.cadi</groupId>
 				<artifactId>aaf-cadi-aaf</artifactId>
-				<version>${project.cadiVersion}</version>
+				<version>${project.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.cassandra</groupId>
@@ -434,7 +432,7 @@
 			<dependency>
 				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-client</artifactId>
-				<version>${project.interfaceVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>

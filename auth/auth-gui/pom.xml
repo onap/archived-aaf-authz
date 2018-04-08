@@ -50,16 +50,19 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-cmd</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Add the Organizations you wish to support. You can delete ONAP if 
@@ -68,21 +71,25 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-deforg</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.misc</groupId>
 			<artifactId>aaf-misc-xgen</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 

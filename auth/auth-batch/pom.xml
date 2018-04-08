@@ -97,26 +97,31 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz.misc</groupId>
 			<artifactId>aaf-misc-env</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.misc</groupId>
 			<artifactId>aaf-misc-rosetta</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-cass</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

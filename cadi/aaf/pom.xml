@@ -25,7 +25,7 @@
 		<groupId>org.onap.aaf.authz.cadi</groupId>
 		<artifactId>parent</artifactId>
 		<version>2.1.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -91,21 +91,25 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.misc</groupId>
 			<artifactId>aaf-misc-env</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz.cadi</groupId>
 			<artifactId>aaf-cadi-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

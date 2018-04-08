@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.onap.aaf.authz.cadi</groupId>
 		<artifactId>parent</artifactId>
-		<relativePath>..</relativePath>
+		<relativePath>../pom.xml</relativePath>
 		<version>2.1.0-SNAPSHOT</version>
 	</parent>
 

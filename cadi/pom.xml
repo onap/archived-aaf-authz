@@ -40,8 +40,6 @@
 	<properties>
 		<skipSigning>true</skipSigning>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.miscVersion>2.1.0-SNAPSHOT</project.miscVersion>
-		<project.authClientVersion>2.10-SNAPSHOT</project.authClientVersion>
 		<project.jettyVersion>9.3.9.v20160517</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
 		<!--  SONAR  -->
@@ -148,7 +146,7 @@
 			<dependency>
 				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-client</artifactId>
-				<version>${project.authClientVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
@@ -206,19 +204,19 @@
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-env</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-rosetta</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.onap.aaf.authz.misc</groupId>
 				<artifactId>aaf-misc-log4j</artifactId>
-				<version>${project.miscVersion}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<dependency>
