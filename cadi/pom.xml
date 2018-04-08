@@ -39,6 +39,7 @@
 	
 	<properties>
 		<skipSigning>true</skipSigning>
+		<project.authClientVersion>2.1.0-SNAPSHOT</project.authClientVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.jettyVersion>9.3.9.v20160517</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
@@ -146,7 +147,7 @@
 			<dependency>
 				<groupId>org.onap.aaf.authz.auth</groupId>
 				<artifactId>aaf-auth-client</artifactId>
-				<version>${project.version}</version>
+				<version>${project.authClientVersion}</version>
 			</dependency>
 
 			<dependency>
