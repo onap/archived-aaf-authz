@@ -91,7 +91,7 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz.auth</groupId>
 			<artifactId>aaf-auth-client</artifactId>
-			<version>${project.version}</version>
+			<!--<version>${project.version}</version> -->
 		</dependency>
 
 		<dependency>
