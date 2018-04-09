@@ -145,9 +145,9 @@
 	</build>
 	<modules>
 		<module>auth/auth-client</module>
-		<module>misc</module>
+		<!-- <module>misc</module>
 		<module>cadi</module>
-		<module>auth</module>
+		<module>auth</module>  -->
 	</modules>
 
 	<distributionManagement>
