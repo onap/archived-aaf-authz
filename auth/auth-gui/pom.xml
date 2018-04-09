@@ -15,8 +15,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.onap.aaf.authz.auth</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>org.onap.aaf.authz</groupId>
+		<artifactId>authparent</artifactId>
 		<version>2.1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -42,25 +42,25 @@
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
-		<sitePath>/content/sites/site/org/onap/aaf/authz/auth/${project.artifactId}/${project.version}</sitePath>
+		<sitePath>/content/sites/site/org.onap.aaf.authz/${project.artifactId}/${project.version}</sitePath>
 	</properties>
 
 
 	<dependencies>
 		<dependency>
-			<groupId>org.onap.aaf.authz.auth</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.aaf.authz.auth</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.aaf.authz.auth</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-cmd</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -69,25 +69,25 @@
 			you have something else Match with Property Entry: Organization.<root ns>, 
 			i.e. Organization.onap.org=org.onap.org.DefaultOrg -->
 		<dependency>
-			<groupId>org.onap.aaf.authz.auth</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-deforg</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.aaf.authz.cadi</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.aaf.authz.cadi</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.onap.aaf.authz.misc</groupId>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-misc-xgen</artifactId>
 			<version>${project.version}</version>
 		</dependency>
