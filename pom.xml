@@ -144,7 +144,7 @@
 		</plugins>
 	</build>
 	<modules>
-		<module>auth/auth-client</module>
+		<module>auth-client</module>
 		<!-- <module>misc</module>
 		<module>cadi</module>
 		<module>auth</module>  -->

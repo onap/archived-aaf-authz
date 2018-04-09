@@ -1,0 +1,141 @@
+<!-- 
+ * ============LICENSE_START====================================================
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ *
+-->
+<xs:schema 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:aafoauth="urn:aafoauth:v2_0"
+	targetNamespace="urn:aafoauth:v2_0" 
+	elementFormDefault="qualified">
+	
+	
+	<!-- Definition of a GUID found several places on WEB, 5/24/2017
+	Developed a HexToken instead 
+	<xs:simpleType name="guid">
+  		<xs:annotation>
+	    	<xs:documentation xml:lang="en">
+		       The representation of a GUID, generally the id of an element.
+		    </xs:documentation>
+	  	</xs:annotation>
+	  	<xs:restriction base="xs:string">
+	    	<xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}"/>
+	  </xs:restriction>
+	</xs:simpleType>
+	-->
+
+	<!--  fill this out 
+	<xs:simpleType name="scope">
+  		<xs:annotation>
+	    	<xs:documentation xml:lang="en">
+		       The representation of a GUID, generally the id of an element.
+		    </xs:documentation>
+	  	</xs:annotation>
+	  	<xs:restriction base="xs:string">
+	    	<xs:pattern value="[&#x|&#x23-&#x5B|&#5D-&#x7E]*"/>
+	  </xs:restriction>
+	</xs:simpleType>
+	-->
+	
+	<!--
+		Authenticate:  consider "redirect" as well as typical connection info like:
+			grant_type - use the value “password”
+			client_id - your API client id
+			client_secret - the secret key of your client
+			username - the account username for which you want to obtain an access token
+			password - the account password
+			response_type - use the value “token”
+		 
+	 -->
+	<!--  RFC 6749, Section 4.2.1 -->
+	<xs:element name="tokenRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<!-- Must be set to "token" -->
+				<xs:element name="response_type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="client_id" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="redirect_uri" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<!-- only include for "refresh_token" type -->
+				<xs:element name="refresh_token" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="scope" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<!-- Normally put in application/x-www-form-urlencoded  -->
+				<xs:element name="grant_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="client_secret" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	 
+	<!--  RFC 6749, Section 4.2.2 -->
+	<xs:element name="token">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="access_token" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="token_type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="refresh_token" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="expires_in" type="xs:int" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="scope" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="state" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- RFC 6749, Section  4.2.2.1 -->
+	<xs:element name="error">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="error">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="invalid_request" />
+							<xs:enumeration value="unauthorized_client" />
+							<xs:enumeration value="access_denied" />
+							<xs:enumeration value="unsupported_response_type" />
+							<xs:enumeration value="invalid_scope" />
+							<xs:enumeration value="server_error" />
+							<xs:enumeration value="temporarily_unavailable" /> 
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="error_description" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="error_uri" type="xs:string" minOccurs="0" maxOccurs="1" />
+				<xs:element name="state" type="xs:string" minOccurs = "0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- Jonathan 4/21/2016 New for Certificate Info  -->
+	<xs:element name="introspect">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="access_token" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="active" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="client_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="client_type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				<!-- Seconds from jan 1 1970 -->
+				<xs:element name="exp" type="xs:long" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="scope" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="content" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+		
+</xs:schema>
