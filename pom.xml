@@ -51,11 +51,6 @@
 		<!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
 		<sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
-		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
-		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
-		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
-		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-
 	</properties>
 	<build>
 		<plugins>
@@ -145,9 +140,9 @@
 	</build>
 	<modules>
 		<module>auth-client</module>
-		<!-- <module>misc</module>
+		<module>misc</module>
 		<module>cadi</module>
-		<module>auth</module>  -->
+		<module>auth</module>
 	</modules>
 
 	<distributionManagement>
