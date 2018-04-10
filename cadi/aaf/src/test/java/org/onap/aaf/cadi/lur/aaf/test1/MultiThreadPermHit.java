@@ -33,12 +33,13 @@ import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.locator.PropertyLocator;
+import org.onap.aaf.cadi.principal.UnAuthPrincipal;
 import org.onap.aaf.stillNeed.TestPrincipal;
 
 public class MultiThreadPermHit {
 	public static void main(String args[]) {
 		// Link or reuse to your Logging mechanism
-		PropAccess myAccess = new PropAccess(); // 
+		PropAccess myAccess = new PropAccess(args); // 
 		
 		// 
 		try {
@@ -93,7 +94,10 @@ public class MultiThreadPermHit {
 					// Now you can ask the LUR (Local Representative of the User Repository about Authorization
 					// With CADI, in J2EE, you can call isUserInRole("org.osaaf.mygroup|mytype|write") on the Request Object 
 					// instead of creating your own LUR
-					final Principal p = new TestPrincipal(id);
+					//
+					// If possible, use the Principal provided by the Authentication Call.  If that is not possible
+					// because of separation Classes by tooling, or other such reason, you can use "UnAuthPrincipal"
+					final Principal p = new UnAuthPrincipal(id);
 					for(int i=0;i<4;++i) {
 						if(aafLur.fish(p, perm)) {
 							System.out.println("Yes, " + id + " has permission for " + perm.getKey());

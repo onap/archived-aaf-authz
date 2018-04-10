@@ -1,4 +1,3 @@
-#!/bin/bash dinstall
 if ["`docker ps -a | grep aaf_cass`" == ""]; then
   docker run --name aaf_cass  -d cassandra:3.11
   echo "Check for running Docker Container aaf_cass, then run again."
@@ -7,6 +6,7 @@ else
   docker exec aaf_cass mkdir -p /opt/app/cass_init
   docker cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
 fi 
+
 
 echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
 echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"

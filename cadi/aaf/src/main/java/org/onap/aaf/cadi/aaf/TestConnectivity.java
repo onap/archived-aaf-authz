@@ -70,6 +70,8 @@ public class TestConnectivity {
 				aaflocate = access.getProperty(Config.AAF_LOCATE_URL);
 				if(aaflocate==null) {
 					print(true,"Properties must contain ",Config.AAF_LOCATE_URL);
+				} else if (!aaflocate.endsWith("/locate")) {
+					aaflocate += "/locate";
 				}
 			}
 			

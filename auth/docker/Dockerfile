@@ -15,11 +15,10 @@ COPY lib /opt/app/aaf/${AAF_COMPONENT}/lib
 COPY theme /opt/app/aaf/${AAF_COMPONENT}/theme
 COPY bin /opt/app/aaf/${AAF_COMPONENT}/bin
 
-CMD ["/bin/bash","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
+#CMD ["/bin/bash","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
 
 # For Debugging installation
-# CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT};cat /etc/hosts"]
-#CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT};cat /etc/hosts;/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
+CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT};cat /etc/hosts;/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
 # Java Debugging VM Args
 #     "-Xdebug",\
 #     "-Xnoagent",\

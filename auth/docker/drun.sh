@@ -1,9 +1,5 @@
 #!/bin/bash drun.sh
-ORG=onap
-PROJECT=aaf
-DOCKER_REPOSITORY=nexus3.onap.org:10003
-VERSION=2.1.0-SNAPSHOT
-./d.props
+. ./d.props
 
 
 if [ "$1" == "" ]; then
@@ -52,5 +48,5 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 	  ${LINKS} \
 	  --publish $PORTMAP \
 	  --mount type=bind,source=$CONF_ROOT_DIR,target=/opt/app/osaaf \
-	  ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
+	  ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} 
 done

@@ -51,9 +51,9 @@ import org.mockito.Mock;
 public class JU_JettyServiceStarter {
 	private PropAccess propAccess = new PropAccess();
 	private JettyServiceStarter<AuthzEnv,AuthzTrans> jss;
-	class TestService extends AbsService{
+	class TestService extends AbsService<AuthzEnv,AuthzTrans>{
 
-		public TestService(Access access, BasicEnv env) throws CadiException {
+		public TestService(Access access, AuthzEnv env) throws CadiException {
 			super(access, env);
 			// TODO Auto-generated constructor stub
 		}
@@ -65,11 +65,11 @@ public class JU_JettyServiceStarter {
 		}
 
 		@Override
-		public Registrant[] registrants(int port) throws CadiException, LocatorException {
+		public Registrant<AuthzEnv>[] registrants(int port) throws CadiException, LocatorException {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
 	}
 	@SuppressWarnings("unchecked")
 	@Before
