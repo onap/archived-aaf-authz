@@ -161,7 +161,7 @@ public class Sample {
 				// See the CODE for Java Methods used
 				List<Permission> permL = singleton().allAuthorization(fqi);
 				if(permL.size()==0) {
-					System.out.printf("User %s has no Permissions THAT THE CALLER CAN SEE",fqi.getName());
+					System.out.printf("User %s has no Permissions THAT THE CALLER CAN SEE\n",fqi.getName());
 				} else {
 					System.out.print("Success:\n");
 					for(Permission p : permL) {
