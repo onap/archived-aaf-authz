@@ -48,25 +48,43 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-cass</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.code.jscep</groupId>
 			<artifactId>jscep</artifactId>
 			<version>2.4.0</version>
+			<exclusions>
+				<exclusion>
+				 	<groupId>org.bouncycastle</groupId>
+		  			<artifactId>bcprov-jdk15on</artifactId>
+				</exclusion>
+				<exclusion>
+				  	<groupId>org.bouncycastle</groupId>
+  					<artifactId>bcpkix-jdk15on</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- JSCEP does not use latest "Bouncy Castle" -->
+		<dependency>
+		  <groupId>org.bouncycastle</groupId>
+		  <artifactId>bcprov-jdk15on</artifactId>
+		  <version>1.59</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+  			<artifactId>bcpkix-jdk15on</artifactId>
+  			<version>1.59</version>
 		</dependency>
 	</dependencies>
 
@@ -111,7 +129,6 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
 				<extensions>true</extensions>
 				<configuration>
 					<nexusUrl>${nexusproxy}</nexusUrl>
@@ -122,7 +139,6 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
 				<configuration>
 					<excludes>
 						<exclude>**/gen/**</exclude>
