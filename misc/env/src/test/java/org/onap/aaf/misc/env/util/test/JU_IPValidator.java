@@ -21,8 +21,8 @@
 
 package org.onap.aaf.misc.env.util.test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.onap.aaf.misc.env.util.IPValidator;
@@ -46,8 +46,7 @@ public class JU_IPValidator {
 		assertFalse(IPValidator.ipv4("255.01.255.255"));
 		assertFalse(IPValidator.ipv4("255.255.255.256"));
 		assertFalse(IPValidator.ipv4("255.299.255.255"));
-		
-		
+
 		assertTrue(IPValidator.ipv6("0000:0000:0000:0000:0000:0000:0000:0000"));
 		assertTrue(IPValidator.ipv6("0:0:0:0:0:0:0:0"));
 		assertTrue(IPValidator.ipv6("2001:08DB:0000:0000:0023:F422:FE3B:AC10"));
@@ -61,8 +60,6 @@ public class JU_IPValidator {
 		assertFalse(IPValidator.ipv6("0000:0000:0000::0000::0000"));
 		assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10:FFFF"));
 
-		
-		
 		assertTrue(IPValidator.ip("2001:08DB:0000:0000:0023:F422:FE3B:AC10"));
 		assertTrue(IPValidator.ip("192.168.7.2"));
 	}
