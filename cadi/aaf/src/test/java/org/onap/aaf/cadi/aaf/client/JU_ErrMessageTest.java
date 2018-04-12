@@ -24,6 +24,9 @@ package org.onap.aaf.cadi.aaf.client;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
@@ -54,6 +57,8 @@ public class JU_ErrMessageTest {
 	private Error error;
 
 	private Future<?> future;
+
+	private ByteArrayOutputStream errStream;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -89,14 +94,15 @@ public class JU_ErrMessageTest {
 		error.setText("Error Text");
 		errMessage = new ErrMessage(env);
 		
-		
+		errStream = new ByteArrayOutputStream();
 	}
 
 	@Test
 	public void testPrintErrMessage() throws APIException {
 		when(errDF.newData().in(TYPE.JSON).load(attErrJson).asObject()).thenReturn(error);
 		
-		errMessage.printErr(System.out, attErrJson);
+		errMessage.printErr(new PrintStream(errStream), attErrJson);
+		assertEquals("Error Message Id Error Text\n", errStream.toString());
 	}
 	
 	@Test

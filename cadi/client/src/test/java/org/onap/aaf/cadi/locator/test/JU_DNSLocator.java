@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.client.test;
+package org.onap.aaf.cadi.locator.test;
 
 import java.net.URI;
 import java.net.URL;

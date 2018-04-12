@@ -21,37 +21,74 @@
 
 package org.onap.aaf.cadi.oauth.test;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import org.junit.*;
+
 import java.io.StringReader;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.oauth.TokenPerm.LoadPermissions;
 import org.onap.aaf.misc.rosetta.ParseException;
 
-public class JU_FastPerms {
+public class JU_TokenPerm {
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+	@Test
+	public void test() throws ParseException {
+		String json;
+		LoadPermissions lp;
+		Permission p;
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+		json = "{\"perm\":[" +
+			"  {\"type\":\"com.access\",\"instance\":\"*\",\"action\":\"read,approve\"}," +
+			"]}";
 
-	@Before
-	public void setUp() throws Exception {
-	}
+		lp = new LoadPermissions(new StringReader(json));
+		assertThat(lp.perms.size(), is(1));
 
-	@After
-	public void tearDown() throws Exception {
+		p = lp.perms.get(0);
+		assertThat(p.getKey(), is("com.access|*|read,approve"));
+		assertThat(p.permType(), is("AAF"));
+
+		// Extra closing braces for coverage
+		json = "{\"perm\":[" +
+			"  {\"type\":\"com.access\",\"instance\":\"*\",\"action\":\"read,approve\"}}," +
+			"]]}";
+
+		lp = new LoadPermissions(new StringReader(json));
+		assertThat(lp.perms.size(), is(1));
+
+		p = lp.perms.get(0);
+		assertThat(p.getKey(), is("com.access|*|read,approve"));
+		assertThat(p.permType(), is("AAF"));
+
+		// Test without a type
+		json = "{\"perm\":[" +
+			"  {\"instance\":\"*\",\"action\":\"read,approve\"}," +
+			"]}";
+
+		lp = new LoadPermissions(new StringReader(json));
+		assertThat(lp.perms.size(), is(0));
+
+		// Test without an instance
+		json = "{\"perm\":[" +
+			"  {\"type\":\"com.access\",\"action\":\"read,approve\"}," +
+			"]}";
+
+		lp = new LoadPermissions(new StringReader(json));
+		assertThat(lp.perms.size(), is(0));
+
+		// Test without an action
+		json = "{\"perm\":[" +
+			"  {\"type\":\"com.access\",\"instance\":\"*\"}," +
+			"]}";
+
+		lp = new LoadPermissions(new StringReader(json));
+		assertThat(lp.perms.size(), is(0));
 	}
 
 	@Test
-	public void test() {
+	public void redundancyTest() {
 		String json = "{\"perm\":[" +
 				"  {\"type\":\"com.access\",\"instance\":\"*\",\"action\":\"read,approve\"}," +
 				"  {\"type\":\"org.osaaf.aaf.access\",\"instance\":\"*\",\"action\":\"*\"}," +
@@ -88,19 +125,12 @@ public class JU_FastPerms {
 				"  {\"type\":\"com.test.access\",\"instance\":\"*\",\"action\":\"read\"}," +
 				"  {\"type\":\"com.test.access\",\"instance\":\"*\",\"action\":\"read\"}" +
 				"]}";
-		
 		try {
 			LoadPermissions lp = new LoadPermissions(new StringReader(json));
-			for(Permission p : lp.perms) {
-				System.out.println(p.toString());
-			}
-			System.out.println("done");
+			assertThat(lp.perms.size(), is(34));
 		} catch (ParseException e) {
-			System.err.println(e);
+			fail(e.getMessage());
 		}
-		
-		
 	}
 	
-
 }

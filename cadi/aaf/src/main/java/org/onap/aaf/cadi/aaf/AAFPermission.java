@@ -71,24 +71,28 @@ public class AAFPermission implements Permission {
 	 * If you want a simple field comparison, it is faster without REGEX
 	 */
 	public boolean match(Permission p) {
+		boolean rv;
+		String aafType;
+		String aafInstance;
+		String aafAction;
 		if(p instanceof AAFPermission) {
 			AAFPermission ap = (AAFPermission)p;
 			// Note: In AAF > 1.0, Accepting "*" from name would violate multi-tenancy
 			// Current solution is only allow direct match on Type.
 			// 8/28/2014 Jonathan - added REGEX ability
-			if(type.equals(ap.getName()))  
-				if(PermEval.evalInstance(instance,ap.getInstance()))
-					if(PermEval.evalAction(action,ap.getAction()))
-						return true;
+			aafType = ap.getName();
+			aafInstance = ap.getInstance();
+			aafAction = ap.getAction();
 		} else {
 			// Permission is concatenated together: separated by |
 			String[] aaf = p.getKey().split("[\\s]*\\|[\\s]*",3);
-			if(aaf.length>0 && type.equals(aaf[0]))
-				if(PermEval.evalInstance(instance,aaf.length>1?aaf[1]:"*"))
-					if(PermEval.evalAction(action,aaf.length>2?aaf[2]:"*"))
-						return true;
-		}				
-		return false;
+			aafType = aaf[0];
+			aafInstance = (aaf.length > 1) ? aaf[1] : "*";
+			aafAction = (aaf.length > 2) ? aaf[2] : "*";
+		}
+		return ((type.equals(aafType)) &&
+				(PermEval.evalInstance(instance, aafInstance)) &&
+				(PermEval.evalAction(action, aafAction)));
 	}
 
 	public String getName() {
