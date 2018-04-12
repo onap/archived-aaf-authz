@@ -25,12 +25,15 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import org.junit.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Properties;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.PropAccess;
@@ -39,9 +42,9 @@ import org.onap.aaf.cadi.config.Config;
 public class JU_AuthzEnv {
 
 	AuthzEnv authzEnv;
-
 	ByteArrayOutputStream outStream;
 	ByteArrayOutputStream errStream;
+	enum Level {DEBUG, INFO, AUDIT, INIT, WARN, ERROR};
 
 	@Before
 	public void setUp() {
@@ -142,6 +145,7 @@ public class JU_AuthzEnv {
 
 	@Test
 	public void testLog1() {
+		
 		Exception e = new Exception();
 		Object msgs = null;
 		authzEnv.log(e, msgs);
