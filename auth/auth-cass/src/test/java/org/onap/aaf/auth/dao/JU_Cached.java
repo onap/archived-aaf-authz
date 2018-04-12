@@ -22,57 +22,68 @@
 package org.onap.aaf.auth.dao;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.*;
+import org.junit.*;
+import org.mockito.*;
+// import org.junit.runner.RunWith;
+// import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Timer;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.onap.aaf.auth.cache.Cache;
 import org.onap.aaf.auth.cache.Cache.Dated;
 import org.onap.aaf.auth.dao.CIDAO;
 import org.onap.aaf.auth.dao.Cached;
 import org.onap.aaf.auth.dao.Cached.Getter;
+import org.onap.aaf.auth.dao.JU_Cached.DataStub;
+import org.onap.aaf.auth.dao.cass.CacheableData;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.Trans;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
+// @RunWith(PowerMockRunner.class)
 public class JU_Cached {
-	Cached cached;
+
 	@Mock
 	CIDAO<Trans> ciDaoMock;
+
 	@Mock
 	AuthzEnv authzEnvMock;
+
 	@Mock
 	CIDAO<AuthzTrans> cidaoATMock;
 	
 	String name = "nameString";
-	
+
 	@Before
 	public void setUp(){
-		cached = new Cached(ciDaoMock, name, (int)0, 30000L);
+		MockitoAnnotations.initMocks(this);
 	}
 	
-	@Test(expected=ArithmeticException.class)
+	@Test
 	public void testCachedIdx(){
-		int Result = cached.cacheIdx("1234567890");		
+		Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 1, 30000L);
+		assertThat(cached.cacheIdx("1234567890"), is(0));
 	}
 	
-	@Test(expected=ArithmeticException.class)
+	@Test
 	public void testInvalidate(){
-		int Res = cached.invalidate(name);
+		Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 5, 30000L);
+		cached.add("test", new ArrayList<DataStub>());
+		cached.invalidate("test");
+		cached.invalidate("test1");
 	}
 	
 	@SuppressWarnings("static-access")
 	@Test
 	public void testStopTimer(){
+		Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 1, 30000L);
 		cached.stopTimer();
 		assertTrue(true);
 	}
@@ -80,6 +91,7 @@ public class JU_Cached {
 	@SuppressWarnings("static-access")
 	@Test
 	public void testStartRefresh(){
+		Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 1, 30000L);
 		cached.startRefresh(authzEnvMock, cidaoATMock);
 		assertTrue(true);
 	}
@@ -121,4 +133,8 @@ public class JU_Cached {
 //		}
 //		return rld;
 //	}
+
+	class DataStub extends CacheableData {
+		@Override public int[] invalidate(Cached<?, ?> cache) { return null; }
+	}
 }
