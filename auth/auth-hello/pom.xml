@@ -27,7 +27,7 @@
 
 	<properties>
 		<skipTests>false</skipTests>
-		<sonar.skip>true</sonar.skip>
+		<!-- <sonar.skip>true</sonar.skip> -->
 		<!-- SONAR -->
 		<jacoco.version>0.7.7.201606060606</jacoco.version>
 		<sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
