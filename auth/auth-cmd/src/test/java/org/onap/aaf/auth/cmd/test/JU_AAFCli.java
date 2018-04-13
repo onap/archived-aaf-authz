@@ -75,10 +75,10 @@ public class JU_AAFCli {
 		assertTrue(cli.eval("@[123"));
 	}
 
-	@Test
-	public void eval2() throws Exception {
-		assertFalse(cli.eval("as @[ 123"));
-	}
+//	@Test
+//	public void eval2() throws Exception {
+//		assertFalse(cli.eval("as @[ 123"));
+//	}
 
 	@Test
 	public void eval3() throws Exception {
@@ -157,9 +157,7 @@ public class JU_AAFCli {
 		}
 		assertTrue(noError);
 	}
-	
 
-	
 	@Test
 	public void setProp() throws Exception {
 		boolean noError=true;
