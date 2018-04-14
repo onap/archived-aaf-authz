@@ -132,12 +132,8 @@ public class TextIndex {
 		TimeTaken tt2 = trans.start("Open Files", Env.SUB);
 		try {
 			raf = new RandomAccessFile(file,"rw");
-			try {
-				raf.setLength(0L);
-				fos = raf.getChannel();
-			} finally {
-				raf.close();
-			}
+			raf.setLength(0L);
+			fos = raf.getChannel();
 		} finally {
 			tt2.done();
 		}
@@ -187,7 +183,7 @@ public class TextIndex {
 			}
 		} finally {
 			fos.close();
-			raf.close();
+			raf.close(); // closed by fos
 		}
 	}
 	

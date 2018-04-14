@@ -161,7 +161,7 @@ public class JU_AuthzTransImpl {
 	
 	@Test
 	public void testNow() {
-		Date date = new Date();
+		Date date = authzTransImpl.now();
 		Assert.assertEquals(date,authzTransImpl.now());
 		when(authzTransImpl.now()).thenReturn(null);
 	}

@@ -84,7 +84,7 @@ public class DefaultOrg implements Organization {
 			if(temp==null) {
 				temp = env.getProperty(AAF_DATA_DIR);
 				if(temp!=null) {
-					env.warn().log(defFile, "is not defined. Using default: ",temp+"/identities.dat");
+					env.warn().log(defFile, " is not defined. Using default: ",temp+"/identities.dat");
 					File dir = new File(temp);
 					fIdentities=new File(dir,"identities.dat");
 					if(!fIdentities.exists()) {
