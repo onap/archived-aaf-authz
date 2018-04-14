@@ -276,12 +276,6 @@
 								<goal>prepare-agent</goal>
 							</goals>
 							<configuration>
-								<skipTests>false</skipTests>
-								<includes>
-									<include>**/JU*.java</include>
-								</includes>
-								<excludes>
-								</excludes>
 								<destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
 								<propertyName>surefireArgLine</propertyName>
 							</configuration>
