@@ -18,7 +18,6 @@
  * ============LICENSE_END====================================================
  *
  */
-
 package org.onap.aaf.misc.env.log4j;
 
 import java.io.File;
@@ -30,60 +29,60 @@ import java.util.Date;
 public class LogFileNamer {
 	private final String root;
 	private final String ending;
-	private final String dir; 
-	
+	private final String dir;
+
 	public LogFileNamer(final String dir, final String root) {
 		this.dir = dir;
-		if(root==null || "".equals(root) || root.endsWith("/")) {
+		if (root == null || "".equals(root) || root.endsWith("/")) {
 			this.root = root;
 		} else {
 			this.root = root + "-";
 		}
 		ending = new SimpleDateFormat("YYYYMMdd").format(new Date());
 	}
-	
+
 	public LogFileNamer noPID() {
 		return this;
 	}
-	
+
 	private static final String FILE_FORMAT_STR = "%s/%s%s%s_%d.log";
+
 	/**
-	 * Accepts a String.
-	 * If Separated by "|" then first part is the Appender name, and the second is used in the FileNaming
-	 * (This is to allow for shortened Logger names, and more verbose file names)
-	 * ONAP: jna code has license issues.  Just do Date + Unique Number
+	 * Accepts a String. If Separated by "|" then first part is the Appender name,
+	 * and the second is used in the FileNaming (This is to allow for shortened
+	 * Logger names, and more verbose file names) ONAP: jna code has license issues.
+	 * Just do Date + Unique Number
 	 * 
 	 * @param appender
 	 * 
-	 * returns the String Appender
-	 * @throws IOException 
+	 *            returns the String Appender
+	 * @throws IOException
 	 */
 	public String setAppender(String appender) throws IOException {
 		String filename;
-		int i=0;
+		int i = 0;
 		File f;
-		while((f=new File(filename=String.format(FILE_FORMAT_STR, dir,root, appender, ending,i))).exists()) {
+		while ((f = new File(filename = String.format(FILE_FORMAT_STR, dir, root, appender, ending, i))).exists()) {
 			++i;
-		};
+		}
+		;
 		f.createNewFile();
-		System.setProperty(
-			"LOG4J_FILENAME_"+appender,
-			filename);
+		System.setProperty("LOG4J_FILENAME_" + appender, filename);
 		return appender;
 	}
 
 	public void configure(final String path, final String fname, final String log_level) throws IOException {
-		final String fullPath=path+'/'+fname;
-		if(new File(fullPath).exists()) {
-			org.apache.log4j.PropertyConfigurator.configureAndWatch(fullPath,60*1000L);
+		final String fullPath = path + '/' + fname;
+		if (new File(fullPath).exists()) {
+			org.apache.log4j.PropertyConfigurator.configureAndWatch(fullPath, 60 * 1000L);
 		} else {
 			URL rsrc = ClassLoader.getSystemResource(fname);
-			if(rsrc==null) {
-				String msg = "Neither File: " + path + '/' + fname + " nor resource on Classpath " + fname + " exist" ;
+			if (rsrc == null) {
+				String msg = "Neither File: " + path + '/' + fname + " nor resource on Classpath " + fname + " exist";
 				throw new IOException(msg);
 			}
 			org.apache.log4j.PropertyConfigurator.configure(rsrc);
 		}
-		
+
 	}
 }
