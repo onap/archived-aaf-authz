@@ -125,65 +125,70 @@ public class TextIndex {
 	}
 	
 	public void create(final Trans trans,final DataFile data, int maxLine, char delim, int fieldOffset, int skipLines) throws IOException {
-		RandomAccessFile raf;
 		FileChannel fos;
 		
 		List<Idx> list = new LinkedList<Idx>(); // Some hashcodes will double... DO NOT make a set
 		TimeTaken tt2 = trans.start("Open Files", Env.SUB);
+		RandomAccessFile raf=null;
 		try {
-			raf = new RandomAccessFile(file,"rw");
-			raf.setLength(0L);
-			fos = raf.getChannel();
-		} finally {
-			tt2.done();
-		}
-		
-		try {
-			
-			Token t = data.new Token(maxLine);  
-			Field f = t.new Field(delim);
-			
-			int count = 0;
-			if(skipLines>0) {
-				trans.info().log("Skipping",skipLines,"line"+(skipLines==1?" in":"s in"),data.file().getName());
-			}
-			for(int i=0;i<skipLines;++i) {
-				t.nextLine();
-			}
-			tt2 = trans.start("Read", Env.SUB);
 			try {
-				while(t.nextLine()) {
-					list.add(new Idx(f.at(fieldOffset),t.pos()));
-					++count;
-				}
+				raf = new RandomAccessFile(file,"rw");
+				raf.setLength(0L);
+				fos = raf.getChannel();
 			} finally {
 				tt2.done();
 			}
-			trans.checkpoint("    Read " + count + " records");
-			tt2 = trans.start("Sort List", Env.SUB);
-			Collections.sort(list);
-			tt2.done();
-			tt2 = trans.start("Write Idx", Env.SUB);
+			
 			try {
-				ByteBuffer bb = ByteBuffer.allocate(8*1024);
-				IntBuffer ib = bb.asIntBuffer();
-				for(Idx idx : list) {
-					if(!ib.hasRemaining()) {
-						fos.write(bb);
-						ib.clear();
-						bb.rewind();
+				
+				Token t = data.new Token(maxLine);  
+				Field f = t.new Field(delim);
+				
+				int count = 0;
+				if(skipLines>0) {
+					trans.info().log("Skipping",skipLines,"line"+(skipLines==1?" in":"s in"),data.file().getName());
+				}
+				for(int i=0;i<skipLines;++i) {
+					t.nextLine();
+				}
+				tt2 = trans.start("Read", Env.SUB);
+				try {
+					while(t.nextLine()) {
+						list.add(new Idx(f.at(fieldOffset),t.pos()));
+						++count;
 					}
-					ib.put(idx.hash);
-					ib.put(idx.pos);
+				} finally {
+					tt2.done();
 				}
-				bb.limit(4*ib.position());
-				fos.write(bb);
-			} finally {
+				trans.checkpoint("    Read " + count + " records");
+				tt2 = trans.start("Sort List", Env.SUB);
+				Collections.sort(list);
 				tt2.done();
-			}
+				tt2 = trans.start("Write Idx", Env.SUB);
+				try {
+					ByteBuffer bb = ByteBuffer.allocate(8*1024);
+					IntBuffer ib = bb.asIntBuffer();
+					for(Idx idx : list) {
+						if(!ib.hasRemaining()) {
+							fos.write(bb);
+							ib.clear();
+							bb.rewind();
+						}
+						ib.put(idx.hash);
+						ib.put(idx.pos);
+					}
+					bb.limit(4*ib.position());
+					fos.write(bb);
+				} finally {
+					tt2.done();
+				}
+			} finally {
+				fos.close();
+			} 
 		} finally {
-			fos.close();
-			raf.close(); // closed by fos
+			if(raf!=null) {
+				raf.close(); // closed by fos
+			}
 		}
 	}
 	
