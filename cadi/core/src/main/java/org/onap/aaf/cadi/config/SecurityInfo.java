@@ -86,128 +86,24 @@ public class SecurityInfo {
 		try {
 			this.access = access;
 			// reuse DME2 Properties for convenience if specific Properties don't exist
-			String keyStore = access.getProperty(Config.CADI_KEYSTORE,null);
-			if(keyStore!=null && !new File(keyStore).exists()) {
-				throw new CadiException(keyStore + " does not exist");
-			}
-			String keyStorePasswd = access.getProperty(Config.CADI_KEYSTORE_PASSWORD, null);
-			keyStorePasswd = keyStorePasswd==null?null:access.decrypt(keyStorePasswd,false);
-			String trustStore = access.getProperty(Config.CADI_TRUSTSTORE, null);
-			if(trustStore!=null && !new File(trustStore).exists()) {
-				throw new CadiException(trustStore + " does not exist");
-			}
-			String trustStorePasswd = access.getProperty(Config.CADI_TRUSTSTORE_PASSWORD, null);
-			trustStorePasswd = trustStorePasswd==null?"changeit"/*defacto Java Trust Pass*/:access.decrypt(trustStorePasswd,false);
-			default_alias = access.getProperty(Config.CADI_ALIAS,null);
 			
-			String keyPasswd = access.getProperty(Config.CADI_KEY_PASSWORD,null);
-			keyPasswd = keyPasswd==null?keyStorePasswd:access.decrypt(keyPasswd,false);
-			String tips=access.getProperty(Config.CADI_TRUST_MASKS, null);
-			if(tips!=null) {
-				access.log(Level.INIT,"Explicitly accepting valid X509s from",tips);
-				String[] ipsplit = tips.split(REGEX_COMMA);
-				trustMasks = new NetMask[ipsplit.length];
-				for(int i=0;i<ipsplit.length;++i) {
-					try {
-						trustMasks[i]=new NetMask(ipsplit[i]);
-					} catch (MaskFormatException e) {
-						throw new AccessException("Invalid IP Mask in " + Config.CADI_TRUST_MASKS,e);
-					}
-				}
-			}
-			String https_protocols = Config.logProp(access,Config.CADI_PROTOCOLS,
-						access.getProperty(HTTPS_PROTOCOLS,HTTPS_PROTOCOLS_DEFAULT)
+			initializeKeyManager();
+			
+			initializeTrustManager();
+			
+			default_alias = access.getProperty(Config.CADI_ALIAS, null);
+			
+			initializeTrustMasks();
+
+			String https_protocols = Config.logProp(access, Config.CADI_PROTOCOLS,
+						access.getProperty(HTTPS_PROTOCOLS, HTTPS_PROTOCOLS_DEFAULT)
 						);
-			System.setProperty(HTTPS_PROTOCOLS,https_protocols);
+			System.setProperty(HTTPS_PROTOCOLS, https_protocols);
 			System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, https_protocols);
 			if("1.7".equals(System.getProperty("java.specification.version")) && https_protocols.contains("TLSv1.2")) {
 				System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
-			}
-			
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance(SslKeyManagerFactoryAlgorithm);
-			File file;
-	
-	
-			if(keyStore==null || keyStorePasswd == null) { 
-				km = new X509KeyManager[0];
-			} else {
-				ArrayList<X509KeyManager> kmal = new ArrayList<X509KeyManager>();
-				for(String ksname : keyStore.split(REGEX_COMMA)) {
-					file = new File(ksname);
-					String keystoreFormat;
-					if(ksname.endsWith(".p12") || ksname.endsWith(".pkcs12")) {
-						keystoreFormat = "PKCS12";
-					} else {
-						keystoreFormat = "JKS";
-					}
-					if(file.exists()) {
-						FileInputStream fis = new FileInputStream(file);
-						try {
-							KeyStore ks = KeyStore.getInstance(keystoreFormat);
-							ks.load(fis, keyStorePasswd.toCharArray());
-							kmf.init(ks, keyPasswd.toCharArray());
-						} finally {
-							fis.close();
-						}
-					}
-				}
-				for(KeyManager km : kmf.getKeyManagers()) {
-					if(km instanceof X509KeyManager) {
-						kmal.add((X509KeyManager)km);
-					}
-				}
-				km = new X509KeyManager[kmal.size()];
-				kmal.toArray(km);
-			}
-	
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance(SslKeyManagerFactoryAlgorithm);
-			if(trustStore!=null) {
-				for(String tsname : trustStore.split(REGEX_COMMA)) {
-					file = new File(tsname);
-					if(file.exists()) {
-						FileInputStream fis = new FileInputStream(file);
-						try {
-							KeyStore ts = KeyStore.getInstance("JKS");
-							ts.load(fis, trustStorePasswd.toCharArray());
-							tmf.init(ts); 
-						} finally {
-							fis.close();
-						}
-					}
-				}
-				TrustManager tms[] = tmf.getTrustManagers();
-				if(tms!=null) {
-					tm = new X509TrustManager[tms==null?0:tms.length];
-					for(int i=0;i<tms.length;++i) {
-						try {
-							tm[i]=(X509TrustManager)tms[i];
-						} catch (ClassCastException e) {
-							access.log(Level.WARN, "Non X509 TrustManager", tm[i].getClass().getName(),"skipped in SecurityInfo");
-						}
-					}
-				}
-			}
-			
-			if(trustMasks!=null) {
-				final HostnameVerifier origHV = HttpsURLConnection.getDefaultHostnameVerifier();
-				HttpsURLConnection.setDefaultHostnameVerifier(maskHV = new HostnameVerifier() {
-					@Override
-					public boolean verify(final String urlHostName, final SSLSession session) {
-						try {
-							// This will pick up /etc/host entries as well as DNS
-							InetAddress ia = InetAddress.getByName(session.getPeerHost());
-							for(NetMask tmask : trustMasks) {
-								if(tmask.isInNet(ia.getHostAddress())) {
-									return true;
-								}
-							}
-						} catch (UnknownHostException e) {
-							// It's ok. do normal Verify
-						}
-						return origHV.verify(urlHostName,session);
-					};
-				});
-			}
+			}			
+
 			ctx = SSLContext.getInstance("TLS");
 			ctx.init(km, tm, null);
 			SSLContext.setDefault(ctx);
@@ -249,9 +145,134 @@ public class SecurityInfo {
 
 	public void setSocketFactoryOn(HttpsURLConnection hsuc) {
 		hsuc.setSSLSocketFactory(scf);
-		if(maskHV!=null && !maskHV.equals(hsuc.getHostnameVerifier())) {
+		if(maskHV != null && !maskHV.equals(hsuc.getHostnameVerifier())) {
 			hsuc.setHostnameVerifier(maskHV);
 		}
 	}
+	
+	protected void initializeKeyManager() throws CadiException, IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
+		String keyStore = access.getProperty(Config.CADI_KEYSTORE, null);
+		if(keyStore != null && !new File(keyStore).exists()) {
+			throw new CadiException(keyStore + " does not exist");
+		}
 
+		String keyStorePasswd = access.getProperty(Config.CADI_KEYSTORE_PASSWORD, null);
+		keyStorePasswd = (keyStorePasswd == null) ? null : access.decrypt(keyStorePasswd, false);
+
+		String keyPasswd = access.getProperty(Config.CADI_KEY_PASSWORD, null);
+		keyPasswd = (keyPasswd == null) ? keyStorePasswd : access.decrypt(keyPasswd, false);
+
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance(SslKeyManagerFactoryAlgorithm);
+		if(keyStore == null || keyStorePasswd == null) { 
+			km = new X509KeyManager[0];
+		} else {
+			ArrayList<X509KeyManager> kmal = new ArrayList<X509KeyManager>();
+			File file;
+			for(String ksname : keyStore.split(REGEX_COMMA)) {
+				file = new File(ksname);
+				String keystoreFormat;
+				if(ksname.endsWith(".p12") || ksname.endsWith(".pkcs12")) {
+					keystoreFormat = "PKCS12";
+				} else {
+					keystoreFormat = "JKS";
+				}
+				if(file.exists()) {
+					FileInputStream fis = new FileInputStream(file);
+					try {
+						KeyStore ks = KeyStore.getInstance(keystoreFormat);
+						ks.load(fis, keyStorePasswd.toCharArray());
+						kmf.init(ks, keyPasswd.toCharArray());
+					} finally {
+						fis.close();
+					}
+				}
+			}
+			for(KeyManager km : kmf.getKeyManagers()) {
+				if(km instanceof X509KeyManager) {
+					kmal.add((X509KeyManager)km);
+				}
+			}
+			km = new X509KeyManager[kmal.size()];
+			kmal.toArray(km);
+		}
+	}
+
+	protected void initializeTrustManager() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException, CadiException {
+		String trustStore = access.getProperty(Config.CADI_TRUSTSTORE, null);
+		if(trustStore != null && !new File(trustStore).exists()) {
+			throw new CadiException(trustStore + " does not exist");
+		}
+
+		String trustStorePasswd = access.getProperty(Config.CADI_TRUSTSTORE_PASSWORD, null);
+		trustStorePasswd = (trustStorePasswd == null) ? "changeit"/*defacto Java Trust Pass*/ : access.decrypt(trustStorePasswd, false);
+
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(SslKeyManagerFactoryAlgorithm);
+		if(trustStore != null) {
+			File file;
+			for(String tsname : trustStore.split(REGEX_COMMA)) {
+				file = new File(tsname);
+				if(file.exists()) {
+					FileInputStream fis = new FileInputStream(file);
+					try {
+						KeyStore ts = KeyStore.getInstance("JKS");
+						ts.load(fis, trustStorePasswd.toCharArray());
+						tmf.init(ts); 
+					} finally {
+						fis.close();
+					}
+				}
+			}
+
+			TrustManager tms[] = tmf.getTrustManagers();
+			if(tms != null) {
+				tm = new X509TrustManager[(tms == null) ? 0 : tms.length];
+				for(int i = 0; i < tms.length; ++i) {
+					try {
+						tm[i] = (X509TrustManager)tms[i];
+					} catch (ClassCastException e) {
+						access.log(Level.WARN, "Non X509 TrustManager", tm[i].getClass().getName(), "skipped in SecurityInfo");
+					}
+				}
+			}
+		}
+
+	}
+	
+	protected void initializeTrustMasks() throws AccessException {
+		String tips = access.getProperty(Config.CADI_TRUST_MASKS, null);
+		if(tips != null) {
+			access.log(Level.INIT, "Explicitly accepting valid X509s from", tips);
+			String[] ipsplit = tips.split(REGEX_COMMA);
+			trustMasks = new NetMask[ipsplit.length];
+			for(int i = 0; i < ipsplit.length; ++i) {
+				try {
+					trustMasks[i] = new NetMask(ipsplit[i]);
+				} catch (MaskFormatException e) {
+					throw new AccessException("Invalid IP Mask in " + Config.CADI_TRUST_MASKS, e);
+				}
+			}
+		}
+		
+		if(trustMasks != null) {
+			final HostnameVerifier origHV = HttpsURLConnection.getDefaultHostnameVerifier();
+			HttpsURLConnection.setDefaultHostnameVerifier(maskHV = new HostnameVerifier() {
+				@Override
+				public boolean verify(final String urlHostName, final SSLSession session) {
+					try {
+						// This will pick up /etc/host entries as well as DNS
+						InetAddress ia = InetAddress.getByName(session.getPeerHost());
+						for(NetMask tmask : trustMasks) {
+							if(tmask.isInNet(ia.getHostAddress())) {
+								return true;
+							}
+						}
+					} catch (UnknownHostException e) {
+						// It's ok. do normal Verify
+					}
+					return origHV.verify(urlHostName, session);
+				};
+			});
+		}
+	}
+	
 }

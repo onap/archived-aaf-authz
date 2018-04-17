@@ -21,9 +21,13 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.lur.aaf.test;
 
+import org.junit.*;
+
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -32,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.aaf.v2_0.AAFAuthn;
@@ -55,8 +57,17 @@ public class JU_JMeter {
 	private static AAFTaf<HttpURLConnection> aafTaf;
 	private static PropAccess access;
 
+	private static ByteArrayOutputStream outStream;
+	private static ByteArrayOutputStream errStream;
+
 	@BeforeClass
 	public static void before() throws Exception {
+		outStream = new ByteArrayOutputStream();
+		errStream = new ByteArrayOutputStream();
+
+		System.setOut(new PrintStream(outStream));
+		System.setErr(new PrintStream(errStream));
+		
 		if(aafLur==null) {
 			Properties props = System.getProperties();
 			props.setProperty("AFT_LATITUDE", "32.780140");
@@ -106,6 +117,21 @@ public class JU_JMeter {
 		}
 	}
 
+	@Before
+	public void setup() {
+		outStream = new ByteArrayOutputStream();
+		errStream = new ByteArrayOutputStream();
+
+		System.setOut(new PrintStream(outStream));
+		System.setErr(new PrintStream(errStream));
+	}
+
+	@After
+	public void tearDown() {
+		System.setOut(System.out);
+		System.setErr(System.err);
+	}
+
 	private static class Princ implements Principal {
 		private String name;
 		public Princ(String name) {
@@ -136,7 +162,7 @@ public class JU_JMeter {
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
-			Assert.assertFalse(sw.toString(),true);
+			Assert.fail(sw.toString());
 		}
 	}
 
