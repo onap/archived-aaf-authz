@@ -104,7 +104,7 @@ public class JU_AES {
 
 	@Test
 	public void saveToFileTest() throws Exception {
-		String filePath = "test/output_key";
+		String filePath = "src/test/resources/output_key";
 		File keyfile = new File(filePath);
 		aes.save(keyfile);
 		assertTrue(Files.isReadable(Paths.get(filePath)));

@@ -72,7 +72,7 @@ public class JU_PropAccess {
 		Properties testSystemProps = new Properties(System.getProperties());
 		testSystemProps.setProperty("cadi_name", "user");
 		System.setProperties(testSystemProps);
-		PropAccess prop = new PropAccess("cadi_keyfile=test/keyfile", "cadi_loglevel=DEBUG", "cadi_prop_files=test/cadi.properties:not_a_file");
+		PropAccess prop = new PropAccess("cadi_keyfile=src/test/resources/keyfile", "cadi_loglevel=DEBUG", "cadi_prop_files=test/cadi.properties:not_a_file");
 	}
 
 	@Test

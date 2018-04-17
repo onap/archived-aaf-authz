@@ -21,80 +21,94 @@
 
 package org.onap.aaf.cadi.locator.test;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.*;
+import org.junit.*;
+import org.mockito.*;
+
+import java.net.Socket;
 import java.net.URI;
 
-import org.junit.AfterClass;
-import org.junit.Test;
 import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.locator.PropertyLocator;
-
-import static org.junit.Assert.*;
 
 public class JU_PropertyLocator {
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	@Mock
+	Socket socketMock;
+
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+
+		when(socketMock.isConnected()).thenReturn(true);
+		when(socketMock.isClosed()).thenReturn(true).thenReturn(false);
 	}
 
 	@Test
 	public void test() throws Exception {
+		String uris = "https://fred.wilma.com:26444,https://tom.jerry.com:[534-535]";
+		PropertyLocator pl = new PropertyLocator(uris, 0L, 1000*60*20L) {
+			@Override protected Socket createSocket() { return socketMock; }
+		};
+		String str = pl.toString();
+		assertThat(str.contains("https://fred.wilma.com:26444"), is(true));
+		assertThat(str.contains("https://tom.jerry.com:534"), is(true));
+		assertThat(str.contains("https://tom.jerry.com:535"), is(true));
 
-		// TODO: Ian - Fix this test
-		assertTrue(true);
+		Item item = pl.first();
+		assertThat(item.toString(), is("Item: 0 order: 0"));
 
-		// PropertyLocator pl = new PropertyLocator("https://localhost:2345,https://fred.wilma.com:26444,https://tom.jerry.com:534");
+		URI uri = pl.get(item);
+		assertThat(uri.toString(), is("https://fred.wilma.com:26444"));
+
+		assertThat(pl.get(null), is(nullValue()));
+
+		assertThat(pl.hasItems(), is(true));
+
+		assertThat(countItems(pl), is(3));
+		pl.invalidate(pl.best());
+
+		assertThat(countItems(pl), is(2));
+		pl.invalidate(pl.best());
+
+		assertThat(countItems(pl), is(1));
+
+		pl.invalidate(pl.best());
+
+		assertThat(pl.hasItems(), is(false));
+		assertThat(countItems(pl), is(0));
+
+		pl.refresh();
+
+		assertThat(pl.hasItems(), is(true));
 		
-		// Item i;
-		// int count;
-		// boolean print = false;
-		// for(int j=0;j<900000;++j) {
-		// 	count = 0;
-		// 	for(i = pl.first();i!=null;i=pl.next(i)) {
-		// 		URI loc = pl.get(i);
-		// 		if(print)System.out.println(loc.toString());
-		// 		++count;
-		// 	}
-		// 	assertEquals(3,count);
-		// 	assertTrue(pl.hasItems());
-		// 	if(print)System.out.println("---");
-		// 	pl.invalidate(pl.best());
-			
-		// 	count = 0;
-		// 	for(i = pl.first();i!=null;i=pl.next(i)) {
-		// 		URI loc = pl.get(i);
-		// 		if(print)System.out.println(loc.toString());
-		// 		++count;
-		// 	}
-	
-		// 	assertEquals(2,count);
-		// 	assertTrue(pl.hasItems());
-		// 	if(print)System.out.println("---");
-		// 	pl.invalidate(pl.best());
-			
-		// 	count = 0;
-		// 	for(i = pl.first();i!=null;i=pl.next(i)) {
-		// 		URI loc = pl.get(i);
-		// 		if(print)System.out.println(loc.toString());
-		// 		++count;
-		// 	}
-	
-		// 	assertEquals(1,count);
-		// 	assertTrue(pl.hasItems());
-		// 	if(print)System.out.println("---");
-		// 	pl.invalidate(pl.best());
-			
-		// 	count = 0;
-		// 	for(i = pl.first();i!=null;i=pl.next(i)) {
-		// 		URI loc = pl.get(i);
-		// 		if(print)System.out.println(loc.toString());
-		// 		++count;
-		// 	}
-	
-		// 	assertEquals(0,count);
-		// 	assertFalse(pl.hasItems());
-			
-		// 	pl.refresh();
-		// }
+		assertThat(pl.next(null), is(nullValue()));
+
+		// coverage...
+		pl.invalidate(null);
+		pl.invalidate(null);
+		pl.invalidate(null);
+		pl.invalidate(null);
+
+		pl.destroy();
+
+		pl = new PropertyLocator(uris);
+	}
+
+	@Test(expected=LocatorException.class)
+	public void exceptionTest() throws LocatorException {
+		new PropertyLocator(null);
+	}
+
+	private int countItems(PropertyLocator pl) throws LocatorException {
+		int count = 0;
+		for(Item i = pl.first(); i != null; i = pl.next(i)) {
+			++count;
+		}
+		return count;
 	}
 
 }

@@ -39,7 +39,7 @@ import org.onap.aaf.cadi.wsse.XReader;
 
 public class JU_XReader {
 
-	private final static String TEST_DIR_NAME = "test";
+	private final static String TEST_DIR_NAME = "src/test/resources";
 	private final static String TEST_XML_NAME = "test.xml";
 	private static File testXML;
 

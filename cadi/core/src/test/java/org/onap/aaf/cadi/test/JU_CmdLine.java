@@ -21,18 +21,15 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.test;
 
-import static org.mockito.Matchers.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import org.mockito.*;
-import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -43,7 +40,6 @@ import java.util.Properties;
 import org.onap.aaf.cadi.CmdLine;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.util.Chmod;
 
 public class JU_CmdLine {
 
@@ -69,29 +65,10 @@ public class JU_CmdLine {
 		p.setProperty("force_exit", "false");
 
 		CmdLine.access = new PropAccess(p);
-		File test = new File("test");
-		if(test.exists()) {
-			if(!test.isDirectory()) {
-				test.delete();
-				test.mkdirs();
-			}
-		} else {
-			test.mkdirs();
-		}
-		
-		File keyF= new File(test,"keyfile");
-		if(!keyF.exists()) {
-			FileOutputStream fos = new FileOutputStream(keyF);
-			try {
-				fos.write(Symm.keygen());
-				fos.flush();
-			} finally {
-				fos.close();
-			}
-		}
-		keyfile = "test/keyfile";
+		keyfile = "src/test/resources/keyfile";
 		password = "password";
 
+		File keyF = new File("src/test/resources", "keyfile");
 		FileInputStream fis = new FileInputStream(keyF);
 		try {
 			symm = Symm.obtain(fis);

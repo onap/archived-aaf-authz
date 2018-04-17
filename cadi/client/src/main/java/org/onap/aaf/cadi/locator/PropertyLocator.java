@@ -137,7 +137,7 @@ public class PropertyLocator implements Locator<URI> {
 
 	@Override
 	public synchronized void invalidate(Item item) throws LocatorException {
-		if(--end<=0) {
+		if(--end<0) {
 			refresh();
 			return;
 		}
@@ -186,7 +186,7 @@ public class PropertyLocator implements Locator<URI> {
 					URI o,n;
 					for(int j=0;j<ia.length;++j) {
 						o = orig[i];
-						Socket socket = new Socket();
+						Socket socket = createSocket();
 						try {
 							realname=ia[j].getHostAddress().equals(ia[j].getHostName())?ia[j].getCanonicalHostName():ia[j].getHostName();
 							int port = o.getPort();
@@ -250,6 +250,10 @@ public class PropertyLocator implements Locator<URI> {
 		} else {
 			return false;
 		}
+	}
+
+	protected Socket createSocket() {
+		return new Socket();
 	}
 	
 	private class PLItem implements Item {

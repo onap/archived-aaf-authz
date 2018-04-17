@@ -190,7 +190,7 @@ public class JU_Symm {
 
 	@Test
 	public void AccessObtainTest() throws Exception {
-		PropAccess pa = new PropAccess("cadi_keyfile=test/keyfile");
+		PropAccess pa = new PropAccess("cadi_keyfile=src/test/resources/keyfile");
 		Symm symm = Symm.obtain(pa);
 		String orig ="Another Password, please";
 		String encrypted = symm.enpass(orig);

@@ -39,6 +39,7 @@ public class JU_DNSLocator {
 
 	@Test
 	public void test() {
+		// TODO: Actually test this class - Ian
 		
 		DNSLocator dl = new DNSLocator(new PropAccess(), "https", "aaf.it.att.com","8150-8152");
 		try {
@@ -48,7 +49,6 @@ public class JU_DNSLocator {
 			URLConnection conn = url.openConnection();
 			conn.connect();
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
