@@ -19,63 +19,45 @@
  * *
  * *
  ******************************************************************************/
-package org.onap.aaf.auth.cmd.test.role;
 
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+package org.onap.aaf.auth.cmd.test.ns;
 
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.role.List;
-import org.onap.aaf.auth.cmd.role.ListByRole;
-import org.onap.aaf.auth.cmd.role.Role;
+import org.onap.aaf.auth.cmd.ns.Create;
+import org.onap.aaf.auth.cmd.ns.NS;
+import org.onap.aaf.auth.cmd.ns.Owner;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.misc.env.APIException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class JU_ListByRole {
-	
-	private static ListByRole lsByRole;
-	
+import static org.mockito.Mockito.*;
+import org.junit.Test;
+
+public class JU_Owner {
+
+	private static Owner owner;
+
 	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		AAFcli cli = JU_AAFCli.getAAfCli();
-		Role role = new Role(cli);
-		List ls = new List(role);
-		lsByRole = new ListByRole(ls);
+		NS ns = new NS(cli);
+		owner = new Owner(ns);
 	}
-	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsByRole._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 	
 	@Test
 	public void detailedHelp() {
 		boolean hasNoError = true;
 		try {
-			lsByRole.detailedHelp(1, new StringBuilder("test"));
+			owner.detailedHelp(1, new StringBuilder("test"));
 		} catch (Exception e) {
 			hasNoError = false;
 		}
 		assertEquals(hasNoError, true);
 	}
-	
+
 }

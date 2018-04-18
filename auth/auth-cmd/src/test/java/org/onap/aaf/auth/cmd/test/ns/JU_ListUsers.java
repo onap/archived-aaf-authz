@@ -14,6 +14,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
+ * limitations under the License.
  * ============LICENSE_END====================================================
  *
  */
@@ -21,62 +22,58 @@
 package org.onap.aaf.auth.cmd.test.ns;
 
 import static org.junit.Assert.*;
-
-import java.io.Writer;
-import java.net.URI;
-
-import org.onap.aaf.auth.cmd.ns.List;
-import org.onap.aaf.auth.cmd.ns.NS;
-import org.onap.aaf.auth.env.AuthzEnv;
-import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.client.Future;
-import org.onap.aaf.cadi.config.SecurityInfoC;
-import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.misc.env.APIException;
-
-import aaf.v2_0.Nss;
-
-import org.onap.aaf.auth.cmd.AAFcli;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.onap.aaf.auth.cmd.AAFcli;
+import org.onap.aaf.auth.cmd.ns.List;
+import org.onap.aaf.auth.cmd.ns.ListUsers;
+import org.onap.aaf.auth.cmd.ns.NS;
+import org.onap.aaf.auth.cmd.test.JU_AAFCli;
+import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.misc.env.APIException;
+
+import aaf.v2_0.Users;
+
 import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.GregorianCalendar;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
 
-public class JU_List {
-	
-	List list;
+public class JU_ListUsers {
 
+	AAFcli cli;
+	NS ns;
+	List list;
+	ListUsers lUsers;
+	
 	@Before
-	public void setUp() throws APIException, LocatorException {
-		PropAccess prop = new PropAccess();
-		AuthzEnv aEnv = new AuthzEnv();
-		Writer wtr = mock(Writer.class);
-		Locator loc = mock(Locator.class);
-		HMangr hman = new HMangr(aEnv, loc);		
-		AAFcli aafcli = new AAFcli(prop, aEnv, wtr, hman, null, null);
-		NS ns = new NS(aafcli);
-		
+	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+		cli = JU_AAFCli.getAAfCli();
+		ns = new NS(cli);
 		list = new List(ns);
+		lUsers = new ListUsers(list);
 	}
 	
 	@Test
-	public void testReport() {
-		Future<Nss> fu = mock(Future.class);
-		Nss.Ns nss = new Nss.Ns();
-		Nss ns = new Nss();
-		fu.value = ns;
-		fu.value.getNs();
-		System.out.print(fu.value.getNs());
+	public void testReports() throws DatatypeConfigurationException {
+		Users.User user = new Users.User();
+		GregorianCalendar gcal = new GregorianCalendar();
+	    XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+		user.setExpires(xgcal);
 		
-		list.report(null, "test");
-		list.report(fu, "test");
+		lUsers.report("header", "ns");
+		lUsers.report("subHead");
+		lUsers.report("prefix", user);
 	}
-	
+
 }

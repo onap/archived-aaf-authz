@@ -40,15 +40,15 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_CreateDelete {
 	
-//	private static CreateDelete createDel;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		Role role = new Role(cli);
-//		createDel = new CreateDelete(role);
-//	}
-//	
+	private static CreateDelete createDel;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		Role role = new Role(cli);
+		createDel = new CreateDelete(role);
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -65,8 +65,14 @@ public class JU_CreateDelete {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		boolean hasNoError = true;
+		try {
+			createDel.detailedHelp(1, new StringBuilder("test"));
+		} catch (Exception e) {
+			hasNoError = false;
+		}
+		assertEquals(hasNoError, true);
 	}
 }

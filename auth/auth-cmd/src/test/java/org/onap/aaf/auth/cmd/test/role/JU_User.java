@@ -41,15 +41,15 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_User {
 	
-//	private static User user;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		Role role = new Role(cli);
-//		user = new User(role);
-//	}
-//	
+	private static User user;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		Role role = new Role(cli);
+		user = new User(role);
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -66,8 +66,14 @@ public class JU_User {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void detailedHelp() {
+		boolean hasNoError = true;
+		try {
+			user.detailedHelp(1, new StringBuilder("test"));
+		} catch (Exception e) {
+			hasNoError = false;
+		}
+		assertEquals(hasNoError, true);
 	}
 }
