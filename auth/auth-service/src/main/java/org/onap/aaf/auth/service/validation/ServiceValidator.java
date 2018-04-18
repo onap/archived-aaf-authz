@@ -153,7 +153,7 @@ public class ServiceValidator extends Validator {
 				str = str.substring(0,idx);
 			}
 			
-			if(cd.id.endsWith(org.getRealm())) {
+			if(org.supportsRealm(cd.id)) {
 				if(isNew && (str=org.isValidID(trans, str)).length()>0) {
 					msg(cd.id,str);
 				}

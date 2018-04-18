@@ -109,6 +109,11 @@ public class JU_DefaultOrg {
 		assertTrue(realmTest == REALM);
 	}
 
+	public void supportsRealm() {
+		String otherRealm = "org.ossaf.something";
+		defaultOrg.addSupportedRealm(otherRealm);
+		assertTrue(defaultOrg.supportsRealm(otherRealm));
+	}
 	//@Test   
 	public void testGetName() throws OrganizationException{
 		String testName = defaultOrg.getName();

@@ -78,6 +78,12 @@ public interface Organization {
 	 * @return
 	 */
 	public String getRealm();
+	
+	public boolean supportsRealm(String user);
+
+	public void addSupportedRealm(String r);
+
+
 
 	String getDomain();
 
@@ -372,6 +378,15 @@ public interface Organization {
 			return N_A;
 		}
 	
+		@Override
+		public boolean supportsRealm(String r) {
+			return false;
+		}
+
+		@Override
+		public void addSupportedRealm(String r) {
+		}
+
 		@Override
 		public String getDomain() {
 			return N_A;

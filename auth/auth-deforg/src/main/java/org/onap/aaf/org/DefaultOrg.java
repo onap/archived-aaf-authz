@@ -56,9 +56,12 @@ public class DefaultOrg implements Organization {
 	final String realm;
 	
 	private final String NAME,mailHost,mailFrom;
+	private final Set<String> supportedRealms;
 
 	public DefaultOrg(Env env, String realm) throws OrganizationException {
 		this.realm = realm;
+		supportedRealms=new HashSet<String>();
+		supportedRealms.add(realm);
 		domain=FQI.reverseDomain(realm);
 		atDomain = '@'+domain;
 		String s;
@@ -668,5 +671,21 @@ public class DefaultOrg implements Organization {
         return addressArray;
 	}
 
-			
+	private String extractRealm(final String r) {
+		int at;
+		if((at=r.indexOf('@'))>=0) {
+			return FQI.reverseDomain(r.substring(at+1));
+		}
+		return r;
 	}
+	@Override
+	public boolean supportsRealm(final String r) {
+		return supportedRealms.contains(extractRealm(r)) || r.endsWith(realm);
+	}
+
+	@Override
+	public synchronized void addSupportedRealm(final String r) {
+		supportedRealms.add(extractRealm(r));
+	}
+			
+}
