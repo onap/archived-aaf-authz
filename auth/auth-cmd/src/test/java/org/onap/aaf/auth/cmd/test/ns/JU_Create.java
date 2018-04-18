@@ -39,28 +39,25 @@ public class JU_Create {
 
 	private static Create create;//might need to replace import with org.onap.aaf.auth.cmd.perm
 
-//	@BeforeClass
-//	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		create = new Create(ns);
-//	}
+	@BeforeClass
+	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		create = new Create(ns);
+	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
-	}
+	
 
-	//@Test
-	public void exec() {
-		try {
-			assertEquals(create._exec(0, "add", "del", "reset", "extend"), 500);
-		} catch (Exception e) {
-			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
-		}
-	}
+//	@Test
+//	public void exec() {
+//		try {
+//			assertEquals(create._exec(0, "add", "del", "reset", "extend"), 500);
+//		} catch (Exception e) {
+//			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
+//		}
+//	}
 
-	//@Test
+	@Test
 	public void detailedHelp() {
 		boolean hasNoError = true;
 		try {

@@ -36,15 +36,15 @@ import org.onap.aaf.auth.cmd.ns.NS;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Admin {
 
-//	private static Admin admin;
-//
-//	@BeforeClass
-//	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = org.onap.aaf.auth.cmd.test.JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		admin = new Admin(ns);
-//	}
-//
+	private static Admin admin;
+
+	@BeforeClass
+	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = org.onap.aaf.auth.cmd.test.JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		admin = new Admin(ns);
+	}
+
 //	@Test
 //	public void exec() {
 //		try {
@@ -53,20 +53,16 @@ public class JU_Admin {
 //			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
 //		}
 //	}
-//
-//	@Test
-//	public void detailedHelp() {
-//		boolean hasNoError = true;
-//		try {
-//			admin.detailedHelp(1, new StringBuilder("test"));
-//		} catch (Exception e) {
-//			hasNoError = false;
-//		}
-//		assertEquals(hasNoError, true);
-//	}
-	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+
+	@Test
+	public void detailedHelp() {
+		boolean hasNoError = true;
+		try {
+			admin.detailedHelp(1, new StringBuilder("test"));
+		} catch (Exception e) {
+			hasNoError = false;
+		}
+		assertEquals(hasNoError, true);
 	}
+	
 }

@@ -70,6 +70,7 @@ public class ListUsers extends BaseCmd<List> {
 	private static final String uformat = "%s%-50s expires:%02d/%02d/%04d\n";
 	public void report(String prefix, User u) {
 		XMLGregorianCalendar xgc = u.getExpires();
+		System.out.print(xgc);
 		pw().format(uformat,prefix,u.getId(),xgc.getMonth()+1,xgc.getDay(),xgc.getYear());
 	}
 
