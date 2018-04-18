@@ -39,16 +39,16 @@ import org.onap.aaf.misc.env.APIException;
 
 public class JU_Delete {
 
-//	private static Delete delete;//import may be org.onap.aaf.auth.cmd.perm
-//
-//	@BeforeClass
-//	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		delete = new Delete(ns);
-//
-//	}
-//
+	private static Delete delete;//import may be org.onap.aaf.auth.cmd.perm
+
+	@BeforeClass
+	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		delete = new Delete(ns);
+
+	}
+
 //	@Test
 //	public void exec() {
 //		try {
@@ -57,17 +57,17 @@ public class JU_Delete {
 //			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
 //		}
 //	}
-//
-//	@Test
-//	public void detailedHelp() {
-//		boolean hasNoError = true;
-//		try {
-//			delete.detailedHelp(1, new StringBuilder("test"));
-//		} catch (Exception e) {
-//			hasNoError = false;
-//		}
-//		assertEquals(hasNoError, true);
-//	}
+
+	@Test
+	public void detailedHelp() {
+		boolean hasNoError = true;
+		try {
+			delete.detailedHelp(1, new StringBuilder("test"));
+		} catch (Exception e) {
+			hasNoError = false;
+		}
+		assertEquals(hasNoError, true);
+	}
 	
 	@Test						//TODO: Temporary fix AAF-111
 	public void netYetTested() {

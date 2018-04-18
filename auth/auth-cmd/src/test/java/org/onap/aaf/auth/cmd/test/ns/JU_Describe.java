@@ -45,14 +45,14 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Describe {
 	
-//	private static Describe desc;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		desc = new Describe(ns);
-//	}
+	private static Describe desc;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		desc = new Describe(ns);
+	}
 //	
 //	@Test
 //	public void exec() {
@@ -70,9 +70,10 @@ public class JU_Describe {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		desc.detailedHelp(0, sb );
 	}
 }
 
