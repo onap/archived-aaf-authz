@@ -41,16 +41,16 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListNsKeysByAttrib {
 	
-//	private static ListNsKeysByAttrib lsNsKeys;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		List ls = new List(ns);
-//		lsNsKeys = new ListNsKeysByAttrib(ls);
-//	}
-//	
+	private static ListNsKeysByAttrib lsNsKeys;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		List ls = new List(ns);
+		lsNsKeys = new ListNsKeysByAttrib(ls);
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -67,9 +67,10 @@ public class JU_ListNsKeysByAttrib {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		lsNsKeys.detailedHelp(0, sb );
 	}
 }
 

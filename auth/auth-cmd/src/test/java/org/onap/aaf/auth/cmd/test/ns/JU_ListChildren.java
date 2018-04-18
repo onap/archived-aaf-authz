@@ -41,17 +41,17 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListChildren {
-//	
-//	private static ListChildren lsChildren;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		List ls = new List(ns);
-//		lsChildren = new ListChildren(ls);
-//	}
-//	
+	
+	private static ListChildren lsChildren;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		List ls = new List(ns);
+		lsChildren = new ListChildren(ls);
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -68,9 +68,10 @@ public class JU_ListChildren {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		lsChildren.detailedHelp(0, sb );
 	}
 }
 

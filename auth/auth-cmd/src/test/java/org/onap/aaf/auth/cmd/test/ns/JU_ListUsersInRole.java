@@ -39,17 +39,17 @@ import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListUsersInRole {
 
-//	private static ListUsersInRole lsUserinRole;
-//
-//	@BeforeClass
-//	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		List ls = new List(ns);//possible wrong import, remove import org.onap.aaf.auth.cmd.ns to see other options
-//		ListUsers lsU = new ListUsers(ls);
-//		lsUserinRole = new ListUsersInRole(lsU);
-//	}
-//
+	private static ListUsersInRole lsUserinRole;
+
+	@BeforeClass
+	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		List ls = new List(ns);//possible wrong import, remove import org.onap.aaf.auth.cmd.ns to see other options
+		ListUsers lsU = new ListUsers(ls);
+		lsUserinRole = new ListUsersInRole(lsU);
+	}
+
 //	@Test
 //	public void exec() {
 //		try {
@@ -58,20 +58,16 @@ public class JU_ListUsersInRole {
 //			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
 //		}
 //	}
-//
-//	@Test
-//	public void detailedHelp() {
-//		boolean hasNoError = true;
-//		try {
-//			lsUserinRole.detailedHelp(1, new StringBuilder("test"));
-//		} catch (Exception e) {
-//			hasNoError = false;
-//		}
-//		assertEquals(hasNoError, true);
-//	}
-	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+
+	@Test
+	public void detailedHelp() {
+		boolean hasNoError = true;
+		try {
+			lsUserinRole.detailedHelp(1, new StringBuilder("test"));
+		} catch (Exception e) {
+			hasNoError = false;
+		}
+		assertEquals(hasNoError, true);
 	}
+
 }

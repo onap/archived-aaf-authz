@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
@@ -48,8 +49,6 @@ import org.onap.aaf.misc.env.impl.BasicEnv;
 
 import aaf.v2_0.History;
 import aaf.v2_0.History.Item;
-
-import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

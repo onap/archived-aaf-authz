@@ -41,16 +41,16 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListAdminResponsible {
 	
-//	private static ListAdminResponsible lsAdminRes;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		List ls = new List(ns);
-//		lsAdminRes = new ListAdminResponsible(ls);
-//	}
-//	
+	private static ListAdminResponsible lsAdminRes;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		NS ns = new NS(cli);
+		List ls = new List(ns);
+		lsAdminRes = new ListAdminResponsible(ls);
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -68,9 +68,10 @@ public class JU_ListAdminResponsible {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		lsAdminRes.detailedHelp(0, sb );
 	}
 }
 
