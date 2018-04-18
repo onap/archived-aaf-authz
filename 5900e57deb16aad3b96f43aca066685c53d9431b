@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_94661e50",
+        "filename": "auth/auth-cmd/src/test/java/org/onap/aaf/auth/cmd/test/ns/JU_ListUsersContact.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 3649
+      },
+      "writtenOn": "2018-04-18T20:45:52Z",
+      "side": 1,
+      "message": "Must test off network because thats what jenkins does.  IE why it fails for jenkins and succeeds for my local.  HCLient line 334 off network is problem child.",
+      "revId": "5900e57deb16aad3b96f43aca066685c53d9431b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
