@@ -71,9 +71,7 @@ public class JU_AAFLocator {
 		// 	Item i = al.first();
 		// 	i = al.next(i);
 		// 	i = al.best();
-		// 	System.out.println("hi");
 		// } catch (Exception e) {
-		// 	e.printStackTrace();
 		// 	Assert.fail();
 		// }
 	}

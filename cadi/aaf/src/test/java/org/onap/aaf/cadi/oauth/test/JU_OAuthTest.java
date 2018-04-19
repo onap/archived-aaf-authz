@@ -21,6 +21,8 @@
 
 package org.onap.aaf.cadi.oauth.test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.net.ConnectException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -51,11 +53,16 @@ import junit.framework.Assert;
 
 public class JU_OAuthTest {
 
+	private ByteArrayOutputStream outStream;
+
 	private static PropAccess access;
 	private static TokenClientFactory tcf;
 
 	@BeforeClass
 	public static void setUpBeforeClass()  {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(outStream));
+
 		access = new PropAccess();
 		try {
 			tcf = TokenClientFactory.instance(access);
@@ -71,10 +78,13 @@ public class JU_OAuthTest {
 
 	@Before
 	public void setUp() throws Exception {
+		outStream = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(outStream));
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		System.setOut(System.out);
 	}
 
 	@Test
@@ -190,32 +200,31 @@ public class JU_OAuthTest {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 //			Assert.fail();
 		}
 	}
 	
 	
-	private TokenClient testROPCFlow(final String url, final String client_id, final String client_secret, String user, String password, final String ... scope) throws Exception {
-		TokenClient tclient = tcf.newClient(url,3000);
-		tclient.client_creds(client_id, client_secret);
-		if(user!=null && password!=null) {
-			tclient.password(user,password);
-		}
-		Result<TimedToken> rt = tclient.getToken(scope);
-		if(rt.isOK()) {
-			print(rt.value);
-			Result<Introspect> rti = tclient.introspect(rt.value.getAccessToken());
-			if(rti.isOK()) {
-				print(rti.value);
-			} else {
-				printAndFail(rti);
-			}
-		} else {
-			printAndFail(rt);
-		}
-		return tclient;
-	}
+//	private TokenClient testROPCFlow(final String url, final String client_id, final String client_secret, String user, String password, final String ... scope) throws Exception {
+//		TokenClient tclient = tcf.newClient(url,3000);
+//		tclient.client_creds(client_id, client_secret);
+//		if(user!=null && password!=null) {
+//			tclient.password(user,password);
+//		}
+//		Result<TimedToken> rt = tclient.getToken(scope);
+//		if(rt.isOK()) {
+//			print(rt.value);
+//			Result<Introspect> rti = tclient.introspect(rt.value.getAccessToken());
+//			if(rti.isOK()) {
+//				print(rti.value);
+//			} else {
+//				printAndFail(rti);
+//			}
+//		} else {
+//			printAndFail(rt);
+//		}
+//		return tclient;
+//	}
 	
 	private String serviceCall(TzClient tzClient) throws Exception {
 		return tzClient.best(new Retryable<String>() {
@@ -230,10 +239,10 @@ public class JU_OAuthTest {
 			}
 		});
 	}
-	private void printAndFail(Result<?> rt) {
-		System.out.printf("HTTP Code %d: %s\n", rt.code, rt.error);
-		Assert.fail(rt.toString());
-	}
+//	private void printAndFail(Result<?> rt) {
+//		System.out.printf("HTTP Code %d: %s\n", rt.code, rt.error);
+//		Assert.fail(rt.toString());
+//	}
 
 	private void print(Token t) {
 		GregorianCalendar exp_date = new GregorianCalendar();
