@@ -136,6 +136,7 @@
 		<module>aaf</module>
 		<module>oauth-enduser</module>
 		<module>shiro</module>
+		<module>shiro-osgi-bundle</module>
 	</modules>
 
 	<!-- ============================================================== -->
