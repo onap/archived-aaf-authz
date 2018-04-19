@@ -19,29 +19,21 @@
  * *
  * *
  ******************************************************************************/
-package org.onap.aaf.auth.cmd.test.ns;
 
-import org.junit.Assert;
+package org.onap.aaf.auth.cmd.test.mgmt;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
 import org.junit.Before;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.GeneralSecurityException;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.ns.Delete;
+import org.onap.aaf.auth.cmd.mgmt.Deny;
+import org.onap.aaf.auth.cmd.mgmt.Mgmt;
+import org.onap.aaf.auth.cmd.ns.Create;
 import org.onap.aaf.auth.cmd.ns.NS;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
@@ -53,18 +45,27 @@ import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
 
-public class JU_Delete {
+import static org.mockito.Mockito.*;
 
-	private static Delete delete;//import may be org.onap.aaf.auth.cmd.perm
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.junit.Test;
+
+public class JU_Deny {
+	
+	private static Deny deny;//might need to replace import with org.onap.aaf.auth.cmd.perm
 	PropAccess prop;
 	AuthzEnv aEnv;
 	Writer wtr;
 	Locator<URI> loc;
 	HMangr hman;	
 	AAFcli aafcli;
-	
+
 	@Before
-	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		prop = new PropAccess();
 		aEnv = new AuthzEnv();
 		wtr = mock(Writer.class);
@@ -72,10 +73,11 @@ public class JU_Delete {
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
 		hman = new HMangr(aEnv, loc);	
 		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		NS ns = new NS(aafcli);
-		delete = new Delete(ns);
-
+		Mgmt mgmt = new Mgmt(aafcli);
+		deny = new Deny(mgmt);
 	}
+	
+	
 
 	@Test
 	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
@@ -87,20 +89,12 @@ public class JU_Delete {
 		when(loc.get(value)).thenReturn(uri);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
 		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"add","upd","del","add","upd","del"};
-		delete._exec(0, strArr);
+//		String[] strArr = {"add","del", "add","del"};
+//		deny._exec(0, strArr);
+//		
+//		String[] strArr1 = {"del", "add","del"};
+//		deny._exec(0, strArr1);
 		
-	}
-
-	@Test
-	public void detailedHelp() {
-		boolean hasNoError = true;
-		try {
-			delete.detailedHelp(1, new StringBuilder("test"));
-		} catch (Exception e) {
-			hasNoError = false;
-		}
-		assertEquals(hasNoError, true);
 	}
 
 }
