@@ -50,15 +50,15 @@ public class JU_ListUsersWithPerm {
 		lsUserWithPerm = new ListUsersWithPerm(lsU);
 	}
 
-	@Test
-	public void exec() {
-		try {
-			assertEquals(lsUserWithPerm._exec(0, "add", "del", "reset", "extend"), 500);
-		} catch (Exception e) {
-			assertEquals(e.getMessage(), "No Services Found for https://DME2RESOLVE [ ]");
-
-		}
-	}
+//	@Test
+//	public void exec() {
+//		try {
+//			assertEquals(lsUserWithPerm._exec(0, "add", "del", "reset", "extend"), 500);
+//		} catch (Exception e) {
+//			assertEquals(e.getMessage(), "No Services Found for https://DME2RESOLVE [ ]");
+//
+//		}
+//	}
 
 	@Test
 	public void detailedHelp() {
