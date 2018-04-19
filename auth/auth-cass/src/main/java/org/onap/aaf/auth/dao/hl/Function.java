@@ -40,23 +40,23 @@ import org.onap.aaf.auth.dao.cass.DelegateDAO;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.dao.cass.Namespace;
 import org.onap.aaf.auth.dao.cass.NsDAO;
+import org.onap.aaf.auth.dao.cass.NsDAO.Data;
 import org.onap.aaf.auth.dao.cass.NsSplit;
 import org.onap.aaf.auth.dao.cass.NsType;
 import org.onap.aaf.auth.dao.cass.PermDAO;
 import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.auth.dao.cass.Status;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
-import org.onap.aaf.auth.dao.cass.NsDAO.Data;
 import org.onap.aaf.auth.dao.hl.Question.Access;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.env.AuthzTrans.REQD_TYPE;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.Executor;
 import org.onap.aaf.auth.org.Organization;
-import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.Organization.Expiration;
 import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.Organization.Policy;
+import org.onap.aaf.auth.org.OrganizationException;
 
 public class Function {
 
@@ -735,7 +735,7 @@ public class Function {
 
 	private Result<Void> checkValidID(AuthzTrans trans, Date now, String user) {
 		Organization org = trans.org();
-		if (user.endsWith(org.getRealm())) {
+		if (org.supportsRealm(user)) {
 			try {
 				if (org.getIdentity(trans, user) == null) {
 					return Result.err(Status.ERR_Denied,

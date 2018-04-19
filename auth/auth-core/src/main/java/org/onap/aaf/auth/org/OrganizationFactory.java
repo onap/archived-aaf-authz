@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.util.FQI;
+import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 
@@ -98,6 +99,13 @@ public class OrganizationFactory {
 						Class<Organization> cls = (Class<Organization>) Class.forName(orgClass);
 						Constructor<Organization> cnst = cls.getConstructor(Env.class,String.class);
 						org = cnst.newInstance(env,orgNS);
+						String other_realms = env.getProperty(orgNS+".also_supports");
+						if(other_realms!=null) {
+							for(String r : Split.splitTrim(',', other_realms)) {
+								org.addSupportedRealm(r);
+							}
+						}
+						
 					} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | 
 							InstantiationException | IllegalAccessException | IllegalArgumentException | 
 							InvocationTargetException e) {

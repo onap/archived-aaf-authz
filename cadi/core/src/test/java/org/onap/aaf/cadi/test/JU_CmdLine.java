@@ -163,6 +163,10 @@ public class JU_CmdLine {
 		assertThat(outContent.toString().length(), is(2074));
 
 		String filePath = "test/output_key";
+		File testDir = new File("test");
+		if(!testDir.exists()) {
+			testDir.mkdirs();
+		}
 		CmdLine.main(new String[]{"keygen", filePath});
 		File keyfile = new File(filePath);
 		assertTrue(Files.isReadable(Paths.get(filePath)));
