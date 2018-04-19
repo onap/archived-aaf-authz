@@ -130,9 +130,6 @@ public class HMangr {
 							} else {
 								throw new CadiException("Socket prematurely closed, no more services to try");
 							}
-						} else if(ec instanceof SSLHandshakeException) {
-							retryable.item(null);
-							throw e;
 						} else if(ec instanceof SocketException) {
 							if("java.net.SocketException: Connection reset".equals(ec.getMessage())) {
 								access.log(Level.ERROR, ec.getMessage(), " can mean Certificate Expiration or TLS Protocol issues");
@@ -160,9 +157,6 @@ public class HMangr {
 	
 	
 	public<RET> RET best(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable) throws LocatorException, CadiException, APIException {
-		if(loc==null) {
-			throw new LocatorException("No Locator Configured");
-		}
 		retryable.item(loc.best());
 		return same(ss,retryable);
 	}
@@ -232,7 +226,7 @@ public class HMangr {
 		connectionTimeout = t;
 	}
 
-	public int connectionTimout() {
+	public int connectionTimeout() {
 		return connectionTimeout;
 	}
 
