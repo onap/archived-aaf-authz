@@ -22,9 +22,18 @@
 package org.onap.aaf.auth.cmd.test.ns;
 
 import org.junit.Assert;
+import org.junit.Before;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,38 +44,56 @@ import org.onap.aaf.auth.cmd.ns.List;
 import org.onap.aaf.auth.cmd.ns.ListActivity;
 import org.onap.aaf.auth.cmd.ns.NS;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.http.HMangr;
+import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListActivity {
 	
 	private static ListActivity lsActivity;
+	PropAccess prop;
+	AuthzEnv aEnv;
+	Writer wtr;
+	Locator<URI> loc;
+	HMangr hman;	
+	AAFcli aafcli;
 	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		NS ns = new NS(cli);
+	@Before
+	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		prop = new PropAccess();
+		aEnv = new AuthzEnv();
+		wtr = mock(Writer.class);
+		loc = mock(Locator.class);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		hman = new HMangr(aEnv, loc);	
+		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+		NS ns = new NS(aafcli);
 		List ls = new List(ns);
 		lsActivity = new ListActivity(ls);
 	}
 	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsActivity._exec(0, "add","del","reset","extend"),500);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	@Test
+	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+		Item value = mock(Item.class);
+		Locator.Item item = new Locator.Item() {
+		};
+		when(loc.best()).thenReturn(value);
+		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		when(loc.get(value)).thenReturn(uri);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		String[] strArr = {"add","upd","del","add","upd","del"};
+		//lsActivity._exec(0, strArr);
+		
+	}
 	
 	@Test
 	public void testDetailedHelp() {

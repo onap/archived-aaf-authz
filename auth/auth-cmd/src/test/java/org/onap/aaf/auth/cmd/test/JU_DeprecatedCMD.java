@@ -19,58 +19,60 @@
  * *
  * *
  ******************************************************************************/
-package org.onap.aaf.auth.cmd.test.perm;
 
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+package org.onap.aaf.auth.cmd.test;
 
-import org.junit.BeforeClass;
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.perm.Create;
-import org.onap.aaf.auth.cmd.perm.Perm;
-import org.onap.aaf.auth.cmd.role.Role;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
+import org.onap.aaf.auth.cmd.Cmd;
+import org.onap.aaf.auth.cmd.DeprecatedCMD;
+import org.onap.aaf.auth.cmd.Param;
+import org.onap.aaf.auth.cmd.test.JU_Cmd;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.misc.env.APIException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class JU_Create {
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import org.junit.Test;
+
+public class JU_DeprecatedCMD {
+
+	CmdStub cmd;
+	AAFcli cli;
 	
-	private static Create create;
-	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		Role role = new Role(cli);
-		Perm perm = new Perm(role);
-		create = new Create(perm);
+	private class CmdStub extends Cmd {
+
+		public CmdStub(AAFcli aafcli, String name, Param[] params) {
+			super(aafcli, name, params);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected int _exec(int idx, String... args) throws CadiException, APIException, LocatorException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+		
 	}
-	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(create._exec(0, "add","del","reset","extend"),500);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 	
 	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		create.detailedHelp(0, sb);
+	public void testExec() throws CadiException, APIException, LocatorException, GeneralSecurityException, IOException {
+		cli = JU_AAFCli.getAAfCli();
+		Param[] param = new Param[] {new Param("name",true)};
+		
+		cmd = new CmdStub(cli,"test", param);
+		DeprecatedCMD deprecatedcmd = new DeprecatedCMD(cmd,"test", "test");
+		deprecatedcmd._exec(0, "test");
 	}
-	
+
 }
