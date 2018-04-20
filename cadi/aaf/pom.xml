@@ -91,25 +91,21 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-client</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-client</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-misc-env</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
@@ -137,7 +133,6 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
 				<configuration>
 					<excludes>
 						<exclude>**/gen/**</exclude>
@@ -192,14 +187,35 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- We want to create a Jar with Rosetta built in (since I don't want
-				a separate deployment at this time Use this one as the jar to put in SWM
-				packages <plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration>
-				<classifier>tests</classifier> <archive> <manifest> <mainClass>org.onap.aaf.cadi.cm.CmAgent</mainClass>
-				</manifest> <manifestEntries> <Sealed>true</Sealed> </manifestEntries> </archive>
-				</configuration> <executions> <execution> <id>full</id> <phase>package</phase>
-				<goals> <goal>single</goal> </goals> <configuration> <descriptors> <descriptor>src/assemble/cadi-aaf.xml</descriptor>
-				</descriptors> </configuration> </execution> </executions> </plugin> -->
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<classifier>tests</classifier>
+					<archive>
+						<manifest>
+							<mainClass>com.att.cadi.cm.CmAgent</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Sealed>true</Sealed>
+						</manifestEntries>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>full</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assemble/cadi-aaf.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

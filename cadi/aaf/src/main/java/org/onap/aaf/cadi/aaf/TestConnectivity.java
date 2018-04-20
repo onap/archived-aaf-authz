@@ -109,11 +109,12 @@ public class TestConnectivity {
 				}
 
 				/////////
-				print(true,"Test Proxy Access driven by AAFLocator");
-				locator = new AAFLocator(si, new URI(aaflocate+"/AAF_NS.gw:2.0/proxy"));
-				for(SecuritySetter<HttpURLConnection> ss : lss) {
-					permTest(locator,ss);
-				}
+				// Removed for ONAP
+//				print(true,"Test Proxy Access driven by AAFLocator");
+//				locator = new AAFLocator(si, new URI(aaflocate+"/AAF_NS.gw:2.0/proxy"));
+//				for(SecuritySetter<HttpURLConnection> ss : lss) {
+//					permTest(locator,ss);
+//				}
 
 				//////////
 				print(true,"Test essential BasicAuth Service call, driven by AAFLocator");

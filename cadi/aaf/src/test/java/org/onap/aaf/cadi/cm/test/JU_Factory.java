@@ -28,15 +28,11 @@ import org.junit.*;
 import org.mockito.*;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -55,7 +51,7 @@ import javax.crypto.Cipher;
 import org.onap.aaf.cadi.cm.CertException;
 import org.onap.aaf.cadi.cm.Factory;
 import org.onap.aaf.cadi.cm.Factory.StripperInputStream;
-import org.onap.aaf.cadi.cm.Factory.Base64InputStream;
+
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -248,7 +244,7 @@ public class JU_Factory {
 		output = Factory.toString(transMock, certs.toArray(new Certificate[0])[0]);
 		assertThat(output, is(certString));
 
-		List<String> certStrings = new ArrayList();
+		List<String> certStrings = new ArrayList<String>();
 		certStrings.add(certString);
 		certStrings.add(certString);
 		certs = Factory.toX509Certificate(certStrings);
@@ -325,12 +321,31 @@ public class JU_Factory {
 		for (int i = 0; i < lines.length - 2; i++) {
 			rawLines.add(lines[i + 1]);
 		}
-		return String.join("", rawLines);
+		return join("", rawLines);
 	}
 
+	/** 
+	 * Note: String.join is not part of JDK 7, which is what we compile to for CADI
+	 */
+	private String join(String delim, List<String> rawLines) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for(String s : rawLines) {
+			if(first) {
+				first = false;
+			} else {
+				sb.append(delim);
+			}
+			sb.append(s);
+		}
+		return sb.toString();
+	}
+	
+	/* Not used locally
 	private void writeToFile(File file, String contents) throws Exception {
 		writeToFile(file, contents, null);
 	}
+	*/
 
 	private void writeToFile(File file, String contents, String header) throws Exception {
 		PrintWriter writer = new PrintWriter(file, "UTF-8");
