@@ -18,17 +18,24 @@
  * ============LICENSE_END====================================================
  *
  */
-
 package org.onap.aaf.misc.xgen;
 
-public class Back {
-	public String str;
-	public boolean dec;
-	public boolean cr;
-	
-	public Back(String string, boolean decrement, boolean newline) {
-		str = string;
-		dec = decrement;
-		cr = newline;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class JU_MarkTest {
+
+	@Test
+	public void testMark() {
+		Mark mark = new Mark();
+		assertEquals(mark.spot, 0);
+		assertEquals(mark.comment, null);
+
+		mark = new Mark("New Comment");
+		mark.spot(10);
+		assertEquals(mark.spot, 10);
+		assertEquals(mark.comment, "New Comment");
+
 	}
 }

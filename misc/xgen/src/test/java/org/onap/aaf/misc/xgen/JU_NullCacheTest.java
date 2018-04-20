@@ -18,17 +18,18 @@
  * ============LICENSE_END====================================================
  *
  */
-
 package org.onap.aaf.misc.xgen;
 
-public class Back {
-	public String str;
-	public boolean dec;
-	public boolean cr;
-	
-	public Back(String string, boolean decrement, boolean newline) {
-		str = string;
-		dec = decrement;
-		cr = newline;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.onap.aaf.misc.xgen.Cache.Null;
+
+public class JU_NullCacheTest {
+
+	@Test
+	public void testNullIsSingleton() {
+		Null<?> singleton = Cache.Null.singleton();
+		assertEquals(singleton, Cache.Null.singleton());
 	}
 }

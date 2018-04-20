@@ -18,17 +18,47 @@
  * ============LICENSE_END====================================================
  *
  */
-
 package org.onap.aaf.misc.xgen;
 
-public class Back {
-	public String str;
-	public boolean dec;
-	public boolean cr;
-	
-	public Back(String string, boolean decrement, boolean newline) {
-		str = string;
-		dec = decrement;
-		cr = newline;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+import java.io.Writer;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.onap.aaf.misc.env.APIException;
+
+public class JU_SectionTest {
+
+	@Mock
+	private Writer writer;
+
+	@Before
+	public void setup() {
+		writer = mock(Writer.class);
 	}
+
+	@Test
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void test() throws APIException, IOException {
+		Section section = new Section();
+		section.forward = "Forward";
+		section.backward = "Backward";
+
+		section.setIndent(10);
+		section.forward(writer);
+		section.back(writer);
+
+		assertEquals(section.use(null, null, null), section);
+		assertEquals(section.getIndent(), 10);
+		assertEquals(section.toString(), "Forward");
+
+		verify(writer).write("Forward");
+		verify(writer).write("Backward");
+	}
+
 }

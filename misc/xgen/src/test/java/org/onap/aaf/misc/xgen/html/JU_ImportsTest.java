@@ -18,17 +18,37 @@
  * ============LICENSE_END====================================================
  *
  */
+package org.onap.aaf.misc.xgen.html;
 
-package org.onap.aaf.misc.xgen;
+import static org.junit.Assert.assertEquals;
 
-public class Back {
-	public String str;
-	public boolean dec;
-	public boolean cr;
-	
-	public Back(String string, boolean decrement, boolean newline) {
-		str = string;
-		dec = decrement;
-		cr = newline;
+import org.junit.Before;
+import org.junit.Test;
+
+public class JU_ImportsTest {
+
+	@Before
+	public void setUp() throws Exception {
 	}
+
+	@Test
+	public void test() {
+		Imports imports = new Imports(2);
+		imports.css("styles.css");
+		imports.js("main.js");
+		imports.theme("New Theme");
+
+		assertEquals("New Theme", imports.themeResolve(null));
+		assertEquals("New Theme", imports.themeResolve(""));
+		assertEquals("The Theme", imports.themeResolve("The Theme"));
+
+		assertEquals("build/../../", imports.dots(new StringBuilder("build/")).toString());
+		assertEquals("../../Theme/", imports.themePath("Theme"));
+		assertEquals("../../New Theme/", imports.themePath(""));
+		assertEquals("../../New Theme/", imports.themePath(null));
+
+		imports.theme(null);
+		assertEquals("../../", imports.themePath(null));
+	}
+
 }

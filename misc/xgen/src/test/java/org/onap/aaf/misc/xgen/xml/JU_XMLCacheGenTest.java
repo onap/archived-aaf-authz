@@ -18,17 +18,46 @@
  * ============LICENSE_END====================================================
  *
  */
+package org.onap.aaf.misc.xgen.xml;
 
-package org.onap.aaf.misc.xgen;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
-public class Back {
-	public String str;
-	public boolean dec;
-	public boolean cr;
-	
-	public Back(String string, boolean decrement, boolean newline) {
-		str = string;
-		dec = decrement;
-		cr = newline;
+import java.io.IOException;
+import java.io.Writer;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.xgen.Code;
+
+public class JU_XMLCacheGenTest {
+
+	@Mock
+	Writer writer;
+
+	@Mock
+	Code code;
+
+	@Before
+	public void setup() {
+
+		code = mock(Code.class);
+		writer = mock(Writer.class);
 	}
+
+	@Test
+	public void test() throws APIException, IOException {
+		XMLCacheGen cacheGen = new XMLCacheGen(0, code);
+		assertEquals(cacheGen.PRETTY, 1);
+
+		XMLGen xgen = cacheGen.create(1, writer);
+		assertEquals(0, xgen.getIndent());
+
+		xgen.setIndent(10);
+		assertEquals(10, xgen.getIndent());
+		xgen.comment("Comment");
+	}
+
 }

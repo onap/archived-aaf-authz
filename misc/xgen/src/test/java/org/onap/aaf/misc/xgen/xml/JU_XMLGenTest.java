@@ -21,24 +21,46 @@
 
 package org.onap.aaf.misc.xgen.xml;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
 import java.io.Writer;
+import java.util.Map;
+import java.util.TreeMap;
 
-import org.onap.aaf.misc.xgen.XGen;;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 
-public class XMLGen extends XGen<XMLGen> {
-	private final String XML_TAG; 
-	
-	public XMLGen(Writer w) {
-		this(w,"UTF-8");
+public class JU_XMLGenTest {
+
+	@Mock
+	private Writer writer;
+
+	String XML_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
+
+	Map<Character, Integer> map = new TreeMap<Character, Integer>();
+
+	@Before
+	public void setUp() throws Exception {
+		writer = mock(Writer.class);
 	}
-	
-	public XMLGen(Writer w, String encoding) {
-		super(w);
-		XML_TAG="<?xml version=\"1.0\" encoding=\"" + encoding + "\" standalone=\"yes\"?>"; 
-	}
 
-	public XMLGen xml() {
-		forward.println(XML_TAG);
-		return this;
+	@Test
+	public void testXMLGenWriter() throws IOException {
+		XMLGen xmlGen = new XMLGen(writer);
+
+		xmlGen.xml();
+
+		for (char ch : XML_TAG.toCharArray()) {
+			Integer times = map.get(ch);
+			map.put(ch, (times == null ? 0 : times) + 1);
+		}
+
+		for (char ch : map.keySet()) {
+			verify(writer, times(map.get(ch))).write(ch);
+		}
 	}
 }
