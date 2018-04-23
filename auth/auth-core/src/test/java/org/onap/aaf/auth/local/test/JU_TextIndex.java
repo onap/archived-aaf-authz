@@ -69,6 +69,7 @@ public class JU_TextIndex {
 		public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
 			super(dataf, sepChar, maxLineSize, fieldOffset);
 			// TODO Auto-generated constructor stub
+			
 		}
 		
 	}

@@ -80,20 +80,20 @@ public class JU_Admin {
 		
 	}
 	
-//	@Test
-//	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-//		Item value = mock(Item.class);
-//		Locator.Item item = new Locator.Item() {
-//		};
-//		when(loc.best()).thenReturn(value);
-//		URI uri = new URI("http://java.sun.com/j2se/1.3/");
-//		when(loc.get(value)).thenReturn(uri);
-//		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
-//		String[] strArr = {"add", "del","add","add"};
-//		admin._exec(0, strArr);
-//		
-//	}
+	@Test
+	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+		Item value = mock(Item.class);
+		Locator.Item item = new Locator.Item() {
+		};
+		when(loc.best()).thenReturn(value);
+		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		when(loc.get(value)).thenReturn(uri);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		String[] strArr = {"add", "del","add","add"};
+		admin._exec(0, strArr);
+		
+	}
 
 	@Test
 	public void detailedHelp() {
