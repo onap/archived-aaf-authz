@@ -341,12 +341,6 @@ public class JU_Factory {
 		return sb.toString();
 	}
 	
-	/* Not used locally
-	private void writeToFile(File file, String contents) throws Exception {
-		writeToFile(file, contents, null);
-	}
-	*/
-
 	private void writeToFile(File file, String contents, String header) throws Exception {
 		PrintWriter writer = new PrintWriter(file, "UTF-8");
 		if (header != null) {
