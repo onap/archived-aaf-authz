@@ -60,6 +60,7 @@ public class JU_AbsData {
 		public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
 			super(dataf, sepChar, maxLineSize, fieldOffset);
 			// TODO Auto-generated constructor stub
+			
 		}
 		
 	}

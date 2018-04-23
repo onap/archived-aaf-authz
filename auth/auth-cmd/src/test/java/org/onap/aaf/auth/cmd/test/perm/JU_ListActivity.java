@@ -42,17 +42,17 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListActivity {
 	
-//	private static ListActivity lsActivity;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		Role role = new Role(cli);
-//		Perm perm = new Perm(role);
-//		List ls = new List(perm);
-//		lsActivity = new ListActivity(ls);
-//	}
-//	
+	private static ListActivity lsActivity;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		Role role = new Role(cli);
+		Perm perm = new Perm(role);
+		List ls = new List(perm);
+		lsActivity = new ListActivity(ls);
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -69,8 +69,9 @@ public class JU_ListActivity {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		lsActivity.detailedHelp(0, sb);
 	}
 }
