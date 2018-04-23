@@ -180,6 +180,12 @@ public class JU_Cmd {
 		//cmd.oneOf(retryable, "host");			//TODO: AAF-111 need input for hMan
 	}
 	
+	@Test
+	public void testExec() throws CadiException, APIException, LocatorException {
+		String[] strArr = {"a", "b", "c"};
+		cmd.exec(1, strArr);
+	}
+	
 	
 
 }

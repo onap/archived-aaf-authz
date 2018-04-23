@@ -22,41 +22,77 @@
 package org.onap.aaf.auth.cmd.test.mgmt;
 
 import org.junit.Assert;
+import org.junit.Before;
+
 import static org.mockito.Mockito.mock;
+
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaf.auth.cmd.AAFcli;
+import org.onap.aaf.auth.cmd.mgmt.Mgmt;
 import org.onap.aaf.auth.cmd.mgmt.SessClear;
+import org.onap.aaf.auth.cmd.mgmt.Session;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_SessClear {
 	
 	private static SessClear sessclr;
+	PropAccess prop;
+	AuthzEnv aEnv;
+	Writer wtr;
+	Locator<URI> loc;
+	HMangr hman;	
+	AAFcli aafcli;
 	
-	@BeforeClass
-	public static void setUp() {
-		sessclr = mock(SessClear.class);
+	@Before
+	public  void setUp() throws LocatorException, APIException {
+		prop = new PropAccess();
+		aEnv = new AuthzEnv();
+		wtr = mock(Writer.class);
+		loc = mock(Locator.class);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		hman = new HMangr(aEnv, loc);	
+		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+		Mgmt mgmt = new Mgmt(aafcli);
+		Session sess = new Session(mgmt);
+		sessclr = new SessClear(sess);
 	}
 	
+//	@Test
+//	public void exec() {
+//		try {
+//			assertEquals(sessclr._exec(0, "session clear"), 0);
+//		} catch (CadiException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (APIException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (LocatorException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
 	@Test
-	public void exec() {
-		try {
-			assertEquals(sessclr._exec(0, "session clear"), 0);
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		//sessclr.detailedHelp(0, sb);
 	}
 }
