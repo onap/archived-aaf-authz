@@ -133,18 +133,7 @@ public abstract class Rcli<CT> {
 
 
 	public<T> Future<T> create(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -164,18 +153,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> create(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -195,18 +173,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> create(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -226,19 +193,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> create(String pathinfo, Class<T> cls) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -253,19 +208,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public Future<Void> create(String pathinfo, String contentType) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -294,18 +237,7 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public <T> Future<T> postForm(String pathinfo, final RosettaDF<T> df, final String ... formParam) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -364,18 +296,7 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public<T> Future<String> readPost(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -406,18 +327,7 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public<T,R> Future<R> readPost(String pathinfo, final RosettaDF<T> df, final T t, final RosettaDF<R> resp) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -437,18 +347,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public Future<String> readPost(String pathinfo, String contentType, String ... headers) throws CadiException, APIException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -466,18 +365,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public Future<String> read(String pathinfo, String accept, String ... headers) throws APIException, CadiException {
-		final String qp;
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 	
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -498,19 +386,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> read(String pathinfo, String accept, RosettaDF<T> df, String ... headers) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -529,19 +405,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> read(String pathinfo, RosettaDF<T> df,String ... headers) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -560,18 +424,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> read(String pathinfo, Class<?> cls, RosettaDF<T> df) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -587,19 +440,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> update(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
@@ -619,19 +460,7 @@ public abstract class Rcli<CT> {
 	}
 	
 	public<T> Future<String> updateRespondString(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
@@ -652,18 +481,7 @@ public abstract class Rcli<CT> {
 
 
 	public<T> Future<T> update(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
@@ -683,19 +501,7 @@ public abstract class Rcli<CT> {
 	}
 	
 	public<T> Future<T> update(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
@@ -724,19 +530,7 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public<T> Future<Void> update(String pathinfo) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
@@ -755,19 +549,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> delete(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
@@ -787,19 +569,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> delete(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
@@ -819,18 +589,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public<T> Future<T> delete(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
@@ -852,19 +611,7 @@ public abstract class Rcli<CT> {
 
 
 	public<T> Future<T> delete(String pathinfo, Class<T> cls) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
-
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
@@ -879,18 +626,7 @@ public abstract class Rcli<CT> {
 	}
 
 	public Future<Void> delete(String pathinfo, String contentType) throws APIException, CadiException {
-		final String qp; 
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
-			} else {
-				qp=queryParams;
-			}
-		}
+		final String qp = setupParams(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
@@ -942,6 +678,22 @@ public abstract class Rcli<CT> {
 		}
 		client.send();
 		return client.future(resp, expected);
+	}
+
+	private String setupParams(String pathinfo) {
+		final String qp;
+		if(pathinfo==null) {
+			qp=queryParams;
+		} else {
+			final int idx = pathinfo.indexOf('?');
+			if(idx>=0) {
+				qp=pathinfo.substring(idx+1);
+				pathinfo=pathinfo.substring(0,idx);
+			} else {
+				qp=queryParams;
+			}
+		}
+		return qp;
 	}
 
 	public String toString() {
