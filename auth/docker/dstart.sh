@@ -1,9 +1,6 @@
 #!/bin/bash dstop.sh
-ORG=onap
-PROJECT=aaf
-DOCKER_REPOSITORY=nexus3.onap.org:10003
-VERSION=2.1.0-SNAPSHOT
-./d.props
+# Pull in Props
+. ./d.props
 
 if [ "$1" == "" ]; then
   AAF_COMPONENTS=`ls -r ../aaf_${VERSION}/bin | grep -v '\.'`

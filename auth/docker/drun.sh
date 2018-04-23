@@ -1,4 +1,5 @@
 #!/bin/bash drun.sh
+# Pull in Variables from d.props
 . ./d.props
 
 
@@ -40,7 +41,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 	echo Starting aaf_$AAF_COMPONENT...
 
 	docker run  \
-	  -d \
+	  -i \
 	  --name aaf_$AAF_COMPONENT \
 	  --hostname="${AAF_COMPONENT}.aaf.osaaf.org" \
 	  --add-host="$HOSTNAME:$HOST_IP" \
