@@ -6,10 +6,10 @@
 aaf_root_ns=org.osaaf.aaf
 aaf_trust_perm=org.osaaf.aaf|org.onap|trust
 
-cadi_prop_files=/opt/app/osaaf/local/org.osaaf.location.props:/opt/app/osaaf/local/org.osaaf.props
+cadi_prop_files=/opt/app/osaaf/local/org.osaaf.location.props:/opt/app/osaaf/local/org.osaaf.aaf.props
 cadi_protocols=TLSv1.1,TLSv1.2
 
-aaf_locate_url=https://aaf.osaaf.org
+aaf_locate_url=https://aaf.osaaf.org:8095
 aaf_url=https://AAF_LOCATE_URL/AAF_NS.service:2.0
 cadi_loginpage_url=https://AAF_LOCATE_URL/AAF_NS.gui:2.0/login
 

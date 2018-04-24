@@ -28,12 +28,9 @@
         <version>2.1.0-SNAPSHOT</version>
     </parent>
 	
-	<!-- No Parent on Purpose!!! -->
 	<artifactId>aaf-auth-client</artifactId>
 	<name>AAF Auth Client</name>
 	<description>XSD Generated classes for AAF Auth</description>
-	<groupId>org.onap.aaf.authz</groupId>
-	<version>2.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<properties>

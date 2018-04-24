@@ -12,6 +12,6 @@ cadi_keyfile=/opt/app/osaaf/local/org.osaaf.aaf.keyfile
 cadi_keystore=/opt/app/osaaf/local/org.osaaf.aaf.p12
 cadi_keystore_password=enc:4L1xY_7mYTuk57SPWZetza5WlgBUYBe8pbT1-AWKO1-5PAbSTynQEc5TU7ZeomfN
 #cadi_key_password=enc:<KEY PASSWORD (optional if the same as KEYSTORE PASSWORD)>
-cadi_alias=a2345z@aaf.osaaf.org
+cadi_alias=aaf@aaf.osaaf.org
 cadi_truststore=/opt/app/osaaf/local/org.osaaf.aaf.trust.p12
 cadi_truststore_password=enc:5nzj6v3Rb0oZPV1zCxg8EJFfkFvWFGJflLB0i_FN0Np
