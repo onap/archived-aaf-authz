@@ -680,7 +680,17 @@ public class DefaultOrg implements Organization {
 	}
 	@Override
 	public boolean supportsRealm(final String r) {
-		return supportedRealms.contains(extractRealm(r)) || r.endsWith(realm);
+		if(r.endsWith(realm)) {
+			return true;
+		} else {
+			String erealm = extractRealm(r);
+			for(String sr : supportedRealms) {
+				if(erealm.startsWith(sr)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

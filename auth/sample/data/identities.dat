@@ -36,4 +36,6 @@ dmaapbc|DMaap Bus Controller|DMaap|Bus Controller||dgl@research.att.com|a|dgfrom
 dglfromatt|Dominic Lunanuova|Dominic|Lunanuova|732-420-9618|dgl@research.att.com|e|ramokoya
 puthenpura|Sarat Puthenpura|Sarat|Puthenpura|||e|clefevre
 ruoyu|Ruoyu Ying|Ruoyu|Ying|13661960772|ruoyu.ying@intel.com|e|puthenpura
+sunilu|Sunil Unnava|Sunil|Unnava|6094541858|sunil.unnava@att.com|e|ramkoya
+dmaapmr|DMaap Message Router|DMaap MR|Message Router||su622b@att.com|a|sunilu
 
