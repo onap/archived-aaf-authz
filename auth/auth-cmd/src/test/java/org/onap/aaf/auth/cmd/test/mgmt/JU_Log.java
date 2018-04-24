@@ -89,7 +89,7 @@ public class JU_Log {
 //		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
 //		HRcli hcli = new HRcli(hman, uri, item, secSet);
 		String[] strArr = {"add","upd","del","add","upd","del"};
-		log._exec(0, strArr);
+		//log1._exec(0, strArr);
 		
 //		String[] strArr1 = {"del","add","upd","del"};
 //		log1._exec(0, strArr1);

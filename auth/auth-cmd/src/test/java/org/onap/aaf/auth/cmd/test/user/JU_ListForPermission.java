@@ -40,18 +40,18 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListForPermission {
-//	
-//	private static ListForPermission lsForPermission;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		User usr = new User(cli);
-//		List parent = new List(usr);
-//		lsForPermission = new ListForPermission(parent);
-//		
-//	}
-//	
+	
+	private static ListForPermission lsForPermission;
+	
+	@BeforeClass
+	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		User usr = new User(cli);
+		List parent = new List(usr);
+		lsForPermission = new ListForPermission(parent);
+		
+	}
+	
 //	@Test
 //	public void exec() {
 //		try {
@@ -68,8 +68,9 @@ public class JU_ListForPermission {
 //		}
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		lsForPermission.detailedHelp(0, sb);
 	}
 }

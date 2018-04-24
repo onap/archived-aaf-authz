@@ -22,54 +22,85 @@
 package org.onap.aaf.auth.cmd.test.user;
 
 import org.junit.Assert;
+import org.junit.Before;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.cmd.AAFcli;
+import org.onap.aaf.auth.cmd.ns.Create;
+import org.onap.aaf.auth.cmd.ns.NS;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 import org.onap.aaf.auth.cmd.user.List;
 import org.onap.aaf.auth.cmd.user.ListApprovals;
 import org.onap.aaf.auth.cmd.user.User;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.http.HMangr;
+import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListApprovals {
 	
-//	private static ListApprovals lsApprovals;
-//	
-//	@BeforeClass
-//	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		User usr = new User(cli);
-//		List parent = new List(usr);
-//		lsApprovals = new ListApprovals(parent);
-//		
-//	}
-//	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsApprovals._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			
-//			e.printStackTrace();
-//		}
-//	}
+	private static ListApprovals lsApprovals;
+	PropAccess prop;
+	AuthzEnv aEnv;
+	Writer wtr;
+	Locator<URI> loc;
+	HMangr hman;	
+	AAFcli aafcli;
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
+	@Before
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		prop = new PropAccess();
+		aEnv = new AuthzEnv();
+		wtr = mock(Writer.class);
+		loc = mock(Locator.class);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		hman = new HMangr(aEnv, loc);	
+		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+		User usr = new User(aafcli);
+		List parent = new List(usr);
+		lsApprovals = new ListApprovals(parent);
+	}
+	
+	
+
+	@Test
+	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+		Item value = mock(Item.class);
+		Locator.Item item = new Locator.Item() {
+		};
+		when(loc.best()).thenReturn(value);
+		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		when(loc.get(value)).thenReturn(uri);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		String[] strArr = {"user","approver","ticket"};
+		//lsApprovals._exec(0, strArr);
+		
+	}
+	
+	@Test
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		lsApprovals.detailedHelp(0, sb);
 	}
 }

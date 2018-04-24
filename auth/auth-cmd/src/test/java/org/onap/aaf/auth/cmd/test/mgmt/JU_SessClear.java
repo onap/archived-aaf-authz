@@ -40,6 +40,7 @@ import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.mgmt.Mgmt;
 import org.onap.aaf.auth.cmd.mgmt.SessClear;
 import org.onap.aaf.auth.cmd.mgmt.Session;
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
@@ -91,8 +92,10 @@ public class JU_SessClear {
 //	}
 	
 	@Test
-	public void testDetailedHelp() {
+	public void testDetailedHelp() throws CadiException {
+		Define define = new Define();
+		define.set(prop);
 		StringBuilder sb = new StringBuilder();
-		//sessclr.detailedHelp(0, sb);
+		sessclr.detailedHelp(0, sb);
 	}
 }

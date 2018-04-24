@@ -22,6 +22,8 @@
 package org.onap.aaf.auth.cmd.test.user;
 
 import org.junit.Assert;
+import org.junit.Before;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -29,6 +31,10 @@ import static org.mockito.Mockito.when;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,85 +47,68 @@ import org.onap.aaf.auth.cmd.user.Cred;
 import org.onap.aaf.auth.cmd.user.User;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.http.HMangr;
+import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Cred {
 
-	private static Cred testCred;
-	private static User testUser;
-	private static AuthzEnv env;
+	User user;
+	Cred cred;
+	PropAccess prop;
+	AuthzEnv aEnv;
+	Writer wtr;
+	Locator<URI> loc;
+	HMangr hman;	
+	AAFcli aafcli;
 
-
-	@BeforeClass
-	public static void setUp() throws FileNotFoundException, APIException {
+	@Before
+	public void setUp() throws FileNotFoundException, APIException, LocatorException {
+		prop = new PropAccess();
+		aEnv = new AuthzEnv();
+		wtr = mock(Writer.class);
+		loc = mock(Locator.class);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		hman = new HMangr(aEnv, loc);	
+		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+		user = new User(aafcli);
+		cred = new Cred(user);
+	}
+	
+	@Test
+	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+		Item value = mock(Item.class);
+		Locator.Item item = new Locator.Item() {
+		};
+		when(loc.best()).thenReturn(value);
+		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		when(loc.get(value)).thenReturn(uri);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		String[] strArr = {"add","del","reset","extend"};
+		cred._exec(0, strArr);
 		
-		testCred = mock(Cred.class);
-		testUser = mock(User.class);
-		env = mock(AuthzEnv.class);
-		Mockito.when(env.getProperty(Cmd.STARTDATE,null)).thenReturn(null);
-		Mockito.when(env.getProperty(Cmd.ENDDATE,null)).thenReturn(null);
+		String[] strArr1 = {"del","reset","extend","add"};
+		cred._exec(0, strArr1);
 		
-	}
-
-	@Test
-	public void exec() throws CadiException, APIException, LocatorException, FileNotFoundException {
-		boolean isNullpointer=false;
-		AAFcli aaFcli=	new AAFcli(env, new PrintWriter("temp"), null, null, null);
-	User user= new User(aaFcli);
-	 Cred testCred= new Cred(user);
-	try {
-		testCred._exec(0, "add", "del", "reset", "extend");
-	} catch (Exception e) {
-		isNullpointer=true;
-	} 
-	assertEquals(isNullpointer, true);
-	}
-
-
-	@Test
-	public void exec_add() {		
-		try {
-			assertNotNull(testCred._exec(0, "zeroed","add","del","reset","extend"));
-		} catch (CadiException | APIException | LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String[] strArr2 = {"reset","extend", "add","del"};
+		cred._exec(0, strArr2);
+		
+		String[] strArr3 = {"extend","add","del","reset"};
+		cred._exec(0, strArr3);
 
 	}
-
+	
 	@Test
-	public void exec_del() {		
-		try {
-			assertNotNull(testCred._exec(1, "zeroed","add","del","reset","extend"));
-		} catch (CadiException | APIException | LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test
-	public void exec_reset() {		
-		try {
-			assertNotNull(testCred._exec(2, "zeroed","add","del","reset","extend"));
-		} catch (CadiException | APIException | LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	@Test
-	public void exec_extend() {		
-		try {
-			assertNotNull(testCred._exec(3, "zeroed","add","del","reset","extend"));
-		} catch (CadiException | APIException | LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	public void testDetailedHelp() {
+		StringBuilder sb = new StringBuilder();
+		cred.detailedHelp(0, sb);
 	}
 
 }
