@@ -4,7 +4,7 @@
 ##
 
 #Certman
-cm_ca.local=org.onap.aaf.auth.cm.ca.LocalCA,/opt/app/osaaf/local/intermediate_1.p12;intermediate_1;enc:kieWQoNgaIfCrdoqOTsjDQwIp8V1NM4mLgDW3X1g8oyOhBQ-aOmdo12kvL_AMs6u
+cm_ca.local=org.onap.aaf.auth.cm.ca.LocalCA,/opt/app/osaaf/local/org.osaaf.aaf.cm.p12;aaf_cm_ca;enc:asFEWMNqjH7GktBLb9EGl6L1zfS2qMH5ZS5Zd90KVT5B9ZyRsqx7Gb73YllO8Hyw
 cm_ca.local.idDomains=org.osaaf
 cm_ca.local.baseSubject=/OU=OSAAF/O=ONAP/C=US
 cm_ca.local.perm_type=org.osaaf.aaf.ca
