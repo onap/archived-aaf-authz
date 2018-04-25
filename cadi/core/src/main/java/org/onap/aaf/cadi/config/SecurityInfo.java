@@ -224,8 +224,8 @@ public class SecurityInfo {
 			}
 
 			TrustManager tms[] = tmf.getTrustManagers();
-			if(tms != null) {
-				tm = new X509TrustManager[(tms == null) ? 0 : tms.length];
+			if(tms != null && tms.length>0) {
+				tm = new X509TrustManager[tms.length];
 				for(int i = 0; i < tms.length; ++i) {
 					try {
 						tm[i] = (X509TrustManager)tms[i];
