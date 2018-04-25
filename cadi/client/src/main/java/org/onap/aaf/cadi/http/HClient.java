@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -121,18 +122,11 @@ public class HClient implements EClient<HttpURLConnection> {
 				}
 				pi.append(pathinfo);
 			}
-			URL url = new URI(
-					uri.getScheme(), 
-					uri.getUserInfo(),
-					uri.getHost(), 
-					uri.getPort(), 
-					pi==null?uri.getPath():pi.toString(), 
-					query,
-					fragment).toURL();
 			pathinfo=null;
 			query=null;
 			fragment=null;
-			huc = (HttpURLConnection) url.openConnection();
+			//huc = (HttpURLConnection) url.openConnection();
+			huc = getConnection(uri, pi);
 			huc.setRequestMethod(meth);
 			if(ss!=null) {
 				ss.setSecurity(huc); 
@@ -169,10 +163,21 @@ public class HClient implements EClient<HttpURLConnection> {
 		return connectTimeout;
 	}
 	
-	public abstract class HFuture<T> extends Future<T> {
+	protected HttpURLConnection getConnection(URI uri, StringBuilder pi) throws IOException, URISyntaxException {
+		URL url = new URI(
+				uri.getScheme(), 
+				uri.getUserInfo(),
+				uri.getHost(), 
+				uri.getPort(), 
+				pi==null?uri.getPath():pi.toString(), 
+				query,
+				fragment).toURL();
+		return (HttpURLConnection) url.openConnection();
+	}
+	
+ 	public abstract class HFuture<T> extends Future<T> {
 		protected HttpURLConnection huc;
 		protected int respCode;
-		protected String respMessage;
 		protected IOException exception;
 		protected StringBuilder errContent;
 	
@@ -258,10 +263,6 @@ public class HClient implements EClient<HttpURLConnection> {
 			return exception;
 		}
 	
-		public String respMessage() {
-			return respMessage;
-		}
-	
 		@Override
 		public String header(String tag) {
 			return huc.getHeaderField(tag);
@@ -285,9 +286,6 @@ public class HClient implements EClient<HttpURLConnection> {
 			public String body() {
 				if (errContent != null) {
 					return errContent.toString();
-	
-				} else if (respMessage != null) {
-					return respMessage;
 				}
 				return "";
 			}
@@ -314,8 +312,6 @@ public class HClient implements EClient<HttpURLConnection> {
 					return value;
 				} else if (errContent != null) {
 					return errContent.toString();
-				} else if (respMessage != null) {
-					return respMessage;
 				}
 				return "";
 			}
@@ -346,8 +342,6 @@ public class HClient implements EClient<HttpURLConnection> {
 					}
 				} else if (errContent != null) {
 					return errContent.toString();
-				} else if (respMessage != null) {
-					return respMessage;
 				}
 				return "";
 			}
@@ -369,8 +363,6 @@ public class HClient implements EClient<HttpURLConnection> {
 			public String body() {
 				if (errContent != null) {
 					return errContent.toString();
-				} else if (respMessage != null) {
-					return respMessage;
 				}
 				return Integer.toString(respCode);
 			}
@@ -419,7 +411,7 @@ public class HClient implements EClient<HttpURLConnection> {
 
 			@Override
 			public String body() {
-				return errContent==null?respMessage:errContent.toString();
+				return errContent==null?null:errContent.toString();
 			}
 		};
 	}
