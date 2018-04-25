@@ -1,4 +1,4 @@
-#!/bin/bash dclean.sh
+#!/bin/bash 
 # Pull in Variables from d.props
 . ./d.props
 

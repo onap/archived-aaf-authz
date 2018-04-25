@@ -1,3 +1,4 @@
+#!/bin/bash 
 if [ "`docker ps -a | grep aaf_cass`" == "" ]; then
   docker run --name aaf_cass  -d cassandra:3.11
   echo "Check for running Docker Container aaf_cass, then run again."

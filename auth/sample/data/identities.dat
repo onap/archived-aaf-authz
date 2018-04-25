@@ -27,8 +27,8 @@ anne|Anne E Kopp|Anne|Kopp|512-244-4280|anne.e.kopp@att.com|e|jonathan
 aaf|AAF App|AAF|Application||DL-aaf-support@att.com|a|jonathan
 a2345z|AAF App|AAF|Application||DL-aaf-support@att.com|a|jonathan
 aaf_authz|AAF App|AAF|Application||jonathan.gathman@att.com|a|jonathan
-kirankamieni|Kiran K Kamineni|Kiran|Kamineni|999-999=9999|kiran.k.kamineni@intel.com|ramkoya
-aaf_sms|Secret Management Service|SMS|Secret Management Service provides secure storage for sensitive information such as passwords and userIDs||kiran.k.kamineni@intel.com|a|kirankamieni
+kirank|Kiran K Kamineni|Kiran|Kamineni|999-999=9999|kiran.k.kamineni@intel.com|e|ramkoya
+aaf_sms|Secret Management Service|SMS|Secret Management Service provides secure storage for sensitive information such as passwords and userIDs||kiran.k.kamineni@intel.com|a|kirank
 djtimoney|Dan Timoney|Dan|Timoney|+1 (732) 420-3226|dt5972@att.com|e|ramkoya
 xuegao|Xue Gao|Xue|Gao|0032479670327|xg353y@att.com|e|clefevre
 clamp|Clamp Application|clamp|Application||xg353y@att.com|a|xuegao
@@ -36,4 +36,7 @@ dmaapbc|DMaap Bus Controller|DMaap|Bus Controller||dgl@research.att.com|a|dgfrom
 dglfromatt|Dominic Lunanuova|Dominic|Lunanuova|732-420-9618|dgl@research.att.com|e|ramokoya
 puthenpura|Sarat Puthenpura|Sarat|Puthenpura|||e|clefevre
 ruoyu|Ruoyu Ying|Ruoyu|Ying|13661960772|ruoyu.ying@intel.com|e|puthenpura
-
+sunilu|Sunil Unnava|Sunil|Unnava|6094541858|sunil.unnava@att.com|e|ramkoya
+dmaapmr|DMaap Message Router|DMaap MR|Message Router||su622b@att.com|a|sunilu
+oof|OOF|OOF|OOF||sarat@research.att.com|a|saratp
+saratp|Sarat Puthenpura|Sarat|Puthenpura|9089012067|sarat@research.att.com|e|clefevre

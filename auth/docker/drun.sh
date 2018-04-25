@@ -1,4 +1,4 @@
-#!/bin/bash drun.sh
+#!/bin/bash 
 # Pull in Variables from d.props
 . ./d.props
 

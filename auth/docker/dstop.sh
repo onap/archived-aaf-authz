@@ -1,4 +1,4 @@
-#!/bin/bash dstop.sh
+#!/bin/bash 
 # Pull in Properties
 . ./d.props
 
