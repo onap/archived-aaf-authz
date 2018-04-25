@@ -93,6 +93,9 @@ public class JU_Admin {
 		String[] strArr = {"add", "del","add","add"};
 		admin._exec(0, strArr);
 		
+		String[] strArr1 = {"del","add","add"};
+		admin._exec(0, strArr1);
+		
 	}
 
 	@Test

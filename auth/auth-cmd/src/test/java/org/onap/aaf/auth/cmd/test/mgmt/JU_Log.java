@@ -41,6 +41,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.mgmt.Log;
 import org.onap.aaf.auth.cmd.mgmt.Mgmt;
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
@@ -74,27 +75,33 @@ public class JU_Log {
 		hman = new HMangr(aEnv, loc);	
 		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
 		Mgmt mgmt = new Mgmt(aafcli);
-		log = mock(Log.class);
 		log1 = new Log(mgmt);
 	}
 	
 	@Test
 	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-//		Item value = mock(Item.class);
-//		Locator.Item item = new Locator.Item() {
-//		};
-//		when(loc.best()).thenReturn(value);
-//		URI uri = new URI("http://java.sun.com/j2se/1.3/");
-//		when(loc.get(value)).thenReturn(uri);
-//		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		Item value = mock(Item.class);
+		Locator.Item item = new Locator.Item() {
+		};
+		when(loc.best()).thenReturn(value);
+		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		when(loc.get(value)).thenReturn(uri);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		when(loc.first()).thenReturn(value);
 		String[] strArr = {"add","upd","del","add","upd","del"};
-		log._exec(0, strArr);
-		
-//		String[] strArr1 = {"del","add","upd","del"};
-//		log1._exec(0, strArr1);
-//		
-//		String[] strArr2 = {"add","upd","del","add","upd","del"};
-//		log1._exec(0, strArr2);
+		log1._exec(0, strArr);
+
+		String[] strArr1 = {"del","add","upd","del"};
+		log1._exec(0, strArr1);
+
+	}
+	
+	@Test
+	public void testDetailedHelp() throws CadiException {
+		Define define = new Define();
+		define.set(prop);
+		StringBuilder sb = new StringBuilder();
+		log1.detailedHelp(0, sb);
 	}
 }

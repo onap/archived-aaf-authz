@@ -25,10 +25,12 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,13 +42,16 @@ import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.mgmt.Mgmt;
 import org.onap.aaf.auth.cmd.mgmt.SessClear;
 import org.onap.aaf.auth.cmd.mgmt.Session;
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.http.HMangr;
+import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,25 +79,27 @@ public class JU_SessClear {
 		sessclr = new SessClear(sess);
 	}
 	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(sessclr._exec(0, "session clear"), 0);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	@Test
+	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+		Item value = mock(Item.class);
+		Locator.Item item = new Locator.Item() {
+		};
+		when(loc.best()).thenReturn(value);
+		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		when(loc.get(value)).thenReturn(uri);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		HRcli hcli = new HRcli(hman, uri, item, secSet);
+		when(loc.first()).thenReturn(value);
+		String[] strArr = {"add","upd","del","add","upd","del"};
+		//sessclr._exec(0, strArr);
+
+	}
 	
 	@Test
-	public void testDetailedHelp() {
+	public void testDetailedHelp() throws CadiException {
+		Define define = new Define();
+		define.set(prop);
 		StringBuilder sb = new StringBuilder();
-		//sessclr.detailedHelp(0, sb);
+		sessclr.detailedHelp(0, sb);
 	}
 }

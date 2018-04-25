@@ -33,18 +33,30 @@ import org.onap.aaf.auth.cmd.role.Role;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
+
+import aaf.v2_0.Perms;
+import aaf.v2_0.Roles;
+import aaf.v2_0.UserRoles;
 
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 
@@ -53,6 +65,14 @@ import org.junit.Test;
 public class JU_List {
 	
 	AAFcli cli;
+	Role role;
+	List list;
+	PropAccess prop;
+	AuthzEnv aEnv;
+	Writer wtr;
+	Locator<URI> loc;
+	HMangr hman;	
+	AAFcli aafcli;
 
 	private class ListRolesStub extends List {
 
@@ -66,12 +86,20 @@ public class JU_List {
 	
 	@Before
 	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException{
-		cli = JU_AAFCli.getAAfCli();
+		prop = new PropAccess();
+		aEnv = new AuthzEnv();
+		wtr = mock(Writer.class);
+		loc = mock(Locator.class);
+		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+		hman = new HMangr(aEnv, loc);	
+		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+		role = new Role(aafcli);
+		list = new List(role);
 	}
 	
 	@Test
 	public void testRoles() throws APIException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Role role = new Role(cli);
+		Role role = new Role(aafcli);
 		ListRolesStub listStub = new ListRolesStub(role);
 		Future future = mock(Future.class);
 		Rcli rcli = mock(Rcli.class);
@@ -85,6 +113,17 @@ public class JU_List {
 		//listMethod.setAccessible(true);
 		//listMethod.invoke(listStub, future, rcli, "test");
 		
+	}
+	
+	@Test
+	public void testReport() throws Exception {
+		UserRoles urs = new UserRoles();
+		Perms perms = new Perms();
+		Roles roles = mock(Roles.class);
+		list.report(roles, perms , urs , "test");
+		AAFcli cli = JU_AAFCli.getAAfCli();
+		cli.eval("DETAILS @[ 123");
+		list.report(roles, perms , urs , "test");
 	}
 
 }

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,15 +46,15 @@ import junit.framework.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Version {
 	
-//	private static AAFcli cli;
-//	private static Version version;
-//	
-//	@BeforeClass
-//	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
-//		cli = JU_AAFCli.getAAfCli();
-//		version = new Version(cli);
-//	}
-//	
+	private static AAFcli cli;
+	private static Version version;
+	
+	@BeforeClass
+	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+		cli = JU_AAFCli.getAAfCli();
+		version = new Version(cli);
+	}
+	
 //	@Test
 //	public void exec_HTTP_200() throws CadiException, APIException, LocatorException {
 //		assertEquals(version._exec(0, "Version"), HttpStatus.OK_200);

@@ -146,6 +146,16 @@ public class JU_AAFCli {
 	public void eval10() throws Exception {
 		assertTrue(cli.eval("set @[ 123"));
 	}
+	
+	@Test
+	public void eval11() throws Exception {
+		assertTrue(cli.eval("DETAILS @[ 123"));
+	}
+	
+	@Test
+	public void eval12() throws Exception {
+		assertTrue(cli.eval(". |/, .\"0 \" "));
+	}
 
 	@Test
 	public void keyboardHelp() throws Exception {
@@ -210,12 +220,6 @@ public class JU_AAFCli {
 	}
 	
 	@Test
-	public void testMain() {
-		String[] str = {"test"};
-		//cli.main(str);
-	}
-	
-	@Test
 	public void testTest() {
 		Assert.assertNotNull(cli.isTest());
 	}
@@ -245,6 +249,12 @@ public class JU_AAFCli {
 	public void testGui() {
 		cli.gui(true);
 		cli.gui(false);
+	}
+	
+	@Test
+	public void testMain() {
+		String[] strArr = {"\\*","test1"};
+		//cli.main(strArr);
 	}
 	
 }
