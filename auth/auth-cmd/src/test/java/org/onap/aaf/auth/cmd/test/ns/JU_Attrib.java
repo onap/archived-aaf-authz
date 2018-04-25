@@ -95,6 +95,12 @@ public class JU_Attrib {
 		String[] strArr = {"add","upd","del","add","upd","del"};
 		attrib._exec(0, strArr);
 		
+		String[] strArr1 = {"upd","del","add","upd","del","add"};
+		attrib._exec(0, strArr1);
+		
+		String[] strArr2 = {"del","add","upd","del","add","upd"};
+		attrib._exec(0, strArr2);
+		
 	}
 
 	@Test
