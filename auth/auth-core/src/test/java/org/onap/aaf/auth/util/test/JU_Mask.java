@@ -36,7 +36,8 @@ public class JU_Mask {
 
 	@Test
 	public void test() throws Exception {
-		InetAddress ia = InetAddress.getLocalHost();
+//		InetAddress ia = InetAddress.getLocalHost();
+		InetAddress ia = InetAddress.getByName("192.168.0.0");
 		NetMask mask = new NetMask(ia.getAddress());
 		assertTrue(mask.isInNet(ia.getAddress()));
 		
