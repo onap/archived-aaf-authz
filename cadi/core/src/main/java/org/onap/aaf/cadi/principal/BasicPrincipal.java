@@ -121,6 +121,6 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
 
 	@Override
 	public String personalName() {
-		return null;  // personalName not available with Basic Auth
+		return name;  // personalName not available with Basic Auth
 	}
 }

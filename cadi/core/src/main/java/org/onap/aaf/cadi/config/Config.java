@@ -142,7 +142,7 @@ public class Config {
 	public static final String AAF_APPPASS = "aaf_password";
 	public static final String AAF_LUR_CLASS = "aaf_lur_class";
 	public static final String AAF_TAF_CLASS = "aaf_taf_class";
-	public static final String AAF_TAF_CLASS_DEF = "org.osaaf.cadi.aaf.v2_0.AAFTaf";
+	public static final String AAF_TAF_CLASS_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFTaf";
 	public static final String AAF_CONNECTOR_CLASS = "aaf_connector_class";
 	public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
 	public static final String AAF_CONN_TIMEOUT = "aaf_conn_timeout";
