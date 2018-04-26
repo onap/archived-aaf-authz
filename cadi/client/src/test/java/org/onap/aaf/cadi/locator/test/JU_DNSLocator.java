@@ -42,14 +42,14 @@ public class JU_DNSLocator {
 		// TODO: Actually test this class - Ian
 		
 		DNSLocator dl = new DNSLocator(new PropAccess(), "https", "aaf.it.att.com","8150-8152");
-		try {
-			Item item = dl.best();
-			URI uri = dl.get(item);
-			URL url = uri.toURL();
-			URLConnection conn = url.openConnection();
-			conn.connect();
-		} catch (Exception e) {
-		}
+//		try {
+//			Item item = dl.best();
+//			URI uri = dl.get(item);
+//			URL url = uri.toURL();
+//			URLConnection conn = url.openConnection();
+//			conn.connect();
+//		} catch (Exception e) {
+//		}
 	}
 
 }
