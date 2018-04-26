@@ -103,7 +103,7 @@ public class JU_BasicPrincipal {
 		assertTrue(Math.abs(bp.created() - created) < 10);
 		assertThat(bp.toString(), is(expected));
 		assertThat(bp.tag(), is("BAth"));
-		assertThat(bp.personalName(), is(nullValue()));
+		assertThat(bp.personalName(), is(bp.getName()));
 
 		// This test hits the abstract class BearerPrincipal
 		assertThat(bp.getBearer(), is(bearer));

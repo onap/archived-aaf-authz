@@ -154,7 +154,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 		}
 		Miss miss = missMap.get(mkey);
 		if(miss==null) {
-			missMap.put(mkey, new Miss(bs,clean==null?MIN_INTERVAL:clean.timeInterval));
+			missMap.put(mkey, new Miss(bs,clean==null?MIN_INTERVAL:clean.timeInterval,key));
 			return true;
 		}
 		return miss.mayContinue(); 
@@ -376,12 +376,17 @@ public abstract class AbsUserCache<PERM extends Permission> {
 					keys.addAll(missMap.keySet());
 					for(String key : keys) {
 						Miss m = missMap.get(key);
-						if(m!=null && m.timestamp<System.currentTimeMillis()) {
-							synchronized(missMap) {
-								missMap.remove(key);
+						if(m!=null) {
+							long timeLeft = m.timestamp - System.currentTimeMillis();
+							if(timeLeft<0) {
+								synchronized(missMap) {
+									missMap.remove(key);
+								}
+								access.log(Level.INFO, m.name, " has been removed from Missed Credential Map (" + m.tries + " invalid tries)");
+								++miss;
+							} else {
+								access.log(Level.INFO, m.name, " remains in Missed Credential Map (" + m.tries + " invalid tries) for " + (timeLeft/1000) + " more seconds");
 							}
-							access.log(Level.INFO, key, "has been removed from Missed Credential Map (" + m.tries + " invalid tries)");
-							++miss;
 						}
 					}
 				}
@@ -419,11 +424,14 @@ public abstract class AbsUserCache<PERM extends Permission> {
 		private long timetolive;
 
 		private long tries;
+
+		private final String name;
 		
-		public Miss(byte[] first, long timeInterval) {
+		public Miss(final byte[] first, final long timeInterval, final String name) {
 			timestamp = System.currentTimeMillis() + timeInterval;
 			this.timetolive = timeInterval;
 			tries = 0L;
+			this.name = name;
 		}
 		
 		
@@ -437,6 +445,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 			}
 			return true;
 		}
+		
 	}
 	
 	/**

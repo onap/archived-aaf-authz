@@ -50,6 +50,7 @@ import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.CacheInfoDAO;
 import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.dao.cass.CredDAO;
+import org.onap.aaf.auth.dao.cass.CredDAO.Data;
 import org.onap.aaf.auth.dao.cass.DelegateDAO;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.dao.cass.HistoryDAO;
@@ -61,10 +62,9 @@ import org.onap.aaf.auth.dao.cass.PermDAO;
 import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.auth.dao.cass.Status;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
-import org.onap.aaf.auth.dao.cass.CredDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.env.AuthzTransFilter;
 import org.onap.aaf.auth.env.AuthzTrans.REQD_TYPE;
+import org.onap.aaf.auth.env.AuthzTransFilter;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.cadi.Hash;
@@ -780,7 +780,7 @@ public class Question {
 										checkLessThanDays(trans,7,now,cdd);
 										return Result.ok(cdd.expires);
 									} else if (debug!=null) {
-										load(debug, cdd,dbcred);
+										load(debug, cdd);
 									}
 									break;
 								case CredDAO.BASIC_AUTH_SHA256:
@@ -793,7 +793,7 @@ public class Question {
 										checkLessThanDays(trans,7,now,cdd);
 										return Result.ok(cdd.expires);
 									} else if (debug!=null) {
-										load(debug, cdd, dbcred);
+										load(debug, cdd);
 									}
 									break;
 								default:
@@ -809,14 +809,10 @@ public class Question {
 					}
 				} // end for each
 				if(debug==null) {
-					debug=new StringBuilder();
+					trans.audit().printf("No cred matches ip=%s, user=%s\n",trans.ip(),user);
 				} else {
-					debug.append(", ");
+					trans.audit().printf("No cred matches ip=%s, user=%s %s\n",trans.ip(),user,debug.toString());
 				}
-				
-				debug.append("cred=");
-				debug.append(new String(cred));
-				trans.audit().printf("No cred matches ip=%s, user=%s, %s\n",trans.ip(),user,trans.encryptor().encrypt(debug.toString()));
 				if(expired!=null) {
 					// Note: this is only returned if there are no good Credentials
 					rv = Result.err(Status.ERR_Security,
@@ -830,13 +826,11 @@ public class Question {
 	}
 
 
-	private void load(StringBuilder debug, Data cdd, byte[] dbcred) {
+	private void load(StringBuilder debug, Data cdd) {
 		debug.append("DB Entry: user=");
 		debug.append(cdd.id);
 		debug.append(",type=");
 		debug.append(cdd.type);
-		debug.append(",cred=");
-		debug.append(Hash.toHex(dbcred));
 		debug.append(",expires=");
 		debug.append(Chrono.dateTime(cdd.expires));
 		debug.append('\n');

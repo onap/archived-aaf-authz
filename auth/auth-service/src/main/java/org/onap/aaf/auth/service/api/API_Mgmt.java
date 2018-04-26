@@ -52,7 +52,7 @@ public class API_Mgmt {
 	private final static String PERM_DB_POOL_CLEAR=Define.ROOT_NS()+".db|pool|clear";
 	private final static String PERM_DENY_IP = Define.ROOT_NS()+".deny|" + Define.ROOT_COMPANY() + "|ip";
 	private final static String PERM_DENY_ID = Define.ROOT_NS()+".deny|" + Define.ROOT_COMPANY() + "|id";
-	private final static String PERM_LOG_ID = Define.ROOT_NS()+".deny|" + Define.ROOT_COMPANY() + "|id";
+	private final static String PERM_LOG_ID = Define.ROOT_NS()+".log|" + Define.ROOT_COMPANY() + "|id";
 
 	/**
 	 * Normal Init level APIs
