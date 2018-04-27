@@ -22,7 +22,6 @@
 package org.onap.aaf.cadi.locator.test;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import org.mockito.*;
@@ -87,10 +86,10 @@ public class JU_HClientHotPeerLocator {
 
 		item = loc.first();
 		loc.invalidate(item);
-		loc.get(item);
 		
+		loc.invalidate(loc.bestClient());
+		loc.invalidate(loc.get(loc.next(item)));
 		loc.destroy();
-		item = loc.best();
 	}
 
 	@Test(expected = LocatorException.class)
@@ -111,7 +110,7 @@ public class JU_HClientHotPeerLocator {
 		loc.invalidate(loc.first());
 
 		loc.destroy();
-		Locator.Item item = loc.best();
+		loc.best();
 	}
 	
 	@Test

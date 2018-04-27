@@ -25,15 +25,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

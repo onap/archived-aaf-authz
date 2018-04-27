@@ -26,9 +26,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.*;
 import org.mockito.*;
@@ -67,6 +65,7 @@ public class JU_HBasicAuthSS {
 	@Test
 	public void test() throws IOException {
 		// All the constructors accomplish the same thing
+		@SuppressWarnings("unused")
 		HBasicAuthSS auth = new HBasicAuthSS(si);
 		
 		// TODO: While these test _should_ pass, and they _do_ pass on my local machine, they won't

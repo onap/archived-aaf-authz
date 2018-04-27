@@ -73,34 +73,7 @@ public class DNSLocator implements Locator<URI> {
 			throw new LocatorException("DNSLocator accepts only https or http protocols.  (requested URL " + aaf_locate + ')');
 		}
 		
-		int colon = aaf_locate.indexOf(':',start);
-		int slash;
-		if(colon>0) {
-			start = colon+1;
-			int left = aaf_locate.indexOf('[',start);
-			if(left>0) {
-				int right = aaf_locate.indexOf(']',left+1);
-				if(right>0) {
-					int dash = aaf_locate.indexOf('-',left+1);
-					if(dash<0) {
-						startPort = endPort = Integer.parseInt(aaf_locate.substring(left+1,right));
-					} else {
-						startPort = Integer.parseInt(aaf_locate.substring(left+1,dash));
-						endPort = Integer.parseInt(aaf_locate.substring(dash + 1,right));
-					}
-				}
-				
-			} else {
-				slash = aaf_locate.indexOf('/',colon+1);
-				if(slash<0) {
-					startPort = endPort = Integer.parseInt(aaf_locate.substring(start));
-				} else {
-					startPort = endPort = Integer.parseInt(aaf_locate.substring(start,slash));
-				}
-			}
-		} else {
-			startPort = endPort = port;
-		}		
+		parsePorts(aaf_locate.substring(start), port);
 	}
 
 	@Override
@@ -184,6 +157,46 @@ public class DNSLocator implements Locator<URI> {
 			access.log(Level.ERROR, e);
 		}
 		return false;
+	}
+	
+	private void parsePorts(String aaf_locate, int defaultPort) throws LocatorException {
+		int slash, start;
+		int colon = aaf_locate.indexOf(':');
+		if(colon > 0) {
+			start = colon + 1;
+			int left = aaf_locate.indexOf('[', start);
+			if(left > 0) {
+				int right = aaf_locate.indexOf(']', left + 1);
+				if (right < 0) {
+					throw new LocatorException("Missing closing bracket in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
+				} else if (right == (left + 1)) {
+					throw new LocatorException("Missing ports in brackets in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
+				}
+				int dash = aaf_locate.indexOf('-', left + 1);
+				if (dash == (right - 1) || dash == (left + 1)) {
+					throw new LocatorException("Missing ports in brackets in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
+				}
+				if(dash < 0) {
+					startPort = endPort = Integer.parseInt(aaf_locate.substring(left + 1, right));
+				} else {
+					startPort = Integer.parseInt(aaf_locate.substring(left + 1, dash));
+					endPort = Integer.parseInt(aaf_locate.substring(dash + 1, right));
+				}
+				
+			} else {
+				slash = aaf_locate.indexOf('/', start);
+				if (slash == start) {
+					throw new LocatorException("Missing port before '/' in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
+				}
+				if(slash < 0) {
+					startPort = endPort = Integer.parseInt(aaf_locate.substring(start));
+				} else {
+					startPort = endPort = Integer.parseInt(aaf_locate.substring(start, slash));
+				}
+			}
+		} else {
+			startPort = endPort = defaultPort;
+		}		
 	}
 
 	private class Host {
