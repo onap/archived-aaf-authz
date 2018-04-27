@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 
 import java.io.Writer;
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.onap.aaf.auth.cmd.ns.List;
 import org.onap.aaf.auth.cmd.ns.NS;
@@ -38,6 +39,9 @@ import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.Nss;
+import aaf.v2_0.Roles;
+import aaf.v2_0.Users.User;
+import junit.framework.Assert;
 
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.junit.After;
@@ -52,6 +56,45 @@ import org.junit.Test;
 public class JU_List {
 	
 	List list;
+	AAFcli aafcli;
+	User user;
+	
+	private class NssStub extends Nss {
+		public void addNs(Nss.Ns ns) {	
+			if (this.ns == null) {
+	            this.ns = new ArrayList<Nss.Ns>();
+	        }
+			this.ns.add(ns);
+		}
+		
+		private class NsStub extends Ns{
+			public void addAttrib(Nss.Ns.Attrib attrib) {
+	            if ( this.attrib == null) {
+	                this.attrib = new ArrayList<Nss.Ns.Attrib>();
+	            }
+	            this.attrib.add(attrib);
+	        }
+			
+			public void addResponsible(String str) {
+	            if (this.responsible == null) {
+	                this.responsible = new ArrayList<String>();
+	            }
+	            this.responsible.add(str);
+	        }
+			
+			public void addAdmin(String str) {
+	            if (this.admin == null) {
+	                this.admin = new ArrayList<String>();
+	            }
+	            this.admin.add(str);
+	        }
+		}
+		
+		
+		
+		
+	}
+	
 
 	@Before
 	public void setUp() throws APIException, LocatorException {
@@ -60,23 +103,42 @@ public class JU_List {
 		Writer wtr = mock(Writer.class);
 		Locator loc = mock(Locator.class);
 		HMangr hman = new HMangr(aEnv, loc);		
-		AAFcli aafcli = new AAFcli(prop, aEnv, wtr, hman, null, null);
+		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, null);
+		user = new User();
 		NS ns = new NS(aafcli);
 		
 		list = new List(ns);
 	}
 	
 	@Test
-	public void testReport() {
+	public void testReport() throws Exception {
 		Future<Nss> fu = mock(Future.class);
-		Nss.Ns nss = new Nss.Ns();
-		Nss ns = new Nss();
-		fu.value = ns;
-		fu.value.getNs();
-		System.out.print(fu.value.getNs());
+		NssStub nssStub = new NssStub();
+		NssStub.NsStub nsStub = nssStub.new NsStub();
+		Nss.Ns.Attrib attrib = mock(Nss.Ns.Attrib.class);
+		when(attrib.getKey()).thenReturn("key");
+		when(attrib.getValue()).thenReturn("value");
+		nsStub.addAttrib(attrib);
+		nsStub.addResponsible("test");
+		nsStub.addAdmin("admin");
+		nssStub.addNs(nsStub);
+		fu.value = nssStub;
+		aafcli.eval("DETAILS @[ 123");
 		
-		list.report(null, "test");
 		list.report(fu, "test");
+	}
+	
+	@Test
+	public void testGetType() {
+		Assert.assertEquals("n/a", list.getType(user));
+		user.setType(1);
+		Assert.assertEquals("U/P", list.getType(user));
+		user.setType(2);
+		Assert.assertEquals("U/P2", list.getType(user));
+		user.setType(10);
+		Assert.assertEquals("Cert", list.getType(user));
+		user.setType(200);
+		Assert.assertEquals("x509", list.getType(user));
 	}
 	
 }

@@ -35,6 +35,7 @@ import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
@@ -42,10 +43,12 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.Perms;
+import aaf.v2_0.Pkey;
 import aaf.v2_0.Roles;
 import aaf.v2_0.UserRoles;
 
@@ -59,6 +62,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -80,8 +84,25 @@ public class JU_List {
 			super(parent);
 			// TODO Auto-generated constructor stub
 		}
-
-
+	}
+	
+	private class RolesStub extends Roles {
+		public void addRole(aaf.v2_0.Role role) {
+			if (this.role == null) {
+				this.role = new ArrayList<aaf.v2_0.Role>();
+			}
+			this.role.add(role);
+		}
+	}
+	
+	private class RoleStub extends aaf.v2_0.Role {
+		
+		public void addPerms(Pkey perms) {
+	        if (this.perms == null) {
+	            this.perms = new ArrayList<Pkey>();
+	        }
+	        this.perms.add(perms); 
+	    }
 	}
 	
 	@Before
@@ -119,10 +140,22 @@ public class JU_List {
 	public void testReport() throws Exception {
 		UserRoles urs = new UserRoles();
 		Perms perms = new Perms();
-		Roles roles = mock(Roles.class);
+		RolesStub roles = new RolesStub();
 		list.report(roles, perms , urs , "test");
 		AAFcli cli = JU_AAFCli.getAAfCli();
+		RoleStub role = new RoleStub();
+		roles.addRole(role);
+		Pkey pkey = new Pkey();
+		pkey.setInstance("test");
+		pkey.setAction("test");
+		pkey.setInstance("test");
+		pkey.setType("test");
+		
+		list.report(roles, perms , urs , "test");
+		list.report(roles, perms , null , "test");
 		cli.eval("DETAILS @[ 123");
+		role.setName("test");
+		role.addPerms(pkey);
 		list.report(roles, perms , urs , "test");
 	}
 
