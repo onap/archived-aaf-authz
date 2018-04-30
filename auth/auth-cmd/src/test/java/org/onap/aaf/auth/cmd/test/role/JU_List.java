@@ -150,12 +150,13 @@ public class JU_List {
 		pkey.setAction("test");
 		pkey.setInstance("test");
 		pkey.setType("test");
-		
-		list.report(roles, perms , urs , "test");
-		list.report(roles, perms , null , "test");
-		cli.eval("DETAILS @[ 123");
-		role.setName("test");
 		role.addPerms(pkey);
+		list.report(roles, perms , null , "test");
+		list.report(roles, perms , urs , "test");
+		
+		aafcli.eval("DETAILS @[ 123");
+		role.setName("test");
+
 		list.report(roles, perms , urs , "test");
 	}
 
