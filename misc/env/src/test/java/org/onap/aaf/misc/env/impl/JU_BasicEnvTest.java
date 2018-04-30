@@ -22,11 +22,14 @@ package org.onap.aaf.misc.env.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.applet.Applet;
+import java.io.IOException;
 import java.util.Properties;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -129,12 +132,49 @@ public class JU_BasicEnvTest {
 		assertEquals(tt.toString(), "New Name " + (end - tt.start) / 1000000f + "ms 10");
 		assertEquals(sb.toString(), "JSON New Name " + (end - tt.start) / 1000000f + "ms size: 10");
 
+		env.staticSlot("tag", "prop");
+
 		if (System.getProperties().keySet().iterator().hasNext()) {
 			String key = (String) System.getProperties().keySet().iterator().next();
 
 			env.loadFromSystemPropsStartsWith(key);
 			assertEquals(env.getProperty(key), System.getProperties().get(key));
 		}
+
+		BasicTrans trans = env.newTrans();
+		assertEquals(trans.delegate, env);
+
 	}
 
+	@Test
+	public void testLoadProperties() throws IOException {
+		Properties prop = new Properties();
+
+		BasicEnv env = new BasicEnv("tag1", prop);
+
+		env.loadPropFiles("tag1", null);
+		env.setProperty("tag1", "propfile.properties");
+		env.loadPropFiles("tag1", null);
+
+		assertEquals(env.getProperty("prop1"), "New Property");
+
+		env.loadToSystemPropsStartsWith("prop1");
+
+		assertTrue(System.getProperties().keySet().contains("prop1"));
+		assertEquals(System.getProperties().get("prop1"), "New Property");
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		/*
+		 * File file = new File("./log-Append" + ending + "_0.log"); if (file.exists())
+		 * { Files.delete(Paths.get(file.getAbsolutePath())); } file = new
+		 * File("./log-Append" + ending + "_1.log"); if (file.exists()) {
+		 * Files.delete(Paths.get(file.getAbsolutePath())); } file = new File("./Append"
+		 * + ending + "_0.log"); if (file.exists()) {
+		 * Files.delete(Paths.get(file.getAbsolutePath())); } file = new File("./Append"
+		 * + ending + "_1.log"); if (file.exists()) {
+		 * Files.delete(Paths.get(file.getAbsolutePath())); }
+		 */
+	}
 }
