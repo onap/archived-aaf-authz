@@ -65,6 +65,7 @@ import org.onap.aaf.cadi.taf.dos.DenialOfServiceTaf;
  */
 public class Config {
 
+	
 	public static final String UTF_8 = "UTF-8";
 
 	// Property Names associated with configurations.
@@ -142,14 +143,20 @@ public class Config {
 	public static final String AAF_APPPASS = "aaf_password";
 	public static final String AAF_LUR_CLASS = "aaf_lur_class";
 	public static final String AAF_TAF_CLASS = "aaf_taf_class";
-	public static final String AAF_TAF_CLASS_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFTaf";
 	public static final String AAF_CONNECTOR_CLASS = "aaf_connector_class";
 	public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
 	public static final String AAF_CONN_TIMEOUT = "aaf_conn_timeout";
 	public static final String AAF_CONN_TIMEOUT_DEF = "3000";
 	public static final String AAF_CONN_IDLE_TIMEOUT = "aaf_conn_idle_timeout"; // only for Direct Jetty Access.
 	public static final String AAF_CONN_IDLE_TIMEOUT_DEF = "10000"; // only for Direct Jetty Access.
-	
+	 
+	// Default Classes: These are for Class loading to avoid direct compile links
+	public static final String AAF_TAF_CLASS_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFTaf";
+	public static final String AAF_LOCATOR_CLASS_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFLocator";
+	public static final String CADI_OLUR_CLASS_DEF = "org.onap.aaf.cadi.olur.OLur";
+	public static final String CADI_OBASIC_HTTP_TAF_DEF = "org.onap.aaf.cadi.obasic.OBasicHttpTaf";
+	public static final String CADI_AAF_CON_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFCon";
+
 	public static final String AAF_CALL_TIMEOUT = "aaf_timeout";
 	public static final String AAF_CALL_TIMEOUT_DEF = "5000";
 	public static final String AAF_USER_EXPIRES = "aaf_user_expires";
@@ -223,7 +230,7 @@ public class Config {
 		/////////////////////////////////////////////////////
 		// Setup AAFCon for any following
 		/////////////////////////////////////////////////////
-		Class<?> aafConClass = loadClass(access,"org.onap.aaf.cadi.aaf.v2_0.AAFCon");
+		Class<?> aafConClass = loadClass(access,CADI_AAF_CON_DEF);
 		Object aafcon = null;
 		if(con!=null && aafConClass!=null && aafConClass.isAssignableFrom(con.getClass())) {
 			aafcon = con;
@@ -312,7 +319,7 @@ public class Config {
 			if(!hasOAuthDirectTAF) {
 				if(basic_realm!=null) {
 					@SuppressWarnings("unchecked")
-					Class<HttpTaf> obasicCls = (Class<HttpTaf>)loadClass(access,"org.osaaf.cadi.obasic.OBasicHttpTaf");
+					Class<HttpTaf> obasicCls = (Class<HttpTaf>)loadClass(access,CADI_OBASIC_HTTP_TAF_DEF);
 					if(obasicCls!=null) {
 						try {
 							String tokenurl = logProp(access,Config.AAF_OAUTH2_TOKEN_URL, null);
@@ -516,7 +523,7 @@ public class Config {
 		String introspect_url = logProp(access,AAF_OAUTH2_INTROSPECT_URL, null);
 		if(token_url!=null && introspect_url !=null) {
 			try {
-				Class<?> olurCls = loadClass(access, "org.osaaf.cadi.olur.OLur");
+				Class<?> olurCls = loadClass(access, CADI_OLUR_CLASS_DEF);
 				if(olurCls!=null) {
 					Constructor<?> olurCnst = olurCls.getConstructor(PropAccess.class,String.class,String.class);
 					Lur olur = (Lur)olurCnst.newInstance(access,token_url,introspect_url);
@@ -713,7 +720,7 @@ public class Config {
 			}
 	
 			try {
-				Class<?> lcls = loadClass(access,"org.onap.aaf.cadi.aaf.v2_0.AAFLocator");
+				Class<?> lcls = loadClass(access,AAF_LOCATOR_CLASS_DEF);
 				if(lcls==null) {
 					throw new CadiException("Need to include aaf-cadi-aaf jar for AAFLocator");
 				}

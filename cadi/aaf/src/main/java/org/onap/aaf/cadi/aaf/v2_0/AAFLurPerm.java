@@ -59,6 +59,8 @@ import aaf.v2_0.Perms;
  *
  */
 public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
+	private static final String ORG_OSAAF_CADI_OAUTH_O_AUTH2_LUR = "org.osaaf.cadi.oauth.OAuth2Lur";
+
 	/**
 	 *  Need to be able to transmutate a Principal into either ATTUID or MechID, which are the only ones accepted at this
 	 *  point by AAF.  There is no "domain", aka, no "@att.com" in "ab1234@att.com".  
@@ -90,7 +92,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 					Constructor<?> tmconst = tmcls.getConstructor(AAFCon.class,String.class);
 					Object tokMangr = tmconst.newInstance(con,oauth2_url);
 					@SuppressWarnings("unchecked")
-					Class<Lur> oa2cls = (Class<Lur>)Config.loadClass(access,"org.osaaf.cadi.oauth.OAuth2Lur");
+					Class<Lur> oa2cls = (Class<Lur>)Config.loadClass(access,ORG_OSAAF_CADI_OAUTH_O_AUTH2_LUR);
 					Constructor<Lur> oa2const = oa2cls.getConstructor(tmcls);
 					Lur oa2 = oa2const.newInstance(tokMangr);
 					setPreemptiveLur(oa2);

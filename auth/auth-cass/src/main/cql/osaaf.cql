@@ -59,3 +59,64 @@ INSERT INTO role(ns, name, perms, description)
 INSERT INTO user_role(user,role,expires,ns,rname)
   VALUES ('initial@osaaf.org','org.osaaf.aaf.admin','2099-12-31','org.osaaf.aaf','admin') using TTL 14400;
 
+
+// ONAP Specific Entities
+// ONAP initial env Namespace
+INSERT INTO ns (name,description,parent,scope,type)
+  VALUES('org.onap','ONAP','org',2,2);
+
+INSERT INTO ns (name,description,parent,scope,type)
+  VALUES('org.onap.portal','ONAP Portal','org.onap.portal',3,3);
+
+INSERT INTO perm(ns, type, instance, action, roles, description) 
+  VALUES ('org.onap.portal','access','*','read',{
+    'org.onap.portal.owner','org.onap.portal.designer','org.onap.portal.tester','org.onap.portal.ops','org.onap.portal.governor'
+  },'Portal Read Access');
+
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap.portal','owner',{'org.onap.portal.access|*|read'},'Portal Owner');
+
+INSERT INTO perm(ns, type, instance, action, roles, description) 
+  VALUES ('org.onap.portal','access','*','*',{'org.onap.portal.admin'},'Portal Write Access');
+
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap.portal','admin',{'org.onap.portal.access|*|*'},'Portal Admins');
+
+// DEMO ID (OPS)
+insert into cred (id,type,expires,cred,notes,ns,other) values('demo@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('demo@people.osaaf.org','org.onap.portal.admin','2018-10-31','org.onap.portal','admin');
+
+// ADMIN
+insert into cred (id,type,expires,cred,notes,ns,other) values('jh0003@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('jh0003@people.osaaf.org','org.onap.portal.admin','2018-10-31','org.onap.portal','admin');
+
+// DESIGNER
+INSERT INTO cred (id,type,expires,cred,notes,ns,other) values('cs0008@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap.portal','designer',{'org.onap.portal.access|*|read'},'Portal Designer');
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('cs0008@people.osaaf.org','org.onap.portal.designer','2018-10-31','org.onap.portal','designer');
+
+// TESTER
+INSERT INTO cred (id,type,expires,cred,notes,ns,other) values('jm0007@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap.portal','tester',{'org.onap.portal.access|*|read'},'Portal Tester');
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('jm0007@people.osaaf.org','org.onap.portal.tester','2018-10-31','org.onap.portal','tester');
+
+// OPS
+INSERT INTO cred (id,type,expires,cred,notes,ns,other) values('op0001@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap.portal','ops',{'org.onap.portal.access|*|read'},'Portal Operations');
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('op0001@people.osaaf.org','org.onap.portal.ops','2018-10-31','org.onap.portal','ops');
+
+// GOVERNOR
+INSERT INTO cred (id,type,expires,cred,notes,ns,other) values('gv0001@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.onap.portal','governor',{'org.onap.portal.access|*|read'},'Portal Governor');
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('gv0001@people.osaaf.org','org.onap.portal.governor','2018-10-31','org.onap.portal','governor');
+

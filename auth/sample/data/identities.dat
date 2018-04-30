@@ -40,3 +40,12 @@ sunilu|Sunil Unnava|Sunil|Unnava|6094541858|sunil.unnava@att.com|e|ramkoya
 dmaapmr|DMaap Message Router|DMaap MR|Message Router||su622b@att.com|a|sunilu
 oof|OOF|OOF|OOF||sarat@research.att.com|a|saratp
 saratp|Sarat Puthenpura|Sarat|Puthenpura|9089012067|sarat@research.att.com|e|clefevre
+# ONAP default Users
+demo|PORTAL DEMO|PORTAL|DEMO|||e|jonathan
+jh0003|PORTAL ADMIN|PORTAL|ADMIN|||e|jonathan
+cs0008|PORTAL DESIGNER|PORTAL|DESIGNER|||e|jonathan
+jm0007|PORTAL TESTER|PORTAL|TESTER|||e|jonathan
+op0001|PORTAL OPS|PORTAL|OPS|||e|jonathan
+gv0001|PORTAL GOVERNOR|PORTAL|GOVERNOR|||e|jonathan
+
+
