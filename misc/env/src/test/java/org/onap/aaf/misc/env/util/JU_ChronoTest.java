@@ -66,4 +66,144 @@ public class JU_ChronoTest {
 
 		assertEquals(expectedCalendar, timeStamp);
 	}
+
+	@Test
+	public void testUTCStamp() {
+		final Date date = Calendar.getInstance().getTime();
+		String expectedUTCTime = Chrono.utcFmt.format(date);
+
+		String stamp = Chrono.utcStamp(date);
+
+		assertEquals(stamp, expectedUTCTime);
+
+		Date date1 = null;
+		assertEquals("", Chrono.utcStamp(date1));
+
+		GregorianCalendar gc = null;
+		assertEquals(Chrono.utcStamp(gc), "");
+		gc = new GregorianCalendar();
+		gc.setTime(date);
+		assertEquals(Chrono.utcStamp(gc), expectedUTCTime);
+
+		XMLGregorianCalendar xgc = null;
+		assertEquals(Chrono.utcStamp(xgc), "");
+		xgc = Chrono.timeStamp(gc);
+		assertEquals(Chrono.utcStamp(xgc), expectedUTCTime);
+
+	}
+
+	@Test
+	public void testDateStamp() {
+		final Date date = Calendar.getInstance().getTime();
+		String expectedUTCTime = Chrono.dateFmt.format(date);
+
+		String stamp = Chrono.dateStamp(date);
+
+		assertEquals(stamp, expectedUTCTime);
+
+		Date date1 = null;
+		assertEquals("", Chrono.dateStamp(date1));
+
+		GregorianCalendar gc = null;
+		assertEquals(Chrono.dateStamp(gc), "");
+		gc = new GregorianCalendar();
+		gc.setTime(date);
+		assertEquals(Chrono.dateStamp(gc), expectedUTCTime);
+
+		XMLGregorianCalendar xgc = null;
+		assertEquals(Chrono.dateStamp(xgc), "");
+		xgc = Chrono.timeStamp(gc);
+		assertEquals(Chrono.dateStamp(xgc), expectedUTCTime);
+	}
+
+	@Test
+	public void testDateTime() {
+		final Date date = Calendar.getInstance().getTime();
+		date.setTime(1525023883297L);
+
+		String expectedDateTime = "2018-04-29T11:14:43.297+05:30";
+
+		String stamp = Chrono.dateTime(date);
+
+		assertEquals(stamp, expectedDateTime);
+
+		GregorianCalendar gc = null;
+		assertEquals(Chrono.dateTime(gc), "");
+		gc = new GregorianCalendar();
+		gc.setTime(date);
+		assertEquals(Chrono.dateTime(gc), expectedDateTime);
+
+		XMLGregorianCalendar xgc = null;
+		assertEquals(Chrono.dateTime(xgc), "");
+		xgc = Chrono.timeStamp(gc);
+		assertEquals(Chrono.dateTime(xgc), expectedDateTime);
+	}
+
+	@Test
+	public void testDateOnlyStamp() {
+		final Date date = Calendar.getInstance().getTime();
+		date.setTime(1525023883297L);
+
+		String expectedDateTime = Chrono.dateOnlyFmt.format(date);
+
+		String stamp = Chrono.dateOnlyStamp(date);
+
+		assertEquals(stamp, expectedDateTime);
+
+		Date date1 = null;
+		assertEquals("", Chrono.dateOnlyStamp(date1));
+
+		GregorianCalendar gc = null;
+		assertEquals(Chrono.dateOnlyStamp(gc), "");
+		gc = new GregorianCalendar();
+		gc.setTime(date);
+		assertEquals(Chrono.dateOnlyStamp(gc), expectedDateTime);
+
+		XMLGregorianCalendar xgc = null;
+		assertEquals(Chrono.dateOnlyStamp(xgc), "");
+		xgc = Chrono.timeStamp(gc);
+		assertEquals(Chrono.dateOnlyStamp(xgc), expectedDateTime);
+	}
+
+	@Test
+	public void testNiceDateStamp() {
+		final Date date = Calendar.getInstance().getTime();
+		date.setTime(1525023883297L);
+
+		String expectedDateTime = Chrono.niceDateFmt.format(date);
+
+		String stamp = Chrono.niceDateStamp(date);
+
+		assertEquals(stamp, expectedDateTime);
+
+		Date date1 = null;
+		assertEquals("", Chrono.niceDateStamp(date1));
+
+		GregorianCalendar gc = null;
+		assertEquals(Chrono.niceDateStamp(gc), "");
+		gc = new GregorianCalendar();
+		gc.setTime(date);
+		assertEquals(Chrono.niceDateStamp(gc), expectedDateTime);
+
+		XMLGregorianCalendar xgc = null;
+		assertEquals(Chrono.niceDateStamp(xgc), "");
+		xgc = Chrono.timeStamp(gc);
+		assertEquals(Chrono.niceDateStamp(xgc), expectedDateTime);
+	}
+
+	@Test
+	public void testMoment() {
+		final Date date = Calendar.getInstance().getTime();
+		date.setTime(1525023883297L);
+
+		long firstMoment = 1524940200000L;
+		long lastMoment = 1525026599999L;
+
+		assertEquals(firstMoment, Chrono.firstMomentOfDay(date.getTime()));
+		assertEquals(lastMoment, Chrono.lastMomentOfDay(date.getTime()));
+
+		float timeInMillis = (lastMoment - firstMoment) / 1000000f;
+		assertEquals(timeInMillis, Chrono.millisFromNanos(firstMoment, lastMoment), 0);
+
+	}
 }
