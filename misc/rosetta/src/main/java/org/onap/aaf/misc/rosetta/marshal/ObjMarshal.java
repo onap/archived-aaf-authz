@@ -73,26 +73,25 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
 			} else {
 				ladder.push(DONE_ITERATOR);
 			}
-		} else if (DONE_ITERATOR.equals(iter)) {
-		} else {
+		} else if (!DONE_ITERATOR.equals(iter)) {
 			FieldsIterator fields = (FieldsIterator)iter;
 			ladder.ascend(); // look at field info
-				Iterator<?> currFieldIter = ladder.peek();
-				Marshal<T> marshal;
-				if(currFieldIter==null) {
-					marshal=fields.next();
-				} else if(!DONE_ITERATOR.equals(currFieldIter)) {
-					marshal=fields.peek();
-					if(marshal==null && fields.hasNext())marshal=fields.next();
-				} else if(fields.hasNext()) {
-					marshal=fields.next();
-					ladder.push(null);
-				} else {
-					marshal=null;
-				}
-				
-				if(marshal!=null)
-					parsed = marshal.parse(in, parsed);
+			Iterator<?> currFieldIter = ladder.peek();
+			Marshal<T> marshal;
+			if(currFieldIter==null) {
+				marshal=fields.next();
+			} else if(!DONE_ITERATOR.equals(currFieldIter)) {
+				marshal=fields.peek();
+				if(marshal==null && fields.hasNext())marshal=fields.next();
+			} else if(fields.hasNext()) {
+				marshal=fields.next();
+				ladder.push(null);
+			} else {
+				marshal=null;
+			}
+
+			if(marshal!=null)
+				parsed = marshal.parse(in, parsed);
 			ladder.descend();
 			if(marshal==null || parsed.event==NONE) {
 				parsed.event = END_OBJ;

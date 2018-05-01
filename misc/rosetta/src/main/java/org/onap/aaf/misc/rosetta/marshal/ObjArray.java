@@ -53,25 +53,24 @@ public abstract class ObjArray<T,S> extends Marshal<T> {
 				parsed.event = START_ARRAY;
 				parsed.name = name;
 			}
-		} else if (DONE_ITERATOR.equals(iter)) {
-		} else {
+		} else if (!DONE_ITERATOR.equals(iter)) {
 			ladder.ascend(); // look at field info
-				Iterator<?> memIter = ladder.peek();
-				ListIterator<S> mems = (ListIterator<S>)iter;
-				S mem;
-				if(memIter==null) {
-					mem=mems.next();
-				} else if(!DONE_ITERATOR.equals(memIter)) {
-					mem=mems.peek();
-				} else if(iter.hasNext()) {
-					mem=null;
-					ladder.push(null);
-				} else {
-					mem=null;
-				}
-				
-				if(mem!=null)
-					parsed = subMarshaller.parse(mem, parsed);
+			Iterator<?> memIter = ladder.peek();
+			ListIterator<S> mems = (ListIterator<S>)iter;
+			S mem;
+			if(memIter==null) {
+				mem=mems.next();
+			} else if(!DONE_ITERATOR.equals(memIter)) {
+				mem=mems.peek();
+			} else if(iter.hasNext()) {
+				mem=null;
+				ladder.push(null);
+			} else {
+				mem=null;
+			}
+
+			if(mem!=null)
+				parsed = subMarshaller.parse(mem, parsed);
 			ladder.descend();
 			if(mem==null) {
 				if(iter.hasNext()) {
