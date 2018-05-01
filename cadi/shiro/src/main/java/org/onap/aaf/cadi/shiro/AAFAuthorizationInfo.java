@@ -31,9 +31,9 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
 
 /**
- * We treate "roles" and "permissions" in a similar way for first pass.
+ * We treat "roles" and "permissions" in a similar way for first pass.
  * 
- * @author jg1555
+ * @author JonathanGathman
  *
  */
 public class AAFAuthorizationInfo implements AuthorizationInfo {

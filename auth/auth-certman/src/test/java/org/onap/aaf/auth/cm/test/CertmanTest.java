@@ -120,8 +120,8 @@ public class CertmanTest {
 //			@Override
 //			public Void code(Rcli<?> client) throws APIException, CadiException {
 //				CertificateRequest cr = new CertificateRequest();
-//				cr.setMechid("m12345@aaf.att.com");
-//				cr.setSponsor("jg1555");
+//				cr.setMechid("a12345@org.osaaf.org");
+//				cr.setSponsor("something");
 //				cr.getFqdns().add("mithrilcsp.sbc.com");
 //				cr.getFqdns().add("zld01907.vci.att.com");
 //				cr.getFqdns().add("aaftest.test.att.com");

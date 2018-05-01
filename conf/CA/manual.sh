@@ -13,10 +13,30 @@ else
   FQDN=$1
   NAME=$FQDN
   shift
+
+  echo "Enter any SANS, delimited by spaces: "
+  read SANS
 fi
+
+# Do SANs
+if [ "$SANS" = "" ]; then
+   echo no SANS
+    if [ -e $NAME.san ]; then 
+      rm $NAME.san
+    fi
+  else
+   echo some SANS
+    cp ../san.conf $NAME.san
+    NUM=1
+    for D in $SANS; do 
+        echo "DNS.$NUM = $D" >> $NAME.san
+	NUM=$((NUM+1))
+    done
+fi
+
 echo $SUBJECT
 
-if [ -e $FQI.csr ]; then
+if [ -e $NAME.csr ]; then
   SIGN_IT=true
 else 
   if [ "$1" = "-local" ]; then
@@ -46,13 +66,19 @@ fi
 
 if [ "$SIGN_IT" = "true" ]; then
   # Sign it
-  openssl ca -config ../openssl.conf -extensions server_cert -out $NAME.crt \
+  if [ -e $NAME.san ]; then
+    openssl ca -config ../openssl.conf -extensions server_cert -out $NAME.crt \
+	-cert certs/ca.crt -keyfile private/ca.key \
+	-policy policy_loose \
+	-days 360 \
+	-extfile $NAME.san \
+	-infiles $NAME.csr
+  else 
+    openssl ca -config ../openssl.conf -extensions server_cert -out $NAME.crt \
 	-cert certs/ca.crt -keyfile private/ca.key \
 	-policy policy_loose \
 	-days 360 \
 	-infiles $NAME.csr
+  fi
 fi
-
-
-
 

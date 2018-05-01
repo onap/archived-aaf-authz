@@ -228,7 +228,7 @@ public abstract class Cmd {
 		} else if(desc.startsWith("{")) {
 			StringReader sr = new StringReader(desc);
 			try {
-				// Note: 11-18-2013, JG1555.  This rather convoluted Message Structure required by TSS Restful Specs, reflecting "Northbound" practices.
+				// Note: 11-18-2013, JonathanGathman.  This rather convoluted Message Structure required by TSS Restful Specs, reflecting "Northbound" practices.
 				Error err = getDF(Error.class).newData().in(TYPE.JSON).load(sr).asObject();
 				sb.append(" [");
 				sb.append(err.getMessageId());

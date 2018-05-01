@@ -48,7 +48,7 @@ import org.onap.aaf.misc.env.Trans;
  * Additional Factory mechanisms for CSRs, and BouncyCastle.  The main Factory
  * utilizes only Java abstractions, and is useful in Client code.
  * 
- * @author jg1555
+ * @author JonathanGathman
  *
  */
 public class BCFactory extends Factory {

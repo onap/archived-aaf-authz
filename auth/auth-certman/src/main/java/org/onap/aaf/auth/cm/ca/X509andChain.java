@@ -33,7 +33,7 @@ import org.onap.aaf.cadi.cm.Factory;
  * Have to put the Cert and resulting Trust Chain together. 
  * Treating them separately has caused issues
  * 
- * @author jg1555
+ * @author JonathanGathman
  *
  */
 public class X509andChain {

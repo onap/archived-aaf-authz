@@ -25,7 +25,7 @@
  * Created on: Apr 10, 2009
  * Created by: Jonathan
  *
- * Revamped to do away with ThreadLocal 5/27/2011, JG1555
+ * Revamped to do away with ThreadLocal 5/27/2011, JonathanGathman
  *
  * (c) 2009 SBC Knowledge Ventures, L.P. All rights reserved.
  ******************************************************************* 
