@@ -65,7 +65,14 @@ import org.onap.aaf.cadi.taf.dos.DenialOfServiceTaf;
  */
 public class Config {
 
-	
+	private static final String AAF_V2_0 = "org.onap.aaf.cadi.aaf.v2_0";
+	private static final String AAF_V2_0_AAFCON = AAF_V2_0+".AAFCon";
+	private static final String AAF_V2_0_AAF_LUR_PERM = AAF_V2_0+".AAFLurPerm";
+	private static final String OAUTH = "org.onap.auth.oauth";
+	private static final String OAUTH_TOKEN_MGR = OAUTH+".TokenMgr";
+	private static final String OAUTH_HTTP_TAF = OAUTH+".OAuth2HttpTaf";
+	private static final String OAUTH_DIRECT_TAF = OAUTH+".OAuthDirectTAF";
+
 	public static final String UTF_8 = "UTF-8";
 
 	// Property Names associated with configurations.
@@ -191,7 +198,7 @@ public class Config {
 	private static String defaultRealm="none";
 
 	public static final String AAF_DOMAIN_SUPPORT = "aaf_domain_support";
-	public static final String AAF_DOMAIN_SUPPORT_DEF = ".com";
+	public static final String AAF_DOMAIN_SUPPORT_DEF = ".com:.org";
 
 	// OAUTH2
 	public static final String AAF_OAUTH2_TOKEN_URL = "aaf_oauth2_token_url";
@@ -207,19 +214,11 @@ public class Config {
 	
 	public static void setDefaultRealm(Access access) throws CadiException {
 		try {
-			boolean hasCSP;
-			try {
-				Class.forName("org.osaaf.cadi.taf.csp.CSPTaf");
-				hasCSP=true;
-			} catch(ClassNotFoundException e) {
-				hasCSP = logProp(access,Config.CSP_DOMAIN, null)!=null;
-			}
 			defaultRealm = logProp(access,Config.AAF_DEFAULT_REALM,
-					hasCSP?"csp.att.com":
-					logProp(access,Config.BASIC_REALM,
-						logProp(access,HOSTNAME,InetAddress.getLocalHost().getHostName())
-						)
-					);
+				logProp(access,Config.BASIC_REALM,
+					logProp(access,HOSTNAME,InetAddress.getLocalHost().getHostName())
+					)
+				);
 		} catch (UnknownHostException e) {
 			//defaultRealm="none";
 		}
@@ -393,7 +392,7 @@ public class Config {
 				String oauth_token_url = logProp(access,Config.AAF_OAUTH2_TOKEN_URL,null);
 				Class<?> oadtClss;
 				try {
-					oadtClss = Class.forName("org.osaaf.authz.oauth.OAuthDirectTAF");
+					oadtClss = Class.forName(OAUTH_DIRECT_TAF);
 				} catch (ClassNotFoundException e1) {
 					oadtClss = null;
 				}
@@ -408,9 +407,9 @@ public class Config {
 				} else if(oauth_token_url!=null) {
 					String oauth_introspect_url = logProp(access,Config.AAF_OAUTH2_INTROSPECT_URL,null);
 					@SuppressWarnings("unchecked")
-					Class<HttpTaf> oaTCls = (Class<HttpTaf>)loadClass(access,"org.osaaf.cadi.oauth.OAuth2HttpTaf");
+					Class<HttpTaf> oaTCls = (Class<HttpTaf>)loadClass(access,OAUTH_HTTP_TAF);
 					if(oaTCls!=null) {
-						Class<?> oaTTmgrCls = loadClass(access, "org.osaaf.cadi.oauth.TokenMgr");
+						Class<?> oaTTmgrCls = loadClass(access, OAUTH_TOKEN_MGR);
 						if(oaTTmgrCls!=null) {
 							try {
 								Method oaTTmgrGI = oaTTmgrCls.getMethod("getInstance",PropAccess.class,String.class,String.class);
@@ -565,15 +564,15 @@ public class Config {
 				if(aafURL==null) {
 					access.log(Level.INIT,"No AAF LUR properties, AAF will not be loaded");
 				} else {// There's an AAF_URL... try to configure an AAF
-					String aafLurClassStr = logProp(access,AAF_LUR_CLASS,"org.osaaf.cadi.aaf.v2_0.AAFLurPerm");
+					String aafLurClassStr = logProp(access,AAF_LUR_CLASS,AAF_V2_0_AAF_LUR_PERM);
 					////////////AAF Lur 2.0 /////////////
-					if(aafLurClassStr!=null && aafLurClassStr.startsWith("org.osaaf.cadi.aaf.v2_0")) { 
+					if(aafLurClassStr!=null && aafLurClassStr.startsWith(AAF_V2_0)) { 
 						try {
 							Object aafcon = loadAAFConnector(si, aafURL);
 							if(aafcon==null) {
 								access.log(Level.INIT,"AAF LUR class,",aafLurClassStr,"cannot be constructed without valid AAFCon object.");
 							} else {
-								Class<?> aafAbsAAFCon = loadClass(access, "org.osaaf.cadi.aaf.v2_0.AAFCon");
+								Class<?> aafAbsAAFCon = loadClass(access, AAF_V2_0_AAFCON);
 								if(aafAbsAAFCon!=null) {
 									Method mNewLur = aafAbsAAFCon.getMethod("newLur");
 									Object aaflur = mNewLur.invoke(aafcon);
@@ -639,30 +638,31 @@ public class Config {
 		return false;
 	}
 
-	private static final String COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP = "org.osaaf.cadi.aaf.v2_0.AAFConHttp";
+	private static final String AAF_V2_0_AAF_CON_HTTP = "org.onap.aaf.cadi.aaf.v2_0.AAFConHttp";
+
 	public static Object loadAAFConnector(SecurityInfoC<HttpURLConnection> si, String aafURL) {
 		Access access = si.access;
 		Object aafcon = null;
 		Class<?> aafConClass = null;
 
 		try {
-			if(aafURL!=null) {
-				String aafConnector = access.getProperty(AAF_CONNECTOR_CLASS, COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP);
-			if(COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP.equals(aafConnector)) {
-					aafConClass = loadClass(access, COM_ATT_CADI_AAF_V2_0_AAF_CON_HTTP);
-					if(aafConClass!=null) {
-						for(Constructor<?> c : aafConClass.getConstructors()) {
+			if (aafURL!=null) {
+				String aafConnector = access.getProperty(AAF_CONNECTOR_CLASS, AAF_V2_0_AAF_CON_HTTP);
+				if (AAF_V2_0_AAF_CON_HTTP.equals(aafConnector)) {
+					aafConClass = loadClass(access, AAF_V2_0_AAF_CON_HTTP);
+					if (aafConClass != null) {
+						for (Constructor<?> c : aafConClass.getConstructors()) {
 							List<Object> lo = new ArrayList<Object>();
-							for(Class<?> pc : c.getParameterTypes()) {
-								if(pc.equals(PropAccess.class)) {
+							for (Class<?> pc : c.getParameterTypes()) {
+								if (pc.equals(Access.class)) {
 									lo.add(access);
-								} else if(pc.equals(Locator.class)) {
+								} else if (pc.equals(Locator.class)) {
 									lo.add(loadLocator(si, aafURL));
 								} else {
 									continue;
 								}
 							}
-							if(c.getParameterTypes().length!=lo.size()) {
+							if (c.getParameterTypes().length != lo.size()) {
 								continue; // back to another Constructor
 							} else {
 								aafcon = c.newInstance(lo.toArray());
@@ -671,13 +671,13 @@ public class Config {
 						}
 					}
 				}
-				if(aafcon!=null) {
-					String mechid = logProp(access,Config.AAF_APPID, null);
+				if (aafcon != null) {
+					String mechid = logProp(access, Config.AAF_APPID, null);
 					String pass = access.getProperty(Config.AAF_APPPASS, null);
-					if(mechid!=null && pass!=null) {
+					if (mechid != null && pass != null) {
 						try {
 							Method basicAuth = aafConClass.getMethod("basicAuth", String.class, String.class);
-							basicAuth.invoke(aafcon, mechid,pass);
+							basicAuth.invoke(aafcon, mechid, pass);
 						} catch (NoSuchMethodException nsme) {
 							// it's ok, don't use
 						}
@@ -685,9 +685,9 @@ public class Config {
 				}
 			}
 		} catch (Exception e) {
-			access.log(e,"AAF Connector could not be constructed with given Constructors.");
+			access.log(e, "AAF Connector could not be constructed with given Constructors.");
 		}
-		
+
 		return aafcon;
 	}
 

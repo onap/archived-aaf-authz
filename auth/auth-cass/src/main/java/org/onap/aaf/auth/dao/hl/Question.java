@@ -351,9 +351,9 @@ public class Question {
 	 * 
 	 * Given a Child Namespace, figure out what the best Namespace parent is.
 	 * 
-	 * For instance, if in the NS table, the parent "com.att" exists, but not
+	 * For instance, if in the NS table, the parent "org.osaaf" exists, but not
 	 * "org.osaaf.child" or "org.osaaf.a.b.c", then passing in either
-	 * "org.osaaf.child" or "org.osaaf.a.b.c" will return "com.att"
+	 * "org.osaaf.child" or "org.osaaf.a.b.c" will return "org.osaaf"
 	 * 
 	 * Uses recursive search on Cached DAO data
 	 * 

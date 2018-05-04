@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CachedPrincipal;
+import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.TrustChecker;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.Taf.LifeForm;
+import org.onap.aaf.cadi.TrustChecker;
 
 /**
  * HttpEpiTaf
@@ -153,18 +153,13 @@ public class HttpEpiTaf implements HttpTaf {
 	private LifeForm tricorderScan(HttpServletRequest req) {
 		// For simplicity's sake, we'll say Humans use FQDNs, not IPs.
 		
-		String auth = req.getParameter("Authentication");
-		if(auth!=null) {
-			if("BasicAuth".equals(auth)) {
-				return LifeForm.SBLF;
-			}
-		}
 		// Current guess that only Browsers bother to set "Agent" codes that identify the kind of browser they are.
 		// If mechanical frameworks are found that populate this, then more advanced analysis may be required
 		// Jonathan 1/22/2013
 		String agent = req.getHeader("User-Agent");
-		if(agent!=null && agent.startsWith("Mozilla")) // covers I.E./Firefox/Safari/probably any other "advanced" Browser see http://en.wikipedia.org/wiki/User_agent
-			return LifeForm.CBLF;                      
+		if(agent!=null && agent.startsWith("Mozilla")) { // covers I.E./Firefox/Safari/probably any other "advanced" Browser see http://en.wikipedia.org/wiki/User_agent
+			return LifeForm.CBLF;
+		}
 		return LifeForm.SBLF;							// notably skips "curl","wget", (which is desired behavior.  We don't want to try CSP, etc on these)
 	}
 

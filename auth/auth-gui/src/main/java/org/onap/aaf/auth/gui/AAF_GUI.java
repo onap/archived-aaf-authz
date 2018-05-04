@@ -122,8 +122,6 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
 		sTheme = env.staticSlot(CachingFileAccess.CFA_WEB_PATH,access.getProperty(CachingFileAccess.CFA_WEB_PATH,null)==null?AAF_GUI_THEME:CachingFileAccess.CFA_WEB_PATH);
 		theme = env.getProperty(AAF_GUI_THEME);
 
-		//OrganizationFactory.setDefaultOrg(env, "org.osaaf.authz.org.att.ATT");
-
 		slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
 		String[] component = Split.split(':', access.getProperty(Config.AAF_COMPONENT, "N/A:2.x"));
 		if(component.length>1) {

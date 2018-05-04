@@ -100,6 +100,7 @@ public class CadiHTTPManip {
 			}
 			SecurityInfoC<HttpURLConnection> si;
 			si = SecurityInfoC.instance(access, HttpURLConnection.class);
+			
 			lur = Config.configLur(si, con, additionalTafLurs);
 			
 			tc.setLur(lur);
