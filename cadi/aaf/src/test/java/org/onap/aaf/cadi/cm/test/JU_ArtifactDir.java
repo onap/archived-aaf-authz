@@ -69,6 +69,7 @@ public class JU_ArtifactDir {
 	@AfterClass
 	public static void tearDownOnce() {
 		cleanup();
+		ArtifactDir.clear();
 	}
 
 	@Test
