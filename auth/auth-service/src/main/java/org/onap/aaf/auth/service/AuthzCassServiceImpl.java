@@ -1739,7 +1739,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 	@Override
 	public Result<ROLES> getRolesByPerm(AuthzTrans trans, String type, String instance, String action) {
 		final Validator v = new ServiceValidator();
-		if(v.permType(type,null)
+		if(v.permType(type)
 			.permInstance(instance)
 			.permAction(action)
 			.err()) {
