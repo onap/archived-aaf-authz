@@ -70,10 +70,14 @@ public class JU_ArtifactDir {
 		issuers.add("issuer2");
 	}
 	
+	@After
+	public void tearDown() {
+		ArtifactDir.clear();
+	}
+	
 	@AfterClass
 	public static void tearDownOnce() {
 		cleanup();
-		ArtifactDir.clear();
 	}
 
 	@Test
