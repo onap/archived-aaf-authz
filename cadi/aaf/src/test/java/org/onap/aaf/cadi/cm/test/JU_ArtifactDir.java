@@ -36,6 +36,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,10 +71,14 @@ public class JU_ArtifactDir {
 		issuers.add("issuer2");
 	}
 	
+	@After
+	public void tearDown() {
+		ArtifactDir.clear();
+	}
+	
 	@AfterClass
 	public static void tearDownOnce() {
 		cleanup();
-		ArtifactDir.clear();
 	}
 
 	@Test
@@ -129,12 +134,12 @@ public class JU_ArtifactDir {
 	
 	}
 
-	@Test
+	@Test(expected = CadiException.class)
 	public void throwsTest() throws CadiException {
 		ArtifactDirStud artiDir = new ArtifactDirStud();
 		when(artiMock.getDir()).thenReturn(dirName);
 		when(artiMock.getNs()).thenReturn(nsName);
-		assertTrue(artiDir.place(transMock, certInfoMock, artiMock, "machine"));
+		artiDir.place(transMock, certInfoMock, artiMock, "machine");
 	}
 
 	private class ArtifactDirStud extends ArtifactDir {

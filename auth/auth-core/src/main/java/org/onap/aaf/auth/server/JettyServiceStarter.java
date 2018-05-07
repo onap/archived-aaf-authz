@@ -221,7 +221,12 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
 			access().log(Level.INIT,server.dump());
 		} catch (Exception e) {
 			access().log(e,"Error starting " + service.app_name);
-			System.exit(1);
+			String doExit = access().getProperty("cadi_exitOnFailure", "true");
+			if (doExit == "true") {
+				System.exit(1);
+			} else {
+				throw e;
+			}
 		}
 		try {
 			register(service.registrants(port));
