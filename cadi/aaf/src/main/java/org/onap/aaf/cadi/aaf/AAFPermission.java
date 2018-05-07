@@ -71,7 +71,6 @@ public class AAFPermission implements Permission {
 	 * If you want a simple field comparison, it is faster without REGEX
 	 */
 	public boolean match(Permission p) {
-		boolean rv;
 		String aafType;
 		String aafInstance;
 		String aafAction;

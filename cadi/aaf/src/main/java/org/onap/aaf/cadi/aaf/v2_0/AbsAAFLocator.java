@@ -82,21 +82,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 			this.version = Config.AAF_DEFAULT_VERSION;
 		} else {
 			String[] split = Split.split(':', name);
-			
-			switch(split.length) {
-				case 1:
-					this.name = split[0];
-					this.version = Config.AAF_DEFAULT_VERSION;
-					break;
-				case 0:
-					this.name = name;
-					this.version = Config.AAF_DEFAULT_VERSION;
-					break;
-				default:
-					this.version = split[1];
-					this.name = split[0];
-					
-			}
+			this.name = split[0];
+			this.version = (split.length > 1) ? split[1] : Config.AAF_DEFAULT_VERSION;
 		}
 		
 	}
@@ -138,13 +125,11 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 		if(key.startsWith("http")) {
 			if(name!=null) {
 				if(locatorCreator != null) {
-					if(name!=null) {
-						AbsAAFLocator<?> aal = locatorCreator.create(name, version);
-						if(pathInfo!=null) {
-							aal.setPathInfo(pathInfo);
-						}
-						return aal;
+					AbsAAFLocator<?> aal = locatorCreator.create(name, version);
+					if(pathInfo!=null) {
+						aal.setPathInfo(pathInfo);
 					}
+					return aal;
 				}
 			} else {
 				return new PropertyLocator(key);
@@ -491,7 +476,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 			try {
 				return new URI(rv.getScheme(),rv.getUserInfo(),rv.getHost(),rv.getPort(),pathInfo,query,fragment);
 			} catch (URISyntaxException e) {
-				throw new LocatorException("Error coping URL");
+				throw new LocatorException("Error copying URL");
 			}
 		}
 		return rv;
