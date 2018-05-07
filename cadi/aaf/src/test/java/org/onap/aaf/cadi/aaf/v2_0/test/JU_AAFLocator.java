@@ -21,59 +21,103 @@
 
 package org.onap.aaf.cadi.aaf.v2_0.test;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.*;
+import org.mockito.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import static org.junit.Assert.*;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
+import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
+import org.onap.aaf.cadi.http.HClient;
+import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.impl.BasicTrans;
-import org.onap.aaf.misc.rosetta.env.RosettaEnv;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
+
+import locate.v1_0.Endpoint;
+import locate.v1_0.Endpoints;
 
 public class JU_AAFLocator {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+	
+	@Mock private HClient clientMock;
+	@Mock private Future<Endpoints> futureMock;
+	@Mock private Endpoints endpointsMock;
+	
+	private PropAccess access;
+	
+	private ByteArrayOutputStream errStream;
+	
+	private static final String uriString = "https://example.com";
 
 	@Before
 	public void setUp() throws Exception {
-	}
+		MockitoAnnotations.initMocks(this);
+		
+		doReturn(futureMock).when(clientMock).futureRead((RosettaDF<?>)any(), eq(TYPE.JSON));
+		when(clientMock.timeout()).thenReturn(1);
+		when(clientMock.getURI()).thenReturn(new URI(uriString));
+		when(futureMock.get(1)).thenReturn(true);
+		
+		futureMock.value = endpointsMock;
+		List<Endpoint> endpoints = new ArrayList<>();
+		endpoints.add(new Endpoint());
+		when(endpointsMock.getEndpoint()).thenReturn(endpoints);
 
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		
+		errStream = new ByteArrayOutputStream();
+
+		System.setErr(new PrintStream(errStream));
+	}
+	
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
+		System.setErr(System.err);
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		Field field = SecurityInfoC.class.getDeclaredField("sicMap");
+		field.setAccessible(true);
+		field.set(null, new HashMap<Class<?>,SecurityInfoC<?>>());
 	}
 
 	@Test
-	public void test() {
-		// TODO: Ian [JUnit] This fails because these files don't exist
-		assertTrue(true);
-		// try {
-		// 	PropAccess propAccess = new PropAccess("cadi_prop_files=/opt/app/aaf/common/com.att.aaf.common.props:/opt/app/aaf/common/com.att.aaf.props");
-		// 	SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(propAccess, HttpURLConnection.class);
-		// 	String alu = propAccess.getProperty(Config.AAF_LOCATE_URL,"https://mithrilcsp.sbc.com:8095/locate");
-		// 	URI locatorURI = new URI(alu+"/com.att.aaf.service/2.0");
-		// 	AbsAAFLocator<BasicTrans> al = new AAFLocator(si, locatorURI);
-		// 	Assert.assertTrue(al.refresh());
-		// 	Item i = al.first();
-		// 	i = al.next(i);
-		// 	i = al.best();
-		// } catch (Exception e) {
-		// 	Assert.fail();
-		// }
+	public void test() throws CadiException, URISyntaxException, LocatorException {
+		access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
+		access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon
+		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
+		String alu = access.getProperty(Config.AAF_LOCATE_URL,"https://mithrilcsp.sbc.com:8095/locate");
+		URI locatorURI = new URI(alu+"/com.att.aaf.service/2.0");
+		AbsAAFLocator<BasicTrans> al = new AAFLocator(si, locatorURI) {
+			@Override
+			protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
+				return clientMock;
+			}
+		};
+		assertThat(al.refresh(), is(true));
+		when(futureMock.get(1)).thenReturn(false);
+		assertThat(al.refresh(), is(false));
+		String errorMessage = errStream.toString().split(": ", 2)[1];
+		assertThat(errorMessage, is("Error reading location information from " + uriString + ": 0 null\n \n"));
 	}
 
 }
