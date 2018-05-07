@@ -43,10 +43,10 @@ public class DefaultOrgIdentity implements Identity {
 	private static final String CONTRACTOR = "c";
 	private static final String EMPLOYEE = "e";
 	private static final String APPLICATION = "a";
-    private static final String NON_ACTIVE = "n";
+	private static final String NON_ACTIVE = "n";
 
 	private final static int TIMEOUT = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
-	
+
 	private DefaultOrg org;
 	//package on purpose
 	Data identity;
@@ -60,7 +60,7 @@ public class DefaultOrgIdentity implements Identity {
 			org.identities.open(trans, TIMEOUT);
 			try {
 				Reuse r = org.identities.reuse();
-				int at = key.indexOf(dorg.atDomain);
+				int at = key.indexOf(dorg.getDomain());
 				String search;
 				if(at>=0) {
 					search = key.substring(0,at);
@@ -68,6 +68,9 @@ public class DefaultOrgIdentity implements Identity {
 					search = key;
 				}
 				identity = org.identities.find(search, r);
+
+
+
 				if(identity==null) {
 					identity = Identities.NO_DATA;
 				}
@@ -78,7 +81,7 @@ public class DefaultOrgIdentity implements Identity {
 			throw new OrganizationException(e);
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object b) {
 		if(b instanceof DefaultOrgIdentity) {

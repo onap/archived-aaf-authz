@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,7 @@
  ******************************************************************************/
 package org.onap.aaf.org;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -54,11 +53,13 @@ public class DefaultOrg implements Organization {
 	final String domain;
 	final String atDomain;
 	final String realm;
-	
+
 	private final String NAME,mailHost,mailFrom;
 	private final Set<String> supportedRealms;
 
+
 	public DefaultOrg(Env env, String realm) throws OrganizationException {
+
 		this.realm = realm;
 		supportedRealms=new HashSet<String>();
 		supportedRealms.add(realm);
@@ -74,7 +75,7 @@ public class DefaultOrg implements Organization {
 		if(mailFrom==null) {
 			throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
 		}
-		
+
 		System.getProperties().setProperty("mail.smtp.host",mailHost);
 		System.getProperties().setProperty("mail.user", mailFrom);
 		// Get the default Session object.
@@ -90,6 +91,7 @@ public class DefaultOrg implements Organization {
 					env.warn().log(defFile, " is not defined. Using default: ",temp+"/identities.dat");
 					File dir = new File(temp);
 					fIdentities=new File(dir,"identities.dat");
+
 					if(!fIdentities.exists()) {
 						env.warn().log("No",fIdentities.getCanonicalPath(),"exists.  Creating.");
 						if(!dir.exists()) {
@@ -107,7 +109,7 @@ public class DefaultOrg implements Organization {
 					}
 				}
 			}
-			
+
 			if(fIdentities!=null && fIdentities.exists()) {
 				identities = new Identities(fIdentities);
 			} else {
@@ -121,7 +123,7 @@ public class DefaultOrg implements Organization {
 			throw new OrganizationException(e);
 		}
 	}
-	
+
 	// Implement your own Delegation System
 	static final List<String> NULL_DELEGATES = new ArrayList<String>();
 
@@ -130,14 +132,14 @@ public class DefaultOrg implements Organization {
 	private Session session;
 	public enum Types {Employee, Contractor, Application, NotActive};
 	private final static Set<String> typeSet;
-	
+
 	static {
 		typeSet = new HashSet<String>();
 		for(Types t : Types.values()) {
 			typeSet.add(t.name());
 		}
 	}
-	
+
 	private static final EmailWarnings emailWarnings = new DefaultOrgWarnings();
 
 	@Override
@@ -158,10 +160,11 @@ public class DefaultOrg implements Organization {
 	@Override
 	public DefaultOrgIdentity getIdentity(AuthzTrans trans, String id) throws OrganizationException {
 		int at = id.indexOf('@');
+		String attt = at<0?id:id.substring(0, at);
 		return new DefaultOrgIdentity(trans,at<0?id:id.substring(0, at),this);
 	}
 
-	// Note: Return a null if found; return a String Message explaining why not found. 
+	// Note: Return a null if found; return a String Message explaining why not found.
 	@Override
 	public String isValidID(final AuthzTrans trans, final String id) {
 		try {
@@ -185,18 +188,18 @@ public class DefaultOrg implements Organization {
 //			if(!id.regionMatches(at+1, domain, 0, id.length()-at-1)) {
 //				return false;
 //			}
-			sid = id.substring(0,at); 
+			sid = id.substring(0,at);
 		} else {
 			sid = id;
 		}
 		// We'll validate that it exists, rather than check patterns.
-		
+
 		return isValidID(trans, sid)==null;
 		// Check Pattern (if checking existing is too long)
 		//		if(id.endsWith(SUFFIX) && ID_PATTERN.matcher(id).matches()) {
 		//			return true;
 		//		}
-		//		return false; 
+		//		return false;
 	}
 
 	private static final String SPEC_CHARS = "!@#$%^*-+?/,:;.";
@@ -327,6 +330,7 @@ public class DefaultOrg implements Organization {
 								+ "Please follow this link: \n\n\t" + url
 								+ "\n\n" + summary, urgent);
 			} catch (Exception e) {
+
 				trans.error().log(e, "Failure to send Email");
 				return Response.ERR_NotificationFailure;
 			}
@@ -386,8 +390,9 @@ public class DefaultOrg implements Organization {
 	@Override
 	public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList, String subject, String body,
 			Boolean urgent) throws OrganizationException {
+
 		int status = 1;
-		
+
 		List<String> to = new ArrayList<String>();
 		for(String em : toList) {
 			if(em.indexOf('@')<0) {
@@ -396,11 +401,11 @@ public class DefaultOrg implements Organization {
 				to.add(em);
 			}
 		}
-		
+
 		List<String> cc = new ArrayList<String>();
 		if(ccList!=null) {
 			if(!ccList.isEmpty()) {
-			
+
 				for(String em : ccList) {
 					if(em.indexOf('@')<0) {
 						cc.add(new DefaultOrgIdentity(trans, em, this).email());
@@ -409,7 +414,7 @@ public class DefaultOrg implements Organization {
 					}
 				}
 			}
-			
+
 			// for now, I want all emails so we can see what goes out. Remove later
 			if (!ccList.contains(mailFrom)) {
 				ccList.add(mailFrom);
@@ -444,6 +449,7 @@ public class DefaultOrg implements Organization {
 				// Now set the actual message
 				message.setText(body);
 			} else {
+
 				// override recipients
 				message.addRecipients(Message.RecipientType.TO,
 						InternetAddress.parse(mailFrom));
@@ -480,11 +486,13 @@ public class DefaultOrg implements Organization {
 			status = 0;
 
 		} catch (MessagingException mex) {
+			System.out.println("Error messaging: "+ mex.getMessage());
+			System.out.println("Error messaging: "+ mex.toString());
 			throw new OrganizationException("Exception send email message "
 					+ mex.getMessage());
 		}
 
-		return status;	
+		return status;
 	}
 
 	/**
@@ -507,8 +515,8 @@ public class DefaultOrg implements Organization {
 
 	@Override
 	public GregorianCalendar expiration(GregorianCalendar gc, Expiration exp, String... extra) {
-        GregorianCalendar now = new GregorianCalendar();
-        GregorianCalendar rv = gc==null?now:(GregorianCalendar)gc.clone();
+		GregorianCalendar now = new GregorianCalendar();
+		GregorianCalendar rv = gc==null?now:(GregorianCalendar)gc.clone();
 		switch (exp) {
 			case ExtendPassword:
 				// Extending Password give 5 extra days, max 8 days from now
@@ -573,7 +581,7 @@ public class DefaultOrg implements Organization {
 				orgIdentitys.add(supervisor);
 			}
 		}
-		return orgIdentitys;	
+		return orgIdentitys;
 	}
 
 	@Override
@@ -590,7 +598,7 @@ public class DefaultOrg implements Organization {
 	@Override
 	public boolean canHaveMultipleCreds(String id) {
 		// External entities are likely mono-password... if you change it, it is a global change.
-		// This is great for people, but horrible for Applications.  
+		// This is great for people, but horrible for Applications.
 		//
 		// AAF's Password can have multiple Passwords, each with their own Expiration Date.
 		// For Default Org, we'll assume true for all, but when you add your external
@@ -621,13 +629,13 @@ public class DefaultOrg implements Organization {
 					}
 				}
 				return null;
-				
+
 			case CREATE_MECHID_BY_PERM_ONLY:
 				return getName() + " only allows sponsors to create MechIDs";
-				
+
 			default:
 				return policy.name() + " is unsupported at " + getName();
-		}	
+		}
 	}
 
 	@Override
@@ -650,9 +658,9 @@ public class DefaultOrg implements Organization {
 		return this.getAddresses(strAddress,";");
 	}
 	/**
-	 * Convert the delimiter String into Internet addresses with the 
+	 * Convert the delimiter String into Internet addresses with the
 	 * delimiter of provided
-	 * @param strAddress
+	 * @param strAddresses
 	 * @param delimiter
 	 * @return
 	 */
@@ -661,14 +669,14 @@ public class DefaultOrg implements Organization {
 		int count = 0;
 		for (String addr : strAddresses)
 		{
-            try{
-            	addressArray[count] = new InternetAddress(addr);
-            	count++;
-            }catch(Exception e){
-            	throw new OrganizationException("Failed to parse the email address "+ addr +": "+e.getMessage());
-            }
-        }
-        return addressArray;
+			try{
+				addressArray[count] = new InternetAddress(addr);
+				count++;
+			}catch(Exception e){
+				throw new OrganizationException("Failed to parse the email address "+ addr +": "+e.getMessage());
+			}
+		}
+		return addressArray;
 	}
 
 	private String extractRealm(final String r) {
@@ -697,5 +705,5 @@ public class DefaultOrg implements Organization {
 	public synchronized void addSupportedRealm(final String r) {
 		supportedRealms.add(extractRealm(r));
 	}
-			
+
 }
