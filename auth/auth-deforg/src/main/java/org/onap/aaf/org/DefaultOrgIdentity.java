@@ -60,7 +60,7 @@ public class DefaultOrgIdentity implements Identity {
 			org.identities.open(trans, TIMEOUT);
 			try {
 				Reuse r = org.identities.reuse();
-				int at = key.indexOf(dorg.atDomain);
+				int at = key.indexOf(dorg.getDomain());
 				String search;
 				if(at>=0) {
 					search = key.substring(0,at);
@@ -68,6 +68,9 @@ public class DefaultOrgIdentity implements Identity {
 					search = key;
 				}
 				identity = org.identities.find(search, r);
+
+
+
 				if(identity==null) {
 					identity = Identities.NO_DATA;
 				}

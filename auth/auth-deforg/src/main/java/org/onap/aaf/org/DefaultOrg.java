@@ -21,8 +21,7 @@
  ******************************************************************************/
 package org.onap.aaf.org;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -58,12 +57,14 @@ public class DefaultOrg implements Organization {
 	private final String NAME,mailHost,mailFrom;
 	private final Set<String> supportedRealms;
 
+
 	public DefaultOrg(Env env, String realm) throws OrganizationException {
+
 		this.realm = realm;
 		supportedRealms=new HashSet<String>();
 		supportedRealms.add(realm);
 		domain=FQI.reverseDomain(realm);
-		atDomain = '@'+domain;
+		atDomain = '@'+getDomain();
 		String s;
 		NAME=env.getProperty(realm + ".name","Default Organization");
 		mailHost = env.getProperty(s=(realm + ".mailHost"), null);
@@ -90,6 +91,7 @@ public class DefaultOrg implements Organization {
 					env.warn().log(defFile, " is not defined. Using default: ",temp+"/identities.dat");
 					File dir = new File(temp);
 					fIdentities=new File(dir,"identities.dat");
+
 					if(!fIdentities.exists()) {
 						env.warn().log("No",fIdentities.getCanonicalPath(),"exists.  Creating.");
 						if(!dir.exists()) {
@@ -158,6 +160,7 @@ public class DefaultOrg implements Organization {
 	@Override
 	public DefaultOrgIdentity getIdentity(AuthzTrans trans, String id) throws OrganizationException {
 		int at = id.indexOf('@');
+		String attt = at<0?id:id.substring(0, at);
 		return new DefaultOrgIdentity(trans,at<0?id:id.substring(0, at),this);
 	}
 
@@ -327,6 +330,7 @@ public class DefaultOrg implements Organization {
 								+ "Please follow this link: \n\n\t" + url
 								+ "\n\n" + summary, urgent);
 			} catch (Exception e) {
+
 				trans.error().log(e, "Failure to send Email");
 				return Response.ERR_NotificationFailure;
 			}
@@ -386,8 +390,9 @@ public class DefaultOrg implements Organization {
 	@Override
 	public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList, String subject, String body,
 			Boolean urgent) throws OrganizationException {
+
 		int status = 1;
-		
+
 		List<String> to = new ArrayList<String>();
 		for(String em : toList) {
 			if(em.indexOf('@')<0) {
@@ -396,7 +401,7 @@ public class DefaultOrg implements Organization {
 				to.add(em);
 			}
 		}
-		
+
 		List<String> cc = new ArrayList<String>();
 		if(ccList!=null) {
 			if(!ccList.isEmpty()) {
@@ -444,6 +449,7 @@ public class DefaultOrg implements Organization {
 				// Now set the actual message
 				message.setText(body);
 			} else {
+
 				// override recipients
 				message.addRecipients(Message.RecipientType.TO,
 						InternetAddress.parse(mailFrom));
@@ -480,6 +486,8 @@ public class DefaultOrg implements Organization {
 			status = 0;
 
 		} catch (MessagingException mex) {
+			System.out.println("Error messaging: "+ mex.getMessage());
+			System.out.println("Error messaging: "+ mex.toString());
 			throw new OrganizationException("Exception send email message "
 					+ mex.getMessage());
 		}
@@ -652,7 +660,7 @@ public class DefaultOrg implements Organization {
 	/**
 	 * Convert the delimiter String into Internet addresses with the 
 	 * delimiter of provided
-	 * @param strAddress
+	 * @param strAddresses
 	 * @param delimiter
 	 * @return
 	 */

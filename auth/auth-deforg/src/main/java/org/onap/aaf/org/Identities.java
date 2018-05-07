@@ -55,8 +55,8 @@ import org.onap.aaf.auth.local.DataFile.Token.Field;
  */
 public class Identities extends AbsData {
 	public final static Data NO_DATA = new Data();
-	
-	public Identities(File users) {
+
+	public Identities(File users) throws IOException {
 		super(users,'|',512,0);
 	}
 
