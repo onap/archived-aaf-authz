@@ -76,13 +76,13 @@
 		<!--  SONAR  -->
 		<!-- <sonar.skip>true</sonar.skip> -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
-	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
-	    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-	    <!-- Default Sonar configuration -->
-	    <sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
-	    <sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
-	    <!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
-	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
+		<sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<!-- Default Sonar configuration -->
+		<sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
+		<sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
+		<!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
+		<sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
@@ -107,6 +107,12 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jvnet.mock-javamail</groupId>
+			<artifactId>mock-javamail</artifactId>
+			<version>1.9</version>
 		</dependency>
 	</dependencies>
 

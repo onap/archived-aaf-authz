@@ -55,8 +55,8 @@ import org.onap.aaf.auth.local.DataFile.Token.Field;
  */
 public class Identities extends AbsData {
 	public final static Data NO_DATA = new Data();
-	
-	public Identities(File users) {
+
+	public Identities(File users) throws IOException {
 		super(users,'|',512,0);
 	}
 
@@ -81,7 +81,7 @@ public class Identities extends AbsData {
 		public final String email;
 		public final String status;
 		public final String responsibleTo;
-		
+
 		private Data(Field f) {
 			f.reset();
 			id=f.next();
@@ -93,10 +93,10 @@ public class Identities extends AbsData {
 			status=f.next();
 			responsibleTo =f.next();
 		}
-		
+
 		private Data() {
 			id = name = fname = lname =
-			phone = email = status = responsibleTo 
+			phone = email = status = responsibleTo
 			= "";
 		}
 
@@ -110,34 +110,34 @@ public class Identities extends AbsData {
 					status + '|' +
 					responsibleTo;
 		}
-		
+
 		// Here, make up your own Methods which help you easily determine your Organization's structure
 		// in your Organization Object
-        public boolean hasStatus(String possible) {
-            return possible.contains(status);
-	    }
+		public boolean hasStatus(String possible) {
+			return possible.contains(status);
+		}
 
-	    public boolean isEmployee() {
-	            return "e".equals(status);
-	    }
-	
-	    public boolean isContractor() {
-	            return "c".equals(status);
-	    }
-	
-	    public boolean isApplication() {
-	            return "a".equals(status);
-	    }
+		public boolean isEmployee() {
+				return "e".equals(status);
+		}
+
+		public boolean isContractor() {
+				return "c".equals(status);
+		}
+
+		public boolean isApplication() {
+				return "a".equals(status);
+		}
 	}
-	
-    public Data find(Object key,Reuse r) throws IOException {
-        r.reset();
-        // These are new, to allow for Thread Safety
-        int rec = ti.find(key,r,0);
-        if(rec<0) {
-            return null;
-        }
-        r.pos(rec);
+
+	public Data find(Object key,Reuse r) throws IOException {
+		r.reset();
+		// These are new, to allow for Thread Safety
+		int rec = ti.find(key,r,0);
+		if(rec<0) {
+			return null;
+		}
+		r.pos(rec);
 		return new Data(r.getFieldData());
-    }
+	}
 }
