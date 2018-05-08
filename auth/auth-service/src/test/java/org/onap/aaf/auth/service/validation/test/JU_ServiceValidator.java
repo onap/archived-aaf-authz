@@ -53,6 +53,18 @@ public class JU_ServiceValidator {
 		assertTrue(validator.errs().equals("ERR_Security\n"));
 
 	}
+	
+	@Test
+	public void permInstance() {
+		assertFalse(validator.permInstance("hello").err());
+		assertFalse(validator.permInstance("hello32").err());
+		assertFalse(validator.permInstance("hello-32").err());
+		assertFalse(validator.permInstance(":asdf:*:sdf*:sdk").err());
+		assertFalse(validator.permInstance(":asdf:*:sdf*:sdk*").err());
+		// Perms may not end in ":"
+		assertTrue(validator.permInstance(":").err());
+		assertTrue(validator.permInstance(":hello:").err());
+	}
 
 	@Test
 	public void permOkNull() {
