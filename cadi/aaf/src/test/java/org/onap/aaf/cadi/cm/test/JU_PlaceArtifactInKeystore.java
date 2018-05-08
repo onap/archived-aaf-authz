@@ -53,6 +53,7 @@ public class JU_PlaceArtifactInKeystore {
 	@Mock private CertInfo certInfoMock;
 	@Mock private Artifact artiMock;
 
+	private static final String caName = "onap";
 	private static final String dirName = "src/test/resources/artifacts";
 	private static final String nsName = "org.onap.test";
 	private static final String mechID = "m12345";
@@ -77,6 +78,7 @@ public class JU_PlaceArtifactInKeystore {
 		when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
 		when(certInfoMock.getCerts()).thenReturn(certs);
 
+		when(artiMock.getCa()).thenReturn(caName);
 		when(artiMock.getDir()).thenReturn(dirName);
 		when(artiMock.getNs()).thenReturn(nsName);
 		when(artiMock.getMechid()).thenReturn(mechID);
@@ -94,12 +96,13 @@ public class JU_PlaceArtifactInKeystore {
 
 	@Test
 	public void test() throws CadiException {
-		PlaceArtifactInKeystore placer = new PlaceArtifactInKeystore("pkcs12");
+		// Note: PKCS12 can't be tested in JDK 7 and earlier.  Can't handle Trusting Certificates.
+		PlaceArtifactInKeystore placer = new PlaceArtifactInKeystore("jks");
 
 		certs.add(x509String);
 		certs.add(x509Chain);
 		assertThat(placer.place(transMock, certInfoMock, artiMock, "machine"), is(true));
-		for (String ext : new String[] {"chal", "keyfile", "pkcs12", "props", "trust.pkcs12"}) {
+		for (String ext : new String[] {"chal", "keyfile", "jks", "props", "trust.jks"}) {
 			assertThat(new File(dirName + '/' + nsName + '.' + ext).exists(), is(true));
 		}
 

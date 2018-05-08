@@ -21,9 +21,11 @@
 
 package org.onap.aaf.cadi.cm.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +36,11 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.*;
-import org.mockito.*;
-
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.cm.ArtifactDir;
 import org.onap.aaf.cadi.util.Chmod;
@@ -125,12 +129,12 @@ public class JU_ArtifactDir {
 	
 	}
 
-	@Test(expected = CadiException.class)
+	@Test
 	public void throwsTest() throws CadiException {
 		ArtifactDirStud artiDir = new ArtifactDirStud();
 		when(artiMock.getDir()).thenReturn(dirName);
 		when(artiMock.getNs()).thenReturn(nsName);
-		artiDir.place(transMock, certInfoMock, artiMock, "machine");
+		assertTrue(artiDir.place(transMock, certInfoMock, artiMock, "machine"));
 	}
 
 	private class ArtifactDirStud extends ArtifactDir {

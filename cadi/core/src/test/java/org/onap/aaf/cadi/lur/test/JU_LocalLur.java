@@ -47,12 +47,24 @@ public class JU_LocalLur {
 
 	@Test
 	public void test() throws IOException {
-		Symm symmetric = Symm.baseCrypt().obtain();
+		final Symm symmetric = Symm.baseCrypt().obtain();
 		LocalLur up;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write(Symm.ENC.getBytes());
 		symmetric.enpass("<pass>", baos);
-		PropAccess ta = new PropAccess();
+		PropAccess ta = new PropAccess() {
+			@Override
+			public String decrypt(String encrypted, boolean anytext) throws IOException {
+				return symmetric.depass(encrypted);
+			}
+
+			@Override
+			public String encrypt(String unencrypted) throws IOException {
+				return symmetric.enpass(unencrypted);
+			}
+			
+		};
+		
 		Lur ml = up = new LocalLur(ta,"myname:groupA,groupB","admin:myname,yourname;suser:hisname,hername,m1234%"+baos.toString());
 
 		

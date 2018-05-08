@@ -125,17 +125,16 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			char[] truststorePassArray = trustStorePass.toCharArray();
 			jks.load(null,truststorePassArray); // load in
 			
-			// Add Trusted Certificates
+			// Add Trusted Certificates, but PKCS12 doesn't support
 			for(int i=0; i<trustCAs.length;++i) {
 				jks.setCertificateEntry("ca_" + arti.getCa() + '_' + i, trustCAs[i]);
 			}
 			// Write out
 			write(fks,Chmod.to644,jks,truststorePassArray);
-
+			return true;
 		} catch (Exception e) {
 			throw new CadiException(e);
 		}
-		return false;
 	}
 
 }
