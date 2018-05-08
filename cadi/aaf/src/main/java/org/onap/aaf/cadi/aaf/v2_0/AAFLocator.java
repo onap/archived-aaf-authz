@@ -79,15 +79,16 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 					int slash = aaf_locator_host.lastIndexOf("//");
 					host = aaf_locator_host.substring(slash+2);
 				}
-				client = new HClient(ss, new URI(
-											locatorURI.getScheme(),
-											locatorURI.getUserInfo(),
-											host,
-											locatorURI.getPort(),
-											"/locate/"+name + '/' + version,
-											null,
-											null
-											), connectTimeout);
+				URI uri = new URI(
+							locatorURI.getScheme(),
+							locatorURI.getUserInfo(),
+							host,
+							locatorURI.getPort(),
+							"/locate/"+name + '/' + version,
+							null,
+							null
+							);
+				client = createClient(ss, uri, connectTimeout);
 			} else {
 				client = new HClient(ss, locatorURI, connectTimeout);
 			}
@@ -128,5 +129,9 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 	@Override
 	protected URI getURI() {
 		return client.getURI();
+	}
+	
+	protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
+		return new HClient(ss, uri, connectTimeout);
 	}
 }

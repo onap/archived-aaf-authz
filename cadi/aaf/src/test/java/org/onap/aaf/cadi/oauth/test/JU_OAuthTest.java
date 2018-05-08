@@ -23,9 +23,11 @@ package org.onap.aaf.cadi.oauth.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.ConnectException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -39,6 +41,7 @@ import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.oauth.TimedToken;
 import org.onap.aaf.cadi.oauth.TokenClient;
 import org.onap.aaf.cadi.oauth.TokenClientFactory;
@@ -74,6 +77,9 @@ public class JU_OAuthTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		Field field = SecurityInfoC.class.getDeclaredField("sicMap");
+		field.setAccessible(true);
+		field.set(null, new HashMap<Class<?>,SecurityInfoC<?>>());
 	}
 
 	@Before

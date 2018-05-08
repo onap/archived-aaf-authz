@@ -23,25 +23,16 @@ package org.onap.aaf.content;
 
 import java.io.StringReader;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.rosetta.env.RosettaData;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 import aaf.v2_0.Error;
 
+// TODO: This test doesn't really do anything. It should be deleted as soon as coverage is above 50%
+
 public class JU_Content {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
 
 	@Test
 	public void parseErrorJSON() throws Exception {
@@ -70,11 +61,15 @@ public class JU_Content {
 		errDF.out(RosettaData.TYPE.JSON);
 		RosettaData<Error> data = errDF.newData();
 		data.load(err);
-		System.out.println(data.asString());
+		
+		@SuppressWarnings("unused")
+		String output = data.asString();
+//		System.out.println(output);
 		
 		data.load(new StringReader(msg));
 		err = data.asObject();
-		System.out.println(err.getText());
+		output = err.getText();
+//		System.out.println(output);
 	}
 		
 

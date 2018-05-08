@@ -30,9 +30,11 @@ import java.io.FileReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,6 +45,7 @@ import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
 import org.onap.aaf.cadi.aaf.v2_0.AAFTaf;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.locator.DNSLocator;
 import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 
@@ -142,6 +145,13 @@ public class JU_JMeter {
 		}
 		
 	};
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		Field field = SecurityInfoC.class.getDeclaredField("sicMap");
+		field.setAccessible(true);
+		field.set(null, new HashMap<Class<?>,SecurityInfoC<?>>());
+	}
 	
 	private static int index = -1;
 	
