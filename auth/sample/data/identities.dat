@@ -1,5 +1,5 @@
 #
-# Identities.dat
+# Sample Identities.dat
 # This file is for use with the "Default Organization". It is a simple mechanism to have a basic ILM structure to use with
 # out-of-the-box tire-kicking, or even for Small companies
 #
@@ -16,36 +16,21 @@
 #  5 - official email
 #  6 - employment status e=employee, c=contractor, a=application, n=no longer with company
 #  7 - responsible to (i.e Supervisor for People, or AppOwner, if it's an App ID)
-jonathan|Jonathan C Gathman|Jonathan|Gathman|314-550-3312|jonathan.gathman@att.com|e|
-clefevre|Catherine LeFevre|Catherine|LeFevre||catherine.lefevre@att.com|e|
-ramkoya|Ram Koya|Ram|Koya||ram.koya@att.com|e|clefevre
-chris|Chris Varner|Chris|Varner|469-375-0774|chris.varner@att.com|c|anne
-ian|Ian Howell|Ian|Howell|314-450-2782|ian.howell@att.com|e|jonathan
-gabe|Gabe B Maurer|Gabe|Maurer|314-962-9579|gabe.maurer@att.com|e|jonathan
-sai|Sai Gandham|Sai|Gandham|424-265-9959|sai.gandham@att.com|c|anne
-anne|Anne E Kopp|Anne|Kopp|512-244-4280|anne.e.kopp@att.com|e|jonathan
-aaf|AAF App|AAF|Application||DL-aaf-support@att.com|a|jonathan
-a2345z|AAF App|AAF|Application||DL-aaf-support@att.com|a|jonathan
-aaf_authz|AAF App|AAF|Application||jonathan.gathman@att.com|a|jonathan
-kirank|Kiran K Kamineni|Kiran|Kamineni|999-999=9999|kiran.k.kamineni@intel.com|e|ramkoya
-aaf_sms|Secret Management Service|SMS|Secret Management Service provides secure storage for sensitive information such as passwords and userIDs||kiran.k.kamineni@intel.com|a|kirank
-djtimoney|Dan Timoney|Dan|Timoney|+1 (732) 420-3226|dt5972@att.com|e|ramkoya
-xuegao|Xue Gao|Xue|Gao|0032479670327|xg353y@att.com|e|clefevre
-clamp|Clamp Application|clamp|Application||xg353y@att.com|a|xuegao
-dmaapbc|DMaap Bus Controller|DMaap|Bus Controller||dgl@research.att.com|a|dgfromatt
-dglfromatt|Dominic Lunanuova|Dominic|Lunanuova|732-420-9618|dgl@research.att.com|e|ramokoya
-puthenpura|Sarat Puthenpura|Sarat|Puthenpura|||e|clefevre
-ruoyu|Ruoyu Ying|Ruoyu|Ying|13661960772|ruoyu.ying@intel.com|e|puthenpura
-sunilu|Sunil Unnava|Sunil|Unnava|6094541858|sunil.unnava@att.com|e|ramkoya
-dmaapmr|DMaap Message Router|DMaap MR|Message Router||su622b@att.com|a|sunilu
-oof|OOF|OOF|OOF||sarat@research.att.com|a|saratp
-saratp|Sarat Puthenpura|Sarat|Puthenpura|9089012067|sarat@research.att.com|e|clefevre
+#
+
+iowna|Ima D. Owner|Ima|Owner|314-123-2000|ima.d.owner@osaaf.com|e|
+mmanager|Mark D. Manager|Mark|Manager|314-123-1234|mark.d.manager@osaaf.com|e|iowna
+bdevl|Robert D. Developer|Bob|Developer|314-123-1235|bob.d.develper@osaaf.com|e|mmanager
+mmarket|Mary D. Marketer|Mary|Marketer|314-123-1236|mary.d.marketer@osaaf.com|e|mmanager
+ccontra|Clarice D. Contractor|Clarice|Contractor|314-123-1237|clarice.d.contractor@osaaf.com|c|mmanager
+iretired|Ira Lee M. Retired|Ira|Retired|314-123-1238|clarice.d.contractor@osaaf.com|n|mmanager
+osaaf|ID of AAF|||||a|bdevl
 # ONAP default Users
-demo|PORTAL DEMO|PORTAL|DEMO|||e|jonathan
-jh0003|PORTAL ADMIN|PORTAL|ADMIN|||e|jonathan
-cs0008|PORTAL DESIGNER|PORTAL|DESIGNER|||e|jonathan
-jm0007|PORTAL TESTER|PORTAL|TESTER|||e|jonathan
-op0001|PORTAL OPS|PORTAL|OPS|||e|jonathan
-gv0001|PORTAL GOVERNOR|PORTAL|GOVERNOR|||e|jonathan
+demo|PORTAL DEMO|PORTAL|DEMO|||e|mmanager
+jh0003|PORTAL ADMIN|PORTAL|ADMIN|||e|mmanager
+cs0008|PORTAL DESIGNER|PORTAL|DESIGNER|||e|mmanager
+jm0007|PORTAL TESTER|PORTAL|TESTER|||e|mmanager
+op0001|PORTAL OPS|PORTAL|OPS|||e|mmanager
+gv0001|PORTAL GOVERNOR|PORTAL|GOVERNOR|||e|mmanager
 
 

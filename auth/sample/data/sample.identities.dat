@@ -25,3 +25,12 @@ mmarket|Mary D. Marketer|Mary|Marketer|314-123-1236|mary.d.marketer@osaaf.com|e|
 ccontra|Clarice D. Contractor|Clarice|Contractor|314-123-1237|clarice.d.contractor@osaaf.com|c|mmanager
 iretired|Ira Lee M. Retired|Ira|Retired|314-123-1238|clarice.d.contractor@osaaf.com|n|mmanager
 osaaf|ID of AAF|||||a|bdevl
+# ONAP default Users
+demo|PORTAL DEMO|PORTAL|DEMO|||e|mmanager
+jh0003|PORTAL ADMIN|PORTAL|ADMIN|||e|mmanager
+cs0008|PORTAL DESIGNER|PORTAL|DESIGNER|||e|mmanager
+jm0007|PORTAL TESTER|PORTAL|TESTER|||e|mmanager
+op0001|PORTAL OPS|PORTAL|OPS|||e|mmanager
+gv0001|PORTAL GOVERNOR|PORTAL|GOVERNOR|||e|mmanager
+
+
