@@ -19,8 +19,7 @@
  *
  */
 
-
-package org.onap.aaf.auth.test;
+package org.onap.aaf.auth.helpers.test;
 
 import static org.junit.Assert.*;
 import org.junit.After;
@@ -28,32 +27,54 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.onap.aaf.auth.BatchException;
+import org.onap.aaf.auth.helpers.CacheChange;
+
+import junit.framework.Assert;
 
 import static org.mockito.Mockito.*;
+
+import java.util.List;
+
 import org.junit.Test;
 
-public class JU_BatchException {
+public class JU_CacheChange {
 
-	BatchException bExcept1;
-	BatchException bExcept2;
-	BatchException bExcept3;
-	BatchException bExcept4;
-	BatchException bExcept5;
-	Throwable throwable;
+	CacheChange cc;
+	
 	
 	@Before
 	public void setUp() {
-		throwable = new Throwable();
+		cc = new CacheChange();
 	}
 	
 	@Test
-	public void testBatchException() {
-		bExcept1 = new BatchException();
-		bExcept2 = new BatchException("test");
-		bExcept3 = new BatchException(throwable);
-		bExcept4 = new BatchException("test", throwable);
-		bExcept5 = new BatchException("test", throwable,true,true);
+	public void testDelayedDelete() {
+		cc.delayedDelete(null);
+	}
+
+	@Test
+	public void testGetRemoved() {
+		List list = cc.getRemoved();
+		Assert.assertNotNull(list);
+	}
+	
+	@Test
+	public void testResetLocalData() {
+		cc.resetLocalData();
+	}
+	
+	@Test
+	public void testCacheSize() {
+		int size;
+		size = cc.cacheSize();
+		Assert.assertEquals(0, size);
+	}
+	
+	@Test
+	public void testContains() {
+		boolean containsBools;
+		containsBools = cc.contains(null);
+		Assert.assertEquals(false, containsBools);
 	}
 
 }

@@ -19,7 +19,6 @@
  *
  */
 
-
 package org.onap.aaf.auth.test;
 
 import static org.junit.Assert.*;
@@ -28,32 +27,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.onap.aaf.auth.BatchException;
+import org.onap.aaf.auth.BatchPrincipal;
+
+import junit.framework.Assert;
 
 import static org.mockito.Mockito.*;
 import org.junit.Test;
 
-public class JU_BatchException {
+public class JU_BatchPrincipal {
 
-	BatchException bExcept1;
-	BatchException bExcept2;
-	BatchException bExcept3;
-	BatchException bExcept4;
-	BatchException bExcept5;
-	Throwable throwable;
-	
-	@Before
-	public void setUp() {
-		throwable = new Throwable();
-	}
+	BatchPrincipal bPrincipal;
 	
 	@Test
-	public void testBatchException() {
-		bExcept1 = new BatchException();
-		bExcept2 = new BatchException("test");
-		bExcept3 = new BatchException(throwable);
-		bExcept4 = new BatchException("test", throwable);
-		bExcept5 = new BatchException("test", throwable,true,true);
+	public void testBatchPrincipal() {
+		bPrincipal = new BatchPrincipal("name");
+		bPrincipal.getName();
+		Assert.assertEquals("Batch", bPrincipal.tag());
 	}
 
 }
