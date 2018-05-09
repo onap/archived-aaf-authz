@@ -113,11 +113,7 @@ public class Persisting<T> implements Persistable<T> {
 		//TODO other elements to add here... 
 		// Ideas:  Is it valid?
 		//         if not, How many times has it been checked in the last minute
-		if(expired()) {
-			return true;
-		} else {
-			return false;
-		}
+		return expired();
 	}
 
 	@Override
