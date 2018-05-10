@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,17 +21,77 @@
 
 package org.onap.aaf.cadi.oauth.test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.onap.aaf.cadi.Permission;
+import org.onap.aaf.cadi.oauth.TokenPerm;
 import org.onap.aaf.cadi.oauth.TokenPerm.LoadPermissions;
+import org.onap.aaf.cadi.persist.Persist;
+import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.rosetta.ParseException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
+
+import aaf.v2_0.Perms;
+import aafoauth.v2_0.Introspect;
 
 public class JU_TokenPerm {
+
+	private static final byte[] hash = "hashstring".getBytes();
+
+	private static final String clientId = "clientId";
+	private static final String username = "username";
+	private static final String token = "token";
+	private static final String scopes = "scopes";
+	private static final String content = "content";
+
+	private static final long expires = 10000L;
+
+	private static Path path;
+
+	@Mock private Persist<Introspect, ?> persistMock;
+	@Mock private RosettaDF<Perms> dfMock;
+	@Mock private Introspect introspectMock;
+
+	@Before
+	public void setup() throws IOException {
+		MockitoAnnotations.initMocks(this);
+
+		when(introspectMock.getExp()).thenReturn(expires);
+		when(introspectMock.getClientId()).thenReturn(clientId);
+		when(introspectMock.getUsername()).thenReturn(username);
+		when(introspectMock.getAccessToken()).thenReturn(token);
+		when(introspectMock.getScope()).thenReturn(scopes);
+		when(introspectMock.getExp()).thenReturn(expires);
+
+		path = Files.createTempFile("fake", ".txt");
+	}
+
+	@Test
+	public void tokenTest() throws APIException {
+		TokenPerm tokenPerm = new TokenPerm(persistMock, dfMock, introspectMock, hash, path);
+		assertThat(tokenPerm.perms().size(), is(0));
+		assertThat(tokenPerm.getClientId(), is(clientId));
+		assertThat(tokenPerm.getUsername(), is(username));
+		assertThat(tokenPerm.getToken(), is(token));
+		assertThat(tokenPerm.getScopes(), is(scopes));
+		assertThat(tokenPerm.getIntrospect(), is(introspectMock));
+
+		when(introspectMock.getContent()).thenReturn(content);
+		tokenPerm = new TokenPerm(persistMock, dfMock, introspectMock, hash, path);
+	}
 
 	@Test
 	public void test() throws ParseException {
@@ -132,5 +192,5 @@ public class JU_TokenPerm {
 			fail(e.getMessage());
 		}
 	}
-	
+
 }
