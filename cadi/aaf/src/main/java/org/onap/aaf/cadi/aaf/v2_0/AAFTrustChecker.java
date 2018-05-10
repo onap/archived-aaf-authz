@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,10 +41,10 @@ public class AAFTrustChecker implements TrustChecker {
 	private Lur lur;
 
 	/**
-	 * 
+	 *
 	 * Instance will be replaced by Identity
-	 * @param lur 
-	 *    
+	 * @param lur
+	 *
 	 * @param tag
 	 * @param perm
 	 */
@@ -87,28 +87,30 @@ public class AAFTrustChecker implements TrustChecker {
 	@Override
 	public TafResp mayTrust(TafResp tresp, HttpServletRequest req) {
 		String user_info = req.getHeader(tag);
-		if(user_info !=null ) {
-			String[] info = Split.split(',', user_info);
-			if(info.length>0) {
-				String[] flds = Split.splitTrim(':',info[0]);
-				if(flds.length>3 && "AS".equals(flds[3])) { // is it set for "AS"
-					String pn = tresp.getPrincipal().getName();
-					if(pn.equals(id)  // We do trust our own App Components: if a trust entry is made with self, always accept
-					   || lur.fish(tresp.getPrincipal(), perm)) { // Have Perm set by Config.CADI_TRUST_PERM
-						return new TrustTafResp(tresp,
-								new TrustPrincipal(tresp.getPrincipal(), flds[0]),
-								"  " + flds[0] + " validated using " + flds[2] + " by " + flds[1] + ','
-							);
-					} else if(pn.equals(flds[0])) { // Ignore if same identity 
-						return tresp;
-					} else {
-						return new TrustNotTafResp(tresp, tresp.getPrincipal().getName() + " requested trust as "
-								+ flds[0] + ", but does not have Authorization");
-					}
-				}
-			}
+		if (user_info == null) {
+			return tresp;
 		}
-		return tresp;
+
+		String[] info = Split.split(',', user_info);
+		String[] flds = Split.splitTrim(':', info[0]);
+		if (flds.length < 4) {
+			return tresp;
+		}
+		if (!("AS".equals(flds[3]))) { // is it set for "AS"
+			return tresp;
+		}
+
+		String principalName = tresp.getPrincipal().getName();
+		if(principalName.equals(id)  // We do trust our own App Components: if a trust entry is made with self, always accept
+				|| lur.fish(tresp.getPrincipal(), perm)) { // Have Perm set by Config.CADI_TRUST_PERM
+			String desc = "  " + flds[0] + " validated using " + flds[2] + " by " + flds[1] + ',';
+			return new TrustTafResp(tresp, new TrustPrincipal(tresp.getPrincipal(), flds[0]), desc);
+		} else if(principalName.equals(flds[0])) { // Ignore if same identity
+			return tresp;
+		} else {
+			String desc = tresp.getPrincipal().getName() + " requested trust as " + flds[0] + ", but does not have Authorization";
+			return new TrustNotTafResp(tresp, desc);
+		}
 	}
 
 }
