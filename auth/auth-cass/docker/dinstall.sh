@@ -23,8 +23,14 @@ if [ "$YESCQL" == "" ]; then
   exit
 fi
 
+echo "Creating /opt/app/cass_init dir on aaf_cass"
 docker exec aaf_cass mkdir -p /opt/app/cass_init
+echo "cp the following files to /opt/app/cass_init dir on aaf_cass"
+ls ../src/main/cql
 docker cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
+echo "The following files are on /opt/app/cass_init dir on aaf_cass"
+docker exec -it aaf_cass 'ls /opt/app/cass_init'
+
 
 echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
 echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
