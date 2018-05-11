@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,13 +19,22 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.cadi.cm.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
-import org.junit.*;
-import org.mockito.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,6 +59,7 @@ import javax.crypto.Cipher;
 
 import org.onap.aaf.cadi.cm.CertException;
 import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.cm.Factory.Base64InputStream;
 import org.onap.aaf.cadi.cm.Factory.StripperInputStream;
 
 import org.onap.aaf.misc.env.Env;
@@ -59,34 +69,23 @@ import org.onap.aaf.misc.env.Trans;
 
 public class JU_Factory {
 
-	@Mock
-	Trans transMock;
+	private static final String message = "The quick brown fox jumps over the lazy dog.";
+	private static final String subjectDNText = "subjectDN";
+	private static final String certText = "Some text that might be included in a certificate";
+	private static final String resourceDirName = "src/test/resources";
 
-	@Mock
-	TimeTaken timeTakenMock;
-
-	@Mock
-	LogTarget logTargetMock;
-
-	@Mock
-	X509Certificate x509CertMock;
-
-	@Mock
-	Certificate certMock;
-
-	@Mock
-	Principal subjectDN;
-
-	private final String resourceDirName = "src/test/resources";
 	private File resourceDir;
 	private File publicKeyFile;
 	private File privateKeyFile;
 	private File certFile;
-	
-	private static final String message = "The quick brown fox jumps over the lazy dog.";
 
-	private static final String subjectDNText = "subjectDN";
-	private static final String certText = "Some text that might be included in a certificate";
+	@Mock private Trans transMock;
+	@Mock private TimeTaken timeTakenMock;
+	@Mock private LogTarget logTargetMock;
+	@Mock private X509Certificate x509CertMock;
+	@Mock private Certificate certMock;
+	@Mock private Principal subjectDN;
+
 
 	@Before
 	public void setup() throws CertificateEncodingException {
@@ -118,10 +117,6 @@ public class JU_Factory {
 		privateKeyFile = new File(resourceDirName, "/privateKey");
 		publicKeyFile.delete();
 		privateKeyFile.delete();
-
-		if (resourceDir.list().length == 0) {
-			resourceDir.delete();
-		}
 	}
 
 	@Test
@@ -295,25 +290,32 @@ public class JU_Factory {
 		assertThat(Factory.verify(transMock, signedString.getBytes(), signedBytes, kp.getPublic()), is(true));
 	}
 
-	// TODO: Ian - finish these tests
-	// @Test
-	// public void base64ISTest() throws Exception {
-	// 	KeyPair kp = Factory.generateKeyPair(transMock);
+	@Test
+	public void base64ISTest() throws Exception {
+		KeyPair kp = Factory.generateKeyPair(transMock);
 
-	// 	String privateKeyString = Factory.toString(transMock, kp.getPrivate());
-	// 	String cleaned = cleanupString(privateKeyString);
-	// 	System.out.println(cleaned);
-	// 	writeToFile(privateKeyFile, cleaned);
-	// 	Base64InputStream b64is = new Base64InputStream(privateKeyFile);
-	// 	byte[] buffer = new byte[10000];
-	// 	b64is.read(buffer);
-	// 	System.out.println(new String(buffer));
-	// 	b64is.close();
-	// }
+		String privateKeyString = Factory.toString(transMock, kp.getPrivate());
+		String cleaned = cleanupString(privateKeyString);
+		writeToFile(privateKeyFile, cleaned, null);
+		Base64InputStream b64is = new Base64InputStream(privateKeyFile);
+		byte[] buffer = new byte[10000];
+		b64is.read(buffer);
+		b64is.close();
 
-	// @Test
-	// public void getSecurityProviderTest() {
-	// }
+		FileInputStream fis = new FileInputStream(privateKeyFile);
+		b64is = new Base64InputStream(fis);
+		b64is.close();
+		fis.close();
+	}
+
+	@Test
+	public void getSecurityProviderTest() throws CertException {
+		String[][] params = {
+				{"test", "test"},
+				{"test", "test"},
+		};
+		assertThat(Factory.getSecurityProvider("PKCS12", params), is(nullValue()));
+	}
 
 	private String cleanupString(String str) {
 		String[] lines = str.split("\n", 0);
@@ -324,7 +326,7 @@ public class JU_Factory {
 		return join("", rawLines);
 	}
 
-	/** 
+	/**
 	 * Note: String.join is not part of JDK 7, which is what we compile to for CADI
 	 */
 	private String join(String delim, List<String> rawLines) {
@@ -340,7 +342,7 @@ public class JU_Factory {
 		}
 		return sb.toString();
 	}
-	
+
 	private void writeToFile(File file, String contents, String header) throws Exception {
 		PrintWriter writer = new PrintWriter(file, "UTF-8");
 		if (header != null) {
