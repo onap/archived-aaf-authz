@@ -1,4 +1,10 @@
 #!/bin/bash 
+if [ "`docker ps -a | grep aaf_cass`" == "" ]; then
+  docker run --name aaf_cass  -d cassandra:3.11
+  echo "aaf_cass Starting"
+  echo "Check for running Docker Container aaf_cass, then run again."
+  exit
+fi 
 
 docker exec aaf_cass mkdir -p /opt/app/cass_init
 docker cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
@@ -18,7 +24,7 @@ sleep 20
 echo "Do a repair, to ensure Cassandra is actually running yet"
 docker exec -it aaf_cass bash -c 'nodetool repair'
 
-echo "Create Keyspaces and Tables""
+echo "Create Keyspaces and Tables"
 docker exec -it aaf_cass bash -c '\
 cd /opt/app/cass_init; \
 echo "Creating Keyspace";cqlsh -u root -p root -f keyspace.cql;\
