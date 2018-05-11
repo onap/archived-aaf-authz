@@ -1,13 +1,7 @@
 #!/bin/bash 
-if [ "`docker ps -a | grep aaf_cass`" == "" ]; then
-  docker run --name aaf_cass  -d cassandra:3.11
-  echo "Check for running Docker Container aaf_cass, then run again."
-  exit
-else
-  docker exec aaf_cass mkdir -p /opt/app/cass_init
-  docker cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
-fi 
 
+docker exec aaf_cass mkdir -p /opt/app/cass_init
+docker cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
 
 echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
 echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
@@ -19,8 +13,12 @@ echo " cqlsh -u root -p root -f osaaf.cql"
 echo ""
 echo "The following will give you a temporary identity with which to start working, or emergency"
 echo " cqlsh -u root -p root -f temp_identity.cql"
-echo "Sleeping for 10 seconds"
-sleep 10
+echo "Sleeping for 20 seconds"
+sleep 20
+echo "Do a repair, to ensure Cassandra is actually running yet"
+docker exec -it aaf_cass bash -c 'nodetool repair'
+
+echo "Create Keyspaces and Tables""
 docker exec -it aaf_cass bash -c '\
 cd /opt/app/cass_init; \
 echo "Creating Keyspace";cqlsh -u root -p root -f keyspace.cql;\
