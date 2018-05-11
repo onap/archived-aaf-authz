@@ -60,6 +60,8 @@ public class JU_PoolTest {
 				content = t;
 			}
 		});
+		Pool.Pooled<Integer> pooled = new Pool.Pooled<Integer>(new Integer(123), pool, LogTarget.SYSOUT);
+		Pool.Pooled<Integer> pooled1 = new Pool.Pooled<Integer>(new Integer(123), null, LogTarget.SYSOUT);
 		try {
 			// pool.drain();
 			assertEquals("Should return intial value", 0, pool.get().content);
@@ -74,8 +76,11 @@ public class JU_PoolTest {
 
 			pool.drain();
 			assertEquals("Should remove last from pool", 17, pool.get(LogTarget.SYSOUT).content);
+			pool.setMaxRange(10);
+			assertEquals(10, pool.getMaxRange());
+			pooled.toss();
+			pooled1.toss();
 		} catch (APIException e) {
 		}
 	}
-
 }
