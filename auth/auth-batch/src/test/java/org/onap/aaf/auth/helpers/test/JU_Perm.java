@@ -27,75 +27,72 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.onap.aaf.auth.helpers.MonthData;
-import org.onap.aaf.auth.helpers.MonthData.Row;
+import org.onap.aaf.auth.helpers.Perm;
 
 import junit.framework.Assert;
 
 import static org.mockito.Mockito.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
-public class JU_MonthData {
+public class JU_Perm {
 	
-	File f;
-	MonthData mData;
-	Row row;
-	BufferedWriter bw = null;
-	FileWriter fw = null;
+	Perm perm;
+	Set set;
 	
 	@Before
-	public void setUp() throws IOException {
-		mData = new MonthData("env");
-		row = new Row("target", 10,2,1);
-		f = new File("Monthlyenv.dat");
-		f.createNewFile();
-		bw = new BufferedWriter(new FileWriter(f));
-		bw.write("#test"+ "\n");
-		bw.write("long,tester"+ "\n");
-		bw.write("1,2,3,4,5"+ "\n");
-		bw.close();
-		
-		mData = new MonthData("env");
+	public void setUp() {
+		set = new HashSet();
+		perm = new Perm("ns","type", "instance", "action","description", set);
 	}
 
 	@Test
-	public void testAdd() {
-		mData.add(2, "target", 10, 1, 1);
+	public void testFullType() {
+		Assert.assertEquals("ns.type", perm.fullType());
 	}
 	
 	@Test
-	public void testNotExists() {
-		mData.notExists(2);
+	public void testFullPerm() {
+		Assert.assertEquals("ns.type|instance|action", perm.fullPerm());
 	}
 	
 	@Test
-	public void testWrite() throws IOException {
-		mData.write();
+	public void testEncode() {
+		Assert.assertEquals("ns|type|instance|action", perm.encode());
 	}
 	
 	@Test
-	public void testCompareTo() {
-		Row testrow = new Row("testtar",1,1,1);
-		Assert.assertEquals(-4, row.compareTo(testrow));
-		Assert.assertEquals(0, row.compareTo(row));
+	public void testHashCode() {
+		Assert.assertEquals(850667666, perm.hashCode());
 	}
 	
 	@Test
 	public void testToString() {
-		Assert.assertEquals("target|10|1|2", row.toString());
+		Assert.assertEquals("ns|type|instance|action", perm.toString());
 	}
 	
-	@After
-	public void cleanUp() {
-		if(f.exists()) {
-			f.delete();
-		}
+	@Test
+	public void testEquals() {
+		Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
+		Assert.assertEquals(false, perm.equals(perm1));
+	}
+	
+	@Test
+	public void testCompareTo() {
+		Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
+		Perm perm2 = new Perm("ns1","type", "instance", "action","description", set);
+		
+		Assert.assertEquals(0, perm.compareTo(perm1));
+		Assert.assertEquals(75, perm.compareTo(perm2));
+	}
+	
+	@Test
+	public void testStageRemove() {
+		Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
+		perm.stageRemove(perm1);
 	}
 
 }
