@@ -130,7 +130,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 	}
 	
 	public int totalLoaded() {
-		return totalLoaded();
+		return totalLoaded;
 	}
 	
 	public int deleted() {
