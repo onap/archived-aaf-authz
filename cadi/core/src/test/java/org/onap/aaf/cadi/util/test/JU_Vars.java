@@ -46,7 +46,6 @@ public class JU_Vars {
 
 	@Test
 	public void convertTest1() {
-		String test = "te%t";
 		List<String> list = new ArrayList<String>();
 		list.add("method");
 		assertEquals(Vars.convert("test", list), "test");
@@ -54,7 +53,6 @@ public class JU_Vars {
 
 	@Test
 	public void convertTest2() {
-		String test = "te%s%t";
 		List<String> list = new ArrayList<String>();
 		list.add("method");
 		assertEquals(Vars.convert("test", list), "test");

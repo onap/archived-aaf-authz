@@ -21,9 +21,13 @@
 
 package org.onap.aaf.cadi.config.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -64,7 +68,7 @@ public class JU_UsersDump {
 	private final static String names = "admin:myname,yourname;suser:hisname,hername,m1234";
 
 	private AbsUserCache<LocalPermission> lur;
-		
+
 	@Before
 	public void setup() throws IOException {
 		outStream = new ByteArrayOutputStream();
@@ -85,6 +89,9 @@ public class JU_UsersDump {
 		UsersDump.write(outStream, lur);
 		String[] actualLines = Split.splitTrim('\n', outStream.toString());
 		String[] expectedLines = Split.splitTrim('\n', expected);
+		for (String s : actualLines) {
+			System.out.println(s);
+		}
 
 		assertThat(actualLines.length, is(expectedLines.length));
 

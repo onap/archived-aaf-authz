@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,97 +19,156 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.cadi.lur.test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.onap.aaf.cadi.Lur;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.CredVal.Type;
-import org.onap.aaf.cadi.config.UsersDump;
+import org.onap.aaf.cadi.lur.ConfigPrincipal;
 import org.onap.aaf.cadi.lur.LocalLur;
 import org.onap.aaf.cadi.lur.LocalPermission;
 
 public class JU_LocalLur {
 
+	private static final String password = "<pass>";
+	private String encrypted;
+
+	private PropAccess access;
+	private ByteArrayOutputStream outStream;
+
+	@Mock Permission permMock;
+
+	@Before
+	public void setup() throws IOException {
+		MockitoAnnotations.initMocks(this);
+
+		encrypted = rot13(password);
+
+		outStream = new ByteArrayOutputStream();
+		access = new PropAccess(new PrintStream(outStream), new String[0]) {
+			@Override public String decrypt(String encrypted, boolean anytext) throws IOException {
+				return rot13(encrypted);
+			}
+			@Override public String encrypt(String unencrypted) throws IOException {
+				return rot13(unencrypted);
+			}
+		};
+
+	}
+
 	@Test
 	public void test() throws IOException {
-		final Symm symmetric = Symm.baseCrypt().obtain();
-		LocalLur up;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(Symm.ENC.getBytes());
-		symmetric.enpass("<pass>", baos);
-		PropAccess ta = new PropAccess() {
-			@Override
-			public String decrypt(String encrypted, boolean anytext) throws IOException {
-				return symmetric.depass(encrypted);
-			}
+		LocalLur lur;
+		List<AbsUserCache<LocalPermission>.DumpInfo> info;
 
-			@Override
-			public String encrypt(String unencrypted) throws IOException {
-				return symmetric.enpass(unencrypted);
-			}
-			
-		};
-		
-		Lur ml = up = new LocalLur(ta,"myname:groupA,groupB","admin:myname,yourname;suser:hisname,hername,m1234%"+baos.toString());
+		lur = new LocalLur(access, null, null);
+		assertThat(lur.dumpInfo().size(), is(0));
 
+		lur = new LocalLur(access, "user1", null);
+		info = lur.dumpInfo();
+		assertThat(info.size(), is(1));
+		assertThat(info.get(0).user, is("user1"));
+
+		lur.clearAll();
+		assertThat(lur.dumpInfo().size(), is(0));
+
+		lur = new LocalLur(access, "user1%" + encrypted, null);
+		info = lur.dumpInfo();
+		assertThat(info.size(), is(1));
+		assertThat(info.get(0).user, is("user1@none"));
+
+		lur.clearAll();
+		assertThat(lur.dumpInfo().size(), is(0));
+
+		lur = new LocalLur(access, "user1@domain%" + encrypted, null);
+		info = lur.dumpInfo();
+		assertThat(info.size(), is(1));
+		assertThat(info.get(0).user, is("user1@domain"));
+
+		lur = new LocalLur(access, "user1@domain%" + encrypted + ":groupA", null);
+		info = lur.dumpInfo();
+		assertThat(info.size(), is(1));
+		assertThat(info.get(0).user, is("user1@domain"));
 		
-//		Permission admin = new LocalPermission("admin");
-//		Permission suser = new LocalPermission("suser");
-//		
-//		// Check User fish
-//		assertTrue(ml.fish(new JUPrincipal("myname"),admin));
-//		assertTrue(ml.fish(new JUPrincipal("hisname"),admin));
-//		assertFalse(ml.fish(new JUPrincipal("noname"),admin));
-//		assertTrue(ml.fish(new JUPrincipal("itsname"),suser));
-//		assertTrue(ml.fish(new JUPrincipal("hername"),suser));
-//		assertFalse(ml.fish(new JUPrincipal("myname"),suser));
-//		
-//		// Check validate password
-//		assertTrue(up.validate("m1234",Type.PASSWORD, "<pass>".getBytes()));
-//		assertFalse(up.validate("m1234",Type.PASSWORD, "badPass".getBytes()));
-//		
-		// Check fishAll
-		Set<String> set = new TreeSet<String>();
-		List<Permission> perms = new ArrayList<Permission>();
-		ml.fishAll(new JUPrincipal("myname"), perms);
-		for(Permission p : perms) {
-			set.add(p.getKey());
-		}
-//		assertEquals("[admin, groupA, groupB]",set.toString());
-		UsersDump.write(System.out, up);
-		System.out.flush();
+		when(permMock.getKey()).thenReturn("groupA");
+		assertThat(lur.handlesExclusively(permMock), is(true));
+		when(permMock.getKey()).thenReturn("groupB");
+		assertThat(lur.handlesExclusively(permMock), is(false));
 		
+		assertThat(lur.fish(null, null), is(false));
+		
+		Principal princ = new ConfigPrincipal("user1@localized", encrypted);
+
+		lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
+		assertThat(lur.fish(princ, lur.createPerm("groupA")), is(true));
+		assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
+		assertThat(lur.fish(princ, permMock), is(false));
+
+		princ = new ConfigPrincipal("user1@domain", encrypted);
+		assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
+
+		princ = new ConfigPrincipal("user1@localized", "badpass");
+		assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
+		
+		assertThat(lur.handles(null), is(false));
+		
+		lur.fishAll(null,  null);
+
+		List<Permission> perms = new ArrayList<>();
+		perms.add(lur.createPerm("groupB"));
+		perms.add(lur.createPerm("groupA"));
+		princ = new ConfigPrincipal("user1@localized", encrypted);
+		lur.fishAll(princ, perms);
+		princ = new ConfigPrincipal("user1@localized", "badpass");
+		lur.fishAll(princ, perms);
+		
+		assertThat(lur.validate(null, null, null, null), is(false));
+		assertThat(lur.validate("user", null, "badpass".getBytes(), null), is(false));
+		assertThat(lur.validate("user1@localized", null, encrypted.getBytes(), null), is(false));
+
+		lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
+		assertThat(lur.validate("user1@localized", Type.PASSWORD, encrypted.getBytes(), null), is(true));
+
+		lur = new LocalLur(access, null, "admin");
+		lur = new LocalLur(access, null, "admin:user1");
+		lur = new LocalLur(access, null, "admin:user1@localized");
+		lur = new LocalLur(access, null, "admin:user1@localized,user2@localized%" + password + ";user:user1@localized");
 	}
-	
-	// Simplistic Principal for testing purposes
-	private static class JUPrincipal implements Principal {
-		private String name;
-		public JUPrincipal(String name) {
-			this.name = name;
+
+	public static String rot13(String input) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			if (c >= 'a' && c <= 'm') {
+				c += 13;
+			} else if (c >= 'A' && c <= 'M') {
+				c += 13;
+			} else if (c >= 'n' && c <= 'z') {
+				c -= 13;
+			} else if (c >= 'N' && c <= 'Z') {
+				c -= 13;
+			}
+			sb.append(c);
 		}
-//		@Override
-		public String getName() {
-			return name;
-		}
+		return sb.toString();
 	}
 
-
-
-	
-	
 }
+

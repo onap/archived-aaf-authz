@@ -21,7 +21,6 @@
 
 package org.onap.aaf.cadi.wsse;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.stream.XMLStreamException;
@@ -46,7 +45,6 @@ public class WSSEParser {
 	private static final String SOAP_NS = "http://schemas.xmlsoap.org/soap/envelope/";
 	private static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
 	private Match<BasicCred> parseTree;
-	//private XMLInputFactory inputFactory;
 
 	public WSSEParser() {
 		// soap:Envelope/soap:Header/wsse:Security/wsse:UsernameToken/[wsse:Password&wsse:Username]
@@ -72,10 +70,9 @@ public class WSSEParser {
 				).stopAfter() // Stop Processing when Header Ends
 			).exclusive()// Envelope must match Header, and no other.  FYI, Body comes after Header short circuits (see above), so it's ok
 		).exclusive(); // root must be Envelope
-		//inputFactory = XMLInputFactory.newInstance();
 	}
 	
-	public XMLStreamException parse(BasicCred bc, InputStream is) throws IOException {
+	public XMLStreamException parse(BasicCred bc, InputStream is) {
 		try {
 			parseTree.onMatch(bc, new XReader(is));
 			return null;

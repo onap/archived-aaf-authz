@@ -22,9 +22,13 @@
 
 package org.onap.aaf.cadi.principal.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 import org.junit.*;
 
 import java.io.IOException;
@@ -33,9 +37,6 @@ import java.util.Date;
 import org.onap.aaf.cadi.BasicCred;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
-import org.onap.aaf.cadi.principal.StringTagLookup;
-import org.onap.aaf.cadi.principal.TaggedPrincipal;
-import org.onap.aaf.cadi.principal.TaggedPrincipal.TagLookup;
 
 public class JU_BasicPrincipal {
 

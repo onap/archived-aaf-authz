@@ -21,11 +21,13 @@
 
 package org.onap.aaf.cadi.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
-import org.junit.*;
-import org.mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,13 +37,17 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.AbsUserCache;
-import org.onap.aaf.cadi.AbsUserCache.*;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.CachingLur;
 import org.onap.aaf.cadi.GetCred;
-import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.User;
@@ -51,14 +57,10 @@ import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 public class JU_AbsUserCache {
 
 	@Mock private CachingLur<Permission> cl;
-
 	@Mock private Principal principal;
-
 	@Mock private CachedBasicPrincipal cbp;
-
 	@Mock private LocalPermission permission1;
 	@Mock private LocalPermission permission2;
-	
 
 	private Access access;
 
@@ -67,7 +69,7 @@ public class JU_AbsUserCache {
 	private String name1 = "name1";
 	private String name2 = "name2";
 	private byte[] password = "password".getBytes();
-	
+
 	private static Field timerField;
 
 	@BeforeClass
@@ -300,22 +302,22 @@ public class JU_AbsUserCache {
 
 	@Test
 	public void handlesExclusivelyTest() {
-		AbsUserCacheStub<Permission> aucs = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE); 
+		AbsUserCacheStub<Permission> aucs = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE);
 		assertFalse(aucs.handlesExclusively(permission1));
 		assertFalse(aucs.handlesExclusively(permission2));
 	}
 
 	@Test
 	public void destroyTest() {
-		AbsUserCacheStub<Permission> aucs = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE); 
+		AbsUserCacheStub<Permission> aucs = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE);
 		aucs.destroy();
-		aucs = new AbsUserCacheStub<Permission>(access, 1, 1, Integer.MAX_VALUE); 
+		aucs = new AbsUserCacheStub<Permission>(access, 1, 1, Integer.MAX_VALUE);
 		aucs.destroy();
 	}
 
 	@Test
 	public void missTest() throws IOException {
-		AbsUserCacheStub<Permission> aucs = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE); 
+		AbsUserCacheStub<Permission> aucs = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE);
 		// Add the Miss to the missmap
 		assertTrue(aucs.addMiss("key", password));  // This one actually adds it
 		assertTrue(aucs.addMiss("key", password));  // this one doesn't really do anything
@@ -332,26 +334,26 @@ public class JU_AbsUserCache {
 	}
 
 	class AbsUserCacheStub<PERM extends Permission> extends AbsUserCache<PERM> {
-		public AbsUserCacheStub(Access access, long cleanInterval, int highCount, int usageCount) { super(access, cleanInterval, highCount, usageCount); } 
-		public AbsUserCacheStub(AbsUserCache<PERM> cache) { super(cache); } 
-		@Override public void setLur(CachingLur<PERM> lur) { super.setLur(lur); } 
-		@Override public void addUser(User<PERM> user) { super.addUser(user); } 
-		@Override public void addUser(String key, User<PERM> user) { super.addUser(key, user); } 
-		@Override public User<PERM> getUser(Principal p) { return super.getUser(p); } 
-		@Override public User<PERM> getUser(CachedBasicPrincipal p) { return super.getUser(p); } 
-		@Override public User<PERM> getUser(String user, byte[] cred) { return super.getUser(user, cred); } 
+		public AbsUserCacheStub(Access access, long cleanInterval, int highCount, int usageCount) { super(access, cleanInterval, highCount, usageCount); }
+		public AbsUserCacheStub(AbsUserCache<PERM> cache) { super(cache); }
+		@Override public void setLur(CachingLur<PERM> lur) { super.setLur(lur); }
+		@Override public void addUser(User<PERM> user) { super.addUser(user); }
+		@Override public void addUser(String key, User<PERM> user) { super.addUser(key, user); }
+		@Override public User<PERM> getUser(Principal p) { return super.getUser(p); }
+		@Override public User<PERM> getUser(CachedBasicPrincipal p) { return super.getUser(p); }
+		@Override public User<PERM> getUser(String user, byte[] cred) { return super.getUser(user, cred); }
 		@Override public void remove(User<PERM> user) { super.remove(user); }
 		@Override public boolean addMiss(String key, byte[] bs) { return super.addMiss(key, bs); }
 		@Override public Miss missed(String key, byte[] bs) throws IOException { return super.missed(key, bs); }
 	}
 
 	class AbsUserCacheCLStub<PERM extends Permission> extends AbsUserCache<PERM> implements CachingLur<PERM> {
-		public AbsUserCacheCLStub(AbsUserCache<PERM> cache) { super(cache); } 
-		@Override public Permission createPerm(String p) { return null; } 
-		@Override public boolean fish(Principal bait, Permission pond) { return false; } 
-		@Override public void fishAll(Principal bait, List<Permission> permissions) { } 
-		@Override public boolean handles(Principal principal) { return false; } 
-		@Override public Resp reload(User<PERM> user) { return null; } 
+		public AbsUserCacheCLStub(AbsUserCache<PERM> cache) { super(cache); }
+		@Override public Permission createPerm(String p) { return null; }
+		@Override public boolean fish(Principal bait, Permission pond) { return false; }
+		@Override public void fishAll(Principal bait, List<Permission> permissions) { }
+		@Override public boolean handles(Principal principal) { return false; }
+		@Override public Resp reload(User<PERM> user) { return null; }
 		@Override public void setDebug(String commaDelimIDsOrNull) { }
 	}
 

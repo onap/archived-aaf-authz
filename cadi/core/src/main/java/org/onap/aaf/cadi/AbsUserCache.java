@@ -60,7 +60,6 @@ public abstract class AbsUserCache<PERM extends Permission> {
 	
 	private Clean clean;
 	protected Access access;
-//	private final static Permission teaser = new LocalPermission("***NoPERM****");
 	
 	protected AbsUserCache(Access access, long cleanInterval, int highCount, int usageCount) {
 		this.access = access;
@@ -322,7 +321,6 @@ public abstract class AbsUserCache<PERM extends Permission> {
 				for(User<PERM> user : al) {
 					++total;
 						if(user.count>usageTriggerCount) {
-	//						access.log(Level.AUDIT, "Checking Thread", new Date(now));
 							boolean touched = false, removed=false;
 							if(user.principal instanceof CachedPrincipal) {
 								CachedPrincipal cp = (CachedPrincipal)user.principal;
@@ -333,7 +331,6 @@ public abstract class AbsUserCache<PERM extends Permission> {
 											break;
 										case REVALIDATED:
 											user.resetCount();
-			//								access.log(Level.AUDIT, "CACHE revalidated credentials");
 											touched = true;
 											break;
 										default:
@@ -346,9 +343,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 								}
 							}
 						
-	//						access.log(Level.AUDIT, "User Perm Expires", new Date(user.permExpires));
 							if(!removed && lur!=null && user.permExpires<= now ) {
-	//							access.log(Level.AUDIT, "Reloading");
 								if(lur.reload(user).equals(Resp.REVALIDATED)) {
 									user.renewPerm();
 									access.log(Level.DEBUG, "Reloaded Perms for",user);

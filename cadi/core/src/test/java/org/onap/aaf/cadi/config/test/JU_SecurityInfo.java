@@ -21,11 +21,13 @@
 
 package org.onap.aaf.cadi.config.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
-import org.junit.*;
-import org.mockito.*;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

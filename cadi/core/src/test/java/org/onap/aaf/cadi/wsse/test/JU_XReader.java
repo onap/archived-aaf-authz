@@ -21,19 +21,20 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.wsse.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.onap.aaf.cadi.wsse.XEvent;
 import org.onap.aaf.cadi.wsse.XReader;
 
@@ -122,17 +123,6 @@ public class JU_XReader {
 			fis.close();
 		}
 	}
-
-	// @Test
-	// public void tagTest() {
-	// 	String prefix = "prefix";
-	// 	String name = "name";
-	// 	String value = "value";
-	// 	XReader.Tag tag = new Tag(prefix, name, value);
-
-	// 	assertThat(tag.toString(), is(prefix + ':' + name + "=\'" + value + "'"));
-	// }
-
 
 	private static XEvent getNextEvent(XReader xr) throws XMLStreamException {
 		if (xr.hasNext()) {

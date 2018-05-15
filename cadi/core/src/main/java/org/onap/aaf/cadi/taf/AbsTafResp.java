@@ -62,7 +62,7 @@ public abstract class AbsTafResp implements TafResp {
 	 * Respond in the affirmative if the TAF was able to Authenticate
 	 */
 	public boolean isValid() {
-		return principal!=null;
+		return principal != null;
 	}
 
 	/**
