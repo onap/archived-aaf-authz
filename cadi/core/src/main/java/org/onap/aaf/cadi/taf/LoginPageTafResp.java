@@ -53,34 +53,42 @@ public class LoginPageTafResp extends AbsTafResp {
 		return RESP.TRY_AUTHENTICATING;
 	}
 	
-	public static TafResp create(Access access, Locator<URI> locator, final HttpServletResponse resp, List<Redirectable> redir) {
-		if(locator!=null) {
-			try {
-				Item item = locator.best();
-				URI uri = locator.get(item);
-				if(uri!=null) {
-					StringBuilder sb = new StringBuilder(uri.toString());
-					String query = uri.getQuery();
-					boolean first = query==null || query.length()==0;
-					int count=0;
-					for(Redirectable t : redir) {
-						if(first) {
-							sb.append('?');
-							first=false;
-						}
-						else sb.append('&');
-						sb.append(t.get());
-						++count;
-					}
-					if(count>0)return new LoginPageTafResp(access, resp, sb.toString());
-				}
-			} catch (Exception e) {
-				access.log(e, "Error deriving Login Page location");
+	public static TafResp create(Access access, Locator<URI> locator, final HttpServletResponse resp, List<Redirectable> redirectables) {
+		if (locator == null) {
+			if (!redirectables.isEmpty()) { 
+				access.log(Level.DEBUG,"LoginPage Locator is not configured. Taking first Redirectable Taf");
+				return redirectables.get(0);
 			}
-		} else if(!redir.isEmpty()) { 
-			access.log(Level.DEBUG,"LoginPage Locator is not configured. Taking first Redirectable Taf");
-			return redir.get(0);
+			return NullTafResp.singleton();
 		}
+
+		try {
+			Item item = locator.best();
+			URI uri = locator.get(item);
+			if (uri == null) {
+				return NullTafResp.singleton();
+			}
+
+			StringBuilder sb = new StringBuilder(uri.toString());
+			String query = uri.getQuery();
+			boolean first = ((query == null) || (query.length() == 0));
+			for (Redirectable redir : redirectables) {
+				if (first) {
+					sb.append('?');
+					first = false;
+				}
+				else {
+					sb.append('&');
+				}
+				sb.append(redir.get());
+			}
+			if (!redirectables.isEmpty()) {
+				return new LoginPageTafResp(access, resp, sb.toString());
+			}
+		} catch (Exception e) {
+			access.log(e, "Error deriving Login Page location");
+		}
+
 		return NullTafResp.singleton();
 	}
 }
