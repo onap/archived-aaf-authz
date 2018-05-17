@@ -47,7 +47,7 @@ public class AUTHZServlet<S extends Servlet> implements Servlet {
 			delegate = null;
 		}
 		RolesAllowed rolesAllowed = cls.getAnnotation(RolesAllowed.class);
-		if(rolesAllowed == null) {
+		if (rolesAllowed == null) {
 			roles = null;
 		} else {
 			roles = rolesAllowed.value();
@@ -55,7 +55,9 @@ public class AUTHZServlet<S extends Servlet> implements Servlet {
 	}
 	
 	public void init(ServletConfig sc) throws ServletException {
-		if(delegate == null) throw new ServletException("Invalid Servlet Delegate");
+		if (delegate == null) {
+			throw new ServletException("Invalid Servlet Delegate");
+		}
 		delegate.init(sc);
 	}
 	
@@ -68,33 +70,29 @@ public class AUTHZServlet<S extends Servlet> implements Servlet {
 	}
 
 	public void service(ServletRequest req, ServletResponse resp) throws ServletException, IOException {
-		if(roles==null) {
-			delegate.service(req,resp);
-		} else { // Validate
-			try {
-				HttpServletRequest hreq = (HttpServletRequest)req;
-				boolean proceed = false;
-				for(String role : roles) {
-					if(hreq.isUserInRole(role)) {
-						proceed = true;
-						break;
-					}
+		if (roles == null) {
+			delegate.service(req, resp);
+			return;
+		}
+
+		// Validate
+		try {
+			HttpServletRequest hreq = (HttpServletRequest)req;
+			for (String role : roles) {
+				if (hreq.isUserInRole(role)) {
+					delegate.service(req, resp);
+					return;
 				}
-				if(proceed) {
-					delegate.service(req,resp);
-				} else {
-					//baseRequest.getServletContext().log(hreq.getUserPrincipal().getName()+" Refused " + roles);
-					((HttpServletResponse)resp).sendError(403); // forbidden
-				}
-			} catch(ClassCastException e) {
-				throw new ServletException("JASPIServlet only supports HTTPServletRequest/HttpServletResponse");
 			}
+
+			((HttpServletResponse)resp).sendError(403); // forbidden
+		} catch (ClassCastException e) {
+			throw new ServletException("JASPIServlet only supports HTTPServletRequest/HttpServletResponse");
 		}
 	}
 
 	public void destroy() {
 		delegate.destroy();
 	}
-
 
 }

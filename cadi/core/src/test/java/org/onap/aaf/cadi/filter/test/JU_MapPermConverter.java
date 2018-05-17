@@ -19,27 +19,27 @@
  *
  */
 
-package org.onap.aaf.cadi.filter;
+package org.onap.aaf.cadi.filter.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-/**
- * A NullPermConverter
- *
- * Obey the PermConverter Interface, but passed in "minimal" String is not converted.
- *
- * @author Jonathan
- *
- */
-public class NullPermConverter implements PermConverter {
+import org.junit.Test;
+import org.onap.aaf.cadi.filter.MapPermConverter;
 
-	private static final NullPermConverter singleton = new NullPermConverter();
+public class JU_MapPermConverter {
 
-	private NullPermConverter() {}
+	private static final String tag = "tag";
+	private static final String value = "value";
+	private static final String nontag = "nontag";
 
-	public static NullPermConverter singleton() { return singleton; }
-
-	public String convert(String minimal) {
-		return minimal;
+	@Test
+	public void test() {
+		MapPermConverter converter = new MapPermConverter();
+		assertThat(converter.map().isEmpty(), is(true));
+		converter.map().put(tag, value);
+		assertThat(converter.convert(tag), is(value));
+		assertThat(converter.convert(nontag), is(nontag));
 	}
 
 }

@@ -19,27 +19,36 @@
  *
  */
 
-package org.onap.aaf.cadi.filter;
+package org.onap.aaf.cadi.filter.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-/**
- * A NullPermConverter
- *
- * Obey the PermConverter Interface, but passed in "minimal" String is not converted.
- *
- * @author Jonathan
- *
- */
-public class NullPermConverter implements PermConverter {
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
-	private static final NullPermConverter singleton = new NullPermConverter();
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.filter.AccessGetter;
 
-	private NullPermConverter() {}
+public class JU_AccessGetter {
 
-	public static NullPermConverter singleton() { return singleton; }
+	private static final String tag = "tag";
+	private static final String value = "value";
 
-	public String convert(String minimal) {
-		return minimal;
+	private PropAccess access;
+
+	@Before
+	public void setup() {
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		access.setProperty(tag, value);
+	}
+
+	@Test
+	public void test() {
+		AccessGetter getter = new AccessGetter(access);
+		assertThat(getter.get(tag, null, false), is(value));
 	}
 
 }

@@ -47,8 +47,7 @@ import org.onap.aaf.cadi.util.JsonOutputStream;
  */
 public class CmdLine {
 
-	public static Access access;
-	
+	private static boolean systemExit = true;
 	/**
 	 * @param args
 	 */
@@ -349,10 +348,13 @@ public class CmdLine {
 			System.out.println("  sha256 <text> <salts(s)>               (Digest String into SHA256 Hash)");
 			System.out.println("  md5 <text>                             (Digest String into MD5 Hash)");
 		}
-		String forceExit = access.getProperty("force_exit", null);
-		if (forceExit == null) {
+		if (systemExit) {
 			System.exit(1);
 		}
+	}
+	
+	public static void setSystemExit(boolean shouldExit) {
+		systemExit = shouldExit;
 	}
 	
 }

@@ -21,10 +21,11 @@
  ******************************************************************************/
 package org.onap.aaf.cadi.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
-import org.mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,8 +38,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CmdLine;
-import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
 
 public class JU_CmdLine {
@@ -59,12 +64,12 @@ public class JU_CmdLine {
 	public void setup() throws Exception {
 		MockitoAnnotations.initMocks(this);
 
-	    System.setOut(new PrintStream(outContent));
+		System.setOut(new PrintStream(outContent));
 
 		Properties p = new Properties();
 		p.setProperty("force_exit", "false");
 
-		CmdLine.access = new PropAccess(p);
+		CmdLine.setSystemExit(false);
 		keyfile = "src/test/resources/keyfile";
 		password = "password";
 
@@ -79,8 +84,8 @@ public class JU_CmdLine {
 	
 	@After
 	public void restoreStreams() throws IOException {
-	    System.setOut(System.out);
-	    System.setIn(System.in);
+		System.setOut(System.out);
+		System.setIn(System.in);
 	}
 
 	@Test
@@ -94,13 +99,6 @@ public class JU_CmdLine {
 		decrypted = symm.depass(outContent.toString());
 		assertThat(decrypted, is(password));
 	}
-
-	// @Test
-	// public void regurgitateTest() {
-	// 	// TODO: We may still want to remove the regurgitate functionality
-	// 	// from the CmdLine - Ian
-	// 	fail("Tests not yet implemented");
-	// }
 
 	@Test
 	public void encode64Test() throws Exception {

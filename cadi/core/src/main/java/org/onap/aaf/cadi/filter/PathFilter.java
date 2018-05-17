@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,44 +39,44 @@ import org.onap.aaf.cadi.config.Config;
 
 /**
  * PathFilter
- * 
+ *
  * This class implements Servlet Filter, and uses AAF to validate access to a Path.
- * 
+ *
  * This class can be used in a standard J2EE Servlet manner.
- *  
+ *
  * @author Jonathan, collaborating with Xue Gao
  *
  */
 public class PathFilter implements Filter {
-	private ServletContext context;
-	private String aaf_type;
-	private String not_authorized_msg;
 	private final Log log;
+
+	private ServletContext context;
+	private String aafType;
+	private String notAuthorizedMsg;
 
 	/**
 	 * Construct a viable Filter for installing in Container WEB.XML, etc.
-	 * 
+	 *
 	 */
 	public PathFilter() {
 		log = new Log() {
 			public void info(String ... msg) {
-				context.log(build("INFO:",msg));
+				context.log(build("INFO:", msg));
 			}
 			public void audit(String ... msg) {
-				context.log(build("AUDIT:",msg));
+				context.log(build("AUDIT:", msg));
 			}
 			private String build(String type, String []msg) {
 				StringBuilder sb = new StringBuilder(type);
-				for(String s : msg) {
+				for (String s : msg) {
 					sb.append(' ');
 					sb.append(s);
 				}
 				return sb.toString();
 			}
-		
 		};
 	}
-	
+
 	/**
 	 * Filter that can be constructed within Java
 	 * @param access
@@ -91,10 +91,10 @@ public class PathFilter implements Filter {
 			}
 		};
 	}
-	
+
 	/**
 	 * Init
-	 * 
+	 *
 	 * Standard Filter "init" call with FilterConfig to obtain properties.  POJOs can construct a
 	 * FilterConfig with the mechanism of their choice, and standard J2EE Servlet engines utilize this
 	 * mechanism already.
@@ -103,16 +103,16 @@ public class PathFilter implements Filter {
 		// need the Context for Logging, instantiating ClassLoader, etc
 		context = filterConfig.getServletContext();
 		StringBuilder sb = new StringBuilder();
-		StringBuilder err = new StringBuilder(); 
+		StringBuilder err = new StringBuilder();
 		Object attr = context.getAttribute(Config.PATHFILTER_NS);
-		if(attr==null) {
+		if (attr == null) {
 			err.append("PathFilter - pathfilter_ns is not set");
 		} else {
-			sb.append(attr.toString()); 
+			sb.append(attr.toString());
 		}
 
 		attr = context.getAttribute(Config.PATHFILTER_STACK);
-		if(attr==null) {
+		if (attr == null) {
 			log.info("PathFilter - No pathfilter_stack set, ignoring");
 		} else {
 			sb.append('.');
@@ -120,7 +120,7 @@ public class PathFilter implements Filter {
 		}
 
 		attr = context.getAttribute(Config.PATHFILTER_URLPATTERN);
-		if(attr==null) {
+		if (attr == null) {
 			log.info("PathFilter - No pathfilter_urlpattern set, defaulting to 'urlpattern'");
 			sb.append(".urlpattern");
 		} else {
@@ -128,20 +128,20 @@ public class PathFilter implements Filter {
 			sb.append(attr.toString());
 		}
 
-		log.info("PathFilter - AAF Permission Type is",sb.toString());
-		
+		log.info("PathFilter - AAF Permission Type is", sb.toString());
+
 		sb.append('|');
-		
-		aaf_type = sb.toString();
+
+		aafType = sb.toString();
 
 		attr = context.getAttribute(Config.PATHFILTER_NOT_AUTHORIZED_MSG);
-		if(attr==null) {
-			not_authorized_msg = "Forbidden - Not Authorized to access this Path";
+		if (attr == null) {
+			notAuthorizedMsg = "Forbidden - Not Authorized to access this Path";
 		} else {
-			not_authorized_msg = attr.toString();
+			notAuthorizedMsg = attr.toString();
 		}
 
-		if(err.length()>0) {
+		if (err.length() > 0) {
 			throw new ServletException(err.toString());
 		}
 	}
@@ -153,7 +153,7 @@ public class PathFilter implements Filter {
 
 	/**
 	 * doFilter
-	 * 
+	 *
 	 * This is the standard J2EE invocation.  Analyze the request, modify response as necessary, and
 	 * only call the next item in the filterChain if request is suitably Authenticated.
 	 */
@@ -161,23 +161,20 @@ public class PathFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest hreq = (HttpServletRequest)request;
 		HttpServletResponse hresp = (HttpServletResponse)response;
-		String perm = aaf_type+hreq.getPathInfo()+'|'+hreq.getMethod();
-		if(hreq.isUserInRole(perm)) {
+		String perm = aafType + hreq.getPathInfo() + '|' + hreq.getMethod();
+		if (hreq.isUserInRole(perm)) {
 			chain.doFilter(request, response);
 		} else {
-			log.audit("PathFilter has denied",hreq.getUserPrincipal().getName(),"access to",perm);
-			hresp.sendError(403,not_authorized_msg);
+			log.audit("PathFilter has denied", hreq.getUserPrincipal().getName(), "access to", perm);
+			hresp.sendError(403, notAuthorizedMsg);
 		}
 	}
 
 	/**
-	 * Containers call "destroy" when time to cleanup 
+	 * Containers call "destroy" when time to cleanup
 	 */
 	public void destroy() {
 		log.info("PathFilter destroyed.");
 	}
 
-
-
 }
-

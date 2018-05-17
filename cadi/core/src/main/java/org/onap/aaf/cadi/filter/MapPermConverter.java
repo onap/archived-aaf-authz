@@ -34,7 +34,7 @@ public class MapPermConverter implements PermConverter {
 	 * @param value
 	 */
 	public MapPermConverter() {
-		map = new HashMap<String,String>();
+		map = new HashMap<>();
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class MapPermConverter implements PermConverter {
 
 	public String convert(String minimal) {
 		String rv = map.get(minimal);
-		return rv==null?minimal:rv;
+		return (rv == null) ? minimal : rv;
 	}
 
 }
