@@ -96,12 +96,12 @@ public class JU_Future {
 	
 	@Test
 	public void testSizeForDeletion() {
-		System.out.println(future.sizeForDeletion());
+		Assert.assertEquals(0, future.sizeForDeletion());
 	}
 	
 	@Test
 	public void testPendingDelete() {
-		System.out.println(future.pendingDelete(future));
+		Assert.assertEquals(false, future.pendingDelete(future));
 	}
 	
 
