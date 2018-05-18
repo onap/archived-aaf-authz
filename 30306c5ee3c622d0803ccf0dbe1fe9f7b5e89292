@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3ce01f25",
+        "filename": "auth/docker/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3289
+      },
+      "writtenOn": "2018-05-18T10:05:45Z",
+      "side": 1,
+      "message": "FYI, We are only waiting for OOM/HEAT deployments so we get out of Jeopardy before we finish refining our Images.",
+      "revId": "30306c5ee3c622d0803ccf0dbe1fe9f7b5e89292",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
