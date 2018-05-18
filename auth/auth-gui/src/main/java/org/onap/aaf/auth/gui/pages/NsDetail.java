@@ -61,7 +61,6 @@ public class NsDetail extends Page {
 	
 	public static final String HREF = "/gui/nsdetail";
 	public static final String NAME = "NsDetail";
-	static final String WEBPHONE = "http://webphone.att.com/cgi-bin/webphones.pl?id=";
 	public static enum NS_FIELD { OWNERS, ADMINS, ROLES, PERMISSIONS, CREDS};
 	private static final String BLANK = "";
 	private static Slot keySlot;
@@ -91,7 +90,6 @@ public class NsDetail extends Page {
 	 *
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		private static final String CSP_ATT_COM = "@csp.att.com";
 		private NsDetail nd;
 
 		public void set(NsDetail nsDetail) {
@@ -197,8 +195,7 @@ public class NsDetail extends Page {
 					for (int i=0; i< values.size(); i++) {
 						AbsCell label = (i==0?new TextCell(sentenceCase(field)+":"):AbsCell.Null);
 						String user = values.get(i);
-						AbsCell userCell = (user.endsWith(CSP_ATT_COM)?
-								new RefCell(user,WEBPHONE + user.substring(0,user.indexOf('@')),true):new TextCell(user));
+						AbsCell userCell = (new TextCell(user));
 						rv.add(new AbsCell[] {
 								label, 
 								userCell

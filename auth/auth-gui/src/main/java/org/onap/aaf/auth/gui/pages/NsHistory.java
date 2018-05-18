@@ -37,7 +37,6 @@ import org.onap.aaf.auth.gui.Page;
 import org.onap.aaf.auth.gui.Table;
 import org.onap.aaf.auth.gui.Table.Cells;
 import org.onap.aaf.auth.gui.table.AbsCell;
-import org.onap.aaf.auth.gui.table.RefCell;
 import org.onap.aaf.auth.gui.table.TableData;
 import org.onap.aaf.auth.gui.table.TextCell;
 import org.onap.aaf.cadi.CadiException;
@@ -146,7 +145,6 @@ public class NsHistory extends Page {
 	 *
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		private static final String CSP_ATT_COM = "@csp.att.com";
 		private static final String[] headers = new String[] {"Date","User","Memo"};
 		private Slot name;
 		private Slot dates;
@@ -196,8 +194,7 @@ public class NsHistory extends Page {
 								
 								for (Item i : histItems) {
 									String user = i.getUser();
-									AbsCell userCell = (user.endsWith(CSP_ATT_COM)?
-											new RefCell(user,WEBPHONE + user.substring(0,user.indexOf('@')),true):new TextCell(user));
+									AbsCell userCell = new TextCell(user);
 									
 									rv.add(new AbsCell[] {
 											new TextCell(i.getTimestamp().toGregorianCalendar().getTime().toString()),

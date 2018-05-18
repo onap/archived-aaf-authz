@@ -36,7 +36,6 @@ import org.onap.aaf.auth.gui.Page;
 import org.onap.aaf.auth.gui.Table;
 import org.onap.aaf.auth.gui.Table.Cells;
 import org.onap.aaf.auth.gui.table.AbsCell;
-import org.onap.aaf.auth.gui.table.RefCell;
 import org.onap.aaf.auth.gui.table.TableData;
 import org.onap.aaf.auth.gui.table.TextCell;
 import org.onap.aaf.cadi.CadiException;
@@ -71,8 +70,6 @@ public class RequestDetail extends Page {
 	 *
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		static final String WEBPHONE = "http://webphone.att.com/cgi-bin/webphones.pl?id=";
-		private static final String CSP_ATT_COM = "@csp.att.com";
 		final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
 		private Slot sTicket;
 		public Model(AuthzEnv env) {
@@ -117,12 +114,7 @@ public class RequestDetail extends Page {
 											});
 											rv.add(new AbsCell[]{new TextCell("Operation:"),new TextCell(decodeOp(approval.getOperation()),"colspan=3")});
 											String user = approval.getUser();
-											if (user.endsWith(CSP_ATT_COM)) {
-												rv.add(new AbsCell[]{new TextCell("User:"),
-														new RefCell(user,WEBPHONE + user.substring(0, user.indexOf("@")),true,"colspan=3")});
-											} else {
-												rv.add(new AbsCell[]{new TextCell("User:"),new TextCell(user,"colspan=3")});
-											}
+											rv.add(new AbsCell[]{new TextCell("User:"),new TextCell(user,"colspan=3")});
 											
 											// headers for listing each approver
 											rv.add(new AbsCell[]{new TextCell(" ","colspan=4","class=blank_line")});
@@ -137,15 +129,7 @@ public class RequestDetail extends Page {
 										    approverLine[0] = AbsCell.Null;
 										}
 										
-										String approver = approval.getApprover();
-										String approverShort = approver.substring(0,approver.indexOf('@'));
-										
-										if (approver.endsWith(CSP_ATT_COM)) {
-											approverLine[1] = new RefCell(approver, WEBPHONE + approverShort,true);
-										} else {
-											approverLine[1] = new TextCell(approval.getApprover());
-										}
-										
+										approverLine[1] = new TextCell(approval.getApprover());
 										String type = approval.getType();
 										if ("owner".equalsIgnoreCase(type)) {
 											type = "resource owner";

@@ -252,7 +252,7 @@ public class Examples {
 	private static UserRoleRequest newUserRoleRequestv2_0(boolean optional) {
 		UserRoleRequest urr = new UserRoleRequest();
 		urr.setRole("org.osaaf.myns.myRole");
-		urr.setUser("ab1234@csp.att.com");
+		urr.setUser("ab1234@people.osaaf.org");
 		if(optional) setOptional(urr);
 		return urr;
 	}
@@ -261,10 +261,10 @@ public class Examples {
 	private static NsRequest newNsRequestv2_0(boolean optional) {
 		NsRequest nr = new NsRequest();
 		nr.setName("org.osaaf.myns");
-		nr.getResponsible().add("ab1234@csp.att.com");
-		nr.getResponsible().add("cd5678@csp.att.com");
-		nr.getAdmin().add("zy9876@csp.att.com");
-		nr.getAdmin().add("xw5432@csp.att.com");		
+		nr.getResponsible().add("ab1234@people.osaaf.org");
+		nr.getResponsible().add("cd5678@people.osaaf.org");
+		nr.getAdmin().add("zy9876@people.osaaf.org");
+		nr.getAdmin().add("xw5432@people.osaaf.org");		
 		if(optional) {
 			nr.setDescription("This is my Namespace to set up");
 			nr.setType("APP");
@@ -281,18 +281,18 @@ public class Examples {
 		Nss nss = new Nss();
 		nss.getNs().add(ns = new Nss.Ns());
 		ns.setName("org.osaaf.myns");
-		ns.getResponsible().add("ab1234@csp.att.com");
-		ns.getResponsible().add("cd5678@csp.att.com");
-		ns.getAdmin().add("zy9876@csp.att.com");
-		ns.getAdmin().add("xw5432@csp.att.com");
+		ns.getResponsible().add("ab1234@people.osaaf.org");
+		ns.getResponsible().add("cd5678@people.osaaf.org");
+		ns.getAdmin().add("zy9876@people.osaaf.org");
+		ns.getAdmin().add("xw5432@people.osaaf.org");
 		ns.setDescription("This is my Namespace to set up");
 		
 		nss.getNs().add(ns = new Nss.Ns());
 		ns.setName("org.osaaf.myOtherNs");
-		ns.getResponsible().add("ab1234@csp.att.com");
-		ns.getResponsible().add("cd5678@csp.att.com");
-		ns.getAdmin().add("zy9876@csp.att.com");
-		ns.getAdmin().add("xw5432@csp.att.com");		
+		ns.getResponsible().add("ab1234@people.osaaf.org");
+		ns.getResponsible().add("cd5678@people.osaaf.org");
+		ns.getAdmin().add("zy9876@people.osaaf.org");
+		ns.getAdmin().add("xw5432@people.osaaf.org");		
 			
 		return nss;
 	}
@@ -327,12 +327,12 @@ public class Examples {
 	
 		Users users = new Users();
 		users.getUser().add(user = new Users.User());
-		user.setId("ab1234@csp.att.com");	
+		user.setId("ab1234@people.osaaf.org");	
 		GregorianCalendar gc = new GregorianCalendar();
 		user.setExpires(Chrono.timeStamp(gc));
 		
 		users.getUser().add(user = new Users.User());
-		user.setId("zy9876@csp.att.com");	
+		user.setId("zy9876@people.osaaf.org");	
 		user.setExpires(Chrono.timeStamp(gc));	
 			
 		return users;

@@ -214,7 +214,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 201,
 			errorCodes = { 403,404,406,409 }, 
 			text = { 	"Add an Identity :id to the list of Admins for the Namespace :ns", 
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)" }
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" }
 			)
 	@Override
 	public Result<Void> addAdminNS(AuthzTrans trans, String ns, String id) {
@@ -230,7 +230,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 200,
 			errorCodes = { 403,404 }, 
 			text = { 	"Remove an Identity :id from the list of Admins for the Namespace :ns",
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)" }
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" }
 			)
 	@Override
 	public Result<Void> delAdminNS(AuthzTrans trans, String ns, String id) {
@@ -246,7 +246,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 201,
 			errorCodes = { 403,404,406,409 }, 
 			text = { 	"Add an Identity :id to the list of Responsibles for the Namespace :ns",
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)" }
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" }
 			)
 	@Override
 	public Result<Void> addResponsibleNS(AuthzTrans trans, String ns, String id) {
@@ -262,7 +262,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 200,
 			errorCodes = { 403,404 }, 
 			text = { 	"Remove an Identity :id to the list of Responsibles for the Namespace :ns",
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)",
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)",
 						"Note: A namespace must have at least 1 responsible party"
 					}
 			)
@@ -512,7 +512,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 200,
 			errorCodes = { 403,404 }, 
 			text = { 	"Lists all Namespaces where Identity :id is an Admin", 
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)" 
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" 
 					}
 			)
 	@Override
@@ -542,7 +542,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 200,
 			errorCodes = { 403,404 }, 
 			text = { 	"Lists all Namespaces where Identity :id is either an Admin or an Owner", 
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)" 
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" 
 					}
 			)
 	@Override
@@ -633,7 +633,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			expectedCode = 200,
 			errorCodes = { 403,404 }, 
 			text = { 	"Lists all Namespaces where Identity :id is a Responsible Party", 
-						"Note: :id must be fully qualified (i.e. ab1234@csp.att.com)"
+						"Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)"
 					}
 			)
 	@Override

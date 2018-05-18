@@ -107,7 +107,6 @@ public class PendingRequestsShow extends Page {
 	 *
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		private static final String CSP_ATT_COM = "@csp.att.com";
 		final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
 		private static final String[] headers = new String[] {"Request Date","Status","Memo","Approver"};
 
@@ -157,12 +156,7 @@ public class PendingRequestsShow extends Page {
 											prevTicket = ticket;
 										}
 										
-										AbsCell approverCell = null;
-										if (approver.endsWith(CSP_ATT_COM)) {
-											approverCell = new RefCell(approver, WEBPHONE + approverShort,true);
-										} else {
-											approverCell = new TextCell(approver);
-										}
+										AbsCell approverCell = new TextCell(approver);
 										AbsCell[] sa = new AbsCell[] {
 											tsCell,
 											new TextCell(a.getStatus()),

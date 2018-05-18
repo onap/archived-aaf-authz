@@ -203,7 +203,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	
 			app=FQI.reverseDomain(ss.getID());
 			//TODO Get Realm from AAF
-			realm="csp.att.com";
+			realm="people.osaaf.org";
 	
 			env = new RosettaEnv();
 			permsDF = env.newDataFactory(Perms.class);

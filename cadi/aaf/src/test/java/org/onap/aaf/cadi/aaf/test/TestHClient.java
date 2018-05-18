@@ -61,7 +61,7 @@ public class TestHClient {
 					
 					hman = new HMangr(access,loc);
 					final String path = String.format("/authz/perms/user/%s",
-							access.getProperty(Config.AAF_APPID,"xx9999@csp.att.com"));
+							access.getProperty(Config.AAF_APPID,"xx9999@people.osaaf.org"));
 					hman.best(ss, new Retryable<Void>() {
 						@Override
 						public Void code(Rcli<?> cli) throws APIException, CadiException {

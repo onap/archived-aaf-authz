@@ -146,7 +146,6 @@ public class RoleHistory extends Page {
 	 *
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		private static final String CSP_ATT_COM = "@csp.att.com";
 		private static final String[] headers = new String[] {"Date","User","Memo"};
 		private Slot role;
 		private Slot dates;
@@ -195,8 +194,7 @@ public class RoleHistory extends Page {
 									
 									for (Item i : histItems) {
 										String user = i.getUser();
-										AbsCell userCell = (user.endsWith(CSP_ATT_COM)?
-												new RefCell(user,WEBPHONE + user.substring(0,user.indexOf('@')),false):new TextCell(user));
+										AbsCell userCell = new TextCell(user);
 										
 										rv.add(new AbsCell[] {
 												new TextCell(i.getTimestamp().toGregorianCalendar().getTime().toString()),

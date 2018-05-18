@@ -28,7 +28,7 @@ package org.onap.aaf.cadi;
  * 
  *  Where
  *  APP is name suitable for Logging (i.e. official App Acronym) 
- *  ID is official User or MechID, best if includes Identity Source (i.e. ab1234@csp.att.com)
+ *  ID is official User or MechID, best if includes Identity Source (i.e. ab1234@people.osaaf.org)
  *  Protocol is the Security protocol,
  *  
  *  Format:<ID>:<APP>:<protocol>[:AS][,<ID>:<APP>:<protocol>]*

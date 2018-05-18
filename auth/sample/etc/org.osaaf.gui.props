@@ -9,15 +9,15 @@ port=8200
 aaf_gui_title=AAF
 aaf_gui_copyright=(c) 2018 AT&T Intellectual Property. All rights reserved.
 aaf_gui_theme=theme/onap
-cadi_loginpage_url=https://AAF_LOCATE_URL/com.att.aaf.gui:2.0/login
+cadi_loginpage_url=https://AAF_LOCATE_URL/AAF_NS.gui:2.0/login
 
 # GUI URLS and Help URLS
 cm_url=https://aaf.osaaf.org:8150
 gw_url=https://aaf.osaaf.org:8095
 fs_url=http://aaf.osaaf.org:8096
 
-aaf_url.gui_onboard=https://wiki.web.att.com/display/aaf/OnBoarding
-aaf_url.cuigui=https://wiki.web.att.com/display/aaf/Using+the+Command+Prompt
+aaf_url.gui_onboard=https://wiki.onap.org/display/DW/Client+Onboarding
+# aaf_url.cuigui=https://???/Using+the+Command+Prompt
 
 aaf_url.aaf_help=https://wiki.onap.org/display/DW/Application+Authorization+Framework+Documentation
 aaf_url.aaf_help.sub=Bootstrapping+AAF,Installation+Guide

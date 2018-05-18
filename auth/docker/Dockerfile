@@ -10,7 +10,7 @@ COPY lib /opt/app/aaf/${AAF_COMPONENT}/lib
 COPY theme /opt/app/aaf/${AAF_COMPONENT}/theme
 COPY bin /opt/app/aaf/${AAF_COMPONENT}/bin
 
-CMD ["/bin/bash","-c","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT} >> /opt/app/osaaf/logs/${AAF_COMPONENT}/stdout`date -I` 2>> /opt/app/osaaf/logs/${AAF_COMPONENT}/stderr`date -I`"]
+CMD ["/bin/bash","-c","/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
 
 # For Debugging installation
 # CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT};cat /etc/hosts;/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]
