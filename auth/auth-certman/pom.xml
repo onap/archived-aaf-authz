@@ -42,6 +42,7 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
+		<project.bouncyCastleVersion>1.59</project.bouncyCastleVersion>
 	</properties>
 
 	<dependencies>
@@ -79,12 +80,12 @@
 		<dependency>
 		  <groupId>org.bouncycastle</groupId>
 		  <artifactId>bcprov-jdk15on</artifactId>
-		  <version>1.59</version>
+		  <version>${project.bouncyCastleVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
   			<artifactId>bcpkix-jdk15on</artifactId>
-  			<version>1.59</version>
+  			<version>${project.bouncyCastleVersion}</version>
 		</dependency>
 	</dependencies>
 
