@@ -54,6 +54,12 @@
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
 		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
+		<!-- TODO: These are the versions that were hard-coded
+		<project.cassVersion>3.4.0</project.cassVersion>
+		<project.nettyVersion>4.1.22.Final</project.nettyVersion>
+		-->
+		<project.cassVersion>3.3.0</project.cassVersion>
+		<project.nettyVersion>4.0.47.Final</project.nettyVersion>
 	</properties>
 
 	<developers>
@@ -484,7 +490,7 @@
 			<dependency>
 				<groupId>com.datastax.cassandra</groupId>
 				<artifactId>cassandra-all</artifactId>
-				<version>3.3.0</version>
+				<version>${project.cassVersion}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -500,7 +506,7 @@
 			<dependency>
 				<groupId>com.datastax.cassandra</groupId>
 				<artifactId>cassandra-driver-core</artifactId>
-				<version>3.4.0</version>
+				<version>${project.cassVersion}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -517,7 +523,7 @@
 			<dependency>
 				  <groupId>io.netty</groupId>
 				  <artifactId>netty-handler</artifactId>
-				  <version>4.1.22.Final</version>
+				  <version>${project.nettyVersion}</version>
 			</dependency>
 
 			
