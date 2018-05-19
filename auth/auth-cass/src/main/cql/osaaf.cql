@@ -16,13 +16,6 @@ INSERT INTO perm(ns, type, instance, action, roles, description)
 INSERT INTO perm(ns, type, instance, action, roles, description) 
   VALUES ('org','access','*','*',{'org.admin'},'Org Write Access');
 
-// Create Root pass
-INSERT INTO cred (id,ns,type,cred,expires)
-  VALUES ('initial@osaaf.org','org.osaaf',1,0x008c5926ca861023c1d2a36653fd88e2,'2099-12-31') using TTL 14400;
-
-INSERT INTO user_role(user,role,expires,ns,rname)
-  VALUES ('initial@osaaf.org','org.admin','2099-12-31','org','admin') using TTL 14400;
-
 
 // Create org.osaaf
 INSERT INTO ns (name,description,parent,scope,type)
@@ -55,10 +48,6 @@ INSERT INTO perm(ns, type, instance, action, roles, description)
 
 INSERT INTO role(ns, name, perms, description)
   VALUES('org.osaaf.aaf','owner',{'org.osaaf.aaf.access|*|read,approve'},'AAF Owners');
-
-INSERT INTO user_role(user,role,expires,ns,rname)
-  VALUES ('initial@osaaf.org','org.osaaf.aaf.admin','2099-12-31','org.osaaf.aaf','admin') using TTL 14400;
-
 
 // ONAP Specific Entities
 // ONAP initial env Namespace
