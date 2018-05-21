@@ -56,8 +56,8 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
 			return Result.err(Result.ERR_ActionNotCompleted,"Not Executed");
 		} else {
 			// Save on Lookups
-			final List<ApprovalDAO.Data> apprs = new ArrayList<ApprovalDAO.Data>();
-			final List<UserRoleDAO.Data> urs = new ArrayList<UserRoleDAO.Data>();
+			final List<ApprovalDAO.Data> apprs = new ArrayList<>();
+			final List<UserRoleDAO.Data> urs = new ArrayList<>();
 			for(Approval a : app) {
 				apprs.add(a.add);
 				UserRole ur = UserRole.get(a.add.user, future.role);
