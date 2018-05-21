@@ -70,7 +70,7 @@ public class X509Taf implements HttpTaf {
 		try {
 			certFactory = CertificateFactory.getInstance("X.509");
 			messageDigest = MessageDigest.getInstance("SHA-256"); // use this to clone
-			tmf = TrustManagerFactory.getInstance(SecurityInfoC.SslKeyManagerFactoryAlgorithm);
+			tmf = TrustManagerFactory.getInstance(SecurityInfoC.SSL_KEY_MANAGER_FACTORY_ALGORITHM);
 		} catch (Exception e) {
 			throw new RuntimeException("X.509 and SHA-256 are required for X509Taf",e);
 		}

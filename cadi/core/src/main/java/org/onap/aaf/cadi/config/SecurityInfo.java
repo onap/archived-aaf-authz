@@ -61,23 +61,23 @@ public class SecurityInfo {
 
 	public static final String HTTPS_PROTOCOLS_DEFAULT = "TLSv1.1,TLSv1.2";
 	public static final String REGEX_COMMA = "\\s*,\\s*";
-	public static final String SslKeyManagerFactoryAlgorithm;
+	public static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM;
 	
-	private SSLSocketFactory scf;
-	private X509KeyManager[] km;
-	private X509TrustManager[] tm;
-	public final String default_alias;
+	private SSLSocketFactory socketFactory;
+	private X509KeyManager[] x509KeyManager;
+	private X509TrustManager[] x509TrustManager;
+	public final String defaultAlias;
 	private NetMask[] trustMasks;
-	private SSLContext ctx;
+	private SSLContext context;
 	private HostnameVerifier maskHV;
 	public final Access access;
 
 	// Change Key Algorithms for IBM's VM.  Could put in others, if needed.
 	static {
-		if(System.getProperty("java.vm.vendor").equalsIgnoreCase("IBM Corporation")) {
-			SslKeyManagerFactoryAlgorithm = "IbmX509";
+		if ("IBM Corporation".equalsIgnoreCase(System.getProperty("java.vm.vendor"))) {
+			SSL_KEY_MANAGER_FACTORY_ALGORITHM = "IbmX509";
 		} else {
-			SslKeyManagerFactoryAlgorithm = "SunX509";
+			SSL_KEY_MANAGER_FACTORY_ALGORITHM = "SunX509";
 		}
 	}
 	
@@ -91,23 +91,23 @@ public class SecurityInfo {
 			
 			initializeTrustManager();
 			
-			default_alias = access.getProperty(Config.CADI_ALIAS, null);
+			defaultAlias = access.getProperty(Config.CADI_ALIAS, null);
 			
 			initializeTrustMasks();
 
-			String https_protocols = Config.logProp(access, Config.CADI_PROTOCOLS,
+			String httpsProtocols = Config.logProp(access, Config.CADI_PROTOCOLS,
 						access.getProperty(HTTPS_PROTOCOLS, HTTPS_PROTOCOLS_DEFAULT)
 						);
-			System.setProperty(HTTPS_PROTOCOLS, https_protocols);
-			System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, https_protocols);
-			if("1.7".equals(System.getProperty("java.specification.version")) && https_protocols.contains("TLSv1.2")) {
+			System.setProperty(HTTPS_PROTOCOLS, httpsProtocols);
+			System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, httpsProtocols);
+			if ("1.7".equals(System.getProperty("java.specification.version")) && httpsProtocols.contains("TLSv1.2")) {
 				System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
 			}			
 
-			ctx = SSLContext.getInstance("TLS");
-			ctx.init(km, tm, null);
-			SSLContext.setDefault(ctx);
-			scf = ctx.getSocketFactory();
+			context = SSLContext.getInstance("TLS");
+			context.init(x509KeyManager, x509TrustManager, null);
+			SSLContext.setDefault(context);
+			socketFactory = context.getSocketFactory();
 		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | CertificateException | UnrecoverableKeyException | IOException e) {
 			throw new CadiException(e);
 		}
@@ -117,162 +117,168 @@ public class SecurityInfo {
 	 * @return the scf
 	 */
 	public SSLSocketFactory getSSLSocketFactory() {
-		return scf;
+		return socketFactory;
 	}
 
 	public SSLContext getSSLContext() {
-		return ctx;
+		return context;
 	}
 
 	/**
 	 * @return the km
 	 */
 	public X509KeyManager[] getKeyManagers() {
-		return km;
+		return x509KeyManager;
 	}
 
 	public void checkClientTrusted(X509Certificate[] certarr) throws CertificateException {
-		for(X509TrustManager xtm : tm) {
+		for (X509TrustManager xtm : x509TrustManager) {
 			xtm.checkClientTrusted(certarr, SECURITY_ALGO);
 		}
 	}
 
 	public void checkServerTrusted(X509Certificate[] certarr) throws CertificateException {
-		for(X509TrustManager xtm : tm) {
+		for (X509TrustManager xtm : x509TrustManager) {
 			xtm.checkServerTrusted(certarr, SECURITY_ALGO);
 		}
 	}
 
 	public void setSocketFactoryOn(HttpsURLConnection hsuc) {
-		hsuc.setSSLSocketFactory(scf);
-		if(maskHV != null && !maskHV.equals(hsuc.getHostnameVerifier())) {
+		hsuc.setSSLSocketFactory(socketFactory);
+		if (maskHV != null && !maskHV.equals(hsuc.getHostnameVerifier())) {
 			hsuc.setHostnameVerifier(maskHV);
 		}
 	}
 	
 	protected void initializeKeyManager() throws CadiException, IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
 		String keyStore = access.getProperty(Config.CADI_KEYSTORE, null);
-		if(keyStore != null && !new File(keyStore).exists()) {
+		if (keyStore != null && !new File(keyStore).exists()) {
 			throw new CadiException(keyStore + " does not exist");
 		}
 
 		String keyStorePasswd = access.getProperty(Config.CADI_KEYSTORE_PASSWORD, null);
 		keyStorePasswd = (keyStorePasswd == null) ? null : access.decrypt(keyStorePasswd, false);
+		if (keyStore == null || keyStorePasswd == null) { 
+			x509KeyManager = new X509KeyManager[0];
+			return;
+		}
 
 		String keyPasswd = access.getProperty(Config.CADI_KEY_PASSWORD, null);
 		keyPasswd = (keyPasswd == null) ? keyStorePasswd : access.decrypt(keyPasswd, false);
 
-		KeyManagerFactory kmf = KeyManagerFactory.getInstance(SslKeyManagerFactoryAlgorithm);
-		if(keyStore == null || keyStorePasswd == null) { 
-			km = new X509KeyManager[0];
-		} else {
-			ArrayList<X509KeyManager> kmal = new ArrayList<X509KeyManager>();
-			File file;
-			for(String ksname : keyStore.split(REGEX_COMMA)) {
-				file = new File(ksname);
-				String keystoreFormat;
-				if(ksname.endsWith(".p12") || ksname.endsWith(".pkcs12")) {
-					keystoreFormat = "PKCS12";
-				} else {
-					keystoreFormat = "JKS";
-				}
-				if(file.exists()) {
-					FileInputStream fis = new FileInputStream(file);
-					try {
-						KeyStore ks = KeyStore.getInstance(keystoreFormat);
-						ks.load(fis, keyStorePasswd.toCharArray());
-						kmf.init(ks, keyPasswd.toCharArray());
-					} finally {
-						fis.close();
-					}
+		KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(SSL_KEY_MANAGER_FACTORY_ALGORITHM);
+
+		ArrayList<X509KeyManager> keyManagers = new ArrayList<>();
+		File file;
+		for (String ksname : keyStore.split(REGEX_COMMA)) {
+			String keystoreFormat;
+			if (ksname.endsWith(".p12") || ksname.endsWith(".pkcs12")) {
+				keystoreFormat = "PKCS12";
+			} else {
+				keystoreFormat = "JKS";
+			}
+
+			file = new File(ksname);
+			if (file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				try {
+					KeyStore ks = KeyStore.getInstance(keystoreFormat);
+					ks.load(fis, keyStorePasswd.toCharArray());
+					keyManagerFactory.init(ks, keyPasswd.toCharArray());
+				} finally {
+					fis.close();
 				}
 			}
-			for(KeyManager km : kmf.getKeyManagers()) {
-				if(km instanceof X509KeyManager) {
-					kmal.add((X509KeyManager)km);
-				}
-			}
-			km = new X509KeyManager[kmal.size()];
-			kmal.toArray(km);
 		}
+		for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
+			if (keyManager instanceof X509KeyManager) {
+				keyManagers.add((X509KeyManager)keyManager);
+			}
+		}
+		x509KeyManager = new X509KeyManager[keyManagers.size()];
+		keyManagers.toArray(x509KeyManager);
 	}
 
 	protected void initializeTrustManager() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException, CadiException {
 		String trustStore = access.getProperty(Config.CADI_TRUSTSTORE, null);
-		if(trustStore != null && !new File(trustStore).exists()) {
+		if (trustStore != null && !new File(trustStore).exists()) {
 			throw new CadiException(trustStore + " does not exist");
+		}
+
+		if (trustStore == null) {
+			return;
 		}
 
 		String trustStorePasswd = access.getProperty(Config.CADI_TRUSTSTORE_PASSWORD, null);
 		trustStorePasswd = (trustStorePasswd == null) ? "changeit"/*defacto Java Trust Pass*/ : access.decrypt(trustStorePasswd, false);
 
-		TrustManagerFactory tmf = TrustManagerFactory.getInstance(SslKeyManagerFactoryAlgorithm);
-		if(trustStore != null) {
-			File file;
-			for(String tsname : trustStore.split(REGEX_COMMA)) {
-				file = new File(tsname);
-				if(file.exists()) {
-					FileInputStream fis = new FileInputStream(file);
-					try {
-						KeyStore ts = KeyStore.getInstance("JKS");
-						ts.load(fis, trustStorePasswd.toCharArray());
-						tmf.init(ts); 
-					} finally {
-						fis.close();
-					}
-				}
-			}
-
-			TrustManager tms[] = tmf.getTrustManagers();
-			if(tms != null && tms.length>0) {
-				tm = new X509TrustManager[tms.length];
-				for(int i = 0; i < tms.length; ++i) {
-					try {
-						tm[i] = (X509TrustManager)tms[i];
-					} catch (ClassCastException e) {
-						access.log(Level.WARN, "Non X509 TrustManager", tm[i].getClass().getName(), "skipped in SecurityInfo");
-					}
+		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(SSL_KEY_MANAGER_FACTORY_ALGORITHM);
+		File file;
+		for (String trustStoreName : trustStore.split(REGEX_COMMA)) {
+			file = new File(trustStoreName);
+			if (file.exists()) {
+				FileInputStream fis = new FileInputStream(file);
+				try {
+					KeyStore ts = KeyStore.getInstance("JKS");
+					ts.load(fis, trustStorePasswd.toCharArray());
+					trustManagerFactory.init(ts); 
+				} finally {
+					fis.close();
 				}
 			}
 		}
 
+		TrustManager trustManagers[] = trustManagerFactory.getTrustManagers();
+		if (trustManagers == null || trustManagers.length == 0) {
+			return;
+		}
+
+		x509TrustManager = new X509TrustManager[trustManagers.length];
+		for (int i = 0; i < trustManagers.length; ++i) {
+			try {
+				x509TrustManager[i] = (X509TrustManager)trustManagers[i];
+			} catch (ClassCastException e) {
+				access.log(Level.WARN, "Non X509 TrustManager", x509TrustManager[i].getClass().getName(), "skipped in SecurityInfo");
+			}
+		}
 	}
 	
 	protected void initializeTrustMasks() throws AccessException {
 		String tips = access.getProperty(Config.CADI_TRUST_MASKS, null);
-		if(tips != null) {
-			access.log(Level.INIT, "Explicitly accepting valid X509s from", tips);
-			String[] ipsplit = tips.split(REGEX_COMMA);
-			trustMasks = new NetMask[ipsplit.length];
-			for(int i = 0; i < ipsplit.length; ++i) {
-				try {
-					trustMasks[i] = new NetMask(ipsplit[i]);
-				} catch (MaskFormatException e) {
-					throw new AccessException("Invalid IP Mask in " + Config.CADI_TRUST_MASKS, e);
-				}
+		if (tips == null) {
+			return;
+		}
+
+		access.log(Level.INIT, "Explicitly accepting valid X509s from", tips);
+		String[] ipsplit = tips.split(REGEX_COMMA);
+		trustMasks = new NetMask[ipsplit.length];
+		for (int i = 0; i < ipsplit.length; ++i) {
+			try {
+				trustMasks[i] = new NetMask(ipsplit[i]);
+			} catch (MaskFormatException e) {
+				throw new AccessException("Invalid IP Mask in " + Config.CADI_TRUST_MASKS, e);
 			}
 		}
-		
-		if(trustMasks != null) {
-			final HostnameVerifier origHV = HttpsURLConnection.getDefaultHostnameVerifier();
-			HttpsURLConnection.setDefaultHostnameVerifier(maskHV = new HostnameVerifier() {
-				@Override
-				public boolean verify(final String urlHostName, final SSLSession session) {
-					try {
-						// This will pick up /etc/host entries as well as DNS
-						InetAddress ia = InetAddress.getByName(session.getPeerHost());
-						for(NetMask tmask : trustMasks) {
-							if(tmask.isInNet(ia.getHostAddress())) {
-								return true;
-							}
+	
+		final HostnameVerifier origHV = HttpsURLConnection.getDefaultHostnameVerifier();
+		maskHV = new HostnameVerifier() {
+			@Override
+			public boolean verify(final String urlHostName, final SSLSession session) {
+				try {
+					// This will pick up /etc/host entries as well as DNS
+					InetAddress ia = InetAddress.getByName(session.getPeerHost());
+					for (NetMask tmask : trustMasks) {
+						if (tmask.isInNet(ia.getHostAddress())) {
+							return true;
 						}
-					} catch (UnknownHostException e) {
-						// It's ok. do normal Verify
 					}
-					return origHV.verify(urlHostName, session);
-				};
-			});
-		}
+				} catch (UnknownHostException e) {
+					// It's ok. do normal Verify
+				}
+				return origHV.verify(urlHostName, session);
+			};
+		};
+		HttpsURLConnection.setDefaultHostnameVerifier(maskHV);
 	}
 	
 }
