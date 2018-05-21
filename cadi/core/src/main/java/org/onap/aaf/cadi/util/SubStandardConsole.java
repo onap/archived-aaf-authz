@@ -27,7 +27,13 @@ import java.io.InputStreamReader;
 
 // Substandard, because System.in doesn't do Passwords..
 public class SubStandardConsole implements MyConsole {
-	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private final static char[] BLANK = new char[0];
+	private final BufferedReader br; 
+
+	public SubStandardConsole() {
+		br = new BufferedReader(new InputStreamReader(System.in));
+	}
+	
 	@Override
 	public String readLine(String fmt, Object... args) {
 		String rv;
@@ -48,10 +54,12 @@ public class SubStandardConsole implements MyConsole {
 	public char[] readPassword(String fmt, Object... args) {
 		try {
 			System.out.printf(fmt,args);
-			return br.readLine().toCharArray();
+			String response = br.readLine();
+			return response==null?BLANK:response.toCharArray();
+
 		} catch (IOException e) {
 			System.err.println("uh oh...");
-			return new char[0];
+			return BLANK;
 		}
 	}
 
