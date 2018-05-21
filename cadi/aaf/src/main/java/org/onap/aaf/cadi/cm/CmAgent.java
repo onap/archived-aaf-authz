@@ -79,9 +79,12 @@ public class CmAgent {
 	private static ErrMessage errMsg;
 	private static Map<String,PlaceArtifact> placeArtifact;
 	private static RosettaEnv env;
+	
+	private static boolean doExit;
 
 	public static void main(String[] args) {
 		int exitCode = 0;
+		doExit = true;
 		try {
 			AAFSSO aafsso = new AAFSSO(args);
 			if(aafsso.loginOnly()) {
@@ -93,7 +96,9 @@ public class CmAgent {
 				env = new RosettaEnv(access.getProperties());
 				Deque<String> cmds = new ArrayDeque<String>();
 				for(String p : args) {
-					if(p.indexOf('=')<0) {
+					if("-noexit".equalsIgnoreCase(p)) {
+						doExit = false;
+					} else if(p.indexOf('=') < 0) {
 						cmds.add(p);
 					}
 				}
@@ -110,7 +115,9 @@ public class CmAgent {
 					System.out.println("   showpass <mechID> [<machine>]");
 					System.out.println("   check    <mechID> [<machine>]");
 					System.out.println("   genkeypair");
-					System.exit(1);
+					if (doExit) {
+						System.exit(1);
+					}
 				}
 				
 				TIMEOUT = Integer.parseInt(env.getProperty(Config.AAF_CONN_TIMEOUT, "5000"));
@@ -183,7 +190,7 @@ public class CmAgent {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(exitCode!=0) {
+		if(exitCode != 0 && doExit) {
 			System.exit(exitCode);
 		}
 	}

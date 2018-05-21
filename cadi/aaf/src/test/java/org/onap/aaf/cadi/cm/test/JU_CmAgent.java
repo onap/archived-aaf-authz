@@ -56,54 +56,61 @@ public class JU_CmAgent {
 		String[] args;
 		args = new String[] {
 				"-login",
-				"-noexit",
+				"-noExit",
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
-				"noexit=true",
+				"-noExit",
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"place",
+				"-noExit",
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
+				"-noExit",
 				"create"
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
+				"-noExit",
 				"read"
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
+				"-noExit",
 				"copy"
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
+				"-noExit",
 				"update"
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
+				"-noExit",
 				"delete"
 		};
 		CmAgent.main(args);
 
 		inStream.reset();
 		args = new String[] {
+				"-noExit",
 				"showpass"
 		};
 		CmAgent.main(args);
