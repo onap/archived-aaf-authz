@@ -68,7 +68,7 @@ import com.datastax.driver.core.Statement;
 
 public abstract class Batch {
 
-	private static String ROOT_NS;
+	private static String rootNs;
 
 	private static StaticSlot ssargs;
 
@@ -84,13 +84,13 @@ public abstract class Batch {
 
 	public static final String CASS_ENV = "CASS_ENV";
 	public static final String LOG_DIR = "LOG_DIR";
-    protected final static String PUNT="punt";
-    protected final static String MAX_EMAILS="MAX_EMAILS";
-    protected final static String VERSION="VERSION";
-    public final static String GUI_URL="GUI_URL";
+    protected static final String PUNT="punt";
+    protected static final String MAX_EMAILS="MAX_EMAILS";
+    protected static final String VERSION="VERSION";
+    public static final String GUI_URL="GUI_URL";
     
-    protected final static String ORA_URL="ora_url";
-    protected final static String ORA_PASSWORD="ora_password";
+    protected static final String ORA_URL="ora_url";
+    protected static final String ORA_PASSWORD="ora_password";
 	protected final Organization org;
 
 
@@ -123,7 +123,7 @@ public abstract class Batch {
         cluster = CassAccess.cluster(env,batchEnv);
         env.info().log("cluster name - ",cluster.getClusterName());
         String dryRunStr = env.getProperty( "DRY_RUN" );
-        if ( dryRunStr == null || dryRunStr.trim().equals("false") ) {
+        if ( dryRunStr == null || "false".equals(dryRunStr.trim()) ) {
 		    dryRun = false;
 		} else {
             dryRun = true;
@@ -134,7 +134,7 @@ public abstract class Batch {
 		org.setTestMode(dryRun);
 
 		// Special names to allow behaviors beyond normal rules
-        specialNames = new HashSet<String>();
+        specialNames = new HashSet<>();
         String names = env.getProperty( "SPECIAL_NAMES" );
         if ( names != null )
         {
@@ -151,7 +151,7 @@ public abstract class Batch {
     protected abstract void _close(AuthzTrans trans);
     
     public String[] args() {
-    	return (String[])env.get(ssargs);
+    	return env.get(ssargs);
     }
 	
     public boolean isDryRun()
@@ -177,9 +177,9 @@ public abstract class Batch {
 		}
 	}
 
-	protected PrintStream fallout(PrintStream _fallout, String logType)
+	protected PrintStream fallout(PrintStream inFallout, String logType)
 			throws IOException {
-		PrintStream fallout = _fallout;
+		PrintStream fallout = inFallout;
 		if (fallout == null) {
 			File dir = new File("logs");
 			if (!dir.exists()) {
@@ -187,7 +187,6 @@ public abstract class Batch {
 			}
 
 			File f = null;
-			// String os = System.getProperty("os.name").toLowerCase();
 			long uniq = System.currentTimeMillis();
 
 			f = new File(dir, getClass().getSimpleName() + "_" + logType + "_"
@@ -199,15 +198,15 @@ public abstract class Batch {
 	}
 
 	public Organization getOrgFromID(AuthzTrans trans, String user) {
-		Organization org;
+		Organization organization;
 		try {
-			org = OrganizationFactory.obtain(trans.env(),user.toLowerCase());
+			organization = OrganizationFactory.obtain(trans.env(),user.toLowerCase());
 		} catch (OrganizationException e1) {
 			trans.error().log(e1);
-			org=null;
+			organization=null;
 		}
 
-		if (org == null) {
+		if (organization == null) {
 			PrintStream fallout = null;
 
 			try {
@@ -220,7 +219,7 @@ public abstract class Batch {
 			return (null);
 		}
 
-		return (org);
+		return (organization);
 	}
 	
 	public static Row executeDeleteQuery(Statement stmt) {
@@ -238,7 +237,7 @@ public abstract class Batch {
 		String envStr = env.getProperty("AFT_ENVIRONMENT");
 
 		if (envStr != null) {
-			if (envStr.equals("AFTPRD")) {
+			if ("AFTPRD".equals(envStr)) {
 				testEnv = false;
 			}
 		} else {
@@ -331,31 +330,32 @@ public abstract class Batch {
 	
 	// IMPORTANT! VALIDATE Organization isUser method
     protected void checkOrganizationAcccess(AuthzTrans trans, Question q) throws APIException, OrganizationException {
-		Set<String> testUsers = new HashSet<String>();
-		Result<List<RoleDAO.Data>> rrd = q.roleDAO.readNS(trans, ROOT_NS);
-		if(rrd.isOK()) {
-			for(RoleDAO.Data r : rrd.value) {
-				Result<List<UserRoleDAO.Data>> rur = q.userRoleDAO.readByRole(trans, r.fullName());
-				if(rur.isOK()) {
-					for(UserRoleDAO.Data udd : rur.value) {
+			Set<String> testUsers = new HashSet<>();
+			Result<List<RoleDAO.Data>> rrd = q.roleDAO.readNS(trans, rootNs);
+			if (rrd.isOK()) {
+				for (RoleDAO.Data r : rrd.value) {
+					Result<List<UserRoleDAO.Data>> rur = q.userRoleDAO.readByRole(trans, r.fullName());
+					if (!rur.isOK()) {
+						continue;
+					}
+					for (UserRoleDAO.Data udd : rur.value) {
 						testUsers.add(udd.user);
+					}
+				}
+				if (testUsers.size() < 2) {
+					throw new APIException("Not enough Users in Roles for " + rootNs + " to Validate");
+				}
+
+				Identity iden;
+				for (String user : testUsers) {
+					if ((iden = org.getIdentity(trans, user)) == null) {
+						throw new APIException("Failed Organization Entity Validation Check: " + user);
+					} else {
+						trans.info().log("Organization Validation Check: " + iden.id());
 					}
 				}
 			}
 		}
-		if(testUsers.size()<2) {
-			throw new APIException("Not enough Users in Roles for " + ROOT_NS + " to Validate");
-		}
-		
-		Identity iden;
-		for(String user : testUsers) {
-			if((iden=org.getIdentity(trans,user))==null) {
-				throw new APIException("Failed Organization Entity Validation Check: " + user);
-			} else {
-				trans.info().log("Organization Validation Check: " + iden.id());
-			}
-		}
-    }
     
     protected static String logDir() {
     	String ld = env.getProperty(LOG_DIR);
@@ -392,7 +392,7 @@ public abstract class Batch {
 		String propLoc;
 		try {
 			Define.set(access);
-			ROOT_NS=Define.ROOT_NS();
+			rootNs =Define.ROOT_NS();
 			
 			File f = new File("etc/authzBatch.props");
 			try {
