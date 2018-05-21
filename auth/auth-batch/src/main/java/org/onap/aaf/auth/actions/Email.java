@@ -46,9 +46,9 @@ public class Email implements Action<Organization,Void, String>{
 
 	
 	public Email(String ... defaultCC) {
-		toList = new ArrayList<String>();
+		toList = new ArrayList<>();
 		this.defaultCC = defaultCC;
-		ccList = new ArrayList<String>();
+		ccList = new ArrayList<>();
 		clear();
 	}
 	
@@ -71,10 +71,8 @@ public class Email implements Action<Organization,Void, String>{
 	}
 
 	public Email addTo(Identity id) {
-		if(id!=null) {
-			if(!toList.contains(id.email())) {
+		if(id!=null && !toList.contains(id.email())) {
 				toList.add(id.email());
-			}
 		}
 		return this;
 	}
@@ -94,10 +92,8 @@ public class Email implements Action<Organization,Void, String>{
 	}
 
 	public Email addCC(Identity id) {
-		if(id!=null) {
-			if(!ccList.contains(id.email())) {
+		if(id!=null && !ccList.contains(id.email())) {
 				ccList.add(id.email());
-			}
 		}
 		return this;
 	}
