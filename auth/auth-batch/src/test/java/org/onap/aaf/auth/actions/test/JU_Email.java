@@ -37,6 +37,7 @@ import org.onap.aaf.auth.org.OrganizationException;
 
 import static org.mockito.Mockito.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -47,12 +48,21 @@ import org.junit.Test;
 
 public class JU_Email {
 	
+	private ByteArrayOutputStream outStream;
+	private ByteArrayOutputStream errStream;
 	Email email;
 	Identity usersI;
 	Message msg;
+	PrintStream ps;
 	
 	@Before
-	public void setUp() {
+	public void setUp() throws FileNotFoundException {
+		outStream = new ByteArrayOutputStream();
+		errStream = new ByteArrayOutputStream();
+		ps = new PrintStream(errStream);
+		System.setOut(new PrintStream(outStream));
+		System.setErr(ps);
+		
 		usersI = mock(Identity.class);
 		msg = new Message();
 		email = new Email();
@@ -124,13 +134,18 @@ public class JU_Email {
 	
 	@Test
 	public void testLog() throws FileNotFoundException {
-		PrintStream ps = new PrintStream("test");
 		email.addTo("email");
 		email.addCC("email");
 		email.log(ps, "email");
 		email.addTo("emails");
 		email.addCC("emails");
 		email.log(ps, "emails");
+	}
+	
+	@After
+	public void cleanUp() {
+		System.setErr(System.err);
+		System.setOut(System.out);
 	}
 
 }
