@@ -50,12 +50,11 @@ public class Cache<TRANS extends Trans, DATA> {
 
 	public static final String CACHE_HIGH_COUNT = "CACHE_HIGH_COUNT";
 	public static final String CACHE_CLEAN_INTERVAL = "CACHE_CLEAN_INTERVAL";
-//	public static final String CACHE_MIN_REFRESH_INTERVAL = "CACHE_MIN_REFRESH_INTERVAL";
 
 	private static final Map<String,Map<String,Dated>> cacheMap;
 
 	static {
-		cacheMap = new HashMap<String,Map<String,Dated>>();
+		cacheMap = new HashMap<>();
 	}
 
 	/**
@@ -64,7 +63,7 @@ public class Cache<TRANS extends Trans, DATA> {
 	 * @author Jonathan
 	 *
 	 */
-	public final static class Dated { 
+	public static final class Dated {
 		public Date timestamp;
 		public List<?> data;
 		private long expireIn;
@@ -77,7 +76,7 @@ public class Cache<TRANS extends Trans, DATA> {
 
 		public <T> Dated(T t, long expireIn) {
 			timestamp = new Date(System.currentTimeMillis()+expireIn);
-			ArrayList<T> al = new ArrayList<T>(1);
+			ArrayList<T> al = new ArrayList<>(1);
 			al.add(t);
 			data = al;
 			this.expireIn = expireIn;
@@ -91,7 +90,7 @@ public class Cache<TRANS extends Trans, DATA> {
 	public static Map<String,Dated> obtain(String key) {
 		Map<String, Dated> m = cacheMap.get(key);
 		if(m==null) {
-			m = new ConcurrentHashMap<String, Dated>();
+			m = new ConcurrentHashMap<>();
 			synchronized(cacheMap) {
 				cacheMap.put(key, m);
 			}
@@ -108,7 +107,7 @@ public class Cache<TRANS extends Trans, DATA> {
 	 * @author Jonathan
 	 *
 	 */
-	private final static class Clean extends TimerTask {
+	private static final class Clean extends TimerTask {
 		private final Env env;
 		private Set<String> set;
 		
@@ -124,7 +123,7 @@ public class Cache<TRANS extends Trans, DATA> {
 			high = highCount;
 			timeInterval = cleanInterval;
 			advance = 0;
-			set = new HashSet<String>();
+			set = new HashSet<>();
 		}
 		
 		public synchronized void add(String key) {
@@ -140,16 +139,17 @@ public class Cache<TRANS extends Trans, DATA> {
 			
 			for(String name : set) {
 				Map<String,Dated> map = cacheMap.get(name);
-				if(map!=null) for(Map.Entry<String,Dated> me : map.entrySet()) {
+				if(map==null) {
+					continue;
+				}
+
+				for(Map.Entry<String,Dated> me : map.entrySet()) {
 					++total;
-					if(me.getValue().timestamp.before(now)) {
+					if (me.getValue().timestamp.before(now)) {
 						map.remove(me.getKey());
 						++count;
 					}
 				}
-//				if(count>0) {
-//					env.info().log(Level.INFO, "Cache removed",count,"expired",name,"Elements");
-//				}
 			}
 			
 			if(count>0) {
