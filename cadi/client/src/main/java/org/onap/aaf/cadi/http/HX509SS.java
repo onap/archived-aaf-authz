@@ -69,10 +69,10 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
 	public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
 		securityInfo = si;
 		if((alias=sendAlias) == null) {
-			if(si.default_alias == null) {
+			if(si.defaultAlias == null) {
 				throw new APIException("JKS Alias is required to use X509SS Security.  Use " + Config.CADI_ALIAS +" to set default alias");
 			} else {
-				alias = si.default_alias;
+				alias = si.defaultAlias;
 			}
 		}
 		

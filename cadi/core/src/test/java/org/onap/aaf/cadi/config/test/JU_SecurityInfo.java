@@ -97,6 +97,9 @@ public class JU_SecurityInfo {
 		assertNotNull(si.getSSLSocketFactory());
 		assertNotNull(si.getSSLContext());
 		assertNotNull(si.getKeyManagers());
+		
+		access.setProperty(Config.CADI_TRUST_MASKS, "123.123.123.123");
+		si = new SecurityInfo(access);
 	}
 
 	@Test(expected = CadiException.class)
@@ -109,6 +112,14 @@ public class JU_SecurityInfo {
 	@Test(expected = CadiException.class)
 	public void nullTrustStoreTest() throws CadiException {
 		access.setProperty(Config.CADI_TRUSTSTORE, "passwords.txt");
+		@SuppressWarnings("unused")
+		SecurityInfo si = new SecurityInfo(access);
+	}
+	
+	
+	@Test(expected = NumberFormatException.class)
+	public void badTrustMaskTest() throws CadiException {
+		access.setProperty(Config.CADI_TRUST_MASKS, "trustMask");
 		@SuppressWarnings("unused")
 		SecurityInfo si = new SecurityInfo(access);
 	}
