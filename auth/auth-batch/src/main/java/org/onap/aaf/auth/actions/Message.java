@@ -28,7 +28,7 @@ public class Message {
 	public final List<String> lines;
 		
 	public Message() {
-		lines = new ArrayList<String>();
+		lines = new ArrayList<>();
 	}
 
 	public void clear() {
@@ -42,7 +42,7 @@ public class Message {
 	}
 
 	public void msg(StringBuilder sb, String lineIndent) {
-		if(lines.size()>0) {
+		if(!lines.isEmpty()) {
 			for(String line : lines) {
 				sb.append(lineIndent);
 				sb.append(line);
