@@ -145,7 +145,13 @@ public class JU_DefaultOrg {
 		assertEquals(response.name(), "OK");
 
 	}
-
+	
+	@Test
+	public void testDefOrgPasswords() {
+		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
+		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "new2you!", "Pilgrim"),"");
+		
+	}
 
 	@Test
 	public void testDefOrgNotifyPasswordExpiration_returnResponseOK() {

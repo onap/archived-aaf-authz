@@ -85,5 +85,4 @@ public class JU_Organization {
 		Assert.assertTrue(Organization.NULL.getPasswordRules() instanceof String[]);
 
 	}
-
 }

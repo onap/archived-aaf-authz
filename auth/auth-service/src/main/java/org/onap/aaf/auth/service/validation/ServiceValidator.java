@@ -154,7 +154,8 @@ public class ServiceValidator extends Validator {
 			}
 			
 			if(org.supportsRealm(cd.id)) {
-				if(isNew && (str=org.isValidID(trans, str)).length()>0) {
+				String resp = org.isValidID(trans, str);
+				if(isNew && (resp!=null && resp.length()>0)) {
 					msg(cd.id,str);
 				}
 			}
