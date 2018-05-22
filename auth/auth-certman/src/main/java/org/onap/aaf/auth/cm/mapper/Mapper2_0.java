@@ -101,38 +101,37 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 	@Override
 	public Result<CertInfo> toCert(AuthzTrans trans, Result<CertResp> in, boolean withTrustChain) throws IOException {
 		if(in.isOK()) {
-			CertResp cin = in.value;
-			CertInfo cout = newInstance(API.CERT);
-			cout.setPrivatekey(cin.privateString());
-			String value;
-			if((value=cin.challenge())!=null) {
-				cout.setChallenge(value);
-			}
-			cout.getCerts().add(cin.asCertString());
-			if(cin.trustChain()!=null) {
-				for(String c : cin.trustChain()) {
-					cout.getCerts().add(c);
-				}
-			}
-			if(cin.notes()!=null) {
-				boolean first = true;
-				StringBuilder sb = new StringBuilder();
-				for(String n : cin.notes()) {
-					if(first) {
-						first = false;
-					} else {
-						sb.append('\n');
-					}
-					sb.append(n);
-				}
-				cout.setNotes(sb.toString());
-			}
-			cout.getCaIssuerDNs().addAll(cin.caIssuerDNs());
-			cout.setEnv(cin.env());
-			return Result.ok(cout);
-		} else {
 			return Result.err(in);
 		}
+		CertResp cin = in.value;
+		CertInfo cout = newInstance(API.CERT);
+		cout.setPrivatekey(cin.privateString());
+		String value;
+		if((value=cin.challenge())!=null) {
+			cout.setChallenge(value);
+		}
+		cout.getCerts().add(cin.asCertString());
+		if(cin.trustChain()!=null) {
+			for(String c : cin.trustChain()) {
+				cout.getCerts().add(c);
+			}
+		}
+		if(cin.notes()!=null) {
+			boolean first = true;
+			StringBuilder sb = new StringBuilder();
+			for(String n : cin.notes()) {
+				if(first) {
+					first = false;
+				} else {
+					sb.append('\n');
+				}
+				sb.append(n);
+			}
+			cout.setNotes(sb.toString());
+		}
+		cout.getCaIssuerDNs().addAll(cin.caIssuerDNs());
+		cout.setEnv(cin.env());
+		return Result.ok(cout);
 	}
 
 
@@ -164,9 +163,10 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 
 		CertReq out = new CertReq();
 		CertmanValidator v = new CertmanValidator();
-		v.isNull("CertRequest", req)
-			.nullOrBlank("MechID", out.mechid=in.getMechid());
-		v.nullBlankMin("FQDNs", out.fqdns=in.getFqdns(),1);
+		out.mechid=in.getMechid();
+		out.fqdns=in.getFqdns();
+		v.isNull("CertRequest", req).nullOrBlank("MechID", out.mechid);
+		v.nullBlankMin("FQDNs", out.fqdns,1);
 		if(v.err()) {
 			return Result.err(Result.ERR_BadData, v.errs());
 		}
@@ -200,7 +200,7 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 	 */
 	@Override
 	public List<ArtiDAO.Data> toArtifact(AuthzTrans trans, Artifacts artifacts) {
-		List<ArtiDAO.Data> ladd = new ArrayList<ArtiDAO.Data>();
+		List<ArtiDAO.Data> ladd = new ArrayList<>();
 		for(Artifact arti : artifacts.getArtifact()) {
 			ArtiDAO.Data data = new ArtiDAO.Data();
 			data.mechid = arti.getMechid();
@@ -220,10 +220,8 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 			
 			// Derive Optional Data from Machine (Domain) if exists
 			if(data.machine!=null) {
-				if(data.ca==null) {
-					if(data.machine.endsWith(".att.com")) {
+				if(data.ca==null && data.machine.endsWith(".att.com")) {
 						data.ca = "aaf"; // default
-					}
 				}
 				if(data.ns==null ) {
 					data.ns=FQI.reverseDomain(data.machine);
