@@ -25,16 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Imports implements Thematic{
-	List<String> css,js;
+	List<String> css;
+	List<String> js;
 	public final int backdots;
-//	public final File webDir;
 	private String theme;
 	
 	public Imports(int backdots) {
-//		this.webDir = webDir;
 		
-		css = new ArrayList<String>();
-		js = new ArrayList<String>();
+		css = new ArrayList<>();
+		js = new ArrayList<>();
 		this.backdots = backdots;
 		theme = "";
 	}
