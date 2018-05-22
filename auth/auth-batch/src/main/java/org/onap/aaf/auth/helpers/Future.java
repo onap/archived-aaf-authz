@@ -44,12 +44,12 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Future implements CacheChange.Data, Comparable<Future> {
-	public static final Map<UUID,Future> data = new TreeMap<UUID,Future>();
-	public static final Map<String,List<Future>> byRole = new TreeMap<String,List<Future>>();
+	public static final Map<UUID,Future> data = new TreeMap<>();
+	public static final Map<String,List<Future>> byRole = new TreeMap<>();
 	
 	public final FutureDAO.Data fdd;
 	public final String role; // derived
-	private final static CacheChange<Future> cache = new CacheChange<Future>(); 
+	private static final CacheChange<Future> cache = new CacheChange<>();
 	
 	
 	public final UUID id() {
@@ -102,13 +102,16 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         		++count;
         		Future f = creator.create(row);
         		data.put(f.fdd.id,f);
-        		if(f.role!=null) {
-        			List<Future> lf = byRole.get(f.role);
-        			if(lf==null) {
-        				byRole.put(f.role,lf = new ArrayList<Future>());
-        			}
-        			lf.add(f);
+        		if(f.role==null) {
+        			continue;
         		}
+        		List<Future> lf = byRole.get(f.role);
+        		if(lf==null) {
+					lf = new ArrayList<>();
+        			byRole.put(f.role,lf);
+        		}
+        		lf.add(f);
+
         	}
 		} finally {
 			tt.done();
