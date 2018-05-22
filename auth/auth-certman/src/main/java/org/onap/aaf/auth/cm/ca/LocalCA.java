@@ -97,7 +97,7 @@ public class LocalCA extends CA {
 			String fileName = f.getName();
 			if(fileName.endsWith(".key")) {
 				caKey = Factory.toPrivateKey(NullTrans.singleton(),f);
-				List<FileReader> frs = new ArrayList<FileReader>(params.length-1);
+				List<FileReader> frs = new ArrayList<>(params.length-1);
 				try {
 					String dir = access.getProperty(CM_PUBLIC_DIR, "");
 					if(!"".equals(dir) && !dir.endsWith("/")) {
@@ -128,8 +128,8 @@ public class LocalCA extends CA {
 					KeyStore keyStore;
 					FileInputStream fis = null;
 					if(fileName.endsWith(".pkcs11")) {
-						String ksType;
-						p = Factory.getSecurityProvider(ksType="PKCS11",params);
+						String ksType="PKCS11";
+						p = Factory.getSecurityProvider(ksType,params);
 						keyStore = KeyStore.getInstance(ksType,p);
 					} else if(fileName.endsWith(".jks")) {
 						keyStore = KeyStore.getInstance("JKS");
@@ -216,7 +216,7 @@ public class LocalCA extends CA {
 					SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(new RSAKeyParameters(false,rpk.getModulus(),rpk.getPublicExponent()))
 //					new SubjectPublicKeyInfo(ASN1Sequence.getInstance(caCert.getPublicKey().getEncoded()))
 					);
-			List<GeneralName> lsan = new ArrayList<GeneralName>();
+			List<GeneralName> lsan = new ArrayList<>();
 			for(String s : csrmeta.sans()) {
 				lsan.add(new GeneralName(GeneralName.dNSName,s));
 			}
