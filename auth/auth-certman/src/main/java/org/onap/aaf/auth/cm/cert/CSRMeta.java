@@ -60,17 +60,16 @@ public class CSRMeta {
 	private String email;
 	private String challenge;
 	private List<RDN> rdns;
-	
-	public CSRMeta(List<RDN> rdns) {
-		this.rdns = rdns;
-	}
-	
-	private ArrayList<String> sanList = new ArrayList<String>();
+	private ArrayList<String> sanList = new ArrayList<>();
 	private KeyPair keyPair;
 	private X500Name name = null;
 	private SecureRandom random = new SecureRandom();
 
-	public X500Name x500Name() throws IOException {
+	public CSRMeta(List<RDN> rdns) {
+		this.rdns = rdns;
+	}
+
+	public X500Name x500Name() {
 		if(name==null) {
 			X500NameBuilder xnb = new X500NameBuilder();
 			xnb.addRDN(BCStyle.CN,cn);
@@ -99,7 +98,7 @@ public class CSRMeta {
 		}
 		
 		int plus = email==null?0:1;
-		if(sanList.size()>0) {
+		if(!sanList.isEmpty()) {
 			GeneralName[] gna = new GeneralName[sanList.size()+plus];
 			int i=-1;
 			for(String s : sanList) {
@@ -114,10 +113,7 @@ public class CSRMeta {
 					})
 			);
 		}
-		
-		if(email!=null) {
-			
-		}
+
 		try {
 			return builder.build(BCFactory.contentSigner(keypair(trans).getPrivate()));
 		} catch (OperatorCreationException e) {
@@ -129,27 +125,29 @@ public class CSRMeta {
 	public static void dump(PKCS10CertificationRequest csr) {
 		 Attribute[] certAttributes = csr.getAttributes();
 		 for (Attribute attribute : certAttributes) {
-		     if (attribute.getAttrType().equals(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest)) {
-		         Extensions extensions = Extensions.getInstance(attribute.getAttrValues().getObjectAt(0));
-		         GeneralNames gns = GeneralNames.fromExtensions(extensions,Extension.subjectAlternativeName);
-		         GeneralName[] names = gns.getNames();
-		         for(int k=0; k < names.length; k++) {
-		             String title = "";
-		             if(names[k].getTagNo() == GeneralName.dNSName) {
-		                 title = "dNSName";
-		             } else if(names[k].getTagNo() == GeneralName.iPAddress) {
-		                 title = "iPAddress";
-		                 // Deprecated, but I don't see anything better to use.
-		                 names[k].toASN1Object();
-		             } else if(names[k].getTagNo() == GeneralName.otherName) {
-		                 title = "otherName";
-		             } else if(names[k].getTagNo() == GeneralName.rfc822Name) {
-		                 title = "email";
-		             }
+		     if (!attribute.getAttrType().equals(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest)) {
+					 continue;
+				 }
 
-		             System.out.println(title + ": "+ names[k].getName());
-		         } 
-		     }
+				 Extensions extensions = Extensions.getInstance(attribute.getAttrValues().getObjectAt(0));
+				 GeneralNames gns = GeneralNames.fromExtensions(extensions,Extension.subjectAlternativeName);
+				 GeneralName[] names = gns.getNames();
+				 for(int k=0; k < names.length; k++) {
+						 String title = "";
+						 if(names[k].getTagNo() == GeneralName.dNSName) {
+								 title = "dNSName";
+						 } else if(names[k].getTagNo() == GeneralName.iPAddress) {
+								 title = "iPAddress";
+								 // Deprecated, but I don't see anything better to use.
+								 names[k].toASN1Object();
+						 } else if(names[k].getTagNo() == GeneralName.otherName) {
+								 title = "otherName";
+						 } else if(names[k].getTagNo() == GeneralName.rfc822Name) {
+								 title = "email";
+						 }
+
+						 System.out.println(title + ": "+ names[k].getName());
+				 }
 		 }
 	}
 	
