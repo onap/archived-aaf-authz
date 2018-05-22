@@ -58,12 +58,22 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 	protected String myhostname;
 	protected int myport;
 	protected final String aaf_locator_host;
+	protected final URI aaf_locator_uri;
 	private long earliest;
 	private final long refreshWait;
 
 
 	public AbsAAFLocator(Access access, String name, final long refreshMin) throws LocatorException {
 		aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL, null);
+		if(aaf_locator_host==null) {
+			aaf_locator_uri = null;
+		} else {
+			try {
+				aaf_locator_uri = new URI(aaf_locator_host);
+			} catch (URISyntaxException e) {
+				throw new LocatorException(e);
+			}
+		}
 
 		epList = new LinkedList<EP>();
 		refreshWait = refreshMin;

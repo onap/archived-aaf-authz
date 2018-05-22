@@ -44,9 +44,13 @@ public abstract class AbsOTafLur {
 	
 	protected AbsOTafLur(final PropAccess access, final String token_url, final String introspect_url) throws CadiException {
 		this.access = access;
-		if((client_id = access.getProperty(Config.AAF_APPID,null))==null) {
-			throw new CadiException(Config.AAF_APPID + REQUIRED_FOR_OAUTH2);
+		String ci;
+		if((ci = access.getProperty(Config.AAF_APPID,null))==null) {
+			if((ci = access.getProperty(Config.CADI_ALIAS,null))==null) {
+				throw new CadiException(Config.AAF_APPID + REQUIRED_FOR_OAUTH2);
+			}
 		}
+		client_id = ci;
 
 		synchronized(access) {
 			if(tokenClientPool==null) {

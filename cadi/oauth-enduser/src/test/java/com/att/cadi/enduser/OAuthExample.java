@@ -72,12 +72,13 @@ public class OAuthExample {
 		
 		
 		// Obtain Endpoints for OAuth2 from Properties.  Expected is "cadi.properties" file, pointed to by "cadi_prop_files"
-		String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL);
-		String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL);
-
-		
-		// Get Properties
-		final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL);
+		String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,
+				"https://AAF_LOCATE_URL/AAF_NS.token/2.0"); // Default to AAF
+		String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,
+				"https://AAF_LOCATE_URL/AAF_NS.introspect/2.0"); // Default to AAF);
+		// Get Hello Service
+		final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL, 
+				"https://AAF_LOCATE_URL/AAF_NS.hello/2.0");
 
 		final int CALL_TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
 		
@@ -95,6 +96,10 @@ public class OAuthExample {
 			//   If AAF Token server, then its just the same as your other AAF MechID creds
 			//   If it is the Alternate OAUTH, you'll need THOSE credentials.  See that tool's Onboarding procedures.
 			String client_id = access.getProperty(Config.AAF_APPID);
+			if(client_id==null) {
+				// For AAF, client_id CAN be Certificate.  This is not necessarily true elsewhere
+				client_id = access.getProperty(Config.CADI_ALIAS);
+			}
 			String client_secret = access.getProperty(Config.AAF_APPPASS);
 			tc.client_creds(client_id, client_secret);
 			
@@ -140,7 +145,7 @@ public class OAuthExample {
 				String rv = helloClient.best(new Retryable<String>() {
 					@Override
 					public String code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-						Future<String> future = client.read(null,"text/plain");
+						Future<String> future = client.read("hello","text/plain");
 						// The "future" calling method allows you to do other processing, such as call more than one backend
 						// client before picking up the result
 						// If "get" matches the HTTP Code for the method (i.e. read HTTP Return value is 200), then 
@@ -216,7 +221,7 @@ public class OAuthExample {
 				+ "\tUserName:\t%s\n"
 				+ "\tExpires: \t%d (%s)\n"
 				+ "\tScope:\t\t%s\n"
-				+ "\tContent:\t\t%s\n",
+				+ "\tContent:\t%s\n",
 		ti.getAccessToken(),
 		ti.getClientId(),
 		ti.getClientType(),

@@ -532,7 +532,11 @@ public class Config {
 					access.log(Level.INIT,"AAF/OAuth LUR plugin is not available.");
 				}
 			} catch (NoSuchMethodException| SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				access.log(e,"AAF/OAuth LUR could not be constructed with given Constructors.");
+				String msg = e.getMessage();
+				if(msg==null && e.getCause()!=null) {
+					msg = e.getCause().getMessage();
+				}
+				access.log(Level.INIT,"AAF/OAuth LUR is not instantiated.",msg);
 			} 
 		} else {
 			access.log(Level.INIT, "OAuth2 Lur disabled");

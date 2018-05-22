@@ -85,7 +85,12 @@ public class JU_TzHClient {
 
 	@Test
 	public void test() throws CadiException, LocatorException, APIException, IOException {
-		TzHClient client = new TzHClient(access, "tag");
+		TzHClient client;
+		try {
+			client = new TzHClient(access, "tag");
+		} catch (Exception e) {
+			throw e;
+		}
 		try {
 			client.best(retryableMock);
 			fail("Should've thrown an exception");
