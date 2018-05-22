@@ -53,7 +53,8 @@ public abstract class CA {
 	public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<String>());
 
 	
-	private final String name,env;
+	private final String name;
+	private final String env;
 	private MessageDigest messageDigest;
 	private final String permType;
 	private Set<String> caIssuerDNs;
@@ -70,7 +71,7 @@ public abstract class CA {
 		if(permType==null) {
 			throw new CertException(CM_CA_PREFIX + name + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
 		}
-		caIssuerDNs = new HashSet<String>();
+		caIssuerDNs = new HashSet<>();
 		
 		String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
 		
@@ -79,13 +80,14 @@ public abstract class CA {
 			throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
 		}
 		access.log(Level.INFO, tag, "=",fields);
-		for(RDN rdn : rdns = RDN.parse('/',fields)) {
+		rdns = RDN.parse('/',fields);
+		for(RDN rdn : rdns) {
 			if(rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
 				throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);
 			}
 		}
 		
-		idDomains = new ArrayList<String>();
+		idDomains = new ArrayList<>();
 		StringBuilder sb = null;
 		for(String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
 			if(s.length()>0) {
@@ -102,14 +104,14 @@ public abstract class CA {
 			access.printf(Level.INIT, "CA '%s' supports Personal Certificates for %s", caName, sb);
 		}
 		
-		String data_dir = access.getProperty(CM_PUBLIC_DIR,null);
-		if(data_dir!=null) {
-			File data = new File(data_dir);
+		String dataDir = access.getProperty(CM_PUBLIC_DIR,null);
+		if(dataDir!=null) {
+			File data = new File(dataDir);
 			byte[] bytes;
 			if(data.exists()) {
-				String trust_cas = access.getProperty(CM_TRUST_CAS,null);
-				if(trust_cas!=null) {
-					for(String fname : Split.splitTrim(',', trust_cas)) {
+				String trustCas = access.getProperty(CM_TRUST_CAS,null);
+				if(trustCas!=null) {
+					for(String fname : Split.splitTrim(',', trustCas)) {
 						File crt = new File(data,fname);
 						if(crt.exists()) {
 							access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
