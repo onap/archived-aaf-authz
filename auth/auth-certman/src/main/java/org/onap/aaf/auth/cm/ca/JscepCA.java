@@ -59,21 +59,21 @@ public class JscepCA extends CA {
 	static final String CA_PREFIX = "http://";
 	static final String CA_POSTFIX="/certsrv/mscep_admin/mscep.dll";
 
-	private final static String MS_PROFILE="1";
-	private final static int MAX_RETRY=3;
+	private static final String MS_PROFILE="1";
+	private static final int MAX_RETRY=3;
 	public static final long INVALIDATE_TIME = 1000*60*10L; // 10 mins
 
 	// package on purpose
-	private Map<String,X509ChainWithIssuer> mxcwi_s;
-	private Map<Client,X509ChainWithIssuer> mxcwi_c;
+	private Map<String,X509ChainWithIssuer> mxcwiS;
+	private Map<Client,X509ChainWithIssuer> mxcwiC;
 
 
 	private JscepClientLocator clients;
 
 	public JscepCA(final Access access, final String name, final String env, String [][] params) throws IOException, CertException, LocatorException {
  		super(access, name, env);
- 		mxcwi_s = new ConcurrentHashMap<String,X509ChainWithIssuer>();
- 		mxcwi_c = new ConcurrentHashMap<Client,X509ChainWithIssuer>();
+ 		mxcwiS = new ConcurrentHashMap<>();
+ 		mxcwiC = new ConcurrentHashMap<>();
  		
  		if(params.length<2) {
  			throw new CertException("No Trust Chain parameters are included");
@@ -110,7 +110,7 @@ public class JscepCA extends CA {
 				dir = dir + '/';
 			}
 			String path;
-			List<FileReader> frs = new ArrayList<FileReader>(params.length-1);
+			List<FileReader> frs = new ArrayList<>(params.length-1);
 			try {
 				for(int j=1; j<params[i].length; ++j) { // first 3 taken up, see above
 					path = !params[i][j].contains("/")?dir+params[i][j]:params[i][j];
@@ -119,7 +119,7 @@ public class JscepCA extends CA {
 				}
 				X509ChainWithIssuer xcwi = new X509ChainWithIssuer(frs);
 				addCaIssuerDN(xcwi.getIssuerDN());
-				mxcwi_s.put(params[i][0],xcwi);
+				mxcwiS.put(params[i][0],xcwi);
 			} finally {
 				for(FileReader fr : frs) {
 					if(fr!=null) {
@@ -173,26 +173,16 @@ public class JscepCA extends CA {
 								break;
 							}
 						}
-						X509ChainWithIssuer mxcwi = mxcwi_c.get(client);
+						X509ChainWithIssuer mxcwi = mxcwiC.get(client);
 						return new X509ChainWithIssuer(mxcwi,x509);
-//						break;
+
 					} else if (er.isPending()) {
 						trans.checkpoint("Polling, waiting on CA to complete");
 						Thread.sleep(3000);
 					} else if (er.isFailure()) {
-//						switch(er.getFailInfo()) {
-//							case badMessageCheck:
-//								throw new ClientException("Received BadMessageCheck from Jscep");
-//							case badAlg:
-//							case badCertId:
-//							case badRequest:
-//							case badTime:
-//							default:
-//						}
 						throw new CertException(clients.info(item)+':'+er.getFailInfo().toString());
 					}
 				}
-				//i=MAX_RETRY;
 			} catch(LocatorException e) {
 				trans.error().log(e);
 				i=MAX_RETRY;
@@ -246,7 +236,7 @@ public class JscepCA extends CA {
 					}
 				);
 				// Map URL to Client, because Client doesn't expose Connection
-				mxcwi_c.put(c,mxcwi_s.get(urlinfo));
+				mxcwiC.put(c, mxcwiS.get(urlinfo));
 				return c;
 			} catch (MalformedURLException e) {
 				throw new LocatorException(e);
@@ -260,7 +250,7 @@ public class JscepCA extends CA {
 
 		@Override
 		protected void _destroy(Client client) {
-			mxcwi_c.remove(client);
+			mxcwiC.remove(client);
 		}
 		
 		
