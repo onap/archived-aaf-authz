@@ -157,6 +157,18 @@ public class TokenClient {
 			} catch(IOException | NoSuchAlgorithmException e) {
 				throw new CadiException(e);
 			}
+		} else {
+			ss = new GetSetter() {
+				@Override
+				public <CLIENT> SecuritySetter<CLIENT> get(AAFCon<CLIENT> con) throws CadiException {
+					try {
+						return con.x509Alias(client_id);// no password, assume Cert
+					} catch (APIException e) {
+						throw new CadiException(e);
+					} 
+				}				
+			};
+			authn_method = AUTHN_METHOD.client_credentials;
 		}
 	}
 	

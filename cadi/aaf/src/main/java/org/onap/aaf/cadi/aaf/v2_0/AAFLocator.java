@@ -67,22 +67,32 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 		int connectTimeout = Integer.parseInt(si.access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
 		try {
 			String[] path = Split.split('/',locatorURI.getPath());
-			if(path.length>2 && "locate".equals(path[1])) {
+			String host = locatorURI.getHost();
+			if(host==null) {
+				host = locatorURI.getAuthority(); // this happens when no port
+			}
+			if("AAF_LOCATE_URL".equals(host)) {
+				URI uri = new URI(
+						locatorURI.getScheme(),
+						locatorURI.getUserInfo(),
+						aaf_locator_uri.getHost(),
+						aaf_locator_uri.getPort(),
+						"/locate"+locatorURI.getPath(),
+						null,
+						null
+						);
+				client = createClient(ss, uri, connectTimeout);
+			} else if(path.length>1 && "locate".equals(path[1])) {
 				StringBuilder sb = new StringBuilder();
 				for(int i=3;i<path.length;++i) {
 					sb.append('/');
 					sb.append(path[i]);
 				}
 				setPathInfo(sb.toString());
-				String host = locatorURI.getHost();
-				if(aaf_locator_host!=null && (host==null || "AAF_LOCATOR_URL".equals(host))) {
-					int slash = aaf_locator_host.lastIndexOf("//");
-					host = aaf_locator_host.substring(slash+2);
-				}
 				URI uri = new URI(
 							locatorURI.getScheme(),
 							locatorURI.getUserInfo(),
-							host,
+							locatorURI.getHost(),
 							locatorURI.getPort(),
 							"/locate/"+name + '/' + version,
 							null,
@@ -93,7 +103,6 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 				client = new HClient(ss, locatorURI, connectTimeout);
 			}
 			epsDF = env.newDataFactory(Endpoints.class);
-			refresh();
 		} catch (APIException | URISyntaxException e) {
 			throw new LocatorException(e);
 		}

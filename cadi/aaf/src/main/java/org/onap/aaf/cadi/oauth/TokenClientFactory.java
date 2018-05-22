@@ -158,10 +158,8 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 		if(locatorURL==null) {
 			throw new LocatorException("Cannot have a null locatorURL in bestLocator");
 		}
-		if(locatePattern.matcher(locatorURL).matches()) {
+		if(locatorURL.startsWith("https://AAF_LOCATE_URL/") || locatePattern.matcher(locatorURL).matches()) {
 			return new AAFLocator(hsi,new URI(locatorURL));
-		} else if(locatorURL.contains("//DME2RESOLVE/")) {
-			throw new LocatorException("DME2Locator doesn't exist.  Use DME2 specific Clients");
 		} else {
 			return new PropertyLocator(locatorURL);
 		}
