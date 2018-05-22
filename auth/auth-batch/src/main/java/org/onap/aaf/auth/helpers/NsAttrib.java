@@ -23,6 +23,7 @@ package org.onap.aaf.auth.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.onap.aaf.misc.env.Env;
@@ -36,11 +37,24 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class NsAttrib  {
-	public static final List<NsAttrib> data = new ArrayList<NsAttrib>();
-    public static final TreeMap<String,List<NsAttrib>> byKey = new TreeMap<String,List<NsAttrib>>();
-    public static final TreeMap<String,List<NsAttrib>> byNS = new TreeMap<String,List<NsAttrib>>();
+	public static final List<NsAttrib> data = new ArrayList<>();
+    public static final SortedMap<String,List<NsAttrib>> byKey = new TreeMap<>();
+    public static final SortedMap<String,List<NsAttrib>> byNS = new TreeMap<>();
 
-	public final String ns,key,value;
+	public final String ns;
+	public final String key;
+	public final String value;
+	public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
+		@Override
+		public NsAttrib create(Row row) {
+			return new NsAttrib(row.getString(0), row.getString(1), row.getString(2));
+		}
+
+		@Override
+		public String select() {
+			return "select ns,key,value from authz.ns_attrib";
+		}
+	};
 	
 	public NsAttrib(String ns, String key, String value) {
 		this.ns = ns;
@@ -69,14 +83,14 @@ public class NsAttrib  {
 	        	
 	        	List<NsAttrib> lna = byKey.get(ur.key);
 	        	if(lna==null) {
-	        		lna = new ArrayList<NsAttrib>();
+	        		lna = new ArrayList<>();
 		        	byKey.put(ur.key, lna);
 	        	}
 	        	lna.add(ur);
 	        	
 	        	lna = byNS.get(ur.ns);
 	        	if(lna==null) {
-	        		lna = new ArrayList<NsAttrib>();
+	        		lna = new ArrayList<>();
 		        	byNS.put(ur.ns, lna);
 	        	}
 	        	lna.add(ur);
@@ -86,19 +100,6 @@ public class NsAttrib  {
         	trans.info().log("Found",count,"NS Attributes");
         }
 	}
-
-	public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
-		@Override
-		public NsAttrib create(Row row) {
-			return new NsAttrib(row.getString(0), row.getString(1), row.getString(2));
-		}
-
-		@Override
-		public String select() {
-			return "select ns,key,value from authz.ns_attrib";
-		}
-	};
-
 
 	public String toString() {
 		return '"' + ns + "\",\"" + key + "\",\""  + value +'"';
