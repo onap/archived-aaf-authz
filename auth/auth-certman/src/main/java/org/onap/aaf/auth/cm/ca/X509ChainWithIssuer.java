@@ -45,24 +45,26 @@ public class X509ChainWithIssuer extends X509andChain {
 		Collection<? extends Certificate> certs;
 		X509Certificate x509;
 		for(Reader rdr : rdrs) {
-			if(rdr!=null) { // cover for badly formed array
-				byte[] bytes = Factory.decode(rdr);
-				try {
-					certs = Factory.toX509Certificate(bytes);
-				} catch (CertificateException e) {
-					throw new CertException(e);
+			if(rdr==null) { // cover for badly formed array
+				continue;
+			}
+			byte[] bytes = Factory.decode(rdr);
+			try {
+				certs = Factory.toX509Certificate(bytes);
+			} catch (CertificateException e) {
+				throw new CertException(e);
+			}
+			for(Certificate c : certs) {
+				x509=(X509Certificate)c;
+				Principal subject = x509.getSubjectDN();
+				if(subject==null) {
+					continue;
 				}
-				for(Certificate c : certs) {
-					x509=(X509Certificate)c;
-					Principal subject = x509.getSubjectDN();
-					if(subject!=null) {
-						if(cert==null) { // first in Trust Chain
-							issuerDN= subject.toString();
-						}
-						addTrustChainEntry(x509);
-						cert=x509; // adding each time makes sure last one is signer.
-					}
+				if(cert==null) { // first in Trust Chain
+					issuerDN = subject.toString();
 				}
+				addTrustChainEntry(x509);
+				cert=x509; // adding each time makes sure last one is signer.
 			}
 		}
 	}
