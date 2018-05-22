@@ -135,12 +135,12 @@ public class ApprovalForm extends Page {
 		@Override
 		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
 			final String userParam = trans.get(sUser, null);
-			ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			ArrayList<AbsCell[]> rv = new ArrayList<>();
 			String msg = null;
 			TimeTaken tt = trans.start("AAF Get Approvals for Approver",Env.REMOTE);
 			try {
-				final List<Approval> pendingApprovals = new ArrayList<Approval>();
-				final List<Integer> beginIndicesPerApprover = new ArrayList<Integer>();
+				final List<Approval> pendingApprovals = new ArrayList<>();
+				final List<Integer> beginIndicesPerApprover = new ArrayList<>();
 				int numLeft = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Integer>() {
 					@Override
 					public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
@@ -150,12 +150,10 @@ public class ApprovalForm extends Page {
 							
 							if(fa.value!=null) {
 								for (Approval appr : fa.value.getApprovals()) {
-									if (appr.getStatus().equals("pending")) {
-										if (userParam!=null) {
-											if (!appr.getUser().equalsIgnoreCase(userParam)) {
+									if ("pending".equals(appr.getStatus())) {
+										if (userParam!=null && !appr.getUser().equalsIgnoreCase(userParam)) {
 												numLeft++;
 												continue;
-											}
 										}
 										pendingApprovals.add(appr);
 									}
@@ -178,7 +176,7 @@ public class ApprovalForm extends Page {
 					}
 				});
 				
-				if (pendingApprovals.size() > 0) {
+				if (!pendingApprovals.isEmpty()) {
 					// Only add select all links if we have approvals
 					AbsCell[] selectAllRow = new AbsCell[] {
 							AbsCell.Null,
@@ -191,7 +189,7 @@ public class ApprovalForm extends Page {
 						
 				int line=-1;
 				
-				while (beginIndicesPerApprover.size() > 0) {
+				while (!beginIndicesPerApprover.isEmpty()) {
 					int beginIndex = beginIndicesPerApprover.remove(0);
 					int endIndex = (beginIndicesPerApprover.isEmpty()?pendingApprovals.size():beginIndicesPerApprover.get(0));
 					List<Approval> currApproverList = pendingApprovals.subList(beginIndex, endIndex);
@@ -243,7 +241,7 @@ public class ApprovalForm extends Page {
 								} else {
 									Identity au = org.getIdentity(trans, user);
 									if(au!=null) {
-										if(au.type().equals("MECHID")) {
+										if("MECHID".equals(au.type())) {
 											Identity managedBy = au.responsibleTo();
 											if(managedBy==null) {
 												title ="title=" + au.type();
@@ -258,12 +256,13 @@ public class ApprovalForm extends Page {
 										title="title=Not a User at " + org.getName();
 									}
 								}
-								userCell = new RefCell(prevUser=user, 
+								prevUser=user;
+								userCell = new RefCell(prevUser,
 									TODO_ILM_INFO+user.substring(0, user.length()-DOMAIN_OF_USER.length()),
 									true,
 									title);
 							} else {
-								userCell = new TextCell(prevUser=user);
+								userCell = new TextCell(prevUser);
 							}
 							AbsCell[] sa = new AbsCell[] {
 								userCell,
@@ -280,7 +279,7 @@ public class ApprovalForm extends Page {
 				if(numLeft>0) {
 					msg = "After these, there will be " + numLeft + " approvals left to process";
 				}
-				if(rv.size()==0) {
+				if(rv.isEmpty()) {
 					if (numLeft>0) {
 						msg = "No Approvals to process at this time for user " + userParam +". You have " 
 							+ numLeft + " other approvals to process.";
