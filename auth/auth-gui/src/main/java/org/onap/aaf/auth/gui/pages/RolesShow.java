@@ -73,6 +73,9 @@ public class RolesShow extends Page {
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
 		private static final String[] headers = new String[] {"Role","Expires","Remediation","Actions"};
+		private static final String ROLE = "&role=";
+		private static final String USER = "?user=";
+		private static final String CLASS_EXPIRED = "class=expired";
 
 		@Override
 		public String[] headers() {
@@ -87,24 +90,23 @@ public class RolesShow extends Page {
 				rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
 					@Override
 					public Cells code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-						ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+						ArrayList<AbsCell[]> rv = new ArrayList<>();
 						TimeTaken tt = trans.start("AAF Roles by User",Env.REMOTE);
 						try {
 							Future<UserRoles> fur = client.read("/authz/userRoles/user/"+trans.user(),gui.getDF(UserRoles.class));
-							if (fur.get(5000)) {
-								if(fur.value != null) for (UserRole u : fur.value.getUserRole()) {
+							if (fur.get(5000) && fur.value != null) for (UserRole u : fur.value.getUserRole()) {
 									if(u.getExpires().compare(Chrono.timeStamp()) < 0) {
 										AbsCell[] sa = new AbsCell[] {
-												new TextCell(u.getRole() + "*", "class=expired"),
-												new TextCell(new SimpleDateFormat(DATE_TIME_FORMAT).format(u.getExpires().toGregorianCalendar().getTime()),"class=expired"),
+												new TextCell(u.getRole() + "*", CLASS_EXPIRED),
+												new TextCell(new SimpleDateFormat(DATE_TIME_FORMAT).format(u.getExpires().toGregorianCalendar().getTime()),CLASS_EXPIRED),
 												new RefCell("Extend",
-														UserRoleExtend.HREF + "?user="+trans.user()+"&role="+u.getRole(),
+														UserRoleExtend.HREF+USER+trans.user()+ROLE+u.getRole(),
 														false,
-														new String[]{"class=expired"}),
+														new String[]{CLASS_EXPIRED}),
 												new RefCell("Remove",
-													UserRoleRemove.HREF + "?user="+trans.user()+"&role="+u.getRole(),
+													UserRoleRemove.HREF+USER +trans.user()+ROLE+u.getRole(),
 													false,
-													new String[]{"class=expired"})
+													new String[]{CLASS_EXPIRED})
 														
 											};
 											rv.add(sa);
@@ -116,12 +118,11 @@ public class RolesShow extends Page {
 												new TextCell(new SimpleDateFormat(DATE_TIME_FORMAT).format(u.getExpires().toGregorianCalendar().getTime())),
 												AbsCell.Null,
 												new RefCell("Remove",
-														UserRoleRemove.HREF + "?user="+trans.user()+"&role="+u.getRole(),
+														UserRoleRemove.HREF+USER+trans.user()+ROLE+u.getRole(),
 														false)
 											};
 											rv.add(sa);
 									}
-								}
 							}
 							
 						} finally {
