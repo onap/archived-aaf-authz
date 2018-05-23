@@ -21,11 +21,7 @@
 
 package org.onap.aaf.auth.helpers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -45,13 +41,27 @@ public class Approval implements CacheChange.Data  {
 	public static final String RE_VALIDATE_ADMIN = "Re-Validate as Administrator for AAF Namespace '";
 	public static final String RE_VALIDATE_OWNER = "Re-Validate Ownership for AAF Namespace '";
 
-	public static TreeMap<String,List<Approval>> byApprover = new TreeMap<String,List<Approval>>();
-	public static TreeMap<String,List<Approval>> byUser = new TreeMap<String,List<Approval>>();
-	public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<UUID,List<Approval>>();
-	private final static CacheChange<Approval> cache = new CacheChange<Approval>(); 
+	public static SortedMap<String,List<Approval>> byApprover = new TreeMap<>();
+	public static SortedMap<String,List<Approval>> byUser = new TreeMap<>();
+	public static SortedMap<UUID,List<Approval>> byTicket = new TreeMap<>();
+	private static final  CacheChange<Approval> cache = new CacheChange<>();
 	
 	public final ApprovalDAO.Data add;
 	private String role;
+
+	public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
+		@Override
+		public Approval create(Row row) {
+			return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2), row.getTimestamp(3),
+					row.getString(4),row.getString(5),row.getString(6),row.getString(7),row.getString(8)
+					,row.getLong(9)/1000);
+		}
+
+		@Override
+		public String select() {
+			return "select id,ticket,approver,last_notified,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
+		}
+	};
 	
 	public Approval(UUID id, UUID ticket, String approver, Date last_notified, 
 			String user, String memo, String operation, String status, String type, long updated) {
@@ -114,7 +124,7 @@ public class Approval implements CacheChange.Data  {
 				        	if(person!=null) {
 					        ln = byApprover.get(person);
 					        	if(ln==null) {
-					        		ln = new ArrayList<Approval>();
+					        		ln = new ArrayList<>();
 					        		byApprover.put(app.getApprover(), ln);
 					        	}
 					        	ln.add(app);
@@ -125,7 +135,7 @@ public class Approval implements CacheChange.Data  {
 				        	if(person!=null) {
 				        		ln = byUser.get(person);
 					        	if(ln==null) {
-					        		ln = new ArrayList<Approval>();
+					        		ln = new ArrayList<>();
 					        		byUser.put(app.getUser(), ln);
 					        	}
 					        	ln.add(app);
@@ -134,7 +144,7 @@ public class Approval implements CacheChange.Data  {
 				        	if(ticket!=null) {
 					        	ln = byTicket.get(ticket);
 					        	if(ln==null) {
-					        		ln = new ArrayList<Approval>();
+					        		ln = new ArrayList<>();
 					        		byTicket.put(app.getTicket(), ln);
 					        	}
 					        ln.add(app);
@@ -177,20 +187,6 @@ public class Approval implements CacheChange.Data  {
 			apprDAO.update(trans, add);
 		}
 	}
-
-	public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
-		@Override
-		public Approval create(Row row) {
-			return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2), row.getTimestamp(3),
-					row.getString(4),row.getString(5),row.getString(6),row.getString(7),row.getString(8)
-					,row.getLong(9)/1000);
-		}
-
-		@Override
-		public String select() {
-			return "select id,ticket,approver,last_notified,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
-		}
-	};
 
 	/**
 	 * @return the lastNotified
