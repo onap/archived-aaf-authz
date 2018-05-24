@@ -117,7 +117,8 @@ public class Symm {
 	private static char passChars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+!@#$%^&*(){}[]?:;,.".toCharArray();
 			
 
-
+	private static Symm internalOnly = null;
+	
 	/**
 	 * Use this to create special case Case Sets and/or Line breaks
 	 * 
@@ -570,6 +571,12 @@ public class Symm {
 				}
 				throw new CadiException("ERROR: " + filename + " does not exist!");
 			}
+		} else {
+			try {
+				symm = internalOnly();
+			} catch (IOException e) {
+				throw new CadiException(e);
+			}
 		}
 		return symm;
    }
@@ -854,5 +861,23 @@ public class Symm {
 	  }
 
 	  return newSymm;
+  }
+  
+  /** 
+   * This Symm is generated for internal JVM use.  It has no external keyfile, but can be used
+   * for securing Memory, as it remains the same ONLY of the current JVM
+   * @return
+ * @throws IOException 
+   */
+  public static synchronized Symm internalOnly() throws IOException {
+	  if(internalOnly==null) {
+		  ByteArrayInputStream baos = new ByteArrayInputStream(keygen());
+		  try {
+			  internalOnly = Symm.obtain(baos);
+		  } finally {
+			  baos.close();
+		  }
+	  }
+	  return internalOnly;
   }
 }

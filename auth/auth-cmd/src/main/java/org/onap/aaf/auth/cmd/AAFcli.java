@@ -59,7 +59,6 @@ import org.onap.aaf.misc.env.APIException;
 import jline.console.ConsoleReader;
 
 public class AAFcli {
-	private static final String HTTPS = "https://";
 	protected static PrintWriter pw;
 	protected HMangr hman;
 	// Storage for last reused client. We can do this
@@ -439,174 +438,167 @@ public class AAFcli {
 			AAFSSO aafsso = new AAFSSO(args);
 			try {
 				PropAccess access = aafsso.access();
-				Define.set(access);
-				AuthzEnv env = new AuthzEnv(access);
+				if(aafsso.ok()) {
+					Define.set(access);
+					AuthzEnv env = new AuthzEnv(access);
+					
+					Reader rdr = null;
+					boolean exitOnFailure = true;
+					/*
+					 * Check for "-" options anywhere in command line
+					 */
+					StringBuilder sb = new StringBuilder();
+					for (int i = 0; i < args.length; ++i) {
+						if ("-i".equalsIgnoreCase(args[i])) {
+							rdr = new InputStreamReader(System.in);
+							// } else if("-o".equalsIgnoreCase(args[i])) {
+							// // shall we do something different? Output stream is
+							// already done...
+						} else if ("-f".equalsIgnoreCase(args[i])) {
+							if (args.length > i + 1) {
+								rdr = new FileReader(args[++i]);
+							}
+						} else if ("-a".equalsIgnoreCase(args[i])) {
+							exitOnFailure = false;
+						} else if ("-c".equalsIgnoreCase(args[i])) {
+							isConsole = true;
+						} else if ("-s".equalsIgnoreCase(args[i]) && args.length > i + 1) {
+							access.setProperty(Cmd.STARTDATE, args[++i]);
+						} else if ("-e".equalsIgnoreCase(args[i]) && args.length > i + 1) {
+							access.setProperty(Cmd.ENDDATE, args[++i]);
+						} else if ("-t".equalsIgnoreCase(args[i])) {
+							isTest = true;
+						} else if ("-d".equalsIgnoreCase(args[i])) {
+							showDetails = true;
+						} else if ("-n".equalsIgnoreCase(args[i])) {
+							ignoreDelay = true;
+						} else {
+							if (sb.length() > 0) {
+								sb.append(' ');
+							}
+							sb.append(args[i]);
+						}
+					}
+		
+					SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
+					Locator<URI> loc;
+					
+					aafsso.setLogDefault();
+					aafsso.setStdErrDefault();
+	
+					// Note, with AAF Locator, this may not longer be necessary 3/2018 Jonathan
+					if(!aafsso.loginOnly()) {
+						try {
+							loc = new AAFLocator(si,new URI(access.getProperty(Config.AAF_URL)));
+						} catch (Throwable t) {
+							aafsso.setStdErrDefault();
+							throw t;
+						} finally {
+							// Other Access is done writing to StdOut and StdErr, reset Std out
+							aafsso.setLogDefault();
+						}
+	
+						TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
+						HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
+						
+						if(access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
+							access.setProperty(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
+							aafsso.addProp(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
+						}
+			
+						
+						AAFcli aafcli = new AAFcli(access,env, new OutputStreamWriter(System.out), hman, si, 
+							new HBasicAuthSS(si,aafsso.user(), access.decrypt(aafsso.enc_pass(),false)));
+						if(!ignoreDelay) {
+							File delay = new File("aafcli.delay");
+							if(delay.exists()) {
+								BufferedReader br = new BufferedReader(new FileReader(delay));
+								try {
+									globalDelay = Integer.parseInt(br.readLine());
+								} catch(Exception e) {
+									access.log(Level.DEBUG,e);
+								} finally {
+									br.close();
+								}
+							}
+						}
+						try {
+							if (isConsole) {
+								System.out.println("Type 'help' for short help or 'help -d' for detailed help with aafcli commands");
+								System.out.println("Type '?' for help with command line editing");
+								System.out.println("Type 'q', 'quit', or 'exit' to quit aafcli\n");
+			
+								ConsoleReader reader = new ConsoleReader();
+								try {
+									reader.setPrompt("aafcli > ");
 				
+									String line;
+									while ((line = reader.readLine()) != null) {
+										showDetails = (line.contains("-d"))?true:false;
+				
+										if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q") || line.equalsIgnoreCase("exit")) {
+											break;
+										} else if (line.equalsIgnoreCase("--help -d") || line.equalsIgnoreCase("help -d") 
+												|| line.equalsIgnoreCase("help")) {
+											line = "--help";
+										} else if (line.equalsIgnoreCase("cls")) {
+											reader.clearScreen();
+											continue;
+										} else if (line.equalsIgnoreCase("?")) {
+											keyboardHelp();
+											continue;
+										}
+										try {
+											aafcli.eval(line);
+											pw.flush();
+										} catch (Exception e) {
+											pw.println(e.getMessage());
+											pw.flush();
+										}
+									}
+								} finally {
+									reader.close();
+								}
+							} else if (rdr != null) {
+								BufferedReader br = new BufferedReader(rdr);
+								String line;
+								while ((line = br.readLine()) != null) {
+									if (!aafcli.eval(line) && exitOnFailure) {
+										rv = 1;
+										break;
+									}
+								}
+							} else { // just run the command line
+								aafcli.verbose(false);
+								if (sb.length() == 0) {
+									sb.append("--help");
+								}
+								rv = aafcli.eval(sb.toString()) ? 0 : 1;
+							}
+							
+						} finally {
+							aafcli.close();
+			
+							// Don't close if No Reader, or it's a Reader of Standard In
+							if (rdr != null && !(rdr instanceof InputStreamReader)) {
+								rdr.close();
+							}
+						}
+					}
+				}
+			} finally {
+				aafsso.close();
 				StringBuilder err = aafsso.err();
-				String noexit = access.getProperty("no_exit");
+				String noexit = aafsso.access().getProperty("no_exit");
 				if (err != null) {
 					err.append("to continue...");
 					System.err.println(err);
-					if(noexit!=null) {
-						System.exit(1);
-					}
 				}
-	
-				Reader rdr = null;
-				boolean exitOnFailure = true;
-				/*
-				 * Check for "-" options anywhere in command line
-				 */
-				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < args.length; ++i) {
-					if ("-i".equalsIgnoreCase(args[i])) {
-						rdr = new InputStreamReader(System.in);
-						// } else if("-o".equalsIgnoreCase(args[i])) {
-						// // shall we do something different? Output stream is
-						// already done...
-					} else if ("-f".equalsIgnoreCase(args[i])) {
-						if (args.length > i + 1) {
-							rdr = new FileReader(args[++i]);
-						}
-					} else if ("-a".equalsIgnoreCase(args[i])) {
-						exitOnFailure = false;
-					} else if ("-c".equalsIgnoreCase(args[i])) {
-						isConsole = true;
-					} else if ("-s".equalsIgnoreCase(args[i]) && args.length > i + 1) {
-						access.setProperty(Cmd.STARTDATE, args[++i]);
-					} else if ("-e".equalsIgnoreCase(args[i]) && args.length > i + 1) {
-						access.setProperty(Cmd.ENDDATE, args[++i]);
-					} else if ("-t".equalsIgnoreCase(args[i])) {
-						isTest = true;
-					} else if ("-d".equalsIgnoreCase(args[i])) {
-						showDetails = true;
-					} else if ("-n".equalsIgnoreCase(args[i])) {
-						ignoreDelay = true;
-					} else {
-						if (sb.length() > 0) {
-							sb.append(' ');
-						}
-						sb.append(args[i]);
-					}
+				if(noexit==null) {
+					return;
 				}
-	
-				SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
-				Locator<URI> loc;
-				String aafUrl = access.getProperty(Config.AAF_URL);
-				if(aafUrl==null) {
-					aafsso.setLogDefault();
-					aafsso.setStdErrDefault();
-					aafUrl=AAFSSO.cons.readLine("aaf_url=%s", HTTPS);
-					if(aafUrl.length()==0) {
-						System.exit(0);
-					} else if(!aafUrl.startsWith(HTTPS)) {
-						aafUrl=HTTPS+aafUrl;
-					}
-					aafsso.addProp(Config.AAF_URL, aafUrl);
-				} 
-				// Note, with AAF Locator, this may not longer be necessary 3/2018 Jonathan
-				if(!aafsso.loginOnly()) {
-					try {
-						loc = new AAFLocator(si,new URI(aafUrl));
-					} catch (Throwable t) {
-						aafsso.setStdErrDefault();
-						throw t;
-					} finally {
-						// Other Access is done writing to StdOut and StdErr, reset Std out
-						aafsso.setLogDefault();
-					}
 
-					TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-					HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion("2.0");
-					
-					if(access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
-						access.log(Level.ERROR, Config.AAF_DEFAULT_REALM,"is required");
-					}
-		
-					
-					AAFcli aafcli = new AAFcli(access,env, new OutputStreamWriter(System.out), hman, si, 
-						new HBasicAuthSS(si,aafsso.user(), access.decrypt(aafsso.enc_pass(),false)));
-					if(!ignoreDelay) {
-						File delay = new File("aafcli.delay");
-						if(delay.exists()) {
-							BufferedReader br = new BufferedReader(new FileReader(delay));
-							try {
-								globalDelay = Integer.parseInt(br.readLine());
-							} catch(Exception e) {
-								access.log(Level.DEBUG,e);
-							} finally {
-								br.close();
-							}
-						}
-					}
-					try {
-						if (isConsole) {
-							System.out.println("Type 'help' for short help or 'help -d' for detailed help with aafcli commands");
-							System.out.println("Type '?' for help with command line editing");
-							System.out.println("Type 'q', 'quit', or 'exit' to quit aafcli\n");
-		
-							ConsoleReader reader = new ConsoleReader();
-							try {
-								reader.setPrompt("aafcli > ");
-			
-								String line;
-								while ((line = reader.readLine()) != null) {
-									showDetails = (line.contains("-d"))?true:false;
-			
-									if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q") || line.equalsIgnoreCase("exit")) {
-										break;
-									} else if (line.equalsIgnoreCase("--help -d") || line.equalsIgnoreCase("help -d") 
-											|| line.equalsIgnoreCase("help")) {
-										line = "--help";
-									} else if (line.equalsIgnoreCase("cls")) {
-										reader.clearScreen();
-										continue;
-									} else if (line.equalsIgnoreCase("?")) {
-										keyboardHelp();
-										continue;
-									}
-									try {
-										aafcli.eval(line);
-										pw.flush();
-									} catch (Exception e) {
-										pw.println(e.getMessage());
-										pw.flush();
-									}
-								}
-							} finally {
-								reader.close();
-							}
-						} else if (rdr != null) {
-							BufferedReader br = new BufferedReader(rdr);
-							String line;
-							while ((line = br.readLine()) != null) {
-								if (!aafcli.eval(line) && exitOnFailure) {
-									rv = 1;
-									break;
-								}
-							}
-						} else { // just run the command line
-							aafcli.verbose(false);
-							if (sb.length() == 0) {
-								sb.append("--help");
-							}
-							rv = aafcli.eval(sb.toString()) ? 0 : 1;
-						}
-						
-					} finally {
-						aafcli.close();
-		
-						// Don't close if No Reader, or it's a Reader of Standard In
-						if (rdr != null && !(rdr instanceof InputStreamReader)) {
-							rdr.close();
-						}
-					}
-				}
-				aafsso.writeFiles();
-			} finally {
-				aafsso.close();
 			}
-			
 		} catch (MessageException e) {
 			System.out.println("MessageException caught");
 
