@@ -207,11 +207,11 @@ public class PermHistory extends Page {
 								for (Item i : histItems) {
 									String user = i.getUser();
 									AbsCell userCell = new TextCell(user);
-									
+									String memo = i.getMemo().replace("<script>", "&lt;script&gt;").replace("</script>", "&lt;/script&gt;");
 									rv.add(new AbsCell[] {
 											new TextCell(i.getTimestamp().toGregorianCalendar().getTime().toString()),
 											userCell,
-											new TextCell(i.getMemo())
+											new TextCell(memo)
 									});
 								}
 								

@@ -38,7 +38,6 @@ import org.onap.aaf.auth.gui.Page;
 import org.onap.aaf.auth.gui.Table;
 import org.onap.aaf.auth.gui.Table.Cells;
 import org.onap.aaf.auth.gui.table.AbsCell;
-import org.onap.aaf.auth.gui.table.RefCell;
 import org.onap.aaf.auth.gui.table.TableData;
 import org.onap.aaf.auth.gui.table.TextCell;
 import org.onap.aaf.cadi.CadiException;
@@ -195,11 +194,12 @@ public class RoleHistory extends Page {
 									for (Item i : histItems) {
 										String user = i.getUser();
 										AbsCell userCell = new TextCell(user);
-										
+
+										String memo = i.getMemo().replace("<script>", "&lt;script&gt;").replace("</script>", "&lt;/script&gt;");
 										rv.add(new AbsCell[] {
 												new TextCell(i.getTimestamp().toGregorianCalendar().getTime().toString()),
 												userCell,
-												new TextCell(i.getMemo())
+												new TextCell(memo)
 										});
 									}
 								} else {
