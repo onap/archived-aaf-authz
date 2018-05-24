@@ -25,17 +25,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.util.MyConsole;
 import org.onap.aaf.cadi.util.SubStandardConsole;
@@ -43,9 +45,10 @@ import org.onap.aaf.cadi.util.TheConsole;
 
 public class AAFSSO {
 	public static final MyConsole  cons = TheConsole.implemented() ? new TheConsole() : new SubStandardConsole();
-	private static final int EIGHT_HOURS = 8 * 60 * 60 * 1000;
+//	private static final int EIGHT_HOURS = 8 * 60 * 60 * 1000;
 
-	private Properties diskprops = null; // use for temp storing User/Password on disk
+	private Properties diskprops;
+	private boolean touchDiskprops;
 	private File dot_aaf = null;
 	private File sso = null; // instantiated, if ever, with diskprops
 
@@ -61,132 +64,314 @@ public class AAFSSO {
 	private PrintStream os;
 
 	private Method close;
+	private final PrintStream stdOutOrig;
+	private final PrintStream stdErrOrig;
+	private boolean ok;
 
 	public AAFSSO(String[] args) throws IOException, CadiException {
-		String[] nargs = parseArgs(args);
+		ok = true;
+		List<String> nargs = parseArgs(args);
+		diskprops = new Properties();
+		touchDiskprops = false;
 
 		dot_aaf = new File(System.getProperty("user.home") + "/.aaf");
 		if (!dot_aaf.exists()) {
 			dot_aaf.mkdirs();
 		}
+		stdOutOrig = System.out;
+		stdErrOrig = System.err;
 		File f = new File(dot_aaf, "sso.out");
 		os = new PrintStream(new FileOutputStream(f, true));
 		System.setOut(os);
 		System.setErr(os);
 
-		access = new PropAccess(os, nargs);
-		Config.setDefaultRealm(access);
-
-		user = access.getProperty(Config.AAF_APPID);
-		encrypted_pass = access.getProperty(Config.AAF_APPPASS);
-
+		sso = new File(dot_aaf, "sso.props");
+		if(sso.exists()) {
+			InputStream propStream = new FileInputStream(sso);
+			try {
+				diskprops.load(propStream);
+			} finally {
+				propStream.close();
+			}
+		}
+		
+//		String keyfile = diskprops.getProperty(Config.CADI_KEYFILE);
+//		if(keyfile==null) {
+//			keyfile = dot_aaf.getCanonicalPath()+".keyfile";
+//			touchDiskprops=true;
+//		}
 		File dot_aaf_kf = new File(dot_aaf, "keyfile");
 
-		sso = new File(dot_aaf, "sso.props");
 		if (removeSSO) {
 			if (dot_aaf_kf.exists()) {
 				dot_aaf_kf.setWritable(true, true);
 				dot_aaf_kf.delete();
 			}
 			if (sso.exists()) {
-				sso.delete();
+				Properties temp = new Properties();
+				// Keep only these
+				for(Entry<Object, Object> es : diskprops.entrySet()) {
+					if(Config.CADI_LATITUDE.equals(es.getKey()) ||
+					   Config.CADI_LONGITUDE.equals(es.getKey()) ||
+					   Config.AAF_DEFAULT_REALM.equals(es.getKey())) {
+						 temp.setProperty(es.getKey().toString(), es.getValue().toString());
+					}
+				}
+				diskprops = temp;
+				touchDiskprops = true;
+				String[] naargs = new String[nargs.size()];
+				nargs.toArray(naargs);
+				access = new PropAccess(os, naargs);
 			}
+			ok = false;
+			setLogDefault();
 			System.out.println("AAF SSO information removed");
-			if (doExit) {
-				System.exit(0);
-			}
-		}
-
-		if (!dot_aaf_kf.exists()) {
-			FileOutputStream fos = new FileOutputStream(dot_aaf_kf);
-			try {
-				fos.write(Symm.keygen());
-				setReadonly(dot_aaf_kf);
-			} finally {
-				fos.close();
-			}
-		}
-
-		String keyfile = access.getProperty(Config.CADI_KEYFILE); // in case it's CertificateMan props
-		if (keyfile == null) {
-			access.setProperty(Config.CADI_KEYFILE, dot_aaf_kf.getAbsolutePath());
-		}
-
-		String alias = access.getProperty(Config.CADI_ALIAS);
-		if ((user == null) && (alias != null) && (access.getProperty(Config.CADI_KEYSTORE_PASSWORD) != null)) {
-			user = alias;
-			access.setProperty(Config.AAF_APPID, user);
-			use_X509 = true;
 		} else {
-			use_X509 = false;
-			Symm decryptor = Symm.obtain(dot_aaf_kf);
-			if (user == null) {
-				if (sso.exists() && (sso.lastModified() > (System.currentTimeMillis() - EIGHT_HOURS))) {
-					String cm_url = access.getProperty(Config.CM_URL); // SSO might overwrite...
-					FileInputStream fos = new FileInputStream(sso);
-					try {
-						access.load(fos);
-						user = access.getProperty(Config.AAF_APPID);
-						encrypted_pass = access.getProperty(Config.AAF_APPPASS);
-						// decrypt with .aaf, and re-encrypt with regular Keyfile
-						access.setProperty(Config.AAF_APPPASS,
-								access.encrypt(decryptor.depass(encrypted_pass)));
-						if (cm_url != null) { //Command line CM_URL Overwrites ssofile.
-							access.setProperty(Config.CM_URL, cm_url);
-						}
-					} finally {
-						fos.close();
-					}
-				} else {
-					diskprops = new Properties();
-					String realm = Config.getDefaultRealm();
-					// Turn on Console Sysout
-					System.setOut(System.out);
-					user = cons.readLine("aaf_id(%s@%s): ", System.getProperty("user.name"), realm);
-					if (user == null) {
-						user = System.getProperty("user.name") + '@' + realm;
-					} else if (user.length() == 0) { //
-						user = System.getProperty("user.name") + '@' + realm;
-					} else if ((user.indexOf('@') < 0) && (realm != null)) {
-						user = user + '@' + realm;
-					}
-					access.setProperty(Config.AAF_APPID, user);
-					diskprops.setProperty(Config.AAF_APPID, user);
-					encrypted_pass = new String(cons.readPassword("aaf_password: "));
-					System.setOut(os);
-					encrypted_pass = Symm.ENC + decryptor.enpass(encrypted_pass);
-					access.setProperty(Config.AAF_APPPASS, encrypted_pass);
-					diskprops.setProperty(Config.AAF_APPPASS, encrypted_pass);
-					diskprops.setProperty(Config.CADI_KEYFILE, access.getProperty(Config.CADI_KEYFILE));
+			//	Config.setDefaultRealm(access);
+	
+			if (!dot_aaf_kf.exists()) {
+				FileOutputStream fos = new FileOutputStream(dot_aaf_kf);
+				try {
+					fos.write(Symm.keygen());
+					setReadonly(dot_aaf_kf);
+				} finally {
+					fos.close();
 				}
 			}
-		}
-		if (user == null) {
-			err = new StringBuilder("Add -D" + Config.AAF_APPID + "=<id> ");
-		}
 
-		if (encrypted_pass == null && alias == null) {
-			if (err == null) {
-				err = new StringBuilder();
-			} else {
-				err.append("and ");
+			for(Entry<Object, Object> es : diskprops.entrySet()) {
+				nargs.add(es.getKey().toString() + '=' + es.getValue().toString());
 			}
-			err.append("-D" + Config.AAF_APPPASS + "=<passwd> ");
+			String[] naargs = new String[nargs.size()];
+			nargs.toArray(naargs);
+			access = new PropAccess(os, naargs);
+			
+			if(loginOnly) {
+				for(String tag : new String[] {Config.AAF_APPID, Config.AAF_APPPASS, 
+						Config.CADI_ALIAS, Config.CADI_KEYSTORE,Config.CADI_KEYSTORE_PASSWORD,Config.CADI_KEY_PASSWORD}) {
+					access.getProperties().remove(tag);
+					diskprops.remove(tag);
+				}
+				touchDiskprops=true;
+// TODO Do we want to require reset of Passwords at least every Eight Hours.
+//			} else if (sso.lastModified() > (System.currentTimeMillis() - EIGHT_HOURS)) {
+//				for(String tag : new String[] {Config.AAF_APPPASS,Config.CADI_KEYSTORE_PASSWORD,Config.CADI_KEY_PASSWORD}) {
+//					access.getProperties().remove(tag);
+//					diskprops.remove(tag);
+//				}
+//				touchDiskprops=true;
+			}
+	
+			String keyfile = access.getProperty(Config.CADI_KEYFILE); // in case its CertificateMan props
+			if (keyfile == null) {
+				access.setProperty(Config.CADI_KEYFILE, dot_aaf_kf.getAbsolutePath());
+				addProp(Config.CADI_KEYFILE,dot_aaf_kf.getAbsolutePath());
+			}
+	
+	
+			String alias, appID;
+			alias = access.getProperty(Config.CADI_ALIAS);
+			if(alias==null) {
+				appID = access.getProperty(Config.AAF_APPID);
+				user=appID;
+			} else {
+				user=alias;
+				appID=null;
+			}
+			
+			String keystore=access.getProperty(Config.CADI_KEYSTORE);
+			String keystore_pass=access.getProperty(Config.CADI_KEYSTORE_PASSWORD);
+			
+			if(user==null || (alias!=null && (keystore==null || keystore_pass==null))) {
+				String select = null;
+				String name;
+				for (File tsf : dot_aaf.listFiles()) {
+					name = tsf.getName();
+					if (!name.contains("trust") && (name.endsWith(".jks") || name.endsWith(".p12"))) {
+						select = cons.readLine("Use %s for Identity? (y/n): ",tsf.getName());
+						if("y".equalsIgnoreCase(select)) {
+							keystore = tsf.getCanonicalPath();
+							access.setProperty(Config.CADI_KEYSTORE, keystore);
+							addProp(Config.CADI_KEYSTORE, keystore);
+							char[] password = cons.readPassword("Keystore Password: ");
+							encrypted_pass= access.encrypt(new String(password));
+							access.setProperty(Config.CADI_KEYSTORE_PASSWORD, encrypted_pass);
+							addProp(Config.CADI_KEYSTORE_PASSWORD, encrypted_pass);
+							
+							// TODO READ Aliases out of Keystore?
+							user = alias = cons.readLine("Keystore alias: ");
+							access.setProperty(Config.CADI_ALIAS, user);
+							addProp(Config.CADI_ALIAS, user);
+							break;
+						}
+					}
+				}
+				if(alias==null) {
+					user = appID = cons.readLine(Config.AAF_APPID + ": ");
+					access.setProperty(Config.AAF_APPID, appID);
+					addProp(Config.AAF_APPID, appID);
+					char[] password = cons.readPassword(Config.AAF_APPPASS + ": ");
+					encrypted_pass= access.encrypt(new String(password));
+					access.setProperty(Config.AAF_APPPASS, encrypted_pass);
+					addProp(Config.AAF_APPPASS, encrypted_pass);
+				}
+			} else {
+				encrypted_pass = access.getProperty(Config.CADI_KEYSTORE_PASSWORD);
+				if(encrypted_pass == null) {
+					keystore_pass = null;
+					encrypted_pass = access.getProperty(Config.AAF_APPPASS);
+				} else {
+					keystore_pass = encrypted_pass;
+				}
+			}
+			
+	
+			if (alias!=null) {
+				use_X509 = true;
+			} else {
+				use_X509 = false;
+				Symm decryptor = Symm.obtain(dot_aaf_kf);
+				if (user == null) {
+					if (sso.exists()) {
+						String cm_url = access.getProperty(Config.CM_URL); // SSO might overwrite...
+						FileInputStream fos = new FileInputStream(sso);
+						try {
+							access.load(fos);
+							user = access.getProperty(Config.AAF_APPID);
+							encrypted_pass = access.getProperty(Config.AAF_APPPASS);
+							// decrypt with .aaf, and re-encrypt with regular Keyfile
+							access.setProperty(Config.AAF_APPPASS,
+									access.encrypt(decryptor.depass(encrypted_pass)));
+							if (cm_url != null) { //Command line CM_URL Overwrites ssofile.
+								access.setProperty(Config.CM_URL, cm_url);
+							}
+						} finally {
+							fos.close();
+						}
+					} else {
+						diskprops = new Properties();
+						String realm = Config.getDefaultRealm();
+						// Turn on Console Sysout
+						System.setOut(System.out);
+						user = cons.readLine("aaf_id(%s@%s): ", System.getProperty("user.name"), realm);
+						if (user == null) {
+							user = System.getProperty("user.name") + '@' + realm;
+						} else if (user.length() == 0) { //
+							user = System.getProperty("user.name") + '@' + realm;
+						} else if ((user.indexOf('@') < 0) && (realm != null)) {
+							user = user + '@' + realm;
+						}
+						access.setProperty(Config.AAF_APPID, user);
+						diskprops.setProperty(Config.AAF_APPID, user);
+						encrypted_pass = new String(cons.readPassword("aaf_password: "));
+						System.setOut(os);
+						encrypted_pass = Symm.ENC + decryptor.enpass(encrypted_pass);
+						access.setProperty(Config.AAF_APPPASS, encrypted_pass);
+						diskprops.setProperty(Config.AAF_APPPASS, encrypted_pass);
+						diskprops.setProperty(Config.CADI_KEYFILE, access.getProperty(Config.CADI_KEYFILE));
+					}
+				}
+			}
+			if (user == null) {
+				err = new StringBuilder("Add -D" + Config.AAF_APPID + "=<id> ");
+			}
+	
+			if (encrypted_pass == null && alias == null) {
+				if (err == null) {
+					err = new StringBuilder();
+				} else {
+					err.append("and ");
+				}
+				err.append("-D" + Config.AAF_APPPASS + "=<passwd> ");
+			}
+			
+			String locateUrl = access.getProperty(Config.AAF_LOCATE_URL);
+			if(locateUrl==null) {
+				locateUrl=AAFSSO.cons.readLine("AAF Locator FQDN/machine[:port]=https://");
+				if(locateUrl==null || locateUrl.length()==0) {
+					err = new StringBuilder(Config.AAF_LOCATE_URL);
+					err.append(" is required.");
+					ok = false;
+					return;
+				} else {
+					locateUrl="https://"+locateUrl+"/locate";
+				}
+				access.setProperty(Config.AAF_LOCATE_URL, locateUrl);
+				addProp(Config.AAF_LOCATE_URL, locateUrl);
+			}
+			
+			String aafUrl = "https://AAF_LOCATE_URL/AAF_NS.service/2.0";
+			access.setProperty(Config.AAF_URL, aafUrl);
+			access.setProperty(Config.CM_URL, "https://AAF_LOCATE_URL/AAF_NS.cm/2.0");
+			String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
+			if(cadiLatitude==null) {
+				System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");
+				cadiLatitude=AAFSSO.cons.readLine("cadi_latitude[0.000]=");
+				if(cadiLatitude==null || cadiLatitude.isEmpty()) {
+					cadiLatitude="0.000";
+				}
+				access.setProperty(Config.CADI_LATITUDE, cadiLatitude);
+				addProp(Config.CADI_LATITUDE, cadiLatitude);
+				
+			}
+			String cadiLongitude = access.getProperty(Config.CADI_LONGITUDE);
+			if(cadiLongitude==null) {
+				cadiLongitude=AAFSSO.cons.readLine("cadi_longitude[0.000]=");
+				if(cadiLongitude==null || cadiLongitude.isEmpty()) {
+					cadiLongitude="0.000";
+				}
+				access.setProperty(Config.CADI_LONGITUDE, cadiLongitude);
+				addProp(Config.CADI_LONGITUDE, cadiLongitude);
+			}
+	
+			String cadi_truststore = access.getProperty(Config.CADI_TRUSTSTORE);
+			if(cadi_truststore==null) {
+				String name; 
+				String select;
+				for (File tsf : dot_aaf.listFiles()) {
+					name = tsf.getName();
+					if (name.contains("trust") && 
+							(name.endsWith(".jks") || name.endsWith(".p12"))) {
+						select = cons.readLine("Use %s for TrustStore? (y/n):",tsf.getName());
+						if("y".equalsIgnoreCase(select)) {
+							cadi_truststore=tsf.getCanonicalPath();
+							access.setProperty(Config.CADI_TRUSTSTORE, cadi_truststore);
+							addProp(Config.CADI_TRUSTSTORE, cadi_truststore);
+							break;
+						}
+					}
+				}
+			}
+			if(cadi_truststore!=null) {
+				if(cadi_truststore.indexOf(File.separatorChar)<0) {
+					cadi_truststore=dot_aaf.getPath()+File.separator+cadi_truststore;
+				}
+				String cadi_truststore_password = access.getProperty(Config.CADI_TRUSTSTORE_PASSWORD);
+				if(cadi_truststore_password==null) {
+					cadi_truststore_password=AAFSSO.cons.readLine("cadi_truststore_password[%s]=","changeit");
+					cadi_truststore_password = access.encrypt(cadi_truststore_password);
+					access.setProperty(Config.CADI_TRUSTSTORE_PASSWORD, cadi_truststore_password);
+					addProp(Config.CADI_TRUSTSTORE_PASSWORD, cadi_truststore_password);
+				}
+			}
+			ok = err==null;
 		}
+		writeFiles();
 	}
 
 	public void setLogDefault() {
 		this.setLogDefault(PropAccess.DEFAULT);
+		System.setOut(stdOutOrig);
 	}
 
 	public void setStdErrDefault() {
 		access.setLogLevel(PropAccess.DEFAULT);
-		System.setErr(System.err);
+		System.setOut(stdErrOrig);
 	}
 
 	public void setLogDefault(Level level) {
 		access.setLogLevel(level);
-		System.setOut(System.out);
+		System.setOut(stdOutOrig);
 	}
 
 	public boolean loginOnly() {
@@ -194,28 +379,32 @@ public class AAFSSO {
 	}
 
 	public void addProp(String key, String value) {
-		if (diskprops != null) {
-			diskprops.setProperty(key, value);
+		if(key==null || value==null) {
+			return;
 		}
+		touchDiskprops=true;
+		diskprops.setProperty(key, value);
 	}
 
 	public void writeFiles() throws IOException {
-		// Store Creds, if they work
-		if (diskprops != null) {
-			if (!dot_aaf.exists()) {
-				dot_aaf.mkdirs();
+		if(touchDiskprops) {
+			// Store Creds, if they work
+			if (diskprops != null) {
+				if (!dot_aaf.exists()) {
+					dot_aaf.mkdirs();
+				}
+				FileOutputStream fos = new FileOutputStream(sso);
+				try {
+					diskprops.store(fos, "AAF Single Signon");
+				} finally {
+					fos.close();
+					setReadonly(sso);
+				}
 			}
-			FileOutputStream fos = new FileOutputStream(sso);
-			try {
-				diskprops.store(fos, "AAF Single Signon");
-			} finally {
-				fos.close();
+			if (sso != null) {
 				setReadonly(sso);
+				sso.setWritable(true, true);
 			}
-		}
-		if (sso != null) {
-			setReadonly(sso);
-			sso.setWritable(true, true);
 		}
 	}
 
@@ -250,7 +439,7 @@ public class AAFSSO {
 		}
 	}
 
-	private String[] parseArgs(String[] args)
+	private List<String> parseArgs(String[] args)
 	{
 		List<String> larg = new ArrayList<String>(args.length);
 
@@ -271,9 +460,7 @@ public class AAFSSO {
 				larg.add(args[i]);
 			}
 		}
-		String[] nargs = new String[larg.size()];
-		larg.toArray(nargs);
-		return nargs;
+		return larg;
 	}
 	
 	private void setReadonly(File file) {
@@ -281,5 +468,9 @@ public class AAFSSO {
 		file.setWritable(false, false);
 		file.setReadable(false, false);
 		file.setReadable(true, true);
+	}
+
+	public boolean ok() {
+		return ok;
 	}
 }
