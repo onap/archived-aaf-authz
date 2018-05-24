@@ -75,8 +75,6 @@ public class JU_AAFSSO {
 		assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
 		assertThat(sso.loginOnly(), is(true));
 		
-		assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(false));
-		sso.writeFiles();
 		assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(true));
 		
 		sso.setLogDefault();
@@ -92,7 +90,7 @@ public class JU_AAFSSO {
 
 		assertThat(new File(aafDir).exists(), is(true));
 		assertThat(new File(aafDir + "/.aaf").exists(), is(true));
-		assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(true));
+		assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(false));
 		assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
 		assertThat(sso.loginOnly(), is(false));
 
@@ -105,7 +103,6 @@ public class JU_AAFSSO {
 		
 		assertThat(sso.useX509(), is(false));
 
-		sso.close();
 		sso.close();
 	}
 

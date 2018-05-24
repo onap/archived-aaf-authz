@@ -117,7 +117,8 @@ public class Symm {
 	private static char passChars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+!@#$%^&*(){}[]?:;,.".toCharArray();
 			
 
-
+	private static Symm internalOnly = null;
+	
 	/**
 	 * Use this to create special case Case Sets and/or Line breaks
 	 * 
@@ -537,10 +538,10 @@ public class Symm {
  * @throws CadiException 
     */
    public static Symm obtain(Access access) throws CadiException {
-		Symm symm = Symm.baseCrypt();
-
 		String keyfile = access.getProperty(Config.CADI_KEYFILE,null);
 		if(keyfile!=null) {
+			Symm symm = Symm.baseCrypt();
+
 			File file = new File(keyfile);
 			try {
 				access.log(Level.INIT, Config.CADI_KEYFILE,"points to",file.getCanonicalPath());
@@ -570,8 +571,14 @@ public class Symm {
 				}
 				throw new CadiException("ERROR: " + filename + " does not exist!");
 			}
+			return symm;
+		} else {
+			try {
+				return internalOnly();
+			} catch (IOException e) {
+				throw new CadiException(e);
+			}
 		}
-		return symm;
    }
   /**
    *  Create a new random key 
@@ -854,5 +861,23 @@ public class Symm {
 	  }
 
 	  return newSymm;
+  }
+  
+  /** 
+   * This Symm is generated for internal JVM use.  It has no external keyfile, but can be used
+   * for securing Memory, as it remains the same ONLY of the current JVM
+   * @return
+ * @throws IOException 
+   */
+  public static synchronized Symm internalOnly() throws IOException {
+	  if(internalOnly==null) {
+		  ByteArrayInputStream baos = new ByteArrayInputStream(keygen());
+		  try {
+			  internalOnly = Symm.obtain(baos);
+		  } finally {
+			  baos.close();
+		  }
+	  }
+	  return internalOnly;
   }
 }

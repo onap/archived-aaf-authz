@@ -51,7 +51,7 @@ public class Define {
 	}
 	
 	public static void set(Access access) throws CadiException {
-		ROOT_NS = access.getProperty(Config.AAF_ROOT_NS,"org.onap.aaf");
+		ROOT_NS = access.getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
 		ROOT_COMPANY = access.getProperty(Config.AAF_ROOT_COMPANY,null);
 		if(ROOT_COMPANY==null) {
 			int last = ROOT_NS.lastIndexOf('.');
