@@ -121,35 +121,38 @@ public class RoleDetail extends Page {
 							Future<Roles> fr = client.read("/authz/roles/"+pRole+"?ns",gui.getDF(Roles.class));
 							Future<UserRoles> fur = client.read("/authz/userRoles/role/"+pRole,gui.getDF(UserRoles.class));
 							if(fr.get(AAF_GUI.TIMEOUT)) {
-								Role role = fr.value.getRole().get(0);
-								trans.put(sRole, role);
-								Boolean mayWrite = trans.fish(new AAFPermission(role.getNs()+".access",":role:"+role.getName(),"write"));
-								trans.put(sMayWrite,mayWrite);
-								Boolean mayApprove = trans.fish(new AAFPermission(role.getNs()+".access",":role:"+role.getName(),"approve"));
-								trans.put(sMayApprove, mayApprove);
-								
-								if(mayWrite || mayApprove) {
-									Mark js = new Mark();
-									Mark fn = new Mark();
-									hgen.js(js)
-										.function(fn,"touchedDesc")
-										.li("d=document.getElementById('descText');",
-											"if (d.orig == undefined ) {",
-											"  d.orig = d.value;",
-											"  d.addEventListener('keyup',changedDesc);",
-											"  d.removeEventListener('keypress',touchedDesc);",
-											"}").end(fn)
-										.function(fn,"changedDesc")
-										.li(
-											"dcb=document.getElementById('descCB');",
-											"d=document.getElementById('descText');",
-											"dcb.checked= (d.orig != d.value)"
-										).end(fn)
-										.end(js);
-
-									Mark mark = new Mark();
-									hgen.incr(mark,"form","method=post");
-									trans.put(sMark, mark);
+								List<Role> roles = fr.value.getRole();
+								if(!roles.isEmpty()) {
+									Role role = fr.value.getRole().get(0);
+									trans.put(sRole, role);
+									Boolean mayWrite = trans.fish(new AAFPermission(role.getNs()+".access",":role:"+role.getName(),"write"));
+									trans.put(sMayWrite,mayWrite);
+									Boolean mayApprove = trans.fish(new AAFPermission(role.getNs()+".access",":role:"+role.getName(),"approve"));
+									trans.put(sMayApprove, mayApprove);
+									
+									if(mayWrite || mayApprove) {
+										Mark js = new Mark();
+										Mark fn = new Mark();
+										hgen.js(js)
+											.function(fn,"touchedDesc")
+											.li("d=document.getElementById('descText');",
+												"if (d.orig == undefined ) {",
+												"  d.orig = d.value;",
+												"  d.addEventListener('keyup',changedDesc);",
+												"  d.removeEventListener('keypress',touchedDesc);",
+												"}").end(fn)
+											.function(fn,"changedDesc")
+											.li(
+												"dcb=document.getElementById('descCB');",
+												"d=document.getElementById('descText');",
+												"dcb.checked= (d.orig != d.value)"
+											).end(fn)
+											.end(js);
+	
+										Mark mark = new Mark();
+										hgen.incr(mark,"form","method=post");
+										trans.put(sMark, mark);
+									}
 								}
 							} else {
 								trans.error().printf("Error calling AAF for Roles in GUI, Role Detail %d: %s",fr.code(),fr.body());

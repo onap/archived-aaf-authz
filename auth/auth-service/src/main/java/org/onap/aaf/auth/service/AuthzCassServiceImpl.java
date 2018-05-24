@@ -1574,7 +1574,8 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 		}
 		
 		// Look up data
-		Result<List<RoleDAO.Data>> rlrd = ques.getRolesByName(trans, role);
+		int query = role.indexOf('?');
+		Result<List<RoleDAO.Data>> rlrd = ques.getRolesByName(trans, query<0?role:role.substring(0, query));
 		if(rlrd.isOK()) {
 			// Note: Mapper will restrict what can be viewed
 			ROLES roles = mapper.newInstance(API.ROLES);
