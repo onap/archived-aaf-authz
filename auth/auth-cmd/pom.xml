@@ -95,7 +95,6 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
 				<extensions>true</extensions>
 				<configuration>
 					<nexusUrl>${nexusproxy}</nexusUrl>
@@ -106,7 +105,6 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
 				<configuration>
 					<excludes>
 						<exclude>**/gen/**</exclude>
@@ -165,6 +163,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<classifier>tests</classifier>
+					<archive>
+						<manifest>
+							<mainClass>org.onap.aaf.auth.cmd.AAFcli</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Sealed>true</Sealed>
+						</manifestEntries>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>full</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assemble/auth-cmd.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
@@ -172,13 +199,11 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
