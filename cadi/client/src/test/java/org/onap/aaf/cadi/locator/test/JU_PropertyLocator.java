@@ -96,6 +96,7 @@ public class JU_PropertyLocator {
 		pl.destroy();
 
 		pl = new PropertyLocator(uris);
+		
 	}
 
 	@Test(expected=LocatorException.class)
