@@ -89,8 +89,6 @@ public abstract class Batch {
     protected static final String VERSION="VERSION";
     public static final String GUI_URL="GUI_URL";
     
-    protected static final String ORA_URL="ora_url";
-    protected static final String ORA_PASSWORD="ora_password";
 	protected final Organization org;
 
 
