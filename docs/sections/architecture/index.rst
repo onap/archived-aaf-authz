@@ -8,21 +8,5 @@ Architecture
    :maxdepth: 2
    :glob:
 
-   architecture/*
-
-Installation
-==============
-.. toctree::
-   :maxdepth: 2
-   :glob:
-
-   installation/*
-
-Configuration
-=============
-.. toctree::
-   :maxdepth: 2
-   :glob:
-
-   configuration/*
+   *
 

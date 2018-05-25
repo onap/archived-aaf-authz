@@ -17,11 +17,14 @@ Sections
 ++++++++
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :glob:
 
-   sections/*
-   
+   sections/architecture/index
+   sections/installation/index
+   sections/configuration/index
+   sections/logging
+   sections/release-notes
    
 Introduction
 ------------
