@@ -15,9 +15,15 @@ To be effective during a computer transaction, Security must not only be secure,
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    
-
+   architecture/architecture.rst
+   Bootstrapping-AAF-Components/Bootstrapping-AAF-Components.rst
+   configuration/configuration.rst
+   Installation/installation.rst
+   logging/logging.rst
+   release-notes/release-notes.rst
+   
    
 Introduction
 ------------
@@ -41,5 +47,3 @@ The Data is managed by RESTful API, with Admin functions supplemented by Charact
 -CADI (A Framework for providing Enterprise Class Authentication and Authorization with minimal configuration to Containers and Standalone Services)
 
 -Cassandra (GRID Core)
-
--Hadoop Plugin (a plugin via Hadoop Group Mapper mechanism)
