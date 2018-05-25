@@ -13,16 +13,14 @@ This is a critical function for Cloud environments, as Services need to be able 
 To be effective during a computer transaction, Security must not only be secure, but very fast. Given that each transaction must be checked and validated for Authorization and Authentication, it is critical that all elements on this path perform optimally.
 
 
+Sections
+++++++++
 
 .. toctree::
-   :maxdepth: 1
-   
-   architecture/architecture.rst
-   Bootstrapping-AAF-Components/Bootstrapping-AAF-Components.rst
-   configuration/configuration.rst
-   Installation/installation.rst
-   logging/logging.rst
-   release-notes/release-notes.rst
+   :maxdepth: 2
+   :glob:
+
+   sections/*
    
    
 Introduction
@@ -31,7 +29,7 @@ AAF contains some elements of Role Based Authorization, but includes Attribute B
 
 |image0|
 
-.. |image0| image:: aaf-object-model.jpg
+.. |image0| image:: images/aaf-object-model.jpg
    :height: 600px
    :width: 800px
 

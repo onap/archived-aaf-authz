@@ -1,0 +1,5 @@
+/_static/
+/etc/
+/.tox/
+/conf.py
+/tox.ini
