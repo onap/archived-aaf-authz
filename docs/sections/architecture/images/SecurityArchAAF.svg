@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="210.566" height="286.166" viewBox="0, 0, 210.566, 286.166">
+  <g id="AAF" transform="translate(-283.488, -41.5)">
+    <g>
+      <path d="M360.277,242.79 L448.072,242.79 C452.228,242.79 455.597,244.074 455.597,245.659 L455.597,276.982 C455.597,278.567 452.228,279.851 448.072,279.851 L360.277,279.851 C356.12,279.851 352.751,278.567 352.751,276.982 L352.751,245.659 C352.751,244.074 356.12,242.79 360.277,242.79 z" fill="#D65F15" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 404.174, 264.314)">
+        <tspan x="-16.57" y="-0.264" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">Service</tspan>
+      </text>
+    </g>
+    <g>
+      <path d="M371.153,79.5 L428.002,79.5 C430.693,79.5 432.875,80.785 432.875,82.369 L432.875,113.692 C432.875,115.277 430.693,116.562 428.002,116.562 L371.153,116.562 C368.462,116.562 366.281,115.277 366.281,113.692 L366.281,82.369 C366.281,80.785 368.462,79.5 371.153,79.5 z" fill="#D65F15" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 399.578, 101.024)">
+        <tspan x="-20.745" y="-0.264" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">Cert Man</tspan>
+      </text>
+    </g>
+    <g>
+      <path d="M371.153,201.967 L428.002,201.967 C430.693,201.967 432.874,203.252 432.874,204.837 L432.874,236.16 C432.874,237.744 430.693,239.029 428.002,239.029 L371.153,239.029 C368.462,239.029 366.28,237.744 366.28,236.16 L366.28,204.837 C366.28,203.252 368.462,201.967 371.153,201.967 z" fill="#D65F15" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 399.577, 223.491)">
+        <tspan x="-14.175" y="-0.264" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">OAuth</tspan>
+      </text>
+    </g>
+    <path d="M305.139,73 L493.554,73 L493.554,327.166 L305.139,327.166 L305.139,73 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <text transform="matrix(1, 0, 0, 1, 380.99, 60.5)">
+      <tspan x="-12.155" y="-7" font-family="HelveticaNeue" font-size="13" fill="#000000" fill-opacity="0.87">AAF</tspan>
+      <tspan x="12.155" y="-7" font-family="HelveticaNeue" font-size="11" fill="#000000" fill-opacity="0.87"> </tspan>
+      <tspan x="-76.495" y="5" font-family="HelveticaNeue" font-size="9" fill="#000000" fill-opacity="0.87">(Application Authorization Framework)</tspan>
+    </text>
+    <g>
+      <path d="M355.161,279.851 L383.272,279.851 C384.603,279.851 385.682,280.931 385.682,282.263 L385.682,308.589 C385.682,309.92 384.603,311 383.272,311 L355.161,311 C353.83,311 352.751,309.92 352.751,308.589 L352.751,282.263 C352.751,280.931 353.83,279.851 355.161,279.851 z" fill="#15C6D6" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 369.216, 297.941)">
+        <tspan x="-13.155" y="1.374" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">Authn</tspan>
+      </text>
+    </g>
+    <g>
+      <path d="M390.797,278.605 L450.482,278.605 C453.307,278.605 455.597,279.728 455.597,281.113 L455.597,308.492 C455.597,309.877 453.307,311 450.482,311 L390.797,311 C387.972,311 385.682,309.877 385.682,308.492 L385.682,281.113 C385.682,279.728 387.972,278.605 390.797,278.605 z" fill="#D6AF15" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 420.639, 297.419)">
+        <tspan x="-12.775" y="1.029" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">Authz</tspan>
+      </text>
+    </g>
+    <g>
+      <path d="M371.153,161.145 L428.002,161.145 C430.693,161.145 432.875,162.43 432.875,164.014 L432.875,195.337 C432.875,196.922 430.693,198.207 428.002,198.207 L371.153,198.207 C368.462,198.207 366.281,196.922 366.281,195.337 L366.281,164.014 C366.281,162.43 368.462,161.145 371.153,161.145 z" fill="#D65F15" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 399.578, 182.669)">
+        <tspan x="-17.13" y="-0.264" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">Locator</tspan>
+      </text>
+    </g>
+    <g>
+      <path d="M371.153,120.322 L428.002,120.322 C430.693,120.322 432.875,121.607 432.875,123.192 L432.875,154.515 C432.875,156.099 430.693,157.384 428.002,157.384 L371.153,157.384 C368.462,157.384 366.281,156.099 366.281,154.515 L366.281,123.192 C366.281,121.607 368.462,120.322 371.153,120.322 z" fill="#D65F15" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 399.578, 138.083)">
+        <tspan x="-8.7" y="-1.5" font-family="HelveticaNeue" font-size="10" fill="#FFFFFF" fill-opacity="0.87">GUI </tspan>
+        <tspan x="-25.564" y="8.5" font-family="HelveticaNeue" font-size="8" fill="#FFFFFF" fill-opacity="0.87">(Management)</tspan>
+      </text>
+    </g>
+  </g>
+</svg>
