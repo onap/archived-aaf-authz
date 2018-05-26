@@ -32,7 +32,7 @@ AAF contains some elements of Role Based Authorization, but includes Attribute B
 
 |image0|
 
-.. |image0| image:: images/aaf-object-model.jpg
+.. |image0| image:: sections/architecture/images/aaf-object-model.jpg
    :height: 600px
    :width: 800px
 
