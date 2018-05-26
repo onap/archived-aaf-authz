@@ -93,6 +93,11 @@ In order to do this efficiently, ONAP services will use the CADI Client, which i
   * Highly scalable Endpoint information (at the very least, of AAF components)
   * The ability to propogate the Identity of originating Caller (User One) 
 
+.. image:: images/SecurityArchCADIClient.svg
+   	:width: 70%
+	:align: center
+
+
 Obtaining Security Information
 ------------------------------
 
