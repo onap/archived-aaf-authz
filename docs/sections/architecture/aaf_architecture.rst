@@ -11,7 +11,7 @@ To be effective during a computer transaction, Security must not only be secure,
 
 |image0|
 
-.. |image0| image:: aaf-object-model.jpg
+.. |image0| image:: images/aaf-object-model.jpg
    :height: 600px
    :width: 800px
 
@@ -33,7 +33,7 @@ Every secure transaction requires 1) Encryption 2) Authentication 3) Authorizati
 
 |image1|
 
-.. |image1| image:: aaf-cm.png
+.. |image1| image:: images/aaf-cm.png
    :height: 768px
    :width: 1024px   
  

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="517.817" height="313.5" viewBox="0, 0, 517.817, 313.5">
+  <g id="TLS" transform="translate(-175.969, -237)">
+    <text transform="matrix(-0, 1, -1, -0, 639.901, 366.492)">
+      <tspan x="-22.253" y="3" font-family="HelveticaNeue" font-size="11" fill="#000000" fill-opacity="0.87">TLS 1.2+</tspan>
+    </text>
+    <text transform="matrix(1, -0, 0, 1, 439.736, 509.201)">
+      <tspan x="-22.253" y="3" font-family="HelveticaNeue" font-size="11" fill="#000000" fill-opacity="0.87">TLS 1.2+</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 634.155, 457.499)">
+      <tspan x="-19.244" y="3" font-family="HelveticaNeue" font-size="11" fill="#000000" fill-opacity="0.87">HTTP/S</tspan>
+    </text>
+    <text transform="matrix(-0, 1, -1, -0, 320.012, 516.681)">
+      <tspan x="-19.244" y="3.235" font-family="HelveticaNeue" font-size="11" fill="#000000" fill-opacity="0.87">HTTP/S</tspan>
+    </text>
+  </g>
+  <g id="Basics" transform="translate(-175.969, -237)">
+    <path d="M186.675,488.5 L303.255,488.5 C308.773,488.5 313.247,490.649 313.247,493.3 L313.247,545.7 C313.247,548.351 308.773,550.5 303.255,550.5 L186.675,550.5 C181.156,550.5 176.682,548.351 176.682,545.7 L176.682,493.3 C176.682,490.649 181.156,488.5 186.675,488.5 z" fill="#38AB4E"/>
+    <text transform="matrix(1, 0, 0, 1, 244.965, 519.497)">
+      <tspan x="-42.661" y="-4.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF">Application</tspan>
+      <tspan x="-15.257" y="15.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF">Two</tspan>
+    </text>
+    <path d="M581.936,464.5 L683.521,464.5 C688.33,464.5 692.229,467.481 692.229,471.158 L692.229,543.841 C692.229,547.519 688.33,550.5 683.521,550.5 L581.936,550.5 C577.127,550.5 573.229,547.519 573.229,543.841 L573.229,471.158 C573.229,467.481 577.127,464.5 581.936,464.5 z" fill="#38AB4E"/>
+    <g>
+      <path d="M582.649,237 L684.234,237 C689.043,237 692.942,239.149 692.942,241.8 L692.942,294.2 C692.942,296.851 689.043,299 684.234,299 L582.649,299 C577.84,299 573.942,296.851 573.942,294.2 L573.942,241.8 C573.942,239.149 577.84,237 582.649,237 z" fill="#7A40CA" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 635.812, 266)">
+        <tspan x="-35.896" y="-4.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">User One</tspan>
+        <tspan x="-31.161" y="15.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">(Person)</tspan>
+      </text>
+    </g>
+    <g>
+      <path d="M631.441,299.5 L633.285,442" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+      <path d="M630.285,442.039 L633.388,450 L636.285,441.962 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="1" stroke-opacity="1"/>
+    </g>
+    <g>
+      <path d="M574.31,520.114 L335.202,521.06" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+      <path d="M335.19,518.06 L327.202,521.091 L335.214,524.06 z" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="1" stroke-opacity="1"/>
+    </g>
+    <text transform="matrix(1, 0, 0, 1, 632.729, 504.138)">
+      <tspan x="-42.661" y="-6.219" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">Application</tspan>
+      <tspan x="-15.75" y="13.781" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">One</tspan>
+    </text>
+    <path d="M185.961,488.5 L302.541,488.5 C308.06,488.5 312.534,490.649 312.534,493.3 L312.534,545.7 C312.534,548.351 308.06,550.5 302.541,550.5 L185.961,550.5 C180.442,550.5 175.969,548.351 175.969,545.7 L175.969,493.3 C175.969,490.649 180.442,488.5 185.961,488.5 z" fill="#38AB4E"/>
+    <text transform="matrix(1, 0, 0, 1, 244.251, 519.498)">
+      <tspan x="-42.661" y="-4.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF">Application</tspan>
+      <tspan x="-15.257" y="15.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF">Two</tspan>
+    </text>
+    <path d="M581.222,464.5 L682.808,464.5 C687.617,464.5 691.515,467.481 691.515,471.158 L691.515,543.842 C691.515,547.519 687.617,550.5 682.808,550.5 L581.222,550.5 C576.413,550.5 572.515,547.519 572.515,543.842 L572.515,471.158 C572.515,467.481 576.413,464.5 581.222,464.5 z" fill="#38AB4E"/>
+    <g>
+      <path d="M581.936,237 L683.521,237 C688.33,237 692.229,239.149 692.229,241.8 L692.229,294.2 C692.229,296.851 688.33,299 683.521,299 L581.936,299 C577.127,299 573.229,296.851 573.229,294.2 L573.229,241.8 C573.229,239.149 577.127,237 581.936,237 z" fill="#7A40CA" fill-opacity="0.87"/>
+      <text transform="matrix(1, 0, 0, 1, 635.099, 266)">
+        <tspan x="-35.896" y="-4.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">User One</tspan>
+        <tspan x="-31.161" y="15.5" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">(Person)</tspan>
+      </text>
+    </g>
+    <text transform="matrix(1, 0, 0, 1, 632.015, 504.139)">
+      <tspan x="-42.661" y="-6.219" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">Application</tspan>
+      <tspan x="-15.75" y="13.781" font-family="HelveticaNeue" font-size="17" fill="#FFFFFF" fill-opacity="0.87">One</tspan>
+    </text>
+  </g>
+</svg>
