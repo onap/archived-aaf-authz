@@ -11,6 +11,7 @@ else
 fi
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-        docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
+        docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${OLD_VERSION}
+		docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
 
 done
