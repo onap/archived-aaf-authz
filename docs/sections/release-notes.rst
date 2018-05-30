@@ -11,7 +11,7 @@ Version: 2.1.0
 --------------
 
 
-:Release Date: 2018-04-18
+:Release Date: 2018-06-07
 
 
 
@@ -24,9 +24,22 @@ This release fixes the packaging and security issues.
 **Known Issues**
 	NA
 
-**Security Issues**
-	This release fixes the security vulnerabilities due to the opensourced libraries used in the project
+**Security Notes**
 
+ONAP has adopted the `CII Best Practice Badge Program <https://bestpractices.coreinfrastructure.org/en>`_. The goal of the Beijing release is for all ONAP projects to be close to achieving a CII Passing badge.
+
+AAF code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities found in these scans are closed. The 'AAF security vulnerabilities and their workarounds <https://bestpractices.coreinfrastructure.org/en/projects/1758>'_ have been documented as part of the project.
+
+***Quick Links***
+ 	- `AAF project page <https://wiki.onap.org/display/DW/Application+Authorization+Framework+Project>'_
+ 	
+ 	- `Badging information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/1758>'_
+ 	
+ 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=28380057>'_
+ 	
+ 	- `Badging Requirements <https://github.com/coreinfrastructure/best-practices-badge#core-infrastructure-initiative-best-practices-badge>'_
+ 	
+ 	- `Badging Status for all ONAP projects <https://bestpractices.coreinfrastructure.org/en/projects?q=onap>'_
 
 **Upgrade Notes**
   NA
