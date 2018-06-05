@@ -44,7 +44,8 @@ EOF
 
   # Sign it
   openssl ca -config openssl.conf -extensions v3_intermediate_ca \
-     -cert certs/ca.crt -keyfile private/ca.key -out $DIR/certs/ca.crt \
+	-days 1826 \
+     	-cert certs/ca.crt -keyfile private/ca.key -out $DIR/certs/ca.crt \
 	-infiles $DIR/$CN.csr
 
     openssl x509 -text -noout -in $DIR/certs/ca.crt
