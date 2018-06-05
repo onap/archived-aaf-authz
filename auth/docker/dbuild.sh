@@ -18,6 +18,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         cd ..
         docker build -t ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}  aaf_${VERSION}
 		docker tag ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${OLD_VERSION}
+		docker tag ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION_2.1.1}
         rm aaf_${VERSION}/Dockerfile
         cd -
 done
