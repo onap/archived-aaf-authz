@@ -11,7 +11,7 @@ Version: 2.1.0
 --------------
 
 
-:Release Date: 2018-04-18
+:Release Date: 2018-06-07
 
 
 
@@ -24,9 +24,16 @@ This release fixes the packaging and security issues.
 **Known Issues**
 	NA
 
-**Security Issues**
-	This release fixes the security vulnerabilities due to the opensourced libraries used in the project
+**Security Notes**
 
+AAF code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The AAF open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28380057>`_.
+
+Quick Links:
+ 	- `AAF project page <https://wiki.onap.org/display/DW/Application+Authorization+Framework+Project>`_
+ 	
+ 	- `Passing Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/1758>`_
+ 	
+ 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=28380057>`_
 
 **Upgrade Notes**
   NA
