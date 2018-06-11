@@ -1,4 +1,4 @@
-FROM rmannfv/aaf-base:openjdk8
+FROM rmannfv/aaf-base:xenial
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
