@@ -35,15 +35,4 @@ Every secure transaction requires 1) Encryption 2) Authentication 3) Authorizati
 
 .. |image1| image:: images/aaf-cm.png
    :height: 768px
-   :width: 1024px   
- 
-Capabilities
-------------
-
-
-Usage Scenarios
----------------
-
-
-Interactions
-------------
+   :width: 1024px
