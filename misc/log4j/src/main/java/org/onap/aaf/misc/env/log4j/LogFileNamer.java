@@ -59,15 +59,14 @@ public class LogFileNamer {
 	 * @throws IOException
 	 */
 	public String setAppender(String appender) throws IOException {
-		String filename;
 		int i = 0;
 		File f;
-		while ((f = new File(filename = String.format(FILE_FORMAT_STR, dir, root, appender, ending, i))).exists()) {
+		while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, ending, i))).exists()) {
 			++i;
 		}
-		;
+		
 		f.createNewFile();
-		System.setProperty("LOG4J_FILENAME_" + appender, filename);
+		System.setProperty("LOG4J_FILENAME_" + appender, f.getCanonicalPath());
 		return appender;
 	}
 

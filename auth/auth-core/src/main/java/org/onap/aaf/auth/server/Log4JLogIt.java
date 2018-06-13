@@ -62,6 +62,9 @@ public class Log4JLogIt implements LogIt {
 			logs.mkdirs();
 		}
 
+		if(System.getProperty("log4j.configuration")==null) {
+			System.setProperty("log4j.configuration", etc_dir+'/'+propsFile);
+		}
 		LogFileNamer lfn = new LogFileNamer(log_dir,root);
 		try {
 			service=lfn.setAppender("service"); // when name is split, i.e. authz|service, the Appender is "authz", and "service"

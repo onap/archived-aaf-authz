@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JU_LogFileNamerTest {
+	private File dir = new File(".");
 
 	private String ending = new SimpleDateFormat("YYYYMMdd").format(new Date());
 
@@ -43,26 +44,26 @@ public class JU_LogFileNamerTest {
 
 	@Test
 	public void test() throws IOException {
-		LogFileNamer logFileNamer = new LogFileNamer(".", "log");
+		LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
 		assertEquals(logFileNamer, logFileNamer.noPID());
 
 		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), "./log-Append" + ending + "_0.log");
+		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), dir.getCanonicalFile()+"/log-Append" + ending + "_0.log");
 
 		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), "./log-Append" + ending + "_1.log");
+		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), dir.getCanonicalFile()+"/log-Append" + ending + "_1.log");
 	}
 
 	@Test
 	public void testBlankRoot() throws IOException {
-		LogFileNamer logFileNamer = new LogFileNamer(".", "");
+		LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
 		assertEquals(logFileNamer, logFileNamer.noPID());
 
 		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), "./Append" + ending + "_0.log");
+		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), dir.getCanonicalPath()+"/Append" + ending + "_0.log");
 
 		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), "./Append" + ending + "_1.log");
+		assertEquals(System.getProperty("LOG4J_FILENAME_Append"), dir.getCanonicalPath()+"/Append" + ending + "_1.log");
 	}
 
 	@After

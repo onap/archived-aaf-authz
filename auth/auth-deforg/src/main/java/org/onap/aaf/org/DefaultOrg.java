@@ -21,7 +21,8 @@
  ******************************************************************************/
 package org.onap.aaf.org;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -160,7 +161,6 @@ public class DefaultOrg implements Organization {
 	@Override
 	public DefaultOrgIdentity getIdentity(AuthzTrans trans, String id) throws OrganizationException {
 		int at = id.indexOf('@');
-		String attt = at<0?id:id.substring(0, at);
 		return new DefaultOrgIdentity(trans,at<0?id:id.substring(0, at),this);
 	}
 
