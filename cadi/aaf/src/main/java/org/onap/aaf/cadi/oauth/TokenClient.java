@@ -107,7 +107,12 @@ public class TokenClient {
 
 	public void client_creds(Access access) throws CadiException {
 		if(okind=='A') {
-			client_creds(access.getProperty(Config.AAF_APPID, null),access.getProperty(Config.AAF_APPPASS, null));
+			String alias = access.getProperty(Config.CADI_ALIAS, null);
+			if(alias == null) {
+				client_creds(access.getProperty(Config.AAF_APPID, null),access.getProperty(Config.AAF_APPPASS, null));
+			} else {
+				client_creds(alias,null);
+			}
 		} else {
 			client_creds(access.getProperty(Config.AAF_ALT_CLIENT_ID, null),access.getProperty(Config.AAF_ALT_CLIENT_SECRET, null));
 		}

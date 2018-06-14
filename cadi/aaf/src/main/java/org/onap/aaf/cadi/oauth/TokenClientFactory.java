@@ -56,10 +56,18 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 	private Map<String,AAFConHttp> aafcons = new ConcurrentHashMap<String, AAFConHttp>();
 	private SecurityInfoC<HttpURLConnection> hsi;
 	// Package on purpose
-	final Symm symm;	
+	final Symm symm;
 
 	private TokenClientFactory(Access pa) throws APIException, GeneralSecurityException, IOException, CadiException {
 		super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
+		
+		if(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
+			access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, "https://AAF_LOCATE_URL/AAF_NS.token/2.0"); // Default to AAF
+		}
+		if(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
+			access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, "https://AAF_LOCATE_URL/AAF_NS.introspect/2.0"); // Default to AAF);
+		}
+
 		symm = Symm.encrypt.obtain();
 		hsi = SecurityInfoC.instance(access, HttpURLConnection.class);
 	}
@@ -70,7 +78,7 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 		}
 		return instance;
 	}
-
+	
 	/**
 	 * Pickup Timeout from Properties
 	 * 
@@ -95,18 +103,23 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 			}
 		}
 		char okind;
-		if(Config.AAF_OAUTH2_TOKEN_URL.equals(tagOrURL) || 
-			tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL, null))) {
+		if( Config.AAF_OAUTH2_TOKEN_URL.equals(tagOrURL) ||
+			Config.AAF_OAUTH2_INTROSPECT_URL.equals(tagOrURL) ||
+			tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL, null)) ||
+			tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL, null))
+			) {
 				okind = Kind.AAF_OAUTH;
 			} else {
 				okind = Kind.OAUTH;
 			}
-		return new TokenClient(
+		TokenClient tci = new TokenClient(
 				okind,
 				this,
 				ach,
 				timeout,
 				AUTHN_METHOD.none);
+		tci.client_creds(access);
+		return tci;
 	}
 	
 	public TzClient newTzClient(final String locatorURL) throws CadiException, LocatorException {
