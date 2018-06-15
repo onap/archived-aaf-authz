@@ -48,59 +48,64 @@ b.	This might be helpful for covering separate Management Servlet implementation
 Servlet Code Snippet
 =========================
 
-public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-    HttpServletRequest request;
-    try {
-        request = (HttpServletRequest)req;
-    } catch (ClassCastException e) {
-        throw new ServletException("Only serving HTTP today",e);
-    }
+.. code-block:: java
+
+  public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+      HttpServletRequest request;
+      try {
+          request = (HttpServletRequest)req;
+      } catch (ClassCastException e) {
+         throw new ServletException("Only serving HTTP today",e);
+      }
      
-    // Note: CADI is OVERLOADING the concept of "isUserInRole".. You need to think "doesUserHavePermssion()"
-    // Assume that you have CREATED and GRANTED An AAF Permission in YOUR Namespace
-    // Example Permission:   "org.onap.aaf.myapp.myPerm * write"
+      // Note: CADI is OVERLOADING the concept of "isUserInRole".. You need to think "doesUserHavePermssion()"
+      // Assume that you have CREATED and GRANTED An AAF Permission in YOUR Namespace
+      // Example Permission:   "org.onap.aaf.myapp.myPerm * write"
  
-    // Think in your head, "Does user have write permission on any instance of org.onap.aaf.myapp.myPerm
-    if(request.isUserInRole("org.onap.aaf.myapp.myPerm|*|write")) { 
-        // *** Do something here that someone with "myPerm write" permissions is allowed to do
-    } else {
-        // *** Do something reasonable if user is denied, like an Error Message
+      // Think in your head, "Does user have write permission on any instance of org.onap.aaf.myapp.myPerm
+      if(request.isUserInRole("org.onap.aaf.myapp.myPerm|*|write")) { 
+          // *** Do something here that someone with "myPerm write" permissions is allowed to do
+      } else {
+          // *** Do something reasonable if user is denied, like an Error Message
+      }
+ 
     }
- 
-}
 
 Here is a working TestServlet, where you can play with different Permissions that you own on the URL, i.e.:
 https://<your machine:port>/caditest/testme?PERM=org.onap.aaf.myapp.myPerm|*|write
 
 Sample Servlet (Working example)
 ================================
-package org.onap.aaf.cadi.debug;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.FilterMapping;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.onap.aaf.cadi.filter.CadiFilter;
-import org.onap.aaf.cadi.filter.RolesAllowed;
-import org.onap.aaf.cadi.jetty.MiniJASPIWrap;
+
+.. code-block:: java
+
+  package org.onap.aaf.cadi.debug;
+  import java.io.FileInputStream;
+  import java.io.IOException;
+  import java.net.InetAddress;
+  import java.net.UnknownHostException;
+  import java.util.HashMap;
+  import java.util.Map;
+  import java.util.Map.Entry;
+  import java.util.Properties;
+  import javax.servlet.Servlet;
+  import javax.servlet.ServletConfig;
+  import javax.servlet.ServletException;
+  import javax.servlet.ServletRequest;
+  import javax.servlet.ServletResponse;
+  import javax.servlet.http.HttpServletRequest;
+  import org.eclipse.jetty.server.Server;
+  import org.eclipse.jetty.server.ServerConnector;
+  import org.eclipse.jetty.server.handler.ContextHandler;
+  import org.eclipse.jetty.servlet.FilterHolder;
+  import org.eclipse.jetty.servlet.FilterMapping;
+  import org.eclipse.jetty.servlet.ServletContextHandler;
+  import org.eclipse.jetty.servlet.ServletHandler;
+  import org.onap.aaf.cadi.filter.CadiFilter;
+  import org.onap.aaf.cadi.filter.RolesAllowed;
+  import org.onap.aaf.cadi.jetty.MiniJASPIWrap;
  
-public class CSPServletTest {
+  public class CSPServletTest {
     public static void main(String[] args) {
         // Go ahead and print Test reports in cadi-core first
         Test.main(args);
@@ -226,27 +231,30 @@ public class CSPServletTest {
         public void destroy() {
         }
     }
-}
+   }
  
 Java Direct (AAFLur) Method
 ===========================
 The AAFLur is the exact component used within all the Plugins mentioned above.  It is written so that it can be called standalone as well, see the Example as follows
-package org.onap.aaf.example;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+.. code-block:: java
 
-import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.Permission;
-import org.onap.aaf.cadi.aaf.v2_0.AAFAuthn;
-import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
-import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
-import org.onap.aaf.cadi.config.Config;
-import org.onap.aaf.cadi.lur.aaf.AAFPermission;
-import org.onap.aaf.cadi.lur.aaf.test.TestAccess;
+  package org.onap.aaf.example;
 
-public class ExamplePerm2_0 {
+  import java.util.ArrayList;
+  import java.util.List;
+  import java.util.Properties;
+
+  import org.onap.aaf.cadi.Access;
+  import org.onap.aaf.cadi.Permission;
+  import org.onap.aaf.cadi.aaf.v2_0.AAFAuthn;
+  import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
+  import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
+  import org.onap.aaf.cadi.config.Config;
+  import org.onap.aaf.cadi.lur.aaf.AAFPermission;
+  import org.onap.aaf.cadi.lur.aaf.test.TestAccess;
+
+  public class ExamplePerm2_0 {
 	public static void main(String args[]) {
 		// Normally, these should be set in environment.  Setting here for clarity
 		Properties props = System.getProperties();
@@ -259,8 +267,8 @@ public class ExamplePerm2_0 {
 		props.setProperty(Config.AAF_USER_EXPIRES,Integer.toString(5*60000));	// 5 minutes for found items to live in cache
 		props.setProperty(Config.AAF_HIGH_COUNT,Integer.toString(400));		// Maximum number of items in Cache);
 		props.setProperty(Config.CADI_KEYFILE,"keyfile"); //Note: Be sure to generate with java -jar <cadi_path>/lib/cadi-core*.jar keygen keyfile
-//		props.setProperty("DME2_EP_REGISTRY_CLASS","DME2FS");
-//		props.setProperty("AFT_DME2_EP_REGISTRY_FS_DIR","../../authz/dme2reg");
+  //		props.setProperty("DME2_EP_REGISTRY_CLASS","DME2FS");
+  //		props.setProperty("AFT_DME2_EP_REGISTRY_FS_DIR","../../authz/dme2reg");
 
 		
 		// Link or reuse to your Logging mechanism
@@ -335,8 +343,9 @@ public class ExamplePerm2_0 {
 		}
 
 	}
-}
+  }
 
+  
 There are two current AAF Lurs which you can utilize:
 •	Org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm is the default, and will fish based on the Three-fold "Permission" standard in AAF
 To run this code, you will need from a SWM deployment (org.onap.aaf.cadi:cadi, then soft link to jars needed):
