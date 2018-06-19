@@ -166,43 +166,46 @@ public class Expiring extends Batch {
         Date tooLate = gc.getTime();
         
         TimeTaken tt;
-       
-    	// Clean out Approvals UserRoles are fixed up.
+
+		// Clean out Approvals UserRoles are fixed up.
 		String memo;
 		for(List<Approval> la : Approval.byUser.values()) {
 			for(Approval a : la ) {
 				memo = a.getMemo();
 				if(memo!=null && (memo.contains("Re-Approval") || memo.contains("Re-Validate"))) {
-			    		String role = a.getRole();
-			    		if(role!=null) {
+					String role = a.getRole();
+					if(role!=null) {
 						UserRole ur = UserRole.get(a.getUser(), a.getRole());
 						Future f=null;
 						if(ur!=null) {
 							if(ur.expires().after(future)) { // no need for Approval anymore
 								a.delayDelete(noAvg, apprDAO, dryRun, "User Role already Extended");
 								UUID tkt = a.getTicket();
-								if(tkt!=null) {
-									f = Future.data.get(tkt);
+								if (tkt != null && Future.data.containsKey(tkt)) {
+									f = Future.data.get(a.getTicket());
 								}
 							}
 						} else {
 							a.delayDelete(noAvg, apprDAO, dryRun, "User Role does not exist");
-							f = Future.data.get(a.getTicket());
+							UUID tkt = a.getTicket();
+							if (tkt != null && Future.data.containsKey(tkt)) {
+								f = Future.data.get(a.getTicket());
+							}
 						}
 						if(f!=null) {
 							f.delayedDelete(noAvg, futureDAO, dryRun, "Approvals removed");
 						}
-			    		}
+					}
 				}
 			}
 		}
 		try {
-	    		trans.info().log("### Removed",Future.sizeForDeletion(),"Future and",Approval.sizeForDeletion(),"Approvals");
-	    		Future.resetLocalData();
-	        Approval.resetLocalData();
-	    	} catch (Throwable t) {
-	    		t.printStackTrace();
-	    	}
+			trans.info().log("### Removed",Future.sizeForDeletion(),"Future and",Approval.sizeForDeletion(),"Approvals");
+			Future.resetLocalData();
+			Approval.resetLocalData();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	
         // Run for Expired Futures
         trans.info().log("Checking for Expired Approval/Futures");
