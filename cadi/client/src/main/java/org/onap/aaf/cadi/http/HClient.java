@@ -122,11 +122,16 @@ public class HClient implements EClient<HttpURLConnection> {
 				}
 				pi.append(pathinfo);
 			}
-			pathinfo=null;
-			query=null;
-			fragment=null;
-			//huc = (HttpURLConnection) url.openConnection();
-			huc = getConnection(uri, pi);
+			URI sendURI = new URI(
+					uri.getScheme(),
+					uri.getUserInfo(),
+					uri.getHost(),
+					uri.getPort(),
+					pi==null?uri.getPath():pi.toString(),
+					query==null?uri.getQuery():query,
+					fragment==null?uri.getFragment():fragment
+					);
+			huc = getConnection(sendURI, pi);
 			huc.setRequestMethod(meth);
 			if(ss!=null) {
 				ss.setSecurity(huc); 

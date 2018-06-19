@@ -57,7 +57,7 @@ public class OrgLookupFilter implements Filter {
 						Identity id;
 						try {
 							id = trans.org().getIdentity(trans, p.getName());
-							if(id.isFound()) {
+							if(id!=null && id.isFound()) {
 								return id.firstName();
 							}
 						} catch (OrganizationException e) {

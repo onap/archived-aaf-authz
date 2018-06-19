@@ -62,9 +62,10 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
 	}
 	
 	@Override
-	protected AuthzTrans newTrans() {
+	protected AuthzTrans newTrans(HttpServletRequest req) {
 		AuthzTrans at = env.newTrans();
 		at.setLur(getLur());
+		at.set(req);
 		return at;
 	}
 
