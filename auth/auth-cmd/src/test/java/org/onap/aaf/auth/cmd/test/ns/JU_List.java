@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import org.onap.aaf.auth.cmd.ns.List;
 import org.onap.aaf.auth.cmd.ns.NS;
 import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
@@ -95,7 +96,7 @@ public class JU_List {
 	
 
 	@Before
-	public void setUp() throws APIException, LocatorException {
+	public void setUp() throws APIException, LocatorException, CadiException {
 		PropAccess prop = new PropAccess();
 		AuthzEnv aEnv = new AuthzEnv();
 		Writer wtr = mock(Writer.class);

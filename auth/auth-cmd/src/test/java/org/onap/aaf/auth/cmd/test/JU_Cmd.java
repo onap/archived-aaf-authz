@@ -94,7 +94,7 @@ public class JU_Cmd {
 	}
 	
 	@Before
-	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
 		cli = JU_AAFCli.getAAfCli();
 		Param[] param = new Param[] {new Param("name",true)};
 		

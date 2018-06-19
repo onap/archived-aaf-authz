@@ -69,7 +69,7 @@ public class JU_Cred {
 	AAFcli aafcli;
 
 	@Before
-	public void setUp() throws FileNotFoundException, APIException, LocatorException {
+	public void setUp() throws FileNotFoundException, APIException, LocatorException, CadiException {
 		prop = new PropAccess();
 		aEnv = new AuthzEnv();
 		wtr = mock(Writer.class);

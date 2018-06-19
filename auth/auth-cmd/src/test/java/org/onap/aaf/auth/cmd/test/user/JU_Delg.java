@@ -68,7 +68,7 @@ public class JU_Delg {
 	AAFcli aafcli;
 
 	@Before
-	public void setUp() throws FileNotFoundException, APIException, LocatorException {
+	public void setUp() throws FileNotFoundException, APIException, LocatorException, CadiException {
 		prop = new PropAccess();
 		aEnv = new AuthzEnv();
 		wtr = mock(Writer.class);

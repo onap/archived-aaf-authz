@@ -67,7 +67,7 @@ public class JU_ListUsersContact {
 	ListUsersContact lUContact;
 	
 	@Before
-	public void setUp() throws LocatorException, APIException {
+	public void setUp() throws LocatorException, APIException, CadiException {
 		prop = new PropAccess();
 		aEnv = new AuthzEnv();
 		wtr = mock(Writer.class);

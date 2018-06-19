@@ -32,6 +32,7 @@ import org.onap.aaf.auth.cmd.ns.List;
 import org.onap.aaf.auth.cmd.ns.ListUsers;
 import org.onap.aaf.auth.cmd.ns.NS;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.misc.env.APIException;
 
@@ -57,7 +58,7 @@ public class JU_ListUsers {
 	ListUsers lUsers;
 	
 	@Before
-	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
 		cli = JU_AAFCli.getAAfCli();
 		ns = new NS(cli);
 		list = new List(ns);

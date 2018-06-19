@@ -184,7 +184,7 @@ public class JU_AAFCli {
 		assertTrue(cli.eval("Some random string @#&*& to check complete 100 coverage"));
 	}
 
-	public static AAFcli getAAfCli() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public static AAFcli getAAfCli() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
 		final AuthzEnv env = new AuthzEnv(System.getProperties());
 		String aafUrl = "https://DME2RESOLVE";
 		SecurityInfoC<HttpURLConnection> si = mock(SecurityInfoC.class);

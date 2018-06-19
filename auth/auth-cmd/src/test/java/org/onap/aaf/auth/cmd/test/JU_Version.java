@@ -50,7 +50,7 @@ public class JU_Version {
 	private static Version version;
 	
 	@BeforeClass
-	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
 		cli = JU_AAFCli.getAAfCli();
 		version = new Version(cli);
 	}

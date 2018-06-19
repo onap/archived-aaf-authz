@@ -104,7 +104,7 @@ public class JU_List {
 	}
 	
 	@Before
-	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException{
+	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException{
 		prop = new PropAccess();
 		aEnv = new AuthzEnv();
 		wtr = mock(Writer.class);

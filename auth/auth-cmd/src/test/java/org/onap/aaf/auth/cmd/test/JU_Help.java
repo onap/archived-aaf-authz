@@ -84,7 +84,7 @@ public class JU_Help {
 	private static List<Cmd> cmds;
 	
 	@Before
-	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
 		cli = JU_AAFCli.getAAfCli();
 		cmds = new ArrayList<>();
 		Param[] param = new Param[] {new Param("name",true)};

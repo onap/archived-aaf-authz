@@ -54,7 +54,7 @@ public class JU_BaseCmd {
 	private static BaseCmd bCmd;
 
 	@BeforeClass
-	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
 		cli = JU_AAFCli.getAAfCli();
 		bCmd = new BaseCmd<>(cli, "testString");
 	}

@@ -94,11 +94,11 @@ public class AAFcli {
 	}
 
 	// Create when only have Access
-	public AAFcli(Access access, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
+	public AAFcli(Access access, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
 		this(access,new AuthzEnv(access.getProperties()),wtr,hman, si,ss);
 	}
 
-	public AAFcli(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
+	public AAFcli(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
 		this.env = env;
 		this.access = access;
 		this.ss = ss;
@@ -111,7 +111,6 @@ public class AAFcli {
 			pw = new PrintWriter(wtr);
 			close = true;
 		}
-
 
 		/*
 		 * Create Cmd Tree

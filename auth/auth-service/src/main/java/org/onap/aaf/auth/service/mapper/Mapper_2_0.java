@@ -522,7 +522,6 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 			if(ok.length()>0) {
 				return Result.err(Status.ERR_BadData,ok);
 			}
-
 		} else {
 			to.type=0;
 		}

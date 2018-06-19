@@ -66,7 +66,7 @@ public class JU_Log {
 	AAFcli aafcli;
 	
 	@Before
-	public void setUp() throws APIException, LocatorException {
+	public void setUp() throws APIException, LocatorException, CadiException {
 		prop = new PropAccess();
 		aEnv = new AuthzEnv();
 		wtr = mock(Writer.class);
