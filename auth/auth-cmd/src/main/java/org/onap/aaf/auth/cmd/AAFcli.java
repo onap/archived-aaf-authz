@@ -66,12 +66,12 @@ public class AAFcli {
 	public Retryable<?> prevCall;
 
 	protected SecuritySetter<HttpURLConnection> ss;
-//	protected AuthzEnv env;
+
 	private boolean close;
 	private List<Cmd> cmds;
 
 	// Lex State
-	private ArrayList<Integer> expect = new ArrayList<Integer>();
+	private ArrayList<Integer> expect = new ArrayList<>();
 	private boolean verbose = true;
 	private int delay;
 	private SecurityInfoC<HttpURLConnection> si;
@@ -82,16 +82,12 @@ public class AAFcli {
 	Access access;
 	AuthzEnv env;
 
-	private static int TIMEOUT = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
+	private static int timeout = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
 	private static boolean isConsole = false;
 	private static boolean isTest = false;
 	private static boolean showDetails = false;
 	private static boolean ignoreDelay = false;
 	private static int globalDelay=0;
-	
-	public static int timeout() {
-		return TIMEOUT;
-	}
 
 	// Create when only have Access
 	public AAFcli(Access access, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
@@ -116,7 +112,7 @@ public class AAFcli {
 		/*
 		 * Create Cmd Tree
 		 */
-		cmds = new ArrayList<Cmd>();
+		cmds = new ArrayList<>();
 
 		Role role = new Role(this);
 		cmds.add(new Help(this, cmds));
@@ -126,6 +122,10 @@ public class AAFcli {
 		cmds.add(new User(this));
 		cmds.add(new NS(this));
 		cmds.add(new Mgmt(this));
+	}
+
+	public static int timeout() {
+		return timeout;
 	}
 
 	public void verbose(boolean v) {
@@ -212,21 +212,19 @@ public class AAFcli {
 					}
 				} else if ("expect".equalsIgnoreCase(largs[idx])) {
 					expect.clear();
-					if (largs.length > idx++) {
-						if (!"nothing".equals(largs[idx])) {
-							for (String str : largs[idx].split(",")) {
-								try {
-									if ("Exception".equalsIgnoreCase(str)) {
-										expect.add(-1);
-									} else {
-										expect.add(Integer.parseInt(str));
-									}
-								} catch (NumberFormatException e) {
-									throw new CadiException("\"expect\" should be followed by Number");
+					if (largs.length > idx++ && !"nothing".equals(largs[idx])) {
+						for (String str : largs[idx].split(",")) {
+							try {
+								if ("Exception".equalsIgnoreCase(str)) {
+									expect.add(-1);
+								} else {
+									expect.add(Integer.parseInt(str));
 								}
+							} catch (NumberFormatException e) {
+								throw new CadiException("\"expect\" should be followed by Number");
 							}
-						++idx;
 						}
+						++idx;
 					}
 					continue;
 					// Sleep, typically for reports, to allow DB to update
@@ -309,7 +307,7 @@ public class AAFcli {
 				if (largs[idx].equalsIgnoreCase(c.getName())) {
 					if (verbose) {
 						pw.println(line);
-						if (expect.size() > 0) {
+						if (!expect.isEmpty()) {
 							pw.print("** Expect ");
 							boolean first = true;
 							for (Integer i : expect) {
@@ -361,13 +359,13 @@ public class AAFcli {
 
 	private String[] argEval(String line) {
 		StringBuilder sb = new StringBuilder();
-		ArrayList<String> arr = new ArrayList<String>();
+		ArrayList<String> arr = new ArrayList<>();
 		boolean start = true;
 		char quote = 0;
 		char last = 0;
 		for (int i = 0; i < line.length(); ++i) {
-			char ch;
-			if (Character.isWhitespace(ch = line.charAt(i))) {
+			char ch = line.charAt(i);
+			if (Character.isWhitespace(ch)) {
 				if (start || last==',') {
 					continue; // trim
 				} else if (quote != 0) {
@@ -451,9 +449,6 @@ public class AAFcli {
 					for (int i = 0; i < args.length; ++i) {
 						if ("-i".equalsIgnoreCase(args[i])) {
 							rdr = new InputStreamReader(System.in);
-							// } else if("-o".equalsIgnoreCase(args[i])) {
-							// // shall we do something different? Output stream is
-							// already done...
 						} else if ("-f".equalsIgnoreCase(args[i])) {
 							if (args.length > i + 1) {
 								rdr = new FileReader(args[++i]);
@@ -498,8 +493,8 @@ public class AAFcli {
 							aafsso.setLogDefault();
 						}
 	
-						TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-						HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
+						timeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
+						HMangr hman = new HMangr(access, loc).readTimeout(timeout).apiVersion(Config.AAF_DEFAULT_VERSION);
 						
 						if(access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
 							access.setProperty(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
@@ -536,15 +531,15 @@ public class AAFcli {
 									while ((line = reader.readLine()) != null) {
 										showDetails = (line.contains("-d"))?true:false;
 				
-										if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q") || line.equalsIgnoreCase("exit")) {
+										if ("quit".equalsIgnoreCase(line) || "q".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
 											break;
-										} else if (line.equalsIgnoreCase("--help -d") || line.equalsIgnoreCase("help -d") 
-												|| line.equalsIgnoreCase("help")) {
+										} else if ("--help -d".equalsIgnoreCase(line) || "help -d".equalsIgnoreCase(line)
+												|| "help".equalsIgnoreCase(line)) {
 											line = "--help";
-										} else if (line.equalsIgnoreCase("cls")) {
+										} else if ("cls".equalsIgnoreCase(line)) {
 											reader.clearScreen();
 											continue;
-										} else if (line.equalsIgnoreCase("?")) {
+										} else if ("?".equalsIgnoreCase(line)) {
 											keyboardHelp();
 											continue;
 										}
