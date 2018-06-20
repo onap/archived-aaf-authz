@@ -95,7 +95,7 @@ public abstract class Cmd {
 		if(parent!=null) {
 			parent.children.add(this);
 		}
-		children = new ArrayList<Cmd>();
+		children = new ArrayList<>();
 		this.params = params;
 		this.name = name;
 		required=0;
@@ -178,43 +178,47 @@ public abstract class Cmd {
 		
 		boolean first = true;
 		for(Cmd child : children) {
-			if(!(child instanceof DeprecatedCMD)) {
-				if(first) {
-					first = false;
-				} else if(detail==null) {
-					multiChar(sb,indent,' ',0);
-				} else {
-					// Write parents for Detailed Report
-					Stack<String> stack = new Stack<String>();
-					for(Cmd c = child.parent;c!=null;c=c.parent) {
-						if(c.name!=null) {
-							stack.push(c.name);
-						}
-					}
-					if(!stack.isEmpty()) {
-						sb.append("  ");
-						while(!stack.isEmpty()) {
-							sb.append(stack.pop());
-							sb.append(' ');
-						}
-					}
-				}
-				child.build(sb,detail);
-				if(detail!=null) {
-					child.detailedHelp(4, detail);
-					// If Child wrote something, then add, bracketing by lines
-					if(detail.length()>0) {
-						multiChar(sb,80,'-',2);
-						sb.append(detail);
-						sb.append('\n');
-						multiChar(sb,80,'-',2);
-						sb.append('\n');
-						detail.setLength(0); // reuse
-					} else {
-						sb.append('\n');
-					}
-				}
+			if(child instanceof DeprecatedCMD)
+			{
+				continue;
 			}
+
+      if(first) {
+        first = false;
+      } else if(detail==null) {
+        multiChar(sb,indent,' ',0);
+      } else {
+        // Write parents for Detailed Report
+        Stack<String> stack = new Stack<>();
+        for(Cmd c = child.parent;c!=null;c=c.parent) {
+          if(c.name!=null) {
+            stack.push(c.name);
+          }
+        }
+        if(!stack.isEmpty()) {
+          sb.append("  ");
+          while(!stack.isEmpty()) {
+            sb.append(stack.pop());
+            sb.append(' ');
+          }
+        }
+      }
+      child.build(sb,detail);
+      if(detail!=null) {
+        child.detailedHelp(4, detail);
+        // If Child wrote something, then add, bracketing by lines
+        if(detail.length()>0) {
+          multiChar(sb,80,'-',2);
+          sb.append(detail);
+          sb.append('\n');
+          multiChar(sb,80,'-',2);
+          sb.append('\n');
+          detail.setLength(0); // reuse
+        } else {
+          sb.append('\n');
+        }
+      }
+
 		}
 		return sb;
 	}
@@ -406,10 +410,6 @@ public abstract class Cmd {
 		throw new CadiException(build(new StringBuilder("Invalid Option: "),null).toString());
 	}
 
-//	protected RosettaEnv env() {
-//		return aafcli.env;
-//	}
-
 	protected HMangr hman() {
 		return aafcli.hman;
 	}
@@ -497,19 +497,6 @@ public abstract class Cmd {
 			rcli.setQueryParams(sb.toString());
 		}
 	}
-//
-//	/**
-//	 * If Force is set, will return True once only, then revert to "FALSE".
-//	 *  
-//	 * @return
-//	 */
-//	protected String checkForce() {
-//		if(TRUE.equalsIgnoreCase(env.getProperty(FORCE, FALSE))) {
-//			env.setProperty(FORCE, FALSE);
-//			return "true";
-//		}
-//		return FALSE;
-//	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -520,11 +507,7 @@ public abstract class Cmd {
 			return parent.toString();
 		}
 	}
-	
-//	private String getOrgRealm() {
-//		return ;
-//	}
-//	
+
 	/**
 	 * Appends shortID with Realm, but only when allowed by Organization
 	 * @throws OrganizationException 
