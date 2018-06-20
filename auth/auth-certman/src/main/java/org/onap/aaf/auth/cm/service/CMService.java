@@ -74,15 +74,17 @@ public class CMService {
 	public static final String REQUEST = "request";
 	public static final String RENEW = "renew";
 	public static final String DROP = "drop";
-//	public static final String SANS = "san";
 	public static final String IPS = "ips";
 	public static final String DOMAIN = "domain";
+
+	private static final String CERTMAN = ".certman";
+	private static final String ACCESS = ".access";
 	
 	private static final String[] NO_NOTES = new String[0];
 	private final CertDAO certDAO;
 	private final CredDAO credDAO;
 	private final ArtiDAO artiDAO;
-//	private DAO<AuthzTrans, ?>[] daos;
+
 	private AAF_CM certman;
 
 //	@SuppressWarnings("unchecked")
@@ -94,11 +96,7 @@ public class CMService {
 		certDAO = new CertDAO(trans, hd, cid);
 		credDAO = new CredDAO(trans, hd, cid);
 		artiDAO = new ArtiDAO(trans, hd, cid);
-		
-//		daos =(DAO<AuthzTrans, ?>[]) new DAO<?,?>[] {
-//				hd,cid,certDAO,credDAO,artiDAO
-//		};
-//
+
 		this.certman = certman;
 	}
 	
@@ -119,13 +117,13 @@ public class CMService {
 			
 
 			// Disallow non-AAF CA without special permission
-			if(!ca.getName().equals("aaf") && !trans.fish( new AAFPermission(mechNS+".certman", ca.getName(), REQUEST))) {
+			if(!"aaf".equals(ca.getName()) && !trans.fish( new AAFPermission(mechNS+CERTMAN, ca.getName(), REQUEST))) {
 				return Result.err(Status.ERR_Denied, "'%s' does not have permission to request Certificates from Certificate Authority '%s'", 
 						trans.user(),ca.getName());
 			}
 
 			List<String> notes = null;
-			List<String> fqdns = new ArrayList<String>(req.value.fqdns);
+			List<String> fqdns = new ArrayList<>(req.value.fqdns);
 			
 			
 			String email = null;
@@ -135,7 +133,7 @@ public class CMService {
 				
 				InetAddress primary = null;
 				// Organize incoming information to get to appropriate Artifact
-				if(fqdns.size()>=1) {
+				if(!fqdns.isEmpty()) {
 					// Accept domain wild cards, but turn into real machines
 					// Need *domain.com:real.machine.domain.com:san.machine.domain.com:...
 					if(fqdns.get(0).startsWith("*")) { // Domain set
@@ -146,22 +144,20 @@ public class CMService {
 						//TODO check for Permission in Add Artifact?
 						String domain = fqdns.get(0).substring(1);
 						fqdns.remove(0);
-						if(fqdns.size()>=1) {
-							InetAddress ia = InetAddress.getByName(fqdns.get(0));
-							if(ia==null) {
-								return Result.err(Result.ERR_Denied, "Request not made from matching IP matching domain");
-							} else if(ia.getHostName().endsWith(domain)) {
-								primary = ia;
-							}
-						} else {
+						if(fqdns.isEmpty()) {
 							return Result.err(Result.ERR_Denied, "Requests using domain require machine declaration");
 						}
-					
+						InetAddress ia = InetAddress.getByName(fqdns.get(0));
+						if(ia==null) {
+							return Result.err(Result.ERR_Denied, "Request not made from matching IP matching domain");
+						} else if(ia.getHostName().endsWith(domain)) {
+							primary = ia;
+						}
 	 				} else {
 						for(String cn : req.value.fqdns) {
 							try {
 								InetAddress[] ias = InetAddress.getAllByName(cn);
-								Set<String> potentialSanNames = new HashSet<String>();
+								Set<String> potentialSanNames = new HashSet<>();
 								for(InetAddress ia1 : ias) {
 									InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
 									if(primary==null && ias.length==1 && trans.ip().equals(ia1.getHostAddress())) {
@@ -180,7 +176,6 @@ public class CMService {
 				
 				if(primary==null) {
 					return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)",trans.ip());
-//					return Result.err(Result.ERR_BadData,"Calling Machine does not match DNS lookup for %s",req.value.fqdns.get(0));
 				}
 				
 				ArtiDAO.Data add = null;
@@ -247,24 +242,9 @@ public class CMService {
 				}
 		
 				// Policy 7: Caller must be the MechID or have specifically delegated permissions
-				if(!(trans.user().equals(req.value.mechid) || trans.fish(new AAFPermission(mechNS + ".certman", ca.getName() , "request")))) {
+				if(!(trans.user().equals(req.value.mechid) || trans.fish(new AAFPermission(mechNS + CERTMAN, ca.getName() , REQUEST)))) {
 					return Result.err(Status.ERR_Denied, "%s must have access to modify x509 certs in NS %s",trans.user(),mechNS);
 				}
-				
-				// Policy 8: SANs only allowed by Exception... need permission
-				// 7/25/2017 - SAN Permission no longer required. CSO
-//				if(fqdns.size()>1 && !certman.aafLurPerm.fish(
-//						new Principal() {
-//							@Override
-//							public String getName() {
-//								return req.value.mechid;
-//							}
-//						},
-//						new AAFPermission(ca.getPermType(), ca.getName(), SANS))) {
-//					if(notes==null) {notes = new ArrayList<String>();}
-//					notes.add("Warning: Subject Alternative Names only allowed by Permission: Get CSO Exception.");
-//					return Result.err(Status.ERR_Denied, "%s must have a CSO Exception to work with SAN",trans.user());
-//				}
 				
 				// Make sure Primary is the first in fqdns
 				if(fqdns.size()>1) {
@@ -295,9 +275,6 @@ public class CMService {
 					return Result.err(Result.ERR_ActionNotCompleted,"x509 Certificate not signed by CA");
 				}
 				trans.info().printf("X509 Subject: %s", x509ac.getX509().getSubjectDN());
-//				for(String s: x509ac.getTrustChain()) {
-//					trans.warn().printf("Trust Cert: \n%s", s);
-//				}
 				
 				X509Certificate x509 = x509ac.getX509();
 				CertDAO.Data cdd = new CertDAO.Data();
@@ -349,7 +326,7 @@ public class CMService {
 		String ns = Question.domain2ns(mechID);
 		try {
 			if( trans.user().equals(mechID)
-					|| trans.fish(new AAFPermission(ns + ".access", "*", "read"))
+					|| trans.fish(new AAFPermission(ns + ACCESS, "*", "read"))
 					|| (trans.org().validate(trans,Organization.Policy.OWNS_MECHID,null,mechID))==null) {
 				return certDAO.readID(trans, mechID);
 			} else {
@@ -489,9 +466,9 @@ public class CMService {
 		}
 		add = data.value.get(0);
 		if( trans.user().equals(add.mechid)
-			|| trans.fish(new AAFPermission(add.ns + ".access", "*", "read"))
-			|| trans.fish(new AAFPermission(add.ns+".certman",add.ca,"read"))
-			|| trans.fish(new AAFPermission(add.ns+".certman",add.ca,"request"))
+			|| trans.fish(new AAFPermission(add.ns + ACCESS, "*", "read"))
+			|| trans.fish(new AAFPermission(add.ns+CERTMAN,add.ca,"read"))
+			|| trans.fish(new AAFPermission(add.ns+CERTMAN,add.ca,"request"))
 			|| (trans.org().validate(trans,Organization.Policy.OWNS_MECHID,null,add.mechid))==null) {
 			return data;
 		} else {
@@ -509,7 +486,7 @@ public class CMService {
 		String ns = FQI.reverseDomain(mechid);
 		
 		String reason;
-		if(trans.fish(new AAFPermission(ns + ".access", "*", "read"))
+		if(trans.fish(new AAFPermission(ns + ACCESS, "*", "read"))
 			|| (reason=trans.org().validate(trans,Organization.Policy.OWNS_MECHID,null,mechid))==null) {
 			return artiDAO.readByMechID(trans, mechid);
 		} else {
@@ -540,8 +517,7 @@ public class CMService {
 		
 		// TODO do some checks?
 
-		Result<List<ArtiDAO.Data>> rv = artiDAO.readByNs(trans, ns);
-		return rv;
+		return artiDAO.readByNs(trans, ns);
 	}
 
 
@@ -639,7 +615,7 @@ public class CMService {
 		
 		String ns = FQI.reverseDomain(add.mechid);
 
-		if(trans.fish(new AAFPermission(ns + ".access", "*", "write"))
+		if(trans.fish(new AAFPermission(ns + ACCESS, "*", "write"))
 				|| trans.user().equals(sponsor)) {
 			return artiDAO.delete(trans, add, false);
 		}
