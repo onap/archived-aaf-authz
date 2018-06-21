@@ -78,11 +78,14 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
 	 * @return
 	 */
 	public String pathParam(HttpServletRequest req, String key) {
-		String rv = match.param(req.getPathInfo(), key);
-		if(rv!=null) {
-			rv = rv.trim();
-			if(rv.endsWith("/")) {
-				rv = rv.substring(0, rv.length()-1);
+		String rv = req.getParameter(key);
+		if(rv==null) {
+			rv = match.param(req.getPathInfo(), key);
+			if(rv!=null) {
+				rv = rv.trim();
+				if(rv.endsWith("/")) {
+					rv = rv.substring(0, rv.length()-1);
+				}
 			}
 		}
 		return rv;

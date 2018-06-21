@@ -497,8 +497,7 @@ public class CmAgent {
 								cr.getFqdns().add(fqdns[i]);
 							}
 							Future<String> f = aafcon.client(CM_VER)
-									.setQueryParams("withTrust")
-									.updateRespondString("/cert/" + a.getCa(),reqDF, cr);
+									.updateRespondString("/cert/" + a.getCa()+"?withTrust",reqDF, cr);
 							if(f.get(TIMEOUT)) {
 								CertInfo capi = certDF.newData().in(TYPE.JSON).load(f.body()).asObject();
 								for(String type : a.getType()) {

@@ -43,6 +43,7 @@ import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.locator.PropertyLocator;
+import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.oauth.TokenClient.AUTHN_METHOD;
 import org.onap.aaf.cadi.persist.Persist;
 import org.onap.aaf.cadi.principal.Kind;
@@ -173,8 +174,10 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 		}
 		if(locatorURL.startsWith("https://AAF_LOCATE_URL/") || locatePattern.matcher(locatorURL).matches()) {
 			return new AAFLocator(hsi,new URI(locatorURL));
-		} else {
+		} else if(locatorURL.indexOf(',')>0) { // multiple URLs is a Property Locator
 			return new PropertyLocator(locatorURL);
+		} else {
+			return new SingleEndpointLocator(locatorURL);
 		}
 		// Note: Removed DME2Locator... If DME2 client is needed, use DME2Clients
 	}

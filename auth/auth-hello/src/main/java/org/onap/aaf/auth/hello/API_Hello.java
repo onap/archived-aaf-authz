@@ -52,8 +52,9 @@ public class API_Hello {
 	 */
 	public static void init(final AAF_Hello oauthHello) throws Exception {
 		////////
-		// Overall APIs
+		// Simple "GET" API
 		///////
+		
 		oauthHello.route(HttpMethods.GET,"/hello/:perm*",API.TOKEN,new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"Hello OAuth"){
 			@Override
 			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -84,5 +85,37 @@ public class API_Hello {
 			}
 		}); 
 
+		////////
+		// REST APIs
+		///////
+		oauthHello.route(oauthHello.env,HttpMethods.GET,"/resthello/:perm*",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello OAuth") {
+			@Override
+			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+				resp.setStatus(200 /* OK */);
+				StringBuilder sb = new StringBuilder("{\"resp\": \"Hello REST AAF\",\"principal\": \"");
+				sb.append(req.getUserPrincipal().getName());
+				sb.append('"');
+				String perm = pathParam(req, "perm");
+				if(perm!=null && perm.length()>0) {
+					TimeTaken tt = trans.start("Authorize perm", Env.REMOTE);
+					try {
+						sb.append(",\"validation\": { \"permission\" : \"");
+						sb.append(perm);
+						sb.append("\",\"has\" : \"");
+						sb.append(req.isUserInRole(perm));
+						sb.append("\"}");
+					} finally {
+						tt.done();
+					}
+				}
+				sb.append("}");
+				ServletOutputStream os = resp.getOutputStream();
+				os.println(sb.toString());
+				trans.info().printf("Said 'RESTful Hello' to %s, Authentication type: %s",trans.getUserPrincipal().getName(),trans.getUserPrincipal().getClass().getSimpleName());
+			}
+		},"application/json"); 
+		
+		
+		
 	}
 }

@@ -19,7 +19,7 @@
  *
  */
 
-package com.att.cadi.enduser;
+package org.onap.aaf.cadi.enduser.test;
 
 import java.io.IOException;
 import java.net.ConnectException;

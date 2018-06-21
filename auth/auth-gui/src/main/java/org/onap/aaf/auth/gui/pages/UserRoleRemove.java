@@ -67,8 +67,8 @@ public class UserRoleRemove extends Page {
 							gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
 								@Override
 								public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-									Future<Void> fv = client.setQueryParams("request=true").delete(
-												"/authz/userRole/"+user+"/"+role,Void.class);
+									Future<Void> fv = client.delete(
+												"/authz/userRole/"+user+"/"+role+"?request=true",Void.class);
 									
 									if(fv.get(5000)) {
 										// not sure if we'll ever hit this

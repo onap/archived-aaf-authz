@@ -130,7 +130,7 @@ public class TokenClient {
 	 */
 	public void client_creds(final String client_id, final String client_secret) throws CadiException {
 		if(client_id==null) {
-			throw new CadiException(Config.AAF_ALT_CLIENT_ID + " is null");
+			throw new CadiException("client_creds:client_id is null");
 		}
 		this.client_id = client_id;
 		default_scope = FQI.reverseDomain(client_id);

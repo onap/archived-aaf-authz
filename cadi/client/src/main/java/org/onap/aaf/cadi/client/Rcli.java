@@ -57,7 +57,7 @@ public abstract class Rcli<CT> {
 	protected int readTimeout = 5000;
 	protected int connectionTimeout = 3000;
 	protected URI uri;
-	private String queryParams, fragment;
+	private String oneCallQueryParams;
 	public static Pool<byte[]> buffPool = new Pool<byte[]>(new Pool.Creator<byte[]>() {
 		@Override
 		public byte[] create() throws APIException {
@@ -132,15 +132,15 @@ public abstract class Rcli<CT> {
 	protected abstract EClient<CT> client() throws CadiException;
 
 
-	public<T> Future<T> create(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+	public<T> Future<T> create(final String pathinfo, final String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,contentType);
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -148,19 +148,18 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureCreate(df.getTypeClass());
 	}
 
 	public<T> Future<T> create(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,typeString(df.getTypeClass()));
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -168,19 +167,18 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureCreate(df.getTypeClass());
 	}
 
 	public<T> Future<T> create(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,typeString(cls));
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -188,37 +186,34 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureCreate(df.getTypeClass());
 	}
 
 	public<T> Future<T> create(String pathinfo, Class<T> cls) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,typeString(cls));
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.futureCreate(cls);
 	}
 
 	public Future<Void> create(String pathinfo, String contentType) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,contentType);
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.futureCreate(Void.class);
 	}
 
@@ -237,7 +232,7 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public <T> Future<T> postForm(String pathinfo, final RosettaDF<T> df, final String ... formParam) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
@@ -252,9 +247,9 @@ public abstract class Rcli<CT> {
 			default:
 				break;
 		}
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -280,7 +275,6 @@ public abstract class Rcli<CT> {
 				}
 			}});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureRead(df,TYPE.JSON);
 	}
 
@@ -296,14 +290,14 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public<T> Future<String> readPost(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,typeString(df.getTypeClass()));
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -311,7 +305,6 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureReadString();
 	}
 
@@ -327,14 +320,14 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public<T,R> Future<R> readPost(String pathinfo, final RosettaDF<T> df, final T t, final RosettaDF<R> resp) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
-
+		final ParsePath pp = new ParsePath(pathinfo);
+		
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,typeString(df.getTypeClass()));
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -342,30 +335,28 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureRead(resp,resp.getOutType());
 	}
 
 	public Future<String> readPost(String pathinfo, String contentType, String ... headers) throws CadiException, APIException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(POST);
 		client.addHeader(CONTENT_TYPE,contentType);
-		client.setPathInfo(pathinfo);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
 			}});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureReadString();
 	}
 
 	public Future<String> read(String pathinfo, String accept, String ... headers) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 	
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -374,19 +365,16 @@ public abstract class Rcli<CT> {
 		for(int i=1;i<headers.length;i=i+2) {
 			client.addHeader(headers[i-1],headers[i]);
 		}
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-	
-		client.setPathInfo(pathinfo);
-		
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.futureReadString();
 	}
 
 	public<T> Future<T> read(String pathinfo, String accept, RosettaDF<T> df, String ... headers) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -394,18 +382,16 @@ public abstract class Rcli<CT> {
 		for(int i=1;i<headers.length;i=i+2) {
 			client.addHeader(headers[i-1],headers[i]);
 		}
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
-		
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.futureRead(df,type);
 	}
 
 	public<T> Future<T> read(String pathinfo, RosettaDF<T> df,String ... headers) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(GET);
@@ -413,41 +399,39 @@ public abstract class Rcli<CT> {
 		for(int i=1;i<headers.length;i=i+2) {
 			client.addHeader(headers[i-1],headers[i]);
 		}
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
 		
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.futureRead(df,type);
 	}
 
 	public<T> Future<T> read(String pathinfo, Class<?> cls, RosettaDF<T> df) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(GET);
 		client.addHeader(ACCEPT, typeString(cls));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
-		
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());		
+
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.futureRead(df,type);
 	}
 
 	public<T> Future<T> update(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
 		client.addHeader(CONTENT_TYPE,contentType);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());		
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -455,19 +439,19 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.future(t);
 	}
 	
 	public<T> Future<String> updateRespondString(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
-
+		final ParsePath pp = new ParsePath(pathinfo);
+		
 		EClient<CT> client = client();
 		client.setMethod(PUT);
 		client.addHeader(CONTENT_TYPE, typeString(df.getTypeClass()));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());		
+
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -475,20 +459,20 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.futureReadString();
 	}
 
 
 	public<T> Future<T> update(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
 		client.addHeader(CONTENT_TYPE, typeString(df.getTypeClass()));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
+		
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -496,19 +480,19 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.future(t);
 	}
 	
 	public<T> Future<T> update(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
-
+		final ParsePath pp = new ParsePath(pathinfo);
+		
 		EClient<CT> client = client();
 		client.setMethod(PUT);
 		client.addHeader(CONTENT_TYPE, typeString(cls));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
+
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -516,7 +500,6 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.future(t);
 	}
 
@@ -530,33 +513,34 @@ public abstract class Rcli<CT> {
 	 * @throws CadiException
 	 */
 	public<T> Future<Void> update(String pathinfo) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(PUT);
 		client.addHeader(CONTENT_TYPE, typeString(Void.class));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
+
 //		client.setPayload(new EClient.Transfer() {
 //			@Override
 //			public void transfer(OutputStream os) throws IOException, APIException {
 //			}
 //		});
 		client.send();
-		queryParams = fragment = null;
 		return client.future(null);
 	}
 
 	public<T> Future<T> delete(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
 		client.addHeader(CONTENT_TYPE, contentType);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
+
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -564,19 +548,18 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.future(t);
 	}
 
 	public<T> Future<T> delete(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
 		client.addHeader(CONTENT_TYPE, typeString(cls));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -584,19 +567,18 @@ public abstract class Rcli<CT> {
 			}
 		});
 		client.send();
-		queryParams = fragment = null;
 		return client.future(t);
 	}
 
 	public<T> Future<T> delete(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
 		client.addHeader(CONTENT_TYPE, typeString(df.getTypeClass()));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
@@ -605,38 +587,37 @@ public abstract class Rcli<CT> {
 		});
 
 		client.send();
-		queryParams = fragment = null;
 		return client.future(t);
 	}
 
 
 	public<T> Future<T> delete(String pathinfo, Class<T> cls) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
 		client.addHeader(CONTENT_TYPE, typeString(cls));
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
+
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.future((T)null);
 	}
 
 	public Future<Void> delete(String pathinfo, String contentType) throws APIException, CadiException {
-		final String qp = setupParams(pathinfo);
+		final ParsePath pp = new ParsePath(pathinfo);
 
 		EClient<CT> client = client();
 		client.setMethod(DELETE);
 		client.addHeader(CONTENT_TYPE, contentType);
-		client.setQueryParams(qp);
-		client.setFragment(fragment);
-		client.setPathInfo(pathinfo);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());	
+
 		client.setPayload(null);
 		client.send();
-		queryParams = fragment = null;
 		return client.future(null);
 	}
 
@@ -680,47 +661,75 @@ public abstract class Rcli<CT> {
 		return client.future(resp, expected);
 	}
 
-	private String setupParams(String pathinfo) {
-		final String qp;
-		if(pathinfo==null) {
-			qp=queryParams;
-		} else {
-			final int idx = pathinfo.indexOf('?');
-			if(idx>=0) {
-				qp=pathinfo.substring(idx+1);
-				pathinfo=pathinfo.substring(0,idx);
+	private class ParsePath {
+		private final String path;
+		private final int query;
+		private final int queryEnd;
+		private final int pound;
+		private final String queryParams;
+
+		public ParsePath(final String origPath) {
+			path = origPath;
+			if(origPath==null) {
+				query=queryEnd=pound=-1;
+				queryParams=null;
 			} else {
-				qp=queryParams;
+				query = origPath.indexOf('?');
+				pound = origPath.indexOf('#');
+				queryEnd = pound>=0?pound:path.length();
+				if(oneCallQueryParams==null) {
+					if(query>=0) {
+						queryParams = path.substring(query+1,queryEnd); 
+					} else {
+						queryParams=null;
+					}
+				} else {
+					if(query>=0) {
+						queryParams = oneCallQueryParams + '&' + path.substring(query+1,queryEnd); 
+					} else {
+						queryParams = oneCallQueryParams;
+					}
+					oneCallQueryParams = null;
+				}
 			}
 		}
-		return qp;
+		
+		public String path() {
+			if(query>=0) {
+				if(pound>=0) {
+					return path.substring(pound+1);
+				}
+				return path.substring(0,query);
+			} else if(pound>=0) {
+				return path.substring(0,pound);
+			} else {
+				return path;
+			}
+		}
+		
+		public String query() {
+			return queryParams;
+		}
+		
+		public String frag() {
+			if(pound>=0) {
+				return path.substring(pound+1);
+			} else {
+				return null;
+			}
+		}
 	}
 
 	public String toString() {
 		return uri.toString();
 	}
 
-	/**
-	 * @param queryParams the queryParams to set
-	 * @return 
-	 */
-	public Rcli<CT> setQueryParams(String queryParams) {
-		this.queryParams = queryParams;
-		return this;
-	}
-	
-
-	/**
-	 * @param fragment the fragment to set
-	 * @return 
-	 */
-	public Rcli<CT> setFragment(String fragment) {
-		this.fragment = fragment;
-		return this;
-	}
-
 	public URI getURI() {
 		return uri;
+	}
+
+	public void setQueryParams(final String queryParams) {
+		oneCallQueryParams=queryParams;
 	}
 
 }

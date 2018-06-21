@@ -67,7 +67,7 @@ public class UserRoleExtend extends Page {
 							gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
 								@Override
 								public Void code(Rcli<?> client)throws CadiException, ConnectException, APIException {
-									Future<Void> fv = client.setQueryParams("request=true").update("/authz/userRole/extend/"+user+"/"+role);
+									Future<Void> fv = client.update("/authz/userRole/extend/"+user+"/"+role+"?request=true");
 									if(fv.get(5000)) {
 										// not sure if we'll ever hit this
 										hgen.p("Extended User ["+ user+"] in Role [" +role+"]");

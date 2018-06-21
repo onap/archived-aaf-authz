@@ -21,22 +21,10 @@
 
 package org.onap.aaf.cadi.client.test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
-import org.mockito.*;
-
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.client.EClient;
-import org.onap.aaf.cadi.client.Future;
-import org.onap.aaf.cadi.client.Rcli;
-import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.misc.env.Data;
-import org.onap.aaf.misc.env.Data.TYPE;
-import org.onap.aaf.misc.rosetta.env.RosettaDF;
-import org.onap.aaf.misc.rosetta.env.RosettaData;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,6 +38,21 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.client.EClient;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.Data;
+import org.onap.aaf.misc.env.Data.TYPE;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
+import org.onap.aaf.misc.rosetta.env.RosettaData;
+
 public class JU_Rcli {
 
 	@Mock RosettaDF<HttpURLConnection> dfMock;
@@ -61,8 +64,6 @@ public class JU_Rcli {
 	
 	private final static String uriString = "example.com";
 	private final static String apiVersion = "v1.0";
-	private final static String fragment = "framgent";
-	private final static String queryParams = "queryParams";
 	private final static String contentType = "contentType";
 	
 	private static URI uri;
@@ -224,9 +225,6 @@ public class JU_Rcli {
 		rcli.apiVersion(null);
 		assertThat(rcli.typeString(HttpURLConnection.class), is("application/HttpURLConnection+xml"));
 		
-		rcli.setFragment(fragment);
-		rcli.setQueryParams(queryParams);
-
 		rcliClone = rcli.forUser(null);
 		assertThat(rcliClone.toString(), is(uriString));
 	}
