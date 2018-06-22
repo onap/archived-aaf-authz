@@ -55,11 +55,15 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 		hman = new HMangr(access,Config.loadLocator(si, access.getProperty(Config.AAF_URL,null)));
 	}
 
-	public static SecuritySetter<HttpURLConnection> bestSS(SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
+	protected SecuritySetter<HttpURLConnection> bestSS(SecurityInfoC<HttpURLConnection> si) throws CadiException {
 		Access access = si.access;
 		String s;
 		if((s = access.getProperty(Config.CADI_ALIAS, null))!=null) {
-			return new HX509SS(s,si,true);
+			try {
+				return new HX509SS(s,si,true);
+			} catch (APIException e) {
+				throw new CadiException(e);
+			}
 		} else if((s = access.getProperty(Config.AAF_APPID, null))!=null){
 			try {
 				return new HBasicAuthSS(si,true);
@@ -88,18 +92,21 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 		hman = new HMangr(access,locator);
 	}
 
-	public AAFConHttp(Access access, Locator<URI> locator, SecurityInfoC<HttpURLConnection> si) throws CadiException, LocatorException {
+	public AAFConHttp(Access access, Locator<URI> locator, SecurityInfoC<HttpURLConnection> si) throws CadiException, LocatorException, APIException {
 		super(access,Config.AAF_URL,si);
+		bestSS(si);
 		hman = new HMangr(access,locator);
 	}
 
-	public AAFConHttp(Access access, Locator<URI> locator, SecurityInfoC<HttpURLConnection> si, String tag) throws CadiException, LocatorException {
+	public AAFConHttp(Access access, Locator<URI> locator, SecurityInfoC<HttpURLConnection> si, String tag) throws CadiException, LocatorException, APIException {
 		super(access,tag,si);
+		bestSS(si);
 		hman = new HMangr(access, locator);
 	}
 	
 	private AAFConHttp(AAFCon<HttpURLConnection> aafcon, String url) throws LocatorException {
 		super(aafcon);
+		si=aafcon.si;
 		hman = new HMangr(aafcon.access,Config.loadLocator(si, url));
 	}
 
@@ -191,7 +198,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 
 	@Override
 	public <RET> RET best(Retryable<RET> retryable) throws LocatorException, CadiException, APIException {
-		return hman.best(ss, (Retryable<RET>)retryable);
+		return hman.best(si.defSS, (Retryable<RET>)retryable);
 	}
 
 	/* (non-Javadoc)
@@ -225,5 +232,5 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 	protected void setInitURI(String uriString) throws CadiException {
 		// Using Locator, not URLString, which is mostly for DME2
 	}
-	
+
 }
