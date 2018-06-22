@@ -52,12 +52,6 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 
 	public AAFLocator(SecurityInfoC<HttpURLConnection> si, URI locatorURI) throws LocatorException {
 		super(si.access, nameFromLocatorURI(locatorURI), 10000L /* Wait at least 10 seconds between refreshes */);
-		SecuritySetter<HttpURLConnection> ss;
-		try {
-			ss=AAFConHttp.bestSS(si);
-		} catch (APIException | CadiException e1) {
-			throw new LocatorException(e1);
-		}
 		synchronized(sr) {
 			if(env==null) {
 				env = new RosettaEnv(access.getProperties());
@@ -81,7 +75,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 						null,
 						null
 						);
-				client = createClient(ss, uri, connectTimeout);
+				client = createClient(si.defSS, uri, connectTimeout);
 			} else if(path.length>1 && "locate".equals(path[1])) {
 				StringBuilder sb = new StringBuilder();
 				for(int i=3;i<path.length;++i) {
@@ -98,9 +92,9 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 							null,
 							null
 							);
-				client = createClient(ss, uri, connectTimeout);
+				client = createClient(si.defSS, uri, connectTimeout);
 			} else {
-				client = new HClient(ss, locatorURI, connectTimeout);
+				client = new HClient(si.defSS, locatorURI, connectTimeout);
 			}
 			epsDF = env.newDataFactory(Endpoints.class);
 		} catch (APIException | URISyntaxException e) {

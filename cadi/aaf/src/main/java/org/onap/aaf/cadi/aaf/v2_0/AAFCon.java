@@ -69,7 +69,6 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	final public RosettaDF<Error> errDF;
 	private String realm;
 	public final String app;
-	protected SecuritySetter<CLIENT> ss;
 	protected SecurityInfoC<CLIENT> si;
 
 	private AAFLurPerm lur;
@@ -77,7 +76,8 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	final public RosettaEnv env;
 	protected abstract URI initURI();
 	protected abstract void setInitURI(String uriString) throws CadiException;
-
+	protected abstract SecuritySetter<CLIENT>  bestSS(SecurityInfoC<CLIENT> si) throws CadiException;
+	
 	/**
 	 * Use this call to get the appropriate client based on configuration (HTTP, future)
 	 * 
@@ -88,7 +88,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	public Rcli<CLIENT> client(String apiVersion) throws CadiException {
 		Rcli<CLIENT> client = clients.get(apiVersion);
 		if(client==null) {
-			client = rclient(initURI(),ss);
+			client = rclient(initURI(),si.defSS);
 			client.apiVersion(apiVersion)
 				  .readTimeout(connTimeout);
 			clients.put(apiVersion, client);
@@ -97,7 +97,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	}
 
 	public Rcli<CLIENT> client(URI uri) throws CadiException {
-		return rclient(uri,ss).readTimeout(connTimeout);
+		return rclient(uri,si.defSS).readTimeout(connTimeout);
 	}
 	
 	/**
@@ -128,7 +128,6 @@ public abstract class AAFCon<CLIENT> implements Connector {
 		usersDF = copy.usersDF;
 		errDF = copy.errDF;
 		app = copy.app;
-		ss = copy.ss;
 		si = copy.si;
 		env = copy.env;
 		realm = copy.realm;
@@ -138,6 +137,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 		if(tag==null) {
 			throw new CadiException("AAFCon cannot be constructed without a property tag or URL");
 		} else {
+			si.defSS = bestSS(si);
 			String str = access.getProperty(tag,null);
 			if(str==null) {
 				if(tag.contains("://")) { // assume a URL
@@ -151,8 +151,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 		try {
 			this.access = access;
 			this.si = si;
-			this.ss = si.defSS;
-			if(ss.getID().equals(SecurityInfoC.DEF_ID)) { // it's the Preliminary SS, try to get a better one
+			if(si.defSS.getID().equals(SecurityInfoC.DEF_ID)) { // it's the Preliminary SS, try to get a better one
 				String mechid = access.getProperty(Config.AAF_APPID, null);
 				if(mechid==null) {
 					mechid=access.getProperty(Config.OAUTH_CLIENT_ID,null);
@@ -201,7 +200,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 			userExpires = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim());
 			usageRefreshTriggerCount = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim())-1; // zero based
 	
-			app=FQI.reverseDomain(ss.getID());
+			app=FQI.reverseDomain(si.defSS.getID());
 			//TODO Get Realm from AAF
 			realm="people.osaaf.org";
 	
@@ -291,7 +290,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	public abstract Rcli<CLIENT> rclient(Locator<URI> loc, SecuritySetter<CLIENT> ss) throws CadiException;
 
 	public Rcli<CLIENT> client(Locator<URI> locator) throws CadiException {
-		return rclient(locator,ss);
+		return rclient(locator,si.defSS);
 	}
 	
 	public abstract<RET> RET best(Retryable<RET> retryable) throws LocatorException, CadiException, APIException;
@@ -324,7 +323,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	}
 
 	public SecuritySetter<CLIENT> set(final SecuritySetter<CLIENT> ss) {
-		this.ss = ss;
+		si.set(ss);
 		for(Rcli<CLIENT> client : clients.values()) {
 			client.setSecuritySetter(ss);
 		}
@@ -336,8 +335,8 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	}
 
 	public String defID() {
-		if(ss!=null) {
-			return ss.getID();
+		if(si!=null) {
+			return si.defSS.getID();
 		}
 		return "unknown";
 	}
