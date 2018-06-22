@@ -95,11 +95,6 @@ public class AAFSSO {
 			}
 		}
 		
-//		String keyfile = diskprops.getProperty(Config.CADI_KEYFILE);
-//		if(keyfile==null) {
-//			keyfile = dot_aaf.getCanonicalPath()+".keyfile";
-//			touchDiskprops=true;
-//		}
 		File dot_aaf_kf = new File(dot_aaf, "keyfile");
 
 		if (removeSSO) {
@@ -300,9 +295,9 @@ public class AAFSSO {
 				addProp(Config.AAF_LOCATE_URL, locateUrl);
 			}
 			
-			String aafUrl = "https://AAF_LOCATE_URL/AAF_NS.service/2.0";
+			String aafUrl = "https://AAF_LOCATE_URL/AAF_NS.service:2.0";
 			access.setProperty(Config.AAF_URL, aafUrl);
-			access.setProperty(Config.CM_URL, "https://AAF_LOCATE_URL/AAF_NS.cm/2.0");
+			access.setProperty(Config.CM_URL, "https://AAF_LOCATE_URL/AAF_NS.cm:2.0");
 			String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
 			if(cadiLatitude==null) {
 				System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");
@@ -366,7 +361,7 @@ public class AAFSSO {
 
 	public void setStdErrDefault() {
 		access.setLogLevel(PropAccess.DEFAULT);
-		System.setOut(stdErrOrig);
+		System.setErr(stdErrOrig);
 	}
 
 	public void setLogDefault(Level level) {

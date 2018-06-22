@@ -720,7 +720,12 @@ public class Config {
 			String url = _url, replacement;
 			int idxAAF_LOCATE_URL;
 			if((idxAAF_LOCATE_URL=_url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
-				url = replacement + "/locate" + _url.substring(idxAAF_LOCATE_URL+AAF_LOCATE_URL_TAG.length());
+				StringBuilder sb = new StringBuilder(replacement);
+				if(!replacement.endsWith("/locate")) {
+					sb.append("/locate");
+				} 
+				sb.append(_url,idxAAF_LOCATE_URL+AAF_LOCATE_URL_TAG.length(),_url.length());
+				url = sb.toString();
 			}
 	
 			try {

@@ -30,7 +30,6 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,10 +43,9 @@ import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
+import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
@@ -132,10 +130,10 @@ public class AAFcli {
 	}
 
 	public void close() {
-		if (hman != null) {
-			hman.close();
-			hman = null;
-		}
+//		if (hman != null) {
+//			hman.close();
+//			hman = null;
+//		}
 		if (close) {
 			pw.close();
 		}
@@ -200,7 +198,7 @@ public class AAFcli {
 						if (pass != null) {
 							pass = access.decrypt(pass, false);
 							access.getProperties().put(user, pass);
-							ss = new HBasicAuthSS(si, user, pass);
+							ss=new HBasicAuthSS(si, user, pass);
 							pw.println("as " + user);
 						} else { // get Pass from System Properties, under name of
 							// Tag
@@ -478,36 +476,39 @@ public class AAFcli {
 							sb.append(args[i]);
 						}
 					}
-		
-					SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
-					Locator<URI> loc;
+					
+					AAFConHttp aafcon = new AAFConHttp(access);
+//					
+//					SecurityInfoC<?> si = aafcon.securityInfo();
+//					Locator<URI> loc;
 					
 					aafsso.setLogDefault();
 					aafsso.setStdErrDefault();
 	
 					// Note, with AAF Locator, this may not longer be necessary 3/2018 Jonathan
 					if(!aafsso.loginOnly()) {
-						try {
-							loc = new AAFLocator(si,new URI(access.getProperty(Config.AAF_URL)));
-						} catch (Throwable t) {
-							aafsso.setStdErrDefault();
-							throw t;
-						} finally {
-							// Other Access is done writing to StdOut and StdErr, reset Std out
-							aafsso.setLogDefault();
-						}
+//						try {
+//							loc = new AAFLocator(si,new URI(access.getProperty(Config.AAF_URL)));
+//						} catch (Throwable t) {
+//							aafsso.setStdErrDefault();
+//							throw t;
+//						} finally {
+//							// Other Access is done writing to StdOut and StdErr, reset Std out
+//							aafsso.setLogDefault();
+//						}
 	
 						TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-						HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
+//						HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
 						
 						if(access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
 							access.setProperty(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
 							aafsso.addProp(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
 						}
 			
-						
-						AAFcli aafcli = new AAFcli(access,env, new OutputStreamWriter(System.out), hman, si, 
-							new HBasicAuthSS(si,aafsso.user(), access.decrypt(aafsso.enc_pass(),false)));
+						AAFcli aafcli = new AAFcli(access,env, new OutputStreamWriter(System.out),  
+								aafcon.hman(), aafcon.securityInfo(), aafcon.securityInfo().defSS);
+//							new HBasicAuthSS(si,aafsso.user(), access.decrypt(aafsso.enc_pass(),false)));
+//						}
 						if(!ignoreDelay) {
 							File delay = new File("aafcli.delay");
 							if(delay.exists()) {
@@ -617,7 +618,7 @@ public class AAFcli {
 	}
 
 	public String typeString(Class<?> cls, boolean json) {
-		return "application/" + cls.getSimpleName() + "+" + (json ? "json" : "xml") + ";version=" + hman.apiVersion();
+		return "application/" + cls.getSimpleName() + "+" + (json ? "json" : "xml");//+ ";version=" + hman.apiVersion();
 	}
 
 	public String forceString() {
