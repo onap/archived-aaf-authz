@@ -202,11 +202,12 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
 
 	@Override
-	public Filter[] filters() throws CadiException, LocatorException {
+	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
 		try {
 			return new Filter[] {
 				new AuthzTransFilter(env, aafCon(), 
 					new AAFTrustChecker((Env)env)
+					,additionalTafLurs
 				)};
 		} catch (NumberFormatException e) {
 			throw new CadiException("Invalid Property information", e);

@@ -97,11 +97,12 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
 	}
 	
 	@Override
-	public Filter[] filters() throws CadiException, LocatorException {
+	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
 		try {
 			return new Filter[] {
 					new AuthzTransFilter(env,aafCon(),
-		        			new AAFTrustChecker((Env)env))
+		        		new AAFTrustChecker((Env)env),
+		        		additionalTafLurs)
 				};
 		} catch (NumberFormatException e) {
 			throw new CadiException("Invalid Property information", e);

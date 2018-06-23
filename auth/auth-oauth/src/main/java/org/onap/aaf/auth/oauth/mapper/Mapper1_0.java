@@ -88,7 +88,6 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
 	public TokenRequest tokenReqFromParams(HttpServletRequest req) {
 		TokenRequest tr = new TokenRequest();
 		boolean data = false;
-		@SuppressWarnings("unchecked")
 		Map<String, String[]> map = req.getParameterMap();
 		for(Entry<String, String[]> es : map.entrySet()) {
 			switch(es.getKey()) {

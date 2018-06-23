@@ -100,7 +100,7 @@ public class JU_AbsServiceStarter {
 		}
 
 		@Override
-		public Filter[] filters() throws CadiException, LocatorException {
+		public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
 			// TODO Auto-generated method stub
 			return null;
 		}

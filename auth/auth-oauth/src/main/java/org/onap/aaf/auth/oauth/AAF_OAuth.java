@@ -140,19 +140,26 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
 	}
 	
 	@Override
-	public Filter[] filters() throws CadiException, LocatorException {
+	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
 		try {
-	        DirectOAuthTAF doat;
-			return new Filter[] {new AuthzTransFilter(env,aafCon(),
+	        DirectOAuthTAF doat = new DirectOAuthTAF(env,question,facade1_0);
+        	Object[] atl=new Object[additionalTafLurs.length+2];
+	        atl[0] = doat;
+	        atl[1] = doat.directUserPass();
+
+	        if(additionalTafLurs.length>0) {
+	        	System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
+	        }
+	        
+			return new Filter[] {
+				new AuthzTransFilter(env,aafCon(),
 	        		new AAFTrustChecker((Env)env),
-	        		doat = new DirectOAuthTAF(env,question,facade1_0),
-	        		doat.directUserPass()
-	        		)};
+	        		atl
+	        )};
 		} catch (NumberFormatException | APIException e) {
 			throw new CadiException("Invalid Property information", e);
 		}
 	}
-
 	
 	@SuppressWarnings("unchecked")
 	@Override

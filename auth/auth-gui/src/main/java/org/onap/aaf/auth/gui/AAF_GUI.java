@@ -230,13 +230,15 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
 	public<RET> RET cmClientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
 			return cmCon.hman().best(new HTransferSS(p,app, aafCon.securityInfo()), retryable);
 	}
+	
 	@Override
-	public Filter[] filters() throws CadiException, LocatorException {
+	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
 		try {
 			return new Filter[] {
 					new XFrameFilter(XFrameFilter.TYPE.none),
 					new AuthzTransFilter(env,aafCon(),
-		        			new AAFTrustChecker((Env)env)),
+		        			new AAFTrustChecker((Env)env),
+		        			additionalTafLurs),
 					new OrgLookupFilter()
 				};
 		} catch (NumberFormatException e) {
