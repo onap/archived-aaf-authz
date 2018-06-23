@@ -54,6 +54,7 @@ import org.onap.aaf.auth.service.facade.AuthzFacadeFactory;
 import org.onap.aaf.auth.service.facade.AuthzFacade_2_0;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.aaf.v2_0.AAFTrustChecker;
 import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
@@ -157,21 +158,30 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 	}
 	
 	@Override
-	public Filter[] filters() throws CadiException {
-		final String domain = FQI.reverseDomain(access.getProperty("aaf_root_ns","org.osaaf.aaf"));
+	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+		final String domain = FQI.reverseDomain(access.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF));
 		try {
-				return new Filter[] {new AuthzTransFilter(env, null /* no connection to AAF... it is AAF */,
-						new AAFTrustChecker((Env)env),
-						new DirectAAFLur(env,question), // Note, this will be assigned by AuthzTransFilter to TrustChecker
-						//new DirectOAuthTAF(env,question,OAFacadeFactory.directV1_0(oauthService)),
-						new BasicHttpTaf(env, directAAFUserPass,
-							domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
-							false)
-					)};
+        	Object[] atl=new Object[additionalTafLurs.length+2];
+        	atl[0]=new DirectAAFLur(env,question); // Note, this will be assigned by AuthzTransFilter to TrustChecker
+			atl[1]=new BasicHttpTaf(env, directAAFUserPass,
+				domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
+				false);
+
+	        if(additionalTafLurs.length>0) {
+	        	System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
+	        }
+	        
+			return new Filter[] {
+				new AuthzTransFilter(env,aafCon(),
+	        		new AAFTrustChecker((Env)env),
+	        		atl
+	        )};
 		} catch (NumberFormatException e) {
 			throw new CadiException("Invalid Property information", e);
 		}
 	}
+
+
 
 	@SuppressWarnings("unchecked")
 	@Override

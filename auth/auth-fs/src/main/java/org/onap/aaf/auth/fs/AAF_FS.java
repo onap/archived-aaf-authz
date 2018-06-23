@@ -88,7 +88,8 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
 	};
 	
 	@Override
-	public Filter[] filters() throws CadiException, LocatorException {
+	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+		// Note: No TAFs and Lurs on FileServer
 		return new Filter[] {
 			new AuthzTransOnlyFilter(env)
 		};

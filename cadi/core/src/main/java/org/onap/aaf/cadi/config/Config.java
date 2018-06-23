@@ -143,6 +143,7 @@ public class Config {
 	public static final String AAF_ENV = "aaf_env";
 	public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration
 	public static final String AAF_ROOT_NS = "aaf_root_ns";
+	public static final String AAF_ROOT_NS_DEF = "org.osaaf.aaf";
 	public static final String AAF_ROOT_COMPANY = "aaf_root_company";
 	public static final String AAF_LOCATE_URL = "aaf_locate_url"; //URL for AAF locator
 	private static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.

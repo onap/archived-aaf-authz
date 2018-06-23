@@ -104,8 +104,18 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
 		}
     }
 
-	public abstract Filter[] filters() throws CadiException,  LocatorException;
-
+	protected abstract Filter[] _filters(Object ... additionalTafLurs) throws CadiException,  LocatorException;
+	
+	/**
+	 * Overload this method to add new TAF or LURs
+	 * 
+	 * @return
+	 * @throws CadiException
+	 * @throws LocatorException
+	 */
+	public Filter[] filters() throws CadiException,  LocatorException {
+		return _filters();
+	}
 
     public abstract Registrant<ENV>[] registrants(final int port) throws CadiException, LocatorException;
 

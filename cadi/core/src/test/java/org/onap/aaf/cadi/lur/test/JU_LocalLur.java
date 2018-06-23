@@ -48,8 +48,6 @@ import org.onap.aaf.cadi.lur.LocalPermission;
 public class JU_LocalLur {
 
 	private static final String password = "<pass>";
-	private String encrypted;
-
 	private PropAccess access;
 	private ByteArrayOutputStream outStream;
 
@@ -58,8 +56,6 @@ public class JU_LocalLur {
 	@Before
 	public void setup() throws IOException {
 		MockitoAnnotations.initMocks(this);
-
-		encrypted = rot13(password);
 
 		outStream = new ByteArrayOutputStream();
 		access = new PropAccess(new PrintStream(outStream), new String[0]) {
@@ -75,6 +71,8 @@ public class JU_LocalLur {
 
 	@Test
 	public void test() throws IOException {
+		final String encrypted = rot13(password);
+
 		LocalLur lur;
 		List<AbsUserCache<LocalPermission>.DumpInfo> info;
 
