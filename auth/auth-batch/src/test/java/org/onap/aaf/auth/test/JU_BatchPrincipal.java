@@ -41,8 +41,8 @@ public class JU_BatchPrincipal {
 	@Test
 	public void testBatchPrincipal() {
 		bPrincipal = new BatchPrincipal("name");
-		bPrincipal.getName();
-		Assert.assertEquals("Batch", bPrincipal.tag());
+		Assert.assertEquals("batch:name", bPrincipal.getName());
+		Assert.assertEquals("Btch", bPrincipal.tag());
 	}
 
 }

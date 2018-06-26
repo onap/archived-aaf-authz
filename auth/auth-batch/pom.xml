@@ -29,7 +29,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>auth-batch</artifactId>
+	<artifactId>aaf-auth-batch</artifactId>
 	<name>AAF Auth Batch</name>
 	<description>Batch Processing for AAF Auth</description>
 	<packaging>jar</packaging>

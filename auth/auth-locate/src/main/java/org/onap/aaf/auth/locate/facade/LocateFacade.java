@@ -103,4 +103,13 @@ public interface LocateFacade {
 	 */
 	public abstract Result<Void> removeMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
+	/**
+	 * 
+	 * @param trans
+	 * @param req
+	 * @param resp
+	 * @return
+	 */
+	public Result<Void> getConfig(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, String id, String type);
+
 }

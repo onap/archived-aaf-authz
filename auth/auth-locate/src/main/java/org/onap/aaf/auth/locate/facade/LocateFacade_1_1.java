@@ -18,24 +18,24 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.auth;
 
-import org.onap.aaf.cadi.principal.TaggedPrincipal;
+package org.onap.aaf.auth.locate.facade;
 
-public class BatchPrincipal extends TaggedPrincipal {
-	private final String name;
-	
-	public BatchPrincipal(final String name) {
-		this.name = "batch:"+name;
-	}
+import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.auth.locate.service.LocateService;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.Data;
 
-	@Override
-	public String getName() {
-		return name;
-	}
+import locate.v1_0.Endpoints;
+import locate.v1_0.MgmtEndpoints;
+import locate_local.v1_0.Error;
+import locate_local.v1_0.InRequest;
+import locate_local.v1_0.Out;
+import locate_local.v1_1.Configuration;
 
-	@Override
-	public String tag() {
-		return "Btch";
+public class LocateFacade_1_1 extends LocateFacadeImpl<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error>
+{
+	public LocateFacade_1_1(AuthzEnv env, LocateService<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error> service, Data.TYPE type) throws APIException {
+		super(env, service, type);
 	}
 }

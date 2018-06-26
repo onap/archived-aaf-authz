@@ -35,8 +35,9 @@ import locate.v1_0.MgmtEndpoints;
 import locate_local.v1_0.Error;
 import locate_local.v1_0.InRequest;
 import locate_local.v1_0.Out;
+import locate_local.v1_1.Configuration;
 
-public class Mapper_1_0 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,Error> {
+public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error> {
 	
 	@Override
 	public Class<?> getClass(API api) {
@@ -47,6 +48,7 @@ public class Mapper_1_0 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
 			case VOID: return Void.class;
 			case ENDPOINTS: return Endpoints.class;
 			case MGMT_ENDPOINTS: return MgmtEndpoints.class;
+			case CONFIG: return Configuration.class;
 		}
 		return null;
 	}
@@ -60,6 +62,7 @@ public class Mapper_1_0 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
 			case ERROR: return (A)new Error();
 			case ENDPOINTS: return (A) new Endpoints();
 			case MGMT_ENDPOINTS: return (A) new MgmtEndpoints();
+			case CONFIG: return (A) new Configuration();
 			case VOID: return null;
 		}
 		return null;

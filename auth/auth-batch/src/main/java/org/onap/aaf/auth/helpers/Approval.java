@@ -45,10 +45,10 @@ public class Approval implements CacheChange.Data  {
 	public static final String RE_VALIDATE_ADMIN = "Re-Validate as Administrator for AAF Namespace '";
 	public static final String RE_VALIDATE_OWNER = "Re-Validate Ownership for AAF Namespace '";
 
-	public static TreeMap<String,List<Approval>> byApprover = new TreeMap<String,List<Approval>>();
-	public static TreeMap<String,List<Approval>> byUser = new TreeMap<String,List<Approval>>();
-	public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<UUID,List<Approval>>();
-	private final static CacheChange<Approval> cache = new CacheChange<Approval>(); 
+	public static TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
+	public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
+	public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
+	private final static CacheChange<Approval> cache = new CacheChange<>(); 
 	
 	public final ApprovalDAO.Data add;
 	private String role;

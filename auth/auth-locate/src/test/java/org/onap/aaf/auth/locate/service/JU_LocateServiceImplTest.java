@@ -35,6 +35,7 @@ import org.onap.aaf.auth.dao.cass.LocateDAO;
 import org.onap.aaf.auth.dao.cass.LocateDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.auth.locate.AAF_Locate;
 import org.onap.aaf.auth.locate.mapper.Mapper;
 import org.onap.aaf.misc.env.APIException;
 
@@ -43,8 +44,20 @@ import locate.v1_0.MgmtEndpoints;
 
 public class JU_LocateServiceImplTest {
 
+	// Extend, because I don't want a "setter" in the original.  Compromised with a protected...
+	private final class LocateServiceImplExtension extends LocateServiceImpl {
+		private LocateServiceImplExtension(AuthzTrans trans, AAF_Locate locate, Mapper mapper) throws APIException {
+			super(trans, locate, mapper);
+		}
+		public void set(LocateDAO ld) {
+			locateDAO=ld;
+		}
+	}
+
 	@Mock
 	private AuthzTrans trans;
+	@Mock
+	private AAF_Locate aaf_locate;
 	@Mock
 	private LocateDAO locateDAO;
 	@Mock
@@ -65,7 +78,8 @@ public class JU_LocateServiceImplTest {
 
 	@Test
 	public void test() throws APIException {
-		LocateServiceImpl locateServiceImpl = new LocateServiceImpl(trans, locateDAO, mapper);
+		LocateServiceImplExtension locateServiceImpl = new LocateServiceImplExtension(trans, aaf_locate, mapper);
+		locateServiceImpl.set(locateDAO);
 
 		assertEquals(mapper, locateServiceImpl.mapper());
 

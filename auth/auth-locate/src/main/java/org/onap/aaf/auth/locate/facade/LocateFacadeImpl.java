@@ -54,9 +54,9 @@ import org.onap.aaf.auth.rserv.doc.ApiDoc;
 import org.onap.aaf.cadi.aaf.client.Examples;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
+import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
-import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.rosetta.env.RosettaData;
 
@@ -82,28 +82,30 @@ import locate_local.v1_0.Api;
  * @author Jonathan
  *
  */
-public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> extends FacadeImpl implements LocateFacade 
+public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURATION,ERROR> extends FacadeImpl implements LocateFacade 
 	{
-	private LocateService<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> service;
+	private LocateService<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURATION,ERROR> service;
 
 	private final RosettaDF<ERROR>	 		errDF;
 	private final RosettaDF<Api>	 			apiDF;
 	private final RosettaDF<ENDPOINTS>		epDF;
 	private final RosettaDF<MGMT_ENDPOINTS>	mepDF;
+	private final RosettaDF<CONFIGURATION>	confDF;
 
 
 	private static long cacheClear = 0L, emptyCheck=0L;
 	private final static Map<String,String> epsCache = new HashMap<String, String>(); // protected manually, in getEndpoints
 
-	public LocateFacadeImpl(AuthzEnv env, LocateService<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> service, Data.TYPE dataType) throws APIException {
+	public LocateFacadeImpl(AuthzEnv env, LocateService<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURATION,ERROR> service, Data.TYPE dataType) throws APIException {
 		this.service = service;
 		(errDF 				= env.newDataFactory(mapper().getClass(API.ERROR))).in(dataType).out(dataType);
 		(apiDF				= env.newDataFactory(Api.class)).in(dataType).out(dataType);
 		(epDF				= env.newDataFactory(mapper().getClass(API.ENDPOINTS))).in(dataType).out(dataType);
 		(mepDF				= env.newDataFactory(mapper().getClass(API.MGMT_ENDPOINTS))).in(dataType).out(dataType);
+		(confDF				= env.newDataFactory(mapper().getClass(API.CONFIG))).in(dataType).out(dataType);
 	}
 	
-	public Mapper<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> mapper() {
+	public Mapper<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURATION,ERROR> mapper() {
 		return service.mapper();
 	}
 		
@@ -391,4 +393,26 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,ERROR> ex
 		}
 	}
 
+	private static final String GET_CONFIG = "Get Configuration";
+	@Override
+	public Result<Void> getConfig(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, final String id, final String type) {
+		TimeTaken tt = trans.start(GET_CONFIG, Env.SUB|Env.ALWAYS);
+		try {
+			Result<CONFIGURATION> rp = service.getConfig(trans, id, type);
+			switch(rp.status) {
+				case OK: 
+					setContentType(resp,mepDF.getOutType());
+					confDF.newData(trans).load(rp.value).to(resp.getOutputStream());
+					return Result.ok();
+				default:
+					return Result.err(rp);
+			}
+		} catch (Exception e) {
+			trans.error().log(e,IN,GET_CONFIG);
+			return Result.err(e);
+		} finally {
+			tt.done();
+		}	
+	}
+	
 }

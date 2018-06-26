@@ -47,7 +47,6 @@ import org.onap.aaf.cadi.lur.LocalPermission;
 
 public class JU_LocalLur {
 
-	private static final String password = "<pass>";
 	private PropAccess access;
 	private ByteArrayOutputStream outStream;
 
@@ -71,6 +70,7 @@ public class JU_LocalLur {
 
 	@Test
 	public void test() throws IOException {
+		final String password = "<pass>";
 		final String encrypted = rot13(password);
 
 		LocalLur lur;

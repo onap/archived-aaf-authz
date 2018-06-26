@@ -1,5 +1,5 @@
 /**
- * ============LICENSE_START====================================================
+\\ * ============LICENSE_START====================================================
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
@@ -21,10 +21,10 @@
 
 package org.onap.aaf.auth.locate.facade;
 
-import org.onap.aaf.auth.dao.cass.LocateDAO;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.locate.mapper.Mapper_1_0;
+import org.onap.aaf.auth.locate.AAF_Locate;
+import org.onap.aaf.auth.locate.mapper.Mapper_1_1;
 import org.onap.aaf.auth.locate.service.LocateServiceImpl;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
@@ -35,13 +35,13 @@ import locate_local.v1_0.Out;
 
 
 public class LocateFacadeFactory {
-	public static LocateFacade_1_0 v1_0(AuthzEnv env, LocateDAO locateDAO, AuthzTrans trans, Data.TYPE type) throws APIException {
-		return new LocateFacade_1_0(
+	public static LocateFacade_1_1 v1_1(AuthzEnv env, AAF_Locate locate, AuthzTrans trans, Data.TYPE type) throws APIException {
+		return new LocateFacade_1_1(
 				env,
 				new LocateServiceImpl<
 					InRequest,
 					Out,
-					Error>(trans,locateDAO,new Mapper_1_0()),
+					Error>(trans,locate,new Mapper_1_1()),
 				type);  
 	}
 
