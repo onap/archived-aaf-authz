@@ -21,11 +21,15 @@
 
 package org.onap.aaf.auth.locate.service;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.onap.aaf.auth.dao.cass.ConfigDAO;
+import org.onap.aaf.auth.dao.cass.ConfigDAO.Data;
 import org.onap.aaf.auth.dao.cass.LocateDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.auth.locate.AAF_Locate;
 import org.onap.aaf.auth.locate.mapper.Mapper;
 import org.onap.aaf.auth.locate.validation.LocateValidator;
 import org.onap.aaf.cadi.aaf.AAFPermission;
@@ -34,20 +38,24 @@ import org.onap.aaf.misc.env.APIException;
 import locate.v1_0.Endpoints;
 import locate.v1_0.MgmtEndpoint;
 import locate.v1_0.MgmtEndpoints;
+import locate_local.v1_1.Configuration;
+import locate_local.v1_1.Configuration.Props;
 
 public class LocateServiceImpl<IN,OUT,ERROR> 
-	  implements LocateService<IN,OUT,Endpoints,MgmtEndpoints,ERROR> {
-		private Mapper<IN,OUT,Endpoints,MgmtEndpoints,ERROR> mapper;
-		private LocateDAO locateDAO;
+	  implements LocateService<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> {
+		private Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper;
+		protected LocateDAO locateDAO;
+		private ConfigDAO configDAO;
 		private boolean permToRegister;
 	
-		public LocateServiceImpl(AuthzTrans trans, LocateDAO locateDAO, Mapper<IN,OUT,Endpoints,MgmtEndpoints,ERROR> mapper) throws APIException {
+		public LocateServiceImpl(AuthzTrans trans, AAF_Locate locate, Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper) throws APIException {
 			this.mapper = mapper;
-			this.locateDAO = locateDAO; 
+			this.locateDAO = locate.locateDAO;
+			this.configDAO = locate.configDAO;
 			permToRegister = false; //TODO Setup a Configuration for this
 		}
 		
-		public Mapper<IN,OUT,Endpoints,MgmtEndpoints,ERROR> mapper() {return mapper;}
+		public Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper() {return mapper;}
 
 		@Override
 		public Result<Endpoints> getEndPoints(AuthzTrans trans, String service, String version, String other) {
@@ -115,6 +123,29 @@ public class LocateServiceImpl<IN,OUT,ERROR>
 			} else {
 				return Result.err(Result.ERR_NotFound, "No endpoints found");
 			}
+		}
+
+		/////   ADDED v1_1
+		/* (non-Javadoc)
+		 * @see org.onap.aaf.auth.locate.service.LocateService#getConfig(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, java.lang.String)
+		 */
+		@Override
+		public Result<Configuration> getConfig(AuthzTrans trans, String id, String type) {
+			Result<List<Data>> dr = configDAO.readName(trans, type);
+			Configuration c = new Configuration();
+			c.setName(type);
+			Props p;
+			
+			if(dr.isOKhasData()) {
+				for(ConfigDAO.Data data : dr.value) {
+					p = new Props();
+					p.setTag(data.tag);
+					p.setValue(data.value);
+					c.getProps().add(p);
+				}
+			}
+			return Result.ok(c);
+			//return Result.err(Result.ERR_NotImplemented,"not done yet");
 		}
 
 

@@ -42,7 +42,7 @@ public class JU_Mapper_1_0Test {
 
 	@Test
 	public void testGetClasses() {
-		Mapper_1_0 mapper = new Mapper_1_0();
+		Mapper_1_1 mapper = new Mapper_1_1();
 		assertEquals(InRequest.class, mapper.getClass(API.IN_REQ));
 		assertEquals(Out.class, mapper.getClass(API.OUT));
 		assertEquals(Error.class, mapper.getClass(API.ERROR));
@@ -53,7 +53,7 @@ public class JU_Mapper_1_0Test {
 
 	@Test
 	public void testNewInstance() {
-		Mapper_1_0 mapper = new Mapper_1_0();
+		Mapper_1_1 mapper = new Mapper_1_1();
 		assertTrue(mapper.newInstance(API.IN_REQ) instanceof InRequest);
 		assertTrue(mapper.newInstance(API.OUT) instanceof Out);
 		assertTrue(mapper.newInstance(API.ERROR) instanceof Error);

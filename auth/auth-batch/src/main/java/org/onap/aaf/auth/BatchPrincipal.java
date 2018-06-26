@@ -26,7 +26,7 @@ public class BatchPrincipal extends TaggedPrincipal {
 	private final String name;
 	
 	public BatchPrincipal(final String name) {
-		this.name = name;
+		this.name = "batch:"+name;
 	}
 
 	@Override
@@ -36,6 +36,6 @@ public class BatchPrincipal extends TaggedPrincipal {
 
 	@Override
 	public String tag() {
-		return "Batch";
+		return "Btch";
 	}
 }

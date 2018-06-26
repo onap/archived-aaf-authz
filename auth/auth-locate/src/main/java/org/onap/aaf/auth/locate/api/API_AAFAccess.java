@@ -21,6 +21,8 @@
 
 package org.onap.aaf.auth.locate.api;
 
+import static org.onap.aaf.auth.layer.Result.OK;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
@@ -217,6 +219,28 @@ public class API_AAFAccess {
 					redirect(trans, req, resp, context, 
 							gwAPI.getGUILocator(), 
 							"gui/home");
+				} catch (Exception e) {
+					context.error(trans, resp, Result.ERR_General, e.getMessage());
+				}
+			}
+		});
+		
+		/**
+		 * Configuration 
+		 */
+		gwAPI.route(HttpMethods.GET,"/configure/:id/:type",API.CONFIG,new LocateCode(facade,"Deliver Configuration Properties to AAF", true) {
+			@Override
+			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+				try {
+					Result<Void> r = facade.getConfig(trans, req, resp, pathParam(req, ":id"),pathParam(req,":type"));
+					switch(r.status) {
+						case OK:
+							resp.setStatus(HttpStatus.OK_200);
+							break;
+						default:
+							context.error(trans,resp,r);
+					}
+
 				} catch (Exception e) {
 					context.error(trans, resp, Result.ERR_General, e.getMessage());
 				}

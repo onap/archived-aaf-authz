@@ -30,6 +30,7 @@ import javax.servlet.Filter;
 import org.onap.aaf.auth.cache.Cache;
 import org.onap.aaf.auth.cache.Cache.Dated;
 import org.onap.aaf.auth.dao.CassAccess;
+import org.onap.aaf.auth.dao.cass.ConfigDAO;
 import org.onap.aaf.auth.dao.cass.LocateDAO;
 import org.onap.aaf.auth.direct.DirectLocatorCreator;
 import org.onap.aaf.auth.direct.DirectRegistrar;
@@ -41,7 +42,7 @@ import org.onap.aaf.auth.locate.api.API_Api;
 import org.onap.aaf.auth.locate.api.API_Find;
 import org.onap.aaf.auth.locate.api.API_Proxy;
 import org.onap.aaf.auth.locate.facade.LocateFacadeFactory;
-import org.onap.aaf.auth.locate.facade.LocateFacade_1_0;
+import org.onap.aaf.auth.locate.facade.LocateFacade_1_1;
 import org.onap.aaf.auth.locate.mapper.Mapper.API;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.auth.server.AbsService;
@@ -68,8 +69,8 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 	private static final String DOT_LOCATOR = ".locator";
 
 	private static final String USER_PERMS = "userPerms";
-	private LocateFacade_1_0 facade; // this is the default Facade
-	private LocateFacade_1_0 facade_1_0_XML;
+	private LocateFacade_1_1 facade; // this is the default Facade
+	private LocateFacade_1_1 facade_1_1_XML;
 	public Map<String, Dated> cacheUser;
 	public final AAFAuthn<?> aafAuthn;
 	public final AAFLurPerm aafLurPerm;
@@ -77,6 +78,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 	public final long expireIn;
 	private final Cluster cluster;
 	public final LocateDAO locateDAO;
+	public final ConfigDAO configDAO;
 	private Locator<URI> dal;
 	private final String aaf_service_name;
 	private final String aaf_gui_name;
@@ -103,6 +105,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
 		cluster = org.onap.aaf.auth.dao.CassAccess.cluster(env,null);
 		locateDAO = new LocateDAO(trans,cluster,CassAccess.KEYSPACE);
+		configDAO = new ConfigDAO(trans,locateDAO); // same stuff
 
 		// Have AAFLocator object Create DirectLocators for Location needs
 		AbsAAFLocator.setCreator(new DirectLocatorCreator(env, locateDAO));
@@ -112,8 +115,8 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 		aafAuthn = aafCon().newAuthn(aafLurPerm);
 
 
-		facade = LocateFacadeFactory.v1_0(env,locateDAO,trans,Data.TYPE.JSON);   // Default Facade
-		facade_1_0_XML = LocateFacadeFactory.v1_0(env,locateDAO,trans,Data.TYPE.XML);
+		facade = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.JSON);   // Default Facade
+		facade_1_1_XML = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.XML);
 
 		synchronized(env) {
 			if(cacheUser == null) {
@@ -166,7 +169,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
 		// setup Application API HTML ContentTypes for XML and Route
 		application = applicationXML(respCls, version);
-		route(env,meth,path,code.clone(facade_1_0_XML,false),application,"text/xml;version="+version);
+		route(env,meth,path,code.clone(facade_1_1_XML,false),application,"text/xml;version="+version);
 		
 		// Add other Supported APIs here as created
 	}

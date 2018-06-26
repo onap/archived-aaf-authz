@@ -145,7 +145,7 @@ public abstract class Batch {
         }
     }
 
-    protected abstract void run(AuthzTrans trans);
+	protected abstract void run(AuthzTrans trans);
     protected abstract void _close(AuthzTrans trans);
     
     public String[] args() {
