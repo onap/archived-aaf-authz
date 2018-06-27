@@ -28,10 +28,11 @@ import org.onap.aaf.misc.env.Data;
 
 import locate.v1_0.Endpoints;
 import locate.v1_0.MgmtEndpoints;
-import locate_local.v1_0.Error;
+import locate.v1_1.Configuration;
 import locate_local.v1_0.InRequest;
 import locate_local.v1_0.Out;
-import locate_local.v1_1.Configuration;
+import locate_local.v1_0.Error;
+
 
 public class LocateFacade_1_1 extends LocateFacadeImpl<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error>
 {

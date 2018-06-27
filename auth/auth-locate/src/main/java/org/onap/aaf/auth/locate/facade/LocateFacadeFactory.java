@@ -29,9 +29,10 @@ import org.onap.aaf.auth.locate.service.LocateServiceImpl;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 
-import locate_local.v1_0.Error;
 import locate_local.v1_0.InRequest;
 import locate_local.v1_0.Out;
+import locate_local.v1_0.Error;;
+
 
 
 public class LocateFacadeFactory {

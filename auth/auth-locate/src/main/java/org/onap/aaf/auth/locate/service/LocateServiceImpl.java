@@ -38,8 +38,8 @@ import org.onap.aaf.misc.env.APIException;
 import locate.v1_0.Endpoints;
 import locate.v1_0.MgmtEndpoint;
 import locate.v1_0.MgmtEndpoints;
-import locate_local.v1_1.Configuration;
-import locate_local.v1_1.Configuration.Props;
+import locate.v1_1.Configuration;
+import locate.v1_1.Configuration.Props;
 
 public class LocateServiceImpl<IN,OUT,ERROR> 
 	  implements LocateService<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> {

@@ -438,7 +438,7 @@
 				<artifactId>aaf-auth-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>org.onap.aaf.authz</groupId>
 				<artifactId>aaf-auth-core</artifactId>

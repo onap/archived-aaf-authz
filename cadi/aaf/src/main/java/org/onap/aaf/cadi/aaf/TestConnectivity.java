@@ -64,14 +64,12 @@ public class TestConnectivity {
 			PropAccess access = new PropAccess(args);
 			String aaflocate;
 			if(args.length>1) {
-				aaflocate = "https://" + args[1] + "/locate";
+				aaflocate = "https://" + args[1];
 				access.setProperty(Config.AAF_LOCATE_URL, "https://" + args[1]);
 			} else {
 				aaflocate = access.getProperty(Config.AAF_LOCATE_URL);
 				if(aaflocate==null) {
 					print(true,"Properties must contain ",Config.AAF_LOCATE_URL);
-				} else if (!aaflocate.endsWith("/locate")) {
-					aaflocate += "/locate";
 				}
 			}
 			
@@ -81,16 +79,15 @@ public class TestConnectivity {
 				List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
 				/////////
 				print(true,"Test Connections driven by AAFLocator");
-				URI serviceURI = new URI(aaflocate+"/AAF_NS.service/2.0");
+				URI serviceURI = new URI(aaflocate+"/locate/AAF_NS.service/2.0");
 
 				for(URI uri : new URI[] {
 						serviceURI,
-						new URI(aaflocate+"/AAF_NS.service:2.0"),
-						new URI(aaflocate+"/AAF_NS.service"),
-						new URI(aaflocate+"/AAF_NS.gw:2.0"),
-						new URI(aaflocate+"/AAF_NS.token:2.0"),
-						new URI(aaflocate+"/AAF_NS.certman:2.0"),
-						new URI(aaflocate+"/AAF_NS.hello")
+						new URI(aaflocate+"/locate/AAF_NS.service:2.0"),
+						new URI(aaflocate+"/locate/AAF_NS.locate:2.0"),
+						new URI(aaflocate+"/locate/AAF_NS.token:2.0"),
+						new URI(aaflocate+"/locate/AAF_NS.certman:2.0"),
+						new URI(aaflocate+"/locate/AAF_NS.hello")
 				}) {
 					Locator<URI> locator = new AAFLocator(si, uri);
 					try {
@@ -102,8 +99,8 @@ public class TestConnectivity {
 				}
 
 				/////////
-				print(true,"Test Service driven by AAFLocator");
-				Locator<URI> locator = new AAFLocator(si,new URI(aaflocate+"/AAF_NS.service:2.0"));
+				print(true,"Test Service for Perms driven by AAFLocator");
+				Locator<URI> locator = new AAFLocator(si,serviceURI);
 				for(SecuritySetter<HttpURLConnection> ss : lss) {
 					permTest(locator,ss);
 				}
@@ -120,7 +117,7 @@ public class TestConnectivity {
 				print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
 				for(SecuritySetter<HttpURLConnection> ss : lss) {
 					if(ss instanceof HBasicAuthSS) {
-						basicAuthTest(new AAFLocator(si, new URI(aaflocate+"/AAF_NS.service:2.0")),ss);
+						basicAuthTest(new AAFLocator(si, serviceURI),ss);
 					}
 				}
 				

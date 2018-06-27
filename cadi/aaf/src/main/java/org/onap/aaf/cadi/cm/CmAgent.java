@@ -24,45 +24,60 @@ package org.onap.aaf.cadi.cm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayDeque;
+import java.util.Date;
 import java.util.Deque;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.CmdLine;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.aaf.client.ErrMessage;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
+import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.sso.AAFSSO;
 import org.onap.aaf.cadi.util.FQI;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
-import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.env.util.Split;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
-import java.util.Properties;
-
+import aaf.v2_0.Perm;
+import aaf.v2_0.Perms;
 import certman.v1_0.Artifacts;
 import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;
 import certman.v1_0.CertificateRequest;
+import locate.v1_1.Configuration;
+import locate.v1_1.Configuration.Props;
 
 public class CmAgent {
+	private static final String HASHES = "######################";
 	private static final String PRINT = "print";
 	private static final String FILE = "file";
 	private static final String PKCS12 = "pkcs12";
@@ -76,6 +91,8 @@ public class CmAgent {
 	private static RosettaDF<CertificateRequest> reqDF;
 	private static RosettaDF<CertInfo> certDF;
 	private static RosettaDF<Artifacts> artifactsDF;
+	private static RosettaDF<Configuration> configDF;
+	private static RosettaDF<Perms> permDF;
 	private static ErrMessage errMsg;
 	private static Map<String,PlaceArtifact> placeArtifact;
 	private static RosettaEnv env;
@@ -86,7 +103,19 @@ public class CmAgent {
 		int exitCode = 0;
 		doExit = true;
 		try {
-			AAFSSO aafsso = new AAFSSO(args);
+			AAFSSO aafsso = new AAFSSO(args, new AAFSSO.ProcessArgs() {
+				@Override
+				public Properties process(String[] args, Properties props) {
+					if(args.length>1) {
+						if(args[0].equals("validate")) {
+							props.put(Config.CADI_PROP_FILES, args[1]);
+						} else if (!args[0].equals("genkeypair")) {
+							props.put("aaf_id", args[1]);
+						}	
+					}
+					return props;
+				}
+			});
 			if(aafsso.loginOnly()) {
 				aafsso.setLogDefault();
 				aafsso.writeFiles();
@@ -105,15 +134,18 @@ public class CmAgent {
 				
 				if(cmds.size()==0) {
 					aafsso.setLogDefault();
+					// NOTE: CHANGE IN CMDS should be reflected in AAFSSO constructor, to get FQI->aaf-id or not
 					System.out.println("Usage: java -jar <cadi-aaf-*-full.jar> cmd [<tag=value>]*");
-					System.out.println("   create   <mechID> [<machine>]");
-					System.out.println("   read     <mechID> [<machine>]");
-					System.out.println("   update   <mechID> [<machine>]");
-					System.out.println("   delete   <mechID> [<machine>]");
-					System.out.println("   copy     <mechID> <machine> <newmachine>[,<newmachine>]*");
-					System.out.println("   place    <mechID> [<machine>]");
-					System.out.println("   showpass <mechID> [<machine>]");
-					System.out.println("   check    <mechID> [<machine>]");
+					System.out.println("   create   <FQI> [<machine>]");
+					System.out.println("   read     <FQI> [<machine>]");
+					System.out.println("   update   <FQI> [<machine>]");
+					System.out.println("   delete   <FQI> [<machine>]");
+					System.out.println("   copy     <FQI> <machine> <newmachine>[,<newmachine>]*");
+					System.out.println("   place    <FQI> [<machine>]");
+					System.out.println("   showpass <FQI> [<machine>]");
+					System.out.println("   check    <FQI> [<machine>]");
+					System.out.println("   config   <FQI>");
+					System.out.println("   validate <cadi.props>");
 					System.out.println("   genkeypair");
 					if (doExit) {
 						System.exit(1);
@@ -125,6 +157,8 @@ public class CmAgent {
 				reqDF = env.newDataFactory(CertificateRequest.class);
 				artifactsDF = env.newDataFactory(Artifacts.class);
 				certDF = env.newDataFactory(CertInfo.class);
+				configDF = env.newDataFactory(Configuration.class);
+				permDF = env.newDataFactory(Perms.class);
 				errMsg = new ErrMessage(env);
 	
 				placeArtifact = new HashMap<String,PlaceArtifact>();
@@ -154,29 +188,44 @@ public class CmAgent {
 					AAFCon<?> aafcon = new AAFConHttp(access,Config.CM_URL);
 
 					String cmd = cmds.removeFirst();
-					if("place".equals(cmd)) {
-						placeCerts(trans,aafcon,cmds);
-					} else if("create".equals(cmd)) {
-						createArtifact(trans, aafcon,cmds);
-					} else if("read".equals(cmd)) {
-						readArtifact(trans, aafcon, cmds);
-					} else if("copy".equals(cmd)) {
-						copyArtifact(trans, aafcon, cmds);
-					} else if("update".equals(cmd)) {
-						updateArtifact(trans, aafcon, cmds);
-					} else if("delete".equals(cmd)) {
-						deleteArtifact(trans, aafcon, cmds);
-					} else if("showpass".equals(cmd)) {
-						showPass(trans,aafcon,cmds);
-					} else if("check".equals(cmd)) {
-						try {
-							exitCode = check(trans,aafcon,cmds);
-						} catch (Exception e) {
-							exitCode = 1;
-							throw e;
-						}
-					} else {
-						AAFSSO.cons.printf("Unknown command \"%s\"\n", cmd);
+					switch(cmd) {
+						case "place":
+							placeCerts(trans,aafcon,cmds);
+							break;
+						case "create":
+							createArtifact(trans, aafcon,cmds);
+							break;
+						case "read":
+							readArtifact(trans, aafcon, cmds);
+							break;
+						case "copy":
+							copyArtifact(trans, aafcon, cmds);
+							break;
+						case "update":
+							updateArtifact(trans, aafcon, cmds);
+							break;
+						case "delete":
+							deleteArtifact(trans, aafcon, cmds);
+							break;
+						case "showpass":
+							showPass(trans, aafcon, cmds);
+							break;
+						case "config":
+							initConfig(trans,access,aafcon,cmds);
+							break;
+						case "validate":
+							validate(aafsso,aafcon);
+							break;
+						case "check":
+							try {
+								exitCode = check(trans,aafcon,cmds);
+							} catch (Exception e) {
+								exitCode = 1;
+								throw e;
+							}
+							break;
+						default:
+							AAFSSO.cons.printf("Unknown command \"%s\"\n", cmd);
 					}
 				} finally {
 					StringBuilder sb = new StringBuilder();
@@ -217,7 +266,7 @@ public class CmAgent {
 		return value;
 	}
 
-	private static String mechID(Deque<String> cmds) {
+	private static String fqi(Deque<String> cmds) {
 		if(cmds.size()<1) {
 			String alias = env.getProperty(Config.CADI_ALIAS);
 			return alias!=null?alias:AAFSSO.cons.readLine("MechID: ");
@@ -245,7 +294,7 @@ public class CmAgent {
 	}
 
 	private static void createArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 
 		Artifacts artifacts = new Artifacts();
@@ -299,7 +348,7 @@ public class CmAgent {
 	
 
 	private static void readArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 
 		TimeTaken tt = trans.start("Read Artifact", Env.SUB);
@@ -341,7 +390,7 @@ public class CmAgent {
 	}
 	
 	private static void copyArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 		String[] newmachs = machines(cmds);
 		if(machine==null || newmachs == null) {
@@ -381,7 +430,7 @@ public class CmAgent {
 	}
 
 	private static void updateArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 
 		TimeTaken tt = trans.start("Update Artifact", Env.REMOTE);
@@ -445,7 +494,7 @@ public class CmAgent {
 	}
 	
 	private static void deleteArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechid = mechID(cmds);
+		String mechid = fqi(cmds);
 		String machine = machine(cmds);
 		
 		TimeTaken tt = trans.start("Delete Artifact", Env.REMOTE);
@@ -468,7 +517,7 @@ public class CmAgent {
 
 	private static boolean placeCerts(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
 		boolean rv = false;
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 		String[] fqdns = Split.split(':', machine);
 		String key;
@@ -530,7 +579,7 @@ public class CmAgent {
 	}
 
 	private static void showPass(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 
 		TimeTaken tt = trans.start("Show Password", Env.REMOTE);
@@ -598,6 +647,121 @@ public class CmAgent {
 	}
 	
 
+	private static void initConfig(Trans trans, PropAccess pa, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+		final String fqi = fqi(cmds);
+		final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
+		final String rootFile = FQI.reverseDomain(fqi);
+		final File dir = new File(pa.getProperty(Config.CADI_ETCDIR, "."));
+		if(dir.exists()) {
+			System.out.println("Writing to " + dir.getCanonicalFile());
+		} else if(dir.mkdirs()) {
+			System.out.println("Created directory " + dir.getCanonicalFile());
+		} else {
+			System.err.println("Unable to create or write to " + dir.getCanonicalPath());
+			return;
+		}
+		
+		TimeTaken tt = trans.start("Get Configuration", Env.REMOTE);
+		try {
+			boolean ok=false;
+			File fprops = File.createTempFile(rootFile, ".tmp",dir);
+			PrintStream out = new PrintStream(new FileOutputStream(fprops));
+			out.println(HASHES);
+			out.print("# Configuration File generated on ");
+			out.println(new Date().toString());
+			out.println(HASHES);
+			
+			File fkf = new File(dir,rootFile+".keyfile");
+			if(!fkf.exists()) {
+				CmdLine.main(new String[] {"keygen",fkf.toString()});
+			}
+			out.print("cadi_keyfile=");
+			out.println(fkf.getCanonicalPath());
+			
+			out.print(Config.AAF_APPID);
+			out.print('=');
+			out.println(fqi);
+			
+			Symm filesymm = Symm.obtain(fkf);
+			out.print(Config.AAF_APPPASS);
+			out.print("=enc:");
+			String ps = pa.decrypt(pa.getProperty(Config.AAF_APPPASS), false);
+			ps = filesymm.enpass(ps);
+			out.println(ps);
+			
+			out.print(Config.CADI_TRUSTSTORE);
+			out.print("=");
+			File origTruststore = new File(pa.getProperty(Config.CADI_TRUSTSTORE));
+			File newTruststore = new File(dir,origTruststore.getName());
+			if(!newTruststore.exists()) {
+				Files.copy(origTruststore.toPath(), newTruststore.toPath());
+			}
+			out.println(newTruststore.getCanonicalPath());
+
+			out.print(Config.CADI_TRUSTSTORE_PASSWORD);
+			out.print("=enc:");
+			ps = pa.decrypt(pa.getProperty(Config.CADI_TRUSTSTORE_PASSWORD), false);
+			ps = filesymm.enpass(ps);
+			out.println(ps);
+
+			
+			try {
+				Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
+						.read("/configure/"+fqi+"/aaf", configDF);
+				if(acf.get(TIMEOUT)) {
+//					out.println(acf.value.getName());
+					for(Props props : acf.value.getProps()) {
+						out.println(props.getTag() + '=' + props.getValue());					
+					}
+					ok = true;
+				} else if(acf.code()==401){
+					trans.error().log("Bad Password sent to AAF");
+				} else {
+					trans.error().log(errMsg.toMsg(acf));
+				}
+			} finally {
+				out.close();
+			}
+			if(ok) {
+				File newFile = new File(dir,rootFile+".common.props");
+				fprops.renameTo(newFile);
+				System.out.println("Created " + newFile.getCanonicalPath());
+				fprops = newFile;
+			} else {
+				fprops.delete();
+			}
+		} finally {
+			tt.done();
+		}
+	}
+	
+	private static void validate(final AAFSSO aafsso, final AAFCon<?> aafcon) throws LocatorException, CadiException, APIException {
+		System.out.println("Validating Configuration...");
+		aafcon.clone(aafsso.access().getProperty(Config.AAF_URL)).best(new Retryable<Void>() {
+			@Override
+			public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+				Future<Perms> fc = client.read("/authz/perms/user/"+aafsso.user(),permDF);
+				if(fc.get(aafcon.timeout)) {
+					System.out.print("Success connecting to ");
+					System.out.println(client.getURI());
+					System.out.print("   Permissions for ");
+					System.out.println(aafsso.user());
+					for(Perm p : fc.value.getPerm()) {
+						System.out.print('\t');
+						System.out.print(p.getType());
+						System.out.print('|');
+						System.out.print(p.getInstance());
+						System.out.print('|');
+						System.out.println(p.getAction());
+					}
+				} else {
+					System.err.println("Error: " + fc.code() + ' ' + fc.body());
+				}
+				return null;
+			}
+		});
+	}
+
 	/**
 	 * Check returns Error Codes, so that Scripts can know what to do
 	 * 
@@ -614,7 +778,7 @@ public class CmAgent {
 	 */
 	private static int check(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
 		int exitCode=1;
-		String mechID = mechID(cmds);
+		String mechID = fqi(cmds);
 		String machine = machine(cmds);
 		
 		TimeTaken tt = trans.start("Check Certificate", Env.REMOTE);

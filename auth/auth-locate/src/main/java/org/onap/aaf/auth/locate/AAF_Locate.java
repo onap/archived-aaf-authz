@@ -62,6 +62,7 @@ import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Env;
+import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 import com.datastax.driver.core.Cluster;
 
