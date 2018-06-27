@@ -69,20 +69,28 @@ public class AAFSSO {
 	private boolean ok;
 
 	public AAFSSO(String[] args) throws IOException, CadiException {
+		this(args,new Properties());
+	}
+	
+	public AAFSSO(String[] args, ProcessArgs pa) throws IOException, CadiException {
+		this(args,pa.process(args, new Properties()));
+	}
+
+	public AAFSSO(String[] args, Properties dp) throws IOException, CadiException {
+		stdOutOrig = System.out;
+		stdErrOrig = System.err;
 		ok = true;
 		List<String> nargs = parseArgs(args);
-		diskprops = new Properties();
+		diskprops = dp;
 		touchDiskprops = false;
 
 		dot_aaf = new File(System.getProperty("user.home") + "/.aaf");
 		if (!dot_aaf.exists()) {
 			dot_aaf.mkdirs();
 		}
-		stdOutOrig = System.out;
-		stdErrOrig = System.err;
 		File f = new File(dot_aaf, "sso.out");
 		os = new PrintStream(new FileOutputStream(f, true));
-		System.setOut(os);
+		//System.setOut(os);
 		System.setErr(os);
 
 		sso = new File(dot_aaf, "sso.props");
@@ -174,6 +182,12 @@ public class AAFSSO {
 				appID=null;
 			}
 			
+			if(appID!=null && access.getProperty(Config.AAF_APPPASS)==null) {
+				char[] password = cons.readPassword("Password for %s: ", appID);
+				String app_pass = access.encrypt(new String(password));
+				access.setProperty(Config.AAF_APPPASS,app_pass);
+			}
+			
 			String keystore=access.getProperty(Config.CADI_KEYSTORE);
 			String keystore_pass=access.getProperty(Config.CADI_KEYSTORE_PASSWORD);
 			
@@ -183,6 +197,7 @@ public class AAFSSO {
 				for (File tsf : dot_aaf.listFiles()) {
 					name = tsf.getName();
 					if (!name.contains("trust") && (name.endsWith(".jks") || name.endsWith(".p12"))) {
+						setLogDefault();
 						select = cons.readLine("Use %s for Identity? (y/n): ",tsf.getName());
 						if("y".equalsIgnoreCase(select)) {
 							keystore = tsf.getCanonicalPath();
@@ -282,14 +297,14 @@ public class AAFSSO {
 			
 			String locateUrl = access.getProperty(Config.AAF_LOCATE_URL);
 			if(locateUrl==null) {
-				locateUrl=AAFSSO.cons.readLine("AAF Locator FQDN/machine[:port]=https://");
+				locateUrl=AAFSSO.cons.readLine("AAF Locator URL=https://");
 				if(locateUrl==null || locateUrl.length()==0) {
 					err = new StringBuilder(Config.AAF_LOCATE_URL);
 					err.append(" is required.");
 					ok = false;
 					return;
 				} else {
-					locateUrl="https://"+locateUrl+"/locate";
+					locateUrl="https://"+locateUrl;
 				}
 				access.setProperty(Config.AAF_LOCATE_URL, locateUrl);
 				addProp(Config.AAF_LOCATE_URL, locateUrl);
@@ -469,5 +484,9 @@ public class AAFSSO {
 
 	public boolean ok() {
 		return ok;
+	}
+	
+	public static interface ProcessArgs {
+		public Properties process(final String[] args, final Properties props);
 	}
 }

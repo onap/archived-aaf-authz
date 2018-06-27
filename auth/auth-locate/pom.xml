@@ -48,6 +48,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
+			<artifactId>aaf-auth-client</artifactId>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-core</artifactId>
 		</dependency>
 
@@ -59,6 +64,11 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.onap.aaf.authz</groupId>
+			<artifactId>aaf-misc-rosetta</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -79,7 +89,6 @@
 					<schemaDirectory>src/main/xsd</schemaDirectory>
 				</configuration>
 			</plugin>
-
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -32,10 +32,10 @@ import locate.v1_0.Endpoint;
 import locate.v1_0.Endpoints;
 import locate.v1_0.MgmtEndpoint;
 import locate.v1_0.MgmtEndpoints;
+import locate.v1_1.Configuration;
 import locate_local.v1_0.Error;
 import locate_local.v1_0.InRequest;
 import locate_local.v1_0.Out;
-import locate_local.v1_1.Configuration;
 
 public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error> {
 	

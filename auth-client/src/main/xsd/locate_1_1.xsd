@@ -20,8 +20,8 @@
 -->
 <xs:schema 
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	xmlns:locate_local="urn:locate_local:v1_1" 
-	targetNamespace="urn:locate_local:v1_1" 
+	xmlns:locate_local="urn:locate:v1_1" 
+	targetNamespace="urn:locate:v1_1" 
 	elementFormDefault="qualified">
 	
 
