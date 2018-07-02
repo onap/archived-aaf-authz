@@ -32,7 +32,7 @@ import java.util.List;
 import org.junit.*;
 import org.mockito.*;
 import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.cm.PlaceArtifactInFiles;
+import org.onap.aaf.cadi.configure.PlaceArtifactInFiles;
 import org.onap.aaf.misc.env.Trans;
 
 import certman.v1_0.Artifacts.Artifact;

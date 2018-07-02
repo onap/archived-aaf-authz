@@ -30,7 +30,13 @@ package org.onap.aaf.misc.env.util;
  */
 
 public class Split {
+	  private static final String[] BLANK = new String[0];
+	  
 	  public static String[] split(char c, String value) {
+		  if(value==null) {
+			  return BLANK;
+		  }
+
 		  // Count items to preallocate Array (memory alloc is more expensive than counting twice)
 		  int count,idx;
 		  for(count=1,idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,++idx),++count);
@@ -50,6 +56,9 @@ public class Split {
 	  }
 
 	  public static String[] splitTrim(char c, String value) {
+		  if(value==null) {
+			  return BLANK;
+		  }
 		  // Count items to preallocate Array (memory alloc is more expensive than counting twice)
 		  int count,idx;
 		  for(count=1,idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,++idx),++count);
@@ -69,6 +78,10 @@ public class Split {
 	  }
 
 	  public static String[] splitTrim(char c, String value, int size) {
+		  if(value==null) {
+			  return BLANK;
+		  }
+
 		  int idx;
 		  String[] rv = new String[size];
 		  if(size==1) {

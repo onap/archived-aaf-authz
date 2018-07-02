@@ -450,9 +450,11 @@ public class Symm {
 		   this.range = range;
 	   }
 	   public int convert(int read) throws IOException {
+		   // System.out.print((char)read);
 		   switch(read) {
 			   case -1: 
 			   case '=':
+			   case ' ':
 			   case '\n':
 			   case '\r':
 				   return -1;

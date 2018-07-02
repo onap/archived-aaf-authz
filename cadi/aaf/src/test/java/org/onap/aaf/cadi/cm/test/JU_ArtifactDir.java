@@ -42,7 +42,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.cm.ArtifactDir;
+import org.onap.aaf.cadi.configure.ArtifactDir;
 import org.onap.aaf.cadi.util.Chmod;
 import org.onap.aaf.misc.env.Trans;
 

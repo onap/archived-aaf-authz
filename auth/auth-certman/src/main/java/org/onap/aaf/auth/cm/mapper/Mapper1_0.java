@@ -31,8 +31,8 @@ import org.onap.aaf.auth.cm.data.CertReq;
 import org.onap.aaf.auth.cm.data.CertResp;
 import org.onap.aaf.auth.cm.validation.CertmanValidator;
 import org.onap.aaf.auth.dao.cass.ArtiDAO;
-import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.dao.cass.ArtiDAO.Data;
+import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.util.FQI;
@@ -108,7 +108,9 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 		if((value=cin.challenge())!=null) {
 			cout.setChallenge(value);
 		}
+		// In Version 1, Cert is always first
 		cout.getCerts().add(cin.asCertString());
+		// Follow with Trust Chain
 		if(cin.trustChain()!=null) {
 			for(String c : cin.trustChain()) {
 				if(c!=null) {
@@ -116,12 +118,15 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 				}
 			}
 		}
+
 		// Adding all the Certs in one response is a mistake.  Makes it very hard for Agent to setup
 		// Certs in keystore versus Truststore.  Separate in Version 2_0
 		if(cin.trustCAs()!=null) {
 			for(String c : cin.trustCAs()) {
 				if(c!=null) {
-					cout.getCerts().add(c);
+					if(!cout.getCerts().contains(c)) {
+						cout.getCerts().add(c);
+					}
 				}
 			}
 		}
@@ -138,7 +143,10 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 			}
 			cout.setNotes(sb.toString());
 		}
-		cout.getCaIssuerDNs().addAll(cin.caIssuerDNs());
+		List<String> caIssuerDNs = cout.getCaIssuerDNs();
+		for(String s : cin.caIssuerDNs()) {
+			caIssuerDNs.add(s);
+		}
 		cout.setEnv(cin.env());
 		return Result.ok(cout);
 

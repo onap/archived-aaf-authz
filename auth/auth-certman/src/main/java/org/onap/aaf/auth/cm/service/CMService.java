@@ -59,7 +59,7 @@ import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.aaf.AAFPermission;
-import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.util.Chrono;
@@ -317,7 +317,7 @@ public class CMService {
 				crdd.type = CredDAO.CERT_SHA256_RSA;
 				credDAO.create(trans, crdd);
 				
-				CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), ca.getTrustedCAs(), compileNotes(notes));
+				CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(),compileNotes(notes));
 				return Result.ok(cr);
 			} catch (Exception e) {
 				trans.error().log(e);
@@ -398,7 +398,7 @@ public class CMService {
 				cdd.x509=Factory.toString(trans, x509);
 				certDAO.create(trans, cdd);
 				
-				CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), ca.getTrustedCAs(), compileNotes(null));
+				CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), compileNotes(null));
 				return Result.ok(cr);
 			} catch (Exception e) {
 				trans.error().log(e);

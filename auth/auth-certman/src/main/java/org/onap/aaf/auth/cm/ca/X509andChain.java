@@ -25,8 +25,8 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.onap.aaf.auth.env.NullTrans;
-import org.onap.aaf.cadi.cm.CertException;
-import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.configure.CertException;
+import org.onap.aaf.cadi.configure.Factory;
 
 
 /**
@@ -45,14 +45,14 @@ public class X509andChain {
 		trustChain = null;
 	}
 	
-	public X509andChain(X509Certificate cert, String[] trustChain) {
+	public X509andChain(X509Certificate cert, String[] tc) throws IOException, CertException {
 		this.cert = cert;
-		this.trustChain = trustChain;
+		trustChain=tc;
 	}
 
-	public X509andChain(X509Certificate cert, List<String> chain) {
+	public X509andChain(X509Certificate cert, List<String> chain) throws IOException, CertException {
 		this.cert = cert;
-		trustChain = new String[chain.size()];
+		trustChain = new String[chain.size()+1];
 		chain.toArray(trustChain);
 	}
 	
@@ -67,6 +67,7 @@ public class X509andChain {
 			trustChain=temp;
 		}
 	}
+	
 
 	public X509Certificate getX509() {
 		return cert;

@@ -19,13 +19,14 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -53,6 +54,7 @@ import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.sso.AAFSSO;
@@ -76,8 +78,8 @@ import certman.v1_0.CertificateRequest;
 import locate.v1_1.Configuration;
 import locate.v1_1.Configuration.Props;
 
-public class CmAgent {
-	private static final String HASHES = "######################";
+public class Agent {
+	private static final String HASHES = "################################################################";
 	private static final String PRINT = "print";
 	private static final String FILE = "file";
 	private static final String PKCS12 = "pkcs12";
@@ -103,25 +105,36 @@ public class CmAgent {
 		int exitCode = 0;
 		doExit = true;
 		try {
-			AAFSSO aafsso = new AAFSSO(args, new AAFSSO.ProcessArgs() {
-				@Override
-				public Properties process(String[] args, Properties props) {
-					if(args.length>1) {
-						if(args[0].equals("validate")) {
-							props.put(Config.CADI_PROP_FILES, args[1]);
-						} else if (!args[0].equals("genkeypair")) {
-							props.put("aaf_id", args[1]);
-						}	
+			AAFSSO aafsso;
+			PropAccess access;
+			
+			if(args.length>0 && args[0].equals("validate")) {
+				int idx = args[1].indexOf('=');
+				aafsso = null;
+				access = new PropAccess(
+							(idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
+							'='+
+						    (idx<0?args[1]:args[1].substring(idx+1)));
+			} else {
+				aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
+					@Override
+					public Properties process(String[] args, Properties props) {
+						if(args.length>1) {
+							if (!args[0].equals("genkeypair")) {
+								props.put("aaf_id", args[1]);
+							}	
+						}
+						return props;
 					}
-					return props;
-				}
-			});
-			if(aafsso.loginOnly()) {
+				});
+				access = aafsso.access();
+			}
+				
+			if(aafsso!=null && aafsso.loginOnly()) {
 				aafsso.setLogDefault();
 				aafsso.writeFiles();
 				System.out.println("AAF SSO information created in ~/.aaf");
 			} else {
-				PropAccess access = aafsso.access();
 				env = new RosettaEnv(access.getProperties());
 				Deque<String> cmds = new ArrayDeque<String>();
 				for(String p : args) {
@@ -145,7 +158,7 @@ public class CmAgent {
 					System.out.println("   showpass <FQI> [<machine>]");
 					System.out.println("   check    <FQI> [<machine>]");
 					System.out.println("   config   <FQI>");
-					System.out.println("   validate <cadi.props>");
+					System.out.println("   validate <FQI>.props>");
 					System.out.println("   genkeypair");
 					if (doExit) {
 						System.exit(1);
@@ -174,16 +187,18 @@ public class CmAgent {
 					trans.setProperty("oauth_token", token);
 				}
 				try {
+					if(aafsso!=null) {
 					// show Std out again
-					aafsso.setLogDefault();
-					aafsso.setStdErrDefault();
-					
-					// if CM_URL can be obtained, add to sso.props, if written
-					String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL+": ");
-					if(cm_url!=null) {
-						aafsso.addProp(Config.CM_URL, cm_url);
+						aafsso.setLogDefault();
+						aafsso.setStdErrDefault();
+						
+						// if CM_URL can be obtained, add to sso.props, if written
+						String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL+": ");
+						if(cm_url!=null) {
+							aafsso.addProp(Config.CM_URL, cm_url);
+						}
+						aafsso.writeFiles();
 					}
-					aafsso.writeFiles();
 
 					AAFCon<?> aafcon = new AAFConHttp(access,Config.CM_URL);
 
@@ -214,7 +229,7 @@ public class CmAgent {
 							initConfig(trans,access,aafcon,cmds);
 							break;
 						case "validate":
-							validate(aafsso,aafcon);
+							validate(access);
 							break;
 						case "check":
 							try {
@@ -234,7 +249,9 @@ public class CmAgent {
 	                	trans.info().log("Trans Info\n",sb);
 	                }
 				}
-				aafsso.close();
+				if(aafsso!=null) {
+					aafsso.close();
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -610,7 +627,7 @@ public class CmAgent {
 						if(allowed) {
 							File dir = new File(a.getDir());
 							Properties props = new Properties();
-							FileInputStream fis = new FileInputStream(new File(dir,a.getNs()+".props"));
+							FileInputStream fis = new FileInputStream(new File(dir,a.getNs()+".cred.props"));
 							try {
 								props.load(fis);
 								fis.close();
@@ -664,88 +681,135 @@ public class CmAgent {
 		TimeTaken tt = trans.start("Get Configuration", Env.REMOTE);
 		try {
 			boolean ok=false;
-			File fprops = File.createTempFile(rootFile, ".tmp",dir);
-			PrintStream out = new PrintStream(new FileOutputStream(fprops));
-			out.println(HASHES);
-			out.print("# Configuration File generated on ");
-			out.println(new Date().toString());
-			out.println(HASHES);
-			
-			File fkf = new File(dir,rootFile+".keyfile");
-			if(!fkf.exists()) {
-				CmdLine.main(new String[] {"keygen",fkf.toString()});
-			}
-			out.print("cadi_keyfile=");
-			out.println(fkf.getCanonicalPath());
-			
-			out.print(Config.AAF_APPID);
-			out.print('=');
-			out.println(fqi);
-			
-			Symm filesymm = Symm.obtain(fkf);
-			out.print(Config.AAF_APPPASS);
-			out.print("=enc:");
-			String ps = pa.decrypt(pa.getProperty(Config.AAF_APPPASS), false);
-			ps = filesymm.enpass(ps);
-			out.println(ps);
-			
-			out.print(Config.CADI_TRUSTSTORE);
-			out.print("=");
-			File origTruststore = new File(pa.getProperty(Config.CADI_TRUSTSTORE));
-			File newTruststore = new File(dir,origTruststore.getName());
-			if(!newTruststore.exists()) {
-				Files.copy(origTruststore.toPath(), newTruststore.toPath());
-			}
-			out.println(newTruststore.getCanonicalPath());
+			File fProps = File.createTempFile(rootFile, ".tmp",dir);
+			File fSecureTempProps = File.createTempFile(rootFile, ".cred.tmp",dir);
+			File fSecureProps = new File(dir,rootFile+".cred.props");
+			PrintStream psProps;
 
-			out.print(Config.CADI_TRUSTSTORE_PASSWORD);
-			out.print("=enc:");
-			ps = pa.decrypt(pa.getProperty(Config.CADI_TRUSTSTORE_PASSWORD), false);
-			ps = filesymm.enpass(ps);
-			out.println(ps);
-
-			
-			try {
-				Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
-						.read("/configure/"+fqi+"/aaf", configDF);
-				if(acf.get(TIMEOUT)) {
-//					out.println(acf.value.getName());
-					for(Props props : acf.value.getProps()) {
-						out.println(props.getTag() + '=' + props.getValue());					
+			File fLocProps = new File(dir,rootFile + ".location.props");
+			if(!fLocProps.exists()) {
+				psProps = new PrintStream(new FileOutputStream(fLocProps));
+				try {
+					psProps.println(HASHES);
+					psProps.print("# Configuration File generated on ");
+					psProps.println(new Date().toString());
+					psProps.println(HASHES);
+					for(String tag : new String[] {Config.CADI_LATITUDE,Config.CADI_LONGITUDE}) {
+						psProps.print(tag);
+						psProps.print('=');
+						psProps.println(getProperty(pa, trans, false, tag, "%s: ",tag));
 					}
-					ok = true;
-				} else if(acf.code()==401){
-					trans.error().log("Bad Password sent to AAF");
-				} else {
-					trans.error().log(errMsg.toMsg(acf));
+				} finally {
+					psProps.close();
+				}
+			}
+
+			psProps = new PrintStream(new FileOutputStream(fProps));
+			try {
+				PrintStream psCredProps = new PrintStream(new FileOutputStream(fSecureTempProps));
+				try {
+					psCredProps.println(HASHES);
+					psCredProps.print("# Configuration File generated on ");
+					psCredProps.println(new Date().toString());
+					psCredProps.println(HASHES);
+
+					psProps.println(HASHES);
+					psProps.print("# Configuration File generated on ");
+					psProps.println(new Date().toString());
+					psProps.println(HASHES);
+					
+					psProps.print(Config.CADI_PROP_FILES);
+					psProps.print('=');
+					psProps.print(fSecureProps.getCanonicalPath());
+					psProps.print(File.pathSeparatorChar);
+					psProps.println(fLocProps.getCanonicalPath());
+					
+					File fkf = new File(dir,rootFile+".keyfile");
+					if(!fkf.exists()) {
+						CmdLine.main(new String[] {"keygen",fkf.toString()});
+					}
+					psCredProps.print("cadi_keyfile=");
+					psCredProps.println(fkf.getCanonicalPath());
+					
+					psCredProps.print(Config.AAF_APPID);
+					psCredProps.print('=');
+					psCredProps.println(fqi);
+					
+					Symm filesymm = Symm.obtain(fkf);
+					psCredProps.print(Config.AAF_APPPASS);
+					psCredProps.print("=enc:");
+					String ps = pa.decrypt(pa.getProperty(Config.AAF_APPPASS), false);
+					ps = filesymm.enpass(ps);
+					psCredProps.println(ps);
+					
+					psCredProps.print(Config.CADI_TRUSTSTORE);
+					psCredProps.print("=");
+					File origTruststore = new File(pa.getProperty(Config.CADI_TRUSTSTORE));
+					File newTruststore = new File(dir,origTruststore.getName());
+					if(!newTruststore.exists()) {
+						Files.copy(origTruststore.toPath(), newTruststore.toPath());
+					}
+					psCredProps.println(newTruststore.getCanonicalPath());
+		
+					psCredProps.print(Config.CADI_TRUSTSTORE_PASSWORD);
+					psCredProps.print("=enc:");
+					ps = pa.decrypt(pa.getProperty(Config.CADI_TRUSTSTORE_PASSWORD), false);
+					ps = filesymm.enpass(ps);
+					psCredProps.println(ps);
+					
+					try {
+						Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
+								.read("/configure/"+fqi+"/aaf", configDF);
+						if(acf.get(TIMEOUT)) {
+		//					out.println(acf.value.getName());
+							for(Props props : acf.value.getProps()) {
+								psProps.println(props.getTag() + '=' + props.getValue());					
+							}
+							ok = true;
+						} else if(acf.code()==401){
+							trans.error().log("Bad Password sent to AAF");
+						} else {
+							trans.error().log(errMsg.toMsg(acf));
+						}
+					} finally {
+						psProps.close();
+					}
+					if(ok) {
+						File newFile = new File(dir,rootFile+".props");
+						fProps.renameTo(newFile);
+						System.out.println("Created " + newFile.getCanonicalPath());
+						fProps = newFile;
+						
+						fSecureTempProps.renameTo(fSecureProps);
+						System.out.println("Created " + fSecureProps.getCanonicalPath());
+						fProps = newFile;
+					} else {
+						fProps.delete();
+						fSecureTempProps.delete();
+					}
+				} finally {
+					psCredProps.close();
 				}
 			} finally {
-				out.close();
-			}
-			if(ok) {
-				File newFile = new File(dir,rootFile+".common.props");
-				fprops.renameTo(newFile);
-				System.out.println("Created " + newFile.getCanonicalPath());
-				fprops = newFile;
-			} else {
-				fprops.delete();
+				psProps.close();
 			}
 		} finally {
 			tt.done();
 		}
 	}
 	
-	private static void validate(final AAFSSO aafsso, final AAFCon<?> aafcon) throws LocatorException, CadiException, APIException {
+	private static void validate(final PropAccess pa) throws LocatorException, CadiException, APIException {
 		System.out.println("Validating Configuration...");
-		aafcon.clone(aafsso.access().getProperty(Config.AAF_URL)).best(new Retryable<Void>() {
+		final AAFCon<?> aafcon = new AAFConHttp(pa,Config.AAF_URL,new SecurityInfoC<HttpURLConnection>(pa));
+		aafcon.best(new Retryable<Void>() {
 			@Override
 			public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-				Future<Perms> fc = client.read("/authz/perms/user/"+aafsso.user(),permDF);
+				Future<Perms> fc = client.read("/authz/perms/user/"+aafcon.defID(),permDF);
 				if(fc.get(aafcon.timeout)) {
 					System.out.print("Success connecting to ");
 					System.out.println(client.getURI());
 					System.out.print("   Permissions for ");
-					System.out.println(aafsso.user());
+					System.out.println(aafcon.defID());
 					for(Perm p : fc.value.getPerm()) {
 						System.out.print('\t');
 						System.out.print(p.getType());

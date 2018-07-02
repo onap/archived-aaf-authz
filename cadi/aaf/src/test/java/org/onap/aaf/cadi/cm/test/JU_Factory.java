@@ -57,11 +57,10 @@ import java.util.List;
 
 import javax.crypto.Cipher;
 
-import org.onap.aaf.cadi.cm.CertException;
-import org.onap.aaf.cadi.cm.Factory;
-import org.onap.aaf.cadi.cm.Factory.Base64InputStream;
-import org.onap.aaf.cadi.cm.Factory.StripperInputStream;
-
+import org.onap.aaf.cadi.configure.CertException;
+import org.onap.aaf.cadi.configure.Factory;
+import org.onap.aaf.cadi.configure.Factory.Base64InputStream;
+import org.onap.aaf.cadi.configure.Factory.StripperInputStream;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -162,8 +161,8 @@ public class JU_Factory {
 		assertThat(privateKeyString.startsWith("-----BEGIN PRIVATE KEY-----"), is(true));
 		assertThat(privateKeyString.endsWith("-----END PRIVATE KEY-----\n"), is(true));
 
-		PublicKey publicKey = Factory.toPublicKey(transMock, cleanupString(publicKeyString));
-		PrivateKey privateKey = Factory.toPrivateKey(transMock, cleanupString(privateKeyString));
+		PublicKey publicKey = Factory.toPublicKey(transMock, publicKeyString);
+		PrivateKey privateKey = Factory.toPrivateKey(transMock, privateKeyString);
 
 		Cipher encryptor = Factory.pkCipher(publicKey, true);
 		Cipher decryptor = Factory.pkCipher(privateKey, false);

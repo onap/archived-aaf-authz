@@ -49,8 +49,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.PKCS10CertificationRequestBuilder;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.onap.aaf.cadi.cm.CertException;
-import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.configure.CertException;
+import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.misc.env.Trans;
 
 public class CSRMeta {

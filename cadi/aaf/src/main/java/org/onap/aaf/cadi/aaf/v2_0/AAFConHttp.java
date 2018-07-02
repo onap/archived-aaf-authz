@@ -70,8 +70,9 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 			} catch (IOException /*| GeneralSecurityException*/ e) {
 				throw new CadiException(e);
 			}
+		} else {
+			throw new CadiException("No IDs (" + Config.CADI_ALIAS + " or " + Config.AAF_APPID + ") have been identified.");
 		}
-		return null;
 	}
 
 	public AAFConHttp(Access access, String tag) throws APIException, CadiException, LocatorException {

@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.cadi.util.Split;
 
 public class RDN {

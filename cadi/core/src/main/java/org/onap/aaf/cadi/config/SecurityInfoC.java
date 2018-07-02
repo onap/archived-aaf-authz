@@ -34,7 +34,7 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
 	private static Map<Class<?>,SecurityInfoC<?>> sicMap = new HashMap<Class<?>,SecurityInfoC<?>>();
 	public SecuritySetter<CLIENT> defSS;
 
-	private SecurityInfoC(Access access) throws CadiException {
+	public SecurityInfoC(Access access) throws CadiException {
 		super(access);
 		defSS = new SecuritySetter<CLIENT>() {
 				@Override
@@ -54,14 +54,14 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
 			};
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static synchronized <CLIENT> SecurityInfoC<CLIENT> instance(Access access, Class<CLIENT> cls) throws CadiException {
-		SecurityInfoC<?> sic = sicMap.get(cls);
+		@SuppressWarnings("unchecked")
+		SecurityInfoC<CLIENT> sic = (SecurityInfoC<CLIENT>) sicMap.get(cls);
 		if(sic==null) {
 			sic = new SecurityInfoC<CLIENT>(access); 
 			sicMap.put(cls, sic);
 		}
-		return (SecurityInfoC<CLIENT>)sic;
+		return sic;
 	}
 
 	public SecurityInfoC<CLIENT> set(SecuritySetter<CLIENT> defSS) {

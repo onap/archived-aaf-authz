@@ -32,8 +32,7 @@ import java.util.List;
 
 import org.junit.*;
 import org.mockito.*;
-
-import org.onap.aaf.cadi.cm.PlaceArtifactOnStream;
+import org.onap.aaf.cadi.configure.PlaceArtifactOnStream;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.Trans;
 

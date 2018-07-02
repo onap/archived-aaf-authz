@@ -39,6 +39,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -64,28 +65,33 @@ import org.onap.aaf.auth.cm.cert.RDN;
 import org.onap.aaf.auth.env.NullTrans;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.cm.CertException;
-import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.configure.CertException;
+import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
 public class LocalCA extends CA {
 
+	private final static BigInteger ONE = new BigInteger("1");
 	// Extensions
 	private static final KeyPurposeId[] ASN_WebUsage = new KeyPurposeId[] {
 				KeyPurposeId.id_kp_serverAuth, // WebServer
-				KeyPurposeId.id_kp_clientAuth};// WebClient
-				
+				KeyPurposeId.id_kp_clientAuth // WebClient
+				};
+	
 	private final PrivateKey caKey;
 	private final X500Name issuer;
 	private final SecureRandom random = new SecureRandom();
-	private byte[] serialish;
+	private BigInteger serial;
 	private final X509ChainWithIssuer x509cwi; // "Cert" is CACert
-
+	
+	
 	public LocalCA(Access access, final String name, final String env, final String[][] params) throws IOException, CertException {
 		super(access, name, env);
-		serialish = new byte[24];
+	
+		serial = new BigInteger(64,random);
+
 		if(params.length<1 || params[0].length<2) {
 			throw new IOException("LocalCA expects cm_ca.<ca name>=org.onap.aaf.auth.cm.ca.LocalCA,<full path to key file>[;<Full Path to Trust Chain, ending with actual CA>]+");
 		}
@@ -180,7 +186,9 @@ public class LocalCA extends CA {
 		}
 		
 		X500NameBuilder xnb = new X500NameBuilder();
-		for(RDN rnd : RDN.parse(',', x509cwi.getIssuerDN())) {
+		List<RDN> rp = RDN.parse(',', x509cwi.getIssuerDN());
+		Collections.reverse(rp);
+		for(RDN rnd : rp) {
 			xnb.addRDN(rnd.aoi,rnd.value);
 		}
 		issuer = xnb.build();
@@ -201,9 +209,10 @@ public class LocalCA extends CA {
 		TimeTaken tt = trans.start("Create/Sign Cert",Env.SUB);
 		try {
 			BigInteger bi;
-			synchronized(serialish) {
-				random.nextBytes(serialish);
-				bi = new BigInteger(serialish);
+			
+			synchronized(ONE) {
+				bi = serial;
+				serial = serial.add(ONE);
 			}
 				
 			RSAPublicKey rpk = (RSAPublicKey)csrmeta.keypair(trans).getPublic();
@@ -225,20 +234,23 @@ public class LocalCA extends CA {
 
 		    JcaX509ExtensionUtils extUtils = new JcaX509ExtensionUtils();
 		    	xcb.addExtension(Extension.basicConstraints,
-                    	false, new BasicConstraints(false))
+                    	false, new BasicConstraints(false
+                    			))
 		            .addExtension(Extension.keyUsage,
 		                true, new KeyUsage(KeyUsage.digitalSignature
-		                                 | KeyUsage.keyEncipherment))
+		                                 | KeyUsage.keyEncipherment 
+		                                 | KeyUsage.nonRepudiation))
 		            .addExtension(Extension.extendedKeyUsage,
 		                          true, new ExtendedKeyUsage(ASN_WebUsage))
-
                     .addExtension(Extension.authorityKeyIdentifier,
-		                          false, extUtils.createAuthorityKeyIdentifier(x509cwi.cert))
-		            .addExtension(Extension.subjectKeyIdentifier,
-		                          false, extUtils.createSubjectKeyIdentifier(x509cwi.cert.getPublicKey()))
+	                          false, extUtils.createAuthorityKeyIdentifier(x509cwi.cert))
+                    .addExtension(Extension.subjectKeyIdentifier,
+	                          false, extUtils.createSubjectKeyIdentifier(rpk))
 		            .addExtension(Extension.subjectAlternativeName,
 		            		false, new GeneralNames(sans))
-		                                           ;
+//		            .addExtension(MiscObjectIdentifiers.netscape, true, new NetscapeCertType(
+//		            		NetscapeCertType.sslClient|NetscapeCertType.sslClient))
+		            ;		            
 	
 			x509 = new JcaX509CertificateConverter().getCertificate(
 					xcb.build(BCFactory.contentSigner(caKey)));
@@ -248,7 +260,7 @@ public class LocalCA extends CA {
 			tt.done();
 		}
 		
-		return new X509ChainWithIssuer(x509cwi,x509);
+		return new X509andChain(x509,x509cwi.trustChain);
 	}
 
 }

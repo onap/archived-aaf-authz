@@ -48,7 +48,7 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.cadi.locator.HotPeerLocator;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;

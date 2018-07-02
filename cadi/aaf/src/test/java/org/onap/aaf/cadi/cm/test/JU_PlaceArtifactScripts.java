@@ -30,7 +30,7 @@ import java.io.File;
 import org.junit.*;
 import org.mockito.*;
 import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.cm.PlaceArtifactScripts;
+import org.onap.aaf.cadi.configure.PlaceArtifactScripts;
 import org.onap.aaf.misc.env.Trans;
 
 import certman.v1_0.Artifacts.Artifact;

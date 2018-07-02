@@ -52,10 +52,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.aaf.auth.cm.ca.CA;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
 import org.onap.aaf.auth.dao.cached.CachedCertDAO;
-import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.misc.env.Trans;
 
 //TODO: Gabe [JUnit] Import does not exist

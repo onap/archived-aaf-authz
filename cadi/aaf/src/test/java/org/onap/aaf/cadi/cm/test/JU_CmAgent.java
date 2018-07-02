@@ -28,7 +28,7 @@ import java.io.File;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.aaf.cadi.cm.CmAgent;
+import org.onap.aaf.cadi.configure.Agent;
 
 public class JU_CmAgent {
 
@@ -58,62 +58,62 @@ public class JU_CmAgent {
 				"-login",
 				"-noExit",
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"place",
 				"-noExit",
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 				"create"
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 				"read"
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 				"copy"
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 				"update"
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 				"delete"
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 		inStream.reset();
 		args = new String[] {
 				"-noExit",
 				"showpass"
 		};
-		CmAgent.main(args);
+		Agent.main(args);
 
 	}
 

@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;

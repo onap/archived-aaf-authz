@@ -32,6 +32,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CadiWrap;
 import org.onap.aaf.cadi.Connector;
 import org.onap.aaf.cadi.CredVal;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.Taf;
 import org.onap.aaf.cadi.TrustChecker;
@@ -70,7 +71,7 @@ public class CadiHTTPManip {
 	public static final Object[] noAdditional = new Object[0]; // CadiFilter can be created each call in some systems
 
 
-	public CadiHTTPManip(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException {
+	public CadiHTTPManip(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
 		synchronized(LOCK) {
 			this.access = access;
 //			Get getter = new AccessGetter(access);

@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CadiWrap;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.ServletContextAccess;
@@ -188,7 +189,7 @@ public class CadiFilter implements Filter {
 				}
 				try {
 					httpChecker = new CadiHTTPManip(access,null /*reuseable Con*/,tc, additionalTafLurs);
-				} catch (CadiException e1) {
+				} catch (CadiException | LocatorException e1) {
 					throw new ServletException(e1);
 				}
 			} else if(access==null) {

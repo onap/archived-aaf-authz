@@ -47,7 +47,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
-import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;

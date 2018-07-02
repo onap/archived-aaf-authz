@@ -127,7 +127,12 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 				}
 				cout.setNotes(sb.toString());
 			}
-			cout.getCaIssuerDNs().addAll(cin.caIssuerDNs());
+			
+			List<String> caIssuerDNs = cout.getCaIssuerDNs();
+			for(String s : cin.caIssuerDNs()) {
+				caIssuerDNs.add(s);
+			}
+
 			cout.setEnv(cin.env());
 			return Result.ok(cout);
 		} else {

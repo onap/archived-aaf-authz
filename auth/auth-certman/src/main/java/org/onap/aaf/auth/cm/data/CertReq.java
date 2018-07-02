@@ -28,7 +28,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.onap.aaf.auth.cm.ca.CA;
 import org.onap.aaf.auth.cm.cert.BCFactory;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
-import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.cadi.configure.CertException;
 
 public class CertReq {
 	// These cannot be null

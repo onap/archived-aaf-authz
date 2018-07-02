@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 public class CertException extends Exception {
 

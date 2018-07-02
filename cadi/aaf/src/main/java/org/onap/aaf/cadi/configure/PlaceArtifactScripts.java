@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 import java.io.File;
 
@@ -116,7 +116,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
 			" fi\n" +
 			"}\n\n" +
 			javaHome() + "/bin/" +"java -cp $CP " +
-				CmAgent.class.getName() + 
+				Agent.class.getName() + 
 				" cadi_prop_files=$DIR/$APP.props check 2>  $DIR/$APP.STDERR > $DIR/$APP.STDOUT\n" +
 			"case \"$?\" in\n" +
 			"  0)\n" +

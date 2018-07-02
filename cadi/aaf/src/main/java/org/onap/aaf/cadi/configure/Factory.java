@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -64,6 +64,7 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
 import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -155,10 +156,10 @@ public class Factory {
 	}
 	
 	public static PrivateKey toPrivateKey(Trans trans, String pk) throws IOException, CertException {
-		byte[] bytes = decode(new StringReader(pk));
+		byte[] bytes = decode(new StringReader(pk), null);
 		return toPrivateKey(trans, bytes);
 	}
-	
+
 	public static PrivateKey toPrivateKey(Trans trans, byte[] bytes) throws IOException, CertException {
 		TimeTaken tt=trans.start("Reconstitute Private Key", Env.SUB);
 		try {
@@ -169,11 +170,12 @@ public class Factory {
 			tt.done();
 		}
 	}
-	
+
 	public static PrivateKey toPrivateKey(Trans trans, File file) throws IOException, CertException {
 		TimeTaken tt = trans.start("Decode Private Key File", Env.SUB);
 		try {
-			return toPrivateKey(trans,decode(file));
+			Holder<String> firstLine = new Holder<String>(null);
+			return toPrivateKey(trans,decode(file,firstLine));
 		}finally {
 			tt.done();
 		}
@@ -190,7 +192,7 @@ public class Factory {
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(pk.getBytes());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Symm.base64noSplit.decode(bais, baos);
+			Symm.base64noSplit.decode(new StripperInputStream(bais), baos);
 
 			return keyFactory.generatePublic(new X509EncodedKeySpec(baos.toByteArray()));
 		} catch (InvalidKeySpecException e) {
@@ -273,10 +275,25 @@ public class Factory {
 	}
 
 	public static byte[] strip(Reader rdr) throws IOException {
+		return strip(rdr,null);
+	}
+	
+	public static byte[] strip(Reader rdr, Holder<String> hs) throws IOException {
 		BufferedReader br = new BufferedReader(rdr);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		String line;
+		boolean notStarted = true;
 		while((line=br.readLine())!=null) {
+			if(notStarted) {
+				if(line.startsWith("-----")) {
+					notStarted = false;
+					if(hs!=null) {
+						hs.set(line);
+					}
+				} else {
+					continue;
+				}
+			}
 			if(line.length()>0 &&
 			   !line.startsWith("-----") &&
 			   line.indexOf(':')<0) {  // Header elements
@@ -285,7 +302,7 @@ public class Factory {
 		}
 		return baos.toByteArray();
 	}
-	
+
 	public static class StripperInputStream extends InputStream {
 		private Reader created;
 		private BufferedReader br;
@@ -395,17 +412,18 @@ public class Factory {
 		return baos.toByteArray();
 	}
 	
-	public static byte[] decode(File f) throws IOException {
+	public static byte[] decode(File f, Holder<String> hs) throws IOException {
 		FileReader fr = new FileReader(f);
 		try {
-			return Factory.decode(fr);
+			return Factory.decode(fr,hs);
 		} finally {
 			fr.close();
 		}
-
 	}
-	public static byte[] decode(Reader rdr) throws IOException {
-		return decode(strip(rdr));
+
+
+	public static byte[] decode(Reader rdr,Holder<String> hs) throws IOException {
+		return decode(strip(rdr,hs));
 	}
 
 

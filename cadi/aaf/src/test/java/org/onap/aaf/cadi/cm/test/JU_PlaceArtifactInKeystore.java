@@ -39,7 +39,7 @@ import java.security.cert.CertificateException;
 import org.junit.*;
 import org.mockito.*;
 import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.cm.PlaceArtifactInKeystore;
+import org.onap.aaf.cadi.configure.PlaceArtifactInKeystore;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -102,8 +102,9 @@ public class JU_PlaceArtifactInKeystore {
 		certs.add(x509String);
 		certs.add(x509Chain);
 		assertThat(placer.place(transMock, certInfoMock, artiMock, "machine"), is(true));
-		for (String ext : new String[] {"chal", "keyfile", "jks", "props", "trust.jks"}) {
-			assertThat(new File(dirName + '/' + nsName + '.' + ext).exists(), is(true));
+		for (String ext : new String[] {"chal", "keyfile", "jks", "trust.jks", "cred.props"}) {
+			File f = new File(dirName + '/' + nsName + '.' + ext);
+			assertThat(f.exists(), is(true));
 		}
 
 		// coverage

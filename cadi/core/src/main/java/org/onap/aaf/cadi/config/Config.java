@@ -43,6 +43,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Connector;
 import org.onap.aaf.cadi.CredVal;
 import org.onap.aaf.cadi.Locator;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
@@ -225,7 +226,7 @@ public class Config {
 		}
 	}
 
-	public static HttpTaf configHttpTaf(Connector con, SecurityInfoC<HttpURLConnection> si, TrustChecker tc, CredVal up, Lur lur, Object ... additionalTafLurs) throws CadiException {
+	public static HttpTaf configHttpTaf(Connector con, SecurityInfoC<HttpURLConnection> si, TrustChecker tc, CredVal up, Lur lur, Object ... additionalTafLurs) throws CadiException, LocatorException {
 		Access access = si.access;
 		/////////////////////////////////////////////////////
 		// Setup AAFCon for any following
@@ -712,7 +713,7 @@ public class Config {
 
 
 	@SuppressWarnings("unchecked")
-	public static Locator<URI> loadLocator(SecurityInfoC<HttpURLConnection> si, final String _url) {
+	public static Locator<URI> loadLocator(SecurityInfoC<HttpURLConnection> si, final String _url) throws LocatorException {
 		Access access = si.access;
 		Locator<URI> locator = null;
 		if(_url==null) {
@@ -753,6 +754,9 @@ public class Config {
 					access.log(Level.INFO, "AAFLocator enabled using preloaded " + locator.getClass().getSimpleName());
 				}
 			} catch (InvocationTargetException e) {
+				if(e.getTargetException() instanceof LocatorException) {
+					throw (LocatorException)e.getTargetException();
+				}
 				access.log(Level.INIT,e.getTargetException().getMessage(),"AAFLocator for",url,"could not be created.",e);
 			} catch (Exception e) {
 				access.log(Level.INIT,"AAFLocator for",url,"could not be created.",e);

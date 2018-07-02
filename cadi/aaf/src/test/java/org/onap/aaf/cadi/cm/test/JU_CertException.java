@@ -24,8 +24,7 @@ package org.onap.aaf.cadi.cm.test;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
-
-import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.cadi.configure.CertException;
 
 public class JU_CertException {
 

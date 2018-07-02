@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +76,8 @@ public abstract class ArtifactDir implements PlaceArtifact {
 				
 				// Also place cm_url and Host Name
 				addProperty(Config.CM_URL,trans.getProperty(Config.CM_URL));
-				addProperty(Config.HOSTNAME,machine);
-				addProperty(Config.AAF_ENV,certInfo.getEnv());
+//				addProperty(Config.HOSTNAME,machine);
+//				addProperty(Config.AAF_ENV,certInfo.getEnv());
 				// Obtain Issuers
 				boolean first = true;
 				StringBuilder issuers = new StringBuilder();
@@ -208,10 +209,11 @@ public abstract class ArtifactDir implements PlaceArtifact {
 		}
 		boolean first=processed.get("dir")==null;
 		try {
-			File f = new File(dir,arti.getNs()+".props");
+			File f = new File(dir,arti.getNs()+".cred.props");
 			if(f.exists()) {
 				if(first) {
-					f.delete();
+					File backup = File.createTempFile(f.getName()+'.', ".backup",dir);
+					f.renameTo(backup);
 				} else {
 					f.setWritable(true);
 				}

@@ -37,6 +37,7 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CadiWrap;
 import org.onap.aaf.cadi.Connector;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.TrustChecker;
 import org.onap.aaf.cadi.config.Config;
@@ -66,7 +67,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
 
 	private final String[] no_authn;
 	
-	public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException {
+	public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
 		cadi = new CadiHTTPManip(access, con, tc, additionalTafLurs);
 		String no = access.getProperty(Config.CADI_NOAUTHN, null);
 		if(no!=null) {

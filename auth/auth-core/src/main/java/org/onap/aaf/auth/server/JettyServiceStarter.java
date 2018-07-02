@@ -231,11 +231,16 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
 		try {
 			register(service.registrants(port));
 			access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
+			server.join();
 		} catch(Exception e) {
 			access().log(e,"Error registering " + service.app_name);
-			// Question: Should Registered Services terminate?
+			String doExit = access().getProperty("cadi_exitOnFailure", "true");
+			if (doExit == "true") {
+				System.exit(1);
+			} else {
+				throw e;
+			}
 		}
-		server.join();
 	}
 
 	private FilterChain buildFilterChain(final AbsService<?,?> as, final FilterChain doLast) throws CadiException, LocatorException {

@@ -36,7 +36,8 @@ import org.onap.aaf.auth.cm.cert.CSRMeta;
 import org.onap.aaf.auth.cm.cert.RDN;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.cm.CertException;
+import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Split;
 
@@ -57,9 +58,9 @@ public abstract class CA {
 	private final String env;
 	private MessageDigest messageDigest;
 	private final String permType;
-	private Set<String> caIssuerDNs;
 	private final ArrayList<String> idDomains;
 	private String[] trustedCAs;
+	private String[] caIssuerDNs;
 	private List<RDN> rdns; 
 
 
@@ -71,7 +72,7 @@ public abstract class CA {
 		if(permType==null) {
 			throw new CertException(CM_CA_PREFIX + name + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
 		}
-		caIssuerDNs = new HashSet<>();
+		caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
 		
 		String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
 		
@@ -112,7 +113,12 @@ public abstract class CA {
 				String trustCas = access.getProperty(CM_TRUST_CAS,null);
 				if(trustCas!=null) {
 					for(String fname : Split.splitTrim(',', trustCas)) {
-						File crt = new File(data,fname);
+						File crt;
+						if(fname.contains("/")) {
+							crt = new File(fname);
+						} else {
+							crt = new File(data,fname);
+						}
 						if(crt.exists()) {
 							access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
 							bytes = new byte[(int)crt.length()];
@@ -139,7 +145,19 @@ public abstract class CA {
 	}
 
 	protected void addCaIssuerDN(String issuerDN) {
-		caIssuerDNs.add(issuerDN);
+		boolean changed = true;
+		for(String id : caIssuerDNs) {
+			if(id.equals(issuerDN)) {
+				changed = false;
+				break;
+			}
+		}
+		if(changed) {
+			String[] newsa = new String[caIssuerDNs.length+1];
+			newsa[0]=issuerDN;
+			System.arraycopy(caIssuerDNs, 0, newsa, 1, caIssuerDNs.length);
+			caIssuerDNs = newsa;
+		}
 	}
 	
 	protected synchronized void addTrustedCA(final String crtString) {
@@ -161,7 +179,7 @@ public abstract class CA {
 		trustedCAs = temp;
 	}
 	
-	public Set<String> getCaIssuerDNs() {
+	public String[] getCaIssuerDNs() {
 		return caIssuerDNs;
 	}
 	
@@ -211,4 +229,5 @@ public abstract class CA {
 	public CSRMeta newCSRMeta() {
 		return new CSRMeta(rdns);
 	}
+
 }

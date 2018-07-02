@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.onap.aaf.auth.rserv.TransFilter;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Connector;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.TrustChecker;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.cadi.principal.TrustPrincipal;
@@ -48,7 +49,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
 
 	public static final int BUCKETSIZE = 2;
 	
-	public AuthzTransFilter(AuthzEnv env, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException {
+	public AuthzTransFilter(AuthzEnv env, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
 		super(env.access(),con, tc, additionalTafLurs);
 		this.env = env;
 		serviceMetric = new Metric();

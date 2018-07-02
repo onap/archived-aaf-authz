@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
 import java.io.File;
 import java.security.KeyStore;
@@ -28,7 +28,10 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Symm;
@@ -52,7 +55,8 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 		try {
 			KeyStore jks = KeyStore.getInstance(kst);
 			if(fks.exists()) {
-				fks.delete();
+				File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
+				fks.renameTo(backup);
 			}	
 
 			// Get the Cert(s)... Might include Trust store
@@ -60,29 +64,26 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			// find where the trusts end in 1.0 API
 		
 			X509Certificate x509;
-			List<X509Certificate> certList = new ArrayList<X509Certificate>();
-			Certificate[] trustChain = null;
-			Certificate[] trustCAs;
+			List<X509Certificate> chainList = new ArrayList<X509Certificate>();
+			Set<X509Certificate> caSet = new HashSet<X509Certificate>();
 			for(Certificate c : certColl) {
 				x509 = (X509Certificate)c;
-				if(trustChain==null && x509.getSubjectDN().equals(x509.getIssuerDN())) {
-					trustChain = new Certificate[certList.size()];
-					certList.toArray(trustChain);
-					certList.clear(); // reuse
+				// Is a Root (self-signed, anyway)
+				if(x509.getSubjectDN().equals(x509.getIssuerDN())) {
+					caSet.add(x509);
+				} else {
+					chainList.add(x509);
 				}
-				certList.add(x509);
 			}
-			
-			// remainder should be Trust CAs
-			trustCAs = new Certificate[certList.size()];
-			certList.toArray(trustCAs);
+//			chainList.addAll(caSet);
+			//Collections.reverse(chainList);
 
 			// Properties, etc
 			// Add CADI Keyfile Entry to Properties
 			addProperty(Config.CADI_KEYFILE,arti.getDir()+'/'+arti.getNs() + ".keyfile");
 			// Set Keystore Password
 			addProperty(Config.CADI_KEYSTORE,fks.getAbsolutePath());
-			String keystorePass = Symm.randomGen(CmAgent.PASS_SIZE);
+			String keystorePass = Symm.randomGen(Agent.PASS_SIZE);
 			addEncProperty(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
 			char[] keystorePassArray = keystorePass.toCharArray();
 			jks.load(null,keystorePassArray); // load in
@@ -106,6 +107,8 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			KeyStore.ProtectionParameter protParam = 
 					new KeyStore.PasswordProtection(keyPass.toCharArray());
 			
+			Certificate[] trustChain = new Certificate[chainList.size()];
+			chainList.toArray(trustChain);
 			KeyStore.PrivateKeyEntry pkEntry = 
 				new KeyStore.PrivateKeyEntry(pk, trustChain);
 			jks.setEntry(arti.getMechid(), 
@@ -116,16 +119,23 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			
 			// Change out to TrustStore
 			fks = new File(dir,arti.getNs()+".trust."+kst);
+			if(fks.exists()) {
+				File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
+				fks.renameTo(backup);
+			}	
+
 			jks = KeyStore.getInstance(kst);
 			
 			// Set Truststore Password
 			addProperty(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());
-			String trustStorePass = Symm.randomGen(CmAgent.PASS_SIZE);
+			String trustStorePass = Symm.randomGen(Agent.PASS_SIZE);
 			addEncProperty(Config.CADI_TRUSTSTORE_PASSWORD,trustStorePass);
 			char[] truststorePassArray = trustStorePass.toCharArray();
 			jks.load(null,truststorePassArray); // load in
 			
 			// Add Trusted Certificates, but PKCS12 doesn't support
+			Certificate[] trustCAs = new Certificate[caSet.size()];
+			caSet.toArray(trustCAs);
 			for(int i=0; i<trustCAs.length;++i) {
 				jks.setCertificateEntry("ca_" + arti.getCa() + '_' + i, trustCAs[i]);
 			}

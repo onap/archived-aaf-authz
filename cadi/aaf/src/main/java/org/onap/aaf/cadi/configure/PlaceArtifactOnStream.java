@@ -19,34 +19,33 @@
  *
  */
 
-package org.onap.aaf.cadi.cm;
+package org.onap.aaf.cadi.configure;
 
-import java.io.File;
+import java.io.PrintStream;
 
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.util.Chmod;
 import org.onap.aaf.misc.env.Trans;
 
 import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;
 
-public class PlaceArtifactInFiles extends ArtifactDir {
+public class PlaceArtifactOnStream implements PlaceArtifact {
+	private PrintStream out;
+
+	public PlaceArtifactOnStream(PrintStream printStream) {
+		out = printStream;
+	}
+
 	@Override
-	public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-		try {
-			// Setup Public Cert
-			File f = new File(dir,arti.getNs()+".crt");
-			write(f,Chmod.to644,certInfo.getCerts().get(0),C_R);
-			
-			// Setup Private Key
-			f = new File(dir,arti.getNs()+".key");
-			write(f,Chmod.to400,certInfo.getPrivatekey(),C_R);
-			
-		} catch (Exception e) {
-			throw new CadiException(e);
+	public boolean place(Trans trans, CertInfo capi, Artifact a, String machine) {
+		if(capi.getNotes()!=null && capi.getNotes().length()>0) {
+			trans.info().printf("Warning:    %s\n",capi.getNotes());
+		}
+		out.printf("Challenge:  %s\n",capi.getChallenge());
+		out.printf("PrivateKey:\n%s\n",capi.getPrivatekey());
+		out.println("Certificate Chain:");
+		for(String c : capi.getCerts()) {
+			out.println(c);
 		}
 		return true;
 	}
 }
-
-

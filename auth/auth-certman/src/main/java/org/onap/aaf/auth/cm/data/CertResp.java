@@ -25,12 +25,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
-import java.util.Set;
 
 import org.onap.aaf.auth.cm.ca.CA;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
-import org.onap.aaf.cadi.cm.CertException;
-import org.onap.aaf.cadi.cm.Factory;
+import org.onap.aaf.cadi.configure.CertException;
+import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.misc.env.Trans;
 
 public class CertResp {
@@ -40,17 +39,15 @@ public class CertResp {
 	
 	private String privateKey, certString;
 	private String[] trustChain;
-	private String[] trustCAs;
 	private String[] notes;
 	
-	public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] trustCAs, String[] notes) throws IOException, GeneralSecurityException, CertException {
+	public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] notes) throws IOException, GeneralSecurityException, CertException {
 		keyPair = csrMeta.keypair(trans);
 		privateKey = Factory.toString(trans, keyPair.getPrivate());
 		certString = Factory.toString(trans,x509);
 		challenge=csrMeta.challenge();
 		this.ca = ca;
 		this.trustChain = trustChain;
-		this.trustCAs = trustCAs;
 		this.notes = notes;
 	}
 
@@ -76,7 +73,7 @@ public class CertResp {
 		return notes;
 	}
 	
-	public Set<String> caIssuerDNs() {
+	public String[] caIssuerDNs() {
 		return ca.getCaIssuerDNs();
 	}
 	
@@ -89,6 +86,6 @@ public class CertResp {
 	}
 	
 	public String[] trustCAs() {
-		return trustCAs;
+		return ca.getTrustedCAs();
 	}
 }
