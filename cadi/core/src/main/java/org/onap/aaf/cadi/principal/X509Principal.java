@@ -26,31 +26,30 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.regex.Pattern;
 
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.GetCred;
+import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
 
 public class X509Principal extends BearerPrincipal implements GetCred {
 	private static final Pattern pattern = Pattern.compile("[a-zA-Z0-9]*\\@[a-zA-Z0-9.]*");
 	private final X509Certificate cert;
 	private final String name;
-	private TagLookup tagLookup;
-	private byte[] content;  
+	private byte[] content;
+	private BasicHttpTaf bht;  
 
 	public X509Principal(String identity, X509Certificate cert) {
 		name = identity;
 		content = null;
 		this.cert = cert;
-		tagLookup = null;
 	}
 
-	public X509Principal(String identity, X509Certificate cert, byte[] content) {
+	public X509Principal(String identity, X509Certificate cert, byte[] content, BasicHttpTaf bht) {
 		name = identity;
 		this.content = content;
 		this.cert = cert;
-		tagLookup = null;
+		this.bht = bht;
 	}
 
-	public X509Principal(X509Certificate cert, byte[] content) throws IOException {
+	public X509Principal(X509Certificate cert, byte[] content, BasicHttpTaf bht) throws IOException {
 		this.content=content;
 		this.cert = cert;
 		String _name = null;
@@ -70,7 +69,7 @@ public class X509Principal extends BearerPrincipal implements GetCred {
 			throw new IOException("X509 does not have Identity as CN");
 		}
 		name = _name;
-		tagLookup = null;
+		this.bht = bht;
 	}
 	
 	public String getAsHeader() throws IOException {
@@ -104,6 +103,10 @@ public class X509Principal extends BearerPrincipal implements GetCred {
 	@Override
 	public String tag() {
 		return "x509";
+	}
+
+	public BasicHttpTaf getBasicHttpTaf() {
+		return bht;
 	}
 
 }

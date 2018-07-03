@@ -42,6 +42,7 @@ import org.onap.aaf.cadi.CachingLur;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Connector;
 import org.onap.aaf.cadi.CredVal;
+import org.onap.aaf.cadi.CredValDomain;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
@@ -111,13 +112,6 @@ public class Config {
 	public static final String CADI_OAUTH2_URL="cadi_oauth2_url";
 	public static final String CADI_TOKEN_DIR = "cadi_token_dir";
 
-	public static final String CSP_DOMAIN = "csp_domain";
-	public static final String CSP_HOSTNAME = "csp_hostname";
-	public static final String CSP_DEVL_LOCALHOST = "csp_devl_localhost";
-	public static final String CSP_USER_HEADER = "CSP_USER";
-	public static final String CSP_SYSTEMS_CONF = "CSPSystems.conf";
-    public static final String CSP_SYSTEMS_CONF_FILE = "csp_systems_conf_file";
-    
     public static final String HTTPS_PROTOCOLS = "https.protocols";
     public static final String HTTPS_CIPHER_SUITES = "https.cipherSuites";
     public static final String HTTPS_CLIENT_PROTOCOLS="jdk.tls.client.protocols";
@@ -277,7 +271,7 @@ public class Config {
 		/////////////////////////////////////////////////////
 		// Configure Client Cert TAF
 		/////////////////////////////////////////////////////
-		
+		X509Taf x509TAF = null;
 		String truststore = logProp(access, CADI_TRUSTSTORE,null);
 		if(truststore!=null) {
 			String truststore_pwd = access.getProperty(CADI_TRUSTSTORE_PASSWORD,null);
@@ -290,7 +284,7 @@ public class Config {
 					}
 				}
 				try {
-					htlist.add(new X509Taf(access,lur));
+					htlist.add(x509TAF=new X509Taf(access,lur));
 					access.log(Level.INIT,"Certificate Authorization enabled");
 				} catch (SecurityException e) {
 					access.log(Level.INIT,"AAFListedCertIdentity cannot be instantiated. Certificate Authorization is now disabled",e);
@@ -339,7 +333,16 @@ public class Config {
 						if(!basic_warn)access.log(Level.INIT,"WARNING! The basic_warn property has been set to false.",
 								" There will be no additional warning if Basic Auth is used on an insecure channel"
 								);
-						htlist.add(new BasicHttpTaf(access, up, basic_realm, userExp, basic_warn));
+						BasicHttpTaf bht = new BasicHttpTaf(access, up, basic_realm, userExp, basic_warn);
+						for(Object o : additionalTafLurs) {
+							if(o instanceof CredValDomain) {
+								bht.add((CredValDomain)o);
+							}
+						}
+						if(x509TAF!=null) {
+							x509TAF.add(bht);
+						}
+						htlist.add(bht);
 						access.log(Level.INIT,"Basic Authorization is enabled");
 					}
 				} else {
@@ -443,8 +446,18 @@ public class Config {
 		/////////////////////////////////////////////////////
 		if(additionalTafLurs!=null) {
 			for(Object additional : additionalTafLurs) {
-				if(additional instanceof HttpTaf) {
-					htlist.add((HttpTaf)additional);
+				if(additional instanceof BasicHttpTaf) {
+					BasicHttpTaf ht = (BasicHttpTaf)additional;
+					for(Object cv : additionalTafLurs) {
+						if(cv instanceof CredValDomain) {
+							ht.add((CredValDomain)cv);
+							access.printf(Level.INIT,"%s Authentication is enabled",cv);
+						}
+					}
+					htlist.add(ht);
+				} else if(additional instanceof HttpTaf) {
+					HttpTaf ht = (HttpTaf)additional;
+					htlist.add(ht);
 					access.printf(Level.INIT,"%s Authentication is enabled",additional.getClass().getSimpleName());
 				} else if(hasOAuthDirectTAF) {
 					Class<?> daupCls;

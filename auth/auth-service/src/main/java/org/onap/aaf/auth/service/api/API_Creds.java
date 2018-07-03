@@ -42,9 +42,11 @@ import org.onap.aaf.auth.service.Code;
 import org.onap.aaf.auth.service.facade.AuthzFacade;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
 import org.onap.aaf.cadi.CredVal;
+import org.onap.aaf.cadi.CredVal.Type;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 import org.onap.aaf.cadi.principal.X509Principal;
+import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
@@ -90,23 +92,36 @@ public class API_Creds {
 					// have to check Basic Auth here, because it might be CSP.
 					String authz = req.getHeader("Authorization");
 					if(authz.startsWith("Basic ")) {
-						String decoded = Symm.base64noSplit.decode(authz.substring(6));
-						int colon = decoded.indexOf(':');
-						TimeTaken tt = trans.start("Direct Validation", Env.REMOTE);
-						try {
-							if(directAAFUserPass.validate(
-									decoded.substring(0,colon), 
-									CredVal.Type.PASSWORD , 
-									decoded.substring(colon+1).getBytes(),trans)) {
-								
-								resp.setStatus(HttpStatus.OK_200);
-							} else {
-								// DME2 at this version crashes without some sort of response
-								resp.getOutputStream().print("");
-								resp.setStatus(HttpStatus.FORBIDDEN_403);
+						BasicHttpTaf bht = ((X509Principal)p).getBasicHttpTaf(); 
+						if(bht!=null) {
+							BasicPrincipal bp = new BasicPrincipal(authz,"");
+							CredVal cv = bht.getCredVal(bp.getDomain());
+							if(cv!=null) {
+								if(cv.validate(bp.getName(), Type.PASSWORD, bp.getCred(), null) ) {
+									resp.setStatus(HttpStatus.OK_200);
+								} else {
+									resp.setStatus(HttpStatus.FORBIDDEN_403);
+								}
 							}
-						} finally {
-							tt.done();
+						} else {
+							String decoded = Symm.base64noSplit.decode(authz.substring(6));
+							int colon = decoded.indexOf(':');
+							TimeTaken tt = trans.start("Direct Validation", Env.REMOTE);
+							try {
+								if(directAAFUserPass.validate(
+										decoded.substring(0,colon), 
+										CredVal.Type.PASSWORD , 
+										decoded.substring(colon+1).getBytes(),trans)) {
+									
+									resp.setStatus(HttpStatus.OK_200);
+								} else {
+									// DME2 at this version crashes without some sort of response
+									resp.getOutputStream().print("");
+									resp.setStatus(HttpStatus.FORBIDDEN_403);
+								}
+							} finally {
+								tt.done();
+							}
 						}
 					}
 				} else if(p == null) {

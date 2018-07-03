@@ -67,7 +67,7 @@ public class JU_X509Principal {
 
 	@Test
 	public void constructor2Test() throws IOException {
-		X509Principal x509 = new X509Principal(name, cert, cred);
+		X509Principal x509 = new X509Principal(name, cert, cred,null);
 		// Call twice to hit both branches
 		assertThat(x509.getAsHeader(), is("X509 " + cred));
 		assertThat(x509.toString(), is("X509 Authentication for " + name));
@@ -81,7 +81,7 @@ public class JU_X509Principal {
 		final String longName = "name@domain";
 		when(subject.getName()).thenReturn("OU=" + longName + ",extra");
 		when(cert.getSubjectDN()).thenReturn(subject);
-		X509Principal x509 = new X509Principal(cert, cred);
+		X509Principal x509 = new X509Principal(cert, cred,null);
 		// Call twice to hit both branches
 		assertThat(x509.getAsHeader(), is("X509 " + cred));
 		assertThat(x509.toString(), is("X509 Authentication for " + longName));
@@ -91,7 +91,7 @@ public class JU_X509Principal {
 		when(subject.getName()).thenReturn(longName + ",extra");
 		when(cert.getSubjectDN()).thenReturn(subject);
 		try {
-			x509 = new X509Principal(cert, cred);
+			x509 = new X509Principal(cert, cred, null);
 			fail("Should have thrown an Exception");
 		} catch(IOException e) {
 			assertThat(e.getMessage(), is("X509 does not have Identity as CN"));
@@ -100,7 +100,7 @@ public class JU_X509Principal {
 		when(subject.getName()).thenReturn("OU=" + longName);
 		when(cert.getSubjectDN()).thenReturn(subject);
 		try {
-			x509 = new X509Principal(cert, cred);
+			x509 = new X509Principal(cert, cred, null);
 			fail("Should have thrown an Exception");
 		} catch(IOException e) {
 			assertThat(e.getMessage(), is("X509 does not have Identity as CN"));
@@ -109,7 +109,7 @@ public class JU_X509Principal {
 		when(subject.getName()).thenReturn("OU=" + name + ",exta");
 		when(cert.getSubjectDN()).thenReturn(subject);
 		try {
-			x509 = new X509Principal(cert, cred);
+			x509 = new X509Principal(cert, cred, null);
 			fail("Should have thrown an Exception");
 		} catch(IOException e) {
 			assertThat(e.getMessage(), is("X509 does not have Identity as CN"));

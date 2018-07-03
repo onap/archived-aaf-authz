@@ -36,12 +36,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CachedPrincipal;
+import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.CredVal;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.Taf.LifeForm;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfo;
@@ -51,6 +52,7 @@ import org.onap.aaf.cadi.principal.X509Principal;
 import org.onap.aaf.cadi.taf.HttpTaf;
 import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
+import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
 import org.onap.aaf.cadi.util.Split;
 
 public class X509Taf implements HttpTaf {
@@ -65,6 +67,7 @@ public class X509Taf implements HttpTaf {
 	private ArrayList<String> cadiIssuers;
 	private String env;
 	private SecurityInfo si;
+	private BasicHttpTaf bht;
 
 	static {
 		try {
@@ -150,7 +153,7 @@ public class X509Taf implements HttpTaf {
 							String[] sa = Split.splitTrim(':', subject, temp+3,end);
 							if(sa.length==1 || (sa.length>1 && env!=null && env.equals(sa[1]))) { // Check Environment 
 								return new X509HttpTafResp(access, 
-										new X509Principal(sa[0], certarr[0],(byte[])null), 
+										new X509Principal(sa[0], certarr[0],(byte[])null,bht), 
 										"X509Taf validated " + sa[0] + (sa.length<2?"":" for aaf_env " + env ), RESP.IS_AUTHENTICATED);
 							}
 						}
@@ -259,4 +262,16 @@ public class X509Taf implements HttpTaf {
 		return null;
 	}
 
+	public void add(BasicHttpTaf bht) {
+		this.bht = bht;
+	}
+	
+	public CredVal getCredVal(final String key) {
+		if(bht==null) {
+			return null;
+		} else {
+			return bht.getCredVal(key);
+		}
+	}
+	
 }

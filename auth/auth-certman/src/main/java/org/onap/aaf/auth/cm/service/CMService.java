@@ -426,17 +426,24 @@ public class CMService {
 				}
 				
 				// Policy 2: MechID must have valid Organization Owner
-				Identity ouser = muser.responsibleTo();
-				if(ouser == null) {
-					return Result.err(Result.ERR_Denied,"%s is not a valid Sponsor for %s at %s",
-							trans.user(),add.mechid,trans.org().getName());
+				Identity emailUser;
+				if(muser.isPerson()) {
+					emailUser = muser;
+				} else {
+					Identity ouser = muser.responsibleTo();
+					if(ouser == null) {
+						return Result.err(Result.ERR_Denied,"%s is not a valid Sponsor for %s at %s",
+								trans.user(),add.mechid,trans.org().getName());
+					}
+
+					// Policy 3: Calling ID must be MechID Owner
+					if(!trans.user().equals(ouser.fullID())) {
+						return Result.err(Result.ERR_Denied,"%s is not the Sponsor for %s at %s",
+								trans.user(),add.mechid,trans.org().getName());
+					}
+					emailUser = ouser;
 				}
 				
-				// Policy 3: Calling ID must be MechID Owner
-				if(!trans.user().equals(ouser.fullID())) {
-					return Result.err(Result.ERR_Denied,"%s is not the Sponsor for %s at %s",
-							trans.user(),add.mechid,trans.org().getName());
-				}
 
 				// Policy 4: Renewal Days are between 10 and 60 (constants, may be parameterized)
 				if(add.renewDays<MIN_RENEWAL) {
@@ -447,7 +454,7 @@ public class CMService {
 				
 				// Policy 5: If Notify is blank, set to Owner's Email
 				if(add.notify==null || add.notify.length()==0) {
-					add.notify = "mailto:"+ouser.email();
+					add.notify = "mailto:"+emailUser.email();
 				}
 				
 				// Policy 6: Only do Domain by Exception
@@ -462,7 +469,7 @@ public class CMService {
 				}
 
 				// Set Sponsor from Golden Source
-				add.sponsor = ouser.fullID();
+				add.sponsor = emailUser.fullID();
 				
 				
 			} catch (OrganizationException e) {

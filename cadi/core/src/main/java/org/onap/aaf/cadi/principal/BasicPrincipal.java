@@ -36,11 +36,12 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
 
 	private String name = null;
 	private String shortName = null;
+	private String domain;
 	private byte[] cred = null;
-	
 	private long created;
 
-	public BasicPrincipal(String content,String domain) throws IOException {
+
+	public BasicPrincipal(String content,String defaultDomain) throws IOException {
 		created = System.currentTimeMillis();
 		ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
 		// Read past "Basic ", ensuring it starts with it.
@@ -61,13 +62,15 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
 			shortName=name.substring(0, at);
 		} else {
 			shortName = name;
-			name = name + '@' + domain;
+			domain=defaultDomain;
+			name = name + '@' + defaultDomain;
 		}
 	}
 	
 	public BasicPrincipal(BasicCred bc, String domain) {
 		name = bc.getUser();
 		cred = bc.getCred();
+		this.domain = domain;
 	}
 
 	private class BasicOS extends OutputStream {
@@ -100,6 +103,10 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
 	
 	public String getShortName() {
 		return shortName;
+	}
+	
+	public String getDomain() {
+		return domain;
 	}
 	
 	public byte[] getCred() {

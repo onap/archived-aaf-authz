@@ -93,7 +93,7 @@ public class AAFListedCertIdentity implements CertIdentity {
 		byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
 		String id = certs.get(new ByteArrayHolder(fingerprint));
 		if(id!=null) { // Caller is Validated
-			return new X509Principal(id,cert,certBytes);
+			return new X509Principal(id,cert,certBytes,null);
 		}
 		return null;
 	}

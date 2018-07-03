@@ -163,9 +163,9 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 		try {
         	Object[] atl=new Object[additionalTafLurs.length+2];
         	atl[0]=new DirectAAFLur(env,question); // Note, this will be assigned by AuthzTransFilter to TrustChecker
-			atl[1]=new BasicHttpTaf(env, directAAFUserPass,
-				domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
-				false);
+			atl[1]= new BasicHttpTaf(env, directAAFUserPass,
+					domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
+					false);
 
 	        if(additionalTafLurs.length>0) {
 	        	System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);

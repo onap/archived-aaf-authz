@@ -532,7 +532,6 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 		NSS nss = mapper.newInstance(API.NSS);
 		// Note: "loadNamespace" already validates view of Namespace
 		return mapper.nss(trans, rn.value, nss);
-
 	}
 
 	@ApiDoc(

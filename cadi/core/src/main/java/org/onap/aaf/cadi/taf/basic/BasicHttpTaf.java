@@ -23,18 +23,21 @@ package org.onap.aaf.cadi.taf.basic;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.BasicCred;
 import org.onap.aaf.cadi.CachedPrincipal;
-import org.onap.aaf.cadi.CredVal;
-import org.onap.aaf.cadi.Taf;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CachedPrincipal.Resp;
+import org.onap.aaf.cadi.CredVal;
 import org.onap.aaf.cadi.CredVal.Type;
+import org.onap.aaf.cadi.CredValDomain;
+import org.onap.aaf.cadi.Taf;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 import org.onap.aaf.cadi.taf.HttpTaf;
@@ -60,6 +63,7 @@ public class BasicHttpTaf implements HttpTaf {
 	private Access access;
 	private String realm;
 	private CredVal rbac;
+	private Map<String,CredVal> rbacs = new TreeMap<>();
 	private boolean warn;
 	private long timeToLive;
 	
@@ -71,6 +75,10 @@ public class BasicHttpTaf implements HttpTaf {
 		this.timeToLive = timeToLive;
 	}
 
+	public void add(final CredValDomain cvd) {
+		rbacs.put(cvd.domain(), cvd);
+	}
+	
 	/**
 	 * Note: BasicHttp works for either Carbon Based (Humans) or Silicon Based (machine) Lifeforms.  
 	 * @see Taf
@@ -84,10 +92,16 @@ public class BasicHttpTaf implements HttpTaf {
 					return DenialOfServiceTaf.respDenyID(access,bc.getUser());
 				}
 				CachedBasicPrincipal bp = new CachedBasicPrincipal(this,bc,realm,timeToLive);
+				
+				// Be able to do Organizational specific lookups by Domain
+				CredVal cv = rbacs.get(bp.getDomain());
+				if(cv==null) {
+					cv = rbac;
+				}
+				
 				// ONLY FOR Last Ditch DEBUGGING... 
 				// access.log(Level.WARN,bp.getName() + ":" + new String(bp.getCred()));
-				
-				if(rbac.validate(bp.getName(),Type.PASSWORD,bp.getCred(),req)) {
+				if(cv.validate(bp.getName(),Type.PASSWORD,bp.getCred(),req)) {
 					return new BasicHttpTafResp(access,bp,bp.getName()+" authenticated by password",RESP.IS_AUTHENTICATED,resp,realm,false);
 				} else {
 					//TODO may need timed retries in a given time period
@@ -107,10 +121,16 @@ public class BasicHttpTaf implements HttpTaf {
 				if(DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
 					return DenialOfServiceTaf.respDenyID(access,ba.getName());
 				}
+				
+				final int at = ba.getName().indexOf('@');
+				CredVal cv = rbacs.get(ba.getName().substring(at+1));
+				if(cv==null) { 
+					cv = rbac; // default
+				}
 
 				// ONLY FOR Last Ditch DEBUGGING... 
 				// access.log(Level.WARN,ba.getName() + ":" + new String(ba.getCred()));
-				if(rbac.validate(ba.getName(), Type.PASSWORD, ba.getCred(), req)) {
+				if(cv.validate(ba.getShortName(), Type.PASSWORD, ba.getCred(), req)) {
 					return new BasicHttpTafResp(access,ba, ba.getName()+" authenticated by BasicAuth password",RESP.IS_AUTHENTICATED,resp,realm,false);
 				} else {
 					//TODO may need timed retries in a given time period
@@ -146,7 +166,19 @@ public class BasicHttpTaf implements HttpTaf {
 		}
 		return sb.toString();
 	}
+	
+	public void addCredVal(final String realm, final CredVal cv) {
+		rbacs.put(realm, cv);
+	}
 
+	public CredVal getCredVal(String key) {
+		CredVal cv = rbacs.get(key);
+		if(cv==null) {
+			cv = rbac;
+		}
+		return cv;
+	}
+	
 	@Override
 	public Resp revalidate(CachedPrincipal prin, Object state) {
 		if(prin instanceof BasicPrincipal) {
@@ -162,4 +194,5 @@ public class BasicHttpTaf implements HttpTaf {
 	public String toString() {
 		return "Basic Auth enabled on realm: " + realm;
 	}
+
 }

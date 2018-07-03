@@ -186,6 +186,7 @@ public class AAFSSO {
 				char[] password = cons.readPassword("Password for %s: ", appID);
 				String app_pass = access.encrypt(new String(password));
 				access.setProperty(Config.AAF_APPPASS,app_pass);
+				diskprops.setProperty(Config.AAF_APPPASS, app_pass);
 			}
 			
 			String keystore=access.getProperty(Config.CADI_KEYSTORE);

@@ -66,7 +66,7 @@ public class DirectCertIdentity implements CertIdentity {
 		Result<List<Data>> cresp = certDAO.read(trans, ByteBuffer.wrap(fingerprint));
 		if(cresp.isOKhasData()) {
 			Data cdata = cresp.value.get(0);
-			return new X509Principal(cdata.id,cert,certBytes);
+			return new X509Principal(cdata.id,cert,certBytes,null);
 		}
 		return null;
 	}
