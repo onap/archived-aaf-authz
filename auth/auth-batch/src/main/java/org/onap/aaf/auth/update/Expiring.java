@@ -181,13 +181,16 @@ public class Expiring extends Batch {
 							if(ur.expires().after(future)) { // no need for Approval anymore
 								a.delayDelete(noAvg, apprDAO, dryRun, "User Role already Extended");
 								UUID tkt = a.getTicket();
-								if(tkt!=null) {
-									f = Future.data.get(tkt);
+								if(tkt!=null && Future.data.containsKey(tkt)) {
+									f = Future.data.get(a.getTicket());
 								}
 							}
 						} else {
 							a.delayDelete(noAvg, apprDAO, dryRun, "User Role does not exist");
-							f = Future.data.get(a.getTicket());
+							UUID tkt = a.getTicket();
+							if(tkt !=null && Future.data.containsKey(tkt)) {
+								f = Future.data.get(a.getTicket());
+							}
 						}
 						if(f!=null) {
 							f.delayedDelete(noAvg, futureDAO, dryRun, "Approvals removed");
