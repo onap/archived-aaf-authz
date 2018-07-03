@@ -88,7 +88,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 							locatorURI.getUserInfo(),
 							locatorURI.getHost(),
 							locatorURI.getPort(),
-							"/locate/"+name + '/' + version,
+							"/locate/"+name + ':' + version,
 							null,
 							null
 							);

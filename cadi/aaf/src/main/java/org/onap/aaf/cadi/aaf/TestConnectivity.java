@@ -79,7 +79,7 @@ public class TestConnectivity {
 				List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
 				/////////
 				print(true,"Test Connections driven by AAFLocator");
-				URI serviceURI = new URI(aaflocate+"/locate/AAF_NS.service/2.0");
+				URI serviceURI = new URI(aaflocate+"/locate/AAF_NS.service:2.0");
 
 				for(URI uri : new URI[] {
 						serviceURI,

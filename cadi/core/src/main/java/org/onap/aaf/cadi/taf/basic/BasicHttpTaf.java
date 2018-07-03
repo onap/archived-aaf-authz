@@ -130,7 +130,7 @@ public class BasicHttpTaf implements HttpTaf {
 
 				// ONLY FOR Last Ditch DEBUGGING... 
 				// access.log(Level.WARN,ba.getName() + ":" + new String(ba.getCred()));
-				if(cv.validate(ba.getShortName(), Type.PASSWORD, ba.getCred(), req)) {
+				if(cv.validate(ba.getName(), Type.PASSWORD, ba.getCred(), req)) {
 					return new BasicHttpTafResp(access,ba, ba.getName()+" authenticated by BasicAuth password",RESP.IS_AUTHENTICATED,resp,realm,false);
 				} else {
 					//TODO may need timed retries in a given time period

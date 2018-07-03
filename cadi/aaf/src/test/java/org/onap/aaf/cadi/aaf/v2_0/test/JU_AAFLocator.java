@@ -105,7 +105,7 @@ public class JU_AAFLocator {
 		access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
 		access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon
 		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
-		URI locatorURI = new URI("https://somemachine.moc:10/com.att.aaf.service/2.0");
+		URI locatorURI = new URI("https://somemachine.moc:10/com.att.aaf.service:2.0");
 		AbsAAFLocator<BasicTrans> al = new AAFLocator(si, locatorURI) {
 			@Override
 			protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {

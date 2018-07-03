@@ -104,7 +104,7 @@ public class OnapClientExample {
 				// These should NOT be used cross thread.
 				// Get Hello Service URL... roll your own in your own world.
 				final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL, 
-						"https://AAF_LOCATE_URL/AAF_NS.hello/2.0");
+						"https://AAF_LOCATE_URL/AAF_NS.hello:2.0");
 
 
 				TzClient helloClient = tcf.newTzClient(endServicesURL);

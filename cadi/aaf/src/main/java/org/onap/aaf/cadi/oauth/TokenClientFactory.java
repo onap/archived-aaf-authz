@@ -63,10 +63,10 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 		super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
 		
 		if(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
-			access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, "https://AAF_LOCATE_URL/AAF_NS.token/2.0"); // Default to AAF
+			access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, "https://AAF_LOCATE_URL/AAF_NS.token:2.0"); // Default to AAF
 		}
 		if(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
-			access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, "https://AAF_LOCATE_URL/AAF_NS.introspect/2.0"); // Default to AAF);
+			access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, "https://AAF_LOCATE_URL/AAF_NS.introspect:2.0"); // Default to AAF);
 		}
 
 		symm = Symm.encrypt.obtain();

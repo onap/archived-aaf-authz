@@ -474,6 +474,14 @@ public class Config {
 			}
 		}
 		
+		// Add BasicAuth, if any, to x509Taf
+		if(x509TAF!=null) {
+			for( HttpTaf ht : htlist) {
+				if(ht instanceof BasicHttpTaf) {
+					x509TAF.add((BasicHttpTaf)ht);
+				}
+			}
+		}
 		/////////////////////////////////////////////////////
 		// Create EpiTaf from configured TAFs
 		/////////////////////////////////////////////////////
