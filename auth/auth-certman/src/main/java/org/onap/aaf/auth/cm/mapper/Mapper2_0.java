@@ -100,7 +100,7 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 	 */
 	@Override
 	public Result<CertInfo> toCert(AuthzTrans trans, Result<CertResp> in, boolean withTrustChain) throws IOException {
-		if(in.isOK()) {
+		if(!in.isOK()) {
 			CertResp cin = in.value;
 			CertInfo cout = newInstance(API.CERT);
 			cout.setPrivatekey(cin.privateString());
