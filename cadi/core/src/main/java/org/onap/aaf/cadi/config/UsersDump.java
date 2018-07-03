@@ -85,7 +85,7 @@ public class UsersDump {
 
 			ps.println("</tomcat-users>");
 			ps.flush();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			t.printStackTrace(ps);
 			return false;
 		}

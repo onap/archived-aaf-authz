@@ -433,8 +433,10 @@ public class AAFcli {
 		
 		try {
 			AAFSSO aafsso = new AAFSSO(args);
+			String noexit = aafsso.access().getProperty("no_exit");
 			try {
 				PropAccess access = aafsso.access();
+
 				if(aafsso.ok()) {
 					Define.set(access);
 					AuthzEnv env = new AuthzEnv(access);
@@ -589,21 +591,21 @@ public class AAFcli {
 			} finally {
 				aafsso.close();
 				StringBuilder err = aafsso.err();
-				String noexit = aafsso.access().getProperty("no_exit");
 				if (err != null) {
 					err.append("to continue...");
 					System.err.println(err);
 				}
-				if(noexit==null) {
-					return;
-				}
-
 			}
+			if(noexit==null) {
+				return;
+			}
+
+
 		} catch (MessageException e) {
 			System.out.println("MessageException caught");
 
 			System.err.println(e.getMessage());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			e.printStackTrace(System.err);
 		}
 		System.exit(rv);

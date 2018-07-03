@@ -200,7 +200,7 @@ public class Expiring extends Batch {
 	    		trans.info().log("### Removed",Future.sizeForDeletion(),"Future and",Approval.sizeForDeletion(),"Approvals");
 	    		Future.resetLocalData();
 	        Approval.resetLocalData();
-	    	} catch (Throwable t) {
+	    	} catch (Exception t) {
 	    		t.printStackTrace();
 	    	}
 	
@@ -233,7 +233,7 @@ public class Expiring extends Batch {
 	    		trans.info().log("### Removed",Future.sizeForDeletion(),"Future and",Approval.sizeForDeletion(),"Approvals");
 	    		Future.resetLocalData();
 	        Approval.resetLocalData();
-	    	} catch (Throwable t) {
+	    	} catch (Exception t) {
 	    		t.printStackTrace();
 	    	}
 
@@ -256,7 +256,7 @@ public class Expiring extends Batch {
 	        		trans.info().log("### Removed",Future.sizeForDeletion(),"Future and",Approval.sizeForDeletion(),"Approvals");
 	        		Future.resetLocalData();
 	            Approval.resetLocalData();
-	        	} catch (Throwable t) {
+	        	} catch (Exception t) {
 	        		t.printStackTrace();
 	        	}
         } finally {
@@ -348,7 +348,7 @@ public class Expiring extends Batch {
 	    		trans.info().log("### Removed",Future.sizeForDeletion(),"Future and",Approval.sizeForDeletion(),"Approvals");
 	    		Future.resetLocalData();
 	        Approval.resetLocalData();
-	    	} catch (Throwable t) {
+	    	} catch (Exception t) {
 	    		t.printStackTrace();
 	    	}
         

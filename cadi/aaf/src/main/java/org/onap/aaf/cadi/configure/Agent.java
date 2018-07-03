@@ -105,7 +105,7 @@ public class Agent {
 		int exitCode = 0;
 		doExit = true;
 		try {
-			AAFSSO aafsso;
+			AAFSSO aafsso=null;
 			PropAccess access;
 			
 			if(args.length>0 && args[0].equals("validate")) {
@@ -146,7 +146,9 @@ public class Agent {
 				}
 				
 				if(cmds.size()==0) {
-					aafsso.setLogDefault();
+					if(aafsso!=null) {
+						aafsso.setLogDefault();
+					}
 					// NOTE: CHANGE IN CMDS should be reflected in AAFSSO constructor, to get FQI->aaf-id or not
 					System.out.println("Usage: java -jar <cadi-aaf-*-full.jar> cmd [<tag=value>]*");
 					System.out.println("   create   <FQI> [<machine>]");

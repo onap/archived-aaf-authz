@@ -1730,7 +1730,7 @@ public class Function {
 						default:
 					}
 				}				
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				trans.error().log("Exception: ", e.getMessage(),
 					" \n occurred while performing", curr.memo,
 					" from Ticket ", curr.id.toString());
