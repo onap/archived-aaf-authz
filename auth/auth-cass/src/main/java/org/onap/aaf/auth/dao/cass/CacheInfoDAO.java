@@ -63,7 +63,7 @@ import com.datastax.driver.core.exceptions.DriverException;
 public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> implements CIDAO<AuthzTrans> {
 
 	private static final String TABLE = "cache";
-	public static final Map<String,Date[]> info = new ConcurrentHashMap<String,Date[]>();
+	public static final Map<String,Date[]> info = new ConcurrentHashMap<>();
 
 	private static CacheUpdate cacheUpdate;
 	
@@ -217,7 +217,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
 			}
 			public void add(int[] ints) {
 				if(set==null) {
-					set = new HashSet<Integer>();
+					set = new HashSet<>();
 					
 					for(int i=0;i<raw.length;++i) {
 						set.add(raw[i]);
@@ -275,7 +275,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
 							start = System.nanoTime();
 							trans = env.newTransNoAvg();
 							cc = new CacheClear(trans);
-							gather = new HashMap<String,IntHolder>();
+							gather = new HashMap<>();
 						}
 						IntHolder prev = gather.get(data.table);
 						if(prev==null) {

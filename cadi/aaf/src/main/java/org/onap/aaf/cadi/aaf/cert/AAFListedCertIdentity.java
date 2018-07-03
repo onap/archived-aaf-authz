@@ -118,9 +118,9 @@ public class AAFListedCertIdentity implements CertIdentity {
 		@Override
 		public void run() {
 			try {
-				TreeMap<ByteArrayHolder, String> newCertsMap = new TreeMap<ByteArrayHolder,String>();
-				Map<String,Set<String>> newTrustMap = new TreeMap<String,Set<String>>();
-				Set<String> userLookup = new HashSet<String>();
+				TreeMap<ByteArrayHolder, String> newCertsMap = new TreeMap<>();
+				Map<String,Set<String>> newTrustMap = new TreeMap<>();
+				Set<String> userLookup = new HashSet<>();
 				for(String s : certIDs) {
 					userLookup.add(s);
 				}
@@ -132,7 +132,7 @@ public class AAFListedCertIdentity implements CertIdentity {
 							aafcon.access.log(Level.WARN, "AAF Lookup-No IDs in Role com.att.aaf.trustForID <> "+authMech);
 						} else {
 							aafcon.access.log(Level.INFO,"Loading Trust Authentication Info for",authMech);
-							Set<String> hsUser = new HashSet<String>();
+							Set<String> hsUser = new HashSet<>();
 							for(User u : users) {
 								userLookup.add(u.getId());
 								hsUser.add(u.getId());

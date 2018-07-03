@@ -41,7 +41,7 @@ class Acceptor<TRANS extends Trans>  {
 	
 	public Acceptor(List<Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>>> types) {
 		this.types = types;
-		acceptable = new ArrayList<Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>>>();
+		acceptable = new ArrayList<>();
 	}
 	
 	private boolean eval(HttpCode<TRANS,?> code, String str, List<String> props) {
@@ -128,7 +128,7 @@ class Acceptor<TRANS extends Trans>  {
 		int cis,cie=-1,cend;
 		int sis,sie,send;
 		String name;
-		ArrayList<String> props = new ArrayList<String>();
+		ArrayList<String> props = new ArrayList<>();
 		do {
 			// Clear these in case more than one Semi
 			props.clear(); // on loop, do not want mixed properties

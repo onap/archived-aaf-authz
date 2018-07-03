@@ -36,8 +36,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class MonthData {
-    public final Map<Integer,Set<Row>> data = 
-    		new TreeMap<Integer,Set<Row>>();
+    public final Map<Integer,Set<Row>> data = new TreeMap<>();
 	private File f;
     
     public MonthData(String env) throws IOException {
@@ -69,7 +68,7 @@ public class MonthData {
     public void add(int yr_mon, String target, long total, long adds, long drops) {
 		Set<Row> row = data.get(yr_mon);
 		if(row==null) {
-			data.put(yr_mon, (row=new HashSet<Row>()));
+			data.put(yr_mon, (row=new HashSet<>()));
 		}
 		row.add(new Row(target,total,adds,drops));
 	}

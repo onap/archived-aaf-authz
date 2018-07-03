@@ -68,7 +68,7 @@ import org.w3c.dom.Node;
  */
 public class JAXBumar {
 	// Need to store off possible JAXBContexts based on Class, which will be stored in Creator
-	private static Map<Class<?>[],Pool<SUnmarshaller>> pools = new HashMap<Class<?>[], Pool<SUnmarshaller>>();
+	private static Map<Class<?>[],Pool<SUnmarshaller>> pools = new HashMap<>();
 
 	private Class<?> cls;
 	private Schema schema;

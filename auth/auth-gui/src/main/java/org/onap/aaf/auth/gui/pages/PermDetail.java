@@ -96,7 +96,7 @@ public class PermDetail extends Page {
 				trans.warn().printf("Error in PermDetail Request: %s", v.errs());
 				return Cells.EMPTY;
 			}
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			rv.add(new AbsCell[]{new TextCell("Type:"),new TextCell(pType)});
 			rv.add(new AbsCell[]{new TextCell("Instance:"),new TextCell(pInstance)});
 			rv.add(new AbsCell[]{new TextCell("Action:"),new TextCell(pAction)});

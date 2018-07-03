@@ -71,7 +71,7 @@ public class JU_Pool {
 	public void getTest() throws CadiException {
 		Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
 
-		List<Pooled<Integer>> gotten = new ArrayList<Pooled<Integer>>();
+		List<Pooled<Integer>> gotten = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			gotten.add(intPool.get());
 			assertThat(gotten.get(i).content, is(i));

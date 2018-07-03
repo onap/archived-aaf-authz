@@ -216,9 +216,9 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         // Getters
         public Set<String> roles(boolean mutable) {
             if (roles == null) {
-                roles = new HashSet<String>();
+                roles = new HashSet<>();
             } else if (mutable && !(roles instanceof HashSet)) {
-                roles = new HashSet<String>(roles);
+                roles = new HashSet<>(roles);
             }
             return roles;
         }

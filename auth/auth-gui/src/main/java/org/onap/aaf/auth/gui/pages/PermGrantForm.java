@@ -125,7 +125,7 @@ public class PermGrantForm extends Page {
 	}
 		
 	private static List<String> getMyRoles(final AAF_GUI gui, final AuthzTrans trans) {
-		final List<String> myRoles = new ArrayList<String>();
+		final List<String> myRoles = new ArrayList<>();
 		try {
 			gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
 				@Override

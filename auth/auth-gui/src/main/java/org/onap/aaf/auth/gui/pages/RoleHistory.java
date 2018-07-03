@@ -171,7 +171,7 @@ public class RoleHistory extends Page {
 					rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
 						@Override
 						public Cells code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-							ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+							ArrayList<AbsCell[]> rv = new ArrayList<>();
 							TimeTaken tt = trans.start("AAF Get History for Namespace ["+oName+"]",Env.REMOTE);
 							String msg = null;
 							try {

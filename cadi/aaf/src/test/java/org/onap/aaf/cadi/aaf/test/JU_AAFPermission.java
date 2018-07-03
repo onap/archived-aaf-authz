@@ -44,7 +44,7 @@ public class JU_AAFPermission {
 
 	@Before
 	public void setup() {
-		roles = new ArrayList<String>();
+		roles = new ArrayList<>();
 		roles.add(role);
 	}
 

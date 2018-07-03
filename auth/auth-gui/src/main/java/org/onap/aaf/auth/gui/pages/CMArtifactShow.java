@@ -159,7 +159,7 @@ public class CMArtifactShow extends Page {
 				return Cells.EMPTY;
 			}
 			final String id = str.indexOf('@')>=0?str:str + '@' + FQI.reverseDomain(sc.get(trans,Params.ns, ""));
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			final TimeTaken tt = trans.start("AAF X509 Details",Env.REMOTE);
 			try {
 				gui.cmClientAsUser(trans.getUserPrincipal(),new Retryable<Void>() {

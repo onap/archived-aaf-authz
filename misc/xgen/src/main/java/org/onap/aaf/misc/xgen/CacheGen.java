@@ -42,7 +42,7 @@ public abstract class CacheGen<G extends XGen<G>> {
 	public final static int HTML5 	= 0x8;
 
 	
-	private ArrayList<Section<G>> sections = new ArrayList<Section<G>>();
+	private ArrayList<Section<G>> sections = new ArrayList<>();
 	private int flags;
 	private final Thematic thematic;
 

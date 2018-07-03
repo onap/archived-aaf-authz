@@ -238,7 +238,7 @@ public class JU_Factory {
 		output = Factory.toString(transMock, certs.toArray(new Certificate[0])[0]);
 		assertThat(output, is(certString));
 
-		List<String> certStrings = new ArrayList<String>();
+		List<String> certStrings = new ArrayList<>();
 		certStrings.add(certString);
 		certStrings.add(certString);
 		certs = Factory.toX509Certificate(certStrings);
@@ -318,7 +318,7 @@ public class JU_Factory {
 
 	private String cleanupString(String str) {
 		String[] lines = str.split("\n", 0);
-		List<String> rawLines = new ArrayList<String>();
+		List<String> rawLines = new ArrayList<>();
 		for (int i = 0; i < lines.length - 2; i++) {
 			rawLines.add(lines[i + 1]);
 		}

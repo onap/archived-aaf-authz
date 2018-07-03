@@ -107,7 +107,7 @@ public class Pool<T> {
 	public Pool(Creator<T> creator) {
 		count = spares = 0;
 		this.creator = creator;
-		list = new LinkedList<Pooled<T>>();
+		list = new LinkedList<>();
 		logger = Log.NULL;
 	}
 	

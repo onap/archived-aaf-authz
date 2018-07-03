@@ -36,7 +36,7 @@ import org.onap.aaf.cadi.lur.LocalPermission;
  *
  */
 public final class User<PERM extends Permission> {
-	private static final Map<String,Permission> NULL_MAP = new HashMap<String,Permission>();
+	private static final Map<String,Permission> NULL_MAP = new HashMap<>();
 	public String name;
 	private byte[] cred;
 	public Principal principal;
@@ -121,7 +121,7 @@ public final class User<PERM extends Permission> {
 	}
 	
 	public Map<String,Permission> newMap() {
-		return new ConcurrentHashMap<String,Permission>();
+		return new ConcurrentHashMap<>();
 	}
 
 	public void add(LocalPermission permission) {

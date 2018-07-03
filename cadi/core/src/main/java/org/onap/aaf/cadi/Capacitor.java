@@ -36,7 +36,7 @@ import java.util.ArrayList;
  */
 public class Capacitor {
 	private static final int DEFAULT_CHUNK = 256;
-	private ArrayList<ByteBuffer> bbs = new ArrayList<ByteBuffer>();
+	private ArrayList<ByteBuffer> bbs = new ArrayList<>();
 	private ByteBuffer curr = null;
 	private int idx;
 	

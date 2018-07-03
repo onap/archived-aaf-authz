@@ -259,7 +259,7 @@ public class Config {
 		
 		access.log(Level.INIT, "Hostname set to",hostname);
 		// Get appropriate TAFs
-		ArrayList<HttpTaf> htlist = new ArrayList<HttpTaf>();
+		ArrayList<HttpTaf> htlist = new ArrayList<>();
 
 		/////////////////////////////////////////////////////
 		// Add a Denial of Service TAF
@@ -507,7 +507,7 @@ public class Config {
 	
 	public static Lur configLur(SecurityInfoC<HttpURLConnection> si, Connector con, Object ... additionalTafLurs) throws CadiException {
 		Access access = si.access;
-		List<Lur> lurs = new ArrayList<Lur>();
+		List<Lur> lurs = new ArrayList<>();
 		
 		/////////////////////////////////////////////////////
 		// Configure a Local Property Based RBAC/LUR
@@ -671,7 +671,7 @@ public class Config {
 					aafConClass = loadClass(access, AAF_V2_0_AAF_CON_HTTP);
 					if (aafConClass != null) {
 						for (Constructor<?> c : aafConClass.getConstructors()) {
-							List<Object> lo = new ArrayList<Object>();
+							List<Object> lo = new ArrayList<>();
 							for (Class<?> pc : c.getParameterTypes()) {
 								if (pc.equals(Access.class)) {
 									lo.add(access);

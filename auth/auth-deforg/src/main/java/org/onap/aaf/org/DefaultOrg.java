@@ -62,7 +62,7 @@ public class DefaultOrg implements Organization {
 	public DefaultOrg(Env env, String realm) throws OrganizationException {
 
 		this.realm = realm;
-		supportedRealms=new HashSet<String>();
+		supportedRealms=new HashSet<>();
 		supportedRealms.add(realm);
 		domain=FQI.reverseDomain(realm);
 		atDomain = '@'+domain;
@@ -126,7 +126,7 @@ public class DefaultOrg implements Organization {
 	}
 
 	// Implement your own Delegation System
-	static final List<String> NULL_DELEGATES = new ArrayList<String>();
+	static final List<String> NULL_DELEGATES = new ArrayList<>();
 
 	public Identities identities;
 	private boolean dryRun;
@@ -135,7 +135,7 @@ public class DefaultOrg implements Organization {
 	private final static Set<String> typeSet;
 
 	static {
-		typeSet = new HashSet<String>();
+		typeSet = new HashSet<>();
 		for(Types t : Types.values()) {
 			typeSet.add(t.name());
 		}
@@ -251,7 +251,7 @@ public class DefaultOrg implements Organization {
 	public Response notify(AuthzTrans trans, Notify type, String url, String[] identities, String[] ccs, String summary, Boolean urgent) {
 		String system = trans.getProperty("CASS_ENV", "");
 
-		ArrayList<String> toList = new ArrayList<String>();
+		ArrayList<String> toList = new ArrayList<>();
 		Identity identity;
 		if (identities != null) {
 			for (String user : identities) {
@@ -278,7 +278,7 @@ public class DefaultOrg implements Organization {
 			return Response.ERR_NotificationFailure;
 		}
 
-		ArrayList<String> ccList = new ArrayList<String>();
+		ArrayList<String> ccList = new ArrayList<>();
 
 		// If we're sending an urgent email, CC the user's supervisor
 		//
@@ -393,7 +393,7 @@ public class DefaultOrg implements Organization {
 
 		int status = 1;
 
-		List<String> to = new ArrayList<String>();
+		List<String> to = new ArrayList<>();
 		for(String em : toList) {
 			if(em.indexOf('@')<0) {
 				to.add(new DefaultOrgIdentity(trans, em, this).email());
@@ -402,7 +402,7 @@ public class DefaultOrg implements Organization {
 			}
 		}
 
-		List<String> cc = new ArrayList<String>();
+		List<String> cc = new ArrayList<>();
 		if(ccList!=null) {
 			if(!ccList.isEmpty()) {
 
@@ -461,7 +461,7 @@ public class DefaultOrg implements Organization {
 					message.addHeader("X-Priority", "1");
 				}
 
-				ArrayList<String> newBody = new ArrayList<String>();
+				ArrayList<String> newBody = new ArrayList<>();
 
 				Address temp[] = getAddresses(to);
 				String headerString = "TO:\t" + InternetAddress.toString(temp) + "\n";
@@ -574,7 +574,7 @@ public class DefaultOrg implements Organization {
 	@Override
 	public List<Identity> getApprovers(AuthzTrans trans, String user) throws OrganizationException {
 		Identity orgIdentity = getIdentity(trans, user);
-		List<Identity> orgIdentitys = new ArrayList<Identity>();
+		List<Identity> orgIdentitys = new ArrayList<>();
 		if(orgIdentity!=null) {
 			Identity supervisor = orgIdentity.responsibleTo();
 			if(supervisor!=null) {

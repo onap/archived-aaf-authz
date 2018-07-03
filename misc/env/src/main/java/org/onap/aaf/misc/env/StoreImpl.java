@@ -65,21 +65,21 @@ public class StoreImpl implements Store {
 	
 	public StoreImpl() {
 		 staticState = new Object[growSize];
-		 staticMap = new HashMap<String,StaticSlot>();
-		 localMap = new HashMap<String,Slot>();
+		 staticMap = new HashMap<>();
+		 localMap = new HashMap<>();
 	}
 	
 	public StoreImpl(String tag) {
 		 staticState = new Object[growSize];
-		 staticMap = new HashMap<String,StaticSlot>();
-		 localMap = new HashMap<String,Slot>();
+		 staticMap = new HashMap<>();
+		 localMap = new HashMap<>();
 	}
 
 	
 	public StoreImpl(String tag, String[] args) {
 		 staticState = new Object[growSize];
-		 staticMap = new HashMap<String,StaticSlot>();
-		 localMap = new HashMap<String,Slot>();
+		 staticMap = new HashMap<>();
+		 localMap = new HashMap<>();
 
 		 if(tag!=null) {
 			String tequals = tag + '=';
@@ -102,8 +102,8 @@ public class StoreImpl implements Store {
 	
 	public StoreImpl(String tag, Properties props) {
 		 staticState = new Object[growSize];
-		 staticMap = new HashMap<String,StaticSlot>();
-		 localMap = new HashMap<String,Slot>();
+		 staticMap = new HashMap<>();
+		 localMap = new HashMap<>();
 		 
 		 if(tag!=null) {
 			 String fname = props.getProperty(tag);
@@ -191,7 +191,7 @@ public class StoreImpl implements Store {
 	 * @see com.att.env.Store#existingSlotNames()
 	 */
 	public List<String> existingSlotNames() {
-		return new ArrayList<String>(localMap.keySet());
+		return new ArrayList<>(localMap.keySet());
 	}
 
 	/* (non-Javadoc)
@@ -234,7 +234,7 @@ public class StoreImpl implements Store {
 	}
 
 	public List<String> existingStaticSlotNames() {
-		return new ArrayList<String>(staticMap.keySet());
+		return new ArrayList<>(staticMap.keySet());
 	}
 }
 

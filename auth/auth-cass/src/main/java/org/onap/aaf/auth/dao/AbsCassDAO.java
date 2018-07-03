@@ -71,8 +71,8 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 	protected Class<DATA> dataClass;
 	private final String name;
 //	private static Slot sessionSlot; // not used since 2015
-	private static final ArrayList<AbsCassDAO<? extends TransStore,?>.PSInfo> psinfos = new ArrayList<AbsCassDAO<? extends TransStore,?>.PSInfo>();
-	private static final List<Object> EMPTY = new ArrayList<Object>(0);
+	private static final ArrayList<AbsCassDAO<? extends TransStore,?>.PSInfo> psinfos = new ArrayList<>();
+	private static final List<Object> EMPTY = new ArrayList<>(0);
 	private static final Deque<ResetRequest> resetDeque = new ConcurrentLinkedDeque<ResetRequest>();
 	private static boolean resetTrigger = false;
 	private static long nextAvailableReset = 0;
@@ -288,7 +288,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 /// TEST CODE for Exception				
 //				boolean force = true; 
 //				if(force) {
-//					Map<InetSocketAddress, Throwable> misa = new HashMap<InetSocketAddress,Throwable>();
+//					Map<InetSocketAddress, Throwable> misa = new HashMap<>();
 //					//misa.put(new InetSocketAddress(444),new Exception("no host was tried"));
 //					misa.put(new InetSocketAddress(444),new Exception("Connection has been closed"));
 //					throw new com.datastax.driver.core.exceptions.NoHostAvailableException(misa);
@@ -338,7 +338,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 			return Result.ok((List<DATA>)EMPTY); // Result sets now .emptyList(true);
 		} else {
 			DATA d;
-			List<DATA> data = indata==null?new ArrayList<DATA>(rows.size()):indata;
+			List<DATA> data = indata==null?new ArrayList<>(rows.size()):indata;
 			
 			for(Row row : rows) {
 				try {

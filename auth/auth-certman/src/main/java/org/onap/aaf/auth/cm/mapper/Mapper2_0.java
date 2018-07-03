@@ -205,7 +205,7 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 	 */
 	@Override
 	public List<ArtiDAO.Data> toArtifact(AuthzTrans trans, Artifacts artifacts) {
-		List<ArtiDAO.Data> ladd = new ArrayList<ArtiDAO.Data>();
+		List<ArtiDAO.Data> ladd = new ArrayList<>();
 		for(Artifact arti : artifacts.getArtifact()) {
 			ArtiDAO.Data data = new ArtiDAO.Data();
 			data.mechid = arti.getMechid();

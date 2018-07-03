@@ -59,7 +59,7 @@ public class JU_HTML5GenTest {
 
 		gen.html("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "html".toCharArray()) {
 			Integer times = map.get(ch);
@@ -79,7 +79,7 @@ public class JU_HTML5GenTest {
 
 		gen.head();
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "head".toCharArray()) {
 			Integer times = map.get(ch);
@@ -98,7 +98,7 @@ public class JU_HTML5GenTest {
 
 		gen.body("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "body".toCharArray()) {
 			Integer times = map.get(ch);
@@ -121,7 +121,7 @@ public class JU_HTML5GenTest {
 
 		gen.charset(charset);
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : CHARSET_LINE.toCharArray()) {
 			Integer times = map.get(ch);

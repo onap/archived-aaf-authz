@@ -122,7 +122,7 @@ public class JU_CachingFileAccess {
 
 	@Test
 	public void testCleanupParams() {
-		NavigableMap<String,org.onap.aaf.auth.rserv.Content> content = new ConcurrentSkipListMap<String,org.onap.aaf.auth.rserv.Content>();
+		NavigableMap<String,org.onap.aaf.auth.rserv.Content> content = new ConcurrentSkipListMap<>();
 		cachingFileAccess.cleanupParams(50, 500); //TODO: find right input
 	}
 
@@ -170,7 +170,7 @@ public class JU_CachingFileAccess {
 
 	@Test
 	public void testInvalidate() {
-		//NavigableMap<String,org.onap.aaf.auth.rserv.Content> content = new ConcurrentSkipListMap<String,org.onap.aaf.auth.rserv.Content>();
+		//NavigableMap<String,org.onap.aaf.auth.rserv.Content> content = new ConcurrentSkipListMap<>();
 		//Content con = mock(Content.class);
 		//content.put("hello", con);
 		cachingFileAccess.invalidate("hello");

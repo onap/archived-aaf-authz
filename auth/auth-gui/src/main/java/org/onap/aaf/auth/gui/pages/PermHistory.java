@@ -175,7 +175,7 @@ public class PermHistory extends Page {
 				return Cells.EMPTY;
 			}
 			
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			String msg = null;
 			try {
 				gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {

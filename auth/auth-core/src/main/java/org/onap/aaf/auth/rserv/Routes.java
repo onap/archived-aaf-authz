@@ -80,7 +80,7 @@ public class Routes<TRANS extends Trans> {
 	}
 	
 	public List<RouteReport> routeReport() {
-		ArrayList<RouteReport> ltr = new ArrayList<RouteReport>();
+		ArrayList<RouteReport> ltr = new ArrayList<>();
 		for(int i=0;i<end;++i) {
 			ltr.add(routes[i].api());
 		}

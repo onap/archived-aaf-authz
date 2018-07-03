@@ -64,7 +64,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
 
 	public void add(DATA data)  {
 		String key = keyFromObjs(dao.keyFrom(data));
-		List<DATA> list = new ArrayList<DATA>();
+		List<DATA> list = new ArrayList<>();
 		list.add(data);
 		super.add(key,list);
 	}

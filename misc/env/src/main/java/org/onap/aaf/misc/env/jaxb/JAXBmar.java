@@ -64,7 +64,7 @@ import org.onap.aaf.misc.env.util.Pool.Pooled;
  */
 public class JAXBmar {
 	// Need to store off possible JAXBContexts based on Class, which will be stored in Creator
-	private static Map<Class<?>[],Pool<PMarshaller>> pools = new HashMap<Class<?>[], Pool<PMarshaller>>();
+	private static Map<Class<?>[],Pool<PMarshaller>> pools = new HashMap<>();
 
 	// Handle Marshaller class setting of properties only when needed
 	private class PMarshaller {

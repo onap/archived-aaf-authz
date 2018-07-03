@@ -184,7 +184,7 @@ public class PropAccess implements Access {
 						String chainProp = props.getProperty(Config.CADI_PROP_FILES);
 						if(chainProp!=null) {
 							if(recursionProtection==null) {
-								recursionProtection = new ArrayList<String>();
+								recursionProtection = new ArrayList<>();
 								recursionProtection.add(cadi_prop_files);
 							}
 							if(!recursionProtection.contains(chainProp)) {

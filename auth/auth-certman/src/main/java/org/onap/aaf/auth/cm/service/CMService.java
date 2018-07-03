@@ -125,7 +125,7 @@ public class CMService {
 			}
 
 			List<String> notes = null;
-			List<String> fqdns = new ArrayList<String>(req.value.fqdns);
+			List<String> fqdns = new ArrayList<>(req.value.fqdns);
 			
 			
 			String email = null;
@@ -161,7 +161,7 @@ public class CMService {
 						for(String cn : req.value.fqdns) {
 							try {
 								InetAddress[] ias = InetAddress.getAllByName(cn);
-								Set<String> potentialSanNames = new HashSet<String>();
+								Set<String> potentialSanNames = new HashSet<>();
 								for(InetAddress ia1 : ias) {
 									InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
 									if(primary==null && ias.length==1 && trans.ip().equals(ia1.getHostAddress())) {
@@ -261,7 +261,7 @@ public class CMService {
 //							}
 //						},
 //						new AAFPermission(ca.getPermType(), ca.getName(), SANS))) {
-//					if(notes==null) {notes = new ArrayList<String>();}
+//					if(notes==null) {notes = new ArrayList<>();}
 //					notes.add("Warning: Subject Alternative Names only allowed by Permission: Get CSO Exception.");
 //					return Result.err(Status.ERR_Denied, "%s must have a CSO Exception to work with SAN",trans.user());
 //				}

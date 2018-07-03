@@ -46,7 +46,7 @@ public class JU_DataFile {
 //		File file = new File("../authz-batch/data/v1.dat");
 //		DataFile df = new DataFile(file,"r");
 //		int count = 0;
-//		List<String> list = new ArrayList<String>();
+//		List<String> list = new ArrayList<>();
 //		try {
 //			df.open();
 //			Token tok = df.new Token(1024000);

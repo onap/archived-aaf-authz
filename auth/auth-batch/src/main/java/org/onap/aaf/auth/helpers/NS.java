@@ -36,7 +36,7 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class NS implements Comparable<NS> {
-	public final static Map<String,NS> data = new TreeMap<String,NS>();
+	public final static Map<String,NS> data = new TreeMap<>();
 
 	public final String name, description, parent;
 	public final int scope,type;

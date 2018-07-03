@@ -82,13 +82,6 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
 		public String target;
 		public String subject;
 		public String  memo;
-//		Map<String, String>  detail = null;
-//		public Map<String, String>  detail() {
-//			if(detail == null) {
-//				detail = new HashMap<String, String>();
-//			}
-//			return detail;
-//		}
 		public ByteBuffer reconstruct;
 	}
 	
@@ -106,7 +99,6 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
 			data.target = row.getString(4);
 			data.subject = row.getString(5);
 			data.memo = row.getString(6);
-//			data.detail = row.getMap(6, String.class, String.class);
 			data.reconstruct = row.getBytes(7);
 			return data;
 		}

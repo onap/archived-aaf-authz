@@ -235,7 +235,7 @@ public class Question {
 			nss = null;
 		} else {
 			// Setup a TreeSet to check on Namespaces to 
-			nss = new TreeSet<String>();
+			nss = new TreeSet<>();
 			PermLookup fUser = PermLookup.get(trans, this, forUser);
 			Result<Set<String>> forUpn = fUser.getPermNames();
 			if(forUpn.notOK()) {
@@ -252,7 +252,7 @@ public class Question {
 			}
 		}
 
-		List<PermDAO.Data> rlpUser = new ArrayList<PermDAO.Data>();
+		List<PermDAO.Data> rlpUser = new ArrayList<>();
 		Result<PermDAO.Data> rpdd;
 		PermDAO.Data pdd;
 		for(String pn : plPermNames.value) {
@@ -298,7 +298,7 @@ public class Question {
 			return Result.err(rlrd);
 		}
 		// Using Set to avoid duplicates
-		Set<String> permNames = new HashSet<String>();
+		Set<String> permNames = new HashSet<>();
 		if (rlrd.isOKhasData()) {
 			for (RoleDAO.Data drr : rlrd.value) {
 				permNames.addAll(drr.perms(false));
@@ -307,7 +307,7 @@ public class Question {
 
 		// Note: It should be ok for a Valid user to have no permissions -
 		// Jonathan 8/12/2013
-		List<PermDAO.Data> perms = new ArrayList<PermDAO.Data>();
+		List<PermDAO.Data> perms = new ArrayList<>();
 		for (String perm : permNames) {
 			Result<PermDAO.Data> pr = PermDAO.Data.decode(trans, this, perm);
 			if (pr.notOK()) {
@@ -744,7 +744,7 @@ public class Question {
 				// Bug noticed 6/22. Sorting on the result can cause Concurrency Issues.	 
 				List<CredDAO.Data> cddl;
 				if(result.value.size() > 1) {
-					cddl = new ArrayList<CredDAO.Data>(result.value.size());
+					cddl = new ArrayList<>(result.value.size());
 					for(CredDAO.Data old : result.value) {
 						if(old.type==CredDAO.BASIC_AUTH || old.type==CredDAO.BASIC_AUTH_SHA256) {
 							cddl.add(old);
@@ -1039,7 +1039,7 @@ public class Question {
 
 	public static synchronized boolean specialLogOn(AuthzTrans trans, String id) {
 		if (specialLog == null) {
-			specialLog = new HashSet<String>();
+			specialLog = new HashSet<>();
 		}
 		boolean rc = specialLog.add(id);
 		if(rc) {

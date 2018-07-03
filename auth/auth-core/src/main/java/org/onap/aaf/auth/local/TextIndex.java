@@ -89,7 +89,7 @@ public class TextIndex {
 			}
 		}
 		
-		List<Integer> entries = new ArrayList<Integer>();
+		List<Integer> entries = new ArrayList<>();
 		for(int i=min;i<=max;++i) {
 			ttok.pos(i*REC_SIZE);
 			tib.rewind();
@@ -127,7 +127,7 @@ public class TextIndex {
 	public void create(final Trans trans,final DataFile data, int maxLine, char delim, int fieldOffset, int skipLines) throws IOException {
 		FileChannel fos;
 		
-		List<Idx> list = new LinkedList<Idx>(); // Some hashcodes will double... DO NOT make a set
+		List<Idx> list = new LinkedList<>(); // Some hashcodes will double... DO NOT make a set
 		TimeTaken tt2 = trans.start("Open Files", Env.SUB);
 		RandomAccessFile raf=null;
 		try {

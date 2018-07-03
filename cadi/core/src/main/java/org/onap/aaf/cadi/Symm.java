@@ -138,7 +138,7 @@ public class Symm {
 		// There can be time efficiencies gained when the underlying keyset consists mainly of ordered 
 		// data (i.e. abcde...).  Therefore, we'll quickly analyze the keyset.  If it proves to have
 		// too much entropy, the "Unordered" algorithm, which is faster in such cases is used.
-		ArrayList<int[]> la = new ArrayList<int[]>();
+		ArrayList<int[]> la = new ArrayList<>();
 		for(int i=0;i<codeset.length;++i) {
 			curr = codeset[i];
 			if(prev+1==curr) { // is next character in set

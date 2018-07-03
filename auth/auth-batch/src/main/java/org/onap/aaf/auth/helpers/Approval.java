@@ -114,7 +114,7 @@ public class Approval implements CacheChange.Data  {
 				        	if(person!=null) {
 					        ln = byApprover.get(person);
 					        	if(ln==null) {
-					        		ln = new ArrayList<Approval>();
+					        		ln = new ArrayList<>();
 					        		byApprover.put(app.getApprover(), ln);
 					        	}
 					        	ln.add(app);
@@ -125,7 +125,7 @@ public class Approval implements CacheChange.Data  {
 				        	if(person!=null) {
 				        		ln = byUser.get(person);
 					        	if(ln==null) {
-					        		ln = new ArrayList<Approval>();
+					        		ln = new ArrayList<>();
 					        		byUser.put(app.getUser(), ln);
 					        	}
 					        	ln.add(app);
@@ -134,7 +134,7 @@ public class Approval implements CacheChange.Data  {
 				        	if(ticket!=null) {
 					        	ln = byTicket.get(ticket);
 					        	if(ln==null) {
-					        		ln = new ArrayList<Approval>();
+					        		ln = new ArrayList<>();
 					        		byTicket.put(app.getTicket(), ln);
 					        	}
 					        ln.add(app);

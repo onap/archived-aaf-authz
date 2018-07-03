@@ -205,7 +205,7 @@ public class InXML implements Parse<Reader, State> {
 				String value = sb.toString();
 				sb.setLength(0);
 				if(tag !=null && value != null) {
-					if(props==null)props = new ArrayList<Prop>();
+					if(props==null)props = new ArrayList<>();
 					props.add(new Prop(tag,value));
 				}
 			}
@@ -251,7 +251,7 @@ public class InXML implements Parse<Reader, State> {
 
 		public void push(Prop prop) {
 			if(attribs==null) {
-				attribs = new ArrayList<Prop>();
+				attribs = new ArrayList<>();
 				idx = 0;
 			}
 			attribs.add(prop);
@@ -291,7 +291,7 @@ public class InXML implements Parse<Reader, State> {
 
 		private void addNS(Prop prop) {
 			Map<String,String> existingNS = getNS();
-			if(ns==null)ns = new HashMap<String,String>();
+			if(ns==null)ns = new HashMap<>();
 			// First make a copy of previous NSs so that we have everything we need, but can overwrite, if necessary
 			if(existingNS!=null && ns!=existingNS) {
 				ns.putAll(ns);

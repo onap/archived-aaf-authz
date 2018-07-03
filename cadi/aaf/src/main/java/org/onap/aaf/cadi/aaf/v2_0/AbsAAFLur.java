@@ -132,7 +132,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 					} else {
 						sb.append("\n\tUser does not contain ");
 						sb.append(pond.getKey());
-						List<Permission> perms = new ArrayList<Permission>();
+						List<Permission> perms = new ArrayList<>();
 						user.copyPermsTo(perms);
 						for(Permission p : perms) {
 							sb.append("\n\t\t");

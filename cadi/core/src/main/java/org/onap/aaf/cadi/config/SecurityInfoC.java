@@ -31,7 +31,7 @@ import org.onap.aaf.cadi.SecuritySetter;
 
 public class SecurityInfoC<CLIENT> extends SecurityInfo {
 	public static final String DEF_ID = "ID not Set";
-	private static Map<Class<?>,SecurityInfoC<?>> sicMap = new HashMap<Class<?>,SecurityInfoC<?>>();
+	private static Map<Class<?>,SecurityInfoC<?>> sicMap = new HashMap<>();
 	public SecuritySetter<CLIENT> defSS;
 
 	public SecurityInfoC(Access access) throws CadiException {

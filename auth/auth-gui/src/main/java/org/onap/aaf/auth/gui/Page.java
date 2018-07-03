@@ -83,7 +83,7 @@ public class Page extends HTMLCacheGen {
 	public final boolean no_cache;
 
 	// Note: Only access is synchronized in "getPerm"
-	private final static Map<String,Map<String,Permission>> perms = new HashMap<String,Map<String,Permission>>();
+	private final static Map<String,Map<String,Permission>> perms = new HashMap<>();
 
 	public String name() {
 		return bcName;
@@ -379,7 +379,7 @@ public class Page extends HTMLCacheGen {
 		Map<String,Permission> msp = perms.get(instance);
 		Permission p;
 		if(msp==null) {
-			msp = new HashMap<String,Permission>();
+			msp = new HashMap<>();
 			perms.put(instance, msp);
 			p=null;
 		} else {

@@ -38,11 +38,11 @@ import javax.xml.bind.annotation.XmlType;
  * @param <T>
  */
 public class JaxSet<T> {
-	private static Map<Class<?>,JaxSet<?>> jsets = new HashMap<Class<?>,JaxSet<?>>();
+	private static Map<Class<?>,JaxSet<?>> jsets = new HashMap<>();
 	private Map<String,Setter<T>> members;
 
 	private JaxSet(Class<?> cls) {
-		members = new TreeMap<String, Setter<T>>();
+		members = new TreeMap<>();
 		XmlType xmltype = cls.getAnnotation(XmlType.class);
 		Class<?> paramType[] = new Class[] {String.class};
 		for(String str : xmltype.propOrder()) {
@@ -79,7 +79,7 @@ public class JaxSet<T> {
 			@SuppressWarnings("unchecked")
 			JaxSet<X> js = (JaxSet<X>)jsets.get(cls);
 			if(js == null) {
-				jsets.put(cls, js = new JaxSet<X>(cls));
+				jsets.put(cls, js = new JaxSet<>(cls));
 			}
 			return js;
 		}

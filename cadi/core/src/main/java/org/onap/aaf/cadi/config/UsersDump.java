@@ -58,7 +58,7 @@ public class UsersDump {
 			StringBuilder sb = new StringBuilder();
 			
 			// Obtain all unique role names
-			HashSet<String> groups = new HashSet<String>();
+			HashSet<String> groups = new HashSet<>();
 			for(AbsUserCache<?>.DumpInfo di : lur.dumpInfo()) {
 				sb.append("\n  <user username=\"");
 				sb.append(di.user);

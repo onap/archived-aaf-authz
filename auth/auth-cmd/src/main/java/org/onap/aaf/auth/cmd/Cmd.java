@@ -73,7 +73,7 @@ public abstract class Cmd {
 	private int required;
 	protected final Cmd parent;
 	protected final List<Cmd> children;
-	private final static ConcurrentHashMap<Class<?>,RosettaDF<?>> dfs = new ConcurrentHashMap<Class<?>,RosettaDF<?>>();
+	private final static ConcurrentHashMap<Class<?>,RosettaDF<?>> dfs = new ConcurrentHashMap<>();
 	public final AAFcli aafcli;
 	protected Access access;
 	private AuthzEnv env;
@@ -95,7 +95,7 @@ public abstract class Cmd {
 		if(parent!=null) {
 			parent.children.add(this);
 		}
-		children = new ArrayList<Cmd>();
+		children = new ArrayList<>();
 		this.params = params;
 		this.name = name;
 		required=0;

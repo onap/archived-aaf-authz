@@ -69,7 +69,7 @@ public class RefreshableThreadObject<T extends Creatable<T>> {
 	 * @throws APIException
 	 */
 	public RefreshableThreadObject(Class<T> clss) throws APIException {
-		objs = new ConcurrentHashMap<Thread,T>();
+		objs = new ConcurrentHashMap<>();
 		try {
 			cnst = clss.getConstructor(new Class[]{Env.class} );
 		} catch (Exception e) {

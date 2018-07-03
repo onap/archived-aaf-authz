@@ -35,7 +35,7 @@ public class Approver {
 	public Approver(String approver, Organization org) {
 		this.name = approver;
 		this.org = org;
-		userRequests = new HashMap<String, Integer>();
+		userRequests = new HashMap<>();
 	}
 	
 	public void addRequest(String user) {

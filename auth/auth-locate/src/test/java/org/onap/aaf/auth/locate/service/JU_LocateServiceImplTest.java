@@ -90,7 +90,7 @@ public class JU_LocateServiceImplTest {
 
 		assertEquals(endPointResult, output);
 
-		List<MgmtEndpoint> mgmtEndPoints = new ArrayList<MgmtEndpoint>();
+		List<MgmtEndpoint> mgmtEndPoints = new ArrayList<>();
 		mgmtEndPoints.add(mgmtEndPoint);
 
 		when(mgmtEndPoint.getName()).thenReturn("http.Endpoint1");

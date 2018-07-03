@@ -79,7 +79,7 @@ public class JU_OAuthTest {
 	public static void tearDownAfterClass() throws Exception {
 		Field field = SecurityInfoC.class.getDeclaredField("sicMap");
 		field.setAccessible(true);
-		field.set(null, new HashMap<Class<?>,SecurityInfoC<?>>());
+		field.set(null, new HashMap<>());
 	}
 
 	@Before

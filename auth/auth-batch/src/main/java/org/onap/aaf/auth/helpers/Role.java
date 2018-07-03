@@ -39,10 +39,10 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Role implements Comparable<Role> {
-    public static final TreeMap<Role,Set<String>> data = new TreeMap<Role,Set<String>>();
-    public static final TreeMap<String,Role> keys = new TreeMap<String,Role>();
-    public static final TreeMap<String,Role> byName = new TreeMap<String,Role>();
-	private static List<Role> deleteRoles = new ArrayList<Role>();
+    public static final TreeMap<Role,Set<String>> data = new TreeMap<>();
+    public static final TreeMap<String,Role> keys = new TreeMap<>();
+    public static final TreeMap<String,Role> byName = new TreeMap<>();
+	private static List<Role> deleteRoles = new ArrayList<>();
 
 	public final String ns, name, description;
 	private String full, encode;
@@ -51,7 +51,7 @@ public class Role implements Comparable<Role> {
 	public Role(String full) {
 		ns = name = description = "";
 		this.full = full;
-		perms = new HashSet<String>();
+		perms = new HashSet<>();
 	}
 	
 	public Role(String ns, String name, String description,Set<String> perms) {

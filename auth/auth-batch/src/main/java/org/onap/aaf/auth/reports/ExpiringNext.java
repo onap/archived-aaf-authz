@@ -73,7 +73,7 @@ public class ExpiringNext extends Batch {
         Date earliestUR = gc.getTime();
         Date earliestCred = gc.getTime();
         // Run for Roles
-        List<String> expiring = new ArrayList<String>();
+        List<String> expiring = new ArrayList<>();
         
         trans.info().log("Checking for Expired UserRoles");
     	for(UserRole ur : UserRole.data) {

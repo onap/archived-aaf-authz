@@ -59,7 +59,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
 		private List<Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String, Object>>>>> types;
 
 		public TypedCode() {
-			types = new ArrayList<Pair<String,Pair<HttpCode<TRANS,?>,List<Pair<String,Object>>>>>();
+			types = new ArrayList<>();
 		}
 		
 		/**
@@ -88,7 +88,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
 		@Override
 		protected Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> types(HttpCode<TRANS,?> code, String str) {
 			Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String, Object>>>> type = null;
-			ArrayList<Pair<String, Object>> props = new ArrayList<Pair<String,Object>>();
+			ArrayList<Pair<String, Object>> props = new ArrayList<>();
 			// Want Q percentage is to be first in the array everytime.  If not listed, 1.0 is default
 			props.add(new Pair<String,Object>(Q,1f));
 			Pair<HttpCode<TRANS,?>, List<Pair<String,Object>>> cl = new Pair<HttpCode<TRANS,?>, List<Pair<String,Object>>>(code, props);
@@ -227,7 +227,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
 		
 		public void api(RouteReport tr) {
 			// Need to build up a map, because Prop entries can be in several places.
-			HashMap<HttpCode<?,?>,StringBuilder> psb = new HashMap<HttpCode<?,?>,StringBuilder>();
+			HashMap<HttpCode<?,?>,StringBuilder> psb = new HashMap<>();
 			StringBuilder temp;
 			tr.desc = null;
 			

@@ -365,7 +365,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 		jks.load(null, cap);
 		
 		// Get the Cert(s)... Might include Trust store
-		List<String> lcerts = new ArrayList<String>();
+		List<String> lcerts = new ArrayList<>();
 		lcerts.add(cr.asCertString());
 		for(String s : trustChain) {
 			lcerts.add(s);

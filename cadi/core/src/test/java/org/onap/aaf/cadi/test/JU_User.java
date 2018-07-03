@@ -158,7 +158,7 @@ public class JU_User {
 	@Test
 	public void addValuesToNewMapTest() {
 		User<Permission> user = new User<Permission>(principal);
-		Map<String, Permission> newMap = new HashMap<String,Permission>();
+		Map<String, Permission> newMap = new HashMap<>();
 		
 		assertFalse(user.contains(permission));
 		
@@ -167,7 +167,7 @@ public class JU_User {
 		
 		assertTrue(user.contains(permission));
 		
-		List<Permission> sink = new ArrayList<Permission>();
+		List<Permission> sink = new ArrayList<>();
 		user.copyPermsTo(sink);
 		
 		assertThat(sink.size(), is(1));

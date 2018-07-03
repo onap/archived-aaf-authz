@@ -93,7 +93,7 @@ public class HClient implements EClient<HttpURLConnection> {
 	@Override
 	public void addHeader(String tag, String value) {
 		if (headers == null)
-			headers = new ArrayList<Header>();
+			headers = new ArrayList<>();
 		headers.add(new Header(tag, value));
 	}
 

@@ -109,7 +109,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
 			client.send();
 			Future<Endpoints> fr = client.futureRead(epsDF, TYPE.JSON);
 			if(fr.get(client.timeout())) {
-				List<EP> epl = new LinkedList<EP>();
+				List<EP> epl = new LinkedList<>();
 				for(Endpoint endpoint : fr.value.getEndpoint()) {
 					epl.add(new EP(endpoint,latitude,longitude));
 				}

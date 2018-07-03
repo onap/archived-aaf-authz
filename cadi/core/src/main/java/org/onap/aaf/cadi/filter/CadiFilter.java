@@ -218,7 +218,7 @@ public class CadiFilter implements Filter {
 						if(map.length>0) {
 							MapPermConverter mpc=null;
 							int idx;
-							mapPairs = new ArrayList<Pair>();
+							mapPairs = new ArrayList<>();
 							for(String entry : map) {
 								if((idx=entry.indexOf('='))<0) { // it's a Path, so create a new converter
 									access.log(Level.INIT,"Loading Perm Conversions for:",entry);

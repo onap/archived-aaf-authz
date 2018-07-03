@@ -48,11 +48,11 @@ public abstract class ArtifactDir implements PlaceArtifact {
 
 	protected static final String C_R = "\n";
 	protected File dir;
-	private List<String> encodeds = new ArrayList<String>();
+	private List<String> encodeds = new ArrayList<>();
 	
 	private Symm symm;
 	// This checks for multiple passes of Dir on the same objects.  Run clear after done.
-	protected static Map<String,Object> processed = new HashMap<String,Object>();
+	protected static Map<String,Object> processed = new HashMap<>();
 
 
 	/**

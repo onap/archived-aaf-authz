@@ -133,7 +133,7 @@ public class TestConnectivity {
 		print(true,"Load Security Setters from Configuration Information");
 		String user = access.getProperty(Config.AAF_APPID);
 
-		ArrayList<SecuritySetter<HttpURLConnection>> lss = new ArrayList<SecuritySetter<HttpURLConnection>>();
+		ArrayList<SecuritySetter<HttpURLConnection>> lss = new ArrayList<>();
 		
 
 		try {

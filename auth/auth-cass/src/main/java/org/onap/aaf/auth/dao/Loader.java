@@ -143,7 +143,7 @@ public abstract class Loader<DATA> {
 		if(l<0) {
 		    return null;
 		}
-		Set<String> set = new HashSet<String>(l);
+		Set<String> set = new HashSet<>(l);
 		for(int i=0;i<l;++i) {
 			set.add(readString(is,buff));
 		}
@@ -155,7 +155,7 @@ public abstract class Loader<DATA> {
 		if(l<0) {
 		    return null;
 		}
-		List<String> list = new ArrayList<String>(l);
+		List<String> list = new ArrayList<>(l);
 		for(int i=0;i<l;++i) {
 			list.add(Loader.readString(is,buff));
 		}
@@ -187,7 +187,7 @@ public abstract class Loader<DATA> {
 		if(l<0) {
 		    return null;
 		}
-		Map<String,String> map = new HashMap<String,String>(l);
+		Map<String,String> map = new HashMap<>(l);
 		for(int i=0;i<l;++i) {
 			String key = readString(is,buff);
 			map.put(key,readString(is,buff));
