@@ -49,7 +49,7 @@ public class Validator {
 	private StringBuilder msgs;
 
 	static {
-		nsKeywords = new ArrayList<String>();
+		nsKeywords = new ArrayList<>();
 		nsKeywords.add(".access");
 		nsKeywords.add(".owner");
 		nsKeywords.add(".admin");

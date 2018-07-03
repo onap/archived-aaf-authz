@@ -75,7 +75,7 @@ public class JU_Cached {
 	@Test
 	public void testInvalidate(){
 		Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 5, 30000L);
-		cached.add("test", new ArrayList<DataStub>());
+		cached.add("test", new ArrayList<>());
 		cached.invalidate("test");
 		cached.invalidate("test1");
 	}

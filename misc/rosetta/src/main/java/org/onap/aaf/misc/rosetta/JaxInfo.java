@@ -74,7 +74,7 @@ public class JaxInfo {
 		JaxInfo derived;
 		// Lazy Instantiation
 		if(extensions == null) {
-			extensions = new HashMap<String,JaxInfo>();
+			extensions = new HashMap<>();
 			derived = null;
 		} else {
 			derived = extensions.get(derivedName);
@@ -163,7 +163,7 @@ public class JaxInfo {
 		// Build up Method names from JAXB Annotations
 		XmlType xt;
 		while((xt = cls.getAnnotation(XmlType.class))!=null) {
-			if(fields==null)fields = new ArrayList<JaxInfo>();
+			if(fields==null)fields = new ArrayList<>();
 			for(String field : xt.propOrder()) {
 				if("".equals(field)) break; // odd bug.  "" returned when no fields exist, rather than empty array
 				Field rf = cls.getDeclaredField(field);

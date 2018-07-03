@@ -55,7 +55,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 	private static Timer timer;
 	// Map of userName to User
 	private final Map<String, User<PERM>> userMap;
-	private static final Map<String, Miss> missMap = new TreeMap<String,Miss>();
+	private static final Map<String, Miss> missMap = new TreeMap<>();
 	private final Symm missEncrypt;
 	
 	private Clean clean;
@@ -73,7 +73,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 		}
 		missEncrypt = s;
 		
-		userMap = new ConcurrentHashMap<String, User<PERM>>();
+		userMap = new ConcurrentHashMap<>();
 
 		
 		if(cleanInterval>0) {
@@ -236,7 +236,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 	}
 	
 	public final List<DumpInfo> dumpInfo() {
-		List<DumpInfo> rv = new ArrayList<DumpInfo>();
+		List<DumpInfo> rv = new ArrayList<>();
 		for(User<PERM> user : userMap.values()) {
 			rv.add(new DumpInfo(user));
 		}
@@ -265,7 +265,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 	
 
 	// Simple map of Group name to a set of User Names
-	//	private Map<String, Set<String>> groupMap = new HashMap<String, Set<String>>();
+	//	private Map<String, Set<String>> groupMap = new HashMap<>();
 
 	/**
 	 * Class to hold a small subset of the data, because we don't want to expose actual Permission or User Objects
@@ -276,7 +276,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 		
 		public DumpInfo(User<PERM> user) {
 			this.user = user.principal.getName();
-			perms = new ArrayList<String>(user.perms.keySet());
+			perms = new ArrayList<>(user.perms.keySet());
 		}
 	}
 	
@@ -315,7 +315,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 			int total = 0;
 			try {
 				// look at now.  If we need to expire more by increasing "now" by "advance"
-				ArrayList<User<PERM>> al = new ArrayList<User<PERM>>(userMap.values().size());
+				ArrayList<User<PERM>> al = new ArrayList<>(userMap.values().size());
 				al.addAll(0, userMap.values());
 				long now = System.currentTimeMillis() + advance;
 				for(User<PERM> user : al) {
@@ -367,7 +367,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 				int missTotal = missMap.keySet().size();
 				int miss = 0;
 				if(missTotal>0) {
-					ArrayList<String> keys = new ArrayList<String>(missTotal);
+					ArrayList<String> keys = new ArrayList<>(missTotal);
 					keys.addAll(missMap.keySet());
 					for(String key : keys) {
 						Miss m = missMap.get(key);

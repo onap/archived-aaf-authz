@@ -274,7 +274,7 @@ public class TokenClient {
 		Result<TimedToken> rtt = factory.get(key,hash,new Loader<TimedToken>() {
 			@Override
 			public Result<TimedToken> load(final String key) throws APIException, CadiException, LocatorException {
-				final List<String> params = new ArrayList<String>();
+				final List<String> params = new ArrayList<>();
 				params.add(scope);
 				addSecurity(params,authn_method);
 			
@@ -331,7 +331,7 @@ public class TokenClient {
 		if(ss==null) {
 			throw new APIException("client_creds(...) must be set before obtaining Access Tokens");
 		}
-		final List<String> params = new ArrayList<String>();
+		final List<String> params = new ArrayList<>();
 		params.add("refresh_token="+token.getRefreshToken());
 		addSecurity(params,AUTHN_METHOD.refresh_token);
 		final String scope="scope="+token.getScope().replace(' ', '+');
@@ -373,7 +373,7 @@ public class TokenClient {
 		return tkCon.best(new Retryable<Result<Introspect>>() {
 				@Override
 				public Result<Introspect> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-					final List<String> params = new ArrayList<String>();
+					final List<String> params = new ArrayList<>();
 					params.add("token="+token);
 					addSecurity(params,AUTHN_METHOD.client_credentials);
 					final String paramsa[] = new String[params.size()];

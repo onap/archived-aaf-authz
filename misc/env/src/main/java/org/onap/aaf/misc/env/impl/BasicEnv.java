@@ -84,7 +84,7 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
 	 */
 	public BasicEnv(Applet applet, String ... tags) {
 		super(null, tags);
-//		props = new HashMap<String, String>();
+//		props = new HashMap<>();
 //		String value;
 //		for(int i=0;i<tags.length;++i) {
 //			value = applet.getParameter(tags[i]);

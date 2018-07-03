@@ -354,14 +354,22 @@ public class XReader {
 			for(Tag tag : t.attribs) {
 				if("xmlns".equals(tag.prefix)) {
 					if(newnss==null) {
-						newnss = new HashMap<String,String>();
+						newnss = new HashMap<>();
 						if(nss!=null)newnss.putAll(nss);
 					}
 					newnss.put(tag.name, tag.value);
 				}
 			}
 		}
-		return newnss==null?(nss==null?new HashMap<String,String>():nss):newnss;
+		//return newnss==null?(nss==null?new HashMap<String,String>():nss):newnss;
+		if(newnss==null) {
+			if(nss==null) {
+				newnss = new HashMap<>();
+			} else {
+				newnss = nss;
+			}
+		}
+		return newnss;
 	}
 
 	/**
@@ -392,7 +400,7 @@ public class XReader {
 		 */
 		public void add(Tag attrib) {
 			if(attribs == null) {
-				attribs = new ArrayList<Tag>();
+				attribs = new ArrayList<>();
 			}
 			attribs.add(attrib);
 		}

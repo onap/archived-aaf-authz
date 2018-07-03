@@ -71,7 +71,7 @@ import com.datastax.driver.core.Cluster;
 public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
 	private static final String USER_PERMS = "userPerms";
-	private static final Map<String,CA> certAuths = new TreeMap<String,CA>();
+	private static final Map<String,CA> certAuths = new TreeMap<>();
 	public Facade1_0 facade1_0; // this is the default Facade
 	public Facade1_0 facade1_0_XML; // this is the XML Facade
 	public Map<String, Dated> cacheUser;

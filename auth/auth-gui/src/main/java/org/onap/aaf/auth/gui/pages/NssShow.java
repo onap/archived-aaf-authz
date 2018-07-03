@@ -83,7 +83,7 @@ public class NssShow extends Page {
 		
 		@Override
 		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			ArrayList<AbsCell[]> rv = new ArrayList<>();
 			List<Ns> nss = trans.get(sNssByUser, null);
 			if(nss==null) {
 				TimeTaken tt = trans.start("AAF Nss by User for " + privilege,Env.REMOTE);

@@ -75,7 +75,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 			}
 		}
 
-		epList = new LinkedList<EP>();
+		epList = new LinkedList<>();
 		refreshWait = refreshMin;
 
 		this.access = access;
@@ -261,7 +261,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 		if(!hasItems()) {
 			throw new LocatorException("No Entries found" + (pathInfo==null?"":(" for " + pathInfo)));
 		}
-		List<EP> lep = new ArrayList<EP>();
+		List<EP> lep = new ArrayList<>();
 		EP first = null;
 		// Note: Deque is sorted on the way by closest distance
 		Iterator<EP> iter = getIterator();

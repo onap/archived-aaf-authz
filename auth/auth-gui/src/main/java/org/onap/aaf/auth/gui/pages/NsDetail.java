@@ -109,7 +109,7 @@ public class NsDetail extends Page {
 			if(nsName==null) {
 				return Cells.EMPTY;
 			}
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			rv.add(new AbsCell[]{new TextCell("Name:"),new TextCell(nsName)});
 
 			final TimeTaken tt = trans.start("AAF Namespace Details",Env.REMOTE);
@@ -144,7 +144,7 @@ public class NsDetail extends Page {
 													"/authz/roles/ns/"+nsName, 
 													gui.getDF(Roles.class)
 													);
-									List<String> roles = new ArrayList<String>();
+									List<String> roles = new ArrayList<>();
 									if(fr.get(AAFcli.timeout())) {
 										for (Role r : fr.value.getRole()) {
 											roles.add(r.getName());
@@ -157,7 +157,7 @@ public class NsDetail extends Page {
 													"/authz/perms/ns/"+nsName, 
 													gui.getDF(Perms.class)
 													);
-									List<String> perms = new ArrayList<String>();
+									List<String> perms = new ArrayList<>();
 			
 									if(fp.get(AAFcli.timeout())) {
 										for (Perm p : fp.value.getPerm()) {

@@ -56,7 +56,7 @@ public class Namespace implements Bytification {
 		type = ndd.type;
 		parent = ndd.parent;
 		if(ndd.attrib!=null && !ndd.attrib.isEmpty()) {
-			attrib = new ArrayList<Pair<String,String>>();
+			attrib = new ArrayList<>();
 			for( Entry<String, String> entry : ndd.attrib.entrySet()) {
 				attrib.add(new Pair<String,String>(entry.getKey(),entry.getValue()));
 			}
@@ -71,7 +71,7 @@ public class Namespace implements Bytification {
 		type = ndd.type;
 		parent = ndd.parent;
 		if(ndd.attrib!=null && !ndd.attrib.isEmpty()) {
-			attrib = new ArrayList<Pair<String,String>>();
+			attrib = new ArrayList<>();
 			for( Entry<String, String> entry : ndd.attrib.entrySet()) {
 				attrib.add(new Pair<String,String>(entry.getKey(),entry.getValue()));
 			}

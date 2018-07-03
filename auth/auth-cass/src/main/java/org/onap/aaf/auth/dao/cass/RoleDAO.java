@@ -90,9 +90,9 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         // Getters
 		public Set<String> perms(boolean mutable) {
 			if (perms == null) {
-				perms = new HashSet<String>();
+				perms = new HashSet<>();
 			} else if (mutable && !(perms instanceof HashSet)) {
-				perms = new HashSet<String>(perms);
+				perms = new HashSet<>(perms);
 			}
 			return perms;
 		}

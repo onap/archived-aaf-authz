@@ -83,7 +83,7 @@ public class JU_LocateValidatorTest {
     public void testSubProtoCol() {
         LocateValidator validator = new LocateValidator();
 
-        List<String> subProtocol = new ArrayList<String>();
+        List<String> subProtocol = new ArrayList<>();
         subProtocol.add(null);
 
         when(endpoint.getName()).thenReturn("EndPoint.Endpoint1");
@@ -127,20 +127,20 @@ public class JU_LocateValidatorTest {
         when(endpoint.getHostname()).thenReturn("HOST1");
         when(endpoint.getPort()).thenReturn(9090);
         when(endpoint.getProtocol()).thenReturn("HTTP");
-        List<String> subprotocol = new ArrayList<String>();
+        List<String> subprotocol = new ArrayList<>();
         when(endpoint.getSubprotocol()).thenReturn(subprotocol);
 
-        List<Endpoint> endpointList = new ArrayList<Endpoint>();
+        List<Endpoint> endpointList = new ArrayList<>();
         endpointList.add(endpoint);
 
         when(mgmtEndpoint.getName()).thenReturn("EndPoint.Endpoint1");
         when(mgmtEndpoint.getHostname()).thenReturn("HOST1");
         when(mgmtEndpoint.getPort()).thenReturn(9090);
         when(mgmtEndpoint.getProtocol()).thenReturn("HTTP");
-        List<SpecialPorts> specialPorts = new ArrayList<SpecialPorts>();
+        List<SpecialPorts> specialPorts = new ArrayList<>();
         specialPorts.add(null);
         when(mgmtEndpoint.getSpecialPorts()).thenReturn(specialPorts);
-        List<MgmtEndpoint> mgmtEndpoints = new ArrayList<MgmtEndpoint>();
+        List<MgmtEndpoint> mgmtEndpoints = new ArrayList<>();
         mgmtEndpoints.add(mgmtEndpoint);
 
         when(endpoints.getEndpoint()).thenReturn(endpointList);
@@ -160,20 +160,20 @@ public class JU_LocateValidatorTest {
         when(mgmtEndpoint.getPort()).thenReturn(9090);
         when(mgmtEndpoint.getProtocol()).thenReturn("HTTP");
 
-        List<SpecialPorts> specialPorts = new ArrayList<SpecialPorts>();
+        List<SpecialPorts> specialPorts = new ArrayList<>();
         specialPorts.add(specialPort);
 
         when(specialPort.getName()).thenReturn("Port1");
         when(specialPort.getProtocol()).thenReturn("HTTP");
         when(specialPort.getPort()).thenReturn(9090);
 
-        List<String> versions = new ArrayList<String>();
+        List<String> versions = new ArrayList<>();
         versions.add("1");
 
         when(specialPort.getProtocolVersions()).thenReturn(versions);
 
         when(mgmtEndpoint.getSpecialPorts()).thenReturn(specialPorts);
-        List<MgmtEndpoint> mgmtEndpoints = new ArrayList<MgmtEndpoint>();
+        List<MgmtEndpoint> mgmtEndpoints = new ArrayList<>();
         mgmtEndpoints.add(mgmtEndpoint);
 
         when(me.getMgmtEndpoint()).thenReturn(mgmtEndpoints);

@@ -86,7 +86,7 @@ public class RequestDetail extends Page {
 						@Override
 						public Cells code(Rcli<?> client) throws CadiException, ConnectException, APIException {
 							TimeTaken tt = trans.start("AAF Approval Details",Env.REMOTE);
-							ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+							ArrayList<AbsCell[]> rv = new ArrayList<>();
 							try {
 								Future<Approvals> fa = client.read(
 									"/authz/approval/ticket/"+ticket, 

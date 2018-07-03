@@ -28,7 +28,7 @@ public class CacheChange<T extends CacheChange.Data> {
 	private List<T> removed;
 	
 	public CacheChange() {
-		removed = new ArrayList<T>();
+		removed = new ArrayList<>();
 	}
 	
 	interface Data {

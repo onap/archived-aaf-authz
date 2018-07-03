@@ -106,8 +106,8 @@ public class XmlEscape {
 	}
 
 	static {
-		charMap = new TreeMap<String, Integer>();
-		intMap = new TreeMap<Integer,String>();
+		charMap = new TreeMap<>();
+		intMap = new TreeMap<>();
 		charMap.put("quot", 34);
 		charMap.put("amp",38);
 		charMap.put("apos",39);

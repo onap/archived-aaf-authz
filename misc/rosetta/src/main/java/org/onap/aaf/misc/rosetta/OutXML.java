@@ -42,7 +42,7 @@ public class OutXML extends Out{
 
 	public OutXML(String root, String ... params) {
 		this.root = root;
-		props = new ArrayList<Prop>();
+		props = new ArrayList<>();
 		for(String p : params) {
 			String[] tv=p.split("=");
 			if(tv.length==2)
@@ -164,7 +164,7 @@ public class OutXML extends Out{
 			}
 			
 			if(create && !rv) {
-				if(nses == null) nses = new HashMap<String,String>();
+				if(nses == null) nses = new HashMap<>();
 				nses.put(ns, value);
 			}
 			return rv;

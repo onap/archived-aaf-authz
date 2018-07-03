@@ -181,7 +181,7 @@ public class RoleDetail extends Page {
 		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
 			final String pRole = trans.get(sRoleName, null);
 			final Role role = trans.get(sRole,null);
-			ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			ArrayList<AbsCell[]> rv = new ArrayList<>();
 			
 			if(role!=null) {
 				boolean mayWrite = trans.get(sMayWrite, false);

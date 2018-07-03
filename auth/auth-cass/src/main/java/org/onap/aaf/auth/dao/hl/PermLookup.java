@@ -59,7 +59,7 @@ class PermLookup {
 		PermLookup lp=null;
 		Map<String, PermLookup> permMap = trans.get(Question.PERMS, null);
 		if (permMap == null) {
-			trans.put(Question.PERMS, permMap = new HashMap<String, PermLookup>());
+			trans.put(Question.PERMS, permMap = new HashMap<>());
 		} else {
 			lp = permMap.get(user);
 		}
@@ -78,7 +78,7 @@ class PermLookup {
 		if(userRoles==null) {
 			userRoles = q.userRoleDAO.readByUser(trans,user);
 			if(userRoles.isOKhasData()) {
-				List<UserRoleDAO.Data> lurdd = new ArrayList<UserRoleDAO.Data>();
+				List<UserRoleDAO.Data> lurdd = new ArrayList<>();
 				Date now = new Date();
 				for(UserRoleDAO.Data urdd : userRoles.value) {
 					if(urdd.expires.after(now)) { // Remove Expired
@@ -104,7 +104,7 @@ class PermLookup {
 		if(roles==null) {
 			Result<List<UserRoleDAO.Data>> rur = getUserRoles();
 			if(rur.isOK()) {
-				List<RoleDAO.Data> lrdd = new ArrayList<RoleDAO.Data>();
+				List<RoleDAO.Data> lrdd = new ArrayList<>();
 				for (UserRoleDAO.Data urdata : rur.value) {
 					// Gather all permissions from all Roles
 					    if(urdata.ns==null || urdata.rname==null) {
@@ -130,7 +130,7 @@ class PermLookup {
 		if(permNames==null) {
 			Result<List<RoleDAO.Data>> rlrd = getRoles();
 			if (rlrd.isOK()) {
-				Set<String> pns = new TreeSet<String>();
+				Set<String> pns = new TreeSet<>();
 				for (RoleDAO.Data rdata : rlrd.value) {
 					pns.addAll(rdata.perms(false));
 				}
@@ -149,7 +149,7 @@ class PermLookup {
 			// Jonathan 8/12/2013
 			Result<Set<String>> rss = getPermNames();
 			if(rss.isOK()) {
-				List<PermDAO.Data> lpdd = new ArrayList<PermDAO.Data>();
+				List<PermDAO.Data> lpdd = new ArrayList<>();
 				for (String perm : rss.value) {
 					if(lookup) {
 						Result<String[]> ap = PermDAO.Data.decodeToArray(trans, q, perm);

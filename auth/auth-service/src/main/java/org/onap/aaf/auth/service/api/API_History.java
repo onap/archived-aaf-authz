@@ -185,7 +185,7 @@ public class API_History {
 		// Sonar says threading issues.
 		SimpleDateFormat FMT = new SimpleDateFormat("yyyyMM");
 		String yyyymm = req.getParameter("yyyymm");
-		ArrayList<Integer> ai= new ArrayList<Integer>();
+		ArrayList<Integer> ai= new ArrayList<>();
 		if(yyyymm==null) {
 			GregorianCalendar gc = new GregorianCalendar();
 			// three months is the default

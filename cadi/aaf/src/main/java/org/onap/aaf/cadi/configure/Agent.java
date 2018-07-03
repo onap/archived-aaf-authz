@@ -174,7 +174,7 @@ public class Agent {
 				permDF = env.newDataFactory(Perms.class);
 				errMsg = new ErrMessage(env);
 	
-				placeArtifact = new HashMap<String,PlaceArtifact>();
+				placeArtifact = new HashMap<>();
 				placeArtifact.put(JKS, new PlaceArtifactInKeystore(JKS));
 				placeArtifact.put(PKCS12, new PlaceArtifactInKeystore(PKCS12));
 				placeArtifact.put(FILE, new PlaceArtifactInFiles());

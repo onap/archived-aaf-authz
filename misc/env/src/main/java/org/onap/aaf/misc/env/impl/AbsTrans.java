@@ -37,7 +37,7 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
 	private static final Object[] EMPTYO = new Object[0];
 	
 	protected ENV delegate;
-	protected List<TimeTaken> trail = new ArrayList<TimeTaken>(30);
+	protected List<TimeTaken> trail = new ArrayList<>(30);
 	private Object[] state;
 	
 	

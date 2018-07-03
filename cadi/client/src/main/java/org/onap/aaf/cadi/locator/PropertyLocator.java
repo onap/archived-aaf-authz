@@ -65,7 +65,7 @@ public class PropertyLocator implements Locator<URI> {
 			throw new LocatorException("No Location List given for PropertyLocator");
 		}
 		String[] locarray = Split.split(',',locList);
-		List<URI> uriList = new ArrayList<URI>();
+		List<URI> uriList = new ArrayList<>();
 		
 		random = new SecureRandom();
 		
@@ -177,7 +177,7 @@ public class PropertyLocator implements Locator<URI> {
 	public synchronized boolean refresh() {
 		if(System.currentTimeMillis()>lastRefreshed) {
 			// Build up list
-			List<URI> resolve = new ArrayList<URI>();
+			List<URI> resolve = new ArrayList<>();
 			String realname;
 			for(int i = 0; i < orig.length ; ++i) {
 				try {

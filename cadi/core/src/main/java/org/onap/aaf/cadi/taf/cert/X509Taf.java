@@ -86,7 +86,7 @@ public class X509Taf implements HttpTaf {
 			throw new CadiException("X509Taf requires Environment ("+Config.AAF_ENV+") to be set.");
 		}
 //		this.lur = lur;
-		this.cadiIssuers = new ArrayList<String>();
+		this.cadiIssuers = new ArrayList<>();
 		for(String ci : access.getProperty(Config.CADI_X509_ISSUERS, "").split(":")) {
 			access.printf(Level.INIT, "Trusting Identity for Certificates signed by \"%s\"",ci);
 			cadiIssuers.add(ci);

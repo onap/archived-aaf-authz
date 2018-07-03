@@ -91,7 +91,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
 				if(user.equals(trans.user())) {
 					Result<List<Data>> rrbu = readByUser(trans, user);
 					if(rrbu.isOK()) {
-						List<Data> ld = new ArrayList<Data>(1);
+						List<Data> ld = new ArrayList<>(1);
 						for(Data d : rrbu.value) {
 							if(d.role.equals(role)) {
 								ld.add(d);

@@ -43,8 +43,8 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Cred  {
-    public static final TreeMap<String,Cred> data = new TreeMap<String,Cred>();
-    public static final TreeMap<String,List<Cred>> byNS = new TreeMap<String,List<Cred>>();
+    public static final TreeMap<String,Cred> data = new TreeMap<>();
+    public static final TreeMap<String,List<Cred>> byNS = new TreeMap<>();
 
 	public final String id;
 	public final List<Instance> instances;
@@ -52,7 +52,7 @@ public class Cred  {
 	
 	public Cred(String id) {
 		this.id = id;
-		instances = new ArrayList<Instance>();
+		instances = new ArrayList<>();
 		ns=Question.domain2ns(id);
 	}
 	
@@ -93,7 +93,7 @@ public class Cred  {
 
 	
 	public Set<Integer> types() {
-		Set<Integer> types = new HashSet<Integer>();
+		Set<Integer> types = new HashSet<>();
 		for(Instance i : instances) {
 			types.add(i.type);
 		}
@@ -155,7 +155,7 @@ public class Cred  {
 		        	
 		        	List<Cred> lscd = byNS.get(cred.ns);
 		        	if(lscd==null) {
-		        		byNS.put(cred.ns, (lscd=new ArrayList<Cred>()));
+		        		byNS.put(cred.ns, (lscd=new ArrayList<>()));
 		        	}
 		        	boolean found = false;
 		        	for(Cred c : lscd) {

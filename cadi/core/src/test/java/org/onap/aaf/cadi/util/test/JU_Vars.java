@@ -39,21 +39,21 @@ public class JU_Vars {
 	@Test
 	public void convert() {
 		String test = "test";
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("method");
 		assertEquals(Vars.convert(test, list), test);
 	}
 
 	@Test
 	public void convertTest1() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("method");
 		assertEquals(Vars.convert("test", list), "test");
 	}
 
 	@Test
 	public void convertTest2() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("method");
 		assertEquals(Vars.convert("test", list), "test");
 	}

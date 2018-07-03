@@ -39,7 +39,7 @@ public class AAFPermission implements Permission {
 	private List<String> roles;
 	
 	static {
-		NO_ROLES = new ArrayList<String>();
+		NO_ROLES = new ArrayList<>();
 	}
 
 	protected AAFPermission() {roles=NO_ROLES;}

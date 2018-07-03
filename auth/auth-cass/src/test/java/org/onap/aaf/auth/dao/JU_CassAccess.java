@@ -51,7 +51,7 @@ public class JU_CassAccess {
 	public static final String CASSANDRA_RESET_EXCEPTIONS = "cassandra.reset.exceptions";
 	public static final String LATITUDE = "LATITUDE";
 	public static final String LONGITUDE = "LONGITUDE";
-	//private static final List<Resettable> resetExceptions = new ArrayList<Resettable>();
+	//private static final List<Resettable> resetExceptions = new ArrayList<>();
 	public static final String ERR_ACCESS_MSG = "Accessing Backend";
 	private static Builder cb = null;
 	@Mock

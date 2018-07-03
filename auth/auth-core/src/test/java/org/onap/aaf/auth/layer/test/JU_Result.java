@@ -73,7 +73,7 @@ public class JU_Result {
 
 		Collection<String> col1 = new ArrayList();
 		List<String> list1 = new ArrayList();
-		Set<String> set1 = new HashSet<String>();
+		Set<String> set1 = new HashSet<>();
 		Integer[] R1 = new Integer[0];
 		set1.add("derp");
 		list1.add("test");

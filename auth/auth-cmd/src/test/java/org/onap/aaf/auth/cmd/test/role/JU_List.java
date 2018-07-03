@@ -87,7 +87,7 @@ public class JU_List {
 	private class RolesStub extends Roles {
 		public void addRole(aaf.v2_0.Role role) {
 			if (this.role == null) {
-				this.role = new ArrayList<aaf.v2_0.Role>();
+				this.role = new ArrayList<>();
 			}
 			this.role.add(role);
 		}
@@ -97,7 +97,7 @@ public class JU_List {
 		
 		public void addPerms(Pkey perms) {
 	        if (this.perms == null) {
-	            this.perms = new ArrayList<Pkey>();
+	            this.perms = new ArrayList<>();
 	        }
 	        this.perms.add(perms); 
 	    }

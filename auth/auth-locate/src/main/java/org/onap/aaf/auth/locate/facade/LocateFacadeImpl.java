@@ -95,7 +95,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
 
 
 	private static long cacheClear = 0L, emptyCheck=0L;
-	private final static Map<String,String> epsCache = new HashMap<String, String>(); // protected manually, in getEndpoints
+	private final static Map<String,String> epsCache = new HashMap<>(); // protected manually, in getEndpoints
 
 	public LocateFacadeImpl(AuthzEnv env, LocateService<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURATION,ERROR> service, Data.TYPE dataType) throws APIException {
 		this.service = service;

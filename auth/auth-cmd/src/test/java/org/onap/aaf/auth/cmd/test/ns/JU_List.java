@@ -61,7 +61,7 @@ public class JU_List {
 	private class NssStub extends Nss {
 		public void addNs(Nss.Ns ns) {	
 			if (this.ns == null) {
-	            this.ns = new ArrayList<Nss.Ns>();
+	            this.ns = new ArrayList<>();
 	        }
 			this.ns.add(ns);
 		}
@@ -69,21 +69,21 @@ public class JU_List {
 		private class NsStub extends Ns{
 			public void addAttrib(Nss.Ns.Attrib attrib) {
 	            if ( this.attrib == null) {
-	                this.attrib = new ArrayList<Nss.Ns.Attrib>();
+	                this.attrib = new ArrayList<>();
 	            }
 	            this.attrib.add(attrib);
 	        }
 			
 			public void addResponsible(String str) {
 	            if (this.responsible == null) {
-	                this.responsible = new ArrayList<String>();
+	                this.responsible = new ArrayList<>();
 	            }
 	            this.responsible.add(str);
 	        }
 			
 			public void addAdmin(String str) {
 	            if (this.admin == null) {
-	                this.admin = new ArrayList<String>();
+	                this.admin = new ArrayList<>();
 	            }
 	            this.admin.add(str);
 	        }

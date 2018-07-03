@@ -67,7 +67,7 @@ public class ListUsersInRole extends Cmd {
 				Future<Nss> fn = client.read("/authz/nss/"+ns,getDF(Nss.class));
 				if(fn.get(AAFcli.timeout())) {
 					if(fn.value!=null) {
-						Set<String> uset = detail?null:new HashSet<String>();
+						Set<String> uset = detail?null:new HashSet<>();
 						for(Ns n : fn.value.getNs()) {
 							Future<Roles> fr = client.read("/authz/roles/ns/"+n.getName(), getDF(Roles.class));
 							if(fr.get(AAFcli.timeout())) {

@@ -42,7 +42,7 @@ import aaf.v2_0.Perms;
 import aafoauth.v2_0.Introspect;
 
 public class TokenPerm extends Persisting<Introspect>{
-	private static final List<AAFPermission> NULL_PERMS = new ArrayList<AAFPermission>();
+	private static final List<AAFPermission> NULL_PERMS = new ArrayList<>();
 	private Introspect introspect;
 	private List<AAFPermission> perms;
 	private String scopes;
@@ -99,7 +99,7 @@ public class TokenPerm extends Persisting<Introspect>{
 			while((pd = ij.parse(r,pd.reuse())).valid()) {
 				switch(pd.event) {
 					case Parse.START_DOC:
-						perms = new ArrayList<AAFPermission>();
+						perms = new ArrayList<>();
 						break;
 					case Parse.START_ARRAY:
 						inPerms = "perm".equals(pd.name);

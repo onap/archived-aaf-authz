@@ -54,7 +54,7 @@ import aafoauth.v2_0.Token;
 
 public class TokenClientFactory extends Persist<Token,TimedToken> {
 	private static TokenClientFactory instance;
-	private Map<String,AAFConHttp> aafcons = new ConcurrentHashMap<String, AAFConHttp>();
+	private Map<String,AAFConHttp> aafcons = new ConcurrentHashMap<>();
 	private SecurityInfoC<HttpURLConnection> hsi;
 	// Package on purpose
 	final Symm symm;

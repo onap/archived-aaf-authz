@@ -117,7 +117,7 @@ public class Function {
 	public static final String FOP_PERM = "perm";
 	public static final String FOP_ROLE = "role";
 	public static final String FOP_USER_ROLE = "user_role";
-	private static final List<Identity> NO_ADDL_APPROVE = new ArrayList<Identity>();
+	private static final List<Identity> NO_ADDL_APPROVE = new ArrayList<>();
 	private static final String ROOT_NS = Define.ROOT_NS();
 	// First Action should ALWAYS be "write", see "CreateRole"
 	public final Question q;
@@ -134,7 +134,7 @@ public class Function {
 			if (result.notOK()) {
 				if (sb == null) {
 					sb = new StringBuilder();
-					ao = new ArrayList<String>();
+					ao = new ArrayList<>();
 				}
 				sb.append(result.details);
 				sb.append('\n');
@@ -333,7 +333,7 @@ public class Function {
 			if (rrdc.isOKhasData()) {
 				for (RoleDAO.Data rdd : rrdc.value) {
 					// Remove old Role from Perms, save them off
-					List<PermDAO.Data> lpdd = new ArrayList<PermDAO.Data>();
+					List<PermDAO.Data> lpdd = new ArrayList<>();
 					for(String p : rdd.perms(false)) {
 						Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans,q,p);
 						if(rpdd.isOKhasData()) {
@@ -387,7 +387,7 @@ public class Function {
 			if (rpdc.isOKhasData()) {
 				for (PermDAO.Data pdd : rpdc.value) {
 					// Remove old Perm from Roles, save them off
-					List<RoleDAO.Data> lrdd = new ArrayList<RoleDAO.Data>();
+					List<RoleDAO.Data> lrdd = new ArrayList<>();
 					
 					for(String rl : pdd.roles(false)) {
 						Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,q,rl);
@@ -447,11 +447,11 @@ public class Function {
 		pd.action = Question.ASTERIX;
 		pd.description = "AAF Namespace Write Access";
 
-		rd.perms = new HashSet<String>();
+		rd.perms = new HashSet<>();
 		rd.perms.add(pd.encode());
 		eb.log(q.roleDAO.create(trans, rd));
 
-		pd.roles = new HashSet<String>();
+		pd.roles = new HashSet<>();
 		pd.roles.add(rd.encode());
 		eb.log(q.permDAO.create(trans, pd));
 	}
@@ -469,11 +469,11 @@ public class Function {
 		pd.action = Question.READ;
 		pd.description = "AAF Namespace Read Access";
 
-		rd.perms = new HashSet<String>();
+		rd.perms = new HashSet<>();
 		rd.perms.add(pd.encode());
 		eb.log(q.roleDAO.create(trans, rd));
 
-		pd.roles = new HashSet<String>();
+		pd.roles = new HashSet<>();
 		pd.roles.add(rd.encode());
 		eb.log(q.permDAO.create(trans, pd));
 	}
@@ -825,7 +825,7 @@ public class Function {
 				    continue;
 				}
 				// Remove old Perm from Roles, save them off
-				List<RoleDAO.Data> lrdd = new ArrayList<RoleDAO.Data>();
+				List<RoleDAO.Data> lrdd = new ArrayList<>();
 				
 				for(String rl : pdd.roles(false)) {
 					Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,q,rl);
@@ -891,7 +891,7 @@ public class Function {
 				    continue;
 				}
 				// Remove old Role from Perms, save them off
-				List<PermDAO.Data> lpdd = new ArrayList<PermDAO.Data>();
+				List<PermDAO.Data> lpdd = new ArrayList<>();
 				for(String p : rdd.perms(false)) {
 					Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans,q,p);
 					if(rpdd.isOKhasData()) {
@@ -1439,7 +1439,7 @@ public class Function {
 		}
 		Date now = new Date();
 		List<UserRoleDAO.Data> list = rurdd.value;
-		List<String> rv = new ArrayList<String>(list.size()); // presize
+		List<String> rv = new ArrayList<>(list.size()); // presize
 		for (UserRoleDAO.Data urdd : rurdd.value) {
 			if (includeExpired || urdd.expires.after(now)) {
 				rv.add(urdd.user);
@@ -1471,7 +1471,7 @@ public class Function {
 			Organization org = trans.org();
 			// For Reapproval, only check Owners.. Do Supervisors, etc, separately
 			List<Identity> approvers = op.equals(FUTURE_OP.A)?NO_ADDL_APPROVE:org.getApprovers(trans, user);
-			List<Identity> owners = new ArrayList<Identity>();
+			List<Identity> owners = new ArrayList<>();
 			if (nsd != null) {
 				Result<List<UserRoleDAO.Data>> rrbr = q.userRoleDAO
 						.readByRole(trans, nsd.name + Question.DOT_OWNER);

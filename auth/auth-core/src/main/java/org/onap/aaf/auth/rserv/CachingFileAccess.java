@@ -109,11 +109,11 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 	public CachingFileAccess(EnvJAXB env, String ... args) throws IOException {
 		super(null,"Caching File Access");
 		setEnv(env,args);
-		content = new ConcurrentSkipListMap<String,Content>(); // multi-thread changes possible
+		content = new ConcurrentSkipListMap<>(); // multi-thread changes possible
 
-		attachOnly = new HashSet<String>();     // short, unchanged
+		attachOnly = new HashSet<>();     // short, unchanged
 
-		typeMap = new TreeMap<String,String>(); // Structure unchanged after Construction
+		typeMap = new TreeMap<>(); // Structure unchanged after Construction
 		typeMap.put("ico","image/icon");
 		typeMap.put("html","text/html");
 		typeMap.put("css","text/css");
@@ -540,7 +540,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 		public void run() {
 			int size = content.size();
 			if(size>maxSize) {
-				ArrayList<Comp> scont = new ArrayList<Comp>(size);
+				ArrayList<Comp> scont = new ArrayList<>(size);
 				Object[] entries = content.entrySet().toArray();
 				for(int i=0;i<size;++i) {
 					scont.add(i, new Comp((Map.Entry<String,Content>)entries[i]));

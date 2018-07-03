@@ -65,7 +65,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
 		super(access, sub_dir);
 		this.env = env;
 		df = env.newDataFactory(cls);
-		tmap = new ConcurrentHashMap<String, CT>();
+		tmap = new ConcurrentHashMap<>();
 		synchronized(Persist.class) {
 			if(clean==null) {
 				clean = new Timer(true);

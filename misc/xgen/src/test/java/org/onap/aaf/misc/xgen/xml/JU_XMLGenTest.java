@@ -41,7 +41,7 @@ public class JU_XMLGenTest {
 
 	String XML_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 
-	Map<Character, Integer> map = new TreeMap<Character, Integer>();
+	Map<Character, Integer> map = new TreeMap<>();
 
 	@Before
 	public void setUp() throws Exception {

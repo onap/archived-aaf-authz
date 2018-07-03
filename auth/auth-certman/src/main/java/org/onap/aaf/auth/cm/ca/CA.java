@@ -51,7 +51,7 @@ public abstract class CA {
 	private static final String CM_TRUST_CAS = "cm_trust_cas";
 	protected static final String CM_BACKUP_CAS = "cm_backup_cas";
 
-	public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<String>());
+	public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<>());
 
 	
 	private final String name;

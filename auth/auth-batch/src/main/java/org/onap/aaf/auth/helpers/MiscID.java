@@ -36,7 +36,7 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class MiscID  {
-	public static final TreeMap<String,MiscID> data = new TreeMap<String,MiscID>();
+	public static final TreeMap<String,MiscID> data = new TreeMap<>();
 	/*
 	Sample Record
 	aad890|mj9030|20040902|20120207

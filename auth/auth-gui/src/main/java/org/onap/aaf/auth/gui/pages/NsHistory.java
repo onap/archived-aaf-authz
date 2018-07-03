@@ -168,7 +168,7 @@ public class NsHistory extends Page {
 				return Cells.EMPTY;
 			}
 			
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			String msg = null;
 			final TimeTaken tt = trans.start("AAF Get History for Namespace ["+oName+"]",Env.REMOTE);
 			try {

@@ -62,7 +62,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	// Package access
 	final public int timeout, cleanInterval, connTimeout;
 	final public int highCount, userExpires, usageRefreshTriggerCount;
-	private Map<String,Rcli<CLIENT>> clients = new ConcurrentHashMap<String,Rcli<CLIENT>>();
+	private Map<String,Rcli<CLIENT>> clients = new ConcurrentHashMap<>();
 	final public RosettaDF<Perms> permsDF;
 	final public RosettaDF<Certs> certsDF;
 	final public RosettaDF<Users> usersDF;

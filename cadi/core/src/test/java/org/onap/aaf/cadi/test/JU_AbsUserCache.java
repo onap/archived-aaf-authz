@@ -284,10 +284,10 @@ public class JU_AbsUserCache {
 		assertThat(dumpInfo.size(), is(2));
 
 		// Utility lists
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		names.add(name1);
 		names.add(name2);
-		List<String> permissions = new ArrayList<String>();
+		List<String> permissions = new ArrayList<>();
 		permissions.add("NewKey1");
 		permissions.add("NewKey2");
 

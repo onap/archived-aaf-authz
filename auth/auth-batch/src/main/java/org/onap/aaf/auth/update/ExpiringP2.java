@@ -89,7 +89,7 @@ public class ExpiringP2 extends Batch {
 		String line,prev="";
 		try {
 			UserRole ur;
-			Map<String,Count> tally = new HashMap<String,Count>();
+			Map<String,Count> tally = new HashMap<>();
 			int count=0;
 			try {
 				while((line=urDeleteF.readLine())!=null) {

@@ -60,7 +60,7 @@ public class JU_HTML4GenTest {
 
 		gen.html("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 		for (char ch : DOCTYPE.toCharArray()) {
 			Integer times = map.get(ch);
 			map.put(ch, (times == null ? 0 : times) + 1);
@@ -84,7 +84,7 @@ public class JU_HTML4GenTest {
 
 		gen.head();
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "head".toCharArray()) {
 			Integer times = map.get(ch);
@@ -103,7 +103,7 @@ public class JU_HTML4GenTest {
 
 		gen.body("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "body".toCharArray()) {
 			Integer times = map.get(ch);
@@ -126,7 +126,7 @@ public class JU_HTML4GenTest {
 
 		gen.charset(charset);
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : CHARSET_LINE.toCharArray()) {
 			Integer times = map.get(ch);
@@ -145,7 +145,7 @@ public class JU_HTML4GenTest {
 
 		gen.header("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "header".toCharArray()) {
 			Integer times = map.get(ch);
@@ -174,7 +174,7 @@ public class JU_HTML4GenTest {
 
 		gen.footer("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "footer".toCharArray()) {
 			Integer times = map.get(ch);
@@ -203,7 +203,7 @@ public class JU_HTML4GenTest {
 
 		gen.section("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "section".toCharArray()) {
 			Integer times = map.get(ch);
@@ -232,7 +232,7 @@ public class JU_HTML4GenTest {
 
 		gen.article("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "attrib".toCharArray()) {
 			Integer times = map.get(ch);
@@ -261,7 +261,7 @@ public class JU_HTML4GenTest {
 
 		gen.aside("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "aside".toCharArray()) {
 			Integer times = map.get(ch);
@@ -290,7 +290,7 @@ public class JU_HTML4GenTest {
 
 		gen.nav("attributes");
 
-		Map<Character, Integer> map = new TreeMap<Character, Integer>();
+		Map<Character, Integer> map = new TreeMap<>();
 
 		for (char ch : "nav".toCharArray()) {
 			Integer times = map.get(ch);

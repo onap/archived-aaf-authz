@@ -64,8 +64,8 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			// find where the trusts end in 1.0 API
 		
 			X509Certificate x509;
-			List<X509Certificate> chainList = new ArrayList<X509Certificate>();
-			Set<X509Certificate> caSet = new HashSet<X509Certificate>();
+			List<X509Certificate> chainList = new ArrayList<>();
+			Set<X509Certificate> caSet = new HashSet<>();
 			for(Certificate c : certColl) {
 				x509 = (X509Certificate)c;
 				// Is a Root (self-signed, anyway)
@@ -98,7 +98,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			PrivateKey pk = Factory.toPrivateKey(trans, certInfo.getPrivatekey());
 			addEncProperty(Config.CADI_KEY_PASSWORD, keyPass);
 			addProperty(Config.CADI_ALIAS, arti.getMechid());
-//			Set<Attribute> attribs = new HashSet<Attribute>();
+//			Set<Attribute> attribs = new HashSet<>();
 //			if(kst.equals("pkcs12")) {
 //				// Friendly Name
 //				attribs.add(new PKCS12Attribute("1.2.840.113549.1.9.20", arti.getNs()));

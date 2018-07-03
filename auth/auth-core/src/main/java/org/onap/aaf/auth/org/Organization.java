@@ -307,11 +307,11 @@ public interface Organization {
 	public static final Organization NULL = new Organization() 
 	{
 		private final GregorianCalendar gc = new GregorianCalendar(1900, 1, 1);
-		private final List<Identity> nullList = new ArrayList<Identity>();
-		private final Set<String> nullStringSet = new HashSet<String>();
+		private final List<Identity> nullList = new ArrayList<>();
+		private final Set<String> nullStringSet = new HashSet<>();
 		private String[] nullStringArray = new String[0];
 		private final Identity nullIdentity = new Identity() {
-			List<String> nullUser = new ArrayList<String>();
+			List<String> nullUser = new ArrayList<>();
 			@Override
 			public String type() {
 				return N_A;

@@ -71,7 +71,7 @@ public class Notification {
 	}
 
 
-    public static final TreeMap<String,List<Notification>> data = new TreeMap<String,List<Notification>>();
+    public static final TreeMap<String,List<Notification>> data = new TreeMap<>();
     public static final Date now = new Date();
     
     public final String user;
@@ -113,7 +113,7 @@ public class Notification {
 		        	Notification not = creator.create(row);
 		        	List<Notification> ln = data.get(not.user);
 		        	if(ln==null) {
-		        		ln = new ArrayList<Notification>();
+		        		ln = new ArrayList<>();
 		        		data.put(not.user, ln);
 		        	}
 		        	ln.add(not);

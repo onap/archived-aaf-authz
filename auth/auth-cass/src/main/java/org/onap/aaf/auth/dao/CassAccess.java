@@ -44,7 +44,7 @@ public class CassAccess {
 	public static final String CASSANDRA_CLUSTERS_USER_NAME = "cassandra.clusters.user";
 	public static final String CASSANDRA_CLUSTERS_PASSWORD = "cassandra.clusters.password";
 	public static final String CASSANDRA_RESET_EXCEPTIONS = "cassandra.reset.exceptions";
-	private static final List<Resettable> resetExceptions = new ArrayList<Resettable>();
+	private static final List<Resettable> resetExceptions = new ArrayList<>();
 	public static final String ERR_ACCESS_MSG = "Accessing Backend";
 	private static Builder cb = null;
 
@@ -181,7 +181,7 @@ public class CassAccess {
 					}
 				}
 				if(split.length>1) {
-					messages=new ArrayList<String>();
+					messages=new ArrayList<>();
 					for(int i=1;i<split.length;++i) {
 						String str = split[i];
 						int start = str.startsWith("\"")?1:0;

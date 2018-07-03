@@ -80,9 +80,9 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
 
 		public Set<String> scopes(boolean mutable) {
 			if (scopes == null) {
-				scopes = new HashSet<String>();
+				scopes = new HashSet<>();
 			} else if (mutable && !(scopes instanceof HashSet)) {
-				scopes = new HashSet<String>(scopes);
+				scopes = new HashSet<>(scopes);
 			}
 			return scopes;
 		}

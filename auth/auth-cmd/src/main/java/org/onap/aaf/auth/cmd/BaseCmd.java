@@ -34,12 +34,12 @@ public class BaseCmd<CMD extends Cmd> extends Cmd  {
 
 	public BaseCmd(AAFcli aafcli, String name, Param ... params) {
 		super(aafcli, null, name, params);
-		cmds = new ArrayList<Cmd>();
+		cmds = new ArrayList<>();
 	}
 	
 	public BaseCmd(CMD parent, String name, Param ... params) {
 		super(parent.aafcli, parent, name, params);
-		cmds = new ArrayList<Cmd>();
+		cmds = new ArrayList<>();
 	}
 
 	

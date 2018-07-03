@@ -51,7 +51,7 @@ public class Match {
 	 */
 	public Match(String path) {
 		// IF DEBUG: System.out.print("\n[" + path + "]");
-		params = new HashMap<String,Integer>();
+		params = new HashMap<>();
 		if(path!=null) {
 			String[] pa = path.split("/");
 			values = new byte[pa.length][];

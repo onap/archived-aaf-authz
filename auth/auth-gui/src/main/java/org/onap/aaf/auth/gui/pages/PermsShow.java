@@ -77,7 +77,7 @@ public class PermsShow extends Page {
 		
 		@Override
 		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			TimeTaken tt = trans.start("AAF Perms by User",Env.REMOTE);
 			try {
 				gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {

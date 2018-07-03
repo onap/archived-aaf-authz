@@ -242,7 +242,7 @@ public class JU_AppCA {
 				
 			}
 		};
-		X509andChain xac = new X509andChain(cert, new ArrayList<String>());
+		X509andChain xac = new X509andChain(cert, new ArrayList<>());
 		when(localCA.sign(Mockito.any(Trans.class), Mockito.any(CSRMeta.class))).thenReturn(xac);
 		certDAO = mock(CachedCertDAO.class, CALLS_REAL_METHODS);
 	}

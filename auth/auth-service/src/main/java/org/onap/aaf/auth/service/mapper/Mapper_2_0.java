@@ -292,7 +292,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 
 	@Override
 	public Result<List<PermDAO.Data>> perms(AuthzTrans trans, Perms perms) {
-		List<PermDAO.Data> lpd = new ArrayList<PermDAO.Data>();
+		List<PermDAO.Data> lpd = new ArrayList<>();
 		for (Perm p : perms.getPerm()) {
 			Result<NsSplit> nss = q.deriveNsSplit(trans, p.getType());
 			PermDAO.Data pd = new PermDAO.Data();
@@ -790,7 +790,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 	
 	@Override
 	public Result<List<ApprovalDAO.Data>> approvals(Approvals apprs) {
-		List<ApprovalDAO.Data>  lappr = new ArrayList<ApprovalDAO.Data>();
+		List<ApprovalDAO.Data>  lappr = new ArrayList<>();
 		for(Approval a : apprs.getApprovals()) {
 			ApprovalDAO.Data ad = new ApprovalDAO.Data();
 			String str = a.getId();

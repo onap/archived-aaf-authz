@@ -81,9 +81,9 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
 	  // Getters
 		public Set<String> subprotocol(boolean mutable) {
 			if (subprotocol == null) {
-				subprotocol = new HashSet<String>();
+				subprotocol = new HashSet<>();
 			} else if (mutable && !(subprotocol instanceof HashSet)) {
-				subprotocol = new HashSet<String>(subprotocol);
+				subprotocol = new HashSet<>(subprotocol);
 			}
 			return subprotocol;
 		}
@@ -191,7 +191,7 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
 			data.protocol = readString(is,buff);
 			
 			int size = is.readInt();
-			data.subprotocol = new HashSet<String>(size);
+			data.subprotocol = new HashSet<>(size);
 			for(int i=0;i<size;++i) {
 				data.subprotocol.add(readString(is,buff));
 			}

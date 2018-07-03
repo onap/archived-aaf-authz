@@ -82,18 +82,18 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
 //      // Getters
 		public Set<String> type(boolean mutable) {
 			if (type == null) {
-				type = new HashSet<String>();
+				type = new HashSet<>();
 			} else if (mutable && !(type instanceof HashSet)) {
-				type = new HashSet<String>(type);
+				type = new HashSet<>(type);
 			}
 			return type;
 		}
 
 		public Set<String> sans(boolean mutable) {
 			if (sans == null) {
-				sans = new HashSet<String>();
+				sans = new HashSet<>();
 			} else if (mutable && !(sans instanceof HashSet)) {
-				sans = new HashSet<String>(sans);
+				sans = new HashSet<>(sans);
 			}
 			return sans;
 		}
@@ -199,7 +199,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
 			data.mechid = readString(is,buff);
 			data.machine = readString(is,buff);
 			int size = is.readInt();
-			data.type = new HashSet<String>(size);
+			data.type = new HashSet<>(size);
 			for(int i=0;i<size;++i) {
 				data.type.add(readString(is,buff));
 			}
@@ -213,7 +213,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
 			data.expires = l<0?null:new Date(l);
 			data.renewDays = is.readInt();
 			size = is.readInt();
-			data.sans = new HashSet<String>(size);
+			data.sans = new HashSet<>(size);
 			for(int i=0;i<size;++i) {
 				data.sans.add(readString(is,buff));
 			}

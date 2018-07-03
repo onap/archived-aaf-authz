@@ -44,9 +44,9 @@ import aaf.v2_0.Perms;
 import aafoauth.v2_0.Introspect;
 
 public class TokenMgr extends Persist<Introspect, TokenPerm> {
-	protected static Map<String,TokenPerm> tpmap = new ConcurrentHashMap<String, TokenPerm>();
-	protected static Map<String,TokenMgr> tmmap = new HashMap<String, TokenMgr>(); // synchronized in getInstance
-	protected static Map<String,String> currentToken = new HashMap<String,String>(); // synchronized in getTP
+	protected static Map<String,TokenPerm> tpmap = new ConcurrentHashMap<>();
+	protected static Map<String,TokenMgr> tmmap = new HashMap<>(); // synchronized in getInstance
+	protected static Map<String,String> currentToken = new HashMap<>(); // synchronized in getTP
 	public static RosettaDF<Perms> permsDF;
 	public static RosettaDF<Introspect> introspectDF;
 

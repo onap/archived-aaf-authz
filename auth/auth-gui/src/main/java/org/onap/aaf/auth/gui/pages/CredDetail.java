@@ -148,7 +148,7 @@ public class CredDetail extends Page {
 			if(ns==null) {
 				return Cells.EMPTY;
 			}
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			final TimeTaken tt = trans.start("AAF Cred Details",Env.REMOTE);
 			List<Artifact> la; 
 			try {
@@ -164,7 +164,7 @@ public class CredDetail extends Page {
 					}
 
 				});
-				final Set<String> lns = new HashSet<String>();
+				final Set<String> lns = new HashSet<>();
 				if(la!=null) {
 					for(Artifact a : la){
 						lns.add(a.getMechid());
@@ -176,7 +176,7 @@ public class CredDetail extends Page {
 						Future<Users> fu = client.read("/authn/creds/ns/"+ns,gui.getDF(Users.class));
 						if(fu.get(AAFcli.timeout())) {
 							// Organize User entries
-							Map<String,List<Map<Integer,List<User>>>> users = new HashMap<String,List<Map<Integer,List<User>>>>();
+							Map<String,List<Map<Integer,List<User>>>> users = new HashMap<>();
 		
 							List<Map<Integer,List<User>>> lmu=null;
 							Map<Integer, List<User>> mu = null;
@@ -188,7 +188,7 @@ public class CredDetail extends Page {
 								}
 								lmu = users.get(u.getId());
 								if(lmu==null) {
-									users.put(u.getId(),lmu=new ArrayList<Map<Integer,List<User>>>());
+									users.put(u.getId(),lmu=new ArrayList<>());
 								}
 								mu=null;
 								for(Map<Integer,List<User>> xmu : lmu) {
@@ -198,12 +198,12 @@ public class CredDetail extends Page {
 								}
 								
 								if(mu==null) {
-									lmu.add(mu=new HashMap<Integer,List<User>>());
+									lmu.add(mu=new HashMap<>());
 								}
 								
 								lu = mu.get(u.getType());
 								if(lu==null) {
-									mu.put(u.getType(),lu = new ArrayList<User>());
+									mu.put(u.getType(),lu = new ArrayList<>());
 								}
 								lu.add(u);
 							}

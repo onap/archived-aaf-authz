@@ -140,7 +140,7 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
 	 *  To utilize, the Request must be a "CadiWrap" object, then call.
 	 */
 	public List<Permission> getPermissions(Principal p) {
-		List<Permission> perms = new ArrayList<Permission>();
+		List<Permission> perms = new ArrayList<>();
 		lur.fishAll(p, perms);
 		return perms;
 	}

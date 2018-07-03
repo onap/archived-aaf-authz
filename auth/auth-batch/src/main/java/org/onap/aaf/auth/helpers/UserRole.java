@@ -44,10 +44,10 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class UserRole implements Cloneable, CacheChange.Data  {
-	public static final List<UserRole> data = new ArrayList<UserRole>();
-    public static final TreeMap<String,List<UserRole>> byUser = new TreeMap<String,List<UserRole>>();
-    public static final TreeMap<String,List<UserRole>> byRole = new TreeMap<String,List<UserRole>>();
-	private final static CacheChange<UserRole> cache = new CacheChange<UserRole>(); 
+	public static final List<UserRole> data = new ArrayList<>();
+    public static final TreeMap<String,List<UserRole>> byUser = new TreeMap<>();
+    public static final TreeMap<String,List<UserRole>> byRole = new TreeMap<>();
+	private final static CacheChange<UserRole> cache = new CacheChange<>(); 
 	private static PrintStream urDelete=System.out,urRecover=System.err;
 	private static int totalLoaded;
 	private static int deleted;
@@ -109,14 +109,14 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 		        	
 		        	List<UserRole> lur = byUser.get(ur.urdd.user);
 		        	if(lur==null) {
-		        		lur = new ArrayList<UserRole>();
+		        		lur = new ArrayList<>();
 			        	byUser.put(ur.urdd.user, lur);
 		        	}
 		        	lur.add(ur);
 		        	
 		        	lur = byRole.get(ur.urdd.role);
 		        	if(lur==null) {
-		        		lur = new ArrayList<UserRole>();
+		        		lur = new ArrayList<>();
 			        	byRole.put(ur.urdd.role, lur);
 		        	}
 		        	lur.add(ur);

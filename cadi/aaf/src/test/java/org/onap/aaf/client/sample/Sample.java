@@ -105,7 +105,7 @@ public class Sample {
 	}
 	
 	public List<Permission> allAuthorization(Principal fqi) {
-		List<Permission> pond = new ArrayList<Permission>();
+		List<Permission> pond = new ArrayList<>();
 		aafLur.fishAll(fqi, pond);
 		return pond;
 	}

@@ -91,7 +91,7 @@ public class JU_ServiceValidator {
 		to.ns = "namespace";
 		to.name = "name";
 		to.description = "description";
-		Set<String> permissions = new HashSet<String>();
+		Set<String> permissions = new HashSet<>();
 		permissions.add("perm1");
 		to.perms = permissions;
 

@@ -126,7 +126,7 @@ public class DenialOfServiceTaf implements HttpTaf {
 	public static synchronized boolean denyIP(String ip) {
 		boolean rv = false;
 		if(deniedIP==null) {
-			deniedIP = new HashMap<String,Counter>();
+			deniedIP = new HashMap<>();
 			deniedIP.put(ip, new Counter(ip)); // Noted duplicated for minimum time spent
 			rv= true;
 		} else if(deniedIP.get(ip)==null) {
@@ -170,7 +170,7 @@ public class DenialOfServiceTaf implements HttpTaf {
 				br = new BufferedReader(new FileReader(dosIP));
 				try {
 					if(deniedIP==null) {
-						deniedIP=new HashMap<String,Counter>();
+						deniedIP=new HashMap<>();
 					}
 
 					String line;
@@ -215,7 +215,7 @@ public class DenialOfServiceTaf implements HttpTaf {
 	public static synchronized boolean denyID(String id) {
 		boolean rv = false;
 		if(deniedID==null) {
-			deniedID = new HashMap<String,Counter>();
+			deniedID = new HashMap<>();
 			deniedID.put(id, new Counter(id)); // Noted duplicated for minimum time spent
 			rv = true;
 		} else if(deniedID.get(id)==null) {
@@ -260,7 +260,7 @@ public class DenialOfServiceTaf implements HttpTaf {
 				br = new BufferedReader(new FileReader(dosID));
 				try {
 					if(deniedID==null) {
-						deniedID=new HashMap<String,Counter>();
+						deniedID=new HashMap<>();
 					}
 					
 					String line;
@@ -299,7 +299,7 @@ public class DenialOfServiceTaf implements HttpTaf {
 		int initSize = 0;
 		if(deniedIP!=null)initSize+=deniedIP.size();
 		if(deniedID!=null)initSize+=deniedID.size();
-		ArrayList<String> al = new ArrayList<String>(initSize);
+		ArrayList<String> al = new ArrayList<>(initSize);
 		if(deniedID!=null) {
 			for(Counter c : deniedID.values()) {
 				al.add(c.toString());

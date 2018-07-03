@@ -161,12 +161,12 @@ public class ApiDocs extends Page {
 		
 		@Override
 		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			final ArrayList<AbsCell[]> ns = new ArrayList<AbsCell[]>();
-			final ArrayList<AbsCell[]> perms = new ArrayList<AbsCell[]>();
-			final ArrayList<AbsCell[]> roles = new ArrayList<AbsCell[]>();
-			final ArrayList<AbsCell[]> user = new ArrayList<AbsCell[]>();
-			final ArrayList<AbsCell[]> aafOnly = new ArrayList<AbsCell[]>();
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> ns = new ArrayList<>();
+			final ArrayList<AbsCell[]> perms = new ArrayList<>();
+			final ArrayList<AbsCell[]> roles = new ArrayList<>();
+			final ArrayList<AbsCell[]> user = new ArrayList<>();
+			final ArrayList<AbsCell[]> aafOnly = new ArrayList<>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			
 	
 			final TimeTaken tt = trans.start("AAF APIs",Env.REMOTE);

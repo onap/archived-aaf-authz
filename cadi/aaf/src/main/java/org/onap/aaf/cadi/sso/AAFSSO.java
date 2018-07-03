@@ -454,7 +454,7 @@ public class AAFSSO {
 
 	private List<String> parseArgs(String[] args)
 	{
-		List<String> larg = new ArrayList<String>(args.length);
+		List<String> larg = new ArrayList<>(args.length);
 
 		// Cover for bash's need to escape *.. (\\*)
 		// also, remove SSO if required

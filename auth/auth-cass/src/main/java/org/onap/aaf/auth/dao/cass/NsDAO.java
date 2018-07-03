@@ -110,9 +110,9 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
 //        // Getters
 		public Map<String,String> attrib(boolean mutable) {
 			if (attrib == null) {
-				attrib = new HashMap<String,String>();
+				attrib = new HashMap<>();
 			} else if (mutable && !(attrib instanceof HashMap)) {
-				attrib = new HashMap<String,String>(attrib);
+				attrib = new HashMap<>(attrib);
 			}
 			return attrib;
 		}
@@ -255,7 +255,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
 //// TEST CODE for Exception				
 //			boolean force = true; 
 //			if(force) {
-//				throw new com.datastax.driver.core.exceptions.NoHostAvailableException(new HashMap<InetSocketAddress,Throwable>());
+//				throw new com.datastax.driver.core.exceptions.NoHostAvailableException(new HashMap<>());
 ////				throw new com.datastax.driver.core.exceptions.AuthenticationException(new InetSocketAddress(9999),"Sample Message");
 //			}
 ////END TEST CODE
@@ -376,7 +376,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
 	}
     
 	public Result<Map<String,String>> readAttribByNS(AuthzTrans trans, String ns) {
-		Map<String,String> map = new HashMap<String,String>();
+		Map<String,String> map = new HashMap<>();
 		TimeTaken tt = trans.start("readAttribByNS " + ns, Env.REMOTE);
 		try {
 			ResultSet rs = getSession(trans).execute("SELECT key,value FROM " 
@@ -399,7 +399,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
 	}
 
 	public Result<Set<String>> readNsByAttrib(AuthzTrans trans, String key) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		TimeTaken tt = trans.start("readNsBykey " + key, Env.REMOTE);
 		try {
 			ResultSet rs = getSession(trans).execute("SELECT ns FROM " 

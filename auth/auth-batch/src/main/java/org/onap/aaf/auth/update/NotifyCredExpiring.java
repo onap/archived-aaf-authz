@@ -128,12 +128,12 @@ public class NotifyCredExpiring extends Batch {
 		Date tooLate = new Date(now);
 		
 		// Temp structures
-		Map<String,Cred> lastCred = new HashMap<String,Cred>();
-		Map<String,List<LastCred>> ownerCreds = new TreeMap<String,List<LastCred>>();
+		Map<String,Cred> lastCred = new HashMap<>();
+		Map<String,List<LastCred>> ownerCreds = new TreeMap<>();
 		Date last;
 		
 
-		List<LastCred> noOwner = new ArrayList<LastCred>();
+		List<LastCred> noOwner = new ArrayList<>();
 		ownerCreds.put(UNKNOWN_ID,noOwner);
 
 		// Get a list of ONLY the ones needing email by Owner
@@ -148,7 +148,7 @@ public class NotifyCredExpiring extends Batch {
 							String owner = ur.user();
 							List<LastCred> llc = ownerCreds.get(owner);
 							if(llc==null) {
-								ownerCreds.put(owner, (llc=new ArrayList<LastCred>()));
+								ownerCreds.put(owner, (llc=new ArrayList<>()));
 							}
 							llc.add(new LastCred(c,last));
 						}

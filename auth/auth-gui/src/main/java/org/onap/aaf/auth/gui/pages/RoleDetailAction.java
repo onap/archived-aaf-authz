@@ -76,7 +76,7 @@ public class RoleDetailAction extends Page {
 									/*fail =*/ gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Boolean>() {
 										@Override
 										public Boolean code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-											List<TypedFuture> ltf = new ArrayList<TypedFuture>();
+											List<TypedFuture> ltf = new ArrayList<>();
 											String text;
 											Map<String, String[]> pm = (Map<String, String[]>)req.getParameterMap();
 											for(final Entry<String, String[]> es : pm.entrySet()) {

@@ -117,7 +117,7 @@ public class PendingRequestsShow extends Page {
 		
 		@Override
 		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			final ArrayList<AbsCell[]> rv = new ArrayList<AbsCell[]>();
+			final ArrayList<AbsCell[]> rv = new ArrayList<>();
 			try {
 				gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
 					@Override

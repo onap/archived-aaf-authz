@@ -48,7 +48,7 @@ import org.onap.aaf.misc.env.impl.BasicEnv;
 public class OrganizationFactory {
 	private static final String ORGANIZATION_DOT = "Organization.";
 	private static Organization defaultOrg = null;
-	private static Map<String,Organization> orgs = new ConcurrentHashMap<String,Organization>();
+	private static Map<String,Organization> orgs = new ConcurrentHashMap<>();
 	public static Organization init(BasicEnv env) throws OrganizationException {
 		int idx = ORGANIZATION_DOT.length();
 		Organization org,firstOrg = null;

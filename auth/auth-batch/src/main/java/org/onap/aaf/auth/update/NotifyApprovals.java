@@ -103,7 +103,7 @@ public class NotifyApprovals extends Batch {
 
 		Message msg = new Message();
 		int emailCount = 0;
-		List<Approval> pending = new ArrayList<Approval>();
+		List<Approval> pending = new ArrayList<>();
 		boolean isOwner,isSupervisor;
 		for(Entry<String, List<Approval>> es : Approval.byApprover.entrySet()) {
 			isOwner = isSupervisor = false;

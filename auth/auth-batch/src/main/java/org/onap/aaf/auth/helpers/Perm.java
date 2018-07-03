@@ -38,9 +38,9 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Perm implements Comparable<Perm> {
-    public static final TreeMap<Perm,Set<String>> data = new TreeMap<Perm,Set<String>>();
-    public static final TreeMap<String,Perm> keys = new TreeMap<String,Perm>();
-	private static List<Perm> deletePerms = new ArrayList<Perm>();
+    public static final TreeMap<Perm,Set<String>> data = new TreeMap<>();
+    public static final TreeMap<String,Perm> keys = new TreeMap<>();
+	private static List<Perm> deletePerms = new ArrayList<>();
 
 	public final String ns, type, instance, action,description;
 	private String fullType = null, fullPerm = null, encode = null;

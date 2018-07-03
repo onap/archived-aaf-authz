@@ -66,7 +66,7 @@ public class RDN {
 	 * @throws CertException
 	 */
 	public static List<RDN> parse(final char delim, final String dnString ) throws CertException {
-		List<RDN> lrnd = new ArrayList<RDN>();
+		List<RDN> lrnd = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		boolean inQuotes = false;
 		for(int i=0;i<dnString.length();++i) {

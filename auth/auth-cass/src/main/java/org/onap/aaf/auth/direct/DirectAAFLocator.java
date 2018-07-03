@@ -84,7 +84,7 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
 		AuthzTrans trans = env.newTransNoAvg();
 		Result<List<Data>> rl = ldao.readByName(trans, name);
 		if(rl.isOK()) {
-			LinkedList<EP> epl = new LinkedList<EP>();
+			LinkedList<EP> epl = new LinkedList<>();
 			for(Data d : rl.value) {
 //				if(myhostname!=null && d.port==myport && d.hostname.equals(myhostname)) {
 //					continue;

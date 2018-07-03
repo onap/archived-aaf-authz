@@ -69,7 +69,7 @@ public class AAFcli {
 	private List<Cmd> cmds;
 
 	// Lex State
-	private ArrayList<Integer> expect = new ArrayList<Integer>();
+	private ArrayList<Integer> expect = new ArrayList<>();
 	private boolean verbose = true;
 	private int delay;
 	private SecurityInfoC<HttpURLConnection> si;
@@ -113,7 +113,7 @@ public class AAFcli {
 		/*
 		 * Create Cmd Tree
 		 */
-		cmds = new ArrayList<Cmd>();
+		cmds = new ArrayList<>();
 
 		Role role = new Role(this);
 		cmds.add(new Help(this, cmds));
@@ -358,7 +358,7 @@ public class AAFcli {
 
 	private String[] argEval(String line) {
 		StringBuilder sb = new StringBuilder();
-		ArrayList<String> arr = new ArrayList<String>();
+		ArrayList<String> arr = new ArrayList<>();
 		boolean start = true;
 		char quote = 0;
 		char last = 0;

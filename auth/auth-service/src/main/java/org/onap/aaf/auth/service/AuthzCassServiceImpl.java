@@ -568,8 +568,8 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 		if(urd.notOKorIsEmpty()) {
 			return Result.err(urd);
 		}
-		Map<String, Namespace> lm = new HashMap<String,Namespace>();
-		Map<String, Namespace> other = full || endsWith==null?null:new TreeMap<String,Namespace>();
+		Map<String, Namespace> lm = new HashMap<>();
+		Map<String, Namespace> other = full || endsWith==null?null:new TreeMap<>();
 		for(UserRoleDAO.Data urdd : urd.value) {
 			if(full) {
 				if(endsWith==null || urdd.role.endsWith(endsWith)) {
@@ -604,8 +604,8 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 							}
 							if(namespace==null) {
 								namespace = new Namespace(nsd.value);
-								namespace.admin=new ArrayList<String>();
-								namespace.owner=new ArrayList<String>();
+								namespace.admin=new ArrayList<>();
+								namespace.owner=new ArrayList<>();
 							}
 							if(endsWith==null || urdd.role.endsWith(endsWith)) {
 								lm.put(namespace.name,namespace);
@@ -679,7 +679,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			return Result.err(rnd); 
 		}
 
-		Set<Namespace> lm = new HashSet<Namespace>();
+		Set<Namespace> lm = new HashSet<>();
 		Result<List<NsDAO.Data>> rlnd = ques.nsDAO.dao().getChildren(trans, parent);
 		if(rlnd.isOK()) {
 			if(rlnd.isEmpty()) {
@@ -1301,7 +1301,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 		}
 		
 		// Create a set of Update Roles, which are in Internal Format
-		Set<String> updtRoles = new HashSet<String>();
+		Set<String> updtRoles = new HashSet<>();
 		Result<NsSplit> nss;
 		for(String role : updt.value.roles(false)) {
 			nss = ques.deriveNsSplit(trans, role);
@@ -3114,7 +3114,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 	//			filter = false;
 			
 			// Get list of roles per user, then add to Roles as we go
-			HashSet<UserRoleDAO.Data> userSet = new HashSet<UserRoleDAO.Data>();
+			HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
 			Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, role);
 			if(rlurd.isOK()) {
 				for(UserRoleDAO.Data data : rlurd.value) {
@@ -3186,7 +3186,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			
 			List<UserRoleDAO.Data> content;
 			if(mustFilter) {
-				content = new ArrayList<UserRoleDAO.Data>(rlurd.value.size()); // avoid multi-memory redos
+				content = new ArrayList<>(rlurd.value.size()); // avoid multi-memory redos
 				
 				for(UserRoleDAO.Data data : rlurd.value) {
 					ndd.name=data.ns;
@@ -3231,7 +3231,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			return Result.err(Status.ERR_BadData,v.errs());
 		}
 
-		Set<String> currRoles = new HashSet<String>();
+		Set<String> currRoles = new HashSet<>();
 		Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByUser(trans, rurdd.value.user);
 		if(rlurd.isOK()) {
 			for(UserRoleDAO.Data data : rlurd.value) {
@@ -3325,7 +3325,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			return Result.err(nsr);	
 		}
 
-		Set<String> currUsers = new HashSet<String>();
+		Set<String> currUsers = new HashSet<>();
 		Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, rurdd.value.role);
 		if(rlurd.isOK()) { 
 			for(UserRoleDAO.Data data : rlurd.value) {
@@ -3541,7 +3541,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			return Result.err(rnd); 
 		}
 		
-		HashSet<UserRoleDAO.Data> userSet = new HashSet<UserRoleDAO.Data>();
+		HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
 		Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readUserInRole(trans, user, role);
 		if(rlurd.isOK()) {
 			for(UserRoleDAO.Data data : rlurd.value) {
@@ -3593,7 +3593,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			}
 		}
 		
-		HashSet<UserRoleDAO.Data> userSet = new HashSet<UserRoleDAO.Data>();
+		HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
 		Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, role);
 		if(rlurd.isOK()) { 
 			for(UserRoleDAO.Data data : rlurd.value) {
@@ -3657,8 +3657,8 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 		// Get list of roles per Permission, 
 		// Then loop through Roles to get Users
 		// Note: Use Sets to avoid processing or responding with Duplicates
-		Set<String> roleUsed = new HashSet<String>();
-		Set<UserRoleDAO.Data> userSet = new HashSet<UserRoleDAO.Data>();
+		Set<String> roleUsed = new HashSet<>();
+		Set<UserRoleDAO.Data> userSet = new HashSet<>();
 		
 		if(!nss.isEmpty()) {
 			Result<List<PermDAO.Data>> rlp = ques.permDAO.readByType(trans, nss.value.ns, nss.value.name);
@@ -4025,8 +4025,8 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			}
 
 			if(curr.isOKhasData()) {
-		    	Map<String, Result<List<DelegateDAO.Data>>> delegateCache = new HashMap<String, Result<List<DelegateDAO.Data>>>();
-		    	Map<UUID, FutureDAO.Data> futureCache = new HashMap<UUID, FutureDAO.Data>();
+		    	Map<String, Result<List<DelegateDAO.Data>>> delegateCache = new HashMap<>();
+		    	Map<UUID, FutureDAO.Data> futureCache = new HashMap<>();
 		    	FutureDAO.Data hasDeleted = new FutureDAO.Data();
 		    	
 			    for(ApprovalDAO.Data cd : curr.value) {
@@ -4177,7 +4177,7 @@ public class AuthzCassServiceImpl	<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS
 			return Result.err(Status.ERR_BadData,v.errs());
 		}
 		
-		List<ApprovalDAO.Data> listRapds = new ArrayList<ApprovalDAO.Data>();
+		List<ApprovalDAO.Data> listRapds = new ArrayList<>();
 		
 		Result<List<ApprovalDAO.Data>> myRapd = ques.approvalDAO.readByApprover(trans, approver);
 		if(myRapd.notOK()) {
