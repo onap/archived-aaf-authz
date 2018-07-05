@@ -80,7 +80,7 @@ public class SimpleRESTClient {
 	}
 
 	//Format:<ID>:<APP>:<protocol>[:AS][,<ID>:<APP>:<protocol>]*
-	public SimpleRESTClient as(Principal principal) {
+	public SimpleRESTClient endUser(Principal principal) {
 		if(principal==null) {
 			chain = null;
 		} else {
@@ -93,23 +93,27 @@ public class SimpleRESTClient {
 		}
 		return this;
 	}
-	
-	public String get(final String path) throws CadiException, LocatorException, APIException  {
+
+	public String read(final String path) throws RESTException, CadiException, LocatorException, APIException  {
 		return get(path,"application/json");
 	}
 
-	public String get(final String path, final String accepts) throws CadiException, LocatorException, APIException  {
-		return restClient.best(new Retryable<String>() {
+	public String get(final String path) throws RESTException, CadiException, LocatorException, APIException  {
+		return get(path,"application/json");
+	}
+
+	public String get(final String path, final String accepts) throws RESTException, CadiException, LocatorException, APIException  {
+		Future<String> future = restClient.best(new Retryable<Future<String>>() {
 			@Override
-			public String code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-				Future<String> future = client.read(path,accepts, headers());
-				if(future.get(callTimeout)) {
-					return future.value;
-				} else {
-					throw new APIException(future.code()  + future.body());
-				}					
+			public Future<String> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+				return client.read(path,accepts, headers());
 			}
 		});
+		if(future.get(callTimeout)) {
+			return future.value;
+		} else {
+			throw new RESTException(future);
+		}					
 	}
 	
 	public interface Headers {

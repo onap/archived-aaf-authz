@@ -228,20 +228,20 @@ public class JU_CmdLine {
 	@Test
 	public void showHelpTest() {
 		String expected = 
-			"Usage: java -jar <this jar> ...\n" +
-			"  keygen [<keyfile>]                     (Generates Key on file, or Std Out)\n" +
-			"  digest [<passwd>|-i|] <keyfile>        (Encrypts Password with \"keyfile\"\n" +
-			"                                          if passwd = -i, will read StdIin\n" +
-			"                                          if passwd is blank, will ask securely)\n" +
-			"  passgen <digits>                       (Generate Password of given size)\n" +
-			"  urlgen <digits>                        (Generate URL field of given size)\n" +
-			"  csptest                                (Tests for CSP compatibility)\n" +
-			"  encode64 <your text>                   (Encodes to Base64)\n" +
-			"  decode64 <base64 encoded text>         (Decodes from Base64)\n" +
-			"  encode64url <your text>                (Encodes to Base64 URL charset)\n" +
-			"  decode64url <base64url encoded text>   (Decodes from Base64 URL charset)\n" +
-			"  sha256 <text> <salts(s)>               (Digest String into SHA256 Hash)\n" +
-			"  md5 <text>                             (Digest String into MD5 Hash)\n";
+			"Usage: java -jar <this jar> ...\n" + 
+			"  keygen [<keyfile>]                     (Generates Key on file, or Std Out)\n" + 
+			"  digest [<passwd>|-i|] <keyfile>        (Encrypts Password with \"keyfile\"\n" + 
+			"                                          if passwd = -i, will read StdIn\n" + 
+			"                                          if passwd is blank, will ask securely)\n" + 
+			"  passgen <digits>                       (Generate Password of given size)\n" + 
+			"  urlgen <digits>                        (Generate URL field of given size)\n" + 
+			"  encode64 <your text>                   (Encodes to Base64)\n" + 
+			"  decode64 <base64 encoded text>         (Decodes from Base64)\n" + 
+			"  encode64url <your text>                (Encodes to Base64 URL charset)\n" + 
+			"  decode64url <base64url encoded text>   (Decodes from Base64 URL charset)\n" + 
+			"  sha256 <text> <salts(s)>               (Digest String into SHA256 Hash)\n" + 
+			"  md5 <text>                             (Digest String into MD5 Hash)\n"
+			;
 
 		CmdLine.main(new String[]{});
 

@@ -27,6 +27,7 @@ import java.security.Principal;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.enduser.ClientFactory;
+import org.onap.aaf.cadi.enduser.RESTException;
 import org.onap.aaf.cadi.enduser.SimpleRESTClient;
 import org.onap.aaf.misc.env.APIException;
 
@@ -53,6 +54,11 @@ public class SimpleRestClientExample {
 				String rv = restClient.get("resthello");
 				System.out.println(rv);
 				
+				// Same call with "read" style
+				rv = restClient.read("resthello");
+				System.out.println(rv);
+				
+				
 				// Call with Queries
 				rv = restClient.get("resthello?perm=org.osaaf.people|*|read");
 				System.out.println(rv);
@@ -61,10 +67,22 @@ public class SimpleRestClientExample {
 				// Pretend Transaction
 				HRequest req = new HRequest("demo@people.osaaf.org"); // Pretend Trans has Jonathan as Identity
 				
-				rv = restClient.as(req.userPrincipal()).get("resthello?perm=org.osaaf.people|*|read");
+				// Call with RESTException, which allows obtaining HTTPCode and any Error message sent
+				rv = restClient.endUser(req.userPrincipal()).get("resthello?perm=org.osaaf.people|*|read");
 				System.out.println(rv);
+
+				try {
+					restClient.get("notAnAPI");
+				} catch(RESTException e) {
+					System.out.println(e.getCode());
+					System.out.println(e.getMsg());
+					System.out.println(e.getMessage());
+					System.out.println(e.getLocalizedMessage());
+					System.out.println(e);
+				}
+
 			}			
-		} catch (CadiException | APIException e) {
+		} catch (CadiException | APIException | RESTException e) {
 			e.printStackTrace();
 		}
 	}

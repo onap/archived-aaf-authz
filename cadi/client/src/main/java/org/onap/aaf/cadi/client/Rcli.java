@@ -455,6 +455,7 @@ public abstract class Rcli<CT> {
 		client.setPayload(new EClient.Transfer() {
 			@Override
 			public void transfer(OutputStream os) throws IOException, APIException {
+				//String s = df.newData().out(type).load(t).asString();
 				df.newData().out(type).direct(t,os);
 			}
 		});

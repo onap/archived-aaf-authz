@@ -29,7 +29,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,7 +142,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
 		encodeds.add(sb.toString());
 	}
 
-	protected void write(File f, Chmod c, String ... data) throws IOException {
+	public static void write(File f, Chmod c, String ... data) throws IOException {
 		f.setWritable(true,true);
 		
 		FileOutputStream fos = new FileOutputStream(f);
@@ -158,7 +157,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
 		}
 	}
 
-	protected void write(File f, Chmod c, byte[] bytes) throws IOException {
+	public static void write(File f, Chmod c, byte[] bytes) throws IOException {
 		f.setWritable(true,true);
 		
 		FileOutputStream fos = new FileOutputStream(f);
@@ -170,7 +169,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
 		}
 	}
 	
-	protected void write(File f, Chmod c, KeyStore ks, char[] pass ) throws IOException, CadiException {
+	public static void write(File f, Chmod c, KeyStore ks, char[] pass ) throws IOException, CadiException {
 		f.setWritable(true,true);
 		
 		FileOutputStream fos = new FileOutputStream(f);

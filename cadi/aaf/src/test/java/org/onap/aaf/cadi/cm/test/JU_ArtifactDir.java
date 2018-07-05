@@ -105,22 +105,22 @@ public class JU_ArtifactDir {
 		artiDir.place(transMock, certInfoMock, artiMock, "machine");
 		
 		File writableFile = new File(dirName + '/' + nsName + "writable.txt");
-		artiDir.write(writableFile, Chmod.to755, "first data point", "second data point");
+		ArtifactDir.write(writableFile, Chmod.to755, "first data point", "second data point");
 		try {
-			artiDir.write(writableFile, Chmod.to755, (String[])null);
+			ArtifactDir.write(writableFile, Chmod.to755, (String[])null);
 			fail("Should've thrown an exception");
 		} catch(NullPointerException e) {
 		}
 		
 		KeyStore ks = KeyStore.getInstance("pkcs12");
 		try {
-			artiDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
+			ArtifactDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
 			fail("Should've thrown an exception");
 		} catch(CadiException e) {
 		}
 		
 		ks.load(null, null);
-		artiDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
+		ArtifactDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
 		
 		ArtifactDirStud artiDir2 = new ArtifactDirStud();
 		artiDir2.place(transMock, certInfoMock, artiMock, "machine");
@@ -146,15 +146,6 @@ public class JU_ArtifactDir {
 		protected boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
 			// This is only here so that we have a concrete class to test
 			return false;
-		}
-		
-		// Expose the protected methods
-
-		public  void write(File f, Chmod c, String ... data) throws IOException {
-			super.write(f, c, data);
-		}
-		public void write(File f, Chmod c, KeyStore ks, char[] pass ) throws IOException, CadiException {
-			super.write(f, c, ks, pass);
 		}
 	}
 

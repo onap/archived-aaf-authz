@@ -37,11 +37,7 @@ import org.onap.aaf.cadi.util.JsonOutputStream;
 
 /**
  * A Class to run on command line to determine suitability of environment for certain TAFs.
- * 
- * For instance, CSP supports services only in certain domains, and while dynamic host
- * lookups on the machine work in most cases, sometimes, names and IPs are unexpected (and
- * invalid) for CSP because of multiple NetworkInterfaces, etc
- * 
+ *  * 
  * @author Jonathan
  *
  */
@@ -336,11 +332,10 @@ public class CmdLine {
 			System.out.println("Usage: java -jar <this jar> ...");
 			System.out.println("  keygen [<keyfile>]                     (Generates Key on file, or Std Out)");
 			System.out.println("  digest [<passwd>|-i|] <keyfile>        (Encrypts Password with \"keyfile\"");
-			System.out.println("                                          if passwd = -i, will read StdIin");
+			System.out.println("                                          if passwd = -i, will read StdIn");
 			System.out.println("                                          if passwd is blank, will ask securely)");
 			System.out.println("  passgen <digits>                       (Generate Password of given size)");
 			System.out.println("  urlgen <digits>                        (Generate URL field of given size)");
-			System.out.println("  csptest                                (Tests for CSP compatibility)");
 			System.out.println("  encode64 <your text>                   (Encodes to Base64)");
 			System.out.println("  decode64 <base64 encoded text>         (Decodes from Base64)");
 			System.out.println("  encode64url <your text>                (Encodes to Base64 URL charset)");

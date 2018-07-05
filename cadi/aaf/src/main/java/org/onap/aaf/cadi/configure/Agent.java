@@ -24,12 +24,14 @@ package org.onap.aaf.cadi.configure;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
+import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayDeque;
@@ -58,6 +60,7 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.sso.AAFSSO;
+import org.onap.aaf.cadi.util.Chmod;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data.TYPE;
@@ -100,167 +103,195 @@ public class Agent {
 	private static RosettaEnv env;
 	
 	private static boolean doExit;
+	private static AAFCon<?> aafcon;
 
 	public static void main(String[] args) {
 		int exitCode = 0;
 		doExit = true;
-		try {
-			AAFSSO aafsso=null;
-			PropAccess access;
-			
-			if(args.length>0 && args[0].equals("validate")) {
-				int idx = args[1].indexOf('=');
-				aafsso = null;
-				access = new PropAccess(
-							(idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
-							'='+
-						    (idx<0?args[1]:args[1].substring(idx+1)));
-			} else {
-				aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
-					@Override
-					public Properties process(String[] args, Properties props) {
-						if(args.length>1) {
-							if (!args[0].equals("genkeypair")) {
-								props.put("aaf_id", args[1]);
-							}	
-						}
-						return props;
-					}
-				});
-				access = aafsso.access();
+		if(args.length>0 && "cadi".equals(args[0])) {
+			String[] newArgs = new String[args.length-1];
+			System.arraycopy(args, 1, newArgs, 0, newArgs.length);
+			if(newArgs.length==0) {
+				System.out.println(HASHES);
+				System.out.println("Note: Cadi CmdLine is a separate component.  When running with\n\t"
+						+ "Agent, always preface with \"cadi\",\n\tex: cadi keygen [<keyfile>]");
+				System.out.println(HASHES);
 			}
+			CmdLine.main(newArgs);
+		} else {
+			try {
+				AAFSSO aafsso=null;
+				PropAccess access;
 				
-			if(aafsso!=null && aafsso.loginOnly()) {
-				aafsso.setLogDefault();
-				aafsso.writeFiles();
-				System.out.println("AAF SSO information created in ~/.aaf");
-			} else {
-				env = new RosettaEnv(access.getProperties());
-				Deque<String> cmds = new ArrayDeque<String>();
-				for(String p : args) {
-					if("-noexit".equalsIgnoreCase(p)) {
-						doExit = false;
-					} else if(p.indexOf('=') < 0) {
-						cmds.add(p);
-					}
-				}
-				
-				if(cmds.size()==0) {
-					if(aafsso!=null) {
-						aafsso.setLogDefault();
-					}
-					// NOTE: CHANGE IN CMDS should be reflected in AAFSSO constructor, to get FQI->aaf-id or not
-					System.out.println("Usage: java -jar <cadi-aaf-*-full.jar> cmd [<tag=value>]*");
-					System.out.println("   create   <FQI> [<machine>]");
-					System.out.println("   read     <FQI> [<machine>]");
-					System.out.println("   update   <FQI> [<machine>]");
-					System.out.println("   delete   <FQI> [<machine>]");
-					System.out.println("   copy     <FQI> <machine> <newmachine>[,<newmachine>]*");
-					System.out.println("   place    <FQI> [<machine>]");
-					System.out.println("   showpass <FQI> [<machine>]");
-					System.out.println("   check    <FQI> [<machine>]");
-					System.out.println("   config   <FQI>");
-					System.out.println("   validate <FQI>.props>");
-					System.out.println("   genkeypair");
-					if (doExit) {
-						System.exit(1);
-					}
-				}
-				
-				TIMEOUT = Integer.parseInt(env.getProperty(Config.AAF_CONN_TIMEOUT, "5000"));
-			
-				reqDF = env.newDataFactory(CertificateRequest.class);
-				artifactsDF = env.newDataFactory(Artifacts.class);
-				certDF = env.newDataFactory(CertInfo.class);
-				configDF = env.newDataFactory(Configuration.class);
-				permDF = env.newDataFactory(Perms.class);
-				errMsg = new ErrMessage(env);
-	
-				placeArtifact = new HashMap<>();
-				placeArtifact.put(JKS, new PlaceArtifactInKeystore(JKS));
-				placeArtifact.put(PKCS12, new PlaceArtifactInKeystore(PKCS12));
-				placeArtifact.put(FILE, new PlaceArtifactInFiles());
-				placeArtifact.put(PRINT, new PlaceArtifactOnStream(System.out));
-				placeArtifact.put(SCRIPT, new PlaceArtifactScripts());
-				
-				Trans trans = env.newTrans();
-				String token;
-				if((token=access.getProperty("oauth_token"))!=null) {
-					trans.setProperty("oauth_token", token);
-				}
-				try {
-					if(aafsso!=null) {
-					// show Std out again
-						aafsso.setLogDefault();
-						aafsso.setStdErrDefault();
-						
-						// if CM_URL can be obtained, add to sso.props, if written
-						String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL+": ");
-						if(cm_url!=null) {
-							aafsso.addProp(Config.CM_URL, cm_url);
-						}
-						aafsso.writeFiles();
-					}
-
-					AAFCon<?> aafcon = new AAFConHttp(access,Config.CM_URL);
-
-					String cmd = cmds.removeFirst();
-					switch(cmd) {
-						case "place":
-							placeCerts(trans,aafcon,cmds);
-							break;
-						case "create":
-							createArtifact(trans, aafcon,cmds);
-							break;
-						case "read":
-							readArtifact(trans, aafcon, cmds);
-							break;
-						case "copy":
-							copyArtifact(trans, aafcon, cmds);
-							break;
-						case "update":
-							updateArtifact(trans, aafcon, cmds);
-							break;
-						case "delete":
-							deleteArtifact(trans, aafcon, cmds);
-							break;
-						case "showpass":
-							showPass(trans, aafcon, cmds);
-							break;
-						case "config":
-							initConfig(trans,access,aafcon,cmds);
-							break;
-						case "validate":
-							validate(access);
-							break;
-						case "check":
-							try {
-								exitCode = check(trans,aafcon,cmds);
-							} catch (Exception e) {
-								exitCode = 1;
-								throw e;
+				if(args.length>0 && args[0].equals("validate")) {
+					int idx = args[1].indexOf('=');
+					aafsso = null;
+					access = new PropAccess(
+								(idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
+								'='+
+							    (idx<0?args[1]:args[1].substring(idx+1)));
+				} else {
+					aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
+						@Override
+						public Properties process(String[] args, Properties props) {
+							if(args.length>1) {
+								if (!args[0].equals("keypairgen")) {
+									props.put("aaf_id", args[1]);
+								}	
 							}
-							break;
-						default:
-							AAFSSO.cons.printf("Unknown command \"%s\"\n", cmd);
+							return props;
+						}
+					});
+					access = aafsso.access();
+				}
+					
+				if(aafsso!=null && aafsso.loginOnly()) {
+					aafsso.setLogDefault();
+					aafsso.writeFiles();
+					System.out.println("AAF SSO information created in ~/.aaf");
+				} else {
+					env = new RosettaEnv(access.getProperties());
+					Deque<String> cmds = new ArrayDeque<String>();
+					for(String p : args) {
+						if("-noexit".equalsIgnoreCase(p)) {
+							doExit = false;
+						} else if(p.indexOf('=') < 0) {
+							cmds.add(p);
+						}
 					}
-				} finally {
-					StringBuilder sb = new StringBuilder();
-	                trans.auditTrail(4, sb, Trans.REMOTE);
-	                if(sb.length()>0) {
-	                	trans.info().log("Trans Info\n",sb);
-	                }
+					
+					if(cmds.size()==0) {
+						if(aafsso!=null) {
+							aafsso.setLogDefault();
+						}
+						// NOTE: CHANGE IN CMDS should be reflected in AAFSSO constructor, to get FQI->aaf-id or not
+						System.out.println("Usage: java -jar <cadi-aaf-*-full.jar> cmd [<tag=value>]*");
+						System.out.println("   create     <FQI> [<machine>]");
+						System.out.println("   read       <FQI> [<machine>]");
+						System.out.println("   update     <FQI> [<machine>]");
+						System.out.println("   delete     <FQI> [<machine>]");
+						System.out.println("   copy       <FQI> <machine> <newmachine>[,<newmachine>]*");
+						System.out.println("   place      <FQI> [<machine>]");
+						System.out.println("   showpass   <FQI> [<machine>]");
+						System.out.println("   check      <FQI> [<machine>]");
+						System.out.println("   keypairgen <FQI>");
+						System.out.println("   config     <FQI>");
+						System.out.println("   validate   <FQI>.props>");
+						System.out.println("   --- Additional Tool Access ---");
+						System.out.println("     ** Type with no params for Tool Help");
+						System.out.println("     ** If using with Agent, preface with \"cadi\"");
+						System.out.println("   cadi <cadi tool params, see -?>");
+						
+						if (doExit) {
+							System.exit(1);
+						}
+					}
+					
+					TIMEOUT = Integer.parseInt(env.getProperty(Config.AAF_CONN_TIMEOUT, "5000"));
+				
+					reqDF = env.newDataFactory(CertificateRequest.class);
+					artifactsDF = env.newDataFactory(Artifacts.class);
+					certDF = env.newDataFactory(CertInfo.class);
+					configDF = env.newDataFactory(Configuration.class);
+					permDF = env.newDataFactory(Perms.class);
+					errMsg = new ErrMessage(env);
+		
+					placeArtifact = new HashMap<>();
+					placeArtifact.put(JKS, new PlaceArtifactInKeystore(JKS));
+					placeArtifact.put(PKCS12, new PlaceArtifactInKeystore(PKCS12));
+					placeArtifact.put(FILE, new PlaceArtifactInFiles());
+					placeArtifact.put(PRINT, new PlaceArtifactOnStream(System.out));
+					placeArtifact.put(SCRIPT, new PlaceArtifactScripts());
+					
+					Trans trans = env.newTrans();
+					String token;
+					if((token=access.getProperty("oauth_token"))!=null) {
+						trans.setProperty("oauth_token", token);
+					}
+					try {
+						if(aafsso!=null) {
+						// show Std out again
+							aafsso.setLogDefault();
+							aafsso.setStdErrDefault();
+							
+							// if CM_URL can be obtained, add to sso.props, if written
+							String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL+": ");
+							if(cm_url!=null) {
+								aafsso.addProp(Config.CM_URL, cm_url);
+							}
+							aafsso.writeFiles();
+						}
+	
+						
+	
+						String cmd = cmds.removeFirst();
+						switch(cmd) {
+							case "place":
+								placeCerts(trans,aafcon(access),cmds);
+								break;
+							case "create":
+								createArtifact(trans, aafcon(access),cmds);
+								break;
+							case "read":
+								readArtifact(trans, aafcon(access), cmds);
+								break;
+							case "copy":
+								copyArtifact(trans, aafcon(access), cmds);
+								break;
+							case "update":
+								updateArtifact(trans, aafcon(access), cmds);
+								break;
+							case "delete":
+								deleteArtifact(trans, aafcon(access), cmds);
+								break;
+							case "showpass":
+								showPass(trans, aafcon(access), cmds);
+								break;
+							case "keypairgen":
+								keypairGen(trans, access, cmds);
+								break;
+							case "config":
+								config(trans,access,aafcon(access),cmds);
+								break;
+							case "validate":
+								validate(access);
+								break;
+							case "check":
+								try {
+									exitCode = check(trans,aafcon(access),cmds);
+								} catch (Exception e) {
+									exitCode = 1;
+									throw e;
+								}
+								break;
+							default:
+								AAFSSO.cons.printf("Unknown command \"%s\"\n", cmd);
+						}
+					} finally {
+						StringBuilder sb = new StringBuilder();
+		                trans.auditTrail(4, sb, Trans.REMOTE);
+		                if(sb.length()>0) {
+		                	trans.info().log("Trans Info\n",sb);
+		                }
+					}
+					if(aafsso!=null) {
+						aafsso.close();
+					}
 				}
-				if(aafsso!=null) {
-					aafsso.close();
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		if(exitCode != 0 && doExit) {
 			System.exit(exitCode);
 		}
+	}
+
+	private static synchronized AAFCon<?> aafcon(PropAccess access) throws APIException, CadiException, LocatorException {
+		if(aafcon==null) {
+			aafcon = new AAFConHttp(access,Config.CM_URL);
+		}
+		return aafcon;
 	}
 
 	private static String getProperty(PropAccess pa, Env env, boolean secure, String tag, String prompt, Object ... def) {
@@ -665,8 +696,30 @@ public class Agent {
 
 	}
 	
+	private static void keypairGen(final Trans trans, final PropAccess access, final Deque<String> cmds) throws IOException {
+		final String fqi = fqi(cmds);
+		final String ns = FQI.reverseDomain(fqi);
+		File dir = new File(access.getProperty(Config.CADI_ETCDIR,".")); // default to current Directory
+		File f = new File(dir,ns+".key");
+		
+		if(f.exists()) {
+			String line = AAFSSO.cons.readLine("%s exists. Overwrite? (y/n): ", f.getCanonicalPath());
+			if(!"Y".equalsIgnoreCase(line)) {
+				System.out.println("Canceling...");
+				return;
+			}
+		}
+		
+		KeyPair kp = Factory.generateKeyPair(trans);
+		ArtifactDir.write(f, Chmod.to400, Factory.toString(trans, kp.getPrivate()));
+		System.out.printf("Wrote %s\n", f.getCanonicalFile());
 
-	private static void initConfig(Trans trans, PropAccess pa, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+		f=new File(dir,ns+".pubkey");
+		ArtifactDir.write(f, Chmod.to644, Factory.toString(trans, kp.getPublic()));
+		System.out.printf("Wrote %s\n", f.getCanonicalFile());
+	}
+	
+	private static void config(Trans trans, PropAccess pa, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
 		final String fqi = fqi(cmds);
 		final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
 		final String rootFile = FQI.reverseDomain(fqi);
