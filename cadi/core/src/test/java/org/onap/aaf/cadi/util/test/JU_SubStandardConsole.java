@@ -39,6 +39,7 @@ public class JU_SubStandardConsole {
 	private String inputString = "An input string";
 	private ByteArrayOutputStream outStream;
 	private ByteArrayOutputStream errStream;
+	private String lineSeparator = System.lineSeparator();
 
 	@Before
 	public void setup() {
@@ -59,9 +60,9 @@ public class JU_SubStandardConsole {
 		byte[] input = inputString.getBytes();
 		System.setIn(new ByteArrayInputStream(input));
 		SubStandardConsole ssc = new SubStandardConsole();
-		String output = ssc.readLine("%s\n", ">>> ");
+		String output = ssc.readLine("%s" + lineSeparator, ">>> ");
 		assertThat(output, is(inputString));
-		assertThat(outStream.toString(), is(">>> \n"));
+		assertThat(outStream.toString(), is(">>> " + lineSeparator));
 	}
 
 	@Test
@@ -69,7 +70,7 @@ public class JU_SubStandardConsole {
 		byte[] input = inputString.getBytes();
 		System.setIn(new ByteArrayInputStream(input));
 		SubStandardConsole ssc = new SubStandardConsole();
-		String output = ssc.readLine("%s %s\n", ">>> ", "Another argument for coverage");
+		String output = ssc.readLine("%s %s"  + lineSeparator, ">>> ", "Another argument for coverage");
 		assertThat(output, is(inputString));
 	}
 
@@ -78,9 +79,9 @@ public class JU_SubStandardConsole {
 		byte[] input = "\n".getBytes();
 		System.setIn(new ByteArrayInputStream(input));
 		SubStandardConsole ssc = new SubStandardConsole();
-		String output = ssc.readLine("%s\n", ">>> ");
+		String output = ssc.readLine("%s" + lineSeparator, ">>> ");
 		assertThat(output, is(">>> "));
-		assertThat(outStream.toString(), is(">>> \n"));
+		assertThat(outStream.toString(), is(">>> " + lineSeparator));
 	}
 
 	@Test
@@ -88,10 +89,10 @@ public class JU_SubStandardConsole {
 		byte[] input = inputString.getBytes();
 		System.setIn(new ByteArrayInputStream(input));
 		SubStandardConsole ssc = new SubStandardConsole();
-		char[] output = ssc.readPassword("%s\n", ">>> ");
+		char[] output = ssc.readPassword("%s" + lineSeparator, ">>> ");
 		System.out.println(output);
 		assertThat(output, is(inputString.toCharArray()));
-		assertThat(outStream.toString(), is(">>> \nAn input string\n"));
+		assertThat(outStream.toString(), is(">>> " + lineSeparator + "An input string"  + lineSeparator));
 	}
 
 	@Test
@@ -115,10 +116,10 @@ public class JU_SubStandardConsole {
 		brField.set(ssc, brMock);
 
 		assertThat(ssc.readLine(""), is(""));
-		assertThat(errStream.toString(), is("uh oh...\n"));
+		assertThat(errStream.toString(), is("uh oh..." + lineSeparator));
         errStream.reset();
 		assertThat(ssc.readPassword("").length, is(0));
-		assertThat(errStream.toString(), is("uh oh...\n"));
+		assertThat(errStream.toString(), is("uh oh..." + lineSeparator));
 	}
 
 }

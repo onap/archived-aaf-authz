@@ -102,7 +102,7 @@ public class JU_ErrMessageTest {
 		when(errDF.newData().in(TYPE.JSON).load(attErrJson).asObject()).thenReturn(error);
 		
 		errMessage.printErr(new PrintStream(errStream), attErrJson);
-		assertEquals("Error Message Id Error Text\n", errStream.toString());
+		assertEquals("Error Message Id Error Text" + System.lineSeparator(), errStream.toString());
 	}
 	
 	@Test

@@ -72,7 +72,7 @@ public class JU_GetAccess {
 
         @SuppressWarnings("unused")
 		GetAccess getAccess = new GetAccess(accessGet);
-		String[] lines = outStream.toString().split("\n");
+		String[] lines = outStream.toString().split(System.lineSeparator());
 		assertThat(lines.length, is(2));
         output = lines[0].split(" ", 2)[1];
         assertThat(output, is("INIT [cadi] cadi_prop_files is set to " + filePath));

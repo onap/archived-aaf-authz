@@ -72,7 +72,7 @@ public class JU_PlaceArtifactOnStream {
 		PlaceArtifactOnStream placer = new PlaceArtifactOnStream(new PrintStream(outStream));
 		placer.place(transMock, certInfoMock, artiMock, "machine");
 		
-		String[] output = outStream.toString().split("\n", 0);
+		String[] output = outStream.toString().split(System.lineSeparator(), 0);
 		
 		String[] expected = {
 				"Challenge:  " + luggagePassword,
