@@ -75,7 +75,7 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
 				new Lookup<UserRoleDAO.Data>() {
 					@Override
 					public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
-						List<UserRole> lur = UserRole.byUser.get(keys[0]);
+						List<UserRole> lur = UserRole.getByUser().get(keys[0]);
 						if(lur!=null) {
 							for(UserRole ur : lur) {
 								if(ur.role().equals(keys[1])) {

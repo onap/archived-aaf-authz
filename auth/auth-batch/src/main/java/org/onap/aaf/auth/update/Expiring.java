@@ -305,7 +305,7 @@ public class Expiring extends Batch {
 	    								// Make sure Owner Role exists
 										String owner = role.ns + ".owner";
 										if(Role.byName.containsKey(owner)) {
-			    								List<UserRole> lur = UserRole.byRole.get(owner);
+			    								List<UserRole> lur = UserRole.getByRole().get(owner);
 			    								if(lur != null) {
 			        								for(UserRole ur : lur) {
 			        									if(ur.user().equals(app.getApprover())) {
@@ -360,7 +360,7 @@ public class Expiring extends Batch {
         // Run for User Roles
         trans.info().log("Checking for Expired User Roles");
         try {
-	        	for(UserRole ur : UserRole.data) {
+	        	for(UserRole ur : UserRole.getData()) {
 	        		if(org.getIdentity(noAvg, ur.user())==null) {  // if not part of Organization;
 	        			if(isSpecial(ur.user())) {
 		        			trans.info().log(ur.user(),"is not part of organization, but may not be deleted");
@@ -421,11 +421,11 @@ public class Expiring extends Batch {
         if(UserRole.sizeForDeletion()>0) {
         		count+=UserRole.sizeForDeletion();
             double onePercent = 0.01;
-	        if(((double)UserRole.sizeForDeletion())/UserRole.data.size() > onePercent) {
+	        if(((double)UserRole.sizeForDeletion())/UserRole.getData().size() > onePercent) {
 		        	Message msg = new Message();
 		        	try {
 					msg.line("Found %d of %d UserRoles marked for Deletion in file %s", 
-						delayedURDeletes,UserRole.data.size(),deletesFile.getCanonicalPath());
+						delayedURDeletes,UserRole.getData().size(),deletesFile.getCanonicalPath());
 				} catch (IOException e) {
 					msg.line("Found %d of %d UserRoles marked for Deletion.\n", 
 							delayedURDeletes);

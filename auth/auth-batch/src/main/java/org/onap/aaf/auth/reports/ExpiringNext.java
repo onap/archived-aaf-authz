@@ -76,7 +76,7 @@ public class ExpiringNext extends Batch {
         List<String> expiring = new ArrayList<>();
         
         trans.info().log("Checking for Expired UserRoles");
-    	for(UserRole ur : UserRole.data) {
+    	for(UserRole ur : UserRole.getData()) {
     		if(ur.expires().after(now)) {
     			if(ur.expires().before(twoWeeks)) {
     				expiring.add(Chrono.dateOnlyStamp(ur.expires()) + ":\t" + ur.user() + '\t' + ur.role());

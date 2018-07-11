@@ -142,7 +142,7 @@ public class NotifyCredExpiring extends Batch {
 			for(Cred c : es.getValue()) {
 				last = c.last(CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256);
 				if(last!=null && last.after(tooLate) && last.before(early)) {
-					List<UserRole> ownerURList = UserRole.byRole.get(es.getKey()+".owner");
+					List<UserRole> ownerURList = UserRole.getByRole().get(es.getKey()+".owner");
 					if(ownerURList!=null) {
 						for(UserRole ur:ownerURList) {
 							String owner = ur.user();
