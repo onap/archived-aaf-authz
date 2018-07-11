@@ -43,9 +43,9 @@ public class Validator {
 	public static final Pattern ID_CHARS = Pattern.compile("[\\w.-]+@[\\w.-]+");
 	public static final Pattern NAME_CHARS = Pattern.compile("[\\w.-]+");
 	public static final Pattern DESC_CHAR = Pattern.compile("["+ESSENTIAL+"\\x20]+");
-	public static List<String> nsKeywords;
-	protected final Pattern actionChars;
-	protected final Pattern instChars;
+	protected static List<String> nsKeywords;
+	private final Pattern actionChars;
+	private final Pattern instChars;
 	private StringBuilder msgs;
 
 	static {
@@ -110,7 +110,7 @@ public class Validator {
 		if(res==null) {
 			msgs.append("Result object is blank");
 		} else if(res.notOK()) {
-			msgs.append(res.getClass().getSimpleName() + " is not OK");
+			msgs.append(res.getClass().getSimpleName()).append(" is not OK");
 		}
 		return this;
 	}
@@ -130,10 +130,8 @@ public class Validator {
 	}
 
 	protected Validator description(String type, String description) {
-		if(description!=null) {
-			if(noMatch(description, DESC_CHAR)) {
-				msg(type + " Description is invalid.");
-			}
+		if (description != null && noMatch(description, DESC_CHAR)) {
+			msg(type + " Description is invalid.");
 		}
 		return this;
 	}
@@ -151,7 +149,7 @@ public class Validator {
 		} else if(ns==null) {
 			msg("Perm NS is null");
 		} else if(nob(type,NAME_CHARS)) {
-			msg("Perm Type [" + (ns+(type.length()==0?"":'.'))+type + "] is invalid.");
+			msg("Perm Type [" + (ns+(type.length()==0?"":'.')) + type + "] is invalid.");
 		}
 		return this;
 	}
@@ -207,5 +205,6 @@ public class Validator {
 		}
 		return this;
 	}
+
 
 }
