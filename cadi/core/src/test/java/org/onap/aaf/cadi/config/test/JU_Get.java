@@ -76,19 +76,19 @@ public class JU_Get {
 
 		assertThat(accessGet.get("tag", defaultVal, true), is("value"));
 		output = outStream.toString().split(" ", 2)[1];
-		assertThat(output, is("INIT [cadi] tag is set to value\n"));
+		assertThat(output, is("INIT [cadi] tag is set to value" + System.lineSeparator()));
 
 		outStream.reset();
 
 		assertThat(accessGet.get("not a real tag", defaultVal, true), is(defaultVal));
 		output = outStream.toString().split(" ", 2)[1];
-		assertThat(output, is("INIT [cadi] not a real tag is set to " + defaultVal + "\n"));
+		assertThat(output, is("INIT [cadi] not a real tag is set to " + defaultVal + System.lineSeparator()));
 
 		outStream.reset();
 
 		assertThat(accessGet.get("not a real tag", null, true), is(nullValue()));
 		output = outStream.toString().split(" ", 2)[1];
-		assertThat(output, is("INIT [cadi] not a real tag is not set\n"));
+		assertThat(output, is("INIT [cadi] not a real tag is not set" + System.lineSeparator()));
 
 		outStream.reset();
 

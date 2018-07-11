@@ -113,7 +113,7 @@ public class JU_AbsUserCache {
 		expected.append(String.valueOf(cleanInterval));
 		expected.append(" ms and max objects of ");
 		expected.append(String.valueOf(maxInterval));
-		expected.append("\n");
+		expected.append(System.lineSeparator());
 		assertThat(output, is(expected.toString()));
 
 		outStream.reset();
@@ -124,7 +124,7 @@ public class JU_AbsUserCache {
 		expected.append(String.valueOf(cleanInterval));
 		expected.append(" ms and max objects of ");
 		expected.append(String.valueOf(maxInterval));
-		expected.append("\n");
+		expected.append(System.lineSeparator());
 		assertThat(output, is(expected.toString()));
 
 		AbsUserCacheStub<Permission> aucs3 = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE);
