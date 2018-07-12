@@ -1,0 +1,18 @@
+#
+# Special AAF specific Properties... for AAF Init only
+#
+# Controlling NS
+aaf_root_ns=org.osaaf.aaf
+aaf_trust_perm=org.osaaf.aaf|org.onap|trust
+
+# Domains and Realms
+aaf_domain_support=.com:.org
+aaf_default_realm=people.osaaf.org
+
+# Initial Passwords and such
+aaf_password=osaaf_admin
+cadi_truststore=/opt/app/osaaf/public/truststoreONAPall.jks
+cadi_truststore_password=changeit
+
+# Other
+aaf_data_dir=/opt/app/osaaf/data

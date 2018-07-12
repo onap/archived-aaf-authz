@@ -2,6 +2,7 @@
 # Pull in Props
 . ./d.props
 
+
 if [ "$1" == "" ]; then
   AAF_COMPONENTS=`ls -r ../aaf_${VERSION}/bin | grep -v '\.'`
 else

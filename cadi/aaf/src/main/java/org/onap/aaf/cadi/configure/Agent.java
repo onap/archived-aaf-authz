@@ -176,7 +176,7 @@ public class Agent {
 						System.out.println("   check      <FQI> [<machine>]");
 						System.out.println("   keypairgen <FQI>");
 						System.out.println("   config     <FQI>");
-						System.out.println("   validate   <FQI>.props>");
+						System.out.println("   validate   <NS>.props>");
 						System.out.println("   --- Additional Tool Access ---");
 						System.out.println("     ** Type with no params for Tool Help");
 						System.out.println("     ** If using with Agent, preface with \"cadi\"");
@@ -251,7 +251,13 @@ public class Agent {
 								keypairGen(trans, access, cmds);
 								break;
 							case "config":
-								config(trans,access,aafcon(access),cmds);
+								if(access.getProperty(Config.CADI_PROP_FILES)!=null) {
+									// Get Properties from initialization Prop Files
+									config(trans,access,null,cmds);
+								} else {
+									// Get Properties from existing AAF Instance
+									config(trans,access,aafcon(access),cmds);
+								}
 								break;
 							case "validate":
 								validate(access);
@@ -721,7 +727,6 @@ public class Agent {
 	
 	private static void config(Trans trans, PropAccess pa, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
 		final String fqi = fqi(cmds);
-		final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
 		final String rootFile = FQI.reverseDomain(fqi);
 		final File dir = new File(pa.getProperty(Config.CADI_ETCDIR, "."));
 		if(dir.exists()) {
@@ -796,35 +801,115 @@ public class Agent {
 					String ps = pa.decrypt(pa.getProperty(Config.AAF_APPPASS), false);
 					ps = filesymm.enpass(ps);
 					psCredProps.println(ps);
-					
-					psCredProps.print(Config.CADI_TRUSTSTORE);
-					psCredProps.print("=");
-					File origTruststore = new File(pa.getProperty(Config.CADI_TRUSTSTORE));
-					File newTruststore = new File(dir,origTruststore.getName());
-					if(!newTruststore.exists()) {
-						Files.copy(origTruststore.toPath(), newTruststore.toPath());
-					}
-					psCredProps.println(newTruststore.getCanonicalPath());
+
+					String cts = pa.getProperty(Config.CADI_TRUSTSTORE);
+					if(cts!=null) {
+						File origTruststore = new File(cts);
+						if(!origTruststore.exists()) {
+							// Try same directory as cadi_prop_files
+							String cpf = pa.getProperty(Config.CADI_PROP_FILES);
+							if(cpf!=null) {
+								for(String f : Split.split(File.pathSeparatorChar, cpf)) {
+									File fcpf = new File(f);
+									if(fcpf.exists()) {
+										int lastSep = cts.lastIndexOf(File.pathSeparator);
+										origTruststore = new File(fcpf.getParentFile(),lastSep>=0?cts.substring(lastSep):cts);
+										if(origTruststore.exists()) { 
+											break;
+										}
+									}
+								}
+								if(!origTruststore.exists()) {
+									throw new CadiException(cts + "does not exist");
+								}
+							}
+							
+						}
+						File newTruststore = new File(dir,origTruststore.getName());
+						if(!newTruststore.exists()) {
+							Files.copy(origTruststore.toPath(), newTruststore.toPath());
+						}
+						psCredProps.print(Config.CADI_TRUSTSTORE);
+						psCredProps.print("=");
+						psCredProps.println(newTruststore.getCanonicalPath());
 		
-					psCredProps.print(Config.CADI_TRUSTSTORE_PASSWORD);
-					psCredProps.print("=enc:");
-					ps = pa.decrypt(pa.getProperty(Config.CADI_TRUSTSTORE_PASSWORD), false);
-					ps = filesymm.enpass(ps);
-					psCredProps.println(ps);
+						psCredProps.print(Config.CADI_TRUSTSTORE_PASSWORD);
+						psCredProps.print("=enc:");
+						ps = pa.decrypt(pa.getProperty(Config.CADI_TRUSTSTORE_PASSWORD), false);
+						ps = filesymm.enpass(ps);
+						psCredProps.println(ps);
+					}
+					
+//					String cadi_x509_issuers = pa.getProperty(Config.CADI_X509_ISSUERS);
+//					if(cadi_x509_issuers!=null) {
+//						psCredProps.print(Config.CADI_X509_ISSUERS);
+//						psCredProps.print('=');
+//						psCredProps.println(cadi_x509_issuers);
+//					}
+
 					
 					try {
-						Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
-								.read("/configure/"+fqi+"/aaf", configDF);
-						if(acf.get(TIMEOUT)) {
-		//					out.println(acf.value.getName());
-							for(Props props : acf.value.getProps()) {
-								psProps.println(props.getTag() + '=' + props.getValue());					
+						if(aafcon!=null) { // get Properties from Remote AAF
+							final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
+
+							Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
+									.read("/configure/"+fqi+"/aaf", configDF);
+							if(acf.get(TIMEOUT)) {
+								PrintStream pstemp;
+								for(Props props : acf.value.getProps()) {
+									if(Config.CADI_X509_ISSUERS.equals(props.getTag())) {
+										pstemp=psCredProps;
+									} else {
+										pstemp = psProps;
+									}
+									pstemp.print(props.getTag());
+									pstemp.print('=');
+									pstemp.println(props.getValue());					
+								}
+								ok = true;
+							} else if(acf.code()==401){
+								trans.error().log("Bad Password sent to AAF");
+							} else {
+								trans.error().log(errMsg.toMsg(acf));
+							}
+						} else {
+							String cpf = pa.getProperty(Config.CADI_PROP_FILES);
+							if(cpf!=null){
+								for(String f : Split.split(File.pathSeparatorChar, cpf)) {
+									System.out.format("Reading %s\n",f);
+									FileInputStream fis = new FileInputStream(f); 
+									try {
+										Properties props = new Properties();
+										props.load(fis);
+										PrintStream pstemp;
+										String key,value;
+										for(Entry<Object, Object> prop : props.entrySet()) {
+											key = prop.getKey().toString();
+											if(Config.CADI_X509_ISSUERS.equals(key)) {
+												pstemp=psCredProps;
+												value = prop.getValue().toString();
+											} else if(key.endsWith("_password")){
+												if(Config.AAF_APPPASS.equals(key) || Config.CADI_TRUSTSTORE_PASSWORD.equals(key)) {
+													continue;
+												}
+												value = "enc:" + filesymm.enpass(prop.getValue().toString());
+												pstemp = psCredProps;
+											} else if(Config.CADI_TRUSTSTORE.equals(key)) {
+												continue;
+											} else {
+												value = prop.getValue().toString();
+												pstemp = psProps;
+											}
+											pstemp.print(key);
+											pstemp.print('=');
+											pstemp.println(value);
+										}
+									} finally {
+										fis.close();
+									}
+								}
 							}
 							ok = true;
-						} else if(acf.code()==401){
-							trans.error().log("Bad Password sent to AAF");
-						} else {
-							trans.error().log(errMsg.toMsg(acf));
 						}
 					} finally {
 						psProps.close();

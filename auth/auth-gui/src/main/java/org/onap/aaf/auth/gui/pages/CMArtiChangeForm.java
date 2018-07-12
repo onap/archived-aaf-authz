@@ -61,7 +61,7 @@ public class CMArtiChangeForm extends Page {
 	static final String NAME = "ArtifactChange";
 	static final String fields[] = {"id","machine","ns","directory","ca","osuser","renewal","notify","cmd","others","types[]","sans"};
 	
-	static final String types[] = {"jks","file","script"};
+	static final String types[] = {"pkcs12","jks","file","script"};
 	static final String UPDATE = "Update";
 	static final String CREATE = "Create";
 	static final String COPY = "Copy";
@@ -169,7 +169,7 @@ public class CMArtiChangeForm extends Page {
 								arti.setRenewDays(30);
 								arti.setNotification("mailto:"+user.email());
 								arti.getType().add(types[0]);
-								arti.getType().add(types[2]);
+								arti.getType().add(types[3]);
 								submitText = CREATE;
 								delete = false;
 							} else {
@@ -179,24 +179,14 @@ public class CMArtiChangeForm extends Page {
 									arti.setNotification("mailto:"+user.email());
 								}
 							}
-							// CSO Approval no longer required for SAN use
-//							final String mechID = arti.getMechid();
-//							boolean maySans=gui.lur.fish(new Principal() {
-//								@Override
-//								public String getName() {
-//									return mechID;
-//								}},getPerm(arti.getCa(),"san"));
-//							if(!maySans) {
-//								arti.getSans().clear();
-//							}
 							Mark table = new Mark(TABLE);
 							hgen.incr(table)
-								.input(fields[0],"MechID*",true,"value="+arti.getMechid())
+								.input(fields[0],"AppID*",true,"value="+arti.getMechid())
 								.input("sponsor", "Sponsor",false,"value="+arti.getSponsor(),"readonly","style=border:none;background-color:white;")
-								.input(fields[1],"Machine*",true,"value="+arti.getMachine(),"style=width:130%;");
+								.input(fields[1],"FQDN*",true,"value="+arti.getMachine(),"style=width:130%;");
 //							if(maySans) {
 								hgen.incr(HTMLGen.TR).incr(HTMLGen.TD).end()
-									.incr(HTMLGen.TD,"class=subtext").text("Use full machine names, ");
+									.incr(HTMLGen.TD,"class=subtext").text("Use Fully Qualified Domain Names (that will be in DNS), ");
 									if(!trans.fish(getPerm(arti.getCa(),"ip"))) {
 										hgen.text("NO ");
 									}
