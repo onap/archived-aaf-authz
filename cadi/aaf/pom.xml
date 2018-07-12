@@ -194,7 +194,7 @@
 					<classifier>tests</classifier>
 					<archive>
 						<manifest>
-							<mainClass>org.onap.aaf.cadi.cm.CmAgent</mainClass>
+							<mainClass>org.onap.aaf.cadi.configure.Agent</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Sealed>true</Sealed>

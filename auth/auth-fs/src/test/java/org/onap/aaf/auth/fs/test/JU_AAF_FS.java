@@ -70,12 +70,12 @@ public class JU_AAF_FS {
 		System.setErr(new PrintStream(errStream));
 		value = System.setProperty(Config.CADI_LOGDIR, testDir);
 		System.setProperty(Config.CADI_ETCDIR, testDir);
-		System.out.println(ClassLoader.getSystemResource("org.osaaf.log4j.props"));
+		System.out.println(ClassLoader.getSystemResource("org.osaaf.aaf.log4j.props"));
 		d = new File(testDir);
 		d.mkdirs();
 		fService = new File(d +"/fs-serviceTEST.log");
 		fService.createNewFile();
-		fEtc = new File(d + "/org.osaaf.log4j.props");
+		fEtc = new File(d + "/org.osaaf.aaf.log4j.props");
 		fEtc.createNewFile();
 		
 		aEnv = new AuthzEnv();

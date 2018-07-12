@@ -1,3 +1,4 @@
+use authz;
 CREATE TABLE config (
   name          varchar,
   tag           varchar,

@@ -8,8 +8,10 @@ else
   AAF_COMPONENTS=$1
 fi
 
+docker image rm $ORG/$PROJECT/aaf_core:${VERSION}
+
 echo "Y" | docker container prune
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-  docker image rm $DOCKER_REPOSITORY/$ORG/$PROJECT/aaf_$AAF_COMPONENT:${VERSION}
+  docker image rm $ORG/$PROJECT/aaf_$AAF_COMPONENT:${VERSION}
 done
 echo "Y" | docker image prune

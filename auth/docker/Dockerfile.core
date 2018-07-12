@@ -1,0 +1,10 @@
+FROM rmannfv/aaf-base:xenial 
+MAINTAINER AAF Team, AT&T 2018
+ENV VERSION=${AAF_VERSION}
+
+LABEL description="aaf_core"
+LABEL version=${AAF_VERSION}
+
+COPY lib /opt/app/aaf/lib
+COPY bin /opt/app/aaf/bin
+

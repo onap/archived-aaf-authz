@@ -50,7 +50,7 @@ public class Log4JLogIt implements LogIt {
 
 
 	public Log4JLogIt(final String[] args, final String root) throws APIException {
-		String propsFile = getArgOrVM(AAF_LOG4J_PREFIX, args, "org.osaaf")+".log4j.props";
+		String propsFile = getArgOrVM(AAF_LOG4J_PREFIX, args, "org.osaaf.aaf")+".log4j.props";
 		String log_dir = getArgOrVM(Config.CADI_LOGDIR,args,"/opt/app/osaaf/logs");
 		String etc_dir = getArgOrVM(Config.CADI_ETCDIR,args,"/opt/app/osaaf/etc");
 		String log_level = getArgOrVM(Config.CADI_LOGLEVEL,args,"INFO");

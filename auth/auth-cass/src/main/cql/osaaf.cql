@@ -49,6 +49,14 @@ INSERT INTO perm(ns, type, instance, action, roles, description)
 INSERT INTO role(ns, name, perms, description)
   VALUES('org.osaaf.aaf','owner',{'org.osaaf.aaf.access|*|read,approve'},'AAF Owners');
 
+// OSAAF Root
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('osaaf@aaf.osaaf.org','org.admin','2018-10-31','org','admin') using TTL 14400;
+
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('osaaf@aaf.osaaf.org','org.osaaf.aaf.admin','2018-10-31','org.osaaf.aaf','admin') using TTL 14400;
+
+
 // ONAP Specific Entities
 // ONAP initial env Namespace
 INSERT INTO ns (name,description,parent,scope,type)

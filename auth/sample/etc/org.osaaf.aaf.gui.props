@@ -1,8 +1,8 @@
 ##
-## org.osaaf.locator 
-## AAF Locator Properties
+## org.osaaf.aaf.gui 
+## AAF GUI Properties
 ##
-cadi_prop_files=/opt/app/osaaf/etc/org.osaaf.common.props:/opt/app/osaaf/etc/org.osaaf.orgs.props
+cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props
 aaf_component=AAF_NS.gui:2.1.0.0
 port=8200
 

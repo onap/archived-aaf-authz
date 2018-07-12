@@ -2,6 +2,18 @@
 # Pull in Variables from d.props
 . ./d.props
 
+# Create Volumes, if not exist already
+for VOL in aaf_config aaf_cass_data; do
+  HAS_VOLUME=`docker volume ls | grep $VOL`
+  if [ "$HAS_VOLUME" = "" ]; then
+    docker volume create --name $VOL
+  fi
+done
+       docker run  \
+          -d \
+          --name aaf_config \
+          --mount 'type=volume,src=aaf_config,dst=/opt/app/osaaf,volume-driver=local' \
+          ${ORG}/${PROJECT}/aaf_agent:${VERSION}
 
 if [ "$1" == "" ]; then
   AAF_COMPONENTS=`ls -r ../aaf_${VERSION}/bin | grep -v '\.'`
@@ -49,5 +61,5 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 	  ${LINKS} \
 	  --publish $PORTMAP \
 	  --mount type=bind,source=$CONF_ROOT_DIR,target=/opt/app/osaaf \
-	  ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} 
+	  ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} 
 done
