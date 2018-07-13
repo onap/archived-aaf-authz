@@ -57,9 +57,7 @@
 		<!-- We have to up these versions from the original to avoid Security Errors -->
 		<project.cassVersion>3.4.0</project.cassVersion>
 		<project.nettyVersion>4.1.22.Final</project.nettyVersion>
-		<!--
-		<project.cassVersion>3.3.0</project.cassVersion>
-		<project.nettyVersion>4.0.47.Final</project.nettyVersion> -->
+		<project.project.ext_root_dir>/opt/app/osaaf</project.project.ext_root_dir>
 	</properties>
 
 	<developers>

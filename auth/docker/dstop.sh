@@ -1,13 +1,13 @@
-#!/bin/bash 
+#!/bin/bash
 # Pull in Properties
 . ./d.props
 
 if [ "$1" == "" ]; then
-  AAF_COMPONENTS=`ls ../aaf_${VERSION}/bin | grep -v '\.'`
+    AAF_COMPONENTS=$(ls ../aaf_${VERSION}/bin | grep -v '\.')
 else
-  AAF_COMPONENTS=$1
+    AAF_COMPONENTS="$@"
 fi
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-  docker stop aaf_$AAF_COMPONENT
+    docker stop aaf_$AAF_COMPONENT
 done

@@ -117,8 +117,9 @@
 							<mainClass>org.onap.aaf.auth.gui.AAF_GUI</mainClass>
 							<name>gui</name>
 							<commandLineArguments>
-								<commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.gui.props</commandLineArgument>
+								<commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.aaf.gui.props</commandLineArgument>
 								<commandLineArgument>cadi_log_dir=${project.ext_root_dir}/logs/gui</commandLineArgument>
+								<commandLineArgument>cadi_etc_dir=${project.ext_root_dir}/etc</commandLineArgument>
 							</commandLineArguments>
 							<jvmSettings>
 								<extraArguments>

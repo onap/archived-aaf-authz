@@ -1,10 +1,10 @@
 ##
-## org.osaaf.aaf.cm.ca.props
-## Properties to access Certificate Authority
+## org.osaaf.cm.ca.props
+## Properties to access Certifiate Authority
 ##
 
 #Certman
-cm_ca.local=org.onap.aaf.auth.cm.ca.LocalCA,/opt/app/osaaf/local/org.osaaf.aaf.cm.p12;aaf_cm_ca;enc:<Encrypted Password>
+cm_ca.local=org.onap.aaf.auth.cm.ca.LocalCA,/opt/app/osaaf/local/aaf_intermediate_1.p12;aaf_intermediate_1;enc:
 cm_ca.local.idDomains=org.osaaf
 cm_ca.local.baseSubject=/OU=OSAAF/O=ONAP/C=US
 cm_ca.local.perm_type=org.osaaf.aaf.ca

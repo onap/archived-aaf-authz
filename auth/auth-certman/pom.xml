@@ -120,7 +120,7 @@
 							<mainClass>org.onap.aaf.auth.cm.AAF_CM</mainClass>
 							<name>cm</name>
 							<commandLineArguments>
-								<commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.cm.props</commandLineArgument>
+								<commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.aaf.cm.props</commandLineArgument>
 								<commandLineArgument>cadi_log_dir=${project.ext_root_dir}/logs/cm</commandLineArgument>
 							</commandLineArguments>
 						</program>

@@ -264,3 +264,10 @@ CREATE TABLE run_lock (
   start timestamp,
   PRIMARY KEY ((class))
 );
+
+CREATE TABLE config (
+  name          varchar,
+  tag           varchar,
+  value         varchar,
+  PRIMARY KEY (name,tag)
+);

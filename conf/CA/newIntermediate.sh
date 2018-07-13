@@ -13,6 +13,8 @@ mkdir -p $DIR/private $DIR/certs $DIR/newcerts
 chmod 700 $DIR/private
 chmod 755 $DIR/certs $DIR/newcerts
 touch $DIR/index.txt
+echo "unique_subject = no" > $DIR/index.txt.attr
+
 if [ ! -e $DIR/serial ]; then
   echo '01' > $DIR/serial
 fi

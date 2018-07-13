@@ -7,7 +7,7 @@ cassandra.clusters=cass.aaf.osaaf.org
 cassandra.clusters.port=9042
 #need this to be fully qualified name when REAL AAF integration
 cassandra.clusters.user=cassandra
-cassandra.clusters.password=enc:<Encrypted Password>
+cassandra.clusters.password=enc:
 
 # Name for exception that has happened in the past
 cassandra.reset.exceptions=com.datastax.driver.core.exceptions.NoHostAvailableException:"no host was tried":"Connection has been closed"
