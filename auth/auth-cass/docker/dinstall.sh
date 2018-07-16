@@ -56,6 +56,7 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     echo " cqlsh -f keyspace.cql"
     echo " cqlsh -f init.cql"
     echo " cqlsh -f osaaf.cql"
+    echo " cqlsh -f temp_identity.cql"
     echo ""
     echo "The following will give you a temporary identity with which to start working, or emergency"
     echo " cqlsh -f temp_identity.cql"

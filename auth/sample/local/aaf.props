@@ -11,12 +11,11 @@ aaf_default_realm=people.osaaf.org
 
 # Initial Passwords and such
 aaf_password=startup
-cadi_alias=osaaf@aaf.osaaf.org
+cadi_alias=aaf@aaf.osaaf.org
 cadi_keystore=/opt/app/osaaf/local/org.osaaf.aaf.p12
-cadi_keystore_password=kumquat
 cadi_truststore=/opt/app/osaaf/public/truststoreONAPall.jks
 cadi_truststore_password=changeit
+cadi_x509_issuers=CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US
 
 # Other
 aaf_data_dir=/opt/app/osaaf/data
-cadi_registration_hostname=meriadoc.mithril.sbc.com

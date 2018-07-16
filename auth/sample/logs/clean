@@ -1,3 +1,4 @@
+cd /opt/app/osaaf/logs
 for D in `find . -type d`; do 
   if [ "$D" != "./" ]; then 
 	rm -f $D/*.log

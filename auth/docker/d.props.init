@@ -8,5 +8,10 @@ CONF_ROOT_DIR=/opt/app/osaaf
 # Local Env info
 HOSTNAME=
 HOST_IP=
-CASS_HOST=
+CASS_HOST=<cass FQDN>:<cass IP>
 
+# AAF Machine info
+aaf_env=DEV
+aaf_register_as=$HOSTNAME
+cadi_latitude=
+cadi_longitude=

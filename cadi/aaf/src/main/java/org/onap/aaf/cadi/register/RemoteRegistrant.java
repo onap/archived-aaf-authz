@@ -87,7 +87,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
 		mep.setPort(port);
 
 		try {
-			String hostnameToRegister = access.getProperty(Config.CADI_REGISTRATION_HOSTNAME, null);
+			String hostnameToRegister = access.getProperty(Config.AAF_REGISTER_AS, null);
 			if(hostnameToRegister==null) {
 				hostnameToRegister = access.getProperty(Config.HOSTNAME, null);
 			}

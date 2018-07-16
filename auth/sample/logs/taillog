@@ -1,1 +1,2 @@
+cd /opt/app/osaaf/logs
 tail -f `find . -name *service*.log -ctime 0`

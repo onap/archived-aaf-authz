@@ -74,14 +74,12 @@ public class Config {
 	private static final String OAUTH_TOKEN_MGR = OAUTH+".TokenMgr";
 	private static final String OAUTH_HTTP_TAF = OAUTH+".OAuth2HttpTaf";
 	private static final String OAUTH_DIRECT_TAF = OAUTH+".OAuthDirectTAF";
-
 	public static final String UTF_8 = "UTF-8";
 
 	// Property Names associated with configurations.
 	// As of 1.0.2, these have had the dots removed so as to be compatible with JavaBean style
 	// configurations as well as property list style.
 	public static final String HOSTNAME = "hostname";
-	public static final String CADI_REGISTRATION_HOSTNAME = "cadi_registration_hostname";
 	public static final String CADI_PROP_FILES = "cadi_prop_files"; // Additional Properties files (separate with ;)
 	public static final String CADI_LOGLEVEL = "cadi_loglevel";
 	public static final String CADI_LOGDIR = "cadi_log_dir";
@@ -142,6 +140,7 @@ public class Config {
 	public static final String AAF_ROOT_COMPANY = "aaf_root_company";
 	public static final String AAF_LOCATE_URL = "aaf_locate_url"; //URL for AAF locator
 	private static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
+	public static final String AAF_REGISTER_AS = "aaf_register_as";
 	public static final String AAF_APPID = "aaf_id";
 	public static final String AAF_APPPASS = "aaf_password";
 	public static final String AAF_LUR_CLASS = "aaf_lur_class";

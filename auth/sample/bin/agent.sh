@@ -16,11 +16,21 @@ if [ ! -e /opt/app/osaaf/local/org.osaaf.aaf.props ]; then
     for D in public etc logs; do
         rsync -avzh --exclude=.gitignore /opt/app/aaf_config/$D/* /opt/app/osaaf/$D
     done
-    $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar config osaaf@aaf.osaaf.org \
+
+    TMP=$(mktemp)
+    echo aaf_env=${AAF_ENV} >> ${TMP}
+    echo cadi_latitude=${LATITUDE} >> ${TMP}
+    echo cadi_longitude=${LONGITUDE} >> ${TMP}
+    echo aaf_register_as=${AAF_REGISTER_AS} >> ${TMP}
+    echo aaf_locate_url=https://${AAF_REGISTER_AS}:8095 >> ${TMP}
+
+    $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar config aaf@aaf.osaaf.org \
         cadi_etc_dir=/opt/app/osaaf/local \
-        cadi_prop_files=/opt/app/aaf_config/local/initialConfig.props:/opt/app/aaf_config/local/aaf.props \
-        cadi_latitude=38.4329 \
-        cadi_longitude=-90.43248
+        cadi_prop_files=/opt/app/aaf_config/local/initialConfig.props:/opt/app/aaf_config/local/aaf.props:${TMP}
+    rm ${TMP}
+    # Default Password for Default Cass
+    CASS_PASS=$("$JAVA" -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar cadi digest "cassandra" /opt/app/osaaf/local/org.osaaf.aaf.keyfile)
+    sed -i.backup -e "s/\\(cassandra.clusters.password=enc:\\)/\\1$CASS_PASS/" /opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
 fi
 
 # Now run a command
@@ -69,12 +79,30 @@ if [ ! "$CMD" = "" ]; then
         cd /opt/app/osaaf/local || exit
         /bin/bash "$@"
         ;;
-    encrypt)
+    setProp)
         cd /opt/app/osaaf/local || exit
         FILES=$(grep -l "$1" ./*.props)
-        if [ "$FILES" = "" ]; then
-            FILES=/opt/app/osaaf/local/org.osaaf.aaf.cred.props
-            echo "$1=enc:" >>FILES
+	if [ "$FILES" = "" ]; then 
+  	    FILES="$3"
+	    ADD=Y
+	fi
+        for F in $FILES; do
+            echo "Changing $1 in $F"
+	    if [ "$ADD" = "Y" ]; then
+		echo $2 >> $F
+	    else 
+                sed -i.backup -e "s/\\(${1}.*=\\).*/\\1${2}/" $F
+	    fi
+            cat $F
+        done
+        ;;
+    encrypt)
+        cd /opt/app/osaaf/local || exit
+	echo $1
+        FILES=$(grep -l "$1" ./*.props)
+	if [ "$FILES" = "" ]; then
+             FILES=/opt/app/osaaf/local/org.osaaf.aaf.cred.props
+	     ADD=Y
         fi
         for F in $FILES; do
             echo "Changing $1 in $F"
@@ -89,10 +117,17 @@ if [ ! "$CMD" = "" ]; then
                 ORIG_PW="$2"
             fi
             PWD=$("$JAVA" -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar cadi digest "$ORIG_PW" /opt/app/osaaf/local/org.osaaf.aaf.keyfile)
-            sed -i.backup -e "s/\\($1.*enc:\\).*/\\1$PWD/" $F
+            if [ "$ADD" = "Y" ]; then
+                  echo "$1=enc:$PWD" >> $F
+            else 
+            	sed -i.backup -e "s/\\($1.*enc:\\).*/\\1$PWD/" $F
+	   fi
             cat $F
         done
         ;;
+    taillog) 
+	sh /opt/app/osaaf/logs/taillog
+	;;
     --help | -?)
         case "$1" in
         "")
@@ -100,6 +135,7 @@ if [ ! "$CMD" = "" ]; then
             echo "  ls                      - Lists all files in Configuration"
             echo "  cat <file.props>>       - Shows the contents (Prop files only)"
             echo "  validate                - Runs a test using Configuration"
+            echo "  setProp <tag> [<value>] - set value on 'tag' (if no value, it will be queried from config)"
             echo "  encrypt <tag> [<pass>]  - set passwords on Configuration (if no pass, it will be queried)"
             echo "  bash                    - run bash in Container"
             echo "     Note: the following aliases are preset"

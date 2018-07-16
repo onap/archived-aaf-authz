@@ -63,7 +63,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
 			locate.patch = split.length>2?Integer.parseInt(split[2]):0;
 			locate.minor = split.length>1?Integer.parseInt(split[1]):0;
 			locate.major = split.length>0?Integer.parseInt(split[0]):0;
-			locate.hostname = access.getProperty(Config.CADI_REGISTRATION_HOSTNAME, null);
+			locate.hostname = access.getProperty(Config.AAF_REGISTER_AS, null);
 			if(locate.hostname==null) {
 				locate.hostname = access.getProperty(Config.HOSTNAME, null);
 			}
