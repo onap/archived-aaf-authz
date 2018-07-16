@@ -191,10 +191,9 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 			}
 			// utilize pre-constructed DirectAAFLocator
 			return new AAFConHttp(env.access(),dal);
-		} catch (APIException | LocatorException e) {
+		} catch (LocatorException e) {
 			throw new CadiException(e);
 		}
-
 	}
 
 	public Locator<URI> getGUILocator() throws LocatorException {

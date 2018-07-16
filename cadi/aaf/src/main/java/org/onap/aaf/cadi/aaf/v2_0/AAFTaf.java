@@ -22,23 +22,20 @@
 package org.onap.aaf.cadi.aaf.v2_0;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.security.Principal;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.onap.aaf.cadi.AbsUserCache;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CachedPrincipal;
+import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Connector;
 import org.onap.aaf.cadi.GetCred;
 import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.User;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.Taf.LifeForm;
+import org.onap.aaf.cadi.User;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon.GetSetter;
 import org.onap.aaf.cadi.client.Future;
@@ -54,8 +51,6 @@ import org.onap.aaf.cadi.taf.basic.BasicHttpTafResp;
 import org.onap.aaf.misc.env.APIException;
 
 public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpTaf {
-//	private static final String INVALID_AUTH_TOKEN = "Invalid Auth Token";
-//	private static final String AUTHENTICATING_SERVICE_UNAVAILABLE = "Authenticating Service unavailable";
 	private AAFCon<CLIENT> aaf;
 	private boolean warn;
 
@@ -67,19 +62,19 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 
 	public AAFTaf(AAFCon<CLIENT> con, boolean turnOnWarning, AbsUserCache<AAFPermission> other) {
 		super(other);
-		aaf = (AAFCon<CLIENT>)con;
+		aaf = con;
 		warn = turnOnWarning;
 	}
 	
 	// Note: Needed for Creation of this Object with Generics
 	@SuppressWarnings("unchecked")
-	public AAFTaf(Connector mustBeAAFCon, boolean turnOnWarning, AbsUserCache<AAFPermission> other) throws CadiException {
+	public AAFTaf(Connector mustBeAAFCon, boolean turnOnWarning, AbsUserCache<AAFPermission> other) {
 		this((AAFCon<CLIENT>)mustBeAAFCon,turnOnWarning,other);
 	}
 
 	// Note: Needed for Creation of this Object with Generics
 	@SuppressWarnings("unchecked")
-	public AAFTaf(Connector mustBeAAFCon, boolean turnOnWarning) throws CadiException {
+	public AAFTaf(Connector mustBeAAFCon, boolean turnOnWarning) {
 		this((AAFCon<CLIENT>)mustBeAAFCon,turnOnWarning);
 	}
 
@@ -90,7 +85,9 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 		// Note: Either Carbon or Silicon based LifeForms ok
 		String authz = req.getHeader("Authorization");
 		if(authz != null && authz.startsWith("Basic ")) {
-			if(warn&&!req.isSecure())aaf.access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
+			if(warn&&!req.isSecure()) {
+				aaf.access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
+			}
 			try {
 				final CachedBasicPrincipal bp;
 				if(req.getUserPrincipal() instanceof CachedBasicPrincipal) {
@@ -100,14 +97,12 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 				}
 				// First try Cache
 				final User<AAFPermission> usr = getUser(bp);
-				if(usr != null && usr.principal != null) {
-					if(usr.principal instanceof GetCred) {
-						if(Hash.isEqual(bp.getCred(),((GetCred)usr.principal).getCred())) {
-							return new BasicHttpTafResp(aaf.access,bp,bp.getName()+" authenticated by cached AAF password",RESP.IS_AUTHENTICATED,resp,aaf.getRealm(),false);
-						}
-					}
+				if(usr != null
+					&& usr.principal instanceof GetCred
+					&& Hash.isEqual(bp.getCred(),((GetCred)usr.principal).getCred())) {
+					return new BasicHttpTafResp(aaf.access,bp,bp.getName()+" authenticated by cached AAF password",RESP.IS_AUTHENTICATED,resp,aaf.getRealm(),false);
 				}
-				
+
 				Miss miss = missed(bp.getName(), bp.getCred());
 				if(miss!=null && !miss.mayContinue()) {
 					return new BasicHttpTafResp(aaf.access,null,buildMsg(bp,req,
@@ -123,7 +118,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 						}
 					},new Retryable<BasicHttpTafResp>() {
 						@Override
-						public BasicHttpTafResp code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+						public BasicHttpTafResp code(Rcli<?> client) throws CadiException, APIException {
 							Future<String> fp = client.read("/authn/basicAuth", "text/plain");
 							if(fp.get(aaf.timeout)) {
 								if(usr!=null) {
@@ -166,7 +161,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 		return new BasicHttpTafResp(aaf.access,null,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),false);
 	}
 	
-	public String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {
+	private String buildMsg(Principal pr, HttpServletRequest req, Object... msg) {
 		StringBuilder sb = new StringBuilder();
 		for(Object s : msg) {
 			sb.append(s.toString());

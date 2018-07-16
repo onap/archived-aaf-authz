@@ -128,6 +128,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 						version = split[1];
 						name = split[0];
 						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -207,7 +209,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 	}
 
 	private boolean noEntries() {
-		return epList.size()<=0;
+		return epList.isEmpty();
 	}
 
 	@Override
@@ -416,8 +418,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 		}
 
 	protected static class EP implements Comparable<EP> {
-		public URI uri;
-		public final double distance;
+		private URI uri;
+		private final double distance;
 		private boolean valid;
 		
 		public EP(final Endpoint ep, double latitude, double longitude) throws URISyntaxException {
@@ -486,7 +488,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 			try {
 				return new URI(rv.getScheme(),rv.getUserInfo(),rv.getHost(),rv.getPort(),pathInfo,query,fragment);
 			} catch (URISyntaxException e) {
-				throw new LocatorException("Error copying URL");
+				throw new LocatorException("Error copying URL", e);
 			}
 		}
 		return rv;
