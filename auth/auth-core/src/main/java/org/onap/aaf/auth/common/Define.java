@@ -31,6 +31,7 @@ import org.onap.aaf.cadi.config.Config;
 public class Define {
 	private static String ROOT_NS = null;
 	private static String ROOT_COMPANY = null;
+	private static boolean initialized = false;
 
 	private final static String MSG = ".set(Access access) must be called before use";
 	public static final CharSequence ROOT_NS_TAG = "AAF_NS"; // use for certain Replacements in Location
@@ -67,7 +68,8 @@ public class Define {
 				access.getProperties().setProperty(es.getKey().toString(),varReplace(es.getValue().toString()));
 			}
 		}
-		
+
+		initialized = true;
 		access.printf(Level.INIT,"AAF Root NS is %s, and AAF Company Root is %s",ROOT_NS,ROOT_COMPANY);
 	}
 
@@ -77,6 +79,10 @@ public class Define {
 		} else {
 			return potential;
 		}
+	}
+
+	public static boolean isInitialized() {
+		return initialized;
 	}
 	
 }

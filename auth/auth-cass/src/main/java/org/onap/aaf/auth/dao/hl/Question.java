@@ -114,7 +114,7 @@ public class Question {
 	public static final String NS = Type.ns.name();
 	public static final String CRED = Type.cred.name();
 	private static final String DELG = "delg";
-	public static final String ROOT_NS = Define.ROOT_NS();
+	public static final String ROOT_NS = Define.isInitialized() ? Define.ROOT_NS() : "undefined";
 	public static final String ATTRIB = "attrib";
 
 
