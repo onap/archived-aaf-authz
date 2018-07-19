@@ -55,7 +55,7 @@ public class TestConnectivity {
 			System.out.println("Usage: ConnectivityTester <cadi_prop_files> [<AAF FQDN (i.e. aaf.dev.att.com)>]");
 		} else {
 			print(true,"START OF CONNECTIVITY TESTS",new Date().toString(),System.getProperty("user.name"),
-					"Note: All API Calls are /authz/perms/user/<MechID/Alias of the caller>");
+					"Note: All API Calls are /authz/perms/user/<AppID/Alias of the caller>");
 
 			if(!args[0].contains(Config.CADI_PROP_FILES+'=')) {
 				args[0]=Config.CADI_PROP_FILES+'='+args[0];

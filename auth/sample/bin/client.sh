@@ -87,9 +87,16 @@ if [ ! "$CMD" = "" ]; then
             rsync -uh --exclude=.gitignore /opt/app/aaf_config/$D/* /opt/app/osaaf/$D
         done
         ;;
+    showpass)
+        echo "## Show Passwords"
+        $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar showpass ${APP_FQI} ${APP_FQDN}
+        ;;
+    check)
+        $JAVA -Dcadi_prop_files=/opt/app/osaaf/local/${NS}.props -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar check ${APP_FQI} ${APP_FQDN}
+        ;;
     validate)
         echo "## validate requested"
-        $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar validate cadi_prop_files=/opt/app/osaaf/local/${NS}.props
+        $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar validate /opt/app/osaaf/local/${NS}.props
         ;;
     bash)
         if [ ! -e ~/.bash_aliases ]; then

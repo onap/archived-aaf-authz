@@ -24,7 +24,6 @@ docker build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
 # Clean up 
 rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
 cd -
-
 ########
 # Second, build a core Docker Image
 echo Building aaf_$AAF_COMPONENT...

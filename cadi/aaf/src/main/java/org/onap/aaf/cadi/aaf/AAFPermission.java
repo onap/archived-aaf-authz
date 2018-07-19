@@ -50,7 +50,11 @@ public class AAFPermission implements Permission {
 		type = name;
 		this.instance = instance;
 		this.action = action;
-		key = ns + '|' + type + '|' + instance + '|' + action;
+		if(ns==null) {
+			key = type + '|' + instance + '|' + action;
+		} else {
+			key = ns + '|' + type + '|' + instance + '|' + action;
+		}
 		this.roles = NO_ROLES;
 
 	}
@@ -60,7 +64,11 @@ public class AAFPermission implements Permission {
 		type = name;
 		this.instance = instance;
 		this.action = action;
-		key = ns + '|' + type + '|' + instance + '|' + action;
+		if(ns==null) {
+			key = type + '|' + instance + '|' + action;
+		} else {
+			key = ns + '|' + type + '|' + instance + '|' + action;
+		}
 		this.roles = roles==null?NO_ROLES:roles;
 	}
 	
@@ -117,7 +125,15 @@ public class AAFPermission implements Permission {
 			}
 		}
 		boolean typeMatches;
-		if(aafNS.length() == ns.length()) {
+		if(aafNS==null) {
+			if(ns==null) {
+				typeMatches = aafType.equals(type);
+			} else {
+				typeMatches = aafType.equals(ns+'.'+type);
+			}
+		} else if(ns==null) {
+			typeMatches = type.equals(aafNS+'.'+aafType);
+		} else if(aafNS.length() == ns.length()) {
 			typeMatches = aafNS.equals(ns) && aafType.equals(type);
 		} else { // Allow for restructuring of NS/Perm structure
 			typeMatches = (aafNS+'.'+aafType).equals(ns+'.'+type);

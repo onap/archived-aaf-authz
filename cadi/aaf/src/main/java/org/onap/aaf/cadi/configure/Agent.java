@@ -89,8 +89,8 @@ public class Agent {
 	private static final String HASHES = "################################################################";
 	private static final String PRINT = "print";
 	private static final String FILE = "file";
-	private static final String PKCS12 = "pkcs12";
-	private static final String JKS = "jks";
+	public static final String PKCS12 = "pkcs12";
+	public static final String JKS = "jks";
 	private static final String SCRIPT="script";
 	
 	private static final String CM_VER = "1.0";
@@ -127,7 +127,7 @@ public class Agent {
 				AAFSSO aafsso=null;
 				PropAccess access;
 				
-				if(args.length>1 && args[0].equals("validate")) {
+				if(args.length>1 && args[0].equals("validate") ) {
 					int idx = args[1].indexOf('=');
 					aafsso = null;
 					access = new PropAccess(
@@ -329,7 +329,7 @@ public class Agent {
 	private static String fqi(Deque<String> cmds) {
 		if(cmds.size()<1) {
 			String alias = env.getProperty(Config.CADI_ALIAS);
-			return alias!=null?alias:AAFSSO.cons.readLine("MechID: ");
+			return alias!=null?alias:AAFSSO.cons.readLine("AppID: ");
 		}
 		return cmds.removeFirst();	
 	}
@@ -360,11 +360,11 @@ public class Agent {
 		Artifacts artifacts = new Artifacts();
 		Artifact arti = new Artifact();
 		artifacts.getArtifact().add(arti);
-		arti.setMechid(mechID!=null?mechID:AAFSSO.cons.readLine("MechID: "));
+		arti.setMechid(mechID!=null?mechID:AAFSSO.cons.readLine("AppID: "));
 		arti.setMachine(machine!=null?machine:AAFSSO.cons.readLine("Machine (%s): ",InetAddress.getLocalHost().getHostName()));
 		arti.setCa(AAFSSO.cons.readLine("CA: (%s): ","aaf"));
 		
-		String resp = AAFSSO.cons.readLine("Types [file,jks,script] (%s): ", "jks");
+		String resp = AAFSSO.cons.readLine("Types [file,pkcs12,jks,script] (%s): ", PKCS12);
 		for(String s : Split.splitTrim(',', resp)) {
 			arti.getType().add(s);
 		}
@@ -419,7 +419,7 @@ public class Agent {
 			if(future.get(TIMEOUT)) {
 				boolean printed = false;
 				for(Artifact a : future.value.getArtifact()) {
-					AAFSSO.cons.printf("MechID:          %s\n",a.getMechid()); 
+					AAFSSO.cons.printf("AppID:          %s\n",a.getMechid()); 
 					AAFSSO.cons.printf("  Sponsor:       %s\n",a.getSponsor()); 
 					AAFSSO.cons.printf("Machine:         %s\n",a.getMachine()); 
 					AAFSSO.cons.printf("CA:              %s\n",a.getCa()); 
@@ -650,7 +650,7 @@ public class Agent {
 				// Have to wait for JDK 1.7 source...
 				//switch(artifact.getType()) {
 				if(acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
-					AAFSSO.cons.printf("No Artifacts found for %s on %s", mechID, machine);
+					AAFSSO.cons.printf("No Artifacts found for %s on %s ", mechID, machine);
 				} else {
 					String id = aafcon.defID();
 					boolean allowed;
@@ -660,7 +660,7 @@ public class Agent {
 										&& aafcon.securityInfo().defSS.getClass().isAssignableFrom(HBasicAuthSS.class)));
 						if(!allowed) {
 							Future<String> pf = aafcon.client(CM_VER).read("/cert/may/" + 
-									a.getNs() + ".certman|"+a.getCa()+"|showpass","*/*");
+									a.getNs()+"|certman|"+a.getCa()+"|showpass","*/*");
 							if(pf.get(TIMEOUT)) {
 								allowed = true;
 							} else {
@@ -1017,13 +1017,13 @@ public class Agent {
 							String prop;						
 							File f;
 	
-							if((prop=props.getProperty(Config.CADI_KEYFILE))==null ||
+							if((prop=trans.getProperty(Config.CADI_KEYFILE))==null ||
 								!(f=new File(prop)).exists()) {
 									trans.error().printf("Keyfile must exist to check Certificates for %s on %s",
 										a.getMechid(), a.getMachine());
 							} else {
-								String ksf = props.getProperty(Config.CADI_KEYSTORE);
-								String ksps = props.getProperty(Config.CADI_KEYSTORE_PASSWORD);
+								String ksf = trans.getProperty(Config.CADI_KEYSTORE);
+								String ksps = trans.getProperty(Config.CADI_KEYSTORE_PASSWORD);
 								if(ksf==null || ksps == null) {
 									trans.error().printf("Properties %s and %s must exist to check Certificates for %s on %s",
 											Config.CADI_KEYSTORE, Config.CADI_KEYSTORE_PASSWORD,a.getMechid(), a.getMachine());

@@ -62,7 +62,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 	private static final String ORG_OSAAF_CADI_OAUTH_O_AUTH2_LUR = "org.osaaf.cadi.oauth.OAuth2Lur";
 
 	/**
-	 *  Need to be able to transmutate a Principal into either ATTUID or MechID, which are the only ones accepted at this
+	 *  Need to be able to transmutate a Principal into either Person or AppID, which are the only ones accepted at this
 	 *  point by AAF.  There is no "domain", aka, no "@att.com" in "ab1234@att.com".  
 	 *  
 	 *  The only thing that matters here for AAF is that we don't waste calls with IDs that obviously aren't valid.
@@ -107,12 +107,6 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 
 	protected User<AAFPermission> loadUser(final Principal principal)  {
 		final String name = principal.getName();
-//		// Note: The rules for AAF is that it only stores permissions for ATTUID and MechIDs, which don't 
-//		// have domains.  We are going to make the Transitive Class (see this.transmutative) to convert
-//		final Principal tp = principal; //transmutate.mutate(principal);
-//		if(tp==null) {
-//			return null; // if not a valid Transmutated credential, don't bother calling...
-//		}
 //		TODO Create a dynamic way to declare domains supported.
 		final long start = System.nanoTime();
 		final boolean[] success = new boolean[]{false};

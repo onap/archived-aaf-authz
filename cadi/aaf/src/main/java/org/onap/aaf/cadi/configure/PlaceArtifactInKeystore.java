@@ -28,7 +28,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +50,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 
 	@Override
 	public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-		File fks = new File(dir,arti.getNs()+'.'+(kst=="pkcs12"?"p12":kst));
+		File fks = new File(dir,arti.getNs()+'.'+(kst==Agent.PKCS12?"p12":kst));
 		try {
 			KeyStore jks = KeyStore.getInstance(kst);
 			if(fks.exists()) {
@@ -125,7 +124,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 				fks.renameTo(backup);
 			}	
 
-			jks = KeyStore.getInstance("jks");
+			jks = KeyStore.getInstance(Agent.JKS);
 			
 			// Set Truststore Password
 			addProperty(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());

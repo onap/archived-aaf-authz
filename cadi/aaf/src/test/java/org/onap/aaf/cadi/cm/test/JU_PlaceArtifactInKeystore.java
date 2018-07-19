@@ -21,9 +21,11 @@
 
 package org.onap.aaf.cadi.cm.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -31,14 +33,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.security.cert.CertificateException;
-
-import org.junit.*;
-import org.mockito.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.configure.Agent;
 import org.onap.aaf.cadi.configure.PlaceArtifactInKeystore;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -97,12 +102,12 @@ public class JU_PlaceArtifactInKeystore {
 	@Test
 	public void test() throws CadiException {
 		// Note: PKCS12 can't be tested in JDK 7 and earlier.  Can't handle Trusting Certificates.
-		PlaceArtifactInKeystore placer = new PlaceArtifactInKeystore("jks");
+		PlaceArtifactInKeystore placer = new PlaceArtifactInKeystore(Agent.JKS);
 
 		certs.add(x509String);
 		certs.add(x509Chain);
 		assertThat(placer.place(transMock, certInfoMock, artiMock, "machine"), is(true));
-		for (String ext : new String[] {"chal", "keyfile", "jks", "trust.jks", "cred.props"}) {
+		for (String ext : new String[] {"chal", "keyfile", Agent.JKS, "trust.jks", "cred.props"}) {
 			File f = new File(dirName + '/' + nsName + '.' + ext);
 			assertThat(f.exists(), is(true));
 		}
