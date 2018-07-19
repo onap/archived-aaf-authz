@@ -8,6 +8,7 @@ else
     AAF_COMPONENTS=$1
 fi
 
+docker image rm $ORG/$PROJECT/aaf_agent:${VERSION}
 docker image rm $ORG/$PROJECT/aaf_config:${VERSION}
 docker image rm $ORG/$PROJECT/aaf_core:${VERSION}
 

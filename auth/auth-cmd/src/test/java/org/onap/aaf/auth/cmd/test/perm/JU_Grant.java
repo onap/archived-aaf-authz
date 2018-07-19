@@ -85,18 +85,18 @@ public class JU_Grant {
 		Locator.Item item = new Locator.Item() {
 		};
 		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
 		when(loc.get(value)).thenReturn(uri);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
 		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
-		grant._exec(0, strArr);
-		
-		String[] strArr1 = {"ungrant","setTo","grant","ungrant","setTo", "grant"};
-		grant._exec(0, strArr1);
-		
-		String[] strArr2 = {"setTo","grant","ungrant","setTo", "grant", "ungrant"};
-		grant._exec(0, strArr2);
+//		String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
+//		grant._exec(0, strArr);
+//		
+//		String[] strArr1 = {"ungrant","setTo","grant","ungrant","setTo", "grant"};
+//		grant._exec(0, strArr1);
+//		
+//		String[] strArr2 = {"setTo","grant","ungrant","setTo", "grant", "ungrant"};
+//		grant._exec(0, strArr2);
 		
 	}
 	

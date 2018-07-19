@@ -21,7 +21,7 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cm.facade;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,31 +31,23 @@ import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-import javax.xml.validation.Schema;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.cm.AAF_CM;
-import org.onap.aaf.auth.cm.facade.FacadeImpl;
 import org.onap.aaf.auth.cm.mapper.Mapper;
 import org.onap.aaf.auth.cm.service.CMService;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.aaf.AAFPermission;
-import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TimeTaken;
-import org.onap.aaf.misc.env.Trans;
-import org.onap.aaf.misc.rosetta.env.RosettaDF;
-import org.onap.aaf.misc.rosetta.env.RosettaData;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -126,42 +118,42 @@ public class JU_FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> {
 	
 	@Test
 	public void check() throws IOException {
-		AAFPermission ap = new AAFPermission("str1","str3","str2");
+		AAFPermission ap = new AAFPermission("str0","str1","str3","str2");
 		String perms = ap.getInstance();
 		assertNotNull(hImpl.check(trans, resp, perms));
 	}
 	
 	@Test
 	public void checkNull() throws IOException {
-		AAFPermission ap = new AAFPermission(null,"Str3","str2");
+		AAFPermission ap = new AAFPermission(null,null,"Str3","str2");
 		String perms = ap.getInstance();
 		assertNotNull(hImpl.check(trans, resp, perms));
 	}
 	
 	@Test
 	public void checkTwoNull() throws IOException {
-		AAFPermission ap = new AAFPermission(null,null,"str2");
+		AAFPermission ap = new AAFPermission(null,null,null,"str2");
 		String perms = ap.getInstance();
 		assertNotNull(fImpl.check(trans, resp, perms));
 	}
 	
 	@Test
 	public void checkAllNull() throws IOException {
-		AAFPermission ap = new AAFPermission(null,null,null);
+		AAFPermission ap = new AAFPermission(null,null,null,null);
 		String perms = ap.getInstance();
 		assertNotNull(fImpl.check(trans, resp, perms));
 	}
 	
 	@Test
 	public void checkTrans_null() throws IOException {
-		AAFPermission ap = new AAFPermission("str1","str3","str2");
+		AAFPermission ap = new AAFPermission("str0","str1","str3","str2");
 		String perms = ap.getInstance();
 		assertNotNull(hImpl.check(null, resp, perms));
 	}
 	
 	@Test
 	public void checkRespNull() throws IOException {
-		AAFPermission ap = new AAFPermission("str1","str3","str2");
+		AAFPermission ap = new AAFPermission("str0","str1","str3","str2");
 		String perms = ap.getInstance();
 		assertNotNull(hImpl.check(trans, null, perms));
 	}

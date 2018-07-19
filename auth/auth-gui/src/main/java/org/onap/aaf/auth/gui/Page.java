@@ -67,7 +67,8 @@ public class Page extends HTMLCacheGen {
 	public static final String AAF_URL_GUI_ONBOARD = "aaf_url.gui_onboard";
 	public static final String AAF_URL_AAF_HELP = "aaf_url.aaf_help";
 	public static final String AAF_URL_CADI_HELP = "aaf_url.cadi_help";
-	public static final String PERM_CA_TYPE = Define.ROOT_NS() + ".ca";
+	public static final String PERM_CA_TYPE = "certman";
+	public static final String PERM_NS = Define.ROOT_NS();
 
 	public static enum BROWSER {iPhone,html5,ie,ieOld};
 	
@@ -386,7 +387,7 @@ public class Page extends HTMLCacheGen {
 			p = msp.get(instance);
 		}
 		if(p==null) {
-			p=new AAFPermission(PERM_CA_TYPE,instance,action);
+			p=new AAFPermission(PERM_NS, PERM_CA_TYPE,instance,action);
 			msp.put(action, p);
 		}
 		return p;

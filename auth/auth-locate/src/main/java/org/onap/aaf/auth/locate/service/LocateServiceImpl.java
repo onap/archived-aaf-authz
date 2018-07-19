@@ -75,7 +75,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
 			for(MgmtEndpoint me : meps.getMgmtEndpoint()) {
 				if(permToRegister) { 
 					int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
-					AAFPermission p = new AAFPermission(me.getName().substring(0,dot)+".locator",me.getName(),"write"); 
+					AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getName(),"write"); 
 					if(trans.fish(p)) {
 						LocateDAO.Data data = mapper.locateData(me);
 						locateDAO.update(trans, data, true);
@@ -108,7 +108,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
 			int count = 0;
 			for(MgmtEndpoint me : meps.getMgmtEndpoint()) {
 				int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
-				AAFPermission p = new AAFPermission(me.getName().substring(0,dot)+".locator",me.getHostname(),"write"); 
+				AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
 				if(trans.fish(p)) {
 					LocateDAO.Data data = mapper.locateData(me);
 					data.port_key = UUID.randomUUID();

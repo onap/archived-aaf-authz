@@ -662,6 +662,9 @@ public class Symm {
    * @throws IOException
    */
   public void enpass(final String password, final OutputStream os) throws IOException {
+	    if(password==null) {
+	    	throw new IOException("Invalid password passed");
+	    }
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(baos);
 		byte[] bytes = password.getBytes();

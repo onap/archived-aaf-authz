@@ -79,15 +79,16 @@ public class TestConnectivity {
 				List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
 				/////////
 				print(true,"Test Connections driven by AAFLocator");
-				URI serviceURI = new URI(aaflocate+"/locate/AAF_NS.service:2.0");
+				URI serviceURI = new URI(Defaults.AAF_URL);
 
 				for(URI uri : new URI[] {
 						serviceURI,
-						new URI(aaflocate+"/locate/AAF_NS.service:2.0"),
-						new URI(aaflocate+"/locate/AAF_NS.locate:2.0"),
-						new URI(aaflocate+"/locate/AAF_NS.token:2.0"),
-						new URI(aaflocate+"/locate/AAF_NS.certman:2.0"),
-						new URI(aaflocate+"/locate/AAF_NS.hello")
+						new URI(Defaults.OAUTH2_TOKEN_URL),
+						new URI(Defaults.OAUTH2_INTROSPECT_URL),
+						new URI(Defaults.CM_URL),
+						new URI(Defaults.GUI_URL),
+						new URI(Defaults.FS_URL),
+						new URI(Defaults.HELLO_URL)
 				}) {
 					Locator<URI> locator = new AAFLocator(si, uri);
 					try {
@@ -104,14 +105,6 @@ public class TestConnectivity {
 				for(SecuritySetter<HttpURLConnection> ss : lss) {
 					permTest(locator,ss);
 				}
-
-				/////////
-				// Removed for ONAP
-//				print(true,"Test Proxy Access driven by AAFLocator");
-//				locator = new AAFLocator(si, new URI(aaflocate+"/AAF_NS.gw:2.0/proxy"));
-//				for(SecuritySetter<HttpURLConnection> ss : lss) {
-//					permTest(locator,ss);
-//				}
 
 				//////////
 				print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
@@ -163,7 +156,7 @@ public class TestConnectivity {
 		String tokenURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL);
 		String locateURL=access.getProperty(Config.AAF_LOCATE_URL);
 		if(tokenURL==null || (tokenURL.contains("/locate/") && locateURL!=null)) {
-			tokenURL=locateURL+"/locate/AAF_NS.token:2.0/token";
+			tokenURL=Defaults.OAUTH2_TOKEN_URL+"/token";
 		}
 
 		try {

@@ -32,6 +32,7 @@ import java.util.NoSuchElementException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.config.Config;
@@ -86,6 +87,12 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 		} else {
 			latitude = Double.parseDouble(lat);
 			longitude = Double.parseDouble(lng);
+		}
+		if(name.startsWith(Defaults.AAF_NS)) {
+			String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
+			if(root_ns!=null) {
+				name=name.replace(Defaults.AAF_NS, root_ns);
+			}
 		}
 		if(name.startsWith("http")) { // simple URL
 			this.name = name;
@@ -259,7 +266,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 	@Override
 	public Item best() throws LocatorException {
 		if(!hasItems()) {
-			throw new LocatorException("No Entries found" + (pathInfo==null?"":(" for " + pathInfo)));
+			throw new LocatorException("No Entries found for '" + aaf_locator_uri.toString() + "/locate/" + name + ':' + version + '\'');
 		}
 		List<EP> lep = new ArrayList<>();
 		EP first = null;

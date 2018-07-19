@@ -32,16 +32,6 @@ import static org.onap.aaf.auth.layer.Result.ERR_Security;
 import static org.onap.aaf.auth.layer.Result.OK;
 
 import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,8 +48,6 @@ import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.aaf.AAFPermission;
-import org.onap.aaf.cadi.configure.CertException;
-import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Env;
@@ -232,10 +220,17 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 	@Override
 	public Result<Void> check(AuthzTrans trans, HttpServletResponse resp, String perm) throws IOException {
 		String[] p = Split.split('|',perm);
-		if(p.length!=3) {
-			return Result.err(Result.ERR_BadData,"Invalid Perm String");
+		AAFPermission ap;
+		switch(p.length) {
+			case 3:
+				 ap = new AAFPermission(null, p[0],p[1],p[2]);
+				 break;
+			case 4:
+				ap = new AAFPermission(p[0],p[1],p[2],p[3]);
+				break;
+			default:
+				return Result.err(Result.ERR_BadData,"Invalid Perm String");
 		}
-		AAFPermission ap = new AAFPermission(p[0],p[1],p[2]);
 		if(certman.aafLurPerm.fish(trans.getUserPrincipal(), ap)) {
 			resp.setContentType(voidResp);
 			resp.getOutputStream().write(0);
@@ -360,33 +355,33 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 //		return Result.ok();
 	}
 
-	private KeyStore keystore(AuthzTrans trans, CertResp cr, String[] trustChain, String name, char[] cap) throws KeyStoreException, CertificateException, APIException, IOException, CertException, NoSuchAlgorithmException {
-		KeyStore jks = KeyStore.getInstance("jks");
-		jks.load(null, cap);
-		
-		// Get the Cert(s)... Might include Trust store
-		List<String> lcerts = new ArrayList<>();
-		lcerts.add(cr.asCertString());
-		for(String s : trustChain) {
-			lcerts.add(s);
-		}
-		
-		Collection<? extends Certificate> certColl = Factory.toX509Certificate(lcerts);
-		X509Certificate[] certs = new X509Certificate[certColl.size()];
-		certColl.toArray(certs);
-		KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(cap);
-		
-		PrivateKey pk = Factory.toPrivateKey(trans, cr.privateString());
-		KeyStore.PrivateKeyEntry pkEntry = 
-				new KeyStore.PrivateKeyEntry(pk, new Certificate[] {certs[0]});
-		jks.setEntry(name, pkEntry, protParam);
-		
-		int i=0;
-		for(X509Certificate x509 : certs) {
-			jks.setCertificateEntry("cert_"+ ++i, x509);
-		}
-		return jks;
-	}
+//	private KeyStore keystore(AuthzTrans trans, CertResp cr, String[] trustChain, String name, char[] cap) throws KeyStoreException, CertificateException, APIException, IOException, CertException, NoSuchAlgorithmException {
+//		KeyStore jks = KeyStore.getInstance("jks");
+//		jks.load(null, cap);
+//		
+//		// Get the Cert(s)... Might include Trust store
+//		List<String> lcerts = new ArrayList<>();
+//		lcerts.add(cr.asCertString());
+//		for(String s : trustChain) {
+//			lcerts.add(s);
+//		}
+//		
+//		Collection<? extends Certificate> certColl = Factory.toX509Certificate(lcerts);
+//		X509Certificate[] certs = new X509Certificate[certColl.size()];
+//		certColl.toArray(certs);
+//		KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(cap);
+//		
+//		PrivateKey pk = Factory.toPrivateKey(trans, cr.privateString());
+//		KeyStore.PrivateKeyEntry pkEntry = 
+//				new KeyStore.PrivateKeyEntry(pk, new Certificate[] {certs[0]});
+//		jks.setEntry(name, pkEntry, protParam);
+//		
+//		int i=0;
+//		for(X509Certificate x509 : certs) {
+//			jks.setCertificateEntry("cert_"+ ++i, x509);
+//		}
+//		return jks;
+//	}
 
 	@Override
 	public Result<Void> renewCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, boolean withTrust) {

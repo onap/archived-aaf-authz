@@ -141,13 +141,16 @@ public class TokenPerm extends Persisting<Introspect>{
 	
 	// Gathering object for parsing objects, then creating AAF Permission
 	private static class PermInfo {
-		public String type,instance,action;
+		public String ns,type,instance,action;
 		public void clear() {
-			type=instance=action=null;
+			ns=type=instance=action=null;
 		}
 		public void eval(Parsed<State> pd) {
 			if(pd.hasName()) {
 				switch(pd.name) {
+					case "ns":
+						ns=pd.sb.toString();
+						break;
 					case "type":
 						type=pd.sb.toString();
 						break;
@@ -162,7 +165,7 @@ public class TokenPerm extends Persisting<Introspect>{
 		}
 		public AAFPermission create() {
 			if(type!=null && instance!=null && action !=null) {
-				return new AAFPermission(type, instance, action);
+				return new AAFPermission(ns,type, instance, action);
 			} else {
 				return null;
 			}

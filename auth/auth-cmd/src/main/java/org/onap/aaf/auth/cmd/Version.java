@@ -36,8 +36,8 @@ public class Version extends Cmd {
 	@Override
 	protected int _exec(int idx, String... args) throws CadiException, APIException, LocatorException {
 		pw().println("AAF Command Line Tool");
-		String version = access.getProperty(Config.AAF_DEFAULT_VERSION, "2.0");
-		pw().println("Version: " + version);
+		pw().print("Version: ");
+		pw().println(Config.AAF_DEFAULT_VERSION);
 		return 200 /*HttpStatus.OK_200;*/;
 	}
 }

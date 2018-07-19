@@ -246,7 +246,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 	/**
 	 * The default behavior of a LUR is to not handle something exclusively.
 	 */
-	public boolean handlesExclusively(Permission pond) {
+	public boolean handlesExclusively(Permission ... pond) {
 		return false;
 	}
 	

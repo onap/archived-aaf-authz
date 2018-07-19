@@ -141,11 +141,8 @@ public class ServiceValidator extends Validator {
 		if(cd==null) {
 			msg("Cred Data is null.");
 		} else {
-			if(nob(cd.id,ID_CHARS)) {
-				msg("ID [" + cd.id + "] is invalid in " + org.getName());
-			}
 			if(!org.isValidCred(trans, cd.id)) {
-				msg("ID [" + cd.id + "] is invalid for a cred in " + org.getName());
+				msg("ID [" + cd.id + "] is invalid in " + org.getName());
 			}
 			String str = cd.id;
 			int idx = str.indexOf('@');

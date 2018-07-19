@@ -99,9 +99,9 @@ public class JSONPermLoaderFactory {
 						} else {
 							sb.append(',');
 						}
-						sb.append("{\"type\":\"");
+						sb.append("{\"ns\":\"");
 						sb.append(d.ns);
-						sb.append('.');
+						sb.append("\",\"type\":\"");
 						sb.append(d.type);
 						sb.append("\",\"instance\":\"");
 						sb.append(d.instance);

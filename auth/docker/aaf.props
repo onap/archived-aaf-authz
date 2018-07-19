@@ -1,0 +1,14 @@
+FQI=clamp@clamp.onap.org
+VOLUME=clamp_aaf
+LONGITUDE=-92
+FQDN=meriadoc.mithril.sbc.com
+VERSION=2.1.2-SNAPSHOT
+DRIVER=local
+LATITUDE=38
+FQDN_IP=192.168.99.100
+AAF_FQDN=meriadoc.mithril.sbc.com
+AAF_AAF_FQDN_IP=192.168.99.100
+DEPLOY_FQI=deployer@people.osaaf.org
+DEPLOY_PASSWORD=demo123456!
+APP_FQDN=meriadoc.mithril.sbc.com
+APP_FQI=clamp@clamp.onap.org

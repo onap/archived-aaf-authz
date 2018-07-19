@@ -3,7 +3,7 @@
 #
 # Controlling NS
 aaf_root_ns=org.osaaf.aaf
-aaf_trust_perm=org.osaaf.aaf|org.onap|trust
+aaf_trust_perm=org.osaaf.aaf.appid|org|trust
 
 # Domains and Realms
 aaf_domain_support=.com:.org
@@ -19,3 +19,4 @@ cadi_x509_issuers=CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_
 
 # Other
 aaf_data_dir=/opt/app/osaaf/data
+cadi_token_dir=/opt/app/osaaf/tokens

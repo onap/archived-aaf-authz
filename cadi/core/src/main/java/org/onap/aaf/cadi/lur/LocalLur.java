@@ -94,14 +94,16 @@ public final class LocalLur extends AbsUserCache<LocalPermission> implements Lur
 	}
 
 	//	@Override
-	public boolean fish(Principal bait, Permission pond) {
+	public boolean fish(Principal bait, Permission ... pond) {
 		if (pond == null) {
 			return false;
 		}
-		if (handles(bait) && pond instanceof LocalPermission) { // local Users only have LocalPermissions
-			User<LocalPermission> user = getUser(bait);
-			if (user != null) {
-				return user.contains((LocalPermission)pond);
+		for(Permission p : pond) {
+			if (handles(bait) && p instanceof LocalPermission) { // local Users only have LocalPermissions
+				User<LocalPermission> user = getUser(bait);
+				if (user != null) {
+					return user.contains((LocalPermission)p);
+				}
 			}
 		}
 		return false;
@@ -128,8 +130,15 @@ public final class LocalLur extends AbsUserCache<LocalPermission> implements Lur
 		return principal.getName().endsWith(supportedRealm);
 	}
 
-	public boolean handlesExclusively(Permission pond) {
-		return supportingGroups.contains(pond.getKey());
+	@Override
+	public boolean handlesExclusively(Permission ... pond) {
+		boolean rv = false;
+		for (Permission p : pond) {
+			if(rv=supportingGroups.contains(p.getKey())) {
+				break;
+			}
+		}
+		return rv;
 	}
 
 	/* (non-Javadoc)

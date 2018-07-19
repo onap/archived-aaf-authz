@@ -60,7 +60,7 @@ public final class EpiLur implements Lur {
 		if(lurs.length==0) throw new CadiException("Need at least one Lur implementation in constructor");
 	}
 
-	public boolean fish(Principal bait, Permission pond) {
+	public boolean fish(Principal bait, Permission ... pond) {
 		if(pond==null) {
 			return false;
 		}
@@ -99,7 +99,7 @@ public final class EpiLur implements Lur {
 	}
 
 	// Never needed... Only EpiLur uses...
-	public boolean handlesExclusively(Permission pond) {
+	public boolean handlesExclusively(Permission ... pond) {
 		return false;
 	}
 	

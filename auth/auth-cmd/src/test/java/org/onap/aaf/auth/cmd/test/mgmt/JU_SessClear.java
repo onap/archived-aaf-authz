@@ -72,11 +72,11 @@ public class JU_SessClear {
 		wtr = mock(Writer.class);
 		loc = mock(Locator.class);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		Mgmt mgmt = new Mgmt(aafcli);
-		Session sess = new Session(mgmt);
-		sessclr = new SessClear(sess);
+//		hman = new HMangr(aEnv, loc);	
+//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+//		Mgmt mgmt = new Mgmt(aafcli);
+//		Session sess = new Session(mgmt);
+//		sessclr = new SessClear(sess);
 	}
 	
 	@Test
@@ -85,12 +85,12 @@ public class JU_SessClear {
 		Locator.Item item = new Locator.Item() {
 		};
 		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
 		when(loc.get(value)).thenReturn(uri);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		when(loc.first()).thenReturn(value);
-		String[] strArr = {"add","upd","del","add","upd","del"};
+//		HRcli hcli = new HRcli(hman, uri, item, secSet);
+//		when(loc.first()).thenReturn(value);
+//		String[] strArr = {"add","upd","del","add","upd","del"};
 		//sessclr._exec(0, strArr);
 
 	}
@@ -100,6 +100,6 @@ public class JU_SessClear {
 		Define define = new Define();
 		define.set(prop);
 		StringBuilder sb = new StringBuilder();
-		sessclr.detailedHelp(0, sb);
+//		sessclr.detailedHelp(0, sb);
 	}
 }

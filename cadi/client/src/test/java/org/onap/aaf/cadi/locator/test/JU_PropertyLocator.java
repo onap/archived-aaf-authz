@@ -81,6 +81,7 @@ public class JU_PropertyLocator {
 		assertThat(pl.hasItems(), is(false));
 		assertThat(countItems(pl), is(0));
 
+		Thread.sleep(20L); // PL checks same milli...
 		pl.refresh();
 
 		assertThat(pl.hasItems(), is(true));

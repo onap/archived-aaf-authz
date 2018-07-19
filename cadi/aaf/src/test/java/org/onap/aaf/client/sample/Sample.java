@@ -147,7 +147,7 @@ public class Sample {
 				String permS = myAccess.getProperty("perm","org.osaaf.aaf.access|*|read");
 				String[] permA = Split.splitTrim('|', permS);
 				if(permA.length>2) {
-					final Permission perm = new AAFPermission(permA[0],permA[1],permA[2]);
+					final Permission perm = new AAFPermission(null, permA[0],permA[1],permA[2]);
 					// See the CODE for Java Methods used
 					if(singleton().oneAuthorization(fqi, perm)) {
 						System.out.printf("Success: %s has %s\n",fqi.getName(),permS);

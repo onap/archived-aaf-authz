@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onap.aaf.cadi.Permission;
+import org.onap.aaf.misc.env.util.Split;
 
 /**
  * A Class that understands the AAF format of Permission (name/type/action)
@@ -35,7 +36,7 @@ import org.onap.aaf.cadi.Permission;
  */
 public class AAFPermission implements Permission {
 	private static final List<String> NO_ROLES;
-	protected String type,instance,action,key;
+	protected String ns,type,instance,action,key;
 	private List<String> roles;
 	
 	static {
@@ -44,19 +45,22 @@ public class AAFPermission implements Permission {
 
 	protected AAFPermission() {roles=NO_ROLES;}
 
-	public AAFPermission(String type, String instance, String action) {
-		this.type = type;
+	public AAFPermission(String ns, String name, String instance, String action) {
+		this.ns = ns;
+		type = name;
 		this.instance = instance;
 		this.action = action;
-		key = type + '|' + instance + '|' + action;
+		key = ns + '|' + type + '|' + instance + '|' + action;
 		this.roles = NO_ROLES;
 
 	}
-	public AAFPermission(String type, String instance, String action, List<String> roles) {
-		this.type = type;
+
+	public AAFPermission(String ns, String name, String instance, String action, List<String> roles) {
+		this.ns = ns;
+		type = name;
 		this.instance = instance;
 		this.action = action;
-		key = type + '|' + instance + '|' + action;
+		key = ns + '|' + type + '|' + instance + '|' + action;
 		this.roles = roles==null?NO_ROLES:roles;
 	}
 	
@@ -71,6 +75,7 @@ public class AAFPermission implements Permission {
 	 * If you want a simple field comparison, it is faster without REGEX
 	 */
 	public boolean match(Permission p) {
+		String aafNS;
 		String aafType;
 		String aafInstance;
 		String aafAction;
@@ -79,23 +84,59 @@ public class AAFPermission implements Permission {
 			// Note: In AAF > 1.0, Accepting "*" from name would violate multi-tenancy
 			// Current solution is only allow direct match on Type.
 			// 8/28/2014 Jonathan - added REGEX ability
-			aafType = ap.getName();
+			aafNS = ap.getNS();
+			aafType = ap.getType();
 			aafInstance = ap.getInstance();
 			aafAction = ap.getAction();
 		} else {
-			// Permission is concatenated together: separated by |
-			String[] aaf = p.getKey().split("[\\s]*\\|[\\s]*",3);
-			aafType = aaf[0];
-			aafInstance = (aaf.length > 1) ? aaf[1] : "*";
-			aafAction = (aaf.length > 2) ? aaf[2] : "*";
+			// Permission is concatenated together: separated by 
+			String[] aaf = Split.splitTrim('|', p.getKey());
+			switch(aaf.length) {
+				case 1:
+					aafNS = aaf[0];
+					aafType="";
+					aafInstance = aafAction = "*";
+					break;
+				case 2:
+					aafNS = aaf[0];
+					aafType = aaf[1];
+					aafInstance = aafAction = "*";
+					break;
+				case 3:
+					aafNS = aaf[0];
+					aafType = aaf[1];
+					aafInstance = aaf[2]; 
+					aafAction = "*";
+					break;
+				default:
+					aafNS = aaf[0];
+					aafType = aaf[1];
+					aafInstance = aaf[2]; 
+					aafAction = aaf[3];
+				break;
+			}
 		}
-		return ((type.equals(aafType)) &&
-				(PermEval.evalInstance(instance, aafInstance)) &&
-				(PermEval.evalAction(action, aafAction)));
+		boolean typeMatches;
+		if(aafNS.length() == ns.length()) {
+			typeMatches = aafNS.equals(ns) && aafType.equals(type);
+		} else { // Allow for restructuring of NS/Perm structure
+			typeMatches = (aafNS+'.'+aafType).equals(ns+'.'+type);
+		}
+		return (typeMatches &&
+				PermEval.evalInstance(instance, aafInstance) &&
+				PermEval.evalAction(action, aafAction));
 	}
 
-	public String getName() {
+	public String getNS() {
+		return ns;
+	}
+
+	public String getType() {
 		return type;
+	}
+
+	public String getFullType() {
+		return ns + '.' + type;
 	}
 	
 	public String getInstance() {
@@ -121,7 +162,9 @@ public class AAFPermission implements Permission {
 		return roles;
 	}
 	public String toString() {
-		return "AAFPermission:\n\tType: " + type + 
+		return "AAFPermission:" +
+				"\n\tNS: " + ns +
+				"\n\tType: " + type + 
 				"\n\tInstance: " + instance +
 				"\n\tAction: " + action +
 				"\n\tKey: " + key;

@@ -148,7 +148,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 						Map<String, Permission> newMap = user.newMap();
 						boolean willLog = aaf.access.willLog(Level.DEBUG);
 						for(Perm perm : fp.value.getPerm()) {
-							user.add(newMap,new AAFPermission(perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
+							user.add(newMap,new AAFPermission(perm.getNs(),perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
 							if(willLog) {
 								aaf.access.log(Level.DEBUG, name,"has '",perm.getType(),'|',perm.getInstance(),'|',perm.getAction(),'\'');
 							}
@@ -197,7 +197,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 				Map<String,Permission> newMap = user.newMap(); 
 				boolean willLog = aaf.access.willLog(Level.DEBUG);
 				for(Perm perm : fp.value.getPerm()) {
-					user.add(newMap, new AAFPermission(perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
+					user.add(newMap, new AAFPermission(perm.getNs(),perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
 					if(willLog) {
 						aaf.access.log(Level.DEBUG, name,"has",perm.getType(),perm.getInstance(),perm.getAction());
 					}
@@ -235,10 +235,13 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 	@Override
 	public Permission createPerm(String p) {
 		String[] params = Split.split('|', p);
-		if(params.length==3) {
-			return new AAFPermission(params[0],params[1],params[2]);
-		} else {
-			return new LocalPermission(p);
+		switch(params.length) {
+			case 3:
+				return new AAFPermission(null,params[0],params[1],params[2]);
+			case 4:
+				return new AAFPermission(params[0],params[1],params[2],params[3]);
+			default:
+				return new LocalPermission(p);
 		}
 	}
 	

@@ -52,7 +52,7 @@ public interface Lur {
 	 * @param principalName
 	 * @return
 	 */
-	public boolean fish(Principal bait, Permission pond);
+	public boolean fish(Principal bait, Permission ... pond);
 
 	/** 
 	 * Fish all the Principals out a Pond
@@ -77,7 +77,7 @@ public interface Lur {
 	 * @param pond
 	 * @return
 	 */
-	public boolean handlesExclusively(Permission pond);  
+	public boolean handlesExclusively(Permission ... pond);  
 	
 	/**
 	 *  Does the LUR support a particular kind of Principal

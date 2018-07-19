@@ -38,6 +38,7 @@ import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.config.Config;
@@ -63,10 +64,10 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 		super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
 		
 		if(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
-			access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, "https://AAF_LOCATE_URL/AAF_NS.token:2.0"); // Default to AAF
+			access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, Defaults.OAUTH2_TOKEN_URL); // Default to AAF
 		}
 		if(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
-			access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, "https://AAF_LOCATE_URL/AAF_NS.introspect:2.0"); // Default to AAF);
+			access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, Defaults.OAUTH2_INTROSPECT_URL); // Default to AAF);
 		}
 
 		symm = Symm.encrypt.obtain();

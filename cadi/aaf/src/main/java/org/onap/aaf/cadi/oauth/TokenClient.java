@@ -443,6 +443,11 @@ public class TokenClient {
 						throw new APIException("Error Decrypting Password",e);
 					}
 				}
+				
+				if(username!=null) {
+					params.add("username="+username);
+				}
+
 				break;
 			case refresh_token:
 				if(client_id!=null) {

@@ -98,28 +98,28 @@ public class JU_TokenPerm {
 		String json;
 		LoadPermissions lp;
 		Permission p;
-
+		
 		json = "{\"perm\":[" +
-			"  {\"type\":\"com.access\",\"instance\":\"*\",\"action\":\"read,approve\"}," +
+			"  {\"ns\":\"com\",\"type\":\"access\",\"instance\":\"*\",\"action\":\"read,approve\"}," +
 			"]}";
 
 		lp = new LoadPermissions(new StringReader(json));
 		assertThat(lp.perms.size(), is(1));
 
 		p = lp.perms.get(0);
-		assertThat(p.getKey(), is("com.access|*|read,approve"));
+		assertThat(p.getKey(), is("com|access|*|read,approve"));
 		assertThat(p.permType(), is("AAF"));
 
 		// Extra closing braces for coverage
 		json = "{\"perm\":[" +
-			"  {\"type\":\"com.access\",\"instance\":\"*\",\"action\":\"read,approve\"}}," +
+			"  {\"ns\":\"com\",\"type\":\"access\",\"instance\":\"*\",\"action\":\"read,approve\"}}," +
 			"]]}";
 
 		lp = new LoadPermissions(new StringReader(json));
 		assertThat(lp.perms.size(), is(1));
 
 		p = lp.perms.get(0);
-		assertThat(p.getKey(), is("com.access|*|read,approve"));
+		assertThat(p.getKey(), is("com|access|*|read,approve"));
 		assertThat(p.permType(), is("AAF"));
 
 		// Test without a type

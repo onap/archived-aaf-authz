@@ -117,10 +117,10 @@ public class JU_EpiLur {
 	private class CredValStub implements Lur, CredVal {
 		@Override public boolean validate(String user, Type type, byte[] cred, Object state) { return false; }
 		@Override public Permission createPerm(String p) { return null; }
-		@Override public boolean fish(Principal bait, Permission pond) { return false; }
+		@Override public boolean fish(Principal bait, Permission ... pond) { return false; }
 		@Override public void fishAll(Principal bait, List<Permission> permissions) { }
 		@Override public void destroy() { }
-		@Override public boolean handlesExclusively(Permission pond) { return false; }
+		@Override public boolean handlesExclusively(Permission ... pond) { return false; }
 		@Override public boolean handles(Principal principal) { return false; }
 		@Override public void clear(Principal p, StringBuilder report) { }
 	}

@@ -21,32 +21,23 @@
  ******************************************************************************/
 package org.onap.aaf.auth.common.test;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.junit.Before;
-import static org.mockito.Mockito.*;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.Env;
-import static org.junit.Assert.*;
-
-//import com.att.authz.common.Define;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_Define {
+	private static final String AAF_NS_DOT = "AAF_NS.";
 	public static String ROOT_NS="NS.Not.Set";
 	public static String ROOT_COMPANY=ROOT_NS;
 	Access acc;
@@ -62,7 +53,7 @@ public class JU_Define {
 	@Test
 	public void testSet() throws CadiException {
 		PropAccess prop = new PropAccess();
-		prop.setProperty("AAF_NS.", "AAF_NS.");
+		prop.setProperty(AAF_NS_DOT, AAF_NS_DOT);
 		prop.setProperty(Config.AAF_ROOT_NS, ".ns_Test");
 		prop.setProperty(Config.AAF_ROOT_COMPANY, "company_Test");
 		Define.set(prop);
@@ -70,7 +61,7 @@ public class JU_Define {
 		Define.ROOT_COMPANY();
 		
 		PropAccess prop1 = new PropAccess();
-		prop1.setProperty("AAF_NS.", "AAF_NS.");
+		prop1.setProperty(AAF_NS_DOT, AAF_NS_DOT);
 		prop1.setProperty(Config.AAF_ROOT_NS, ".ns_Test");
 		Define.set(prop1);
 	}
@@ -87,7 +78,7 @@ public class JU_Define {
 
 	@Test
 	public void testVarReplace() {
-		Define.varReplace("AAF_NS.");
+		Define.varReplace(AAF_NS_DOT);
 		Define.varReplace("test");
 	}
 }

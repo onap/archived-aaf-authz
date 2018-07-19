@@ -51,10 +51,10 @@ INSERT INTO role(ns, name, perms, description)
 
 // OSAAF Root
 INSERT INTO user_role(user,role,expires,ns,rname)
-  VALUES ('aaf@aaf.osaaf.org','org.admin','2018-10-31','org','admin') using TTL 14400;
+  VALUES ('aaf@aaf.osaaf.org','org.admin','2018-10-31','org','admin');
 
 INSERT INTO user_role(user,role,expires,ns,rname)
-  VALUES ('aaf@aaf.osaaf.org','org.osaaf.aaf.admin','2018-10-31','org.osaaf.aaf','admin') using TTL 14400;
+  VALUES ('aaf@aaf.osaaf.org','org.osaaf.aaf.admin','2018-10-31','org.osaaf.aaf','admin');
 
 
 // ONAP Specific Entities
@@ -78,6 +78,19 @@ INSERT INTO perm(ns, type, instance, action, roles, description)
 
 INSERT INTO role(ns, name, perms, description)
   VALUES('org.onap.portal','admin',{'org.onap.portal.access|*|*'},'Portal Admins');
+
+// AAF Admin
+insert into cred (id,type,expires,cred,notes,ns,other) values('aaf_admin@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('aaf_admin@people.osaaf.org','org.osaaf.aaf.admin','2018-10-31','org.osaaf.aaf','admin');
+
+// A Deployer
+insert into cred (id,type,expires,cred,notes,ns,other) values('deployer@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);
+INSERT INTO role(ns, name, perms, description)
+  VALUES('org.osaaf.aaf','deploy',{},'ONAP Deployment Role');
+INSERT INTO user_role(user,role,expires,ns,rname)
+  VALUES ('deployer@people.osaaf.org','org.osaaf.aaf.deploy','2018-10-31','org.osaaf.aaf','deploy');
+
 
 // DEMO ID (OPS)
 insert into cred (id,type,expires,cred,notes,ns,other) values('demo@people.osaaf.org',2,'2019-05-01',0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95,'Initial ID','org.osaaf.people',53344);

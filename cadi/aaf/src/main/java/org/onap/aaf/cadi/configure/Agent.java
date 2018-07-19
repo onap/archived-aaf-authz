@@ -52,6 +52,7 @@ import org.onap.aaf.cadi.CmdLine;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.aaf.client.ErrMessage;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
@@ -126,7 +127,7 @@ public class Agent {
 				AAFSSO aafsso=null;
 				PropAccess access;
 				
-				if(args.length>0 && args[0].equals("validate")) {
+				if(args.length>1 && args[0].equals("validate")) {
 					int idx = args[1].indexOf('=');
 					aafsso = null;
 					access = new PropAccess(
@@ -353,8 +354,8 @@ public class Agent {
 	}
 
 	private static void createArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-		String mechID = fqi(cmds);
-		String machine = machine(cmds);
+		final String mechID = fqi(cmds);
+		final String machine = machine(cmds);
 
 		Artifacts artifacts = new Artifacts();
 		Artifact arti = new Artifact();
@@ -798,6 +799,7 @@ public class Agent {
 					directedPut(pa, filesymm, normal,creds, Config.CADI_KEYFILE, fkf.getCanonicalPath());
 					directedPut(pa, filesymm, normal,creds, Config.AAF_APPID,fqi);
 					directedPut(pa, filesymm, normal,creds, Config.AAF_APPPASS,null);
+					directedPut(pa, filesymm, normal,creds, Config.AAF_URL, Defaults.AAF_URL);
 					
 
 					String cts = pa.getProperty(Config.CADI_TRUSTSTORE);
@@ -928,7 +930,7 @@ public class Agent {
 			if(tag.endsWith("_password")) {
 				if(val.length()>4) {
 					if(val.startsWith("enc:")) {
-						val = orig.decrypt(value, true);
+						val = orig.decrypt(val, true);
 					}
 					val = "enc:" + symm.enpass(val);
 				}

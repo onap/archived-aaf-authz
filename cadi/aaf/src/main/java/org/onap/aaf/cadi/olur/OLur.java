@@ -22,16 +22,19 @@
 package org.onap.aaf.cadi.olur;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.client.Result;
+import org.onap.aaf.cadi.lur.LocalPermission;
 import org.onap.aaf.cadi.oauth.AbsOTafLur;
 import org.onap.aaf.cadi.oauth.OAuth2Principal;
 import org.onap.aaf.cadi.oauth.TimedToken;
@@ -39,8 +42,8 @@ import org.onap.aaf.cadi.oauth.TokenClient;
 import org.onap.aaf.cadi.oauth.TokenPerm;
 import org.onap.aaf.cadi.principal.Kind;
 import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.misc.env.util.Split;
 import org.onap.aaf.misc.env.util.Pool.Pooled;
+import org.onap.aaf.misc.env.util.Split;
 
 public class OLur extends AbsOTafLur implements Lur {
 	public OLur(PropAccess access, final String token_url, final String introspect_url) throws APIException, CadiException {
@@ -51,7 +54,7 @@ public class OLur extends AbsOTafLur implements Lur {
 	 * @see org.onap.aaf.cadi.Lur#fish(java.security.Principal, org.onap.aaf.cadi.Permission)
 	 */
 	@Override
-	public boolean fish(Principal bait, Permission pond) {
+	public boolean fish(Principal bait, Permission ... pond) {
 		TokenPerm tp;
 		if(bait instanceof OAuth2Principal) {
 			OAuth2Principal oa2p = (OAuth2Principal)bait;
@@ -66,7 +69,17 @@ public class OLur extends AbsOTafLur implements Lur {
 				try {
 					TokenClient tc = tcp.content;
 					tc.username(bait.getName());
-					Result<TimedToken> rtt = tc.getToken(Kind.getKind(bait),tc.defaultScope());
+					Set<String> scopeSet = new HashSet<>();
+					scopeSet.add(tc.defaultScope());
+					AAFPermission ap;
+					for (Permission p : pond) {
+						ap = (AAFPermission)p;
+						scopeSet.add(ap.getNS());
+					}
+					String[] scopes = new String[scopeSet.size()];
+					scopeSet.toArray(scopes);
+					
+					Result<TimedToken> rtt = tc.getToken(Kind.getKind(bait),scopes);
 					if(rtt.isOK()) {
 						Result<TokenPerm> rtp = tkMgr.get(rtt.value.getAccessToken(), bait.getName().getBytes());
 						if(rtp.isOK()) {
@@ -77,9 +90,11 @@ public class OLur extends AbsOTafLur implements Lur {
 					tcp.done();
 				}
 			} catch (APIException | LocatorException | CadiException e) {
-				access.log(Level.ERROR, "Unable to Get a Token: " + e.getMessage());
+				access.log(e, "Unable to Get a Token");
 			}
 		}
+		
+		boolean rv = false;
 		if(tp!=null) {
 			if(tkMgr.access.willLog(Level.DEBUG)) {
 				StringBuilder sb = new StringBuilder("AAF Permissions for user ");
@@ -87,8 +102,10 @@ public class OLur extends AbsOTafLur implements Lur {
 				sb.append(", from token ");			
 				sb.append(tp.get().getAccessToken());
 				for (AAFPermission p : tp.perms()) {
-					sb.append("\n\t");
-					sb.append(p.getName());
+					sb.append("\n\t[");
+					sb.append(p.getNS());
+					sb.append(']');					
+					sb.append(p.getType());
 					sb.append('|');
 					sb.append(p.getInstance());
 					sb.append('|');
@@ -97,13 +114,18 @@ public class OLur extends AbsOTafLur implements Lur {
 				sb.append('\n');
 				access.log(Level.DEBUG, sb);
 			}
-			for (AAFPermission p : tp.perms()) {
-				if (p.match(pond)) {
-					return true;
+			for (Permission p : pond) {
+				if(rv) {
+					break;
+				}
+				for (AAFPermission perm : tp.perms()) {
+					if (rv=perm.match(p)) {
+						break;
+					}
 				}
 			}
 		}
-		return false;
+		return rv;
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +144,7 @@ public class OLur extends AbsOTafLur implements Lur {
 	 * @see org.onap.aaf.cadi.Lur#handlesExclusively(org.onap.aaf.cadi.Permission)
 	 */
 	@Override
-	public boolean handlesExclusively(Permission pond) {
+	public boolean handlesExclusively(Permission ... pond) {
 		return false;
 	}
 
@@ -140,10 +162,13 @@ public class OLur extends AbsOTafLur implements Lur {
 	@Override
 	public Permission createPerm(final String p) {
 		String[] s = Split.split('|',p);
-		if(s!=null && s.length==3) {
-			return new AAFPermission(s[0],s[1],s[2]);
-		} else {
-			return null;
+		switch(s.length) {
+			case 3:
+				return new AAFPermission(null, s[0],s[1],s[2]);
+			case 4:
+				return new AAFPermission(s[0],s[1],s[2],s[3]);
+			default:
+				return new LocalPermission(p);
 		}
 	}
 

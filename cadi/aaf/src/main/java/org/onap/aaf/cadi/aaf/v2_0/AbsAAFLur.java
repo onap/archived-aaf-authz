@@ -90,7 +90,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 	protected abstract boolean isCorrectPermType(Permission pond);
 	
 	// This is where you build AAF CLient Code.  Answer the question "Is principal "bait" in the "pond"
-	public boolean fish(Principal bait, Permission pond) {
+	public boolean fish(Principal bait, Permission ... pond) {
 		if(preemptiveLur!=null && preemptiveLur.handles(bait)) {
 			return preemptiveLur.fish(bait, pond);
 		} else {
@@ -123,20 +123,23 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 						user = loadUser(bait);
 						sb.append("\n\tloadUser called");
 					}
-					if(user==null) {
-						sb.append("\n\tUser was not Loaded");
-					} else if(user.contains(pond)) {
-						sb.append("\n\tUser contains ");
-						sb.append(pond.getKey());
-						rv = true;
-					} else {
-						sb.append("\n\tUser does not contain ");
-						sb.append(pond.getKey());
-						List<Permission> perms = new ArrayList<>();
-						user.copyPermsTo(perms);
-						for(Permission p : perms) {
-							sb.append("\n\t\t");
+					for (Permission p : pond) {
+						if(user==null) {
+							sb.append("\n\tUser was not Loaded");
+							break;
+						} else if(user.contains(p)) {
+							sb.append("\n\tUser contains ");
 							sb.append(p.getKey());
+							rv = true;
+						} else {
+							sb.append("\n\tUser does not contain ");
+							sb.append(p.getKey());
+							List<Permission> perms = new ArrayList<>();
+							user.copyPermsTo(perms);
+							for(Permission perm : perms) {
+								sb.append("\n\t\t");
+								sb.append(perm.getKey());
+							}
 						}
 					}
 				} else {
@@ -147,14 +150,23 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 				aaf.access.log(Level.INFO, sb);
 				return rv;
 			} else {
+				boolean rv = false;
 				if(handles(bait)) {
 					User<PERM> user = getUser(bait);
 					if(user==null || user.permsUnloaded() || user.permExpired()) {
 						user = loadUser(bait);
 					}
-					return user==null?false:user.contains(pond);
+					if(user==null) {
+						return false;
+					} else {
+						for(Permission p : pond) {
+							if(rv=user.contains(p)) {
+								break;
+							}
+						}
+					}
 				}
-				return false;
+				return rv;
 			}
 		}
 	}

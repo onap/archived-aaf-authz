@@ -21,7 +21,10 @@
  ******************************************************************************/
 package org.onap.aaf.org.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +37,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.local.AbsData.Reuse;
+import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.Env;
@@ -42,7 +47,6 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.org.DefaultOrg;
 import org.onap.aaf.org.Identities;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.onap.aaf.auth.local.AbsData.Reuse;
 
 
 @RunWith(PowerMockRunner.class)
@@ -149,8 +153,8 @@ public class JU_DefaultOrg {
 	@Test
 	public void testDefOrgPasswords() {
 		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "new2you!", "Pilgrim"),"");
-		
+		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2you!", "Pilgrim"),"");
+		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newtoyou", "Pilgrim"),"");
 	}
 
 	@Test
@@ -250,7 +254,15 @@ public class JU_DefaultOrg {
 	// 	System.out.println("value of res " +Result);
 	// 	assertNotNull(Result);
 	// }
-
+	
+	@Test
+	public void testResponsible() throws OrganizationException {
+		Identity id = defaultOrg.getIdentity(authzTransMock, "osaaf");
+		Identity rt = id.responsibleTo();
+		assertTrue(rt.id().equals("bdevl"));
+		
+	}
+	
 	//@Test
 	public void notYetImplemented() {
 		fail("Tests in this file should not be trusted");

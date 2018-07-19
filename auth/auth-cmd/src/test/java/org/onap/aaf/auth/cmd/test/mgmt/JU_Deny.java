@@ -76,10 +76,10 @@ public class JU_Deny {
 		wtr = mock(Writer.class);
 		loc = mock(Locator.class);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		Mgmt mgmt = new Mgmt(aafcli);
-		deny = new Deny(mgmt);
+//		hman = new HMangr(aEnv, loc);	
+//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+//		Mgmt mgmt = new Mgmt(aafcli);
+//		deny = new Deny(mgmt);
 		//denyS = deny.new DenySomething(deny,"ip","ipv4or6[,ipv4or6]*");
 
 	}
@@ -92,10 +92,10 @@ public class JU_Deny {
 		Locator.Item item = new Locator.Item() {
 		};
 		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
 		when(loc.get(value)).thenReturn(uri);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
+//		HRcli hcli = new HRcli(hman, uri, item, secSet);
 
 //		String[] strArr = {"add","del", "add","del"};
 //		deny._exec(0, strArr);

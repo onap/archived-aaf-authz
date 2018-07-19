@@ -76,11 +76,11 @@ public class JU_Clear {
 		wtr = mock(Writer.class);
 		loc = mock(Locator.class);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		mgmt = new Mgmt(aafcli);
-		cache = new Cache(mgmt);
-		clr = new Clear(cache);
+//		hman = new HMangr(aEnv, loc);	
+//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+//		mgmt = new Mgmt(aafcli);
+//		cache = new Cache(mgmt);
+//		clr = new Clear(cache);
 		
 	}
 	
@@ -88,12 +88,12 @@ public class JU_Clear {
 	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
 		Item value = mock(Item.class);
 		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
 		when(loc.get(value)).thenReturn(uri);
 		when(loc.first()).thenReturn(value);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, value, secSet);
-		String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
+//		HRcli hcli = new HRcli(hman, uri, value, secSet);
+//		String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
 		//clr._exec(0, strArr);				
 
 	}
@@ -103,6 +103,6 @@ public class JU_Clear {
 		Define define = new Define();
 		define.set(prop);
 		StringBuilder sb = new StringBuilder();
-		clr.detailedHelp(0, sb);
+//		clr.detailedHelp(0, sb);
 	}
 }

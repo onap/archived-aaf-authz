@@ -33,11 +33,11 @@ import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 
 public class JU_AAFPermission {
-
+	private final static String ns = "ns";
 	private final static String type = "type";
 	private final static String instance = "instance";
 	private final static String action = "action";
-	private final static String key = type + '|' + instance + '|' + action;
+	private final static String key = ns + '|' + type + '|' + instance + '|' + action;
 	private final static String role = "role";
 
 	private static List<String> roles;
@@ -50,14 +50,17 @@ public class JU_AAFPermission {
 
 	@Test
 	public void constructor1Test() {
-		AAFPermission perm = new AAFPermission(type, instance, action);
-		assertThat(perm.getName(), is(type));
+		AAFPermission perm = new AAFPermission(ns, type, instance, action);
+		assertThat(perm.getNS(), is(ns));
+		assertThat(perm.getType(), is(type));
 		assertThat(perm.getInstance(), is(instance));
 		assertThat(perm.getAction(), is(action));
 		assertThat(perm.getKey(), is(key));
 		assertThat(perm.permType(), is("AAF"));
 		assertThat(perm.roles().size(), is(0));
-		assertThat(perm.toString(), is("AAFPermission:\n\tType: " + type +
+		assertThat(perm.toString(), is("AAFPermission:" +
+										"\n\tNS: " + ns +
+										"\n\tType: " + type +
 										"\n\tInstance: " + instance +
 										"\n\tAction: " + action +
 										"\n\tKey: " + key));
@@ -67,39 +70,45 @@ public class JU_AAFPermission {
 	public void constructor2Test() {
 		AAFPermission perm;
 
-		perm = new AAFPermission(type, instance, action, null);
-		assertThat(perm.getName(), is(type));
+		perm = new AAFPermission(ns, type, instance, action, null);
+		assertThat(perm.getNS(), is(ns));
+		assertThat(perm.getType(), is(type));
 		assertThat(perm.getInstance(), is(instance));
 		assertThat(perm.getAction(), is(action));
 		assertThat(perm.getKey(), is(key));
 		assertThat(perm.permType(), is("AAF"));
 		assertThat(perm.roles().size(), is(0));
-		assertThat(perm.toString(), is("AAFPermission:\n\tType: " + type +
+		assertThat(perm.toString(), is("AAFPermission:" +
+										"\n\tNS: " + ns +
+										"\n\tType: " + type +
 										"\n\tInstance: " + instance +
 										"\n\tAction: " + action +
 										"\n\tKey: " + key));
 
-		perm = new AAFPermission(type, instance, action, roles);
-		assertThat(perm.getName(), is(type));
+		perm = new AAFPermission(ns, type, instance, action, roles);
+		assertThat(perm.getNS(), is(ns));
+		assertThat(perm.getType(), is(type));
 		assertThat(perm.getInstance(), is(instance));
 		assertThat(perm.getAction(), is(action));
 		assertThat(perm.getKey(), is(key));
 		assertThat(perm.permType(), is("AAF"));
 		assertThat(perm.roles().size(), is(1));
 		assertThat(perm.roles().get(0), is(role));
-		assertThat(perm.toString(), is("AAFPermission:\n\tType: " + type +
-										"\n\tInstance: " + instance +
-										"\n\tAction: " + action +
-										"\n\tKey: " + key));
+		assertThat(perm.toString(), is("AAFPermission:" +
+				"\n\tNS: " + ns +
+				"\n\tType: " + type +
+				"\n\tInstance: " + instance +
+				"\n\tAction: " + action +
+				"\n\tKey: " + key));
 	}
 
 	@Test
 	public void matchTest() {
-		final AAFPermission controlPermission = new AAFPermission(type, instance, action);
+		final AAFPermission controlPermission = new AAFPermission(ns,type, instance, action);
 		PermissionStub perm;
 		AAFPermission aafperm;
 
-		aafperm = new AAFPermission(type, instance, action);
+		aafperm = new AAFPermission(ns, type, instance, action);
 		assertThat(controlPermission.match(aafperm), is(true));
 
 		perm = new PermissionStub(key);
@@ -117,7 +126,8 @@ public class JU_AAFPermission {
 	@Test
 	public void coverageTest() {
 		AAFPermissionStub aafps = new AAFPermissionStub();
-		assertThat(aafps.getName(), is(nullValue()));
+		assertThat(aafps.getNS(), is(nullValue()));
+		assertThat(aafps.getType(), is(nullValue()));
 		assertThat(aafps.getInstance(), is(nullValue()));
 		assertThat(aafps.getAction(), is(nullValue()));
 		assertThat(aafps.getKey(), is(nullValue()));

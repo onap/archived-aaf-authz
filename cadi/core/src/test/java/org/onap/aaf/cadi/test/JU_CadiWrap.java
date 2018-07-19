@@ -122,10 +122,10 @@ public class JU_CadiWrap {
 		// Anonymous object for testing purposes
 		CachingLur<Permission> lur1 = new CachingLur<Permission>() {
 			@Override public Permission createPerm(String p) { return null; }
-			@Override public boolean fish(Principal bait, Permission pond) { return true; }
+			@Override public boolean fish(Principal bait, Permission ... pond) { return true; }
 			@Override public void fishAll(Principal bait, List<Permission> permissions) { }
 			@Override public void destroy() { }
-			@Override public boolean handlesExclusively(Permission pond) { return false; }
+			@Override public boolean handlesExclusively(Permission ... pond) { return false; }
 			@Override public boolean handles(Principal principal) { return false; }
 			@Override public void remove(String user) { }
 			@Override public Resp reload(User<Permission> user) { return null; }

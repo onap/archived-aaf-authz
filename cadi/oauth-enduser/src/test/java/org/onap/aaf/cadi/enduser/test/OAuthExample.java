@@ -31,6 +31,7 @@ import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
@@ -72,13 +73,10 @@ public class OAuthExample {
 		
 		
 		// Obtain Endpoints for OAuth2 from Properties.  Expected is "cadi.properties" file, pointed to by "cadi_prop_files"
-		String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,
-				"https://AAF_LOCATE_URL/AAF_NS.token:2.0"); // Default to AAF
-		String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,
-				"https://AAF_LOCATE_URL/AAF_NS.introspect:2.0"); // Default to AAF);
+		String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,Defaults.OAUTH2_TOKEN_URL); // Default to AAF
+		String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,Defaults.OAUTH2_INTROSPECT_URL); // Default to AAF);
 		// Get Hello Service
-		final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL, 
-				"https://AAF_LOCATE_URL/AAF_NS.hello:2.0");
+		final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Defaults.HELLO_URL);
 
 		final int CALL_TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
 		

@@ -116,7 +116,7 @@ public class BCFactory extends Factory {
 		CertmanValidator v = new CertmanValidator();
 		if(v.nullOrBlank("cn", csr.cn())
 			.nullOrBlank("mechID", csr.mechID())
-			.nullOrBlank("email", csr.email())
+//			.nullOrBlank("email", csr.email())
 			.err()) {
 			return v.errs();
 		} else {

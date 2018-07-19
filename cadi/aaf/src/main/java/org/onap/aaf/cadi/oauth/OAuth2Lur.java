@@ -41,34 +41,37 @@ public class OAuth2Lur implements Lur {
 	@Override
 	public Permission createPerm(String p) {
 		String[] params = Split.split('|', p);
-		if(params.length==3) {
-			return new AAFPermission(params[0],params[1],params[2]);
-		} else {
-			return new LocalPermission(p);
+		switch(params.length) {
+			case 3:
+				return new AAFPermission(null,params[0],params[1],params[2]);
+			case 4:
+				return new AAFPermission(params[0],params[1],params[2],params[3]);
+			default:
+				return new LocalPermission(p);
 		}
 	}
 
 	@Override
-	public boolean fish(Principal bait, Permission pond) {
-		AAFPermission apond = (AAFPermission)pond;
-		OAuth2Principal oap;
+	public boolean fish(Principal bait, Permission ... pond) {
+		boolean rv = false;
+		
 		if(bait instanceof OAuth2Principal) {
-			oap = (OAuth2Principal)bait; 
-		} else {
-			// Here is the spot to put in Principal Conversions
-			return false;
-		}
-
-		TokenPerm tp = oap.tokenPerm();
-		if(tp==null) {
-		} else {
-			for(Permission p : tp.perms()) {
-				if(p.match(apond)) {
-					return true;
+			OAuth2Principal oap = (OAuth2Principal)bait; 
+			for (Permission p : pond ) {
+				AAFPermission apond = (AAFPermission)p;
+		
+				TokenPerm tp = oap.tokenPerm();
+				if(tp==null) {
+				} else {
+					for(Permission perm : tp.perms()) {
+						if(perm.match(apond)) {
+							return true;
+						}
+					}
 				}
 			}
 		}
-		return false;
+		return rv;
 	}
 
 	@Override
@@ -87,7 +90,7 @@ public class OAuth2Lur implements Lur {
 	}
 
 	@Override
-	public boolean handlesExclusively(Permission pond) {
+	public boolean handlesExclusively(Permission ... pond) {
 		return false;
 	}
 

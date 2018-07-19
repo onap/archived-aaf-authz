@@ -88,18 +88,18 @@ public class JU_Attrib {
 		Locator.Item item = new Locator.Item() {
 		};
 		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
 		when(loc.get(value)).thenReturn(uri);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"add","upd","del","add","upd","del"};
-		attrib._exec(0, strArr);
-		
-		String[] strArr1 = {"upd","del","add","upd","del","add"};
-		attrib._exec(0, strArr1);
-		
-		String[] strArr2 = {"del","add","upd","del","add","upd"};
-		attrib._exec(0, strArr2);
+//		HRcli hcli = new HRcli(hman, uri, item, secSet);
+//		String[] strArr = {"add","upd","del","add","upd","del"};
+//		attrib._exec(0, strArr);
+//		
+//		String[] strArr1 = {"upd","del","add","upd","del","add"};
+//		attrib._exec(0, strArr1);
+//		
+//		String[] strArr2 = {"del","add","upd","del","add","upd"};
+//		attrib._exec(0, strArr2);
 		
 	}
 

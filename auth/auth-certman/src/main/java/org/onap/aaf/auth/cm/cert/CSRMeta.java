@@ -156,6 +156,7 @@ public class CSRMeta {
 		Date start = gc.getTime();
 		gc.add(GregorianCalendar.DAY_OF_MONTH,2);
 		Date end = gc.getTime();
+		@SuppressWarnings("deprecation")
 		X509v3CertificateBuilder xcb = new X509v3CertificateBuilder(
 				x500Name(),
 				new BigInteger(12,random), // replace with Serialnumber scheme

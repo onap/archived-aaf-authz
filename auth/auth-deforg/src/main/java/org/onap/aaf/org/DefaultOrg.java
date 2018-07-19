@@ -203,14 +203,27 @@ public class DefaultOrg implements Organization {
 	}
 
 	private static final String SPEC_CHARS = "!@#$%^*-+?/,:;.";
-	private static final Pattern PASS_PATTERN=Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[" + SPEC_CHARS +"]).{6,20})");
+	private static final Pattern PASS_PATTERN=Pattern.compile("(((?=.*[a-z,A-Z])(((?=.*\\d))|(?=.*[" + SPEC_CHARS +"]))).{6,20})");
 	/**
+	 *  (				# Start of group
+	 *  (?=.*[a-z,A-Z])	#   must contain one character
+	 *  
+	 *  (?=.*\d)		#   must contain one digit from 0-9 
+	 *        OR
+	 *  (?=.*[@#$%])	#   must contain one special symbols in the list SPEC_CHARS
+	 *  
+	 *        	.		#     match anything with previous condition checking
+	 *          {6,20}	#        length at least 6 characters and maximum of 20
+	 *  )				# End of group
+	 *
+	 * Another example, more stringent pattern
+	 private static final Pattern PASS_PATTERN=Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[" + SPEC_CHARS +"]).{6,20})");
 	 *  Attribution: from mkyong.com
 	 *  (				# Start of group
-	 *  (?=.*\d)			#   must contains one digit from 0-9
-	 *  (?=.*[a-z])		#   must contains one lowercase characters
-	 *  (?=.*[A-Z])		#   must contains one uppercase characters
-	 *  (?=.*[@#$%])		#   must contains one special symbols in the list SPEC_CHARS
+	 *  (?=.*\d)		#   must contain one digit from 0-9
+	 *  (?=.*[a-z])		#   must contain one lowercase characters
+	 *  (?=.*[A-Z])		#   must contain one uppercase characters
+	 *  (?=.*[@#$%])	#   must contain one special symbols in the list SPEC_CHARS
 	 *        	.		#     match anything with previous condition checking
 	 *          {6,20}	#        length at least 6 characters and maximum of 20
 	 *  )				# End of group
@@ -230,11 +243,11 @@ public class DefaultOrg implements Organization {
 	}
 
 	private static final String[] rules = new String[] {
-			"Passwords must contain one digit from 0-9",
-			"Passwords must contain one lowercase character",
-			"Passwords must contain one uppercase character",
-			"Passwords must contain one special symbols in the list \""+ SPEC_CHARS + '"',
-			"Passwords must be between 6 and 20 chars in length"
+			"Passwords must contain letters",
+			"Passwords must contain one of the following:",
+			"  Number",
+			"  One special symbols in the list \""+ SPEC_CHARS + '"',
+			"Passwords must be between 6 and 20 chars in length",
 	};
 
 	@Override

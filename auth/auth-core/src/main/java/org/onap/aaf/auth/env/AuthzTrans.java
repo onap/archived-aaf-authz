@@ -63,7 +63,7 @@ public interface AuthzTrans extends TransStore {
 
 	public abstract void setLur(Lur lur);
 
-	public abstract boolean fish(Permission p);
+	public abstract boolean fish(Permission ... p);
 	
 	public abstract Organization org();
 

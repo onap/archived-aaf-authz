@@ -57,20 +57,22 @@ public abstract class CA {
 	private final String name;
 	private final String env;
 	private MessageDigest messageDigest;
+	private final String permNS; 
 	private final String permType;
 	private final ArrayList<String> idDomains;
 	private String[] trustedCAs;
 	private String[] caIssuerDNs;
-	private List<RDN> rdns; 
+	private List<RDN> rdns;
 
 
 	protected CA(Access access, String caName, String env) throws IOException, CertException {
 		trustedCAs = new String[4]; // starting array
 		this.name = caName;
 		this.env = env;
-		permType = access.getProperty(CM_CA_PREFIX + name + ".perm_type",null);
+		permNS = CM_CA_PREFIX + name;
+		permType = access.getProperty(permNS + ".perm_type",null);
 		if(permType==null) {
-			throw new CertException(CM_CA_PREFIX + name + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
+			throw new CertException(permNS + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
 		}
 		caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
 		
@@ -203,6 +205,10 @@ public abstract class CA {
 		return name;
 	}
 	
+	
+	public String getPermNS() {
+		return permNS;
+	}
 	
 	public String getPermType() {
 		return permType;

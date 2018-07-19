@@ -201,11 +201,11 @@ public class CMArtiChangeForm extends Page {
 								}
 								
 								hgen.text("IPs allowed, separated by commas.").end()
-									.input(fields[11], "SANs", false, "value="+(sb==null?"":sb.toString()),"style=width:180%;");
+									.input(fields[11], "SANs", false, "value="+(sb==null?"":sb.toString()),"style=width:130%;");
 //							}
-							hgen.input(fields[2],"Namespace",true,"value="+arti.getNs(),"style=width:180%;")
-								.input(fields[3],"Directory", true, "value="+arti.getDir(),"style=width:180%;")
-								.input(fields[4],"Certificate Authority",true,"value="+arti.getCa(),"style=width:180%;")
+							hgen.input(fields[2],"Namespace",true,"value="+arti.getNs(),"style=width:130%;")
+								.input(fields[3],"Directory", true, "value="+arti.getDir(),"style=width:130%;")
+								.input(fields[4],"Certificate Authority",true,"value="+arti.getCa(),"style=width:130%;")
 								.input(fields[5],"O/S User",true,"value="+arti.getOsUser())
 								.input(fields[6],"Renewal Days before Expiration", true, "value="+arti.getRenewDays(),"style=width:20%;")
 								.input(fields[7],"Notification",true,"value="+arti.getNotification())

@@ -51,7 +51,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 
 	@Override
 	public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-		File fks = new File(dir,arti.getNs()+'.'+kst);
+		File fks = new File(dir,arti.getNs()+'.'+(kst=="pkcs12"?"p12":kst));
 		try {
 			KeyStore jks = KeyStore.getInstance(kst);
 			if(fks.exists()) {
@@ -118,13 +118,14 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 			write(fks,Chmod.to400,jks,keystorePassArray);
 			
 			// Change out to TrustStore
-			fks = new File(dir,arti.getNs()+".trust."+kst);
+			// NOTE: PKCS12 does NOT support Trusted Entries.  Put in JKS Always
+			fks = new File(dir,arti.getNs()+".trust.jks");
 			if(fks.exists()) {
 				File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
 				fks.renameTo(backup);
 			}	
 
-			jks = KeyStore.getInstance(kst);
+			jks = KeyStore.getInstance("jks");
 			
 			// Set Truststore Password
 			addProperty(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());

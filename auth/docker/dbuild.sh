@@ -9,14 +9,23 @@ fi
 
 . ./d.props
 
-# Create the Config (Security) Image
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.config >../sample/Dockerfile
+# Create the AAF Config (Security) Images
 cd ..
 cp ../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar sample/bin
+
+# AAF Config image (for AAF itself)
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.config > sample/Dockerfile
 docker build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
+
+# AAF Agent Image (for Clients)
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.client > sample/Dockerfile
+docker build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
+
+# Clean up 
 rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
 cd -
 
+########
 # Second, build a core Docker Image
 echo Building aaf_$AAF_COMPONENT...
 # Apply currrent Properties to Docker file, and put in place.

@@ -38,6 +38,7 @@ import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.util.MyConsole;
 import org.onap.aaf.cadi.util.SubStandardConsole;
@@ -311,9 +312,8 @@ public class AAFSSO {
 				addProp(Config.AAF_LOCATE_URL, locateUrl);
 			}
 			
-			String aafUrl = "https://AAF_LOCATE_URL/AAF_NS.service:2.0";
-			access.setProperty(Config.AAF_URL, aafUrl);
-			access.setProperty(Config.CM_URL, "https://AAF_LOCATE_URL/AAF_NS.cm:2.0");
+			access.setProperty(Config.AAF_URL, Defaults.AAF_URL);
+			access.setProperty(Config.CM_URL, Defaults.CM_URL);
 			String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
 			if(cadiLatitude==null) {
 				System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");

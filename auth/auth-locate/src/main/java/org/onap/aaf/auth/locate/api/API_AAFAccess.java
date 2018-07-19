@@ -135,19 +135,27 @@ public class API_AAFAccess {
 				,"text/plain","*/*","*");
 
 		/**
-		 * Query User Has Perm
+		 * Query User Has Perm is DEPRECATED
+		 * 
+		 * Need to move towards NS declaration... is this even being used?
+		 * @deprecated
 		 */
 		gwAPI.route(HttpMethods.GET,"/ask/:user/has/:type/:instance/:action",API.VOID,new LocateCode(facade,USER_HAS_PERM, true) {
 			@Override
 			public void handle(final AuthzTrans trans, final HttpServletRequest req, HttpServletResponse resp) throws Exception {
 				try {
+					String type = pathParam(req,":type");
+					int idx = type.lastIndexOf('.');
+					String ns = type.substring(0,idx);
+					type = type.substring(idx+1);
 					resp.getOutputStream().print(
 							gwAPI.aafLurPerm.fish(new Principal() {
 								public String getName() {
 									return pathParam(req,":user");
 								};
 							}, new AAFPermission(
-								pathParam(req,":type"),
+								ns,
+								type,
 								pathParam(req,":instance"),
 								pathParam(req,":action"))));
 					resp.setStatus(HttpStatus.OK_200);

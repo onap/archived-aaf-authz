@@ -31,6 +31,7 @@ import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
@@ -103,8 +104,7 @@ public class OnapClientExample {
 				// Use this Token in your client calls with "Tokenized Client" (TzClient)
 				// These should NOT be used cross thread.
 				// Get Hello Service URL... roll your own in your own world.
-				final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL, 
-						"https://AAF_LOCATE_URL/AAF_NS.hello:2.0");
+				final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Defaults.HELLO_URL);
 
 
 				TzClient helloClient = tcf.newTzClient(endServicesURL);

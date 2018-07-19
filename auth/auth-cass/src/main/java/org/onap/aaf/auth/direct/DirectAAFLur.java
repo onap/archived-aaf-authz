@@ -28,16 +28,16 @@ import java.util.List;
 
 import org.onap.aaf.auth.dao.cass.NsSplit;
 import org.onap.aaf.auth.dao.cass.PermDAO;
-import org.onap.aaf.auth.dao.cass.Status;
 import org.onap.aaf.auth.dao.cass.PermDAO.Data;
+import org.onap.aaf.auth.dao.cass.Status;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.env.NullTrans;
 import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.Permission;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.lur.LocalPermission;
 import org.onap.aaf.misc.env.util.Split;
 
@@ -52,17 +52,23 @@ public class DirectAAFLur implements Lur {
 	}
 
 	@Override
-	public boolean fish(Principal bait, Permission pond) {
+	public boolean fish(Principal bait, Permission ... pond) {
 		return fish(env.newTransNoAvg(),bait,pond);
 	}
 	
-	public boolean fish(AuthzTrans trans, Principal bait, Permission pond) {
+	public boolean fish(AuthzTrans trans, Principal bait, Permission ... pond) {
+		boolean rv = false;
 		Result<List<Data>> pdr = question.getPermsByUser(trans, bait.getName(),false);
 		switch(pdr.status) {
 			case OK:
 				for(PermDAO.Data d : pdr.value) {
-					if(new PermPermission(d).match(pond)) {
-						return true;
+					if(!rv) {
+						for (Permission p : pond) {
+							if(new PermPermission(d).match(p)) {
+								rv=true;
+								break;
+							}
+						}
 					}
 				}
 				break;
@@ -72,7 +78,7 @@ public class DirectAAFLur implements Lur {
 			default:
 				trans.error().log("Can't access Cassandra to fulfill Permission Query: ",pdr.status,"-",pdr.details);
 		}
-		return false;
+		return rv;
 	}
 
 	@Override
@@ -94,7 +100,7 @@ public class DirectAAFLur implements Lur {
 	}
 
 	@Override
-	public boolean handlesExclusively(Permission pond) {
+	public boolean handlesExclusively(Permission ... pond) {
 		return false;
 	}
 	

@@ -87,6 +87,7 @@ public class RoleDetail extends Page {
 	 *
 	 */
 	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
+		private static final String ACCESS = "access";
 		private Slot sRoleName,sRole,sUserRole,sMayWrite,sMayApprove,sMark,sNS;
 		public Model(AuthzEnv env) {
 			sRoleName = env.slot(NAME+".role");
@@ -125,9 +126,9 @@ public class RoleDetail extends Page {
 								if(!roles.isEmpty()) {
 									Role role = fr.value.getRole().get(0);
 									trans.put(sRole, role);
-									Boolean mayWrite = trans.fish(new AAFPermission(role.getNs()+".access",":role:"+role.getName(),"write"));
+									Boolean mayWrite = trans.fish(new AAFPermission(role.getNs(),ACCESS,":role:"+role.getName(),"write"));
 									trans.put(sMayWrite,mayWrite);
-									Boolean mayApprove = trans.fish(new AAFPermission(role.getNs()+".access",":role:"+role.getName(),"approve"));
+									Boolean mayApprove = trans.fish(new AAFPermission(role.getNs(),ACCESS,":role:"+role.getName(),"approve"));
 									trans.put(sMayApprove, mayApprove);
 									
 									if(mayWrite || mayApprove) {

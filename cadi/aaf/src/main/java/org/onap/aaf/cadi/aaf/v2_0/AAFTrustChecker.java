@@ -55,8 +55,13 @@ public class AAFTrustChecker implements TrustChecker {
 		AAFPermission temp=null;
 		if(str!=null) {
 			String[] sp = Split.splitTrim('|', str);
-			if(sp.length==3) {
-				temp = new AAFPermission(sp[0],sp[1],sp[2]);
+			switch(sp.length) {
+				case 3:
+					temp = new AAFPermission(null,sp[0],sp[1],sp[2]);
+					break;
+				case 4:
+					temp = new AAFPermission(sp[0],sp[1],sp[2],sp[3]);
+					break;
 			}
 		}
 		perm=temp;
@@ -69,8 +74,13 @@ public class AAFTrustChecker implements TrustChecker {
 		AAFPermission temp=null;
 		if(str!=null) {
 			String[] sp = Split.splitTrim('|', str);
-			if(sp.length==3) {
-				temp = new AAFPermission(sp[0],sp[1],sp[2]);
+			switch(sp.length) {
+				case 3:
+					temp = new AAFPermission(null,sp[0],sp[1],sp[2]);
+					break;
+				case 4:
+					temp = new AAFPermission(sp[0],sp[1],sp[2],sp[3]);
+					break;
 			}
 		}
 		perm=temp;

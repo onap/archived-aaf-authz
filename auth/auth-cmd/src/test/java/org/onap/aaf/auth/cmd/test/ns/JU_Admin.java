@@ -86,15 +86,15 @@ public class JU_Admin {
 		Locator.Item item = new Locator.Item() {
 		};
 		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://java.sun.com/j2se/1.3/");
+		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
 		when(loc.get(value)).thenReturn(uri);
 		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"add", "del","add","add"};
-		admin._exec(0, strArr);
-		
-		String[] strArr1 = {"del","add","add"};
-		admin._exec(0, strArr1);
+//		HRcli hcli = new HRcli(hman, uri, item, secSet);
+//		String[] strArr = {"add", "del","add","add"};
+//		admin._exec(0, strArr);
+//		
+//		String[] strArr1 = {"del","add","add"};
+//		admin._exec(0, strArr1);
 		
 	}
 

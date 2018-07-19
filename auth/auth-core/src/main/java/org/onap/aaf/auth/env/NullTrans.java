@@ -195,7 +195,7 @@ public class NullTrans implements AuthzTrans {
 	}
 
 	@Override
-	public boolean fish(Permission p) {
+	public boolean fish(Permission ... p) {
 		return false;
 	}
 

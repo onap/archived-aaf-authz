@@ -44,7 +44,7 @@ public class NullLur implements Lur {
 			return false;
 		}};
 
-	public boolean fish(Principal bait, Permission pond) {
+	public boolean fish(Principal bait, Permission ... pond) {
 		// Well, for Jenkins, this is ok... It finds out it can't do J2EE Security, and then looks at it's own
 //		System.err.println("CADI's LUR has not been configured, but is still being called.  Access is being denied");
 		return false;
@@ -56,7 +56,7 @@ public class NullLur implements Lur {
 	public void destroy() {
 	}
 
-	public boolean handlesExclusively(Permission pond) {
+	public boolean handlesExclusively(Permission ... pond) {
 		return false;
 	}
 

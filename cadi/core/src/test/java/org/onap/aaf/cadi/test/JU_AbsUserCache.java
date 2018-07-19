@@ -350,7 +350,7 @@ public class JU_AbsUserCache {
 	class AbsUserCacheCLStub<PERM extends Permission> extends AbsUserCache<PERM> implements CachingLur<PERM> {
 		public AbsUserCacheCLStub(AbsUserCache<PERM> cache) { super(cache); }
 		@Override public Permission createPerm(String p) { return null; }
-		@Override public boolean fish(Principal bait, Permission pond) { return false; }
+		@Override public boolean fish(Principal bait, Permission ... pond) { return false; }
 		@Override public void fishAll(Principal bait, List<Permission> permissions) { }
 		@Override public boolean handles(Principal principal) { return false; }
 		@Override public Resp reload(User<PERM> user) { return null; }
