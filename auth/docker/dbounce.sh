@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sh ./dstop.sh "$@"
-sh ./dstart.sh "$@"
+bash ./dstop.sh "$@"
+bash ./dstart.sh "$@"
