@@ -164,9 +164,7 @@ public class CMService {
 
 					} else {
 						for (String cn : req.value.fqdns) {
-							if(ignoreIPs) {
-								potentialSanNames.add(cn);
-							} else {
+							if(!ignoreIPs) {
 								try {
 									InetAddress[] ias = InetAddress.getAllByName(cn);
 									Set<String> potentialSanNames = new HashSet<>();
