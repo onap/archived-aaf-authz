@@ -2,10 +2,11 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright © 2017 AT&T Intellectual Property. All rights reserved.
 
+============================
 Installing from Source Code
 ============================
 
-*Note: this document assumes UNIX Bash Shell.  Being AAF works in Windows, but you will have to create your own script/instruction conversions.*
+*Note: this document assumes UNIX Bash Shell.  Being Java, AAF works in Windows, but you will have to create your own script/instruction conversions.*
 
 ------------------
 Modes

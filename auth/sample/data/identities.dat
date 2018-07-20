@@ -41,7 +41,7 @@ clamp|ONAP CLAMP Application|CLAMP|Application|||a|aaf_admin
 aai|ONAP AAI Application|AAI|ONAP Application|||a|aaf_admin
 appc|ONAP APPC Application|APPC|ONAP Application|||a|aaf_admin
 dcae|ONAP DCAE Application|CLAMP|ONAP Application|||a|aaf_admin
-dmaap-bc|ONAP DMaap BC Application|DMaap BC|ONAP Application|||_admina|aaf
+dmaap-bc|ONAP DMaap BC Application|DMaap BC|ONAP Application|||a|aaf_admin
 dmaap-mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
 oof|ONAP OOF Application|OOF|ONAP Application|||a|aaf_admin
 sdnc|ONAP SDNC Application|SDNC|ONAP Application|||a|aaf_admin

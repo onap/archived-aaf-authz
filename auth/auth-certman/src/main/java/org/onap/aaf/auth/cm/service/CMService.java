@@ -164,22 +164,25 @@ public class CMService {
 
 					} else {
 						for (String cn : req.value.fqdns) {
-							try {
-								InetAddress[] ias = InetAddress.getAllByName(cn);
-								Set<String> potentialSanNames = new HashSet<>();
-								for (InetAddress ia1 : ias) {
-									InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
-									if (primary == null && ias.length == 1 && trans.ip().equals(ia1.getHostAddress())) {
-										primary = ia1;
-									} else if (!cn.equals(ia1.getHostName())
-											&& !ia2.getHostName().equals(ia2.getHostAddress())) {
-										potentialSanNames.add(ia1.getHostName());
+							if(ignoreIPs) {
+								potentialSanNames.add(cn);
+							} else {
+								try {
+									InetAddress[] ias = InetAddress.getAllByName(cn);
+									Set<String> potentialSanNames = new HashSet<>();
+									for (InetAddress ia1 : ias) {
+										InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
+										if (primary == null && ias.length == 1 && trans.ip().equals(ia1.getHostAddress())) {
+											primary = ia1;
+										} else if (!cn.equals(ia1.getHostName())
+												&& !ia2.getHostName().equals(ia2.getHostAddress())) {
+											potentialSanNames.add(ia1.getHostName());
+										}
 									}
+								} catch (UnknownHostException e1) {
+									return Result.err(Result.ERR_BadData, "There is no DNS lookup for %s", cn);
 								}
-							} catch (UnknownHostException e1) {
-								return Result.err(Result.ERR_BadData, "There is no DNS lookup for %s", cn);
 							}
-
 						}
 					}
 				}
