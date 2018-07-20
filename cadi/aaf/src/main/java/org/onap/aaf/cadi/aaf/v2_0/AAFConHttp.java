@@ -49,7 +49,7 @@ import org.onap.aaf.misc.env.APIException;
 public class AAFConHttp extends AAFCon<HttpURLConnection> {
 	private final HMangr hman;
 
-	public AAFConHttp(Access access) throws APIException, CadiException, LocatorException {
+	public AAFConHttp(Access access) throws CadiException, LocatorException {
 		super(access,Config.AAF_URL,SecurityInfoC.instance(access, HttpURLConnection.class));
 		bestSS(si);
 		hman = new HMangr(access,Config.loadLocator(si, access.getProperty(Config.AAF_URL,null)));
@@ -64,7 +64,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 			} catch (APIException e) {
 				throw new CadiException(e);
 			}
-		} else if((s = access.getProperty(Config.AAF_APPID, null))!=null){
+		} else if((access.getProperty(Config.AAF_APPID, null))!=null){
 			try {
 				return new HBasicAuthSS(si,true);
 			} catch (IOException /*| GeneralSecurityException*/ e) {
@@ -75,19 +75,19 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 		}
 	}
 
-	public AAFConHttp(Access access, String tag) throws APIException, CadiException, LocatorException {
+	public AAFConHttp(Access access, String tag) throws CadiException, LocatorException {
 		super(access,tag,SecurityInfoC.instance(access, HttpURLConnection.class));
 		bestSS(si);
 		hman = new HMangr(access,Config.loadLocator(si, access.getProperty(tag,tag/*try the content itself*/)));
 	}
 
-	public AAFConHttp(Access access, String urlTag, SecurityInfoC<HttpURLConnection> si) throws CadiException, APIException, LocatorException {
+	public AAFConHttp(Access access, String urlTag, SecurityInfoC<HttpURLConnection> si) throws CadiException, LocatorException {
 		super(access,urlTag,si);
 		bestSS(si);
 		hman = new HMangr(access,Config.loadLocator(si, access.getProperty(urlTag,null)));
 	}
 
-	public AAFConHttp(Access access, Locator<URI> locator) throws CadiException, LocatorException, APIException {
+	public AAFConHttp(Access access, Locator<URI> locator) throws CadiException, LocatorException {
 		super(access,Config.AAF_URL,SecurityInfoC.instance(access, HttpURLConnection.class));
 		bestSS(si);
 		hman = new HMangr(access,locator);
@@ -135,7 +135,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 		}
 	}
 
-	public SecuritySetter<HttpURLConnection> x509Alias(String alias) throws APIException, CadiException {
+	public SecuritySetter<HttpURLConnection> x509Alias(String alias) throws CadiException {
 		try {
 			return set(new HX509SS(alias,si));
 		} catch (Exception e) {
@@ -168,7 +168,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 		}
 	}
 	@Override
-	public AbsTransferSS<HttpURLConnection> transferSS(TaggedPrincipal principal) throws CadiException {
+	public AbsTransferSS<HttpURLConnection> transferSS(TaggedPrincipal principal) {
 		return new HTransferSS(principal, app,si);
 	}
 	
@@ -199,7 +199,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 
 	@Override
 	public <RET> RET best(Retryable<RET> retryable) throws LocatorException, CadiException, APIException {
-		return hman.best(si.defSS, (Retryable<RET>)retryable);
+		return hman.best(si.defSS, retryable);
 	}
 
 	/* (non-Javadoc)
@@ -207,7 +207,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 	 */
 	@Override
 	public <RET> RET bestForUser(GetSetter getSetter, Retryable<RET> retryable) throws LocatorException, CadiException, APIException {
-		return hman.best(getSetter.get(this), (Retryable<RET>)retryable);
+		return hman.best(getSetter.get(this), retryable);
 	}
 
 	/* (non-Javadoc)
@@ -230,7 +230,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 	 * @see org.onap.aaf.cadi.aaf.v2_0.AAFCon#setInitURI(java.lang.String)
 	 */
 	@Override
-	protected void setInitURI(String uriString) throws CadiException {
+	protected void setInitURI(String uriString) {
 		// Using Locator, not URLString, which is mostly for DME2
 	}
 

@@ -166,19 +166,21 @@ public abstract class AAFCon<CLIENT> implements Connector {
 						access.printf(Access.Level.WARN,"%s, %s or %s required before use.", Config.CADI_ALIAS, Config.AAF_APPID, Config.OAUTH_CLIENT_ID);
 						set(si.defSS);
 					} else {
-						set(si.defSS=x509Alias(alias));
+						si.defSS=x509Alias(alias);
+						set(si.defSS);
 					}
 				} else {
-					if(mechid!=null && encpass !=null) {
-						set(si.defSS=basicAuth(mechid, encpass));
+					if(mechid!=null) {
+						si.defSS=basicAuth(mechid, encpass);
+						set(si.defSS);
 					} else {
-						set(si.defSS=new SecuritySetter<CLIENT>() {
-							
+						si.defSS=new SecuritySetter<CLIENT>() {
+
 							@Override
 							public String getID() {
 								return "";
 							}
-			
+
 							@Override
 							public void setSecurity(CLIENT client) throws CadiException {
 								throw new CadiException("AAFCon has not been initialized with Credentials (SecuritySetter)");
@@ -188,7 +190,8 @@ public abstract class AAFCon<CLIENT> implements Connector {
 							public int setLastResponse(int respCode) {
 								return 0;
 							}
-						});
+						};
+						set(si.defSS);
 					}
 				}
 			}
@@ -249,22 +252,21 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	
 	public AAFAuthn<CLIENT> newAuthn() throws APIException {
 		try {
-			return new AAFAuthn<CLIENT>(this);
-		} catch (APIException e) {
-			throw e;
+			return new AAFAuthn<>(this);
 		} catch (Exception e) {
 			throw new APIException(e);
 		}
 	}
 
 	public AAFAuthn<CLIENT> newAuthn(AbsUserCache<AAFPermission> c) {
-		return new AAFAuthn<CLIENT>(this,c);
+		return new AAFAuthn<>(this, c);
 	}
 
 	public AAFLurPerm newLur() throws CadiException {
 		try {
 			if(lur==null) {
-				return (lur =  new AAFLurPerm(this));
+				lur = new AAFLurPerm(this);
+				return lur;
 			} else {
 				return new AAFLurPerm(this,lur);
 			}
@@ -357,13 +359,13 @@ public abstract class AAFCon<CLIENT> implements Connector {
 				Error err = errDF.newData().in(TYPE.JSON).load(f.body()).asObject();
 				return Vars.convert(err.getText(),err.getVariables());
 			} catch (APIException e){
-				// just return the body below
+				access.log(e);
 			}
 		}
 		return text;
 	}
 	
-	public static AAFCon<?> newInstance(PropAccess pa) throws APIException, CadiException, LocatorException {
+	public static AAFCon<?> newInstance(PropAccess pa) throws CadiException, LocatorException {
 		// Potentially add plugin for other kinds of Access
 		return new AAFConHttp(pa);
 	}

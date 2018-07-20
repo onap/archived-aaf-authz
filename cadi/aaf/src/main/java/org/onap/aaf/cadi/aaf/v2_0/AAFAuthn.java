@@ -43,7 +43,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 	 * @throws Exception ..
 	 */
 	// Package on purpose
-	AAFAuthn(AAFCon<CLIENT> con) throws Exception {
+	AAFAuthn(AAFCon<CLIENT> con) {
 		super(con.access,con.cleanInterval,con.highCount,con.usageRefreshTriggerCount);
 		this.con = con;
 	}
@@ -73,7 +73,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 	 * 
 	 * Convenience function.  Passes "null" for State object
 	 */
-	public String validate(String user, String password) throws IOException, CadiException {
+	public String validate(String user, String password) throws IOException {
 		return validate(user,password,null);
 	}
 	
@@ -90,7 +90,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 	 * @throws CadiException 
 	 * @throws Exception
 	 */
-	public String validate(String user, String password, Object state) throws IOException, CadiException {
+	public String validate(String user, String password, Object state) throws IOException {
 		password = access.decrypt(password, false);
 		byte[] bytes = password.getBytes();
 		User<AAFPermission> usr = getUser(user,bytes);
@@ -103,7 +103,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 			}
 		}
 
-		AAFCachedPrincipal cp = new AAFCachedPrincipal(this,con.app, user, bytes, con.cleanInterval);
+		AAFCachedPrincipal cp = new AAFCachedPrincipal(user, bytes, con.cleanInterval);
 		// Since I've relocated the Validation piece in the Principal, just revalidate, then do Switch
 		// Statement
 		switch(cp.revalidate(state)) {
@@ -127,9 +127,10 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 	}
 	
 	private class AAFCachedPrincipal extends ConfigPrincipal implements CachedPrincipal {
-		private long expires,timeToLive;
+		private long expires;
+		private long timeToLive;
 
-		public AAFCachedPrincipal(AAFAuthn<?> aaf, String app, String name, byte[] pass, int timeToLive) {
+		private AAFCachedPrincipal(String name, byte[] pass, int timeToLive) {
 			super(name,pass);
 			this.timeToLive = timeToLive;
 			expires = timeToLive + System.currentTimeMillis();
@@ -164,6 +165,6 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 		public long expires() {
 			return expires;
 		}
-	};
+	}
 
 }

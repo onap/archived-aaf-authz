@@ -136,16 +136,13 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
      * @return
      * @throws LocatorException 
      */
-    protected synchronized AAFConHttp _newAAFConHttp() throws CadiException, LocatorException {
-		try {
+		protected synchronized AAFConHttp _newAAFConHttp() throws CadiException, LocatorException {
 			if(aafCon==null) {
 				aafCon = new AAFConHttp(access);
-			} 
+			}
 			return aafCon;
-		} catch (APIException e) {
-			throw new CadiException(e);
+
 		}
-    }
     
     // This is a method, so we can overload for AAFAPI
     public String aaf_url() {
