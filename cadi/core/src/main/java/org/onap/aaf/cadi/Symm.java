@@ -483,7 +483,8 @@ public class Symm {
 		   switch(read) {
 			   case -1: 
 			   case '=':
-			   case '\n': 
+				 case '\n':
+				 case '\r':
 				   return -1;
 		   }
 		   for(int i=0;i<codec.length;++i) {
