@@ -2,7 +2,7 @@
 ## org.osaaf.aaf.locate 
 ## AAF Locator Properties
 ##
-cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opts/app/osaaf/etc/org.osaaf.aaf.orgs.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
+cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
 aaf_component=AAF_NS.locator:2.1.2
 port=8095
 

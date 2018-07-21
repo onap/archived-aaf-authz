@@ -61,6 +61,14 @@
 			<artifactId>aaf-auth-cass</artifactId>
 		</dependency>
 
+                <!-- Add the Organizations you wish to support. You can delete ONAP if
+                        you have something else Match with Property Entry: Organization.<root ns>,
+                        i.e. Organization.onap.org=org.onap.org.DefaultOrg -->
+                <dependency>
+                        <groupId>org.onap.aaf.authz</groupId>
+                        <artifactId>aaf-auth-deforg</artifactId>
+                </dependency>
+
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
