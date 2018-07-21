@@ -40,11 +40,11 @@ done
 . ./aaf.props
 
 # Need AAF_FQDN's IP, because not might not be available in mini-container
-if [ "$AAF_AAF_FQDN_IP" = "" ]; then
-  AAF_AAF_FQDN_IP=$(host $AAF_FQDN | grep "has address" | tail -1 | cut -f 4 -d ' ')
-  if [ "$AAF_AAF_FQDN_IP" = "" ]; then
-    read -p "IP of $AAF_FQDN: " AAF_AAF_FQDN_IP
-    echo "AAF_AAF_FQDN_IP=$AAF_AAF_FQDN_IP" >> ./aaf.props
+if [ "$AAF_FQDN_IP" = "" ]; then
+  AAF_FQDN_IP=$(host $AAF_FQDN | grep "has address" | tail -1 | cut -f 4 -d ' ')
+  if [ "$AAF_FQDN_IP" = "" ]; then
+    read -p "IP of $AAF_FQDN: " AAF_FQDN_IP
+    echo "AAF_FQDN_IP=$AAF_FQDN_IP" >> ./aaf.props
   fi
 fi
 
@@ -58,7 +58,7 @@ docker run \
     -it \
     --rm \
     --mount 'type=volume,src='${VOLUME}',dst=/opt/app/osaaf,volume-driver='${DRIVER} \
-    --add-host="$AAF_FQDN:$AAF_AAF_FQDN_IP" \
+    --add-host="$AAF_FQDN:$AAF_FQDN_IP" \
     --env AAF_FQDN=${AAF_FQDN} \
     --env DEPLOY_FQI=${DEPLOY_FQI} \
     --env DEPLOY_PASSWORD=${DEPLOY_PASSWORD} \

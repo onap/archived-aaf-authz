@@ -1,5 +1,8 @@
-tar -xvf dat.gz
-for T in x509 ns_attrib config cred user_role perm role artifact ns; do
-  cqlsh -e "use authz; COPY $T FROM '$T.dat' WITH DELIMITER='|';"
+mkdir -p dats
+cd dats
+tar -xvf ../dat.gz
+for T in $(ls *.dat); do
+  cqlsh -e "use authz; COPY ${T%.dat} FROM '$T' WITH DELIMITER='|';"
 done
-
+cd -
+rm -Rf dats

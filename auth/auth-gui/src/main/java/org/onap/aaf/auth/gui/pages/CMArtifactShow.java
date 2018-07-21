@@ -102,7 +102,7 @@ public class CMArtifactShow extends Page {
 										"&machine='+machine.value,'_self');"
 							    	).end(js);
 								hgen.leaf("input","id=machine","style=margin:1em 1em 1em 1em;width:30%").end();
-								hgen.leaf(HTMLGen.A,"class=greenbutton","href=javascript:newArtifact()","style=color:white;").text("New Machine").end();
+								hgen.leaf(HTMLGen.A,"class=greenbutton","href=javascript:newArtifact()","style=color:white;").text("New FQDN").end();
 							}
 						});
 						}
@@ -146,7 +146,7 @@ public class CMArtifactShow extends Page {
 			this.sc = sc;
 		}
 
-		private static final String[] headers = new String[]{"Machine","Directory","CA","Renews","Expires",""};
+		private static final String[] headers = new String[]{"FQDN","Directory","CA","Renews","Expires",""};
 		@Override
 		public String[] headers() {
 			return headers;
