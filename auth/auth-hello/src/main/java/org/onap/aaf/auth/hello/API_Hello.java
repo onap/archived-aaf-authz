@@ -21,6 +21,9 @@
 
 package org.onap.aaf.auth.hello;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +42,9 @@ import org.onap.aaf.misc.env.TimeTaken;
  */
 public class API_Hello {
 
+
+	private static final String APPLICATION_JSON = "application/json";
+	protected static final byte[] NOT_JSON = "Data does not look like JSON".getBytes();
 
 	// Hide Public Constructor
 	private API_Hello() {}
@@ -85,10 +91,37 @@ public class API_Hello {
 			}
 		}); 
 
-		////////
-		// REST APIs
-		///////
-		oauthHello.route(oauthHello.env,HttpMethods.GET,"/resthello/:perm*",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello OAuth") {
+////////////////
+// REST APIs
+////////////////
+
+		////////////////
+		// CREATE/POST
+		////////////////
+		oauthHello.route(oauthHello.env,HttpMethods.POST,"/resthello/:id",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello Create") {
+			@Override
+			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+				BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				while(br.ready()) {
+					sb.append(br.readLine());
+				}
+				String content = sb.toString();
+				trans.info().printf("Content from %s: %s\n", pathParam(req, ":id"),content);
+				if(content.startsWith("{") && content.endsWith("}")) {
+					resp.setStatus(201 /* OK */);
+				} else {
+					resp.getOutputStream().write(NOT_JSON);
+					resp.setStatus(406);
+				}
+			}
+		},APPLICATION_JSON); 
+
+
+		////////////////
+		// READ/GET
+		////////////////
+		oauthHello.route(oauthHello.env,HttpMethods.GET,"/resthello/:id/:perm*",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello Read") {
 			@Override
 			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 				resp.setStatus(200 /* OK */);
@@ -96,6 +129,7 @@ public class API_Hello {
 				sb.append(req.getUserPrincipal().getName());
 				sb.append('"');
 				String perm = pathParam(req, "perm");
+				trans.info().printf("Read request from %s: %s\n", pathParam(req, ":id"),perm);
 				if(perm!=null && perm.length()>0) {
 					TimeTaken tt = trans.start("Authorize perm", Env.REMOTE);
 					try {
@@ -113,9 +147,42 @@ public class API_Hello {
 				os.println(sb.toString());
 				trans.info().printf("Said 'RESTful Hello' to %s, Authentication type: %s",trans.getUserPrincipal().getName(),trans.getUserPrincipal().getClass().getSimpleName());
 			}
-		},"application/json"); 
+		},APPLICATION_JSON); 
 		
-		
-		
+		////////////////
+		// UPDATE/PUT
+		////////////////
+		oauthHello.route(oauthHello.env,HttpMethods.PUT,"/resthello/:id",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello Update") {
+			@Override
+			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+				BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				while(br.ready()) {
+					sb.append(br.readLine());
+				}
+				String content = sb.toString();
+				trans.info().printf("Content from %s: %s\n", pathParam(req, ":id"),content);
+				if(content.startsWith("{") && content.endsWith("}")) {
+					resp.setStatus(200 /* OK */);
+					resp.getOutputStream().print(content);
+				} else {
+					resp.getOutputStream().write(NOT_JSON);
+					resp.setStatus(406);
+				}
+			}
+		},APPLICATION_JSON); 
+
+
+		////////////////
+		// DELETE
+		////////////////
+		oauthHello.route(oauthHello.env,HttpMethods.DELETE,"/resthello/:id",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello Delete") {
+			@Override
+			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+				trans.info().printf("Delete requested on %s\n", pathParam(req, ":id"));
+				resp.setStatus(200 /* OK */);
+			}
+		},APPLICATION_JSON); 
+
 	}
 }

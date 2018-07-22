@@ -217,6 +217,20 @@ public abstract class Rcli<CT> {
 		return client.futureCreate(Void.class);
 	}
 
+	public Future<Void> create(String pathinfo, String contentType, EClient.Transfer content) throws APIException, CadiException {
+		final ParsePath pp = new ParsePath(pathinfo);
+
+		EClient<CT> client = client();
+		client.setMethod(POST);
+		client.addHeader(CONTENT_TYPE,contentType);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
+		client.setPayload(content);
+		client.send();
+		return client.futureCreate(Void.class);
+	}
+
 
 	/**
 	 * Post Data in WWW expected format, with the format tag1=value1&tag2=value2, etc
@@ -462,6 +476,22 @@ public abstract class Rcli<CT> {
 		client.send();
 		return client.futureReadString();
 	}
+	
+	public Future<String> update(String pathinfo, String contentType, EClient.Transfer content) throws APIException, CadiException {
+		final ParsePath pp = new ParsePath(pathinfo);
+
+		EClient<CT> client = client();
+		client.setMethod(PUT);
+		client.addHeader(CONTENT_TYPE,contentType);
+		client.setPathInfo(pp.path());
+		client.setQueryParams(pp.query());
+		client.setFragment(pp.frag());
+		client.setPayload(content);
+		client.send();
+		return client.futureReadString();
+	}
+
+
 
 
 	public<T> Future<T> update(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
@@ -503,6 +533,8 @@ public abstract class Rcli<CT> {
 		client.send();
 		return client.future(t);
 	}
+	
+
 
 	/**
 	 * A method to update with a VOID
@@ -531,6 +563,7 @@ public abstract class Rcli<CT> {
 		client.send();
 		return client.future(null);
 	}
+	
 
 	public<T> Future<T> delete(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
 		final ParsePath pp = new ParsePath(pathinfo);
