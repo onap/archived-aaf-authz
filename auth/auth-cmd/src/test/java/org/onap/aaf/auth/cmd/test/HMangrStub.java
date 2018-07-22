@@ -49,6 +49,10 @@ public class HMangrStub extends HMangr {
 		return null;
 	}
 	@Override public<RET> RET oneOf(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable, boolean notify, String host) {
+		try {
+			return retryable.code(clientMock);
+		} catch (Exception e) {
+		}
 		return null;
 	}
 }

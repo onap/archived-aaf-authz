@@ -63,7 +63,7 @@ public class JU_Grant {
 	@Mock private Locator<URI> locMock;
 	@Mock private Writer wrtMock;
 	@Mock private Rcli<HttpURLConnection> clientMock;
-	@Mock private Future<Object> futureMock;
+	@Mock private Future<String> futureMock;
 
 	private PropAccess access;
 	private HMangrStub hman;	
@@ -74,9 +74,9 @@ public class JU_Grant {
 	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		MockitoAnnotations.initMocks(this);
 
-		when(clientMock.create(any(), any(), any())).thenReturn(futureMock);
-		when(clientMock.delete(any(), any(), any())).thenReturn(futureMock);
-		when(clientMock.update(any(), any(), any())).thenReturn(futureMock);
+		when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
+		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
+		when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
 
 		hman = new HMangrStub(access, locMock, clientMock);
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);

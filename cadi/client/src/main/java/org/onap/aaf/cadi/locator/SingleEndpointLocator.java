@@ -22,6 +22,7 @@ package org.onap.aaf.cadi.locator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
@@ -29,6 +30,7 @@ import org.onap.aaf.cadi.LocatorException;
 public class SingleEndpointLocator implements Locator<URI> {
 	private final URI uri;
 	private final static Item item = new Item() {};  
+	private Date noRetryUntil;
 	
 	public SingleEndpointLocator(final URI uri) {
 		this.uri = uri;
@@ -45,12 +47,20 @@ public class SingleEndpointLocator implements Locator<URI> {
 
 	@Override
 	public boolean hasItems() {
+		if(noRetryUntil!=null) {
+			if(new Date().after(noRetryUntil)) {
+				noRetryUntil = null;
+			} else {
+				return false;
+			}
+		}
 		return true;
 	}
 
 	@Override
 	public void invalidate(Item item) throws LocatorException {
-		// Endpoints cannot be invalidated
+		// one minute timeout, because there is no other item
+		noRetryUntil = new Date(System.currentTimeMillis()+60000); 
 	}
 
 	@Override

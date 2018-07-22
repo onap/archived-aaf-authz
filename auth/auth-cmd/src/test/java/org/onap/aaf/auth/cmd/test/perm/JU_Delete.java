@@ -24,7 +24,7 @@ package org.onap.aaf.auth.cmd.test.perm;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-
+import org.hamcrest.core.AnyOf;
 import org.junit.Before;
 
 import org.onap.aaf.auth.cmd.test.HMangrStub;
@@ -62,7 +62,7 @@ public class JU_Delete {
 	@Mock private Locator<URI> locMock;
 	@Mock private Writer wrtMock;
 	@Mock private Rcli<HttpURLConnection> clientMock;
-	@Mock private Future<Object> futureMock;
+	@Mock private Future<String> futureMock;
 
 	private static Delete del;
 	
@@ -75,9 +75,9 @@ public class JU_Delete {
 	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		MockitoAnnotations.initMocks(this);
 
-		when(clientMock.create(any(), any(), any())).thenReturn(futureMock);
-		when(clientMock.delete(any(), any(), any())).thenReturn(futureMock);
-		when(clientMock.update(any(), any(), any())).thenReturn(futureMock);
+		when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
+		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
+		when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
 
 		hman = new HMangrStub(access, locMock, clientMock);
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);

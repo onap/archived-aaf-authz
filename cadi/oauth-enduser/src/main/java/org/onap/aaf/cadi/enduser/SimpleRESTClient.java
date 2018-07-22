@@ -21,11 +21,14 @@
 package org.onap.aaf.cadi.enduser;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.security.Principal;
 
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.client.EClient;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
@@ -37,8 +40,10 @@ import org.onap.aaf.cadi.oauth.TokenClientFactory;
 import org.onap.aaf.cadi.oauth.TzClient;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.util.StringBuilderWriter;
 
 public class SimpleRESTClient {
+	private static final String APPLICATION_JSON = "application/json";
 	private static final String[] EMPTY = new String[0];
 	private final TokenClient tokenClient;
 	private final TzClient restClient;
@@ -93,13 +98,116 @@ public class SimpleRESTClient {
 		}
 		return this;
 	}
+	
+	/**
+	 * Single Threaded Class for building up content
+	 * @author jg1555
+	 *
+	 */
+	public static class Input {
+		private static final byte[] EMPTY_STREAM_BYTES = "".getBytes();
 
+		private String content;
+		private StringBuilder sb;
+		
+		public Input() {
+			content = null;
+			sb = null;
+		}
+		
+		public Input(final String content) {
+			this.content = content;
+		}
+		
+		public void set(final String content) {
+			this.content = content;
+		}
+		
+		public PrintWriter writer() {
+			return new PrintWriter(new StringBuilderWriter(builder()));
+		}
+		
+		public StringBuilder builder() {
+			if(sb==null) {
+				sb = new StringBuilder();
+				content = null;
+			}
+			return sb;
+		}
+		
+		/**
+		 * Reuse StringBuilder object
+		 */
+		public void clear() {
+			content = null;
+			if(sb!=null) {
+				sb.setLength(0);
+			}
+		}
+		
+		@Override
+		public String toString() {
+			if(content!=null) {
+				return content;
+			} else if(sb!=null) {
+				return sb.toString();
+			} else {
+				return "";
+			}
+		}
+
+		public byte[] getBytes() {
+			byte[] rv;
+			if(content==null) {
+				if(sb==null) {
+					rv = EMPTY_STREAM_BYTES;
+				} else {
+					rv = sb.toString().getBytes();	
+				}
+			} else {
+				rv = content.getBytes();
+			}
+			content = null;
+			return rv;
+		}
+	}
+
+	/////////////////////////////////////////////////////////////
+	//  
+	// CREATE
+	//
+	/////////////////////////////////////////////////////////////
+	public void create(final String path, final Input input) throws RESTException, CadiException, LocatorException, APIException  {
+		post(path,APPLICATION_JSON, input);
+	}
+
+	public void post(final String path, final Input input) throws RESTException, CadiException, LocatorException, APIException  {
+		post(path,APPLICATION_JSON, input);
+	}
+
+	public void post(final String path, final String contentType, final Input input) throws RESTException, CadiException, LocatorException, APIException  {
+		Future<Void> future = restClient.best(new Retryable<Future<Void>>() {
+			@Override
+			public Future<Void> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+				return client.create(path, contentType, new ETransfer(input));
+			}
+		});
+		if(!future.get(callTimeout)) {
+			throw new RESTException(future);
+		}					
+	}
+
+	/////////////////////////////////////////////////////////////
+	//  
+	// READ
+	//
+	/////////////////////////////////////////////////////////////
 	public String read(final String path) throws RESTException, CadiException, LocatorException, APIException  {
-		return get(path,"application/json");
+		return get(path,APPLICATION_JSON);
 	}
 
 	public String get(final String path) throws RESTException, CadiException, LocatorException, APIException  {
-		return get(path,"application/json");
+		return get(path,APPLICATION_JSON);
 	}
 
 	public String get(final String path, final String accepts) throws RESTException, CadiException, LocatorException, APIException  {
@@ -116,6 +224,69 @@ public class SimpleRESTClient {
 		}					
 	}
 	
+	/////////////////////////////////////////////////////////////
+	//  
+	// UPDATE
+	//
+	/////////////////////////////////////////////////////////////
+
+	public String update(final String path, final Input input) throws RESTException, CadiException, LocatorException, APIException  {
+		return put(path,APPLICATION_JSON, input);
+	}
+
+	public String put(final String path, final Input input) throws RESTException, CadiException, LocatorException, APIException  {
+		return put(path,APPLICATION_JSON, input);
+	}
+
+	public String put(final String path, final String contentType, final Input input) throws RESTException, CadiException, LocatorException, APIException  {
+		Future<String> future = restClient.best(new Retryable<Future<String>>() {
+			@Override
+			public Future<String> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+				return client.update(path, contentType, new ETransfer(input));
+			}
+		});
+		if(future.get(callTimeout)) {
+			return future.value;
+		} else {
+			throw new RESTException(future);
+		}					
+	}
+
+	/////////////////////////////////////////////////////////////
+	//  
+	// DELETE
+	//
+	/////////////////////////////////////////////////////////////
+	public void delete(final String path) throws RESTException, CadiException, LocatorException, APIException  {
+		delete(path,APPLICATION_JSON);
+	}
+		
+	public void delete(final String path, final String contentType) throws RESTException, CadiException, LocatorException, APIException  {
+		Future<Void> future = restClient.best(new Retryable<Future<Void>>() {
+			@Override
+			public Future<Void> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+				return client.delete(path, contentType);
+			}
+		});
+		if(!future.get(callTimeout)) {
+			throw new RESTException(future);
+		}					
+	}
+
+	/////////////////////////////////////////////////////////////
+	
+	private static class ETransfer implements EClient.Transfer {
+		private Input input;
+		public ETransfer(final Input input) {
+			this.input = input;
+		}
+		
+		@Override
+		public void transfer(OutputStream os) throws IOException, APIException {
+			os.write(input.getBytes());
+		}
+	}
+
 	public interface Headers {
 		String[] headers();
 	}
