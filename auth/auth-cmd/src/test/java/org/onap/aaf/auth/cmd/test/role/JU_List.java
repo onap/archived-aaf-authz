@@ -25,12 +25,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.role.List;
 import org.onap.aaf.auth.cmd.role.Role;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
+import org.onap.aaf.auth.cmd.perm.Perm;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
@@ -50,9 +53,12 @@ import aaf.v2_0.Pkey;
 import aaf.v2_0.Roles;
 import aaf.v2_0.UserRoles;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,16 +71,19 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 public class JU_List {
+
+	private List list;
 	
-	AAFcli cli;
-	Role role;
-	List list;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<String> futureMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
 
 	private class ListRolesStub extends List {
 
@@ -105,14 +114,21 @@ public class JU_List {
 	
 	@Before
 	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException{
-		prop = new PropAccess();
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
+		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
+		when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		role = new Role(aafcli);
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		Role role = new Role(aafcli);
+		Perm perm = new Perm(role);
+		
+
 		list = new List(role);
 	}
 	
