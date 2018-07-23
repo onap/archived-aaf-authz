@@ -24,7 +24,6 @@ package org.onap.aaf.auth.cmd.test.perm;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import org.hamcrest.core.AnyOf;
 import org.junit.Before;
 
 import org.onap.aaf.auth.cmd.test.HMangrStub;
@@ -64,7 +63,7 @@ public class JU_Delete {
 	@Mock private Rcli<HttpURLConnection> clientMock;
 	@Mock private Future<String> futureMock;
 
-	private static Delete del;
+	private Delete del;
 	
 	private PropAccess access;
 	private HMangrStub hman;	

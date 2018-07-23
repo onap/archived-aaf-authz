@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,9 +41,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.ns.Create;
-import org.onap.aaf.auth.cmd.ns.NS;
+import org.onap.aaf.auth.cmd.perm.Create;
+import org.onap.aaf.auth.cmd.perm.Perm;
+import org.onap.aaf.auth.cmd.role.Role;
 import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
@@ -51,6 +53,8 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.config.SecurityInfoC;
+import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -62,14 +66,15 @@ public class JU_Create {
 	@Mock private Rcli<HttpURLConnection> clientMock;
 	@Mock private Future<String> futureMock;
 		
-	private static Create create;
+	private Create create;
 
-	private NS ns;
 	private PropAccess access;
-	private HMangrStub hman;	
+	private HMangrStub hman;
 	private AuthzEnv aEnv;
-	private AAFcli aafcli;
+	private AAFcliStub aafcli;
 	
+	private String force;
+
 	@Before
 	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		MockitoAnnotations.initMocks(this);
@@ -81,35 +86,59 @@ public class JU_Create {
 		hman = new HMangrStub(access, locMock, clientMock);
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
-		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
-		
-		ns = new NS(aafcli);
+		aafcli = new AAFcliStub(access, aEnv, wrtMock, hman, null, ssMock);
 
-		create = new Create(ns);
+		create = new Create(new Perm(new Role(aafcli)));
 	}
-	
+
 	@Test
 	public void testError() throws APIException, LocatorException, CadiException, URISyntaxException {
 		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-		create._exec(4, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
-	
-	@Test
-	public void testSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(futureMock.code()).thenReturn(202);
-		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
 	}
 
 	@Test
-	public void testSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
+	public void testSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(futureMock.code()).thenReturn(409);
+		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+
+		when(futureMock.code()).thenReturn(202);
+		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+
+		// This gets returned from a stubbed call of aafcli
+		force = "test";
+
+		when(futureMock.code()).thenReturn(201);
+		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+
+		when(futureMock.code()).thenReturn(409);
+		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+
+		when(futureMock.code()).thenReturn(1);
+		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+
+		when(futureMock.code()).thenReturn(201);
 		when(futureMock.get(any(Integer.class))).thenReturn(true);
 		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+
+		create._exec(0, new String[] {"grant","ungrant","setTo"});
 	}
-	
+
 	@Test
 	public void testDetailedHelp() {
 		StringBuilder sb = new StringBuilder();
 		create.detailedHelp(0, sb);
 	}
-	
+
+	private class AAFcliStub extends AAFcli {
+		public AAFcliStub(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si,
+			SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
+			super(access, env, wtr, hman, si, ss);
+		}
+
+		@Override
+		public String forceString() {
+			return force;
+		}
+	}
+
 }

@@ -57,7 +57,7 @@ import org.onap.aaf.auth.cmd.test.HMangrStub;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Grant {
 	
-	private static Grant grant;
+	private Grant grant;
 
 	@Mock private SecuritySetter<HttpURLConnection> ssMock;
 	@Mock private Locator<URI> locMock;
