@@ -49,7 +49,7 @@ public class SimpleRestClientExample {
 						+ "where \"aaf hello machine\" is an aaf Installation you know about.");
 			} else {
 				
-				SimpleRESTClient restClient = cf.simpleRESTClient(urlString,"org.osaaf.clamp");
+				SimpleRESTClient restClient = cf.simpleRESTClient(urlString,"org.osaaf.aaf");
 
 				/////////////////////////////////////////////////////////////
 				//  

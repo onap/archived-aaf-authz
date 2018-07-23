@@ -23,6 +23,7 @@ Sections
    sections/architecture/index
    sections/installation/index
    sections/configuration/index
+   sections/development/index
    sections/logging
    sections/release-notes
    
