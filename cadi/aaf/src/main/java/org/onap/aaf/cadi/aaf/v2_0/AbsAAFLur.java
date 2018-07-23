@@ -32,7 +32,6 @@ import org.onap.aaf.cadi.CachingLur;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.User;
-import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.util.Split;
@@ -249,32 +248,8 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 		}
 		return false;
 	}
-	/**
-	 * This special case minimizes loops, avoids multiple Set hits, and calls all the appropriate Actions found.
-	 * 
-	 * @param bait
-	 * @param obj
-	 * @param type
-	 * @param instance
-	 * @param actions
-	 */
-	public<A> void fishOneOf(Principal princ, A obj, String type, String instance, List<Action<A>> actions) {
-		User<PERM> user = getUser(princ);
-		if(user==null || user.permsUnloaded() || user.permExpired()) {
-			user = loadUser(princ);
-		}
-		if(user!=null) {
-			ReuseAAFPermission perm = new ReuseAAFPermission(type,instance);
-			for(Action<A> action : actions) {
-				perm.setAction(action.getName());
-				if(user.contains(perm)) {
-					if(action.exec(obj))return;
-				}
-			}
-		}
-	}
 	
-	public static interface Action<A> {
+	public interface Action<A> {
 		public String getName();
 		/**
 		 *  Return false to continue, True to end now
@@ -282,20 +257,5 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 		 */
 		public boolean exec(A a);
 	}
-	
-	private class ReuseAAFPermission extends AAFPermission {
-		public ReuseAAFPermission(String type, String instance) {
-			super(type,instance,null,null);
-		}
 
-		public void setAction(String s) {
-			action = s;
-		}
-		
-		/**
-		 * This function understands that AAF Keys are hierarchical, :A:B:C, 
-		 *  Cassandra follows a similar method, so we'll short circuit and do it more efficiently when there isn't a first hit
-		 * @return
-		 */
-	}
 }

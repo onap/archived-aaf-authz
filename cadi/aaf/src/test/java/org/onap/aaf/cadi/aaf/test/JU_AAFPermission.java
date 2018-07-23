@@ -22,129 +22,135 @@
 
 package org.onap.aaf.cadi.aaf.test;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.aaf.cadi.Permission;
+import org.onap.aaf.cadi.aaf.AAFPermission;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
-import org.onap.aaf.cadi.Permission;
-import org.onap.aaf.cadi.aaf.AAFPermission;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class JU_AAFPermission {
-	private final static String ns = "ns";
-	private final static String type = "type";
-	private final static String instance = "instance";
-	private final static String action = "action";
-	private final static String key = ns + '|' + type + '|' + instance + '|' + action;
-	private final static String role = "role";
+    private static final List<String> NO_ROLES = new ArrayList<>();
+    private static final String NS = "ns";
+    private static final String TYPE = "type";
+    private static final String INSTANCE = "instance";
+    private static final String ACTION = "action";
+    private static final String KEY = NS + '|' + TYPE + '|' + INSTANCE + '|' + ACTION;
+    private static final String ROLE = "role";
 
-	private static List<String> roles;
+    private static List<String> roles;
 
-	@Before
-	public void setup() {
-		roles = new ArrayList<>();
-		roles.add(role);
-	}
+    @Before
+    public void setup() {
+        roles = new ArrayList<>();
+        roles.add(ROLE);
+    }
 
-	@Test
-	public void constructor1Test() {
-		AAFPermission perm = new AAFPermission(ns, type, instance, action);
-		assertThat(perm.getNS(), is(ns));
-		assertThat(perm.getType(), is(type));
-		assertThat(perm.getInstance(), is(instance));
-		assertThat(perm.getAction(), is(action));
-		assertThat(perm.getKey(), is(key));
-		assertThat(perm.permType(), is("AAF"));
-		assertThat(perm.roles().size(), is(0));
-		assertThat(perm.toString(), is("AAFPermission:" +
-										"\n\tNS: " + ns +
-										"\n\tType: " + type +
-										"\n\tInstance: " + instance +
-										"\n\tAction: " + action +
-										"\n\tKey: " + key));
-	}
+    @Test
+    public void shouldCreatePermissionWithCorrectKeyComponents() {
+        AAFPermission perm = new AAFPermission(NS, TYPE, INSTANCE, ACTION);
 
-	@Test
-	public void constructor2Test() {
-		AAFPermission perm;
+        assertAAFPermissionKeyComponenets(perm);
+    }
 
-		perm = new AAFPermission(ns, type, instance, action, null);
-		assertThat(perm.getNS(), is(ns));
-		assertThat(perm.getType(), is(type));
-		assertThat(perm.getInstance(), is(instance));
-		assertThat(perm.getAction(), is(action));
-		assertThat(perm.getKey(), is(key));
-		assertThat(perm.permType(), is("AAF"));
-		assertThat(perm.roles().size(), is(0));
-		assertThat(perm.toString(), is("AAFPermission:" +
-										"\n\tNS: " + ns +
-										"\n\tType: " + type +
-										"\n\tInstance: " + instance +
-										"\n\tAction: " + action +
-										"\n\tKey: " + key));
+    @Test
+    public void shouldCreatePermissionWithCorrectKey() {
+        AAFPermission perm;
 
-		perm = new AAFPermission(ns, type, instance, action, roles);
-		assertThat(perm.getNS(), is(ns));
-		assertThat(perm.getType(), is(type));
-		assertThat(perm.getInstance(), is(instance));
-		assertThat(perm.getAction(), is(action));
-		assertThat(perm.getKey(), is(key));
-		assertThat(perm.permType(), is("AAF"));
-		assertThat(perm.roles().size(), is(1));
-		assertThat(perm.roles().get(0), is(role));
-		assertThat(perm.toString(), is("AAFPermission:" +
-				"\n\tNS: " + ns +
-				"\n\tType: " + type +
-				"\n\tInstance: " + instance +
-				"\n\tAction: " + action +
-				"\n\tKey: " + key));
-	}
+        perm = new AAFPermission(NS, TYPE, INSTANCE, ACTION);
+        assertThat(perm.getKey(), is(KEY));
 
-	@Test
-	public void matchTest() {
-		final AAFPermission controlPermission = new AAFPermission(ns,type, instance, action);
-		PermissionStub perm;
-		AAFPermission aafperm;
+        perm = new AAFPermission(null, TYPE, INSTANCE, ACTION);
+        assertThat(perm.getKey(), is(TYPE + '|' + INSTANCE + '|' + ACTION));
+    }
 
-		aafperm = new AAFPermission(ns, type, instance, action);
-		assertThat(controlPermission.match(aafperm), is(true));
+    @Test
+    public void shouldCreatePermissionWithCorrectRoles() {
+        AAFPermission perm;
 
-		perm = new PermissionStub(key);
-		assertThat(controlPermission.match(perm), is(true));
+        perm = new AAFPermission(NS, TYPE, INSTANCE, ACTION);
+        assertThat(perm.roles(), is(NO_ROLES));
 
-		// Coverage tests
-		perm = new PermissionStub("not a valid key");
-		assertThat(controlPermission.match(perm), is(false));
-		perm = new PermissionStub("type");
-		assertThat(controlPermission.match(perm), is(false));
-		perm = new PermissionStub("type|instance|badAction");
-		assertThat(controlPermission.match(perm), is(false));
-	}
+        perm = new AAFPermission(NS, TYPE, INSTANCE, ACTION, roles);
+        assertThat(perm.roles(), is(roles));
+    }
 
-	@Test
-	public void coverageTest() {
-		AAFPermissionStub aafps = new AAFPermissionStub();
-		assertThat(aafps.getNS(), is(nullValue()));
-		assertThat(aafps.getType(), is(nullValue()));
-		assertThat(aafps.getInstance(), is(nullValue()));
-		assertThat(aafps.getAction(), is(nullValue()));
-		assertThat(aafps.getKey(), is(nullValue()));
-		assertThat(aafps.permType(), is("AAF"));
-		assertThat(aafps.roles().size(), is(0));
-	}
+    @Test
+    public void shouldCorrectlyMatchBasedOnParsedKey() {
+        final AAFPermission controlPermission = new AAFPermission(NS, TYPE, INSTANCE, ACTION);
 
-	private class PermissionStub implements Permission {
-		private String key;
+        assertThat(controlPermission.match(newPermission("ns|type|instance|action")), is(true));
+        assertThat(controlPermission.match(newPermission("not a valid KEY")), is(false));
+        assertThat(controlPermission.match(newPermission("ns")), is(false));
+        assertThat(controlPermission.match(newPermission("ns|type")), is(false));
+        assertThat(controlPermission.match(newPermission("ns|type|instance")), is(false));
+        assertThat(controlPermission.match(newPermission("ns|type|instance|badAction")), is(false));
+    }
 
-		public PermissionStub(String key) { this.key = key; }
-		@Override public String permType() { return null; }
-		@Override public String getKey() { return key; }
-		@Override public boolean match(Permission p) { return false; }
-	}
+    @Test
+    public void shouldCorrectlyMatchWithNotDefinedNs() {
+        AAFPermission controlPermission;
 
-	private class AAFPermissionStub extends AAFPermission {
+        controlPermission = new AAFPermission(null, TYPE, INSTANCE, ACTION);
+        assertThat(controlPermission.match(new AAFPermission(null, TYPE, INSTANCE, ACTION)), is(true));
+        assertThat(controlPermission.match(new AAFPermission(NS, TYPE, INSTANCE, ACTION)), is(false));
 
-	}
+        controlPermission = new AAFPermission(null, NS + '.' + TYPE, INSTANCE, ACTION);
+        assertThat(controlPermission.match(new AAFPermission(NS, TYPE, INSTANCE, ACTION)), is(true));
+    }
+
+    @Test
+    public void shouldCorrectlyMatchWithNotDefinedNsInReferencePermission() {
+        final AAFPermission controlPermission = new AAFPermission(NS, TYPE, INSTANCE, ACTION);
+
+        assertThat(controlPermission.match(new AAFPermission(null, NS + '.' + TYPE, INSTANCE, ACTION)), is(true));
+        assertThat(controlPermission.match(new AAFPermission(null, TYPE, INSTANCE, ACTION)), is(false));
+    }
+
+    private PermissionStub newPermission(String s) {
+        return new PermissionStub(s);
+    }
+
+    private void assertAAFPermissionKeyComponenets(AAFPermission perm) {
+        assertThat(perm.getNS(), is(NS));
+        assertThat(perm.getType(), is(TYPE));
+        assertThat(perm.getInstance(), is(INSTANCE));
+        assertThat(perm.getAction(), is(ACTION));
+        assertThat(perm.permType(), is("AAF"));
+        assertThat(perm.toString(), is("AAFPermission:" +
+                "\n\tNS: " + NS +
+                "\n\tType: " + TYPE +
+                "\n\tInstance: " + INSTANCE +
+                "\n\tAction: " + ACTION +
+                "\n\tKey: " + KEY));
+    }
+
+    private class PermissionStub implements Permission {
+
+        private String key;
+
+        private PermissionStub(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String permType() {
+            return null;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        @Override
+        public boolean match(Permission p) {
+            return false;
+        }
+    }
+
 }
