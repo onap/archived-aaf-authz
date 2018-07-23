@@ -21,11 +21,7 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.ns;
 
-import org.junit.Assert;
-import org.junit.Before;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,21 +32,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.ns.Delete;
 import org.onap.aaf.auth.cmd.ns.NS;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
+import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
 
 public class JU_Delete {

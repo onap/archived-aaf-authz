@@ -121,7 +121,7 @@ public class API_Hello {
 		////////////////
 		// READ/GET
 		////////////////
-		oauthHello.route(oauthHello.env,HttpMethods.GET,"/resthello/:id/:perm*",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello Read") {
+		oauthHello.route(oauthHello.env,HttpMethods.GET,"/resthello/:id",new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"REST Hello Read") {
 			@Override
 			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 				resp.setStatus(200 /* OK */);

@@ -73,8 +73,10 @@ public class OLur extends AbsOTafLur implements Lur {
 					scopeSet.add(tc.defaultScope());
 					AAFPermission ap;
 					for (Permission p : pond) {
-						ap = (AAFPermission)p;
-						scopeSet.add(ap.getNS());
+						if(p instanceof AAFPermission) {
+							ap = (AAFPermission)p;
+							scopeSet.add(ap.getNS());
+						}
 					}
 					String[] scopes = new String[scopeSet.size()];
 					scopeSet.toArray(scopes);

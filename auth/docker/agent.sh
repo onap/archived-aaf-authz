@@ -6,12 +6,20 @@ CADI_VERSION=2.1.2-SNAPSHOT
 if [ ! -e aaf.props ]; then
   > ./aaf.props
 fi
-for V in VERSION AAF_FQDN DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
+ 
+. ./aaf.props
+
+for V in VERSION AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
    if [ "$(grep $V ./aaf.props)" = "" ]; then
       unset DEF
       case $V in
          AAF_FQDN)   PROMPT="AAF's FQDN";;
          DEPLOY_FQI) PROMPT="Deployer's FQI";;
+         AAF_FQDN_IP)
+		# Need AAF_FQDN's IP, because not might not be available in mini-container
+		PROMPT="AAF FQDN IP"
+  		DEF=$(host $AAF_FQDN | grep "has address" | tail -1 | cut -f 4 -d ' ')
+                ;;
          APP_FQI)    PROMPT="App's FQI";; 
          APP_FQDN)   PROMPT="App's Root FQDN";; 
          VOLUME)     PROMPT="APP's AAF Configuration Volume";;
@@ -38,15 +46,6 @@ for V in VERSION AAF_FQDN DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LON
    fi
 done
 . ./aaf.props
-
-# Need AAF_FQDN's IP, because not might not be available in mini-container
-if [ "$AAF_FQDN_IP" = "" ]; then
-  AAF_FQDN_IP=$(host $AAF_FQDN | grep "has address" | tail -1 | cut -f 4 -d ' ')
-  if [ "$AAF_FQDN_IP" = "" ]; then
-    read -p "IP of $AAF_FQDN: " AAF_FQDN_IP
-    echo "AAF_FQDN_IP=$AAF_FQDN_IP" >> ./aaf.props
-  fi
-fi
 
 # Make sure Container Volume exists
 if [ "$(docker volume ls | grep ${VOLUME})" = "" ]; then
