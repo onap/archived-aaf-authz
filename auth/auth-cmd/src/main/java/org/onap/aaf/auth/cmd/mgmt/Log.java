@@ -61,9 +61,9 @@ public class Log extends BaseCmd<Mgmt> {
 				@Override
 				public Integer code(Rcli<?> client) throws APIException, CadiException {
 					int rv = 409;
-					Future<Void> fp;
+					Future<Void> fp = null;
 					String str = "/mgmt/log/id/"+fname;
-					String msg;
+					String msg = "ignored";
 					switch(option) {
 						case 0:	
 							fp = client.create(str,Void.class);
@@ -73,20 +73,16 @@ public class Log extends BaseCmd<Mgmt> {
 							fp = client.delete(str,Void.class);
 							msg = "Deleted";
 							break;
-						default:
-							fp = null;
-							msg = "Ignored";
+						default: // note, if not an option, whichOption throws Exception
+							break;
 					}
 							
-					if(fp!=null) {
-						if(fp.get(AAFcli.timeout())) {
-							pw().println(msg + " Special Log for " + fname + " on " + client);
-							rv=200;
-						} else {
-							if(rv==409)rv = fp.code();
-							error(fp);
-						}
-						return rv;
+					if(fp.get(AAFcli.timeout())) {
+						pw().println(msg + " Special Log for " + fname + " on " + client);
+						rv = 200;
+					} else {
+						rv = fp.code();
+						error(fp);
 					}
 					return rv;
 				}

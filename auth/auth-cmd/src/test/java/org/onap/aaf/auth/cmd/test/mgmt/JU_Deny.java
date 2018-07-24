@@ -19,90 +19,102 @@
  * *
  * *
  ******************************************************************************/
-
 package org.onap.aaf.auth.cmd.test.mgmt;
 
-import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
-import org.junit.After;
 import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.mgmt.Deny;
-import org.onap.aaf.auth.cmd.mgmt.Deny.DenySomething;
-import org.onap.aaf.auth.cmd.mgmt.Mgmt;
-import org.onap.aaf.auth.cmd.ns.Create;
-import org.onap.aaf.auth.cmd.ns.NS;
 import org.onap.aaf.auth.env.AuthzEnv;
-import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.env.AuthzTransOnlyFilter;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
 
-import static org.mockito.Mockito.*;
-
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import org.junit.Test;
+import org.onap.aaf.auth.cmd.mgmt.Deny;
+import org.onap.aaf.auth.cmd.mgmt.Mgmt;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
 
 public class JU_Deny {
 	
-	Deny deny;
-	DenySomething denyS;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
+	private Deny deny;
 
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<String> stringFutureMock;
+	@Mock private Future<Void> voidFutureMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
+	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		hman = new HMangr(aEnv, loc);	
-//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-//		Mgmt mgmt = new Mgmt(aafcli);
-//		deny = new Deny(mgmt);
-		//denyS = deny.new DenySomething(deny,"ip","ipv4or6[,ipv4or6]*");
+		MockitoAnnotations.initMocks(this);
 
+		when(clientMock.create(any(), any(), any(String.class))).thenReturn(stringFutureMock);
+		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(stringFutureMock);
+		when(clientMock.update(any(), any(), any(String.class))).thenReturn(stringFutureMock);
+
+		when(clientMock.create(any(String.class), any(Class.class))).thenReturn(voidFutureMock);
+		when(clientMock.delete(any(String.class), any(Class.class))).thenReturn(voidFutureMock);
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		aEnv = new AuthzEnv();
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		deny = new Deny(new Mgmt(aafcli));
 	}
 	
-	
+	@Test
+	public void testDenySomethingError() throws CadiException, APIException, LocatorException {
+		Deny.DenySomething denySomething = deny.new DenySomething(deny, "id", "test");
+		denySomething.exec(0, new String[]{"add", "test_name"});
+		denySomething.exec(0, new String[]{"del", "test_name"});
+
+		denySomething.exec(0, new String[]{"add", "test@somedomain.com"});
+		denySomething.exec(0, new String[]{"del", "test@somedomain.com"});
+
+		denySomething = deny.new DenySomething(deny, "not_an_id", "test");
+		denySomething.exec(0, new String[]{"add", "test_name"});
+		denySomething.exec(0, new String[]{"del", "test_name"});
+	}
 
 	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
+	public void testDenySomethingSuccess() throws CadiException, APIException, LocatorException {
+		when(voidFutureMock.get(any(Integer.class))).thenReturn(true);
 
-//		String[] strArr = {"add","del", "add","del"};
-//		deny._exec(0, strArr);
-//		
-//		String[] strArr1 = {"del", "add","del"};
-//		deny._exec(0, strArr1);
-		
+		Deny.DenySomething denySomething = deny.new DenySomething(deny, "id", "test");
+		denySomething.exec(0, new String[]{"add", "test_name"});
+		denySomething.exec(0, new String[]{"del", "test_name"});
+
+		denySomething.exec(0, new String[]{"add", "test@somedomain.com"});
+		denySomething.exec(0, new String[]{"del", "test@somedomain.com"});
+
+		denySomething = deny.new DenySomething(deny, "not_an_id", "test");
+		denySomething.exec(0, new String[]{"add", "test_name"});
+		denySomething.exec(0, new String[]{"del", "test_name"});
 	}
+	
 
 }

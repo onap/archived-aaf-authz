@@ -21,88 +21,85 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.mgmt;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.mgmt.Cache;
-import org.onap.aaf.auth.cmd.mgmt.Clear;
-import org.onap.aaf.auth.cmd.mgmt.Mgmt;
-import org.onap.aaf.auth.cmd.perm.Create;
-import org.onap.aaf.auth.cmd.perm.Perm;
-import org.onap.aaf.auth.cmd.role.Role;
-import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.auth.cmd.mgmt.Cache;
+import org.onap.aaf.auth.cmd.mgmt.Clear;
+import org.onap.aaf.auth.cmd.mgmt.Mgmt;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
+import org.onap.aaf.auth.common.Define;
 
-@RunWith(MockitoJUnitRunner.class)
 public class JU_Clear {
+
+	private Clear clear;
+
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<Void> voidFutureMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
 	
-	private static Clear clr;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	Cache cache;
-	Mgmt mgmt;
-	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		hman = new HMangr(aEnv, loc);	
-//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-//		mgmt = new Mgmt(aafcli);
-//		cache = new Cache(mgmt);
-//		clr = new Clear(cache);
-		
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		when(loc.first()).thenReturn(value);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, value, secSet);
-//		String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
-		//clr._exec(0, strArr);				
+		MockitoAnnotations.initMocks(this);
 
+		when(clientMock.create(any(String.class), any(Class.class))).thenReturn(voidFutureMock);
+		when(clientMock.delete(any(String.class), any(Class.class))).thenReturn(voidFutureMock);
+		
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		aEnv = new AuthzEnv();
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		Define.set(access);
+
+		clear = new Clear(new Cache(new Mgmt(aafcli)));
+	}
+
+	@Test
+	public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(voidFutureMock.get(any(Integer.class))).thenReturn(false);
+		clear.exec(0, new String[] {"first","second"});
 	}
 	
 	@Test
-	public void testDetailedHelp() throws CadiException {
-		Define define = new Define();
-		define.set(prop);
+	public void testExecSuccess() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(voidFutureMock.get(any(Integer.class))).thenReturn(true);
+		clear.exec(0, new String[] {"first","second"});
+	}
+	
+	@Test
+	public void testDetailedHelp() {
 		StringBuilder sb = new StringBuilder();
-//		clr.detailedHelp(0, sb);
+		clear.detailedHelp(0, sb);
 	}
 }

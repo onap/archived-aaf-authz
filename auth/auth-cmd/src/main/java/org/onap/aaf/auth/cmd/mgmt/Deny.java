@@ -86,7 +86,7 @@ public class Deny extends BaseCmd<Mgmt> {
 							pw().println(name + append + resp + " on " + client);
 							rv=fp.code();
 						} else {
-							if(rv==409)rv = fp.code();
+							rv = fp.code();
 							error(fp);
 						}
 						return rv;

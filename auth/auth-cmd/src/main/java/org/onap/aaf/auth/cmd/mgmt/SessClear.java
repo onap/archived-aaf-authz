@@ -58,9 +58,9 @@ public class SessClear extends Cmd {
 						);
 				if(fp.get(AAFcli.timeout())) {
 					pw().println("Cleared DBSession on " + client);
-					rv=200;
+					rv = 200;
 				} else {
-					if(rv==409)rv = fp.code();
+					rv = fp.code();
 					error(fp);
 				}
 				return rv;

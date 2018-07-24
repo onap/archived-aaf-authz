@@ -31,35 +31,33 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.env.AuthzEnv;
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.auth.cmd.mgmt.SessClear;
-import org.onap.aaf.auth.cmd.mgmt.Session;
+
+import org.onap.aaf.auth.cmd.mgmt.Cache;
 import org.onap.aaf.auth.cmd.mgmt.Mgmt;
 import org.onap.aaf.auth.cmd.test.HMangrStub;
-import org.onap.aaf.auth.common.Define;
 
-public class JU_SessClear {
-
-	private SessClear sessClear;
+public class JU_Cache {
+	
+	@SuppressWarnings("unused")
+	private Cache cache;
 
 	@Mock private SecuritySetter<HttpURLConnection> ssMock;
 	@Mock private Locator<URI> locMock;
 	@Mock private Writer wrtMock;
 	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<String> stringFutureMock;
 	@Mock private Future<Void> voidFutureMock;
 
 	private PropAccess access;
@@ -69,41 +67,25 @@ public class JU_SessClear {
 	
 	@SuppressWarnings("unchecked")
 	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.create(any(), any(), any(String.class))).thenReturn(stringFutureMock);
+		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(stringFutureMock);
+		when(clientMock.update(any(), any(), any(String.class))).thenReturn(stringFutureMock);
 
 		when(clientMock.create(any(String.class), any(Class.class))).thenReturn(voidFutureMock);
 		when(clientMock.delete(any(String.class), any(Class.class))).thenReturn(voidFutureMock);
-		
+
 		hman = new HMangrStub(access, locMock, clientMock);
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
 		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
-
-		Define.set(access);
-
-		sessClear = new SessClear(new Session(new Mgmt(aafcli)));
-	}
-
-	@Test
-	public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(voidFutureMock.get(any(Integer.class))).thenReturn(false);
-
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
 	}
 	
 	@Test
-	public void testExecSetToSuccess() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(voidFutureMock.get(any(Integer.class))).thenReturn(true);
-
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
+	public void testConstructor() throws APIException {
+		cache = new Cache(new Mgmt(aafcli));
 	}
 	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		sessClear.detailedHelp(0, sb);
-	}
 }
