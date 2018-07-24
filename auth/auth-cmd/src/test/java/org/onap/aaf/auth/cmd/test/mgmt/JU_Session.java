@@ -46,15 +46,14 @@ import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.auth.cmd.mgmt.SessClear;
-import org.onap.aaf.auth.cmd.mgmt.Session;
 import org.onap.aaf.auth.cmd.mgmt.Mgmt;
+import org.onap.aaf.auth.cmd.mgmt.Session;
 import org.onap.aaf.auth.cmd.test.HMangrStub;
-import org.onap.aaf.auth.common.Define;
 
-public class JU_SessClear {
+public class JU_Session {
 
-	private SessClear sessClear;
+	@SuppressWarnings("unused")
+	private Session session;
 
 	@Mock private SecuritySetter<HttpURLConnection> ssMock;
 	@Mock private Locator<URI> locMock;
@@ -79,31 +78,11 @@ public class JU_SessClear {
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
 		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
-
-		Define.set(access);
-
-		sessClear = new SessClear(new Session(new Mgmt(aafcli)));
 	}
 
 	@Test
-	public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(voidFutureMock.get(any(Integer.class))).thenReturn(false);
+	public void testConstructor() throws APIException, LocatorException, CadiException, URISyntaxException {
+		session = new Session(new Mgmt(aafcli));
+	}
 
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
-	}
-	
-	@Test
-	public void testExecSetToSuccess() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(voidFutureMock.get(any(Integer.class))).thenReturn(true);
-
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
-		sessClear.exec(0, new String[]{"machine1", "machine2"});
-	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		sessClear.detailedHelp(0, sb);
-	}
 }
