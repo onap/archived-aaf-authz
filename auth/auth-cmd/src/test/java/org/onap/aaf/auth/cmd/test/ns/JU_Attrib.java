@@ -29,6 +29,8 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -37,8 +39,13 @@ import java.net.URISyntaxException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
+
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +53,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.ns.Attrib;
 import org.onap.aaf.auth.cmd.ns.NS;
+import org.onap.aaf.auth.cmd.perm.Perm;
+import org.onap.aaf.auth.cmd.role.Role;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
 import org.onap.aaf.auth.cmd.test.JU_AAFCli;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
@@ -54,6 +64,8 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
@@ -61,46 +73,49 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Attrib {
 
-	private static Attrib attrib;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
+	private Attrib attrib;
+	
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<String> futureMock;
+	@Mock private Future<Void> futureVoidMock;
 
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
+
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.create(any(String.class), any(Class.class))).thenReturn(futureMock);
+		when(clientMock.delete(any(String.class), any(Class.class))).thenReturn(futureMock);
+		when(clientMock.update(any(String.class))).thenReturn(futureVoidMock);
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
 		NS ns = new NS(aafcli);
+		
 		attrib = new Attrib(ns);
 	}
 
 	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
-//		String[] strArr = {"add","upd","del","add","upd","del"};
-//		attrib._exec(0, strArr);
-//		
-//		String[] strArr1 = {"upd","del","add","upd","del","add"};
-//		attrib._exec(0, strArr1);
-//		
-//		String[] strArr2 = {"del","add","upd","del","add","upd"};
-//		attrib._exec(0, strArr2);
-		
+	public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
+		attrib._exec(0, new String[] {"add","upd","del", "add","upd","del"});		
+		attrib._exec(0, new String[] {"upd","upd","del", "add","upd","del"});		
+		attrib._exec(0, new String[] {"del","upd","del", "add","upd","del"});		
+	}
+	
+	@Test
+	public void testExecSuccess() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(futureMock.get(any(Integer.class))).thenReturn(true);
+		attrib._exec(0, new String[] {"add","upd","del", "add","upd","del"});		
 	}
 
 	@Test
