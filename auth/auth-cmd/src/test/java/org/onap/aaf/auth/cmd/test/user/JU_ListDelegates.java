@@ -21,56 +21,101 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
+import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
+import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
+
+import aaf.v2_0.Delgs;
+
 import org.onap.aaf.auth.cmd.user.List;
 import org.onap.aaf.auth.cmd.user.ListDelegates;
 import org.onap.aaf.auth.cmd.user.User;
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
 
-@RunWith(MockitoJUnitRunner.class)
 public class JU_ListDelegates {
 	
-	private static ListDelegates lsDelegates;
+	private ListDelegates listDelegates;
+
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<Delgs> delgsFutureMock;
+	@Mock private Delgs delgsMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
 	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		User usr = new User(cli);
-		List parent = new List(usr);
-		lsDelegates = new ListDelegates(parent);
+	@SuppressWarnings("unchecked")
+	@Before
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.read(any(String.class), any(RosettaDF.class))).thenReturn(delgsFutureMock);
 		
+		delgsFutureMock.value = delgsMock;
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		aEnv = new AuthzEnv();
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		List list = new List(new User(aafcli));
+		listDelegates = new ListDelegates(list);
+	}
+
+	@Test
+	public void testUser() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(delgsFutureMock.get(any(Integer.class))).thenReturn(false);
+		listDelegates.exec(0, new String[] {"user", "id"});
+		
+		when(delgsFutureMock.get(any(Integer.class))).thenReturn(true);
+		listDelegates.exec(0, new String[] {"user", "id"});
+
+		when(delgsFutureMock.code()).thenReturn(404);
+		listDelegates.exec(0, new String[] {"user", "id"});
 	}
 	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsDelegates._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			
-//			e.printStackTrace();
-//		}
-//	}
+	@Test
+	public void testDelegate() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(delgsFutureMock.get(any(Integer.class))).thenReturn(false);
+		listDelegates.exec(0, new String[] {"delegate", "id"});
+		
+		when(delgsFutureMock.get(any(Integer.class))).thenReturn(true);
+		listDelegates.exec(0, new String[] {"delegate", "id"});
+
+		when(delgsFutureMock.code()).thenReturn(404);
+		listDelegates.exec(0, new String[] {"delegate", "id"});
+	}
 	
 	@Test
 	public void testDetailedHelp() {
 		StringBuilder sb = new StringBuilder();
-		lsDelegates.detailedHelp(0, sb);
+		listDelegates.detailedHelp(0, sb);
 	}
 }

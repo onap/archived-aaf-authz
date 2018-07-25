@@ -118,7 +118,9 @@ public class Cred extends Cmd {
 					pw().println(']');
 				} else if(fp.code()==202) {
 						pw().println("Credential Action Accepted, but requires Approvals before actualizing");
-				} else if(fp.code()==406 && option==1) {
+				} else if(
+						fp.code()==406 && 
+						option==1) {
 						pw().println("You cannot delete this Credential");
 				} else {
 					pw().println(ATTEMPT_FAILED_SPECIFICS_WITHELD);

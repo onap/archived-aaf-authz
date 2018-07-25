@@ -21,86 +21,113 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import org.junit.Assert;
-import org.junit.Before;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.ns.Create;
-import org.onap.aaf.auth.cmd.ns.NS;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
-import org.onap.aaf.auth.cmd.user.List;
-import org.onap.aaf.auth.cmd.user.ListApprovals;
-import org.onap.aaf.auth.cmd.user.User;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
-@RunWith(MockitoJUnitRunner.class)
+import aaf.v2_0.Approvals;
+
+import org.onap.aaf.auth.cmd.user.List;
+import org.onap.aaf.auth.cmd.user.ListApprovals;
+import org.onap.aaf.auth.cmd.user.User;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
+
 public class JU_ListApprovals {
 	
-	private static ListApprovals lsApprovals;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
+	private ListApprovals listApprovals;
+
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<Approvals> approvalsFutureMock;
+	@Mock private Approvals approvalsMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
 	
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.read(any(String.class), any(RosettaDF.class))).thenReturn(approvalsFutureMock);
+		
+		approvalsFutureMock.value = approvalsMock;
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		User usr = new User(aafcli);
-		List parent = new List(usr);
-		lsApprovals = new ListApprovals(parent);
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		List list = new List(new User(aafcli));
+		listApprovals = new ListApprovals(list);
 	}
-	
-	
 
 	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"user","approver","ticket"};
-		//lsApprovals._exec(0, strArr);
+	public void testUser() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(approvalsFutureMock.get(any(Integer.class))).thenReturn(false);
+		listApprovals.exec(0, new String[] {"user", "id"});
 		
+		when(approvalsFutureMock.get(any(Integer.class))).thenReturn(true);
+		listApprovals.exec(0, new String[] {"user", "id"});
+
+		when(approvalsFutureMock.code()).thenReturn(404);
+		listApprovals.exec(0, new String[] {"user", "id"});
+	}
+	
+	@Test
+	public void testApprover() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(approvalsFutureMock.get(any(Integer.class))).thenReturn(false);
+		listApprovals.exec(0, new String[] {"approver", "id"});
+		
+		when(approvalsFutureMock.get(any(Integer.class))).thenReturn(true);
+		listApprovals.exec(0, new String[] {"approver", "id"});
+
+		when(approvalsFutureMock.code()).thenReturn(404);
+		listApprovals.exec(0, new String[] {"approver", "id"});
+	}
+	
+	@Test
+	public void testTicket() throws CadiException, APIException, LocatorException {
+		when(approvalsFutureMock.get(any(Integer.class))).thenReturn(false);
+		listApprovals.exec(0, new String[] {"ticket", "id"});
+		
+		when(approvalsFutureMock.get(any(Integer.class))).thenReturn(true);
+		listApprovals.exec(0, new String[] {"ticket", "id"});
+
+		when(approvalsFutureMock.code()).thenReturn(404);
+		listApprovals.exec(0, new String[] {"ticket", "id"});
 	}
 	
 	@Test
 	public void testDetailedHelp() {
 		StringBuilder sb = new StringBuilder();
-		lsApprovals.detailedHelp(0, sb);
+		listApprovals.detailedHelp(0, sb);
 	}
 }

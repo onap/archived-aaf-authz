@@ -21,56 +21,89 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
+import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Locator;
+import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
+
+import aaf.v2_0.History;
+
 import org.onap.aaf.auth.cmd.user.List;
 import org.onap.aaf.auth.cmd.user.ListActivity;
 import org.onap.aaf.auth.cmd.user.User;
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
 
-@RunWith(MockitoJUnitRunner.class)
 public class JU_ListActivity {
 	
-	private static ListActivity lsActivity;
+	private ListActivity listActivity;
+
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<History> historyFutureMock;
+	@Mock private History historyMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
 	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		User usr = new User(cli);
-		List parent = new List(usr);
-		lsActivity = new ListActivity(parent);
+	@SuppressWarnings("unchecked")
+	@Before
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.read(any(String.class), any(RosettaDF.class))).thenReturn(historyFutureMock);
 		
+		historyFutureMock.value = historyMock;
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		aEnv = new AuthzEnv();
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		List list = new List(new User(aafcli));
+		listActivity = new ListActivity(list);
 	}
-//	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsActivity._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			
-//			e.printStackTrace();
-//		}
-//	}
+
+	@Test
+	public void testError() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(historyFutureMock.get(any(Integer.class))).thenReturn(false);
+		listActivity.exec(0, new String[] {"user"});
+	}
+	
+	@Test
+	public void testSuccess() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(historyFutureMock.get(any(Integer.class))).thenReturn(true);
+		listActivity.exec(0, new String[] {"user"});
+	}
 	
 	@Test
 	public void testDetailedHelp() {
 		StringBuilder sb = new StringBuilder();
-		lsActivity.detailedHelp(0, sb);
+		listActivity.detailedHelp(0, sb);
 	}
 }

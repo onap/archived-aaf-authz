@@ -21,88 +21,135 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import org.junit.Assert;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.Cmd;
-import org.onap.aaf.auth.cmd.user.Cred;
-import org.onap.aaf.auth.cmd.user.User;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
-@RunWith(MockitoJUnitRunner.class)
+import aaf.v2_0.CredRequest;
+
+import org.onap.aaf.auth.cmd.user.Cred;
+import org.onap.aaf.auth.cmd.user.User;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
+
 public class JU_Cred {
+	
+	private Cred cred;
 
-	User user;
-	Cred cred;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<CredRequest> credRequestFutureMock;
 
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
+	
+	@SuppressWarnings("unchecked")
 	@Before
-	public void setUp() throws FileNotFoundException, APIException, LocatorException, CadiException {
-		prop = new PropAccess();
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.create(any(String.class), any(RosettaDF.class), any(CredRequest.class))).thenReturn(credRequestFutureMock);
+		when(clientMock.delete(any(String.class), any(RosettaDF.class), any(CredRequest.class))).thenReturn(credRequestFutureMock);
+		when(clientMock.update(any(String.class), any(RosettaDF.class), any(CredRequest.class))).thenReturn(credRequestFutureMock);
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		user = new User(aafcli);
-		cred = new Cred(user);
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		cred = new Cred(new User(aafcli));
+	}
+
+	@Test
+	public void testAdd() throws APIException, LocatorException, CadiException, URISyntaxException {
+		cred.exec(0, new String[] {"add", "id", "password"});
+
+		when(credRequestFutureMock.code()).thenReturn(406);
+		cred.exec(0, new String[] {"add", "id", "password"});
+
+		when(credRequestFutureMock.code()).thenReturn(202);
+		cred.exec(0, new String[] {"add", "id", "password"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		cred.exec(0, new String[] {"add", "id", "password"});
+		
+		try {
+			cred.exec(0, new String[] {"add", "id"});
+			fail("Should have thrown an exception");
+		} catch (CadiException e) {
+			assertThat(e.getMessage(), is("Password Required"));
+		}
 	}
 	
 	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
-//		String[] strArr = {"add","del","reset","extend"};
-//		cred._exec(0, strArr);
-//		
-//		String[] strArr1 = {"del","reset","extend","add"};
-//		cred._exec(0, strArr1);
-//		
-//		String[] strArr2 = {"reset","extend", "add","del"};
-//		cred._exec(0, strArr2);
-//		
-//		String[] strArr3 = {"extend","add","del","reset"};
-//		cred._exec(0, strArr3);
+	public void testDel() throws APIException, LocatorException, CadiException, URISyntaxException {
+		cred.exec(0, new String[] {"del", "id", "entry"});
 
+		when(credRequestFutureMock.code()).thenReturn(406);
+		cred.exec(0, new String[] {"del", "id", "entry"});
+
+		when(credRequestFutureMock.code()).thenReturn(202);
+		cred.exec(0, new String[] {"del", "id", "entry"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		cred.exec(0, new String[] {"del", "id", "entry"});
+	}
+	
+	@Test
+	public void testReset() throws APIException, LocatorException, CadiException, URISyntaxException {
+		cred.exec(0, new String[] {"reset", "id", "password"});
+
+		when(credRequestFutureMock.code()).thenReturn(406);
+		cred.exec(0, new String[] {"reset", "id", "password"});
+
+		when(credRequestFutureMock.code()).thenReturn(202);
+		cred.exec(0, new String[] {"reset", "id", "password"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		cred.exec(0, new String[] {"reset", "id", "password"});
+	}
+	
+	@Test
+	public void testExtend() throws APIException, LocatorException, CadiException, URISyntaxException {
+		cred.exec(0, new String[] {"extend", "id"});
+
+		when(credRequestFutureMock.code()).thenReturn(406);
+		cred.exec(0, new String[] {"extend", "id"});
+
+		when(credRequestFutureMock.code()).thenReturn(202);
+		cred.exec(0, new String[] {"extend", "id"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		cred.exec(0, new String[] {"extend", "id"});
 	}
 	
 	@Test
@@ -110,5 +157,4 @@ public class JU_Cred {
 		StringBuilder sb = new StringBuilder();
 		cred.detailedHelp(0, sb);
 	}
-
 }

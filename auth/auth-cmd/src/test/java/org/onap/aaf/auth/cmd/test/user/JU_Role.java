@@ -21,86 +21,146 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import org.junit.Assert;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
-import org.onap.aaf.auth.cmd.user.Role;
-import org.onap.aaf.auth.cmd.user.User;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
-@RunWith(MockitoJUnitRunner.class)
+import aaf.v2_0.CredRequest;
+
+import org.onap.aaf.auth.cmd.user.Role;
+import org.onap.aaf.auth.cmd.user.User;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
+
 public class JU_Role {
 	
-	private static Role role;
-	User user;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
+	private Role role;
+
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<CredRequest> credRequestFutureMock;
+	@Mock private Future<Void> voidFutureMock;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
 	
+	@SuppressWarnings("unchecked")
 	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.create(any(String.class), any(RosettaDF.class), any(CredRequest.class))).thenReturn(credRequestFutureMock);
+		when(clientMock.delete(any(String.class), any(Class.class))).thenReturn(credRequestFutureMock);
+		when(clientMock.update(any(String.class))).thenReturn(voidFutureMock);
+		when(clientMock.update(any(String.class), any(RosettaDF.class), any(CredRequest.class))).thenReturn(credRequestFutureMock);
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		User usr = new User(aafcli);
-		role = new Role(usr);
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
+		role = new Role(new User(aafcli));
+	}
+
+	@Test
+	public void testAdd() throws APIException, LocatorException, CadiException, URISyntaxException {
+		role.exec(0, new String[] {"add", "user", "role"});
+
+		when(credRequestFutureMock.code()).thenReturn(202);
+		role.exec(0, new String[] {"add", "user", "role"});
+
+		when(credRequestFutureMock.code()).thenReturn(404);
+		role.exec(0, new String[] {"add", "user", "role"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		role.exec(0, new String[] {"add", "user", "role"});
 		
+		try {
+			role.exec(0, new String[] {"add", "user"});
+			fail("Should have thrown an exception");
+		} catch (CadiException e) {
+			assertThat(e.getMessage(), is("Too few args: role <add|del|setTo|extend> <user> [role[,role]* (!REQ S)] "));
+		}
+	}
+	
+	@Test public void testDel() throws APIException, LocatorException, CadiException, URISyntaxException {
+		role.exec(0, new String[] {"del", "user", "role"});
+
+		when(credRequestFutureMock.code()).thenReturn(202);
+		role.exec(0, new String[] {"del", "user", "role"});
+
+		when(credRequestFutureMock.code()).thenReturn(404);
+		role.exec(0, new String[] {"del", "user", "role"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		role.exec(0, new String[] {"del", "user", "role"});
+		
+		try {
+			role.exec(0, new String[] {"del", "user"});
+			fail("Should have thrown an exception");
+		} catch (CadiException e) {
+			assertThat(e.getMessage(), is("Too few args: role <add|del|setTo|extend> <user> [role[,role]* (!REQ S)] "));
+		}
 	}
 	
 	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
-//		String[] strArr = {"add", "del", "setTo","extend", "del", "setTo","extend"};
-//		Assert.assertEquals(200, role._exec(0, strArr));
-//		
-//		String[] strArr1 = { "del", "setTo","extend","add", "del", "setTo","extend"};
-//		Assert.assertEquals(501, role._exec(0, strArr1));
-//		
-//		String[] strArr2 = {"setTo","extend","add", "del", "del", "setTo","extend" };
-//		Assert.assertEquals(501, role._exec(0, strArr2));
-//		
-//		String[] strArr3 = {"extend","add", "del","setTo", "del", "setTo","extend" };
-//		Assert.assertEquals(501, role._exec(0, strArr3));
+	public void testSetTo() throws APIException, LocatorException, CadiException, URISyntaxException {
+		role.exec(0, new String[] {"setTo", "user"});
 
+		role.exec(0, new String[] {"setTo", "user", "role"});
+
+		when(credRequestFutureMock.get(any(Integer.class))).thenReturn(true);
+		role.exec(0, new String[] {"setTo", "user"});
+	}
+	
+	@Test
+	public void testExtend() throws APIException, LocatorException, CadiException, URISyntaxException {
+		role.exec(0, new String[] {"extend", "user", "role"});
+
+		when(voidFutureMock.code()).thenReturn(202);
+		role.exec(0, new String[] {"extend", "user", "role"});
+
+		when(voidFutureMock.code()).thenReturn(404);
+		role.exec(0, new String[] {"extend", "user", "role"});
+
+		when(voidFutureMock.get(any(Integer.class))).thenReturn(true);
+		role.exec(0, new String[] {"extend", "user", "role"});
+		
+		try {
+			role.exec(0, new String[] {"extend", "user"});
+			fail("Should have thrown an exception");
+		} catch (CadiException e) {
+			assertThat(e.getMessage(), is("Too few args: role <add|del|setTo|extend> <user> [role[,role]* (!REQ S)] "));
+		}
 	}
 	
 	@Test

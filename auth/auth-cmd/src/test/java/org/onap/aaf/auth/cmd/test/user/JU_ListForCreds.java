@@ -21,84 +21,142 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import org.junit.Assert;
-import org.junit.Before;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
-import org.onap.aaf.auth.cmd.test.JU_AAFCli;
-import org.onap.aaf.auth.cmd.user.List;
-import org.onap.aaf.auth.cmd.user.ListForCreds;
-import org.onap.aaf.auth.cmd.user.User;
 import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.http.HRcli;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
-@RunWith(MockitoJUnitRunner.class)
+import aaf.v2_0.Users;
+
+import org.onap.aaf.auth.cmd.user.List;
+import org.onap.aaf.auth.cmd.user.ListForCreds;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
+import org.onap.aaf.auth.cmd.user.User;
+
 public class JU_ListForCreds {
 	
-	private static ListForCreds lsForCreds;
-	User user;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	
-	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		User usr = new User(aafcli);
-		List parent = new List(usr);
-		lsForCreds = new ListForCreds(parent);
-		
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"ns","id","ns","id"};
-		//lsForCreds._exec(0, strArr);
+	private ListForCreds listUsers;
 
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
+	@Mock private Future<Users> usersFutureMock;
+	@Mock private Users usersMock;
+	@Mock private Users.User userMock1;
+	@Mock private Users.User userMock2;
+
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcliStub aafcliStub;
+	
+	private ArrayList<Users.User> users;
+	
+	private boolean isTest;
+	
+	@SuppressWarnings("unchecked")
+	@Before
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		MockitoAnnotations.initMocks(this);
+
+		when(clientMock.read(any(String.class), any(RosettaDF.class))).thenReturn(usersFutureMock);
+		
+		
+		when(userMock1.getId()).thenReturn("id1");
+		when(userMock2.getId()).thenReturn("id2");
+
+		users = new ArrayList<>();
+		users.add(userMock1);
+		users.add(userMock2);
+
+		when(usersMock.getUser()).thenReturn(users);
+
+		usersFutureMock.value = usersMock;
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		aEnv = new AuthzEnv();
+		aafcliStub = new AAFcliStub(access, aEnv, wrtMock, hman, null, ssMock);
+		isTest = true;
+
+		List list = new List(new User(aafcliStub));
+		listUsers = new ListForCreds(list);
 	}
+
+	@Test
+	public void testNs() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(usersFutureMock.get(any(Integer.class))).thenReturn(false);
+		listUsers.exec(0, new String[] {"ns", "id"});
+		
+		when(usersFutureMock.get(any(Integer.class))).thenReturn(true);
+		listUsers.exec(0, new String[] {"ns", "id"});
+
+		when(usersFutureMock.code()).thenReturn(404);
+		listUsers.exec(0, new String[] {"ns", "id"});
+		
+		isTest = false;
+		listUsers.exec(0, new String[] {"ns", "id"});
+	}
+
+	@Test
+	public void testID() throws APIException, LocatorException, CadiException, URISyntaxException {
+		when(usersFutureMock.get(any(Integer.class))).thenReturn(false);
+		listUsers.exec(0, new String[] {"id", "id"});
+		
+		when(usersFutureMock.get(any(Integer.class))).thenReturn(true);
+		listUsers.exec(0, new String[] {"id", "id"});
+
+		when(usersFutureMock.code()).thenReturn(404);
+		listUsers.exec(0, new String[] {"id", "id"});
+		
+		isTest = false;
+		listUsers.exec(0, new String[] {"ns", "id"});
+	}
+	
 	
 	@Test
 	public void testDetailedHelp() {
 		StringBuilder sb = new StringBuilder();
-		lsForCreds.detailedHelp(0, sb);
+		listUsers.detailedHelp(0, sb);
 	}
+
+	private class AAFcliStub extends AAFcli {
+		public AAFcliStub(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si,
+			SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
+			super(access, env, wtr, hman, si, ss);
+		}
+
+		@Override
+		public boolean isTest() {
+			return isTest;
+		}
+	}
+
 }

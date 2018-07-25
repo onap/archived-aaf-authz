@@ -21,10 +21,7 @@
  ******************************************************************************/
 package org.onap.aaf.auth.cmd.test.user;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.fail;
-
 import org.junit.Before;
 
 import java.io.ByteArrayOutputStream;
@@ -32,104 +29,94 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
-
+import java.util.ArrayList;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.env.AuthzEnv;
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
-import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
-import aaf.v2_0.DelgRequest;
+import aaf.v2_0.Approval;
+import aaf.v2_0.Approvals;
+import aaf.v2_0.Delg;
+import aaf.v2_0.Delgs;
 
-import org.onap.aaf.auth.cmd.user.Delg;
+import org.onap.aaf.auth.cmd.user.List;
 import org.onap.aaf.auth.cmd.user.User;
 import org.onap.aaf.auth.cmd.test.HMangrStub;
 
-public class JU_Delg {
+public class JU_List {
 	
-	private Delg delg;
+	private List list;
 
 	@Mock private SecuritySetter<HttpURLConnection> ssMock;
 	@Mock private Locator<URI> locMock;
 	@Mock private Writer wrtMock;
 	@Mock private Rcli<HttpURLConnection> clientMock;
-	@Mock private Future<DelgRequest> delgRequestFutureMock;
+
+	@Mock private Approvals approvalsMock;
+	@Mock private Approval approvalMock1;
+	@Mock private Approval approvalMock2;
+	@Mock private Approval approvalMock3;
+
+	@Mock private Delgs delgsMock;
+	@Mock private Delg delgMock1;
+	@Mock private Delg delgMock2;
+	@Mock private Delg delgMock3;
 
 	private PropAccess access;
 	private HMangrStub hman;	
 	private AuthzEnv aEnv;
 	private AAFcli aafcli;
 	
-	@SuppressWarnings("unchecked")
+	// These should probably be generic Lists, but there's already a classname clash, so...
+	private ArrayList<Approval> approvals;
+	private ArrayList<Delg> delgs;
+
 	@Before
 	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
 		MockitoAnnotations.initMocks(this);
+		
+		when(approvalMock1.getTicket()).thenReturn("id1");
+		when(approvalMock2.getTicket()).thenReturn("id2");
+		when(approvalMock3.getTicket()).thenReturn("id2");
 
-		when(clientMock.create(any(String.class), any(RosettaDF.class), any(DelgRequest.class))).thenReturn(delgRequestFutureMock);
-		when(clientMock.delete(any(String.class), any(RosettaDF.class), any(DelgRequest.class))).thenReturn(delgRequestFutureMock);
-		when(clientMock.update(any(String.class), any(RosettaDF.class), any(DelgRequest.class))).thenReturn(delgRequestFutureMock);
+		approvals = new ArrayList<>();
+		approvals.add(approvalMock1);
+		approvals.add(approvalMock2);
+		approvals.add(approvalMock3);
+
+		when(approvalsMock.getApprovals()).thenReturn(approvals);
+
+		delgs = new ArrayList<>();
+		delgs.add(delgMock1);
+		delgs.add(delgMock2);
+		delgs.add(delgMock3);
+
+		when(delgsMock.getDelgs()).thenReturn(delgs);
 
 		hman = new HMangrStub(access, locMock, clientMock);
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		aEnv = new AuthzEnv();
 		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
-
-		delg = new Delg(new User(aafcli));
+		
+		list = new List(new User(aafcli));
 	}
+	
+	// NOTE: the first report method is package private - it will need to be tested in a packaged class
 
 	@Test
-	public void testAdd() throws APIException, LocatorException, CadiException, URISyntaxException {
-		delg.exec(0, new String[] {"add", "id", "delegate"});
-
-		when(delgRequestFutureMock.get(any(Integer.class))).thenReturn(true);
-		delg.exec(0, new String[] {"add", "id", "delegate"});
-		
-		delg.exec(0, new String[] {"add", "id", "delegate", "2000-01-01"});
-		
-		try {
-			delg.exec(0, new String[] {"add", "id", "delegate", "invalid date format"});
-			fail("Should have thrown an exception");
-		} catch (CadiException e) {
-		}
+	public void testReport2() {
+		list.report(approvalsMock, "title", "id");
 	}
 	
 	@Test
-	public void testUpd() throws APIException, LocatorException, CadiException, URISyntaxException {
-		delg.exec(0, new String[] {"upd", "id", "delegate"});
+	public void testReport3() {
+		list.report(delgsMock, "title", "id");
+	}
 
-		when(delgRequestFutureMock.get(any(Integer.class))).thenReturn(true);
-		delg.exec(0, new String[] {"upd", "id", "delegate"});
-		
-		delg.exec(0, new String[] {"upd", "id", "delegate", "2000-01-01"});
-		
-		try {
-			delg.exec(0, new String[] {"upd", "id", "delegate", "invalid date format"});
-			fail("Should have thrown an exception");
-		} catch (CadiException e) {
-		}
-	}
-	
-	@Test
-	public void testDel() throws APIException, LocatorException, CadiException, URISyntaxException {
-		delg.exec(0, new String[] {"del", "id"});
-
-		when(delgRequestFutureMock.get(any(Integer.class))).thenReturn(true);
-		delg.exec(0, new String[] {"del", "id"});
-	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		delg.detailedHelp(0, sb);
-	}
 }

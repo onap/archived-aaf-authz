@@ -19,43 +19,59 @@
  * *
  * *
  ******************************************************************************/
-package org.onap.aaf.auth.cmd.test;
+package org.onap.aaf.auth.cmd.test.user;
 
-import java.net.ConnectException;
+import org.junit.Before;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
-import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.CadiException;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.onap.aaf.auth.cmd.AAFcli;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Rcli;
-import org.onap.aaf.cadi.client.Retryable;
-import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 
-public class HMangrStub extends HMangr {
+import org.onap.aaf.auth.cmd.user.User;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
+
+public class JU_User {
 	
-	private Rcli<HttpURLConnection> clientMock;
+	@SuppressWarnings("unused")
+	private User user;
 
-	public HMangrStub(Access access, Locator<URI> loc, Rcli<HttpURLConnection> clientMock) throws LocatorException {
-		super(access, loc);
-		this.clientMock = clientMock;
-	}
+	@Mock private SecuritySetter<HttpURLConnection> ssMock;
+	@Mock private Locator<URI> locMock;
+	@Mock private Writer wrtMock;
+	@Mock private Rcli<HttpURLConnection> clientMock;
 
-	@Override public<RET> RET same(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable) throws APIException, CadiException, LocatorException {
-		try {
-			return retryable.code(clientMock);
-		} catch (ConnectException e) {
-		}
-		return null;
+	private PropAccess access;
+	private HMangrStub hman;	
+	private AuthzEnv aEnv;
+	private AAFcli aafcli;
+	
+	@Before
+	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+		MockitoAnnotations.initMocks(this);
+
+		hman = new HMangrStub(access, locMock, clientMock);
+		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+		aEnv = new AuthzEnv();
+		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+
 	}
-	@Override public<RET> RET oneOf(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify,String host) throws LocatorException, CadiException, APIException {
-		try {
-			return retryable.code(clientMock);
-		} catch (ConnectException e) {
-		}
-		return null;
+	
+	@Test
+	public void testConstructor() throws APIException {
+		user = new User(aafcli);
 	}
+	
 }

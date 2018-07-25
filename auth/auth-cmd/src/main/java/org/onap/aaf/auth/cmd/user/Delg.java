@@ -67,7 +67,7 @@ public class Delg extends BaseCmd<User> {
 				if(option<2) {
 					String delegate = fullID(args[idx++]);
 					dr.setDelegate(delegate);
-					if(option<2 && args.length>idx) {
+					if(args.length>idx) {
 						Date date;
 						try {
 							date = Chrono.dateOnlyFmt.parse(args[idx++]);

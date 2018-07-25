@@ -65,7 +65,7 @@ public class Role extends Cmd {
 				Future<?> fp = null;
 
 				if (option != 2) {
-					if (args.length < 5) {
+					if (args.length < 3) {
 						throw new CadiException(build(new StringBuilder("Too few args: "), null).toString());                        
 					}
 					String[] roles = args[idx++].split(",");
