@@ -22,9 +22,17 @@
 
 package org.onap.aaf.cadi.lur.test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.onap.aaf.cadi.AbsUserCache;
+import org.onap.aaf.cadi.CredVal.Type;
+import org.onap.aaf.cadi.Permission;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.lur.ConfigPrincipal;
+import org.onap.aaf.cadi.lur.LocalLur;
+import org.onap.aaf.cadi.lur.LocalPermission;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,140 +41,136 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.onap.aaf.cadi.Permission;
-import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.AbsUserCache;
-import org.onap.aaf.cadi.CredVal.Type;
-import org.onap.aaf.cadi.lur.ConfigPrincipal;
-import org.onap.aaf.cadi.lur.LocalLur;
-import org.onap.aaf.cadi.lur.LocalPermission;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 public class JU_LocalLur {
 
-	private PropAccess access;
-	private ByteArrayOutputStream outStream;
+    private PropAccess access;
+    private ByteArrayOutputStream outStream;
 
-	@Mock Permission permMock;
+    @Mock
+    Permission permMock;
 
-	@Before
-	public void setup() throws IOException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws IOException {
+        MockitoAnnotations.initMocks(this);
 
-		outStream = new ByteArrayOutputStream();
-		access = new PropAccess(new PrintStream(outStream), new String[0]) {
-			@Override public String decrypt(String encrypted, boolean anytext) throws IOException {
-				return rot13(encrypted);
-			}
-			@Override public String encrypt(String unencrypted) throws IOException {
-				return rot13(unencrypted);
-			}
-		};
+        outStream = new ByteArrayOutputStream();
+        access = new PropAccess(new PrintStream(outStream), new String[0]) {
+            @Override
+            public String decrypt(String encrypted, boolean anytext) throws IOException {
+                return rot13(encrypted);
+            }
 
-	}
+            @Override
+            public String encrypt(String unencrypted) throws IOException {
+                return rot13(unencrypted);
+            }
+        };
 
-	@Test
-	public void test() throws IOException {
-		final String password = "<pass>";
-		final String encrypted = rot13(password);
+    }
 
-		LocalLur lur;
-		List<AbsUserCache<LocalPermission>.DumpInfo> info;
+    @Test
+    public void test() throws IOException {
+        final String password = "<pass>";
+        final String encrypted = rot13(password);
 
-		lur = new LocalLur(access, null, null);
-		assertThat(lur.dumpInfo().size(), is(0));
+        LocalLur lur;
+        List<AbsUserCache<LocalPermission>.DumpInfo> info;
 
-		lur = new LocalLur(access, "user1", null);
-		info = lur.dumpInfo();
-		assertThat(info.size(), is(1));
-		assertThat(info.get(0).user, is("user1"));
+        lur = new LocalLur(access, null, null);
+        assertThat(lur.dumpInfo().size(), is(0));
 
-		lur.clearAll();
-		assertThat(lur.dumpInfo().size(), is(0));
+        lur = new LocalLur(access, "user1", null);
+        info = lur.dumpInfo();
+        assertThat(info.size(), is(1));
+        assertThat(info.get(0).user, is("user1"));
 
-		lur = new LocalLur(access, "user1%" + encrypted, null);
-		info = lur.dumpInfo();
-		assertThat(info.size(), is(1));
-		assertThat(info.get(0).user, is("user1@none"));
+        lur.clearAll();
+        assertThat(lur.dumpInfo().size(), is(0));
 
-		lur.clearAll();
-		assertThat(lur.dumpInfo().size(), is(0));
+        lur = new LocalLur(access, "user1%" + encrypted, null);
+        info = lur.dumpInfo();
+        assertThat(info.size(), is(1));
+        assertThat(info.get(0).user, is("user1@none"));
 
-		lur = new LocalLur(access, "user1@domain%" + encrypted, null);
-		info = lur.dumpInfo();
-		assertThat(info.size(), is(1));
-		assertThat(info.get(0).user, is("user1@domain"));
+        lur.clearAll();
+        assertThat(lur.dumpInfo().size(), is(0));
 
-		lur = new LocalLur(access, "user1@domain%" + encrypted + ":groupA", null);
-		info = lur.dumpInfo();
-		assertThat(info.size(), is(1));
-		assertThat(info.get(0).user, is("user1@domain"));
-		
-		when(permMock.getKey()).thenReturn("groupA");
-		assertThat(lur.handlesExclusively(permMock), is(true));
-		when(permMock.getKey()).thenReturn("groupB");
-		assertThat(lur.handlesExclusively(permMock), is(false));
-		
-		assertThat(lur.fish(null, null), is(false));
-		
-		Principal princ = new ConfigPrincipal("user1@localized", encrypted);
+        lur = new LocalLur(access, "user1@domain%" + encrypted, null);
+        info = lur.dumpInfo();
+        assertThat(info.size(), is(1));
+        assertThat(info.get(0).user, is("user1@domain"));
 
-		lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
-		assertThat(lur.fish(princ, lur.createPerm("groupA")), is(true));
-		assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
-		assertThat(lur.fish(princ, permMock), is(false));
+        lur = new LocalLur(access, "user1@domain%" + encrypted + ":groupA", null);
+        info = lur.dumpInfo();
+        assertThat(info.size(), is(1));
+        assertThat(info.get(0).user, is("user1@domain"));
 
-		princ = new ConfigPrincipal("user1@domain", encrypted);
-		assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
+        when(permMock.getKey()).thenReturn("groupA");
+        assertThat(lur.handlesExclusively(permMock), is(true));
+        when(permMock.getKey()).thenReturn("groupB");
+        assertThat(lur.handlesExclusively(permMock), is(false));
 
-		princ = new ConfigPrincipal("user1@localized", "badpass");
-		assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
-		
-		assertThat(lur.handles(null), is(false));
-		
-		lur.fishAll(null,  null);
+        assertThat(lur.fish(null, null), is(false));
 
-		List<Permission> perms = new ArrayList<>();
-		perms.add(lur.createPerm("groupB"));
-		perms.add(lur.createPerm("groupA"));
-		princ = new ConfigPrincipal("user1@localized", encrypted);
-		lur.fishAll(princ, perms);
-		princ = new ConfigPrincipal("user1@localized", "badpass");
-		lur.fishAll(princ, perms);
-		
-		assertThat(lur.validate(null, null, null, null), is(false));
-		assertThat(lur.validate("user", null, "badpass".getBytes(), null), is(false));
-		assertThat(lur.validate("user1@localized", null, encrypted.getBytes(), null), is(false));
+        Principal princ = new ConfigPrincipal("user1@localized", encrypted);
 
-		lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
-		assertThat(lur.validate("user1@localized", Type.PASSWORD, encrypted.getBytes(), null), is(true));
+        lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
+        assertThat(lur.fish(princ, lur.createPerm("groupA")), is(true));
+        assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
+        assertThat(lur.fish(princ, permMock), is(false));
 
-		lur = new LocalLur(access, null, "admin");
-		lur = new LocalLur(access, null, "admin:user1");
-		lur = new LocalLur(access, null, "admin:user1@localized");
-		lur = new LocalLur(access, null, "admin:user1@localized,user2@localized%" + password + ";user:user1@localized");
-	}
+        princ = new ConfigPrincipal("user1@domain", encrypted);
+        assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
 
-	public static String rot13(String input) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			char c = input.charAt(i);
-			if (c >= 'a' && c <= 'm') {
-				c += 13;
-			} else if (c >= 'A' && c <= 'M') {
-				c += 13;
-			} else if (c >= 'n' && c <= 'z') {
-				c -= 13;
-			} else if (c >= 'N' && c <= 'Z') {
-				c -= 13;
-			}
-			sb.append(c);
-		}
-		return sb.toString();
-	}
+        princ = new ConfigPrincipal("user1@localized", "badpass");
+        assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
+
+        assertThat(lur.handles(null), is(false));
+
+        lur.fishAll(null, null);
+
+        List<Permission> perms = new ArrayList<>();
+        perms.add(lur.createPerm("groupB"));
+        perms.add(lur.createPerm("groupA"));
+        princ = new ConfigPrincipal("user1@localized", encrypted);
+        lur.fishAll(princ, perms);
+        princ = new ConfigPrincipal("user1@localized", "badpass");
+        lur.fishAll(princ, perms);
+
+        assertThat(lur.validate(null, null, null, null), is(false));
+        assertThat(lur.validate("user", null, "badpass".getBytes(), null), is(false));
+        assertThat(lur.validate("user1@localized", null, encrypted.getBytes(), null), is(false));
+
+        lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
+        assertThat(lur.validate("user1@localized", Type.PASSWORD, encrypted.getBytes(), null), is(true));
+
+        lur = new LocalLur(access, null, "admin");
+        lur = new LocalLur(access, null, "admin:user1");
+        lur = new LocalLur(access, null, "admin:user1@localized");
+        lur = new LocalLur(access, null, "admin:user1@localized,user2@localized%" + password + ";user:user1@localized");
+    }
+
+    public static String rot13(String input) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c >= 'a' && c <= 'm') {
+                c += 13;
+            } else if (c >= 'A' && c <= 'M') {
+                c += 13;
+            } else if (c >= 'n' && c <= 'z') {
+                c -= 13;
+            } else if (c >= 'N' && c <= 'Z') {
+                c -= 13;
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
 
 }
 
