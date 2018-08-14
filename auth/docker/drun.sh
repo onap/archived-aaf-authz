@@ -2,6 +2,15 @@
 # Pull in Variables from d.props
 . ./d.props
 
+# Only need Cassandra Link Info when initializing the container.
+if [ ! -e ./cass.props ]; then
+    cp cass.props.init cass.props
+    echo "Edit appropriate Cassandra Link Info into cass.props"
+    exit
+fi
+
+. ./cass.props
+
 if [ "$1" == "" ]; then
     AAF_COMPONENTS=$(ls -r ../aaf_${VERSION}/bin | grep -v '\.')
 else

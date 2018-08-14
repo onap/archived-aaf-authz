@@ -7,4 +7,6 @@ LABEL version=${AAF_VERSION}
 
 COPY lib /opt/app/aaf/lib
 COPY bin /opt/app/aaf/bin
+COPY theme /opt/app/aaf/theme
+
 

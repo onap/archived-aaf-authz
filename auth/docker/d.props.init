@@ -8,7 +8,6 @@ CONF_ROOT_DIR=/opt/app/osaaf
 # Local Env info
 HOSTNAME=aaf.osaaf.org
 HOST_IP=
-CASS_HOST=cass.aaf.osaaf.org:<Cass IP>
 
 # AAF Machine info
 AAF_ENV=DEV

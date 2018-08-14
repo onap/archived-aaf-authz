@@ -45,6 +45,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.ms >../aaf_${VERSION}/Dockerfile
     cd ..
     docker build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
+    docker tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
     rm aaf_${VERSION}/Dockerfile
     cd -
 done
