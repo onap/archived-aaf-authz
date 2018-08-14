@@ -16,10 +16,12 @@ cp ../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar sample/bin
 # AAF Config image (for AAF itself)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.config > sample/Dockerfile
 docker build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
+docker tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
 
 # AAF Agent Image (for Clients)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.client > sample/Dockerfile
 docker build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
+docker tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
 
 # Clean up 
 rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
@@ -31,6 +33,7 @@ echo Building aaf_$AAF_COMPONENT...
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.core >../aaf_${VERSION}/Dockerfile
 cd ..
 docker build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
+docker tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
 rm aaf_${VERSION}/Dockerfile
 cd -
 
