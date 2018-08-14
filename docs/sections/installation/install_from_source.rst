@@ -93,7 +93,7 @@ New Docker Cassandra
 Assuming you are in your src/authz directory::
 
   $ cd auth/auth-cass/docker
-  $ sh dinstall.sh
+  $ bash dinstall.sh
 
 ---------------------
 AAF Itself
@@ -127,7 +127,7 @@ You will need to edit and fill out the information in your d.props file.  Here i
 
 AAF can be built, and local Docker Images built with the following::
 
-  $ sh dbuild.sh
+  $ bash dbuild.sh
 
 Otherwise, just let it pull from Nexus
 
@@ -140,7 +140,7 @@ AAF uses a Persistent Volume to store data longer term, such as CADI configs, Or
 This volume is created automatically, as necessary, and linked into the container when starting. ::
 
   ## Be sure to have your 'd.props' file filled out before running.
-  $ sh aaf.sh
+  $ bash aaf.sh
 
 ==============================
 Bootstrapping with Keystores
@@ -187,7 +187,7 @@ Check the Container logs for correct Keystore passwords, other issues ::
 
 Watch logs ::
 
-  $ sh aaf.sh taillog
+  $ bash aaf.sh taillog
 
 Notes:
 
