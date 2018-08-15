@@ -9,10 +9,15 @@ fi
  
 . ./aaf.props
 
-for V in VERSION AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
+
+for V in VERSION DOCKER_REPOSITORY AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
    if [ "$(grep $V ./aaf.props)" = "" ]; then
       unset DEF
       case $V in
+	 DOCKER_REPOSITORY) 
+	        PROMPT="Docker Repo"
+	        DEF=nexus3.onap.org:10003
+	        ;;
          AAF_FQDN)   PROMPT="AAF's FQDN";;
          DEPLOY_FQI) PROMPT="Deployer's FQI";;
          AAF_FQDN_IP)
@@ -66,5 +71,5 @@ docker run \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
     --name aaf_agent_$USER \
-    onap/aaf/aaf_agent:$VERSION \
+    $DOCKER_REPOSITORY/onap/aaf/aaf_agent:$VERSION \
     /bin/bash "$@"
