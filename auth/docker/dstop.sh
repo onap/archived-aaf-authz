@@ -3,7 +3,7 @@
 . ./d.props
 
 if [ "$1" == "" ]; then
-    AAF_COMPONENTS=$(ls ../aaf_${VERSION}/bin | grep -v '\.')
+    AAF_COMPONENTS=$(cat components)
 else
     AAF_COMPONENTS="$@"
 fi

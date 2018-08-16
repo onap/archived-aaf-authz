@@ -12,5 +12,5 @@ docker run \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
     --name aaf_config_$USER \
-    ${ORG}/${PROJECT}/aaf_config:${VERSION} \
+    $PREFIX${ORG}/${PROJECT}/aaf_config:${VERSION} \
     /bin/bash "$@"

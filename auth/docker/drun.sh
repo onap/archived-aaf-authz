@@ -12,7 +12,7 @@ fi
 . ./cass.props
 
 if [ "$1" == "" ]; then
-    AAF_COMPONENTS=$(ls -r ../aaf_${VERSION}/bin | grep -v '\.')
+    AAF_COMPONENTS=$(cat components)
 else
     AAF_COMPONENTS="$@"
 fi
@@ -57,5 +57,5 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         ${LINKS} \
         --publish $PORTMAP \
         --mount 'type=volume,src=aaf_config,dst='$CONF_ROOT_DIR',volume-driver=local' \
-        ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
+        ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
 done
