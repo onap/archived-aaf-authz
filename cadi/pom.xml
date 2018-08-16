@@ -38,7 +38,7 @@
 	<properties>
 		<!-- <sonar.skip>true</sonar.skip> -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.jettyVersion>9.3.9.v20160517</project.jettyVersion>
+		<project.jettyVersion>9.4.12.RC</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
