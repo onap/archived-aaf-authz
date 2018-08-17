@@ -41,19 +41,18 @@ echo $SUBJECT
 $PASSPHRASE
 EOF
 
-  chmod 400 $DIR/private/$CN.key 
+  chmod 400 $DIR/private/ca.key
   openssl req -verify -text -noout -in $DIR/$CN.csr
 
   # Sign it
   openssl ca -config openssl.conf -extensions v3_intermediate_ca \
 	-days 1826 \
-     	-cert certs/ca.crt -keyfile private/ca.key -out $DIR/certs/ca.crt \
+  -cert certs/ca.crt -keyfile private/ca.key -out $DIR/certs/ca.crt \
 	-infiles $DIR/$CN.csr
 
-    openssl x509 -text -noout -in $DIR/certs/ca.crt
+   openssl x509 -text -noout -in $DIR/certs/ca.crt
 
-
-     openssl verify -CAfile certs/ca.crt $DIR/certs/ca.crt
+   openssl verify -CAfile certs/ca.crt $DIR/certs/ca.crt
 
 
 # Create a Signer p12 script
