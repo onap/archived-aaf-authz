@@ -37,7 +37,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.interfaceVersion>2.1.1-SNAPSHOT</project.interfaceVersion>
 		<!-- >project.jettyVersion>9.3.22.v20171030</project.jettyVersion -->
-		<project.jettyVersion>9.4.11.v20180605</project.jettyVersion>
+		<!-- project.jettyVersion>9.4.11.v20180605</project.jettyVersion -->
+		<project.jettyVersion>9.4.12.RC2</project.jettyVersion>
 		<powermock.version>1.5.1</powermock.version>
 		<project.ext_root_dir>/opt/app/osaaf</project.ext_root_dir>
 		<!--  SONAR  -->
