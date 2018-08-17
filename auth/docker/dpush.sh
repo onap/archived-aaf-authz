@@ -4,12 +4,7 @@
 # Pull in Variables from d.props
 . ./d.props
 
-f [ "$1" == "" ]; then
-    AAF_COMPONENTS=$(cat components)
-else
-    AAF_COMPONENTS="$@"
-fi
-
+AAF_COMPONENTS=$(cat components)
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         # docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${OLD_VERSION}
