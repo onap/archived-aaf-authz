@@ -108,42 +108,47 @@ public abstract class CA {
 		}
 		
 		String dataDir = access.getProperty(CM_PUBLIC_DIR,null);
-		if(dataDir!=null) {
-			File data = new File(dataDir);
-			byte[] bytes;
-			if(data.exists()) {
-				String trustCas = access.getProperty(CM_TRUST_CAS,null);
-				if(trustCas!=null) {
-					for(String fname : Split.splitTrim(',', trustCas)) {
-						File crt;
-						if(fname.contains("/")) {
-							crt = new File(fname);
-						} else {
-							crt = new File(data,fname);
-						}
-						if(crt.exists()) {
-							access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
-							bytes = new byte[(int)crt.length()];
-							FileInputStream fis = new FileInputStream(crt);
-							try {
-								int read = fis.read(bytes);
-								if(read>0) {	
-									addTrustedCA(new String(bytes));
-								}
-							} finally {
-								fis.close();
-							}
-						} else {
-							access.printf(Level.INIT, "FAILED to Load CA Cert from %s", crt.getAbsolutePath());
-						}
-					}
-				} else {
-					access.printf(Level.INIT, "Cannot load external TRUST CAs: No property %s",CM_TRUST_CAS);
-				}
-			} else {
-				access.printf(Level.INIT, "Cannot load external TRUST CAs: %s doesn't exist, or is not accessible",data.getAbsolutePath());
-			}
-		}
+		if(dataDir==null) {
+      access.printf(Level.INIT,
+          "Cannot load external TRUST CAs: No property %s", CM_PUBLIC_DIR);
+      return;
+    }
+    File data = new File(dataDir);
+    byte[] bytes;
+    if(!data.exists()) {
+      access.printf(Level.INIT,
+          "Cannot load external TRUST CAs: %s doesn't exist, or is not accessible",
+          data.getAbsolutePath());
+      return;
+    }
+    String trustCas = access.getProperty(CM_TRUST_CAS,null);
+    if(trustCas==null) {
+      access.printf(Level.INIT, "Cannot load external TRUST CAs: No property %s", CM_TRUST_CAS);
+      return;
+    }
+    for(String fname : Split.splitTrim(',', trustCas)) {
+      File crt;
+      if(fname.contains("/")) {
+        crt = new File(fname);
+      } else {
+        crt = new File(data,fname);
+      }
+      if(!crt.exists()) {
+        access.printf(Level.INIT, "FAILED to Load CA Cert from %s", crt.getAbsolutePath());
+        continue;
+      }
+      access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
+      bytes = new byte[(int)crt.length()];
+      FileInputStream fis = new FileInputStream(crt);
+      try {
+        int read = fis.read(bytes);
+        if(read>0) {
+          addTrustedCA(new String(bytes));
+        }
+      } finally {
+        fis.close();
+      }
+    }
 	}
 
 	protected void addCaIssuerDN(String issuerDN) {
