@@ -11,7 +11,7 @@ To be effective during a computer transaction, Security must not only be secure,
 
 |image0|
 
-.. |image0| image:: images/aaf-object-model.jpg
+.. |image0| image:: images/aaf-hl-object-model.png
    :height: 600px
    :width: 800px
 
