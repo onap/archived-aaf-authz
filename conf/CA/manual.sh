@@ -1,84 +1,91 @@
 #
 # Initialize a manual Cert.  This is NOT entered in Certman Records
+# $1 - CN (Common Name)
+# $2 - FQI (Fully Qualified Identity)
+# $3-$n - SANs (Service Alias Names)
 #
-echo "FQI (Fully Qualified Identity): "
-read FQI
-if [ "$1" = "" -o "$1" = "-local" ]; then 
+
+if [ "$2" = "" ]; then
+  echo "FQI (Fully Qualified Identity): "
+  read FQI
+fi
+
+if [ "$1" = "" -o "$1" = "-local" ]; then
   echo "Personal Certificate"
   SUBJECT="/CN=$FQI/OU=V1`cat subject.aaf`"
   NAME=$FQI
-else 
+else
   echo "Application Certificate"
   SUBJECT="/CN=$1/OU=$FQI`cat subject.aaf`"
-  FQDN=$1
-  NAME=$FQDN
-  shift
+  NAME=$1
 
-  echo "Enter any SANS, delimited by spaces: "
-  read SANS
+  if [ "$3" = "" ]; then
+    echo "Enter any SANS, delimited by spaces: "
+    read SANS
+  else
+    SANS=""
+    while [ ! "$3" = "" ]; do
+    SANS=${SANS}" "$3
+    shift
+    done
+  fi
 fi
 
 # Do SANs
 if [ "$SANS" = "" ]; then
    echo no SANS
-    if [ -e $NAME.san ]; then 
+    if [ -e $NAME.san ]; then
       rm $NAME.san
     fi
   else
-   echo some SANS
+   echo some SANS: $SANS
     cp ../san.conf $NAME.san
     NUM=1
-    for D in $SANS; do 
+    for D in $SANS; do
         echo "DNS.$NUM = $D" >> $NAME.san
-	NUM=$((NUM+1))
+	      NUM=$((NUM+1))
     done
 fi
 
 echo $SUBJECT
 
-if [ -e $NAME.csr ]; then
-  SIGN_IT=true
-else 
+if [ ! -e $NAME.csr ]; then
   if [ "$1" = "-local" ]; then
 	echo "IMPORTANT: If for any reason, you kill this process, type 'stty sane'"
 	echo "Enter the PassPhrase for the Key for $FQI: "
 	`stty -echo`
 	read PASSPHRASE
 	`stty echo`
- 
+
 	# remove any previous Private key
 	rm private/$NAME.key
-	# Create j regaular rsa encrypted key
+	# Create regular rsa encrypted key
 	openssl req -new -newkey rsa:2048 -sha256 -keyout private/$NAME.key \
 	  -out $NAME.csr -outform PEM -subj "$SUBJECT" \
 	  -passout stdin  << EOF
 $PASSPHRASE
 EOF
-	chmod 400 private/$NAME.key 
-	SIGN_IT=true
-  else 
-	echo openssl req -newkey rsa:2048 -sha256 -keyout $NAME.key -out $NAME.csr -outform PEM -subj '"'$SUBJECT'"'
-	echo chmod 400 $NAME.key
+	chmod 400 private/$NAME.key
+  else
+	openssl req -newkey rsa:2048 -sha256 -keyout private/$NAME.key -out $NAME.csr -outform PEM -subj "$SUBJECT"
+	chmod 400 $NAME.key
 	echo "# All done, print result"
-	echo openssl req -verify -text -noout -in $NAME.csr
+	openssl req -verify -text -noout -in $NAME.csr
   fi
 fi
 
-if [ "$SIGN_IT" = "true" ]; then
   # Sign it
   if [ -e $NAME.san ]; then
-    openssl ca -config ../openssl.conf -extensions server_cert -out $NAME.crt \
+    openssl ca -config ../openssl.conf -extensions server_cert -out certs/$NAME.crt \
 	-cert certs/ca.crt -keyfile private/ca.key \
 	-policy policy_loose \
 	-days 360 \
 	-extfile $NAME.san \
 	-infiles $NAME.csr
-  else 
-    openssl ca -config ../openssl.conf -extensions server_cert -out $NAME.crt \
+  else
+    openssl ca -config ../openssl.conf -extensions server_cert -out certs/$NAME.crt \
 	-cert certs/ca.crt -keyfile private/ca.key \
 	-policy policy_loose \
 	-days 360 \
 	-infiles $NAME.csr
   fi
-fi
-
