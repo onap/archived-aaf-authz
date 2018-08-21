@@ -63,7 +63,7 @@ public abstract class Cmd {
 
 	protected static final int lineLength = 80;
 
-	private final static String hformat = "%-23s %-5s %-20s %-35s\n";
+	private static final String hformat = "%-23s %-5s %-20s %-35s\n";
 
 	public static final String STARTDATE = "startdate";
 	public static final String ENDDATE = "enddate";
@@ -73,7 +73,7 @@ public abstract class Cmd {
 	private int required;
 	protected final Cmd parent;
 	protected final List<Cmd> children;
-	private final static ConcurrentHashMap<Class<?>,RosettaDF<?>> dfs = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Class<?>,RosettaDF<?>> dfs = new ConcurrentHashMap<>();
 	public final AAFcli aafcli;
 	protected Access access;
 	private AuthzEnv env;
@@ -156,8 +156,14 @@ public abstract class Cmd {
 
 	protected void multiChar(StringBuilder sb, int length, char c, int indent) {
 		sb.append('\n');
-		for(int i=0;i<indent;++i)sb.append(' ');
-		for(int i=indent;i<length;++i)sb.append(c);
+		for(int i=0;i<indent;++i)
+		{
+			sb.append(' ');
+		}
+		for(int i=indent;i<length;++i)
+		{
+			sb.append(c);
+		}
 	}
 
 	public StringBuilder build(StringBuilder sb, StringBuilder detail) {
@@ -178,43 +184,45 @@ public abstract class Cmd {
 		
 		boolean first = true;
 		for(Cmd child : children) {
-			if(!(child instanceof DeprecatedCMD)) {
-				if(first) {
-					first = false;
-				} else if(detail==null) {
-					multiChar(sb,indent,' ',0);
-				} else {
-					// Write parents for Detailed Report
-					Stack<String> stack = new Stack<String>();
-					for(Cmd c = child.parent;c!=null;c=c.parent) {
-						if(c.name!=null) {
-							stack.push(c.name);
-						}
-					}
-					if(!stack.isEmpty()) {
-						sb.append("  ");
-						while(!stack.isEmpty()) {
-							sb.append(stack.pop());
-							sb.append(' ');
-						}
-					}
-				}
-				child.build(sb,detail);
-				if(detail!=null) {
-					child.detailedHelp(4, detail);
-					// If Child wrote something, then add, bracketing by lines
-					if(detail.length()>0) {
-						multiChar(sb,80,'-',2);
-						sb.append(detail);
-						sb.append('\n');
-						multiChar(sb,80,'-',2);
-						sb.append('\n');
-						detail.setLength(0); // reuse
-					} else {
-						sb.append('\n');
-					}
-				}
-			}
+			if(child instanceof DeprecatedCMD) {
+        continue;
+      }
+      if(first) {
+        first = false;
+      } else if(detail==null) {
+        multiChar(sb,indent,' ',0);
+      } else {
+        // Write parents for Detailed Report
+        Stack<String> stack = new Stack<>();
+        for(Cmd c = child.parent;c!=null;c=c.parent) {
+          if(c.name!=null) {
+            stack.push(c.name);
+          }
+        }
+        if(!stack.isEmpty()) {
+          sb.append("  ");
+          while(!stack.isEmpty()) {
+            sb.append(stack.pop());
+            sb.append(' ');
+          }
+        }
+      }
+      child.build(sb,detail);
+      if(detail==null) {
+        continue;
+      }
+      child.detailedHelp(4, detail);
+      // If Child wrote something, then add, bracketing by lines
+      if(detail.length()>0) {
+        multiChar(sb,80,'-',2);
+        sb.append(detail);
+        sb.append('\n');
+        multiChar(sb,80,'-',2);
+        sb.append('\n');
+        detail.setLength(0); // reuse
+      } else {
+        sb.append('\n');
+      }
 		}
 		return sb;
 	}
@@ -341,11 +349,17 @@ public abstract class Cmd {
 			}
 		} else {
 			pw().println(header);
-			for(int i=0;i<lineLength;++i)pw().print('-');
+			for(int i=0;i<lineLength;++i)
+      {
+        pw().print('-');
+      }
 			pw().println();
 								
 			pw().format(hformat,"Date","Table","User","Memo");
-			for(int i=0;i<lineLength;++i)pw().print('-');
+			for(int i=0;i<lineLength;++i)
+      {
+        pw().print('-');
+      }
 			pw().println();
 	
 			// Save Server time by Sorting locally
@@ -405,10 +419,6 @@ public abstract class Cmd {
 		}
 		throw new CadiException(build(new StringBuilder("Invalid Option: "),null).toString());
 	}
-
-//	protected RosettaEnv env() {
-//		return aafcli.env;
-//	}
 
 	protected HMangr hman() {
 		return aafcli.hman;
@@ -475,7 +485,10 @@ public abstract class Cmd {
 	}
 
 	public void reportLine() {
-		for(int i=0;i<lineLength;++i)pw().print('-');
+		for(int i=0;i<lineLength;++i)
+    {
+      pw().print('-');
+    }
 		pw().println();
 	}
 	
