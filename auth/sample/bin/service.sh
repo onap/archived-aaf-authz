@@ -89,9 +89,10 @@ if [ ! "$CMD" = "" ]; then
         for F in $FILES; do
             echo "Changing $1 in $F"
 	    if [ "$ADD" = "Y" ]; then
-		echo $2 >> $F
+		echo "$1=$2" >> $F
 	    else 
-                sed -i.backup -e "s/\\(${1}.*=\\).*/\\1${2}/" $F
+		VALUE=${2//\//\\\/}
+                sed -i.backup -e "s/\(${1}=\).*/\1${VALUE}/" $F
 	    fi
             cat $F
         done

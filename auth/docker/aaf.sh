@@ -15,6 +15,10 @@ function run_it() {
     /bin/bash $PARAMS
 }
 
+function set_prop() {
+docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2" "$3"
+}
+
 function encrypt_it() {
   docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
 }
@@ -43,6 +47,9 @@ if [ "$(docker volume ls | grep aaf_config)" = "" ] && [ ${P12_LOAD} = "yes" ]; 
   fi	
   docker container cp ${AAF_INITIAL_X509_P12} aaf_config_$USER:/opt/app/osaaf/local/org.osaaf.aaf.p12
   docker container cp ${AAF_SIGNER_P12} aaf_config_$USER:/opt/app/osaaf/local/org.osaaf.aaf.signer.p12
+
+  set_prop cm_ca.local "${CM_CA_LOCAL}" org.osaaf.aaf.cm.ca.props
+  set_prop cadi_x509_issuers "${CADI_X509_ISSUERS}" org.osaaf.aaf.props
 
   encrypt_it cadi_keystore_password "${AAF_INITIAL_X509_PASSWORD}"
   encrypt_it cm_ca.local "${AAF_SIGNER_PASSWORD}"
