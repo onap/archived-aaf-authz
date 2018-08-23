@@ -20,6 +20,7 @@ LONGITUDE=
 # Initial AAF Certificate (not Generated)
 AAF_INITIAL_X509_P12=
 AAF_INITIAL_X509_PASSWORD=
+CADI_X509_ISSUERS=
 
 # CA info (leave blank unless functioning as CA)
 AAF_SIGNER_P12=

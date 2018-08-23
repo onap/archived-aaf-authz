@@ -19,9 +19,13 @@ function encrypt_it() {
   docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
 }
 
+function set_it() {
+  docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2"
+}
+
 P12_LOAD="no"
 
-for PROP in AAF_INITIAL_X509_P12 AAF_INITIAL_X509_PASSWORD AAF_SIGNER_P12 AAF_SIGNER_PASSWORD; do
+for PROP in AAF_INITIAL_X509_P12 AAF_INITIAL_X509_PASSWORD AAF_SIGNER_P12 AAF_SIGNER_PASSWORD CADI_X509_ISSUERS; do
     if [ "${!PROP}" != "" ]; then
     	  P12_LOAD='yes'
 	  break;
@@ -42,6 +46,9 @@ if [ "$(docker volume ls | grep aaf_config)" = "" ] && [ ${P12_LOAD} = "yes" ]; 
 
   encrypt_it cadi_keystore_password "${AAF_INITIAL_X509_PASSWORD}"
   encrypt_it cm_ca.local "${AAF_SIGNER_PASSWORD}"
+
+  set_it cadi_x509_issuers "${CADI_X509_ISSUERS}"
+
 
   echo -n "Stopping "
   docker container stop aaf_config_$USER 
