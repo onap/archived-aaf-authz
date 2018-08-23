@@ -76,7 +76,8 @@ public class Examples {
 						version = elem.substring(8);
 					}
 				}
-				if(className!=null && version!=null)break;
+				if(className!=null && version!=null)
+					break;
 			}
 			if(className==null) {
 				throw new APIException(nameOrContentType + " does not contain Class Information");
@@ -87,7 +88,8 @@ public class Examples {
 		
 		// No Void.class in aaf.v2_0 package causing errors when trying to use a newVoidv2_0
 		// method similar to others in this class. This makes it work, but is it right?
-		if ("Void".equals(className)) return "";
+		if ("Void".equals(className))
+			return "";
 				
 		if("1.1".equals(version)) {
 			version = "v1_0";
@@ -158,26 +160,32 @@ public class Examples {
 		Role r;
 		Pkey p;
 		Roles rs = new Roles();
-		rs.getRole().add(r = new Role());
+    r = new Role();
+		rs.getRole().add(r);
 		r.setName("org.osaaf.myns.myRole");
-		r.getPerms().add(p = new Pkey());
+    p = new Pkey();
+		r.getPerms().add(p);
 		p.setType("org.osaaf.myns.myType");
 		p.setInstance("myInstance");
 		p.setAction("myAction");
-		
-		r.getPerms().add(p = new Pkey());
+
+    p = new Pkey();
+		r.getPerms().add(p);
 		p.setType("org.osaaf.myns.myType");
 		p.setInstance("myInstance");
 		p.setAction("myOtherAction");
-		
-		rs.getRole().add(r = new Role());
+
+    r = new Role();
+		rs.getRole().add(r);
 		r.setName("org.osaaf.myns.myOtherRole");
-		r.getPerms().add(p = new Pkey());
+    p = new Pkey();
+		r.getPerms().add(p);
 		p.setType("org.osaaf.myns.myOtherType");
 		p.setInstance("myInstance");
 		p.setAction("myAction");
-		
-		r.getPerms().add(p = new Pkey());
+
+    p = new Pkey();
+		r.getPerms().add(p);
 		p.setType("org.osaaf.myns.myOthertype");
 		p.setInstance("myInstance");
 		p.setAction("myOtherAction");
@@ -228,16 +236,17 @@ public class Examples {
 	@SuppressWarnings("unused")
 	private static Perms newPermsv2_0(boolean optional) {
 		Perms perms = new Perms();
-		Perm p;
-		perms.getPerm().add(p=new Perm());
+		Perm p=new Perm();
+		perms.getPerm().add(p);
 		p.setType("org.osaaf.myns.myType");
 		p.setInstance("myInstance");
 		p.setAction("myAction");
 		p.getRoles().add("org.osaaf.myns.myRole");
 		p.getRoles().add("org.osaaf.myns.myRole2");
-		
 
-		perms.getPerm().add(p=new Perm());
+
+    p=new Perm();
+		perms.getPerm().add(p);
 		p.setType("org.osaaf.myns.myOtherType");
 		p.setInstance("myInstance");
 		p.setAction("myOtherAction");
@@ -326,12 +335,14 @@ public class Examples {
 		User user;
 	
 		Users users = new Users();
-		users.getUser().add(user = new Users.User());
+    user = new Users.User();
+		users.getUser().add(user);
 		user.setId("ab1234@people.osaaf.org");	
 		GregorianCalendar gc = new GregorianCalendar();
 		user.setExpires(Chrono.timeStamp(gc));
-		
-		users.getUser().add(user = new Users.User());
+
+    user = new Users.User();
+		users.getUser().add(user);
 		user.setId("zy9876@people.osaaf.org");	
 		user.setExpires(Chrono.timeStamp(gc));	
 			
