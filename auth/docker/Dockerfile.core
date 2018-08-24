@@ -1,4 +1,4 @@
-FROM rmannfv/aaf-base:xenial 
+FROM nexus3.onap.org:10001/onap/aaf/aaf-base-xenial:latest
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
