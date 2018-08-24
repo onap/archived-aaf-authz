@@ -58,6 +58,23 @@ public class DefaultOrg implements Organization {
 	private final String NAME,mailHost,mailFrom;
 	private final Set<String> supportedRealms;
 
+  // Implement your own Delegation System
+  static final List<String> NULL_DELEGATES = new ArrayList<>();
+
+  public Identities identities;
+  private boolean dryRun;
+  private Session session;
+  public enum Types {Employee, Contractor, Application, NotActive};
+  private static final Set<String> typeSet;
+
+  static {
+    typeSet = new HashSet<>();
+    for(Types t : Types.values()) {
+      typeSet.add(t.name());
+    }
+  }
+
+  private static final EmailWarnings emailWarnings = new DefaultOrgWarnings();
 
 	public DefaultOrg(Env env, String realm) throws OrganizationException {
 
@@ -66,13 +83,14 @@ public class DefaultOrg implements Organization {
 		supportedRealms.add(realm);
 		domain=FQI.reverseDomain(realm);
 		atDomain = '@'+domain;
-		String s;
+		String s = realm + ".mailHost";
 		NAME=env.getProperty(realm + ".name","Default Organization");
-		mailHost = env.getProperty(s=(realm + ".mailHost"), null);
+		mailHost = env.getProperty(s, null);
 		if(mailHost==null) {
 			throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
 		}
-		mailFrom = env.getProperty(s=(realm + ".mailFrom"), null);
+		s = realm + ".mailFrom";
+		mailFrom = env.getProperty(s, null);
 		if(mailFrom==null) {
 			throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
 		}
@@ -83,8 +101,8 @@ public class DefaultOrg implements Organization {
 		session = Session.getDefaultInstance(System.getProperties());
 
 		try {
-			String defFile;
-			String temp=env.getProperty(defFile = (getClass().getName()+".file"));
+			String defFile = getClass().getName()+".file";
+			String temp=env.getProperty(defFile);
 			File fIdentities=null;
 			if(temp==null) {
 				temp = env.getProperty(AAF_DATA_DIR);
@@ -125,24 +143,6 @@ public class DefaultOrg implements Organization {
 		}
 	}
 
-	// Implement your own Delegation System
-	static final List<String> NULL_DELEGATES = new ArrayList<>();
-
-	public Identities identities;
-	private boolean dryRun;
-	private Session session;
-	public enum Types {Employee, Contractor, Application, NotActive};
-	private final static Set<String> typeSet;
-
-	static {
-		typeSet = new HashSet<>();
-		for(Types t : Types.values()) {
-			typeSet.add(t.name());
-		}
-	}
-
-	private static final EmailWarnings emailWarnings = new DefaultOrgWarnings();
-
 	@Override
 	public String getName() {
 		return NAME;
@@ -174,10 +174,11 @@ public class DefaultOrg implements Organization {
 			return getName() + " could not lookup " + id + ": " + e.getLocalizedMessage();
 		}
 	}
-	// Possible ID Pattern
-	//	private static final Pattern ID_PATTERN=Pattern.compile("([\\w.-]+@[\\w.-]+).{4-13}");
-	// Another one: ID_PATTERN = "(a-z[a-z0-9]{5-8}@.*).{4-13}";
 
+	/** Possible ID Pattern
+	**	private static final Pattern ID_PATTERN=Pattern.compile("([\\w.-]+@[\\w.-]+).{4-13}");
+	** Another one: ID_PATTERN = "(a-z[a-z0-9]{5-8}@.*).{4-13}";
+  */
 	@Override
 	public boolean isValidCred(final AuthzTrans trans, final String id) {
 		// have domain?
@@ -448,7 +449,7 @@ public class DefaultOrg implements Organization {
 				message.addRecipients(Message.RecipientType.TO,getAddresses(to));
 
 				// Set CC: header field of the header.
-				if ((ccList != null) && (ccList.size() > 0)) {
+				if ((ccList != null) && !ccList.isEmpty()) {
 					message.addRecipients(Message.RecipientType.CC,getAddresses(cc));
 				}
 
@@ -476,7 +477,7 @@ public class DefaultOrg implements Organization {
 
 				ArrayList<String> newBody = new ArrayList<>();
 
-				Address temp[] = getAddresses(to);
+				Address[] temp = getAddresses(to);
 				String headerString = "TO:\t" + InternetAddress.toString(temp) + "\n";
 
 				temp = getAddresses(cc);
