@@ -22,6 +22,7 @@
 package org.onap.aaf.authz.service.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -30,6 +31,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.onap.aaf.auth.layer.Result.ERR_BadData;
+import static org.onap.aaf.auth.layer.Result.ERR_General;
 
 import aaf.v2_0.NsRequest;
 import aaf.v2_0.Nss;
@@ -37,6 +40,9 @@ import aaf.v2_0.Nss.Ns;
 import aaf.v2_0.Perm;
 import aaf.v2_0.Perms;
 import aaf.v2_0.Request;
+import aaf.v2_0.Role;
+import aaf.v2_0.RoleRequest;
+import aaf.v2_0.Roles;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -45,6 +51,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +64,7 @@ import org.onap.aaf.auth.dao.cass.NsSplit;
 import org.onap.aaf.auth.dao.cass.NsType;
 import org.onap.aaf.auth.dao.cass.PermDAO;
 import org.onap.aaf.auth.dao.cass.PermDAO.Data;
+import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.dao.hl.Question.Access;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -360,6 +368,148 @@ public class JU_Mapper_2_0 {
       perm.description = description;
       return perm;
   }
+
+  @Test
+	public void role_shouldReturnErrorResult_whenNssIsNok() throws Exception {
+		//given
+		String roleName = "admin";
+		RoleRequest request = createRoleRequest(roleName, "role description");
+		given(question.deriveNsSplit(transaction, roleName)).willReturn(Result.err(new IllegalArgumentException()));
+
+		//when
+		Result<RoleDAO.Data> result = mapper.role(transaction, request);
+
+		//then
+		assertFalse(result.isOK());
+		assertNull(result.value);
+		assertEquals(ERR_General, result.status);
+	}
+
+	@Test
+	public void role_shouldReturnMappedRoleObject_whenNssIsOk() throws Exception {
+		//given
+		String roleName = "admin";
+		String roleNs = "org.onap.roles";
+		String roleFullName = roleNs + "." + roleName;
+		String description =" role description";
+		RoleRequest request = createRoleRequest(roleFullName, description);
+		given(question.deriveNsSplit(transaction, roleFullName)).willReturn(Result.ok(new NsSplit(roleNs, roleName)));
+
+		//when
+		Result<RoleDAO.Data> result = mapper.role(transaction, request);
+
+		//then
+		assertTrue(result.isOK());
+		assertEquals(roleName, result.value.name);
+		assertEquals(roleNs, result.value.ns);
+		assertEquals(description, result.value.description);
+		verify(transaction).checkpoint(roleFullName, Env.ALWAYS);
+	}
+
+	private RoleRequest createRoleRequest(String name, String description) {
+		RoleRequest req = mapper.newInstance(API.ROLE_REQ);
+		req.setName(name);
+		req.setDescription(description);
+		return req;
+	}
+
+	@Test
+	public void roles_shouldNotAddAnyRoles_whenFilterFlagIsNotSet() {
+		//given
+		Roles initialRoles = new Roles();
+		RoleDAO.Data role = createRoleDAOobj("org.onap.app1", "org.onap.app1.admin", "description");
+
+		//when
+		Result<Roles> result = mapper.roles(transaction, Lists.newArrayList(role), initialRoles, false);
+
+		//then
+		assertTrue(result.isOK());
+		assertEquals(initialRoles.getRole(), result.value.getRole());
+	}
+
+	@Test
+	public void roles_shouldNotAddAnyRoles_whenFilterFlagIsSet_andUserIsNotAuthorizedToReadRole() {
+		//given
+		Roles initialRoles = new Roles();
+		RoleDAO.Data role = createRoleDAOobj("org.onap.app1", "org.onap.app1.admin", "description");
+		given(question.mayUser(eq(transaction), eq(USER), any(RoleDAO.Data.class), eq(Access.read)))
+			.willReturn(Result.err(9, "error"));
+
+		//when
+		Result<Roles> result = mapper.roles(transaction, Lists.newArrayList(role), initialRoles, true);
+
+		//then
+		assertTrue(result.isOK());
+		assertEquals(initialRoles.getRole(), result.value.getRole());
+	}
+
+	@Test
+	public void roles_shouldAddRolesWithoutNamespace_whenNsNotRequested_andFilterFlagSet_andUserIsAuthorized() {
+		test_roles_shouldAddRoles(false);
+	}
+
+	@Test
+	public void roles_shouldAddRolesWithNamespace_whenNsRequested_andFilterFlagSet_andUserIsAuthorized() {
+		test_roles_shouldAddRoles(true);
+	}
+
+	private void test_roles_shouldAddRoles(boolean namespaceRequested) {
+		//given
+		String namespace = "org.onap.app1";
+		String description = "role description";
+		Set<String> roleNames = Sets.newHashSet(namespace+".admin", namespace+".deployer");
+		List<RoleDAO.Data> daoRoles = roleNames.stream().map( name -> createRoleDAOobj(namespace, name, description))
+			.collect(Collectors.toList());
+		given(question.mayUser(eq(transaction), eq(USER), any(RoleDAO.Data.class), eq(Access.read)))
+			.willReturn(Result.ok(new NsDAO.Data()));
+		given(transaction.requested(REQD_TYPE.ns)).willReturn(namespaceRequested);
+
+		//when
+		Result<Roles> result = mapper.roles(transaction, daoRoles, new Roles(), true);
+
+		//then
+		assertTrue(result.isOK());
+		assertEquals(2, result.value.getRole().size());
+		result.value.getRole().stream().forEach( role -> {
+			assertTrue(role.getPerms().isEmpty());
+			if(namespaceRequested) {
+				assertEquals(namespace, role.getNs());
+			} else {
+				assertNull(role.getNs());
+			}
+			assertTrue(roleNames.contains(role.getName()));
+			assertEquals(description, role.getDescription());
+		});
+	}
+
+	@Test
+	public void roles_shouldReturnErrorResult_whenAnyPermHasInvalidFormat() {
+		//given
+		given(question.mayUser(eq(transaction), eq(USER), any(RoleDAO.Data.class), eq(Access.read)))
+			.willReturn(Result.ok(new NsDAO.Data()));
+		RoleDAO.Data role = createRoleDAOobj("org.onap.app", "org.onap.app.admin", "desc");
+		role.perms = Sets.newHashSet("invalidPermFormat");
+
+		//when
+		Result<Roles> result = mapper.roles(transaction, Lists.newArrayList(role), new Roles(), true);
+
+		//then
+		assertFalse(result.isOK());
+		assertEquals(ERR_BadData, result.status);
+	}
+
+	@Test
+	public void roles_shouldAddPerms_whenProperlyDefined_andUserCanViewIt() {
+		
+	}
+
+	private RoleDAO.Data createRoleDAOobj(String namespace, String rolename, String desc) {
+		NsDAO.Data ns = new NsDAO.Data();
+		ns.name = namespace;
+		RoleDAO.Data role = RoleDAO.Data.create(ns, rolename);
+		role.description = desc;
+		return role;
+	}
 
 	@Test
 	public void test() {
