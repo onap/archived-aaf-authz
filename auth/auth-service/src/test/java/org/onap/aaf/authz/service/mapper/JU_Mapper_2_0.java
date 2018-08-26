@@ -22,6 +22,7 @@
 package org.onap.aaf.authz.service.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -30,6 +31,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.onap.aaf.auth.layer.Result.ERR_General;
 
 import aaf.v2_0.NsRequest;
 import aaf.v2_0.Nss;
@@ -37,6 +39,8 @@ import aaf.v2_0.Nss.Ns;
 import aaf.v2_0.Perm;
 import aaf.v2_0.Perms;
 import aaf.v2_0.Request;
+import aaf.v2_0.Role;
+import aaf.v2_0.RoleRequest;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -57,6 +61,7 @@ import org.onap.aaf.auth.dao.cass.NsSplit;
 import org.onap.aaf.auth.dao.cass.NsType;
 import org.onap.aaf.auth.dao.cass.PermDAO;
 import org.onap.aaf.auth.dao.cass.PermDAO.Data;
+import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.dao.hl.Question.Access;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -360,6 +365,50 @@ public class JU_Mapper_2_0 {
       perm.description = description;
       return perm;
   }
+
+  @Test
+	public void role_shouldReturnErrorResult_whenNssIsNok() throws Exception {
+		//given
+		String roleName = "admin";
+		RoleRequest request = createRoleRequest(roleName, "role description");
+		given(question.deriveNsSplit(transaction, roleName)).willReturn(Result.err(new IllegalArgumentException()));
+
+		//when
+		Result<RoleDAO.Data> result = mapper.role(transaction, request);
+
+		//then
+		assertFalse(result.isOK());
+		assertNull(result.value);
+		assertEquals(ERR_General, result.status);
+	}
+
+	@Test
+	public void role_shouldReturnMappedRoleObject_whenNssIsOk() throws Exception {
+		//given
+		String roleName = "admin";
+		String roleNs = "org.onap.roles";
+		String roleFullName = roleNs + "." + roleName;
+		String description =" role description";
+		RoleRequest request = createRoleRequest(roleFullName, description);
+		given(question.deriveNsSplit(transaction, roleFullName)).willReturn(Result.ok(new NsSplit(roleNs, roleName)));
+
+		//when
+		Result<RoleDAO.Data> result = mapper.role(transaction, request);
+
+		//then
+		assertTrue(result.isOK());
+		assertEquals(roleName, result.value.name);
+		assertEquals(roleNs, result.value.ns);
+		assertEquals(description, result.value.description);
+		verify(transaction).checkpoint(roleFullName, Env.ALWAYS);
+	}
+
+	private RoleRequest createRoleRequest(String name, String description) {
+		RoleRequest req = mapper.newInstance(API.ROLE_REQ);
+		req.setName(name);
+		req.setDescription(description);
+		return req;
+	}
 
 	@Test
 	public void test() {
