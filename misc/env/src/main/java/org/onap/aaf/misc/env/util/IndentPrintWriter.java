@@ -31,7 +31,7 @@ import java.io.Writer;
  *         Catch \n and indent according to current indent levels of JavaGen
  */
 public class IndentPrintWriter extends PrintWriter {
-	public static int INDENT = 2;
+	private static final int INDENT_MULTIPLIER = 2;
 	private boolean addIndent;
 	private int indent;
 	private int col;
@@ -49,6 +49,7 @@ public class IndentPrintWriter extends PrintWriter {
 	}
 
 
+    @Override
     public void write(String str) {
     	int len = str.length();
 		for(int i=0;i<len;++i) {
@@ -56,16 +57,19 @@ public class IndentPrintWriter extends PrintWriter {
 		}
     }
     
+    @Override
     public void println() {
     	write((int)'\n');
     }
-	public void write(String str, int off, int len)  {
-		len = Math.min(str.length(),off+len);
-		for(int i=off;i<len;++i) {
+	@Override
+  public void write(String str, int off, int len)  {
+		int finalLength = Math.min(str.length(),off+len);
+		for(int i=off;i<finalLength;++i) {
 			write((int)str.charAt(i));
 		}
 	}
-	public void write(int b) {
+	@Override
+  public void write(int b) {
 		if (b == '\n') {
 			addIndent = true;
 			col = 0;
@@ -97,7 +101,9 @@ public class IndentPrintWriter extends PrintWriter {
 	}
 
 	public void toCol(int idx) {
-		while(idx>col++)super.write((int)' ');
+		while(idx>col++) {
+		    super.write((int)' ');
+    }
 	}
 
 	public int getIndent() {
@@ -105,7 +111,7 @@ public class IndentPrintWriter extends PrintWriter {
 	}
 
 	public void toIndent() {
-		int end = indent * INDENT;
+		int end = indent * INDENT_MULTIPLIER;
 		for (int i = 0; i < end; ++i) {
 			super.write((int) ' ');
 		}
