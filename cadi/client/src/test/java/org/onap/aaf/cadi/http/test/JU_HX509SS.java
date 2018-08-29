@@ -21,6 +21,10 @@
 
 package org.onap.aaf.cadi.http.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -32,12 +36,10 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.X509KeyManager;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.CoreMatchers.*;
-
-import org.junit.*;
-import org.mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
@@ -75,7 +77,7 @@ public class JU_HX509SS {
 		
 		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 		access.setProperty(Config.CADI_ALIAS, alias);
-		si = SecurityInfoC.instance(access, HttpURLConnection.class);
+		// si = SecurityInfoC.instance(access, HttpURLConnectionStub.class);
 	}
 
 	@Test
@@ -103,12 +105,6 @@ public class JU_HX509SS {
 	public void throws1Test() throws APIException, CadiException {
 		@SuppressWarnings("unused")
 		HX509SS x509 = new HX509SS(siMock);
-	}
-
-	@Test(expected = APIException.class)
-	public void throws2Test() throws APIException, CadiException {
-		@SuppressWarnings("unused")
-		HX509SS x509 = new HX509SS(si, false);
 	}
 
 	@Test(expected = APIException.class)

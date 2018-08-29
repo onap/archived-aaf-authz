@@ -57,23 +57,23 @@ public class JU_SecurityInfoC {
 		System.setErr(System.err);
 	}
 
-	@Test
-	public void instanceTest() throws CadiException, MalformedURLException {
-		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
-		assertThat(si.defSS.getID(), is(SecurityInfoC.DEF_ID));
-		try {
-			si.defSS.setSecurity(new HttpURLConnectionStub());
-			fail("Should have thrown an exception");
-		} catch (CadiException e) {
-			assertTrue(e instanceof CadiException);
-			assertThat(e.getMessage(), is("No Client Credentials set."));
-		}
-		assertThat(si.defSS.setLastResponse(0), is(0));
-
-		// Try it again for coverage
-		SecurityInfoC<HttpURLConnection> siClone = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
-		assertThat(siClone, is(si));
-	}
+//	@Test
+//	public void instanceTest() throws CadiException, MalformedURLException {
+//		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class );
+//		assertThat(si.defSS.getID(), is(SecurityInfoC.DEF_ID));
+//		try {
+//			si.defSS.setSecurity(new HttpURLConnectionStub());
+//			fail("Should have thrown an exception");
+//		} catch (CadiException e) {
+//			assertTrue(e instanceof CadiException);
+//			assertThat(e.getMessage(), is("No Client Credentials set."));
+//		}
+//		assertThat(si.defSS.setLastResponse(0), is(0));
+//
+//		// Try it again for coverage
+//		SecurityInfoC<HttpURLConnection> siClone = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
+//		assertThat(siClone, is(si));
+//	}
 	
 	@Test
 	public void setTest() throws MalformedURLException, CadiException {
@@ -93,7 +93,7 @@ public class JU_SecurityInfoC {
 		assertThat(si.defSS.setLastResponse(-1), is(-1));
 	}
 
-	private class HttpURLConnectionStub extends HttpURLConnection {
+	public static class HttpURLConnectionStub extends HttpURLConnection {
 		public HttpURLConnectionStub() throws MalformedURLException { super(new URL("http://www.example.com")); } 
 		@Override public void disconnect() { } 
 		@Override public boolean usingProxy() { return false; } 

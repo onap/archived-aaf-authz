@@ -18,18 +18,11 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.stillNeed;
+package org.onap.aaf.cadi.config;
 
-import java.security.Principal;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.SecuritySetter;
 
-public class TestPrincipal implements Principal {
-	private String name;
-	public TestPrincipal(String name) {
-		this.name = name;
-	}
-	@Override
-	public String getName() {
-		return name;
-	}
-
+public interface SecurityInfoInit<CLIENT> {
+	public SecuritySetter<CLIENT> bestDefault(SecurityInfoC<CLIENT> si) throws CadiException;
 }
