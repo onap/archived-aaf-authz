@@ -31,7 +31,7 @@ import java.io.Writer;
  *         Catch \n and indent according to current indent levels of JavaGen
  */
 public class IndentPrintWriter extends PrintWriter {
-	public static int INDENT = 2;
+	private static final int INDENT_MULTIPLIER = 2;
 	private boolean addIndent;
 	private int indent;
 	private int col;
@@ -105,7 +105,7 @@ public class IndentPrintWriter extends PrintWriter {
 	}
 
 	public void toIndent() {
-		int end = indent * INDENT;
+		int end = indent * INDENT_MULTIPLIER;
 		for (int i = 0; i < end; ++i) {
 			super.write((int) ' ');
 		}
