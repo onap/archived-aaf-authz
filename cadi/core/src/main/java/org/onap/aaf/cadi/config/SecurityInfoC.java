@@ -21,6 +21,7 @@
 
 package org.onap.aaf.cadi.config;
 
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,32 +34,37 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
 	public static final String DEF_ID = "ID not Set";
 	private static Map<Class<?>,SecurityInfoC<?>> sicMap = new HashMap<>();
 	public SecuritySetter<CLIENT> defSS;
+ 
 
 	public SecurityInfoC(Access access) throws CadiException {
 		super(access);
-		defSS = new SecuritySetter<CLIENT>() {
-				@Override
-				public String getID() {
-					return DEF_ID;
-				}
-
-				@Override
-				public void setSecurity(CLIENT client) throws CadiException {
-					throw new CadiException("No Client Credentials set.");
-				}
-
-				@Override
-				public int setLastResponse(int respCode) {
-					return 0;
-				}
-			};
+		defSS = new DEFSS<CLIENT>();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static synchronized <CLIENT> SecurityInfoC<CLIENT> instance(Access access, Class<CLIENT> cls) throws CadiException {
-		@SuppressWarnings("unchecked")
+		SecurityInfoInit<CLIENT> sii;
+		if(cls.isAssignableFrom(HttpURLConnection.class)) {
+			try {
+				@SuppressWarnings("rawtypes")
+				Class<SecurityInfoInit> initCls = (Class<SecurityInfoInit>)Class.forName("org.onap.aaf.cadi.http.HSecurityInfoInit");
+				sii = initCls.newInstance();
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				throw new CadiException("CADI using HttpURLConnection requires cadi-client jar",e);
+			}
+		} else {
+			sii = new SecurityInfoInit<CLIENT>() {
+				@Override
+				public SecuritySetter<CLIENT> bestDefault(SecurityInfoC<CLIENT> si) throws CadiException {
+					return new DEFSS<CLIENT>();
+				}
+			}; 
+		}
+		
 		SecurityInfoC<CLIENT> sic = (SecurityInfoC<CLIENT>) sicMap.get(cls);
 		if(sic==null) {
-			sic = new SecurityInfoC<CLIENT>(access); 
+			sic = new SecurityInfoC<CLIENT>(access);
+			sic.set(sii.bestDefault(sic));
 			sicMap.put(cls, sic);
 		}
 		return sic;
@@ -69,4 +75,20 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
 		return this;
 	}
 
+	private static class DEFSS<C> implements SecuritySetter<C> {
+		@Override
+		public String getID() {
+			return DEF_ID;
+		}
+
+		@Override
+		public void setSecurity(C client) throws CadiException {
+			throw new CadiException("No Client Credentials set.");
+		}
+
+		@Override
+		public int setLastResponse(int respCode) {
+			return 0;
+		}
+	};
 }

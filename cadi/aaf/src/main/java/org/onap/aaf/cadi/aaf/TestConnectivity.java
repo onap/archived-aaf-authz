@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
+import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;

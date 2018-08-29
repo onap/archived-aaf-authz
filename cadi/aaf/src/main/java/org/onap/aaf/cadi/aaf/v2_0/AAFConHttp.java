@@ -51,28 +51,11 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 
 	public AAFConHttp(Access access) throws CadiException, LocatorException {
 		super(access,Config.AAF_URL,SecurityInfoC.instance(access, HttpURLConnection.class));
-		bestSS(si);
 		hman = new HMangr(access,Config.loadLocator(si, access.getProperty(Config.AAF_URL,null)));
 	}
 
 	protected SecuritySetter<HttpURLConnection> bestSS(SecurityInfoC<HttpURLConnection> si) throws CadiException {
-		Access access = si.access;
-		String s;
-		if((s = access.getProperty(Config.CADI_ALIAS, null))!=null) {
-			try {
-				return new HX509SS(s,si,true);
-			} catch (APIException e) {
-				throw new CadiException(e);
-			}
-		} else if((access.getProperty(Config.AAF_APPID, null))!=null){
-			try {
-				return new HBasicAuthSS(si,true);
-			} catch (IOException /*| GeneralSecurityException*/ e) {
-				throw new CadiException(e);
-			}
-		} else {
-			throw new CadiException("No IDs (" + Config.CADI_ALIAS + " or " + Config.AAF_APPID + ") have been identified.");
-		}
+		return si.defSS;
 	}
 
 	public AAFConHttp(Access access, String tag) throws CadiException, LocatorException {

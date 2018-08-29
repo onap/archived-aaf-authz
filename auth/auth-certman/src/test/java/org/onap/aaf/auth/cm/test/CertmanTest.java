@@ -163,8 +163,4 @@ public class CertmanTest {
 //		return null;
 //	}
 	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		fail("Tests not yet implemented");
-	}
 }
