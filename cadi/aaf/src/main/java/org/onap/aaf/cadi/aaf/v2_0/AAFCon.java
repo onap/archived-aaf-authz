@@ -76,7 +76,9 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	final public RosettaEnv env;
 	protected abstract URI initURI();
 	protected abstract void setInitURI(String uriString) throws CadiException;
+	/*
 	protected abstract SecuritySetter<CLIENT>  bestSS(SecurityInfoC<CLIENT> si) throws CadiException;
+	*/
 	
 	/**
 	 * Use this call to get the appropriate client based on configuration (HTTP, future)
@@ -137,7 +139,6 @@ public abstract class AAFCon<CLIENT> implements Connector {
 		if(tag==null) {
 			throw new CadiException("AAFCon cannot be constructed without a property tag or URL");
 		} else {
-			si.defSS = bestSS(si);
 			String str = access.getProperty(tag,null);
 			if(str==null) {
 				if(tag.contains("://")) { // assume a URL

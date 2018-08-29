@@ -35,6 +35,7 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
+import org.onap.aaf.cadi.http.HSecurityInfoInit;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 
 public class JU_HBasicAuthSS {

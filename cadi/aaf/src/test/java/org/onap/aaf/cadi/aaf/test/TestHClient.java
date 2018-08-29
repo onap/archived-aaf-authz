@@ -24,11 +24,10 @@ package org.onap.aaf.cadi.aaf.test;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
 import org.onap.aaf.cadi.client.Future;
@@ -36,7 +35,6 @@ import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
-import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.impl.BasicTrans;
@@ -56,13 +54,11 @@ public class TestHClient {
 					for(Item item = loc.first(); item!=null; item=loc.next(item)) {
 						System.out.println(loc.get(item));
 					}
-					SecuritySetter<HttpURLConnection> ss = new HBasicAuthSS(si);
-		//			SecuritySetter<HttpURLConnection> ss = new X509SS(si, "aaf");
 					
 					hman = new HMangr(access,loc);
 					final String path = String.format("/authz/perms/user/%s",
 							access.getProperty(Config.AAF_APPID,"xx9999@people.osaaf.org"));
-					hman.best(ss, new Retryable<Void>() {
+					hman.best(si.defSS, new Retryable<Void>() {
 						@Override
 						public Void code(Rcli<?> cli) throws APIException, CadiException {
 							Future<String> ft = cli.read(path,"application/json");  

@@ -21,12 +21,10 @@
 
 package org.onap.aaf.cadi.aaf.v2_0.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
-
-import org.junit.*;
-import org.mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -38,18 +36,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.SecuritySetter;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
-import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
+import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HClient;
 import org.onap.aaf.misc.env.Data.TYPE;
-import org.onap.aaf.misc.env.impl.BasicTrans;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
 import locate.v1_0.Endpoint;
@@ -106,12 +106,12 @@ public class JU_AAFLocator {
 		access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon
 		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
 		URI locatorURI = new URI("https://somemachine.moc:10/com.att.aaf.service:2.0");
-		AbsAAFLocator<BasicTrans> al = new AAFLocator(si, locatorURI) {
-			@Override
-			protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
-				return clientMock;
-			}
-		};
+//		AbsAAFLocator<BasicTrans> al = new AAFLocator(si, locatorURI) {
+//			@Override
+//			protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
+//				return clientMock;
+//			}
+//		};
 		// Start over: This was originally calling a developer machine.
 //		assertThat(al.refresh(), is(true));
 //		when(futureMock.get(1)).thenReturn(false);
