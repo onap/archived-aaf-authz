@@ -112,7 +112,7 @@ public class XGen<RT extends XGen<RT>> {
 	
 		if(pretty) {
 			if(mark!=null && mark.comment!=null) {
-				int fi = forward.getIndent()*IndentPrintWriter.INDENT;
+				int fi = forward.getIndent()*IndentPrintWriter.INDENT_MULTIPLIER;
 				for(int i = fi+backSB.length();i<=COMMENT_COLUMN;++i) {
 					back.append(' ');
 				}
