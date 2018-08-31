@@ -40,7 +40,7 @@ public class PropAccess implements Access {
 	// Sonar says cannot be static... it's ok.  not too many PropAccesses created.
 	private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-	public static Level DEFAULT = Level.AUDIT;
+	public static final Level DEFAULT = Level.AUDIT;
 	
 	private Symm symm;
 	private int level;
