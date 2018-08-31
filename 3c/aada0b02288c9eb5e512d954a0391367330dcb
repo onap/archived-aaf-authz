@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Damian Nowak <damain.nowak@nokia.com>
+Code-Review+1: Jakub Zieba <jakub.zieba@nokia.com>
+Code-Review+2: Jonathan Gathman <jonathan.gathman@att.com>
+Submitted-by: Jonathan Gathman <jonathan.gathman@att.com>
+Submitted-at: Fri, 31 Aug 2018 19:09:31 +0000
+Reviewed-on: https://gerrit.onap.org/r/63437
+Project: aaf/authz
+Branch: refs/heads/master
