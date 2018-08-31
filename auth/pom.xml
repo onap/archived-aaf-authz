@@ -35,11 +35,6 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.interfaceVersion>2.1.1-SNAPSHOT</project.interfaceVersion>
-		<!-- >project.jettyVersion>9.3.22.v20171030</project.jettyVersion -->
-		<!-- project.jettyVersion>9.4.11.v20180605</project.jettyVersion -->
-		<project.jettyVersion>9.4.12.RC2</project.jettyVersion>
-		<powermock.version>1.5.1</powermock.version>
 		<project.ext_root_dir>/opt/app/osaaf</project.ext_root_dir>
 		<!--  SONAR  -->
 		 <jacoco.version>0.7.7.201606060606</jacoco.version>
@@ -340,25 +335,21 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
-			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -382,166 +373,5 @@
 		<module>auth-hello</module>
 	</modules>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-misc-env</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-misc-log4j</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-misc-rosetta</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-misc-xgen</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-cadi-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-cadi-client</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-cadi-aaf</artifactId>
-				<version>${project.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.cassandra</groupId>
-						<artifactId>cassandra-all</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-auth-client</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-auth-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-auth-cass</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-auth-cmd</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-auth-oauth</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.onap.aaf.authz</groupId>
-				<artifactId>aaf-auth-deforg</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>3.0.1</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>${project.jettyVersion}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${project.jettyVersion}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.datastax.cassandra</groupId>
-				<artifactId>cassandra-all</artifactId>
-				<version>${project.cassVersion}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<dependency>
-				<groupId>com.datastax.cassandra</groupId>
-				<artifactId>cassandra-driver-core</artifactId>
-				<version>${project.cassVersion}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			
-			<!-- Note: Ensure DataStax uses more up-to-date netty handler -->		
-			<dependency>
-				  <groupId>io.netty</groupId>
-				  <artifactId>netty-handler</artifactId>
-				  <version>${project.nettyVersion}</version>
-			</dependency>
-
-			
-
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.7.5</version>
-			</dependency>
-
-			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>mail</artifactId>
-				<version>1.4.7</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-
-	
 
 </project>	

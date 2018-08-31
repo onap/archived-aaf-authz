@@ -63,9 +63,6 @@
 	</developers>
 
 	<properties>
-
-
-
 		<!-- SONAR -->
 		<!-- <sonar.skip>true</sonar.skip> -->
 		<jacoco.version>0.7.7.201606060606</jacoco.version>
@@ -98,6 +95,11 @@
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
+		</dependency>
+
+		<dependency>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
 		</dependency>
 
 		<!-- Cassandra prefers Snappy and LZ4 libs for performance -->
