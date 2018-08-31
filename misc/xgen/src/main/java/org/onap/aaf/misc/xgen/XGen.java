@@ -30,7 +30,7 @@ import org.onap.aaf.misc.env.util.StringBuilderWriter;
 
 public class XGen<RT extends XGen<RT>> {
 
-	public static int COMMENT_COLUMN = 40;
+	private static final int COMMENT_COLUMN = 40;
 	private StringBuilder backSB = new StringBuilder();
 	private Stack<Back> backStack = new Stack<Back>();
 	
