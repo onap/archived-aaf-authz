@@ -50,7 +50,6 @@
 		<mockito.version>1.9.5</mockito.version>
 		<project.interfaceVersion>${project.version}</project.interfaceVersion>
 		<project.jettyVersion>9.4.11.v20180605</project.jettyVersion>
-		<project.guavaVersion>23.6.1-jre</project.guavaVersion>
 
 	</properties>
 	<build>
@@ -324,15 +323,6 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			
-	
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>${project.guavaVersion}</version>
-			</dependency>
-				
-	
 			<!-- Note: Ensure DataStax uses more up-to-date netty handler -->
 			<dependency>
 				<groupId>io.netty</groupId>
