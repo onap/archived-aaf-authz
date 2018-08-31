@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_55a89a1f",
+        "filename": "misc/xgen/src/main/java/org/onap/aaf/misc/xgen/XGen.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3289
+      },
+      "writtenOn": "2018-08-31T19:09:28Z",
+      "side": 1,
+      "message": "I\u0027m always amused (or dismayed) at Sonar\u0027s definition of \"Critical\"....",
+      "revId": "3caada0b02288c9eb5e512d954a0391367330dcb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
