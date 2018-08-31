@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.EmailWarnings;
 import org.onap.aaf.auth.org.Executor;
+import org.onap.aaf.auth.org.Mailer;
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.util.FQI;

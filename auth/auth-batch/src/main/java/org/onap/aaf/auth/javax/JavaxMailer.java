@@ -18,7 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.org;
+package org.onap.aaf.auth.javax;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.org.Mailer;
 import org.onap.aaf.auth.org.OrganizationException;
 
 public class JavaxMailer implements Mailer {

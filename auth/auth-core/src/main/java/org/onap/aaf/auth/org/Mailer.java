@@ -18,12 +18,11 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.org;
+package org.onap.aaf.auth.org;
 
 import java.util.List;
 
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.org.OrganizationException;
 
 public interface Mailer {
 	public int sendEmail(
