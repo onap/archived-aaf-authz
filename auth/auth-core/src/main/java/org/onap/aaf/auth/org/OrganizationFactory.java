@@ -105,7 +105,6 @@ public class OrganizationFactory {
 								org.addSupportedRealm(r);
 							}
 						}
-						
 					} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | 
 							InstantiationException | IllegalAccessException | IllegalArgumentException | 
 							InvocationTargetException e) {

@@ -31,14 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.EmailWarnings;
 import org.onap.aaf.auth.org.Executor;
@@ -76,11 +68,20 @@ public class DefaultOrg implements Organization {
 		if(mailFrom==null) {
 			throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
 		}
+		
+		// Note: This code is to avoid including javax.mail into ONAP, because there are security/licence 
+		// exceptions
+		try {
+			Class.forName("javax.mail.Session"); // ensure package is loaded
+			@SuppressWarnings("unchecked")
+			Class<Mailer> minst = (Class<Mailer>)Class.forName("org.onap.aaf.org.JavaxMailer");
+			mailer = minst.newInstance();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
+			env.warn().log("JavaxMailer not loaded. Mailing disabled");
+		}
 
 		System.getProperties().setProperty("mail.smtp.host",mailHost);
 		System.getProperties().setProperty("mail.user", mailFrom);
-		// Get the default Session object.
-		session = Session.getDefaultInstance(System.getProperties());
 
 		try {
 			String defFile;
@@ -130,7 +131,7 @@ public class DefaultOrg implements Organization {
 
 	public Identities identities;
 	private boolean dryRun;
-	private Session session;
+	private Mailer mailer;
 	public enum Types {Employee, Contractor, Application, NotActive};
 	private final static Set<String> typeSet;
 
@@ -400,113 +401,6 @@ public class DefaultOrg implements Organization {
 		return Response.OK;
 	}
 
-	@Override
-	public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList, String subject, String body,
-			Boolean urgent) throws OrganizationException {
-
-		int status = 1;
-
-		List<String> to = new ArrayList<>();
-		for(String em : toList) {
-			if(em.indexOf('@')<0) {
-				to.add(new DefaultOrgIdentity(trans, em, this).email());
-			} else {
-				to.add(em);
-			}
-		}
-
-		List<String> cc = new ArrayList<>();
-		if(ccList!=null) {
-			if(!ccList.isEmpty()) {
-
-				for(String em : ccList) {
-					if(em.indexOf('@')<0) {
-						cc.add(new DefaultOrgIdentity(trans, em, this).email());
-					} else {
-						cc.add(em);
-					}
-				}
-			}
-
-			// for now, I want all emails so we can see what goes out. Remove later
-			if (!ccList.contains(mailFrom)) {
-				ccList.add(mailFrom);
-			}
-		}
-
-		try {
-			// Create a default MimeMessage object.
-			MimeMessage message = new MimeMessage(session);
-
-			// Set From: header field of the header.
-			message.setFrom(new InternetAddress(mailFrom));
-
-			if (!dryRun) {
-				// Set To: header field of the header. This is a required field
-				// and calling module should make sure that it is not null or
-				// blank
-				message.addRecipients(Message.RecipientType.TO,getAddresses(to));
-
-				// Set CC: header field of the header.
-				if ((ccList != null) && (ccList.size() > 0)) {
-					message.addRecipients(Message.RecipientType.CC,getAddresses(cc));
-				}
-
-				// Set Subject: header field
-				message.setSubject(subject);
-
-				if (urgent) {
-					message.addHeader("X-Priority", "1");
-				}
-
-				// Now set the actual message
-				message.setText(body);
-			} else {
-
-				// override recipients
-				message.addRecipients(Message.RecipientType.TO,
-						InternetAddress.parse(mailFrom));
-
-				// Set Subject: header field
-				message.setSubject("[TESTMODE] " + subject);
-
-				if (urgent) {
-					message.addHeader("X-Priority", "1");
-				}
-
-				ArrayList<String> newBody = new ArrayList<>();
-
-				Address temp[] = getAddresses(to);
-				String headerString = "TO:\t" + InternetAddress.toString(temp) + "\n";
-
-				temp = getAddresses(cc);
-				headerString += "CC:\t" + InternetAddress.toString(temp) + "\n";
-
-				newBody.add(headerString);
-
-				newBody.add("Text: \n");
-
-				newBody.add(body);
-				String outString = "";
-				for (String s : newBody) {
-					outString += s + "\n";
-				}
-
-				message.setText(outString);
-			}
-			// Send message
-			Transport.send(message);
-			status = 0;
-
-		} catch (MessagingException mex) {
-			System.out.println("Error messaging: "+ mex.getMessage());
-			System.out.println("Error messaging: "+ mex.toString());
-			throw new OrganizationException("Exception send email message "
-					+ mex.getMessage());
-		}
-
-		return status;
-	}
 
 	/**
 	 * Default Policy is to set to 6 Months for Notification Types.
@@ -661,37 +555,6 @@ public class DefaultOrg implements Organization {
 		this.dryRun = dryRun;
 	}
 
-	/**
-	 * Convert the delimiter String into Internet addresses with the default
-	 * delimiter of ";"
-	 * @param strAddress
-	 * @return
-	 */
-	private Address[] getAddresses(List<String> strAddress) throws OrganizationException {
-		return this.getAddresses(strAddress,";");
-	}
-	/**
-	 * Convert the delimiter String into Internet addresses with the
-	 * delimiter of provided
-	 * @param strAddresses
-	 * @param delimiter
-	 * @return
-	 */
-	private Address[] getAddresses(List<String> strAddresses, String delimiter) throws OrganizationException {
-		Address[] addressArray = new Address[strAddresses.size()];
-		int count = 0;
-		for (String addr : strAddresses)
-		{
-			try{
-				addressArray[count] = new InternetAddress(addr);
-				count++;
-			}catch(Exception e){
-				throw new OrganizationException("Failed to parse the email address "+ addr +": "+e.getMessage());
-			}
-		}
-		return addressArray;
-	}
-
 	private String extractRealm(final String r) {
 		int at;
 		if((at=r.indexOf('@'))>=0) {
@@ -719,4 +582,41 @@ public class DefaultOrg implements Organization {
 		supportedRealms.add(extractRealm(r));
 	}
 
+	@Override
+	public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList, String subject, String body,
+			Boolean urgent) throws OrganizationException {
+		if (mailer!=null) {
+			List<String> to = new ArrayList<>();
+			for(String em : toList) {
+				if(em.indexOf('@')<0) {
+					to.add(new DefaultOrgIdentity(trans, em, this).email());
+				} else {
+					to.add(em);
+				}
+			}
+
+			List<String> cc = new ArrayList<>();
+			if(ccList!=null) {
+				if(!ccList.isEmpty()) {
+
+					for(String em : ccList) {
+						if(em.indexOf('@')<0) {
+							cc.add(new DefaultOrgIdentity(trans, em, this).email());
+						} else {
+							cc.add(em);
+						}
+					}
+				}
+
+				// for now, I want all emails so we can see what goes out. Remove later
+				if (!ccList.contains(mailFrom)) {
+					ccList.add(mailFrom);
+				}
+			}
+
+			return mailer.sendEmail(trans,dryRun,mailFrom,to,cc,subject,body,urgent);
+		} else {
+			return 0;
+		}
+	}
 }
