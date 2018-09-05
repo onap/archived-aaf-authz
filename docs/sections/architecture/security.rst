@@ -126,7 +126,7 @@ The AAF Suite provides the following elements:
 The Organization
 ----------------
 
-AAF is only a tool to reflect the Organization it is setup for.  AAF does not, for instance, know what IDs are acceptable to a particular company.  Every Organization (or Company) will also likely have its own Certificate Authority and DNS. Most importantly, each Organzation will have a hierarchy of who is responsible for any give person or application. 
+AAF is only a tool to reflect the Organization it is setup for.  AAF does not, for instance, know what IDs are acceptable to a particular company.  Every Organization (or Company) will also likely have its own Certificate Authority and DNS. Most importantly, each Organization will have a hierarchy of who is responsible for any give person or application. 
 
  * AAF's Certman connects to the Organization's CA via SCEP protocol (Others can be created as well)
  * AAF ties into the Organizational hierarchy.  Currently, this is through a feed of IDs and relationships.
