@@ -416,8 +416,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 	public Result<Roles> roles(AuthzTrans trans, List<RoleDAO.Data> from, Roles to, boolean filter) {
 		final boolean needNS = trans.requested(REQD_TYPE.ns); 
 		for(RoleDAO.Data frole : from) {
-			// Only Add Data to view if User is allowed to see this Role 
-			//if(!filter || q.mayUserViewRole(trans, trans.user(), frole).isOK()) {
+			// Only Add Data to view if User is allowed to see this Role
 			if(!filter || q.mayUser(trans, trans.user(), frole,Access.read).isOK()) {
 				Role role = new Role();
 				role.setName(frole.ns + '.' + frole.name);
@@ -427,7 +426,8 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 				}
 				for(String p : frole.perms(false)) { // can see any Perms in the Role he has permission for
 					Result<String[]> rpa = PermDAO.Data.decodeToArray(trans,q,p);
-					if(rpa.notOK()) return Result.err(rpa);
+					if(rpa.notOK())
+						return Result.err(rpa);
 					
 					String[] pa = rpa.value;
 					Pkey pKey = new Pkey();
@@ -481,12 +481,6 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 		return Result.ok(to);
 	}
 
-	/**
-	 * 
-	 * @param base
-	 * @param start
-	 * @return
-	 */
 	@Override
 	public Result<UserRoleDAO.Data> userRole(AuthzTrans trans, Request base) {
 		try {
@@ -495,8 +489,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 			// Setup UserRoleData, either for immediate placement, or for futureIt i
 			UserRoleDAO.Data to = new UserRoleDAO.Data();
 			if (from.getUser() != null) {
-				String user = from.getUser();
-				to.user = user;
+				to.user = from.getUser();
 			}
 			if (from.getRole() != null) {
 				to.role(trans,q,from.getRole());
