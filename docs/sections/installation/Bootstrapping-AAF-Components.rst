@@ -145,7 +145,7 @@ $ cd /opt/app/osaaf/CA
 
 view README.txt for last minute info
 
-view an/or change "subject.aaf" for your needs. This format will be used on all generated certs from the CA.
+view and/or change "subject.aaf" for your needs. This format will be used on all generated certs from the CA.
 
 $ cat subject.aaf
 
