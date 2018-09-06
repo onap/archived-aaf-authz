@@ -119,7 +119,7 @@ if [ ! "$CMD" = "" ]; then
 	    if [ "$ADD" = "Y" ]; then
 		echo $2 >> $F
 	    else 
-               sed -i.backup -e "s/\\(${1}.*=\\).*/\\1\"${2}\"/" $F
+               sed -i.backup -e "s/\\(${1}.*=\\).*/\\1${2}/" $F
 	    fi
             cat $F
         done
