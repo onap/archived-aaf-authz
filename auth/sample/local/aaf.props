@@ -20,3 +20,4 @@ cadi_x509_issuers=
 # Other
 aaf_data_dir=/opt/app/osaaf/data
 cadi_token_dir=/opt/app/osaaf/tokens
+cadi_loglevel=WARN

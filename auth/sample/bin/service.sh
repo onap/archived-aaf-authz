@@ -92,7 +92,7 @@ if [ ! "$CMD" = "" ]; then
 		echo "$1=$2" >> $F
 	    else 
 		VALUE=${2//\//\\\/}
-                sed -i.backup -e "s/\(${1}=\).*/\1${VALUE}/" $F
+                sed -i.backup -e "s/\(${1}=\).*/\1\"${VALUE}\"/" $F
 	    fi
             cat $F
         done
