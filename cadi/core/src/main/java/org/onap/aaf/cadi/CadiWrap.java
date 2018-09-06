@@ -34,6 +34,7 @@ import org.onap.aaf.cadi.filter.PermConverter;
 import org.onap.aaf.cadi.lur.EpiLur;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.cadi.taf.TafResp;
+import org.onap.aaf.cadi.util.Timing;
 
 
 
@@ -113,7 +114,7 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
 	 */
 	@Override
 	public boolean isUserInRole(String perm) {
-		return perm==null?false:checkPerm(access,"(HttpRequest)",principal,pconv,lur,perm);
+		return perm==null?false:checkPerm(access,"isUserInRole",principal,pconv,lur,perm);
 	}
 	
 	public static boolean checkPerm(Access access, String caller, Principal principal, PermConverter pconv, Lur lur, String perm) {
@@ -121,12 +122,13 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
 			access.log(Level.AUDIT,caller, "No Principal in Transaction");
 			return false;
 		} else { 
+			final long start = System.nanoTime();
 			perm = pconv.convert(perm);
 			if(lur.fish(principal,lur.createPerm(perm))) {
-				access.log(Level.DEBUG,caller, principal.getName(), "has", perm);
+				access.printf(Level.DEBUG,"%s: %s has %s, %f ms", caller, principal.getName(), perm, Timing.millis(start));
 				return true;
 			} else {
-				access.log(Level.DEBUG,caller, principal.getName(), "does not have", perm);
+				access.printf(Level.DEBUG,"%s: %s does not have %s, %f ms", caller, principal.getName(), perm, Timing.millis(start));
 				return false;
 			}
 		}

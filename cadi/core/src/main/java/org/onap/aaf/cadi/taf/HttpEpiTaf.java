@@ -101,8 +101,9 @@ public class HttpEpiTaf implements HttpTaf {
 		}
 		try {
 			for (HttpTaf taf : tafs) {
+				final long start = System.nanoTime();
 				tresp = taf.validate(reading, req, resp);
-				addToLog(log, tresp);
+				addToLog(log, tresp, start);
 				switch(tresp.isAuthenticated()) {
 					case TRY_ANOTHER_TAF:
 						break; // and loop
@@ -181,10 +182,11 @@ public class HttpEpiTaf implements HttpTaf {
 		return Resp.NOT_MINE;
 	}
 	
-	private void addToLog(List<TafResp> log, TafResp tresp) {
+	private void addToLog(List<TafResp> log, final TafResp tresp, final long start) {
 		if (log == null) {
 			return;
 		}
+		tresp.timing(start);
 		log.add(tresp);
 	}
 	
@@ -193,7 +195,7 @@ public class HttpEpiTaf implements HttpTaf {
 			return;
 		}
 		for (TafResp tresp : log) {
-			access.log(Level.DEBUG, tresp.desc());
+			access.printf(Level.DEBUG, "%s: %s, ms=%f", tresp.taf(), tresp.desc(), tresp.timing());
 		}
 	}
 

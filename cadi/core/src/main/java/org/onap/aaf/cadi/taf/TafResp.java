@@ -91,4 +91,21 @@ public interface TafResp {
 	 * Be able to check if part of a Failed attempt
 	 */
 	public boolean isFailedAttempt();
+	
+	/**
+	 * report how long this took
+	 * @return
+	 */
+	public float timing();
+
+	/**
+	 * Set end of timing in Millis, given Nanos
+	 * @param start
+	 */
+	void timing(long start);
+	
+	/**
+	 * Support Taf Name
+	 */
+	String taf();
 }

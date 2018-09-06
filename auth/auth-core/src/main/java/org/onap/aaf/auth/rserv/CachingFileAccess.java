@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -553,10 +552,10 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 					content.remove(entry.getKey());
 					//System.out.println("removed Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
 				}
-				for(int i=end;i<size;++i) {
-					Entry<String, Content> entry = scont.get(i).entry;
-					//System.out.println("remaining Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
-				}
+//				for(int i=end;i<size;++i) {
+//					Entry<String, Content> entry = scont.get(i).entry;
+//					//System.out.println("remaining Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
+//				}
 			}
 		}
 	}

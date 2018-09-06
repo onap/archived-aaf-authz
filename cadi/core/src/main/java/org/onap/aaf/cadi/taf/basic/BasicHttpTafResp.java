@@ -31,13 +31,14 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp;
 
 public class BasicHttpTafResp extends AbsTafResp implements TafResp {
+	private static final String tafName = BasicHttpTaf.class.getSimpleName();
 	private HttpServletResponse httpResp;
 	private String realm;
 	private RESP status;
 	private final boolean wasFailed;
 	
 	public BasicHttpTafResp(Access access, TaggedPrincipal principal, String description, RESP status, HttpServletResponse resp, String realm, boolean wasFailed) {
-		super(access,principal, description);
+		super(access, tafName, principal, description);
 		httpResp = resp;
 		this.realm = realm;
 		this.status = status;
@@ -57,6 +58,4 @@ public class BasicHttpTafResp extends AbsTafResp implements TafResp {
 	public boolean isFailedAttempt() {
 		return wasFailed;
 	}
-
-
 }

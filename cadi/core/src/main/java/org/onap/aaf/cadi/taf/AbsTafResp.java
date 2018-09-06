@@ -23,6 +23,7 @@ package org.onap.aaf.cadi.taf;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
+import org.onap.aaf.cadi.util.Timing;
 
 /**
  * AbsTafResp
@@ -34,9 +35,11 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
  */
 public abstract class AbsTafResp implements TafResp {
 
-	protected final String desc;
-	protected final TaggedPrincipal principal;
 	protected final Access access;
+	protected final String tafName;
+	protected final TaggedPrincipal principal;
+	protected final String desc;
+	private float timing;
 
 	/**
 	 * AbsTafResp
@@ -47,11 +50,13 @@ public abstract class AbsTafResp implements TafResp {
 	 * Access (for access to underlying container, i.e. for Logging, auditing, ClassLoaders, etc)
 	 *  
 	 * @param access
+	 * @param tafname 
 	 * @param principal
 	 * @param description
 	 */
-	public AbsTafResp(Access access, TaggedPrincipal principal, String description) {
+	public AbsTafResp(Access access, String tafname, TaggedPrincipal principal, String description) {
 		this.access = access;
+		this.tafName = tafname;
 		this.principal = principal;
 		this.desc = description;
 	}
@@ -111,6 +116,21 @@ public abstract class AbsTafResp implements TafResp {
 	 */
 	public boolean isFailedAttempt() {
 		return false;
+	}
+
+	@Override
+	public float timing() {
+		return timing;
+	}
+	
+	@Override
+	public void timing(final long start) {
+		timing = Timing.millis(start);
+	}
+
+	@Override
+	public String taf() {
+		return tafName;
 	}
 
 }
