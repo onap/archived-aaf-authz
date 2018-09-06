@@ -12,7 +12,7 @@ The service side is always compute process, but the client can be of two types:
  * People (via browser, or perhaps command line tool)
  * Compute process talking to another computer process.
 
-In larger systems, it is atypical to have just one connection, but will the call initiated by the initial actor will cause additional calls after it.  Thus, we demonstrate both a client call, and a subsequent call in the following:
+In larger systems, it is a typical to have just one connection, but will the call initiated by the initial actor will cause additional calls after it.  Thus, we demonstrate both a client call, and a subsequent call in the following:
 
 Thus, the essential building blocks of any networked system is made up of a caller and any subsquent calls.
 
