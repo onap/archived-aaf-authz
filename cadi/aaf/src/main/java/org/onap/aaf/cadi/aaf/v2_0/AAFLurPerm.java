@@ -30,18 +30,20 @@ import java.util.Map;
 
 import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.User;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.CachedPrincipal.Resp;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.lur.LocalPermission;
+import org.onap.aaf.cadi.util.Timing;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.util.Split;
 
@@ -107,15 +109,16 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 
 	protected User<AAFPermission> loadUser(final Principal principal)  {
 		final String name = principal.getName();
-//		TODO Create a dynamic way to declare domains supported.
 		final long start = System.nanoTime();
+		final Holder<Float> remote = new Holder<Float>(0f);
+
 		final boolean[] success = new boolean[]{false};
 		
-//		new Exception("loadUser").printStackTrace();
 		try {
 			return aaf.best(new Retryable<User<AAFPermission>>() {
 				@Override
 				public User<AAFPermission> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+					final long remoteStart = System.nanoTime();
 					Future<Perms> fp = client.read("/authz/perms/user/"+name,aaf.permsDF);
 					
 					// In the meantime, lookup User, create if necessary
@@ -137,7 +140,9 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 					}
 					
 					// OK, done all we can, now get content
-					if(fp.get(aaf.timeout)) {
+					boolean ok = fp.get(aaf.timeout);
+					remote.set(Timing.millis(remoteStart));
+					if(ok) {
 						success[0]=true;
 						Map<String, Permission> newMap = user.newMap();
 						boolean willLog = aaf.access.willLog(Level.DEBUG);
@@ -170,51 +175,61 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 			success[0]=false;
 			return null;
 		} finally {
-			float time = (System.nanoTime()-start)/1000000f;
-			aaf.access.log(Level.INFO, success[0]?"Loaded":"Load Failure",name,"from AAF in",time,"ms");
+			aaf.access.printf(Level.INFO, "AAFLurPerm: %s %s perms from AAF in %f ms, remote=%f",
+					(success[0]?"Loaded":"Load Failure"),name,Timing.millis(start),remote.get());
 		}
 	}
 
-	public Resp reload(User<AAFPermission> user) {
+	public Resp reload(final User<AAFPermission> user) {
 		final String name = user.name;
 		long start = System.nanoTime();
-		boolean success = false;
+		final Holder<Float> remote = new Holder<Float>(0f);
+		final Holder<Boolean> success = new Holder<Boolean>(false);
 		try {
-			Future<Perms> fp = aaf.client(Config.AAF_DEFAULT_VERSION).read(
-					"/authz/perms/user/"+name,
-					aaf.permsDF
-					);
-			
-			// OK, done all we can, now get content
-			if(fp.get(aaf.timeout)) {
-				success = true;
-				Map<String,Permission> newMap = user.newMap(); 
-				boolean willLog = aaf.access.willLog(Level.DEBUG);
-				for(Perm perm : fp.value.getPerm()) {
-					user.add(newMap, new AAFPermission(perm.getNs(),perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
-					if(willLog) {
-						aaf.access.log(Level.DEBUG, name,"has",perm.getType(),perm.getInstance(),perm.getAction());
+			Resp rv = aaf.best(new Retryable<Resp>() {
+				@Override
+				public Resp code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+					final long remoteStart = System.nanoTime();
+					Future<Perms> fp = aaf.client(Config.AAF_DEFAULT_VERSION).read(
+							"/authz/perms/user/"+name,
+							aaf.permsDF
+							);
+					
+					// OK, done all we can, now get content
+					boolean ok = fp.get(aaf.timeout);
+					remote.set(Timing.millis(remoteStart));
+					if(ok) {
+						success.set(true);
+						Map<String,Permission> newMap = user.newMap(); 
+						boolean willLog = aaf.access.willLog(Level.DEBUG);
+						for(Perm perm : fp.value.getPerm()) {
+							user.add(newMap, new AAFPermission(perm.getNs(),perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
+							if(willLog) {
+								aaf.access.log(Level.DEBUG, name,"has",perm.getType(),perm.getInstance(),perm.getAction());
+							}
+						}
+						user.renewPerm();
+						return Resp.REVALIDATED;
+					} else {
+						int code;
+						switch(code=fp.code()) {
+							case 401:
+								aaf.access.log(Access.Level.ERROR, code, "Unauthorized to make AAF calls");
+								break;
+							default:
+								aaf.access.log(Access.Level.ERROR, code, fp.body());
+						}
+						return Resp.UNVALIDATED;
 					}
 				}
-				user.renewPerm();
-				return Resp.REVALIDATED;
-			} else {
-				int code;
-				switch(code=fp.code()) {
-					case 401:
-						aaf.access.log(Access.Level.ERROR, code, "Unauthorized to make AAF calls");
-						break;
-					default:
-						aaf.access.log(Access.Level.ERROR, code, fp.body());
-				}
-				return Resp.UNVALIDATED;
-			}
+			});
+			return rv;
 		} catch (Exception e) {
 			aaf.access.log(e,"Calling","/authz/perms/user/"+name);
 			return Resp.INACCESSIBLE;
 		} finally {
-			float time = (System.nanoTime()-start)/1000000f;
-			aaf.access.log(Level.AUDIT, success?"Reloaded":"Reload Failure",name,"from AAF in",time,"ms");
+			aaf.access.printf(Level.INFO, "AAFLurPerm: %s %s perms from AAF in %f ms (remote=%f)",
+					(success.get()?"Reloaded":"Reload Failure"),name,Timing.millis(start),remote.get());
 		}
 	}
 

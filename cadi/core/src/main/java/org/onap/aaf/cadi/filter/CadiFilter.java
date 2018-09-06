@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CadiWrap;
 import org.onap.aaf.cadi.LocatorException;
@@ -43,11 +44,11 @@ import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.ServletContextAccess;
 import org.onap.aaf.cadi.TrustChecker;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.Get;
 import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
+import org.onap.aaf.cadi.util.Timing;
 
 /**
  * CadiFilter
@@ -264,22 +265,39 @@ public class CadiFilter implements Filter {
 	 */
 	//TODO Always validate changes against Tomcat AbsCadiValve and Jaspi CadiSAM functions
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		final long startAll = System.nanoTime();
+		long startCode, startValidate;
+		float code=0f, validate=0f;
+		String user = "n/a";
+		String tag = "";
 		try {
 			HttpServletRequest hreq = (HttpServletRequest)request;
 			if(noAuthn(hreq)) {
+				startCode=System.nanoTime();
 				chain.doFilter(request, response);
+				code = Timing.millis(startCode);
 			} else {
 				HttpServletResponse hresp = (HttpServletResponse)response;
+				startValidate=System.nanoTime();
 				TafResp tresp = httpChecker.validate(hreq, hresp, hreq);
+				validate = Timing.millis(startValidate);
 				if(tresp.isAuthenticated()==RESP.IS_AUTHENTICATED) {
+					user = tresp.getPrincipal().personalName();
+					tag = tresp.getPrincipal().tag();
 					CadiWrap cw = new CadiWrap(hreq, tresp, httpChecker.getLur(),getConverter(hreq));
 					if(httpChecker.notCadi(cw, hresp)) {
+						startCode=System.nanoTime();
 						oauthFilter.doFilter(cw,response,chain);
+						code = Timing.millis(startCode);
 					}
-				}						
+				}
 			}
 		} catch (ClassCastException e) {
 			throw new ServletException("CadiFilter expects Servlet to be an HTTP Servlet",e);
+		} finally {
+			access.printf(Level.WARN, "Trans: user=%s[%s],ip=%s,ms=%f,validate=%f,code=%f",
+				user,tag,request.getRemoteAddr(),
+				Timing.millis(startAll),validate,code);
 		}
 	}
 

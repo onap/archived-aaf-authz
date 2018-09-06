@@ -56,7 +56,6 @@ import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
 import org.onap.aaf.cadi.util.Split;
 
 public class X509Taf implements HttpTaf {
-	
 	private static final String CERTIFICATE_NOT_VALID_FOR_AUTHENTICATION = "Certificate NOT valid for Authentication";
 	public static final CertificateFactory certFactory;
 	public static final MessageDigest messageDigest;

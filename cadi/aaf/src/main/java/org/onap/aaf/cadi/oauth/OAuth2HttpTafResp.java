@@ -31,19 +31,20 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp;
 
 public class OAuth2HttpTafResp extends AbsTafResp implements TafResp {
+	private static final String tafName = OAuth2HttpTaf.class.getSimpleName();
 	private HttpServletResponse httpResp;
 	private RESP status;
 	private final boolean wasFailed;
 	
 	public OAuth2HttpTafResp(Access access, OAuth2Principal principal, String desc, RESP status, HttpServletResponse resp, boolean wasFailed) {
-		super(access,principal, desc);
+		super(access,tafName, principal, desc);
 		httpResp = resp;
 		this.status = status; 
 		this.wasFailed = wasFailed;
 	}
 
 	public OAuth2HttpTafResp(Access access, TrustPrincipal principal, String desc, RESP status,HttpServletResponse resp) {
-		super(access,principal, desc);
+		super(access,tafName, principal, desc);
 		httpResp = resp;
 		this.status = status; 
 		wasFailed = true; // if Trust Principal added, must be good
@@ -61,6 +62,5 @@ public class OAuth2HttpTafResp extends AbsTafResp implements TafResp {
 	public boolean isFailedAttempt() {
 		return wasFailed;
 	}
-
 
 }

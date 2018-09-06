@@ -62,7 +62,7 @@ Query               Tag             Description
 =================== =============== ============
 CADI Version        VERSION         Defaults to CADI version of this
 AAF's FQDN          AAF_FQDN        PUBLIC Name for AAF. For ONAP Test, it is 'aaf-onap-test.osaaf.org'
-Deployer's FQI      DEPLOY_FQI      deployer@people.osaaf.org.  In a REAL system, this would be a person or process 
+Deployer's FQI      DEPLOY_FQI      In a REAL system, this would be a person or process. For ONAP Testing, the id is deploy@people.osaaf.org, password (see Dynamic Properties) is 'demo123456!'
 App's Root FQDN     APP_FQDN        This will show up in the Cert Subject, and should be the name given by Docker. i.e. clamp.onap
 App's FQI           APP_FQI         Fully Qualified ID given by Organization and with AAF NS/domain.  ex: clamp@clamp.onap.org 
 App's Volume        VOLUME          Volume to put the data, see above. ex: clamp_aaf

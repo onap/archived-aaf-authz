@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
+import org.onap.aaf.cadi.util.Timing;
 
 /**
  * A Punt Resp to make it fast and easy for a Taf to respond that it cannot handle a particular kind of
@@ -33,10 +34,13 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
  *
  */
 public class PuntTafResp implements TafResp {
+	private final String name;
 	private final String desc;
+	private float timing;
 
 	public PuntTafResp(String name, String explanation) {
-		desc = name + " is not processing this transaction: " + explanation;
+		this.name = name;
+		desc = "Not processing this transaction: " + explanation;
 	}
 	
 	public boolean isValid() {
@@ -66,4 +70,20 @@ public class PuntTafResp implements TafResp {
 	public boolean isFailedAttempt() {
 		return false;
 	}
+
+	@Override
+	public float timing() {
+		return timing;
+	}
+
+	@Override
+	public void timing(long start) {
+		timing = Timing.millis(start);
+	}
+	
+	@Override
+	public String taf() {
+		return name;
+	}
+
 }

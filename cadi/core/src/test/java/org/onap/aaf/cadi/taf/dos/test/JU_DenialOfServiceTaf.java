@@ -131,7 +131,8 @@ public class JU_DenialOfServiceTaf {
 		dost = new DenialOfServiceTaf(accessMock);
 		tafResp = dost.validate(LifeForm.SBLF, reqMock1, respMock);
 
-		assertThat(tafResp.desc(), is("DenialOfServiceTaf is not processing this transaction: This Transaction is not denied"));
+		assertThat(tafResp.desc(), is("Not processing this transaction: This Transaction is not denied"));
+		assertThat(tafResp.taf(), is("DenialOfServiceTaf"));
 
 		assertThat(DenialOfServiceTaf.denyIP(ip1), is(true));
 
@@ -139,7 +140,8 @@ public class JU_DenialOfServiceTaf {
 		assertThat(tafResp.desc(), is(ip1 + " is on the IP Denial list"));
 
 		tafResp = dost.validate(LifeForm.SBLF, reqMock2, respMock);
-		assertThat(tafResp.desc(), is("DenialOfServiceTaf is not processing this transaction: This Transaction is not denied"));
+		assertThat(tafResp.desc(), is("Not processing this transaction: This Transaction is not denied"));
+		assertThat(tafResp.taf(), is("DenialOfServiceTaf"));
 	}
 
 	@Test

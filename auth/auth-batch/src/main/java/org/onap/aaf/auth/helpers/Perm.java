@@ -106,7 +106,9 @@ public class Perm implements Comparable<Perm> {
 	        try {
 		        while(iter.hasNext()) {
 		        	row = iter.next();
-		        	Perm pk = new Perm(row.getString(0),row.getString(1),row.getString(2),row.getString(3), row.getString(4), row.getSet(5,String.class));
+		        	Perm pk = new Perm(
+		        			row.getString(0),row.getString(1),row.getString(2),
+		        			row.getString(3), row.getString(4), row.getSet(5,String.class));
 		        	keys.put(pk.encode(), pk);
 		        	data.put(pk,pk.roles);
 		        }

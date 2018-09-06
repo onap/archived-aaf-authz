@@ -44,7 +44,8 @@ public class JU_PuntTafResp {
 
 		assertFalse(punt.isValid());
 		assertThat(punt.isAuthenticated(), is(RESP.TRY_ANOTHER_TAF));
-		assertThat(punt.desc(), is(name + " is not processing this transaction: " + explanation));
+		assertThat(punt.desc(), is("Not processing this transaction: " + explanation));
+		assertThat(punt.taf(), is(name));
 		assertThat(punt.authenticate(), is(RESP.TRY_ANOTHER_TAF));
 		assertThat(punt.getPrincipal(), is(nullValue()));
 		assertThat(punt.getAccess(), is(Access.NULL));

@@ -40,6 +40,7 @@ import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_AbsTafResp {
 	
+	private static final String JUNIT = "Junit";
 	private static final String name = "name";
 	private static final String tag = "tag";
 	private static final String description = "description";
@@ -58,7 +59,7 @@ public class JU_AbsTafResp {
 
 	@Test
 	public void test() {
-		AbsTafResp tafResp = new AbsTafResp(access, taggedPrinc, description) {
+		AbsTafResp tafResp = new AbsTafResp(access, JUNIT, taggedPrinc, description) {
 			@Override public RESP authenticate() throws IOException {
 				return null;
 			}
@@ -66,12 +67,13 @@ public class JU_AbsTafResp {
 
 		assertThat(tafResp.isValid(), is(true));
 		assertThat(tafResp.desc(), is(description));
+		assertThat(tafResp.taf(), is(JUNIT));
 		assertThat(tafResp.isAuthenticated(), is(RESP.IS_AUTHENTICATED));
 		assertThat(tafResp.getPrincipal(), is(taggedPrinc));
 		assertThat(tafResp.getAccess(), is(access));
 		assertThat(tafResp.isFailedAttempt(), is(false));
 
-		tafResp = new AbsTafResp(null, null, null) {
+		tafResp = new AbsTafResp(null, JUNIT, null, null) {
 			@Override public RESP authenticate() throws IOException {
 				return null;
 			}
@@ -81,6 +83,7 @@ public class JU_AbsTafResp {
 		assertThat(tafResp.isAuthenticated(), is(RESP.TRY_ANOTHER_TAF));
 		assertThat(tafResp.getPrincipal(), is(nullValue()));
 		assertThat(tafResp.getAccess(), is(nullValue()));
+		assertThat(tafResp.taf(), is(JUNIT));
 		assertThat(tafResp.isFailedAttempt(), is(false));
 	}
 

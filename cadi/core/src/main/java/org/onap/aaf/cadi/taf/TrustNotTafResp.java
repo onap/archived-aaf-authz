@@ -25,10 +25,12 @@ import java.io.IOException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
+import org.onap.aaf.cadi.util.Timing;
 
 public class TrustNotTafResp implements TafResp {
 	private final TafResp delegate;
 	private final String desc;
+	private float timing;
 	
 	public TrustNotTafResp(final TafResp delegate, final String desc) {
 		this.delegate = delegate;
@@ -69,8 +71,24 @@ public class TrustNotTafResp implements TafResp {
 	public boolean isFailedAttempt() {
 		return true;
 	}
+	@Override
+	public float timing() {
+		return timing;
+	}
+
+	@Override
+	public void timing(long start) {
+		timing = Timing.millis(start);
+	}
 	
+	@Override
 	public String toString() {
 		return desc();
 	}
+	
+	@Override
+	public String taf() {
+		return "TrustNot";
+	}
+
 }

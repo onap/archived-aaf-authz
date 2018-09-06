@@ -27,10 +27,12 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.taf.AbsTafResp;
 
 public class DenialOfServiceTafResp extends AbsTafResp  {
+	private static final String tafName = DenialOfServiceTaf.class.getSimpleName();
+
 	private RESP ect;  // Homage to Arethra Franklin
 
 	public DenialOfServiceTafResp(Access access, RESP resp, String description ) {
-		super(access, null, description);
+		super(access, tafName, null, description);
 		ect = resp;
 	}
 
@@ -44,4 +46,10 @@ public class DenialOfServiceTafResp extends AbsTafResp  {
 	public RESP authenticate() throws IOException {
 		return ect;
 	}
+	
+	@Override
+	public String taf() {
+		return "DOS";
+	}
+
 }

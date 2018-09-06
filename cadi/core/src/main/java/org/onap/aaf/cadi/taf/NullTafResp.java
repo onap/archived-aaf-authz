@@ -70,4 +70,19 @@ class NullTafResp implements TafResp {
 	public boolean isFailedAttempt() {
 		return true;
 	}
+
+	@Override
+	public float timing() {
+		return 0;
+	}
+
+	@Override
+	public void timing(long start) {
+	}
+	
+	@Override
+	public String taf() {
+		return "NULL";
+	}
+
 }
