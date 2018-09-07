@@ -54,9 +54,6 @@ if [ "$(docker volume ls | grep aaf_config)" = "" ] && [ ${P12_LOAD} = "yes" ]; 
   encrypt_it cadi_keystore_password "${AAF_INITIAL_X509_PASSWORD}"
   encrypt_it cm_ca.local "${AAF_SIGNER_PASSWORD}"
 
-  set_it cadi_x509_issuers "${CADI_X509_ISSUERS}"
-
-
   echo -n "Stopping "
   docker container stop aaf_config_$USER 
   echo -n "Removing "
