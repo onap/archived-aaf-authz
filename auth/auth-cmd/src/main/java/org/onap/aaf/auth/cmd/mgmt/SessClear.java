@@ -56,11 +56,11 @@ public class SessClear extends Cmd {
                         "/mgmt/dbsession", 
                         Void.class
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     pw().println("Cleared DBSession on " + client);
                     rv=200;
                 } else {
-                    if(rv==409)rv = fp.code();
+                    if (rv==409)rv = fp.code();
                     error(fp);
                 }
                 return rv;

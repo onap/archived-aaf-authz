@@ -68,13 +68,13 @@ public class ListByUser extends Cmd {
                         "/authz/userRoles/user/"+user,
                         getDF(UserRoles.class)
                     );
-                if(fr.get(AAFcli.timeout())) {
+                if (fr.get(AAFcli.timeout())) {
                     if (aafcli.isDetailed()) {
                         Future<Perms> fp = client.read(
                                 "/authz/perms/user/"+user+(aafcli.isDetailed()?"?ns":""), 
                                 getDF(Perms.class)
                             );
-                        if(fp.get(AAFcli.timeout())) {
+                        if (fp.get(AAFcli.timeout())) {
                             perms = fp.value;
                         }
                     }

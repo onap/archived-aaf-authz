@@ -59,10 +59,10 @@ public class NSAttribCompare extends RosettaCompare<NsAttribRequest>  {
     @Override
     public void compare(NsAttribRequest t1, NsAttribRequest t2) {
         assertEquals(t1.getNs(),t2.getNs());
-        for(Attrib a1 : t1.getAttrib()) {
+        for (Attrib a1 : t1.getAttrib()) {
             boolean ok = false;
-            for(Attrib a2 : t2.getAttrib()) {
-                if(a1.getKey().equals(a2.getKey()) &&
+            for (Attrib a2 : t2.getAttrib()) {
+                if (a1.getKey().equals(a2.getKey()) &&
                     a1.getValue().equals(a2.getValue())) {
                     ok = true;
                     break;
@@ -70,10 +70,10 @@ public class NSAttribCompare extends RosettaCompare<NsAttribRequest>  {
             }
             assertTrue("a2 Attribs in a1",ok);
         }
-        for(Attrib a2 : t2.getAttrib()) {
+        for (Attrib a2 : t2.getAttrib()) {
             boolean ok = false;
-            for(Attrib a1 : t1.getAttrib()) {
-                if(a1.getKey().equals(a2.getKey()) &&
+            for (Attrib a1 : t1.getAttrib()) {
+                if (a1.getKey().equals(a2.getKey()) &&
                     a1.getValue().equals(a2.getValue())) {
                     ok = true;
                     break;

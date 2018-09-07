@@ -87,7 +87,7 @@ public class RefreshableThreadObject<T extends Creatable<T>> {
     public T get(Env env) throws APIException {
         Thread t = Thread.currentThread();
         T obj = objs.get(t);
-        if(obj==null || refreshed>obj.created()) {
+        if (obj==null || refreshed>obj.created()) {
             try {
                 obj = cnst.newInstance(new Object[]{env});
             } catch (InvocationTargetException e) {
@@ -96,7 +96,7 @@ public class RefreshableThreadObject<T extends Creatable<T>> {
                 throw new APIException(e);
             }
             T destroyMe = objs.put(t,obj);
-            if(destroyMe!=null) {
+            if (destroyMe!=null) {
                 destroyMe.destroy(env);
             }
         } 
@@ -118,7 +118,7 @@ public class RefreshableThreadObject<T extends Creatable<T>> {
      */
     public void remove(Env env) {
         T obj = objs.remove(Thread.currentThread());
-        if(obj!=null)
+        if (obj!=null)
             obj.destroy(env);
     }
 }

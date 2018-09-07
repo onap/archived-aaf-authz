@@ -108,7 +108,7 @@ public class Role extends Cmd {
                                 pw().println(" Accepted, but requires Approvals before actualizing");
                                 break;
                             case 404:
-                                if(option==3) {
+                                if (option==3) {
                                     pw().println("Failed with code 404: UserRole is not found, or you do not have permission to view");
                                     break;
                                 }

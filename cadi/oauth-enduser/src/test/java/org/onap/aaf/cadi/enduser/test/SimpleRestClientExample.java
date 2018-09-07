@@ -42,7 +42,7 @@ public class SimpleRestClientExample {
             
     
             String urlString = cf.getAccess().getProperty("myurl", null);
-            if(urlString==null) {
+            if (urlString==null) {
                 System.out.println("Note: In your startup, add \"myurl=https://<aaf hello machine>:8130\" to command line\n\t"
                         + "OR\n\t" 
                         + " add -Dmyurl=https://<aaf hello machine>:8130 to VM Args\n\t"
@@ -64,8 +64,8 @@ public class SimpleRestClientExample {
                 
                 PrintWriter pw = input.writer();
                 pw.print("{\"something\": [");
-                for(int i=0;i<4;++i) {
-                    if(i>0) {
+                for (int i=0;i<4;++i) {
+                    if (i>0) {
                         pw.print(',');
                     }
                     pw.print("{\"myint\":");
@@ -136,14 +136,14 @@ public class SimpleRestClientExample {
                     System.out.println("-------- START Expecting Exception starting here --------");
                     expectException = true;
                     restClient.get("notAnAPI");
-                } catch(RESTException e) {
+                } catch (RESTException e) {
                     System.out.println(e.getCode());
                     System.out.println(e.getMsg());
                     System.out.println(e.getMessage());
                     System.out.println(e.getLocalizedMessage());
                     System.out.println(e);
                 } finally {
-                    if(expectException) {
+                    if (expectException) {
                         System.out.println("-------- END Expecting Exception starting here --------");
                     }
                     System.out.println("-------- END REST READ/GET --------");

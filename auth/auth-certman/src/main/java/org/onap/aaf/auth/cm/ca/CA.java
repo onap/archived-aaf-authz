@@ -71,7 +71,7 @@ public abstract class CA {
         this.env = env;
         permNS = CM_CA_PREFIX + name;
         permType = access.getProperty(permNS + ".perm_type",null);
-        if(permType==null) {
+        if (permType==null) {
             throw new CertException(permNS + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
         }
         caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
@@ -79,22 +79,22 @@ public abstract class CA {
         String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
         
         String fields = access.getProperty(tag, null);
-        if(fields==null) {
+        if (fields==null) {
             throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
         }
         access.log(Level.INFO, tag, "=",fields);
         rdns = RDN.parse('/',fields);
-        for(RDN rdn : rdns) {
-            if(rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
+        for (RDN rdn : rdns) {
+            if (rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
                 throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);
             }
         }
         
         idDomains = new ArrayList<>();
         StringBuilder sb = null;
-        for(String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
-            if(s.length()>0) {
-                if(sb==null) {
+        for (String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
+            if (s.length()>0) {
+                if (sb==null) {
                     sb = new StringBuilder();
                 } else {
                     sb.append(", ");
@@ -103,31 +103,31 @@ public abstract class CA {
                 sb.append(s);
             }
         }
-        if(sb!=null) {
+        if (sb!=null) {
             access.printf(Level.INIT, "CA '%s' supports Personal Certificates for %s", caName, sb);
         }
         
         String dataDir = access.getProperty(CM_PUBLIC_DIR,null);
-        if(dataDir!=null) {
+        if (dataDir!=null) {
             File data = new File(dataDir);
             byte[] bytes;
-            if(data.exists()) {
+            if (data.exists()) {
                 String trustCas = access.getProperty(CM_TRUST_CAS,null);
-                if(trustCas!=null) {
-                    for(String fname : Split.splitTrim(',', trustCas)) {
+                if (trustCas!=null) {
+                    for (String fname : Split.splitTrim(',', trustCas)) {
                         File crt;
-                        if(fname.contains("/")) {
+                        if (fname.contains("/")) {
                             crt = new File(fname);
                         } else {
                             crt = new File(data,fname);
                         }
-                        if(crt.exists()) {
+                        if (crt.exists()) {
                             access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
                             bytes = new byte[(int)crt.length()];
                             FileInputStream fis = new FileInputStream(crt);
                             try {
                                 int read = fis.read(bytes);
-                                if(read>0) {    
+                                if (read>0) {    
                                     addTrustedCA(new String(bytes));
                                 }
                             } finally {
@@ -148,13 +148,13 @@ public abstract class CA {
 
     protected void addCaIssuerDN(String issuerDN) {
         boolean changed = true;
-        for(String id : caIssuerDNs) {
-            if(id.equals(issuerDN)) {
+        for (String id : caIssuerDNs) {
+            if (id.equals(issuerDN)) {
                 changed = false;
                 break;
             }
         }
-        if(changed) {
+        if (changed) {
             String[] newsa = new String[caIssuerDNs.length+1];
             newsa[0]=issuerDN;
             System.arraycopy(caIssuerDNs, 0, newsa, 1, caIssuerDNs.length);
@@ -164,13 +164,13 @@ public abstract class CA {
     
     protected synchronized void addTrustedCA(final String crtString) {
         String crt;
-        if(crtString.endsWith("\n")) {
+        if (crtString.endsWith("\n")) {
             crt = crtString;
         } else {
             crt = crtString + '\n';
         }
-        for(int i=0;i<trustedCAs.length;++i) {
-            if(trustedCAs[i]==null) {
+        for (int i=0;i<trustedCAs.length;++i) {
+            if (trustedCAs[i]==null) {
                 trustedCAs[i]=crt;
                 return;
             }
@@ -221,7 +221,7 @@ public abstract class CA {
      */
     public boolean inPersonalDomains(Principal p) {
         int at = p.getName().indexOf('@');
-        if(at>=0) {
+        if (at>=0) {
             return idDomains.contains(p.getName().substring(at+1));
         } else {
             return false;

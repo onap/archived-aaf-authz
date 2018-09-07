@@ -99,7 +99,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             data.operation = row.getString(7);
             data.last_notified = row.getTimestamp(8);
             // This is used to get "WRITETIME(STATUS)" from Approval, which gives us an "updated" 
-            if(row.getColumnDefinitions().size()>9) {
+            if (row.getColumnDefinitions().size()>9) {
                 // Rows reported in MicroSeconds
                 data.updated = new Date(row.getLong(9)/1000);
             }
@@ -168,11 +168,11 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
     @Override
     public Result<Data> create(AuthzTrans trans, Data data) {
         // If ID is not set (typical), create one.
-        if(data.id==null) {
+        if (data.id==null) {
             data.id = Chrono.dateToUUID(System.currentTimeMillis());
         }
         Result<ResultSet> rs = createPS.exec(trans, C_TEXT, data);
-        if(rs.notOK()) {
+        if (rs.notOK()) {
             return Result.err(rs);
         }
         return Result.ok(data);    
@@ -200,14 +200,14 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
      */
     @Override
     public Result<Void> delete(AuthzTrans trans, Data data, boolean reread) {
-        if(reread || data.status == null) { // if Memo is empty, likely not full record
+        if (reread || data.status == null) { // if Memo is empty, likely not full record
             Result<ResultSet> rd = readPS.exec(trans, R_TEXT, data);
-            if(rd.notOK()) {
+            if (rd.notOK()) {
                 return Result.err(rd);
             }
             ApprovalLoader.deflt.load(data, rd.value.one());
         }
-        if("approved".equals(data.status) || "denied".equals(data.status)) { 
+        if ("approved".equals(data.status) || "denied".equals(data.status)) { 
             StringBuilder sb = new StringBuilder("BEGIN BATCH\n");
             sb.append("INSERT INTO ");
             sb.append(TABLELOG);
@@ -228,7 +228,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             sb.append("APPLY BATCH;\n");
             TimeTaken tt = trans.start("DELETE APPROVAL",Env.REMOTE);
             try {
-                if(async) {
+                if (async) {
                     getSession(trans).executeAsync(sb.toString());
                     return Result.ok();
                 } else {
@@ -270,7 +270,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
                 : (modified.name() + "d approval for " + data.user);
         // Detail?
         // Reconstruct?
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
     }

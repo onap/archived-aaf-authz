@@ -124,7 +124,7 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
         Metric metric = new Metric();
         int last = (metric.entries = trail.size()) -1;
         metric.buckets = flags.length==0?EMPTYF:new float[flags.length];
-        if(last>=0) {
+        if (last>=0) {
             TimeTaken first = trail.get(0);
             // If first entry is sub, then it's actually the last "end" as well
             // otherwise, check end
@@ -133,48 +133,48 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
             metric.total = (end - first.start) / 1000000f;
         }
         
-        if(sb==null) {
-            for(TimeTaken tt : trail) {
+        if (sb==null) {
+            for (TimeTaken tt : trail) {
                 float ms = tt.millis();
-                for(int i=0;i<flags.length;++i) {
-                    if(tt.flag == flags[i]) metric.buckets[i]+=ms;
+                for (int i=0;i<flags.length;++i) {
+                    if (tt.flag == flags[i]) metric.buckets[i]+=ms;
                 }
             }
-        } else if(!lt.isLoggable()) {
+        } else if (!lt.isLoggable()) {
             boolean first = true;
-            for(TimeTaken tt : trail) {
+            for (TimeTaken tt : trail) {
                 float ms = tt.millis();
-                for(int i=0;i<flags.length;++i) {
-                    if(tt.flag == flags[i]) metric.buckets[i]+=ms;
+                for (int i=0;i<flags.length;++i) {
+                    if (tt.flag == flags[i]) metric.buckets[i]+=ms;
                 }
-                if((tt.flag&ALWAYS)==ALWAYS) {
-                    if(first) first = false;
+                if ((tt.flag&ALWAYS)==ALWAYS) {
+                    if (first) first = false;
                     else sb.append('/');
                     sb.append(tt.name);
                 }
             }            
         } else {
             Stack<Long> stack = new Stack<Long>();
-            for(TimeTaken tt : trail) {
+            for (TimeTaken tt : trail) {
                 // Create Indentation based on SUB
-                while(!stack.isEmpty() && tt.end()>stack.peek()) {
+                while (!stack.isEmpty() && tt.end()>stack.peek()) {
                     --indent;
                     stack.pop();
                 }
-                for(int i=0;i<indent;++i) {
+                for (int i=0;i<indent;++i) {
                     sb.append("  ");
                 }
                 tt.output(sb);
                 sb.append('\n');
-                if((tt.flag&SUB)==SUB) {
+                if ((tt.flag&SUB)==SUB) {
                     stack.push(tt.end());
                     ++indent;
                 }
                 
                 // Add time values to Metric
                 float ms = tt.millis();
-                for(int i=0;i<flags.length;++i) {
-                    if(tt.flag == flags[i]) metric.buckets[i]+=ms;
+                for (int i=0;i<flags.length;++i) {
+                    if (tt.flag == flags[i]) metric.buckets[i]+=ms;
                 }
             }
         }
@@ -200,7 +200,7 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
         Object o;
         try {
             o = slot.get(state);
-        } catch(ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             // Env State Size has changed because of dynamic Object creation... Rare event, but needs to be covered
             Object[] temp = ((StoreImpl) delegate).newTransState();
             System.arraycopy(state, 0, temp, 0, state.length);

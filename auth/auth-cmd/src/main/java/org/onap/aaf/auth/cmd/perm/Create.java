@@ -65,9 +65,9 @@ public class Create extends Cmd {
                 boolean force = aafcli.forceString()!=null;
                 int rv;
                 
-                if(roles!=null && force) { // Make sure Roles are Created
+                if (roles!=null && force) { // Make sure Roles are Created
                     RoleRequest rr = new RoleRequest();
-                    for(String role : roles) {
+                    for (String role : roles) {
                         rr.setName(role);;
                         Future<RoleRequest> fr = client.create(
                             "/authz/role",
@@ -96,13 +96,13 @@ public class Create extends Cmd {
                         getDF(PermRequest.class),
                         pr
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     rv = fp.code();
                     pw().println("Created Permission");
-                    if(roles!=null) {
-                        if(aafcli.forceString()!=null) { // Make sure Roles are Created
+                    if (roles!=null) {
+                        if (aafcli.forceString()!=null) { // Make sure Roles are Created
                             RoleRequest rr = new RoleRequest();
-                            for(String role : roles) {
+                            for (String role : roles) {
                                 rr.setName(role);;
                                 Future<RoleRequest> fr = client.create(
                                     "/authz/role",
@@ -120,7 +120,7 @@ public class Create extends Cmd {
                         }
                         
                         try {
-                            if(201!=(rv=((Perm)parent)._exec(0, 
+                            if (201!=(rv=((Perm)parent)._exec(0, 
                                     new String[] {"grant",pr.getType(),pr.getInstance(),pr.getAction(),roleCommas}))) {
                                 rv = 206 /*HttpStatus.PARTIAL_CONTENT_206*/;
                             }
@@ -130,9 +130,9 @@ public class Create extends Cmd {
                     }
                 } else {
                     rv = fp.code();
-                    if(rv==409 && force) {
+                    if (rv==409 && force) {
                         rv = 201;
-                    } else if(rv==202) {
+                    } else if (rv==202) {
                         pw().println("Permission Creation Accepted, but requires Approvals before actualizing");
                         if (roles!=null)
                             pw().println("You need to grant the roles after approval.");

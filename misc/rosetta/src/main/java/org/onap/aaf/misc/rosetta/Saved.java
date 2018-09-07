@@ -50,20 +50,20 @@ public class Saved extends Out implements Parse<Reader, State>{
     // @Override
     public<IN,S> void extract(IN in, Writer ignore, Parse<IN,S> parser, boolean ... options) throws IOException, ParseException {
         Parsed<S> p = parser.newParsed();
-        if(!append) {
+        if (!append) {
             // reuse array  if not too big
-            if(content==null||content.length>INIT_SIZE*3) {
+            if (content==null||content.length>INIT_SIZE*3) {
                 content = new Content[INIT_SIZE];
                 idx = -1;
             } else do {
                 content[idx]=null;
-            } while(--idx>=0);
+            } while (--idx>=0);
         }
         
         // Note: idx needs to be -1 on initialization and no appendages
-        while((p = parser.parse(in,p.reuse())).valid()) {
-            if(!(append && (p.event==START_DOC || p.event==END_DOC))) { // skip any start/end of document in appendages
-                if(++idx>=content.length) {
+        while ((p = parser.parse(in,p.reuse())).valid()) {
+            if (!(append && (p.event==START_DOC || p.event==END_DOC))) { // skip any start/end of document in appendages
+                if (++idx>=content.length) {
                     Content temp[] = new Content[content.length*2];
                     System.arraycopy(content, 0, temp, 0, idx);
                     content = temp;
@@ -76,7 +76,7 @@ public class Saved extends Out implements Parse<Reader, State>{
     // @Override
     public Parsed<State> parse(Reader ignore, Parsed<State> parsed) throws ParseException {
         int i;
-        if((i=parsed.state.count++)<=idx) 
+        if ((i=parsed.state.count++)<=idx) 
             content[i].load(parsed);
         else 
             parsed.event = Parse.NONE; 
@@ -85,9 +85,9 @@ public class Saved extends Out implements Parse<Reader, State>{
 
     public Content[] cut(char event, int count) {
         append = true;
-        for(int i=idx;i>=0;--i) {
-            if(content[i].event==event) count--;
-            if(count==0) {
+        for (int i=idx;i>=0;--i) {
+            if (content[i].event==event) count--;
+            if (count==0) {
                 Content[] appended = new Content[idx-i+1];
                 System.arraycopy(content, i, appended, 0, appended.length);
                 idx = i-1;
@@ -98,8 +98,8 @@ public class Saved extends Out implements Parse<Reader, State>{
     }
 
     public void paste(Content[] appended) {
-        if(appended!=null) {
-            if(idx+appended.length>content.length) {
+        if (appended!=null) {
+            if (idx+appended.length>content.length) {
                 Content temp[] = new Content[content.length*2];
                 System.arraycopy(content, 0, temp, 0, idx);
                 content = temp;
@@ -134,7 +134,7 @@ public class Saved extends Out implements Parse<Reader, State>{
             p.isString = isString;
             p.event = event;
             p.name = name;
-            if(str!=null)
+            if (str!=null)
                 p.sb.append(str);
         }
         
@@ -144,14 +144,14 @@ public class Saved extends Out implements Parse<Reader, State>{
             sb.append(" - ");
             sb.append(name);
             sb.append(": ");
-            if(isString)sb.append('"');
+            if (isString)sb.append('"');
             sb.append(str);
-            if(isString)sb.append('"');
+            if (isString)sb.append('"');
             sb.append(' ');
-            if(props!=null) {
+            if (props!=null) {
                 boolean comma = false;
-                for(Prop prop : props) {
-                    if(comma)sb.append(',');
+                for (Prop prop : props) {
+                    if (comma)sb.append(',');
                     else comma = true;
                     sb.append(prop.tag);
                     sb.append('=');

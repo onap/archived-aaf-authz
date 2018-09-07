@@ -87,10 +87,10 @@ public class NotifyCredExpiring extends Batch {
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("batch:NotifyCredExpiring"));
         
-        if((supportEmailAddr = env.getProperty("mailFromUserId"))==null) {
+        if ((supportEmailAddr = env.getProperty("mailFromUserId"))==null) {
             throw new APIException("mailFromUserId property must be set");
         }
-        if(isDryRun()) {
+        if (isDryRun()) {
             email = new EmailPrint();
             maxEmails=3;
             maxEmails = Integer.parseInt(trans.getProperty("MAX_EMAILS","3"));
@@ -137,17 +137,17 @@ public class NotifyCredExpiring extends Batch {
         ownerCreds.put(UNKNOWN_ID,noOwner);
 
         // Get a list of ONLY the ones needing email by Owner
-        for(Entry<String, List<Cred>> es : Cred.byNS.entrySet()) {
+        for (Entry<String, List<Cred>> es : Cred.byNS.entrySet()) {
             lastCred.clear();
-            for(Cred c : es.getValue()) {
+            for (Cred c : es.getValue()) {
                 last = c.last(CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256);
-                if(last!=null && last.after(tooLate) && last.before(early)) {
+                if (last!=null && last.after(tooLate) && last.before(early)) {
                     List<UserRole> ownerURList = UserRole.getByRole().get(es.getKey()+".owner");
-                    if(ownerURList!=null) {
-                        for(UserRole ur:ownerURList) {
+                    if (ownerURList!=null) {
+                        for (UserRole ur:ownerURList) {
                             String owner = ur.user();
                             List<LastCred> llc = ownerCreds.get(owner);
-                            if(llc==null) {
+                            if (llc==null) {
                                 ownerCreds.put(owner, (llc=new ArrayList<>()));
                             }
                             llc.add(new LastCred(c,last));
@@ -164,39 +164,39 @@ public class NotifyCredExpiring extends Batch {
         Message msg = new Message();
         Notification ownNotf;
         StringBuilder logMessage = new StringBuilder();
-        for(Entry<String,List<LastCred>> es : ownerCreds.entrySet()) {
+        for (Entry<String,List<LastCred>> es : ownerCreds.entrySet()) {
             String owner = es.getKey();
             boolean header = true;
             try {
                 Organization org = OrganizationFactory.obtain(env, owner);
                 Identity user = org.getIdentity(noAvg, owner);
-                if(!UNKNOWN_ID.equals(owner) && user==null) {
+                if (!UNKNOWN_ID.equals(owner) && user==null) {
                     ps.printf("Invalid Identity: %s\n", owner);
                 } else {
                     logMessage.setLength(0);
-                    if(maxEmails>emailCount) {
+                    if (maxEmails>emailCount) {
                         bCritical=bNormal=bEarly = false;
                         email.clear();
                         msg.clear();
                         email.addTo(user==null?supportEmailAddr:user.email());
 
                         ownNotf = Notification.get(es.getKey(),TYPE.CN);
-                        if(ownNotf==null) {
+                        if (ownNotf==null) {
                             ownNotf = Notification.create(user==null?UNKNOWN_ID:user.fullID(), TYPE.CN);
                         }
                         last = ownNotf.last;
                         // Get Max ID size for formatting purposes
                         int length = AAF_INSTANTIATED_MECHID.length();
-                        for(LastCred lc : es.getValue()) {
+                        for (LastCred lc : es.getValue()) {
                             length = Math.max(length, lc.cred.id.length());
                         }
                         String id_exp_fmt = "\t%-"+length+"s  %15s  %s";
 
                         Collections.sort(es.getValue(),LastCred.COMPARE);
-                        for(LastCred lc : es.getValue()) {
-                            if(lc.last.after(must) && lc.last.before(early) && 
+                        for (LastCred lc : es.getValue()) {
+                            if (lc.last.after(must) && lc.last.before(early) && 
                                 (ownNotf.last==null || ownNotf.last.before(withinLastWeek))) {
-                                if(!bEarly && header) {
+                                if (!bEarly && header) {
                                     msg.line("\tThe following are friendly 2 month reminders, just in case you need to schedule your updates early.  "
                                             + "You will be reminded next month\n");
                                     msg.line(id_exp_fmt, AAF_INSTANTIATED_MECHID,EXPIRATION_DATE, QUICK_LINK);
@@ -204,19 +204,19 @@ public class NotifyCredExpiring extends Batch {
                                     header = false;
                                 }
                                 bEarly = true;
-                            } else if(lc.last.after(critical) && lc.last.before(must) && 
+                            } else if (lc.last.after(critical) && lc.last.before(must) && 
                                     (ownNotf.last==null || ownNotf.last.before(withinLastWeek))) {
-                                if(!bNormal) {
+                                if (!bNormal) {
                                     boolean last2wks = lc.last.before(within2Weeks);
-                                    if(last2wks) {
+                                    if (last2wks) {
                                         try {
                                             Identity supvsr = user.responsibleTo();
                                             email.addCC(supvsr.email());
-                                        } catch(OrganizationException e) {
+                                        } catch (OrganizationException e) {
                                             trans.error().log(e, "Supervisor cannot be looked up");
                                         }
                                     }
-                                    if(header) {
+                                    if (header) {
                                         msg.line("\tIt is now important for you to update Passwords all all configurations using them for the following.\n" +
                                                 (last2wks?"\tNote: Your Supervisor is CCd\n":"\tNote: Your Supervisor will be notified if this is not being done before the last 2 weeks\n"));
                                         msg.line(id_exp_fmt, AAF_INSTANTIATED_MECHID,EXPIRATION_DATE, QUICK_LINK);
@@ -225,8 +225,8 @@ public class NotifyCredExpiring extends Batch {
                                     header = false;
                                 }
                                 bNormal=true;
-                            } else if(lc.last.after(tooLate) && lc.last.before(critical)) { // Email Every Day, with Supervisor
-                                if(!bCritical && header) {
+                            } else if (lc.last.after(tooLate) && lc.last.before(critical)) { // Email Every Day, with Supervisor
+                                if (!bCritical && header) {
                                     msg.line("\t!!! WARNING: These Credentials will expire in LESS THAN ONE WEEK !!!!\n" +
                                              "\tYour supervisor is added to this Email\n");
                                     msg.line(id_exp_fmt, AAF_INSTANTIATED_MECHID,EXPIRATION_DATE, QUICK_LINK);
@@ -235,22 +235,22 @@ public class NotifyCredExpiring extends Batch {
                                 }
                                 bCritical = true;
                                 try {
-                                    if(user!=null) {
+                                    if (user!=null) {
                                         Identity supvsr = user.responsibleTo();
-                                        if(supvsr!=null) {
+                                        if (supvsr!=null) {
                                             email.addCC(supvsr.email());
                                             supvsr = supvsr.responsibleTo();
-                                            if(supvsr!=null) {
+                                            if (supvsr!=null) {
                                                 email.addCC(supvsr.email());
                                             }
                                         }
                                     }
-                                } catch(OrganizationException e) {
+                                } catch (OrganizationException e) {
                                     trans.error().log(e, "Supervisor cannot be looked up");
                                 }
                             }
-                            if(bEarly || bNormal || bCritical) {
-                                if(logMessage.length()==0) {
+                            if (bEarly || bNormal || bCritical) {
+                                if (logMessage.length()==0) {
                                     logMessage.append("NotifyCredExpiring");
                                 }
                                 logMessage.append("\n\t");
@@ -261,7 +261,7 @@ public class NotifyCredExpiring extends Batch {
                             }
                         }
                         
-                        if(bEarly || bNormal || bCritical) {
+                        if (bEarly || bNormal || bCritical) {
                             msg.line(LINE);
                             msg.line("Why are you receiving this Notification?\n");
                                 msg.line("You are the listed owner of one or more AAF Namespaces. ASPR requires that those responsible for "
@@ -271,9 +271,9 @@ public class NotifyCredExpiring extends Batch {
                                 msg.line("   %s/ns\n\n",env.getProperty(GUI_URL));
                             email.msg(msg);
                             Result<Void> rv = email.exec(trans, org,"");
-                            if(rv.isOK()) {
+                            if (rv.isOK()) {
                                 ++emailCount;
-                                if(!isDryRun()) {
+                                if (!isDryRun()) {
                                     ownNotf.update(noAvg, session, false);
                                     // SET LastNotification
                                 }

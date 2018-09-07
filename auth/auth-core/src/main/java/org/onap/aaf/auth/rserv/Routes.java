@@ -47,12 +47,12 @@ public class Routes<TRANS extends Trans> {
     // Package on purpose
     synchronized Route<TRANS> findOrCreate(HttpMethods  meth, String path) {
         Route<TRANS> rv = null;
-        for(int i=0;i<end;++i) {
-            if(routes[i].resolvesTo(meth,path))rv = routes[i];
+        for (int i=0;i<end;++i) {
+            if (routes[i].resolvesTo(meth,path))rv = routes[i];
         }
         
-        if(rv==null) {
-            if(end>=routes.length) {
+        if (rv==null) {
+            if (end>=routes.length) {
                 @SuppressWarnings("unchecked")
                 Route<TRANS>[] temp = new Route[end+10];
                 System.arraycopy(routes, 0, temp, 0, routes.length);
@@ -69,9 +69,9 @@ public class Routes<TRANS extends Trans> {
         String path = req.getPathInfo();
         String meth = req.getMethod();
         //TODO a TREE would be better
-        for(int i=0;rv==null && i<end; ++i) {
+        for (int i=0;rv==null && i<end; ++i) {
             rv = routes[i].matches(meth,path);
-            if(rv!=null && !codeSetter.matches(rv)) { // potential match, check if has Code 
+            if (rv!=null && !codeSetter.matches(rv)) { // potential match, check if has Code 
                 rv = null; // not quite, keep going
             }
         }
@@ -81,7 +81,7 @@ public class Routes<TRANS extends Trans> {
     
     public List<RouteReport> routeReport() {
         ArrayList<RouteReport> ltr = new ArrayList<>();
-        for(int i=0;i<end;++i) {
+        for (int i=0;i<end;++i) {
             ltr.add(routes[i].api());
         }
         return ltr;

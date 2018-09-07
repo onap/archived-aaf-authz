@@ -121,14 +121,14 @@ public class JU_Cached {
 //        Date dbStamp = info.get(trans, name,cacheIdx);
 //        
 //        // Check for cache Entry and whether it is still good (a good Cache Entry is same or after DBEntry, so we use "before" syntax)
-//        if(cached!=null && dbStamp.before(cached.timestamp)) {
+//        if (cached!=null && dbStamp.before(cached.timestamp)) {
 //            ld = (List<DATA>)cached.data;
 //            rld = Result.ok(ld);
 //        } else {
 //            rld = getter.get();
-//            if(rld.isOK()) { // only store valid lists
+//            if (rld.isOK()) { // only store valid lists
 //                map.put(key, new Dated(rld.value));  // successful item found gets put in cache
-////            } else if(rld.status == Result.ERR_Backend){
+////            } else if (rld.status == Result.ERR_Backend){
 ////                map.remove(key);
 //            }
 //        }

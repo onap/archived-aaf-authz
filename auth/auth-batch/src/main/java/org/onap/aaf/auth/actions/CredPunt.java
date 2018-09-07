@@ -46,14 +46,14 @@ public class CredPunt extends ActionPuntDAO<CredDAO.Data,Void,String> {
     public Result<Void> exec(AuthzTrans trans, CredDAO.Data cdd,String text) {
         Result<Void> rv = null;
         Result<List<CredDAO.Data>> read = q.credDAO.read(trans, cdd);
-        if(read.isOKhasData()) {
-            for(CredDAO.Data data : read.value) {
+        if (read.isOKhasData()) {
+            for (CredDAO.Data data : read.value) {
                 Date from = data.expires;
                 data.expires = puntDate(from);
-                if(data.expires.compareTo(from)<=0) {
+                if (data.expires.compareTo(from)<=0) {
                     trans.debug().printf("Error: %s is before %s", Chrono.dateOnlyStamp(data.expires), Chrono.dateOnlyStamp(from));
                 } else {
-                    if(dryRun) {
+                    if (dryRun) {
                         trans.info().log("Would Update Cred",cdd.id, CredPrint.type(cdd.type), "from",Chrono.dateOnlyStamp(from),"to",Chrono.dateOnlyStamp(data.expires));
                     } else {
                         trans.info().log("Updated Cred",cdd.id, CredPrint.type(cdd.type), "from",Chrono.dateOnlyStamp(from),"to",Chrono.dateOnlyStamp(data.expires));
@@ -62,7 +62,7 @@ public class CredPunt extends ActionPuntDAO<CredDAO.Data,Void,String> {
                 }
             }
         }
-        if(rv==null) {
+        if (rv==null) {
             rv=Result.err(read);
         }
         return rv;

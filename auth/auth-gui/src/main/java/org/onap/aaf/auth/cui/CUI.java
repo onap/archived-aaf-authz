@@ -51,7 +51,7 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
         int c;
         StringBuilder cmd = new StringBuilder();
 
-        while((c=isr.read())>=0) {
+        while ((c=isr.read())>=0) {
             cmd.append((char)c);
         }
 

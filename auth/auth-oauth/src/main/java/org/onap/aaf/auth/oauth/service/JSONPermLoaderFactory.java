@@ -52,8 +52,8 @@ public class JSONPermLoaderFactory {
                 pathinfo.append(user);
                 pathinfo.append("?scopes=");
                 boolean first = true;
-                for(String s : scopes) {
-                    if(first) {
+                for (String s : scopes) {
+                    if (first) {
                         first = false;
                     } else {
                         pathinfo.append(':');
@@ -63,9 +63,9 @@ public class JSONPermLoaderFactory {
                 TimeTaken tt = trans.start("Call AAF Service", Env.REMOTE);
                 try {
                     Future<String> fs = c.read(pathinfo.toString(), "application/Perms+json;charset=utf-8;version=2.0");
-                    if(fs.get(timeout)) {
+                    if (fs.get(timeout)) {
                         return Result.ok(fs.body());
-                    } else if(fs.code()==404) {
+                    } else if (fs.code()==404) {
                         return Result.err(Result.ERR_NotFound,fs.body());
                     } else {
                         return Result.err(Result.ERR_Backend,"Error accessing AAF %s: %s",Integer.toString(fs.code()),fs.body());
@@ -86,15 +86,15 @@ public class JSONPermLoaderFactory {
                 } finally {
                     tt.done();
                 }
-                if(pd.notOK()) {
+                if (pd.notOK()) {
                     return Result.err(pd);
                 }
                 // Since we know it is 
                 StringBuilder sb = new StringBuilder("{\"perm\":[");
                 boolean first = true;
-                for(PermDAO.Data d : pd.value) {
-                    if(scopes.contains(d.ns)) {
-                        if(first) {
+                for (PermDAO.Data d : pd.value) {
+                    if (scopes.contains(d.ns)) {
+                        if (first) {
                             first = false;
                         } else {
                             sb.append(',');

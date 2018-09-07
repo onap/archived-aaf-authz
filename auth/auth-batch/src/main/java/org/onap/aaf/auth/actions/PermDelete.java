@@ -47,12 +47,12 @@ public class PermDelete extends ActionDAO<Perm,Void,String> {
         pdd.type = p.type;
         pdd.instance = p.instance;
         pdd.action = p.action;
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Delete Perm:",text,p.fullType());
             return Result.ok();
         } else {
             Result<Void> rv = q.permDAO.delete(trans, pdd, true); // need to read for undelete
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log("Deleted Perm:",text,p.fullType());
             } else {
                 trans.error().log("Error Deleting Perm -",rv.details,":",p.fullType());

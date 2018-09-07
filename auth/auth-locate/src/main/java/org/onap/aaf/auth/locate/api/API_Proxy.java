@@ -62,7 +62,7 @@ public class API_Proxy {
     public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
         
         String aafurl = gwAPI.access.getProperty(Config.AAF_URL,null);
-        if(aafurl==null) {
+        if (aafurl==null) {
         } else {
             ////////
             // Transferring APIs
@@ -73,7 +73,7 @@ public class API_Proxy {
             gwAPI.routeAll(HttpMethods.GET,"/proxy/:path*",API.VOID,new LocateCode(facade,"Proxy GET", true) {
                 @Override
                 public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
-                    if("/proxy/authn/basicAuth".equals(req.getPathInfo()) && !(req.getUserPrincipal() instanceof OAuth2Principal)) {
+                    if ("/proxy/authn/basicAuth".equals(req.getPathInfo()) && !(req.getUserPrincipal() instanceof OAuth2Principal)) {
                         bac.handle(trans, req, resp);
                     } else {
                         TimeTaken tt = trans.start("Forward to AAF Service", Env.REMOTE);

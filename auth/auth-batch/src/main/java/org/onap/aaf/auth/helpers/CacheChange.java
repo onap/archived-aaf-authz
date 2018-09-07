@@ -44,10 +44,10 @@ public class CacheChange<T extends CacheChange.Data> {
     }
     
     public final void resetLocalData() {
-        if(removed==null || removed.isEmpty()) {
+        if (removed==null || removed.isEmpty()) {
             return;
         }
-        for(T t : removed) {
+        for (T t : removed) {
             t.expunge();
         }
         removed.clear();

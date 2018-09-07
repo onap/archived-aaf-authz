@@ -217,7 +217,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
      * @return
      */
     public RosettaDF<T> rootMarshal(Marshal<T> marshal) {
-        if(marshal instanceof DocMarshal) {
+        if (marshal instanceof DocMarshal) {
             this.marshal = marshal;
         } else {
             this.marshal = DocMarshal.root(marshal);
@@ -229,7 +229,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
         Out out = getOut(outType);
         TimeTaken tt = trans.start(out.logName(),logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(marshal==null) { // Unknown marshaller... do working XML marshal/extraction
+            if (marshal==null) { // Unknown marshaller... do working XML marshal/extraction
                 StringWriter sw = new StringWriter();
                 jaxMar.marshal(trans.debug(), t, sw, options);
                 out.extract(new StringReader(sw.toString()), new OutputStreamWriter(os), inXML,options);
@@ -247,7 +247,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
         Out out = getOut(outType);
         TimeTaken tt = trans.start(out.logName(),logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(marshal==null) { // Unknown marshaller... do working XML marshal/extraction
+            if (marshal==null) { // Unknown marshaller... do working XML marshal/extraction
                 StringWriter sw = new StringWriter();
                 jaxMar.marshal(trans.debug(), t, sw, options);
                 out.extract(new StringReader(sw.toString()), writer, inXML,options);

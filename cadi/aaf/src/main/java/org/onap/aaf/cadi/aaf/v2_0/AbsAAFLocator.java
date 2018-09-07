@@ -66,7 +66,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     public AbsAAFLocator(Access access, String name, final long refreshMin) throws LocatorException {
         aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL, null);
-        if(aaf_locator_host==null) {
+        if (aaf_locator_host==null) {
             aaf_locator_uri = null;
         } else {
             try {
@@ -82,19 +82,19 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         this.access = access;
         String lat = access.getProperty(Config.CADI_LATITUDE,null);
         String lng = access.getProperty(Config.CADI_LONGITUDE,null);
-        if(lat==null || lng==null) {
+        if (lat==null || lng==null) {
             throw new LocatorException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " properties are required.");
         } else {
             latitude = Double.parseDouble(lat);
             longitude = Double.parseDouble(lng);
         }
-        if(name.startsWith(Defaults.AAF_NS)) {
+        if (name.startsWith(Defaults.AAF_NS)) {
             String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
-            if(root_ns!=null) {
+            if (root_ns!=null) {
                 name=name.replace(Defaults.AAF_NS, root_ns);
             }
         }
-        if(name.startsWith("http")) { // simple URL
+        if (name.startsWith("http")) { // simple URL
             this.name = name;
             this.version = Config.AAF_DEFAULT_VERSION;
         } else {
@@ -118,11 +118,11 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         String version = Config.AAF_DEFAULT_VERSION;
         String pathInfo = null;
         int prev = key.indexOf("/locate");
-        if(prev>0) {
+        if (prev>0) {
             prev = key.indexOf('/',prev+6);
-            if(prev>0) {
+            if (prev>0) {
                 int next = key.indexOf('/',++prev);
-                if(next>0) {
+                if (next>0) {
                     name = key.substring(prev, next);
                     pathInfo=key.substring(next);
                 } else {
@@ -141,11 +141,11 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             }
         }
 
-        if(key.startsWith("http")) {
-            if(name!=null) {
-                if(locatorCreator != null) {
+        if (key.startsWith("http")) {
+            if (name!=null) {
+                if (locatorCreator != null) {
                     AbsAAFLocator<?> aal = locatorCreator.create(name, version);
-                    if(pathInfo!=null) {
+                    if (pathInfo!=null) {
                         aal.setPathInfo(pathInfo);
                     }
                     return aal;
@@ -168,7 +168,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     protected static String nameFromLocatorURI(URI locatorURI) {
         String[] path = Split.split('/', locatorURI.getPath());
-        if(path.length>2 && "locate".equals(path[1])) {
+        if (path.length>2 && "locate".equals(path[1])) {
             return path[2];
         } else {
             return locatorURI.toString();
@@ -185,7 +185,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
 
     public static void setCreatorSelf(final String hostname, final int port) {
-        if(locatorCreator!=null) {
+        if (locatorCreator!=null) {
             locatorCreator.setSelf(hostname,port);
         }
     }
@@ -202,8 +202,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     private final boolean _refresh() {
         boolean rv = false;
         long now=System.currentTimeMillis();
-        if(noEntries()) {
-            if(earliest<now) {
+        if (noEntries()) {
+            if (earliest<now) {
                 synchronized(epList) {
                     rv = refresh();
                     earliest = now + refreshWait; // call only up to 10 seconds.
@@ -221,9 +221,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     @Override
     public URI get(Item item) throws LocatorException {
-        if(item==null) {
+        if (item==null) {
             return null;
-        } else if(item instanceof AAFLItem) {
+        } else if (item instanceof AAFLItem) {
             return getURI(((AAFLItem)item).uri);
         } else {
             throw new LocatorException(item.getClass().getName() + " does not belong to AAFLocator");
@@ -233,16 +233,16 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     @Override
     public boolean hasItems() {
         boolean isEmpty = epList.isEmpty();
-        if(!isEmpty) {
-            for(Iterator<EP> iter = epList.iterator(); iter.hasNext(); ) {
+        if (!isEmpty) {
+            for (Iterator<EP> iter = epList.iterator(); iter.hasNext(); ) {
                 EP ep = iter.next();
-                if(ep.valid) {
+                if (ep.valid) {
                     return true;
                 }
             }
             isEmpty = true;
         }
-        if(_refresh()) { // is refreshed... check again
+        if (_refresh()) { // is refreshed... check again
             isEmpty = epList.isEmpty();
         }
         return !isEmpty;
@@ -250,8 +250,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     @Override
     public void invalidate(Item item) throws LocatorException {
-        if(item!=null) {
-            if(item instanceof AAFLItem) {
+        if (item!=null) {
+            if (item instanceof AAFLItem) {
                 AAFLItem ali =(AAFLItem)item; 
                 EP ep = ali.ep;
                 synchronized(epList) {
@@ -267,7 +267,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     @Override
     public Item best() throws LocatorException {
-        if(!hasItems()) {
+        if (!hasItems()) {
             throw new LocatorException("No Entries found for '" + aaf_locator_uri.toString() + "/locate/" + name + ':' + version + '\'');
         }
         List<EP> lep = new ArrayList<>();
@@ -275,14 +275,14 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         // Note: Deque is sorted on the way by closest distance
         Iterator<EP> iter = getIterator();
         EP ep;
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             ep = iter.next();
-            if(ep.valid) {
-                if(first==null) {
+            if (ep.valid) {
+                if (first==null) {
                     first = ep;
                     lep.add(first);
                 } else {
-                    if(Math.abs(ep.distance-first.distance)<.1) { // allow for nearby/precision issues.
+                    if (Math.abs(ep.distance-first.distance)<.1) { // allow for nearby/precision issues.
                         lep.add(ep);
                     } else {
                         break;
@@ -298,7 +298,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             default:
                 int rand = sr.nextInt(); // Sonar chokes without.
                 int i = Math.abs(rand)%lep.size();
-                if(i<0) {
+                if (i<0) {
                     return null;
                 } else {
                     return new AAFLItem(iter,lep.get(i));
@@ -309,7 +309,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     private Iterator<EP> getIterator() {
         Object[] epa = epList.toArray();
-        if(epa.length==0) {
+        if (epa.length==0) {
             _refresh();
             epa = epList.toArray();
         }
@@ -329,12 +329,12 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
         @Override
         public boolean hasNext() {
-            if(idx<0) {
+            if (idx<0) {
                 return false;
             } else {
                 Object obj;
-                while(idx<epa.length) {
-                    if((obj=epa[idx])==null || !((EP)obj).valid) {
+                while (idx<epa.length) {
+                    if ((obj=epa[idx])==null || !((EP)obj).valid) {
                         ++idx;
                         continue;
                     }
@@ -346,7 +346,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
         @Override
         public EP next() {
-            if(!hasNext() ) {
+            if (!hasNext() ) {
                 throw new NoSuchElementException();
             }
             return (EP)epa[idx++];
@@ -354,7 +354,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
         @Override
         public void remove() {
-            if(idx>=0 && idx<epa.length) {
+            if (idx>=0 && idx<epa.length) {
                 synchronized(epList) {
                     epList.remove(epa[idx]);
                 }
@@ -366,7 +366,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     public Item first()  {
         Iterator<EP> iter = getIterator();
         EP ep = AAFLItem.next(iter);
-        if(ep==null) {
+        if (ep==null) {
             return null;
         }
         return new AAFLItem(iter,ep);
@@ -374,23 +374,23 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     @Override
     public Item next(Item prev) throws LocatorException {
-        if(prev==null) {
+        if (prev==null) {
             StringBuilder sb = new StringBuilder("Locator Item passed in next(item) is null.");
             int lines = 0;
-            for(StackTraceElement st : Thread.currentThread().getStackTrace()) {
+            for (StackTraceElement st : Thread.currentThread().getStackTrace()) {
                 sb.append("\n\t");
                 sb.append(st.toString());
-                if(++lines > 5) {
+                if (++lines > 5) {
                     sb.append("\n\t...");
                     break;
                 }
             }
             access.log(Level.ERROR, sb);
         } else {
-            if(prev instanceof AAFLItem) {
+            if (prev instanceof AAFLItem) {
                 AAFLItem ali = (AAFLItem)prev;
                 EP ep = AAFLItem.next(ali.iter);
-                if(ep!=null) {
+                if (ep!=null) {
                     return new AAFLItem(ali.iter,ep);
                 }
             } else {
@@ -413,7 +413,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             
             private static EP next(Iterator<EP> iter) {
                 EP ep=null;
-                while(iter.hasNext() && (ep==null || !ep.valid)) {
+                while (iter.hasNext() && (ep==null || !ep.valid)) {
                     ep = iter.next();
                 }
                 return ep;
@@ -441,9 +441,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
         @Override
         public int compareTo(EP o) {
-            if(distance<o.distance) {
+            if (distance<o.distance) {
                 return -1;
-            } else if(distance>o.distance) {
+            } else if (distance>o.distance) {
                 return 1;
             } else {
                 return 0;
@@ -491,7 +491,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     protected abstract URI getURI();
 
     protected URI getURI(URI rv) throws LocatorException {
-        if(additional) {
+        if (additional) {
             try {
                 return new URI(rv.getScheme(),rv.getUserInfo(),rv.getHost(),rv.getPort(),pathInfo,query,fragment);
             } catch (URISyntaxException e) {

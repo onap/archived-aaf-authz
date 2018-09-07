@@ -86,9 +86,9 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
         super(null, tags);
 //        props = new HashMap<>();
 //        String value;
-//        for(int i=0;i<tags.length;++i) {
+//        for (int i=0;i<tags.length;++i) {
 //            value = applet.getParameter(tags[i]);
-//            if(value!=null) {
+//            if (value!=null) {
 //                props.put(tags[i], value);
 //            }
 //        }
@@ -164,11 +164,11 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
                     case Env.REMOTE: sb.append("REMOTE "); break;
                 }
                 sb.append(name);
-                if(flag != Env.CHECKPOINT) {
+                if (flag != Env.CHECKPOINT) {
                     sb.append(' ');
                     sb.append((end-start)/1000000f);
                     sb.append("ms");
-                    if(size>=0) {
+                    if (size>=0) {
                         sb.append(" size: ");
                         sb.append(Long.toString(size));
                     }
@@ -185,11 +185,11 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
     public Properties getProperties(String ... filter) {
         Properties props = new Properties();
         boolean yes;
-        for(String key : existingStaticSlotNames()) {
-            if(filter.length>0) {
+        for (String key : existingStaticSlotNames()) {
+            if (filter.length>0) {
                 yes = false;
-                for(String f : filter) {
-                    if(key.startsWith(f)) {
+                for (String f : filter) {
+                    if (key.startsWith(f)) {
                         yes = true;
                         break;
                     }
@@ -197,9 +197,9 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
             } else {
                 yes = true;
             }
-            if(yes) {
+            if (yes) {
                 String value = getProperty(key);
-                if(value!=null) {
+                if (value!=null) {
                     props.put(key, value);
                 }
             }
@@ -242,7 +242,7 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
 //    @SuppressWarnings("unchecked")
     // @Override
     public <T> DataFactory<T> newDataFactory(Class<?>... classes) throws APIException {
-//        if(String.class.isAssignableFrom(classes[0])) 
+//        if (String.class.isAssignableFrom(classes[0])) 
 //            return (DataFactory<T>) new StringDF(this);
         return new JAXBDF<T>(this,classes);
     }
@@ -250,7 +250,7 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
 //    @SuppressWarnings("unchecked")
     // @Override
     public <T> DataFactory<T> newDataFactory(Schema schema, Class<?>... classes) throws APIException {
-//        if(String.class.isAssignableFrom(classes[0])) 
+//        if (String.class.isAssignableFrom(classes[0])) 
 //            return (DataFactory<T>) new StringDF(this);
         return new JAXBDF<T>(this, schema, classes);
     }
@@ -258,7 +258,7 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
 //    @SuppressWarnings("unchecked")
     // @Override
     public<T> DataFactory<T> newDataFactory(QName qName, Class<?> ... classes) throws APIException {
-//        if(String.class.isAssignableFrom(classes[0])) 
+//        if (String.class.isAssignableFrom(classes[0])) 
 //            return (DataFactory<T>) new StringDF(this);
         return new JAXBDF<T>(this, qName, classes);
     }
@@ -274,9 +274,9 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
     }
 
     public void loadFromSystemPropsStartsWith(String ... str) {
-         for(String name : System.getProperties().stringPropertyNames()) {
-            for(String s : str) {
-                if(name.startsWith(s)) {
+         for (String name : System.getProperties().stringPropertyNames()) {
+            for (String s : str) {
+                if (name.startsWith(s)) {
                     setProperty(name, System.getProperty(name));
                 }
             }
@@ -289,10 +289,10 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
      */
     public void loadToSystemPropsStartsWith(String ... str) {
         String value;
-        for(String name : existingStaticSlotNames()) {
-            for(String s : str) {
-                if(name.startsWith(s)) {
-                    if((value = getProperty(name))!=null)
+        for (String name : existingStaticSlotNames()) {
+            for (String s : str) {
+                if (name.startsWith(s)) {
+                    if ((value = getProperty(name))!=null)
                         System.setProperty(name,value);
                 }
             }
@@ -301,24 +301,24 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
     
     public void loadPropFiles(String tag, ClassLoader classloader) throws IOException {
         String propfiles = getProperty(tag);
-        if(propfiles!=null) {
-            for(String pf : Split.splitTrim(File.pathSeparatorChar, propfiles)) {
+        if (propfiles!=null) {
+            for (String pf : Split.splitTrim(File.pathSeparatorChar, propfiles)) {
                 InputStream is = classloader==null?null:classloader.getResourceAsStream(pf);
-                if(is==null) {
+                if (is==null) {
                     File f = new File(pf);
-                    if(f.exists()) {
+                    if (f.exists()) {
                         is = new FileInputStream(f);
                     }
                 }
-                if(is!=null) {
+                if (is!=null) {
                     BufferedReader br = new BufferedReader(new InputStreamReader(is));
                     try {
                         String line;
-                        while((line=br.readLine())!=null) {
+                        while ((line=br.readLine())!=null) {
                             line = line.trim();
-                            if(!line.startsWith("#")) {
+                            if (!line.startsWith("#")) {
                                 String[] tv = Split.splitTrim('=', line);
-                                if(tv.length==2) {
+                                if (tv.length==2) {
                                     setProperty(tv[0],tv[1]);
                                 }
                             }

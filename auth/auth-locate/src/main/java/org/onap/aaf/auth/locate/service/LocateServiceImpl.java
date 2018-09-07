@@ -68,28 +68,28 @@ public class LocateServiceImpl<IN,OUT,ERROR>
         @Override
         public Result<Void> putMgmtEndPoints(AuthzTrans trans, MgmtEndpoints meps) {
             LocateValidator v = new LocateValidator().mgmt_endpoints(meps, false);
-            if(v.err()) {
+            if (v.err()) {
                 return Result.err(Result.ERR_BadData,v.errs());
             }
             int count = 0;
-            for(MgmtEndpoint me : meps.getMgmtEndpoint()) {
-                if(permToRegister) { 
+            for (MgmtEndpoint me : meps.getMgmtEndpoint()) {
+                if (permToRegister) { 
                     int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
                     AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getName(),"write"); 
-                    if(trans.fish(p)) {
+                    if (trans.fish(p)) {
                         LocateDAO.Data data = mapper.locateData(me);
                         locateDAO.update(trans, data, true);
                         ++count;
                     } else {
                         return Result.err(Result.ERR_Denied,"May not register service (needs " + p.getKey() + ')');
                     }
-                } else { //TODO if(MechID is part of Namespace) { 
+                } else { //TODO if (MechID is part of Namespace) { 
                     LocateDAO.Data data = mapper.locateData(me);
                     locateDAO.update(trans, data, true);
                     ++count;
                 }
             }
-            if(count>0) {
+            if (count>0) {
                 return Result.ok();
             } else {
                 return Result.err(Result.ERR_NotFound, "No endpoints found");
@@ -102,14 +102,14 @@ public class LocateServiceImpl<IN,OUT,ERROR>
         @Override
         public Result<Void> removeMgmtEndPoints(AuthzTrans trans, MgmtEndpoints meps) {
             LocateValidator v = new LocateValidator().mgmt_endpoint_key(meps);
-            if(v.err()) {
+            if (v.err()) {
                 return Result.err(Result.ERR_BadData,v.errs());
             }
             int count = 0;
-            for(MgmtEndpoint me : meps.getMgmtEndpoint()) {
+            for (MgmtEndpoint me : meps.getMgmtEndpoint()) {
                 int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
                 AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
-                if(trans.fish(p)) {
+                if (trans.fish(p)) {
                     LocateDAO.Data data = mapper.locateData(me);
                     data.port_key = UUID.randomUUID();
                     locateDAO.delete(trans, data, false);
@@ -118,7 +118,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                     return Result.err(Result.ERR_Denied,"May not register service (needs " + p.getKey() + ')');
                 }
             }
-            if(count>0) {
+            if (count>0) {
                 return Result.ok();
             } else {
                 return Result.err(Result.ERR_NotFound, "No endpoints found");
@@ -136,8 +136,8 @@ public class LocateServiceImpl<IN,OUT,ERROR>
             c.setName(type);
             Props p;
             
-            if(dr.isOKhasData()) {
-                for(ConfigDAO.Data data : dr.value) {
+            if (dr.isOKhasData()) {
+                for (ConfigDAO.Data data : dr.value) {
                     p = new Props();
                     p.setTag(data.tag);
                     p.setValue(data.value);

@@ -48,7 +48,7 @@ public class Clear extends Cmd {
     public int _exec(int _idx, String ... args) throws CadiException, APIException, LocatorException {
         int idx = _idx;
         int rv=409;
-        for(final String name : args[idx++].split(COMMA)) {
+        for (final String name : args[idx++].split(COMMA)) {
             rv = all(new Retryable<Integer>() {
                 @Override
                 public Integer code(Rcli<?> client) throws APIException, CadiException {
@@ -57,11 +57,11 @@ public class Clear extends Cmd {
                             "/mgmt/cache/"+name, 
                             Void.class
                             );
-                    if(fp.get(AAFcli.timeout())) {
+                    if (fp.get(AAFcli.timeout())) {
                         pw().println("Cleared Cache for " + name + " on " + client);
                         rv=200;
                     } else {
-                        if(rv==409)rv = fp.code();
+                        if (rv==409)rv = fp.code();
                         error(fp);
                     }
                     return rv;

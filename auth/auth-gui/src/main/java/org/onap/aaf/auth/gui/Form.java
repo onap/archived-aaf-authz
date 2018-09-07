@@ -45,7 +45,7 @@ public class Form extends NamedCode {
 
     @Override
     public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-        if(preamble!=null) {
+        if (preamble!=null) {
             hgen.incr("p","class=preamble").text(preamble).end();
         }
         hgen.incr("form","method=post");

@@ -54,14 +54,14 @@ public class HRenewingTokenSS extends HAuthorizationHeader {
             tc.client_creds(access);
             setUser(tc.client_id());
             String defaultNS = FQI.reverseDomain(tc.client_id());
-            if(nss.length>0) {
+            if (nss.length>0) {
                 boolean hasDefault = false;
-                for(String ns : nss) {
-                    if(ns.equals(defaultNS)) {
+                for (String ns : nss) {
+                    if (ns.equals(defaultNS)) {
                         hasDefault = true;
                     }
                 }
-                if(hasDefault) {
+                if (hasDefault) {
                     scopes=nss;        
                 } else {
                     String[] nssPlus = new String[nss.length+1];
@@ -86,7 +86,7 @@ public class HRenewingTokenSS extends HAuthorizationHeader {
         Result<TimedToken> token;
         try {
             token = tc.getToken(Kind.OAUTH,scopes);
-            if(token.isOK()) {
+            if (token.isOK()) {
                 return "Bearer " + token.value.getAccessToken();
             } else {
                 throw new IOException("Token cannot be obtained: " + token.code + '-' + token.error);

@@ -48,28 +48,28 @@ public class Vars {
         StringBuilder sb = null;
         int idx,index=0,prev = 0;
         
-        if(text.contains("%s")) {
+        if (text.contains("%s")) {
             sb = new StringBuilder();
         }
         
         StringBuilder[] sbs = new StringBuilder[] {sb,holder};
         boolean replace, clearIndex = false;
         int c;
-        while((idx=text.indexOf('%',prev))>=0) {
+        while ((idx=text.indexOf('%',prev))>=0) {
             replace = false;
-            if(clearIndex) {
+            if (clearIndex) {
                 index=0;
             }
-            if(sb!=null) {
+            if (sb!=null) {
                 sb.append(text,prev,idx);
             }
-            if(holder!=null) {
+            if (holder!=null) {
                 holder.append(text,prev,idx);
             }
             
             boolean go = true;
-            while(go) {
-                if(text.length()>++idx) {
+            while (go) {
+                if (text.length()>++idx) {
                     switch(c=text.charAt(idx)) {
                         case '0': case '1': case '2': case '3': case '4': 
                         case '5': case '6': case '7': case '8': case '9':
@@ -87,19 +87,19 @@ public class Vars {
                 }
                 prev = idx;
                 go=false;
-                if(replace) {
-                    if(sb!=null) {
+                if (replace) {
+                    if (sb!=null) {
                         sb.append('%');
                         sb.append(index);
                     }
-                    if(index<=vars.length) {
-                        if(holder!=null) {
+                    if (index<=vars.length) {
+                        if (holder!=null) {
                             holder.append(vars[index-1]);
                         }
                     }
                 } else {
-                    for(StringBuilder s : sbs) {
-                        if(s!=null) {
+                    for (StringBuilder s : sbs) {
+                        if (s!=null) {
                             s.append("%");
                         }
                     }
@@ -107,10 +107,10 @@ public class Vars {
             }
         }
         
-        if(sb!=null) {
+        if (sb!=null) {
             sb.append(text,prev,text.length());
         }
-        if(holder!=null) {
+        if (holder!=null) {
             holder.append(text,prev,text.length());
         }
 

@@ -43,8 +43,8 @@ public class EmailPrint extends Email {
         PrintStream out = System.out;
         boolean first = true;
         out.print("To: ");
-        for(String s: toList) {
-            if(first) {first = false;}
+        for (String s: toList) {
+            if (first) {first = false;}
             else {out.print(',');}
             out.print(s);
         }
@@ -52,8 +52,8 @@ public class EmailPrint extends Email {
         
         first = true;
         out.print("CC: ");
-        for(String s: ccList) {
-            if(first) {first = false;}
+        for (String s: ccList) {
+            if (first) {first = false;}
             else {out.print(',');}
             out.print(s);
         }
@@ -64,7 +64,7 @@ public class EmailPrint extends Email {
         out.println();
         boolean go = true;
         
-        for(int start=0, end=LINE_LENGTH;go;start=end,end=Math.min(msg.length(), start+LINE_LENGTH)) {
+        for (int start=0, end=LINE_LENGTH;go;start=end,end=Math.min(msg.length(), start+LINE_LENGTH)) {
             int ret = msg.indexOf("\n",start+1);
             switch(ret) {
                 case -1:
@@ -75,13 +75,13 @@ public class EmailPrint extends Email {
                     out.println();
                     break;
                 default:
-                    if(ret<end) {
+                    if (ret<end) {
                         end = ret;
                     }
-                    if(end==start+LINE_LENGTH) {
+                    if (end==start+LINE_LENGTH) {
                         // Word-wrapping
                         ret = msg.lastIndexOf(" ", end);
-                        if(ret>start && ret<end) {
+                        if (ret>start && ret<end) {
                             end=ret+1;
                         }
                         out.println(msg.substring(start,end));

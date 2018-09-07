@@ -124,9 +124,9 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         public static Result<Data> decode(AuthzTrans trans, Question q, String r) {
             String[] ss = Split.splitTrim('|', r,2);
             Data data = new Data();
-            if(ss[1]==null) { // older 1 part encoding must be evaluated for NS
+            if (ss[1]==null) { // older 1 part encoding must be evaluated for NS
                 Result<NsSplit> nss = q.deriveNsSplit(trans, ss[0]);
-                if(nss.notOK()) {
+                if (nss.notOK()) {
                     return Result.err(nss);
                 }
                 data.ns=nss.value.ns;
@@ -161,9 +161,9 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
          */
         public static Result<String[]> decodeToArray(AuthzTrans trans, Question q, String p) {
             String[] ss = Split.splitTrim('|', p,2);
-            if(ss[1]==null) { // older 1 part encoding must be evaluated for NS
+            if (ss[1]==null) { // older 1 part encoding must be evaluated for NS
                 Result<NsSplit> nss = q.deriveNsSplit(trans, ss[0]);
-                if(nss.notOK()) {
+                if (nss.notOK()) {
                     return Result.err(nss);
                 }
                 ss[0] = nss.value.ns;
@@ -287,7 +287,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
     }
 
     public Result<List<Data>> readChildren(AuthzTrans trans, String ns, String role) {
-        if(role.length()==0 || "*".equals(role)) {
+        if (role.length()==0 || "*".equals(role)) {
             return psChildren.read(trans, R_TEXT, new Object[]{ns, FIRST_CHAR, LAST_CHAR}); 
         } else {
             return psChildren.read(trans, R_TEXT, new Object[]{ns, role+DOT, role+DOT_PLUS_ONE});
@@ -392,7 +392,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         hd.target = TABLE;
         hd.subject = subject ? override[1] : data.fullName();
         hd.memo = memo ? override[0] : (data.fullName() + " was "  + modified.name() + 'd' );
-        if(modified==CRUD.delete) {
+        if (modified==CRUD.delete) {
             try {
                 hd.reconstruct = data.bytify();
             } catch (IOException e) {
@@ -400,10 +400,10 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
             }
         }
 
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
-        if(infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
+        if (infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
             trans.error().log("Cannot touch CacheInfo for Role");
         }
     }

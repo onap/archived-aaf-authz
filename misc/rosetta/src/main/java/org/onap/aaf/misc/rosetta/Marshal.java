@@ -59,7 +59,7 @@ public abstract class Marshal<T> implements Parse<T, Marshal.State> {
 
         @Override
         public Void next() {
-            if(!hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
             return null;

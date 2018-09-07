@@ -45,11 +45,11 @@ public class JaxSet<T> {
         members = new TreeMap<>();
         XmlType xmltype = cls.getAnnotation(XmlType.class);
         Class<?> paramType[] = new Class[] {String.class};
-        for(String str : xmltype.propOrder()) {
+        for (String str : xmltype.propOrder()) {
             try {
                 String setName = "set" + Character.toUpperCase(str.charAt(0)) + str.subSequence(1, str.length());
                 Method meth = cls.getMethod(setName,paramType );
-                if(meth!=null) {
+                if (meth!=null) {
                     members.put(str, new Setter<T>(meth) {
                         public void set(T o, Object t) throws ParseException {
                             try {
@@ -78,7 +78,7 @@ public class JaxSet<T> {
         synchronized(jsets) {
             @SuppressWarnings("unchecked")
             JaxSet<X> js = (JaxSet<X>)jsets.get(cls);
-            if(js == null) {
+            if (js == null) {
                 jsets.put(cls, js = new JaxSet<>(cls));
             }
             return js;

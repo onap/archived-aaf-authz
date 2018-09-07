@@ -70,19 +70,19 @@ public class Approval implements CacheChange.Data  {
     }
     
     public static String roleFromMemo(String memo) {
-        if(memo==null) {
+        if (memo==null) {
             return null;
         }
         int first = memo.indexOf('\'');
-        if(first>=0) {
+        if (first>=0) {
             int second = memo.indexOf('\'', ++first);
-            if(second>=0) {
+            if (second>=0) {
                 String role = memo.substring(first, second);
-                if(memo.startsWith(RE_VALIDATE_ADMIN)) {
+                if (memo.startsWith(RE_VALIDATE_ADMIN)) {
                     return role + ".admin";
-                } else if(memo.startsWith(RE_VALIDATE_OWNER)) {
+                } else if (memo.startsWith(RE_VALIDATE_OWNER)) {
                     return role + ".owner";
-                } else if(memo.startsWith(RE_APPROVAL_IN_ROLE)) {
+                } else if (memo.startsWith(RE_APPROVAL_IN_ROLE)) {
                     return role;
                 }
             }
@@ -106,14 +106,14 @@ public class Approval implements CacheChange.Data  {
 
         try {
                 List<Approval> ln;
-                for(Row row : results.all()) {
+                for (Row row : results.all()) {
                     ++count;
                     try {
                             Approval app = creator.create(row);
                             String person = app.getApprover();
-                            if(person!=null) {
+                            if (person!=null) {
                             ln = byApprover.get(person);
-                                if(ln==null) {
+                                if (ln==null) {
                                     ln = new ArrayList<>();
                                     byApprover.put(app.getApprover(), ln);
                                 }
@@ -122,18 +122,18 @@ public class Approval implements CacheChange.Data  {
                             
                             
                         person = app.getUser();
-                            if(person!=null) {
+                            if (person!=null) {
                                 ln = byUser.get(person);
-                                if(ln==null) {
+                                if (ln==null) {
                                     ln = new ArrayList<>();
                                     byUser.put(app.getUser(), ln);
                                 }
                                 ln.add(app);
                             }
                             UUID ticket = app.getTicket();
-                            if(ticket!=null) {
+                            if (ticket!=null) {
                                 ln = byTicket.get(ticket);
-                                if(ln==null) {
+                                if (ln==null) {
                                     ln = new ArrayList<>();
                                     byTicket.put(app.getTicket(), ln);
                                 }
@@ -152,25 +152,25 @@ public class Approval implements CacheChange.Data  {
     @Override
     public void expunge() {
         List<Approval> la = byApprover.get(getApprover());
-        if(la!=null) {
+        if (la!=null) {
             la.remove(this);
         }
         
         la = byUser.get(getUser());
-        if(la!=null) {
+        if (la!=null) {
             la.remove(this);
         }
         UUID ticket = this.add==null?null:this.add.ticket;
-        if(ticket!=null) {
+        if (ticket!=null) {
             la = byTicket.get(this.add.ticket);
-            if(la!=null) {
+            if (la!=null) {
                 la.remove(this);
             }
         }
     }
 
     public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
         } else {
             trans.info().printf("Update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
@@ -272,11 +272,11 @@ public class Approval implements CacheChange.Data  {
     }
 
     public void delayDelete(AuthzTrans trans, ApprovalDAO ad, boolean dryRun, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log(text,"- Would Delete: Approval",getId(),"on ticket",getTicket(),"for",getApprover());
         } else {
             Result<Void> rv = ad.delete(trans, add, false);
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log(text,"- Deleted: Approval",getId(),"on ticket",getTicket(),"for",getApprover());
                 cache.delayedDelete(this);
             } else {
@@ -295,8 +295,8 @@ public class Approval implements CacheChange.Data  {
     }
 
     public static void delayDelete(AuthzTrans noAvg, ApprovalDAO apprDAO, boolean dryRun, List<Approval> list, String text) {
-        if(list!=null) {
-            for(Approval a : list) {
+        if (list!=null) {
+            for (Approval a : list) {
                 a.delayDelete(noAvg, apprDAO, dryRun,text);
             }
         }

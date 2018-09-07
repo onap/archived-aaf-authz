@@ -47,7 +47,7 @@ public abstract class TaggedPrincipal implements Principal {
     }
 
     public String personalName() {
-        if(tagLookup == null) {
+        if (tagLookup == null) {
             return getName();
         }
         try {

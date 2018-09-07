@@ -53,10 +53,10 @@ public class DirectCertIdentity implements CertIdentity {
     @Override
     public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert,    byte[] _certBytes) throws CertificateException {
             byte[] certBytes = _certBytes;
-        if(cert==null && certBytes==null) {
+        if (cert==null && certBytes==null) {
             return null;
         }
-        if(certBytes==null) {
+        if (certBytes==null) {
             certBytes = cert.getEncoded();
         }
         byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
@@ -64,7 +64,7 @@ public class DirectCertIdentity implements CertIdentity {
         AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
         
         Result<List<Data>> cresp = certDAO.read(trans, ByteBuffer.wrap(fingerprint));
-        if(cresp.isOKhasData()) {
+        if (cresp.isOKhasData()) {
             Data cdata = cresp.value.get(0);
             return new X509Principal(cdata.id,cert,certBytes,null);
         }

@@ -107,17 +107,17 @@ public class Chrono {
     }
 
     public static String utcStamp(Date date) {
-        if(date==null)return "";
+        if (date==null)return "";
         return utcFmt.format(date);
     }
 
     public static String utcStamp(GregorianCalendar gc) {
-        if(gc==null)return "";
+        if (gc==null)return "";
         return utcFmt.format(gc.getTime());
     }
 
     public static String utcStamp(XMLGregorianCalendar xgc) {
-        if(xgc==null)return "";
+        if (xgc==null)return "";
         return utcFmt.format(xgc.toGregorianCalendar().getTime());
     }
 
@@ -126,17 +126,17 @@ public class Chrono {
     }
 
     public static String dateStamp(GregorianCalendar gc) {
-        if(gc == null)return "";
+        if (gc == null)return "";
         return dateFmt.format(gc.getTime());
     }
 
     public static String dateStamp(Date date) {
-        if(date == null)return "";
+        if (date == null)return "";
         return dateFmt.format(date);
     }
 
     public static String dateStamp(XMLGregorianCalendar xgc) {
-        if(xgc==null)return "";
+        if (xgc==null)return "";
         return dateFmt.format(xgc.toGregorianCalendar().getTime());
     }
 
@@ -172,7 +172,7 @@ public class Chrono {
      * @return
      */
     public static String dateTime(GregorianCalendar gc) {
-        if(gc == null)return "";
+        if (gc == null)return "";
         TimeZone tz = gc.getTimeZone();
         int tz1 = (tz.getRawOffset()+tz.getDSTSavings())/0x8CA0;
         int tz1abs = Math.abs(tz1);
@@ -251,7 +251,7 @@ public class Chrono {
     }
 
     public static GregorianCalendar firstMomentOfDay(GregorianCalendar begin) {
-        if(begin==null)begin = new GregorianCalendar();
+        if (begin==null)begin = new GregorianCalendar();
         begin.set(GregorianCalendar.HOUR, 0);
         begin.set(GregorianCalendar.AM_PM, GregorianCalendar.AM);
         begin.set(GregorianCalendar.MINUTE, 0);
@@ -261,7 +261,7 @@ public class Chrono {
     }    
 
     public static GregorianCalendar lastMomentOfDay(GregorianCalendar end) {
-        if(end==null)end = new GregorianCalendar();
+        if (end==null)end = new GregorianCalendar();
         end.set(GregorianCalendar.HOUR, 11);
         end.set(GregorianCalendar.MINUTE, 59);
         end.set(GregorianCalendar.SECOND, 59);

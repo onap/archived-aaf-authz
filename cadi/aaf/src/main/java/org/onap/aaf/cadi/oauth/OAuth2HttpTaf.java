@@ -52,14 +52,14 @@ public class OAuth2HttpTaf implements HttpTaf {
     @Override
     public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
         String authz = req.getHeader("Authorization");
-        if(authz != null && authz.length()>7 && authz.startsWith("Bearer ")) {
-            if(!req.isSecure()) {
+        if (authz != null && authz.length()>7 && authz.startsWith("Bearer ")) {
+            if (!req.isSecure()) {
                 access.log(Level.WARN,"WARNING! OAuth has been used over an insecure channel");
             }
             try {
                 String tkn = authz.substring(7);
                 Result<OAuth2Principal> rp = tmgr.toPrincipal(tkn,Hash.hashSHA256(tkn.getBytes()));
-                if(rp.isOK()) {
+                if (rp.isOK()) {
                     return new OAuth2HttpTafResp(access,rp.value,rp.value.getName()+" authenticated by Bearer Token",RESP.IS_AUTHENTICATED,resp,false);
                 } else {
                     return new OAuth2HttpTafResp(access,null,rp.error,RESP.FAIL,resp,true);

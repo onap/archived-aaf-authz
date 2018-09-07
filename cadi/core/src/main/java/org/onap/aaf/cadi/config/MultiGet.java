@@ -31,9 +31,9 @@ public class MultiGet implements Get {
     @Override
     public String get(String name, String def, boolean print) {
         String str;
-        for(Get getter : getters) {
+        for (Get getter : getters) {
             str = getter.get(name, null, print);
-            if(str!=null) 
+            if (str!=null) 
                 return str;
         }
         return def;

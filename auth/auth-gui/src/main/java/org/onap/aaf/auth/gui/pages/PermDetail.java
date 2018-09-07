@@ -92,7 +92,7 @@ public class PermDetail extends Page {
              .permInstance(pInstance)
              .permAction(pAction);
             
-            if(v.err()) {
+            if (v.err()) {
                 trans.warn().printf("Error in PermDetail Request: %s", v.errs());
                 return Cells.EMPTY;
             }
@@ -108,17 +108,17 @@ public class PermDetail extends Page {
                         try {
                             Future<Perms> fp= client.read("/authz/perms/"+pType + '/' + pInstance + '/' + pAction,gui.getDF(Perms.class));
                     
-                            if(fp.get(AAF_GUI.TIMEOUT)) {
+                            if (fp.get(AAF_GUI.TIMEOUT)) {
                                 tt.done();
                                 tt = trans.start("Load Data", Env.SUB);
                                 List<Perm> ps = fp.value.getPerm();
-                                if(!ps.isEmpty()) {
+                                if (!ps.isEmpty()) {
                                     Perm perm = fp.value.getPerm().get(0);
                                     String desc = (perm.getDescription()!=null?perm.getDescription():BLANK);
                                     rv.add(new AbsCell[]{new TextCell("Description:"),new TextCell(desc)});
                                     boolean first=true;
-                                    for(String r : perm.getRoles()) {
-                                        if(first){
+                                    for (String r : perm.getRoles()) {
+                                        if (first){
                                             first=false;
                                             rv.add(new AbsCell[] {
                                                     new TextCell("Associated Roles:"),

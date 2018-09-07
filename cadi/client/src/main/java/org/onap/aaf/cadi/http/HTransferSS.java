@@ -44,14 +44,14 @@ public class HTransferSS extends AbsTransferSS<HttpURLConnection> {
 
     @Override
     public void setSecurity(HttpURLConnection huc) throws CadiException {
-        if(defSS==null) {
+        if (defSS==null) {
             throw new CadiException("Need App Credentials to send message");
         }
         defSS.setSecurity(huc);
-        if(value!=null) {
+        if (value!=null) {
                 huc.addRequestProperty(Config.CADI_USER_CHAIN, value);
         }
-        if(securityInfo!=null) {
+        if (securityInfo!=null) {
             securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
         }
     }

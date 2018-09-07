@@ -52,7 +52,7 @@ public class XFrameFilter implements Filter {
     
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
-        if(resp instanceof HttpServletResponse) {
+        if (resp instanceof HttpServletResponse) {
             @SuppressWarnings("unused")
             HttpServletResponse hresp = (HttpServletResponse)resp;
             ((HttpServletResponse)resp).addHeader("X-Frame-Options", xframe);

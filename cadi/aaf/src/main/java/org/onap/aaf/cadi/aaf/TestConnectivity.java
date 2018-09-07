@@ -51,24 +51,24 @@ import org.onap.aaf.misc.env.APIException;
 public class TestConnectivity {
     
     public static void main(String[] args) {
-        if(args.length<1) {
+        if (args.length<1) {
             System.out.println("Usage: ConnectivityTester <cadi_prop_files> [<AAF FQDN (i.e. aaf.dev.att.com)>]");
         } else {
             print(true,"START OF CONNECTIVITY TESTS",new Date().toString(),System.getProperty("user.name"),
                     "Note: All API Calls are /authz/perms/user/<AppID/Alias of the caller>");
 
-            if(!args[0].contains(Config.CADI_PROP_FILES+'=')) {
+            if (!args[0].contains(Config.CADI_PROP_FILES+'=')) {
                 args[0]=Config.CADI_PROP_FILES+'='+args[0];
             }
 
             PropAccess access = new PropAccess(args);
             String aaflocate;
-            if(args.length>1) {
+            if (args.length>1) {
                 aaflocate = "https://" + args[1];
                 access.setProperty(Config.AAF_LOCATE_URL, "https://" + args[1]);
             } else {
                 aaflocate = access.getProperty(Config.AAF_LOCATE_URL);
-                if(aaflocate==null) {
+                if (aaflocate==null) {
                     print(true,"Properties must contain ",Config.AAF_LOCATE_URL);
                 }
             }
@@ -81,7 +81,7 @@ public class TestConnectivity {
                 print(true,"Test Connections driven by AAFLocator");
                 URI serviceURI = new URI(Defaults.AAF_URL);
 
-                for(URI uri : new URI[] {
+                for (URI uri : new URI[] {
                         serviceURI,
                         new URI(Defaults.OAUTH2_TOKEN_URL),
                         new URI(Defaults.OAUTH2_INTROSPECT_URL),
@@ -102,19 +102,19 @@ public class TestConnectivity {
                 /////////
                 print(true,"Test Service for Perms driven by AAFLocator");
                 Locator<URI> locator = new AAFLocator(si,serviceURI);
-                for(SecuritySetter<HttpURLConnection> ss : lss) {
+                for (SecuritySetter<HttpURLConnection> ss : lss) {
                     permTest(locator,ss);
                 }
 
                 //////////
                 print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
-                for(SecuritySetter<HttpURLConnection> ss : lss) {
-                    if(ss instanceof HBasicAuthSS) {
+                for (SecuritySetter<HttpURLConnection> ss : lss) {
+                    if (ss instanceof HBasicAuthSS) {
                         basicAuthTest(new AAFLocator(si, serviceURI),ss);
                     }
                 }
                 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace(System.err);
             } finally {
                 print(true,"END OF TESTS");
@@ -131,7 +131,7 @@ public class TestConnectivity {
 
         try {
             HBasicAuthSS hbass = new HBasicAuthSS(si,true);
-            if(hbass==null || hbass.getID()==null) {
+            if (hbass==null || hbass.getID()==null) {
                 access.log(Level.INFO, "BasicAuth Information is not available in configuration, BasicAuth tests will not be conducted... Continuing");
             } else {
                 access.log(Level.INFO, "BasicAuth Information found with ID",hbass.getID(),".  BasicAuth tests will be performed.");
@@ -143,7 +143,7 @@ public class TestConnectivity {
 
         try {
             HX509SS hxss = new HX509SS(user,si);
-            if(hxss==null || hxss.getID()==null) {
+            if (hxss==null || hxss.getID()==null) {
                 access.log(Level.INFO, "X509 (Client certificate) Information is not available in configuration, X509 tests will not be conducted... Continuing");
             } else {
                 access.log(Level.INFO, "X509 (Client certificate) Information found with ID",hxss.getID(),".  X509 tests will be performed.");
@@ -155,7 +155,7 @@ public class TestConnectivity {
 
         String tokenURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL);
         String locateURL=access.getProperty(Config.AAF_LOCATE_URL);
-        if(tokenURL==null || (tokenURL.contains("/locate/") && locateURL!=null)) {
+        if (tokenURL==null || (tokenURL.contains("/locate/") && locateURL!=null)) {
             tokenURL=Defaults.OAUTH2_TOKEN_URL+"/token";
         }
 
@@ -168,7 +168,7 @@ public class TestConnectivity {
         }
         
         tokenURL = access.getProperty(Config.AAF_ALT_OAUTH2_TOKEN_URL);
-        if(tokenURL==null) {
+        if (tokenURL==null) {
             access.log(Level.INFO, "AAF Alternative OAUTH2 requires",Config.AAF_ALT_OAUTH2_TOKEN_URL, "OAuth2 tests to", tokenURL, "will not be conducted... Continuing");
         } else {
             try {
@@ -186,22 +186,22 @@ public class TestConnectivity {
     private static void print(Boolean strong, String ... args) {
         PrintStream out = System.out;
         out.println();
-        if(strong) {
-            for(int i=0;i<70;++i) {
+        if (strong) {
+            for (int i=0;i<70;++i) {
                 out.print('=');
             }
             out.println();
         }
-        for(String s : args) {
+        for (String s : args) {
             out.print(strong?"==  ":"------ ");
             out.print(s);
-            if(!strong) {
+            if (!strong) {
                 out.print("  ------");
             }
             out.println();
         }
-        if(strong) {
-            for(int i=0;i<70;++i) {
+        if (strong) {
+            for (int i=0;i<70;++i) {
                 out.print('=');
             }
         }
@@ -212,8 +212,8 @@ public class TestConnectivity {
         URI uri;
         Socket socket;
         print(false,"TCP/IP Connect test to all Located Services for "  + locatorURI.toString() );
-        for(Item li = dl.first();li!=null;li=dl.next(li)) {
-            if((uri = dl.get(li)) == null) {
+        for (Item li = dl.first();li!=null;li=dl.next(li)) {
+            if ((uri = dl.get(li)) == null) {
                 System.out.println("Locator Item empty");
             } else {
                 socket = new Socket();
@@ -238,14 +238,14 @@ public class TestConnectivity {
     private static void permTest(Locator<URI> dl, SecuritySetter<HttpURLConnection> ss)  {
         try {
             URI uri = dl.get(dl.best());
-            if(uri==null) {
+            if (uri==null) {
                 System.out.print("No URI available using " + ss.getClass().getSimpleName());
                 System.out.println();
                 return;
             } else {
                 System.out.print("Resolved to: " + uri + " using " + ss.getClass().getSimpleName());
             }
-            if(ss instanceof HRenewingTokenSS) {
+            if (ss instanceof HRenewingTokenSS) {
                 System.out.println(" " + ((HRenewingTokenSS)ss).tokenURL());
             } else {
                 System.out.println();
@@ -253,16 +253,16 @@ public class TestConnectivity {
             HClient client = new HClient(ss, uri, 3000);
             client.setMethod("GET");
             String user = ss.getID();
-            if(user.indexOf('@')<0) {
+            if (user.indexOf('@')<0) {
                 user+="@isam.att.com";
             }
             client.setPathInfo("/authz/perms/user/"+user);
             client.send();
             Future<String> future = client.futureReadString();
-            if(future.get(7000)) {
+            if (future.get(7000)) {
                 System.out.println(future.body());    
             } else {
-                if(future.code()==401 && ss instanceof HX509SS) {
+                if (future.code()==401 && ss instanceof HX509SS) {
                     System.out.println("  Authentication denied with 401 for Certificate.\n\t"
                             + "This means Certificate isn't valid for this environment, and has attempted another method of Authentication");
                 } else {
@@ -287,7 +287,7 @@ public class TestConnectivity {
     
         
             Future<String> future = client.futureReadString();
-            if(future.get(7000)) {
+            if (future.get(7000)) {
                 System.out.println("BasicAuth Validated");    
             } else {
                 System.out.println("Failure " + future.code() + ":" + future.body());

@@ -125,10 +125,10 @@ public class PendingRequestsShow extends Page {
                         TimeTaken tt = trans.start("AAF Get Approvals by User",Env.REMOTE);
                         try {
                             Future<Approvals> fa = client.read("/authz/approval/user/"+trans.user(),gui.getDF(Approvals.class));
-                            if(fa.get(5000)) {
+                            if (fa.get(5000)) {
                                 tt.done();
                                 tt = trans.start("Load Data", Env.SUB);
-                                if(fa.value!=null) {
+                                if (fa.value!=null) {
                                     List<Approval> approvals = fa.value.getApprovals();
                                     Collections.sort(approvals, new Comparator<Approval>() {
                                         @Override
@@ -140,7 +140,7 @@ public class PendingRequestsShow extends Page {
                                     });
                                     
                                     String prevTicket = null;
-                                    for(Approval a : approvals) {
+                                    for (Approval a : approvals) {
                                         String approver = a.getApprover();
                                         String approverShort = approver.substring(0,approver.indexOf('@'));
                                         

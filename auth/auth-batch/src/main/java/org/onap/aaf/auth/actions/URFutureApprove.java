@@ -59,11 +59,11 @@ public class URFutureApprove extends ActionDAO<UserRole, String,String> implemen
 
     @Override
     public Result<String> exec(AuthzTrans trans, UserRole ur,String text) {
-        if(dryRun) {
+        if (dryRun) {
             return Result.ok(text);
         } else {
             Result<NsDAO.Data> rns = q.deriveNs(trans, ur.ns());
-            if(rns.isOK()) {
+            if (rns.isOK()) {
                 
                 FutureDAO.Data data = new FutureDAO.Data();
                 data.id=null; // let Create function assign UUID
@@ -78,7 +78,7 @@ public class URFutureApprove extends ActionDAO<UserRole, String,String> implemen
                     return Result.err(e);
                 }
                 Result<String> rfuture = f.createFuture(trans, data, Function.FOP_USER_ROLE, ur.user(), rns.value, FUTURE_OP.A);
-                if(rfuture.isOK()) {
+                if (rfuture.isOK()) {
                     trans.info().log(rfuture.value, text, ur.user(), data.memo);
                 } else {
                     trans.error().log(rfuture.details, text);
@@ -93,15 +93,15 @@ public class URFutureApprove extends ActionDAO<UserRole, String,String> implemen
     @Override
     public String key(UserRole ur) {
         String expire;
-        if(expires.before(start)) {
+        if (expires.before(start)) {
             expire = "' - EXPIRED ";
         } else {
             expire = "' - expiring ";
         }
         
-        if(Question.OWNER.equals(ur.rname())) {
+        if (Question.OWNER.equals(ur.rname())) {
             return Approval.RE_VALIDATE_OWNER + ur.ns() + expire + Chrono.dateOnlyStamp(ur.expires());
-        } else if(Question.ADMIN.equals(ur.rname())) {
+        } else if (Question.ADMIN.equals(ur.rname())) {
             return Approval.RE_VALIDATE_ADMIN + ur.ns() + expire + Chrono.dateOnlyStamp(ur.expires());
         } else {
             return Approval.RE_APPROVAL_IN_ROLE + ur.role() + expire + Chrono.dateOnlyStamp(ur.expires());

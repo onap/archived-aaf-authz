@@ -41,12 +41,12 @@ public class NSDescUpdate extends ActionDAO<NS,Void,String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, NS ns, String desc) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf("Would Update '%s' Description to '%s'",ns,desc);
             return Result.ok();
         } else {
             Result<Void> rv = q.nsDAO.dao().addDescription(trans, ns.name, desc);
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().printf("Updated '%s' Description to '%s'",ns,desc);
             } else {
                 trans.error().printf("Error Updating '%s' Description to '%s' - %s",ns,desc,rv.details);

@@ -121,13 +121,13 @@ public class HTML4Gen extends HTMLGen {
 
 //    @Override
 //    protected void importCSS(Imports imports) {
-//        if(imports.css.size()==1) {
+//        if (imports.css.size()==1) {
 //            cssInline(imports.css.get(0));
 //        } else {
 //            text("<style type=\"text/css\">");
 //            prettyln(forward);
 //            forward.inc();
-//            for(String str : imports.css) {
+//            for (String str : imports.css) {
 //                forward.print("@import url(\"");
 //                forward.print(imports.themePath(null));
 //                forward.print(str);

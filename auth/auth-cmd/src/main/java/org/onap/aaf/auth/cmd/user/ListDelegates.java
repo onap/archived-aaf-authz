@@ -61,9 +61,9 @@ public class ListDelegates extends Cmd {
                         "/authz/delegates/" + key + '/' + id, 
                         getDF(Delgs.class)
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     ((List)parent).report(fp.value,HEADER + " by " + key, id);
-                    if(fp.code()==404)return 200;
+                    if (fp.code()==404)return 200;
                 } else {
                     error(fp);
                 }

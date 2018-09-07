@@ -47,21 +47,21 @@ public class Perm implements Comparable<Perm> {
     public final Set<String> roles;
     
     public String encode() {
-        if(encode == null) {
+        if (encode == null) {
             encode = ns + '|' + type + '|' + instance + '|' + action;
         }
         return encode;
     }
     
     public String fullType() {
-        if(fullType==null) {
+        if (fullType==null) {
             fullType = ns + '.' + type;
         }
         return fullType;
     }
     
     public String fullPerm() {
-        if(fullPerm==null) {
+        if (fullPerm==null) {
             fullPerm = ns + '.' + type  + '|' + instance + '|' + action;
         }
         return fullPerm;
@@ -104,7 +104,7 @@ public class Perm implements Comparable<Perm> {
             Row row;
             tt = trans.start("Load Perms", Env.SUB);
             try {
-                while(iter.hasNext()) {
+                while (iter.hasNext()) {
                     row = iter.next();
                     Perm pk = new Perm(
                             row.getString(0),row.getString(1),row.getString(2),
@@ -164,7 +164,7 @@ public class Perm implements Comparable<Perm> {
     }
     
     public static void executeRemove() {
-        for(Perm p : deletePerms) {
+        for (Perm p : deletePerms) {
             keys.remove(p.encode);
             data.remove(p);
         }

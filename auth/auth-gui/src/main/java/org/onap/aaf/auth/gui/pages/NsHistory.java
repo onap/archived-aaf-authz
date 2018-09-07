@@ -164,7 +164,7 @@ public class NsHistory extends Page {
             final String oName = trans.get(name,null);
             final String oDates = trans.get(dates,null);
             
-            if(oName==null) {
+            if (oName==null) {
                 return Cells.EMPTY;
             }
             

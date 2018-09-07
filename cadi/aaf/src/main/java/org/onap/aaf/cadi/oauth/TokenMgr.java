@@ -55,12 +55,12 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
     private TokenMgr(PropAccess access, String tokenURL, String introspectURL) throws APIException, CadiException {
         super(access,new RosettaEnv(access.getProperties()),Introspect.class,"introspect");
         synchronized(access) {
-            if(permsDF==null) {
+            if (permsDF==null) {
                 permsDF = env.newDataFactory(Perms.class);
                 introspectDF = env.newDataFactory(Introspect.class);
             }
         }
-        if("dbToken".equals(tokenURL) && "dbIntrospect".equals(introspectURL)) {
+        if ("dbToken".equals(tokenURL) && "dbIntrospect".equals(introspectURL)) {
             tpLoader = new TokenPermLoader() { // null Loader
                 @Override
                 public Result<TokenPerm> load(String accessToken, byte[] cred)
@@ -72,7 +72,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
             RemoteTokenPermLoader rtpl = new RemoteTokenPermLoader(tokenURL, introspectURL); // default is remote
             String i = access.getProperty(Config.AAF_APPID,null);
             String p = access.getProperty(Config.AAF_APPPASS, null);
-            if(i==null || p==null) {
+            if (i==null || p==null) {
                 throw new CadiException(Config.AAF_APPID + " and " + Config.AAF_APPPASS + " must be set to initialize TokenMgr");
             }
             rtpl.introCL.client_creds(i,p);
@@ -83,7 +83,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
     private TokenMgr(PropAccess access, TokenPermLoader tpl) throws APIException, CadiException {
         super(access,new RosettaEnv(access.getProperties()),Introspect.class,"incoming");
         synchronized(access) {
-            if(permsDF==null) {
+            if (permsDF==null) {
                 permsDF = env.newDataFactory(Perms.class);
                 introspectDF = env.newDataFactory(Introspect.class);
             }
@@ -94,7 +94,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
     public static synchronized TokenMgr getInstance(final PropAccess access, final String tokenURL, final String introspectURL) throws APIException, CadiException {
         String key;
         TokenMgr tm = tmmap.get(key=tokenURL+'/'+introspectURL);
-        if(tm==null) {
+        if (tm==null) {
             tmmap.put(key, tm=new TokenMgr(access,tokenURL,introspectURL));
         }
         return tm;
@@ -111,7 +111,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
                 }
             }
         });
-        if(tp.isOK()) {
+        if (tp.isOK()) {
             return Result.ok(200, new OAuth2Principal(tp.value,hash));
         } else {
             return Result.err(tp);
@@ -143,7 +143,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
                 int timeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
                 tokenCL = tcf.newClient(tokenURL, 
                                         timeout);
-                if(introspectURL.equals(tokenURL)) {
+                if (introspectURL.equals(tokenURL)) {
                     introCL = tokenCL;
                 } else {
                     introCL = tcf.newClient(introspectURL, 
@@ -159,7 +159,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
             long start = System.currentTimeMillis();
             try {
                 Result<Introspect> ri = introCL.introspect(accessToken);
-                if(ri.isOK()) {
+                if (ri.isOK()) {
                     return Result.ok(ri.code, new TokenPerm(TokenMgr.this,permsDF,ri.value,cred,getPath(accessToken)));
                 } else {
                     return Result.err(ri);
@@ -172,7 +172,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
 
     public void clear(Principal p, StringBuilder report) {
         TokenPerm tp = tpmap.remove(p.getName());
-        if(tp==null) {
+        if (tp==null) {
             report.append("Nothing to clear");
         } else {
             report.append("Cleared ");

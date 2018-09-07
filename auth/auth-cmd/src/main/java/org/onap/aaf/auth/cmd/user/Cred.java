@@ -57,11 +57,11 @@ public class Cred extends Cmd {
 
         final CredRequest cr = new CredRequest();
         cr.setId(args[idx++]);
-        if(option!=1 && option!=3) {
-            if(idx>=args.length) throw new CadiException("Password Required");
+        if (option!=1 && option!=3) {
+            if (idx>=args.length) throw new CadiException("Password Required");
             cr.setPassword(args[idx++]);
         }
-        if(args.length>idx)
+        if (args.length>idx)
             cr.setEntry(args[idx++]);
         
         // Set Start/End commands
@@ -82,7 +82,7 @@ public class Cred extends Cmd {
                         verb = "Added Credential [";
                         break;
                     case 1:
-//                            if(aafcli.addForce())cr.setForce("TRUE");
+//                            if (aafcli.addForce())cr.setForce("TRUE");
                         setQueryParamsOn(client);
                         fp = client.delete(CRED_PATH,
                             getDF(CredRequest.class),
@@ -109,16 +109,16 @@ public class Cred extends Cmd {
 //                        case 4:
 //                            return clean.exec(cleanIDX, args);
                 }
-                if(fp==null) {
+                if (fp==null) {
                     return null; // get by Sonar check.
                 }
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     pw().print(verb);
                     pw().print(cr.getId());
                     pw().println(']');
-                } else if(fp.code()==202) {
+                } else if (fp.code()==202) {
                         pw().println("Credential Action Accepted, but requires Approvals before actualizing");
-                } else if(fp.code()==406 && option==1) {
+                } else if (fp.code()==406 && option==1) {
                         pw().println("You cannot delete this Credential");
                 } else {
                     pw().println(ATTEMPT_FAILED_SPECIFICS_WITHELD);
@@ -126,7 +126,7 @@ public class Cred extends Cmd {
                 return fp.code();
             }
         });
-        if(ret==null)ret = -1;
+        if (ret==null)ret = -1;
         return ret;
     }
     

@@ -89,7 +89,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
         super(env.access(),env);
         
         String aaf_env = env.getProperty(Config.AAF_ENV);
-        if(aaf_env==null) {
+        if (aaf_env==null) {
             throw new APIException("aaf_env needs to be set");
         }
         
@@ -129,10 +129,10 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
         String version = "1.0";
         // Get Correct API Class from Mapper
         Class<?> respCls = facade1_0.mapper().getClass(api); 
-        if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
+        if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         // setup Application API HTML ContentTypes for JSON and Route
         String application = applicationJSON(respCls, version);
-        if(meth.equals(HttpMethods.POST)) {
+        if (meth.equals(HttpMethods.POST)) {
             route(env,meth,path,code,application,"application/json;version="+version,"application/x-www-form-urlencoded","*/*");
         } else {
             route(env,meth,path,code,application,"application/json;version="+version,"*/*");
@@ -147,7 +147,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
             atl[0] = doat;
             atl[1] = doat.directUserPass();
 
-            if(additionalTafLurs.length>0) {
+            if (additionalTafLurs.length>0) {
                 System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
             }
             
@@ -176,10 +176,10 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
     @Override
     public void destroy() {
         Cache.stopTimer();
-        if(service!=null) {
+        if (service!=null) {
             service.close();
         }
-        if(cluster!=null) {
+        if (cluster!=null) {
             cluster.close();
         }
         super.destroy();

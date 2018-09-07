@@ -66,12 +66,12 @@ import org.onap.aaf.misc.env.Trans;
  */
 public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void> {
     public static void setEnv(Store store, String[] args) {
-        for(int i=0;i<args.length-1;i+=2) { // cover two parms required for each 
-            if(CFA_WEB_PATH.equals(args[i])) {
+        for (int i=0;i<args.length-1;i+=2) { // cover two parms required for each 
+            if (CFA_WEB_PATH.equals(args[i])) {
                 store.put(store.staticSlot(CFA_WEB_PATH), args[i+1]); 
-            } else if(CFA_CACHE_CHECK_INTERVAL.equals(args[i])) {
+            } else if (CFA_CACHE_CHECK_INTERVAL.equals(args[i])) {
                 store.put(store.staticSlot(CFA_CACHE_CHECK_INTERVAL), Long.parseLong(args[i+1]));
-            } else if(CFA_MAX_SIZE.equals(args[i])) {
+            } else if (CFA_MAX_SIZE.equals(args[i])) {
                 store.put(store.staticSlot(CFA_MAX_SIZE), Integer.parseInt(args[i+1]));
             }
         }
@@ -144,11 +144,11 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         env.init().log("CachingFileAccess path: " + new File(web_path).getCanonicalPath());
         Object obj;
         obj = env.get(env.staticSlot(CFA_CACHE_CHECK_INTERVAL),600000L);  // Default is 10 mins
-        if(obj instanceof Long) {checkInterval=(Long)obj;
+        if (obj instanceof Long) {checkInterval=(Long)obj;
         } else {checkInterval=Long.parseLong((String)obj);}
         
         obj = env.get(env.staticSlot(CFA_MAX_SIZE), 512000);    // Default is max file 500k
-        if(obj instanceof Integer) {maxItemSize=(Integer)obj;
+        if (obj instanceof Integer) {maxItemSize=(Integer)obj;
         } else {maxItemSize =Integer.parseInt((String)obj);}
               
          clear_command = env.getProperty(CFA_CLEAR_COMMAND,null);
@@ -160,9 +160,9 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     public void handle(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String key = pathParam(req, ":key");
         String cmd = pathParam(req,":cmd");
-        if(key.equals(clear_command)) {
+        if (key.equals(clear_command)) {
             resp.setHeader("Content-Type",typeMap.get("txt"));
-            if("clear".equals(cmd)) {
+            if ("clear".equals(cmd)) {
                 content.clear();
                 resp.setStatus(200/*HttpStatus.OK_200*/);
             } else {
@@ -171,7 +171,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             return;
         }
         Content c = load(logT , web_path,cmd!=null && cmd.length()>0?key+'/'+cmd:key, null, checkInterval);
-        if(c.attachmentOnly) {
+        if (c.attachmentOnly) {
             resp.setHeader("Content-disposition", "attachment");
         }
         c.setHeader(resp);
@@ -214,12 +214,12 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
      */
     public Content load(LogTarget logTarget, String dataRoot, String key, String mediaType, long _timeCheck) throws IOException {
         long timeCheck = _timeCheck;
-        if(timeCheck<0) {
+        if (timeCheck<0) {
             timeCheck=checkInterval; // if time < 0, then use default
         }
         boolean isRoot;
         String fileName;
-        if("-".equals(key)) {
+        if ("-".equals(key)) {
             fileName = dataRoot;
             isRoot = true;
         } else {
@@ -229,30 +229,30 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         Content c = content.get(key);
         long systime = System.currentTimeMillis(); 
         File f=null;
-        if(c!=null) {
+        if (c!=null) {
             // Don't check every hit... only after certain time value
-            if(c.date < systime + timeCheck) {
+            if (c.date < systime + timeCheck) {
                 f = new File(fileName);
-                if(f.lastModified()>c.date) {
+                if (f.lastModified()>c.date) {
                     c=null;
                 }
             }
         }
-        if(c==null) {    
-            if(logTarget!=null) {
+        if (c==null) {    
+            if (logTarget!=null) {
                 logTarget.log("File Read: ",key);
             }
             
-            if(f==null){
+            if (f==null){
                 f = new File(fileName);
             }
             boolean cacheMe;
-            if(f.exists()) {
-                if(f.isDirectory()) {
+            if (f.exists()) {
+                if (f.isDirectory()) {
                     cacheMe = false;
                     c = new DirectoryContent(f,isRoot);
                 } else {
-                    if(f.length() > maxItemSize) {
+                    if (f.length() > maxItemSize) {
                         c = new DirectFileContent(f);
                         cacheMe = false;
                     } else {
@@ -260,10 +260,10 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                         cacheMe = checkInterval>0;
                     }
                     
-                    if(mediaType==null) { // determine from file Ending
+                    if (mediaType==null) { // determine from file Ending
                         int idx = key.lastIndexOf('.');
                         String subkey = key.substring(++idx);
-                        if((c.contentType = idx<0?null:typeMap.get(subkey))==null) {
+                        if ((c.contentType = idx<0?null:typeMap.get(subkey))==null) {
                             // if nothing else, just set to default type...
                             c.contentType = "application/octet-stream";
                         }
@@ -275,7 +275,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                     
                     c.date = f.lastModified();
                     
-                    if(cacheMe) {
+                    if (cacheMe) {
                         content.put(key, c);
                     }
                 }
@@ -283,7 +283,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                 c=NULL;
             }
         } else {
-            if(logTarget!=null)logTarget.log("Cache Read: ",key);
+            if (logTarget!=null)logTarget.log("Cache Read: ",key);
         }
 
         // refresh hit time
@@ -294,7 +294,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     public Content loadOrDefault(Trans trans, String targetDir, String targetFileName, String sourcePath, String mediaType) throws IOException {
         try {
             return load(trans.info(),targetDir,targetFileName,mediaType,0);
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             String targetPath = targetDir + '/' + targetFileName;
             TimeTaken tt = trans.start("File doesn't exist; copy " + sourcePath + " to " + targetPath, Env.SUB);
             try {
@@ -374,7 +374,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             char[] buff = new char[1024];
             try {
                 int read;
-                while((read = fr.read(buff,0,1024))>=0) {
+                while ((read = fr.read(buff,0,1024))>=0) {
                     writer.write(buff,0,read);
                 }
             } finally {
@@ -387,7 +387,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             byte[] buff = new byte[1024];
             try {
                 int read;
-                while((read = fis.read(buff,0,1024))>=0) {
+                while ((read = fis.read(buff,0,1024))>=0) {
                     os.write(buff,0,read);
                 }
             } finally {
@@ -415,13 +415,13 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                     // See if there are Numbers in the name
                     Matcher m1 = A_NUMBER.matcher(f1.getName());
                     Matcher m2 = A_NUMBER.matcher(f2.getName());
-                    if(m1.find() && m2.find()) {
+                    if (m1.find() && m2.find()) {
                         // if numbers, are the numbers in the same start position
                         int i1 = m1.start();
                         int i2 = m2.start();
                         
                         // If same start position and the text is the same, then reverse sort
-                        if(i1==i2 && f1.getName().startsWith(f2.getName().substring(0,i1))) {
+                        if (i1==i2 && f1.getName().startsWith(f2.getName().substring(0,i1))) {
                             // reverse sort files that start similarly, but have numbers in them
                             return f2.compareTo(f1);
                         }
@@ -443,7 +443,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             w.append(H2);
             for (File f : files) {
                 w.append("<li><a href=\"");
-                if(notRoot) {
+                if (notRoot) {
                     w.append(name);
                     w.append('/');
                 }
@@ -490,7 +490,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         public void write(Writer writer) throws IOException {
             synchronized(this) {
                 // do the String Transformation once, and only if actually used
-                if(cdata==null) {
+                if (cdata==null) {
                     cdata = new char[end];
                     new String(data).getChars(0, end, cdata, 0);
                 }
@@ -538,21 +538,21 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         @Override
         public void run() {
             int size = content.size();
-            if(size>maxSize) {
+            if (size>maxSize) {
                 ArrayList<Comp> scont = new ArrayList<>(size);
                 Object[] entries = content.entrySet().toArray();
-                for(int i=0;i<size;++i) {
+                for (int i=0;i<size;++i) {
                     scont.add(i, new Comp((Map.Entry<String,Content>)entries[i]));
                 }
                 Collections.sort(scont);
                 int end = size - ((maxSize/4)*3); // reduce to 3/4 of max size
                 //System.out.println("------ Cleanup Cycle ------ " + new Date().toString() + " -------");
-                for(int i=0;i<end;++i) {
+                for (int i=0;i<end;++i) {
                     Entry<String, Content> entry = scont.get(i).entry;
                     content.remove(entry.getKey());
                     //System.out.println("removed Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
                 }
-//                for(int i=end;i<size;++i) {
+//                for (int i=end;i<size;++i) {
 //                    Entry<String, Content> entry = scont.get(i).entry;
 //                    //System.out.println("remaining Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
 //                }

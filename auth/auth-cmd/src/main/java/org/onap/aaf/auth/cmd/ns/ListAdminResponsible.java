@@ -56,9 +56,9 @@ public class ListAdminResponsible extends Cmd {
                 String apipart = "owner".equals(title)?"responsible":title;
                 
                 Future<Nss> fn = client.read("/authz/nss/"+apipart+"/"+user,getDF(Nss.class));
-                if(fn.get(AAFcli.timeout())) {
+                if (fn.get(AAFcli.timeout())) {
                     ((List)parent).reportName(fn,HEADER + title + " privileges for ",user);
-                } else if(fn.code()==404) {
+                } else if (fn.code()==404) {
                     ((List)parent).report(null,HEADER + title + " privileges for ",user);
                     return 200;
                 } else {    

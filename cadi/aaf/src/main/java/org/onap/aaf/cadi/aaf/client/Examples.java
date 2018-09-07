@@ -63,23 +63,23 @@ public class Examples {
         String className = null;
         String version = null;
         TYPE type = TYPE.JSON; // default
-        if(nameOrContentType.startsWith("application/")) {
-            for(String ct : nameOrContentType.split("\\s*,\\s*")) {
-                for(String elem : ct.split("\\s*;\\s*")) {
-                    if(elem.endsWith("+json")) {
+        if (nameOrContentType.startsWith("application/")) {
+            for (String ct : nameOrContentType.split("\\s*,\\s*")) {
+                for (String elem : ct.split("\\s*;\\s*")) {
+                    if (elem.endsWith("+json")) {
                         type = TYPE.JSON;
                         className = elem.substring(elem.indexOf('/')+1, elem.length()-5);
-                    } else if(elem.endsWith("+xml")) {
+                    } else if (elem.endsWith("+xml")) {
                         type = TYPE.XML;
                         className = elem.substring(elem.indexOf('/')+1, elem.length()-4);
-                    } else if(elem.startsWith("version=")) {
+                    } else if (elem.startsWith("version=")) {
                         version = elem.substring(8);
                     }
                 }
-                if(className!=null && version!=null)
+                if (className!=null && version!=null)
                     break;
             }
-            if(className==null) {
+            if (className==null) {
                 throw new APIException(nameOrContentType + " does not contain Class Information");
             }
         } else {
@@ -91,9 +91,9 @@ public class Examples {
         if ("Void".equals(className))
             return "";
                 
-        if("1.1".equals(version)) {
+        if ("1.1".equals(version)) {
             version = "v1_0";
-        } else if(version!=null) {
+        } else if (version!=null) {
             version = "v" + version.replace('.', '_');
         } else {
             version = "v2_0";
@@ -151,7 +151,7 @@ public class Examples {
         pkey.setAction("myAction");
         rpr.setPerm(pkey);
         rpr.setRole("org.osaaf.myns.myrole");
-        if(optional)setOptional(rpr);
+        if (optional)setOptional(rpr);
         return rpr;
     }
     
@@ -200,7 +200,7 @@ public class Examples {
         pr.setType("org.osaaf.myns.myType");
         pr.setInstance("myInstance");
         pr.setAction("myAction");
-        if(optional) {
+        if (optional) {
             pr.setDescription("Short and meaningful verbiage about the Permission");
             
             setOptional(pr);
@@ -217,7 +217,7 @@ public class Examples {
         pr.getRoles().add("org.osaaf.aaf.myRole");
         pr.getRoles().add("org.osaaf.aaf.myRole2");
         pr.setDescription("This is my description, and I'm sticking with it");
-        if(optional) {
+        if (optional) {
             pr.setDescription("Short and meaningful verbiage about the Permission");
         }
         return pr;
@@ -262,7 +262,7 @@ public class Examples {
         UserRoleRequest urr = new UserRoleRequest();
         urr.setRole("org.osaaf.myns.myRole");
         urr.setUser("ab1234@people.osaaf.org");
-        if(optional) setOptional(urr);
+        if (optional) setOptional(urr);
         return urr;
     }
     
@@ -274,7 +274,7 @@ public class Examples {
         nr.getResponsible().add("cd5678@people.osaaf.org");
         nr.getAdmin().add("zy9876@people.osaaf.org");
         nr.getAdmin().add("xw5432@people.osaaf.org");        
-        if(optional) {
+        if (optional) {
             nr.setDescription("This is my Namespace to set up");
             nr.setType("APP");
             setOptional(nr);
@@ -309,7 +309,7 @@ public class Examples {
     private static RoleRequest newRoleRequestv2_0(boolean optional) {
         RoleRequest rr = new RoleRequest();
         rr.setName("org.osaaf.myns.myRole");
-        if(optional) {
+        if (optional) {
             rr.setDescription("This is my Role");
             setOptional(rr);
         }
@@ -320,7 +320,7 @@ public class Examples {
     private static CredRequest newCredRequestv2_0(boolean optional) {
         CredRequest cr = new CredRequest();
         cr.setId("myID@fully.qualified.domain");
-        if(optional) {
+        if (optional) {
             cr.setType(2);
             cr.setEntry("0x125AB256344CE");
         } else {

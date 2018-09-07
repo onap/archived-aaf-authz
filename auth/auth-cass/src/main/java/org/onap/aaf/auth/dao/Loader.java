@@ -60,14 +60,14 @@ public abstract class Loader<DATA> {
                 rv = new Object[size];
                 body(data,0,rv);
                 int body = size-keylimit();
-                if(body>0) {
+                if (body>0) {
                     key(data,body,rv);
                 }
                 break;
             default:
                 rv = new Object[size];
                 key(data,0,rv);
-                if(size>keylimit()) {
+                if (size>keylimit()) {
                     body(data,keylimit(),rv);
                 }
                 break;
@@ -76,7 +76,7 @@ public abstract class Loader<DATA> {
     }
     
     public static void writeString(DataOutputStream os, String s) throws IOException {
-        if(s==null) {
+        if (s==null) {
             os.writeInt(-1);
         } else {
             switch(s.length()) {
@@ -108,7 +108,7 @@ public abstract class Loader<DATA> {
             case  0: return "";
             default:
                 // Cover case where there is a large string, without always allocating a large buffer.
-                if(l>buff.length) {
+                if (l>buff.length) {
                     buff = new byte[l];
                 }
                 is.read(buff,0,l);
@@ -127,11 +127,11 @@ public abstract class Loader<DATA> {
      * @throws IOException
      */
     public static void writeStringSet(DataOutputStream os, Collection<String> set) throws IOException {
-        if(set==null) {
+        if (set==null) {
             os.writeInt(-1);
         } else {
             os.writeInt(set.size());
-            for(String s : set) {
+            for (String s : set) {
                 writeString(os, s);
             }
         }
@@ -140,11 +140,11 @@ public abstract class Loader<DATA> {
     
     public static Set<String> readStringSet(DataInputStream is, byte[] buff) throws IOException {
         int l = is.readInt();
-        if(l<0) {
+        if (l<0) {
             return null;
         }
         Set<String> set = new HashSet<>(l);
-        for(int i=0;i<l;++i) {
+        for (int i=0;i<l;++i) {
             set.add(readString(is,buff));
         }
         return set;
@@ -152,11 +152,11 @@ public abstract class Loader<DATA> {
     
     public static List<String> readStringList(DataInputStream is, byte[] buff) throws IOException {
         int l = is.readInt();
-        if(l<0) {
+        if (l<0) {
             return null;
         }
         List<String> list = new ArrayList<>(l);
-        for(int i=0;i<l;++i) {
+        for (int i=0;i<l;++i) {
             list.add(Loader.readString(is,buff));
         }
         return list;
@@ -169,12 +169,12 @@ public abstract class Loader<DATA> {
      * @throws IOException
      */
     public static void writeStringMap(DataOutputStream os, Map<String,String> map) throws IOException {
-        if(map==null) {
+        if (map==null) {
             os.writeInt(-1);
         } else {
             Set<Entry<String, String>> es = map.entrySet();
             os.writeInt(es.size());
-            for(Entry<String,String> e : es) {
+            for (Entry<String,String> e : es) {
                 writeString(os, e.getKey());
                 writeString(os, e.getValue());
             }
@@ -184,11 +184,11 @@ public abstract class Loader<DATA> {
 
     public static Map<String,String> readStringMap(DataInputStream is, byte[] buff) throws IOException {
         int l = is.readInt();
-        if(l<0) {
+        if (l<0) {
             return null;
         }
         Map<String,String> map = new HashMap<>(l);
-        for(int i=0;i<l;++i) {
+        for (int i=0;i<l;++i) {
             String key = readString(is,buff);
             map.put(key,readString(is,buff));
         }
@@ -200,11 +200,11 @@ public abstract class Loader<DATA> {
     }
     
     public static int readHeader(DataInputStream is, final int magic, final int version) throws IOException {
-        if(is.readInt()!=magic) {
+        if (is.readInt()!=magic) {
             throw new IOException("Corrupted Data Stream");
         }
         int v = is.readInt();
-        if(version<0 || v>version) {
+        if (version<0 || v>version) {
             throw new IOException("Unsupported Data Version: " + v);
         }
         return v;

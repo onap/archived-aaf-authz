@@ -94,7 +94,7 @@ public class OAuthExample {
             //   If AAF Token server, then its just the same as your other AAF MechID creds
             //   If it is the Alternate OAUTH, you'll need THOSE credentials.  See that tool's Onboarding procedures.
             String client_id = access.getProperty(Config.AAF_APPID);
-            if(client_id==null) {
+            if (client_id==null) {
                 // For AAF, client_id CAN be Certificate.  This is not necessarily true elsewhere
                 client_id = access.getProperty(Config.CADI_ALIAS);
             }
@@ -126,7 +126,7 @@ public class OAuthExample {
             //       tc.clearToken("org.onap.aaf","org.onap.test");
             
             // Result Object can be queried for success
-            if(rtt.isOK()) {
+            if (rtt.isOK()) {
                 TimedToken token = rtt.value;
                 print(token); // Take a look at what's in a Token
                 
@@ -147,7 +147,7 @@ public class OAuthExample {
                         // The "future" calling method allows you to do other processing, such as call more than one backend
                         // client before picking up the result
                         // If "get" matches the HTTP Code for the method (i.e. read HTTP Return value is 200), then 
-                        if(future.get(CALL_TIMEOUT)) {
+                        if (future.get(CALL_TIMEOUT)) {
                             // Client Returned expected value
                             return future.value;
                         } else {
@@ -165,7 +165,7 @@ public class OAuthExample {
                 // As a Service, read Introspection information as proof of Authenticated Authorization
                 //////////////////////////////////////////////////////////////////////
                 // CADI Framework (i.e. CadiFilter) works with the Introspection to drive the J2EE interfaces (
-                // i.e. if(isUserInRole("ns.perm|instance|action")) {...
+                // i.e. if (isUserInRole("ns.perm|instance|action")) {...
                 //
                 // Here, however, is a way to introspect via Java
                 //
@@ -174,7 +174,7 @@ public class OAuthExample {
                 TokenClient tci = tcf.newClient(tokenIntrospectURL);
                 tci.client_creds(client_id, client_secret);
                 Result<Introspect> is = tci.introspect(token.getAccessToken());
-                if(is.isOK()) {
+                if (is.isOK()) {
                     // Note that AAF will add JSON set of Permissions as part of "Content:", legitimate extension of OAuth Structure
                     print(is.value); // do something with Introspect Object
                 } else {
@@ -206,7 +206,7 @@ public class OAuthExample {
     }
     
     private static void print(Introspect ti) {
-        if(ti==null || ti.getClientId()==null) {
+        if (ti==null || ti.getClientId()==null) {
             System.out.println("Empty Introspect");
             return;
         }

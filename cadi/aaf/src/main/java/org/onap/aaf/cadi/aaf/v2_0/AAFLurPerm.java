@@ -88,8 +88,8 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
     private void attachOAuth2(AAFCon<?> con) throws APIException {
         String oauth2_url;
         Class<?> tmcls = Config.loadClass(access,"org.osaaf.cadi.oauth.TokenMgr");
-        if(tmcls!=null) {
-            if((oauth2_url = con.access.getProperty(Config.CADI_OAUTH2_URL,null))!=null) {
+        if (tmcls!=null) {
+            if ((oauth2_url = con.access.getProperty(Config.CADI_OAUTH2_URL,null))!=null) {
                 try {
                     Constructor<?> tmconst = tmcls.getConstructor(AAFCon.class,String.class);
                     Object tokMangr = tmconst.newInstance(con,oauth2_url);
@@ -124,7 +124,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                     // In the meantime, lookup User, create if necessary
                     User<AAFPermission> user = getUser(principal);
                     Principal p;
-                    if(user!=null && user.principal == null) {
+                    if (user!=null && user.principal == null) {
                         p = new Principal() {// Create a holder for lookups
                             private String n = name;
                             public String getName() {
@@ -135,20 +135,20 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                         p = principal;
                     }
                     
-                    if(user==null) {
+                    if (user==null) {
                         addUser(user = new User<AAFPermission>(p,aaf.userExpires)); // no password
                     }
                     
                     // OK, done all we can, now get content
                     boolean ok = fp.get(aaf.timeout);
                     remote.set(Timing.millis(remoteStart));
-                    if(ok) {
+                    if (ok) {
                         success[0]=true;
                         Map<String, Permission> newMap = user.newMap();
                         boolean willLog = aaf.access.willLog(Level.DEBUG);
-                        for(Perm perm : fp.value.getPerm()) {
+                        for (Perm perm : fp.value.getPerm()) {
                             user.add(newMap,new AAFPermission(perm.getNs(),perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
-                            if(willLog) {
+                            if (willLog) {
                                 aaf.access.log(Level.DEBUG, name,"has '",perm.getType(),'|',perm.getInstance(),'|',perm.getAction(),'\'');
                             }
                         }
@@ -198,13 +198,13 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                     // OK, done all we can, now get content
                     boolean ok = fp.get(aaf.timeout);
                     remote.set(Timing.millis(remoteStart));
-                    if(ok) {
+                    if (ok) {
                         success.set(true);
                         Map<String,Permission> newMap = user.newMap(); 
                         boolean willLog = aaf.access.willLog(Level.DEBUG);
-                        for(Perm perm : fp.value.getPerm()) {
+                        for (Perm perm : fp.value.getPerm()) {
                             user.add(newMap, new AAFPermission(perm.getNs(),perm.getType(),perm.getInstance(),perm.getAction(),perm.getRoles()));
-                            if(willLog) {
+                            if (willLog) {
                                 aaf.access.log(Level.DEBUG, name,"has",perm.getType(),perm.getInstance(),perm.getAction());
                             }
                         }

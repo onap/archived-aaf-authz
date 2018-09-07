@@ -120,7 +120,7 @@ public class AuthzEnv extends RosettaEnv implements Access {
     public AuthzTransImpl newTrans() {
         synchronized(this) {
             times[idx]=System.currentTimeMillis();
-            if(++idx>=times.length)idx=0;
+            if (++idx>=times.length)idx=0;
         }
         return new AuthzTransImpl(this);
     }
@@ -137,18 +137,18 @@ public class AuthzEnv extends RosettaEnv implements Access {
         int count = 0;
         long pot = 0;
         long prev = 0;
-        for(int i=idx;i<times.length;++i) {
-            if(times[i]>0) {
-                if(prev>0) {
+        for (int i=idx;i<times.length;++i) {
+            if (times[i]>0) {
+                if (prev>0) {
                     ++count;
         pot += times[i]-prev;
                 }
                 prev = times[i]; 
             }
         }
-        for(int i=0;i<idx;++i) {
-            if(times[i]>0) {
-                if(prev>0) {
+        for (int i=0;i<idx;++i) {
+            if (times[i]>0) {
+                if (prev>0) {
                     ++count;
                     pot += times[i]-prev;
                 }
@@ -199,11 +199,11 @@ public class AuthzEnv extends RosettaEnv implements Access {
     
     private static final byte[] ENC="enc:".getBytes();
     public String decrypt(String encrypted, final boolean anytext) throws IOException {
-        if(encrypted==null) {
+        if (encrypted==null) {
             throw new IOException("Password to be decrypted is null");
         }
-        if(anytext || encrypted.startsWith("enc:")) {
-            if(decryptor.equals(Decryptor.NULL) && getProperty(Config.CADI_KEYFILE)!=null) {
+        if (anytext || encrypted.startsWith("enc:")) {
+            if (decryptor.equals(Decryptor.NULL) && getProperty(Config.CADI_KEYFILE)!=null) {
                 final Symm s;
                 try {
                     s = Symm.obtain(this);

@@ -49,7 +49,7 @@ public class HMangr {
     public HMangr(Access access, Locator<URI> loc) throws LocatorException {
         readTimeout = 10000;
         connectionTimeout=3000;
-        if(loc ==  null) {
+        if (loc ==  null) {
             throw new LocatorException("Null Locator passed");
         }
         this.loc = loc;
@@ -79,20 +79,20 @@ public class HMangr {
             do {
                 Item item;
                 // if no previous state, get the best
-                if(retryable.item()==null) {
+                if (retryable.item()==null) {
                     item = loc.best();
-                    if(item==null) {
+                    if (item==null) {
                         throw new LocatorException("No Services Found for " + loc);
                     }
                     retryable.item(item);
                     retryable.lastClient = null;
                 }
-                if(client==null) {
+                if (client==null) {
                     item = retryable.item();
                     URI uri=loc.get(item);
-                    if(uri==null) {
+                    if (uri==null) {
                         loc.invalidate(retryable.item());
-                        if(loc.hasItems()) {
+                        if (loc.hasItems()) {
                             retryable.item(loc.next(retryable.item()));
                             continue;
                         } else {
@@ -116,22 +116,22 @@ public class HMangr {
                     retryable.item(loc.next(item));
                     try {
                         Throwable ec = e.getCause();
-                        if(ec instanceof java.net.ConnectException) {
-                            if(client!=null && loc.hasItems()) { 
+                        if (ec instanceof java.net.ConnectException) {
+                            if (client!=null && loc.hasItems()) { 
                                 access.log(Level.WARN,"Connection refused, trying next available service");
                                 retry = true;
                             } else {
                                 throw new CadiException("Connection refused, no more services to try");
                             }
-                        } else if(ec instanceof java.net.SocketException) {
-                            if(client!=null && loc.hasItems()) { 
+                        } else if (ec instanceof java.net.SocketException) {
+                            if (client!=null && loc.hasItems()) { 
                                 access.log(Level.WARN,"Socket prematurely closed, trying next available service");
                                 retry = true;
                             } else {
                                 throw new CadiException("Socket prematurely closed, no more services to try");
                             }
-                        } else if(ec instanceof SocketException) {
-                            if("java.net.SocketException: Connection reset".equals(ec.getMessage())) {
+                        } else if (ec instanceof SocketException) {
+                            if ("java.net.SocketException: Connection reset".equals(ec.getMessage())) {
                                 access.log(Level.ERROR, ec.getMessage(), " can mean Certificate Expiration or TLS Protocol issues");
                             }
                             retryable.item(null);
@@ -148,7 +148,7 @@ public class HMangr {
                     loc.invalidate(item);
                     retryable.item(loc.next(item));
                 }
-            } while(retry);
+            } while (retry);
         } finally {
             retryable.lastClient = client;
         }
@@ -172,9 +172,9 @@ public class HMangr {
         RET ret = null;
         // make sure we have all current references:
         loc.refresh();
-        for(Item li=loc.first();li!=null;li=loc.next(li)) {
+        for (Item li=loc.first();li!=null;li=loc.next(li)) {
             URI uri=loc.get(li);
-            if(host!=null && !host.equals(uri.getHost())) {
+            if (host!=null && !host.equals(uri.getHost())) {
                 break;
             }
             try {
@@ -182,14 +182,14 @@ public class HMangr {
                 access.log(Level.DEBUG,"Success calling",uri,"during call to all services");
             } catch (APIException | CadiException e) {
                 Throwable t = e.getCause();
-                if(t!=null && t instanceof ConnectException) {
+                if (t!=null && t instanceof ConnectException) {
                     loc.invalidate(li);
                     access.log(Level.ERROR,"Connection to",uri,"refused during call to all services");
-                } else if(t instanceof SSLHandshakeException) {
+                } else if (t instanceof SSLHandshakeException) {
                     access.log(Level.ERROR,t.getMessage());
                     loc.invalidate(li);
-                } else if(t instanceof SocketException) {
-                    if("java.net.SocketException: Connection reset".equals(t.getMessage())) {
+                } else if (t instanceof SocketException) {
+                    if ("java.net.SocketException: Connection reset".equals(t.getMessage())) {
                         access.log(Level.ERROR, t.getMessage(), " can mean Certificate Expiration or TLS Protocol issues");
                     }
                     retryable.item(null);
@@ -203,7 +203,7 @@ public class HMangr {
             }
         }
             
-        if(ret == null && notify) 
+        if (ret == null && notify) 
             throw new LocatorException("No available clients to call");
         return ret;
     }

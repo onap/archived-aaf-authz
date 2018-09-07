@@ -53,7 +53,7 @@ public class List extends BaseCmd<User> {
         Collections.sort(sorted, new Comparator<aaf.v2_0.Users.User>() {
             @Override
             public int compare(aaf.v2_0.Users.User u1, aaf.v2_0.Users.User u2) {
-                if(u1==null || u2 == null) {
+                if (u1==null || u2 == null) {
                     return -1;
                 }
                 return u1.getId().compareTo(u2.getId());
@@ -61,8 +61,8 @@ public class List extends BaseCmd<User> {
         });
         String format = reportColHead("%-40s %-10s %-30s\n","User","Type","Expires");
         String date = "XXXX-XX-XX";
-        for(aaf.v2_0.Users.User user : sorted) {
-            if(!aafcli.isTest()) {
+        for (aaf.v2_0.Users.User user : sorted) {
+            if (!aafcli.isTest()) {
                 date = Chrono.dateOnlyStamp(user.getExpires());
             }
             pw().format(format, 
@@ -84,9 +84,9 @@ public class List extends BaseCmd<User> {
             }
         } );
         String ticket = null, prev = null;
-        for(Approval app : lapp ) {
+        for (Approval app : lapp ) {
             ticket = app.getTicket();
-            if(!ticket.equals(prev)) {
+            if (!ticket.equals(prev)) {
                 pw().print("Ticket: ");
                 pw().println(ticket);
             }
@@ -106,8 +106,8 @@ public class List extends BaseCmd<User> {
         reportHead(title,id);
         String format = reportColHead(" %-25s %-25s  %-10s\n","User","Delegate","Expires");
         String date = "XXXX-XX-XX";
-        for(Delg delg : delgs.getDelgs()) {
-            if(!this.aafcli.isTest()) 
+        for (Delg delg : delgs.getDelgs()) {
+            if (!this.aafcli.isTest()) 
                 date = Chrono.dateOnlyStamp(delg.getExpires());
             pw().printf(format, 
                         delg.getUser(),

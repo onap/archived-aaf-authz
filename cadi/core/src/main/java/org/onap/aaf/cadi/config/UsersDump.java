@@ -41,7 +41,7 @@ public class UsersDump {
      */
     public static boolean write(OutputStream os, AbsUserCache<?> lur) {
         PrintStream ps;
-        if(os instanceof PrintStream) {
+        if (os instanceof PrintStream) {
             ps = (PrintStream)os;
         } else {
             ps = new PrintStream(os);
@@ -59,14 +59,14 @@ public class UsersDump {
             
             // Obtain all unique role names
             HashSet<String> groups = new HashSet<>();
-            for(AbsUserCache<?>.DumpInfo di : lur.dumpInfo()) {
+            for (AbsUserCache<?>.DumpInfo di : lur.dumpInfo()) {
                 sb.append("\n  <user username=\"");
                 sb.append(di.user);
                 sb.append("\" roles=\"");
                 boolean first = true;
-                for(String role : di.perms) {
+                for (String role : di.perms) {
                     groups.add(role);
-                    if(first)first = false;
+                    if (first)first = false;
                     else sb.append(',');
                     sb.append(role);
                 }
@@ -75,7 +75,7 @@ public class UsersDump {
             }
 
             // Print roles
-            for(String group : groups) {
+            for (String group : groups) {
                 ps.print("  <role rolename=\"");
                 ps.print(group);
                 ps.println("\"/>");
@@ -104,15 +104,15 @@ public class UsersDump {
      */
     public static String updateUsers(String writeto, LocalLur up) {
         // Dump a Tomcat-user.xml lookalike (anywhere)
-        if(writeto!=null) {
+        if (writeto!=null) {
             // First read content
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            if(UsersDump.write(baos, up)) {
+            if (UsersDump.write(baos, up)) {
                 byte[] postulate = baos.toByteArray();
                 // now get contents of file
                 File file = new File(writeto);
                 boolean writeIt;
-                if(file.exists()) {
+                if (file.exists()) {
                     try {
                         FileInputStream fis = new FileInputStream(file);
                         byte[] orig = new byte[(int)file.length()];
@@ -122,17 +122,17 @@ public class UsersDump {
                         } finally {
                             fis.close();
                         }
-                        if(read<=0) {
+                        if (read<=0) {
                             writeIt = false;
                         } else {
                             // Starting at third "<" (<tomcat-users> line)
                             int startA=0, startB=0;
-                            for(int i=0;startA<orig.length && i<3;++startA) if(orig[startA]=='<')++i;
-                            for(int i=0;startB<orig.length && i<3;++startB) if(postulate[startB]=='<')++i;
+                            for (int i=0;startA<orig.length && i<3;++startA) if (orig[startA]=='<')++i;
+                            for (int i=0;startB<orig.length && i<3;++startB) if (postulate[startB]=='<')++i;
                             
                             writeIt=orig.length-startA!=postulate.length-startB; // first, check if remaining length is the same
-                            while(!writeIt && startA<orig.length && startB<postulate.length) {
-                                if(orig[startA++]!=postulate[startB++])writeIt = true;
+                            while (!writeIt && startA<orig.length && startB<postulate.length) {
+                                if (orig[startA++]!=postulate[startB++])writeIt = true;
                             }
                         }
                     } catch (Exception e) {
@@ -142,7 +142,7 @@ public class UsersDump {
                     writeIt = true;
                 }
                 
-                if(writeIt) {
+                if (writeIt) {
                     try {
                         FileOutputStream fos = new FileOutputStream(file);
                         try {

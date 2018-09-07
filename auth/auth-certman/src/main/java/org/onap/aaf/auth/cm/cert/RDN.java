@@ -69,19 +69,19 @@ public class RDN {
         List<RDN> lrnd = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         boolean inQuotes = false;
-        for(int i=0;i<dnString.length();++i) {
+        for (int i=0;i<dnString.length();++i) {
             char c = dnString.charAt(i);
-            if(inQuotes) {
-                if('"' == c) {
+            if (inQuotes) {
+                if ('"' == c) {
                     inQuotes=false;
                 } else {
                     sb.append(dnString.charAt(i));
                 }
             } else {
-                if('"' == c) {
+                if ('"' == c) {
                     inQuotes=true;
-                } else if(delim==c) {
-                    if(sb.length()>0) {
+                } else if (delim==c) {
+                    if (sb.length()>0) {
                         lrnd.add(new RDN(sb.toString()));
                         sb.setLength(0);
                     }
@@ -90,7 +90,7 @@ public class RDN {
                 }
             }
         }
-        if(sb.indexOf("=")>0) {
+        if (sb.indexOf("=")>0) {
             lrnd.add(new RDN(sb.toString()));
         }
         return lrnd;

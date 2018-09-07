@@ -331,8 +331,8 @@ public class JU_Factory {
     private String join(String delim, List<String> rawLines) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for(String s : rawLines) {
-            if(first) {
+        for (String s : rawLines) {
+            if (first) {
                 first = false;
             } else {
                 sb.append(delim);

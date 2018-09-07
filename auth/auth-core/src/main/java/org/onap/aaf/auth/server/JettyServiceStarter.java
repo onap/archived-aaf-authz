@@ -78,15 +78,15 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
 //        Properties props = access().getProperties();
 //        Object temp = null;
 //        // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
-//        if((temp=props.get(Config.CADI_PROTOCOLS))==null) {
-//            if((temp=props.get(Config.HTTPS_PROTOCOLS))==null) {
+//        if ((temp=props.get(Config.CADI_PROTOCOLS))==null) {
+//            if ((temp=props.get(Config.HTTPS_PROTOCOLS))==null) {
 //                props.put(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);
 //            } else {
 //                props.put(Config.CADI_PROTOCOLS, temp);
 //            }
 //        }
 //    
-//        if("1.7".equals(System.getProperty("java.specification.version"))) {
+//        if ("1.7".equals(System.getProperty("java.specification.version"))) {
 //            System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
 //        }
 //        System.setProperty(Config.HTTPS_CIPHER_SUITES, temp.toString());
@@ -98,15 +98,15 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         Properties props = access().getProperties();
         Object httpproto = null;
         // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
-        if((httpproto=props.get(Config.CADI_PROTOCOLS))==null) {
-            if((httpproto=props.get(Config.HTTPS_PROTOCOLS))==null) {
+        if ((httpproto=props.get(Config.CADI_PROTOCOLS))==null) {
+            if ((httpproto=props.get(Config.HTTPS_PROTOCOLS))==null) {
                 props.put(Config.CADI_PROTOCOLS, (httpproto=SecurityInfo.HTTPS_PROTOCOLS_DEFAULT));
             } else {
                 props.put(Config.CADI_PROTOCOLS, httpproto);
             }
         }
     
-        if("1.7".equals(System.getProperty("java.specification.version")) && (httpproto==null || (httpproto instanceof String && ((String)httpproto).contains("TLSv1.2")))) {
+        if ("1.7".equals(System.getProperty("java.specification.version")) && (httpproto==null || (httpproto instanceof String && ((String)httpproto).contains("TLSv1.2")))) {
             System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
         }
     }
@@ -114,7 +114,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
     @Override
     public void _start(RServlet<TRANS> rserv) throws Exception {
         String hostname = access().getProperty(Config.HOSTNAME, null);
-        if(hostname==null) {
+        if (hostname==null) {
             hostname = Inet4Address.getLocalHost().getHostName();
         }
         final int port = Integer.parseInt(access().getProperty("port","0"));
@@ -124,14 +124,14 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         
         ServerConnector conn;
         String protocol;
-        if(!secure || keystore==null) {
+        if (!secure || keystore==null) {
             conn = new ServerConnector(server);
             protocol = "http";
         } else {
             protocol = "https";
 
             String keystorePassword = access().getProperty(Config.CADI_KEYSTORE_PASSWORD, null);
-            if(keystorePassword==null) {
+            if (keystorePassword==null) {
                 throw new CadiException("No Keystore Password configured for " + keystore);
             }
             SslContextFactory sslContextFactory = new SslContextFactory();
@@ -142,9 +142,9 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             temp=null; // don't leave lying around
             
             String truststore = access().getProperty(Config.CADI_TRUSTSTORE, null);
-            if(truststore!=null) {
+            if (truststore!=null) {
                 String truststorePassword = access().getProperty(Config.CADI_TRUSTSTORE_PASSWORD, null);
-                if(truststorePassword==null) {
+                if (truststorePassword==null) {
                     throw new CadiException("No Truststore Password configured for " + truststore);
                 }
                 sslContextFactory.setTrustStorePath(truststore);
@@ -163,7 +163,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             //     sslContextFactory.setEnableCRLDP(false);
             //     sslContextFactory.setEnableOCSP(false);
             String certAlias = access().getProperty(Config.CADI_ALIAS, null);
-            if(certAlias!=null) {
+            if (certAlias!=null) {
                 sslContextFactory.setCertAlias(certAlias);
             }
             
@@ -232,7 +232,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             register(service.registrants(port));
             access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
             server.join();
-        } catch(Exception e) {
+        } catch (Exception e) {
             access().log(e,"Error registering " + service.app_name);
             String doExit = access().getProperty("cadi_exitOnFailure", "true");
             if (doExit == "true") {
@@ -246,7 +246,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
     private FilterChain buildFilterChain(final AbsService<?,?> as, final FilterChain doLast) throws CadiException, LocatorException {
         Filter[] filters = as.filters();
         FilterChain fc = doLast;
-        for(int i=filters.length-1;i>=0;--i) {
+        for (int i=filters.length-1;i>=0;--i) {
             fc = new FCImpl(filters[i],fc);
         }
         return fc;

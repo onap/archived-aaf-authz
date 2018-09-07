@@ -118,11 +118,11 @@ public class CMArtifactShow extends Page {
         @Override
         protected String title(AuthzTrans trans) {
             StringBuilder sb = new StringBuilder("X509 Certificates");
-            if(sc!=null) { // initialized
+            if (sc!=null) { // initialized
                 sb.append(" for ");
                 String id = sc.get(trans,Params.id,"");
                 sb.append(id);
-                if(id.indexOf('@')<0) {
+                if (id.indexOf('@')<0) {
                     sb.append('@');
                     sb.append(FQI.reverseDomain(sc.get(trans, Params.ns,"missingDomain")));
                 }
@@ -155,7 +155,7 @@ public class CMArtifactShow extends Page {
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             String str = sc.get(trans,Params.id, null);
-            if(str==null) {
+            if (str==null) {
                 return Cells.EMPTY;
             }
             final String id = str.indexOf('@')>=0?str:str + '@' + FQI.reverseDomain(sc.get(trans,Params.ns, ""));
@@ -169,7 +169,7 @@ public class CMArtifactShow extends Page {
                         Future<Artifacts> fuArt = client.read("/cert/artifacts?mechid="+id, gui.artifactsDF);
                         
                         X509Certificate[] lc;
-                        if(fuCI.get(AAFcli.timeout())) {
+                        if (fuCI.get(AAFcli.timeout())) {
                             TimeTaken tt1 = trans.start("x509Certificate", Env.SUB);
                             try {
                                 Collection<? extends Certificate> xcs = Factory.toX509Certificate(fuCI.value.getCerts());
@@ -185,8 +185,8 @@ public class CMArtifactShow extends Page {
                             lc = null;
                             trans.error().log("Cannot retrieve Certificates for " + id);
                         }
-                        if(fuArt.get(AAFcli.timeout())) {
-                            for(Artifact arti : fuArt.value.getArtifact()) {
+                        if (fuArt.get(AAFcli.timeout())) {
+                            for (Artifact arti : fuArt.value.getArtifact()) {
                                 StringWriter sw = new StringWriter();
                                 HTMLGen hgen = cas.clone(sw);
                                 Mark mark = new Mark();
@@ -195,17 +195,17 @@ public class CMArtifactShow extends Page {
                                         .text("Details")
                                     .end(mark);
                                 Date last = null;
-                                if(lc!=null) {
-                                    for(X509Certificate xc : lc) {
-                                        if(xc.getSubjectDN().getName().contains("CN="+arti.getMachine())) {
-                                            if(last==null || last.before(xc.getNotAfter())) {
+                                if (lc!=null) {
+                                    for (X509Certificate xc : lc) {
+                                        if (xc.getSubjectDN().getName().contains("CN="+arti.getMachine())) {
+                                            if (last==null || last.before(xc.getNotAfter())) {
                                                 last = xc.getNotAfter();
                                             }
                                         }
                                     }
                                 }
                                 GregorianCalendar renew;
-                                if(last!=null) {
+                                if (last!=null) {
                                     renew = new GregorianCalendar();
                                     renew.setTime(last);
                                     renew.add(GregorianCalendar.DAY_OF_MONTH,arti.getRenewDays()*-1);

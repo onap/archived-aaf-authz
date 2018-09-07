@@ -71,13 +71,13 @@ public class BaseDataFactory {
                 env.staticSlot(EnvFactory.SCHEMA_DIR),
                 EnvFactory.DEFAULT_SCHEMA_DIR);
         File dir = new File(schemaDir);
-        if(!dir.exists())throw new APIException("Schema Directory " + schemaDir + " does not exist.  You can set this with " + EnvFactory.SCHEMA_DIR + " property");
+        if (!dir.exists())throw new APIException("Schema Directory " + schemaDir + " does not exist.  You can set this with " + EnvFactory.SCHEMA_DIR + " property");
         FileInputStream[] fis = new FileInputStream[filenames.length];
         Source[] sources = new Source[filenames.length];
         File f; 
-        for(int i=0; i<filenames.length; ++i) {
-            if(!(f=new File(schemaDir + File.separatorChar + filenames[i])).exists()) {
-                if(!f.exists()) throw new APIException("Cannot find " + f.getName() + " for schema validation");
+        for (int i=0; i<filenames.length; ++i) {
+            if (!(f=new File(schemaDir + File.separatorChar + filenames[i])).exists()) {
+                if (!f.exists()) throw new APIException("Cannot find " + f.getName() + " for schema validation");
             }
             try {
                 fis[i]=new FileInputStream(f);
@@ -95,7 +95,7 @@ public class BaseDataFactory {
         } catch (SAXException e) {
             throw new APIException(e);
         } finally {
-            for(FileInputStream d : fis) {
+            for (FileInputStream d : fis) {
                 try {
                     d.close();
                 } catch (IOException e) {
@@ -109,10 +109,10 @@ public class BaseDataFactory {
     public static QName getQName(Class<?> clss) throws APIException {
         // Obtain the Necessary info for QName from Requirement
         XmlRootElement xre = clss.getAnnotation(XmlRootElement.class);
-        if(xre==null)throw new APIException(clss.getName() + " does not have an XmlRootElement annotation");
+        if (xre==null)throw new APIException(clss.getName() + " does not have an XmlRootElement annotation");
         Package pkg = clss.getPackage();
         XmlSchema xs = pkg.getAnnotation(XmlSchema.class);
-        if(xs==null) throw new APIException(clss.getName() + " package-info does not have an XmlSchema annotation");
+        if (xs==null) throw new APIException(clss.getName() + " package-info does not have an XmlSchema annotation");
         return new QName(xs.namespace(),xre.name());
     }
 
@@ -367,7 +367,7 @@ public class BaseDataFactory {
 //         */
 //        public Character objectify(Env env, String input) throws APIException {
 //            int length = input.length();
-//            if(length<1 || length>1) {
+//            if (length<1 || length>1) {
 //                throw new APIException("String [" + input + "] does not represent a single Character");
 //            }
 //            return input.charAt(0);

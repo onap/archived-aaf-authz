@@ -64,7 +64,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
         
         @SuppressWarnings("unchecked")
         TRANS trans = (TRANS)req.getAttribute(TransFilter.TRANS_TAG);
-        if(trans==null) {
+        if (trans==null) {
             response.setStatus(404); // Not Found, because it didn't go through TransFilter
             return;
         }
@@ -79,7 +79,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
             CodeSetter<TRANS> codesetter = new CodeSetter<TRANS>(trans,request,response);
             // Find declared route
             route = routes.derive(request, codesetter);
-            if(route==null) {
+            if (route==null) {
                 String method = request.getMethod();
                 trans.checkpoint("No Route matches "+ method + ' ' + request.getPathInfo());
                 response.setStatus(404); // Not Found
@@ -91,12 +91,12 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
             tt.done();
         }
         
-        if(route!=null && code!=null) {
+        if (route!=null && code!=null) {
             StringBuilder sb = new StringBuilder(72);
             sb.append(route.auditText);
             sb.append(',');
             sb.append(code.desc());
-            if(ct!=null) {
+            if (ct!=null) {
                 sb.append(", ContentType: ");
                 sb.append(ct);
             }

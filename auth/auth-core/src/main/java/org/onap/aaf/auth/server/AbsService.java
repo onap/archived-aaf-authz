@@ -65,17 +65,17 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         String component = access.getProperty(Config.AAF_COMPONENT, null);
         final String[] locator_deploy;
         
-        if(component == null) {
+        if (component == null) {
             locator_deploy = null;
         } else {
             locator_deploy = Split.splitTrim(':', component);
         }
             
-        if(component == null || locator_deploy==null || locator_deploy.length<2) {
+        if (component == null || locator_deploy==null || locator_deploy.length<2) {
             throw new CadiException("AAF Component must include the " + Config.AAF_COMPONENT + " property, <fully qualified service name>:<full deployed version (i.e. 2.1.3.13)");
         }
         final String[] version = Split.splitTrim('.', locator_deploy[1]);
-        if(version==null || version.length<2) {
+        if (version==null || version.length<2) {
             throw new CadiException("AAF Component Version must have at least Major.Minor version");
         }
             app_name = Define.varReplace(locator_deploy[0]);
@@ -83,7 +83,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             app_interface_version = version[0]+'.'+version[1];
             
         // Print Cipher Suites Available
-        if(access.willLog(Level.DEBUG)) {
+        if (access.willLog(Level.DEBUG)) {
             SSLContext context;
             try {
                 context = SSLContext.getDefault();
@@ -94,11 +94,11 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             StringBuilder sb = new StringBuilder("Available Cipher Suites: ");
             boolean first = true;
             int count=0;
-            for( String cs : sf.getSupportedCipherSuites()) {
-                if(first)first = false;
+            for ( String cs : sf.getSupportedCipherSuites()) {
+                if (first)first = false;
                 else sb.append(',');
                 sb.append(cs);
-                if(++count%4==0){sb.append('\n');}
+                if (++count%4==0){sb.append('\n');}
             }
             access.log(Level.DEBUG,sb);
         }
@@ -121,8 +121,8 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
 
     // Lazy Instantiation
     public synchronized AAFConHttp aafCon() throws CadiException, LocatorException {
-            if(aafCon==null) {
-                if(access.getProperty(Config.AAF_URL,null)!=null) {
+            if (aafCon==null) {
+                if (access.getProperty(Config.AAF_URL,null)!=null) {
                     aafCon = _newAAFConHttp();
                 } else {
                     throw new CadiException("AAFCon cannot be constructed without " + Config.AAF_URL);
@@ -137,7 +137,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
      * @throws LocatorException 
      */
         protected synchronized AAFConHttp _newAAFConHttp() throws CadiException, LocatorException {
-            if(aafCon==null) {
+            if (aafCon==null) {
                 aafCon = new AAFConHttp(access);
             }
             return aafCon;
@@ -165,20 +165,20 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     protected static final String loadFromArgOrSystem(final Properties props, final String tag, final String args[], final String def) {
         String tagEQ = tag + '=';
         String value;
-        for(String arg : args) {
-            if(arg.startsWith(tagEQ)) {
+        for (String arg : args) {
+            if (arg.startsWith(tagEQ)) {
                 props.put(tag, value=arg.substring(tagEQ.length()));
                 return value;
             }
         }
         // check System.properties
         value = System.getProperty(tag);
-        if(value!=null) { 
+        if (value!=null) { 
             props.put(tag, value);
             return value;
         }
         
-        if(def!=null) {
+        if (def!=null) {
             props.put(tag,def);
         }
         return def;

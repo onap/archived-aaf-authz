@@ -59,14 +59,14 @@ public abstract class CassBatch extends Batch {
     }
 
     public ResultSet executeQuery(String cql, String extra) {
-        if(isDryRun() && !cql.startsWith("SELECT")) {
-            if(extra!=null)env.info().log("Would query" + extra + ": " + cql);
+        if (isDryRun() && !cql.startsWith("SELECT")) {
+            if (extra!=null)env.info().log("Would query" + extra + ": " + cql);
         } else {
-            if(extra!=null)env.info().log("query" + extra + ": " + cql);
+            if (extra!=null)env.info().log("query" + extra + ": " + cql);
             try {
                 return session.execute(cql);
             } catch (InvalidQueryException e) {
-                if(extra==null) {
+                if (extra==null) {
                     env.info().log("query: " + cql);
                 }
                 throw e;

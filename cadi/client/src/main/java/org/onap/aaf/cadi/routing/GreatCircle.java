@@ -87,7 +87,7 @@ public class GreatCircle {
             switch(coords.length) {
             case 1:
                 array = Split.split(',',coords[0]);
-                if(array.length!=4)return -1;
+                if (array.length!=4)return -1;
                 return calc(
                     Double.parseDouble(array[0]),
                     Double.parseDouble(array[1]),
@@ -97,7 +97,7 @@ public class GreatCircle {
             case 2:
                 array = Split.split(',',coords[0]);
                 String [] array2 = Split.split(',',coords[1]);
-                if(array.length!=2 || array2.length!=2)return -1;
+                if (array.length!=2 || array2.length!=2)return -1;
                 return calc(
                     Double.parseDouble(array[0]),
                     Double.parseDouble(array[1]),

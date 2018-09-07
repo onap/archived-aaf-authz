@@ -86,7 +86,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
         err.setText(Vars.convert(holder, text, var));
-        for(String s : var) {
+        for (String s : var) {
             err.getVariables().add(s);
         }
         return err;
@@ -97,7 +97,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
      */
     @Override
     public Result<CertInfo> toCert(AuthzTrans trans, Result<CertResp> in, boolean withTrustChain) throws IOException {
-        if(!in.isOK()) {
+        if (!in.isOK()) {
             return Result.err(in);
         }
 
@@ -105,15 +105,15 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         CertInfo cout = newInstance(API.CERT);
         cout.setPrivatekey(cin.privateString());
         String value;
-        if((value=cin.challenge())!=null) {
+        if ((value=cin.challenge())!=null) {
             cout.setChallenge(value);
         }
         // In Version 1, Cert is always first
         cout.getCerts().add(cin.asCertString());
         // Follow with Trust Chain
-        if(cin.trustChain()!=null) {
-            for(String c : cin.trustChain()) {
-                if(c!=null) {
+        if (cin.trustChain()!=null) {
+            for (String c : cin.trustChain()) {
+                if (c!=null) {
                     cout.getCerts().add(c);
                 }
             }
@@ -121,20 +121,20 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 
         // Adding all the Certs in one response is a mistake.  Makes it very hard for Agent to setup
         // Certs in keystore versus Truststore.  Separate in Version 2_0
-        if(cin.trustCAs()!=null) {
-            for(String c : cin.trustCAs()) {
-                if(c!=null) {
-                    if(!cout.getCerts().contains(c)) {
+        if (cin.trustCAs()!=null) {
+            for (String c : cin.trustCAs()) {
+                if (c!=null) {
+                    if (!cout.getCerts().contains(c)) {
                         cout.getCerts().add(c);
                     }
                 }
             }
         }
-        if(cin.notes()!=null) {
+        if (cin.notes()!=null) {
             boolean first = true;
             StringBuilder sb = new StringBuilder();
-            for(String n : cin.notes()) {
-                if(first) {
+            for (String n : cin.notes()) {
+                if (first) {
                     first = false;
                 } else {
                     sb.append('\n');
@@ -144,7 +144,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             cout.setNotes(sb.toString());
         }
         List<String> caIssuerDNs = cout.getCaIssuerDNs();
-        for(String s : cin.caIssuerDNs()) {
+        for (String s : cin.caIssuerDNs()) {
             caIssuerDNs.add(s);
         }
         cout.setEnv(cin.env());
@@ -154,10 +154,10 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
 
     @Override
     public Result<CertInfo> toCert(AuthzTrans trans, Result<List<CertDAO.Data>> in) {
-        if(in.isOK()) {
+        if (in.isOK()) {
             CertInfo cout = newInstance(API.CERT);
             List<String> certs = cout.getCerts();
-            for(CertDAO.Data cdd : in.value) {
+            for (CertDAO.Data cdd : in.value) {
                 certs.add(cdd.x509);
             }
             return Result.ok(cout);
@@ -174,7 +174,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         CertificateRequest in;
         try {
             in = (CertificateRequest)req;
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             return Result.err(Result.ERR_BadData,"Request is not a CertificateRequest");
         }
 
@@ -184,7 +184,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         out.fqdns=in.getFqdns();
         v.isNull("CertRequest", req).nullOrBlank("MechID", out.mechid);
         v.nullBlankMin("FQDNs", out.fqdns,1);
-        if(v.err()) {
+        if (v.err()) {
             return Result.err(Result.ERR_BadData, v.errs());
         }
         out.emails = in.getEmail();
@@ -217,7 +217,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
     @Override
     public List<ArtiDAO.Data> toArtifact(AuthzTrans trans, Artifacts artifacts) {
         List<ArtiDAO.Data> ladd = new ArrayList<>();
-        for(Artifact arti : artifacts.getArtifact()) {
+        for (Artifact arti : artifacts.getArtifact()) {
             ArtiDAO.Data data = new ArtiDAO.Data();
             data.mechid = arti.getMechid();
             data.machine = arti.getMachine();
@@ -235,11 +235,11 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             data.expires = null;
             
             // Derive Optional Data from Machine (Domain) if exists
-            if(data.machine!=null) {
-                if(data.ca==null && data.machine.endsWith(".att.com")) {
+            if (data.machine!=null) {
+                if (data.ca==null && data.machine.endsWith(".att.com")) {
                         data.ca = "aaf"; // default
                 }
-                if(data.ns==null ) {
+                if (data.ns==null ) {
                     data.ns=FQI.reverseDomain(data.machine);
                 }
             }
@@ -254,9 +254,9 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
      */
     @Override
     public Result<Artifacts> fromArtifacts(Result<List<Data>> lArtiDAO) {
-        if(lArtiDAO.isOK()) {
+        if (lArtiDAO.isOK()) {
             Artifacts artis = new Artifacts();
-            for(ArtiDAO.Data arti : lArtiDAO.value) {
+            for (ArtiDAO.Data arti : lArtiDAO.value) {
                 Artifact a = new Artifact();
                 a.setMechid(arti.mechid);
                 a.setMachine(arti.machine);

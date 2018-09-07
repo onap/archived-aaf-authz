@@ -67,9 +67,9 @@ public class ListApprovals extends Cmd {
                         "/authz/approval/"+type+'/'+fullValue, 
                         getDF(Approvals.class)
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     ((List)parent).report(fp.value,HEADER + " by " + type,fullValue);
-                    if(fp.code()==404) {
+                    if (fp.code()==404) {
                         return 200;
                     }
                 } else {

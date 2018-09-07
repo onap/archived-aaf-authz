@@ -72,8 +72,8 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
         public TypedCode<TRANS> add(HttpCode<TRANS,?> code, String ... others) {
             StringBuilder sb = new StringBuilder();
             boolean first = true;
-            for(String str : others) {
-                if(first) {
+            for (String str : others) {
+                if (first) {
                     first = false; 
                 } else {
                     sb.append(',');
@@ -94,7 +94,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             Pair<HttpCode<TRANS,?>, List<Pair<String,Object>>> cl = new Pair<HttpCode<TRANS,?>, List<Pair<String,Object>>>(code, props);
 //            // breakup "plus" stuff, i.e. application/xaml+xml
 //            int plus = str.indexOf('+');
-//            if(plus<0) {
+//            if (plus<0) {
                 type = new Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String,Object>>>>(str, cl);
                 types.add(type);
                 return type;
@@ -102,7 +102,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
 //                int prev = str.indexOf('/')+1;
 //                String first = str.substring(0,prev);
 //                String nstr;
-//                while(prev!=0) {
+//                while (prev!=0) {
 //                    nstr = first + (plus>-1?str.substring(prev,plus):str.substring(prev));
 //                    type = new Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String,Object>>>>(nstr, cl);
 //                    types.add(type);
@@ -115,7 +115,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
 
         @Override
         protected boolean props(Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> type, String tag, String value) {
-            if(tag.equals(Q)) { // reset the Q value (first in array)
+            if (tag.equals(Q)) { // reset the Q value (first in array)
                 boolean rv = true;
                 try {
                     type.y.y.get(0).y=Float.parseFloat(value);
@@ -130,10 +130,10 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
         
         public Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> prep(TRANS trans, String compare) throws IOException, ServletException {
             Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> c,rv=null;
-            if(types.size()==1 && "".equals((c=types.get(0)).x)) { // if there are no checks for type, skip
+            if (types.size()==1 && "".equals((c=types.get(0)).x)) { // if there are no checks for type, skip
                 rv = c;
             } else {
-                if(compare==null || compare.length()==0) {
+                if (compare==null || compare.length()==0) {
                     rv = types.get(0); // first code is used
                 } else {
                     Acceptor<TRANS> acc = new Acceptor<TRANS>(types);
@@ -144,7 +144,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                     } finally {
                         tt.done();
                     }
-                    if(accepted) {
+                    if (accepted) {
                         switch(acc.acceptable.size()) {
                             case 0:    
 //                                // TODO best Status Code?
@@ -156,16 +156,16 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                             default: // compare Q values to get Best Match
                                 float bestQ = -1.0f;
                                 Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> bestT = null;
-                                for(Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> type : acc.acceptable) {
+                                for (Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> type : acc.acceptable) {
                                     Float f = (Float)type.y.y.get(0).y; // first property is always Q
-                                    if(f>bestQ) {
+                                    if (f>bestQ) {
                                         bestQ=f;
                                         bestT = type;
                                     }
                                 }
-                                if(bestT!=null) {
+                                if (bestT!=null) {
                                     // When it is a GET, the matched type is what is returned, so set ContentType
-//                                    if(isGet)resp.setContentType(bestT.x); // set ContentType of Code<TRANS,?>
+//                                    if (isGet)resp.setContentType(bestT.x); // set ContentType of Code<TRANS,?>
 //                                    rv = bestT.y.x;
                                     rv = bestT;
                                 }
@@ -190,17 +190,17 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
          */
         public StringBuilder relatedTo(HttpCode<TRANS, ?> code, StringBuilder sb) {
             boolean first = true;
-            for(Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> pair : types) {
-                if(code==null || pair.y.x == code) {
-                    if(first) {
+            for (Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> pair : types) {
+                if (code==null || pair.y.x == code) {
+                    if (first) {
                         first = false;
                     } else {
                         sb.append(',');
                     }
                     sb.append(pair.x);
-                    for(Pair<String,Object> prop : pair.y.y) {
+                    for (Pair<String,Object> prop : pair.y.y) {
                         // Don't print "Q".  it's there for internal use, but it is only meaningful for "Accepts"
-                        if(!prop.x.equals(Q) || !prop.y.equals(1f) ) {
+                        if (!prop.x.equals(Q) || !prop.y.equals(1f) ) {
                             sb.append(';');
                             sb.append(prop.x);
                             sb.append('=');
@@ -213,8 +213,8 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
         }
         
         public List<Pair<String, Object>> getContent(HttpCode<TRANS,?> code) {
-            for(Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> pair : types) {
-                if(pair.y.x == code) {
+            for (Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> pair : types) {
+                if (pair.y.x == code) {
                     return pair.y.y;
                 }
             }
@@ -232,11 +232,11 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             tr.desc = null;
             
             // Read through Code/TypeCode trees for all accepted Typecodes
-            for(Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> tc : types) {
+            for (Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> tc : types) {
                 // If new, then it's new Code set, create prefix content
-                if((temp=psb.get(tc.y.x))==null) {
+                if ((temp=psb.get(tc.y.x))==null) {
                     psb.put(tc.y.x,temp=new StringBuilder());
-                    if(tr.desc==null) {
+                    if (tr.desc==null) {
                         tr.desc = tc.y.x.desc();
                     }
                 } else {
@@ -245,7 +245,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                 temp.append(tc.x);
 
                 // add all properties
-                for(Pair<String, Object> props : tc.y.y) {
+                for (Pair<String, Object> props : tc.y.y) {
                     temp.append(';');
                     temp.append(props.x);
                     temp.append('=');
@@ -254,13 +254,13 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             }
             // Gather all ContentType possibilities for the same code together
             
-            for(StringBuilder sb : psb.values()) {
+            for (StringBuilder sb : psb.values()) {
                 tr.contextTypes.add(sb.toString());
             }
         }
 
         public String first() {
-            if(types.size()>0) {
+            if (types.size()>0) {
                 return types.get(0).x;
             }
             return null;

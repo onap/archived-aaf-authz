@@ -109,21 +109,21 @@ public class JU_OAuthTest {
 
             TokenClient tc;
             Result<TimedToken> rtt;
-            if(true) {
+            if (true) {
                 tc = tcf.newClient(tokenServiceURL, 3000);
                 tc.client_creds(client_id,client_secret);
                 tc.password(access.getProperty("cadi_username"),access.getProperty("cadi_password"));
                 rtt = tc.getToken(Kind.BASIC_AUTH,"org.osaaf.aaf","org.osaaf.test");
-                if(rtt.isOK()) {
+                if (rtt.isOK()) {
                     print(rtt.value);
                     rtt = tc.refreshToken(rtt.value);
-                    if(rtt.isOK()) {
+                    if (rtt.isOK()) {
                         print(rtt.value);
                         TokenClient ic = tcf.newClient(tokenIntrospectURL,3000);
                         ic.client_creds(client_id,client_secret);
 
                         Result<Introspect> ri = ic.introspect(rtt.value.getAccessToken());
-                        if(ri.isOK()) {
+                        if (ri.isOK()) {
                             print(ri.value);
                         } else {
                             System.out.println(ri.code + ' ' + ri.error);
@@ -145,28 +145,28 @@ public class JU_OAuthTest {
             }
         
             // ISAM Test
-            if(true) {
+            if (true) {
                 System.out.println("**** ISAM TEST ****");
                 tokenServiceURL=access.getProperty(Config.AAF_ALT_OAUTH2_TOKEN_URL);
                 client_id=access.getProperty(Config.AAF_ALT_CLIENT_ID);
                 client_secret=access.getProperty(Config.AAF_ALT_CLIENT_SECRET);
-                if(tokenServiceURL!=null) {
+                if (tokenServiceURL!=null) {
                     tc = tcf.newClient(tokenServiceURL, 3000);
                     tc.client_creds(client_id, client_secret);
                     int at = username.indexOf('@');
                     
                     tc.password(at>=0?username.substring(0, at):username,access.getProperty("cadi_password"));
                     rtt = tc.getToken("org.osaaf.aaf","org.osaaf.test");
-                    if(rtt.isOK()) {
+                    if (rtt.isOK()) {
                         print(rtt.value);
                         rtt = tc.refreshToken(rtt.value);
-                        if(rtt.isOK()) {
+                        if (rtt.isOK()) {
                             print(rtt.value);
                             
                             tc = tcf.newClient(tokenAltIntrospectURL, 3000);
                             tc.client_creds(client_id, client_secret);
                             Result<Introspect> rti = tc.introspect(rtt.value.getAccessToken());
-                            if(rti.isOK()) {
+                            if (rti.isOK()) {
                                 System.out.print("Normal ISAM ");
                                 print(rti.value);
                             } else {
@@ -177,12 +177,12 @@ public class JU_OAuthTest {
                             tc = tcf.newClient(tokenIntrospectURL, 3000);
                             tc.client_creds(client_id, client_secret);
                             rti = tc.introspect(rtt.value.getAccessToken());
-                            if(rti.isOK()) {
+                            if (rti.isOK()) {
                                 System.out.print("AAF with ISAM Token ");
                                 print(rti.value);
                             } else {
                                 System.out.println(rti.code + ' ' + rti.error);
-                                if(rti.code!=404) {
+                                if (rti.code!=404) {
                                     Assert.fail(rti.code + ' ' + rti.error);
                                 }
                             }
@@ -214,14 +214,14 @@ public class JU_OAuthTest {
 //    private TokenClient testROPCFlow(final String url, final String client_id, final String client_secret, String user, String password, final String ... scope) throws Exception {
 //        TokenClient tclient = tcf.newClient(url,3000);
 //        tclient.client_creds(client_id, client_secret);
-//        if(user!=null && password!=null) {
+//        if (user!=null && password!=null) {
 //            tclient.password(user,password);
 //        }
 //        Result<TimedToken> rt = tclient.getToken(scope);
-//        if(rt.isOK()) {
+//        if (rt.isOK()) {
 //            print(rt.value);
 //            Result<Introspect> rti = tclient.introspect(rt.value.getAccessToken());
-//            if(rti.isOK()) {
+//            if (rti.isOK()) {
 //                print(rti.value);
 //            } else {
 //                printAndFail(rti);
@@ -237,7 +237,7 @@ public class JU_OAuthTest {
             @Override
             public String code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                 Future<String> future = client.read(null,"text/plain");
-                if(future.get(3000)) {
+                if (future.get(3000)) {
                     return future.value;
                 } else {
                     throw new APIException(future.code()  + future.body());
@@ -263,7 +263,7 @@ public class JU_OAuthTest {
     }
     
     private void print(Introspect ti) {
-        if(ti==null || ti.getClientId()==null) {
+        if (ti==null || ti.getClientId()==null) {
             System.out.println("Empty Introspect");
             return;
         }

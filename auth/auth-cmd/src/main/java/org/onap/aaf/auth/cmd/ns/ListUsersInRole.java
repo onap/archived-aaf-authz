@@ -65,42 +65,42 @@ public class ListUsersInRole extends Cmd {
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 ((ListUsers)parent).report(HEADER,ns);
                 Future<Nss> fn = client.read("/authz/nss/"+ns,getDF(Nss.class));
-                if(fn.get(AAFcli.timeout())) {
-                    if(fn.value!=null) {
+                if (fn.get(AAFcli.timeout())) {
+                    if (fn.value!=null) {
                         Set<String> uset = detail?null:new HashSet<>();
-                        for(Ns n : fn.value.getNs()) {
+                        for (Ns n : fn.value.getNs()) {
                             Future<Roles> fr = client.read("/authz/roles/ns/"+n.getName(), getDF(Roles.class));
-                            if(fr.get(AAFcli.timeout())) {
-                                for(Role r : fr.value.getRole()) {
-                                    if(detail) {
+                            if (fr.get(AAFcli.timeout())) {
+                                for (Role r : fr.value.getRole()) {
+                                    if (detail) {
                                         ((ListUsers)parent).report(r.getName());
                                     }
                                     Future<Users> fus = client.read(
                                             "/authz/users/role/"+r.getName(), 
                                             getDF(Users.class)
                                             );
-                                    if(fus.get(AAFcli.timeout())) {
-                                        for(User u : fus.value.getUser()) {
-                                            if(detail) {
+                                    if (fus.get(AAFcli.timeout())) {
+                                        for (User u : fus.value.getUser()) {
+                                            if (detail) {
                                                 ((ListUsers)parent).report("  ",u);
                                             } else {
                                                 uset.add(u.getId());
                                             }
                                         }
-                                    } else if(fn.code()==404) {
+                                    } else if (fn.code()==404) {
                                         return 200;
                                     }
                                 }
                             }
                         }
-                        if(uset!=null) {
-                            for(String u : uset) {
+                        if (uset!=null) {
+                            for (String u : uset) {
                                 pw().print("  ");
                                 pw().println(u);
                             }
                         }
                     }
-                } else if(fn.code()==404) {
+                } else if (fn.code()==404) {
                     return 200;
                 } else {    
                     error(fn);

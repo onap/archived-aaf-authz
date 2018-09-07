@@ -43,7 +43,7 @@ public class CredDelete extends ActionDAO<CredDAO.Data,Void, String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, CredDAO.Data cred, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Delete:",text,cred.id,CredPrint.type(cred.type),Chrono.dateOnlyStamp(cred.expires));
             return Result.ok();
         } else {

@@ -33,19 +33,19 @@ public class Kind {
     
     public static char getKind(final Principal principal) {
         Principal check;
-        if(principal instanceof TrustPrincipal) {
+        if (principal instanceof TrustPrincipal) {
             check = ((TrustPrincipal)principal).original();
         } else {
             check = principal;
         }
-        if(check instanceof X509Principal) {
+        if (check instanceof X509Principal) {
             return X509;
         }
-        if(check instanceof OAuth2FormPrincipal) {
+        if (check instanceof OAuth2FormPrincipal) {
             // Note: if AAF, will turn into 'A'
             return OAUTH;
         }
-        if(check instanceof BasicPrincipal) {
+        if (check instanceof BasicPrincipal) {
             return BASIC_AUTH;
         }
         return UNKNOWN;

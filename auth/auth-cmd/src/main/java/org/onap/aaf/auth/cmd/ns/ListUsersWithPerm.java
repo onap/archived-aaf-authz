@@ -65,42 +65,42 @@ public class ListUsersWithPerm extends Cmd {
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 ((ListUsers)parent).report(HEADER,ns);
                 Future<Nss> fn = client.read("/authz/nss/"+ns,getDF(Nss.class));
-                if(fn.get(AAFcli.timeout())) {
-                    if(fn.value!=null) {
+                if (fn.get(AAFcli.timeout())) {
+                    if (fn.value!=null) {
                         Set<String> uset = detail?null:new HashSet<>();
                         
-                        for(Ns n : fn.value.getNs()) {
+                        for (Ns n : fn.value.getNs()) {
                             Future<Perms> fp = client.read("/authz/perms/ns/"+n.getName()+(aafcli.isDetailed()?"?ns":"")
                                     , getDF(Perms.class));
-                            if(fp.get(AAFcli.timeout())) {
-                                for(Perm p : fp.value.getPerm()) {
+                            if (fp.get(AAFcli.timeout())) {
+                                for (Perm p : fp.value.getPerm()) {
                                     String perm = p.getType()+'/'+p.getInstance()+'/'+p.getAction();
-                                    if(detail)((ListUsers)parent).report(perm);
+                                    if (detail)((ListUsers)parent).report(perm);
                                     Future<Users> fus = client.read(
                                             "/authz/users/perm/"+perm, 
                                             getDF(Users.class)
                                             );
-                                    if(fus.get(AAFcli.timeout())) {
-                                        for(User u : fus.value.getUser()) {
-                                            if(detail)
+                                    if (fus.get(AAFcli.timeout())) {
+                                        for (User u : fus.value.getUser()) {
+                                            if (detail)
                                                 ((ListUsers)parent).report("  ",u);
                                             else 
                                                 uset.add(u.getId());
                                         }
-                                    } else if(fn.code()==404) {
+                                    } else if (fn.code()==404) {
                                         return 200;
                                     }
                                 }
                             }
                         }
-                        if(uset!=null) {
-                            for(String u : uset) {
+                        if (uset!=null) {
+                            for (String u : uset) {
                                 pw().print("  ");
                                 pw().println(u);
                             }
                         }
                     }
-                } else if(fn.code()==404) {
+                } else if (fn.code()==404) {
                     return 200;
                 } else {    
                     error(fn);

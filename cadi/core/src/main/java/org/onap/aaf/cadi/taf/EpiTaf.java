@@ -47,7 +47,7 @@ public class EpiTaf implements Taf {
      */
     public EpiTaf(Taf ... tafs) throws CadiException{
         this.tafs = tafs;
-        if(tafs.length==0) throw new CadiException("Need at least one Taf implementation in constructor");
+        if (tafs.length==0) throw new CadiException("Need at least one Taf implementation in constructor");
     }
 
     /**
@@ -63,13 +63,13 @@ public class EpiTaf implements Taf {
      */
     public TafResp validate(LifeForm reading, String... info) {
         TafResp tresp,firstTryAuth=null;
-        for(Taf taf : tafs) {
+        for (Taf taf : tafs) {
             tresp = taf.validate(reading, info);
             switch(tresp.isAuthenticated()) {
                 case TRY_ANOTHER_TAF:
                     break;
                 case TRY_AUTHENTICATING:
-                    if(firstTryAuth==null)firstTryAuth=tresp;
+                    if (firstTryAuth==null)firstTryAuth=tresp;
                     break;
                 default:
                     return tresp;

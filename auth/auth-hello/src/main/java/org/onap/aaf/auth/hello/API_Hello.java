@@ -68,12 +68,12 @@ public class API_Hello {
                 ServletOutputStream os = resp.getOutputStream();
                 os.print("Hello AAF ");
                 String perm = pathParam(req, "perm");
-                if(perm!=null && perm.length()>0) {
+                if (perm!=null && perm.length()>0) {
                     os.print('(');
                     os.print(req.getUserPrincipal().getName());
                     TimeTaken tt = trans.start("Authorize perm", Env.REMOTE);
                     try {
-                        if(req.isUserInRole(perm)) {
+                        if (req.isUserInRole(perm)) {
                             os.print(" has ");
                         } else {
                             os.print(" does not have ");
@@ -103,12 +103,12 @@ public class API_Hello {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
                 StringBuilder sb = new StringBuilder();
-                while(br.ready()) {
+                while (br.ready()) {
                     sb.append(br.readLine());
                 }
                 String content = sb.toString();
                 trans.info().printf("Content from %s: %s\n", pathParam(req, ":id"),content);
-                if(content.startsWith("{") && content.endsWith("}")) {
+                if (content.startsWith("{") && content.endsWith("}")) {
                     resp.setStatus(201 /* OK */);
                 } else {
                     resp.getOutputStream().write(NOT_JSON);
@@ -130,7 +130,7 @@ public class API_Hello {
                 sb.append('"');
                 String perm = pathParam(req, "perm");
                 trans.info().printf("Read request from %s: %s\n", pathParam(req, ":id"),perm);
-                if(perm!=null && perm.length()>0) {
+                if (perm!=null && perm.length()>0) {
                     TimeTaken tt = trans.start("Authorize perm", Env.REMOTE);
                     try {
                         sb.append(",\"validation\": { \"permission\" : \"");
@@ -157,12 +157,12 @@ public class API_Hello {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 BufferedReader br = new BufferedReader(new InputStreamReader(req.getInputStream()));
                 StringBuilder sb = new StringBuilder();
-                while(br.ready()) {
+                while (br.ready()) {
                     sb.append(br.readLine());
                 }
                 String content = sb.toString();
                 trans.info().printf("Content from %s: %s\n", pathParam(req, ":id"),content);
-                if(content.startsWith("{") && content.endsWith("}")) {
+                if (content.startsWith("{") && content.endsWith("}")) {
                     resp.setStatus(200 /* OK */);
                     resp.getOutputStream().print(content);
                 } else {

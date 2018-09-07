@@ -51,12 +51,12 @@ public class ListByUser extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 StringBuilder sb = null;
-                if("true".equalsIgnoreCase(aafcli.forceString())) {
+                if ("true".equalsIgnoreCase(aafcli.forceString())) {
                     sb = new StringBuilder();
                     sb.append("?force");
                 }
-                if(aafcli.isDetailed()) {
-                    if(sb==null) {
+                if (aafcli.isDetailed()) {
+                    if (sb==null) {
                         sb = new StringBuilder('?');
                     } else {
                         sb.append('&');

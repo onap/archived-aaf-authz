@@ -107,7 +107,7 @@ public class JU_PropertyLocator {
 
     private int countItems(PropertyLocator pl) throws LocatorException {
         int count = 0;
-        for(Item i = pl.first(); i != null; i = pl.next(i)) {
+        for (Item i = pl.first(); i != null; i = pl.next(i)) {
             ++count;
         }
         return count;

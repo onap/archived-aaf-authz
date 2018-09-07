@@ -54,7 +54,7 @@ public class CachedBasicPrincipal extends BasicPrincipal implements CachedPrinci
 
     public CachedPrincipal.Resp revalidate(Object state) {
         Resp resp = creator.revalidate(this, state);
-        if(resp.equals(Resp.REVALIDATED))expires = System.currentTimeMillis()+timeToLive;
+        if (resp.equals(Resp.REVALIDATED))expires = System.currentTimeMillis()+timeToLive;
         return resp;
     }
 

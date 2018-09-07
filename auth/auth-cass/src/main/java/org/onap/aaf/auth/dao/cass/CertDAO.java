@@ -143,7 +143,7 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
             writeString(os, data.x500);
             writeString(os, data.x509);
             writeString(os, data.ca);
-            if(data.serial==null) {
+            if (data.serial==null) {
                 os.writeInt(-1);
             } else {
                 byte[] dsba = data.serial.toByteArray();
@@ -164,9 +164,9 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
             data.ca = readString(is,buff);
             int i = is.readInt();
             data.serial=null;
-            if(i>=0) {
+            if (i>=0) {
                 byte[] bytes = new byte[i]; // a bit dangerous, but lessened because of all the previous sized data reads
-                if(is.read(bytes)>0) {
+                if (is.read(bytes)>0) {
                     data.serial = new BigInteger(bytes);
                 }
             }
@@ -180,10 +180,10 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
 
     private void init(AuthzTrans trans) throws APIException, IOException {
         // Set up sub-DAOs
-        if(historyDAO==null) {
+        if (historyDAO==null) {
             historyDAO = new HistoryDAO(trans,this);
         }
-        if(infoDAO==null) {
+        if (infoDAO==null) {
             infoDAO = new CacheInfoDAO(trans,this);
         }
 
@@ -226,7 +226,7 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
                 ? String.format("%s by %s", override[0], hd.user)
                 : (modified.name() + "d certificate info for " + data.id);
         // Detail?
-           if(modified==CRUD.delete) {
+           if (modified==CRUD.delete) {
                     try {
                         hd.reconstruct = data.bytify();
                     } catch (IOException e) {
@@ -234,10 +234,10 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
                     }
                 }
 
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
-        if(infoDAO.touch(trans, TABLE,data.invalidate(cache)).status!=Status.OK) {
+        if (infoDAO.touch(trans, TABLE,data.invalidate(cache)).status!=Status.OK) {
             trans.error().log("Cannot touch Cert");
         }
     }

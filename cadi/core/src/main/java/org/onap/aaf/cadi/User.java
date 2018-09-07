@@ -125,7 +125,7 @@ public final class User<PERM extends Permission> {
     }
 
     public void add(LocalPermission permission) {
-        if(perms==NULL_MAP) {
+        if (perms==NULL_MAP) {
             perms=newMap();
         }
         perms.put(permission.getKey(),permission);
@@ -157,8 +157,8 @@ public final class User<PERM extends Permission> {
         sb.append('|');
         boolean first = true;
         synchronized(perms) {
-            for(Permission gp : perms.values()) {
-                if(first) {
+            for (Permission gp : perms.values()) {
+                if (first) {
                     first = false;
                     sb.append(':');
                 } else {

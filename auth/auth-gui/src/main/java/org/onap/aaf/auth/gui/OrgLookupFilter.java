@@ -48,16 +48,16 @@ public class OrgLookupFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
         final AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
-        if(req instanceof HttpServletRequest) {
+        if (req instanceof HttpServletRequest) {
             Principal p = ((HttpServletRequest)req).getUserPrincipal();
-            if(p instanceof TaggedPrincipal) {
+            if (p instanceof TaggedPrincipal) {
                 ((TaggedPrincipal)p).setTagLookup(new TaggedPrincipal.TagLookup() {
                     @Override
                     public String lookup() throws CadiException {
                         Identity id;
                         try {
                             id = trans.org().getIdentity(trans, p.getName());
-                            if(id!=null && id.isFound()) {
+                            if (id!=null && id.isFound()) {
                                 return id.firstName();
                             }
                         } catch (OrganizationException e) {

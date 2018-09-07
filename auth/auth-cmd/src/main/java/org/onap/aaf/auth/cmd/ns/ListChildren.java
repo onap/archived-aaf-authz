@@ -56,12 +56,12 @@ public class ListChildren extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Nss> fn = client.read("/authz/nss/children/"+ns,getDF(Nss.class));
-                if(fn.get(AAFcli.timeout())) {
+                if (fn.get(AAFcli.timeout())) {
                     parent.reportHead(HEADER);
-                    for(Ns ns : fn.value.getNs()) {
+                    for (Ns ns : fn.value.getNs()) {
                         pw().format(List.kformat, ns.getName());
                     }
-                } else if(fn.code()==404) {
+                } else if (fn.code()==404) {
                     ((List)parent).report(null,HEADER,ns);
                     return 200;
                 } else {    

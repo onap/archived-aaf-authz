@@ -44,9 +44,9 @@ public class DirectIntrospectImpl<INTROSPECT> extends FacadeImpl implements Dire
     public Result<INTROSPECT> mappedIntrospect(AuthzTrans trans, String token) {
         Result<INTROSPECT> rti;
          Result<OAuthTokenDAO.Data> rs = service.introspect(trans,token);
-        if(rs.notOK()) {
+        if (rs.notOK()) {
             rti = Result.err(rs);
-        } else if(rs.isEmpty()) {
+        } else if (rs.isEmpty()) {
             rti = Result.err(Result.ERR_NotFound,"No Token %s found",token);
         } else {
             rti = mapper.introspect(rs);

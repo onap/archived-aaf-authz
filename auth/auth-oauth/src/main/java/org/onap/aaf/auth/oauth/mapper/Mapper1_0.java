@@ -78,7 +78,7 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
         err.setText(Vars.convert(holder, text, var));
-        for(String s : var) {
+        for (String s : var) {
             err.getVariables().add(s);
         }
         return err;
@@ -89,46 +89,46 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
         TokenRequest tr = new TokenRequest();
         boolean data = false;
         Map<String, String[]> map = req.getParameterMap();
-        for(Entry<String, String[]> es : map.entrySet()) {
+        for (Entry<String, String[]> es : map.entrySet()) {
             switch(es.getKey()) {
                 case "client_id":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setClientId(es.getValue()[0]);
                         data = true;
                     }
                     break;
                 case "client_secret":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setClientSecret(es.getValue()[0]);
                         data = true;
                     }
                     break;
                 case "username":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setUsername(es.getValue()[0]);
                         data = true;
                     }
                     break;
                 case "password":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setPassword(es.getValue()[0]);
                         data = true;
                     }
                     break;
                 case "scope":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setScope(es.getValue()[0]);
                         data = true;
                     }
                     break;
                 case "grant_type":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setGrantType(es.getValue()[0]);
                         data = true;
                     }
                     break;
                 case "refresh_token":
-                    if(es.getValue().length==1) {
+                    if (es.getValue().length==1) {
                         tr.setRefreshToken(es.getValue()[0]);
                         data = true;
                     }
@@ -158,12 +158,12 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
         OAuthTokenDAO.Data tdd = new OAuthTokenDAO.Data();
         tdd.client_id = tokReq.getClientId(); 
         tdd.user = tokReq.getUsername();
-        if(tokReq.getRefreshToken()!=null) {
+        if (tokReq.getRefreshToken()!=null) {
             tdd.refresh=tokReq.getRefreshToken();
         }
         
-        for(GRANT_TYPE ttt : GRANT_TYPE.values()) {
-            if(ttt.name().equals(tokReq.getGrantType())) {
+        for (GRANT_TYPE ttt : GRANT_TYPE.values()) {
+            if (ttt.name().equals(tokReq.getGrantType())) {
                 hgt.set(ttt);
                 break;
             }
@@ -180,9 +180,9 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
                 break;
         }
         String scopes=tokReq.getScope(); 
-        if(scopes!=null) {
+        if (scopes!=null) {
             Set<String> ss = tdd.scopes(true);
-            for(String s: Split.split(' ', tokReq.getScope())) {
+            for (String s: Split.split(' ', tokReq.getScope())) {
                 ss.add(s);
             }
         }
@@ -193,12 +193,12 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
 
     @Override
     public Result<Token> tokenFromData(Result<Data> rd) {
-        if(rd.notOK()) {
+        if (rd.notOK()) {
             return Result.err(rd);
         }
         Data d = rd.value;
         Token token = new Token();
-        if(OAuthService.TOKEN_TYPE.values().length>d.type) {
+        if (OAuthService.TOKEN_TYPE.values().length>d.type) {
             token.setTokenType(OAuthService.TOKEN_TYPE.values()[d.type].name());
         } else {
             token.setTokenType("Invalid");

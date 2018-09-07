@@ -82,7 +82,7 @@ public class OAuthService {
         };
         try {
             String alt_url = access.getProperty(Config.AAF_ALT_OAUTH2_INTROSPECT_URL,null);
-            if(alt_url!=null) {
+            if (alt_url!=null) {
                 tcf = TokenClientFactory.instance(access);
                 String[] split = Split.split(',', alt_url);
                 int timeout = split.length>1?Integer.parseInt(split[1]):3000;
@@ -101,7 +101,7 @@ public class OAuthService {
     }
 
     public Result<Void> validate(AuthzTrans trans, OCreds creds) {
-        if(directUserPass.validate(creds.username, Type.PASSWORD, creds.password, trans)) {
+        if (directUserPass.validate(creds.username, Type.PASSWORD, creds.password, trans)) {
             return Result.ok();
         } else {
             return Result.err(Result.ERR_Security, "Invalid Credential for ",creds.username);
@@ -121,7 +121,7 @@ public class OAuthService {
     }
     
     private Result<Data> createBearerToken(AuthzTrans trans, OAuthTokenDAO.Data odd) {
-        if(odd.user==null) {
+        if (odd.user==null) {
             odd.user = trans.user();
         }
         odd.id = AAFToken.toToken(UUID.randomUUID());
@@ -134,7 +134,7 @@ public class OAuthService {
     
         try {
             Result<Data> rd = loadToken(trans, odd);
-            if(rd.notOK()) {
+            if (rd.notOK()) {
                 return rd;
             }
         } catch (APIException | CadiException e) {
@@ -145,11 +145,11 @@ public class OAuthService {
     
     private Result<Data> loadToken(AuthzTrans trans, Data odd) throws APIException, CadiException {
         Result<String> rs = permLoader.loadJSONPerms(trans,odd.user,odd.scopes(false));
-        if(rs.isOK()) {
+        if (rs.isOK()) {
             odd.content = rs.value;
             odd.type = TOKEN_TYPE.bearer.ordinal();
             return Result.ok(odd);
-        } else if(rs.status == Result.ERR_NotFound || rs.status==Status.ERR_UserRoleNotFound) {
+        } else if (rs.status == Result.ERR_NotFound || rs.status==Status.ERR_UserRoleNotFound) {
             odd.type = TOKEN_TYPE.bearer.ordinal();
             return Result.ok(odd);
         } else {
@@ -161,28 +161,28 @@ public class OAuthService {
 
     private Result<Data> refreshBearerToken(AuthzTrans trans, Data odd) {
         Result<List<Data>> rld = tokenDAO.readByUser(trans, trans.user());
-        if(rld.notOK()) {
+        if (rld.notOK()) {
             return Result.err(rld);
         }
-        if(rld.isEmpty()) {
+        if (rld.isEmpty()) {
             return Result.err(Result.ERR_NotFound,"Data not Found for %1 %2",trans.user(),odd.refresh==null?"":odd.refresh.toString());
         }
         Data token = null;
-        for(Data d : rld.value) {
-            if(d.refresh.equals(odd.refresh)) {
+        for (Data d : rld.value) {
+            if (d.refresh.equals(odd.refresh)) {
                 token = d;
                 boolean scopesNE = false;
                 Set<String> scopes = odd.scopes(false);
-                if(scopes.size()>0) { // only check if Scopes listed, RFC 6749, Section 6
-                    if(scopesNE=!(scopes.size() == d.scopes(false).size())) {
-                        for(String s : odd.scopes(false)) {
-                            if(!d.scopes(false).contains(s)) {
+                if (scopes.size()>0) { // only check if Scopes listed, RFC 6749, Section 6
+                    if (scopesNE=!(scopes.size() == d.scopes(false).size())) {
+                        for (String s : odd.scopes(false)) {
+                            if (!d.scopes(false).contains(s)) {
                                 scopesNE=true;
                                 break;
                             }
                         }
                     }
-                    if(scopesNE) {
+                    if (scopesNE) {
                         return Result.err(Result.ERR_BadData,"Requested Scopes do not match existing Token");
                     }
                 }
@@ -190,7 +190,7 @@ public class OAuthService {
             }
         }
         
-        if(token==null) {
+        if (token==null) {
             trans.audit().printf("Duplicate Refresh Token (%s) attempted for %s. Possible Replay Attack",odd.refresh.toString(),trans.user());
             return Result.err(Result.ERR_Security,"Invalid Refresh Token");
         } else {
@@ -205,11 +205,11 @@ public class OAuthService {
             token.exp_sec = exp/1000;
             token.req_ip = trans.ip();
             Result<Data> rd = tokenDAO.create(trans, token);
-            if(rd.notOK()) {
+            if (rd.notOK()) {
                 return Result.err(rd);
             }
             Result<Void> rv = tokenDAO.delete(trans, deleteMe,false);
-            if(rv.notOK()) {
+            if (rv.notOK()) {
                 trans.error().log("Unable to delete token", token);
             }
         }
@@ -220,22 +220,22 @@ public class OAuthService {
         Result<List<Data>> rld;
         try {
             UUID uuid = AAFToken.fromToken(token);
-            if(uuid==null) { // not an AAF Token
+            if (uuid==null) { // not an AAF Token
                 // Attempt to get Alternative Token
-                if(altIntrospectClient!=null) {
+                if (altIntrospectClient!=null) {
                      org.onap.aaf.cadi.client.Result<Introspect> rai = altIntrospectClient.introspect(token);
-                     if(rai.isOK()) {
+                     if (rai.isOK()) {
                          Introspect in = rai.value;
-                         if(in.getExp()==null) {
+                         if (in.getExp()==null) {
                             trans.audit().printf("Alt OAuth sent back inactive, empty token: requesting_id,%s,access_token=%s,ip=%s\n",trans.user(),token,trans.ip());
                          }
                          long expires = in.getExp()*1000;
-                         if(in.isActive() && expires>System.currentTimeMillis()) {
+                         if (in.isActive() && expires>System.currentTimeMillis()) {
                             // We have a good Token, modify to be Fully Qualified
                             String fqid = in.getUsername()+altDomain;
                             // read contents
                             rld = tokenDAO.read(trans, token);
-                            if(rld.isOKhasData()) {
+                            if (rld.isOKhasData()) {
                                 Data td = rld.value.get(0);
                                 in.setContent(td.content);
                             } else {
@@ -248,8 +248,8 @@ public class OAuthService {
                                 td.expires = new Date(expires);
                                 td.exp_sec = in.getExp();
                                 Set<String> scopes = td.scopes(true);
-                                if(in.getScope()!=null) {
-                                    for(String s : Split.split(' ', in.getScope())) {
+                                if (in.getScope()!=null) {
+                                    for (String s : Split.split(' ', in.getScope())) {
                                         scopes.add(s);
                                     }
                                 }
@@ -277,13 +277,13 @@ public class OAuthService {
 
     public Result<Data> dbIntrospect(final AuthzTrans trans, final String token) {
         Result<List<Data>> rld = tokenDAO.read(trans, token);
-        if(rld.notOKorIsEmpty()) {
+        if (rld.notOKorIsEmpty()) {
             return Result.err(rld);
         }
         OAuthTokenDAO.Data odd = rld.value.get(0);
         trans.checkpoint(odd.user + ':' + odd.client_id + ", " + odd.id);
-        if(odd.active) {
-            if(odd.expires.before(trans.now())) {
+        if (odd.active) {
+            if (odd.expires.before(trans.now())) {
                 return Result.err(Result.ERR_Policy,"Token %1 has expired",token);
             }
             return Result.ok(rld.value.get(0)); // ok keyed on id/token.
@@ -293,7 +293,7 @@ public class OAuthService {
     }
 
     public void close() {
-        for(DAO<AuthzTrans,?> dao : daos) {
+        for (DAO<AuthzTrans,?> dao : daos) {
             dao.close(NullTrans.singleton());
         }
     }

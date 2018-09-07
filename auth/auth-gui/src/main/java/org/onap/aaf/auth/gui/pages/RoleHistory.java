@@ -165,7 +165,7 @@ public class RoleHistory extends Page {
             final String oDates = trans.get(dates,null);
             
             Cells rv = Cells.EMPTY;
-            if(oName!=null) {
+            if (oName!=null) {
                 
                 try {
                     rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {

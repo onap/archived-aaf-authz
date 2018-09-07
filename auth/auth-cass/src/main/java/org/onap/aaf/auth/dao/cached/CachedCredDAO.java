@@ -57,7 +57,7 @@ public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> 
         };
         
         Result<List<CredDAO.Data>> lurd = get(trans, id, getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_UserNotFound,"No User Cred found");
         }
         return lurd;

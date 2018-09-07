@@ -134,7 +134,7 @@ public class Identities extends AbsData {
         r.reset();
         // These are new, to allow for Thread Safety
         int rec = ti.find(key,r,0);
-        if(rec<0) {
+        if (rec<0) {
             return null;
         }
         r.pos(rec);

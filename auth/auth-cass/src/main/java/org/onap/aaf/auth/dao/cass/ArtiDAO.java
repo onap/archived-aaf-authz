@@ -170,7 +170,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             writeString(os, data.mechid);
             writeString(os, data.machine);
             os.writeInt(data.type.size());
-            for(String s : data.type) {
+            for (String s : data.type) {
                 writeString(os, s);
             }
             writeString(os, data.sponsor);
@@ -181,9 +181,9 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             writeString(os, data.notify);
             os.writeLong(data.expires==null?-1:data.expires.getTime());
             os.writeInt(data.renewDays);
-            if(data.sans!=null) {
+            if (data.sans!=null) {
                 os.writeInt(data.sans.size());
-                for(String s : data.sans) {
+                for (String s : data.sans) {
                     writeString(os, s);
                 }
             } else {
@@ -200,7 +200,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             data.machine = readString(is,buff);
             int size = is.readInt();
             data.type = new HashSet<>(size);
-            for(int i=0;i<size;++i) {
+            for (int i=0;i<size;++i) {
                 data.type.add(readString(is,buff));
             }
             data.sponsor = readString(is,buff);
@@ -214,7 +214,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             data.renewDays = is.readInt();
             size = is.readInt();
             data.sans = new HashSet<>(size);
-            for(int i=0;i<size;++i) {
+            for (int i=0;i<size;++i) {
                 data.sans.add(readString(is,buff));
             }
         }
@@ -222,7 +222,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
 
     private void init(AuthzTrans trans) {
         // Set up sub-DAOs
-        if(historyDAO==null) {
+        if (historyDAO==null) {
             historyDAO = new HistoryDAO(trans,this);
         }
         
@@ -288,7 +288,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
                 ? String.format("%s by %s", override[0], hd.user)
                 : String.format("%sd %s for %s",modified.name(),data.mechid,data.machine);
         // Detail?
-           if(modified==CRUD.delete) {
+           if (modified==CRUD.delete) {
                     try {
                         hd.reconstruct = data.bytify();
                     } catch (IOException e) {
@@ -296,7 +296,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
                     }
                 }
 
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
     }

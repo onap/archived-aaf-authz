@@ -106,10 +106,10 @@ public class HTML5Gen extends HTMLGen {
 
 //    @Override
 //    protected void importCSS(Imports imports) {
-//        if(imports.css.size() == 1) {
+//        if (imports.css.size() == 1) {
 //            cssInline(imports.css.get(0));
 //        } else {
-//            for(String str : imports.css) {
+//            for (String str : imports.css) {
 //                forward.print("<link rel=\"stylesheet\" href=\"");
 //                forward.print(imports.themePath(null));
 //                forward.print(str);

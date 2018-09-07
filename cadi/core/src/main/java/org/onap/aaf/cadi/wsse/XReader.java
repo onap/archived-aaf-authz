@@ -66,7 +66,7 @@ public class XReader {
     }
     
     public boolean hasNext() throws XMLStreamException {
-        if(curr==null) {
+        if (curr==null) {
             curr = parse();
         }
         return curr!=null;
@@ -106,7 +106,7 @@ public class XReader {
         Map<String,String> nss = nsses.isEmpty()?null:nsses.peek();
 
         XEvent rv;
-        if((rv=another)!=null) { // "another" is a tag that may have needed to be created, but not 
+        if ((rv=another)!=null) { // "another" is a tag that may have needed to be created, but not 
                                  // immediately returned.  Save for next parse.  If necessary, this could be turned into
                                  // a FIFO storage, but a single reference is enough for now.
             another = null;      // "rv" is now set for the Event, and will be returned.  Set to Null.
@@ -115,15 +115,15 @@ public class XReader {
             int c=0;
             
             try {
-                while(go && (c=is.read())>=0) {
+                while (go && (c=is.read())>=0) {
                     ++count;
                     switch(c) {
                         case '<': // Tag is opening
                             state|=~BEGIN_DOC; // remove BEGIN_DOC flag, this is possibly an XML Doc
                             XEvent cxe = null;
-                            if(baos.size()>0) { // If there are any characters between tags, we send as Character Event
+                            if (baos.size()>0) { // If there are any characters between tags, we send as Character Event
                                 String chars = baos.toString().trim();  // Trim out WhiteSpace before and after
-                                if(chars.length()>0) { // don't send if Characters were only whitespace
+                                if (chars.length()>0) { // don't send if Characters were only whitespace
                                     cxe = new XEvent.Characters(chars);
                                     baos.reset();
                                     go = false;
@@ -145,7 +145,7 @@ public class XReader {
                                 default:
                                     ns = "";
                             }
-                            if(ns==null)
+                            if (ns==null)
                                 throw new XMLStreamException("Invalid Namespace Prefix at " + count);
                             go = false;
                             switch(t.state) { // based on 
@@ -165,9 +165,9 @@ public class XReader {
                                   break;
                               case START_TAG|END_TAG:            // This tag is both start/end  aka <myTag/>
                                   rv = new XEvent.StartElement(ns,t.name);
-                                  if(last=='/')another = new XEvent.EndElement(ns,t.name);
+                                  if (last=='/')another = new XEvent.EndElement(ns,t.name);
                             }
-                            if(cxe!=null) {     // if there is a Character Event, it actually should go first.  ow.
+                            if (cxe!=null) {     // if there is a Character Event, it actually should go first.  ow.
                                 another = rv;   // Make current Event the "another" or next event, and 
                                 rv = cxe;        // send Character Event now
                             }
@@ -175,12 +175,12 @@ public class XReader {
                         case ' ':
                         case '\t':
                         case '\n':
-                            if((state&BEGIN_DOC)==BEGIN_DOC) { // if Whitespace before doc, just ignore 
+                            if ((state&BEGIN_DOC)==BEGIN_DOC) { // if Whitespace before doc, just ignore 
                                 break;
                             }
                             // fallthrough on purpose
                         default:
-                            if((state&BEGIN_DOC)==BEGIN_DOC) { // if there is any data at the start other than XML Tag, it's not XML
+                            if ((state&BEGIN_DOC)==BEGIN_DOC) { // if there is any data at the start other than XML Tag, it's not XML
                                 throw new XMLStreamException("Parse Error: This is not an XML Doc");
                             }
                             baos.write(c); // save off Characters
@@ -190,7 +190,7 @@ public class XReader {
             } catch (IOException e) {
                 throw new XMLStreamException(e); // all errors parsing will be treated as XMLStreamErrors (like StAX)
             }
-            if(c==-1 && (state&BEGIN_DOC)==BEGIN_DOC) {                // Normally, end of stream is ok, however, we need to know if the 
+            if (c==-1 && (state&BEGIN_DOC)==BEGIN_DOC) {                // Normally, end of stream is ok, however, we need to know if the 
                 throw new XMLStreamException("Premature End of File"); // document isn't an XML document, so we throw exception if it 
             }                                                           // hasn't yet been determined to be an XML Doc
         }
@@ -214,15 +214,15 @@ public class XReader {
         String prefix=null,name=null,value=null;
         baos.reset();
         
-        while(go && (c=is.read())>=0) {
+        while (go && (c=is.read())>=0) {
             ++count;
-            if(quote!=0) { // If we're in a quote, we only end if we hit another quote of the same time, not preceded by \
-                if(c==quote && last!='\\') {
+            if (quote!=0) { // If we're in a quote, we only end if we hit another quote of the same time, not preceded by \
+                if (c==quote && last!='\\') {
                     quote=0;
                 } else {
                     baos.write(c);
                 }
-            } else if((state&COMMENT)==COMMENT) { // similar to Quote is being in a comment
+            } else if ((state&COMMENT)==COMMENT) { // similar to Quote is being in a comment
                 switch(c) {
                     case '-':
                         switch(state) { // XML has a complicated Quote set... <!-- --> ... we keep track if each has been met with flags. 
@@ -244,7 +244,7 @@ public class XReader {
                         }
                         break;
                     case '>': // Tag indicator has been found, do we have all the comment characters in line?
-                        if((state&COMPLETE_COMMENT)==COMPLETE_COMMENT) {
+                        if ((state&COMPLETE_COMMENT)==COMPLETE_COMMENT) {
                             byte ba[] = baos.toByteArray();
                             tag = new Tag(null,null, new String(ba,0,ba.length-2));
                             baos.reset();
@@ -254,7 +254,7 @@ public class XReader {
                         // fall through on purpose
                     default:
                         state&=~(COMMENT_D3|COMMENT_D4);
-                        if((state&IN_COMMENT)!=IN_COMMENT) state&=~IN_COMMENT; // false alarm, it's not actually a comment
+                        if ((state&IN_COMMENT)!=IN_COMMENT) state&=~IN_COMMENT; // false alarm, it's not actually a comment
                         baos.write(c);
                 }
             } else { // Normal Tag Processing loop
@@ -273,7 +273,7 @@ public class XReader {
                         }
                         break;
                     case '!':
-                        if(last=='<') { 
+                        if (last=='<') { 
                             state|=COMMENT|COMMENT_E; // likely a comment, continue processing in Comment Loop
                         }
                         baos.write(c);
@@ -296,15 +296,15 @@ public class XReader {
                     case ' ':
                     case '\t':
                     case '\n': // white space indicates change in internal tag state, ex between name and between attributes
-                        if((state&VALUE)==VALUE) {
+                        if ((state&VALUE)==VALUE) {
                             value = baos.toString();    // we're in VALUE state, add characters to Value
-                        } else if(name==null) {
+                        } else if (name==null) {
                             name = baos.toString();        // we're in Name state (default) add characters to Name
                         }
                         baos.reset();                    // we've assigned chars, reset buffer
-                        if(name!=null) {                // Name is not null, there's a tag in the offing here...
+                        if (name!=null) {                // Name is not null, there's a tag in the offing here...
                             Tag t = new Tag(prefix,name,value);
-                            if(tag==null) {                // Set as the tag to return, if not exists
+                            if (tag==null) {                // Set as the tag to return, if not exists
                                 tag = t;
                             } else {                    // if we already have a Tag, then we'll treat this one as an attribute
                                 tag.add(t);
@@ -314,7 +314,7 @@ public class XReader {
                         break;
                     case '\'':                            // is the character one of two kinds of quote?
                     case '"':
-                        if(last!='\\') {
+                        if (last!='\\') {
                             quote=c;
                             break;
                         }
@@ -327,10 +327,10 @@ public class XReader {
             last = c;
         }
         int type = state&(DOC_TYPE|COMMENT|END_TAG|START_TAG); // get just the Tag states and turn into Type for Tag
-        if(type==0) {
+        if (type==0) {
             type=START_TAG;
         }
-        if(tag!=null) {
+        if (tag!=null) {
             tag.state|=type;    // add the appropriate Tag States
         }
         return tag;
@@ -350,20 +350,20 @@ public class XReader {
      */
     private Map<String, String> getNss(Map<String, String> nss, Tag t) {
         Map<String,String> newnss = null;
-        if(t.attribs!=null) {
-            for(Tag tag : t.attribs) {
-                if("xmlns".equals(tag.prefix)) {
-                    if(newnss==null) {
+        if (t.attribs!=null) {
+            for (Tag tag : t.attribs) {
+                if ("xmlns".equals(tag.prefix)) {
+                    if (newnss==null) {
                         newnss = new HashMap<>();
-                        if(nss!=null)newnss.putAll(nss);
+                        if (nss!=null)newnss.putAll(nss);
                     }
                     newnss.put(tag.name, tag.value);
                 }
             }
         }
         //return newnss==null?(nss==null?new HashMap<String,String>():nss):newnss;
-        if(newnss==null) {
-            if(nss==null) {
+        if (newnss==null) {
+            if (nss==null) {
                 newnss = new HashMap<>();
             } else {
                 newnss = nss;
@@ -399,7 +399,7 @@ public class XReader {
          * @param tag
          */
         public void add(Tag attrib) {
-            if(attribs == null) {
+            if (attribs == null) {
                 attribs = new ArrayList<>();
             }
             attribs.add(attrib);
@@ -407,14 +407,14 @@ public class XReader {
         
         public String toString() {
             StringBuffer sb = new StringBuffer();
-            if(prefix!=null) {
+            if (prefix!=null) {
                 sb.append(prefix);
                 sb.append(':');
             }
             sb.append(name==null?"!!ERROR!!":name);
 
             char quote = ((state&DOC_TYPE)==DOC_TYPE)?'\'':'"';
-            if(value!=null) {
+            if (value!=null) {
                 sb.append('=');
                 sb.append(quote);
                 sb.append(value);

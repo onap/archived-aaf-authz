@@ -92,21 +92,21 @@ public abstract class Cmd {
         this.aafcli = aafcli;
         this.env = aafcli.env;
         this.access = aafcli.access;
-        if(parent!=null) {
+        if (parent!=null) {
             parent.children.add(this);
         }
         children = new ArrayList<>();
         this.params = params;
         this.name = name;
         required=0;
-        for(Param p : params) {
-            if(p.required) {
+        for (Param p : params) {
+            if (p.required) {
                 ++required;
             }
         }
         
         String temp = access.getProperty(Config.AAF_DEFAULT_REALM,null);
-        if(temp!=null && !temp.startsWith("@")) {
+        if (temp!=null && !temp.startsWith("@")) {
             defaultRealm = '@' + temp;
         } else {
             defaultRealm="<Set Default Realm>";
@@ -114,7 +114,7 @@ public abstract class Cmd {
     }
     
     public final int exec(int idx, String ... args) throws CadiException, APIException, LocatorException {
-        if(args.length-idx<required) {
+        if (args.length-idx<required) {
             throw new CadiException(build(new StringBuilder("Too few args: "),null).toString());
         }
         return _exec(idx,args);
@@ -135,7 +135,7 @@ public abstract class Cmd {
 
     protected void api(StringBuilder sb, int indent, HttpMethods meth, String pathInfo, Class<?> cls,boolean head) {
         final String smeth = meth.name();
-        if(head) {
+        if (head) {
             sb.append('\n');
             detailLine(sb,indent,"APIs:");
         }
@@ -145,7 +145,7 @@ public abstract class Cmd {
         sb.append(' ');
         sb.append(pathInfo);
         String cliString = aafcli.typeString(cls,true);
-        if(indent+smeth.length()+pathInfo.length()+cliString.length()+2>80) {
+        if (indent+smeth.length()+pathInfo.length()+cliString.length()+2>80) {
             sb.append(" ...");
             multiChar(sb,indent+3+smeth.length(),' ',0);
         } else { // same line
@@ -156,54 +156,54 @@ public abstract class Cmd {
 
     protected void multiChar(StringBuilder sb, int length, char c, int indent) {
         sb.append('\n');
-        for(int i=0;i<indent;++i)sb.append(' ');
-        for(int i=indent;i<length;++i)sb.append(c);
+        for (int i=0;i<indent;++i)sb.append(' ');
+        for (int i=indent;i<length;++i)sb.append(c);
     }
 
     public StringBuilder build(StringBuilder sb, StringBuilder detail) {
-        if(name!=null) {
+        if (name!=null) {
             sb.append(name);
             sb.append(' ');
         }
         int line = sb.lastIndexOf("\n")+1;
-        if(line<0) {
+        if (line<0) {
             line=0;
         }
         int indent = sb.length()-line;
-        for(Param p : params) {
+        for (Param p : params) {
             sb.append(p.required?'<':'[');
             sb.append(p.tag);
             sb.append(p.required?"> ": "] ");
         }
         
         boolean first = true;
-        for(Cmd child : children) {
-            if(!(child instanceof DeprecatedCMD)) {
-                if(first) {
+        for (Cmd child : children) {
+            if (!(child instanceof DeprecatedCMD)) {
+                if (first) {
                     first = false;
-                } else if(detail==null) {
+                } else if (detail==null) {
                     multiChar(sb,indent,' ',0);
                 } else {
                     // Write parents for Detailed Report
                     Stack<String> stack = new Stack<String>();
-                    for(Cmd c = child.parent;c!=null;c=c.parent) {
-                        if(c.name!=null) {
+                    for (Cmd c = child.parent;c!=null;c=c.parent) {
+                        if (c.name!=null) {
                             stack.push(c.name);
                         }
                     }
-                    if(!stack.isEmpty()) {
+                    if (!stack.isEmpty()) {
                         sb.append("  ");
-                        while(!stack.isEmpty()) {
+                        while (!stack.isEmpty()) {
                             sb.append(stack.pop());
                             sb.append(' ');
                         }
                     }
                 }
                 child.build(sb,detail);
-                if(detail!=null) {
+                if (detail!=null) {
                     child.detailedHelp(4, detail);
                     // If Child wrote something, then add, bracketing by lines
-                    if(detail.length()>0) {
+                    if (detail.length()>0) {
                         multiChar(sb,80,'-',2);
                         sb.append(detail);
                         sb.append('\n');
@@ -223,9 +223,9 @@ public abstract class Cmd {
         StringBuilder sb = new StringBuilder("Failed");
         String desc = future.body();
         int code = future.code();
-        if(desc==null || desc.length()==0) {
+        if (desc==null || desc.length()==0) {
             withCode(sb,code);
-        } else if(desc.startsWith("{")) {
+        } else if (desc.startsWith("{")) {
             StringReader sr = new StringReader(desc);
             try {
                 // Note: 11-18-2013, JonathanGathman.  This rather convoluted Message Structure required by TSS Restful Specs, reflecting "Northbound" practices.
@@ -240,7 +240,7 @@ public abstract class Cmd {
                     String var = vars.get(varCounter);
                     ++varCounter;
                     if (messageBody.indexOf("%" + varCounter) >= 0) {
-                        if((pipe = var.indexOf('|'))>=0) {  // In AAF, we use a PIPE for Choice
+                        if ((pipe = var.indexOf('|'))>=0) {  // In AAF, we use a PIPE for Choice
                             if (aafcli.isTest()) {
                                 String expiresStr = var.substring(pipe);
                                 var = var.replace(expiresStr, "[Placeholder]");
@@ -260,7 +260,7 @@ public abstract class Cmd {
                 withCode(sb,code);
                 sb.append(" (Note: Details cannot be obtained from Error Structure)");
             }
-        } else if(desc.startsWith("<html>")){ // Core Jetty, etc sends HTML for Browsers
+        } else if (desc.startsWith("<html>")){ // Core Jetty, etc sends HTML for Browsers
             withCode(sb,code);
         } else {
             sb.append(" with code ");
@@ -296,11 +296,11 @@ public abstract class Cmd {
     protected void setStartEnd(Request req) {
         // Set Start/End Dates, if exist
         String str;
-        if((str = access.getProperty(Cmd.STARTDATE,null))!=null) {
+        if ((str = access.getProperty(Cmd.STARTDATE,null))!=null) {
             req.setStart(Chrono.timeStamp(Date.valueOf(str)));
         }
         
-        if((str = access.getProperty(Cmd.ENDDATE,null))!=null) {
+        if ((str = access.getProperty(Cmd.ENDDATE,null))!=null) {
             req.setEnd(Chrono.timeStamp(Date.valueOf(str)));
         }
     }
@@ -326,7 +326,7 @@ public abstract class Cmd {
     @SuppressWarnings("unchecked")
     public static <T> RosettaDF<T> getDF(AuthzEnv env, Class<T> cls) throws APIException {
         RosettaDF<T> rdf = (RosettaDF<T>)dfs.get(cls);
-        if(rdf == null) {
+        if (rdf == null) {
             rdf = env.newDataFactory(cls);
             dfs.put(cls, rdf);
         }
@@ -341,11 +341,11 @@ public abstract class Cmd {
             }
         } else {
             pw().println(header);
-            for(int i=0;i<lineLength;++i)pw().print('-');
+            for (int i=0;i<lineLength;++i)pw().print('-');
             pw().println();
                                 
             pw().format(hformat,"Date","Table","User","Memo");
-            for(int i=0;i<lineLength;++i)pw().print('-');
+            for (int i=0;i<lineLength;++i)pw().print('-');
             pw().println();
     
             // Save Server time by Sorting locally
@@ -357,7 +357,7 @@ public abstract class Cmd {
                 }
             });
             
-            for(History.Item item : items) {
+            for (History.Item item : items) {
                 GregorianCalendar gc = item.getTimestamp().toGregorianCalendar();
                 pw().format(hformat,
                     dateFmt.format(gc.getTime()),
@@ -376,8 +376,8 @@ public abstract class Cmd {
     public static String optionsToString(String[] options) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for(String s : options) {
-            if(first) {
+        for (String s : options) {
+            if (first) {
                 first = false;
             } else {
                 sb.append('|');
@@ -398,8 +398,8 @@ public abstract class Cmd {
      * @throws Exception
      */
     public int whichOption(String[] options, String test) throws CadiException {
-        for(int i=0;i<options.length;++i) {
-            if(options[i].equals(test)) {
+        for (int i=0;i<options.length;++i) {
+            if (options[i].equals(test)) {
                 return i;
             }
         }
@@ -416,7 +416,7 @@ public abstract class Cmd {
 
     public<RET> RET same(Retryable<RET> retryable) throws APIException, CadiException, LocatorException {
         // We're storing in AAFCli, because we know it's always the same, and single threaded
-        if(aafcli.prevCall!=null) {
+        if (aafcli.prevCall!=null) {
             retryable.item(aafcli.prevCall.item());
             retryable.lastClient=aafcli.prevCall.lastClient;
         }
@@ -450,9 +450,9 @@ public abstract class Cmd {
         pw().println();
         boolean first = true;
         int i=0;
-        for(String s : str) {
-            if(first) {
-                if(++i>1) {
+        for (String s : str) {
+            if (first) {
+                if (++i>1) {
                     first = false;
                     pw().print("[");
                 }
@@ -461,7 +461,7 @@ public abstract class Cmd {
             }
             pw().print(s);
         }
-        if(!first) {
+        if (!first) {
             pw().print(']');
         }
         pw().println();
@@ -475,25 +475,25 @@ public abstract class Cmd {
     }
 
     public void reportLine() {
-        for(int i=0;i<lineLength;++i)pw().print('-');
+        for (int i=0;i<lineLength;++i)pw().print('-');
         pw().println();
     }
     
     protected void setQueryParamsOn(Rcli<?> rcli) {
         StringBuilder sb=null;
         String force;
-        if((force=aafcli.forceString())!=null) {
+        if ((force=aafcli.forceString())!=null) {
             sb = new StringBuilder("force=");
             sb.append(force);
         }
-        if(aafcli.addRequest()) {
-            if(sb==null) {
+        if (aafcli.addRequest()) {
+            if (sb==null) {
                 sb = new StringBuilder("future=true");
             } else {
                 sb.append("&future=true");
             }
         }
-        if(sb!=null && rcli!=null) {
+        if (sb!=null && rcli!=null) {
             rcli.setQueryParams(sb.toString());
         }
     }
@@ -504,7 +504,7 @@ public abstract class Cmd {
 //     * @return
 //     */
 //    protected String checkForce() {
-//        if(TRUE.equalsIgnoreCase(env.getProperty(FORCE, FALSE))) {
+//        if (TRUE.equalsIgnoreCase(env.getProperty(FORCE, FALSE))) {
 //            env.setProperty(FORCE, FALSE);
 //            return "true";
 //        }
@@ -513,7 +513,7 @@ public abstract class Cmd {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if(parent==null) { // ultimate parent
+        if (parent==null) { // ultimate parent
             build(sb,null);
             return sb.toString();
         } else {
@@ -530,7 +530,7 @@ public abstract class Cmd {
      * @throws OrganizationException 
      */
     public String fullID(String id) {
-        if(id != null) {
+        if (id != null) {
             if (id.indexOf('@') < 0) {
                 id+=defaultRealm;
             } else {

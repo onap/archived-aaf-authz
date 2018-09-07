@@ -119,7 +119,7 @@ public class Factory {
 
     public static KeyPair generateKeyPair(Trans trans) {
         TimeTaken tt;
-        if(trans!=null) {
+        if (trans!=null) {
             tt = trans.start("Generate KeyPair", Env.SUB);
         } else {
             tt = null;
@@ -127,7 +127,7 @@ public class Factory {
         try {
             return keygen.generateKeyPair();
         } finally {
-            if(tt!=null) {
+            if (tt!=null) {
                 tt.done();
             }
         }
@@ -146,7 +146,7 @@ public class Factory {
         base64.encode(bais, baos);
         sb.append(new String(baos.toByteArray()));
         
-        if(sb.charAt(sb.length()-1)!='\n') {
+        if (sb.charAt(sb.length()-1)!='\n') {
             sb.append('\n');
         }
         sb.append("-----END ");
@@ -215,7 +215,7 @@ public class Factory {
     public static Collection<? extends Certificate> toX509Certificate(List<String> x509s) throws CertificateException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            for(String x509 : x509s) {
+            for (String x509 : x509s) {
                 baos.write(x509.getBytes());
             }
         } catch (IOException e) {
@@ -246,16 +246,16 @@ public class Factory {
     }
 
     public static String toString(Trans trans, Certificate cert) throws IOException, CertException {
-        if(trans.debug().isLoggable()) {
+        if (trans.debug().isLoggable()) {
             StringBuilder sb = new StringBuilder("Certificate to String");
-            if(cert instanceof X509Certificate) {
+            if (cert instanceof X509Certificate) {
                 sb.append(" - ");
                 sb.append(((X509Certificate)cert).getSubjectDN());
             }
             trans.debug().log(sb);
         }
         try {
-            if(cert==null) {
+            if (cert==null) {
                 throw new CertException("Certificate not built");
             }
             return textBuilder("CERTIFICATE",cert.getEncoded());
@@ -283,18 +283,18 @@ public class Factory {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String line;
         boolean notStarted = true;
-        while((line=br.readLine())!=null) {
-            if(notStarted) {
-                if(line.startsWith("-----")) {
+        while ((line=br.readLine())!=null) {
+            if (notStarted) {
+                if (line.startsWith("-----")) {
                     notStarted = false;
-                    if(hs!=null) {
+                    if (hs!=null) {
                         hs.set(line);
                     }
                 } else {
                     continue;
                 }
             }
-            if(line.length()>0 &&
+            if (line.length()>0 &&
                !line.startsWith("-----") &&
                line.indexOf(':')<0) {  // Header elements
                 baos.write(line.getBytes());
@@ -310,7 +310,7 @@ public class Factory {
         private String line;
 
         public StripperInputStream(Reader rdr) {
-            if(rdr instanceof BufferedReader) {
+            if (rdr instanceof BufferedReader) {
                 br = (BufferedReader)rdr;
             } else {
                 br = new BufferedReader(rdr);
@@ -330,16 +330,16 @@ public class Factory {
 
         @Override
         public int read() throws IOException {
-            if(line==null || idx>=line.length()) {
-                while((line=br.readLine())!=null) {
-                    if(line.length()>0 &&
+            if (line==null || idx>=line.length()) {
+                while ((line=br.readLine())!=null) {
+                    if (line.length()>0 &&
                        !line.startsWith("-----") &&
                        line.indexOf(':')<0) {  // Header elements
                         break;
                     }
                 }
 
-                if(line==null) {
+                if (line==null) {
                     return -1;
                 }
                 idx = 0;
@@ -352,7 +352,7 @@ public class Factory {
          */
         @Override
         public void close() throws IOException {
-            if(created!=null) {
+            if (created!=null) {
                 created.close();
             }
         }
@@ -379,13 +379,13 @@ public class Factory {
 
         @Override
         public int read() throws IOException {
-            if(duo==null || idx>=duo.length) {
+            if (duo==null || idx>=duo.length) {
                 int read = is.read(trio);
-                if(read==-1) {
+                if (read==-1) {
                     return -1;
                 }
                 duo = Symm.base64.decode(trio);
-                if(duo==null || duo.length==0) {
+                if (duo==null || duo.length==0) {
                     return -1;
                 }
                 idx=0;
@@ -399,7 +399,7 @@ public class Factory {
          */
         @Override
         public void close() throws IOException {
-            if(created!=null) {
+            if (created!=null) {
                 created.close();
             }
         }
@@ -477,7 +477,7 @@ public class Factory {
      */
     public static synchronized Provider getSecurityProvider(String providerType, String[][] params) throws CertException {
         Provider p = Security.getProvider(providerType);
-        if(p!=null) {
+        if (p!=null) {
             switch(providerType) {
                 case "PKCS12":
                     

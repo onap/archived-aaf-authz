@@ -71,15 +71,15 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 
     @Override
     public final boolean handles(Principal principal) {
-        if(preemptiveLur!=null) {
-            if(preemptiveLur.handles(principal)) {
+        if (preemptiveLur!=null) {
+            if (preemptiveLur.handles(principal)) {
                 return true;
             }
         }
         String userName=principal.getName();
-        if(userName!=null) {
-            for(String s : supports) {
-                if(userName.endsWith(s))
+        if (userName!=null) {
+            for (String s : supports) {
+                if (userName.endsWith(s))
                     return true;
             }
         }
@@ -91,25 +91,25 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     
     // This is where you build AAF CLient Code.  Answer the question "Is principal "bait" in the "pond"
     public boolean fish(Principal bait, Permission ... pond) {
-        if(preemptiveLur!=null && preemptiveLur.handles(bait)) {
+        if (preemptiveLur!=null && preemptiveLur.handles(bait)) {
             return preemptiveLur.fish(bait, pond);
         } else {
-            if(pond==null) {
+            if (pond==null) {
                 return false;
             }
-            if(isDebug(bait)) {
+            if (isDebug(bait)) {
                 boolean rv = false;
                 StringBuilder sb = new StringBuilder("Log for ");
                 sb.append(bait);
-                if(handles(bait)) {
+                if (handles(bait)) {
                     User<PERM> user = getUser(bait);
-                    if(user==null) {
+                    if (user==null) {
                         sb.append("\n\tUser is not in Cache");
                     } else {
-                        if(user.noPerms()) {
+                        if (user.noPerms()) {
                             sb.append("\n\tUser has no Perms");
                         }
-                        if(user.permExpired()) {
+                        if (user.permExpired()) {
                             sb.append("\n\tUser's perm expired [");
                             sb.append(new Date(user.permExpires()));
                             sb.append(']');
@@ -119,15 +119,15 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
                             sb.append(']');
                         }
                     }
-                    if(user==null || user.permsUnloaded() || user.permExpired()) {
+                    if (user==null || user.permsUnloaded() || user.permExpired()) {
                         user = loadUser(bait);
                         sb.append("\n\tloadUser called");
                     }
                     for (Permission p : pond) {
-                        if(user==null) {
+                        if (user==null) {
                             sb.append("\n\tUser was not Loaded");
                             break;
-                        } else if(user.contains(p)) {
+                        } else if (user.contains(p)) {
                             sb.append("\n\tUser contains ");
                             sb.append(p.getKey());
                             rv = true;
@@ -136,7 +136,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
                             sb.append(p.getKey());
                             List<Permission> perms = new ArrayList<>();
                             user.copyPermsTo(perms);
-                            for(Permission perm : perms) {
+                            for (Permission perm : perms) {
                                 sb.append("\n\t\t");
                                 sb.append(perm.getKey());
                             }
@@ -151,16 +151,16 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
                 return rv;
             } else {
                 boolean rv = false;
-                if(handles(bait)) {
+                if (handles(bait)) {
                     User<PERM> user = getUser(bait);
-                    if(user==null || user.permsUnloaded() || user.permExpired()) {
+                    if (user==null || user.permsUnloaded() || user.permExpired()) {
                         user = loadUser(bait);
                     }
-                    if(user==null) {
+                    if (user==null) {
                         return false;
                     } else {
-                        for(Permission p : pond) {
-                            if(rv=user.contains(p)) {
+                        for (Permission p : pond) {
+                            if (rv=user.contains(p)) {
                                 break;
                             }
                         }
@@ -172,21 +172,21 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     }
 
     public void fishAll(Principal bait, List<Permission> perms) {
-        if(preemptiveLur!=null && preemptiveLur.handles(bait)) {
+        if (preemptiveLur!=null && preemptiveLur.handles(bait)) {
             preemptiveLur.fishAll(bait, perms);
         } else {
-            if(isDebug(bait)) {
+            if (isDebug(bait)) {
                 StringBuilder sb = new StringBuilder("Log for ");
                 sb.append(bait);
-                if(handles(bait)) {
+                if (handles(bait)) {
                     User<PERM> user = getUser(bait);
-                    if(user==null) {
+                    if (user==null) {
                         sb.append("\n\tUser is not in Cache");
                     } else {
-                        if(user.noPerms()) {
+                        if (user.noPerms()) {
                             sb.append("\n\tUser has no Perms");
                         }
-                        if(user.permExpired()) {
+                        if (user.permExpired()) {
                             sb.append("\n\tUser's perm expired [");
                             sb.append(new Date(user.permExpires()));
                             sb.append(']');
@@ -196,16 +196,16 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
                             sb.append(']');
                         }
                     }
-                    if(user==null || user.permsUnloaded() || user.permExpired()) {
+                    if (user==null || user.permsUnloaded() || user.permExpired()) {
                         user = loadUser(bait);
                         sb.append("\n\tloadUser called");
                     }
-                    if(user==null) {
+                    if (user==null) {
                         sb.append("\n\tUser was not Loaded");
                     } else {
                         sb.append("\n\tCopying Perms ");
                         user.copyPermsTo(perms);
-                        for(Permission p : perms) {
+                        for (Permission p : perms) {
                             sb.append("\n\t\t");
                             sb.append(p.getKey());
                         }
@@ -217,12 +217,12 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
                 }
                 aaf.access.log(Level.INFO, sb);
             } else {
-                if(handles(bait)) {
+                if (handles(bait)) {
                     User<PERM> user = getUser(bait);
-                    if(user==null || user.permsUnloaded() || user.permExpired()) {
+                    if (user==null || user.permsUnloaded() || user.permExpired()) {
                         user = loadUser(bait);
                     }
-                    if(user!=null) {
+                    if (user!=null) {
                         user.copyPermsTo(perms);
                     }
                 }
@@ -236,13 +236,13 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     }
 
     private boolean isDebug(Principal p) {
-        if(debug!=null) {
-            if(debug.length==1 && "all".equals(debug[0])) {
+        if (debug!=null) {
+            if (debug.length==1 && "all".equals(debug[0])) {
                 return true;
             }
             String name = p.getName();
-            for(String s : debug) {
-                if(s.equals(name)) {
+            for (String s : debug) {
+                if (s.equals(name)) {
                     return true;
                 }
             }
@@ -260,15 +260,15 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
      */
     public<A> void fishOneOf(Principal princ, A obj, String type, String instance, List<Action<A>> actions) {
         User<PERM> user = getUser(princ);
-        if(user==null || user.permsUnloaded() || user.permExpired()) {
+        if (user==null || user.permsUnloaded() || user.permExpired()) {
             user = loadUser(princ);
         }
-        if(user!=null) {
+        if (user!=null) {
             ReuseAAFPermission perm = new ReuseAAFPermission(type,instance);
-            for(Action<A> action : actions) {
+            for (Action<A> action : actions) {
                 perm.setAction(action.getName());
-                if(user.contains(perm)) {
-                    if(action.exec(obj))return;
+                if (user.contains(perm)) {
+                    if (action.exec(obj))return;
                 }
             }
         }

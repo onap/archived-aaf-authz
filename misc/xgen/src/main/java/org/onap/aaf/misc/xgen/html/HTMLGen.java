@@ -69,14 +69,14 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
 
     public HTMLGen imports(Imports imports) {
         //this.imports=imports;
-        for(String str : imports.css) {
+        for (String str : imports.css) {
             forward.print("<link rel=\"stylesheet\" href=\"");
             forward.print(imports.themePath(null));
             forward.print(str);
             forward.println("\">");
         }
 
-        for(String str : imports.js) {
+        for (String str : imports.js) {
             forward.print("<script type=\"text/javascript\" src=\"");
             forward.print(imports.themePath(null));
             forward.print(str);
@@ -87,8 +87,8 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
     
     public HTMLGen jsVars(String ... attrs) {
         forward.println("<script type=text/javascript>");
-        if(attrs!=null) {
-            for(int i=0; i<attrs.length;++i) {
+        if (attrs!=null) {
+            for (int i=0; i<attrs.length;++i) {
                 forward.append(' ');
                 String[] split = attrs[i].split("=",2);
                 switch(split.length) {
@@ -121,7 +121,7 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
         forward.append(tag);
         addAttrs(attrs);
         forward.append('>');
-        if(pretty) {
+        if (pretty) {
             forward.println();
         }
         return this;
@@ -129,7 +129,7 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
 
     public Mark divID(String ... attrs) {
         Mark div;
-        if(attrs.length>0) {
+        if (attrs.length>0) {
             div = new Mark(attrs[0]);
             attrs[0]="id="+attrs[0];
         } else {
@@ -168,7 +168,7 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
         nattrs[0]="id="+id;
         nattrs[1]="name="+id;
         System.arraycopy(attrs, 0, nattrs, 2, attrs.length);
-        if(required) {
+        if (required) {
             nattrs[nattrs.length-1]="required";
         }
         incr(mtd);
@@ -180,7 +180,7 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
     //  Common tags that do not have standard endings.  These are here to help people who don't know to pick directive  
     public HTMLGen br() {
         forward.append("<br>");
-        if(pretty) {
+        if (pretty) {
             forward.println();
         }
         return this;
@@ -188,10 +188,10 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
 
     public HTMLGen p(String ... text) {
         forward.append("<p>");
-        for(String s : text) {
+        for (String s : text) {
             forward.append(s);
         }
-        if(pretty) {
+        if (pretty) {
             forward.println();
         }
         return this;
@@ -199,7 +199,7 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
 
     public HTMLGen hr() {
         forward.append("<hr>");
-        if(pretty) {
+        if (pretty) {
             forward.println();
         }
         return this;
@@ -221,7 +221,7 @@ public abstract class HTMLGen extends XGen<HTMLGen> {
 //            try {
 //                forward.print("<style>");
 //                prettyln(forward);
-//                while((line=br.readLine())!=null) {
+//                while ((line=br.readLine())!=null) {
 //                    forward.print((pretty?line:line.trim()));
 //                    prettyln(forward);
 //                }            

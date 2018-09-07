@@ -174,7 +174,7 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
 
     public Result<List<Data>> readByYYYYMM(AuthzTrans trans, int yyyymm) {
         Result<ResultSet> rs = readByYRMN.exec(trans, "yr_mon", yyyymm);
-        if(rs.notOK()) {
+        if (rs.notOK()) {
             return Result.err(rs);
         }
         return extract(defLoader,rs.value,null,dflt);
@@ -186,22 +186,22 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
      * month -  the month in a year ...values 1 - 12
      **/
     public Result<List<Data>> readByUser(AuthzTrans trans, String user, int ... yyyymm) {
-        if(yyyymm.length==0) {
+        if (yyyymm.length==0) {
             return Result.err(Status.ERR_BadData, "No or invalid yyyymm specified");
         }
         Result<ResultSet> rs = readByUser.exec(trans, "user", user);
-        if(rs.notOK()) {
+        if (rs.notOK()) {
             return Result.err(rs);
         }
         return extract(defLoader,rs.value,null,yyyymm.length>0?new YYYYMM(yyyymm):dflt);
     }
     
     public Result<List<Data>> readBySubject(AuthzTrans trans, String subject, String target, int ... yyyymm) {
-        if(yyyymm.length==0) {
+        if (yyyymm.length==0) {
             return Result.err(Status.ERR_BadData, "No or invalid yyyymm specified");
         }
         Result<ResultSet> rs = readBySubject.exec(trans, "subject", subject, target);
-        if(rs.notOK()) {
+        if (rs.notOK()) {
             return Result.err(rs);
         }
         return extract(defLoader,rs.value,null,yyyymm.length>0?new YYYYMM(yyyymm):dflt);
@@ -215,8 +215,8 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
         @Override
         public boolean ok(Data data) {
             int dym = data.yr_mon;
-            for(int ym:yyyymm) {
-                if(dym==ym) {
+            for (int ym:yyyymm) {
+                if (dym==ym) {
                     return true;
                 }
             }

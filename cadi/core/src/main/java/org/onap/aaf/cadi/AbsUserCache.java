@@ -76,10 +76,10 @@ public abstract class AbsUserCache<PERM extends Permission> {
         userMap = new ConcurrentHashMap<>();
 
         
-        if(cleanInterval>0) {
+        if (cleanInterval>0) {
             cleanInterval = Math.max(MIN_INTERVAL, cleanInterval);
             synchronized(AbsUserCache.class) { // Lazy instantiate.. in case there is no cleanup needed
-                if(timer==null) {
+                if (timer==null) {
                     timer = new Timer("CADI Cleanup Timer",true);
                 }
                 
@@ -96,14 +96,14 @@ public abstract class AbsUserCache<PERM extends Permission> {
         missEncrypt = cache.missEncrypt;
         
         synchronized(AbsUserCache.class) {
-            if(cache.clean!=null && cache.clean.lur==null && this instanceof CachingLur) {
+            if (cache.clean!=null && cache.clean.lur==null && this instanceof CachingLur) {
                 cache.clean.lur=(CachingLur<PERM>)this;
             }
         }
     }
 
     protected void setLur(CachingLur<PERM> lur) {
-        if(clean!=null)clean.lur = lur;
+        if (clean!=null)clean.lur = lur;
         
     }
     
@@ -111,11 +111,11 @@ public abstract class AbsUserCache<PERM extends Permission> {
         Principal p = user.principal;
         String key;
         try {
-            if(p instanceof GetCred) {
+            if (p instanceof GetCred) {
                 key = missKey(p.getName(), ((GetCred)p).getCred());
             } else {
                 byte[] cred;
-                if((cred=user.getCred())==null) {
+                if ((cred=user.getCred())==null) {
                     key = user.name + NO_CRED;
                 } else {
                     key = missKey(user.name,cred);
@@ -152,7 +152,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
             return false;
         }
         Miss miss = missMap.get(mkey);
-        if(miss==null) {
+        if (miss==null) {
             missMap.put(mkey, new Miss(bs,clean==null?MIN_INTERVAL:clean.timeInterval,key));
             return true;
         }
@@ -165,7 +165,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
 
     protected User<PERM> getUser(Principal principal) {
         String key;
-        if(principal instanceof GetCred) {
+        if (principal instanceof GetCred) {
             GetCred gc = (GetCred)principal;
             try {
                 key = missKey(principal.getName(), gc.getCred());
@@ -177,7 +177,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
             key = principal.getName()+NO_CRED;
         }
         User<PERM> u = userMap.get(key);
-        if(u!=null) {
+        if (u!=null) {
             u.incCount();
         }
         return u;
@@ -197,8 +197,8 @@ public abstract class AbsUserCache<PERM extends Permission> {
             return null;
         }
         u = userMap.get(key);
-        if(u!=null) {
-            if(u.permExpired()) {
+        if (u!=null) {
+            if (u.permExpired()) {
                 userMap.remove(key);
                 u=null;
             } else {
@@ -223,7 +223,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
      */
     public void remove(String user) {
         Object o = userMap.remove(user);
-        if(o!=null) {
+        if (o!=null) {
             access.log(Level.INFO, user,"removed from Client Cache by Request");
         }
     }
@@ -237,7 +237,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
     
     public final List<DumpInfo> dumpInfo() {
         List<DumpInfo> rv = new ArrayList<>();
-        for(User<PERM> user : userMap.values()) {
+        for (User<PERM> user : userMap.values()) {
             rv.add(new DumpInfo(user));
         }
         return rv;
@@ -256,7 +256,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
      * If overloading in Derived class, be sure to call "super.destroy()"
      */
     public void destroy() {
-        if(timer!=null) {
+        if (timer!=null) {
             timer.purge();
             timer.cancel();
         }
@@ -318,13 +318,13 @@ public abstract class AbsUserCache<PERM extends Permission> {
                 ArrayList<User<PERM>> al = new ArrayList<>(userMap.values().size());
                 al.addAll(0, userMap.values());
                 long now = System.currentTimeMillis() + advance;
-                for(User<PERM> user : al) {
+                for (User<PERM> user : al) {
                     ++total;
-                        if(user.count>usageTriggerCount) {
+                        if (user.count>usageTriggerCount) {
                             boolean touched = false, removed=false;
-                            if(user.principal instanceof CachedPrincipal) {
+                            if (user.principal instanceof CachedPrincipal) {
                                 CachedPrincipal cp = (CachedPrincipal)user.principal;
-                                if(cp.expires() < now) {
+                                if (cp.expires() < now) {
                                     switch(cp.revalidate(null)) {
                                         case INACCESSIBLE:
                                             access.log(Level.AUDIT, "AAF Inaccessible.  Keeping credentials");
@@ -343,20 +343,20 @@ public abstract class AbsUserCache<PERM extends Permission> {
                                 }
                             }
                         
-                            if(!removed && lur!=null && user.permExpires<= now ) {
-                                if(lur.reload(user).equals(Resp.REVALIDATED)) {
+                            if (!removed && lur!=null && user.permExpires<= now ) {
+                                if (lur.reload(user).equals(Resp.REVALIDATED)) {
                                     user.renewPerm();
                                     access.log(Level.DEBUG, "Reloaded Perms for",user);
                                     touched = true;
                                 }
                             }
                             user.resetCount();
-                            if(touched) {
+                            if (touched) {
                                 ++renewed;
                             }
     
                         } else {
-                            if(user.permExpired()) {
+                            if (user.permExpired()) {
                                 remove(user);
                                 ++count;
                             }
@@ -366,14 +366,14 @@ public abstract class AbsUserCache<PERM extends Permission> {
                 // Clean out Misses
                 int missTotal = missMap.keySet().size();
                 int miss = 0;
-                if(missTotal>0) {
+                if (missTotal>0) {
                     ArrayList<String> keys = new ArrayList<>(missTotal);
                     keys.addAll(missMap.keySet());
-                    for(String key : keys) {
+                    for (String key : keys) {
                         Miss m = missMap.get(key);
-                        if(m!=null) {
+                        if (m!=null) {
                             long timeLeft = m.timestamp - System.currentTimeMillis();
-                            if(timeLeft<0) {
+                            if (timeLeft<0) {
                                 synchronized(missMap) {
                                     missMap.remove(key);
                                 }
@@ -386,14 +386,14 @@ public abstract class AbsUserCache<PERM extends Permission> {
                     }
                 }
                 
-                if(count+renewed+miss>0) {
+                if (count+renewed+miss>0) {
                     access.log(Level.INFO, (lur==null?"Cache":lur.getClass().getSimpleName()), "removed",count,
                         "and renewed",renewed,"expired Permissions out of", total,"and removed", miss, "password misses out of",missTotal);
                 }
     
                 // If High (total) is reached during this period, increase the number of expired services removed for next time.
                 // There's no point doing it again here, as there should have been cleaned items.
-                if(total>high) {
+                if (total>high) {
                     // advance cleanup by 10%, without getting greater than timeInterval.
                     advance = Math.min(timeInterval, advance+(timeInterval/10));
                 } else {
@@ -432,10 +432,10 @@ public abstract class AbsUserCache<PERM extends Permission> {
         
         public synchronized boolean mayContinue() {
             long ts = System.currentTimeMillis(); 
-            if(ts>timestamp) {
+            if (ts>timestamp) {
                 tries = 0;
                 timestamp = ts + timetolive;
-            } else if(MAX_TRIES <= ++tries) {
+            } else if (MAX_TRIES <= ++tries) {
                 return false;
             }
             return true;

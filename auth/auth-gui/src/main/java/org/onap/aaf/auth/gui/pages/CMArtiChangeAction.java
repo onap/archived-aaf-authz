@@ -77,34 +77,34 @@ trans.info().log("Step 1");
                             final String machine = trans.get(sMachine,null);
                             final String ca = trans.get(sCA, null);
                             final String sans = ((String)trans.get(sSans,null));
-                            if(sans!=null) {
-                                for(String s: Split.splitTrim(',', sans)) {
+                            if (sans!=null) {
+                                for (String s: Split.splitTrim(',', sans)) {
                                     arti.getSans().add(s);
                                 }
                             }
                             // Disallow IP entries, except by special Permission
-                            if(!trans.fish(getPerm(ca,"ip"))) {
+                            if (!trans.fish(getPerm(ca,"ip"))) {
                                 boolean ok=true;
-                                if(IPValidator.ip(machine)) {
+                                if (IPValidator.ip(machine)) {
                                     ok=false;
                                 }
-                                if(ok) {
-                                    for(String s: arti.getSans()) {
-                                        if(IPValidator.ip(s)) {
+                                if (ok) {
+                                    for (String s: arti.getSans()) {
+                                        if (IPValidator.ip(s)) {
                                             ok=false;
                                             break;
                                         }
                                     }
                                 }
-                                if(!ok) {
+                                if (!ok) {
                                     hgen.p("Policy Failure: IPs in certificates are only allowed by Exception.");
                                     return;
                                 }
                             }
                             
                             // Disallow Domain based Definitions without exception
-                            if(machine.startsWith("*")) { // Domain set
-                                if(!trans.fish(getPerm(ca, "domain"))) {
+                            if (machine.startsWith("*")) { // Domain set
+                                if (!trans.fish(getPerm(ca, "domain"))) {
                                     hgen.p("Policy Failure: Domain Artifact Declarations are only allowed by Exception.");
                                     return;
                                 }
@@ -119,8 +119,8 @@ trans.info().log("Step 1");
                             arti.setRenewDays(Integer.parseInt((String)trans.get(sRenewal, null)));
                             arti.setNotification((String)trans.get(sNotify, null));
                             String[] checkbox = trans.get(sType,null);
-                            for(int i=0;i<CMArtiChangeForm.types.length;++i) {
-                                if("on".equals(checkbox[i])) {
+                            for (int i=0;i<CMArtiChangeForm.types.length;++i) {
+                                if ("on".equals(checkbox[i])) {
                                     arti.getType().add(CMArtiChangeForm.types[i]);
                                 }
                             }
@@ -144,14 +144,14 @@ trans.info().log("Step 1");
                                                 case CMArtiChangeForm.CREATE:
                                                     Future<Artifacts> fc;
                                                     rv = fc = client.create("/cert/artifacts", gui.artifactsDF, artifacts);
-                                                    if(fc.get(AAFcli.timeout())) {
+                                                    if (fc.get(AAFcli.timeout())) {
                                                         hgen.p("Created Artifact " + arti.getMechid() + " on " + arti.getMachine());
                                                         ok.set(true);
                                                     }
                                                     break;
                                                 case CMArtiChangeForm.UPDATE:
                                                     Future<Artifacts> fu = client.update("/cert/artifacts", gui.artifactsDF, artifacts);
-                                                    if((rv=fu).get(AAFcli.timeout())) {
+                                                    if ((rv=fu).get(AAFcli.timeout())) {
                                                         hgen.p("Artifact " + arti.getMechid() + " on " + arti.getMachine() + " is updated");
                                                         ok.set(true);
                                                     }
@@ -159,12 +159,12 @@ trans.info().log("Step 1");
                                                 case CMArtiChangeForm.COPY:
                                                     Future<Artifacts> future = client.read("/cert/artifacts/"+arti.getMechid()+'/'+arti.getMachine(), gui.artifactsDF);
                                                     rv = future;
-                                                    if(future.get(AAFcli.timeout())) {
-                                                        for(Artifact a : future.value.getArtifact()) { // only one, because these two are key
-                                                            for(String newMachine :Split.split(',', trans.get(sOther, ""))) {
+                                                    if (future.get(AAFcli.timeout())) {
+                                                        for (Artifact a : future.value.getArtifact()) { // only one, because these two are key
+                                                            for (String newMachine :Split.split(',', trans.get(sOther, ""))) {
                                                                 a.setMachine(newMachine);
                                                                 Future<Artifacts> fup = client.update("/cert/artifacts", gui.artifactsDF, future.value);
-                                                                if(fup.get(AAFcli.timeout())) {
+                                                                if (fup.get(AAFcli.timeout())) {
                                                                     hgen.p("Copied to " + newMachine);
                                                                     ok.set(true);
                                                                 }
@@ -175,7 +175,7 @@ trans.info().log("Step 1");
                                                 case CMArtiChangeForm.DELETE:
                                                     Future<Void> fv;
                                                     rv = fv = client.delete("/cert/artifacts/"+arti.getMechid()+"/"+arti.getMachine(),"application/json");
-                                                    if(fv.get(AAFcli.timeout())) {
+                                                    if (fv.get(AAFcli.timeout())) {
                                                         hgen.p("Deleted " + arti.getMechid() + " on " + arti.getMachine());
                                                         ok.set(true);
                                                         deleted.set(true);
@@ -185,11 +185,11 @@ trans.info().log("Step 1");
                                             return rv;
                                         }
                                     });
-                                    if(!ok.get()) {
-                                        if(f==null) {
+                                    if (!ok.get()) {
+                                        if (f==null) {
                                             hgen.p("Unknown Command");
                                         } else {
-                                            if(f.body().contains("%")) {
+                                            if (f.body().contains("%")) {
                                                 Error err = gui.getDF(Error.class).newData().in(TYPE.JSON).load(f.body()).asObject();
                                                 hgen.p(Vars.convert(err.getText(),err.getVariables()));
                                             } else {

@@ -49,7 +49,7 @@ public class TokenPerm extends Persisting<Introspect>{
     public TokenPerm(Persist<Introspect,?> p, RosettaDF<Perms> permsDF, Introspect ti, byte[] hash, Path path) throws APIException {
         super(p,ti,ti.getExp(),hash,path); // ti.getExp() is seconds after Jan 1, 1970 )
         this.introspect = ti;
-        if(ti.getContent()==null || ti.getContent().length()==0) {
+        if (ti.getContent()==null || ti.getContent().length()==0) {
             perms = NULL_PERMS;
         } else {
             LoadPermissions lp;
@@ -96,7 +96,7 @@ public class TokenPerm extends Persisting<Introspect>{
             InJson ij = new InJson();
             Parsed<State> pd =  ij.newParsed();
             boolean inPerms = false, inPerm = false;
-            while((pd = ij.parse(r,pd.reuse())).valid()) {
+            while ((pd = ij.parse(r,pd.reuse())).valid()) {
                 switch(pd.event) {
                     case Parse.START_DOC:
                         perms = new ArrayList<>();
@@ -105,22 +105,22 @@ public class TokenPerm extends Persisting<Introspect>{
                         inPerms = "perm".equals(pd.name);
                         break;
                     case '{':
-                        if(inPerms) {
+                        if (inPerms) {
                             inPerm=true;
                             pi.clear();
                         }
                         break;
                     case ',':
-                        if(inPerm) {
+                        if (inPerm) {
                             pi.eval(pd);
                         }
                         break;
                     case '}':
-                        if(inPerms) {
-                            if(inPerm) {
+                        if (inPerms) {
+                            if (inPerm) {
                                 pi.eval(pd);
                                 AAFPermission perm = pi.create();
-                                if(perm!=null) {
+                                if (perm!=null) {
                                     perms.add(perm);
                                 }
                             }
@@ -128,7 +128,7 @@ public class TokenPerm extends Persisting<Introspect>{
                         }
                         break;
                     case Parse.END_ARRAY:
-                        if(inPerms) {
+                        if (inPerms) {
                             inPerms=false;
                         }
                         break;
@@ -146,7 +146,7 @@ public class TokenPerm extends Persisting<Introspect>{
             ns=type=instance=action=null;
         }
         public void eval(Parsed<State> pd) {
-            if(pd.hasName()) {
+            if (pd.hasName()) {
                 switch(pd.name) {
                     case "ns":
                         ns=pd.sb.toString();
@@ -164,7 +164,7 @@ public class TokenPerm extends Persisting<Introspect>{
             }
         }
         public AAFPermission create() {
-            if(type!=null && instance!=null && action !=null) {
+            if (type!=null && instance!=null && action !=null) {
                 return new AAFPermission(ns,type, instance, action);
             } else {
                 return null;

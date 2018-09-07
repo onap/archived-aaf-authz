@@ -47,8 +47,8 @@ public class SingleEndpointLocator implements Locator<URI> {
 
     @Override
     public boolean hasItems() {
-        if(noRetryUntil!=null) {
-            if(new Date().after(noRetryUntil)) {
+        if (noRetryUntil!=null) {
+            if (new Date().after(noRetryUntil)) {
                 noRetryUntil = null;
             } else {
                 return false;

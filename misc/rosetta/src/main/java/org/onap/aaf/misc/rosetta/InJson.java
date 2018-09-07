@@ -32,7 +32,7 @@ public class InJson implements Parse<Reader, State> {
     public Parsed<State> parse(Reader r, Parsed<State> parsed) throws ParseException {
         // First things first, if there's a "leftover" event, process that immediately
         State state = (State)parsed.state;
-        if(state.unsent > 0) {
+        if (state.unsent > 0) {
             parsed.event = state.unsent;
             state.unsent = 0;
             return parsed;
@@ -45,13 +45,13 @@ public class InJson implements Parse<Reader, State> {
         boolean go = true;
         try {
             // Gather data from Reader, looking for special characters when not in Quotes
-            while(go && (ch=r.read())>=0) {
-                if(state.braces>=0 || ch==Parse.START_OBJ) { // ignore garbage/whitespace before content
+            while (go && (ch=r.read())>=0) {
+                if (state.braces>=0 || ch==Parse.START_OBJ) { // ignore garbage/whitespace before content
                     c=(char)ch;
                     // Character is a quote.  
-                    if(c=='"') {
-                        if(inQuotes) {
-                            if(escaped) {  // if escaped Quote, add to data.
+                    if (c=='"') {
+                        if (inQuotes) {
+                            if (escaped) {  // if escaped Quote, add to data.
                                 sb.append(c);
                                 escaped = false;
                             } else {
@@ -62,9 +62,9 @@ public class InJson implements Parse<Reader, State> {
                             inQuotes = true;
                         }
                     } else { // Not a Quote
-                        if(inQuotes) {
-                            if(c=='\\') {
-                                if(escaped) {
+                        if (inQuotes) {
+                            if (c=='\\') {
+                                if (escaped) {
                                     sb.append("\\\\");
                                     escaped = false;
                                 } else {
@@ -80,7 +80,7 @@ public class InJson implements Parse<Reader, State> {
                                     parsed.isString = false;
                                     break;
                                 case Parse.START_OBJ:
-                                    if(state.braces++ == 0) {
+                                    if (state.braces++ == 0) {
                                         parsed.event = START_DOC;
                                         state.unsent = c;
                                     } else {
@@ -89,7 +89,7 @@ public class InJson implements Parse<Reader, State> {
                                     go = false;
                                     break;
                                 case Parse.END_OBJ:
-                                    if(--state.braces == 0) {
+                                    if (--state.braces == 0) {
                                         parsed.event = c;
                                         state.unsent = END_DOC;
                                     } else {
@@ -99,7 +99,7 @@ public class InJson implements Parse<Reader, State> {
                                     break;
                                 // These three end the data gathering, and send it along with the event that is ending the data gathering
                                 case Parse.NEXT:
-                                    if(parsed.name.startsWith("__")) {
+                                    if (parsed.name.startsWith("__")) {
                                         parsed.event = Parse.ATTRIB;
                                         parsed.name = parsed.name.substring(2);
                                     } else {

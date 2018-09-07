@@ -60,15 +60,15 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
                     request.getUserPrincipal());
             
             String perm = request.getParameter("PERM");
-            if(perm!=null) {
-                if(request.isUserInRole(perm)) {
-                    if(perm.indexOf('|')<0) { 
+            if (perm!=null) {
+                if (request.isUserInRole(perm)) {
+                    if (perm.indexOf('|')<0) { 
                         res.getOutputStream().println("\nCongrats!, You are in Role " + perm);
                     } else { 
                         res.getOutputStream().println("\nCongrats!, You have Permission " + perm);
                     }
                 } else {
-                    if(perm.indexOf('|')<0) { 
+                    if (perm.indexOf('|')<0) { 
                         res.getOutputStream().println("\nSorry, you are NOT in Role " + perm);
                     } else {
                         res.getOutputStream().println("\nSorry, you do NOT have Permission " + perm);
@@ -78,12 +78,12 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
             
             // You can get the working AAFCon from Trans
             AAFCon<?> aafcon = AAFCon.obtain(req);
-            if(aafcon!=null) {
+            if (aafcon!=null) {
                 try {
                     res.getOutputStream().println("----- Perms JSON from direct call -----");
                     final Principal up = request.getUserPrincipal();
                     TaggedPrincipal tp;
-                    if(up instanceof TaggedPrincipal) {
+                    if (up instanceof TaggedPrincipal) {
                         tp = (TaggedPrincipal)up;
                     } else {
                         tp = new TaggedPrincipal() {
@@ -101,7 +101,7 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
                     // This call will be "as the user calling", but only if permission is set to trust.
 //                    Future<String> future = aafcon.clientAs("2.0",tp).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
                     Future<String> future = aafcon.client("2.0").read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
-                    if(future.get(4000 /* timeout */)) {
+                    if (future.get(4000 /* timeout */)) {
                         res.getOutputStream().print(future.value);
                     } else {
                         System.err.println(future.code() + ", " + future.body());

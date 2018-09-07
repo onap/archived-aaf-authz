@@ -74,7 +74,7 @@ public class DirectOAuthTAF implements HttpTaf {
         tkMgr = TokenMgr.getInstance(access,"dbToken","dbIntrospect");
         String alt_url = access.getProperty(Config.AAF_ALT_OAUTH2_INTROSPECT_URL,null);
         TokenClientFactory tcf;
-        if(alt_url!=null) {
+        if (alt_url!=null) {
             try {
                 tcf = TokenClientFactory.instance(access);
                 String[] split = Split.split(',', alt_url);
@@ -94,42 +94,42 @@ public class DirectOAuthTAF implements HttpTaf {
     public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
         String value;
         String token;
-        if((value=req.getHeader("Authorization"))!=null && value.startsWith("Bearer ")) {
+        if ((value=req.getHeader("Authorization"))!=null && value.startsWith("Bearer ")) {
             token = value.substring(7);
         } else {
             token = null;
         }
 
-        if("application/x-www-form-urlencoded".equals(req.getContentType())) {
+        if ("application/x-www-form-urlencoded".equals(req.getContentType())) {
             Map<String, String[]> map = req.getParameterMap();
             String client_id=null,client_secret=null,username=null,password=null;
-            for(Map.Entry<String, String[]> es : map.entrySet()) {
+            for (Map.Entry<String, String[]> es : map.entrySet()) {
                 switch(es.getKey()) {
                     case "client_id":
-                        for(String s : es.getValue()) {
+                        for (String s : es.getValue()) {
                             client_id=s;
                         }
                         break;
                     case "client_secret":
-                        for(String s : es.getValue()) {
+                        for (String s : es.getValue()) {
                             client_secret=s;
                         }
                         break;
                     case "username":
-                        for(String s : es.getValue()) {
+                        for (String s : es.getValue()) {
                             username=s;
                         }
                         break;
                     case "password":
-                        for(String s : es.getValue()) {
+                        for (String s : es.getValue()) {
                             password=s;
                         }
                         break;
                     case "token": 
-                        if(token!=null) { // Defined as both Bearer and Form Encoded - Error
+                        if (token!=null) { // Defined as both Bearer and Form Encoded - Error
                             return new OAuth2HttpTafResp(access, null, "Token Info found as both Bearer Token and Form Info", RESP.FAIL, resp, true);
                         }
-                        for(String s : es.getValue()) {
+                        for (String s : es.getValue()) {
                             token=s;
                         }
                         break;
@@ -137,22 +137,22 @@ public class DirectOAuthTAF implements HttpTaf {
                 }
             }
             
-            if(client_id==null || client_secret==null) {
+            if (client_id==null || client_secret==null) {
                 return new OAuth2HttpTafResp(access, null, "client_id and client_secret required", RESP.TRY_ANOTHER_TAF, resp, false);
             }
             
-            if(token==null) { // No Token to work with, use only Client_ID and Client_Secret 
+            if (token==null) { // No Token to work with, use only Client_ID and Client_Secret 
                 AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
 
-                if(directUserPass.validate(client_id, Type.PASSWORD, client_secret.getBytes(), trans)) {
+                if (directUserPass.validate(client_id, Type.PASSWORD, client_secret.getBytes(), trans)) {
                     // Client_ID is valid
-                    if(username==null) { // Validating just the Client_ID
+                    if (username==null) { // Validating just the Client_ID
                         return new OAuth2FormHttpTafResp(access,new OAuth2FormPrincipal(client_id,client_id),"OAuth client_id authenticated",RESP.IS_AUTHENTICATED,resp,false);
                     } else {
                         //TODO - Does a clientID need specific Authorization to pair authentication with user name?  At the moment, no.
                         // username is ok.
-                        if(password!=null) {
-                            if(directUserPass.validate(username, Type.PASSWORD, password.getBytes(), trans)) {
+                        if (password!=null) {
+                            if (directUserPass.validate(username, Type.PASSWORD, password.getBytes(), trans)) {
                                 return new OAuth2FormHttpTafResp(access,new OAuth2FormPrincipal(client_id, username),"OAuth username authenticated",RESP.IS_AUTHENTICATED,resp,false);
                             } else {
                                 return new OAuth2HttpTafResp(access,null,"OAuth username " + username + " not authenticated ",RESP.FAIL,resp,true);
@@ -169,14 +169,14 @@ public class DirectOAuthTAF implements HttpTaf {
         } 
         
         // OK, have only a Token to validate
-        if(token!=null) {
+        if (token!=null) {
             AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
 
             try {
                 Result<Introspect> ri = oaFacade.mappedIntrospect(trans, token);
-                if(ri.isOK()) {
+                if (ri.isOK()) {
                     TokenPerm tp = tkMgr.putIntrospect(ri.value, Hash.hashSHA256(token.getBytes()));
-                    if(tp==null) {
+                    if (tp==null) {
                         return new OAuth2HttpTafResp(access, null, "TokenPerm persistence failure", RESP.FAIL, resp, false);
                     } else {
                         return new OAuth2HttpTafResp(access,new OAuth2Principal(tp,Hash.hashSHA256(token.getBytes())),"Token Authenticated",RESP.IS_AUTHENTICATED,resp,false);
@@ -209,7 +209,7 @@ public class DirectOAuthTAF implements HttpTaf {
         @Override
         public org.onap.aaf.cadi.client.Result<TokenPerm> load(String accessToken, byte[] cred) throws APIException, CadiException, LocatorException {
             Result<Introspect> ri = oaFacade.mappedIntrospect(trans, accessToken);
-            if(ri.notOK()) {
+            if (ri.notOK()) {
                 //TODO what should the status mapping be?
                 return org.onap.aaf.cadi.client.Result.err(ri.status,ri.errorString());
             }

@@ -67,7 +67,7 @@ public class RoleDetailAction extends Page {
                         public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                             final HttpServletRequest req = trans.get(sReq, null);
                             final String role = getSingleParam(req,"role");
-                            if(role==null) {
+                            if (role==null) {
                                 hgen.text("Parameter 'role' is required").end(); 
                             } else {
                                 // Run Validations
@@ -79,14 +79,14 @@ public class RoleDetailAction extends Page {
                                             List<TypedFuture> ltf = new ArrayList<>();
                                             String text;
                                             Map<String, String[]> pm = (Map<String, String[]>)req.getParameterMap();
-                                            for(final Entry<String, String[]> es : pm.entrySet()) {
-                                                for(final String v : es.getValue()) {
+                                            for (final Entry<String, String[]> es : pm.entrySet()) {
+                                                for (final String v : es.getValue()) {
                                                     TimeTaken tt = null; 
                                                     try {
                                                         switch(es.getKey()) {
                                                             case "desc": // Check box set
                                                                 String desc = getSingleParam(req, "description");
-                                                                if(desc!=null) {
+                                                                if (desc!=null) {
                                                                     text = "Setting Description on " + role + " to " + desc;
                                                                     tt = trans.start(text, Env.REMOTE);
                                                                     RoleRequest rr = new RoleRequest();
@@ -102,7 +102,7 @@ public class RoleDetailAction extends Page {
                                                                 text = "Ungranting Permission '" + v + "' from '" + role + '\'';
                                                                 tt = trans.start(text, Env.REMOTE);
                                                                 String[] pf = Split.splitTrim('|', v);
-                                                                if(pf.length==3) {
+                                                                if (pf.length==3) {
                                                                     Pkey perm = new Pkey();
                                                                     perm.setType(pf[0]);
                                                                     perm.setInstance(pf[1]);
@@ -135,7 +135,7 @@ public class RoleDetailAction extends Page {
 //                                                                System.out.println(es.getKey() + "=" + v);
                                                         }
                                                     } finally {
-                                                        if(tt!=null) {
+                                                        if (tt!=null) {
                                                             tt.done();
                                                             tt=null;
                                                         }
@@ -143,11 +143,11 @@ public class RoleDetailAction extends Page {
                                                 }
                                             }
                                             
-                                            if(ltf.isEmpty()) {
+                                            if (ltf.isEmpty()) {
                                                 hgen.p("No Changes");
                                             } else {
-                                                for(TypedFuture tf : ltf) {
-                                                    if(tf.future.get(5000)) {
+                                                for (TypedFuture tf : ltf) {
+                                                    if (tf.future.get(5000)) {
                                                         hgen.p("<font color=\"green\"><i>Success</i>:</font> " + tf.text);
                                                     } else {
                                                         // Note: if handling of special Error codes is required, use 

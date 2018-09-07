@@ -71,7 +71,7 @@ public abstract class CacheGen<G extends XGen<G>> {
     }
     
     public void replay(State<Env> state, Trans trans,Writer w, String theme) throws IOException, APIException {
-        if(thematic!=null) {
+        if (thematic!=null) {
             theme = thematic.themeResolve(theme);
         }
         /* Theme
@@ -87,7 +87,7 @@ public abstract class CacheGen<G extends XGen<G>> {
         int i=0;
         @SuppressWarnings("unchecked")
         Section<G>[] reverse = new Section[sections.size()];
-        for(Section<G> section : sections) {
+        for (Section<G> section : sections) {
             s = section.use(state, trans, buff); // note, doesn't change cached, only dynamic, which is created for thread
             int tempIndent = s.getIndent();
             s.setIndent(indent);
@@ -97,7 +97,7 @@ public abstract class CacheGen<G extends XGen<G>> {
             reverse[i++]=s;
         }
 
-        for(--i;i>=0;--i) {
+        for (--i;i>=0;--i) {
             reverse[i].back(w);
         }
         w.flush();
@@ -116,7 +116,7 @@ public abstract class CacheGen<G extends XGen<G>> {
             // Clone Dynamic to make Thread Safe
             Dynamic d = new Dynamic(indent,code);
             buff.setIndent(indent);
-            if(code instanceof DynamicCode) {
+            if (code instanceof DynamicCode) {
                 buff.run(state,trans,Cache.Null.singleton(), (DynamicCode<G,?,? extends Trans>)code);
             } else {
                 buff.run((Cache<G>)Cache.Null.singleton(), code);

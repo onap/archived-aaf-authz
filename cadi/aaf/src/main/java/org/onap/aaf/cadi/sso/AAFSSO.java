@@ -95,7 +95,7 @@ public class AAFSSO {
         System.setErr(os);
 
         sso = new File(dot_aaf, "sso.props");
-        if(sso.exists()) {
+        if (sso.exists()) {
             InputStream propStream = new FileInputStream(sso);
             try {
                 diskprops.load(propStream);
@@ -114,8 +114,8 @@ public class AAFSSO {
             if (sso.exists()) {
                 Properties temp = new Properties();
                 // Keep only these
-                for(Entry<Object, Object> es : diskprops.entrySet()) {
-                    if(Config.CADI_LATITUDE.equals(es.getKey()) ||
+                for (Entry<Object, Object> es : diskprops.entrySet()) {
+                    if (Config.CADI_LATITUDE.equals(es.getKey()) ||
                        Config.CADI_LONGITUDE.equals(es.getKey()) ||
                        Config.AAF_DEFAULT_REALM.equals(es.getKey())) {
                          temp.setProperty(es.getKey().toString(), es.getValue().toString());
@@ -143,15 +143,15 @@ public class AAFSSO {
                 }
             }
 
-            for(Entry<Object, Object> es : diskprops.entrySet()) {
+            for (Entry<Object, Object> es : diskprops.entrySet()) {
                 nargs.add(es.getKey().toString() + '=' + es.getValue().toString());
             }
             String[] naargs = new String[nargs.size()];
             nargs.toArray(naargs);
             access = new PropAccess(os, naargs);
             
-            if(loginOnly) {
-                for(String tag : new String[] {Config.AAF_APPID, Config.AAF_APPPASS, 
+            if (loginOnly) {
+                for (String tag : new String[] {Config.AAF_APPID, Config.AAF_APPPASS, 
                         Config.CADI_ALIAS, Config.CADI_KEYSTORE,Config.CADI_KEYSTORE_PASSWORD,Config.CADI_KEY_PASSWORD}) {
                     access.getProperties().remove(tag);
                     diskprops.remove(tag);
@@ -159,7 +159,7 @@ public class AAFSSO {
                 touchDiskprops=true;
 // TODO Do we want to require reset of Passwords at least every Eight Hours.
 //            } else if (sso.lastModified() > (System.currentTimeMillis() - EIGHT_HOURS)) {
-//                for(String tag : new String[] {Config.AAF_APPPASS,Config.CADI_KEYSTORE_PASSWORD,Config.CADI_KEY_PASSWORD}) {
+//                for (String tag : new String[] {Config.AAF_APPPASS,Config.CADI_KEYSTORE_PASSWORD,Config.CADI_KEY_PASSWORD}) {
 //                    access.getProperties().remove(tag);
 //                    diskprops.remove(tag);
 //                }
@@ -175,7 +175,7 @@ public class AAFSSO {
     
             String alias, appID;
             alias = access.getProperty(Config.CADI_ALIAS);
-            if(alias==null) {
+            if (alias==null) {
                 appID = access.getProperty(Config.AAF_APPID);
                 user=appID;
             } else {
@@ -183,7 +183,7 @@ public class AAFSSO {
                 appID=null;
             }
             
-            if(appID!=null && access.getProperty(Config.AAF_APPPASS)==null) {
+            if (appID!=null && access.getProperty(Config.AAF_APPPASS)==null) {
                 char[] password = cons.readPassword("Password for %s: ", appID);
                 String app_pass = access.encrypt(new String(password));
                 access.setProperty(Config.AAF_APPPASS,app_pass);
@@ -193,7 +193,7 @@ public class AAFSSO {
             String keystore=access.getProperty(Config.CADI_KEYSTORE);
             String keystore_pass=access.getProperty(Config.CADI_KEYSTORE_PASSWORD);
             
-            if(user==null || (alias!=null && (keystore==null || keystore_pass==null))) {
+            if (user==null || (alias!=null && (keystore==null || keystore_pass==null))) {
                 String select = null;
                 String name;
                 for (File tsf : dot_aaf.listFiles()) {
@@ -201,7 +201,7 @@ public class AAFSSO {
                     if (!name.contains("trust") && (name.endsWith(".jks") || name.endsWith(".p12"))) {
                         setLogDefault();
                         select = cons.readLine("Use %s for Identity? (y/n): ",tsf.getName());
-                        if("y".equalsIgnoreCase(select)) {
+                        if ("y".equalsIgnoreCase(select)) {
                             keystore = tsf.getCanonicalPath();
                             access.setProperty(Config.CADI_KEYSTORE, keystore);
                             addProp(Config.CADI_KEYSTORE, keystore);
@@ -218,7 +218,7 @@ public class AAFSSO {
                         }
                     }
                 }
-                if(alias==null) {
+                if (alias==null) {
                     user = appID = cons.readLine(Config.AAF_APPID + ": ");
                     access.setProperty(Config.AAF_APPID, appID);
                     addProp(Config.AAF_APPID, appID);
@@ -229,7 +229,7 @@ public class AAFSSO {
                 }
             } else {
                 encrypted_pass = access.getProperty(Config.CADI_KEYSTORE_PASSWORD);
-                if(encrypted_pass == null) {
+                if (encrypted_pass == null) {
                     keystore_pass = null;
                     encrypted_pass = access.getProperty(Config.AAF_APPPASS);
                 } else {
@@ -298,9 +298,9 @@ public class AAFSSO {
             }
             
             String locateUrl = access.getProperty(Config.AAF_LOCATE_URL);
-            if(locateUrl==null) {
+            if (locateUrl==null) {
                 locateUrl=AAFSSO.cons.readLine("AAF Locator URL=https://");
-                if(locateUrl==null || locateUrl.length()==0) {
+                if (locateUrl==null || locateUrl.length()==0) {
                     err = new StringBuilder(Config.AAF_LOCATE_URL);
                     err.append(" is required.");
                     ok = false;
@@ -315,10 +315,10 @@ public class AAFSSO {
             access.setProperty(Config.AAF_URL, Defaults.AAF_URL);
             access.setProperty(Config.CM_URL, Defaults.CM_URL);
             String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
-            if(cadiLatitude==null) {
+            if (cadiLatitude==null) {
                 System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");
                 cadiLatitude=AAFSSO.cons.readLine("cadi_latitude[0.000]=");
-                if(cadiLatitude==null || cadiLatitude.isEmpty()) {
+                if (cadiLatitude==null || cadiLatitude.isEmpty()) {
                     cadiLatitude="0.000";
                 }
                 access.setProperty(Config.CADI_LATITUDE, cadiLatitude);
@@ -326,9 +326,9 @@ public class AAFSSO {
                 
             }
             String cadiLongitude = access.getProperty(Config.CADI_LONGITUDE);
-            if(cadiLongitude==null) {
+            if (cadiLongitude==null) {
                 cadiLongitude=AAFSSO.cons.readLine("cadi_longitude[0.000]=");
-                if(cadiLongitude==null || cadiLongitude.isEmpty()) {
+                if (cadiLongitude==null || cadiLongitude.isEmpty()) {
                     cadiLongitude="0.000";
                 }
                 access.setProperty(Config.CADI_LONGITUDE, cadiLongitude);
@@ -336,7 +336,7 @@ public class AAFSSO {
             }
     
             String cadi_truststore = access.getProperty(Config.CADI_TRUSTSTORE);
-            if(cadi_truststore==null) {
+            if (cadi_truststore==null) {
                 String name; 
                 String select;
                 for (File tsf : dot_aaf.listFiles()) {
@@ -344,7 +344,7 @@ public class AAFSSO {
                     if (name.contains("trust") && 
                             (name.endsWith(".jks") || name.endsWith(".p12"))) {
                         select = cons.readLine("Use %s for TrustStore? (y/n):",tsf.getName());
-                        if("y".equalsIgnoreCase(select)) {
+                        if ("y".equalsIgnoreCase(select)) {
                             cadi_truststore=tsf.getCanonicalPath();
                             access.setProperty(Config.CADI_TRUSTSTORE, cadi_truststore);
                             addProp(Config.CADI_TRUSTSTORE, cadi_truststore);
@@ -353,12 +353,12 @@ public class AAFSSO {
                     }
                 }
             }
-            if(cadi_truststore!=null) {
-                if(cadi_truststore.indexOf(File.separatorChar)<0) {
+            if (cadi_truststore!=null) {
+                if (cadi_truststore.indexOf(File.separatorChar)<0) {
                     cadi_truststore=dot_aaf.getPath()+File.separator+cadi_truststore;
                 }
                 String cadi_truststore_password = access.getProperty(Config.CADI_TRUSTSTORE_PASSWORD);
-                if(cadi_truststore_password==null) {
+                if (cadi_truststore_password==null) {
                     cadi_truststore_password=AAFSSO.cons.readLine("cadi_truststore_password[%s]=","changeit");
                     cadi_truststore_password = access.encrypt(cadi_truststore_password);
                     access.setProperty(Config.CADI_TRUSTSTORE_PASSWORD, cadi_truststore_password);
@@ -381,7 +381,7 @@ public class AAFSSO {
     }
 
     public void setLogDefault(Level level) {
-        if(access!=null) {
+        if (access!=null) {
             access.setLogLevel(level);
         }
         System.setOut(stdOutOrig);
@@ -392,7 +392,7 @@ public class AAFSSO {
     }
 
     public void addProp(String key, String value) {
-        if(key==null || value==null) {
+        if (key==null || value==null) {
             return;
         }
         touchDiskprops=true;
@@ -400,7 +400,7 @@ public class AAFSSO {
     }
 
     public void writeFiles() throws IOException {
-        if(touchDiskprops) {
+        if (touchDiskprops) {
             // Store Creds, if they work
             if (diskprops != null) {
                 if (!dot_aaf.exists()) {

@@ -40,18 +40,18 @@ public class DocMarshal<T> extends Marshal<T> {
     public Parsed<State> parse(T t, Parsed<State> parsed) throws ParseException {
         Ladder<Iterator<?>> ladder = parsed.state.ladder;
         Iterator<?> iter = ladder.peek();
-        if(iter==null) {
+        if (iter==null) {
             ladder.push(PENDING_ITERATOR);
             parsed.event = START_DOC;
         } else if (DONE_ITERATOR.equals(iter)) {
         } else {
             ladder.ascend(); // look at field info
                 Iterator<?> currFieldIter = ladder.peek();
-                if(!DONE_ITERATOR.equals(currFieldIter)){
+                if (!DONE_ITERATOR.equals(currFieldIter)){
                     parsed = root.parse(t, parsed);
                 }
             ladder.descend();
-            if(DONE_ITERATOR.equals(currFieldIter) || parsed.event==NONE) {
+            if (DONE_ITERATOR.equals(currFieldIter) || parsed.event==NONE) {
                 parsed.event = END_DOC;
                 ladder.push(DONE_ITERATOR);
             }
@@ -68,7 +68,7 @@ public class DocMarshal<T> extends Marshal<T> {
 
         @Override
         public Void next() {
-            if(!hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
             return null;

@@ -35,10 +35,10 @@ public class AAFToken {
         long lsb = uuid.getLeastSignificantBits();
         long msb = uuid.getMostSignificantBits();
         int sum=35; // AAF
-        for(int i=0;i<Long.SIZE;i+=8) {
+        for (int i=0;i<Long.SIZE;i+=8) {
             sum+=((lsb>>i) & 0xFF);
         }
-        for(int i=0;i<Long.SIZE;i+=8) {
+        for (int i=0;i<Long.SIZE;i+=8) {
             sum+=((((msb>>i) & 0xFF))<<0xB);
         }
         sum+=(sr.nextInt()&0xEFC00000); // this is just to not leave zeros laying around
@@ -54,11 +54,11 @@ public class AAFToken {
 
     public static final UUID fromToken(String token)  {
         byte[] bytes = Hash.fromHexNo0x(token);
-        if(bytes==null) {
+        if (bytes==null) {
             return null;
         }
         ByteBuffer bb = ByteBuffer.wrap(bytes);
-        if(bb.capacity()!=CAPACITY ) {
+        if (bb.capacity()!=CAPACITY ) {
             return null; // not a CADI Token
         }
         byte b1 = bb.get();
@@ -68,14 +68,14 @@ public class AAFToken {
         byte b3 = (byte)(0x3F&bb.get());
         int sum=35;
         
-        for(int i=0;i<Long.SIZE;i+=8) {
+        for (int i=0;i<Long.SIZE;i+=8) {
             sum+=((lsb>>i) & 0xFF);
         }
-        for(int i=0;i<Long.SIZE;i+=8) {
+        for (int i=0;i<Long.SIZE;i+=8) {
             sum+=((((msb>>i) & 0xFF))<<0xB);
         }
 
-        if(b1!=((byte)sum) ||
+        if (b1!=((byte)sum) ||
            b2!=((byte)(sum>>8)) ||
            b3!=((byte)((sum>>16)))) {
             return null; // not a CADI Token            

@@ -61,11 +61,11 @@ public class SimpleRESTClient {
         callTimeout = Integer.parseInt(tcf.access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
         tokenClient = tcf.newClient(tokenURL);
         Result<TimedToken> rtt = tokenClient.getToken(scope);
-        if(rtt.isOK()) {
+        if (rtt.isOK()) {
             restClient = tcf.newTzClient(endpoint);
             
-            if((client_id = tcf.access.getProperty(Config.AAF_APPID, null))==null) {
-                if((client_id = tcf.access.getProperty(Config.CADI_ALIAS, null))==null) {
+            if ((client_id = tcf.access.getProperty(Config.AAF_APPID, null))==null) {
+                if ((client_id = tcf.access.getProperty(Config.CADI_ALIAS, null))==null) {
                     throw new CadiException(Config.AAF_APPID + " or " + Config.CADI_ALIAS + " needs to be defined");
                 }                
             }
@@ -86,10 +86,10 @@ public class SimpleRESTClient {
 
     //Format:<ID>:<APP>:<protocol>[:AS][,<ID>:<APP>:<protocol>]*
     public SimpleRESTClient endUser(Principal principal) {
-        if(principal==null) {
+        if (principal==null) {
             chain = null;
         } else {
-            if(principal instanceof TaggedPrincipal) {
+            if (principal instanceof TaggedPrincipal) {
                 TaggedPrincipal tp = (TaggedPrincipal)principal;
                 chain = tp.getName() + ':' + (app==null?"":app) + ':' + tp.tag() + ":AS";
             } else {
@@ -128,7 +128,7 @@ public class SimpleRESTClient {
         }
         
         public StringBuilder builder() {
-            if(sb==null) {
+            if (sb==null) {
                 sb = new StringBuilder();
                 content = null;
             }
@@ -140,16 +140,16 @@ public class SimpleRESTClient {
          */
         public void clear() {
             content = null;
-            if(sb!=null) {
+            if (sb!=null) {
                 sb.setLength(0);
             }
         }
         
         @Override
         public String toString() {
-            if(content!=null) {
+            if (content!=null) {
                 return content;
-            } else if(sb!=null) {
+            } else if (sb!=null) {
                 return sb.toString();
             } else {
                 return "";
@@ -158,8 +158,8 @@ public class SimpleRESTClient {
 
         public byte[] getBytes() {
             byte[] rv;
-            if(content==null) {
-                if(sb==null) {
+            if (content==null) {
+                if (sb==null) {
                     rv = EMPTY_STREAM_BYTES;
                 } else {
                     rv = sb.toString().getBytes();    
@@ -192,7 +192,7 @@ public class SimpleRESTClient {
                 return client.create(path, contentType, new ETransfer(input));
             }
         });
-        if(!future.get(callTimeout)) {
+        if (!future.get(callTimeout)) {
             throw new RESTException(future);
         }                    
     }
@@ -217,7 +217,7 @@ public class SimpleRESTClient {
                 return client.read(path,accepts, headers());
             }
         });
-        if(future.get(callTimeout)) {
+        if (future.get(callTimeout)) {
             return future.value;
         } else {
             throw new RESTException(future);
@@ -245,7 +245,7 @@ public class SimpleRESTClient {
                 return client.update(path, contentType, new ETransfer(input));
             }
         });
-        if(future.get(callTimeout)) {
+        if (future.get(callTimeout)) {
             return future.value;
         } else {
             throw new RESTException(future);
@@ -268,7 +268,7 @@ public class SimpleRESTClient {
                 return client.delete(path, contentType);
             }
         });
-        if(!future.get(callTimeout)) {
+        if (!future.get(callTimeout)) {
             throw new RESTException(future);
         }                    
     }
@@ -292,14 +292,14 @@ public class SimpleRESTClient {
     }
     
     public String[] headers() {
-        if(chain==null) {
+        if (chain==null) {
             return headers.headers();
         } else {
             String[] strs = headers.headers();
             String[] rv = new String[strs.length+2];
             rv[0]=Config.CADI_USER_CHAIN;
             rv[1]=chain;
-            for(int i = 0;i<strs.length;++i) {
+            for (int i = 0;i<strs.length;++i) {
                 rv[i+2]=strs[i];
             }
             return rv;

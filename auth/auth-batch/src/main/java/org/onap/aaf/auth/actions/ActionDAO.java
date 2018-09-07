@@ -65,7 +65,7 @@ public abstract class ActionDAO<D,RV,T> implements Action<D,RV,T> {
     }
 
     public void close(AuthzTrans trans) {
-        if(clean) {
+        if (clean) {
             q.close(trans);
         }
     }

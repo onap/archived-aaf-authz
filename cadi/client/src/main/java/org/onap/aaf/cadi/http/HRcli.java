@@ -81,9 +81,9 @@ public class HRcli extends Rcli<HttpURLConnection> {
      */
     protected EClient<HttpURLConnection> client() throws CadiException {
         try {
-            if(uri==null) {
+            if (uri==null) {
                 Item item = hman.loc.best();
-                if(item==null) {
+                if (item==null) {
                     throw new CadiException("No service available for " + hman.loc.toString());
                 }
                 uri = hman.loc.get(item);

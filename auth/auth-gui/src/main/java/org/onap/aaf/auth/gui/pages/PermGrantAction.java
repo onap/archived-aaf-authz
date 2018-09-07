@@ -94,7 +94,7 @@ public class PermGrantAction extends Page {
                                                 grantReq
                                                 );
 
-                                        if(fgrant.get(5000)) {
+                                        if (fgrant.get(5000)) {
                                             hgen.p("Permission has been granted to role.");
                                             fail = false;
                                         } else {

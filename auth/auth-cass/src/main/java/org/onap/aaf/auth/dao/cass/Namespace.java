@@ -55,9 +55,9 @@ public class Namespace implements Bytification {
         description = ndd.description;
         type = ndd.type;
         parent = ndd.parent;
-        if(ndd.attrib!=null && !ndd.attrib.isEmpty()) {
+        if (ndd.attrib!=null && !ndd.attrib.isEmpty()) {
             attrib = new ArrayList<>();
-            for( Entry<String, String> entry : ndd.attrib.entrySet()) {
+            for ( Entry<String, String> entry : ndd.attrib.entrySet()) {
                 attrib.add(new Pair<String,String>(entry.getKey(),entry.getValue()));
             }
         }
@@ -70,9 +70,9 @@ public class Namespace implements Bytification {
         description = ndd.description;
         type = ndd.type;
         parent = ndd.parent;
-        if(ndd.attrib!=null && !ndd.attrib.isEmpty()) {
+        if (ndd.attrib!=null && !ndd.attrib.isEmpty()) {
             attrib = new ArrayList<>();
-            for( Entry<String, String> entry : ndd.attrib.entrySet()) {
+            for ( Entry<String, String> entry : ndd.attrib.entrySet()) {
                 attrib.add(new Pair<String,String>(entry.getKey(),entry.getValue()));
             }
         }
@@ -141,7 +141,7 @@ public class Namespace implements Bytification {
      */
     @Override
     public boolean equals(Object arg0) {
-        if(arg0==null || !(arg0 instanceof Namespace)) {
+        if (arg0==null || !(arg0 instanceof Namespace)) {
             return false;
         }
         return name.equals(((Namespace)arg0).name);

@@ -54,12 +54,12 @@ public class DirectAAFUserPass implements CredVal {
     public boolean validate(String user, Type type, byte[] pass, Object state) {
             try {
                 AuthzTrans trans;
-                if(state !=null) {
-                    if(state instanceof AuthzTrans) {
+                if (state !=null) {
+                    if (state instanceof AuthzTrans) {
                         trans = (AuthzTrans)state;
                     } else {
                         trans = env.newTransNoAvg();
-                        if(state instanceof HttpServletRequest) {
+                        if (state instanceof HttpServletRequest) {
                             trans.set((HttpServletRequest)state);
                         }
                     }

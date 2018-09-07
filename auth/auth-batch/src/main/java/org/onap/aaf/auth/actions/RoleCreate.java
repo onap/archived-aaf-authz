@@ -49,12 +49,12 @@ public class RoleCreate extends ActionDAO<Role,Data,String> {
         rdd.description = r.description;
         rdd.perms = r.perms;
         
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Create Role:",text,r.fullName());
             return Result.ok(rdd);
         } else {
             Result<Data> rv = q.roleDAO.create(trans, rdd); // need to read for undelete
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log("Created Role:",text,r.fullName());
             } else {
                 trans.error().log("Error Creating Role -",rv.details,":",r.fullName());

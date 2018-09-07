@@ -112,10 +112,10 @@ public class Agent {
     public static void main(String[] args) {
         int exitCode = 0;
         doExit = true;
-        if(args.length>0 && "cadi".equals(args[0])) {
+        if (args.length>0 && "cadi".equals(args[0])) {
             String[] newArgs = new String[args.length-1];
             System.arraycopy(args, 1, newArgs, 0, newArgs.length);
-            if(newArgs.length==0) {
+            if (newArgs.length==0) {
                 System.out.println(HASHES);
                 System.out.println("Note: Cadi CmdLine is a separate component.  When running with\n\t"
                         + "Agent, always preface with \"cadi\",\n\tex: cadi keygen [<keyfile>]");
@@ -127,7 +127,7 @@ public class Agent {
                 AAFSSO aafsso=null;
                 PropAccess access;
                 
-                if(args.length>1 && args[0].equals("validate") ) {
+                if (args.length>1 && args[0].equals("validate") ) {
                     int idx = args[1].indexOf('=');
                     aafsso = null;
                     access = new PropAccess(
@@ -138,7 +138,7 @@ public class Agent {
                     aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
                         @Override
                         public Properties process(String[] args, Properties props) {
-                            if(args.length>1) {
+                            if (args.length>1) {
                                 if (!args[0].equals("keypairgen")) {
                                     props.put("aaf_id", args[1]);
                                 }    
@@ -149,23 +149,23 @@ public class Agent {
                     access = aafsso.access();
                 }
                     
-                if(aafsso!=null && aafsso.loginOnly()) {
+                if (aafsso!=null && aafsso.loginOnly()) {
                     aafsso.setLogDefault();
                     aafsso.writeFiles();
                     System.out.println("AAF SSO information created in ~/.aaf");
                 } else {
                     env = new RosettaEnv(access.getProperties());
                     Deque<String> cmds = new ArrayDeque<String>();
-                    for(String p : args) {
-                        if("-noexit".equalsIgnoreCase(p)) {
+                    for (String p : args) {
+                        if ("-noexit".equalsIgnoreCase(p)) {
                             doExit = false;
-                        } else if(p.indexOf('=') < 0) {
+                        } else if (p.indexOf('=') < 0) {
                             cmds.add(p);
                         }
                     }
                     
-                    if(cmds.size()==0) {
-                        if(aafsso!=null) {
+                    if (cmds.size()==0) {
+                        if (aafsso!=null) {
                             aafsso.setLogDefault();
                         }
                         // NOTE: CHANGE IN CMDS should be reflected in AAFSSO constructor, to get FQI->aaf-id or not
@@ -209,18 +209,18 @@ public class Agent {
                     
                     Trans trans = env.newTrans();
                     String token;
-                    if((token=access.getProperty("oauth_token"))!=null) {
+                    if ((token=access.getProperty("oauth_token"))!=null) {
                         trans.setProperty("oauth_token", token);
                     }
                     try {
-                        if(aafsso!=null) {
+                        if (aafsso!=null) {
                         // show Std out again
                             aafsso.setLogDefault();
                             aafsso.setStdErrDefault();
                             
                             // if CM_URL can be obtained, add to sso.props, if written
                             String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL+": ");
-                            if(cm_url!=null) {
+                            if (cm_url!=null) {
                                 aafsso.addProp(Config.CM_URL, cm_url);
                             }
                             aafsso.writeFiles();
@@ -255,7 +255,7 @@ public class Agent {
                                 keypairGen(trans, access, cmds);
                                 break;
                             case "config":
-                                if(access.getProperty(Config.CADI_PROP_FILES)!=null) {
+                                if (access.getProperty(Config.CADI_PROP_FILES)!=null) {
                                     // Get Properties from initialization Prop Files
                                     config(trans,access,null,cmds);
                                 } else {
@@ -280,11 +280,11 @@ public class Agent {
                     } finally {
                         StringBuilder sb = new StringBuilder();
                         trans.auditTrail(4, sb, Trans.REMOTE);
-                        if(sb.length()>0) {
+                        if (sb.length()>0) {
                             trans.info().log("Trans Info\n",sb);
                         }
                     }
-                    if(aafsso!=null) {
+                    if (aafsso!=null) {
                         aafsso.close();
                     }
                 }
@@ -292,13 +292,13 @@ public class Agent {
                 e.printStackTrace();
             }
         }
-        if(exitCode != 0 && doExit) {
+        if (exitCode != 0 && doExit) {
             System.exit(exitCode);
         }
     }
 
     private static synchronized AAFCon<?> aafcon(PropAccess access) throws APIException, CadiException, LocatorException {
-        if(aafcon==null) {
+        if (aafcon==null) {
             aafcon = new AAFConHttp(access,Config.CM_URL);
         }
         return aafcon;
@@ -306,17 +306,17 @@ public class Agent {
 
     private static String getProperty(PropAccess pa, Env env, boolean secure, String tag, String prompt, Object ... def) {
         String value;
-        if((value=pa.getProperty(tag))==null) {
-            if(secure) {
+        if ((value=pa.getProperty(tag))==null) {
+            if (secure) {
                 value = new String(AAFSSO.cons.readPassword(prompt, def));
             } else {
                 value = AAFSSO.cons.readLine(prompt,def).trim();
             }
-            if(value!=null) {
-                if(value.length()>0) {
+            if (value!=null) {
+                if (value.length()>0) {
                     pa.setProperty(tag,value);
                     env.setProperty(tag,value);
-                } else if(def.length==1) {
+                } else if (def.length==1) {
                     value=def[0].toString();
                     pa.setProperty(tag,value);
                     env.setProperty(tag,value);
@@ -327,7 +327,7 @@ public class Agent {
     }
 
     private static String fqi(Deque<String> cmds) {
-        if(cmds.size()<1) {
+        if (cmds.size()<1) {
             String alias = env.getProperty(Config.CADI_ALIAS);
             return alias!=null?alias:AAFSSO.cons.readLine("AppID: ");
         }
@@ -335,7 +335,7 @@ public class Agent {
     }
 
     private static String machine(Deque<String> cmds) throws UnknownHostException {
-        if(cmds.size()>0) {
+        if (cmds.size()>0) {
             return cmds.removeFirst();
         } else {
             String mach = env.getProperty(Config.HOSTNAME);
@@ -345,7 +345,7 @@ public class Agent {
 
     private static String[] machines(Deque<String> cmds)  {
         String machines;
-        if(cmds.size()>0) {
+        if (cmds.size()>0) {
             machines = cmds.removeFirst();
         } else {
             machines = AAFSSO.cons.readLine("Machines (sep by ','): ");
@@ -365,11 +365,11 @@ public class Agent {
         arti.setCa(AAFSSO.cons.readLine("CA: (%s): ","aaf"));
         
         String resp = AAFSSO.cons.readLine("Types [file,pkcs12,jks,script] (%s): ", PKCS12);
-        for(String s : Split.splitTrim(',', resp)) {
+        for (String s : Split.splitTrim(',', resp)) {
             arti.getType().add(s);
         }
         // Always do Script
-        if(!resp.contains(SCRIPT)) {
+        if (!resp.contains(SCRIPT)) {
             arti.getType().add(SCRIPT);
         }
 
@@ -384,7 +384,7 @@ public class Agent {
         TimeTaken tt = trans.start("Create Artifact", Env.REMOTE);
         try {
             Future<Artifacts> future = aafcon.client(CM_VER).create("/cert/artifacts", artifactsDF, artifacts);
-            if(future.get(TIMEOUT)) {
+            if (future.get(TIMEOUT)) {
                 trans.info().printf("Call to AAF Certman successful %s, %s",arti.getMechid(), arti.getMachine());
             } else {
                 trans.error().printf("Call to AAF Certman failed, %s",
@@ -396,10 +396,10 @@ public class Agent {
     }
 
     private static String toNotification(String notification) {
-        if(notification==null) {
+        if (notification==null) {
             notification="";
-        } else if(notification.length()>0) {
-            if(notification.indexOf(':')<0) {
+        } else if (notification.length()>0) {
+            if (notification.indexOf(':')<0) {
                 notification = "mailto:" + notification;
             }
         }
@@ -416,17 +416,17 @@ public class Agent {
             Future<Artifacts> future = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF,"Authorization","Bearer " + trans.getProperty("oauth_token"));
     
-            if(future.get(TIMEOUT)) {
+            if (future.get(TIMEOUT)) {
                 boolean printed = false;
-                for(Artifact a : future.value.getArtifact()) {
+                for (Artifact a : future.value.getArtifact()) {
                     AAFSSO.cons.printf("AppID:          %s\n",a.getMechid()); 
                     AAFSSO.cons.printf("  Sponsor:       %s\n",a.getSponsor()); 
                     AAFSSO.cons.printf("Machine:         %s\n",a.getMachine()); 
                     AAFSSO.cons.printf("CA:              %s\n",a.getCa()); 
                     StringBuilder sb = new StringBuilder();
                     boolean first = true;
-                    for(String t : a.getType()) {
-                        if(first) {first=false;}
+                    for (String t : a.getType()) {
+                        if (first) {first=false;}
                         else{sb.append(',');}
                         sb.append(t);
                     }
@@ -438,7 +438,7 @@ public class Agent {
                     AAFSSO.cons.printf("Notification     %s\n",a.getNotification());
                     printed = true;
                 }
-                if(!printed) {
+                if (!printed) {
                     AAFSSO.cons.printf("Artifact for %s %s does not exist\n", mechID, machine);
                 }
             } else {
@@ -453,7 +453,7 @@ public class Agent {
         String mechID = fqi(cmds);
         String machine = machine(cmds);
         String[] newmachs = machines(cmds);
-        if(machine==null || newmachs == null) {
+        if (machine==null || newmachs == null) {
             trans.error().log("No machines listed to copy to");
         } else {
             TimeTaken tt = trans.start("Copy Artifact", Env.REMOTE);
@@ -461,13 +461,13 @@ public class Agent {
                 Future<Artifacts> future = aafcon.client(CM_VER)
                         .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
             
-                if(future.get(TIMEOUT)) {
+                if (future.get(TIMEOUT)) {
                     boolean printed = false;
-                    for(Artifact a : future.value.getArtifact()) {
-                        for(String m : newmachs) {
+                    for (Artifact a : future.value.getArtifact()) {
+                        for (String m : newmachs) {
                             a.setMachine(m);
                             Future<Artifacts> fup = aafcon.client(CM_VER).update("/cert/artifacts", artifactsDF, future.value);
-                            if(fup.get(TIMEOUT)) {
+                            if (fup.get(TIMEOUT)) {
                                 trans.info().printf("Copy of %s %s successful to %s",mechID,machine,m);
                             } else {
                                 trans.error().printf("Call to AAF Certman failed, %s",
@@ -477,7 +477,7 @@ public class Agent {
                             printed = true;
                         }
                     }
-                    if(!printed) {
+                    if (!printed) {
                         AAFSSO.cons.printf("Artifact for %s %s does not exist", mechID, machine);
                     }
                 } else {
@@ -498,9 +498,9 @@ public class Agent {
             Future<Artifacts> fread = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
     
-            if(fread.get(TIMEOUT)) {
+            if (fread.get(TIMEOUT)) {
                 Artifacts artifacts = new Artifacts();
-                for(Artifact a : fread.value.getArtifact()) {
+                for (Artifact a : fread.value.getArtifact()) {
                     Artifact arti = new Artifact();
                     artifacts.getArtifact().add(arti);
                     
@@ -510,18 +510,18 @@ public class Agent {
                     arti.setCa(AAFSSO.cons.readLine("CA: (%s): ",a.getCa()));
                     StringBuilder sb = new StringBuilder();
                     boolean first = true;
-                    for(String t : a.getType()) {
-                        if(first) {first=false;}
+                    for (String t : a.getType()) {
+                        if (first) {first=false;}
                         else{sb.append(',');}
                         sb.append(t);
                     }
     
                     String resp = AAFSSO.cons.readLine("Types [file,jks,pkcs12] (%s): ", sb);
-                    for(String s : Split.splitTrim(',', resp)) {
+                    for (String s : Split.splitTrim(',', resp)) {
                         arti.getType().add(s);
                     }
                     // Always do Script
-                    if(!resp.contains(SCRIPT)) {
+                    if (!resp.contains(SCRIPT)) {
                         arti.getType().add(SCRIPT);
                     }
 
@@ -533,11 +533,11 @@ public class Agent {
                     arti.setNotification(toNotification(AAFSSO.cons.readLine("Notification (%s):", a.getNotification())));
     
                 }
-                if(artifacts.getArtifact().size()==0) {
+                if (artifacts.getArtifact().size()==0) {
                     AAFSSO.cons.printf("Artifact for %s %s does not exist", mechID, machine);
                 } else {
                     Future<Artifacts> fup = aafcon.client(CM_VER).update("/cert/artifacts", artifactsDF, artifacts);
-                    if(fup.get(TIMEOUT)) {
+                    if (fup.get(TIMEOUT)) {
                         trans.info().printf("Call to AAF Certman successful %s, %s",mechID,machine);
                     } else {
                         trans.error().printf("Call to AAF Certman failed, %s",
@@ -562,7 +562,7 @@ public class Agent {
             Future<Void> future = aafcon.client(CM_VER)
                     .delete("/cert/artifacts/"+mechid+"/"+machine,"application/json" );
     
-            if(future.get(TIMEOUT)) {
+            if (future.get(TIMEOUT)) {
                 trans.info().printf("Call to AAF Certman successful %s, %s",mechid,machine);
             } else {
                 trans.error().printf("Call to AAF Certman failed, %s %s, %s",
@@ -581,7 +581,7 @@ public class Agent {
         String machine = machine(cmds);
         String[] fqdns = Split.split(':', machine);
         String key;
-        if(fqdns.length>1) {
+        if (fqdns.length>1) {
             key = fqdns[0];
             machine = fqdns[1];
         } else {
@@ -592,27 +592,27 @@ public class Agent {
         try {
             Future<Artifacts> acf = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+key, artifactsDF);
-            if(acf.get(TIMEOUT)) {
-                if(acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
+            if (acf.get(TIMEOUT)) {
+                if (acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
                     AAFSSO.cons.printf("===> There are no artifacts for %s on machine '%s'\n", mechID, key);
                 } else {
-                    for(Artifact a : acf.value.getArtifact()) {
+                    for (Artifact a : acf.value.getArtifact()) {
                         String osID = System.getProperty("user.name");
-                        if(a.getOsUser().equals(osID)) {
+                        if (a.getOsUser().equals(osID)) {
                             CertificateRequest cr = new CertificateRequest();
                             cr.setMechid(a.getMechid());
                             cr.setSponsor(a.getSponsor());
-                            for(int i=0;i<fqdns.length;++i) {
+                            for (int i=0;i<fqdns.length;++i) {
                                 cr.getFqdns().add(fqdns[i]);
                             }
                             Future<String> f = aafcon.client(CM_VER)
                                     .updateRespondString("/cert/" + a.getCa()+"?withTrust",reqDF, cr);
-                            if(f.get(TIMEOUT)) {
+                            if (f.get(TIMEOUT)) {
                                 CertInfo capi = certDF.newData().in(TYPE.JSON).load(f.body()).asObject();
-                                for(String type : a.getType()) {
+                                for (String type : a.getType()) {
                                     PlaceArtifact pa = placeArtifact.get(type);
-                                    if(pa!=null) {
-                                        if(rv = pa.place(trans, capi, a,machine)) {
+                                    if (pa!=null) {
+                                        if (rv = pa.place(trans, capi, a,machine)) {
                                             notifyPlaced(a,rv);
                                         }
                                     }
@@ -646,28 +646,28 @@ public class Agent {
         try {
             Future<Artifacts> acf = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
-            if(acf.get(TIMEOUT)) {
+            if (acf.get(TIMEOUT)) {
                 // Have to wait for JDK 1.7 source...
                 //switch(artifact.getType()) {
-                if(acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
+                if (acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
                     AAFSSO.cons.printf("No Artifacts found for %s on %s ", mechID, machine);
                 } else {
                     String id = aafcon.defID();
                     boolean allowed;
-                    for(Artifact a : acf.value.getArtifact()) {
+                    for (Artifact a : acf.value.getArtifact()) {
                         allowed = id!=null && (id.equals(a.getSponsor()) ||
                                 (id.equals(a.getMechid()) 
                                         && aafcon.securityInfo().defSS.getClass().isAssignableFrom(HBasicAuthSS.class)));
-                        if(!allowed) {
+                        if (!allowed) {
                             Future<String> pf = aafcon.client(CM_VER).read("/cert/may/" + 
                                     a.getNs()+"|certman|"+a.getCa()+"|showpass","*/*");
-                            if(pf.get(TIMEOUT)) {
+                            if (pf.get(TIMEOUT)) {
                                 allowed = true;
                             } else {
                                 trans.error().log(errMsg.toMsg(pf));
                             }
                         }
-                        if(allowed) {
+                        if (allowed) {
                             File dir = new File(a.getDir());
                             Properties props = new Properties();
                             FileInputStream fis = new FileInputStream(new File(dir,a.getNs()+".cred.props"));
@@ -681,12 +681,12 @@ public class Agent {
                             }
                             
                             File f = new File(dir,a.getNs()+".keyfile");
-                            if(f.exists()) {
+                            if (f.exists()) {
                                 Symm symm = Symm.obtain(f);
                                 
-                                for(Iterator<Entry<Object,Object>> iter = props.entrySet().iterator(); iter.hasNext();) {
+                                for (Iterator<Entry<Object,Object>> iter = props.entrySet().iterator(); iter.hasNext();) {
                                     Entry<Object,Object> en = iter.next();
-                                    if(en.getValue().toString().startsWith("enc:")) {
+                                    if (en.getValue().toString().startsWith("enc:")) {
                                         System.out.printf("%s=%s\n", en.getKey(), symm.depass(en.getValue().toString()));
                                     }
                                 }
@@ -712,9 +712,9 @@ public class Agent {
         File dir = new File(access.getProperty(Config.CADI_ETCDIR,".")); // default to current Directory
         File f = new File(dir,ns+".key");
         
-        if(f.exists()) {
+        if (f.exists()) {
             String line = AAFSSO.cons.readLine("%s exists. Overwrite? (y/n): ", f.getCanonicalPath());
-            if(!"Y".equalsIgnoreCase(line)) {
+            if (!"Y".equalsIgnoreCase(line)) {
                 System.out.println("Canceling...");
                 return;
             }
@@ -733,9 +733,9 @@ public class Agent {
         final String fqi = fqi(cmds);
         final String rootFile = FQI.reverseDomain(fqi);
         final File dir = new File(pa.getProperty(Config.CADI_ETCDIR, "."));
-        if(dir.exists()) {
+        if (dir.exists()) {
             System.out.println("Writing to " + dir.getCanonicalFile());
-        } else if(dir.mkdirs()) {
+        } else if (dir.mkdirs()) {
             System.out.println("Created directory " + dir.getCanonicalFile());
         } else {
             System.err.println("Unable to create or write to " + dir.getCanonicalPath());
@@ -751,14 +751,14 @@ public class Agent {
             PrintStream psProps;
 
             File fLocProps = new File(dir,rootFile + ".location.props");
-            if(!fLocProps.exists()) {
+            if (!fLocProps.exists()) {
                 psProps = new PrintStream(new FileOutputStream(fLocProps));
                 try {
                     psProps.println(HASHES);
                     psProps.print("# Configuration File generated on ");
                     psProps.println(new Date().toString());
                     psProps.println(HASHES);
-                    for(String tag : LOC_TAGS) {
+                    for (String tag : LOC_TAGS) {
                         psProps.print(tag);
                         psProps.print('=');
                         psProps.println(getProperty(pa, trans, false, tag, "%s: ",tag));
@@ -789,7 +789,7 @@ public class Agent {
                     psProps.println(fLocProps.getCanonicalPath());
                     
                     File fkf = new File(dir,rootFile+".keyfile");
-                    if(!fkf.exists()) {
+                    if (!fkf.exists()) {
                         CmdLine.main(new String[] {"keygen",fkf.toString()});
                     }
                     Symm filesymm = Symm.obtain(fkf);
@@ -803,30 +803,30 @@ public class Agent {
                     
 
                     String cts = pa.getProperty(Config.CADI_TRUSTSTORE);
-                    if(cts!=null) {
+                    if (cts!=null) {
                         File origTruststore = new File(cts);
-                        if(!origTruststore.exists()) {
+                        if (!origTruststore.exists()) {
                             // Try same directory as cadi_prop_files
                             String cpf = pa.getProperty(Config.CADI_PROP_FILES);
-                            if(cpf!=null) {
-                                for(String f : Split.split(File.pathSeparatorChar, cpf)) {
+                            if (cpf!=null) {
+                                for (String f : Split.split(File.pathSeparatorChar, cpf)) {
                                     File fcpf = new File(f);
-                                    if(fcpf.exists()) {
+                                    if (fcpf.exists()) {
                                         int lastSep = cts.lastIndexOf(File.pathSeparator);
                                         origTruststore = new File(fcpf.getParentFile(),lastSep>=0?cts.substring(lastSep):cts);
-                                        if(origTruststore.exists()) { 
+                                        if (origTruststore.exists()) { 
                                             break;
                                         }
                                     }
                                 }
-                                if(!origTruststore.exists()) {
+                                if (!origTruststore.exists()) {
                                     throw new CadiException(cts + " does not exist");
                                 }
                             }
                             
                         }
                         File newTruststore = new File(dir,origTruststore.getName());
-                        if(!newTruststore.exists()) {
+                        if (!newTruststore.exists()) {
                             Files.copy(origTruststore.toPath(), newTruststore.toPath());
                         }
                         
@@ -834,31 +834,31 @@ public class Agent {
                         directedPut(pa, filesymm, normal,creds, Config.CADI_TRUSTSTORE_PASSWORD,null);
                     }
                     
-                    if(aafcon!=null) { // get Properties from Remote AAF
+                    if (aafcon!=null) { // get Properties from Remote AAF
                         final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
 
                         Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
                                 .read("/configure/"+fqi+"/aaf", configDF);
-                        if(acf.get(TIMEOUT)) {
-                            for(Props props : acf.value.getProps()) {
+                        if (acf.get(TIMEOUT)) {
+                            for (Props props : acf.value.getProps()) {
                                 directedPut(pa, filesymm, normal,creds, props.getTag(),props.getValue());                    
                             }
                             ok = true;
-                        } else if(acf.code()==401){
+                        } else if (acf.code()==401){
                             trans.error().log("Bad Password sent to AAF");
                         } else {
                             trans.error().log(errMsg.toMsg(acf));
                         }
                     } else {
                         String cpf = pa.getProperty(Config.CADI_PROP_FILES);
-                        if(cpf!=null){
-                            for(String f : Split.split(File.pathSeparatorChar, cpf)) {
+                        if (cpf!=null){
+                            for (String f : Split.split(File.pathSeparatorChar, cpf)) {
                                 System.out.format("Reading %s\n",f);
                                 FileInputStream fis = new FileInputStream(f); 
                                 try {
                                     Properties props = new Properties();
                                     props.load(fis);
-                                    for(Entry<Object, Object> prop : props.entrySet()) {
+                                    for (Entry<Object, Object> prop : props.entrySet()) {
                                         directedPut(pa, filesymm, normal,creds, prop.getKey().toString(),prop.getValue().toString());
                                     }
                                 } finally {
@@ -868,21 +868,21 @@ public class Agent {
                         }
                         ok = true;
                     }
-                    if(ok) {
-                        for(Entry<String, String> es : normal.entrySet()) {
+                    if (ok) {
+                        for (Entry<String, String> es : normal.entrySet()) {
                             psProps.print(es.getKey());
                             psProps.print('=');
                             psProps.println(es.getValue());
                         }
                         
-                        for(Entry<String, String> es : creds.entrySet()) {
+                        for (Entry<String, String> es : creds.entrySet()) {
                             psCredProps.print(es.getKey());
                             psCredProps.print('=');
                             psCredProps.println(es.getValue());
                         }
                         
                         File newFile = new File(dir,rootFile+".props");
-                        if(newFile.exists()) {
+                        if (newFile.exists()) {
                             File backup = new File(dir,rootFile+".props.backup");
                             newFile.renameTo(backup);
                             System.out.println("Backed up to " + backup.getCanonicalPath());
@@ -891,7 +891,7 @@ public class Agent {
                         System.out.println("Created " + newFile.getCanonicalPath());
                         fProps = newFile;
                         
-                        if(fSecureProps.exists()) {
+                        if (fSecureProps.exists()) {
                             File backup = new File(dir,fSecureProps.getName()+".backup");
                             fSecureProps.renameTo(backup);
                             System.out.println("Backed up to " + backup.getCanonicalPath());
@@ -925,17 +925,17 @@ public class Agent {
     private static List<String> LOC_TAGS = Arrays.asList(new String[] {Config.CADI_LATITUDE, Config.CADI_LONGITUDE});
     
     private static void directedPut(final PropAccess orig, final Symm symm, final Map<String,String> main, final Map<String,String> secured, final String tag, final String value) throws IOException {
-        if(!LOC_TAGS.contains(tag)) { // Location already covered
+        if (!LOC_TAGS.contains(tag)) { // Location already covered
             String val = value==null?orig.getProperty(tag):value;
-            if(tag.endsWith("_password")) {
-                if(val.length()>4) {
-                    if(val.startsWith("enc:")) {
+            if (tag.endsWith("_password")) {
+                if (val.length()>4) {
+                    if (val.startsWith("enc:")) {
                         val = orig.decrypt(val, true);
                     }
                     val = "enc:" + symm.enpass(val);
                 }
             }
-            if(CRED_TAGS.contains(tag)) {
+            if (CRED_TAGS.contains(tag)) {
                 secured.put(tag, val);
             } else {
                 main.put(tag, val);
@@ -950,12 +950,12 @@ public class Agent {
             @Override
             public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                 Future<Perms> fc = client.read("/authz/perms/user/"+aafcon.defID(),permDF);
-                if(fc.get(aafcon.timeout)) {
+                if (fc.get(aafcon.timeout)) {
                     System.out.print("Success connecting to ");
                     System.out.println(client.getURI());
                     System.out.print("   Permissions for ");
                     System.out.println(aafcon.defID());
-                    for(Perm p : fc.value.getPerm()) {
+                    for (Perm p : fc.value.getPerm()) {
                         System.out.print('\t');
                         System.out.print(p.getType());
                         System.out.print('|');
@@ -995,16 +995,16 @@ public class Agent {
         
             Future<Artifacts> acf = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
-            if(acf.get(TIMEOUT)) {
+            if (acf.get(TIMEOUT)) {
                 // Have to wait for JDK 1.7 source...
                 //switch(artifact.getType()) {
-                if(acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
+                if (acf.value.getArtifact()==null || acf.value.getArtifact().isEmpty()) {
                     AAFSSO.cons.printf("No Artifacts found for %s on %s", mechID, machine);
                 } else {
                     String id = aafcon.defID();
                     GregorianCalendar now = new GregorianCalendar();
-                    for(Artifact a : acf.value.getArtifact()) {
-                        if(id.equals(a.getMechid())) {
+                    for (Artifact a : acf.value.getArtifact()) {
+                        if (id.equals(a.getMechid())) {
                             File dir = new File(a.getDir());
                             Properties props = new Properties();
                             FileInputStream fis = new FileInputStream(new File(dir,a.getNs()+".props"));
@@ -1017,14 +1017,14 @@ public class Agent {
                             String prop;                        
                             File f;
     
-                            if((prop=trans.getProperty(Config.CADI_KEYFILE))==null ||
+                            if ((prop=trans.getProperty(Config.CADI_KEYFILE))==null ||
                                 !(f=new File(prop)).exists()) {
                                     trans.error().printf("Keyfile must exist to check Certificates for %s on %s",
                                         a.getMechid(), a.getMachine());
                             } else {
                                 String ksf = trans.getProperty(Config.CADI_KEYSTORE);
                                 String ksps = trans.getProperty(Config.CADI_KEYSTORE_PASSWORD);
-                                if(ksf==null || ksps == null) {
+                                if (ksf==null || ksps == null) {
                                     trans.error().printf("Properties %s and %s must exist to check Certificates for %s on %s",
                                             Config.CADI_KEYSTORE, Config.CADI_KEYSTORE_PASSWORD,a.getMechid(), a.getMachine());
                                 } else {
@@ -1040,7 +1040,7 @@ public class Agent {
                                     X509Certificate cert = (X509Certificate)ks.getCertificate(mechID);
                                     String msg = null;
 
-                                    if(cert==null) {
+                                    if (cert==null) {
                                         msg = String.format("X509Certificate does not exist for %s on %s in %s",
                                                 a.getMechid(), a.getMachine(), ksf);
                                         trans.error().log(msg);
@@ -1049,7 +1049,7 @@ public class Agent {
                                         GregorianCalendar renew = new GregorianCalendar();
                                         renew.setTime(cert.getNotAfter());
                                         renew.add(GregorianCalendar.DAY_OF_MONTH,-1*a.getRenewDays());
-                                        if(renew.after(now)) {
+                                        if (renew.after(now)) {
                                             msg = String.format("X509Certificate for %s on %s has been checked on %s. It expires on %s; it will not be renewed until %s.\n", 
                                                     a.getMechid(), a.getMachine(),Chrono.dateOnlyStamp(now),cert.getNotAfter(),Chrono.dateOnlyStamp(renew));
                                             trans.info().log(msg);
@@ -1059,7 +1059,7 @@ public class Agent {
                                                     a.getMechid(), a.getMachine(),cert.getNotAfter());
                                             cmds.offerLast(mechID);
                                             cmds.offerLast(machine);
-                                            if(placeCerts(trans,aafcon,cmds)) {
+                                            if (placeCerts(trans,aafcon,cmds)) {
                                                 msg = String.format("X509Certificate for %s on %s has been renewed. Ensure services using are refreshed.\n", 
                                                         a.getMechid(), a.getMachine());
                                                 exitCode = 10; // Refreshed
@@ -1070,7 +1070,7 @@ public class Agent {
                                             }
                                         }
                                     }
-                                    if(msg!=null) {
+                                    if (msg!=null) {
                                         FileOutputStream fos = new FileOutputStream(a.getDir()+'/'+a.getNs()+".msg");
                                         try {
                                             fos.write(msg.getBytes());

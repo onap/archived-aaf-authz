@@ -58,7 +58,7 @@ public class InputIterator implements Iterable<String> {
 
             @Override
             public String next() {
-                if(!hasNext()) {
+                if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
                 return input;

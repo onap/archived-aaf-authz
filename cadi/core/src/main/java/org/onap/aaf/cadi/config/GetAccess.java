@@ -38,7 +38,7 @@ public class GetAccess extends PropAccess {
     public String getProperty(String tag, String def) {
         String rv;
         rv = super.getProperty(tag, null);
-        if(rv==null && getter!=null) {
+        if (rv==null && getter!=null) {
             rv = getter.get(tag, null, true);
         }
         return rv==null?def:rv;

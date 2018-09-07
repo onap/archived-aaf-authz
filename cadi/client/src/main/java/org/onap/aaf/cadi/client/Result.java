@@ -51,7 +51,7 @@ public class Result<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder("Code: ");
         sb.append(code);
-        if(error!=null) {
+        if (error!=null) {
             sb.append(" = ");
             sb.append(error);
         }

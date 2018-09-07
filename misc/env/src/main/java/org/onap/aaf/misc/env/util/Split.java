@@ -33,20 +33,20 @@ public class Split {
       private static final String[] BLANK = new String[0];
       
       public static String[] split(char c, String value) {
-          if(value==null) {
+          if (value==null) {
               return BLANK;
           }
 
           // Count items to preallocate Array (memory alloc is more expensive than counting twice)
           int count,idx;
-          for(count=1,idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,++idx),++count);
+          for (count=1,idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,++idx),++count);
           String[] rv = new String[count];
-          if(count==1) {
+          if (count==1) {
               rv[0]=value;
           } else {
               int last=0;
               count=-1;
-              for(idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,idx)) {
+              for (idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,idx)) {
                   rv[++count]=value.substring(last,idx);
                   last = ++idx;
               }
@@ -56,19 +56,19 @@ public class Split {
       }
 
       public static String[] splitTrim(char c, String value) {
-          if(value==null) {
+          if (value==null) {
               return BLANK;
           }
           // Count items to preallocate Array (memory alloc is more expensive than counting twice)
           int count,idx;
-          for(count=1,idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,++idx),++count);
+          for (count=1,idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,++idx),++count);
           String[] rv = new String[count];
-          if(count==1) {
+          if (count==1) {
               rv[0]=value.trim();
           } else {
               int last=0;
               count=-1;
-              for(idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,idx)) {
+              for (idx=value.indexOf(c);idx>=0;idx=value.indexOf(c,idx)) {
                   rv[++count]=value.substring(last,idx).trim();
                   last = ++idx;
               }
@@ -78,19 +78,19 @@ public class Split {
       }
 
       public static String[] splitTrim(char c, String value, int size) {
-          if(value==null) {
+          if (value==null) {
               return BLANK;
           }
 
           int idx;
           String[] rv = new String[size];
-          if(size==1) {
+          if (size==1) {
               rv[0]=value.trim();
           } else {
               int last=0;
               int count=-1;
               size-=2;
-              for(idx=value.indexOf(c);idx>=0 && count<size;idx=value.indexOf(c,idx)) {
+              for (idx=value.indexOf(c);idx>=0 && count<size;idx=value.indexOf(c,idx)) {
                   rv[++count]=value.substring(last,idx).trim();
                   last = ++idx;
               }

@@ -55,7 +55,7 @@ public class Ladder<T> {
     
     public void top() {
         rung = struts.length-1;
-        while(rung>0 && struts[rung]==null)--rung;
+        while (rung>0 && struts[rung]==null)--rung;
     }
     
     public int howHigh() {
@@ -63,7 +63,7 @@ public class Ladder<T> {
     }
     
     public void jumpTo(int rung) {
-        if(rung>=struts.length) {
+        if (rung>=struts.length) {
             Object[] temp = new Object[init_size*((rung/init_size)+1)];
             System.arraycopy(struts, 0, temp, 0, struts.length);
             struts = temp;
@@ -83,7 +83,7 @@ public class Ladder<T> {
     
     public void ascend() {
         ++rung;
-        if(rung>=struts.length) {
+        if (rung>=struts.length) {
             Object[] temp = new Object[struts.length+init_size];
             System.arraycopy(struts, 0, temp, 0, struts.length);
             struts = temp;

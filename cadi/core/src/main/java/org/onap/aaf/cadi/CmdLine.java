@@ -48,18 +48,18 @@ public class CmdLine {
      * @param args
      */
     public static void main(String[] args) {
-        if(args.length>0) {
-            if("digest".equalsIgnoreCase(args[0]) && (args.length>2 || (args.length>1 && System.console()!=null))) {
+        if (args.length>0) {
+            if ("digest".equalsIgnoreCase(args[0]) && (args.length>2 || (args.length>1 && System.console()!=null))) {
                 String keyfile;
                 String password;
-                if(args.length>2) {
+                if (args.length>2) {
                     password = args[1];
                     keyfile = args[2];
-                    if("-i".equals(password)) {
+                    if ("-i".equals(password)) {
                         int c;
                         StringBuilder sb = new StringBuilder();
                         try {
-                            while((c=System.in.read())>=0) {
+                            while ((c=System.in.read())>=0) {
                                 sb.append((char)c);
                             }
                         } catch (IOException e) {
@@ -86,7 +86,7 @@ public class CmdLine {
                     return;
                     /*  testing code... don't want it exposed
                     System.out.println(" ******** Testing *********");
-                    for(int i=0;i<100000;++i) {
+                    for (int i=0;i<100000;++i) {
                         System.out.println(args[1]);
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         b64.enpass(args[1], baos);
@@ -96,7 +96,7 @@ public class CmdLine {
                         b64.depass(pass, reconstituted);
                         String r = reconstituted.toString();
                         System.out.println(r);
-                        if(!r.equals(args[1])) {
+                        if (!r.equals(args[1])) {
                             System.err.println("!!!!! STOP - ERROR !!!!!");
                             return;
                         }
@@ -113,7 +113,7 @@ public class CmdLine {
 // Jonathan.  Oh, well, Deployment services need this behavior.  I will put this code in, but leave it undocumented. 
 // One still needs access to the keyfile to read.
 // July 2016 - thought of a tool "CMPass" to regurgitate from properties, but only if allowed.
-            } else if("regurgitate".equalsIgnoreCase(args[0]) && args.length>2) {
+            } else if ("regurgitate".equalsIgnoreCase(args[0]) && args.length>2) {
                 try {
                     Symm symm;
                     FileInputStream fis = new FileInputStream(args[2]);
@@ -123,10 +123,10 @@ public class CmdLine {
                         fis.close();
                     }
                     boolean isFile = false;
-                    if("-i".equals(args[1]) || (isFile="-f".equals(args[1]))) {
+                    if ("-i".equals(args[1]) || (isFile="-f".equals(args[1]))) {
                         BufferedReader br;
-                        if(isFile) {
-                            if(args.length<4) {
+                        if (isFile) {
+                            if (args.length<4) {
                                 System.err.println("Filename in 4th position");
                                 return;
                             }
@@ -139,10 +139,10 @@ public class CmdLine {
                             boolean cont = false;
                             StringBuffer sb = new StringBuffer();
                             JsonOutputStream jw = new JsonOutputStream(System.out);
-                            while((line=br.readLine())!=null) {
-                                if(cont) {
+                            while ((line=br.readLine())!=null) {
+                                if (cont) {
                                     int end;
-                                    if((end=line.indexOf('"'))>=0) {
+                                    if ((end=line.indexOf('"'))>=0) {
                                         sb.append(line,0,end);
                                         cont=false;
                                     } else {
@@ -150,34 +150,34 @@ public class CmdLine {
                                     }
                                 } else {
                                     int idx;
-                                    if((idx = line.indexOf(' '))>=0 
+                                    if ((idx = line.indexOf(' '))>=0 
                                             && (idx = line.indexOf(' ',++idx))>0
                                             && (idx = line.indexOf('=',++idx))>0
                                             ) {
                                         System.out.println(line.substring(0, idx-5));
                                         int start = idx+2;
                                         int end;
-                                        if((end=line.indexOf('"',start))<0) {
+                                        if ((end=line.indexOf('"',start))<0) {
                                             end = line.length();
                                             cont = true;
                                         }
                                         sb.append(line,start,end);
                                     }
                                 }
-                                if(sb.length()>0) {
+                                if (sb.length()>0) {
                                     symm.depass(sb.toString(),jw);
-                                    if(!cont) {
+                                    if (!cont) {
                                         System.out.println();
                                     }
                                 }
                                 System.out.flush();
                                 sb.setLength(0);
-                                if(!cont) {
+                                if (!cont) {
                                     jw.resetIndent();
                                 }
                             }
                         } finally {
-                            if(isFile) {
+                            if (isFile) {
                                 br.close();
                             }
                         }
@@ -191,7 +191,7 @@ public class CmdLine {
                     System.err.println("Cannot regurgitate password");
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            } else if("encode64".equalsIgnoreCase(args[0]) && args.length>1) {
+            } else if ("encode64".equalsIgnoreCase(args[0]) && args.length>1) {
                 try {
                     Symm.base64.encode(args[1], System.out);
                     System.out.println();
@@ -201,7 +201,7 @@ public class CmdLine {
                     System.err.println("Cannot encode Base64 with " + args[1]);
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            } else if("decode64".equalsIgnoreCase(args[0]) && args.length>1) {
+            } else if ("decode64".equalsIgnoreCase(args[0]) && args.length>1) {
                 try {
                     Symm.base64.decode(args[1], System.out);
                     System.out.println();
@@ -211,7 +211,7 @@ public class CmdLine {
                     System.err.println("Cannot decode Base64 text from " + args[1]);
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            } else if("encode64url".equalsIgnoreCase(args[0]) && args.length>1) {
+            } else if ("encode64url".equalsIgnoreCase(args[0]) && args.length>1) {
                 try {
                     Symm.base64url.encode(args[1], System.out);
                     System.out.println();
@@ -221,7 +221,7 @@ public class CmdLine {
                     System.err.println("Cannot encode Base64url with " + args[1]);
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            } else if("decode64url".equalsIgnoreCase(args[0]) && args.length>1) {
+            } else if ("decode64url".equalsIgnoreCase(args[0]) && args.length>1) {
                 try {
                     Symm.base64url.decode(args[1], System.out);
                     System.out.println();
@@ -231,7 +231,7 @@ public class CmdLine {
                     System.err.println("Cannot decode Base64url text from " + args[1]);
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            } else if("md5".equalsIgnoreCase(args[0]) && args.length>1) {
+            } else if ("md5".equalsIgnoreCase(args[0]) && args.length>1) {
                 try {
                     System.out.println(Hash.hashMD5asStringHex(args[1]));
                     System.out.flush();
@@ -240,11 +240,11 @@ public class CmdLine {
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
                 return;
-            } else if("sha256".equalsIgnoreCase(args[0]) && args.length>1) {
+            } else if ("sha256".equalsIgnoreCase(args[0]) && args.length>1) {
                 try {
-                    if(args.length>2) {
+                    if (args.length>2) {
                         int max = args.length>7?7:args.length;
-                        for(int i=2;i<max;++i) {
+                        for (int i=2;i<max;++i) {
                             int salt = Integer.parseInt(args[i]);
                             System.out.println(Hash.hashSHA256asStringHex(args[1],salt));
                         }
@@ -257,9 +257,9 @@ public class CmdLine {
                 }
                 System.out.flush();
                 return;
-            } else if("keygen".equalsIgnoreCase(args[0])) {
+            } else if ("keygen".equalsIgnoreCase(args[0])) {
                 try {
-                    if(args.length>1) {
+                    if (args.length>1) {
                         File f = new File(args[1]);
                         FileOutputStream fos = new FileOutputStream(f);
                         try {
@@ -280,13 +280,13 @@ public class CmdLine {
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
             
-            } else if("passgen".equalsIgnoreCase(args[0])) {
+            } else if ("passgen".equalsIgnoreCase(args[0])) {
                 int numDigits;
-                if(args.length <= 1) {
+                if (args.length <= 1) {
                     numDigits = 24;
                 } else {
                     numDigits = Integer.parseInt(args[1]); 
-                    if(numDigits<8)numDigits = 8;
+                    if (numDigits<8)numDigits = 8;
                 }
                 String pass;
                 boolean noLower,noUpper,noDigits,noSpecial,repeatingChars,missingChars;
@@ -295,33 +295,33 @@ public class CmdLine {
                     missingChars=noLower=noUpper=noDigits=noSpecial=true;
                     repeatingChars=false;
                     int c=-1,last;
-                    for(int i=0;i<numDigits;++i) {
+                    for (int i=0;i<numDigits;++i) {
                         last = c;
                         c = pass.charAt(i);
-                        if(c==last) {
+                        if (c==last) {
                             repeatingChars=true;
                             break;
                         }
-                        if(noLower) {
+                        if (noLower) {
                             noLower=!(c>=0x61 && c<=0x7A);
                         } 
-                        if(noUpper) {
+                        if (noUpper) {
                             noUpper=!(c>=0x41 && c<=0x5A);
                         } 
-                        if(noDigits) {
+                        if (noDigits) {
                             noDigits=!(c>=0x30 && c<=0x39);
                         } 
-                        if(noSpecial) {
+                        if (noSpecial) {
                             noSpecial = "+!@#$%^&*(){}[]?:;,.".indexOf(c)<0;
                         } 
                         
                         missingChars = (noLower || noUpper || noDigits || noSpecial);
                     }
-                } while(missingChars || repeatingChars);
+                } while (missingChars || repeatingChars);
                 System.out.println(pass.substring(0,numDigits));
-            } else if("urlgen".equalsIgnoreCase(args[0])) {
+            } else if ("urlgen".equalsIgnoreCase(args[0])) {
                 int numDigits;
-                if(args.length <= 1) {
+                if (args.length <= 1) {
                     numDigits = 24;
                 } else {
                     numDigits = Integer.parseInt(args[1]); 

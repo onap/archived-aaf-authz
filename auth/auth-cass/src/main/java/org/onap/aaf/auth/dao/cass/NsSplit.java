@@ -28,10 +28,10 @@ public class NsSplit {
     
     public NsSplit(NsDAO.Data nsd, String child) {
         this.nsd = nsd;
-        if(child.startsWith(nsd.name)) {
+        if (child.startsWith(nsd.name)) {
             ns = nsd.name;
             int dot = ns.length();
-            if(dot<child.length() && child.charAt(dot)=='.') {
+            if (dot<child.length() && child.charAt(dot)=='.') {
                 name = child.substring(dot+1);
             } else {
                 name="";
@@ -48,7 +48,7 @@ public class NsSplit {
         this.nsd = new NsDAO.Data();
         nsd.name = ns;
         int dot = ns.lastIndexOf('.');
-        if(dot>=0) {
+        if (dot>=0) {
             nsd.parent = ns.substring(0, dot);
         } else {
             nsd.parent = ".";

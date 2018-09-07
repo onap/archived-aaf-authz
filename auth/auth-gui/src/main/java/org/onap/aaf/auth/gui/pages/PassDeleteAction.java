@@ -65,13 +65,13 @@ public class PassDeleteAction extends Page {
                                     @Override
                                     public String code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                                         Future<CredRequest> fcr = client.delete("/authn/cred", gui.getDF(CredRequest.class),cr);
-                                        if(!fcr.get(AAFcli.timeout())) {
+                                        if (!fcr.get(AAFcli.timeout())) {
                                             return gui.aafCon.readableErrMsg(fcr);
                                         }
                                         return null;
                                     }
                                 });
-                                if(err==null) {
+                                if (err==null) {
                                     hgen.p("Password " + cr.getId() + ", " + cr.getEntry() + " is Deleted");
                                 } else {
                                     hgen.p(err);

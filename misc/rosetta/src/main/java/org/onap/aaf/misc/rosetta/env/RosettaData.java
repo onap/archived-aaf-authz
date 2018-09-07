@@ -129,7 +129,7 @@ public class RosettaData<T> implements Data<T>{
         Parse<?,?> in = df.getIn(inType);
         TimeTaken tt = in.start(trans);
         try {
-            if(df.marshal==null) { // Unknown marshaller... do working XML marshal/extraction
+            if (df.marshal==null) { // Unknown marshaller... do working XML marshal/extraction
                 StringWriter sw = new StringWriter();
                 df.jaxMar.marshal(trans.debug(), t, sw, options);
                 saved.extract(new StringReader(xml = sw.toString()), (Writer)null, df.inXML);
@@ -169,15 +169,15 @@ public class RosettaData<T> implements Data<T>{
         Out out = df.getOut(outType);
         TimeTaken tt = trans.start(out.logName(),df.logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(outType==TYPE.XML) {
-                if(xml==null) {
+            if (outType==TYPE.XML) {
+                if (xml==null) {
                     StringWriter sw = new StringWriter();
                     out.extract(null, sw, saved, options);
                     xml = sw.toString();
                 }
                 return xml;
             } else {  // is JSON
-                if(json==null) {
+                if (json==null) {
                     StringWriter sw = new StringWriter();
                     out.extract(null, sw, saved, options);
                     json = sw.toString();
@@ -197,9 +197,9 @@ public class RosettaData<T> implements Data<T>{
         Out out = df.getOut(outType);
         TimeTaken tt = trans.start(out.logName(),df.logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(outType==TYPE.XML && xml!=null) {
+            if (outType==TYPE.XML && xml!=null) {
                 os.write(xml.getBytes());
-            } else if(outType==TYPE.JSON && json!=null) {
+            } else if (outType==TYPE.JSON && json!=null) {
                 os.write(json.getBytes());
             } else { 
                 out.extract(null, os, saved, options);
@@ -217,9 +217,9 @@ public class RosettaData<T> implements Data<T>{
         Out out = df.getOut(outType);
         TimeTaken tt = trans.start(out.logName(),df.logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(outType==TYPE.XML && xml!=null) {
+            if (outType==TYPE.XML && xml!=null) {
                 writer.append(xml);
-            } else if(outType==TYPE.JSON && json!=null) {
+            } else if (outType==TYPE.JSON && json!=null) {
                 writer.append(json);
             } else { 
                 out.extract(null, writer, saved, options);
@@ -260,7 +260,7 @@ public class RosettaData<T> implements Data<T>{
         Out out = df.getOut(outType);
         TimeTaken tt = trans.start(out.logName(),df.logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(df.marshal==null) { // Unknown marshaller... do working XML marshal/extraction
+            if (df.marshal==null) { // Unknown marshaller... do working XML marshal/extraction
                 StringWriter sw = new StringWriter();
                 df.jaxMar.marshal(trans.debug(), t, sw, options);
                 out.extract(new StringReader(xml = sw.toString()), writer, df.inXML,options);
@@ -278,8 +278,8 @@ public class RosettaData<T> implements Data<T>{
         Out out = df.getOut(outType);
         TimeTaken tt = trans.start(out.logName(),df.logType(outType)); // determine from Out.. without dependency on Env?
         try {
-            if(df.marshal==null) { // Unknown marshaller... do working XML marshal/extraction
-                if(outType.equals(TYPE.XML)) {
+            if (df.marshal==null) { // Unknown marshaller... do working XML marshal/extraction
+                if (outType.equals(TYPE.XML)) {
                     df.jaxMar.marshal(trans.debug(), t, os, options);
                 } else {
                     StringWriter sw = new StringWriter();

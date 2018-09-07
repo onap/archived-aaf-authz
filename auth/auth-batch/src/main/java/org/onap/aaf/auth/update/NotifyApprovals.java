@@ -69,7 +69,7 @@ public class NotifyApprovals extends Batch {
         session = historyDAO.getSession(trans);
         apprDAO = new ApprovalDAO(trans, historyDAO);
         futureDAO = new FutureDAO(trans, historyDAO);
-        if(isDryRun()) {
+        if (isDryRun()) {
             email = new EmailPrint();
             maxEmails=3;
         } else {
@@ -105,10 +105,10 @@ public class NotifyApprovals extends Batch {
         int emailCount = 0;
         List<Approval> pending = new ArrayList<>();
         boolean isOwner,isSupervisor;
-        for(Entry<String, List<Approval>> es : Approval.byApprover.entrySet()) {
+        for (Entry<String, List<Approval>> es : Approval.byApprover.entrySet()) {
             isOwner = isSupervisor = false;
             String approver = es.getKey();
-            if(approver.indexOf('@')<0) {
+            if (approver.indexOf('@')<0) {
                 approver += org.getRealm();
             }
             Date latestNotify=null, soonestExpire=null;
@@ -116,28 +116,28 @@ public class NotifyApprovals extends Batch {
             GregorianCalendar soonest=new GregorianCalendar();
             pending.clear();
             
-            for(Approval app : es.getValue()) {
+            for (Approval app : es.getValue()) {
                 Future f = app.getTicket()==null?null:Future.data.get(app.getTicket());
-                if(f==null) { // only Ticketed Approvals are valid.. the others are records.
+                if (f==null) { // only Ticketed Approvals are valid.. the others are records.
                     // Approvals without Tickets are no longer valid. 
-                    if("pending".equals(app.getStatus())) {
+                    if ("pending".equals(app.getStatus())) {
                         app.setStatus("lapsed");
                         app.update(noAvg,apprDAO,dryRun); // obeys dryRun
                     }
                 } else {
-                    if((soonestExpire==null && f.expires()!=null) || (soonestExpire!=null && f.expires()!=null && soonestExpire.before(f.expires()))) {
+                    if ((soonestExpire==null && f.expires()!=null) || (soonestExpire!=null && f.expires()!=null && soonestExpire.before(f.expires()))) {
                         soonestExpire=f.expires();
                     }
 
-                    if("pending".equals(app.getStatus())) {
-                        if(!isOwner) {
+                    if ("pending".equals(app.getStatus())) {
+                        if (!isOwner) {
                             isOwner = "owner".equals(app.getType());
                         }
-                        if(!isSupervisor) {
+                        if (!isSupervisor) {
                             isSupervisor = "supervisor".equals(app.getType());
                         }
 
-                        if((latestNotify==null && app.getLast_notified()!=null) ||(latestNotify!=null && app.getLast_notified()!=null && latestNotify.before(app.getLast_notified()))) {
+                        if ((latestNotify==null && app.getLast_notified()!=null) ||(latestNotify!=null && app.getLast_notified()!=null && latestNotify.before(app.getLast_notified()))) {
                             latestNotify=app.getLast_notified();
                         }
                         pending.add(app);
@@ -145,29 +145,29 @@ public class NotifyApprovals extends Batch {
                 }
             }
 
-            if(!pending.isEmpty()) {
+            if (!pending.isEmpty()) {
                 boolean go = false;
-                if(latestNotify==null) { // never notified... make it so
+                if (latestNotify==null) { // never notified... make it so
                     go=true;
                 } else {
-                    if(!today.equals(Chrono.dateOnlyStamp(latest))) { // already notified today
+                    if (!today.equals(Chrono.dateOnlyStamp(latest))) { // already notified today
                         latest.setTime(latestNotify);
                         soonest.setTime(soonestExpire);
                         int year;
                         int days = soonest.get(GregorianCalendar.DAY_OF_YEAR)-latest.get(GregorianCalendar.DAY_OF_YEAR);
                         days+=((year=soonest.get(GregorianCalendar.YEAR))-latest.get(GregorianCalendar.YEAR))*365 + 
                                 (soonest.isLeapYear(year)?1:0);
-                        if(days<7) { // If Expirations get within a Week (or expired), notify everytime.
+                        if (days<7) { // If Expirations get within a Week (or expired), notify everytime.
                             go = true;
                         }
                     }
                 }
-                if(go) {
-                    if(maxEmails>emailCount++) {
+                if (go) {
+                    if (maxEmails>emailCount++) {
                         try {
                             Organization org = OrganizationFactory.obtain(env, approver);
                             Identity user = org.getIdentity(noAvg, approver);
-                            if(user==null) {
+                            if (user==null) {
                                 ps.printf("Invalid Identity: %s\n", approver);
                             } else {
                                 email.clear();
@@ -175,7 +175,7 @@ public class NotifyApprovals extends Batch {
                                 email.addTo(user.email());
                                 msg.line(LINE);
                                 msg.line("Why are you receiving this Notification?\n");
-                                if(isSupervisor) {
+                                if (isSupervisor) {
                                     msg.line("%sYou are the supervisor of one or more employees who need access to tools which are protected by AAF.  " + 
                                              "Your employees may ask for access to various tools and applications to do their jobs.  ASPR requires "
                                              + "that you are notified and approve their requests. The details of each need is provided when you click "
@@ -183,7 +183,7 @@ public class NotifyApprovals extends Batch {
                                     msg.line("Your participation in this process fulfills the ASPR requirement to re-authorize users in roles on a regular basis.\n\n");
                                 }
                             
-                                if(isOwner) {
+                                if (isOwner) {
                                     msg.line("%sYou are the listed owner of one or more AAF Namespaces. ASPR requires that those responsible for "
                                             + "applications and their access review them regularly for accuracy.  The AAF WIKI page for AT&T is https://wiki.web.att.com/display/aaf.  "
                                             + "More info regarding questions of being a Namespace Owner is available at https://wiki.web.att.com/pages/viewpage.action?pageId=594741363\n",isSupervisor?"2) ":"");
@@ -208,9 +208,9 @@ public class NotifyApprovals extends Batch {
 
                                 email.msg(msg);
                                 email.exec(noAvg, org,"");
-                                if(!isDryRun()) {
+                                if (!isDryRun()) {
                                     email.log(ps,"NotifyApprovals");
-                                    for(Approval app : pending) {
+                                    for (Approval app : pending) {
                                         app.setLastNotified(now);
                                         app.update(noAvg, apprDAO, dryRun);
                                     }

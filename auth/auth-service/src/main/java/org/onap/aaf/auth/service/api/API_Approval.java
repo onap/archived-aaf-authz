@@ -49,7 +49,7 @@ public class API_Approval {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.getApprovalsByUser(trans, resp, pathParam(req,"user"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200); 
                 } else {
                     context.error(trans,resp,r);
@@ -64,7 +64,7 @@ public class API_Approval {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.getApprovalsByTicket(trans, resp, pathParam(req,"ticket"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -79,7 +79,7 @@ public class API_Approval {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.getApprovalsByApprover(trans, resp, pathParam(req,"approver"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                         context.error(trans,resp,r);
@@ -95,7 +95,7 @@ public class API_Approval {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.updateApproval(trans, req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);

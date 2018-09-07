@@ -89,7 +89,7 @@ public class JU_ServletContextAccess {
 
         try {
             sca.log(new Exception("This exception was thrown intentionally, please ignore it"));
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail("Should have thrown an exception");
         }
     }

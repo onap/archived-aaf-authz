@@ -286,7 +286,7 @@ public class JU_Validator {
         assertFalse(Validator.INST_CHARS.matcher("").matches());
 
 
-        for( char c=0x20;c<0x7F;++c) {
+        for ( char c=0x20;c<0x7F;++c) {
             boolean b;
             switch(c) {
                 case '?':

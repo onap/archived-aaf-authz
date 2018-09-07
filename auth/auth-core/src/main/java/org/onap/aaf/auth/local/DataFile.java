@@ -43,7 +43,7 @@ public class DataFile {
         this.access = access;
     }
     public void open() throws IOException {
-        if(!file.exists()) throw new FileNotFoundException();
+        if (!file.exists()) throw new FileNotFoundException();
         rafile = new RandomAccessFile(file,access);
         channel = rafile.getChannel();
         mapBuff = channel.map("r".equals(access)?MapMode.READ_ONLY:MapMode.READ_WRITE,0,channel.size());
@@ -52,10 +52,10 @@ public class DataFile {
         return mapBuff!=null;
     }
     public void close() throws IOException {
-        if(channel!=null){
+        if (channel!=null){
             channel.close();
         }
-        if(rafile!=null) {
+        if (rafile!=null) {
             rafile.close();
         }
         mapBuff = null;
@@ -67,7 +67,7 @@ public class DataFile {
 
     private synchronized int load(Token t) {
         int len = Math.min(mapBuff.limit()-t.next,t.buff.length);
-        if(len>0) {
+        if (len>0) {
             mapBuff.position(t.next);
             mapBuff.get(t.buff,0,len);
         }
@@ -91,8 +91,8 @@ public class DataFile {
         public boolean nextLine() {
             end = load(this);
             pos = next;
-            for(int i=0;i<end;++i) {
-                if(buff[i]=='\n') {
+            for (int i=0;i<end;++i) {
+                if (buff[i]=='\n') {
                     end = i;
                     next += i+1;
                     return true;
@@ -126,16 +126,16 @@ public class DataFile {
             }
             
             public String next() {
-                if(idx>=end)return null;
+                if (idx>=end)return null;
                 int start = idx;
                 byte c=0;
                 int endStr = -1;
-                while(idx<end && idx<buff.length && (c=buff[idx])!=delim && c!='\n') { // for DOS
-                    if(c=='\r')endStr=idx;
+                while (idx<end && idx<buff.length && (c=buff[idx])!=delim && c!='\n') { // for DOS
+                    if (c=='\r')endStr=idx;
                     ++idx;
                 }
                 
-                if(endStr<0) {
+                if (endStr<0) {
                     endStr=idx-start;
                 } else {
                     endStr=endStr-start;
@@ -147,9 +147,9 @@ public class DataFile {
             public String at(int fieldOffset) {
                 int start;
                 byte c=0;
-                for(int count = idx = start = 0; idx<end && idx<buff.length; ++idx) {
-                    if((c=buff[idx])==delim || c=='\n') {
-                        if(count++ == fieldOffset) {
+                for (int count = idx = start = 0; idx<end && idx<buff.length; ++idx) {
+                    if ((c=buff[idx])==delim || c=='\n') {
+                        if (count++ == fieldOffset) {
                             break;
                         }
                         start = idx+1;
@@ -161,16 +161,16 @@ public class DataFile {
             public String atToEnd(int fieldOffset) {
                 int start;
                 byte c=0;
-                for(int count = idx = start = 0; idx<end && idx<buff.length; ++idx) {
-                    if((c=buff[idx])==delim || c=='\n') {
-                        if(count++ == fieldOffset) {
+                for (int count = idx = start = 0; idx<end && idx<buff.length; ++idx) {
+                    if ((c=buff[idx])==delim || c=='\n') {
+                        if (count++ == fieldOffset) {
                             break;
                         }
                         start = idx+1;
                     }
                 }
                 
-                for(; idx<end && idx<buff.length && (c=buff[idx])!='\n'; ++idx) {
+                for (; idx<end && idx<buff.length && (c=buff[idx])!='\n'; ++idx) {
                     ++idx;
                 }
                 return new String(buff,start,(idx-start-((c=='\r' || idx>=end)?1:0)));

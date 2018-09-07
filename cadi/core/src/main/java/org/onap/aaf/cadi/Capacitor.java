@@ -46,7 +46,7 @@ public class Capacitor {
     
     
     public void put(byte b) {
-        if(curr == null || curr.remaining()==0) { // ensure we have a "curr" buffer ready for data
+        if (curr == null || curr.remaining()==0) { // ensure we have a "curr" buffer ready for data
             curr = ringGet();
             bbs.add(curr);
         }
@@ -54,10 +54,10 @@ public class Capacitor {
     }
 
     public int read() {
-        if(curr!=null) { 
-            if(curr.remaining()>0) { // have a buffer, use it!
+        if (curr!=null) { 
+            if (curr.remaining()>0) { // have a buffer, use it!
                 return curr.get();
-            } else if(idx<bbs.size()){ // Buffer not enough, get next one from array
+            } else if (idx<bbs.size()){ // Buffer not enough, get next one from array
                 curr=bbs.get(idx++);
                 return curr.get();
             }
@@ -74,11 +74,11 @@ public class Capacitor {
      * @return
      */
     public int read(byte[] array, int offset, int length) {
-        if(curr==null)return -1;
+        if (curr==null)return -1;
         int len;
         int count=0;
-        while(length>0) { // loop through while there's data needed
-            if((len=curr.remaining())>length) { //  if enough data in curr buffer, use this code
+        while (length>0) { // loop through while there's data needed
+            if ((len=curr.remaining())>length) { //  if enough data in curr buffer, use this code
                 curr.get(array,offset,length);
                 count+=length;
                 length=0;
@@ -87,7 +87,7 @@ public class Capacitor {
                 count+=len;
                 offset+=len;
                 length-=len;
-                if(idx<bbs.size()) {
+                if (idx<bbs.size()) {
                     curr=bbs.get(idx++);
                 } else {
                     length=0; // stop, and return the count of how many we were able to load
@@ -105,14 +105,14 @@ public class Capacitor {
      * @param length
      */
     public void put(byte[] array, int offset, int length) {
-        if(curr == null || curr.remaining()==0) {
+        if (curr == null || curr.remaining()==0) {
             curr = ringGet();
             bbs.add(curr);
         }
         
         int len;
-        while(length>0) {
-            if((len=curr.remaining())>length) {
+        while (length>0) {
+            if ((len=curr.remaining())>length) {
                 curr.put(array,offset,length);
                 length=0;
             } else {
@@ -130,10 +130,10 @@ public class Capacitor {
      * Move state from Storage mode into Read mode, changing all internal buffers to read mode, etc
      */
     public void setForRead() {
-        for(ByteBuffer bb : bbs) {
+        for (ByteBuffer bb : bbs) {
             bb.flip();
         }
-        if(bbs.isEmpty()) {
+        if (bbs.isEmpty()) {
             curr = null;
             idx = 0;
         } else {
@@ -146,7 +146,7 @@ public class Capacitor {
      * reuse all the buffers
      */
     public void done() {
-        for(ByteBuffer bb : bbs) {
+        for (ByteBuffer bb : bbs) {
             ringPut(bb);
         }
         bbs.clear();
@@ -160,7 +160,7 @@ public class Capacitor {
      */
     public int available() {
         int count = 0;
-        for(ByteBuffer bb : bbs) {
+        for (ByteBuffer bb : bbs) {
             count+=bb.remaining();
         }
         return count;
@@ -174,11 +174,11 @@ public class Capacitor {
     public long skip(long n) {
         long skipped=0L;
         int skip;
-        if(curr==null) {
+        if (curr==null) {
             return 0;
         }
-        while(n>0) {
-            if(n<(skip=curr.remaining())) {
+        while (n>0) {
+            if (n<(skip=curr.remaining())) {
                 curr.position(curr.position()+(int)n);
                 skipped+=skip;
                 n=0;
@@ -186,7 +186,7 @@ public class Capacitor {
                 curr.position(curr.limit());
                 
                 skipped-=skip;
-                if(idx<bbs.size()) {
+                if (idx<bbs.size()) {
                     curr=bbs.get(idx++);
                     n-=skip;
                 } else {
@@ -201,10 +201,10 @@ public class Capacitor {
      * in a standalone mode.
      */
     public void reset() {
-        for(ByteBuffer bb : bbs) {
+        for (ByteBuffer bb : bbs) {
             bb.position(0);
         }
-        if(bbs.isEmpty()) {
+        if (bbs.isEmpty()) {
             curr = null;
             idx = 0;
         } else {
@@ -221,9 +221,9 @@ public class Capacitor {
         synchronized(ring) {
             bb=ring[start];
             ring[start]=null;
-            if(bb!=null && ++start>15)start=0;
+            if (bb!=null && ++start>15)start=0;
         }
-        if(bb==null) {
+        if (bb==null) {
             bb=ByteBuffer.allocate(DEFAULT_CHUNK);
         } else {
             bb.clear();// refresh reused buffer
@@ -234,7 +234,7 @@ public class Capacitor {
     private void ringPut(ByteBuffer bb) {
         synchronized(ring) {
             ring[end]=bb; // if null or not, BB will just be Garbage collected
-            if(++end>15)end=0;
+            if (++end>15)end=0;
         }
     }
 

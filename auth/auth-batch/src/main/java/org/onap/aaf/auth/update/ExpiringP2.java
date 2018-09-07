@@ -70,7 +70,7 @@ public class ExpiringP2 extends Batch {
             cacheTouch = new CacheTouch(trans,urDelete);
             
             File data_dir = new File(env.getProperty("aaf_data_dir"));
-            if(!data_dir.exists() || !data_dir.canWrite() || !data_dir.canRead()) {
+            if (!data_dir.exists() || !data_dir.canWrite() || !data_dir.canRead()) {
                 throw new IOException("Cannot read/write to Data Directory "+ data_dir.getCanonicalPath() + ": EXITING!!!");
             }
             urDeleteF = new BufferedReader(new FileReader(new File(data_dir,"UserRoleDeletes.dat")));
@@ -92,10 +92,10 @@ public class ExpiringP2 extends Batch {
             Map<String,Count> tally = new HashMap<>();
             int count=0;
             try {
-                while((line=urDeleteF.readLine())!=null) {
-                    if(line.startsWith("#")) {
+                while ((line=urDeleteF.readLine())!=null) {
+                    if (line.startsWith("#")) {
                         Count cnt = tally.get(line);
-                        if(cnt==null) {
+                        if (cnt==null) {
                             tally.put(line, cnt=new Count());
                         }
                         cnt.inc();
@@ -114,11 +114,11 @@ public class ExpiringP2 extends Batch {
                 }
                 
                 System.out.println("Tallies of UserRole Deletions");
-                for(Entry<String, Count> es : tally.entrySet()) {
+                for (Entry<String, Count> es : tally.entrySet()) {
                     System.out.printf("  %6d\t%20s\n", es.getValue().cnt,es.getKey());
                 }
             } finally {
-                if(cacheTouch!=null && count>0) {
+                if (cacheTouch!=null && count>0) {
                         cacheTouch.exec(trans, "user_roles", "Removing UserRoles");
                 }
             }
@@ -142,8 +142,8 @@ public class ExpiringP2 extends Batch {
     @Override
     protected void _close(AuthzTrans trans) {
         aspr.info("End " + this.getClass().getSimpleName() + " processing" );
-        for(Action<?,?,?> action : new Action<?,?,?>[] {urDelete,cacheTouch}) {
-                if(action instanceof ActionDAO) {
+        for (Action<?,?,?> action : new Action<?,?,?>[] {urDelete,cacheTouch}) {
+                if (action instanceof ActionDAO) {
                     ((ActionDAO<?,?,?>)action).close(trans);
                 }
         }

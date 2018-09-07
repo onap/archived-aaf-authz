@@ -70,7 +70,7 @@ public class UserRoleRemove extends Page {
                                     Future<Void> fv = client.delete(
                                                 "/authz/userRole/"+user+"/"+role+"?request=true",Void.class);
                                     
-                                    if(fv.get(5000)) {
+                                    if (fv.get(5000)) {
                                         // not sure if we'll ever hit this
                                         hgen.p("User ["+ user+"] Removed from Role [" +role+"]");
                                     } else {

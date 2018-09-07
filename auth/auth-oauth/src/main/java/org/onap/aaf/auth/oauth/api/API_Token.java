@@ -58,7 +58,7 @@ public class API_Token {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.createBearerToken(trans,req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(201/*HttpStatus.CREATED_201*/);
                 } else {
                     context.error(trans,resp,r);
@@ -70,7 +70,7 @@ public class API_Token {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.introspect(trans,req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(200 /*HttpStatus.OK_200*/);
                 } else {
                     context.error(trans,resp,r);

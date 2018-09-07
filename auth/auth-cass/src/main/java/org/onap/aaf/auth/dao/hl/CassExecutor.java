@@ -47,7 +47,7 @@ public class CassExecutor implements Executor {
     @Override
     public boolean inRole(String name) {
         Result<NsSplit> nss = q.deriveNsSplit(trans, name);
-        if(nss.notOK())return false;
+        if (nss.notOK())return false;
         return q.roleDAO.read(trans, nss.value.ns,nss.value.name).isOKhasData();
     }
 
@@ -58,7 +58,7 @@ public class CassExecutor implements Executor {
     @Override
     public String namespace() throws Exception {
         Result<Data> res = q.validNSOfDomain(trans,trans.user());
-        if(res.isOK()) {
+        if (res.isOK()) {
             String user[] = trans.user().split("\\.");
             return user[user.length-1] + '.' + user[user.length-2];
         }

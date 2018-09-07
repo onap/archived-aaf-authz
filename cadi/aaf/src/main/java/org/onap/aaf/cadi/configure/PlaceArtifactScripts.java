@@ -40,7 +40,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
             String filename = arti.getNs()+".check.sh";
             File f1 = new File(dir,filename);
             String email = arti.getNotification() + '\n';
-            if(email.startsWith("mailto:")) {
+            if (email.startsWith("mailto:")) {
                 email=email.substring(7);
             }  else {
                 email=arti.getOsUser() + '\n';
@@ -48,8 +48,8 @@ public class PlaceArtifactScripts extends ArtifactDir {
             
             StringBuilder classpath = new StringBuilder();
             boolean first = true;
-            for(String pth : Split.split(File.pathSeparatorChar, System.getProperty("java.class.path"))) {
-                if(first) {
+            for (String pth : Split.split(File.pathSeparatorChar, System.getProperty("java.class.path"))) {
+                if (first) {
                     first=false;
                 } else {
                     classpath.append(File.pathSeparatorChar);

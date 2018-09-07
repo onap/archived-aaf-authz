@@ -59,7 +59,7 @@ public interface Get {
             }
             
             // Take def if nothing else
-            if(str==null) {
+            if (str==null) {
                 str = def;
                 // don't log defaults
             } else {
@@ -83,8 +83,8 @@ public interface Get {
         }
         public String get(String name, String def, boolean print) {
             String gotten = access.getProperty(name, def);
-            if(print) {
-                if(gotten == null) {
+            if (print) {
+                if (gotten == null) {
                     access.log(Level.INIT,name, "is not set");
                 } else {
                     access.log(Level.INIT,name, "is set to", gotten);

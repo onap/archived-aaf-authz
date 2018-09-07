@@ -68,8 +68,8 @@ public interface LogTarget {
             PrintStream out = System.out;
             out.print(org.onap.aaf.misc.env.util.Chrono.dateFmt.format(new Date()));
             out.print(": ");
-            for(Object str : msgs) {
-                if(str!=null) {
+            for (Object str : msgs) {
+                if (str!=null) {
                     out.print(str.toString());
                     out.print(' ');
                 } else {
@@ -83,7 +83,7 @@ public interface LogTarget {
             PrintStream out = System.out;
             out.print(Chrono.dateFmt.format(new Date()));
             out.print(": ");
-            for(Object str : msgs) {
+            for (Object str : msgs) {
                 out.print(str.toString());
                 out.print(' ');
             }
@@ -108,7 +108,7 @@ public interface LogTarget {
             PrintStream out = System.err;
             out.print(Chrono.dateFmt.format(new Date()));
             out.print(": ");
-            for(Object str : msgs) {
+            for (Object str : msgs) {
                 out.print(str.toString());
                 out.print(' ');
             }
@@ -120,7 +120,7 @@ public interface LogTarget {
             PrintStream out = System.err;
             out.print(Chrono.dateFmt.format(new Date()));
             out.print(": ");
-            for(Object str : msgs) {
+            for (Object str : msgs) {
                 out.print(str.toString());
                 out.print(' ');
             }

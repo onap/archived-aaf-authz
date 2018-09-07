@@ -41,12 +41,12 @@ public class NSADelete extends ActionDAO<NsAttrib,Void,String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, NsAttrib nsa, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf("Would Delete %s Attrib '%s' in %s",text,nsa.key,nsa.ns);
             return Result.ok();
         } else {
             Result<Void> rv = q.nsDAO.dao().attribRemove(trans, nsa.ns, nsa.key);
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().printf("%s - Deleted Attrib '%s' in %s",text,nsa.key,nsa.value,nsa.ns);
             } else {
                 trans.error().printf("Error Deleting Attrib '%s' in %s - %s",nsa.key,nsa.value,nsa.ns,rv.details);

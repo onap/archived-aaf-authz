@@ -46,7 +46,7 @@ public class DNSLocator implements Locator<URI> {
         this.protocol = protocol;
         this.access = access;
         int dash = range.indexOf('-');
-        if(dash<0) {
+        if (dash<0) {
             startPort = endPort = Integer.parseInt(range);
         } else {
             startPort = Integer.parseInt(range.substring(0,dash));
@@ -57,15 +57,15 @@ public class DNSLocator implements Locator<URI> {
 
     public DNSLocator(Access access, String aaf_locate) throws LocatorException {
         this.access = access;
-        if(aaf_locate==null) {
+        if (aaf_locate==null) {
             throw new LocatorException("Null passed into DNSLocator constructor");
         }
         int start, port;
-        if(aaf_locate.startsWith("https:")) {
+        if (aaf_locate.startsWith("https:")) {
             protocol = "https:";
             start = 9; // https://
             port = 443;
-        } else if(aaf_locate.startsWith("http:")) {
+        } else if (aaf_locate.startsWith("http:")) {
             protocol = "http:";
             start = 8; // http://
             port = 80;
@@ -83,8 +83,8 @@ public class DNSLocator implements Locator<URI> {
 
     @Override
     public boolean hasItems() {
-        for(Host h : hosts) {
-            if(h.status==Status.OK) {
+        for (Host h : hosts) {
+            if (h.status==Status.OK) {
                 return true;
             }
         }
@@ -100,7 +100,7 @@ public class DNSLocator implements Locator<URI> {
     @Override
     public Item best() throws LocatorException {
         // not a good "best"
-        for(int i=0;i<hosts.length;++i) {
+        for (int i=0;i<hosts.length;++i) {
             switch(hosts[i].status) {
                 case OK:
                     return new DLItem(i);
@@ -110,7 +110,7 @@ public class DNSLocator implements Locator<URI> {
                     break;
                 case UNTRIED:
                     try {
-                        if(hosts[i].ia.isReachable(CHECK_TIME)) {
+                        if (hosts[i].ia.isReachable(CHECK_TIME)) {
                             hosts[i].status = Status.OK;
                             return new DLItem(i);
                         }
@@ -133,7 +133,7 @@ public class DNSLocator implements Locator<URI> {
     @Override
     public Item next(Item item) throws LocatorException {
         DLItem di = (DLItem)item;
-        if(++di.cnt<hosts.length) {
+        if (++di.cnt<hosts.length) {
             return di;
         } else {
             return null;
@@ -146,8 +146,8 @@ public class DNSLocator implements Locator<URI> {
             InetAddress[] ias = InetAddress.getAllByName(host);
             Host[] temp = new Host[ias.length * (1 + endPort - startPort)];
             int cnt = -1;
-            for(int j=startPort; j<=endPort; ++j) {
-                for(int i=0;i<ias.length;++i) {
+            for (int j=startPort; j<=endPort; ++j) {
+                for (int i=0;i<ias.length;++i) {
                     temp[++cnt] = new Host(ias[i], j, suffix);
                 }
             }
@@ -162,10 +162,10 @@ public class DNSLocator implements Locator<URI> {
     private void parsePorts(String aaf_locate, int defaultPort) throws LocatorException {
         int slash, start;
         int colon = aaf_locate.indexOf(':');
-        if(colon > 0) {
+        if (colon > 0) {
             start = colon + 1;
             int left = aaf_locate.indexOf('[', start);
-            if(left > 0) {
+            if (left > 0) {
                 int right = aaf_locate.indexOf(']', left + 1);
                 if (right < 0) {
                     throw new LocatorException("Missing closing bracket in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
@@ -176,7 +176,7 @@ public class DNSLocator implements Locator<URI> {
                 if (dash == (right - 1) || dash == (left + 1)) {
                     throw new LocatorException("Missing ports in brackets in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
                 }
-                if(dash < 0) {
+                if (dash < 0) {
                     startPort = endPort = Integer.parseInt(aaf_locate.substring(left + 1, right));
                 } else {
                     startPort = Integer.parseInt(aaf_locate.substring(left + 1, dash));
@@ -188,7 +188,7 @@ public class DNSLocator implements Locator<URI> {
                 if (slash == start) {
                     throw new LocatorException("Missing port before '/' in DNSLocator constructor.  (requested URL " + aaf_locate + ')');
                 }
-                if(slash < 0) {
+                if (slash < 0) {
                     startPort = endPort = Integer.parseInt(aaf_locate.substring(start));
                 } else {
                     startPort = endPort = Integer.parseInt(aaf_locate.substring(start, slash));

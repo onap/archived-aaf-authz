@@ -225,7 +225,7 @@ public class NullTrans implements AuthzTrans {
 
     @Override
     public Date now() {
-        if(now==null) {
+        if (now==null) {
             now = new Date();
         }
         return now;

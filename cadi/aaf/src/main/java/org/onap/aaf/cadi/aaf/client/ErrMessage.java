@@ -76,7 +76,7 @@ public class ErrMessage {
     public StringBuilder toMsg(StringBuilder sb, Future<?> future) {
         try {
             toMsg(sb,errDF.newData().in(TYPE.JSON).load(future.body()).asObject());
-        } catch(Exception e) {
+        } catch (Exception e) {
             //just print what we can
             sb.append(future.code());
             sb.append(": ");

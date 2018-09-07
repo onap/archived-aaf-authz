@@ -56,7 +56,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         for (int i = 0; i < key.length(); i++) {
             h = 31*h + key.charAt(i);
         }
-        if(h<0)h*=-1;
+        if (h<0)h*=-1;
         return h%segSize;
     }
     
@@ -67,7 +67,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         this.expireIn = expireIn;
         cache = new Object[segSize];
         // Create a new Map for each Segment, and store locally
-        for(int i=0;i<segSize;++i) {
+        for (int i=0;i<segSize;++i) {
             cache[i]=obtain(name+i);
         }
     }
@@ -83,17 +83,17 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         int cacheIdx = cacheIdx(key);
         @SuppressWarnings("unchecked")
         Map<String,Dated> map = ((Map<String,Dated>)cache[cacheIdx]);
-//        if(map.remove(key)!=null) // Not seeming to remove all the time
-        if(map!=null)map.clear();
+//        if (map.remove(key)!=null) // Not seeming to remove all the time
+        if (map!=null)map.clear();
 //            System.err.println("Remove " + name + " " + key);
         return cacheIdx;
     }
 
     public Result<Void> invalidate(int segment)  {
-        if(segment<0 || segment>=cache.length) return Result.err(Status.ERR_BadData,"Cache Segment %s is out of range",Integer.toString(segment));
+        if (segment<0 || segment>=cache.length) return Result.err(Status.ERR_BadData,"Cache Segment %s is out of range",Integer.toString(segment));
         @SuppressWarnings("unchecked")
         Map<String,Dated> map = ((Map<String,Dated>)cache[segment]);
-        if(map!=null) {
+        if (map!=null) {
             map.clear();
         }
         return Result.ok();
@@ -118,14 +118,14 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         Date dbStamp = info.get(trans, name,cacheIdx);
         
         // Check for cache Entry and whether it is still good (a good Cache Entry is same or after DBEntry, so we use "before" syntax)
-        if(cached!=null && dbStamp.before(cached.timestamp)) {
+        if (cached!=null && dbStamp.before(cached.timestamp)) {
             ld = (List<DATA>)cached.data;
             rld = Result.ok(ld);
         } else {
             rld = getter.get();
-            if(rld.isOK()) { // only store valid lists
+            if (rld.isOK()) { // only store valid lists
                 map.put(key, new Dated(rld.value,expireIn));  // successful item found gets put in cache
-//            } else if(rld.status == Result.ERR_Backend){
+//            } else if (rld.status == Result.ERR_Backend){
 //                map.remove(key);
             }
         }
@@ -138,8 +138,8 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
      * @param dao
      */
     public static void startCleansing(AuthzEnv env, CachedDAO<?,?,?> ... dao) {
-        for(CachedDAO<?,?,?> d : dao) {  
-            for(int i=0;i<d.segSize;++i) {
+        for (CachedDAO<?,?,?> d : dao) {  
+            for (int i=0;i<d.segSize;++i) {
                 startCleansing(env, d.table()+i);
             }
         }
@@ -147,7 +147,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
 
 
     public static<T extends Trans> void startRefresh(AuthzEnv env, CIDAO<AuthzTrans> cidao) {
-        if(infoTimer==null) {
+        if (infoTimer==null) {
             infoTimer = new Timer("CachedDAO Info Refresh Timer");
             int minRefresh = 10*1000*60; // 10 mins Integer.parseInt(env.getProperty(CACHE_MIN_REFRESH_INTERVAL,"2000")); // 2 second minimum refresh 
             infoTimer.schedule(new Refresh(env,cidao, minRefresh), 1000, minRefresh); // note: Refresh from DB immediately
@@ -156,7 +156,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
     
     public static void stopTimer() {
         Cache.stopTimer();
-        if(infoTimer!=null) {
+        if (infoTimer!=null) {
             infoTimer.cancel();
             infoTimer = null;
         }
@@ -182,14 +182,14 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
             long now = System.currentTimeMillis();
             long interval = now-lastRun;
 
-            if(interval < minRefresh || interval < Math.min(env.transRate(),maxRefresh)) return;
+            if (interval < minRefresh || interval < Math.min(env.transRate(),maxRefresh)) return;
             lastRun = now;
             AuthzTrans trans = env.newTransNoAvg();
             Result<Void> rv = cidao.check(trans);
-            if(rv.status!=Result.OK) {
+            if (rv.status!=Result.OK) {
                 env.error().log("Error in CacheInfo Refresh",rv.details);
             }
-            if(env.debug().isLoggable()) {
+            if (env.debug().isLoggable()) {
                 StringBuilder sb = new StringBuilder("Cache Info Refresh: ");
                 trans.auditTrail(0, sb, Env.REMOTE);
                 env.debug().log(sb);

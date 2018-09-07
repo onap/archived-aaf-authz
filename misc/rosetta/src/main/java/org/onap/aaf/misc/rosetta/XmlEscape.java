@@ -36,13 +36,13 @@ public class XmlEscape {
         try {
             int c;
             StringBuilder esc = new StringBuilder();
-            for(int cnt = 0;cnt<9 /*max*/; ++cnt) {
-                if((c=r.read())<0)throw new ParseException("Invalid Data: Unfinished Escape Sequence");
-                if(c!=';') { 
+            for (int cnt = 0;cnt<9 /*max*/; ++cnt) {
+                if ((c=r.read())<0)throw new ParseException("Invalid Data: Unfinished Escape Sequence");
+                if (c!=';') { 
                     esc.append((char)c);
                 } else { // evaluate
                     Integer i = charMap.get(esc.toString());
-                    if(i==null) {
+                    if (i==null) {
                         // leave in nasty XML format for now.
                         sb.append('&');
                         sb.append(esc);
@@ -69,20 +69,20 @@ public class XmlEscape {
     public static String convert(StringBuilder insb) {
         int idx, ch;
         StringBuilder sb=null;
-        for(idx=0;idx<insb.length();++idx) {
+        for (idx=0;idx<insb.length();++idx) {
             ch = insb.charAt(idx);
-            if(ch>=160 || ch==34 || ch==38 || ch==39 || ch==60 || ch==62) {
+            if (ch>=160 || ch==34 || ch==38 || ch==39 || ch==60 || ch==62) {
                 sb = new StringBuilder();
                 sb.append(insb,0,idx);
                 break;
             }
         }
         
-        if(sb==null)return insb.toString();
+        if (sb==null)return insb.toString();
             
-        for(int i=idx;i<insb.length();++i) {
+        for (int i=idx;i<insb.length();++i) {
             ch = insb.charAt(i);
-            if(ch<160) {
+            if (ch<160) {
                 switch(ch) {
                     case 34: sb.append("&quot;"); break;
                     case 38: sb.append("&amp;"); break;
@@ -94,7 +94,7 @@ public class XmlEscape {
                 }
             } else { // use map
                 String s = intMap.get(ch);
-                if(s==null)sb.append((char)ch);
+                if (s==null)sb.append((char)ch);
                 else {
                     sb.append('&');
                     sb.append(s);
@@ -362,8 +362,8 @@ public class XmlEscape {
         charMap.put("hearts",9829);
         charMap.put("diams",9830);
         
-        for( Entry<String, Integer> es: charMap.entrySet()) {
-            if(es.getValue()>=160); // save small space... note that no longer has amp, etc.
+        for ( Entry<String, Integer> es: charMap.entrySet()) {
+            if (es.getValue()>=160); // save small space... note that no longer has amp, etc.
             intMap.put(es.getValue(), es.getKey());
         }
     }

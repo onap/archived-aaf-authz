@@ -113,7 +113,7 @@ public class CadiFilter implements Filter {
     public CadiFilter(boolean init, PropAccess access, Object ... moreTafLurs) throws ServletException {
         this.access = access;
         additionalTafLurs = moreTafLurs;
-        if(init) {
+        if (init) {
             init(new AccessGetter(access));
         }
     }
@@ -129,7 +129,7 @@ public class CadiFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         // need the Context for Logging, instantiating ClassLoader, etc
         ServletContextAccess sca=new ServletContextAccess(filterConfig); 
-        if(access==null) {
+        if (access==null) {
             access = sca;
         }
         
@@ -144,9 +144,9 @@ public class CadiFilter implements Filter {
        TrustChecker tc = TrustChecker.NOTRUST; // default position
        try {
            Class<TrustChecker> ctc = (Class<TrustChecker>) Class.forName("org.onap.aaf.cadi.aaf.v2_0.AAFTrustChecker");
-           if(ctc!=null) {
+           if (ctc!=null) {
                Constructor<TrustChecker> contc = ctc.getConstructor(Access.class);
-               if(contc!=null) {
+               if (contc!=null) {
                    tc = contc.newInstance(access);
                }
            }
@@ -184,8 +184,8 @@ public class CadiFilter implements Filter {
         // In this case, the epiTaf will be changed to a non-NullTaf, and thus not instantiate twice.
         synchronized(CadiHTTPManip.noAdditional /*will always remain same Object*/) {
             ++count;
-            if(httpChecker == null) {
-                if(access==null) {
+            if (httpChecker == null) {
+                if (access==null) {
                     access = new PropAccess();
                 }
                 try {
@@ -193,16 +193,16 @@ public class CadiFilter implements Filter {
                 } catch (CadiException | LocatorException e1) {
                     throw new ServletException(e1);
                 }
-            } else if(access==null) {
+            } else if (access==null) {
                 access= httpChecker.getAccess();
             }
 
             /*
              * Setup Authn Path Exceptions
              */
-            if(pathExceptions==null) {
+            if (pathExceptions==null) {
                 String str = getter.get(Config.CADI_NOAUTHN, null, true);
-                if(str!=null) {
+                if (str!=null) {
                     pathExceptions = str.split("\\s*:\\s*");
                 }
             }
@@ -210,22 +210,22 @@ public class CadiFilter implements Filter {
             /* 
              * SETUP Permission Converters... those that can take Strings from a Vendor Product, and convert to appropriate AAF Permissions
              */
-            if(mapPairs==null) {
+            if (mapPairs==null) {
                 String str = getter.get(Config.AAF_PERM_MAP, null, true);
-                if(str!=null) {
+                if (str!=null) {
                     String mstr = getter.get(Config.AAF_PERM_MAP, null, true);
-                    if(mstr!=null) {
+                    if (mstr!=null) {
                         String map[] = mstr.split("\\s*:\\s*");
-                        if(map.length>0) {
+                        if (map.length>0) {
                             MapPermConverter mpc=null;
                             int idx;
                             mapPairs = new ArrayList<>();
-                            for(String entry : map) {
-                                if((idx=entry.indexOf('='))<0) { // it's a Path, so create a new converter
+                            for (String entry : map) {
+                                if ((idx=entry.indexOf('='))<0) { // it's a Path, so create a new converter
                                     access.log(Level.INIT,"Loading Perm Conversions for:",entry);
                                     mapPairs.add(new Pair(entry,mpc=new MapPermConverter()));
                                 } else {
-                                    if(mpc!=null) {
+                                    if (mpc!=null) {
                                         mpc.map().put(entry.substring(0,idx),entry.substring(idx+1));
                                     } else {
                                         access.log(Level.ERROR,"cadi_perm_map is malformed; ",entry, "is skipped");
@@ -248,7 +248,7 @@ public class CadiFilter implements Filter {
     public void destroy() {
         // Synchronize, in case multiCadiFilters are used.
         synchronized(CadiHTTPManip.noAdditional) {
-            if(--count<=0 && httpChecker!=null) {
+            if (--count<=0 && httpChecker!=null) {
                 httpChecker.destroy();
                 httpChecker=null;
                 access=null;
@@ -272,7 +272,7 @@ public class CadiFilter implements Filter {
         String tag = "";
         try {
             HttpServletRequest hreq = (HttpServletRequest)request;
-            if(noAuthn(hreq)) {
+            if (noAuthn(hreq)) {
                 startCode=System.nanoTime();
                 chain.doFilter(request, response);
                 code = Timing.millis(startCode);
@@ -281,11 +281,11 @@ public class CadiFilter implements Filter {
                 startValidate=System.nanoTime();
                 TafResp tresp = httpChecker.validate(hreq, hresp, hreq);
                 validate = Timing.millis(startValidate);
-                if(tresp.isAuthenticated()==RESP.IS_AUTHENTICATED) {
+                if (tresp.isAuthenticated()==RESP.IS_AUTHENTICATED) {
                     user = tresp.getPrincipal().personalName();
                     tag = tresp.getPrincipal().tag();
                     CadiWrap cw = new CadiWrap(hreq, tresp, httpChecker.getLur(),getConverter(hreq));
-                    if(httpChecker.notCadi(cw, hresp)) {
+                    if (httpChecker.notCadi(cw, hresp)) {
                         startCode=System.nanoTime();
                         oauthFilter.doFilter(cw,response,chain);
                         code = Timing.millis(startCode);
@@ -308,11 +308,11 @@ public class CadiFilter implements Filter {
      * @return
      */
     private boolean noAuthn(HttpServletRequest hreq) {
-        if(pathExceptions!=null) {
+        if (pathExceptions!=null) {
             String pi = hreq.getPathInfo();
-            if(pi==null) return false; // JBoss sometimes leaves null
-            for(String pe : pathExceptions) {
-                if(pi.startsWith(pe))return true;
+            if (pi==null) return false; // JBoss sometimes leaves null
+            for (String pe : pathExceptions) {
+                if (pi.startsWith(pe))return true;
             }
         }
         return false;
@@ -322,11 +322,11 @@ public class CadiFilter implements Filter {
      * Get Converter by Path
      */
     private PermConverter getConverter(HttpServletRequest hreq) {
-        if(mapPairs!=null) {
+        if (mapPairs!=null) {
             String pi = hreq.getPathInfo();
-            if(pi !=null) {
-                for(Pair p: mapPairs) {
-                    if(pi.startsWith(p.name))return p.pc;
+            if (pi !=null) {
+                for (Pair p: mapPairs) {
+                    if (pi.startsWith(p.name))return p.pc;
                 }
             }
         }

@@ -57,15 +57,15 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
     public Table(String title, TRANS trans, Data<S,TRANS> data, String name, String ... attrs)  {
         super(true,name);
 //        prefix=postfix=null;
-        for(String a : attrs) {
+        for (String a : attrs) {
             addAttr(false, a);
         }
         ROW_MSG_SLOT=trans.slot("TABLE_ROW_MSG");
         EMPTY_TABLE_SLOT=trans.slot("TABLE_EMPTY");
         this.columns = data.headers();
         boolean alt = false;
-        for(String s : attrs) {
-            if("class=std".equals(s) || "class=stdform".equals(s)) {
+        for (String s : attrs) {
+            if ("class=std".equals(s) || "class=stdform".equals(s)) {
                 alt=true;
             }
         }
@@ -89,7 +89,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         Mark tr = new Mark();
         
         hgen.incr(table,TABLE);
-        if(title==null) {
+        if (title==null) {
             cache.dynamic(hgen, new DynamicCode<HTMLGen,S,TRANS>() {
                 @Override
                 public void code(S state, TRANS trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {            
@@ -100,7 +100,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
             hgen.leaf("caption", "class=title").text(title).end();
         }
         hgen.incr(tr,TR);
-                for(String column : columns) {
+                for (String column : columns) {
                     hgen.leaf("th").text(column).end();
                 }
             hgen.end(tr);
@@ -110,7 +110,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         // End Table
         hgen.end(table); 
         
-        if(other!=null) {
+        if (other!=null) {
             other.code(cache,hgen);
         }
             
@@ -119,10 +119,10 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
             @Override
             public void code(S state, TRANS trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                 String msg;
-                if((msg = trans.get(EMPTY_TABLE_SLOT, null))!=null) {
+                if ((msg = trans.get(EMPTY_TABLE_SLOT, null))!=null) {
                     hgen.incr("style").text("#inner tr,caption,input,p.preamble {display: none;}#inner p.notfound {margin: 0px 0px 0px 20px}").end();
                     hgen.incr(HTMLGen.P,"class=notfound").text(msg).end().br();
-                } else if((msg=trans.get(ROW_MSG_SLOT,null))!=null) { 
+                } else if ((msg=trans.get(ROW_MSG_SLOT,null))!=null) { 
                     hgen.p(msg).br();
                 }
             }
@@ -181,9 +181,9 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
             
             int alt = this.alt;
             Cells cells = data.get(trans,state);
-            if(cells.cells.length>0) {
-                for(AbsCell[] row : cells.cells) {
-                    if(row.length==0) {
+            if (cells.cells.length>0) {
+                for (AbsCell[] row : cells.cells) {
+                    if (row.length==0) {
                         hgen.text("</table>")
                             .hr()
                             .text("<table>");
@@ -198,7 +198,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
                                 alt=1;
                                 hgen.incr(tr,TR,"class=alt");
                         }
-                        for(AbsCell cell :row) {
+                        for (AbsCell cell :row) {
                             hgen.leaf(td, TD,cell.attrs());
                             cell.write(hgen);
                             hgen.end(td);
@@ -207,7 +207,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
                     }
                 }
                 // Pass Msg back to Table code, in order to place after Table Complete
-                if(cells.msg!=null) {
+                if (cells.msg!=null) {
                     trans.put(ROW_MSG_SLOT,cells.msg);
                 }
             } else {

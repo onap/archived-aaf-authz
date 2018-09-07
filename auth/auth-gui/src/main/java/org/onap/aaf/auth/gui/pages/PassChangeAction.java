@@ -82,9 +82,9 @@ public class PassChangeAction extends Page {
                             
                             if (id==null || id.indexOf('@')<=0) {
                                 hgen.p("Data Entry Failure: Please enter a valid ID, including domain.");
-                            } else if(password == null || password2 == null) {
+                            } else if (password == null || password2 == null) {
                                 hgen.p("Data Entry Failure: Both Password Fields need entries.");
-                            } else if(!password.equals(password2)) {
+                            } else if (!password.equals(password2)) {
                                 hgen.p("Data Entry Failure: Passwords do not match.");
                             } else { // everything else is checked by Server
                                 final CredRequest cred = new CredRequest();
@@ -98,30 +98,30 @@ public class PassChangeAction extends Page {
                                             boolean go = false;
                                             try {
                                                 Organization org = OrganizationFactory.obtain(trans.env(), id);
-                                                if(org!=null) {
+                                                if (org!=null) {
                                                     go = PassChangeForm.skipCurrent(trans, org.getIdentity(trans, id));
                                                 }
-                                            } catch(OrganizationException e) {
+                                            } catch (OrganizationException e) {
                                                 trans.error().log(e);
                                             }
 
-                                            if(cred.getPassword()==null) {
+                                            if (cred.getPassword()==null) {
                                                 try {
-                                                    if(!go) {
+                                                    if (!go) {
                                                         go=gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Boolean>() {
                                                             @Override
                                                             public Boolean code(Rcli<?> client)    throws CadiException, ConnectException, APIException {
                                                                 Future<Users> fc = client.read("/authn/creds/id/"+id,gui.getDF(Users.class));
-                                                                if(fc.get(AAFcli.timeout())) {
+                                                                if (fc.get(AAFcli.timeout())) {
                                                                     GregorianCalendar now = new GregorianCalendar();
-                                                                    for(aaf.v2_0.Users.User u : fc.value.getUser()) {
-                                                                        if(u.getType()<10 && u.getExpires().toGregorianCalendar().after(now)) {
+                                                                    for (aaf.v2_0.Users.User u : fc.value.getUser()) {
+                                                                        if (u.getType()<10 && u.getExpires().toGregorianCalendar().after(now)) {
                                                                             return false; // an existing, non expired, password type exists
                                                                         }
                                                                     }
                                                                     return true; // no existing, no expired password
                                                                 } else {
-                                                                    if(fc.code()==404) { // not found... 
+                                                                    if (fc.code()==404) { // not found... 
                                                                         return true;
                                                                     } else {
                                                                         trans.error().log(gui.aafCon.readableErrMsg(fc));
@@ -131,7 +131,7 @@ public class PassChangeAction extends Page {
                                                             }
                                                         });
                                                     }
-                                                    if(!go) {
+                                                    if (!go) {
                                                         hgen.p("Current Password required").br();
                                                     }
                                                 } catch (LocatorException e) {
@@ -144,7 +144,7 @@ public class PassChangeAction extends Page {
                                                     // Note: Need "Post", because of hiding password in SSL Data
                                                     Future<CredRequest> fcr = client.create("/authn/validate",gui.getDF(CredRequest.class),cred);
                                                     fcr.get(5000);
-                                                    if(fcr.code() == 200) {
+                                                    if (fcr.code() == 200) {
                                                         hgen.p("Current Password validated").br();
                                                         go = true;
                                                     } else {
@@ -156,13 +156,13 @@ public class PassChangeAction extends Page {
                                                     tt.done();
                                                 }
                                             }
-                                            if(go) {
+                                            if (go) {
                                                 TimeTaken tt = trans.start("AAF Change Password",Env.REMOTE);
                                                 try {
                                                     // Change over Cred to reset mode
                                                     cred.setPassword(password);
                                                     String start = trans.get(startDate, null);
-                                                    if(start!=null) {
+                                                    if (start!=null) {
                                                         try {
                                                             cred.setStart(Chrono.timeStamp(Chrono.dateOnlyFmt.parse(start)));
                                                         } catch (ParseException e) {
@@ -171,7 +171,7 @@ public class PassChangeAction extends Page {
                                                     }
                                                     
                                                     Future<CredRequest> fcr = gui.clientAsUser(trans.getUserPrincipal()).create("/authn/cred",gui.getDF(CredRequest.class),cred);
-                                                    if(fcr.get(AAFcli.timeout())) {
+                                                    if (fcr.get(AAFcli.timeout())) {
                                                         // Do Remote Call
                                                         hgen.p("New Password has been added.  The previous one is still valid until Expiration.");
                                                         fail = false;
@@ -194,10 +194,10 @@ public class PassChangeAction extends Page {
                                 
                         }
                         hgen.br();
-                        if(fail) {
+                        if (fail) {
                             hgen.incr(HTMLGen.A,true,"class=greenbutton","href="+PassChangeForm.HREF+"?id="+id).text("Try again").end();
                         } else {
-                            if(ns==null) {
+                            if (ns==null) {
                                 hgen.incr(HTMLGen.A,true,"class=greenbutton","href="+Home.HREF).text("Back").end();
                             } else {
                                 hgen.incr(HTMLGen.A,true,"class=greenbutton","href="+CredDetail.HREF+"?id="+id+"&ns="+ns).text("Back").end();

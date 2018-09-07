@@ -33,7 +33,7 @@ public class OutJson extends Out {
     public<IN,S> void extract(IN in, Writer writer, Parse<IN, S> prs, boolean ... options) throws IOException, ParseException {
         Parsed<S> p = prs.newParsed();
         IndentPrintWriter ipw;
-        if(options.length>0 && options[0]) { // is Pretty
+        if (options.length>0 && options[0]) { // is Pretty
             ipw = writer instanceof IndentPrintWriter?(IndentPrintWriter)writer:new IndentPrintWriter(writer);
             writer = ipw;
         } else {
@@ -47,13 +47,13 @@ public class OutJson extends Out {
         char afterName=0, beforeName=0, maybe = 0, prev=0;
         
         int count = 0;
-        while((p = prs.parse(in,p.reuse())).valid()) {
+        while ((p = prs.parse(in,p.reuse())).valid()) {
             ++count;
             switch(p.event) {
                 case 1: 
                     continue;
                 case 2:
-                    if(count==2) { // it's empty, write open/close on it's own
+                    if (count==2) { // it's empty, write open/close on it's own
                         writer.append('{');
                         writer.append('}');
                     }
@@ -61,7 +61,7 @@ public class OutJson extends Out {
                     return;
                 case '{':
                     afterName = '{';
-                    if(jsonLevel.peek().printObjectName) {
+                    if (jsonLevel.peek().printObjectName) {
                         print = true;
                     } else { // don't print names on first
                         print=false; 
@@ -70,7 +70,7 @@ public class OutJson extends Out {
                     jsonLevel.push(new LevelStack(true));
                     break;
                 case '}':
-                    if(p.hasData()) { // if we have data, we print that, so may need to prepend a comma.
+                    if (p.hasData()) { // if we have data, we print that, so may need to prepend a comma.
                         maybe = jsonLevel.peek().listItem();
                     } else { // No data means just print, 
                         p.name = ""; // XML tags come through with names, but no data
@@ -81,7 +81,7 @@ public class OutJson extends Out {
                     break;
                 case '[':
                     afterName = p.event;
-                    if((prev==',' && !hadData) || prev==']')maybe=',';
+                    if ((prev==',' && !hadData) || prev==']')maybe=',';
                     else maybe = jsonLevel.peek().listItem();
 
                     jsonLevel.push(new LevelStack(false));
@@ -89,8 +89,8 @@ public class OutJson extends Out {
                     break;
                 case ']':
                     afterName = p.event;
-                    if(p.hasData()) {
-                        if(prev==',' && !hadData)maybe=',';
+                    if (p.hasData()) {
+                        if (prev==',' && !hadData)maybe=',';
                         else maybe = jsonLevel.peek().listItem();
                     } else {
                         p.name = ""; // XML tags come through with names, but no data
@@ -101,7 +101,7 @@ public class OutJson extends Out {
                     break;
                 case   3:
                 case ',':
-                    if(!p.hasData()) {
+                    if (!p.hasData()) {
                         p.isString=false;
                         print=false;
                     } else {
@@ -113,36 +113,36 @@ public class OutJson extends Out {
                     print = true;
             }
         
-            if(maybe!=0) {
-                if(ipw==null)writer.append(maybe); 
+            if (maybe!=0) {
+                if (ipw==null)writer.append(maybe); 
                 else ipw.println(maybe);
                 maybe = 0;
             }
             
-            if(beforeName!=0) {
-                if(ipw==null)writer.append(beforeName);
+            if (beforeName!=0) {
+                if (ipw==null)writer.append(beforeName);
                 else ipw.println(beforeName);
                 beforeName = 0;
             }
-            if(print) {
-                if(p.hasName()) {
+            if (print) {
+                if (p.hasName()) {
                     writer.append('"');
-                    if(p.event==3)writer.append("__");
+                    if (p.event==3)writer.append("__");
                     writer.append(p.name);
                     writer.append("\":");
                 } 
-                if(p.hasData()) {
-                    if(p.isString) {
+                if (p.hasData()) {
+                    if (p.isString) {
                         writer.append('"');
                         escapedWrite(writer, p.sb);
                         writer.append('"');
-                    } else if(p.sb.length()>0) {
+                    } else if (p.sb.length()>0) {
                         writer.append(p.sb);
                     }
                 }
             }
-            if(afterName!=0) {
-                if(ipw==null)writer.append(afterName);
+            if (afterName!=0) {
+                if (ipw==null)writer.append(afterName);
                 else {
                     switch(afterName) {
                         case '{':
@@ -155,7 +155,7 @@ public class OutJson extends Out {
                             ipw.print(afterName);
                             break;
                         case ']':
-                            if(prev=='}' || prev==',')ipw.println();
+                            if (prev=='}' || prev==',')ipw.println();
                             ipw.dec();
                             ipw.print(afterName);
                             break;
@@ -170,7 +170,7 @@ public class OutJson extends Out {
                 afterName = 0;
             }
             
-            if(ipw!=null) {
+            if (ipw!=null) {
                 switch(p.event) {
                     case '[':
                         ipw.inc();
@@ -187,11 +187,11 @@ public class OutJson extends Out {
 
     private void escapedWrite(Writer writer, StringBuilder sb) throws IOException {
         char c;
-        for(int i=0;i<sb.length();++i) {
+        for (int i=0;i<sb.length();++i) {
             switch(c=sb.charAt(i)) {
                 case '\\':
                     writer.append(c);
-                    if(i<sb.length()) {
+                    if (i<sb.length()) {
                         c=sb.charAt(++i);
                         writer.append(c);
                     }
@@ -221,7 +221,7 @@ public class OutJson extends Out {
         }
         
         public char listItem() {
-            if(first_n_List) {
+            if (first_n_List) {
                 first_n_List=false;
                 return 0;
             } else {

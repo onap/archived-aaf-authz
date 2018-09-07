@@ -31,7 +31,7 @@ public class UserChainManip {
     */ 
     public static StringBuilder build(StringBuilder sb, String app, String id, UserChain.Protocol proto, boolean as) {
         boolean mayAs;
-        if(!(mayAs=sb.length()==0)) {
+        if (!(mayAs=sb.length()==0)) {
             sb.append(',');
         }
         sb.append(app);
@@ -39,34 +39,34 @@ public class UserChainManip {
         sb.append(id);
         sb.append(':');
         sb.append(proto.name());
-        if(as && mayAs) {
+        if (as && mayAs) {
             sb.append(":AS");
         }
         return sb;
     }
     
     public static String idToNS(String id) {
-        if(id==null) {
+        if (id==null) {
             return "";
         } else {
             StringBuilder sb = new StringBuilder();
             char c;
             int end;
             boolean first = true;
-            for(int idx = end = id.length()-1;idx>=0;--idx) {
-                if((c = id.charAt(idx))=='@' || c=='.')  {
-                    if(idx<end) {
-                        if(first) {
+            for (int idx = end = id.length()-1;idx>=0;--idx) {
+                if ((c = id.charAt(idx))=='@' || c=='.')  {
+                    if (idx<end) {
+                        if (first) {
                             first = false;
                         } else {
                             sb.append('.');
                         }
-                        for(int i=idx+1;i<=end;++i) {
+                        for (int i=idx+1;i<=end;++i) {
                             sb.append(id.charAt(i));
                         }
                     }
                     end=idx-1;
-                    if(c=='@') {
+                    if (c=='@') {
                         break;
                     }
                 }

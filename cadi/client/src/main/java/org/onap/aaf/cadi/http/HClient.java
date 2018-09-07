@@ -111,13 +111,13 @@ public class HClient implements EClient<HttpURLConnection> {
     public void send() throws APIException {
         try {
             // Build URL from given URI plus current Settings
-            if(uri.getPath()==null) {
+            if (uri.getPath()==null) {
                 throw new APIException("Invalid URL entered for HClient");
             }
             StringBuilder pi=null;
-            if(pathinfo!=null) { // additional pathinfo
+            if (pathinfo!=null) { // additional pathinfo
                 pi = new StringBuilder(uri.getPath());
-                if(!pathinfo.startsWith("/")) {
+                if (!pathinfo.startsWith("/")) {
                     pi.append('/');
                 }
                 pi.append(pathinfo);
@@ -133,7 +133,7 @@ public class HClient implements EClient<HttpURLConnection> {
                     );
             huc = getConnection(sendURI, pi);
             huc.setRequestMethod(meth);
-            if(ss!=null) {
+            if (ss!=null) {
                 ss.setSecurity(huc); 
             }
             if (headers != null)
@@ -153,7 +153,7 @@ public class HClient implements EClient<HttpURLConnection> {
             throw new APIException(e);
         } finally { // ensure all these are reset after sends
             meth=pathinfo=null;
-            if(headers!=null) {
+            if (headers!=null) {
                 headers.clear();
             }
             pathinfo = query = fragment = "";
@@ -200,7 +200,7 @@ public class HClient implements EClient<HttpURLConnection> {
                 huc.setReadTimeout(timeout);
                 respCode = huc.getResponseCode();
                 ss.setLastResponse(respCode);
-                if(evalInfo(huc)) {
+                if (evalInfo(huc)) {
                     return true;
                 } else {
                     extractError();
@@ -216,13 +216,13 @@ public class HClient implements EClient<HttpURLConnection> {
         private void extractError() {
             InputStream is = huc.getErrorStream();
             try {
-                if(is==null) {
+                if (is==null) {
                     is = huc.getInputStream();
                 }
-                if(is!=null) {
+                if (is!=null) {
                 errContent = new StringBuilder();
                 int c;
-                    while((c=is.read())>=0) {
+                    while ((c=is.read())>=0) {
                         errContent.append((char)c);
                     }
                 }
@@ -274,7 +274,7 @@ public class HClient implements EClient<HttpURLConnection> {
         }
     
         public void close() {
-            if(huc!=null) {
+            if (huc!=null) {
                 huc.disconnect();
             }
         }
@@ -382,12 +382,12 @@ public class HClient implements EClient<HttpURLConnection> {
                 int read;
                 InputStream is;
                 OutputStream os = resp.getOutputStream();
-                if(respCode==expected) {
+                if (respCode==expected) {
                     is = huc.getInputStream();
                     // reuse Buffers
                     Pooled<byte[]> pbuff = Rcli.buffPool.get();
                     try { 
-                        while((read=is.read(pbuff.content))>=0) {
+                        while ((read=is.read(pbuff.content))>=0) {
                             os.write(pbuff.content,0,read);
                         }
                     } finally {
@@ -396,14 +396,14 @@ public class HClient implements EClient<HttpURLConnection> {
                     return true;
                 } else {
                     is = huc.getErrorStream();
-                    if(is==null) {
+                    if (is==null) {
                         is = huc.getInputStream();
                     }
-                    if(is!=null) {
+                    if (is!=null) {
                         errContent = new StringBuilder();
                         Pooled<byte[]> pbuff = Rcli.buffPool.get();
                         try { 
-                            while((read=is.read(pbuff.content))>=0) {
+                            while ((read=is.read(pbuff.content))>=0) {
                                 os.write(pbuff.content,0,read);
                             }
                         } finally {

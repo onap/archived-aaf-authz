@@ -127,7 +127,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
         public boolean role(AuthzTrans trans, Question ques, String role) {
             this.role = role;
             Result<NsSplit> rnss = ques.deriveNsSplit(trans, role);
-            if(rnss.isOKhasData()) {
+            if (rnss.isOKhasData()) {
                 ns = rnss.value.ns;
                 rname = rnss.value.name;
                 return true;
@@ -304,15 +304,15 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
                 : "n/a";
         }
 
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
         
-        if(historyDAO.create(trans, hdRole).status!=Status.OK) {
+        if (historyDAO.create(trans, hdRole).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
         // uses User as Segment
-        if(infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
+        if (infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
             trans.error().log("Cannot touch CacheInfo");
         }
     }

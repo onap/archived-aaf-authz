@@ -95,7 +95,7 @@ public class JU_Saved<b> {
                 tt.done();
             }
             report.glean(trans,1,2,3,4);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());

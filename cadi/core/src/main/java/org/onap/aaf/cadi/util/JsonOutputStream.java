@@ -39,11 +39,11 @@ public class JsonOutputStream extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
-        if(ret=='\n') {
+        if (ret=='\n') {
             ret = 0;
-            if(prev!=',' || (b!='{' && b!='[')) {
+            if (prev!=',' || (b!='{' && b!='[')) {
                 os.write('\n');
-                for(int i=0;i<indent;++i) {
+                for (int i=0;i<indent;++i) {
                     os.write(TWO_SPACE);
                 }
             }
@@ -58,7 +58,7 @@ public class JsonOutputStream extends OutputStream {
             case ']': 
                     --indent;
                     os.write('\n');
-                    for(int i=0;i<indent;++i) {
+                    for (int i=0;i<indent;++i) {
                         os.write(TWO_SPACE);
                     }
                     break;
@@ -81,7 +81,7 @@ public class JsonOutputStream extends OutputStream {
 
     @Override
     public void close() throws IOException {
-        if(closeable) {
+        if (closeable) {
             os.close();
         }
     }

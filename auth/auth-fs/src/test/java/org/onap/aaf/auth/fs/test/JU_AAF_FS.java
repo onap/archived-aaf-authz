@@ -112,14 +112,14 @@ public class JU_AAF_FS {
         String[] strArr = {"aaf_component=aaf_com:po.nent"};
         try {
             //AAF_FS.main(strArr);            //Timeout caused in Jenkins but not in local
-        } catch(Exception e) {
+        } catch (Exception e) {
             //Failure expected until we understand how code is.
         }
     }
     
     @After
     public void cleanUp() {
-        for(File f : d.listFiles()) {
+        for (File f : d.listFiles()) {
             f.delete();
         }
         d.delete();

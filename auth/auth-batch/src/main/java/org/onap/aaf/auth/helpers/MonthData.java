@@ -42,15 +42,15 @@ public class MonthData {
     public MonthData(String env) throws IOException {
         f = new File("Monthly"+env+".dat");
         
-        if(f.exists()) {
+        if (f.exists()) {
             BufferedReader br = new BufferedReader(new FileReader(f));
             try {
                 String line;
                 String[] split;
-                while((line=br.readLine())!=null) {
-                    if(!line.startsWith("#")) {
+                while ((line=br.readLine())!=null) {
+                    if (!line.startsWith("#")) {
                         split = Split.split(',', line);
-                        if(split.length==5) {
+                        if (split.length==5) {
                             add(Integer.parseInt(split[0]),split[1],
                                 Integer.parseInt(split[2]),
                                 Integer.parseInt(split[3]),
@@ -67,7 +67,7 @@ public class MonthData {
     
     public void add(int yr_mon, String target, long total, long adds, long drops) {
         Set<Row> row = data.get(yr_mon);
-        if(row==null) {
+        if (row==null) {
             data.put(yr_mon, (row=new HashSet<>()));
         }
         row.add(new Row(target,total,adds,drops));
@@ -101,14 +101,14 @@ public class MonthData {
     }
 
     public void write() throws IOException {
-        if(f.exists()) {
+        if (f.exists()) {
             File bu = new File(f.getName()+".bak");
             f.renameTo(bu);
         }
         PrintStream ps = new PrintStream(f);
         try {
-            for( Entry<Integer, Set<Row>> rows : data.entrySet()) {
-                for(Row row : rows.getValue()) {
+            for ( Entry<Integer, Set<Row>> rows : data.entrySet()) {
+                for (Row row : rows.getValue()) {
                     ps.printf("%d,%s,%d,%d,%d\n",rows.getKey(),row.target,row.total,row.adds,row.drops);
                 }
             }

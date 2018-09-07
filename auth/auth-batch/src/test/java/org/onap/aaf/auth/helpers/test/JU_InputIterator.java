@@ -69,7 +69,7 @@ public class JU_InputIterator {
     
     @After
     public void cleanUp() {
-        if(f.exists()) {
+        if (f.exists()) {
             f.delete();
         }
     }

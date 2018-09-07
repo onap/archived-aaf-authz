@@ -143,21 +143,21 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 
     private static void iterateResults(Creator<UserRole> creator, Iterator<Row> iter ) {
         Row row;
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             ++totalLoaded;
             row = iter.next();
             UserRole ur = creator.create(row);
             data.add(ur);
 
             List<UserRole> lur = byUser.get(ur.urdd.user);
-            if(lur==null) {
+            if (lur==null) {
                 lur = new ArrayList<>();
                 byUser.put(ur.urdd.user, lur);
             }
             lur.add(ur);
 
             lur = byRole.get(ur.urdd.role);
-            if(lur==null) {
+            if (lur==null) {
                 lur = new ArrayList<>();
                 byRole.put(ur.urdd.role, lur);
             }
@@ -178,12 +178,12 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         data.remove(this);
         
         List<UserRole> lur = byUser.get(urdd.user);
-        if(lur!=null) {
+        if (lur!=null) {
             lur.remove(this);
         }
     
         lur = byRole.get(urdd.role);
-        if(lur!=null) {
+        if (lur!=null) {
             lur.remove(this);
         }
     }
@@ -245,10 +245,10 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 
     public static UserRole get(String u, String r) {
         List<UserRole> lur = byUser.get(u);
-        if(lur!=null) {
-            for(UserRole ur : lur) {
+        if (lur!=null) {
+            for (UserRole ur : lur) {
 
-                if(ur.urdd.role.equals(r)) {
+                if (ur.urdd.role.equals(r)) {
                     return ur;
                 }
             }
@@ -260,7 +260,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     // We write to a file, and validate.  If the size is iffy, we email Support
     public void delayDelete(AuthzTrans trans, String text, boolean dryRun) {
         String dt = Chrono.dateTime(urdd.expires);
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf(LOG_FMT,text,"Would Delete",urdd.user,urdd.role,urdd.ns,urdd.rname,dt);
         } else {
             trans.info().printf(LOG_FMT,text,"Staged Deletion",urdd.user,urdd.role,urdd.ns,urdd.rname,dt);
@@ -289,7 +289,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
 
     public static void actuateDeletionNow(AuthzTrans trans, URDelete directDel) {
-        for(UserRole ur : cache.getRemoved()) {
+        for (UserRole ur : cache.getRemoved()) {
             directDel.exec(trans, ur, "Actuating UserRole Deletion");
         }
         cache.getRemoved().clear();

@@ -84,7 +84,7 @@ public class History  {
             Row row;
             tt = trans.start("Load History", Env.SUB);
             try {
-                while(iter.hasNext()) {
+                while (iter.hasNext()) {
                     ++count;
                     row = iter.next();
                     loader.exec(creator.create(row));
@@ -151,9 +151,9 @@ public class History  {
             ByteBuffer bb = row.getBytes(3);
             sb.setLength(0);
             
-            if(bb!=null && bb.hasRemaining()) {
+            if (bb!=null && bb.hasRemaining()) {
                 sb.append("0x");
-                while(bb.hasRemaining()) {
+                while (bb.hasRemaining()) {
                     sb.append(String.format("%02x",bb.get()));
                 }
                 bb.flip();

@@ -56,13 +56,13 @@ public class OLur extends AbsOTafLur implements Lur {
     @Override
     public boolean fish(Principal bait, Permission ... pond) {
         TokenPerm tp;
-        if(bait instanceof OAuth2Principal) {
+        if (bait instanceof OAuth2Principal) {
             OAuth2Principal oa2p = (OAuth2Principal)bait;
             tp = oa2p.tokenPerm();
         } else {
             tp=null;
         }
-        if(tp==null) { 
+        if (tp==null) { 
             // if no Token Perm preset, get
             try {
                 Pooled<TokenClient> tcp = tokenClientPool.get();
@@ -73,7 +73,7 @@ public class OLur extends AbsOTafLur implements Lur {
                     scopeSet.add(tc.defaultScope());
                     AAFPermission ap;
                     for (Permission p : pond) {
-                        if(p instanceof AAFPermission) {
+                        if (p instanceof AAFPermission) {
                             ap = (AAFPermission)p;
                             scopeSet.add(ap.getNS());
                         }
@@ -82,9 +82,9 @@ public class OLur extends AbsOTafLur implements Lur {
                     scopeSet.toArray(scopes);
                     
                     Result<TimedToken> rtt = tc.getToken(Kind.getKind(bait),scopes);
-                    if(rtt.isOK()) {
+                    if (rtt.isOK()) {
                         Result<TokenPerm> rtp = tkMgr.get(rtt.value.getAccessToken(), bait.getName().getBytes());
-                        if(rtp.isOK()) {
+                        if (rtp.isOK()) {
                             tp = rtp.value;
                         }
                     }
@@ -97,8 +97,8 @@ public class OLur extends AbsOTafLur implements Lur {
         }
         
         boolean rv = false;
-        if(tp!=null) {
-            if(tkMgr.access.willLog(Level.DEBUG)) {
+        if (tp!=null) {
+            if (tkMgr.access.willLog(Level.DEBUG)) {
                 StringBuilder sb = new StringBuilder("AAF Permissions for user ");
                 sb.append(bait.getName());
                 sb.append(", from token ");            
@@ -117,7 +117,7 @@ public class OLur extends AbsOTafLur implements Lur {
                 access.log(Level.DEBUG, sb);
             }
             for (Permission p : pond) {
-                if(rv) {
+                if (rv) {
                     break;
                 }
                 for (AAFPermission perm : tp.perms()) {
@@ -135,7 +135,7 @@ public class OLur extends AbsOTafLur implements Lur {
      */
     @Override
     public void fishAll(Principal bait, List<Permission> permissions) {
-        if(bait instanceof OAuth2Principal) {
+        if (bait instanceof OAuth2Principal) {
             for (AAFPermission p : ((OAuth2Principal)bait).tokenPerm().perms()) {
                 permissions.add(p);
             }

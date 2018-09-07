@@ -69,7 +69,7 @@ public class User extends Cmd {
                     // You can request to be added or removed from role.
                     setQueryParamsOn(client);
 
-                    for(String id: ids) {
+                    for (String id: ids) {
                         id=fullID(id);
                         urr.setUser(id);
                         switch(option) {
@@ -97,7 +97,7 @@ public class User extends Cmd {
                             default: // actually, should never get here...
                                 throw new CadiException("Invalid action [" + action + ']');
                         }
-                        if(fp.get(AAFcli.timeout())) {
+                        if (fp.get(AAFcli.timeout())) {
                             pw().print(verb);
                             pw().print(" User [");
                             pw().print(urr.getUser());
@@ -112,7 +112,7 @@ public class User extends Cmd {
                                     pw().println(" is Accepted, but requires Approvals before actualizing");
                                     break;
                                 case 404:
-                                    if(option==3) {
+                                    if (option==3) {
                                         pw().println("Failed with code 404: UserRole is not found, or you do not have permission to view");
                                         break;
                                     }
@@ -139,7 +139,7 @@ public class User extends Cmd {
                             "/authz/userRole/role", 
                             getDF(UserRoleRequest.class), 
                             urr);
-                    if(fp.get(AAFcli.timeout())) {
+                    if (fp.get(AAFcli.timeout())) {
                         pw().println("Set the Role to Users [" + allUsers + "]");
                     } else {
                         error(fp);

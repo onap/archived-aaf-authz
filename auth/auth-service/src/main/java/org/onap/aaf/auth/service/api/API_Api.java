@@ -58,7 +58,7 @@ public class API_Api {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.getAPI(trans,resp,authzAPI);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -80,7 +80,7 @@ public class API_Api {
                 Result<Void> r = context.getAPIExample(trans,resp,nameOrContextType,
                         question>=0 && "optional=true".equalsIgnoreCase(req.getPathInfo().substring(question+1))
                         );
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);

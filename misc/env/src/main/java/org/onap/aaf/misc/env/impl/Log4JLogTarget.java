@@ -61,7 +61,7 @@ public class Log4JLogTarget implements LogTarget {
 
     // @Override
     public void log(Throwable e, Object... msgs) {
-        if (log.isEnabledFor(level)) {
+        if (log.isEnabledFor (level)) {
             StringBuilder sb = new StringBuilder();
             
             String msg;
@@ -69,7 +69,7 @@ public class Log4JLogTarget implements LogTarget {
                 e.printStackTrace(new PrintWriter(new StringBuilderWriter(sb)));
             }
             for (int i = 0; i < msgs.length; ++i) {
-                if(msgs[i]!=null) {
+                if (msgs[i]!=null) {
                     msg = msgs[i].toString();
                     if (msg != null && msg.length() > 0) {
                         int sbl = sb.length();
@@ -92,7 +92,7 @@ public class Log4JLogTarget implements LogTarget {
      */
     @Override
     public void printf(String fmt, Object ... vars) {
-        if(log.isEnabledFor(level)) {
+        if (log.isEnabledFor (level)) {
             log.log(level,String.format(fmt,vars));
         }
     }

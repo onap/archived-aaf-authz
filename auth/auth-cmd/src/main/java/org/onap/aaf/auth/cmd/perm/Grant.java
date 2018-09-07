@@ -75,9 +75,9 @@ public class Grant extends Cmd {
                 if (option != 2) {
                     String[] roles = args[idx++].split(",");
                     String strA,strB;
-                    for(String role : roles) {
+                    for (String role : roles) {
                         rpr.setRole(role);
-                        if(option==0) {
+                        if (option==0) {
                             // You can request to Grant Permission to a Role
                             setQueryParamsOn(client);
                             frpr = client.create(
@@ -98,7 +98,7 @@ public class Grant extends Cmd {
                             strA = "UnGranted Permission [";
                             strB = "] from Role [";
                         }
-                        if(frpr.get(AAFcli.timeout())) {
+                        if (frpr.get(AAFcli.timeout())) {
                             pw().println(strA + pk.getType() + '|' + pk.getInstance() + '|' + pk.getAction() 
                                     + strB + role +']');
                         } else {
@@ -122,7 +122,7 @@ public class Grant extends Cmd {
                             "/authz/role/perm", 
                             getDF(RolePermRequest.class), 
                             rpr);
-                    if(frpr.get(AAFcli.timeout())) {
+                    if (frpr.get(AAFcli.timeout())) {
                         pw().println("Set Permission's Roles to [" + allRoles + "]");
                     } else {
                         error(frpr);

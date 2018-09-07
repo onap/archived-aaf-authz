@@ -67,7 +67,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
         df = env.newDataFactory(cls);
         tmap = new ConcurrentHashMap<>();
         synchronized(Persist.class) {
-            if(clean==null) {
+            if (clean==null) {
                 clean = new Timer(true);
                 clean.schedule(new Clean(access), 20000, CLEAN_CHECK);
             }
@@ -85,14 +85,14 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
         return df;
     }
     public Result<CT> get(final String key, final byte[] hash, Loader<CT> rl) throws CadiException, APIException, LocatorException {
-        if(key==null) {
+        if (key==null) {
             return null;
         }
         Holder<Path> hp = new Holder<Path>(null);
         CT ct = tmap.get(key);
         // Make sure cached Item is synced with Disk, but only even Minute to save Disk hits
-        if(ct!=null && ct.checkSyncTime()) { // check File Time only every SYNC Period (2 min)
-            if(ct.hasBeenTouched()) {
+        if (ct!=null && ct.checkSyncTime()) { // check File Time only every SYNC Period (2 min)
+            if (ct.hasBeenTouched()) {
                 tmap.remove(key);
                 ct = null;
                 access.log(Level.DEBUG,"File for",key,"has been touched, removing memory entry");
@@ -100,12 +100,12 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
         }
 
         // If not currently in memory, check with Disk (which might have been updated by other processes)
-        if(ct==null) {
+        if (ct==null) {
             Holder<Long> hl = new Holder<Long>(0L);
             T t;
-            if((t = readDisk(df, hash, key, hp, hl))!=null) {
+            if ((t = readDisk(df, hash, key, hp, hl))!=null) {
                 try {
-                    if((ct = newCacheable(t,hl.get(),hash,hp.get()))!=null) {
+                    if ((ct = newCacheable(t,hl.get(),hash,hp.get()))!=null) {
                         tmap.put(key, ct);
                     }
                     access.log(Level.DEBUG,"Read Token from",key);
@@ -115,16 +115,16 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
             } // if not read, then ct still==null
             
             // If not in memory, or on disk, get from Remote... IF reloadable (meaning, isn't hitting too often, etc).
-            if(ct==null || ct.checkReloadable()) {
+            if (ct==null || ct.checkReloadable()) {
                 // Load from external (if makes sense)
                 Result<CT> rtp = rl.load(key);
-                if(rtp.isOK()) {
+                if (rtp.isOK()) {
                     ct = rtp.value;
                     try {
                         Path p = getPath(key);
                         writeDisk(df, ct.get(),ct.getHash(),p,ct.expires());
                         access.log(Level.DEBUG, "Writing token",key);
-                    } catch(CadiException e) {
+                    } catch (CadiException e) {
                         throw e;
                     } catch (Exception e) {
                         throw new CadiException(e);
@@ -134,7 +134,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
                 }
             }
             
-            if(ct!=null) {
+            if (ct!=null) {
                 tmap.put(key, ct);
             }
         } else {
@@ -186,23 +186,23 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
             final long now = System.currentTimeMillis();
             final long dayFromNow = now + ONE_DAY;
             final Metrics metrics = new Metrics();
-            for(final Persist<?,?> persist : allPersists) {
+            for (final Persist<?,?> persist : allPersists) {
                 // Clear memory
-                if(access.willLog(Level.DEBUG)) {
+                if (access.willLog(Level.DEBUG)) {
                     access.log(Level.DEBUG, "Persist: Cleaning memory cache for",persist.tokenPath.toAbsolutePath());
                 }
-                for(Entry<String, ?> es : persist.tmap.entrySet()) {
+                for (Entry<String, ?> es : persist.tmap.entrySet()) {
                     ++metrics.mexists;
                     Persistable<?> p = (Persistable<?>)es.getValue();
-                    if(p.checkSyncTime()) {
-                        if(p.count()==0) {
+                    if (p.checkSyncTime()) {
+                        if (p.count()==0) {
                             ++metrics.mremoved;
                             persist.tmap.remove(es.getKey());
                             access.printf(Level.DEBUG, "Persist: removed cached item %s from memory\n", es.getKey());
                         } else {
                             p.clearCount();
                         }
-                    } else if(Files.exists(p.path())) {
+                    } else if (Files.exists(p.path())) {
                         
                     }
                 }
@@ -220,19 +220,19 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
 
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            if(attrs.isRegularFile()) {
+                            if (attrs.isRegularFile()) {
                                 ++metrics.dexists;
                                 try {
 
                                     long exp = persist.readExpiration(file)*1000; // readExpiration is seconds from 1970
-                                    if(now > exp) {  // cover for bad token
+                                    if (now > exp) {  // cover for bad token
                                         sb.append("\n\tFile ");
                                         sb.append(file.getFileName());
                                         sb.append(" expired ");
                                         sb.append(Chrono.dateTime(new Date(exp)));
                                         persist.deleteFromDisk(file);
                                         ++metrics.dremoved;
-                                    } else if(exp > dayFromNow) {
+                                    } else if (exp > dayFromNow) {
                                         sb.append("\n\tFile ");
                                         sb.append(file.toString());
                                         sb.append(" data corrupted.");
@@ -273,14 +273,14 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
             // We want to print some activity of Persistence Check at least hourly, even if no activity has occurred, but not litter the log if nothing is happening
             boolean go=false;
             Level level=Level.WARN;
-            if(access.willLog(Level.INFO)) {
+            if (access.willLog(Level.INFO)) {
                 go = true;
                 level=Level.INFO;
-            } else if(access.willLog(Level.WARN)) {
+            } else if (access.willLog(Level.WARN)) {
                 go = metrics.mremoved>0 || metrics.dremoved>0 || --hourly <= 0;
             }
             
-            if(go) {
+            if (go) {
                 access.printf(level, "Persist Cache: removed %d of %d items from memory and %d of %d from disk", 
                     metrics.mremoved, metrics.mexists, metrics.dremoved, metrics.dexists);
                 hourly = 3600000/CLEAN_CHECK;

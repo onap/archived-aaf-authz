@@ -61,8 +61,8 @@ public class Notification {
         }
 
         public static TYPE get(int idx) {
-            for(TYPE nt : TYPE.values()) {
-                if(idx==nt.type) {
+            for (TYPE nt : TYPE.values()) {
+                if (idx==nt.type) {
                     return nt;
                 }
             }
@@ -107,12 +107,12 @@ public class Notification {
         tt = trans.start("Process Notify", Env.SUB);
 
         try {
-            for(Row row : results.all()) {
+            for (Row row : results.all()) {
                 ++count;
                 try {
                     Notification not = creator.create(row);
                     List<Notification> ln = data.get(not.user);
-                    if(ln==null) {
+                    if (ln==null) {
                         ln = new ArrayList<>();
                         data.put(not.user, ln);
                     }
@@ -129,9 +129,9 @@ public class Notification {
     
     public static Notification get(String user, TYPE type) {
         List<Notification> ln = data.get(user);
-        if(ln!=null) {
-            for(Notification n : ln) {
-                if(type.equals(n.type)) {
+        if (ln!=null) {
+            for (Notification n : ln) {
+                if (type.equals(n.type)) {
                     return n;
                 }
             }
@@ -148,7 +148,7 @@ public class Notification {
         public Notification create(Row row) {
             int idx =row.getInt(1);
             TYPE type = TYPE.get(idx);
-            if(type==null) {
+            if (type==null) {
                 return null;
             }
             return new Notification(row.getString(0), type, row.getTimestamp(2), row.getInt(3));
@@ -166,11 +166,11 @@ public class Notification {
     }
 
     public int checksum() {
-        if(msg==null) {
+        if (msg==null) {
             current=0;
-        } else if(current==0) {
-            for(String l : msg.lines) {
-                for(byte b : l.getBytes()) {
+        } else if (current==0) {
+            for (String l : msg.lines) {
+                for (byte b : l.getBytes()) {
                     current+=b;
                 }
             }
@@ -180,7 +180,7 @@ public class Notification {
     
     public boolean update(AuthzTrans trans, Session session, boolean dryRun) {
         checksum();
-        if(last==null || current==0 || current!=checksum) {
+        if (last==null || current==0 || current!=checksum) {
             last = now;
             current = checksum();
             String update = "UPDATE authz.notify SET " +
@@ -192,7 +192,7 @@ public class Notification {
                     "' AND type=" +
                     type.idx() +
                     ";";
-            if(dryRun) {
+            if (dryRun) {
                 trans.info().log("Would",update);
             } else {
                 session.execute(update);

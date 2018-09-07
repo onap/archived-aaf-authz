@@ -109,7 +109,7 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 try {
-                    if(req.isUserInRole(PERM_DB_POOL_CLEAR)) {
+                    if (req.isUserInRole(PERM_DB_POOL_CLEAR)) {
                         context.dbReset(trans);
 
                         trans.audit().log("DB Sessions have been cleared by "+trans.user());
@@ -119,7 +119,7 @@ public class API_Mgmt {
                         return;
                     }
                     context.error(trans,resp,Result.err(Result.ERR_Denied,"%s is not allowed to clear dbsessions",trans.user()));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     trans.error().log(e, "clearing dbsession");
                     context.error(trans,resp,Result.err(e));
                 }
@@ -133,8 +133,8 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String ip = pathParam(req,":ip");
-                if(req.isUserInRole(PERM_DENY_IP)) {
-                    if(DenialOfServiceTaf.denyIP(ip)) {
+                if (req.isUserInRole(PERM_DENY_IP)) {
+                    if (DenialOfServiceTaf.denyIP(ip)) {
                         trans.audit().log(ip+" has been set to deny by "+trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
 
@@ -158,8 +158,8 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String ip = pathParam(req,":ip");
-                if(req.isUserInRole(PERM_DENY_IP)) {
-                    if(DenialOfServiceTaf.removeDenyIP(ip)) {
+                if (req.isUserInRole(PERM_DENY_IP)) {
+                    if (DenialOfServiceTaf.removeDenyIP(ip)) {
                         trans.audit().log(ip+" has been removed from denial by "+trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.OK_200);
@@ -182,8 +182,8 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String id = pathParam(req,":id");
-                if(req.isUserInRole(PERM_DENY_ID)) {
-                    if(DenialOfServiceTaf.denyID(id)) {
+                if (req.isUserInRole(PERM_DENY_ID)) {
+                    if (DenialOfServiceTaf.denyID(id)) {
                         trans.audit().log(id+" has been set to deny by "+trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.CREATED_201);
@@ -206,8 +206,8 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String id = pathParam(req,":id");
-                if(req.isUserInRole(PERM_DENY_ID)) {
-                    if(DenialOfServiceTaf.removeDenyID(id)) {
+                if (req.isUserInRole(PERM_DENY_ID)) {
+                    if (DenialOfServiceTaf.removeDenyID(id)) {
                         trans.audit().log(id+" has been removed from denial by " + trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.OK_200);
@@ -230,8 +230,8 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String id = pathParam(req,":id");
-                if(req.isUserInRole(PERM_LOG_ID)) {
-                    if(Question.specialLogOn(trans,id)) {
+                if (req.isUserInRole(PERM_LOG_ID)) {
+                    if (Question.specialLogOn(trans,id)) {
                         trans.audit().log(id+" has been set to special Log by "+trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.CREATED_201);
@@ -254,8 +254,8 @@ public class API_Mgmt {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String id = pathParam(req,":id");
-                if(req.isUserInRole(PERM_LOG_ID)) {
-                    if(Question.specialLogOff(trans,id)) {
+                if (req.isUserInRole(PERM_LOG_ID)) {
+                    if (Question.specialLogOff(trans,id)) {
                         trans.audit().log(id+" has been removed from special Logging by " + trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.OK_200);

@@ -62,9 +62,9 @@ public class Imports implements Thematic{
     @Override
     public String themePath(String theTheme) {
         StringBuilder src = dots(new StringBuilder());
-        if(theTheme==null||theTheme.length()==0) {
+        if (theTheme==null||theTheme.length()==0) {
             src.append(theme);
-            if(theme.length()>0)src.append('/');
+            if (theme.length()>0)src.append('/');
         } else {
             src.append(theTheme);
             src.append('/');
@@ -87,7 +87,7 @@ public class Imports implements Thematic{
     }
 
     public StringBuilder dots(StringBuilder src) {
-        for(int i=0;i<backdots;++i) {
+        for (int i=0;i<backdots;++i) {
             src.append("../");
         }
         return src;

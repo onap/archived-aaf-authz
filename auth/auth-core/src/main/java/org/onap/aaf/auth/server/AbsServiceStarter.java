@@ -72,11 +72,11 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 
     @SafeVarargs
     public final synchronized void register(final Registrant<ENV> ... registrants) {
-        if(do_register) {
-            if(registrar==null) {
+        if (do_register) {
+            if (registrar==null) {
                 registrar = new Registrar<ENV>(env(),false);
             }
-            for(Registrant<ENV> r : registrants) {
+            for (Registrant<ENV> r : registrants) {
                 registrar.register(r);
             }
         }
@@ -84,11 +84,11 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 
     @Override
     public void shutdown() {
-        if(registrar!=null) {
+        if (registrar!=null) {
             registrar.close(env());
             registrar=null;
         } 
-        if(service!=null) {
+        if (service!=null) {
             service.destroy();
         }
     }

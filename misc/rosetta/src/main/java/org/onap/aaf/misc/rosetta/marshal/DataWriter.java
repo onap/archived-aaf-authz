@@ -127,7 +127,7 @@ public abstract class DataWriter<T> {
             // String in "HexString" or the processing in
             // "String.format"
             //sb.append("0x");
-            for(int i=0;i<ba.length;++i) {
+            for (int i=0;i<ba.length;++i) {
                 byte b = ba[i];
                 sb.append(chars[((b&0xF0)>>4)]);
                 sb.append(chars[b&0xF]);

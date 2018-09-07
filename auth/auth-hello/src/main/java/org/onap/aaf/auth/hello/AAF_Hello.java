@@ -70,7 +70,7 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
         aafAuthn = aafCon().newAuthn(aafLurPerm);
 
         String aaf_env = env.getProperty(Config.AAF_ENV);
-        if(aaf_env==null) {
+        if (aaf_env==null) {
             throw new APIException("aaf_env needs to be set");
         }
         

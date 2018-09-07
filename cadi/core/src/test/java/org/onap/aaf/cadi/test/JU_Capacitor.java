@@ -58,13 +58,13 @@ public class JU_Capacitor {
         assertNull(curr_field.get(cap));
         assertEquals(idx_field.get(cap), 0);
 
-        for(int iter = 0; iter < 20; ++iter) {
-            for(int i = 0; i < 20; ++i) {
+        for (int iter = 0; iter < 20; ++iter) {
+            for (int i = 0; i < 20; ++i) {
                 cap.put((byte)('a' + i));
             }
             cap.setForRead();
             byte[] array = new byte[20];
-            for(int i = 0; i < 20; ++i) {
+            for (int i = 0; i < 20; ++i) {
                 array[i]=(byte)cap.read();
             }
             assertEquals("abcdefghijklmnopqrst", new String(array));
@@ -73,12 +73,12 @@ public class JU_Capacitor {
             cap.done();
         }
 
-        for(int i = 0; i < 500; i++) {
+        for (int i = 0; i < 500; i++) {
             cap.put((byte)'a');
         }
         cap.setForRead();
         byte[] array = new byte[500];
-        for(int i = 0; i < 500; ++i) {
+        for (int i = 0; i < 500; ++i) {
             array[i]=(byte)cap.read();
         }
         assertEquals((new String(array)).length(), 500);
@@ -88,7 +88,7 @@ public class JU_Capacitor {
     @Test
     public void availableTest() {
         assertEquals(cap.available(), 0);
-        for(int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 100; ++i) {
             cap.put((byte)'a');
         }
         // The Capacitor can hold 256 bytes. After reading 100 bytes,
@@ -114,12 +114,12 @@ public class JU_Capacitor {
         byte[] a = b.getBytes();
         byte[] c = new byte[b.length()]; // we want to use this to test reading offsets, etc
 
-        for(int i = 0; i < a.length; i += 11) {
+        for (int i = 0; i < a.length; i += 11) {
             cap.put(a, i, Math.min(11, a.length-i));
         }
         cap.reset();
         int read;
-        for(int i = 0; i < c.length; i += read) {
+        for (int i = 0; i < c.length; i += read) {
             read = cap.read(c, i, Math.min(3, c.length-i));
         }
         assertEquals(b, new String(c));    

@@ -55,18 +55,18 @@ public class BreadCrumbs extends NamedCode {
                     HttpServletRequest req = trans.get(gui.slot_httpServletRequest, null);
                     StringBuilder key = new StringBuilder();
                     String value, hidden;
-                    for(Page p : breadcrumbs) {
+                    for (Page p : breadcrumbs) {
                         hidden="";
                         // Add keys for page from commandline, where possible.
-                        if(p.fields().length>0) {
+                        if (p.fields().length>0) {
                             boolean first = true;
                             key.setLength(0);
-                            for(String field : p.fields()) {
-                                if((value=req.getParameter(field))==null) {
+                            for (String field : p.fields()) {
+                                if ((value=req.getParameter(field))==null) {
                                     hidden="style=display:none;";
                                     break;
                                 }
-                                if(first) {
+                                if (first) {
                                     first = false;
                                     key.append('?');
                                 } else {

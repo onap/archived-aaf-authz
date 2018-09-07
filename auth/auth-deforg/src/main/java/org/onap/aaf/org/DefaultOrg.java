@@ -62,11 +62,11 @@ public class DefaultOrg implements Organization {
         String s;
         NAME=env.getProperty(realm + ".name","Default Organization");
         mailHost = env.getProperty(s=(realm + ".mailHost"), null);
-        if(mailHost==null) {
+        if (mailHost==null) {
             throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
         }
         mailFrom = env.getProperty(s=(realm + ".mailFrom"), null);
-        if(mailFrom==null) {
+        if (mailFrom==null) {
             throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
         }
         
@@ -88,16 +88,16 @@ public class DefaultOrg implements Organization {
             String defFile;
             String temp=env.getProperty(defFile = (getClass().getName()+".file"));
             File fIdentities=null;
-            if(temp==null) {
+            if (temp==null) {
                 temp = env.getProperty(AAF_DATA_DIR);
-                if(temp!=null) {
+                if (temp!=null) {
                     env.warn().log(defFile, " is not defined. Using default: ",temp+"/identities.dat");
                     File dir = new File(temp);
                     fIdentities=new File(dir,"identities.dat");
 
-                    if(!fIdentities.exists()) {
+                    if (!fIdentities.exists()) {
                         env.warn().log("No",fIdentities.getCanonicalPath(),"exists.  Creating.");
-                        if(!dir.exists()) {
+                        if (!dir.exists()) {
                             dir.mkdirs();
                         }
                         fIdentities.createNewFile();
@@ -105,18 +105,18 @@ public class DefaultOrg implements Organization {
                 }
             } else {
                 fIdentities = new File(temp);
-                if(!fIdentities.exists()) {
+                if (!fIdentities.exists()) {
                     String dataDir = env.getProperty(AAF_DATA_DIR);
-                    if(dataDir!=null) {
+                    if (dataDir!=null) {
                         fIdentities = new File(dataDir,temp);
                     }
                 }
             }
 
-            if(fIdentities!=null && fIdentities.exists()) {
+            if (fIdentities!=null && fIdentities.exists()) {
                 identities = new Identities(fIdentities);
             } else {
-                if(fIdentities==null) {
+                if (fIdentities==null) {
                     throw new OrganizationException("No Identities");
                 } else {
                     throw new OrganizationException(fIdentities.getCanonicalPath() + " does not exist.");
@@ -138,7 +138,7 @@ public class DefaultOrg implements Organization {
 
     static {
         typeSet = new HashSet<>();
-        for(Types t : Types.values()) {
+        for (Types t : Types.values()) {
             typeSet.add(t.name());
         }
     }
@@ -185,9 +185,9 @@ public class DefaultOrg implements Organization {
         // have domain?
         int at = id.indexOf('@');
         String sid;
-        if(at > 0) {
+        if (at > 0) {
             // Use this to prevent passwords to any but THIS domain.
-//            if(!id.regionMatches(at+1, domain, 0, id.length()-at-1)) {
+//            if (!id.regionMatches(at+1, domain, 0, id.length()-at-1)) {
 //                return false;
 //            }
             sid = id.substring(0,at);
@@ -198,7 +198,7 @@ public class DefaultOrg implements Organization {
 
         return isValidID(trans, sid)==null;
         // Check Pattern (if checking existing is too long)
-        //        if(id.endsWith(SUFFIX) && ID_PATTERN.matcher(id).matches()) {
+        //        if (id.endsWith(SUFFIX) && ID_PATTERN.matcher(id).matches()) {
         //            return true;
         //        }
         //        return false;
@@ -232,13 +232,13 @@ public class DefaultOrg implements Organization {
      */
     @Override
     public String isValidPassword(final AuthzTrans trans, final String user, final String password, final String... prev) {
-        for(String p : prev) {
-            if(password.contains(p)) { // A more sophisticated algorithm might be better.
+        for (String p : prev) {
+            if (password.contains(p)) { // A more sophisticated algorithm might be better.
                 return "Password too similar to previous passwords";
             }
         }
         // If you have an Organization user/Password scheme, replace the following
-        if(PASS_PATTERN.matcher(password).matches()) {
+        if (PASS_PATTERN.matcher(password).matches()) {
             return "";
         }
         return "Password does not match " + NAME + " Password Standards";
@@ -430,7 +430,7 @@ public class DefaultOrg implements Organization {
                 // Extending Password give 5 extra days, max 8 days from now
                 rv.add(GregorianCalendar.DATE, 5);
                 now.add(GregorianCalendar.DATE, 8);
-                if(rv.after(now)) {
+                if (rv.after(now)) {
                     rv = now;
                 }
                 break;
@@ -453,7 +453,7 @@ public class DefaultOrg implements Organization {
                 // Delegations expire max in 2 months, renewable to 3
                 rv.add(GregorianCalendar.MONTH, 2);
                 now.add(GregorianCalendar.MONTH, 3);
-                if(rv.after(now)) {
+                if (rv.after(now)) {
                     rv = now;
                 }
                 break;
@@ -483,9 +483,9 @@ public class DefaultOrg implements Organization {
     public List<Identity> getApprovers(AuthzTrans trans, String user) throws OrganizationException {
         Identity orgIdentity = getIdentity(trans, user);
         List<Identity> orgIdentitys = new ArrayList<>();
-        if(orgIdentity!=null) {
+        if (orgIdentity!=null) {
             Identity supervisor = orgIdentity.responsibleTo();
-            if(supervisor!=null) {
+            if (supervisor!=null) {
                 orgIdentitys.add(supervisor);
             }
         }
@@ -519,15 +519,15 @@ public class DefaultOrg implements Organization {
         switch(policy) {
             case OWNS_MECHID:
             case CREATE_MECHID:
-                if(vars.length>0) {
+                if (vars.length>0) {
                     DefaultOrgIdentity thisID = getIdentity(trans,vars[0]);
-                    if("a".equals(thisID.identity.status)) { // MechID
+                    if ("a".equals(thisID.identity.status)) { // MechID
                         DefaultOrgIdentity requestor = getIdentity(trans, trans.user());
-                        if(requestor!=null) {
+                        if (requestor!=null) {
                             Identity mechid = getIdentity(trans, vars[0]);
-                            if(mechid!=null) {
+                            if (mechid!=null) {
                                 Identity sponsor = mechid.responsibleTo();
-                                if(sponsor!=null && requestor.fullID().equals(sponsor.fullID())) {
+                                if (sponsor!=null && requestor.fullID().equals(sponsor.fullID())) {
                                     return null;
                                 } else {
                                     return trans.user() + " is not the Sponsor of MechID " + vars[0];
@@ -558,19 +558,19 @@ public class DefaultOrg implements Organization {
 
     private String extractRealm(final String r) {
         int at;
-        if((at=r.indexOf('@'))>=0) {
+        if ((at=r.indexOf('@'))>=0) {
             return FQI.reverseDomain(r.substring(at+1));
         }
         return r;
     }
     @Override
     public boolean supportsRealm(final String r) {
-        if(r.endsWith(realm)) {
+        if (r.endsWith(realm)) {
             return true;
         } else {
             String erealm = extractRealm(r);
-            for(String sr : supportedRealms) {
-                if(erealm.startsWith(sr)) {
+            for (String sr : supportedRealms) {
+                if (erealm.startsWith(sr)) {
                     return true;
                 }
             }
@@ -588,8 +588,8 @@ public class DefaultOrg implements Organization {
             Boolean urgent) throws OrganizationException {
         if (mailer!=null) {
             List<String> to = new ArrayList<>();
-            for(String em : toList) {
-                if(em.indexOf('@')<0) {
+            for (String em : toList) {
+                if (em.indexOf('@')<0) {
                     to.add(new DefaultOrgIdentity(trans, em, this).email());
                 } else {
                     to.add(em);
@@ -597,11 +597,11 @@ public class DefaultOrg implements Organization {
             }
 
             List<String> cc = new ArrayList<>();
-            if(ccList!=null) {
-                if(!ccList.isEmpty()) {
+            if (ccList!=null) {
+                if (!ccList.isEmpty()) {
 
-                    for(String em : ccList) {
-                        if(em.indexOf('@')<0) {
+                    for (String em : ccList) {
+                        if (em.indexOf('@')<0) {
                             cc.add(new DefaultOrgIdentity(trans, em, this).email());
                         } else {
                             cc.add(em);

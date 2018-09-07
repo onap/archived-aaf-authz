@@ -53,13 +53,13 @@ public class JU_DataFile {
 //            Token tok = df.new Token(1024000);
 //            Field fld = tok.new Field('|');
 //    
-//            while(tok.nextLine()) {
+//            while (tok.nextLine()) {
 //                ++count;
 //                fld.reset();
 //                list.add(fld.at(0));
 //            }
 ////            Collections.sort(list);
-//            for(String s: list) {
+//            for (String s: list) {
 //                System.out.println(s);
 //
 //            }

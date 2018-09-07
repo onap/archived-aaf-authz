@@ -73,15 +73,15 @@ public class Parsed<S> {
     
     public String toString() {
         StringBuilder sb2 = new StringBuilder();
-        if(event<40)sb2.append((int)event);
+        if (event<40)sb2.append((int)event);
         else sb2.append(event);
         sb2.append(" - ");
         sb2.append(name);
-        if(sb.length()>0) {
+        if (sb.length()>0) {
             sb2.append(" : ");
-            if(isString)sb2.append('"');
+            if (isString)sb2.append('"');
             sb2.append(sb);
-            if(isString)sb2.append('"');
+            if (isString)sb2.append('"');
         }
         return sb2.toString();
     }

@@ -94,10 +94,10 @@ public class JU_MonthData {
     @After
     public void cleanUp() {
         File g = new File("Monthlyenv.dat.bak");
-        if(f.exists()) {
+        if (f.exists()) {
             f.delete();
         }
-        if(g.exists()) {
+        if (g.exists()) {
             g.delete();
         }
     }

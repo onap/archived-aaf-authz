@@ -53,27 +53,27 @@ public class Help extends Cmd {
         details = aafcli.isDetailed()?new StringBuilder():null;
 
         String comp = args.length>idx?args[idx++]:null;
-        if("help".equalsIgnoreCase(comp)) {
+        if ("help".equalsIgnoreCase(comp)) {
             build(sb,null);
             detailedHelp(4, sb);
             sb.append('\n');
         } else {
-            for(Cmd c : cmds) {
-                if(!(c instanceof DeprecatedCMD)) {
-                    if(comp!=null) {
-                        if(comp.equals(c.getName())) {
+            for (Cmd c : cmds) {
+                if (!(c instanceof DeprecatedCMD)) {
+                    if (comp!=null) {
+                        if (comp.equals(c.getName())) {
                             multiChar(sb,2,' ',0);
                             c.build(sb,details);
                         }
                     } else {
-                        if(first) {
+                        if (first) {
                             first=false;
                         } else {
                             multiChar(sb,80,'-',2);
                         }
                         multiChar(sb,2,' ',0);
                         c.build(sb,details);
-                        if(details!=null) {
+                        if (details!=null) {
                             c.detailedHelp(4, sb);
     //                    multiChar(sb,80,'-',2);
                         }

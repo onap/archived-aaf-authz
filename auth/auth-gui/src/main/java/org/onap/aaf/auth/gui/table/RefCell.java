@@ -36,7 +36,7 @@ public class RefCell extends AbsCell {
     
     public RefCell(String name, String href, boolean newWindow, String... attributes) {
         this.name = name;
-        if(newWindow) {
+        if (newWindow) {
             str = new String[attributes.length+2];
             str[attributes.length]="target=_blank";
         } else {

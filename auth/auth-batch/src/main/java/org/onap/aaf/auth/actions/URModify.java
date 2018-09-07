@@ -45,22 +45,22 @@ public class URModify extends ActionDAO<UserRole,Void,URModify.Modify> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, UserRole ur,Modify modify) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf("Would Update %s %s", ur.user(), ur.role());
             return Result.ok();
         } else {
             Result<List<Data>> rr = q.userRoleDAO.read(trans, ur.user(),ur.role());
-            if(rr.notOKorIsEmpty()) {
+            if (rr.notOKorIsEmpty()) {
                 return Result.err(rr);
             }
-            for(Data d : rr.value) {
+            for (Data d : rr.value) {
                 modify.change(d);
-                if(!(ur.expires().equals(d.expires))) {
+                if (!(ur.expires().equals(d.expires))) {
                     ur.expires(d.expires);
                 }
-                if(ur.user().equals(d.user) && ur.role().equals(d.role)){
+                if (ur.user().equals(d.user) && ur.role().equals(d.role)){
                     Result<Void> rv = q.userRoleDAO.update(trans, d);
-                    if(rv.isOK()) {
+                    if (rv.isOK()) {
                         trans.info().printf("Updated %s %s to %s", ur.user(), ur.role(), d.toString());
                     } else {
                         trans.info().log(rv.errorString());

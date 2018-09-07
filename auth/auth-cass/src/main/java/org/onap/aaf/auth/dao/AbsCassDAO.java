@@ -128,18 +128,18 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
             psinfos.add(this);
 
             cql = theCQL.trim().toUpperCase();
-            if(cql.startsWith("INSERT")) {
+            if (cql.startsWith("INSERT")) {
                 crud = CRUD.create;
-            } else if(cql.startsWith("UPDATE")) {
+            } else if (cql.startsWith("UPDATE")) {
                 crud = CRUD.update;
-            } else if(cql.startsWith("DELETE")) {
+            } else if (cql.startsWith("DELETE")) {
                 crud = CRUD.delete;
             } else {
                 crud = CRUD.read;
             }
             
             int idx = 0, count=0;
-            while((idx=cql.indexOf('?',idx))>=0) {
+            while ((idx=cql.indexOf('?',idx))>=0) {
                 ++idx;
                 ++count;
             }
@@ -155,7 +155,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
                 You should prepare only once, and cache the PreparedStatement in your application (it is thread-safe). 
                 If you call prepare multiple times with the same query string, the driver will log a warning.
             */
-            if(ps==null) {
+            if (ps==null) {
                 TimeTaken tt = trans.start("Preparing PSInfo " + crud.toString().toUpperCase() + " on " + name,Env.SUB);
                 try {
                     ps = getSession(trans).prepare(cql);
@@ -287,7 +287,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
                 rs = getSession(trans).execute(key==null?ps(trans):ps(trans).bind(key));
 /// TEST CODE for Exception                
 //                boolean force = true; 
-//                if(force) {
+//                if (force) {
 //                    Map<InetSocketAddress, Throwable> misa = new HashMap<>();
 //                    //misa.put(new InetSocketAddress(444),new Exception("no host was tried"));
 //                    misa.put(new InetSocketAddress(444),new Exception("Connection has been closed"));
@@ -334,19 +334,19 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
     @SuppressWarnings("unchecked")
     protected final Result<List<DATA>> extract(Loader<DATA> loader, ResultSet rs, List<DATA> indata, Accept<DATA> accept) {
         List<Row> rows = rs.all();
-        if(rows.isEmpty()) {
+        if (rows.isEmpty()) {
             return Result.ok((List<DATA>)EMPTY); // Result sets now .emptyList(true);
         } else {
             DATA d;
             List<DATA> data = indata==null?new ArrayList<>(rows.size()):indata;
             
-            for(Row row : rows) {
+            for (Row row : rows) {
                 try {
                     d = loader.load(dataClass.newInstance(),row);
-                    if(accept.ok(d)) {
+                    if (accept.ok(d)) {
                         data.add(d);
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     return Result.err(e);
                 }
             }
@@ -372,8 +372,8 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 
     
     public static final void primePSIs(TransStore trans) throws APIException, IOException {
-        for(AbsCassDAO<? extends TransStore, ?>.PSInfo psi : psinfos) {
-            if(psi.ps==null) {
+        for (AbsCassDAO<? extends TransStore, ?>.PSInfo psi : psinfos) {
+            if (psi.ps==null) {
                 psi.ps(trans);
             }
         }
@@ -382,28 +382,28 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
     public final Session getSession(TransStore trans) throws APIException, IOException {
         // SessionFilter unused since 2015
         // Try to use Trans' session, if exists
-//        if(sessionSlot!=null) { // try to get from Trans
+//        if (sessionSlot!=null) { // try to get from Trans
 //            Session sess = trans.get(sessionSlot, null);
-//            if(sess!=null) {
+//            if (sess!=null) {
 //                return sess;
 //            }
 //        }
         
         // If there's an owning DAO, use it's session
-        if(owningDAO!=null) { 
+        if (owningDAO!=null) { 
             return owningDAO.getSession(trans);
         }
         
         // OK, nothing else works... get our own.
-        if(session==null || resetTrigger) {
+        if (session==null || resetTrigger) {
             Cluster tempCluster = null;
             Session tempSession = null;
             try {
                 synchronized(LOCK) {
                     boolean reset = false;
-                    for(ResetRequest r : resetDeque) {
-                        if(r.session == session) {
-                            if(r.timestamp>nextAvailableReset) {
+                    for (ResetRequest r : resetDeque) {
+                        if (r.session == session) {
+                            if (r.timestamp>nextAvailableReset) {
                                 reset=true;
                                 nextAvailableReset = System.currentTimeMillis() + 60000;
                                 tempCluster = cluster;
@@ -415,22 +415,22 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
                         }
                     }
     
-                    if(reset || session == null) {
+                    if (reset || session == null) {
                         TimeTaken tt = trans.start(NEW_CASSANDRA_SESSION, Env.SUB);
                         try {
                             // Note: Maitrayee recommended not closing the cluster, just
                             // overwrite it. Jonathan 9/30/2016 assuming same for Session
                             // This was a bad idea.  Ran out of File Handles as I suspected, Jonathan
-                            if(reset) {
-                                for(AbsCassDAO<? extends TransStore, ?>.PSInfo psi : psinfos) {
+                            if (reset) {
+                                for (AbsCassDAO<? extends TransStore, ?>.PSInfo psi : psinfos) {
                                     psi.reset();
                                 }
                             }
-                            if(reset || cluster==null) {
+                            if (reset || cluster==null) {
                                 cluster = CassAccess.cluster(trans, keyspace);
                                 trans.warn().log(NEW_CASSANDRA_CLUSTER_OBJECT_CREATED);
                             }
-                            if(reset || session==null) {
+                            if (reset || session==null) {
                                 session = cluster.connect(keyspace);
                                 trans.warn().log(NEW_CASSANDRA_SESSION_CREATED);
                             }
@@ -445,10 +445,10 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
                 try {
                     resetDeque.clear();
                     // Not clearing Session/Cluster appears to kill off FileHandles
-                    if(tempSession!=null && !tempSession.isClosed()) {
+                    if (tempSession!=null && !tempSession.isClosed()) {
                         tempSession.close();
                     }
-                    if(tempCluster!=null && !tempCluster.isClosed()) {
+                    if (tempCluster!=null && !tempCluster.isClosed()) {
                         tempCluster.close();
                     }
                 } finally {
@@ -460,11 +460,11 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
     }
     
     public final boolean reportPerhapsReset(TransStore trans, Exception e) {
-        if(owningDAO!=null) {
+        if (owningDAO!=null) {
             return owningDAO.reportPerhapsReset(trans, e);
         } else {
             boolean rv = false;
-            if(CassAccess.isResetException(e)) {
+            if (CassAccess.isResetException(e)) {
                 trans.warn().printf("Session Reset called for %s by %s ",session==null?"":session,e==null?"Mgmt Command":e.getClass().getName());
                 resetDeque.addFirst(new ResetRequest(session));
                 rv = resetTrigger = true;
@@ -475,8 +475,8 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
     }
 
     public void close(TransStore trans) {
-        if(owningDAO==null) {
-            if(session!=null) {
+        if (owningDAO==null) {
+            if (session!=null) {
                 TimeTaken tt = trans.start("Cassandra Session Close", Env.SUB);
                 try {
                     session.close();

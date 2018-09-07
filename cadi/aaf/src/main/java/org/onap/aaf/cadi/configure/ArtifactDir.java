@@ -65,10 +65,10 @@ public abstract class ArtifactDir implements PlaceArtifact {
         try {
             // Obtain/setup directory as required
             dir = new File(arti.getDir());
-            if(processed.get("dir")==null) {
-                if(!dir.exists()) {
+            if (processed.get("dir")==null) {
+                if (!dir.exists()) {
                     Chmod.to755.chmod(dir);
-                    if(!dir.mkdirs()) {
+                    if (!dir.mkdirs()) {
                         throw new CadiException("Could not create " + dir);
                     }
                 }
@@ -80,8 +80,8 @@ public abstract class ArtifactDir implements PlaceArtifact {
                 // Obtain Issuers
                 boolean first = true;
                 StringBuilder issuers = new StringBuilder();
-                for(String dn : certInfo.getCaIssuerDNs()) {
-                    if(first) {
+                for (String dn : certInfo.getCaIssuerDNs()) {
+                    if (first) {
                         first=false;
                     } else {
                         issuers.append(':');
@@ -91,10 +91,10 @@ public abstract class ArtifactDir implements PlaceArtifact {
                 addProperty(Config.CADI_X509_ISSUERS,issuers.toString());
             }
             symm = (Symm)processed.get("symm");
-            if(symm==null) {
+            if (symm==null) {
                 // CADI Key Gen
                 File f = new File(dir,arti.getNs() + ".keyfile");
-                if(!f.exists()) {
+                if (!f.exists()) {
                     write(f,Chmod.to400,Symm.keygen());
                 }
                 symm = Symm.obtain(f); 
@@ -148,7 +148,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
         FileOutputStream fos = new FileOutputStream(f);
         PrintStream ps = new PrintStream(fos);
         try {
-            for(String s : data) {
+            for (String s : data) {
                 ps.print(s);
             }
         } finally {
@@ -186,31 +186,31 @@ public abstract class ArtifactDir implements PlaceArtifact {
 
     private void validate(Artifact a) throws CadiException {
         StringBuilder sb = new StringBuilder();
-        if(a.getDir()==null) {
+        if (a.getDir()==null) {
             sb.append("File Artifacts require a path");
         }
 
-        if(a.getNs()==null) {
-            if(sb.length()>0) {
+        if (a.getNs()==null) {
+            if (sb.length()>0) {
                 sb.append('\n');
             }
             sb.append("File Artifacts require an AAF Namespace");
         }
         
-        if(sb.length()>0) {
+        if (sb.length()>0) {
             throw new CadiException(sb.toString());
         }
     }
 
     private boolean placeProperties(Artifact arti) throws CadiException {
-        if(encodeds.size()==0) {
+        if (encodeds.size()==0) {
             return true;
         }
         boolean first=processed.get("dir")==null;
         try {
             File f = new File(dir,arti.getNs()+".cred.props");
-            if(f.exists()) {
-                if(first) {
+            if (f.exists()) {
+                if (first) {
                     File backup = File.createTempFile(f.getName()+'.', ".backup",dir);
                     f.renameTo(backup);
                 } else {
@@ -222,8 +222,8 @@ public abstract class ArtifactDir implements PlaceArtifact {
             PrintWriter pw = new PrintWriter(new FileWriter(f,!first));
             try {
                 // Write a Header
-                if(first) {
-                    for(int i=0;i<60;++i) {
+                if (first) {
+                    for (int i=0;i<60;++i) {
                         pw.print('#');
                     }
                     pw.println();
@@ -233,12 +233,12 @@ public abstract class ArtifactDir implements PlaceArtifact {
                     pw.print("#   on ");
                     pw.println(Chrono.dateStamp());
                     pw.println("# @copyright 2016, AT&T");
-                    for(int i=0;i<60;++i) {
+                    for (int i=0;i<60;++i) {
                         pw.print('#');
                     }
                     pw.println();
-                    for(String prop : encodeds) {
-                        if(    prop.startsWith("cm_") 
+                    for (String prop : encodeds) {
+                        if (    prop.startsWith("cm_") 
                             || prop.startsWith(Config.HOSTNAME)
                             || prop.startsWith(Config.AAF_ENV)) {
                             pw.println(prop);
@@ -246,8 +246,8 @@ public abstract class ArtifactDir implements PlaceArtifact {
                     }
                 }
             
-                for(String prop : encodeds) {
-                    if(prop.startsWith("cadi")) {
+                for (String prop : encodeds) {
+                    if (prop.startsWith("cadi")) {
                         pw.println(prop);
                     }
                 }
@@ -256,16 +256,16 @@ public abstract class ArtifactDir implements PlaceArtifact {
             }
             Chmod.to644.chmod(f);
             
-            if(first) {
+            if (first) {
                 // Challenge
                 f = new File(dir,arti.getNs()+".chal");
-                if(f.exists()) {
+                if (f.exists()) {
                     f.delete();
                 }
                 pw = new PrintWriter(new FileWriter(f));
                 try {
-                    for(String prop : encodeds) {
-                        if(prop.startsWith("Challenge")) {
+                    for (String prop : encodeds) {
+                        if (prop.startsWith("Challenge")) {
                             pw.println(prop);
                         }
                     }
@@ -274,7 +274,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
                 }
                 Chmod.to400.chmod(f);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new CadiException(e);
         }
         return true;

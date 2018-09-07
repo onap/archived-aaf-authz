@@ -49,9 +49,9 @@ public class Log extends BaseCmd<Mgmt> {
         int idx = _idx;
         final int option = whichOption(options, args[idx++]);
 
-        for(String name : args[idx++].split(COMMA)) {
+        for (String name : args[idx++].split(COMMA)) {
             final String fname;
-            if(name.indexOf("@")<0) {
+            if (name.indexOf("@")<0) {
                 fname=name+'@'+ access.getProperty(Config.AAF_DEFAULT_REALM,null);
             } else {
                 fname = name;
@@ -78,12 +78,12 @@ public class Log extends BaseCmd<Mgmt> {
                             msg = "Ignored";
                     }
                             
-                    if(fp!=null) {
-                        if(fp.get(AAFcli.timeout())) {
+                    if (fp!=null) {
+                        if (fp.get(AAFcli.timeout())) {
                             pw().println(msg + " Special Log for " + fname + " on " + client);
                             rv=200;
                         } else {
-                            if(rv==409)rv = fp.code();
+                            if (rv==409)rv = fp.code();
                             error(fp);
                         }
                         return rv;

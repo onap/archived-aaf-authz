@@ -95,8 +95,8 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         byte[] bytes = password.getBytes();
         User<AAFPermission> usr = getUser(user,bytes);
 
-        if(usr != null && !usr.permExpired()) {
-            if(usr.principal==null) {
+        if (usr != null && !usr.permExpired()) {
+            if (usr.principal==null) {
                 return "User already denied";
             } else {
                 return null; // good
@@ -108,7 +108,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         // Statement
         switch(cp.revalidate(state)) {
             case REVALIDATED:
-                if(usr!=null) {
+                if (usr!=null) {
                     usr.principal = cp;
                 } else {
                     addUser(new User<AAFPermission>(cp,con.timeout));
@@ -139,13 +139,13 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         public Resp revalidate(Object state) {
             try {
                 Miss missed = missed(getName(),getCred());
-                if(missed==null || missed.mayContinue()) {
+                if (missed==null || missed.mayContinue()) {
                     Rcli<CLIENT> client = con.client(Config.AAF_DEFAULT_VERSION).forUser(con.basicAuth(getName(), new String(getCred())));
                     Future<String> fp = client.read(
                             "/authn/basicAuth",
                             "text/plain"
                             );
-                    if(fp.get(con.timeout)) {
+                    if (fp.get(con.timeout)) {
                         expires = System.currentTimeMillis() + timeToLive;
                         addUser(new User<AAFPermission>(this, expires));
                         return Resp.REVALIDATED;

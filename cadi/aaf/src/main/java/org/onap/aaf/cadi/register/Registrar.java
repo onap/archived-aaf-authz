@@ -45,7 +45,7 @@ public class Registrar<ENV extends BasicEnv> {
         timer = new Timer(REGISTRAR,true);
         timer.schedule(new RegistrationTimerTask(env), START, INTERVAL); 
         
-        if(shutdownHook) {
+        if (shutdownHook) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     close(env);
@@ -61,18 +61,18 @@ public class Registrar<ENV extends BasicEnv> {
         }
         @Override
         public void run() {
-            for(Iterator<Registrant<ENV>> iter = registrants.iterator(); iter.hasNext();) {
+            for (Iterator<Registrant<ENV>> iter = registrants.iterator(); iter.hasNext();) {
                 Registrant<ENV> reg = iter.next();
                 Result<Void> rv = reg.update(env);
                 synchronized(LOCK) {
-                    if(rv.isOK()) {
-                        if(erroringTimer!=null) {
+                    if (rv.isOK()) {
+                        if (erroringTimer!=null) {
                             erroringTimer.cancel();
                             erroringTimer = null;
                         }
                     } else {
                         // Account for different Registrations not being to same place
-                        if(erroringTimer==null) {
+                        if (erroringTimer==null) {
                             erroringTimer =  new Timer(REGISTRAR + " error re-check ",true);
                             erroringTimer.schedule(new RegistrationTimerTask(env),20000,20000);
                         }
@@ -94,7 +94,7 @@ public class Registrar<ENV extends BasicEnv> {
         timer.cancel();
 
         Registrant<ENV> r;
-        while(registrants.peek()!=null) {
+        while (registrants.peek()!=null) {
             r = registrants.pop();
             r.cancel(env);
         }

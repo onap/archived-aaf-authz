@@ -56,7 +56,7 @@ public abstract class AbsTransferSS<CLIENT> implements SecuritySetter<CLIENT> {
 
     private void init(TaggedPrincipal principal, String app)  {
         this.principal=principal;
-        if(principal==null) {
+        if (principal==null) {
             return;
         } else  {
             value = principal.getName() + ':' + 

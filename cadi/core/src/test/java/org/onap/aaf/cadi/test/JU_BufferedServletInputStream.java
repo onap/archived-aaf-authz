@@ -151,7 +151,7 @@ public class JU_BufferedServletInputStream {
     @Test
     public void ByteArrayReadStateIsReadTest() throws Exception {
         byte output[] = new byte[200];
-        for(int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 2; ++i) {
             bsis.mark(0);
             bsis.read(output, 0, 100);
             Assert.assertEquals(new String(output, 0, expected.length()), expected);
@@ -160,7 +160,7 @@ public class JU_BufferedServletInputStream {
             bsis.read(output, 0, output.length);
             Assert.assertEquals(new String(output, 0, expected.length()), expected);
             bsis = new BufferedServletInputStream(new ByteArrayInputStream(output));
-            if(i == 0) {
+            if (i == 0) {
                 output = new byte[200];
             }
         }
@@ -286,7 +286,7 @@ public class JU_BufferedServletInputStream {
             byte aa[] = new byte[testString.length()];  // 65 count... important for our test (divisible by 5);
 
             int read;
-            for(int i=0;i<aa.length;i+=5) {
+            for (int i=0;i<aa.length;i+=5) {
                 read = bsis.read(aa, i, 5);
                 assertEquals(5,read);
             }
@@ -296,7 +296,7 @@ public class JU_BufferedServletInputStream {
 
             byte bb[] = new byte[aa.length];
             read = 0;
-            for(int i=0;read>=0;i+=read) {
+            for (int i=0;read>=0;i+=read) {
                 read = bsis.read(bb,i,5);
                 switch(i) {
                     case 65:

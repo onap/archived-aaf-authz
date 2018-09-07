@@ -38,7 +38,7 @@ public class JU_NsType {
     public void test() {
         NsType nt,nt2;
         String[] tests = new String[] {"DOT","ROOT","COMPANY","APP","STACKED_APP","STACK"};
-        for(String s : tests) {
+        for (String s : tests) {
             nt = NsType.valueOf(s);
             assertEquals(s,nt.name());
             

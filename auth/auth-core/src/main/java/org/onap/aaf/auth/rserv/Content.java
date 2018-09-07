@@ -80,13 +80,13 @@ public abstract class Content<TRANS extends Trans> {
                 sis = sie+1;
                 sie = cntnt.indexOf(';',sis);
                 send = sie>cend || sie<0?cend:sie;
-                if(me==null) {
+                if (me==null) {
                     String semi = new String(bytes,sis,send-sis);
                     // trans.checkpoint(semi);
                     // Look at first entity within comma group
                     // Is this an acceptable Type?
                     me=types(code, semi);
-                    if(me==null) {
+                    if (me==null) {
                         sie=-1; // skip the rest of the processing... not a type
                     } else {
                         contType=true;
@@ -95,20 +95,20 @@ public abstract class Content<TRANS extends Trans> {
                     // If there are additional elements (more entities within Semi Colons)
                     // apply Propertys
                     int eq = cntnt.indexOf('=',sis);
-                    if(eq>sis && eq<send) {
+                    if (eq>sis && eq<send) {
                         String tag = new String(bytes,sis,eq-sis);
                         String value = new String(bytes,eq+1,send-(eq+1));
                         // trans.checkpoint("    Prop " + tag + "=" + value);
                         boolean bool =  props(me,tag,value);
-                        if(!bool) {
+                        if (!bool) {
                             contProp=false;
                         }
                     }
                 }
                 // End Property
-            } while(sie<=cend && sie>=cis);
+            } while (sie<=cend && sie>=cis);
             // End SEMIS
-        } while(cie>=0);
+        } while (cie>=0);
         return contType && contProp; // for use in finds, True if a type found AND all props matched
     }
     

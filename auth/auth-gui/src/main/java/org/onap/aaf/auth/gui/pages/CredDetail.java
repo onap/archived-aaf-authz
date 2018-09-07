@@ -90,13 +90,13 @@ public class CredDetail extends Page {
                             Mark js = new Mark(), fn=new Mark();
                             hgen.js(js).function(fn,"newArtifact")
                             .text("id=document.getElementById('id');")
-                            .text("if(id.value=='') {alert('Enter the id in box');} else {")
+                            .text("if (id.value=='') {alert('Enter the id in box');} else {")
                             .text("window.open('"+CMArtiChangeForm.HREF+"?id='+id.value+'&ns="+ns+"','_self');}"
                                 )
                             .end(fn)
                             .function("newPassword")
                             .text("id=document.getElementById('id');")
-                            .text("if(id.value=='') {alert('Enter the id in box');} else {")
+                            .text("if (id.value=='') {alert('Enter the id in box');} else {")
                             .text("window.open('"+PassChangeForm.HREF+"?id='+id.value+'@"+domain+"&ns="+ns+"','_self');}"
                                 )
                             .end(js);
@@ -145,7 +145,7 @@ public class CredDetail extends Page {
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String ns = sc.get(trans, Params.ns, "");
             final String id = sc.get(trans, Params.id, "");
-            if(ns==null) {
+            if (ns==null) {
                 return Cells.EMPTY;
             }
             final ArrayList<AbsCell[]> rv = new ArrayList<>();
@@ -156,7 +156,7 @@ public class CredDetail extends Page {
                     @Override
                     public List<Artifact> code(Rcli<?> client)throws CadiException, ConnectException, APIException {
                         Future<Artifacts> fa = client.read("/cert/artifacts?ns="+ns,gui.artifactsDF);
-                        if(fa.get(AAFcli.timeout())) {
+                        if (fa.get(AAFcli.timeout())) {
                             return fa.value.getArtifact();
                         } else {
                             return null;
@@ -165,8 +165,8 @@ public class CredDetail extends Page {
 
                 });
                 final Set<String> lns = new HashSet<>();
-                if(la!=null) {
-                    for(Artifact a : la){
+                if (la!=null) {
+                    for (Artifact a : la){
                         lns.add(a.getMechid());
                     }
                 }
@@ -174,7 +174,7 @@ public class CredDetail extends Page {
                     @Override
                     public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         Future<Users> fu = client.read("/authn/creds/ns/"+ns,gui.getDF(Users.class));
-                        if(fu.get(AAFcli.timeout())) {
+                        if (fu.get(AAFcli.timeout())) {
                             // Organize User entries
                             Map<String,List<Map<Integer,List<User>>>> users = new HashMap<>();
         
@@ -183,26 +183,26 @@ public class CredDetail extends Page {
                             List<User> lu = null;
                             
                             for (User u : fu.value.getUser()) {
-                                if(u.getType() == 200) {
+                                if (u.getType() == 200) {
                                     lns.remove(u.getId());
                                 }
                                 lmu = users.get(u.getId());
-                                if(lmu==null) {
+                                if (lmu==null) {
                                     users.put(u.getId(),lmu=new ArrayList<>());
                                 }
                                 mu=null;
-                                for(Map<Integer,List<User>> xmu : lmu) {
-                                    if(xmu.containsKey(u.getType())) {
+                                for (Map<Integer,List<User>> xmu : lmu) {
+                                    if (xmu.containsKey(u.getType())) {
                                         mu = xmu;
                                     }
                                 }
                                 
-                                if(mu==null) {
+                                if (mu==null) {
                                     lmu.add(mu=new HashMap<>());
                                 }
                                 
                                 lu = mu.get(u.getType());
-                                if(lu==null) {
+                                if (lu==null) {
                                     mu.put(u.getType(),lu = new ArrayList<>());
                                 }
                                 lu.add(u);
@@ -218,7 +218,7 @@ public class CredDetail extends Page {
                                 StringWriter creds = new StringWriter();
                                 hgen = cd.clone(creds);
                                 Mark div = hgen.divID(key,ulm.getKey().equals(id)?"":"style=display:none;");
-                                    for(Map<Integer, List<User>> miu : ulm.getValue()) {
+                                    for (Map<Integer, List<User>> miu : ulm.getValue()) {
                                         Mark utable = new Mark();
                                         hgen.leaf(utable,HTMLGen.TABLE);
 
@@ -226,7 +226,7 @@ public class CredDetail extends Page {
                                         String cls;
                                         boolean first = true;
                                         
-                                        for( Entry<Integer, List<User>> es : miu.entrySet()) {
+                                        for ( Entry<Integer, List<User>> es : miu.entrySet()) {
                                             Collections.sort(es.getValue(),new Comparator<User>() {
                                                 @Override
                                                 public int compare(User u1, User u2) {
@@ -237,22 +237,22 @@ public class CredDetail extends Page {
                                             int xcnt = 0;
                                             XMLGregorianCalendar oldest=null, newest=null;
                                             String id = null;
-                                            for(User u: es.getValue()) {
-                                                if(id==null) {
+                                            for (User u: es.getValue()) {
+                                                if (id==null) {
                                                     id = u.getId();
                                                 }
                                                 // Need to compile entries for Certificates on this screen
-                                                if(es.getKey()==200) {
+                                                if (es.getKey()==200) {
                                                     ++xcnt;
-                                                    if(oldest==null || oldest.compare(u.getExpires())<0) {
+                                                    if (oldest==null || oldest.compare(u.getExpires())<0) {
                                                         oldest = u.getExpires();
                                                     }
-                                                    if(newest==null || newest.compare(u.getExpires())<0) {
+                                                    if (newest==null || newest.compare(u.getExpires())<0) {
                                                         newest = u.getExpires();
                                                     }
                                                 } else {
                                                     hgen.leaf(uRow,HTMLGen.TR);
-                                                    if(first) {
+                                                    if (first) {
                                                         hgen.leaf(HTMLGen.TD,cls="class=detailFirst",STYLE_WIDTH_10);
                                                         switch(es.getKey()) {
                                                             case 1:   
@@ -274,7 +274,7 @@ public class CredDetail extends Page {
                                                                 "&amp;date="+u.getExpires().toXMLFormat() +
                                                                 "&amp;type="+u.getType())
                                                         .text("Delete").end();
-                                                    if(first && es.getKey()<10) { // Change Password Screen
+                                                    if (first && es.getKey()<10) { // Change Password Screen
                                                         hgen.leaf(HTMLGen.A,"class=button","href="+PassChangeForm.HREF+"?id="+id+"&amp;ns="+ns)
                                                             .text("Add")
                                                             .end();
@@ -287,7 +287,7 @@ public class CredDetail extends Page {
                                                     hgen.end(uRow);
                                                 }
                                             }
-                                            if(xcnt>0) { // print compilations, if any, of Certificate
+                                            if (xcnt>0) { // print compilations, if any, of Certificate
                                                 hgen.leaf(uRow,HTMLGen.TR)
                                                     .leaf(HTMLGen.TD,cls="class=detailFirst",STYLE_WIDTH_10).text("x509").end()
                                                     .leaf(HTMLGen.TD, cls,STYLE_WIDTH_20)
@@ -316,7 +316,7 @@ public class CredDetail extends Page {
                                         new TextCell(creds.toString(),STYLE_WIDTH_70)
                                     });
                             }
-                            for(String missing : lns) {
+                            for (String missing : lns) {
                                 StringWriter buttons = new StringWriter();
                                 HTMLGen hgen = cd.clone(buttons);
                                 hgen.leaf(HTMLGen.A,"class=button","href="+CMArtifactShow.HREF+"?id="+missing+"&amp;ns="+ns)

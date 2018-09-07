@@ -56,10 +56,10 @@ public class LoginLanding extends Page {
                     @Override
                     public void code(AAF_GUI authGUI, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
                         HttpServletRequest req = trans.get(gui.slot_httpServletRequest, null);
-                        if(req!=null) {
+                        if (req!=null) {
                             String query = req.getQueryString();
-                            if(query!=null) {
-                                for(String qs : query.split("&")) {
+                            if (query!=null) {
+                                for (String qs : query.split("&")) {
                                     int equals = qs.indexOf('=');
                                     xgen.leaf(HTMLGen.A, "href="+URLDecoder.decode(qs.substring(equals+1),Config.UTF_8)).text(qs.substring(0,equals).replace('_', ' ')).end();
                                 }

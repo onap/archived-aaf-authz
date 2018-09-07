@@ -81,9 +81,9 @@ public class Function {
          * @return
          */
         public static FUTURE_OP toFO(String value) {
-            if(value!=null) {
-                for(FUTURE_OP fo : values()) {
-                    if(fo.name().equals(value)){
+            if (value!=null) {
+                for (FUTURE_OP fo : values()) {
+                    if (fo.name().equals(value)){
                         return fo;
                     }
                 }
@@ -194,16 +194,16 @@ public class Function {
                 String reason;
                 if (orgUser == null) {
                     return Result.err(Status.ERR_Policy,"%s is not a valid user at %s",u,org.getName());    
-                } else if((reason=orgUser.mayOwn())!=null) {
+                } else if ((reason=orgUser.mayOwn())!=null) {
                     if (org.isTestEnv()) {
                         String reason2;
-                        if((reason2=org.validate(trans, Policy.AS_RESPONSIBLE,new CassExecutor(trans, this), u))!=null) { // can masquerade as responsible
+                        if ((reason2=org.validate(trans, Policy.AS_RESPONSIBLE,new CassExecutor(trans, this), u))!=null) { // can masquerade as responsible
                             trans.debug().log(reason2);
                             return Result.err(Status.ERR_Policy,CANNOT_BE_THE_OWNER_OF_A_NAMESPACE,orgUser.fullName(),orgUser.id(),namespace.name,reason);
                         }
                         // a null means ok
                     } else {
-                        if(orgUser.isFound()) {
+                        if (orgUser.isFound()) {
                             return Result.err(Status.ERR_Policy,CANNOT_BE_THE_OWNER_OF_A_NAMESPACE,orgUser.fullName(),orgUser.id(),namespace.name, reason);
                         } else {
                             return Result.err(Status.ERR_Policy,u + " is an invalid Identity");
@@ -267,7 +267,7 @@ public class Function {
             // or helpful for Operations folks..
             // Admins can be empty, because they can be changed by lower level
             // NSs
-            // if(ns.admin(false).isEmpty()) {
+            // if (ns.admin(false).isEmpty()) {
             // ns.admin(true).add(user);
             // }
             if (namespace.admin != null) {
@@ -334,9 +334,9 @@ public class Function {
                 for (RoleDAO.Data rdd : rrdc.value) {
                     // Remove old Role from Perms, save them off
                     List<PermDAO.Data> lpdd = new ArrayList<>();
-                    for(String p : rdd.perms(false)) {
+                    for (String p : rdd.perms(false)) {
                         Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans,q,p);
-                        if(rpdd.isOKhasData()) {
+                        if (rpdd.isOKhasData()) {
                             PermDAO.Data pdd = rpdd.value;
                             lpdd.add(pdd);
                             q.permDAO.delRole(trans, pdd, rdd);
@@ -358,13 +358,13 @@ public class Function {
                     // "create" per se
                     if ((rq = q.roleDAO.create(trans, rdd)).isOK()) {
                         // Put Role back into Perm, with correct info
-                        for(PermDAO.Data pdd : lpdd) {
+                        for (PermDAO.Data pdd : lpdd) {
                             q.permDAO.addRole(trans, pdd, rdd);
                         }
                         // Change data for User Roles 
                         Result<List<UserRoleDAO.Data>> rurd = q.userRoleDAO.readByRole(trans, rdd.fullName());
-                        if(rurd.isOKhasData()) {
-                            for(UserRoleDAO.Data urd : rurd.value) {
+                        if (rurd.isOKhasData()) {
+                            for (UserRoleDAO.Data urd : rurd.value) {
                                 urd.ns = rdd.ns;
                                 urd.rname = rdd.name;
                                 q.userRoleDAO.update(trans, urd);
@@ -389,9 +389,9 @@ public class Function {
                     // Remove old Perm from Roles, save them off
                     List<RoleDAO.Data> lrdd = new ArrayList<>();
                     
-                    for(String rl : pdd.roles(false)) {
+                    for (String rl : pdd.roles(false)) {
                         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,q,rl);
-                        if(rrdd.isOKhasData()) {
+                        if (rrdd.isOKhasData()) {
                             RoleDAO.Data rdd = rrdd.value;
                             lrdd.add(rdd);
                             q.roleDAO.delPerm(trans, rdd, pdd);
@@ -408,7 +408,7 @@ public class Function {
                             .substring(targetNameDot) : "";
                     if ((rq = q.permDAO.create(trans, pdd)).isOK()) {
                         // Put Role back into Perm, with correct info
-                        for(RoleDAO.Data rdd : lrdd) {
+                        for (RoleDAO.Data rdd : lrdd) {
                             q.roleDAO.addPerm(trans, rdd, pdd);
                         }
 
@@ -698,7 +698,7 @@ public class Function {
             } else {
                 if (org.isTestEnv()) {
                     String reason2;
-                    if((reason2 = org.validate(trans, Policy.AS_RESPONSIBLE, new CassExecutor(trans, this), id))==null) {
+                    if ((reason2 = org.validate(trans, Policy.AS_RESPONSIBLE, new CassExecutor(trans, this), id))==null) {
                         return Result.ok();
                     } else {
                         trans.debug().log(reason2);
@@ -726,7 +726,7 @@ public class Function {
         rq = q.mayUser(trans, trans.user(), rq.value, Access.write);
         if (rq.notOK()) {
             Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO.readUserInRole(trans, trans.user(),ns+".owner");
-            if(!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
+            if (!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
                 return Result.err(rq);
             }
         }
@@ -748,7 +748,7 @@ public class Function {
                         "%s is not a valid %s Credential", user, org.getName());
             }
         //TODO find out how to make sure good ALTERNATE OAUTH DOMAIN USER
-//        } else if(user.endsWith(ALTERNATE OAUTH DOMAIN)) {
+//        } else if (user.endsWith(ALTERNATE OAUTH DOMAIN)) {
 //            return Result.ok();
         } else {
             Result<List<CredDAO.Data>> cdr = q.credDAO.readID(trans, user);
@@ -794,7 +794,7 @@ public class Function {
         if (rq.notOK()) { 
             // Even though not a "writer", Owners still determine who gets to be an Admin
             Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO.readUserInRole(trans, trans.user(),ns+".owner");
-            if(!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
+            if (!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
                 return Result.err(rq);
             }
         }
@@ -827,9 +827,9 @@ public class Function {
                 // Remove old Perm from Roles, save them off
                 List<RoleDAO.Data> lrdd = new ArrayList<>();
                 
-                for(String rl : pdd.roles(false)) {
+                for (String rl : pdd.roles(false)) {
                     Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,q,rl);
-                    if(rrdd.isOKhasData()) {
+                    if (rrdd.isOKhasData()) {
                         RoleDAO.Data rdd = rrdd.value;
                         lrdd.add(rdd);
                         q.roleDAO.delPerm(trans, rdd, pdd);
@@ -846,7 +846,7 @@ public class Function {
                 // Use direct Create/Delete, because switching namespaces
                 if ((pd = q.permDAO.create(trans, pdd)).isOK()) {
                     // Put Role back into Perm, with correct info
-                    for(RoleDAO.Data rdd : lrdd) {
+                    for (RoleDAO.Data rdd : lrdd) {
                         q.roleDAO.addPerm(trans, rdd, pdd);
                     }
 
@@ -892,9 +892,9 @@ public class Function {
                 }
                 // Remove old Role from Perms, save them off
                 List<PermDAO.Data> lpdd = new ArrayList<>();
-                for(String p : rdd.perms(false)) {
+                for (String p : rdd.perms(false)) {
                     Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans,q,p);
-                    if(rpdd.isOKhasData()) {
+                    if (rpdd.isOKhasData()) {
                         PermDAO.Data pdd = rpdd.value;
                         lpdd.add(pdd);
                         q.permDAO.delRole(trans, pdd, rdd);
@@ -912,7 +912,7 @@ public class Function {
                 // Use direct Create/Delete, because switching namespaces
                 if ((rd = q.roleDAO.create(trans, rdd)).isOK()) {
                     // Put Role back into Perm, with correct info
-                    for(PermDAO.Data pdd : lpdd) {
+                    for (PermDAO.Data pdd : lpdd) {
                         q.permDAO.addRole(trans, pdd, rdd);
                     }
 
@@ -973,7 +973,7 @@ public class Function {
         // For each Role
         for (String role : roles = perm.roles(true)) {
             Result<RoleDAO.Data> rdd = RoleDAO.Data.decode(trans,q,role);
-            if(rdd.isOKhasData()) {
+            if (rdd.isOKhasData()) {
                 RoleDAO.Data rd = rdd.value;
                 if (!fromApproval) {
                     // May User write to the Role in question.
@@ -1038,7 +1038,7 @@ public class Function {
                 for (String role : fullperm.roles) {
                     Result<Void> rv = null;
                     Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, q, role);
-                    if(rrdd.isOKhasData()) {
+                    if (rrdd.isOKhasData()) {
                         trans.debug().log("Removing", role, "from", fullperm, "on Perm Delete");
                         if ((rv = q.roleDAO.delPerm(trans, rrdd.value, fullperm)).notOK()) {
                             if (rv.notOK()) {
@@ -1131,19 +1131,19 @@ public class Function {
         
         if (!fromApproval) {
             Result<NsDAO.Data> rRoleCo = q.deriveFirstNsForType(trans, role.ns, NsType.COMPANY);
-            if(rRoleCo.notOK()) {
+            if (rRoleCo.notOK()) {
                 return Result.err(rRoleCo);
             }
             Result<NsDAO.Data> rPermCo = q.deriveFirstNsForType(trans, pd.ns, NsType.COMPANY);
-            if(rPermCo.notOK()) {
+            if (rPermCo.notOK()) {
                 return Result.err(rPermCo);
             }
 
             // Not from same company
-            if(!rRoleCo.value.name.equals(rPermCo.value.name)) {
+            if (!rRoleCo.value.name.equals(rPermCo.value.name)) {
                 Result<Data> r;
                 // Only grant if User ALSO has Write ability in Other Company
-                if((r = q.mayUser(trans, user, role, Access.write)).notOK()) {
+                if ((r = q.mayUser(trans, user, role, Access.write)).notOK()) {
                     return Result.err(r);
                 }
             }
@@ -1279,7 +1279,7 @@ public class Function {
                             break;
                         }
                     }
-                    if(!notFound) {
+                    if (!notFound) {
                         break;
                     }
                 }
@@ -1343,14 +1343,14 @@ public class Function {
      */
     public Result<Void> addUserRole(AuthzTrans trans,UserRoleDAO.Data urData) {
         Result<Void> rv;
-        if(Question.ADMIN.equals(urData.rname)) {
+        if (Question.ADMIN.equals(urData.rname)) {
             rv = mayAddAdmin(trans, urData.ns, urData.user);
-        } else if(Question.OWNER.equals(urData.rname)) {
+        } else if (Question.OWNER.equals(urData.rname)) {
             rv = mayAddOwner(trans, urData.ns, urData.user);
         } else {
             rv = checkValidID(trans, new Date(), urData.user);
         }
-        if(rv.notOK()) {
+        if (rv.notOK()) {
             return rv; 
         }
         
@@ -1378,7 +1378,7 @@ public class Function {
 
     public Result<Void> addUserRole(AuthzTrans trans, String user, String ns, String rname) {
         try {
-            if(trans.org().getIdentity(trans, user)==null) {
+            if (trans.org().getIdentity(trans, user)==null) {
                 return Result.err(Result.ERR_BadData,user+" is an Invalid Identity for " + trans.org().getName());
             }
         } catch (OrganizationException e) {
@@ -1476,9 +1476,9 @@ public class Function {
                 Result<List<UserRoleDAO.Data>> rrbr = q.userRoleDAO
                         .readByRole(trans, nsd.name + Question.DOT_OWNER);
                 if (rrbr.isOKhasData()) {
-                    for(UserRoleDAO.Data urd : rrbr.value) {
+                    for (UserRoleDAO.Data urd : rrbr.value) {
                         Identity owner = org.getIdentity(trans, urd.user);
-                        if(owner==null) {
+                        if (owner==null) {
                             return Result.err(Result.ERR_NotFound,urd.user + " is not a Valid Owner of " + nsd.name);
                         } else {
                             owners.add(owner);
@@ -1487,7 +1487,7 @@ public class Function {
                 }
             }
             
-            if(owners.isEmpty()) {
+            if (owners.isEmpty()) {
                 return Result.err(Result.ERR_NotFound,"No Owners found for " + nsd.name);
             }
             
@@ -1501,17 +1501,17 @@ public class Function {
                 final UUID ticket = fr.value.id;
                 sb.append(", Approvals: ");
                 Boolean first[] = new Boolean[]{true};
-                if(op!=FUTURE_OP.A) {
+                if (op!=FUTURE_OP.A) {
                     for (Identity u : approvers) {
                         Result<ApprovalDAO.Data> r = addIdentity(trans,sb,first,user,data.memo,op,u,ticket,org.getApproverType());
-                        if(r.notOK()) {
+                        if (r.notOK()) {
                             return Result.err(r);
                         }
                     }
                 }
                 for (Identity u : owners) {
                     Result<ApprovalDAO.Data> r = addIdentity(trans,sb,first,user,data.memo,op,u,ticket,"owner");
-                    if(r.notOK()) {
+                    if (r.notOK()) {
                         return Result.err(r);
                     }
                 }
@@ -1534,7 +1534,7 @@ public class Function {
         @Override
         public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
             Result<List<UserRoleDAO.Data>> r = q.userRoleDAO.read(trans, keys);
-            if(r.isOKhasData()) {
+            if (r.isOKhasData()) {
                 return r.value.get(0);
             } else {
                 return null;
@@ -1556,18 +1556,18 @@ public class Function {
     public Result<OP_STATUS> performFutureOp(final AuthzTrans trans, FUTURE_OP fop, FutureDAO.Data curr, Lookup<List<ApprovalDAO.Data>> la, Lookup<UserRoleDAO.Data> lur) {
         // Pre-Evaluate if ReApproval is already done.
         UserRoleDAO.Data urdd = null;
-        if(fop.equals(FUTURE_OP.A) && curr.target.equals(FOP_USER_ROLE) && curr.construct!=null) {
+        if (fop.equals(FUTURE_OP.A) && curr.target.equals(FOP_USER_ROLE) && curr.construct!=null) {
             try {
                 // Get Expected UserRole from Future
                 urdd = new UserRoleDAO.Data();
                 urdd.reconstitute(curr.construct);
                 // Get Current UserRole from lookup
                 UserRoleDAO.Data lurdd = lur.get(trans, urdd.user,urdd.role);
-                if(lurdd==null) {
+                if (lurdd==null) {
                     q.futureDAO.delete(trans, curr, false);
                     return OP_STATUS.RL;
                 } else {
-                    if(curr.expires.compareTo(lurdd.expires)<0) {
+                    if (curr.expires.compareTo(lurdd.expires)<0) {
                         q.futureDAO.delete(trans, curr, false);
                         return OP_STATUS.RL;
                     }
@@ -1579,21 +1579,21 @@ public class Function {
         
         boolean aDenial = false;
         int cntSuper=0, appSuper=0,cntOwner=0, appOwner=0;
-        for(ApprovalDAO.Data add : la.get(trans)) {
+        for (ApprovalDAO.Data add : la.get(trans)) {
             switch(add.status) {
                 case "approved":
-                    if("owner".equals(add.type)) {
+                    if ("owner".equals(add.type)) {
                         ++cntOwner;
                         ++appOwner;
-                    } else if("supervisor".equals(add.type)) {
+                    } else if ("supervisor".equals(add.type)) {
                         ++cntSuper;
                         ++appSuper;
                     }
                     break;
                 case "pending":
-                    if("owner".equals(add.type)) {
+                    if ("owner".equals(add.type)) {
                         ++cntOwner;
-                    } else if("supervisor".equals(add.type)) {
+                    } else if ("supervisor".equals(add.type)) {
                         ++cntSuper;
                     }
                     break;
@@ -1604,18 +1604,18 @@ public class Function {
         }
         
         Result<OP_STATUS> ros=null;
-        if(aDenial) {
+        if (aDenial) {
             // Note: Denial will be Audit-logged.
 //            for (ApprovalDAO.Data ad : allApprovalsForTicket.value) {
 //                q.approvalDAO.delete(trans, ad, false);
 //            }
             ros = OP_STATUS.RD;
-            if(q.futureDAO.delete(trans, curr, false).notOK()) {
+            if (q.futureDAO.delete(trans, curr, false).notOK()) {
                 trans.info().printf("Future %s could not be deleted", curr.id.toString());
             }  else {
                 if (FOP_USER_ROLE.equalsIgnoreCase(curr.target)) {
                     // A Denial means we must remove UserRole
-                    if(fop.equals(FUTURE_OP.U) || fop.equals(FUTURE_OP.A)) {
+                    if (fop.equals(FUTURE_OP.U) || fop.equals(FUTURE_OP.A)) {
                         UserRoleDAO.Data data = new UserRoleDAO.Data();
                         try {
                             data.reconstitute(curr.construct);
@@ -1631,7 +1631,7 @@ public class Function {
         // Decision: If not Denied, and at least owner, if exists, and at least one Super, if exists
         boolean goDecision = (cntOwner>0?appOwner>0:true) && (cntSuper>0?appSuper>0:true);
 
-        if(goDecision) {
+        if (goDecision) {
             // should check if any other pendings before performing
             // actions
             try {
@@ -1684,7 +1684,7 @@ public class Function {
                         default:
                     }
                 } else if (FOP_USER_ROLE.equalsIgnoreCase(curr.target)) {
-                    if(urdd==null) {
+                    if (urdd==null) {
                         urdd = new UserRoleDAO.Data();
                         urdd.reconstitute(curr.construct);
                     }
@@ -1737,7 +1737,7 @@ public class Function {
             }
             q.futureDAO.delete(trans, curr, false);
         } // end for goDecision
-        if(ros==null) {
+        if (ros==null) {
             //return Result.err(Status.ACC_Future, "Full Approvals not obtained: No action taken");
             ros = OP_STATUS.RP;
         }
@@ -1747,7 +1747,7 @@ public class Function {
 
     // Convenience method for setting OPSTatus Results
     private Result<OP_STATUS> set(Result<OP_STATUS> rs, Result<?> orig) {
-        if(orig.isOK()) {
+        if (orig.isOK()) {
             return rs;
         } else {
             return Result.err(orig);
@@ -1767,8 +1767,8 @@ public class Function {
         ad.operation = op.name();
         // Note ad.updated is created in System
         Result<ApprovalDAO.Data> r = q.approvalDAO.create(trans,ad);
-        if(r.isOK()) {
-            if(first[0]) {
+        if (r.isOK()) {
+            if (first[0]) {
                 first[0] = false;
             } else {
                 sb.append(", ");

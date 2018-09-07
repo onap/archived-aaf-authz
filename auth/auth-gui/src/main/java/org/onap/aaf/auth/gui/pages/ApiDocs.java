@@ -176,11 +176,11 @@ public class ApiDocs extends Page {
                     @Override
                     public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         Future<Api> fa = client.read("/api",gui.getDF(Api.class));
-                        if(fa.get(5000)) {
+                        if (fa.get(5000)) {
                             tt.done();
                             TimeTaken tt2 = trans.start("Load Data", Env.SUB);
                             try {
-                                if(fa.value!=null)for(Route r : fa.value.getRoute()) {
+                                if (fa.value!=null)for (Route r : fa.value.getRoute()) {
                                     String path = r.getPath();
                                     // Build info
                                     StringBuilder desc = new StringBuilder();
@@ -188,39 +188,39 @@ public class ApiDocs extends Page {
                                     desc.append("<p class=double>");
                                     desc.append(r.getDesc());
                                     
-                                    if(r.getComments().size()>0) {
-                                        for(String ct : r.getComments()) {
+                                    if (r.getComments().size()>0) {
+                                        for (String ct : r.getComments()) {
                                             desc.append("</p><p class=api_comment>");
                                             desc.append(ct);
                                         }
                                     }
             
-                                    if(r.getParam().size()>0) {
+                                    if (r.getParam().size()>0) {
                                         desc.append("<hr><p class=api_label>Parameters</p>");
                                         
-                                        for(String params : r.getParam()) {
+                                        for (String params : r.getParam()) {
                                             String param[] = params.split("\\s*\\|\\s*");
                                             desc.append("</p><p class=api_contentType>");
                                             desc.append(param[0]);
                                             desc.append(" : ");
                                             desc.append(param[1]);
-                                            if("true".equalsIgnoreCase(param[2])) {
+                                            if ("true".equalsIgnoreCase(param[2])) {
                                                 desc.append(" (Required)");
                                             }
                                         }
                                     }
             
             
-                                    if(r.getExpected()!=0) {
+                                    if (r.getExpected()!=0) {
                                         desc.append("</p><p class=api_label>Expected HTTP Code</p><p class=api_comment>");
                                         desc.append(r.getExpected());
                                     } 
             
-                                    if(r.getExplicitErr().size()!=0) {
+                                    if (r.getExplicitErr().size()!=0) {
                                         desc.append("</p><p class=api_label>Explicit HTTP Error Codes</p><p class=api_comment>");
                                         boolean first = true;
-                                        for(int ee : r.getExplicitErr()) {
-                                            if(first) {
+                                        for (int ee : r.getExplicitErr()) {
+                                            if (first) {
                                                 first = false;
                                             } else {
                                                 desc.append(", ");
@@ -232,11 +232,11 @@ public class ApiDocs extends Page {
                                     desc.append("</p><p class=api_label>");
                                     desc.append("GET".equals(r.getMeth())?"Accept:":"ContentType:");
                                     Collections.sort(r.getContentType());
-                                    if(r.getPath().startsWith("/authn/basicAuth")) {
+                                    if (r.getPath().startsWith("/authn/basicAuth")) {
                                         desc.append("</p><p class=api_contentType>text/plain");
                                     }
-                                    for(String ct : r.getContentType()) {
-                                        if(ct.contains("version=2")) {
+                                    for (String ct : r.getContentType()) {
+                                        if (ct.contains("version=2")) {
                                             desc.append("</p><p class=api_contentType><a href=\"./example/");
                                             try {
                                                 desc.append(Symm.base64noSplit.encode(ct));
@@ -258,16 +258,16 @@ public class ApiDocs extends Page {
                                         new TextCell(desc.toString()),
                                     };
             
-                                    if(path.startsWith("/authz/perm")) {
+                                    if (path.startsWith("/authz/perm")) {
                                         sa[0] = perms.size()==0?new TextCell("PERMISSION"):BLANK;
                                         perms.add(sa);
-                                    } else if(path.startsWith("/authz/role") || path.startsWith("/authz/userRole")) {
+                                    } else if (path.startsWith("/authz/role") || path.startsWith("/authz/userRole")) {
                                         sa[0] = roles.size()==0?new TextCell("ROLE"):BLANK;
                                         roles.add(sa);
-                                    } else if(path.startsWith("/authz/ns")) {
+                                    } else if (path.startsWith("/authz/ns")) {
                                         sa[0] = ns.size()==0?new TextCell("NAMESPACE"):BLANK;
                                         ns.add(sa);
-                                    } else if(path.startsWith("/authn/basicAuth") 
+                                    } else if (path.startsWith("/authn/basicAuth") 
                                         || path.startsWith("/authn/validate")
                                         || path.startsWith("/authz/user")) {
                                         sa[0] = user.size()==0?new TextCell("USER"):BLANK;
@@ -277,7 +277,7 @@ public class ApiDocs extends Page {
                                         aafOnly.add(sa);
                                     }
                                 }
-                                //TODO if(trans.fish(p))
+                                //TODO if (trans.fish(p))
                                 prepare(rv, perms,roles,ns,user);
                             } finally {
                                 tt2.done();
@@ -301,8 +301,8 @@ public class ApiDocs extends Page {
         private void prepare(ArrayList<AbsCell[]> rv, ArrayList<AbsCell[]> ... all) {
             AbsCell lead;
             AbsCell[] row;
-            for(ArrayList<AbsCell[]> al : all) {
-                if(al.size()>1) {
+            for (ArrayList<AbsCell[]> al : all) {
+                if (al.size()>1) {
                     row = al.get(0);
                     lead = row[0];
                     row[0]=BLANK;
@@ -312,7 +312,7 @@ public class ApiDocs extends Page {
                         public int compare(AbsCell[] ca1, AbsCell[] ca2) {
                             int meth = ((TextCell)ca1[2]).name.compareTo(
                                        ((TextCell)ca2[2]).name);
-                            if(meth == 0) {
+                            if (meth == 0) {
                                 return (HttpMethods.valueOf(((TextCell)ca1[1]).name).compareTo(
                                         HttpMethods.valueOf(((TextCell)ca2[1]).name)));
                             } else { 

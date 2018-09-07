@@ -48,42 +48,42 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
     @Override
     public Result<RoleDAO.Data> exec(final AuthzTrans trans, final Role r,final RoleModify.Modify modify) {
         Result<List<Data>> rr = q.roleDAO.read(trans, r.ns,r.name);
-        if(dryRun) {
-            if(rr.isOKhasData()) {
+        if (dryRun) {
+            if (rr.isOKhasData()) {
                 return Result.ok(rr.value.get(0));
             } else {
                 return Result.err(Result.ERR_NotFound, "Data not Found " + r.toString());
             }
         } else {
             Result<Data> rv = null;
-            if(rr.isOKhasData()) {
-                for(final Data d : rr.value) {
+            if (rr.isOKhasData()) {
+                for (final Data d : rr.value) {
                     modify.change(d);
-                    if(d.ns.equals(r.ns) && d.name.equals(r.name)) {
+                    if (d.ns.equals(r.ns) && d.name.equals(r.name)) {
                         // update for fields
                         // In either case, adjust Roles
-                        for(String p : d.perms) {
-                            if(!r.perms.contains(p)) {
+                        for (String p : d.perms) {
+                            if (!r.perms.contains(p)) {
                                 Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans, q, p);
-                                if(rpdd.isOKhasData()) {
+                                if (rpdd.isOKhasData()) {
                                     q.roleDAO.dao().addPerm(trans, d, rpdd.value);
                                 }
                             }
                         }
-                        for(String p : r.perms) {
-                            if(!d.perms.contains(p)) {
+                        for (String p : r.perms) {
+                            if (!d.perms.contains(p)) {
                                 Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans, q, p);
-                                if(rpdd.isOKhasData()) {
+                                if (rpdd.isOKhasData()) {
                                     q.roleDAO.dao().delPerm(trans, d, rpdd.value);
                                 }
                             }
                         }
                         rv = Result.ok(d);
                     } else {                
-                        for(String p : d.perms) {
+                        for (String p : d.perms) {
                             Perm perm = Perm.keys.get(p);
-                            if(perm!=null) {
-                                if(perm.roles.contains(r.encode())) {
+                            if (perm!=null) {
+                                if (perm.roles.contains(r.encode())) {
                                     modify.permModify().exec(trans, perm, new PermModify.Modify() {
                                         @Override
                                         public RoleModify roleModify() {
@@ -100,11 +100,11 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
                             }
                         }
                         Result<List<Data>> preexist = q.roleDAO.read(trans, d);
-                        if(preexist.isOKhasData()) {
+                        if (preexist.isOKhasData()) {
                             Data rdd = preexist.value.get(0);
-                            for(String p : d.perms) {
+                            for (String p : d.perms) {
                                 Result<PermDAO.Data> perm = PermDAO.Data.decode(trans, q, p);
-                                if(perm.isOKhasData()) {
+                                if (perm.isOKhasData()) {
                                     q.roleDAO.dao().addPerm(trans,rdd, perm.value);
                                 }
                             }
@@ -112,7 +112,7 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
                         } else {
                             rv = q.roleDAO.create(trans, d);
                         }
-                        if(rv.isOK()) {
+                        if (rv.isOK()) {
                             trans.info().printf("Updating %s|%s to %s|%s", r.ns, r.name, d.ns, d.name);
                             RoleDAO.Data rmme = new RoleDAO.Data();
                             rmme.ns=r.ns;
@@ -127,7 +127,7 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
             } else {
                 rv = Result.err(rr);
             }
-            if(rv==null) {
+            if (rv==null) {
                 rv = Result.err(Status.ERR_General,"Never get to this code");
             }
             return rv;
@@ -140,7 +140,7 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
     }
     
     public Result<Void> delete(AuthzTrans trans, Role r) {
-        if(dryRun) {
+        if (dryRun) {
             return Result.ok();
         } else {
             RoleDAO.Data data = new RoleDAO.Data();

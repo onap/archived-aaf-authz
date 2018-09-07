@@ -53,39 +53,39 @@ public class OrganizationFactory {
         int idx = ORGANIZATION_DOT.length();
         Organization org,firstOrg = null;
         
-        for(Entry<Object, Object> es : env.getProperties().entrySet()) {
+        for (Entry<Object, Object> es : env.getProperties().entrySet()) {
             String key = es.getKey().toString();
-            if(key.startsWith(ORGANIZATION_DOT)) {
+            if (key.startsWith(ORGANIZATION_DOT)) {
                 org = obtain(env,key.substring(idx));
-                if(firstOrg==null) {
+                if (firstOrg==null) {
                     firstOrg = org;
                 }
             }
         }
-        if(defaultOrg == null) {
+        if (defaultOrg == null) {
             defaultOrg = firstOrg;
         }
         return defaultOrg;
     }
     public static Organization obtain(Env env,final String theNS) throws OrganizationException {
         String orgNS;
-        if(theNS.indexOf('@')>=0) {
+        if (theNS.indexOf('@')>=0) {
             orgNS=FQI.reverseDomain(theNS);
         } else {
             orgNS=theNS;
         }
         Organization org = orgs.get(orgNS);
-        if(org == null) {
+        if (org == null) {
             env.debug().printf("Attempting to instantiate Organization %s\n",orgNS);
 
             String orgClass = env.getProperty(ORGANIZATION_DOT+orgNS);
-            if(orgClass == null) {
+            if (orgClass == null) {
                 env.warn().log("There is no Organization." + orgNS + " property");
             } else {
                 try {
                     Class<?> orgCls = Class.forName(orgClass);
-                    for(Organization o : orgs.values()) {
-                        if(o.getClass().isAssignableFrom(orgCls)) {
+                    for (Organization o : orgs.values()) {
+                        if (o.getClass().isAssignableFrom(orgCls)) {
                             org = o;
                         }
                     }
@@ -93,15 +93,15 @@ public class OrganizationFactory {
                     env.error().log(e1, orgClass + " is not on the Classpath.");
                     throw new OrganizationException(e1);
                 }
-                if(org==null) {
+                if (org==null) {
                     try {
                         @SuppressWarnings("unchecked")
                         Class<Organization> cls = (Class<Organization>) Class.forName(orgClass);
                         Constructor<Organization> cnst = cls.getConstructor(Env.class,String.class);
                         org = cnst.newInstance(env,orgNS);
                         String other_realms = env.getProperty(orgNS+".also_supports");
-                        if(other_realms!=null) {
-                            for(String r : Split.splitTrim(',', other_realms)) {
+                        if (other_realms!=null) {
+                            for (String r : Split.splitTrim(',', other_realms)) {
                                 org.addSupportedRealm(r);
                             }
                         }
@@ -114,13 +114,13 @@ public class OrganizationFactory {
                 }
                 orgs.put(orgNS, org);
                 boolean isDefault;
-                if((isDefault="true".equalsIgnoreCase(env.getProperty(orgNS+".default")))) {
+                if ((isDefault="true".equalsIgnoreCase(env.getProperty(orgNS+".default")))) {
                     defaultOrg = org;
                 }
                 env.init().printf("Instantiated %s with %s%s\n",orgNS,orgClass,(isDefault?" as default":""));
             }
-            if(org==null) {
-                if(defaultOrg!=null) {
+            if (org==null) {
+                if (defaultOrg!=null) {
                     org=defaultOrg;
                     orgs.put(orgNS, org);
                 }
@@ -133,7 +133,7 @@ public class OrganizationFactory {
     public static Organization get(AuthzTrans trans) throws OrganizationException {
         String domain = FQI.reverseDomain(trans.user());
         Organization org = orgs.get(domain);
-        if(org==null) {
+        if (org==null) {
             org = defaultOrg; // can be null, btw, unless set.
         }
         return org;

@@ -74,7 +74,7 @@ public class API_History {
                 try {
                     years = getYears(req);
                     descend = decending(req);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
@@ -101,7 +101,7 @@ public class API_History {
                 try {
                     years = getYears(req);
                     descend = decending(req);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
@@ -128,7 +128,7 @@ public class API_History {
                 try {
                     years = getYears(req);
                     descend = decending(req);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
@@ -155,7 +155,7 @@ public class API_History {
                 try {
                     years = getYears(req);
                     descend = decending(req);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
@@ -174,8 +174,8 @@ public class API_History {
 
     // Check if Ascending
     private static int decending(HttpServletRequest req) {
-        if("true".equalsIgnoreCase(req.getParameter("desc")))return -1;
-        if("true".equalsIgnoreCase(req.getParameter("asc")))return 1;
+        if ("true".equalsIgnoreCase(req.getParameter("desc")))return -1;
+        if ("true".equalsIgnoreCase(req.getParameter("asc")))return 1;
         return 0;
     }
     
@@ -186,21 +186,21 @@ public class API_History {
         SimpleDateFormat FMT = new SimpleDateFormat("yyyyMM");
         String yyyymm = req.getParameter("yyyymm");
         ArrayList<Integer> ai= new ArrayList<>();
-        if(yyyymm==null) {
+        if (yyyymm==null) {
             GregorianCalendar gc = new GregorianCalendar();
             // three months is the default
-            for(int i=0;i<3;++i) {
+            for (int i=0;i<3;++i) {
                 ai.add(Integer.parseInt(FMT.format(gc.getTime())));
                 gc.add(GregorianCalendar.MONTH, -1);
             }
         } else {
-            for(String ym : yyyymm.split(",")) {
+            for (String ym : yyyymm.split(",")) {
                 String range[] = ym.split("\\s*-\\s*");
                 switch(range.length) {
                     case 0:
                         break;
                     case 1:
-                        if(!ym.endsWith("-")) {
+                        if (!ym.endsWith("-")) {
                             ai.add(getNum(ym));
                             break;
                         } else {
@@ -214,26 +214,26 @@ public class API_History {
                         
                         gc.set(GregorianCalendar.MONTH, Integer.parseInt(range[0].substring(4,6))-1);
                         gc.set(GregorianCalendar.YEAR, Integer.parseInt(range[0].substring(0,4)));
-                        for(int i=getNum(FMT.format(gc.getTime()));i<=end;gc.add(GregorianCalendar.MONTH, 1),i=getNum(FMT.format(gc.getTime()))) {
+                        for (int i=getNum(FMT.format(gc.getTime()));i<=end;gc.add(GregorianCalendar.MONTH, 1),i=getNum(FMT.format(gc.getTime()))) {
                             ai.add(i);
                         }
 
                 }
             }
         }
-        if(ai.size()==0) {
+        if (ai.size()==0) {
             throw new NumberFormatException(yyyymm + " is an invalid number or range");
         }
         Collections.sort(ai);
         int ym[] = new int[ai.size()];
-        for(int i=0;i<ym.length;++i) {
+        for (int i=0;i<ym.length;++i) {
             ym[i]=ai.get(i);
         }
         return ym;
     }
     
     private static int getNum(String n) {
-        if(n==null || n.length()!=6) throw new NumberFormatException(n + " is not in YYYYMM format");
+        if (n==null || n.length()!=6) throw new NumberFormatException(n + " is not in YYYYMM format");
         return Integer.parseInt(n);
     }
 }

@@ -45,11 +45,11 @@ public class OAuth2Filter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest hreq = (HttpServletRequest)request;
         Principal p = hreq.getUserPrincipal();
-        if(request.getContentType().equals("application/x-www-form-urlencoded")) {
+        if (request.getContentType().equals("application/x-www-form-urlencoded")) {
             
-        } else if(p instanceof BearerPrincipal) { 
-            for(String authz : Split.splitTrim(';', hreq.getHeader("Authorization"))) {
-                if(authz.startsWith("Bearer ")) {
+        } else if (p instanceof BearerPrincipal) { 
+            for (String authz : Split.splitTrim(';', hreq.getHeader("Authorization"))) {
+                if (authz.startsWith("Bearer ")) {
                     ((BearerPrincipal)p).setBearer(authz.substring(7));
                 }
             }

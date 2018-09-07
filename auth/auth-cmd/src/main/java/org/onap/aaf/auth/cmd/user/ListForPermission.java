@@ -60,14 +60,14 @@ public class ListForPermission extends Cmd {
                 int idx = index;
                 String type = args[idx++];
                 String instance = args[idx++];
-                if("\\*".equals(instance))instance="*";
+                if ("\\*".equals(instance))instance="*";
                 String action = args[idx++];
-                if("\\*".equals(action))action="*";
+                if ("\\*".equals(action))action="*";
                 Future<Users> fp = client.read(
                         "/authz/users/perm/"+type+'/'+instance+'/'+action, 
                         getDF(Users.class)
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     if (aafcli.isTest())
                         Collections.sort(fp.value.getUser(), new Comparator<User>() {
                             @Override
@@ -76,7 +76,7 @@ public class ListForPermission extends Cmd {
                             }            
                         });
                     ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,false,HEADER,type+"|"+instance+"|"+action);
-                    if(fp.code()==404)return 200;
+                    if (fp.code()==404)return 200;
                 } else {
                     error(fp);
                 }

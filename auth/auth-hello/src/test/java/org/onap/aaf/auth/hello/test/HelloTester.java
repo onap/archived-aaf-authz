@@ -46,7 +46,7 @@ public class HelloTester {
         try {
             Define.set(access);
             String uriPrefix = access.getProperty("locatorURI",null);
-            if(uriPrefix==null) {
+            if (uriPrefix==null) {
                 System.out.println("You must add \"locatorURI=<uri>\" to the command line or VM_Args");
             } else {
                 SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
@@ -57,12 +57,12 @@ public class HelloTester {
                 String pathinfo = "/hello";
                 final int iterations = Integer.parseInt(access.getProperty("iterations","5"));
                 System.out.println("Calling " + loc + " with Path " + pathinfo + ' ' + iterations + " time" + (iterations==1?"":"s"));
-                for(int i=0;i<iterations;++i) {
+                for (int i=0;i<iterations;++i) {
                     aafcon.best(new Retryable<Void> () {
                         @Override
                         public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                             Future<String> fs = client.read("/hello","text/plain");
-                            if(fs.get(5000)) {
+                            if (fs.get(5000)) {
                                 System.out.print(fs.body());
                             } else {
                                 System.err.println("Ooops, missed one: " + fs.code() + ": " + fs.body());

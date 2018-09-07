@@ -80,10 +80,10 @@ public class JAXBmar {
         }
         
         public Marshaller get(boolean pretty, boolean fragment) throws JAXBException {
-            if(pretty != p) {
+            if (pretty != p) {
                 m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, p = pretty);
             }
-            if(fragment != f) {
+            if (fragment != f) {
                 m.setProperty(Marshaller.JAXB_FRAGMENT, f = fragment);
             }
             return m;
@@ -139,7 +139,7 @@ public class JAXBmar {
         Pool<PMarshaller> mp;
         synchronized(pools) {
             mp = pools.get(classes);
-            if(mp==null) {
+            if (mp==null) {
                 pools.put(classes,mp = new Pool<PMarshaller>(new Creator(classes)));
             }
         }        
@@ -165,7 +165,7 @@ public class JAXBmar {
         fragment = options.length>1?options[1]:this.fragment;
         Pooled<PMarshaller> m = mpool.get(lt);
         try {
-            if(qname==null) {
+            if (qname==null) {
                 m.content.get(pretty,fragment).marshal(o, writer);
             } else {
                 m.content.get(pretty,fragment).marshal(
@@ -185,7 +185,7 @@ public class JAXBmar {
         fragment = options.length>1?options[1]:this.fragment;
         Pooled<PMarshaller> m = mpool.get(lt);
         try {
-            if(qname==null) {
+            if (qname==null) {
                 m.content.get(pretty,fragment).marshal(o, os);
             } else {
                 m.content.get(pretty,fragment).marshal(
@@ -200,7 +200,7 @@ public class JAXBmar {
     public<O> O marshal(LogTarget lt, O o, Writer writer, Class<O> clss) throws JAXBException, APIException {
         Pooled<PMarshaller> m = mpool.get(lt);
         try {
-            if(qname==null) {
+            if (qname==null) {
                 m.content.get(pretty,fragment).marshal(o, writer);
             } else {
                 m.content.get(pretty,fragment).marshal(
@@ -216,7 +216,7 @@ public class JAXBmar {
     public<O> O marshal(LogTarget lt, O o, OutputStream os, Class<O> clss) throws JAXBException, APIException {
         Pooled<PMarshaller> m = mpool.get(lt);
         try {
-            if(qname==null) { 
+            if (qname==null) { 
                 m.content.get(pretty,fragment).marshal(o, os);
             } else {
                 m.content.get(pretty,fragment).marshal(

@@ -49,16 +49,16 @@ public class JavaUtilLogTarget implements LogTarget {
     }
 
     public void log(Object ... msgs) {
-        if(log.isLoggable(level)) {
+        if (log.isLoggable(level)) {
             StringBuilder sb = new StringBuilder();
             String msg;
-            for(int i=0;i<msgs.length;++i) {
+            for (int i=0;i<msgs.length;++i) {
                 msg = msgs[i].toString();
-                if(msg!=null && msg.length()>0) {
+                if (msg!=null && msg.length()>0) {
                     int sbl = sb.length();
-                    if(sbl>0) {
+                    if (sbl>0) {
                         char last = sb.charAt(sbl-1);
-                        if(" (.".indexOf(last)<0 && "().".indexOf(msg.charAt(0))<0)sb.append(' ');
+                        if (" (.".indexOf(last)<0 && "().".indexOf(msg.charAt(0))<0)sb.append(' ');
                     }
                     sb.append(msg);
                 }
@@ -69,10 +69,10 @@ public class JavaUtilLogTarget implements LogTarget {
 
     public void log(Throwable e, Object ... msgs) {
         String str = e.getLocalizedMessage();
-        if(str==null) {
+        if (str==null) {
             str = e.getMessage();
         }
-        if(str==null) {
+        if (str==null) {
             str = e.getClass().getName();
         }
         log.log(level,str,msgs);
@@ -83,7 +83,7 @@ public class JavaUtilLogTarget implements LogTarget {
      */
     @Override
     public void printf(String fmt, Object ... vars) {
-        if(log.isLoggable(level)) {
+        if (log.isLoggable(level)) {
             log.log(level,String.format(fmt,vars));
         }
     }

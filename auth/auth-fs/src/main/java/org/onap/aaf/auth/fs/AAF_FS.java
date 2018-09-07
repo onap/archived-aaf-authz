@@ -62,7 +62,7 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             route(env,GET,"/:key", cfa); 
             route(env,GET,"/:key/:cmd", cfa);
             final String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL, null);
-            if(aaf_locate_url == null) {
+            if (aaf_locate_url == null) {
                 access.printf(Level.WARN, "Redirection requires property %s",Config.AAF_LOCATE_URL);
             } else {
                 route(env,GET,"/", new Redirect(this,aaf_locate_url));

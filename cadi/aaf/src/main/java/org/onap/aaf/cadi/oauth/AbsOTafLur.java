@@ -45,15 +45,15 @@ public abstract class AbsOTafLur {
     protected AbsOTafLur(final PropAccess access, final String token_url, final String introspect_url) throws CadiException {
         this.access = access;
         String ci;
-        if((ci = access.getProperty(Config.AAF_APPID,null))==null) {
-            if((ci = access.getProperty(Config.CADI_ALIAS,null))==null) {
+        if ((ci = access.getProperty(Config.AAF_APPID,null))==null) {
+            if ((ci = access.getProperty(Config.CADI_ALIAS,null))==null) {
                 throw new CadiException(Config.AAF_APPID + REQUIRED_FOR_OAUTH2);
             }
         }
         client_id = ci;
 
         synchronized(access) {
-            if(tokenClientPool==null) {
+            if (tokenClientPool==null) {
                 tokenClientPool = new Pool<TokenClient>(new TCCreator(access));
             }
             try {
@@ -76,7 +76,7 @@ public abstract class AbsOTafLur {
                 throw new CadiException(e1);
             }
             
-            if((url = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null))==null) {
+            if ((url = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null))==null) {
                 throw new CadiException(Config.AAF_OAUTH2_TOKEN_URL + REQUIRED_FOR_OAUTH2);
             }
             
@@ -85,7 +85,7 @@ public abstract class AbsOTafLur {
             } catch (NumberFormatException e) {
                 throw new CadiException("Bad format for " + Config.AAF_CONN_TIMEOUT, e);
             }
-            if((enc_secret= access.getProperty(Config.AAF_APPPASS,null))==null) {
+            if ((enc_secret= access.getProperty(Config.AAF_APPPASS,null))==null) {
                 throw new CadiException(Config.AAF_APPPASS + REQUIRED_FOR_OAUTH2);
             }
         }

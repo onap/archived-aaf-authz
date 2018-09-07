@@ -63,19 +63,19 @@ public class BufferedServletInputStream extends ServletInputStream {
 
     public int read() throws IOException {
         int value=-1;
-        if(capacitor==null) {
+        if (capacitor==null) {
             value=is.read();
         } else {
             switch(state) {
                 case STORE:
                     value = is.read();
-                    if(value>=0) {
+                    if (value>=0) {
                         capacitor.put((byte)value);
                     }
                     break;
                 case READ:
                     value = capacitor.read();
-                    if(value<0) {
+                    if (value<0) {
                         capacitor.done();
                         capacitor=null; // all done with buffer
                         value = is.read();
@@ -92,27 +92,27 @@ public class BufferedServletInputStream extends ServletInputStream {
 
     public int read(byte[] b, int off, int len) throws IOException {
         int count = -1;
-        if(capacitor==null) {
+        if (capacitor==null) {
             count = is.read(b,off,len);
         } else {
             switch(state) {
                 case STORE:
                     count = is.read(b, off, len);
-                    if(count>0) {
+                    if (count>0) {
                         capacitor.put(b, off, count);
                     }
                     break;
                 case READ:
                     count = capacitor.read(b, off, len);
-                    if(count<=0) {
+                    if (count<=0) {
                         capacitor.done();
                         capacitor=null; // all done with buffer
                     }
-                    if(count<len) {
+                    if (count<len) {
                         int temp = is.read(b, count, len-count);
-                        if(temp>0) { // watch for -1
+                        if (temp>0) { // watch for -1
                             count+=temp;
-                        } else if(count<=0) {
+                        } else if (count<=0) {
                             count = temp; // must account for Stream coming back -1  
                         }
                     }
@@ -124,7 +124,7 @@ public class BufferedServletInputStream extends ServletInputStream {
 
     public long skip(long n) throws IOException {
         long skipped = capacitor.skip(n);
-        if(skipped<n) {
+        if (skipped<n) {
             skipped += is.skip(n-skipped);
         }
         return skipped;
@@ -133,7 +133,7 @@ public class BufferedServletInputStream extends ServletInputStream {
 
     public int available() throws IOException {
         int count = is.available();
-        if(capacitor!=null)count+=capacitor.available();
+        if (capacitor!=null)count+=capacitor.available();
         return count;        
     }
     
@@ -147,7 +147,7 @@ public class BufferedServletInputStream extends ServletInputStream {
 
 
     public void close() throws IOException {
-        if(capacitor!=null) {
+        if (capacitor!=null) {
             capacitor.done();
             capacitor=null;
         }

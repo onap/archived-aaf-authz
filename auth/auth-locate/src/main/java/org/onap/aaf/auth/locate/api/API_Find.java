@@ -62,7 +62,7 @@ public class API_Find {
                 String service = pathParam(req, ":service");
                 String version = pathParam(req, ":version");
                 String other = pathParam(req, ":other");
-                if(service.indexOf(':')>=0) {
+                if (service.indexOf(':')>=0) {
                     String split[] = Split.split(':', service);
                     switch(split.length) {
                         case 3:

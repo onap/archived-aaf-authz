@@ -30,7 +30,7 @@ public class OutRaw extends Out{
     public<IN,S> void extract(IN in, Writer writer, Parse<IN,S> prs, boolean ... options) throws IOException, ParseException {
         Parsed<S> p = prs.newParsed();
         
-        while((p = prs.parse(in,p.reuse())).valid()) { 
+        while ((p = prs.parse(in,p.reuse())).valid()) { 
             writer.append(p.toString());
             writer.append('\n');
         }

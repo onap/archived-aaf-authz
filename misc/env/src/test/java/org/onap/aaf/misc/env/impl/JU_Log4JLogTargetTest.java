@@ -48,7 +48,7 @@ public class JU_Log4JLogTargetTest {
         MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(Logger.class);
         when(Logger.getLogger("Info")).thenReturn(log);
-        when(log.isEnabledFor(Level.DEBUG)).thenReturn(false);
+        when(log.isEnabledFor (Level.DEBUG)).thenReturn(false);
     }
 
     @Test

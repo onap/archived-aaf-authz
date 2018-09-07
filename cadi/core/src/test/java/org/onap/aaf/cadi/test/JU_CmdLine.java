@@ -163,7 +163,7 @@ public class JU_CmdLine {
 
         String filePath = "test/output_key";
         File testDir = new File("test");
-        if(!testDir.exists()) {
+        if (!testDir.exists()) {
             testDir.mkdirs();
         }
         CmdLine.main(new String[]{"keygen", filePath});

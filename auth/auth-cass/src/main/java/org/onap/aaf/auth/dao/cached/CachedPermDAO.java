@@ -46,13 +46,13 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
         };
         
         Result<List<Data>> lurd = get(trans, ns, getter);
-        if(lurd.isOKhasData()) {
+        if (lurd.isOKhasData()) {
             return lurd;
         } else {
             
         }
-//        if(getter.result==null) {
-//            if(lurd==null) {
+//        if (getter.result==null) {
+//            if (lurd==null) {
                 return Result.err(Status.ERR_PermissionNotFound,"No Permission found - " + lurd.details);
 //            } else {
 //                return Result.ok(lurd);
@@ -81,7 +81,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
         
         // Note: Can reuse index1 here, because there is no name collision versus response
         Result<List<Data>> lurd = get(trans, ns+'|'+type, getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_PermissionNotFound,"No Permission found");
         }
         return lurd;
@@ -106,7 +106,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
     
     public Result<Void> addRole(AuthzTrans trans, PermDAO.Data perm, RoleDAO.Data role) {
         Result<Void> rv = dao().addRole(trans,perm,role.encode());
-        if(trans.debug().isLoggable())
+        if (trans.debug().isLoggable())
             trans.debug().log("Adding",role.encode(),"to", perm, "with CachedPermDAO.addRole");
         invalidate(trans,perm);
         return rv;
@@ -114,7 +114,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
 
     public Result<Void> delRole(AuthzTrans trans, Data perm, RoleDAO.Data role) {
         Result<Void> rv = dao().delRole(trans,perm,role.encode());
-        if(trans.debug().isLoggable())
+        if (trans.debug().isLoggable())
             trans.debug().log("Removing",role.encode(),"from", perm, "with CachedPermDAO.delRole");
         invalidate(trans,perm);
         return rv;

@@ -76,7 +76,7 @@ public class CertmanTest {
 //        }
 //
 //        Locator<URI> loc = new DNSLocator(env, "https", "aaf.it.att.com", "8150");
-//        for(Item item = loc.first(); item!=null; item=loc.next(item)) {
+//        for (Item item = loc.first(); item!=null; item=loc.next(item)) {
 //            System.out.println(loc.get(item));
 //        }
 //        
@@ -111,7 +111,7 @@ public class CertmanTest {
 //    @Test
 //    public void testX500Name() throws Exception {
 //        
-//        for( InetAddress ia : InetAddress.getAllByName("aaf.dev.att.com")) {
+//        for ( InetAddress ia : InetAddress.getAllByName("aaf.dev.att.com")) {
 //            System.out.printf("%s - %s\n", ia.getHostName(), ia.getHostAddress());
 //            InetAddress ia1 = InetAddress.getByName(ia.getHostAddress());
 //            System.out.printf("%s - %s\n", ia1.getHostName(), ia1.getHostAddress());
@@ -133,12 +133,12 @@ public class CertmanTest {
 //                try {
 //                    System.out.println(reqDF.newData().option(Data.PRETTY).load(cr).asString());
 //                    Future<String> f = client.updateRespondString(path, reqDF, cr);
-//                    if(f.get(10000)) {
+//                    if (f.get(10000)) {
 //                        end = System.nanoTime();
 //                        System.out.println(f.body());
 //                        CertInfo capi = certDF.newData().in(Data.TYPE.JSON).load(f.body()).asObject();
-//                        for(String c :capi.getCerts()) {
-//                            for( java.security.cert.Certificate x509 : Factory.toX509Certificate(c)) {
+//                        for (String c :capi.getCerts()) {
+//                            for ( java.security.cert.Certificate x509 : Factory.toX509Certificate(c)) {
 //                                System.out.println(x509.toString());
 //                            }
 //                        }

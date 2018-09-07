@@ -48,7 +48,7 @@ public class HBasicAuthSS extends HAuthorizationHeader implements BasicAuth {
 
     public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String pass, boolean asDefault) throws IOException {
         this(si, user,pass);
-        if(asDefault) {
+        if (asDefault) {
             si.set(this);
         }
     }
@@ -59,7 +59,7 @@ public class HBasicAuthSS extends HAuthorizationHeader implements BasicAuth {
     
     public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws IOException {
         this(si, bp.getName(),new String(bp.getCred()));
-        if(asDefault) {
+        if (asDefault) {
             si.set(this);
         }
     }

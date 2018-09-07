@@ -161,8 +161,8 @@ public interface Organization {
         Notify(int id) {this.id = id;}
         public int getValue() {return id;}
         public static Notify from(int type) {
-            for(Notify t : Notify.values()) {
-                if(t.id==type) {
+            for (Notify t : Notify.values()) {
+                if (t.id==type) {
                     return t;
                 }
             }

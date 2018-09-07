@@ -114,7 +114,7 @@ public final class JAXBData<T> implements Data<T>{
      * @throws APIException
      */
     public String asString(EnvJAXB env) throws APIException {
-        if(dataAsString!=null) {
+        if (dataAsString!=null) {
             return dataAsString;
         } else {
             return dataAsString = stringifier.stringify(env, dataAsObject);
@@ -131,7 +131,7 @@ public final class JAXBData<T> implements Data<T>{
      */
     // @Override
     public String asString() throws APIException {
-        if(dataAsString!=null) {
+        if (dataAsString!=null) {
             return dataAsString;
         } else {
             return dataAsString = stringifier.stringify(creatingEnv, dataAsObject,options);
@@ -139,7 +139,7 @@ public final class JAXBData<T> implements Data<T>{
     }
     
     public Data<T> to(OutputStream os) throws APIException, IOException {
-        if(dataAsString!=null) {
+        if (dataAsString!=null) {
             os.write(dataAsString.getBytes());
         } else if (stringifier instanceof IOStringifier){
             ((IOStringifier<T>)stringifier).stringify(creatingEnv, dataAsObject, os, options);
@@ -153,7 +153,7 @@ public final class JAXBData<T> implements Data<T>{
 
     // @Override
     public JAXBData<T> to(Writer writer) throws APIException, IOException {
-        if(dataAsString!=null) {
+        if (dataAsString!=null) {
             writer.write(dataAsString);
         } else if (stringifier instanceof IOStringifier){
             ((IOStringifier<T>)stringifier).stringify(creatingEnv, dataAsObject, writer, options);
@@ -166,7 +166,7 @@ public final class JAXBData<T> implements Data<T>{
 
 
     public InputStream getInputStream() throws APIException {
-        if(dataAsString==null) {
+        if (dataAsString==null) {
             dataAsString = stringifier.stringify(creatingEnv,dataAsObject,options);
         }
         return new ByteArrayInputStream(dataAsString.getBytes());
@@ -184,7 +184,7 @@ public final class JAXBData<T> implements Data<T>{
      */
 
     public T asObject(EnvJAXB env) throws APIException {
-        if(dataAsObject !=null) {
+        if (dataAsObject !=null) {
             return dataAsObject;
         } else {
             // Some Java compilers need two statements here
@@ -204,7 +204,7 @@ public final class JAXBData<T> implements Data<T>{
      */
     // @Override
     public T asObject() throws APIException {
-        if(dataAsObject !=null) {
+        if (dataAsObject !=null) {
             return dataAsObject;
         } else {
             // Some Java compilers need two statements here
@@ -239,7 +239,7 @@ public final class JAXBData<T> implements Data<T>{
      */
     // @Override
     public String toString() {
-        if(dataAsString!=null) {
+        if (dataAsString!=null) {
             return dataAsString;
         } else {
             try {
@@ -292,8 +292,8 @@ public final class JAXBData<T> implements Data<T>{
         int count;
         do {
             count = input.read(b);
-            if(count>0)output.write(b, 0, count);
-        } while(count>=0);
+            if (count>0)output.write(b, 0, count);
+        } while (count>=0);
     }
 
 

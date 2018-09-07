@@ -65,10 +65,10 @@ public class Delete extends Cmd {
                         "/authz/perm", 
                         getDF(PermRequest.class),
                         pk);
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     pw().println("Deleted Permission");
                 } else {
-                    if(fp.code()==202) {
+                    if (fp.code()==202) {
                         pw().println("Permission Deletion Accepted, but requires Approvals before actualizing");
                     } else {
                         error(fp);

@@ -70,7 +70,7 @@ public class AuthzTransOnlyFilter extends TransOnlyFilter<AuthzTrans> {
         Metric m = trans.auditTrail(1, sb, Env.REMOTE,Env.JSON);
         // Add current Metrics to total metrics
         serviceMetric.total+= m.total;
-        for(int i=0;i<serviceMetric.buckets.length;++i) {
+        for (int i=0;i<serviceMetric.buckets.length;++i) {
             serviceMetric.buckets[i]+=m.buckets[i];
         }
         // Log current info

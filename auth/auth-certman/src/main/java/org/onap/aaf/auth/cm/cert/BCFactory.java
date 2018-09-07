@@ -65,7 +65,7 @@ public class BCFactory extends Factory {
     }
     
     public static String toString(PKCS10CertificationRequest csr) throws IOException, CertException {
-        if(csr==null) {
+        if (csr==null) {
             throw new CertException("x509 Certificate Request not built");
         }
         return textBuilder("CERTIFICATE REQUEST",csr.getEncoded());
@@ -94,8 +94,8 @@ public class BCFactory extends Factory {
         CSRMeta csr = ca.newCSRMeta();
         boolean first = true;
         // Set CN (and SAN)
-        for(String fqdn : fqdns) {
-            if(first) {
+        for (String fqdn : fqdns) {
+            if (first) {
                 first = false;
                 csr.cn(fqdn);
             }
@@ -106,7 +106,7 @@ public class BCFactory extends Factory {
         csr.mechID(mechid);
         csr.email(sponsorEmail);
         String errs;
-        if((errs=validateApp(csr))!=null) {
+        if ((errs=validateApp(csr))!=null) {
             throw new CertException(errs);
         }
         return csr;
@@ -114,7 +114,7 @@ public class BCFactory extends Factory {
     
     private static String validateApp(CSRMeta csr) {
         CertmanValidator v = new CertmanValidator();
-        if(v.nullOrBlank("cn", csr.cn())
+        if (v.nullOrBlank("cn", csr.cn())
             .nullOrBlank("mechID", csr.mechID())
 //            .nullOrBlank("email", csr.email())
             .err()) {
@@ -130,7 +130,7 @@ public class BCFactory extends Factory {
         csr.challenge(new String(Symm.randomGen(24)));
         csr.email(email);
         String errs;
-        if((errs=validatePersonal(csr))!=null) {
+        if ((errs=validatePersonal(csr))!=null) {
             throw new CertException(errs);
         }
         return csr;
@@ -138,7 +138,7 @@ public class BCFactory extends Factory {
 
     private static String validatePersonal(CSRMeta csr) {
         CertmanValidator v = new CertmanValidator();
-        if(v.nullOrBlank("cn", csr.cn())
+        if (v.nullOrBlank("cn", csr.cn())
             .nullOrBlank("email", csr.email())
             .err()) {
             return v.errs();

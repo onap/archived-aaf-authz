@@ -85,7 +85,7 @@ public class NssShow extends Page {
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             ArrayList<AbsCell[]> rv = new ArrayList<>();
             List<Ns> nss = trans.get(sNssByUser, null);
-            if(nss==null) {
+            if (nss==null) {
                 TimeTaken tt = trans.start("AAF Nss by User for " + privilege,Env.REMOTE);
                 try {
                     nss = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<List<Ns>>() {
@@ -93,10 +93,10 @@ public class NssShow extends Page {
                         public List<Ns> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                             List<Ns> nss = null;
                             Future<Nss> fp = client.read("/authz/nss/either/" + trans.user(),gui.getDF(Nss.class));
-                            if(fp.get(AAF_GUI.TIMEOUT)) {
+                            if (fp.get(AAF_GUI.TIMEOUT)) {
                                 TimeTaken tt = trans.start("Load Data for " + privilege, Env.SUB);
                                 try {
-                                    if(fp.value!=null) {
+                                    if (fp.value!=null) {
                                         nss = fp.value.getNs();
                                         Collections.sort(nss, new Comparator<Ns>() {
                                             public int compare(Ns ns1, Ns ns2) {
@@ -121,9 +121,9 @@ public class NssShow extends Page {
                 }
             }
             
-            if(nss!=null) {
-                for(Ns n : nss) {
-                    if((isAdmin && !n.getAdmin().isEmpty())
+            if (nss!=null) {
+                for (Ns n : nss) {
+                    if ((isAdmin && !n.getAdmin().isEmpty())
                       || (!isAdmin && !n.getResponsible().isEmpty())) {
                         AbsCell[] sa = new AbsCell[] {
                             new RefCell(n.getName(),NsDetail.HREF

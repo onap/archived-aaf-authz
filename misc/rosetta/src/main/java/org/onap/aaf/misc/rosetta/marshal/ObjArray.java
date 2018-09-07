@@ -44,9 +44,9 @@ public abstract class ObjArray<T,S> extends Marshal<T> {
     public Parsed<State> parse(T t, Parsed<State> parsed) throws ParseException {
         Ladder<Iterator<?>> ladder = parsed.state.ladder;
         Iterator<?> iter = ladder.peek();
-        if(iter==null) {
+        if (iter==null) {
             List<S> list = data(t);
-            if(list.isEmpty() && parsed.state.smallest) {
+            if (list.isEmpty() && parsed.state.smallest) {
                 ladder.push(DONE_ITERATOR);
             } else {
                 ladder.push(new ListIterator<S>(list));
@@ -58,22 +58,22 @@ public abstract class ObjArray<T,S> extends Marshal<T> {
             Iterator<?> memIter = ladder.peek();
             ListIterator<S> mems = (ListIterator<S>)iter;
             S mem;
-            if(memIter==null) {
+            if (memIter==null) {
                 mem=mems.next();
-            } else if(!DONE_ITERATOR.equals(memIter)) {
+            } else if (!DONE_ITERATOR.equals(memIter)) {
                 mem=mems.peek();
-            } else if(iter.hasNext()) {
+            } else if (iter.hasNext()) {
                 mem=null;
                 ladder.push(null);
             } else {
                 mem=null;
             }
 
-            if(mem!=null)
+            if (mem!=null)
                 parsed = subMarshaller.parse(mem, parsed);
             ladder.descend();
-            if(mem==null) {
-                if(iter.hasNext()) {
+            if (mem==null) {
+                if (iter.hasNext()) {
                     parsed.event = NEXT;
                 } else {
                     parsed.event = END_ARRAY;

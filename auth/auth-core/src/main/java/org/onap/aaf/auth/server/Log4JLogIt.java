@@ -55,14 +55,14 @@ public class Log4JLogIt implements LogIt {
         String etc_dir = getArgOrVM(Config.CADI_ETCDIR,args,"/opt/app/osaaf/etc");
         String log_level = getArgOrVM(Config.CADI_LOGLEVEL,args,"INFO");
         File logs = new File(log_dir);
-        if(!logs.isDirectory()) {
+        if (!logs.isDirectory()) {
             logs.delete();
         }
-        if(!logs.exists()) {
+        if (!logs.exists()) {
             logs.mkdirs();
         }
 
-        if(System.getProperty("log4j.configuration")==null) {
+        if (System.getProperty("log4j.configuration")==null) {
             System.setProperty("log4j.configuration", etc_dir+'/'+propsFile);
         }
         LogFileNamer lfn = new LogFileNamer(log_dir,root);
@@ -86,14 +86,14 @@ public class Log4JLogIt implements LogIt {
     private static final String getArgOrVM(final String tag, final String args[], final String def) {
         String tagEQ = tag + '=';
         String value;
-        for(String arg : args) {
-            if(arg.startsWith(tagEQ)) {
+        for (String arg : args) {
+            if (arg.startsWith(tagEQ)) {
                 return arg.substring(tagEQ.length());
             }
         }
         // check System.properties
         value = System.getProperty(tag);
-        if(value!=null) { 
+        if (value!=null) { 
             return value;
         }
         

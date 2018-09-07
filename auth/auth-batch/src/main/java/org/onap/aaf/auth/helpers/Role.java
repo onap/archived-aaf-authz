@@ -64,14 +64,14 @@ public class Role implements Comparable<Role> {
     }
     
     public String encode() {
-        if(encode==null) {
+        if (encode==null) {
             encode = ns + '|' + name;
         } 
         return encode;
     }
 
     public String fullName() {
-        if(full==null) {
+        if (full==null) {
             full = ns + '.' + name;
         } 
         return full;
@@ -102,7 +102,7 @@ public class Role implements Comparable<Role> {
             Row row;
             tt = trans.start("Load Roles", Env.SUB);
             try {
-                while(iter.hasNext()) {
+                while (iter.hasNext()) {
                     row = iter.next();
                     Role rk =new Role(row.getString(0),row.getString(1), row.getString(2),row.getSet(3,String.class));
                     keys.put(rk.encode(), rk);
@@ -165,7 +165,7 @@ public class Role implements Comparable<Role> {
     }
     
     public static void executeRemove() {
-        for(Role p : deleteRoles) {
+        for (Role p : deleteRoles) {
             keys.remove(p.encode);
             data.remove(p);
         }

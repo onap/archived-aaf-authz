@@ -81,18 +81,18 @@ public class X509Taf implements HttpTaf {
     public X509Taf(Access access, Lur lur, CertIdentity ... cis) throws CertificateException, NoSuchAlgorithmException, CadiException {
         this.access = access;
         env = access.getProperty(Config.AAF_ENV,null);
-        if(env==null) {
+        if (env==null) {
             throw new CadiException("X509Taf requires Environment ("+Config.AAF_ENV+") to be set.");
         }
 //        this.lur = lur;
         this.cadiIssuers = new ArrayList<>();
-        for(String ci : access.getProperty(Config.CADI_X509_ISSUERS, "").split(":")) {
+        for (String ci : access.getProperty(Config.CADI_X509_ISSUERS, "").split(":")) {
             access.printf(Level.INIT, "Trusting Identity for Certificates signed by \"%s\"",ci);
             cadiIssuers.add(ci);
         }
         try {
             Class<?> dci = access.classLoader().loadClass("org.onap.aaf.auth.direct.DirectCertIdentity");
-            if(dci==null) {
+            if (dci==null) {
                 certIdents = cis;
             } else {
                 CertIdentity temp[] = new CertIdentity[cis.length+1];
@@ -129,28 +129,28 @@ public class X509Taf implements HttpTaf {
         // Check for Mutual SSL
         try {
             X509Certificate[] certarr = (X509Certificate[])req.getAttribute("javax.servlet.request.X509Certificate");
-            if(certarr!=null && certarr.length>0) {
+            if (certarr!=null && certarr.length>0) {
                 si.checkClientTrusted(certarr);
                 // Note: If the Issuer is not in the TrustStore, it's not added to the Cert list
                 String issuer = certarr[0].getIssuerDN().toString();
-                if(cadiIssuers.contains(issuer)) {
+                if (cadiIssuers.contains(issuer)) {
                     String subject = certarr[0].getSubjectDN().getName();
                     // avoiding extra object creation, since this is validated EVERY transaction with a Cert
                     int at = subject.indexOf('@');
-                    if(at>=0) {
+                    if (at>=0) {
                         int start = subject.lastIndexOf(',', at);
-                        if(start<0) {
+                        if (start<0) {
                             start = 0;
                         }
                         int end = subject.indexOf(',', at);
-                        if(end<0) {
+                        if (end<0) {
                             end=subject.length();
                         }
                         int temp;
-                        if(((temp=subject.indexOf("OU=",start))>=0 && temp<end) || 
+                        if (((temp=subject.indexOf("OU=",start))>=0 && temp<end) || 
                            ((temp=subject.indexOf("CN=",start))>=0 && temp<end)) {
                             String[] sa = Split.splitTrim(':', subject, temp+3,end);
-                            if(sa.length==1 || (sa.length>1 && env!=null && env.equals(sa[1]))) { // Check Environment 
+                            if (sa.length==1 || (sa.length>1 && env!=null && env.equals(sa[1]))) { // Check Environment 
                                 return new X509HttpTafResp(access, 
                                         new X509Principal(sa[0], certarr[0],(byte[])null,bht), 
                                         "X509Taf validated " + sa[0] + (sa.length<2?"":" for aaf_env " + env ), RESP.IS_AUTHENTICATED);
@@ -168,10 +168,10 @@ public class X509Taf implements HttpTaf {
             String responseText=null;
             String authHeader = req.getHeader("Authorization");
 
-            if(certarr!=null) {  // If cert !=null, Cert is Tested by Mutual Protocol.
-                if(authHeader!=null) { // This is only intended to be a Secure Connection, not an Identity
-                    for(String auth : Split.split(',',authHeader)) {
-                        if(auth.startsWith("Bearer ")) { // Bearer = OAuth... Don't use as Authenication
+            if (certarr!=null) {  // If cert !=null, Cert is Tested by Mutual Protocol.
+                if (authHeader!=null) { // This is only intended to be a Secure Connection, not an Identity
+                    for (String auth : Split.split(',',authHeader)) {
+                        if (auth.startsWith("Bearer ")) { // Bearer = OAuth... Don't use as Authenication
                             return new X509HttpTafResp(access, null, "Certificate verified, but Bearer Token is presented", RESP.TRY_ANOTHER_TAF);
                         }
                     }
@@ -179,9 +179,9 @@ public class X509Taf implements HttpTaf {
                 cert = certarr[0];
                 responseText = ", validated by Mutual SSL Protocol";
             } else {         // If cert == null, Get Declared Cert (in header), but validate by having them sign something
-                if(authHeader != null) {
-                    for(String auth : Split.splitTrim(',',authHeader)) {
-                        if(auth.startsWith("x509 ")) {
+                if (authHeader != null) {
+                    for (String auth : Split.splitTrim(',',authHeader)) {
+                        if (auth.startsWith("x509 ")) {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream(auth.length());
                             try {
                                 array = auth.getBytes();
@@ -197,10 +197,10 @@ public class X509Taf implements HttpTaf {
         //                                    cert.checkValidity();
         //                                    cert.--- GET FINGERPRINT?
                                 String stuff = req.getHeader("Signature");
-                                if(stuff==null) 
+                                if (stuff==null) 
                                     return new X509HttpTafResp(access, null, "Header entry 'Signature' required to validate One way X509 Certificate", RESP.TRY_ANOTHER_TAF);
                                 String data = req.getHeader("Data"); 
-        //                                    if(data==null) 
+        //                                    if (data==null) 
         //                                        return new X509HttpTafResp(access, null, "No signed Data to validate with X509 Certificate", RESP.TRY_ANOTHER_TAF);
         
                                 // Note: Data Pos shows is "<signatureType> <data>"
@@ -215,7 +215,7 @@ public class X509Taf implements HttpTaf {
                                 Signature sig = Signature.getInstance(cert.getSigAlgName()); 
                                 sig.initVerify(cert.getPublicKey());
                                 sig.update(data.getBytes());
-                                if(!sig.verify(array)) {
+                                if (!sig.verify(array)) {
                                     access.log(Level.ERROR, "Signature doesn't Match");
                                     return new X509HttpTafResp(access, null, CERTIFICATE_NOT_VALID_FOR_AUTHENTICATION, RESP.TRY_ANOTHER_TAF);
                                 }
@@ -227,21 +227,21 @@ public class X509Taf implements HttpTaf {
                         }
                     }
                 }
-                if(cert==null) {
+                if (cert==null) {
                     return new X509HttpTafResp(access, null, "No Certificate Info on Transaction", RESP.TRY_ANOTHER_TAF);
                 }
                 
                 // A cert has been found, match Identify
                 TaggedPrincipal prin=null;
                 
-                for(int i=0;prin==null && i<certIdents.length;++i) {
-                    if((prin=certIdents[i].identity(req, cert, certBytes))!=null) {
+                for (int i=0;prin==null && i<certIdents.length;++i) {
+                    if ((prin=certIdents[i].identity(req, cert, certBytes))!=null) {
                         responseText = prin.getName() + " matches Certificate " + cert.getSubjectX500Principal().getName() + responseText;
                     }
                 }
     
                 // if Principal is found, check for "AS_USER" and whether this entity is trusted to declare
-                if(prin!=null) {
+                if (prin!=null) {
                     return new X509HttpTafResp(
                         access,
                         prin,
@@ -249,7 +249,7 @@ public class X509Taf implements HttpTaf {
                         RESP.IS_AUTHENTICATED);
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new X509HttpTafResp(access, null, e.getMessage(), RESP.TRY_ANOTHER_TAF);    
         }
     
@@ -266,7 +266,7 @@ public class X509Taf implements HttpTaf {
     }
     
     public CredVal getCredVal(final String key) {
-        if(bht==null) {
+        if (bht==null) {
             return null;
         } else {
             return bht.getCredVal(key);

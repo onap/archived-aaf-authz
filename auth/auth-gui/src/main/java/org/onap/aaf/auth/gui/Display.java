@@ -38,7 +38,7 @@ public class Display {
         final String[] fields = page.fields();
         final Slot slots[] = new Slot[fields.length];
         String prefix = page.name() + '.';
-        for(int i=0;i<slots.length;++i) {
+        for (int i=0;i<slots.length;++i) {
             slots[i] = gui.env.slot(prefix + fields[i]);
         }
 
@@ -49,26 +49,26 @@ public class Display {
          * we turn such names into arrays with same index number.  Then, we place them in the Transaction "Properties" so that 
          * it can be transferred to subclasses easily.
          */ 
-        if(meth.equals(HttpMethods.POST)) {
+        if (meth.equals(HttpMethods.POST)) {
             // Here, we'll expect FORM URL Encoded Data, which we need to get from the body
             gui.route(gui.env, meth, page.url(), 
                 new HttpCode<AuthzTrans,AAF_GUI>(gui,page.name()) {
                     @Override
                     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                         trans.put(gui.slot_httpServletRequest, req);
-                        for(int i=0; i<fields.length;++i) {
+                        for (int i=0; i<fields.length;++i) {
                             int idx = fields[i].indexOf("[]");
-                            if(idx<0) { // single value
+                            if (idx<0) { // single value
                                 trans.put(slots[i], req.getParameter(fields[i])); // assume first value
                             } else { // multi value - Expect Values to be set with Field root name "field.<int>" corresponding to an array of types
                                 String field=fields[i].substring(0, idx)+'.';
                                 String[] array = new String[16];
-                                for(Enumeration<String> names = req.getParameterNames(); names.hasMoreElements();) {
+                                for (Enumeration<String> names = req.getParameterNames(); names.hasMoreElements();) {
                                     String key = names.nextElement();
-                                    if(key.startsWith(field)) {
+                                    if (key.startsWith(field)) {
                                         try {
                                             int x = Integer.parseInt(key.substring(field.length()));
-                                            if(x>=array.length) {
+                                            if (x>=array.length) {
                                                 String[] temp = new String[x+10];
                                                 System.arraycopy(temp, 0, temp, 0, array.length);
                                                 array = temp;
@@ -95,20 +95,20 @@ public class Display {
                     @Override
                     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                         trans.put(gui.slot_httpServletRequest, req);
-                        for(int i=0; i<slots.length;++i) {
+                        for (int i=0; i<slots.length;++i) {
                             int idx = fields[i].indexOf("[]");
-                            if(idx<0) { // single value
+                            if (idx<0) { // single value
                                 trans.put(slots[i], req.getParameter(fields[i]));
                             } else { // multi value
                                 String[] array = new String[30];
                                 String field=fields[i].substring(0, idx);
                                 
-                                for(Enumeration<String> mm = req.getParameterNames();mm.hasMoreElements();) {
+                                for (Enumeration<String> mm = req.getParameterNames();mm.hasMoreElements();) {
                                     String key = mm.nextElement();
-                                    if(key.startsWith(field)) {
+                                    if (key.startsWith(field)) {
                                         try {
                                             int x = Integer.parseInt(key.substring(field.length()));
-                                            if(x>=array.length) {
+                                            if (x>=array.length) {
                                                 String[] temp = new String[x+10];
                                                 System.arraycopy(temp, 0, temp, 0, array.length);
                                                 array = temp;

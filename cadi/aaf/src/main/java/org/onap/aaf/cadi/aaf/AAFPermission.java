@@ -50,7 +50,7 @@ public class AAFPermission implements Permission {
         type = name;
         this.instance = instance;
         this.action = action;
-        if(ns==null) {
+        if (ns==null) {
             key = type + '|' + instance + '|' + action;
         } else {
             key = ns + '|' + type + '|' + instance + '|' + action;
@@ -64,7 +64,7 @@ public class AAFPermission implements Permission {
         type = name;
         this.instance = instance;
         this.action = action;
-        if(ns==null) {
+        if (ns==null) {
             key = type + '|' + instance + '|' + action;
         } else {
             key = ns + '|' + type + '|' + instance + '|' + action;
@@ -87,7 +87,7 @@ public class AAFPermission implements Permission {
         String aafType;
         String aafInstance;
         String aafAction;
-        if(p instanceof AAFPermission) {
+        if (p instanceof AAFPermission) {
             AAFPermission ap = (AAFPermission)p;
             // Note: In AAF > 1.0, Accepting "*" from name would violate multi-tenancy
             // Current solution is only allow direct match on Type.
@@ -125,15 +125,15 @@ public class AAFPermission implements Permission {
             }
         }
         boolean typeMatches;
-        if(aafNS==null) {
-            if(ns==null) {
+        if (aafNS==null) {
+            if (ns==null) {
                 typeMatches = aafType.equals(type);
             } else {
                 typeMatches = aafType.equals(ns+'.'+type);
             }
-        } else if(ns==null) {
+        } else if (ns==null) {
             typeMatches = type.equals(aafNS+'.'+aafType);
-        } else if(aafNS.length() == ns.length()) {
+        } else if (aafNS.length() == ns.length()) {
             typeMatches = aafNS.equals(ns) && aafType.equals(type);
         } else { // Allow for restructuring of NS/Perm structure
             typeMatches = (aafNS+'.'+aafType).equals(ns+'.'+type);

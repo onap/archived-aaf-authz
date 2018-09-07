@@ -89,8 +89,8 @@ public class PropAccess implements Access {
         this.logIt = logIt;
         Properties nprops=new Properties();
         int eq;
-        for(String arg : args) {
-            if((eq=arg.indexOf('='))>0) {
+        for (String arg : args) {
+            if ((eq=arg.indexOf('='))>0) {
                 nprops.setProperty(arg.substring(0, eq),arg.substring(eq+1));
             }
         }
@@ -104,16 +104,16 @@ public class PropAccess implements Access {
         
         props = new Properties();
         // First, load related System Properties
-        for(Entry<Object,Object> es : System.getProperties().entrySet()) {
+        for (Entry<Object,Object> es : System.getProperties().entrySet()) {
             String key = es.getKey().toString();
-            for(String start : new String[] {"cadi_","aaf_","cm_"}) {
-                if(key.startsWith(start)) {
+            for (String start : new String[] {"cadi_","aaf_","cm_"}) {
+                if (key.startsWith(start)) {
                     props.put(key, es.getValue());
                 }
             }            
         }
         // Second, overlay or fill in with Passed in Props
-        if(p!=null) {
+        if (p!=null) {
             props.putAll(p);
         }
         
@@ -121,11 +121,11 @@ public class PropAccess implements Access {
         load(props.getProperty(Config.CADI_PROP_FILES));
         
         String sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
-        if(sLevel!=null) {
+        if (sLevel!=null) {
             level=Level.valueOf(sLevel).maskOf(); 
         }
         // Setup local Symmetrical key encryption
-        if(symm==null) {
+        if (symm==null) {
             try {
                 symm = Symm.obtain(this);
             } catch (CadiException e) {
@@ -142,18 +142,18 @@ public class PropAccess implements Access {
 
     private void specialConversions() {
         // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
-        if(props.get(Config.CADI_PROTOCOLS)==null) {
+        if (props.get(Config.CADI_PROTOCOLS)==null) {
             props.setProperty(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);
         }
         
         Object temp;
         temp=props.get(Config.CADI_PROTOCOLS);
-        if(props.get(Config.HTTPS_PROTOCOLS)==null && temp!=null) {
+        if (props.get(Config.HTTPS_PROTOCOLS)==null && temp!=null) {
             props.put(Config.HTTPS_PROTOCOLS, temp);
         }
         
-        if(temp!=null) {
-            if("1.7".equals(System.getProperty("java.specification.version")) 
+        if (temp!=null) {
+            if ("1.7".equals(System.getProperty("java.specification.version")) 
                     && (temp==null || (temp instanceof String && ((String)temp).contains("TLSv1.2")))) {
                 System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
             }
@@ -161,20 +161,20 @@ public class PropAccess implements Access {
     }
 
     private void load(String cadi_prop_files) {
-        if(cadi_prop_files==null) {
+        if (cadi_prop_files==null) {
             return;
         }
         String prevKeyFile = props.getProperty(Config.CADI_KEYFILE);
         int prev = 0, end = cadi_prop_files.length();
         int idx;
         String filename;
-        while(prev<end) {
+        while (prev<end) {
             idx = cadi_prop_files.indexOf(File.pathSeparatorChar,prev);
-            if(idx<0) {
+            if (idx<0) {
                 idx = end;
             }
             File file = new File(filename=cadi_prop_files.substring(prev,idx));
-            if(file.exists()) {
+            if (file.exists()) {
                 printf(Level.INIT,"Loading CADI Properties from %s",file.getAbsolutePath());
                 try {
                     FileInputStream fis = new FileInputStream(file);
@@ -182,12 +182,12 @@ public class PropAccess implements Access {
                         props.load(fis);
                         // Recursively Load
                         String chainProp = props.getProperty(Config.CADI_PROP_FILES);
-                        if(chainProp!=null) {
-                            if(recursionProtection==null) {
+                        if (chainProp!=null) {
+                            if (recursionProtection==null) {
                                 recursionProtection = new ArrayList<>();
                                 recursionProtection.add(cadi_prop_files);
                             }
-                            if(!recursionProtection.contains(chainProp)) {
+                            if (!recursionProtection.contains(chainProp)) {
                                 recursionProtection.add(chainProp);
                                 load(chainProp); // recurse
                             }
@@ -205,23 +205,23 @@ public class PropAccess implements Access {
         }
         
         // Trim 
-        for(Entry<Object, Object> es : props.entrySet()) {
+        for (Entry<Object, Object> es : props.entrySet()) {
             Object value = es.getValue();
-            if(value instanceof String) {
+            if (value instanceof String) {
                 String trim = ((String)value).trim();
                 // Remove Beginning/End Quotes, which might be there if mixed with Bash Props
                 int s = 0, e=trim.length()-1;
-                if(s<e && trim.charAt(s)=='"' && trim.charAt(e)=='"') {
+                if (s<e && trim.charAt(s)=='"' && trim.charAt(e)=='"') {
                     trim=trim.substring(s+1,e);
                 }
-                if(trim!=value) { // Yes, I want OBJECT equals
+                if (trim!=value) { // Yes, I want OBJECT equals
                     props.setProperty((String)es.getKey(), trim);
                 }
             }
         }
         // Reset Symm if Keyfile Changes:
         String newKeyFile = props.getProperty(Config.CADI_KEYFILE);
-        if((prevKeyFile!=null && newKeyFile!=null) || (newKeyFile!=null && !newKeyFile.equals(prevKeyFile))) {
+        if ((prevKeyFile!=null && newKeyFile!=null) || (newKeyFile!=null && !newKeyFile.equals(prevKeyFile))) {
             try {
                 symm = Symm.obtain(this);
             } catch (CadiException e) {
@@ -234,7 +234,7 @@ public class PropAccess implements Access {
         }
         
         String loglevel = props.getProperty(Config.CADI_LOGLEVEL);
-        if(loglevel!=null) {
+        if (loglevel!=null) {
             try {
                 level=Level.valueOf(loglevel).maskOf();
             } catch (IllegalArgumentException e) {
@@ -253,7 +253,7 @@ public class PropAccess implements Access {
 
     @Override
     public void log(Level level, Object ... elements) {
-        if(willLog(level)) {
+        if (willLog(level)) {
             logIt.push(level,elements);
         }
     }
@@ -270,11 +270,11 @@ public class PropAccess implements Access {
         sb.append(name);
         
         int end = elements.length;
-        if(end<=0) {
+        if (end<=0) {
             sb.append("] ");
         } else {
             int idx = 0;
-            if(elements[idx] instanceof Integer) {
+            if (elements[idx] instanceof Integer) {
                 sb.append('-');
                 sb.append(elements[idx]);
                 ++idx;
@@ -282,14 +282,14 @@ public class PropAccess implements Access {
             sb.append("] ");
             String s;
             boolean first = true;
-            for(Object o : elements) {
-                if(o!=null) {
+            for (Object o : elements) {
+                if (o!=null) {
                     s=o.toString();
-                    if(first) {
+                    if (first) {
                         first = false;
                     } else {
                         int l = s.length();
-                        if(l>0)    {
+                        if (l>0)    {
                             switch(s.charAt(l-1)) {
                                 case ' ':
                                     break;
@@ -313,7 +313,7 @@ public class PropAccess implements Access {
 
     @Override
     public void printf(Level level, String fmt, Object... elements) {
-        if(willLog(level)) {
+        if (willLog(level)) {
             log(level,String.format(fmt, elements));
         }
     }
@@ -362,9 +362,9 @@ public class PropAccess implements Access {
     }
 
     public void setProperty(String tag, String value) {
-        if(value!=null) {
+        if (value!=null) {
             props.put(tag, value);
-            if(Config.CADI_KEYFILE.equals(tag)) {
+            if (Config.CADI_KEYFILE.equals(tag)) {
                 // reset decryption too
                 try {
                     symm = Symm.obtain(this);

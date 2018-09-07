@@ -38,7 +38,7 @@ public class OutDump extends Out{
 
         Parsed<S> p = prs.newParsed();
         
-        while((p = prs.parse(in,p.reuse())).valid()) {
+        while ((p = prs.parse(in,p.reuse())).valid()) {
             switch(p.event) {
                 case Parse.START_OBJ:
                     ipw.append("Start Object ");
@@ -71,9 +71,9 @@ public class OutDump extends Out{
     }
     
     private void printData(IndentPrintWriter ipw, Parsed<?> parsed) {
-        if(parsed.hasData()) {
+        if (parsed.hasData()) {
             ipw.append("Data:[");
-            if(parsed.hasName()) {
+            if (parsed.hasName()) {
                 ipw.append(parsed.name);
                 ipw.append(" : "); 
             }

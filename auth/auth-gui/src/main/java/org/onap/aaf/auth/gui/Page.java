@@ -102,7 +102,7 @@ public class Page extends HTMLCacheGen {
         super(CacheGen.PRETTY, new PageCode(env, 1, content));
         fields = new String[en.length];
         int i=-1;
-        for(Enum<?> p : en) {
+        for (Enum<?> p : en) {
             fields[++i]=p.name();
         }
 
@@ -110,8 +110,8 @@ public class Page extends HTMLCacheGen {
         bcUrl = url;
         // Mark which fields must be "no_cache"
         boolean no_cacheTemp=false;
-        for(NamedCode nc : content) {
-            if(nc.no_cache()) { 
+        for (NamedCode nc : content) {
+            if (nc.no_cache()) { 
                 no_cacheTemp=true;
                 break;
             }
@@ -124,7 +124,7 @@ public class Page extends HTMLCacheGen {
     
     public Page(AuthzEnv env, String name, String url, int backdots, String [] fields, final NamedCode ... content) throws APIException,IOException {
         super(CacheGen.PRETTY, new PageCode(env, backdots, content));
-        if(fields==null) {
+        if (fields==null) {
             this.fields = new String[0];
         } else {
             this.fields = fields;
@@ -133,8 +133,8 @@ public class Page extends HTMLCacheGen {
         bcUrl = url;
         // Mark which fields must be "no_cache"
         boolean no_cacheTemp=false;
-        for(NamedCode nc : content) {
-            if(nc.no_cache()) { 
+        for (NamedCode nc : content) {
+            if (nc.no_cache()) { 
                 no_cacheTemp=true;
                 break;
             }
@@ -220,7 +220,7 @@ public class Page extends HTMLCacheGen {
                             // Obtain User Info, and print
                             TaggedPrincipal p = trans.getUserPrincipal();
                             String user,secured;
-                            if(p==null) {
+                            if (p==null) {
                                 user = "please choose a Login Authority";
                                 secured = "NOT Secure!";
                             } else {
@@ -251,7 +251,7 @@ public class Page extends HTMLCacheGen {
                     int cIdx;
                     ContentCode nc;
                     // If BreadCrumbs, put here
-                    if(content.length>0 && content[0] instanceof BreadCrumbs) {
+                    if (content.length>0 && content[0] instanceof BreadCrumbs) {
                         nc = content[0];
                         Mark ctnt = hgen.divID(nc.idattrs());
                         nc.code(cache, hgen);
@@ -265,7 +265,7 @@ public class Page extends HTMLCacheGen {
                     
                     Mark inner = hgen.divID("inner");
                         // Content
-                        for(int i=cIdx;i<content.length;++i) {
+                        for (int i=cIdx;i<content.length;++i) {
                             nc = content[i];
                             Mark ctnt = hgen.divID(nc.idattrs());
                             nc.code(cache, hgen);
@@ -280,28 +280,28 @@ public class Page extends HTMLCacheGen {
                     hgen.incr("h2").text("Related Links").end();
                     hgen.incr(UL);
                     String aaf_help = env.getProperty(AAF_URL_AAF_HELP,null);
-                    if(aaf_help!=null) {
+                    if (aaf_help!=null) {
                         hgen.leaf(LI).leaf(A,"href="+env.getProperty(AAF_URL_AAF_HELP),"target=_blank").text("AAF WIKI").end(2);
                         String sub = env.getProperty(AAF_URL_AAF_HELP+".sub");
-                        if(sub!=null) {
+                        if (sub!=null) {
                             hgen.incr(UL,"style=margin-left:5%");
-                            for(String s : Split.splitTrim(',', sub)) {
+                            for (String s : Split.splitTrim(',', sub)) {
                                 hgen.leaf(LI).leaf(A,"href="+env.getProperty(AAF_URL_AAF_HELP+".sub."+s),"target=_blank").text(s.replace('+', ' ')).end(2);
                             }
                             hgen.end();
                         }
                     }
                     aaf_help = env.getProperty(AAF_URL_CADI_HELP,null);
-                    if(aaf_help!=null) {
+                    if (aaf_help!=null) {
                         hgen.leaf(LI).leaf(A,"href="+aaf_help,"target=_blank").text("CADI WIKI").end(2);
                     }
                     String tools = env.getProperty(AAFURL_TOOLS);
-                    if(tools!=null) {
+                    if (tools!=null) {
                         hgen.hr()
                             .incr(HTMLGen.UL,"style=margin-left:5%")
                              .leaf(HTMLGen.H3).text("Related Tools").end();
 
-                        for(String tool : Split.splitTrim(',',tools)) {
+                        for (String tool : Split.splitTrim(',',tools)) {
                             hgen.leaf(LI).leaf(A,"href="+env.getProperty(AAF_URL_TOOL_DOT+tool),"target=_blank").text(tool.replace('+', ' ')).end(2);
                         }
                         hgen.end();
@@ -350,10 +350,10 @@ public class Page extends HTMLCacheGen {
      */
     public static BROWSER browser(AuthzTrans trans, Slot slot) {
         BROWSER br = trans.get(slot, null);
-        if(br==null) {
+        if (br==null) {
             String agent = trans.agent();
             int msie; 
-            if(agent.contains("iPhone") /* other phones? */) {
+            if (agent.contains("iPhone") /* other phones? */) {
                 br=BROWSER.iPhone;
             } else if ((msie = agent.indexOf("MSIE"))>=0) {
                 msie+=5;
@@ -379,14 +379,14 @@ public class Page extends HTMLCacheGen {
     protected static synchronized Permission getPerm(String instance, String action) {
         Map<String,Permission> msp = perms.get(instance);
         Permission p;
-        if(msp==null) {
+        if (msp==null) {
             msp = new HashMap<>();
             perms.put(instance, msp);
             p=null;
         } else {
             p = msp.get(instance);
         }
-        if(p==null) {
+        if (p==null) {
             p=new AAFPermission(PERM_NS, PERM_CA_TYPE,instance,action);
             msp.put(action, p);
         }

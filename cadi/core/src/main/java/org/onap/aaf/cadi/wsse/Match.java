@@ -57,42 +57,42 @@ public class Match<OUTPUT> {
         this.qname = new QName(ns,name);
         this.next = next;
         stopAfter = exclusive = false;
-        for(Match<OUTPUT> m : next) { // add the possible tags to look for
-            if(!m.stopAfter)m.prev = this;
+        for (Match<OUTPUT> m : next) { // add the possible tags to look for
+            if (!m.stopAfter)m.prev = this;
         }
     }
     
     public Match<OUTPUT> onMatch(OUTPUT output, XReader reader) throws XMLStreamException {
-        while(reader.hasNext()) {
+        while (reader.hasNext()) {
             XEvent event = reader.nextEvent();
             switch(event.getEventType()) {
                 case XMLEvent.START_ELEMENT:
                     QName e_qname = event.asStartElement().getName();
                     //System.out.println("Start - " + e_qname);
                     boolean match = false;
-                    for(Match<OUTPUT> m : next) {
-                        if(e_qname.equals(m.qname)) {
+                    for (Match<OUTPUT> m : next) {
+                        if (e_qname.equals(m.qname)) {
                             match=true;
-                            if(m.onMatch(output, reader)==null) {
+                            if (m.onMatch(output, reader)==null) {
                                 return null; // short circuit Parsing
                             }
                             break;
                         }
                     }
-                    if(exclusive && !match) // When Tag MUST be present, i.e. the Root Tag, versus info we're not interested in
+                    if (exclusive && !match) // When Tag MUST be present, i.e. the Root Tag, versus info we're not interested in
                         return null;
                     break;
                 case XMLEvent.CHARACTERS:
                     //System.out.println("Data - " +event.asCharacters().getData());
-                    if(action!=null) {
-                        if(!action.content(output,event.asCharacters().getData())) {
+                    if (action!=null) {
+                        if (!action.content(output,event.asCharacters().getData())) {
                             return null;
                         }
                     }
                     break;
                 case XMLEvent.END_ELEMENT:
                     //System.out.println("End - " + event.asEndElement().getName());
-                    if(event.asEndElement().getName().equals(qname)) {
+                    if (event.asEndElement().getName().equals(qname)) {
                         return prev;
                     }
                     break;

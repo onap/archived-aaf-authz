@@ -70,7 +70,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
     public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
         cadi = new CadiHTTPManip(access, con, tc, additionalTafLurs);
         String no = access.getProperty(Config.CADI_NOAUTHN, null);
-        if(no!=null) {
+        if (no!=null) {
             no_authn = Split.split(':', no);
         } else {
             no_authn=null;
@@ -101,9 +101,9 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
         try {
             request.setAttribute(TRANS_TAG, trans);
             
-            if(no_authn!=null) {
-                for(String prefix : no_authn) {
-                    if(req.getPathInfo().startsWith(prefix)) {
+            if (no_authn!=null) {
+                for (String prefix : no_authn) {
+                    if (req.getPathInfo().startsWith(prefix)) {
                         chain.doFilter(request, response);
                         return;
                     }
@@ -128,9 +128,9 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 security.done();
             }
             
-            if(r==RESP.IS_AUTHENTICATED) {
+            if (r==RESP.IS_AUTHENTICATED) {
                 trans.checkpoint(resp.desc());
-                if(cadi.notCadi(cw, res)) {
+                if (cadi.notCadi(cw, res)) {
                     chain.doFilter(cw, response);
                 }
             } else {
@@ -138,10 +138,10 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 // Would need Cached Counter objects that are cleaned up on 
                 // use
                 trans.checkpoint(resp.desc(),Env.ALWAYS);
-                if(resp.isFailedAttempt())
+                if (resp.isFailedAttempt())
                         trans.audit().log(resp.desc());
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             trans.error().log(e);
             trans.checkpoint("Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
             throw new ServletException(e);

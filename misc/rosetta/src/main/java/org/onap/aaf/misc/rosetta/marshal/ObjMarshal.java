@@ -47,9 +47,9 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
      */
     @SuppressWarnings("unchecked")
     protected void add(Marshal<T> pm) {
-        if(pml==null) {
+        if (pml==null) {
             pml = new Marshal[Ladder.DEFAULT_INIT_SIZE]; 
-        } else if(end>pml.length) {
+        } else if (end>pml.length) {
             Object temp[] = pml; 
             pml = new Marshal[pml.length+Ladder.DEFAULT_INIT_SIZE];
             System.arraycopy(temp, 0, pml, 0, pml.length);
@@ -66,8 +66,8 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
     public Parsed<State> parse(T in, Parsed<State> parsed) throws ParseException {
         Ladder<Iterator<?>> ladder = parsed.state.ladder;
         Iterator<Marshal<T>> iter = (Iterator<Marshal<T>>)ladder.peek();
-        if(iter==null) {
-            if(pml.length>0) {
+        if (iter==null) {
+            if (pml.length>0) {
                 ladder.push(new FieldsIterator());
                 parsed.event = START_OBJ;
             } else {
@@ -78,22 +78,22 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
             ladder.ascend(); // look at field info
             Iterator<?> currFieldIter = ladder.peek();
             Marshal<T> marshal;
-            if(currFieldIter==null) {
+            if (currFieldIter==null) {
                 marshal=fields.next();
-            } else if(!DONE_ITERATOR.equals(currFieldIter)) {
+            } else if (!DONE_ITERATOR.equals(currFieldIter)) {
                 marshal=fields.peek();
-                if(marshal==null && fields.hasNext())marshal=fields.next();
-            } else if(fields.hasNext()) {
+                if (marshal==null && fields.hasNext())marshal=fields.next();
+            } else if (fields.hasNext()) {
                 marshal=fields.next();
                 ladder.push(null);
             } else {
                 marshal=null;
             }
 
-            if(marshal!=null)
+            if (marshal!=null)
                 parsed = marshal.parse(in, parsed);
             ladder.descend();
-            if(marshal==null || parsed.event==NONE) {
+            if (marshal==null || parsed.event==NONE) {
                 parsed.event = END_OBJ;
                 ladder.push(DONE_ITERATOR);
             }
@@ -111,7 +111,7 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
 
         @Override
         public Marshal<T> next() {
-            if(!hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
             return pml[++idx];

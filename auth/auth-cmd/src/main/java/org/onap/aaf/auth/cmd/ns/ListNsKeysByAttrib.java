@@ -58,12 +58,12 @@ public class ListNsKeysByAttrib extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Keys> fn = client.read("/authz/ns/attrib/"+attrib,getDF(Keys.class));
-                if(fn.get(AAFcli.timeout())) {
+                if (fn.get(AAFcli.timeout())) {
                     parent.reportHead(HEADER);
-                    for(String key : fn.value.getKey()) {
+                    for (String key : fn.value.getKey()) {
                         pw().printf(List.kformat, key);
                     }
-                } else if(fn.code()==404) {
+                } else if (fn.code()==404) {
                     parent.reportHead(HEADER);
                     pw().println("    *** No Namespaces Found ***");
                     return 200;

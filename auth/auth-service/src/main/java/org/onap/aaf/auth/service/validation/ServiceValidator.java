@@ -44,7 +44,7 @@ import org.onap.aaf.auth.validation.Validator;
  */
 public class ServiceValidator extends Validator {
     public ServiceValidator perm(Result<PermDAO.Data> rpd) {
-        if(rpd.notOK()) {
+        if (rpd.notOK()) {
             msg(rpd.details);
         } else {
             perm(rpd.value);
@@ -54,20 +54,20 @@ public class ServiceValidator extends Validator {
 
 
     public ServiceValidator perm(PermDAO.Data pd) {
-        if(pd==null) {
+        if (pd==null) {
             msg("Perm Data is null.");
         } else {
             ns(pd.ns);
             permType(pd.type,pd.ns);
             permInstance(pd.instance);
             permAction(pd.action);
-            if(pd.roles!=null) { 
-                for(String role : pd.roles) {
+            if (pd.roles!=null) { 
+                for (String role : pd.roles) {
                     role(role);
                 }
             }
-            if(pd.roles!=null) {
-                for(String r : pd.roles) {
+            if (pd.roles!=null) {
+                for (String r : pd.roles) {
                     role(r);
                 }
             }
@@ -77,7 +77,7 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator role(Result<RoleDAO.Data> rrd) {
-        if(rrd.notOK()) {
+        if (rrd.notOK()) {
             msg(rrd.details);
         } else {
             role(rrd.value);
@@ -86,15 +86,15 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator role(RoleDAO.Data pd) {
-        if(pd==null) {
+        if (pd==null) {
             msg("Role Data is null.");
         } else {
             ns(pd.ns);
             role(pd.name);
-            if(pd.perms!=null) {
-                for(String perm : pd.perms) {
+            if (pd.perms!=null) {
+                for (String perm : pd.perms) {
                     String[] ps = perm.split("\\|");
-                    if(ps.length!=3) {
+                    if (ps.length!=3) {
                         msg("Perm [" + perm + "] in Role [" + pd.fullName() + "] is not correctly separated with '|'");
                     } else {
                         permType(ps[0],null);
@@ -109,7 +109,7 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator delegate(Organization org, Result<DelegateDAO.Data> rdd) {
-        if(rdd.notOK()) {
+        if (rdd.notOK()) {
             msg(rdd.details);
         } else {
             delegate(org, rdd.value);
@@ -118,7 +118,7 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator delegate(Organization org, DelegateDAO.Data dd) {
-        if(dd==null) {
+        if (dd==null) {
             msg("Delegate Data is null.");
         } else {
             user(org,dd.user);
@@ -129,7 +129,7 @@ public class ServiceValidator extends Validator {
 
 
     public ServiceValidator cred(AuthzTrans trans, Organization org, Result<CredDAO.Data> rcd, boolean isNew) {
-        if(rcd.notOK()) {
+        if (rcd.notOK()) {
             msg(rcd.details);
         } else {
             cred(trans, org,rcd.value,isNew);
@@ -138,26 +138,26 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator cred(AuthzTrans trans, Organization org, CredDAO.Data cd, boolean isNew) {
-        if(cd==null) {
+        if (cd==null) {
             msg("Cred Data is null.");
         } else {
-            if(!org.isValidCred(trans, cd.id)) {
+            if (!org.isValidCred(trans, cd.id)) {
                 msg("ID [" + cd.id + "] is invalid in " + org.getName());
             }
             String str = cd.id;
             int idx = str.indexOf('@');
-            if(idx>0) {
+            if (idx>0) {
                 str = str.substring(0,idx);
             }
             
-            if(org.supportsRealm(cd.id)) {
+            if (org.supportsRealm(cd.id)) {
                 String resp = org.isValidID(trans, str);
-                if(isNew && (resp!=null && resp.length()>0)) {
+                if (isNew && (resp!=null && resp.length()>0)) {
                     msg(cd.id,str);
                 }
             }
     
-            if(cd.type==null) {
+            if (cd.type==null) {
                 msg("Credential Type must be set");
             } else {
                 switch(cd.type) {
@@ -174,7 +174,7 @@ public class ServiceValidator extends Validator {
 
 
     public ServiceValidator user(Organization org, String user) {
-        if(nob(user,ID_CHARS)) {
+        if (nob(user,ID_CHARS)) {
             msg("User [",user,"] is invalid.");
         }
         return this;
@@ -188,25 +188,25 @@ public class ServiceValidator extends Validator {
 
     public ServiceValidator ns(Namespace ns) {
         ns(ns.name);
-        for(String s : ns.admin) {
-            if(nob(s,ID_CHARS)) {
+        for (String s : ns.admin) {
+            if (nob(s,ID_CHARS)) {
                 msg("Admin [" + s + "] is invalid.");        
             }
             
         }
-        for(String s : ns.owner) {
-            if(nob(s,ID_CHARS)) {
+        for (String s : ns.owner) {
+            if (nob(s,ID_CHARS)) {
                 msg("Responsible [" + s + "] is invalid.");        
             }
             
         }
         
-        if(ns.attrib!=null) {
-            for(Pair<String, String> at : ns.attrib) {
-                if(nob(at.x,NAME_CHARS)) {
+        if (ns.attrib!=null) {
+            for (Pair<String, String> at : ns.attrib) {
+                if (nob(at.x,NAME_CHARS)) {
                     msg("Attribute tag [" + at.x + "] is invalid.");
                 }
-                if(nob(at.x,NAME_CHARS)) {
+                if (nob(at.x,NAME_CHARS)) {
                     msg("Attribute value [" + at.y + "] is invalid.");
                 }
             }
@@ -217,7 +217,7 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator user_role(UserRoleDAO.Data urdd) {
-        if(urdd==null) {
+        if (urdd==null) {
             msg("UserRole is null");
         } else {
             role(urdd.role);
@@ -228,7 +228,7 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator nullOrBlank(PermDAO.Data pd) {
-        if(pd==null) {
+        if (pd==null) {
             msg("Permission is null");
         } else {
             nullOrBlank("NS",pd.ns).
@@ -240,7 +240,7 @@ public class ServiceValidator extends Validator {
     }
 
     public ServiceValidator nullOrBlank(RoleDAO.Data rd) {
-        if(rd==null) {
+        if (rd==null) {
             msg("Role is null");
         } else {
             nullOrBlank("NS",rd.ns).

@@ -123,7 +123,7 @@ public class JU_JSON {
         System.out.println(sw);
         String result = sw.toString();
         
-        if(!result.equals(cmp)) {
+        if (!result.equals(cmp)) {
             sw.getBuffer().setLength(0);
             new OutRaw().extract(new StringReader(str), sw, in);
             System.out.println(sw);

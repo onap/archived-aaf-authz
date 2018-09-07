@@ -42,12 +42,12 @@ public class URDelete extends ActionDAO<UserRole,Void,String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, UserRole ur,String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Delete UserRole:",text,ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
             return Result.ok();
         } else {
             Result<Void> rv = q.userRoleDAO.delete(trans,ur.urdd(), true); // need to read for undelete
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log("Deleted UserRole:",text,ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
             } else {
                 trans.error().log("Error Deleting User Role -",rv.details,":",ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()) );

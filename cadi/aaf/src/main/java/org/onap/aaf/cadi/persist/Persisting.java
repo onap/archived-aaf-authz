@@ -54,7 +54,7 @@ public class Persisting<T> implements Persistable<T> {
         }
         count=0;
         nextCheck=0;
-        if(hash==null) {
+        if (hash==null) {
             this.hash = EMPTY;
         } else {
             this.hash = hash;
@@ -80,7 +80,7 @@ public class Persisting<T> implements Persistable<T> {
     public boolean hasBeenTouched() {
         try {
             FileTime modT = Files.getLastModifiedTime(path);
-            if(lastTouched==null) {
+            if (lastTouched==null) {
                 lastTouched = modT;
                 return true;
             } else {
@@ -98,7 +98,7 @@ public class Persisting<T> implements Persistable<T> {
     @Override
     public synchronized boolean checkSyncTime() {
         long temp=System.currentTimeMillis();
-        if(nextCheck==0 || nextCheck<temp) {
+        if (nextCheck==0 || nextCheck<temp) {
             nextCheck = temp+SYNC_TIME;
             return true;
         }
@@ -123,11 +123,11 @@ public class Persisting<T> implements Persistable<T> {
 
     @Override
     public boolean match(byte[] hashIn) {
-        if(hash==null || hashIn==null || hash.length!=hashIn.length) {
+        if (hash==null || hashIn==null || hash.length!=hashIn.length) {
             return false;
         }
-        for(int i=0;i<hashIn.length;++i) {
-            if(hash[i]!=hashIn[i]) {
+        for (int i=0;i<hashIn.length;++i) {
+            if (hash[i]!=hashIn[i]) {
                 return false;
             }
         }

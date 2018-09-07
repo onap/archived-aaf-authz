@@ -57,13 +57,13 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
         super(env.access(), name, 1000L /* Don't hit DB more than once a second */); 
         this.env = env;
         this.ldao = ldao;
-        if(version!=null) {
+        if (version!=null) {
             try { 
                 String[] v = Split.split('.',version);
-                if(v.length>0) {major = Integer.parseInt(v[0]);}
-                if(v.length>1) {minor = Integer.parseInt(v[1]);}
-                if(v.length>2) {patch = Integer.parseInt(v[2]);}
-                if(v.length>3) {pkg   = Integer.parseInt(v[3]);}
+                if (v.length>0) {major = Integer.parseInt(v[0]);}
+                if (v.length>1) {minor = Integer.parseInt(v[1]);}
+                if (v.length>2) {patch = Integer.parseInt(v[2]);}
+                if (v.length>3) {pkg   = Integer.parseInt(v[3]);}
             } catch (NumberFormatException e) {
                 throw new LocatorException("Invalid Version String: " + version);
             }
@@ -83,13 +83,13 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
     public boolean refresh() {
         AuthzTrans trans = env.newTransNoAvg();
         Result<List<Data>> rl = ldao.readByName(trans, name);
-        if(rl.isOK()) {
+        if (rl.isOK()) {
             LinkedList<EP> epl = new LinkedList<>();
-            for(Data d : rl.value) {
-//                if(myhostname!=null && d.port==myport && d.hostname.equals(myhostname)) {
+            for (Data d : rl.value) {
+//                if (myhostname!=null && d.port==myport && d.hostname.equals(myhostname)) {
 //                    continue;
 //                }
-                if((major<0 || major==d.major) &&
+                if ((major<0 || major==d.major) &&
                    (minor<0 || minor<=d.minor) &&
                    (patch<0 || patch==d.patch) &&
                    (pkg<0   || pkg  ==d.pkg)) {
@@ -104,7 +104,7 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
                     endpoint.setLatitude(d.latitude);
                     endpoint.setLongitude(d.longitude);
                     endpoint.setProtocol(d.protocol);
-                    for(String s : d.subprotocol(false)) {
+                    for (String s : d.subprotocol(false)) {
                         endpoint.getSubprotocol().add(s);
                     }
                     

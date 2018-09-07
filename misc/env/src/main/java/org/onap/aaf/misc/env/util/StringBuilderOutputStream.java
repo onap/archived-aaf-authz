@@ -114,7 +114,7 @@ public class StringBuilderOutputStream extends OutputStream {
         if (csq == null) {
             write("null");
         } else {
-            for(int i = 0;i<csq.length();++i) {
+            for (int i = 0;i<csq.length();++i) {
                 buf.append(csq.charAt(i));
             }
         }

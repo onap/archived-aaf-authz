@@ -42,7 +42,7 @@ public class RoleDelete extends ActionDAO<Role,Void,String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, Role r,String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Delete Role:",text,r.fullName());
             return Result.ok();
         } else {
@@ -50,7 +50,7 @@ public class RoleDelete extends ActionDAO<Role,Void,String> {
             rdd.ns = r.ns;
             rdd.name = r.name;
             Result<Void> rv = q.roleDAO.delete(trans, rdd, true); // need to read for undelete
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log("Deleted Role:",text,r.fullName());
             } else {
                 trans.error().log("Error Deleting Role -",rv.details,":",r.fullName());

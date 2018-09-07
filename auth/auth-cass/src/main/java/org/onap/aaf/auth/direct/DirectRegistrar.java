@@ -45,14 +45,14 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
         
         try {
             String latitude = access.getProperty(Config.CADI_LATITUDE, null);
-            if(latitude==null) {
+            if (latitude==null) {
                 latitude = access.getProperty("AFT_LATITUDE", null);
             }
             String longitude = access.getProperty(Config.CADI_LONGITUDE, null);
-            if(longitude==null) {
+            if (longitude==null) {
                 longitude = access.getProperty("AFT_LONGITUDE", null);
             }
-            if(latitude==null || longitude==null) {
+            if (latitude==null || longitude==null) {
                 throw new CadiException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " is required");
             } else {
                 locate.latitude = Float.parseFloat(latitude);
@@ -64,18 +64,18 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
             locate.minor = split.length>1?Integer.parseInt(split[1]):0;
             locate.major = split.length>0?Integer.parseInt(split[0]):0;
             locate.hostname = access.getProperty(Config.AAF_REGISTER_AS, null);
-            if(locate.hostname==null) {
+            if (locate.hostname==null) {
                 locate.hostname = access.getProperty(Config.HOSTNAME, null);
             }
-            if(locate.hostname==null) {
+            if (locate.hostname==null) {
                 locate.hostname = Inet4Address.getLocalHost().getHostName();
             }
             String subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
-            if(subprotocols==null) {
+            if (subprotocols==null) {
                 locate.protocol="http";
             } else {
                 locate.protocol="https";
-                for(String s : Split.split(',', subprotocols)) {
+                for (String s : Split.split(',', subprotocols)) {
                     locate.subprotocol(true).add(s);
                 }
             }
@@ -87,7 +87,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
     @Override
     public Result<Void> update(AuthzEnv env) {
         org.onap.aaf.auth.layer.Result<Void> dr = ldao.update(env.newTransNoAvg(), locate);
-        if(dr.isOK()) {
+        if (dr.isOK()) {
             return Result.ok(200, null);
         } else {
             return Result.err(503, dr.errorString());
@@ -100,7 +100,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
     @Override
     public Result<Void> cancel(AuthzEnv env) {
         org.onap.aaf.auth.layer.Result<Void> dr = ldao.delete(env.newTransNoAvg(), locate, false);
-        if(dr.isOK()) {
+        if (dr.isOK()) {
             return Result.ok(200, null);
         } else {
             return Result.err(503, dr.errorString());

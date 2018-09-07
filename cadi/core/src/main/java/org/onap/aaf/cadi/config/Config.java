@@ -233,9 +233,9 @@ public class Config {
         /////////////////////////////////////////////////////
         Class<?> aafConClass = loadClass(access,CADI_AAF_CON_DEF);
         Object aafcon = null;
-        if(con!=null && aafConClass!=null && aafConClass.isAssignableFrom(con.getClass())) {
+        if (con!=null && aafConClass!=null && aafConClass.isAssignableFrom(con.getClass())) {
             aafcon = con;
-        } else if(lur != null) {
+        } else if (lur != null) {
             Field f;
             try {
                 f = lur.getClass().getField("aaf");
@@ -248,14 +248,14 @@ public class Config {
         boolean hasDirectAAF = hasDirect("DirectAAFLur",additionalTafLurs);
         // IMPORTANT!  Don't attempt to load AAF Connector if there is no AAF URL
         String aafURL = access.getProperty(AAF_URL,null);
-        if(!hasDirectAAF && aafcon==null && aafURL!=null) {
+        if (!hasDirectAAF && aafcon==null && aafURL!=null) {
             aafcon = loadAAFConnector(si, aafURL);    
         }
         
         HttpTaf taf;
         // Setup Host, in case Network reports an unusable Hostname (i.e. VTiers, VPNs, etc)
         String hostname = logProp(access, HOSTNAME,null);
-        if(hostname==null) {
+        if (hostname==null) {
             try {
                 hostname = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e1) {
@@ -279,10 +279,10 @@ public class Config {
         /////////////////////////////////////////////////////
         X509Taf x509TAF = null;
         String truststore = logProp(access, CADI_TRUSTSTORE,null);
-        if(truststore!=null) {
+        if (truststore!=null) {
             String truststorePwd = access.getProperty(CADI_TRUSTSTORE_PASSWORD,null);
-            if(truststorePwd!=null) {
-                if(truststorePwd.startsWith(Symm.ENC)) {
+            if (truststorePwd!=null) {
+                if (truststorePwd.startsWith(Symm.ENC)) {
                     try {
                         access.decrypt(truststorePwd,false);
                     } catch (IOException e) {
@@ -314,17 +314,17 @@ public class Config {
         long userExp = Long.parseLong(aafCleanup);
         boolean basicWarn = "TRUE".equals(access.getProperty(BASIC_WARN,"FALSE"));
 
-        if(!hasDirectAAF) {
+        if (!hasDirectAAF) {
             HttpTaf aaftaf=null;
-            if(!hasOAuthDirectTAF) {
-                if(basicRealm!=null) {
+            if (!hasOAuthDirectTAF) {
+                if (basicRealm!=null) {
                     @SuppressWarnings("unchecked")
                     Class<HttpTaf> obasicCls = (Class<HttpTaf>)loadClass(access,CADI_OBASIC_HTTP_TAF_DEF);
-                    if(obasicCls!=null) {
+                    if (obasicCls!=null) {
                         try {
                             String tokenurl = logProp(access,Config.AAF_OAUTH2_TOKEN_URL, null);
                             String introspecturl = logProp(access,Config.AAF_OAUTH2_INTROSPECT_URL, null);
-                            if(tokenurl==null || introspecturl==null) {
+                            if (tokenurl==null || introspecturl==null) {
                                 access.log(Level.INIT,"Both tokenurl and introspecturl are required. Oauth Authorization is disabled.");
                             }
                             Constructor<HttpTaf> obasicConst = obasicCls.getConstructor(PropAccess.class,String.class, String.class, String.class);
@@ -333,20 +333,20 @@ public class Config {
                         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                             access.log(Level.INIT, e);
                         }
-                    } else if(up!=null) {
+                    } else if (up!=null) {
                         access.log(Level.INIT,"Basic Authorization is enabled using realm",basicRealm);
                         // Allow warning about insecure channel to be turned off
-                        if(!basicWarn) {
+                        if (!basicWarn) {
                             access.log(Level.INIT, "WARNING! The basicWarn property has been set to false.",
                                 " There will be no additional warning if Basic Auth is used on an insecure channel");
                         }
                         BasicHttpTaf bht = new BasicHttpTaf(access, up, basicRealm, userExp, basicWarn);
-                        for(Object o : additionalTafLurs) {
-                            if(o instanceof CredValDomain) {
+                        for (Object o : additionalTafLurs) {
+                            if (o instanceof CredValDomain) {
                                 bht.add((CredValDomain)o);
                             }
                         }
-                        if(x509TAF!=null) {
+                        if (x509TAF!=null) {
                             x509TAF.add(bht);
                         }
                         htlist.add(bht);
@@ -359,28 +359,28 @@ public class Config {
                 /////////////////////////////////////////////////////
                 // Configure AAF Driven Basic Auth
                 /////////////////////////////////////////////////////
-                if(aafcon==null) {
+                if (aafcon==null) {
                     access.log(Level.INIT,"AAF Connection (AAFcon) is null.  Cannot create an AAF TAF");
-                } else if(aafURL==null) {
+                } else if (aafURL==null) {
                     access.log(Level.INIT,"No AAF URL in properties, Cannot create an AAF TAF");
                 } else {// There's an AAF_URL... try to configure an AAF 
                     String aafTafClassName = logProp(access, AAF_TAF_CLASS,AAF_TAF_CLASS_DEF);
                     // Only 2.0 available at this time
-                    if(AAF_TAF_CLASS_DEF.equals(aafTafClassName)) { 
+                    if (AAF_TAF_CLASS_DEF.equals(aafTafClassName)) { 
                         try {
                             Class<?> aafTafClass = loadClass(access,aafTafClassName);
-                            if(aafTafClass!=null) {
+                            if (aafTafClass!=null) {
                                 Constructor<?> cstr = aafTafClass.getConstructor(Connector.class,boolean.class,AbsUserCache.class);
-                                if(cstr!=null) {
-                                    if(lur instanceof AbsUserCache) {
+                                if (cstr!=null) {
+                                    if (lur instanceof AbsUserCache) {
                                         aaftaf = (HttpTaf)cstr.newInstance(aafcon,basicWarn,lur);
                                     } else {
                                         cstr = aafTafClass.getConstructor(Connector.class,boolean.class);
-                                        if(cstr!=null) {
+                                        if (cstr!=null) {
                                             aaftaf = (HttpTaf)cstr.newInstance(aafcon,basicWarn);
                                         }
                                     }
-                                    if(aaftaf==null) {
+                                    if (aaftaf==null) {
                                         access.log(Level.INIT,"ERROR! AAF TAF Failed construction.  NOT Configured");
                                     } else {
                                         access.log(Level.INIT,"AAF TAF Configured to ",aafURL);
@@ -390,7 +390,7 @@ public class Config {
                             } else {
                                 access.log(Level.INIT, "There is no AAF TAF class available: %s. AAF TAF not configured.",aafTafClassName);
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             access.log(Level.INIT,"ERROR! AAF TAF Failed construction.  NOT Configured",e);
                         }
                     }
@@ -400,7 +400,7 @@ public class Config {
             /////////////////////////////////////////////////////
             // Configure OAuth TAF
             /////////////////////////////////////////////////////
-            if(!hasOAuthDirectTAF) {
+            if (!hasOAuthDirectTAF) {
                 String oauthTokenUrl = logProp(access,Config.AAF_OAUTH2_TOKEN_URL,null);
                 Class<?> oadtClss;
                 try {
@@ -409,21 +409,21 @@ public class Config {
                     oadtClss = null;
                     access.log(Level.INIT, e1);
                 }
-                if(additionalTafLurs!=null && additionalTafLurs.length>0 && (oadtClss!=null && additionalTafLurs[0].getClass().isAssignableFrom(oadtClss))) {
+                if (additionalTafLurs!=null && additionalTafLurs.length>0 && (oadtClss!=null && additionalTafLurs[0].getClass().isAssignableFrom(oadtClss))) {
                     htlist.add((HttpTaf)additionalTafLurs[0]);
                     String[] array= new String[additionalTafLurs.length-1];
-                    if(array.length>0) {
+                    if (array.length>0) {
                         System.arraycopy(htlist, 1, array, 0, array.length);
                     }
                     additionalTafLurs = array;
                     access.log(Level.INIT,"OAuth2 Direct is enabled");
-                } else if(oauthTokenUrl!=null) {
+                } else if (oauthTokenUrl!=null) {
                     String oauthIntrospectUrl = logProp(access,Config.AAF_OAUTH2_INTROSPECT_URL,null);
                     @SuppressWarnings("unchecked")
                     Class<HttpTaf> oaTCls = (Class<HttpTaf>)loadClass(access,OAUTH_HTTP_TAF);
-                    if(oaTCls!=null) {
+                    if (oaTCls!=null) {
                         Class<?> oaTTmgrCls = loadClass(access, OAUTH_TOKEN_MGR);
-                        if(oaTTmgrCls!=null) {
+                        if (oaTTmgrCls!=null) {
                             try {
                                 Method oaTTmgrGI = oaTTmgrCls.getMethod("getInstance",PropAccess.class,String.class,String.class);
                                 Object oaTTmgr = oaTTmgrGI.invoke(null /*this is static method*/,access,oauthTokenUrl,oauthIntrospectUrl);
@@ -444,7 +444,7 @@ public class Config {
             // Adding BasicAuth (AAF) last, after other primary Cookie Based
             // Needs to be before Cert... see below
             /////////////////////////////////////////////////////
-            if(aaftaf!=null) {
+            if (aaftaf!=null) {
                 htlist.add(aaftaf);
             }
         }    
@@ -452,22 +452,22 @@ public class Config {
         /////////////////////////////////////////////////////
         // Any Additional Lurs passed in Constructor
         /////////////////////////////////////////////////////
-        if(additionalTafLurs!=null) {
-            for(Object additional : additionalTafLurs) {
-                if(additional instanceof BasicHttpTaf) {
+        if (additionalTafLurs!=null) {
+            for (Object additional : additionalTafLurs) {
+                if (additional instanceof BasicHttpTaf) {
                     BasicHttpTaf ht = (BasicHttpTaf)additional;
-                    for(Object cv : additionalTafLurs) {
-                        if(cv instanceof CredValDomain) {
+                    for (Object cv : additionalTafLurs) {
+                        if (cv instanceof CredValDomain) {
                             ht.add((CredValDomain)cv);
                             access.printf(Level.INIT,"%s Authentication is enabled",cv);
                         }
                     }
                     htlist.add(ht);
-                } else if(additional instanceof HttpTaf) {
+                } else if (additional instanceof HttpTaf) {
                     HttpTaf ht = (HttpTaf)additional;
                     htlist.add(ht);
                     access.printf(Level.INIT,"%s Authentication is enabled",additional.getClass().getSimpleName());
-                } else if(hasOAuthDirectTAF) {
+                } else if (hasOAuthDirectTAF) {
                     Class<?> daupCls;
                     try {
                         daupCls = Class.forName("org.onap.aaf.auth.direct.DirectAAFUserPass");
@@ -475,7 +475,7 @@ public class Config {
                         daupCls = null;
                         access.log(Level.INIT, e);
                     }
-                    if(daupCls != null && additional.getClass().isAssignableFrom(daupCls)) {
+                    if (daupCls != null && additional.getClass().isAssignableFrom(daupCls)) {
                         htlist.add(new BasicHttpTaf(access, (CredVal)additional , basicRealm, userExp, basicWarn));
                         access.printf(Level.INIT,"Direct BasicAuth Authentication is enabled",additional.getClass().getSimpleName());
                     }
@@ -484,9 +484,9 @@ public class Config {
         }
         
         // Add BasicAuth, if any, to x509Taf
-        if(x509TAF!=null) {
-            for( HttpTaf ht : htlist) {
-                if(ht instanceof BasicHttpTaf) {
+        if (x509TAF!=null) {
+            for ( HttpTaf ht : htlist) {
+                if (ht instanceof BasicHttpTaf) {
                     x509TAF.add((BasicHttpTaf)ht);
                 }
             }
@@ -494,7 +494,7 @@ public class Config {
         /////////////////////////////////////////////////////
         // Create EpiTaf from configured TAFs
         /////////////////////////////////////////////////////
-        if(htlist.size()==1) {
+        if (htlist.size()==1) {
             // just return the one
             taf = htlist.get(0);
         } else {
@@ -504,7 +504,7 @@ public class Config {
             
             taf = new HttpEpiTaf(access,locator, tc, htarray); // ok to pass locator == null
             String level = logProp(access, CADI_LOGLEVEL, null);
-            if(level!=null) {
+            if (level!=null) {
                 access.setLogLevel(Level.valueOf(level));
             }
         }
@@ -514,7 +514,7 @@ public class Config {
     
     public static String logProp(Access access,String tag, String def) {
         String rv = access.getProperty(tag, def);
-        if(rv == null) {
+        if (rv == null) {
             access.log(Level.INIT,tag,"is not explicitly set");
         } else {
             access.log(Level.INIT,tag,"is set to",rv);
@@ -533,14 +533,14 @@ public class Config {
             String users = access.getProperty(USERS,null);
             String groups = access.getProperty(GROUPS,null);
 
-            if(groups!=null || users!=null) {
+            if (groups!=null || users!=null) {
                 LocalLur ll = new LocalLur(access, users, groups);  // note b64==null is ok.. just means no encryption.
                 lurs.add(ll);
                 
                 String writeto = access.getProperty(WRITE_TO,null);
-                if(writeto!=null) {
+                if (writeto!=null) {
                     String msg = UsersDump.updateUsers(writeto, ll);
-                    if(msg!=null) {
+                    if (msg!=null) {
                         access.log(Level.INIT,"ERROR! Error Updating ",writeto,"with roles and users:",msg);
                     }
                 }
@@ -554,10 +554,10 @@ public class Config {
         /////////////////////////////////////////////////////
         String tokenUrl = logProp(access,AAF_OAUTH2_TOKEN_URL, null);
         String introspectUrl = logProp(access,AAF_OAUTH2_INTROSPECT_URL, null);
-        if(tokenUrl!=null && introspectUrl !=null) {
+        if (tokenUrl!=null && introspectUrl !=null) {
             try {
                 Class<?> olurCls = loadClass(access, CADI_OLUR_CLASS_DEF);
-                if(olurCls!=null) {
+                if (olurCls!=null) {
                     Constructor<?> olurCnst = olurCls.getConstructor(PropAccess.class,String.class,String.class);
                     Lur olur = (Lur)olurCnst.newInstance(access,tokenUrl,introspectUrl);
                     lurs.add(olur);
@@ -567,7 +567,7 @@ public class Config {
                 }
             } catch (NoSuchMethodException| SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 String msg = e.getMessage();
-                if(msg==null && e.getCause()!=null) {
+                if (msg==null && e.getCause()!=null) {
                     msg = e.getCause().getMessage();
                 }
                 access.log(Level.INIT,"AAF/OAuth LUR is not instantiated.",msg,e);
@@ -576,7 +576,7 @@ public class Config {
             access.log(Level.INIT, "OAuth2 Lur disabled");
         }
 
-        if(con!=null) { // try to reutilize connector
+        if (con!=null) { // try to reutilize connector
             lurs.add(con.newLur());
         } else { 
             /////////////////////////////////////////////////////
@@ -584,12 +584,12 @@ public class Config {
             /////////////////////////////////////////////////////
             String aafURL = logProp(access,AAF_URL,null); // Trigger Property
             String aafEnv = access.getProperty(AAF_ENV,null);
-            if(aafEnv == null && aafURL!=null && access instanceof PropAccess) { // set AAF_ENV from AAF_URL
+            if (aafEnv == null && aafURL!=null && access instanceof PropAccess) { // set AAF_ENV from AAF_URL
                 int ec = aafURL.indexOf("envContext=");
-                if(ec>0) {
+                if (ec>0) {
                     ec += 11; // length of envContext=
                     int slash = aafURL.indexOf('/', ec);
-                    if(slash>0) {
+                    if (slash>0) {
                         aafEnv = aafURL.substring(ec, slash);
                         ((PropAccess)access).setProperty(AAF_ENV, aafEnv);
                         access.printf(Level.INIT, "Setting aafEnv to %s from aaf_url value",aafEnv);
@@ -598,30 +598,30 @@ public class Config {
             }
 
             // Don't configure AAF if it is using DirectAccess
-            if(!hasDirect("DirectAAFLur",additionalTafLurs)) {
-                if(aafURL==null) {
+            if (!hasDirect("DirectAAFLur",additionalTafLurs)) {
+                if (aafURL==null) {
                     access.log(Level.INIT,"No AAF LUR properties, AAF will not be loaded");
                 } else {// There's an AAF_URL... try to configure an AAF
                     String aafLurClassStr = logProp(access,AAF_LUR_CLASS,AAF_V2_0_AAF_LUR_PERM);
                     ////////////AAF Lur 2.0 /////////////
-                    if(aafLurClassStr!=null && aafLurClassStr.startsWith(AAF_V2_0)) { 
+                    if (aafLurClassStr!=null && aafLurClassStr.startsWith(AAF_V2_0)) { 
                         try {
                             Object aafcon = loadAAFConnector(si, aafURL);
-                            if(aafcon==null) {
+                            if (aafcon==null) {
                                 access.log(Level.INIT,"AAF LUR class,",aafLurClassStr,"cannot be constructed without valid AAFCon object.");
                             } else {
                                 Class<?> aafAbsAAFCon = loadClass(access, AAF_V2_0_AAFCON);
-                                if(aafAbsAAFCon!=null) {
+                                if (aafAbsAAFCon!=null) {
                                     Method mNewLur = aafAbsAAFCon.getMethod("newLur");
                                     Object aaflur = mNewLur.invoke(aafcon);
                 
-                                    if(aaflur==null) {
+                                    if (aaflur==null) {
                                         access.log(Level.INIT,"ERROR! AAF LUR Failed construction.  NOT Configured");
                                     } else {
                                         access.log(Level.INIT,"AAF LUR Configured to ",aafURL);
                                         lurs.add((Lur)aaflur);
                                         String debugIDs = logProp(access,Config.AAF_DEBUG_IDS, null);
-                                        if(debugIDs !=null && aaflur instanceof CachingLur) {
+                                        if (debugIDs !=null && aaflur instanceof CachingLur) {
                                             ((CachingLur<?>)aaflur).setDebug(debugIDs);
                                         }
                                     }
@@ -638,9 +638,9 @@ public class Config {
         /////////////////////////////////////////////////////
         // Any Additional passed in Constructor
         /////////////////////////////////////////////////////
-        if(additionalTafLurs!=null) {
-            for(Object additional : additionalTafLurs) {
-                if(additional instanceof Lur) {
+        if (additionalTafLurs!=null) {
+            for (Object additional : additionalTafLurs) {
+                if (additional instanceof Lur) {
                     lurs.add((Lur)additional);
                     access.log(Level.INIT, additional);
                 }
@@ -666,9 +666,9 @@ public class Config {
     }
     
     private static boolean hasDirect(String simpleClassName, Object[] additionalTafLurs) {
-        if(additionalTafLurs!=null) {
-            for(Object tf : additionalTafLurs) {
-                if(tf.getClass().getSimpleName().equals(simpleClassName)) {
+        if (additionalTafLurs!=null) {
+            for (Object tf : additionalTafLurs) {
+                if (tf.getClass().getSimpleName().equals(simpleClassName)) {
                     return true;
                 }
             }
@@ -746,15 +746,15 @@ public class Config {
     public static Locator<URI> loadLocator(SecurityInfoC<HttpURLConnection> si, final String _url) throws LocatorException {
         Access access = si.access;
         Locator<URI> locator = null;
-        if(_url==null) {
+        if (_url==null) {
             access.log(Level.INIT,"No URL passed to 'loadLocator'. Disabled");
         } else {
             String url = _url;
             String replacement;
             int idxAAFLocateUrl;
-            if((idxAAFLocateUrl=_url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
+            if ((idxAAFLocateUrl=_url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
                 StringBuilder sb = new StringBuilder(replacement);
-                if(!replacement.endsWith("/locate")) {
+                if (!replacement.endsWith("/locate")) {
                     sb.append("/locate");
                 } 
                 sb.append(_url,idxAAFLocateUrl+AAF_LOCATE_URL_TAG.length(),_url.length());
@@ -763,7 +763,7 @@ public class Config {
     
             try {
                 Class<?> lcls = loadClass(access,AAF_LOCATOR_CLASS_DEF);
-                if(lcls==null) {
+                if (lcls==null) {
                     throw new CadiException("Need to include aaf-cadi-aaf jar for AAFLocator");
                 }
                 // First check for preloaded
@@ -773,7 +773,7 @@ public class Config {
                 } catch (Exception e) {
                     access.log(Level.INIT, e);
                 }
-                if(locator==null) {
+                if (locator==null) {
                     URI locatorURI = new URI(url);
                     Constructor<?> cnst = lcls.getConstructor(SecurityInfoC.class,URI.class);
                     locator = (Locator<URI>)cnst.newInstance(new Object[] {si,locatorURI});
@@ -785,7 +785,7 @@ public class Config {
                     access.log(Level.INFO, "AAFLocator enabled using preloaded " + locator.getClass().getSimpleName());
                 }
             } catch (InvocationTargetException e) {
-                if(e.getTargetException() instanceof LocatorException) {
+                if (e.getTargetException() instanceof LocatorException) {
                     throw (LocatorException)e.getTargetException();
                 }
                 access.log(Level.INIT,e.getTargetException().getMessage(),"AAFLocator for",url,"could not be created.",e);

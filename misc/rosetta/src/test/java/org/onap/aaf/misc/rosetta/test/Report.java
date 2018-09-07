@@ -46,7 +46,7 @@ public class Report {
         Metric m = trans.auditTrail(0, null, type);
         total+=m.total;
         int min = Math.min(buckets.length, m.buckets.length);
-        for(int b=0;b<min;++b) {
+        for (int b=0;b<min;++b) {
             buckets[b]+=m.buckets[b];
         }
     }
@@ -59,7 +59,7 @@ public class Report {
     public void report(Writer sbw) throws IOException {
         sbw.append("\n"+count + " entries, Total Time: " + total + "ms, Avg Time: " + total/count + "ms\n");
         int min = Math.min(buckets.length, names.length);
-        for(int i=0;i<min;++i) {
+        for (int i=0;i<min;++i) {
             sbw.append("  Time: " + names[i] + ' ' + buckets[i] + "ms, Avg Time: " + buckets[i]/count + "ms\n");
         }
 

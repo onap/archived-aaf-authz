@@ -61,7 +61,7 @@ public class XGen<RT extends XGen<RT>> {
     }
 
     protected void prettyln(PrintWriter pw) {
-        if(pretty)pw.println();
+        if (pretty)pw.println();
     }
 
     public RT leaf(Mark mark, String tag, String ... args) {
@@ -110,10 +110,10 @@ public class XGen<RT extends XGen<RT>> {
         back.append(tag);
         back.append('>');
     
-        if(pretty) {
-            if(mark!=null && mark.comment!=null) {
+        if (pretty) {
+            if (mark!=null && mark.comment!=null) {
                 int fi = forward.getIndent()*IndentPrintWriter.INDENT_MULTIPLIER;
-                for(int i = fi+backSB.length();i<=COMMENT_COLUMN;++i) {
+                for (int i = fi+backSB.length();i<=COMMENT_COLUMN;++i) {
                     back.append(' ');
                 }
                 back.append("<!-- end ");
@@ -126,12 +126,12 @@ public class XGen<RT extends XGen<RT>> {
                 forward.append(" -->");
             }
             forward.inc();
-            if(!oneLine) {
+            if (!oneLine) {
                 forward.println();
             }
             back.println();
         }
-        if(mark!=null)mark.spot = backStack.size();
+        if (mark!=null)mark.spot = backStack.size();
         backStack.push(new Back(backSB.toString(),true, false));
         backSB.setLength(0);
         return (RT)this;
@@ -143,7 +143,7 @@ public class XGen<RT extends XGen<RT>> {
         forward.append(tag);
         addAttrs(attrs);
         forward.append(" />");
-        if(pretty) {
+        if (pretty) {
             forward.println();
         }
         return (RT)this;
@@ -157,7 +157,7 @@ public class XGen<RT extends XGen<RT>> {
     
     @SuppressWarnings("unchecked")
     public RT xml(String txt) {
-        for(int i=0; i<txt.length();++i) {
+        for (int i=0; i<txt.length();++i) {
             char c = txt.charAt(i);
             switch(c) {
                 case '<':
@@ -179,11 +179,11 @@ public class XGen<RT extends XGen<RT>> {
 
     @SuppressWarnings("unchecked")
     public RT textCR(int tabs, String txt) {
-        for(int i=0;i<tabs;++i) {
+        for (int i=0;i<tabs;++i) {
             forward.append("  ");
         }
         forward.append(txt);
-        if(pretty)forward.println();
+        if (pretty)forward.println();
         return (RT)this;
     }
 
@@ -218,13 +218,13 @@ public class XGen<RT extends XGen<RT>> {
         int size = backStack.size();
         Back c;
         boolean println = false;
-        for(int i=mark==null?0:mark.spot;i<size;++i) {
+        for (int i=mark==null?0:mark.spot;i<size;++i) {
             c = backStack.pop();
-            if(c.dec)forward.dec();
+            if (c.dec)forward.dec();
             forward.append(c.str);
             println = c.cr;
         }
-        if(pretty && println) {
+        if (pretty && println) {
             forward.println();
         }
         return (RT)this;
@@ -233,14 +233,14 @@ public class XGen<RT extends XGen<RT>> {
     public RT end() {
         Mark mark = new Mark();
         mark.spot=backStack.size()-1;
-        if(mark.spot<0)mark.spot=0;
+        if (mark.spot<0)mark.spot=0;
         return end(mark);
     }
 
     public RT end(int i) {
         Mark mark = new Mark();
         mark.spot=backStack.size()-i;
-        if(mark.spot<0)mark.spot=0;
+        if (mark.spot<0)mark.spot=0;
         return end(mark);
     }
 
@@ -250,9 +250,9 @@ public class XGen<RT extends XGen<RT>> {
     }
 
     protected void addAttrs(String[] attrs) {
-        if(attrs!=null) {
-            for(String attr : attrs) {
-                if(attr!=null && attr.length()>0) {
+        if (attrs!=null) {
+            for (String attr : attrs) {
+                if (attr!=null && attr.length()>0) {
                     forward.append(' ');
                     String[] split = attr.split("=",2);
                     switch(split.length) {
@@ -276,7 +276,7 @@ public class XGen<RT extends XGen<RT>> {
 
     @SuppressWarnings("unchecked")
     public RT comment(String string) {
-        if(pretty) {
+        if (pretty) {
             forward.print("<!--  ");
             forward.print(string);
             forward.println("  -->");

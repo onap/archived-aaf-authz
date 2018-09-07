@@ -80,7 +80,7 @@ public class RequestDetail extends Page {
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             Cells rv=Cells.EMPTY;
             final String ticket = trans.get(sTicket, null);
-            if(ticket!=null) {
+            if (ticket!=null) {
                 try {
                     rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
                         @Override
@@ -93,7 +93,7 @@ public class RequestDetail extends Page {
                                     gui.getDF(Approvals.class)
                                     );
                                 
-                                if(fa.get(AAF_GUI.TIMEOUT)) {
+                                if (fa.get(AAF_GUI.TIMEOUT)) {
                                     if (!trans.user().equals(fa.value.getApprovals().get(0).getUser())) {
                                         return Cells.EMPTY;
                                     }

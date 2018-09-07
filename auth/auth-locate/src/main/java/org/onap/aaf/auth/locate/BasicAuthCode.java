@@ -45,7 +45,7 @@ public class BasicAuthCode extends LocateCode {
     @Override
     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         Principal p = trans.getUserPrincipal();
-        if(p == null) {
+        if (p == null) {
             trans.error().log("Transaction not Authenticated... no Principal");
         } else if (p instanceof BasicPrincipal) {
             // the idea is that if call is made with this credential, and it's a BasicPrincipal, it's ok
@@ -55,12 +55,12 @@ public class BasicAuthCode extends LocateCode {
         } else if (p instanceof X509Principal) {
             // Since X509Principal has priority, BasicAuth Info might be there, but not validated.
             String ba;
-            if((ba=req.getHeader("Authorization"))!=null && ba.startsWith("Basic ")) {
+            if ((ba=req.getHeader("Authorization"))!=null && ba.startsWith("Basic ")) {
                 ba = Symm.base64noSplit.decode(ba.substring(6));
                 int colon = ba.indexOf(':');
-                if(colon>=0) {
+                if (colon>=0) {
                     String err;
-                    if((err=authn.validate(ba.substring(0, colon), ba.substring(colon+1),trans))==null) {
+                    if ((err=authn.validate(ba.substring(0, colon), ba.substring(colon+1),trans))==null) {
                         resp.setStatus(HttpStatus.OK_200);
                     } else {
                         trans.audit().log(ba.substring(0,colon),": ",err);

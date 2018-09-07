@@ -71,9 +71,9 @@ public class NsInfoAction extends Page {
                             
                             if (id==null || id.indexOf('@')<=0) {
                                 hgen.p("Data Entry Failure: Please enter a valid ID, including domain.");
-                            } else if(password == null || password2 == null || currPass == null) {
+                            } else if (password == null || password2 == null || currPass == null) {
                                 hgen.p("Data Entry Failure: Both Password Fields need entries.");
-                            } else if(!password.equals(password2)) {
+                            } else if (!password.equals(password2)) {
                                 hgen.p("Data Entry Failure: Passwords do not match.");
                             } else { // everything else is checked by Server
                                 final CredRequest cred = new CredRequest();
@@ -93,21 +93,21 @@ public class NsInfoAction extends Page {
                                                 boolean go;
                                                 boolean fail = true;
                                                 fcr.get(5000);
-                                                if(fcr.code() == 200) {
+                                                if (fcr.code() == 200) {
                                                     hgen.p("Current Password validated");
                                                     go = true;
                                                 } else {
                                                     hgen.p(String.format("Invalid Current Password: %d %s",fcr.code(),fcr.body()));
                                                     go = false;
                                                 }
-                                                if(go) {
+                                                if (go) {
                                                     tt.done();
                                                     tt = trans.start("AAF Change Password",Env.REMOTE);
                                                     try {
                                                         // Change over Cred to reset mode
                                                         cred.setPassword(password);
                                                         String start = trans.get(startDate, null);
-                                                        if(start!=null) {
+                                                        if (start!=null) {
                                                             try {
                                                                 cred.setStart(Chrono.timeStamp(Chrono.dateOnlyFmt.parse(start)));
                                                             } catch (ParseException e) {
@@ -121,7 +121,7 @@ public class NsInfoAction extends Page {
                                                                 cred
                                                                 );
                     
-                                                        if(fcr.get(5000)) {
+                                                        if (fcr.get(5000)) {
                                                             // Do Remote Call
                                                             hgen.p("New Password has been added.");
                                                             fail = false;
@@ -145,7 +145,7 @@ public class NsInfoAction extends Page {
                                 }
                             }
                         hgen.br();
-                        if(fail) {
+                        if (fail) {
                             hgen.incr("a",true,"href="+PassChangeForm.HREF+"?id="+id).text("Try again").end();
                         } else {
                             hgen.incr("a",true,"href="+Home.HREF).text("Home").end(); 

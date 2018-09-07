@@ -66,7 +66,7 @@ public class ListForCreds extends Cmd {
                         "/authn/creds/"+which+'/'+value, 
                         getDF(Users.class)
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     if (aafcli.isTest())
                         Collections.sort(fp.value.getUser(), new Comparator<User>() {
                             @Override
@@ -75,7 +75,7 @@ public class ListForCreds extends Cmd {
                             }            
                         });
                     ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,option==1,HEADER+which,value);
-                    if(fp.code()==404)return 200;
+                    if (fp.code()==404)return 200;
                 } else {
                     error(fp);
                 }

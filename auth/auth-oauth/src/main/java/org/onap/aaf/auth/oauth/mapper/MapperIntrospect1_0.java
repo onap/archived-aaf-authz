@@ -32,19 +32,19 @@ import aafoauth.v2_0.Introspect;
 public class MapperIntrospect1_0 implements MapperIntrospect<Introspect> {
 
     public Result<Introspect> introspect(Result<Data> rs) {
-        if(rs.isOKhasData()) {
+        if (rs.isOKhasData()) {
             Data data = rs.value;
             Introspect ti = new Introspect();
             ti.setAccessToken(data.id);
             ti.setActive(data.active);
             ti.setClientId(data.client_id);
-            for(CLIENT_TYPE ct : CLIENT_TYPE.values()) {
-                if(data.type==ct.ordinal()) {
+            for (CLIENT_TYPE ct : CLIENT_TYPE.values()) {
+                if (data.type==ct.ordinal()) {
                     ti.setClientType(ct.name());
                     break;
                 }
             }
-            if(ti.getClientType()==null) {
+            if (ti.getClientType()==null) {
                 ti.setClientType(CLIENT_TYPE.unknown.name());
             }
             ti.setActive(data.active);
@@ -60,8 +60,8 @@ public class MapperIntrospect1_0 implements MapperIntrospect<Introspect> {
     protected static String getScopes(Set<String> scopes) {
         StringBuilder sb = new StringBuilder();
         boolean start = true;
-        for(String s : scopes) {
-            if(start) {
+        for (String s : scopes) {
+            if (start) {
                 start = false;
             } else {
                 sb.append(' ');

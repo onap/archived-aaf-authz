@@ -87,20 +87,20 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
         final String user;
         String password=null;
         byte[] cred=null;
-        if(req instanceof BasicCred) {
+        if (req instanceof BasicCred) {
             BasicCred bc = (BasicCred)req;
             user = bc.getUser();
             cred = bc.getCred();
         } else {
             String authz = req.getHeader("Authorization");
-            if(authz != null && authz.startsWith("Basic ")) {
-                if(!req.isSecure()) {
+            if (authz != null && authz.startsWith("Basic ")) {
+                if (!req.isSecure()) {
                     access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
                 }
                 try {
                     String temp = Symm.base64noSplit.decode(authz.substring(6));
                     int colon = temp.lastIndexOf(':');
-                    if(colon>0) {
+                    if (colon>0) {
                         user = temp.substring(0,colon);
                         password = temp.substring(colon+1);
                     } else {
@@ -108,7 +108,7 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
                                 access.encrypt(temp));
                         return new BasicHttpTafResp(access,null,"Malformed BasicAuth entry",RESP.FAIL,resp,realm,false);
                     }
-                    if(!rbac.validate(user,Type.PASSWORD,password.getBytes(),req)) {
+                    if (!rbac.validate(user,Type.PASSWORD,password.getBytes(),req)) {
                         return new BasicHttpTafResp(access,null,buildMsg(null,req,"user/pass combo invalid for ",user,"from",req.getRemoteAddr()), 
                                 RESP.TRY_AUTHENTICATING,resp,realm,true);
                     }
@@ -122,10 +122,10 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
         }
 
         try {
-            if(password==null && cred!=null) {
+            if (password==null && cred!=null) {
                 password = new String(cred);
                 cred = Hash.hashSHA256(cred);
-            } else if(password!=null && cred==null) {
+            } else if (password!=null && cred==null) {
                 cred = Hash.hashSHA256(password.getBytes());
             }
             Pooled<TokenClient> pclient = tokenClientPool.get();
@@ -133,13 +133,13 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
                 pclient.content.password(user, password);
                 String scope=FQI.reverseDomain(client_id);
                 Result<TimedToken> rtt = pclient.content.getToken('B',scope);
-                if(rtt.isOK()) {
-                    if(rtt.value.expired()) {
+                if (rtt.isOK()) {
+                    if (rtt.value.expired()) {
                         return new BasicHttpTafResp(access,null,"BasicAuth/OAuth Token: Token Expired",RESP.FAIL,resp,realm,true);
                     } else {
                         TimedToken tt = rtt.value;
                         Result<OAuth2Principal> prin = tkMgr.toPrincipal(tt.getAccessToken(), cred);
-                        if(prin.isOK()) {
+                        if (prin.isOK()) {
                             return new BasicHttpTafResp(access,prin.value,"BasicAuth/OAuth Token Authentication",RESP.IS_AUTHENTICATED,resp,realm,true);
                         } else {
                             return new BasicHttpTafResp(access,null,"BasicAuth/OAuth Token: " + prin.code + ' ' + prin.error,RESP.FAIL,resp,realm,true);
@@ -159,7 +159,7 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
     
     protected String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {
         StringBuilder sb = new StringBuilder();
-        if(pr!=null) {
+        if (pr!=null) {
             sb.append("user=");
             sb.append(pr.getName());
             sb.append(',');
@@ -168,9 +168,9 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
         sb.append(req.getRemoteAddr());
         sb.append(",port=");
         sb.append(req.getRemotePort());
-        if(msg.length>0) {
+        if (msg.length>0) {
             sb.append(",msg=\"");
-            for(Object s : msg) {
+            for (Object s : msg) {
                 sb.append(s.toString());
             }
             sb.append('"');
@@ -180,9 +180,9 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
 
     @Override
     public Resp revalidate(CachedPrincipal prin, Object state) {
-//        if(prin instanceof BasicPrincipal) {
+//        if (prin instanceof BasicPrincipal) {
 //            BasicPrincipal ba = (BasicPrincipal)prin;
-//            if(DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
+//            if (DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
 //                return Resp.UNVALIDATED;
 //            }
 //            return rbac.validate(ba.getName(), Type.PASSWORD, ba.getCred(), state)?Resp.REVALIDATED:Resp.UNVALIDATED;

@@ -51,7 +51,7 @@ public abstract class NamedCode implements ContentCode {
     
     public void addAttr(boolean first, String attr) {
         String[] temp = new String[idattrs.length+1];
-        if(first) {
+        if (first) {
             temp[0] = attr;
             System.arraycopy(idattrs, 0, temp, 1, idattrs.length);
         } else {

@@ -84,27 +84,27 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 
         // Note: Either Carbon or Silicon based LifeForms ok
         String authz = req.getHeader("Authorization");
-        if(authz != null && authz.startsWith("Basic ")) {
-            if(warn&&!req.isSecure()) {
+        if (authz != null && authz.startsWith("Basic ")) {
+            if (warn&&!req.isSecure()) {
                 aaf.access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
             }
             try {
                 final CachedBasicPrincipal bp;
-                if(req.getUserPrincipal() instanceof CachedBasicPrincipal) {
+                if (req.getUserPrincipal() instanceof CachedBasicPrincipal) {
                     bp = (CachedBasicPrincipal)req.getUserPrincipal();
                 } else {
                     bp = new CachedBasicPrincipal(this,authz,aaf.getRealm(),aaf.userExpires);
                 }
                 // First try Cache
                 final User<AAFPermission> usr = getUser(bp);
-                if(usr != null
+                if (usr != null
                     && usr.principal instanceof GetCred
                     && Hash.isEqual(bp.getCred(),((GetCred)usr.principal).getCred())) {
                     return new BasicHttpTafResp(aaf.access,bp,bp.getName()+" authenticated by cached AAF password",RESP.IS_AUTHENTICATED,resp,aaf.getRealm(),false);
                 }
 
                 Miss miss = missed(bp.getName(), bp.getCred());
-                if(miss!=null && !miss.mayContinue()) {
+                if (miss!=null && !miss.mayContinue()) {
                     return new BasicHttpTafResp(aaf.access,null,buildMsg(bp,req,
                             "User/Pass Retry limit exceeded"), 
                             RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),true);
@@ -120,8 +120,8 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                         @Override
                         public BasicHttpTafResp code(Rcli<?> client) throws CadiException, APIException {
                             Future<String> fp = client.read("/authn/basicAuth", "text/plain");
-                            if(fp.get(aaf.timeout)) {
-                                if(usr!=null) {
+                            if (fp.get(aaf.timeout)) {
+                                if (usr!=null) {
                                     usr.principal = bp;
                                 } else {
                                     addUser(new User<AAFPermission>(bp,aaf.userExpires));
@@ -130,7 +130,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                             } else {
                                 // Note: AddMiss checks for miss==null, and is part of logic
                                 boolean rv= addMiss(bp.getName(),bp.getCred());
-                                if(rv) {
+                                if (rv) {
                                     return new BasicHttpTafResp(aaf.access,null,buildMsg(bp,req,
                                             "user/pass combo invalid via AAF from " + req.getRemoteAddr()), 
                                             RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),true);
@@ -163,10 +163,10 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
     
     private String buildMsg(Principal pr, HttpServletRequest req, Object... msg) {
         StringBuilder sb = new StringBuilder();
-        for(Object s : msg) {
+        for (Object s : msg) {
             sb.append(s.toString());
         }
-        if(pr!=null) {
+        if (pr!=null) {
             sb.append(" for ");
             sb.append(pr.getName());
         }
@@ -181,7 +181,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
     
     public Resp revalidate(CachedPrincipal prin, Object state) {
         //  !!!! TEST THIS.. Things may not be revalidated, if not BasicPrincipal
-        if(prin instanceof BasicPrincipal) {
+        if (prin instanceof BasicPrincipal) {
             Future<String> fp;
             try {
                 Rcli<CLIENT> userAAF = aaf.client(Config.AAF_DEFAULT_VERSION).forUser(aaf.transferSS((BasicPrincipal)prin));

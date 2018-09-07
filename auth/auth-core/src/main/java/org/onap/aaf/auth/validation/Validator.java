@@ -70,16 +70,16 @@ public class Validator {
     }
 
     public final Validator nullOrBlank(String name, String str) {
-        if(str==null) {
+        if (str==null) {
             msg(name + " is null.");
-        } else if(str.length()==0) {
+        } else if (str.length()==0) {
             msg(name + " is blank.");
         }
         return this;
     }
 
     public final Validator isNull(String name, Object o) {
-        if(o==null) {
+        if (o==null) {
             msg(name + " is null.");
         }
         return this;
@@ -93,10 +93,10 @@ public class Validator {
     }
 
     protected final void msg(String ... strs) {
-        if(msgs==null) {
+        if (msgs==null) {
             msgs=new StringBuilder();
         }
-        for(String str : strs) {
+        for (String str : strs) {
             msgs.append(str);
         }
         msgs.append('\n');
@@ -107,23 +107,23 @@ public class Validator {
     }
 
     public final Validator notOK(Result<?> res) {
-        if(res==null) {
+        if (res==null) {
             msgs.append("Result object is blank");
-        } else if(res.notOK()) {
+        } else if (res.notOK()) {
             msgs.append(res.getClass().getSimpleName()).append(" is not OK");
         }
         return this;
     }
 
     protected Validator intRange(String text, int target, int start, int end) {
-        if(target<start || target>end) {
+        if (target<start || target>end) {
             msg(text + " is out of range (" + start + '-' + end + ')');
         }
         return this;
     }
 
     protected Validator floatRange(String text, float target, float start, float end) {
-        if(target<start || target>end) {
+        if (target<start || target>end) {
             msg(text + " is out of range (" + start + '-' + end + ')');
         }
         return this;
@@ -137,25 +137,25 @@ public class Validator {
     }
 
     public final Validator permType(String type) {
-        if(nob(type,NAME_CHARS)) {
+        if (nob(type,NAME_CHARS)) {
             msg("Perm Type [" +type + "] is invalid.");
         }
         return this;
     }
 
     public final Validator permType(String type, String ns) {
-        if(type==null) {
+        if (type==null) {
             msg("Perm Type is null");
-        } else if(ns==null) {
+        } else if (ns==null) {
             msg("Perm NS is null");
-        } else if(nob(type,NAME_CHARS)) {
+        } else if (nob(type,NAME_CHARS)) {
             msg("Perm Type [" + (ns+(type.length()==0?"":'.')) + type + "] is invalid.");
         }
         return this;
     }
 
     public final Validator permInstance(String instance) {
-        if(nob(instance,instChars)) {
+        if (nob(instance,instChars)) {
             msg("Perm Instance [" + instance + "] is invalid.");
         }
         return this;
@@ -163,28 +163,28 @@ public class Validator {
 
     public final Validator permAction(String action) {
         // TODO check for correct Splits?  Type|Instance|Action ?
-        if(nob(action, actionChars)) {
+        if (nob(action, actionChars)) {
             msg("Perm Action [" + action + "] is invalid.");
         }
         return this;
     }
 
     public final Validator role(String role) {
-        if(nob(role, NAME_CHARS)) {
+        if (nob(role, NAME_CHARS)) {
             msg("Role [" + role + "] is invalid.");
         }
         return this;
     }
 
     public final Validator ns(String ns) {
-        if(ns==null) {
+        if (ns==null) {
             msg("NS is null");
             return this;
-        } else if(nob(ns,NAME_CHARS)) {
+        } else if (nob(ns,NAME_CHARS)) {
             msg("NS [" + ns + "] is invalid.");
         } 
-        for(String s : nsKeywords) {
-            if(ns.endsWith(s)) {
+        for (String s : nsKeywords) {
+            if (ns.endsWith(s)) {
                 msg("NS [" + ns + "] may not be named with NS keywords");
                 break;
             }
@@ -193,14 +193,14 @@ public class Validator {
     }
 
     public final Validator key(String key) {
-        if(nob(key,NAME_CHARS)) {
+        if (nob(key,NAME_CHARS)) {
             msg("NS Prop Key [" + key + "] is invalid");
         }
         return this;
     }
 
     public final Validator value(String value) {
-        if(nob(value,ESSENTIAL_CHARS)) {
+        if (nob(value,ESSENTIAL_CHARS)) {
             msg("NS Prop value [" + value + "] is invalid");
         }
         return this;

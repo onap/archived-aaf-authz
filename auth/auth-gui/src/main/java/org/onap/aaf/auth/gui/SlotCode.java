@@ -31,7 +31,7 @@ public abstract class SlotCode<TRANS extends TransStore> extends NamedCode {
     public SlotCode(boolean no_cache,EnvStore<?> env, String root, Enum<?> ... params) {
         super(no_cache,root);
         slots = new Slot[params.length];
-        for(int i=0;i<params.length;++i) {
+        for (int i=0;i<params.length;++i) {
             slots[i] = env.slot(root + '.' + params[i].name());
         }
     }
@@ -41,7 +41,7 @@ public abstract class SlotCode<TRANS extends TransStore> extends NamedCode {
     }
     
     public<T> T get(TRANS trans,int idx, T dflt) {
-        if(idx>slots.length) {
+        if (idx>slots.length) {
             return dflt;
         }
         return trans.get(slots[idx],dflt);

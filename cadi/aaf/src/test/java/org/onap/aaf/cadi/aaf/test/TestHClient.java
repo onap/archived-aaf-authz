@@ -44,14 +44,14 @@ public class TestHClient {
         try {
             PropAccess access = new PropAccess(args);
             String aaf_url = access.getProperty(Config.AAF_URL);
-            if(aaf_url == null) {
+            if (aaf_url == null) {
                 access.log(Level.ERROR, Config.AAF_URL," is required");
             } else {
                 HMangr hman = null;
                 try {
                     SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
                     AbsAAFLocator<BasicTrans> loc = new AAFLocator(si,new URI(aaf_url));
-                    for(Item item = loc.first(); item!=null; item=loc.next(item)) {
+                    for (Item item = loc.first(); item!=null; item=loc.next(item)) {
                         System.out.println(loc.get(item));
                     }
                     
@@ -62,7 +62,7 @@ public class TestHClient {
                         @Override
                         public Void code(Rcli<?> cli) throws APIException, CadiException {
                             Future<String> ft = cli.read(path,"application/json");  
-                            if(ft.get(10000)) {
+                            if (ft.get(10000)) {
                                 System.out.println("Hurray,\n"+ft.body());
                             } else {
                                 System.out.println("not quite: " + ft.code());
@@ -70,7 +70,7 @@ public class TestHClient {
                             return null;
                         }});
                 } finally {
-                    if(hman!=null) {
+                    if (hman!=null) {
                         hman.close();
                     }
                 }

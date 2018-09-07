@@ -67,18 +67,18 @@ public class Route<TRANS extends Trans> {
         // FYI, thought about this a long time before implementing this way.
         String compare;
 //        String special[]; // todo, expose Charset (in special) to outside
-        if(isGet) {
+        if (isGet) {
             compare = req.getHeader("Accept"); // Accept is used for read, as we want to agree on what caller is ready to handle
         } else {
             compare = req.getContentType(); // Content type used to declare what data is being created, updated or deleted (might be used for key)
         }
 
         Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> hl = content.prep(trans, compare);
-        if(hl==null) {
+        if (hl==null) {
             resp.setStatus(406); // NOT_ACCEPTABLE
         } else {
-            if(isGet) { // Set Content Type to expected content
-                if("*".equals(hl.x) || "*/*".equals(hl.x)) {// if wild-card, then choose first kind of type
+            if (isGet) { // Set Content Type to expected content
+                if ("*".equals(hl.x) || "*/*".equals(hl.x)) {// if wild-card, then choose first kind of type
                     resp.setContentType(content.first());
                 } else {
                     resp.setContentType(hl.x);

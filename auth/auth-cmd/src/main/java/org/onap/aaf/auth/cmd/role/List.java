@@ -61,16 +61,16 @@ public class List extends BaseCmd<Role> {
     // Package Level on purpose
     abstract class ListRoles extends Retryable<Integer> {
         protected int list(Future<Roles> fr,Rcli<?> client, String header) throws APIException, CadiException {
-            if(fr.get(AAFcli.timeout())) {
+            if (fr.get(AAFcli.timeout())) {
                 Perms perms=null;
                 if (aafcli.isDetailed()) {
-                    for(aaf.v2_0.Role r : fr.value.getRole()) {
+                    for (aaf.v2_0.Role r : fr.value.getRole()) {
                         Future<Perms> fp = client.read(
                                 "/authz/perms/role/"+r.getName()+(aafcli.isDetailed()?"?ns":""), 
                                 getDF(Perms.class)
                             );
-                        if(fp.get(AAFcli.timeout())) {
-                            if(perms==null) {
+                        if (fp.get(AAFcli.timeout())) {
+                            if (perms==null) {
                                 perms = fp.value;
                             } else {
                                 perms.getPerm().addAll(fp.value.getPerm());
@@ -101,7 +101,7 @@ public class List extends BaseCmd<Role> {
     public void report(Roles roles, Perms perms, UserRoles urs, String ... str) {
         reportHead(str);
         XMLGregorianCalendar now = Chrono.timeStamp().normalize();
-        if(roles==null || roles.getRole().isEmpty()) {
+        if (roles==null || roles.getRole().isEmpty()) {
             pw().println("<No Roles Found>");
         } else if (aafcli.isDetailed()){
             if (aafcli.isDetailed() && str[0].toLowerCase().contains(LIST_ROLES_BY_NAME)) {
@@ -113,25 +113,25 @@ public class List extends BaseCmd<Role> {
             String fullFormat = roleFormat+permFormat;
             reportColHead(fullFormat,"[ROLE NS].Name","","[PERM NS].Type","Instance","Action");
             Collections.sort(roles.getRole(),roleCompare);
-            for(aaf.v2_0.Role r : roles.getRole()) {
+            for (aaf.v2_0.Role r : roles.getRole()) {
                 String roleName = r.getName();
                 String ns = r.getNs();
-                if(aafcli.isTest()) {
-                    if(ns==null) {
+                if (aafcli.isTest()) {
+                    if (ns==null) {
                         pw().format(roleFormat, roleName,XXXX_XX_XX);
                     } else {
                         pw().format(roleFormat, "["+ns+"]"+roleName.substring(ns.length()),XXXX_XX_XX);
                     }
                 } else {
                     UserRole ur = get(roleName,urs);
-                    if(ur!=null && now.compare(ur.getExpires().normalize())>0) {
-                        if(ns==null) {
+                    if (ur!=null && now.compare(ur.getExpires().normalize())>0) {
+                        if (ns==null) {
                             pw().format(roleExpiredFormat, roleName,Chrono.dateOnlyStamp(ur.getExpires()));
                         } else {
                             pw().format(roleExpiredFormat, "["+ns+"]"+roleName.substring(ns.length()),Chrono.dateOnlyStamp(ur.getExpires()));
                         }
                     } else {
-                        if(ns==null) {
+                        if (ns==null) {
                             pw().format(roleFormat, roleName,ur!=null?Chrono.dateOnlyStamp(ur.getExpires()):"");
                         } else {
                             pw().format(roleFormat, "["+ns+"]"+roleName.substring(ns.length()),ur!=null?Chrono.dateOnlyStamp(ur.getExpires()):"");
@@ -139,9 +139,9 @@ public class List extends BaseCmd<Role> {
                     }
                 }
 
-                for(Pkey pkey : r.getPerms()) {
+                for (Pkey pkey : r.getPerms()) {
                     Perm perm = get(pkey,perms);
-                    if(perm==null || perm.getNs()==null) {
+                    if (perm==null || perm.getNs()==null) {
                         pw().format(permFormat, 
                                 pkey.getType(),
                                 pkey.getInstance(),
@@ -159,12 +159,12 @@ public class List extends BaseCmd<Role> {
             String fullFormat = roleFormat;
             reportColHead(fullFormat,"ROLE Name","","PERM Type","Instance","Action");
             Collections.sort(roles.getRole(),roleCompare);
-            for(aaf.v2_0.Role r : roles.getRole()) {
+            for (aaf.v2_0.Role r : roles.getRole()) {
                 if (urs != null) {
                     String roleName = r.getName();
-                    if(!aafcli.isTest()) {
+                    if (!aafcli.isTest()) {
                         UserRole ur = get(roleName,urs);
-                        if(ur!=null && now.compare(ur.getExpires().normalize())>0) {
+                        if (ur!=null && now.compare(ur.getExpires().normalize())>0) {
                             pw().format(roleExpiredFormat, roleName+"*",Chrono.dateOnlyStamp(ur.getExpires()));
                         } else {
                             pw().format(roleFormat, roleName,ur!=null?Chrono.dateOnlyStamp(ur.getExpires()):"");
@@ -174,7 +174,7 @@ public class List extends BaseCmd<Role> {
                     }
                 } else {
                     pw().format(roleFormatNoDate, r.getName());
-                    for(Pkey perm : r.getPerms()) {
+                    for (Pkey perm : r.getPerms()) {
                         pw().format(permFormat, 
                                 perm.getType(),
                                 perm.getInstance(),
@@ -185,9 +185,9 @@ public class List extends BaseCmd<Role> {
         }
     }
     private Perm get(Pkey pkey, Perms perms) {
-        if(perms!=null) {
-            for(Perm p : perms.getPerm()) {
-                if(pkey.getAction().equals(p.getAction()) &&
+        if (perms!=null) {
+            for (Perm p : perms.getPerm()) {
+                if (pkey.getAction().equals(p.getAction()) &&
                    pkey.getInstance().equals(p.getInstance()) &&
                    pkey.getType().equals(p.getType())) {
                     return p;
@@ -198,9 +198,9 @@ public class List extends BaseCmd<Role> {
     }
     // The assumption is that these UserRoles are already pulled in by User... no need to check
     private UserRole get(String roleName, UserRoles urs) {
-        if(urs!=null) {
-            for(UserRole ur : urs.getUserRole()) {
-                if(roleName.equals(ur.getRole())) {
+        if (urs!=null) {
+            for (UserRole ur : urs.getUserRole()) {
+                if (roleName.equals(ur.getRole())) {
                     return ur;
                 }
             }

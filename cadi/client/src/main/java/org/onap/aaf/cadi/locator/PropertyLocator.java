@@ -61,7 +61,7 @@ public class PropertyLocator implements Locator<URI> {
         minRefresh = minRefreshMillis;
         backgroundRefresh = backgroundRefreshMillis;
         lastRefreshed=0L;
-        if(locList==null) {
+        if (locList==null) {
             throw new LocatorException("No Location List given for PropertyLocator");
         }
         String[] locarray = Split.split(',',locList);
@@ -69,10 +69,10 @@ public class PropertyLocator implements Locator<URI> {
         
         random = new SecureRandom();
         
-        for(int i=0;i<locarray.length;++i) {
+        for (int i=0;i<locarray.length;++i) {
             try {
                 int range = locarray[i].indexOf(":[");
-                if(range<0) {
+                if (range<0) {
                     uriList.add(new URI(locarray[i]));
                 } else {
                     String mach_colon = locarray[i].substring(0, range+1);
@@ -81,7 +81,7 @@ public class PropertyLocator implements Locator<URI> {
                     int slash = locarray[i].indexOf('/',brac);
                     int start = Integer.parseInt(locarray[i].substring(range+2, dash));
                     int end = Integer.parseInt(locarray[i].substring(dash+1, brac));
-                    for(int port=start;port<=end;++port) {
+                    for (int port=start;port<=end;++port) {
                         uriList.add(new URI(mach_colon+port + (slash>=0?locarray[i].substring(slash):"")));
                     }
                 }
@@ -106,7 +106,7 @@ public class PropertyLocator implements Locator<URI> {
     @Override
     public URI get(Item item) throws LocatorException {
         synchronized(orig) {
-            if(item==null) {
+            if (item==null) {
                 return null;
             } else {
                 return resolved[((PLItem)item).idx];
@@ -126,31 +126,31 @@ public class PropertyLocator implements Locator<URI> {
 
     @Override
     public Item next(Item item) throws LocatorException {
-        if(item==null) {
+        if (item==null) {
             return null;
         } else {
             int spot;
-            if((spot=(((PLItem)item).order+1))>=end)return null;
+            if ((spot=(((PLItem)item).order+1))>=end)return null;
             return current[spot];
         }
     }
 
     @Override
     public synchronized void invalidate(Item item) throws LocatorException {
-        if(--end<0) {
+        if (--end<0) {
             refresh();
             return;
         }
-        if(item==null) {
+        if (item==null) {
             return;
         }
         PLItem pli = (PLItem)item;
         int i,order;
-        for(i=0;i<end;++i) {
-            if(pli==current[i])break;
+        for (i=0;i<end;++i) {
+            if (pli==current[i])break;
         }
         order = current[i].order;
-        for(;i<end;++i) {
+        for (;i<end;++i) {
             current[i]=current[i+1];
             current[i].order=order++;
         }
@@ -159,7 +159,7 @@ public class PropertyLocator implements Locator<URI> {
 
     @Override
     public Item best() throws LocatorException {
-        if(current.length==0) {
+        if (current.length==0) {
             refresh();
         }
         switch(current.length) {
@@ -175,27 +175,27 @@ public class PropertyLocator implements Locator<URI> {
 
     @Override
     public synchronized boolean refresh() {
-        if(System.currentTimeMillis()>lastRefreshed) {
+        if (System.currentTimeMillis()>lastRefreshed) {
             // Build up list
             List<URI> resolve = new ArrayList<>();
             String realname;
-            for(int i = 0; i < orig.length ; ++i) {
+            for (int i = 0; i < orig.length ; ++i) {
                 try {
                     InetAddress ia[] = InetAddress.getAllByName(orig[i].getHost());
 
                     URI o,n;
-                    for(int j=0;j<ia.length;++j) {
+                    for (int j=0;j<ia.length;++j) {
                         o = orig[i];
                         Socket socket = createSocket();
                         try {
                             realname=ia[j].getHostAddress().equals(ia[j].getHostName())?ia[j].getCanonicalHostName():ia[j].getHostName();
                             int port = o.getPort();
-                            if(port<0) { // default
+                            if (port<0) { // default
                                 port = "https".equalsIgnoreCase(o.getScheme())?443:80;
                             }
                             socket.connect(new InetSocketAddress(realname,port),3000);
                             try {
-                                if(socket.isConnected()) {
+                                if (socket.isConnected()) {
                                     n = new URI(
                                             o.getScheme(),
                                             o.getUserInfo(),
@@ -212,7 +212,7 @@ public class PropertyLocator implements Locator<URI> {
                             }
                         } catch (IOException e) {
                         } finally {
-                            if(!socket.isClosed()) {
+                            if (!socket.isClosed()) {
                                 try {
                                     socket.close();
                                 } catch (IOException e) {
@@ -227,14 +227,14 @@ public class PropertyLocator implements Locator<URI> {
             }
             end=resolve.size();
             PLItem[] newCurrent;
-            if(current==null || current.length!=end) {
+            if (current==null || current.length!=end) {
                 newCurrent = new PLItem[end];
             } else {
                 newCurrent = current;
             }
     
-            for(int i=0; i< end; ++i) {
-                if(newCurrent[i]==null){
+            for (int i=0; i< end; ++i) {
+                if (newCurrent[i]==null){
                     newCurrent[i]=new PLItem(i);
                 } else {
                     newCurrent[i].idx=newCurrent[i].order=i;
@@ -271,18 +271,18 @@ public class PropertyLocator implements Locator<URI> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for(URI uri : orig) {
+        for (URI uri : orig) {
             boolean isResolved=false;
-            if(uri!=null) {
-                if(first) {
+            if (uri!=null) {
+                if (first) {
                     first = false;
                 } else {
                     sb.append(", ");
                 }
                 sb.append(uri.toString());
                 sb.append(" [");
-                for(URI u2 : resolved) {
-                    if(uri.equals(u2)) {
+                for (URI u2 : resolved) {
+                    if (uri.equals(u2)) {
                         isResolved = true;
                         break;
                     }

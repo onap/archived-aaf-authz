@@ -31,7 +31,7 @@ class Prop {
     
     public Prop(String t_equals_v) {
         String[] tv = t_equals_v.split("=");
-        if(tv.length>1) {
+        if (tv.length>1) {
             tag = tv[0];
             value = tv[1];
         }                

@@ -48,7 +48,7 @@ public class List extends BaseCmd<Perm> {
     // Package Level on purpose
     abstract class ListPerms extends Retryable<Integer> {
         protected int list(Future<Perms> fp,String header, String parentPerm) throws CadiException, APIException  {
-            if(fp.get(AAFcli.timeout())) {    
+            if (fp.get(AAFcli.timeout())) {    
                 report(fp,header, parentPerm);
             } else {
                 error(fp);
@@ -61,10 +61,10 @@ public class List extends BaseCmd<Perm> {
         @Override
         public int compare(aaf.v2_0.Perm a, aaf.v2_0.Perm b) {
             int rc;
-            if((rc=a.getType().compareTo(b.getType()))!=0) {
+            if ((rc=a.getType().compareTo(b.getType()))!=0) {
                 return rc;
             }
-            if((rc=a.getInstance().compareTo(b.getInstance()))!=0) {
+            if ((rc=a.getInstance().compareTo(b.getInstance()))!=0) {
                 return rc;
             }
             return a.getAction().compareTo(b.getAction());
@@ -80,9 +80,9 @@ public class List extends BaseCmd<Perm> {
             String descFmt = "   %-75s\n";
             reportColHead(format + descFmt,"[PERM NS].Type","Instance","Action", "Description");
             Collections.sort(fp.value.getPerm(),permCompare);
-            for(aaf.v2_0.Perm p : fp.value.getPerm()) {
+            for (aaf.v2_0.Perm p : fp.value.getPerm()) {
                 String pns = p.getNs();
-                if(pns==null) {
+                if (pns==null) {
                     pw().format(format,
                             p.getType(),
                             p.getInstance(),
@@ -94,7 +94,7 @@ public class List extends BaseCmd<Perm> {
                             p.getAction());
                 }
                 String desc = p.getDescription();
-                if(desc!=null && desc.length()>0) {
+                if (desc!=null && desc.length()>0) {
                     pw().format(descFmt,p.getDescription());
                 }
             }
@@ -103,7 +103,7 @@ public class List extends BaseCmd<Perm> {
             String format = reportColHead(permFormat,"PERM Type","Instance","Action");
 
             Collections.sort(fp.value.getPerm(),permCompare);
-            for(aaf.v2_0.Perm p : fp.value.getPerm()) {
+            for (aaf.v2_0.Perm p : fp.value.getPerm()) {
                 pw().format(format,
                     p.getType(),
                     p.getInstance(),

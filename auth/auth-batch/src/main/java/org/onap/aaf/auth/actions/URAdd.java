@@ -44,7 +44,7 @@ public class URAdd extends ActionDAO<UserRole,UserRoleDAO.Data,String> {
 
     @Override
     public Result<Data> exec(AuthzTrans trans, UserRole ur, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Add:",text,ur.role(),ur.user(),"on",Chrono.dateOnlyStamp(ur.expires()));
             return Result.ok(ur.urdd());
         } else {

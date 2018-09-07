@@ -162,11 +162,11 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             os.writeFloat(data.latitude);
             os.writeFloat(data.longitude);
             writeString(os, data.protocol);
-            if(data.subprotocol==null) {
+            if (data.subprotocol==null) {
                 os.writeInt(0);
             } else {
                 os.writeInt(data.subprotocol.size());
-                for(String s: data.subprotocol) {
+                for (String s: data.subprotocol) {
                     writeString(os,s);
                 }
             }
@@ -192,11 +192,11 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             
             int size = is.readInt();
             data.subprotocol = new HashSet<>(size);
-            for(int i=0;i<size;++i) {
+            for (int i=0;i<size;++i) {
                 data.subprotocol.add(readString(is,buff));
             }
             String port_key = readString(is,buff);
-            if(port_key.length()>0) {
+            if (port_key.length()>0) {
                 data.port_key=UUID.fromString(port_key);
             } else {
                 data.port_key = null;

@@ -152,7 +152,7 @@ public class JAXBDF<T> extends BaseDataFactory implements OldDataFactory<T>,IOOb
         try {
             T t = jumar.unmarshal(env.debug(), input);
             return new JAXBData<T>(primaryEnv, this, new JAXBStringifier<T>(jmar), new JAXBObjectifier<T>(jumar),t);
-        } catch(JAXBException e) {
+        } catch (JAXBException e) {
             throw new APIException(e);
         }
     }

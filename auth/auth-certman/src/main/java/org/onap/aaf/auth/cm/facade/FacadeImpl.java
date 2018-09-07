@@ -115,7 +115,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
         (certDF             = env.newDataFactory(mapper.getClass(API.CERT))).in(dataType).out(dataType);
         (artiDF             = env.newDataFactory(mapper.getClass(API.ARTIFACTS))).in(dataType).out(dataType);
 //        sCertAuth = env.slot(API_Cert.CERT_AUTH);
-        if(artiDF.getOutType().name().contains("xml")) {
+        if (artiDF.getOutType().name().contains("xml")) {
             voidResp = "application/Void+xml;charset=utf-8;version=1.0,application/xml;version=1.0,*/*";
         } else {
             voidResp = "application/Void+json;charset=utf-8;version=1.0,application/json;version=1.0,*/*";
@@ -206,7 +206,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                     "] " +
                     holder.toString(),
                     Env.ALWAYS);
-            if(hidemsg) {
+            if (hidemsg) {
                 holder.setLength(0);
                 em = mapper().errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }
@@ -231,7 +231,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             default:
                 return Result.err(Result.ERR_BadData,"Invalid Perm String");
         }
-        if(certman.aafLurPerm.fish(trans.getUserPrincipal(), ap)) {
+        if (certman.aafLurPerm.fish(trans.getUserPrincipal(), ap)) {
             resp.setContentType(voidResp);
             resp.getOutputStream().write(0);
             return Result.ok();
@@ -253,13 +253,13 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             try {
                 Data<REQ> rd = certRequestDF.newData().load(req.getInputStream());
                 request = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,REQUEST_CERT);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
             
             Result<CertResp> rcr = service.requestCert(trans,mapper.toReq(trans,request), ca);
-            if(rcr.notOK()) {
+            if (rcr.notOK()) {
                 return Result.err(rcr);
             }
             
@@ -291,7 +291,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
     public Result<Void> requestPersonalCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca) {
         return Result.err(Result.ERR_NotImplemented,"not implemented yet");
 //        Result<CertResp> rcr = service.requestPersonalCert(trans,ca);
-//        if(rcr.notOK()) {
+//        if (rcr.notOK()) {
 //            return Result.err(rcr);
 //        } else {
 //            try {
@@ -308,17 +308,17 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 //                zos.closeEntry();
 //                
 //                String wt;
-//                if((wt=req.getParameter("withTrust"))!=null || TRUE.equalsIgnoreCase(wt)) {
+//                if ((wt=req.getParameter("withTrust"))!=null || TRUE.equalsIgnoreCase(wt)) {
 //                    zos.putNextEntry(new ZipEntry(trans.user()+".trustCrts"));
-//                    for(String s : ca.getTrustChain()) {
+//                    for (String s : ca.getTrustChain()) {
 //                        ps.println(s);
 //                    }
 //                    zos.closeEntry();
 //                }
 //                
 //                boolean withJKS = (wt=req.getParameter("withJKS"))!=null || TRUE.equalsIgnoreCase(wt);
-//                if(withJKS) {
-//                    if(trans.getUserPrincipal() instanceof BasicPrincipal) {
+//                if (withJKS) {
+//                    if (trans.getUserPrincipal() instanceof BasicPrincipal) {
 //                        char[] cap = new String(((BasicPrincipal)trans.getUserPrincipal()).getCred()).toCharArray();
 //                        KeyStore ks = keystore(trans, rcr.value, ca.getTrustChain(), trans.user(), cap);
 //                        zos.putNextEntry(new ZipEntry(trans.user()+".jks"));
@@ -337,7 +337,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 //                ps.println("echo \"Deploying to `pwd`\"");
 //                ps.println("jar -xvf $THE_PWD/$1 " + trans.user());
 //                ps.println("chmod 600 " + trans.user() + ".key");
-//                if(withJKS) {
+//                if (withJKS) {
 //                    ps.println("chmod 600 " + trans.user() + ".jks");
 //                }
 //                ps.println("cd $THE_PWD");
@@ -362,7 +362,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 //        // Get the Cert(s)... Might include Trust store
 //        List<String> lcerts = new ArrayList<>();
 //        lcerts.add(cr.asCertString());
-//        for(String s : trustChain) {
+//        for (String s : trustChain) {
 //            lcerts.add(s);
 //        }
 //        
@@ -377,7 +377,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
 //        jks.setEntry(name, pkEntry, protParam);
 //        
 //        int i=0;
-//        for(X509Certificate x509 : certs) {
+//        for (X509Certificate x509 : certs) {
 //            jks.setCertificateEntry("cert_"+ ++i, x509);
 //        }
 //        return jks;
@@ -391,7 +391,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             try {
                 Data<REQ> rd = certRenewDF.newData().load(req.getInputStream());
                 request = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,RENEW_CERT);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
@@ -427,7 +427,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             try {
                 Data<REQ> rd = certDropDF.newData().load(req.getInputStream());
                 request = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,DROP_CERT);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
@@ -485,7 +485,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             try {
                 Data<ARTIFACTS> rd = artiDF.newData().load(req.getInputStream());
                 arti = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,CREATE_ARTIFACTS);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
@@ -509,23 +509,23 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             String ns = req.getParameter("ns");
             
             Result<ARTIFACTS> ra;
-            if( machine !=null && mechid == null) {
+            if ( machine !=null && mechid == null) {
                 ra = mapper.fromArtifacts(service.readArtifactsByMachine(trans, machine));
-            } else if(mechid!=null && machine==null) {
+            } else if (mechid!=null && machine==null) {
                 ra = mapper.fromArtifacts(service.readArtifactsByMechID(trans, mechid));
-            } else if(mechid!=null && machine!=null) {
+            } else if (mechid!=null && machine!=null) {
                 ArtiDAO.Data add = new ArtiDAO.Data();
                 add.mechid = mechid;
                 add.machine = machine;
                 add.ns = ns;
                 ra = mapper.fromArtifacts(service.readArtifacts(trans,add));
-            } else if(ns!=null) {
+            } else if (ns!=null) {
                 ra = mapper.fromArtifacts(service.readArtifactsByNs(trans, ns));
             } else {
                 ra = Result.err(Status.ERR_BadData,"Invalid request inputs");
             }
             
-            if(ra.isOK()) {
+            if (ra.isOK()) {
                 RosettaData<ARTIFACTS> data = artiDF.newData(trans).load(ra.value);
                 data.to(resp.getOutputStream());
                 setContentType(resp,artiDF.getOutType());
@@ -550,7 +550,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             add.mechid = mechid;
             add.machine = machine;
             Result<ARTIFACTS> ra = mapper.fromArtifacts(service.readArtifacts(trans,add));
-            if(ra.isOK()) {
+            if (ra.isOK()) {
                 RosettaData<ARTIFACTS> data = artiDF.newData(trans).load(ra.value);
                 data.to(resp.getOutputStream());
                 setContentType(resp,artiDF.getOutType());
@@ -575,7 +575,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             try {
                 Data<ARTIFACTS> rd = artiDF.newData().load(req.getInputStream());
                 arti = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,UPDATE_ARTIFACTS);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
@@ -597,7 +597,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             try {
                 Data<ARTIFACTS> rd = artiDF.newData().load(req.getInputStream());
                 arti = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,DELETE_ARTIFACTS);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }

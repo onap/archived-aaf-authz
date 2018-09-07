@@ -54,10 +54,10 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
         this.env = env;
         serviceMetric = new Metric();
         serviceMetric.buckets = new float[BUCKETSIZE];
-        if(transIDslot==null) {
+        if (transIDslot==null) {
             transIDslot = env.slot(TRANS_ID_SLOT);
         }
-        if(specialLogSlot==null) {
+        if (specialLogSlot==null) {
             specialLogSlot = env.slot(SPECIAL_LOG_SLOT);
         }
     }
@@ -89,7 +89,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
         Boolean b = trans.get(specialLogSlot, false);
         LogTarget lt = b?trans.warn():trans.info();
         
-        if(lt.isLoggable()) {
+        if (lt.isLoggable()) {
             // Transaction is done, now post full Audit Trail
             StringBuilder sb = new StringBuilder("AuditTrail\n");
             // We'll grabAct sub-metrics for Remote Calls and JSON
@@ -98,12 +98,12 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
 
             // Add current Metrics to total metrics
             serviceMetric.total+= m.total;
-            for(int i=0;i<serviceMetric.buckets.length;++i) {
+            for (int i=0;i<serviceMetric.buckets.length;++i) {
                 serviceMetric.buckets[i]+=m.buckets[i];
             }
             
             Long tsi;
-            if((tsi=trans.get(transIDslot, null))!=null) {
+            if ((tsi=trans.get(transIDslot, null))!=null) {
                 sb.append("  TraceID=");
                 sb.append(Long.toHexString(tsi));
                 sb.append('\n');
@@ -123,24 +123,24 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             Metric m = trans.auditTrail(lt,1, content, Env.REMOTE,Env.JSON);
             // Add current Metrics to total metrics
             serviceMetric.total+= m.total;
-            for(int i=0;i<serviceMetric.buckets.length;++i) {
+            for (int i=0;i<serviceMetric.buckets.length;++i) {
                 serviceMetric.buckets[i]+=m.buckets[i];
             }
             
             StringBuilder sb = new StringBuilder();
             sb.append("user=");
             Principal p = trans.getUserPrincipal();
-            if(p==null) {
+            if (p==null) {
                 sb.append("n/a");
             } else {
                 sb.append(p.getName());
-                if(p instanceof TrustPrincipal) {
+                if (p instanceof TrustPrincipal) {
                     sb.append('(');
                     sb.append(((TrustPrincipal)p).personalName()); // UserChain
                     sb.append(')');
                 } else { 
                     sb.append('[');
-                    if(p instanceof TaggedPrincipal) {
+                    if (p instanceof TaggedPrincipal) {
                         sb.append(((TaggedPrincipal)p).tag());
                     } else {
                         sb.append(p.getClass().getSimpleName());
@@ -154,7 +154,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             sb.append(trans.port());
 //            Current code won't ever get here... Always does a Full Audit Trail
 //            Long tsi;
-//            if((tsi=trans.get(transIDslot, null))!=null) {
+//            if ((tsi=trans.get(transIDslot, null))!=null) {
 //                sb.append(",TraceID=");
 //                sb.append(Long.toHexString(tsi));
 //            }
@@ -165,10 +165,10 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             sb.append(",path=");
             sb.append(trans.path());
 
-            if(content.length()>0) {
+            if (content.length()>0) {
                 sb.append(",msg=\"");
                 int start = content.lastIndexOf(",msg=\"");
-                if(start>=0) {
+                if (start>=0) {
                     sb.append(content,start+6,content.length()-1);
                 } else {
                     sb.append(content);

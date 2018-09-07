@@ -93,7 +93,7 @@ public class JU_X509Principal {
         try {
             x509 = new X509Principal(cert, cred, null);
             fail("Should have thrown an Exception");
-        } catch(IOException e) {
+        } catch (IOException e) {
             assertThat(e.getMessage(), is("X509 does not have Identity as CN"));
         }
 
@@ -102,7 +102,7 @@ public class JU_X509Principal {
         try {
             x509 = new X509Principal(cert, cred, null);
             fail("Should have thrown an Exception");
-        } catch(IOException e) {
+        } catch (IOException e) {
             assertThat(e.getMessage(), is("X509 does not have Identity as CN"));
         }
 
@@ -111,7 +111,7 @@ public class JU_X509Principal {
         try {
             x509 = new X509Principal(cert, cred, null);
             fail("Should have thrown an Exception");
-        } catch(IOException e) {
+        } catch (IOException e) {
             assertThat(e.getMessage(), is("X509 does not have Identity as CN"));
         }
 

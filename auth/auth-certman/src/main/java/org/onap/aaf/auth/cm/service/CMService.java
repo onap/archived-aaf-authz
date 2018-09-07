@@ -164,7 +164,7 @@ public class CMService {
 
                     } else {
                         for (String cn : req.value.fqdns) {
-                            if(!ignoreIPs) {
+                            if (!ignoreIPs) {
                                 try {
                                     InetAddress[] ias = InetAddress.getAllByName(cn);
                                     Set<String> potentialSanNames = new HashSet<>();
@@ -186,7 +186,7 @@ public class CMService {
                 }
 
                 final String host;
-                if(ignoreIPs) {
+                if (ignoreIPs) {
                     host = req.value.fqdns.get(0);
                 } else if (primary == null) {
                     return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)", trans.ip());
@@ -271,7 +271,7 @@ public class CMService {
                 // Make sure Primary is the first in fqdns
                 if (fqdns.size() > 1) {
                     for (int i = 0; i < fqdns.size(); ++i) {
-                        if(primary==null) {
+                        if (primary==null) {
                             trans.error().log("CMService var primary is null");
                         } else {
                             String fg = fqdns.get(i);

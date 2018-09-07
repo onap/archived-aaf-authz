@@ -51,7 +51,7 @@ public abstract class JettyServletServer implements Servlet {
         int maxPoolSize = 10;
         int keepAliveTime  = 3000;
         String hostname = access.getProperty(Config.HOSTNAME, null);
-        if(hostname==null) {
+        if (hostname==null) {
             hostname = Inet4Address.getLocalHost().getHostName();
         }
         
@@ -62,7 +62,7 @@ public abstract class JettyServletServer implements Servlet {
         Server server = new Server(pool);            
 
         String protocol;
-        if(access.getProperty(Config.CADI_KEYSTORE_PASSWORD,null)==null) {
+        if (access.getProperty(Config.CADI_KEYSTORE_PASSWORD,null)==null) {
             ServerConnector conn = new ServerConnector(server);
             conn.setHost(hostname);
             conn.setPort(port);

@@ -91,13 +91,13 @@ public class API_Creds {
                 } else if (p instanceof X509Principal) {
                     // have to check Basic Auth here, because it might be CSP.
                     String authz = req.getHeader("Authorization");
-                    if(authz.startsWith("Basic ")) {
+                    if (authz.startsWith("Basic ")) {
                         BasicHttpTaf bht = ((X509Principal)p).getBasicHttpTaf(); 
-                        if(bht!=null) {
+                        if (bht!=null) {
                             BasicPrincipal bp = new BasicPrincipal(authz,"");
                             CredVal cv = bht.getCredVal(bp.getDomain());
-                            if(cv!=null) {
-                                if(cv.validate(bp.getName(), Type.PASSWORD, bp.getCred(), null) ) {
+                            if (cv!=null) {
+                                if (cv.validate(bp.getName(), Type.PASSWORD, bp.getCred(), null) ) {
                                     resp.setStatus(HttpStatus.OK_200);
                                 } else {
                                     resp.setStatus(HttpStatus.FORBIDDEN_403);
@@ -108,7 +108,7 @@ public class API_Creds {
                             int colon = decoded.indexOf(':');
                             TimeTaken tt = trans.start("Direct Validation", Env.REMOTE);
                             try {
-                                if(directAAFUserPass.validate(
+                                if (directAAFUserPass.validate(
                                         decoded.substring(0,colon), 
                                         CredVal.Type.PASSWORD , 
                                         decoded.substring(colon+1).getBytes(),trans)) {
@@ -124,7 +124,7 @@ public class API_Creds {
                             }
                         }
                     }
-                } else if(p == null) {
+                } else if (p == null) {
                     trans.error().log("Transaction not Authenticated... no Principal");
                     resp.setStatus(HttpStatus.FORBIDDEN_403);
                 } else {
@@ -146,7 +146,7 @@ public class API_Creds {
                     HttpServletResponse resp) throws Exception {
                 
                 Result<Date> r = context.doesCredentialMatch(trans, req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     // For Security, we don't give any info out on why failed, other than forbidden
@@ -167,7 +167,7 @@ public class API_Creds {
                     HttpServletResponse resp) throws Exception {
                 
                 Result<Void> r = context.getCertInfoByID(trans, req, resp, pathParam(req,":id") );
-                if(r.isOK()) {
+                if (r.isOK()) {
                         resp.setStatus(HttpStatus.OK_200); 
                 } else {
                         // For Security, we don't give any info out on why failed, other than forbidden
@@ -195,7 +195,7 @@ public class API_Creds {
         authzAPI.route(POST,"/authn/cred",API.CRED_REQ,new Code(facade,"Add a New ID/Credential", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {                Result<Void> r = context.createUserCred(trans, req);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.CREATED_201);
                 } else {
                     context.error(trans,resp,r);
@@ -214,7 +214,7 @@ public class API_Creds {
                     HttpServletResponse resp) throws Exception {
                 
                 Result<Void> r = context.getCredsByNS(trans, resp, pathParam(req, "ns"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200); 
                 } else {
                     context.error(trans,resp,r);
@@ -234,7 +234,7 @@ public class API_Creds {
                     HttpServletResponse resp) throws Exception {
                 
                 Result<Void> r = context.getCredsByID(trans, resp, pathParam(req, "id"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200); 
                 } else {
                     context.error(trans,resp,r);
@@ -252,7 +252,7 @@ public class API_Creds {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 
                 Result<Void> r = context.changeUserCred(trans, req);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -273,7 +273,7 @@ public class API_Creds {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.extendUserCred(trans, req, pathParam(req, "days"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -288,7 +288,7 @@ public class API_Creds {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.deleteUserCred(trans, req);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);

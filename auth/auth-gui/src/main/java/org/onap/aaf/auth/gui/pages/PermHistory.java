@@ -171,7 +171,7 @@ public class PermHistory extends Page {
             final String oName = trans.get(sType,null);
             final String oDates = trans.get(sDates,null);
             
-            if(oName==null) {
+            if (oName==null) {
                 return Cells.EMPTY;
             }
             

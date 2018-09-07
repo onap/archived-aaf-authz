@@ -59,7 +59,7 @@ public class ListActivity extends Cmd {
                         getDF(History.class)
                         );
     
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     activity(fp.value, HEADER + " [ " + ns + " ]");
                 } else {
                     error(fp);

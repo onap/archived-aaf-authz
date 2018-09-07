@@ -56,10 +56,10 @@ public class NSCompare extends RosettaCompare<NsRequest>  {
     public void compare(NsRequest t1, NsRequest t2) {
         assertEquals(t1.getName(),t2.getName());
         assertEquals(t1.getDescription(),t2.getDescription());
-        for(String s : t1.getAdmin()) {
+        for (String s : t1.getAdmin()) {
             assertTrue(t2.getAdmin().contains(s));
         }
-        for(String s : t2.getAdmin()) {
+        for (String s : t2.getAdmin()) {
             assertTrue(t1.getAdmin().contains(s));
         }
         assertEquals(t1.getType(),t2.getType());

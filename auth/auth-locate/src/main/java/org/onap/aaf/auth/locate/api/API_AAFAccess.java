@@ -78,7 +78,7 @@ public class API_AAFAccess {
                 try {
                     final String accept = req.getHeader("ACCEPT");
                     final String user = pathParam(req,":user");
-                    if(!user.contains("@")) {
+                    if (!user.contains("@")) {
                         context.error(trans,resp,Result.ERR_BadData,"User [%s] must be fully qualified with domain",user);
                         return;
                     }
@@ -91,14 +91,14 @@ public class API_AAFAccess {
                         tt2.done();
                     }
                     
-                    if(d==null || d.data.isEmpty()) {
+                    if (d==null || d.data.isEmpty()) {
                         tt2 = trans.start("AAF Service Call",Env.REMOTE);
                         try {
                             gwAPI.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
                                 @Override
                                 public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                                     Future<String> fp = client.read("/authz/perms/user/"+user,accept);
-                                    if(fp.get(5000)) {
+                                    if (fp.get(5000)) {
                                         gwAPI.cacheUser.put(key, new Dated(new User(fp.code(),fp.body()),gwAPI.expireIn));
                                         resp.setStatus(HttpStatus.OK_200);
                                         ServletOutputStream sos;
@@ -159,7 +159,7 @@ public class API_AAFAccess {
                                 pathParam(req,":instance"),
                                 pathParam(req,":action"))));
                     resp.setStatus(HttpStatus.OK_200);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     context.error(trans, resp, Result.ERR_General, e.getMessage());
                 }
             }
@@ -258,14 +258,14 @@ public class API_AAFAccess {
 
     private static void redirect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, LocateFacade context, Locator<URI> loc, String path) throws IOException {
         try {
-            if(loc.hasItems()) {
+            if (loc.hasItems()) {
                 Item item = loc.best();
                 URI uri = loc.get(item);
                 StringBuilder redirectURL = new StringBuilder(uri.toString()); 
                 redirectURL.append('/');
                 redirectURL.append(path);
                 String str = req.getQueryString();
-                if(str!=null) {
+                if (str!=null) {
                     redirectURL.append('?');
                     redirectURL.append(str);
                 }

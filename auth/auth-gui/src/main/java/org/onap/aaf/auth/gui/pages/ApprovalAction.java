@@ -63,16 +63,16 @@ public class ApprovalAction extends Page {
                                 lastPage += "?user="+user;
                             }
                             
-                            if(appr==null) {
+                            if (appr==null) {
                                 hgen.p("No Approvals have been selected.");
                             } else {
                                 Approval app;
                                 final Approvals apps = new Approvals();
                                 int count = 0;
-                                for(String a : appr) {
-                                    if(a!=null) {
+                                for (String a : appr) {
+                                    if (a!=null) {
                                         int idx = a.indexOf('|');
-                                        if(idx>=0) {
+                                        if (idx>=0) {
                                             app = new Approval();
                                             app.setStatus(a.substring(0,idx));
                                             app.setTicket(a.substring(++idx));
@@ -82,7 +82,7 @@ public class ApprovalAction extends Page {
                                         }
                                     }
                                 }
-                                if(apps.getApprovals().isEmpty()) {
+                                if (apps.getApprovals().isEmpty()) {
                                     hgen.p("No Approvals have been sent.");
                                 } else {
                                     TimeTaken tt = trans.start("AAF Update Approvals",Env.REMOTE);
@@ -93,7 +93,7 @@ public class ApprovalAction extends Page {
                                             public Boolean code(Rcli<?> client) throws APIException, CadiException  {
                                                 boolean fail2 = true;
                                                 Future<Approvals> fa = client.update("/authz/approval",gui.getDF(Approvals.class),apps);
-                                                if(fa.get(AAF_GUI.TIMEOUT)) {
+                                                if (fa.get(AAF_GUI.TIMEOUT)) {
                                                     // Do Remote Call
                                                     fail2 = false;
                                                     hgen.p(total + (total==1?" Approval has":" Approvals have") + " been Saved");

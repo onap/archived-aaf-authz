@@ -149,10 +149,10 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     
     private void init(AuthzTrans trans) throws APIException, IOException {
         // Set up sub-DAOs
-        if(historyDAO==null) {
+        if (historyDAO==null) {
         historyDAO = new HistoryDAO(trans, this);
     }
-        if(infoDAO==null) {
+        if (infoDAO==null) {
         infoDAO = new CacheInfoDAO(trans,this);
     }
 
@@ -205,11 +205,11 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             os.writeInt(data.type);
             writeString(os,data.description);
             writeString(os,data.parent);
-            if(data.attrib==null) {
+            if (data.attrib==null) {
                 os.writeInt(-1);
             } else {
                 os.writeInt(data.attrib.size());
-                for(Entry<String, String> es : data.attrib(false).entrySet()) {
+                for (Entry<String, String> es : data.attrib(false).entrySet()) {
                     writeString(os,es.getKey());
                     writeString(os,es.getValue());
                 }
@@ -227,9 +227,9 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             data.description = readString(is,buff);
             data.parent = readString(is,buff);
             int count = is.readInt();
-            if(count>0) {
+            if (count>0) {
                 Map<String, String> da = data.attrib(true);
-                for(int i=0;i<count;++i) {
+                for (int i=0;i<count;++i) {
                     da.put(readString(is,buff), readString(is,buff));
                 }
             }
@@ -241,7 +241,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     public Result<Data> create(AuthzTrans trans, Data data) {
         String ns = data.name;
         // Ensure Parent is set
-        if(data.parent==null) {
+        if (data.parent==null) {
             return Result.err(Result.ERR_BadData, "Need parent for %s", ns);
         }
 
@@ -254,7 +254,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             getSession(trans).execute(stmt.toString());
 //// TEST CODE for Exception                
 //            boolean force = true; 
-//            if(force) {
+//            if (force) {
 //                throw new com.datastax.driver.core.exceptions.NoHostAvailableException(new HashMap<>());
 ////                throw new com.datastax.driver.core.exceptions.AuthenticationException(new InetSocketAddress(9999),"Sample Message");
 //            }
@@ -272,7 +272,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     public Result<Void> update(AuthzTrans trans, Data data) {
         String ns = data.name;
         // Ensure Parent is set
-        if(data.parent==null) {
+        if (data.parent==null) {
             return Result.err(Result.ERR_BadData, "Need parent for %s", ns);
         }
 
@@ -281,26 +281,26 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         try {
             Map<String, String> localAttr = data.attrib;
             Result<Map<String, String>> rremoteAttr = readAttribByNS(trans,ns);
-            if(rremoteAttr.notOK()) {
+            if (rremoteAttr.notOK()) {
                 return Result.err(rremoteAttr);
             }
             // update Attributes
             String str;
-            for(Entry<String, String> es : localAttr.entrySet()) {
+            for (Entry<String, String> es : localAttr.entrySet()) {
                 str = rremoteAttr.value.get(es.getKey());
-                if(str==null || !str.equals(es.getValue())) {
+                if (str==null || !str.equals(es.getValue())) {
                     attribUpdateStmt(stmt, ns, es.getKey(),es.getValue());
                 }
             }
             
             // No point in deleting... insert overwrites...
-//            for(Entry<String, String> es : remoteAttr.entrySet()) {
+//            for (Entry<String, String> es : remoteAttr.entrySet()) {
 //                str = localAttr.get(es.getKey());
-//                if(str==null || !str.equals(es.getValue())) {
+//                if (str==null || !str.equals(es.getValue())) {
 //                    attribDeleteStmt(stmt, ns, es.getKey());
 //                }
 //            }
-            if(stmt.length()>BEGIN_BATCH.length()) {
+            if (stmt.length()>BEGIN_BATCH.length()) {
                 stmt.append(APPLY_BATCH);
                 getSession(trans).execute(stmt.toString());
             }
@@ -320,11 +320,11 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     public Result<List<Data>> read(AuthzTrans trans, Data data) {
         Result<List<Data>> rld = super.read(trans, data);
         
-        if(rld.isOKhasData()) {
-            for(Data d : rld.value) {
+        if (rld.isOKhasData()) {
+            for (Data d : rld.value) {
                 // Note: Map is null at this point, save time/mem by assignment
                 Result<Map<String, String>> rabn = readAttribByNS(trans,d.name);
-                if(rabn.isOK()) {
+                if (rabn.isOK()) {
                     d.attrib = rabn.value;
                 } else {
                     return Result.err(rabn);
@@ -341,11 +341,11 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     public Result<List<Data>> read(AuthzTrans trans, Object... key) {
         Result<List<Data>> rld = super.read(trans, key);
 
-        if(rld.isOKhasData()) {
-            for(Data d : rld.value) {
+        if (rld.isOKhasData()) {
+            for (Data d : rld.value) {
                 // Note: Map is null at this point, save time/mem by assignment
                 Result<Map<String, String>> rabn = readAttribByNS(trans,d.name);
-                if(rabn.isOK()) {
+                if (rabn.isOK()) {
                     d.attrib = rabn.value;
                 } else {
                     return Result.err(rabn);
@@ -385,7 +385,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
                     + ns
                     + "';");
             
-            for(Iterator<Row> iter = rs.iterator();iter.hasNext(); ) {
+            for (Iterator<Row> iter = rs.iterator();iter.hasNext(); ) {
                 Row r = iter.next();
                 map.put(r.getString(0), r.getString(1));
             }
@@ -408,7 +408,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
                 + key
                 + "';");
         
-            for(Iterator<Row> iter = rs.iterator();iter.hasNext(); ) {
+            for (Iterator<Row> iter = rs.iterator();iter.hasNext(); ) {
                 Row r = iter.next();
                 set.add(r.getString(0));
             }
@@ -489,7 +489,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
 
     private void attribInsertStmts(StringBuilder stmt, Data data) {
         // INSERT new Attrib
-        for(Entry<String,String> es : data.attrib(false).entrySet() ) {
+        for (Entry<String,String> es : data.attrib(false).entrySet() ) {
             stmt.append("  ");
             attribInsertStmt(stmt,data.name,es.getKey(),es.getValue());
         }
@@ -541,7 +541,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         hd.target = TABLE;
         hd.subject = subject ? override[1] : data.name;
         hd.memo = memo ? override[0] : (data.name + " was "  + modified.name() + 'd' );
-        if(modified==CRUD.delete) {
+        if (modified==CRUD.delete) {
             try {
                 hd.reconstruct = data.bytify();
             } catch (IOException e) {
@@ -549,10 +549,10 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             }
         }
 
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
         trans.error().log("Cannot log to History");
     }
-        if(infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
+        if (infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
         trans.error().log("Cannot touch CacheInfo");
     }
     }

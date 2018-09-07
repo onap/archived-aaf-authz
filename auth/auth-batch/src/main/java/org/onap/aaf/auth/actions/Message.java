@@ -42,8 +42,8 @@ public class Message {
     }
 
     public void msg(StringBuilder sb, String lineIndent) {
-        if(!lines.isEmpty()) {
-            for(String line : lines) {
+        if (!lines.isEmpty()) {
+            for (String line : lines) {
                 sb.append(lineIndent);
                 sb.append(line);
                 sb.append('\n');

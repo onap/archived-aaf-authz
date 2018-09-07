@@ -45,16 +45,16 @@ public class URPunt extends ActionPuntDAO<UserRole,Void,String> {
     }
 
     public Result<Void> exec(AuthzTrans trans, UserRole ur, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Update User",ur.user(),"and Role", ur.role(), text);
             return Result.ok();
         } else {
             Result<List<Data>> read = q.userRoleDAO.read(trans, ur.user(), ur.role());
-            if(read.isOK()) {
-                for(UserRoleDAO.Data data : read.value) {
+            if (read.isOK()) {
+                for (UserRoleDAO.Data data : read.value) {
                     Date from = data.expires;
                     data.expires = puntDate(from);
-                    if(data.expires.compareTo(from)<=0) {
+                    if (data.expires.compareTo(from)<=0) {
                         trans.debug().printf("Error: %s is same or before %s", Chrono.dateOnlyStamp(data.expires), Chrono.dateOnlyStamp(from));
                     } else {
                         trans.info().log("Updating User",ur.user(),"and Role", ur.role(), "from",Chrono.dateOnlyStamp(from),"to",Chrono.dateOnlyStamp(data.expires), text);

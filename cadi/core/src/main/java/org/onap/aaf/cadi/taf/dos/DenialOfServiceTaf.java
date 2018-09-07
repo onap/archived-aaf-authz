@@ -62,9 +62,9 @@ public class DenialOfServiceTaf implements HttpTaf {
     public DenialOfServiceTaf(Access access) throws CadiException {
         puntNotDenied = new PuntTafResp("DenialOfServiceTaf", "This Transaction is not denied");
         this.access = access;
-        if(dosIP==null || dosID == null) {
+        if (dosIP==null || dosID == null) {
             String dirStr;
-            if((dirStr = access.getProperty(Config.AAF_DATA_DIR, null))!=null) {
+            if ((dirStr = access.getProperty(Config.AAF_DATA_DIR, null))!=null) {
                 dosIP = new File(dirStr+"/dosIP");
                 readIP();
                 dosID = new File(dirStr+"/dosID");
@@ -76,10 +76,10 @@ public class DenialOfServiceTaf implements HttpTaf {
     @Override
     public TafResp validate(LifeForm reading, HttpServletRequest req, final HttpServletResponse resp) {
         // Performance, when not needed
-        if(deniedIP != null) {
+        if (deniedIP != null) {
             String ip;
             Counter c = deniedIP.get(ip=req.getRemoteAddr());
-            if(c!=null) {
+            if (c!=null) {
                 c.inc();
                 return respDenyIP(access,ip);
             }
@@ -100,7 +100,7 @@ public class DenialOfServiceTaf implements HttpTaf {
      *  for use in Other TAFs, before they attempt backend validation of 
      */
     public static Counter isDeniedID(String identity) {
-        if(deniedID!=null) {
+        if (deniedID!=null) {
             return deniedID.get(identity);
         }
         return null;
@@ -110,7 +110,7 @@ public class DenialOfServiceTaf implements HttpTaf {
      *  
      */
     public static Counter isDeniedIP(String ipvX) {
-        if(deniedIP!=null) {
+        if (deniedIP!=null) {
             return deniedIP.get(ipvX);
         }
         return null;
@@ -125,24 +125,24 @@ public class DenialOfServiceTaf implements HttpTaf {
      */
     public static synchronized boolean denyIP(String ip) {
         boolean rv = false;
-        if(deniedIP==null) {
+        if (deniedIP==null) {
             deniedIP = new HashMap<>();
             deniedIP.put(ip, new Counter(ip)); // Noted duplicated for minimum time spent
             rv= true;
-        } else if(deniedIP.get(ip)==null) {
+        } else if (deniedIP.get(ip)==null) {
             deniedIP.put(ip, new Counter(ip));
             rv = true;
         }
-        if(rv) {
+        if (rv) {
             writeIP();
         }
         return rv;
     }
     
     private static void writeIP() {
-        if(dosIP!=null && deniedIP!=null) {
-            if(deniedIP.isEmpty()) {
-                if(dosIP.exists()) {
+        if (dosIP!=null && deniedIP!=null) {
+            if (deniedIP.isEmpty()) {
+                if (dosIP.exists()) {
                     dosIP.delete();
                 }
             } else {
@@ -150,7 +150,7 @@ public class DenialOfServiceTaf implements HttpTaf {
                 try {
                     fos = new PrintStream(new FileOutputStream(dosIP,false));
                     try {
-                        for(String ip: deniedIP.keySet()) {
+                        for (String ip: deniedIP.keySet()) {
                             fos.println(ip);
                         }
                     } finally {
@@ -164,17 +164,17 @@ public class DenialOfServiceTaf implements HttpTaf {
     }
     
     private static void readIP() {
-        if(dosIP!=null && dosIP.exists()) {
+        if (dosIP!=null && dosIP.exists()) {
             BufferedReader br;
             try {
                 br = new BufferedReader(new FileReader(dosIP));
                 try {
-                    if(deniedIP==null) {
+                    if (deniedIP==null) {
                         deniedIP=new HashMap<>();
                     }
 
                     String line;
-                    while((line=br.readLine())!=null) {
+                    while ((line=br.readLine())!=null) {
                         deniedIP.put(line, new Counter(line));
                     }
                 } finally {
@@ -195,9 +195,9 @@ public class DenialOfServiceTaf implements HttpTaf {
      * @return
      */
     public static synchronized boolean removeDenyIP(String ip) {
-        if(deniedIP!=null && deniedIP.remove(ip)!=null) {
+        if (deniedIP!=null && deniedIP.remove(ip)!=null) {
             writeIP();
-            if(deniedIP.isEmpty()) {
+            if (deniedIP.isEmpty()) {
                 deniedIP=null;
             }
             return true;
@@ -214,15 +214,15 @@ public class DenialOfServiceTaf implements HttpTaf {
      */
     public static synchronized boolean denyID(String id) {
         boolean rv = false;
-        if(deniedID==null) {
+        if (deniedID==null) {
             deniedID = new HashMap<>();
             deniedID.put(id, new Counter(id)); // Noted duplicated for minimum time spent
             rv = true;
-        } else if(deniedID.get(id)==null) {
+        } else if (deniedID.get(id)==null) {
             deniedID.put(id, new Counter(id));
             rv = true;
         }
-        if(rv) {
+        if (rv) {
             writeID();
         }
         return rv;
@@ -230,9 +230,9 @@ public class DenialOfServiceTaf implements HttpTaf {
     }
 
     private static void writeID() {
-        if(dosID!=null && deniedID!=null) {
-            if(deniedID.isEmpty()) {
-                if(dosID.exists()) {
+        if (dosID!=null && deniedID!=null) {
+            if (deniedID.isEmpty()) {
+                if (dosID.exists()) {
                     dosID.delete();
                 }
             } else {
@@ -240,7 +240,7 @@ public class DenialOfServiceTaf implements HttpTaf {
                 try {
                     fos = new PrintStream(new FileOutputStream(dosID,false));
                     try {
-                        for(String ip: deniedID.keySet()) {
+                        for (String ip: deniedID.keySet()) {
                             fos.println(ip);
                         }
                     } finally {
@@ -254,17 +254,17 @@ public class DenialOfServiceTaf implements HttpTaf {
     }
 
     private static void readID() {
-        if(dosID!=null && dosID.exists()) {
+        if (dosID!=null && dosID.exists()) {
             BufferedReader br;
             try {
                 br = new BufferedReader(new FileReader(dosID));
                 try {
-                    if(deniedID==null) {
+                    if (deniedID==null) {
                         deniedID=new HashMap<>();
                     }
                     
                     String line;
-                    while((line=br.readLine())!=null) {
+                    while ((line=br.readLine())!=null) {
                         deniedID.put(line, new Counter(line));
                     }
                 } finally {
@@ -284,9 +284,9 @@ public class DenialOfServiceTaf implements HttpTaf {
      * @return
      */
     public static synchronized boolean removeDenyID(String id) {
-        if(deniedID!=null && deniedID.remove(id)!=null) { 
+        if (deniedID!=null && deniedID.remove(id)!=null) { 
             writeID();
-            if(deniedID.isEmpty()) {
+            if (deniedID.isEmpty()) {
                 deniedID=null;
             }
 
@@ -297,16 +297,16 @@ public class DenialOfServiceTaf implements HttpTaf {
     
     public List<String> report() {
         int initSize = 0;
-        if(deniedIP!=null)initSize+=deniedIP.size();
-        if(deniedID!=null)initSize+=deniedID.size();
+        if (deniedIP!=null)initSize+=deniedIP.size();
+        if (deniedID!=null)initSize+=deniedID.size();
         ArrayList<String> al = new ArrayList<>(initSize);
-        if(deniedID!=null) {
-            for(Counter c : deniedID.values()) {
+        if (deniedID!=null) {
+            for (Counter c : deniedID.values()) {
                 al.add(c.toString());
             }
         }
-        if(deniedIP!=null) {
-            for(Counter c : deniedIP.values()) {
+        if (deniedIP!=null) {
+            for (Counter c : deniedIP.values()) {
                 al.add(c.toString());
             }
         }
@@ -344,13 +344,13 @@ public class DenialOfServiceTaf implements HttpTaf {
         private synchronized void inc() {
             ++count;
             last = System.currentTimeMillis();
-            if(first==null) {
+            if (first==null) {
                 first = new Date(last);
             }
         }
         
         public String toString() {
-            if(count==0) 
+            if (count==0) 
                 return name + " is on the denied list, but has not attempted Access"; 
             else 
                 return 

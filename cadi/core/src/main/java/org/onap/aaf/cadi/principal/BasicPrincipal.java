@@ -45,8 +45,8 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
         created = System.currentTimeMillis();
         ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes());
         // Read past "Basic ", ensuring it starts with it.
-        for(int i=0;i<basic.length;++i) {
-            if(bis.read()!=basic[i]) {
+        for (int i=0;i<basic.length;++i) {
+            if (bis.read()!=basic[i]) {
                 name=content;
                 cred = null;
                 return;
@@ -54,10 +54,10 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
         }
         BasicOS bos = new BasicOS(content.length());
         Symm.base64.decode(bis,bos); // note: writes directly to name until ':'
-        if(name==null) throw new IOException("Invalid Coding");
+        if (name==null) throw new IOException("Invalid Coding");
         else cred = bos.toCred();
         int at;
-        if((at=name.indexOf('@'))>0) {
+        if ((at=name.indexOf('@'))>0) {
             domain=name.substring(at+1);
             shortName=name.substring(0, at);
         } else {
@@ -83,7 +83,7 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
 
         @Override
         public void write(int b) throws IOException {
-            if(b==':' && first) {
+            if (b==':' && first) {
                 first = false;
                 name = new String(baos.toByteArray());
                 baos.reset(); // 

@@ -117,10 +117,10 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         trans.checkpoint(namespace.name, Env.ALWAYS);
         
         NsType nt = NsType.fromString(from.getType());
-        if(nt.equals(NsType.UNKNOWN)) {
+        if (nt.equals(NsType.UNKNOWN)) {
             String ns = namespace.name;
             int count = 0;
-            for(int i=ns.indexOf('.');
+            for (int i=ns.indexOf('.');
                     i>=0;
                     i=ns.indexOf('.',i+1)) {
                 ++count;
@@ -141,10 +141,10 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         List<Ns> nss = to.getNs();
         Ns ns = new Ns();
         ns.setName(from.name);
-        if(from.admin!=null)ns.getAdmin().addAll(from.admin);
-        if(from.owner!=null)ns.getResponsible().addAll(from.owner);
-        if(from.attrib!=null) {
-            for(Pair<String,String> attrib : from.attrib) {
+        if (from.admin!=null)ns.getAdmin().addAll(from.admin);
+        if (from.owner!=null)ns.getResponsible().addAll(from.owner);
+        if (from.attrib!=null) {
+            for (Pair<String,String> attrib : from.attrib) {
                 Ns.Attrib toAttrib = new Ns.Attrib();
                 toAttrib.setKey(attrib.x);
                 toAttrib.setValue(attrib.y);
@@ -163,18 +163,18 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<Nss> nss(AuthzTrans trans, Collection<Namespace> from, Nss to) {
         List<Ns> nss = to.getNs();
-        for(Namespace nd : from) {
+        for (Namespace nd : from) {
             Ns ns = new Ns();
             ns.setName(nd.name);
-            if(nd.admin!=null) {
+            if (nd.admin!=null) {
                 ns.getAdmin().addAll(nd.admin);
             }
-            if(nd.owner!=null) {
+            if (nd.owner!=null) {
                 ns.getResponsible().addAll(nd.owner);
             }
             ns.setDescription(nd.description);
-            if(nd.attrib!=null) {
-                for(Pair<String,String> attrib : nd.attrib) {
+            if (nd.attrib!=null) {
+                for (Pair<String,String> attrib : nd.attrib) {
                     Ns.Attrib toAttrib = new Ns.Attrib();
                     toAttrib.setKey(attrib.x);
                     toAttrib.setValue(attrib.y);
@@ -193,18 +193,18 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         final boolean addNS = trans.requested(REQD_TYPE.ns);
         TimeTaken tt = trans.start("Filter Perms before return", Env.SUB);
         try {
-            if(from!=null) {
+            if (from!=null) {
                 for (PermDAO.Data data : from) {
-                    if(!filter || q.mayUser(trans, trans.user(), data, Access.read).isOK()) {
+                    if (!filter || q.mayUser(trans, trans.user(), data, Access.read).isOK()) {
                         Perm perm = new Perm();
                         perm.setType(data.fullType());
                         perm.setInstance(data.instance);
                         perm.setAction(data.action);
                         perm.setDescription(data.description);
-                        if(addNS) {
+                        if (addNS) {
                             perm.setNs(data.ns);
                         }
-                        for(String role : data.roles(false)) {
+                        for (String role : data.roles(false)) {
                             perm.getRoles().add(role);
                         }
                         perms.add(perm);
@@ -242,21 +242,21 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         List<Perm> perms = to.getPerm();
         TimeTaken tt = trans.start("Filter Perms before return", Env.SUB);
         try {
-            if(from!=null) {
+            if (from!=null) {
                 boolean inNSS;
                 for (PermDAO.Data data : from) {
                     inNSS=false;
-                    for(int i=0;!inNSS && i<nss.length;++i) {
-                        if(nss[i].equals(data.ns)) {
+                    for (int i=0;!inNSS && i<nss.length;++i) {
+                        if (nss[i].equals(data.ns)) {
                             inNSS=true;
                         }
                     }
-                    if(inNSS && (!filter || q.mayUser(trans, trans.user(), data, Access.read).isOK())) {
+                    if (inNSS && (!filter || q.mayUser(trans, trans.user(), data, Access.read).isOK())) {
                         Perm perm = new Perm();
                         perm.setType(data.fullType());
                         perm.setInstance(data.instance);
                         perm.setAction(data.action);
-                        for(String role : data.roles(false)) {
+                        for (String role : data.roles(false)) {
                             perm.getRoles().add(role);
                         }
                         perm.setDescription(data.description);
@@ -296,7 +296,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         for (Perm p : perms.getPerm()) {
             Result<NsSplit> nss = q.deriveNsSplit(trans, p.getType());
             PermDAO.Data pd = new PermDAO.Data();
-            if(nss.isOK()) { 
+            if (nss.isOK()) { 
                 pd.ns=nss.value.ns;
                 pd.type = nss.value.name;
                 pd.instance = p.getInstance();
@@ -322,10 +322,10 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     public Result<PermDAO.Data> permFromRPRequest(AuthzTrans trans, Request req) {
         RolePermRequest from = (RolePermRequest)req;
         Pkey perm = from.getPerm();
-        if(perm==null)return Result.err(Status.ERR_NotFound, "Permission not found");
+        if (perm==null)return Result.err(Status.ERR_NotFound, "Permission not found");
         Result<NsSplit> nss = q.deriveNsSplit(trans, perm.getType());
         PermDAO.Data pd = new PermDAO.Data();
-        if(nss.isOK()) { 
+        if (nss.isOK()) { 
             pd.ns=nss.value.ns;
             pd.type = nss.value.name;
             pd.instance = from.getPerm().getInstance();
@@ -351,7 +351,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         RolePermRequest from = (RolePermRequest)req;
         Result<NsSplit> nss = q.deriveNsSplit(trans, from.getRole());
         RoleDAO.Data rd = new RoleDAO.Data();
-        if(nss.isOK()) { 
+        if (nss.isOK()) { 
             rd.ns = nss.value.ns;
             rd.name = nss.value.name;
             trans.checkpoint(rd.fullName(), Env.ALWAYS);
@@ -366,7 +366,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         PermRequest from = (PermRequest)req;
         Result<NsSplit> nss = q.deriveNsSplit(trans, from.getType());
         PermDAO.Data pd = new PermDAO.Data();
-        if(nss.isOK()) { 
+        if (nss.isOK()) { 
             pd.ns=nss.value.ns;
             pd.type = nss.value.name;
             pd.instance = from.getInstance();
@@ -396,7 +396,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     public Result<RoleDAO.Data> role(AuthzTrans trans, Request base) {
         RoleRequest from = (RoleRequest)base;
         Result<NsSplit> nss = q.deriveNsSplit(trans, from.getName());
-        if(nss.isOK()) {
+        if (nss.isOK()) {
             RoleDAO.Data to = new RoleDAO.Data();
             to.ns = nss.value.ns;
             to.name = nss.value.name;
@@ -415,18 +415,18 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<Roles> roles(AuthzTrans trans, List<RoleDAO.Data> from, Roles to, boolean filter) {
         final boolean needNS = trans.requested(REQD_TYPE.ns); 
-        for(RoleDAO.Data frole : from) {
+        for (RoleDAO.Data frole : from) {
             // Only Add Data to view if User is allowed to see this Role
-            if(!filter || q.mayUser(trans, trans.user(), frole,Access.read).isOK()) {
+            if (!filter || q.mayUser(trans, trans.user(), frole,Access.read).isOK()) {
                 Role role = new Role();
                 role.setName(frole.ns + '.' + frole.name);
                 role.setDescription(frole.description);
-                if(needNS) {
+                if (needNS) {
                     role.setNs(frole.ns);
                 }
-                for(String p : frole.perms(false)) { // can see any Perms in the Role he has permission for
+                for (String p : frole.perms(false)) { // can see any Perms in the Role he has permission for
                     Result<String[]> rpa = PermDAO.Data.decodeToArray(trans,q,p);
-                    if(rpa.notOK())
+                    if (rpa.notOK())
                         return Result.err(rpa);
                     
                     String[] pa = rpa.value;
@@ -451,10 +451,10 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<Users> users(AuthzTrans trans, Collection<UserRoleDAO.Data> from, Users to) {
         List<User> cu = to.getUser();
-        for(UserRoleDAO.Data urd : from) {
+        for (UserRoleDAO.Data urd : from) {
             User user = new User();
             user.setId(urd.user);
-            if(urd.expires!=null) {
+            if (urd.expires!=null) {
                 user.setExpires(Chrono.timeStamp(urd.expires));
             }
             cu.add(user);
@@ -471,7 +471,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<UserRoles> userRoles(AuthzTrans trans, Collection<UserRoleDAO.Data> from, UserRoles to) {
         List<UserRole> cu = to.getUserRole();
-        for(UserRoleDAO.Data urd : from) {
+        for (UserRoleDAO.Data urd : from) {
             UserRole ur = new UserRole();
             ur.setUser(urd.user);
             ur.setRole(urd.role);
@@ -510,15 +510,15 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         to.id=from.getId();
         to.ns = Question.domain2ns(to.id);
         String passwd = from.getPassword();
-        if(requiresPass) {
+        if (requiresPass) {
             String ok = trans.org().isValidPassword(trans, to.id,passwd);
-            if(ok.length()>0) {
+            if (ok.length()>0) {
                 return Result.err(Status.ERR_BadData,ok);
             }
         } else {
             to.type=0;
         }
-        if(passwd != null) {
+        if (passwd != null) {
             to.cred = ByteBuffer.wrap(passwd.getBytes());
             to.type = CredDAO.RAW; 
         } else {
@@ -536,7 +536,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<Users> cred(List<CredDAO.Data> from, Users to) {
         List<User> cu = to.getUser();
-        for(CredDAO.Data cred : from) {
+        for (CredDAO.Data cred : from) {
             User user = new User();
             user.setId(cred.id);
             user.setExpires(Chrono.timeStamp(cred.expires));
@@ -549,7 +549,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<Certs> cert(List<CertDAO.Data> from, Certs to) {
         List<Cert> lc = to.getCert();
-        for(CertDAO.Data fcred : from) {
+        for (CertDAO.Data fcred : from) {
             Cert cert = new Cert();
             cert.setId(fcred.id);
             cert.setX500(fcred.x500);
@@ -573,9 +573,9 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
                 Bytification content, boolean enableApproval,  Memo memo, MayChange mc) {
         Result<?> rMayChange;
         boolean needsAppr = enableApproval?trans.requested(REQD_TYPE.future):false; 
-        if(!needsAppr && (needsAppr = (rMayChange=mc.mayChange()).notOK())) {
-            if(enableApproval) {
-                if(!trans.requested(AuthzTrans.REQD_TYPE.future)) {
+        if (!needsAppr && (needsAppr = (rMayChange=mc.mayChange()).notOK())) {
+            if (enableApproval) {
+                if (!trans.requested(AuthzTrans.REQD_TYPE.future)) {
                     return Result.err(rMayChange);
                 }
             } else {
@@ -587,31 +587,31 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         
         GregorianCalendar expires = trans.org().expiration(start, Expiration.Future);
         XMLGregorianCalendar xgc;
-        if((xgc=from.getEnd())!=null) {
+        if ((xgc=from.getEnd())!=null) {
             GregorianCalendar fgc = xgc.toGregorianCalendar();
             expires = expires.before(fgc)?expires:fgc; // Min of desired expiration, and Org expiration
         }
         
         //TODO needs two answers from this.  What's the NSS, and may Change.
         FutureDAO.Data fto;
-        if(start.after(now) || needsAppr ) {
+        if (start.after(now) || needsAppr ) {
             //String user = trans.user();
             fto = new FutureDAO.Data();
             fto.target=table;
             fto.memo = memo.get();
             fto.start = start.getTime();
             fto.expires = expires.getTime();
-            if(needsAppr) { // Need to add Approvers...
+            if (needsAppr) { // Need to add Approvers...
                 /*
                 Result<Data> rslt = mc.getNsd();
-                if(rslt.notOKorIsEmpty())return Result.err(rslt);
+                if (rslt.notOKorIsEmpty())return Result.err(rslt);
                 appr.addAll(mc.getNsd().value.responsible);
                 try {
                     //Note from 2013 Is this getting Approvers for user only?  What about Delegates?
                     // 3/25/2014.  Approvers are set by Corporate policy.  We don't have to worry here about what that means.
                     // It is important to get Delegates, if necessary, at notification time
                     // If we add delegates now, it will get all confused as to who is actually responsible.
-                    for(Organization.User ou : org.getApprovers(trans, user)) {
+                    for (Organization.User ou : org.getApprovers(trans, user)) {
                         appr.add(ou.email);
                     }
                 } catch (Exception e) {
@@ -638,7 +638,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     public Result<History> history(AuthzTrans trans, List<HistoryDAO.Data> history, final int sort) {
         History hist = new History();
         List<Item> items = hist.getItem();
-        for(HistoryDAO.Data data : history) {
+        for (HistoryDAO.Data data : history) {
             History.Item item = new History.Item();
             item.setYYYYMM(Integer.toString(data.yr_mon));
             Date date = Chrono.uuidToDate(data.id);
@@ -651,7 +651,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             items.add(item);
         }
         
-        if(sort != 0) {
+        if (sort != 0) {
             TimeTaken tt = trans.start("Sort ", Env.SUB);
             try {
                 java.util.Collections.sort(items, new Comparator<Item>() {
@@ -673,7 +673,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
         err.setText(Vars.convert(holder, text, var));
-        for(String s : var) {
+        for (String s : var) {
             err.getVariables().add(s);
         }
         return err;
@@ -761,10 +761,10 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         Approvals apprs = new Approvals();
         List<Approval> lappr = apprs.getApprovals();
         Approval a;
-        for(ApprovalDAO.Data appr : lAppr) {
+        for (ApprovalDAO.Data appr : lAppr) {
             a = new Approval();
             a.setId(appr.id.toString());
-            if(appr.ticket==null) {
+            if (appr.ticket==null) {
                 a.setTicket(null);
             } else {
                 a.setTicket(appr.ticket.toString());
@@ -784,12 +784,12 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<List<ApprovalDAO.Data>> approvals(Approvals apprs) {
         List<ApprovalDAO.Data>  lappr = new ArrayList<>();
-        for(Approval a : apprs.getApprovals()) {
+        for (Approval a : apprs.getApprovals()) {
             ApprovalDAO.Data ad = new ApprovalDAO.Data();
             String str = a.getId();
-            if(str!=null)ad.id=UUID.fromString(str);
+            if (str!=null)ad.id=UUID.fromString(str);
             str = a.getTicket();
-            if(str!=null)ad.ticket=UUID.fromString(str);
+            if (str!=null)ad.ticket=UUID.fromString(str);
             ad.user=a.getUser();
             ad.approver=a.getApprover();
             ad.type=a.getType();
@@ -798,7 +798,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             ad.memo=a.getMemo();
             
             XMLGregorianCalendar xgc = a.getUpdated();
-            if(xgc!=null)ad.updated=xgc.toGregorianCalendar().getTime();
+            if (xgc!=null)ad.updated=xgc.toGregorianCalendar().getTime();
             lappr.add(ad);
         }
         return Result.ok(lappr);
@@ -809,11 +809,11 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         Delgs delgs = new Delgs();
         List<Delg> ldelg = delgs.getDelgs();
         Delg d;
-        for(DelegateDAO.Data del: lDelg) {
+        for (DelegateDAO.Data del: lDelg) {
             d = new Delg();
             d.setUser(del.user);
             d.setDelegate(del.delegate);
-            if(del.expires!=null)d.setExpires(Chrono.timeStamp(del.expires));
+            if (del.expires!=null)d.setExpires(Chrono.timeStamp(del.expires));
             ldelg.add(d);
         }
         return Result.ok(delgs);

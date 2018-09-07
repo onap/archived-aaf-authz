@@ -70,7 +70,7 @@ public class Sample {
      */
     public Principal checkUserPass(String fqi, String pass) throws IOException, CadiException {
         String ok = aafAuthn.validate(fqi, pass);
-        if(ok==null) {
+        if (ok==null) {
             System.out.println("Success!");
             /*
              UnAuthPrincipal means that it is not coming from the official Authorization chain.
@@ -127,14 +127,14 @@ public class Sample {
             String user = myAccess.getProperty("user_fqi");
             String pass= myAccess.getProperty("user_pass");
             
-            if(user==null || pass==null) {
+            if (user==null || pass==null) {
                 System.err.println("This Sample class requires properties user_fqi and user_pass");
             } else {
                 pass =  myAccess.decrypt(pass, false); // Note, with "false", decryption will only happen if starts with "enc:"
                 // See the CODE for Java Methods used
                 Principal fqi = Sample.singleton().checkUserPass(user,pass);
                 
-                if(fqi==null) {
+                if (fqi==null) {
                     System.out.println("OK, normally, you would cease processing for an "
                             + "unauthenticated user, but for the purpose of Sample, we'll keep going.\n");
                     fqi=new UnAuthPrincipal(user);
@@ -146,10 +146,10 @@ public class Sample {
                 // note, default String for perm
                 String permS = myAccess.getProperty("perm","org.osaaf.aaf.access|*|read");
                 String[] permA = Split.splitTrim('|', permS);
-                if(permA.length>2) {
+                if (permA.length>2) {
                     final Permission perm = new AAFPermission(null, permA[0],permA[1],permA[2]);
                     // See the CODE for Java Methods used
-                    if(singleton().oneAuthorization(fqi, perm)) {
+                    if (singleton().oneAuthorization(fqi, perm)) {
                         System.out.printf("Success: %s has %s\n",fqi.getName(),permS);
                     } else {
                         System.out.printf("%s does NOT have %s\n",fqi.getName(),permS);
@@ -160,11 +160,11 @@ public class Sample {
                 // Another form, you can get ALL permissions in a list
                 // See the CODE for Java Methods used
                 List<Permission> permL = singleton().allAuthorization(fqi);
-                if(permL.size()==0) {
+                if (permL.size()==0) {
                     System.out.printf("User %s has no Permissions THAT THE CALLER CAN SEE\n",fqi.getName());
                 } else {
                     System.out.print("Success:\n");
-                    for(Permission p : permL) {
+                    for (Permission p : permL) {
                         System.out.printf("\t%s has %s\n",fqi.getName(),p.getKey());
                     }
                 }

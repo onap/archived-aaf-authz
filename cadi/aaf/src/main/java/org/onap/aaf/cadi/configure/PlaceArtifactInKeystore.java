@@ -53,7 +53,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
         File fks = new File(dir,arti.getNs()+'.'+(kst==Agent.PKCS12?"p12":kst));
         try {
             KeyStore jks = KeyStore.getInstance(kst);
-            if(fks.exists()) {
+            if (fks.exists()) {
                 File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
                 fks.renameTo(backup);
             }    
@@ -65,10 +65,10 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             X509Certificate x509;
             List<X509Certificate> chainList = new ArrayList<>();
             Set<X509Certificate> caSet = new HashSet<>();
-            for(Certificate c : certColl) {
+            for (Certificate c : certColl) {
                 x509 = (X509Certificate)c;
                 // Is a Root (self-signed, anyway)
-                if(x509.getSubjectDN().equals(x509.getIssuerDN())) {
+                if (x509.getSubjectDN().equals(x509.getIssuerDN())) {
                     caSet.add(x509);
                 } else {
                     chainList.add(x509);
@@ -98,7 +98,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             addEncProperty(Config.CADI_KEY_PASSWORD, keyPass);
             addProperty(Config.CADI_ALIAS, arti.getMechid());
 //            Set<Attribute> attribs = new HashSet<>();
-//            if(kst.equals("pkcs12")) {
+//            if (kst.equals("pkcs12")) {
 //                // Friendly Name
 //                attribs.add(new PKCS12Attribute("1.2.840.113549.1.9.20", arti.getNs()));
 //            } 
@@ -119,7 +119,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             // Change out to TrustStore
             // NOTE: PKCS12 does NOT support Trusted Entries.  Put in JKS Always
             fks = new File(dir,arti.getNs()+".trust.jks");
-            if(fks.exists()) {
+            if (fks.exists()) {
                 File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
                 fks.renameTo(backup);
             }    
@@ -136,7 +136,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             // Add Trusted Certificates, but PKCS12 doesn't support
             Certificate[] trustCAs = new Certificate[caSet.size()];
             caSet.toArray(trustCAs);
-            for(int i=0; i<trustCAs.length;++i) {
+            for (int i=0; i<trustCAs.length;++i) {
                 jks.setCertificateEntry("ca_" + arti.getCa() + '_' + i, trustCAs[i]);
             }
             // Write out

@@ -70,18 +70,18 @@ public class CSRMeta {
     }
 
     public X500Name x500Name() {
-        if(name==null) {
+        if (name==null) {
             X500NameBuilder xnb = new X500NameBuilder();
             xnb.addRDN(BCStyle.CN,cn);
             xnb.addRDN(BCStyle.E,email);
-            if(mechID!=null) {
-                if(environment==null) {
+            if (mechID!=null) {
+                if (environment==null) {
                     xnb.addRDN(BCStyle.OU,mechID);
                 } else {
                     xnb.addRDN(BCStyle.OU,mechID+':'+environment);
                 }
             }
-            for(RDN rdn : rdns) {
+            for (RDN rdn : rdns) {
                 xnb.addRDN(rdn.aoi,rdn.value);
             }
             name = xnb.build();
@@ -92,16 +92,16 @@ public class CSRMeta {
     
     public PKCS10CertificationRequest  generateCSR(Trans trans) throws IOException, CertException {
         PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(x500Name(),keypair(trans).getPublic());
-        if(challenge!=null) {
+        if (challenge!=null) {
             DERPrintableString password = new DERPrintableString(challenge);
             builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
         }
         
         int plus = email==null?0:1;
-        if(!sanList.isEmpty()) {
+        if (!sanList.isEmpty()) {
             GeneralName[] gna = new GeneralName[sanList.size()+plus];
             int i=-1;
-            for(String s : sanList) {
+            for (String s : sanList) {
                 gna[++i]=new GeneralName(GeneralName.dNSName,s);
             }
             gna[++i]=new GeneralName(GeneralName.rfc822Name,email);
@@ -132,17 +132,17 @@ public class CSRMeta {
                  Extensions extensions = Extensions.getInstance(attribute.getAttrValues().getObjectAt(0));
                  GeneralNames gns = GeneralNames.fromExtensions(extensions,Extension.subjectAlternativeName);
                  GeneralName[] names = gns.getNames();
-                 for(int k=0; k < names.length; k++) {
+                 for (int k=0; k < names.length; k++) {
                          String title = "";
-                         if(names[k].getTagNo() == GeneralName.dNSName) {
+                         if (names[k].getTagNo() == GeneralName.dNSName) {
                                  title = "dNSName";
-                         } else if(names[k].getTagNo() == GeneralName.iPAddress) {
+                         } else if (names[k].getTagNo() == GeneralName.iPAddress) {
                                  title = "iPAddress";
                                  // Deprecated, but I don't see anything better to use.
                                  names[k].toASN1Object();
-                         } else if(names[k].getTagNo() == GeneralName.otherName) {
+                         } else if (names[k].getTagNo() == GeneralName.otherName) {
                                  title = "otherName";
-                         } else if(names[k].getTagNo() == GeneralName.rfc822Name) {
+                         } else if (names[k].getTagNo() == GeneralName.rfc822Name) {
                                  title = "email";
                          }
 
@@ -180,7 +180,7 @@ public class CSRMeta {
 
 
     public KeyPair keypair(Trans trans) {
-        if(keyPair == null) {
+        if (keyPair == null) {
             keyPair = Factory.generateKeyPair(trans);
         }
         return keyPair;

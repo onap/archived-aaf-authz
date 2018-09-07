@@ -57,30 +57,30 @@ public final class EpiLur implements Lur {
      */
     public EpiLur(Lur ... lurs) throws CadiException{
         this.lurs = lurs;
-        if(lurs.length==0) throw new CadiException("Need at least one Lur implementation in constructor");
+        if (lurs.length==0) throw new CadiException("Need at least one Lur implementation in constructor");
     }
 
     public boolean fish(Principal bait, Permission ... pond) {
-        if(pond==null) {
+        if (pond==null) {
             return false;
         }
         boolean rv = false;
         Lur lur;
-        for(int i=0;!rv && i<lurs.length;++i) {
+        for (int i=0;!rv && i<lurs.length;++i) {
             rv = (lur = lurs[i]).fish(bait, pond);
-            if(!rv && lur.handlesExclusively(pond)) break;
+            if (!rv && lur.handlesExclusively(pond)) break;
         }
         return rv;
     }
 
     public void fishAll(Principal bait, List<Permission> permissions) {
-        for(Lur lur : lurs) {
+        for (Lur lur : lurs) {
             lur.fishAll(bait, permissions);
         }
     }
 
     public void destroy() {
-        for(Lur lur : lurs) {
+        for (Lur lur : lurs) {
             lur.destroy();
         }
     }
@@ -90,8 +90,8 @@ public final class EpiLur implements Lur {
      * @return
      */
     public CredVal getUserPassImpl() {
-        for(Lur lur : lurs) {
-            if(lur instanceof CredVal) {
+        for (Lur lur : lurs) {
+            if (lur instanceof CredVal) {
                 return (CredVal)lur;
             }
         }
@@ -109,15 +109,15 @@ public final class EpiLur implements Lur {
      * @return
      */
     public Lur get(int idx) {
-        if(idx>=0 && idx<lurs.length) {
+        if (idx>=0 && idx<lurs.length) {
             return lurs[idx];
         }
         return null;
     }
 
     public boolean handles(Principal p) {
-        for(Lur l : lurs) {
-            if(l.handles(p)) {
+        for (Lur l : lurs) {
+            if (l.handles(p)) {
                 return true;
             }
         }
@@ -125,16 +125,16 @@ public final class EpiLur implements Lur {
     }
 
     public void remove(String id) {
-        for(Lur l : lurs) {
-            if(l instanceof CachingLur) {
+        for (Lur l : lurs) {
+            if (l instanceof CachingLur) {
                 ((CachingLur<?>)l).remove(id);
             }
         }
     }
     
     public Lur subLur(Class<? extends Lur> cls ) {
-        for(Lur l : lurs) {
-            if(l.getClass().isAssignableFrom(cls)) {
+        for (Lur l : lurs) {
+            if (l.getClass().isAssignableFrom(cls)) {
                 return l;
             }
         }
@@ -151,14 +151,14 @@ public final class EpiLur implements Lur {
      */
     @Override
     public void clear(Principal p, StringBuilder report) {
-        for(Lur lur : lurs) {
+        for (Lur lur : lurs) {
             lur.clear(p, report);
         }
     }
     
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(Lur lur : lurs) {
+        for (Lur lur : lurs) {
             sb.append(lur.getClass().getSimpleName());
             sb.append(": Report\n");
             sb.append(lur.toString());

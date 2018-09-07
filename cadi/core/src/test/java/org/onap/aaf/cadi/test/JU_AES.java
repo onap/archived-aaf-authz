@@ -60,7 +60,7 @@ public class JU_AES {
          byte[] keyBytes = new byte[AES.AES_KEY_SIZE/8];
          char[] codeset = Symm.base64.codeset;
          int offset = (Math.abs(codeset[0]) + 47) % (codeset.length - keyBytes.length);
-         for(int i = 0; i < keyBytes.length; ++i) {
+         for (int i = 0; i < keyBytes.length; ++i) {
              keyBytes[i] = (byte)codeset[i+offset];
          }
          aes = new AES(keyBytes, 0, keyBytes.length);

@@ -34,7 +34,7 @@ public class ServletContextAccess extends PropAccess {
         super(filterConfig); // protected constructor... does not have "init" called.
         context = filterConfig.getServletContext();
 
-        for(Enumeration<?> en = filterConfig.getInitParameterNames();en.hasMoreElements();) {
+        for (Enumeration<?> en = filterConfig.getInitParameterNames();en.hasMoreElements();) {
             String name = (String)en.nextElement();
             setProperty(name, filterConfig.getInitParameter(name));
         }
@@ -46,7 +46,7 @@ public class ServletContextAccess extends PropAccess {
      */
     @Override
     public void log(Level level, Object... elements) {
-        if(willLog(level)) {
+        if (willLog(level)) {
             StringBuilder sb = buildMsg(level, elements);
             context.log(sb.toString());
         }

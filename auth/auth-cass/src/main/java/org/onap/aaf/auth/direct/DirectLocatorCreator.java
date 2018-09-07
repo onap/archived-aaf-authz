@@ -40,7 +40,7 @@ public class DirectLocatorCreator implements AbsAAFLocator.LocatorCreator {
     @Override
     public AbsAAFLocator<?> create(String key, String version) throws LocatorException {
         DirectAAFLocator dal = new DirectAAFLocator(env,locateDAO,key,version);
-        if(myhostname!=null) {
+        if (myhostname!=null) {
             dal.setSelf(myhostname, myport);
         }
         return dal;

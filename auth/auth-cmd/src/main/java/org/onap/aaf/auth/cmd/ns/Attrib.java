@@ -50,8 +50,8 @@ public class Attrib extends BaseCmd<NS> {
         final String ns = args[idx+1];
         final String key = args[idx+2];
         final String value;
-        if(option!=2) {
-            if(args.length<=idx+3) {
+        if (option!=2) {
+            if (args.length<=idx+3) {
                 throw new CadiException("Not added: Need more Data");
             }
             value = args[idx+3];
@@ -83,10 +83,10 @@ public class Attrib extends BaseCmd<NS> {
                     default:
                         throw new CadiException("Bad Argument");
                 };
-                if(fp==null) {
+                if (fp==null) {
                     return 500;
                 } else {
-                    if(fp.get(AAFcli.timeout())) {
+                    if (fp.get(AAFcli.timeout())) {
                         pw().println(message);
                     } else {
                         error(fp);

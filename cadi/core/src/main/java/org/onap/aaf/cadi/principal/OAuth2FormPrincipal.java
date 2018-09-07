@@ -49,7 +49,7 @@ public class OAuth2FormPrincipal extends TaggedPrincipal {
 
     @Override
     public String personalName() {
-        if(username!=null && username!=client_id) {
+        if (username!=null && username!=client_id) {
             StringBuilder sb = new StringBuilder();
             sb.append(username);
             sb.append('|');

@@ -100,7 +100,7 @@ public class JU_FromXML {
                 tt.done();
             }
             report.glean(trans,Env.XML);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());
@@ -127,7 +127,7 @@ public class JU_FromXML {
                 tt.done();
             }
             report.glean(trans,Env.XML);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());
@@ -136,7 +136,7 @@ public class JU_FromXML {
     
     @Test
     public void warmup() throws Exception {
-        if(ITERATIONS>20) {
+        if (ITERATIONS>20) {
             System.out.println("*** Warmup JAXB ***");
             
             JAXBumar jaxbUmar = new JAXBumar(LargerData.class);
@@ -170,7 +170,7 @@ public class JU_FromXML {
                     all.done();
                 }
                 report.glean(trans,Env.XML);
-            } while(report.go());
+            } while (report.go());
             
             report.report(sbw);
             System.out.println(sbw.toString());
@@ -209,7 +209,7 @@ public class JU_FromXML {
                 all.done();
             }
             report.glean(trans,Env.XML);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());    }
@@ -225,7 +225,7 @@ public class JU_FromXML {
 
         Trans trans = EnvFactory.newTrans();
         LargerData ld;
-        for(int i=0;i<ITERATIONS;++i) {
+        for (int i=0;i<ITERATIONS;++i) {
             sbw.reset();
             TimeTaken all = trans.start("Combo", Env.SUB);
             try {
@@ -247,7 +247,7 @@ public class JU_FromXML {
         }
         sbw.append('\n');
         Metric m;
-        if(ITERATIONS>20) {
+        if (ITERATIONS>20) {
             m = trans.auditTrail(0,null);
         } else {
             m = trans.auditTrail(0, sbw.getBuffer());

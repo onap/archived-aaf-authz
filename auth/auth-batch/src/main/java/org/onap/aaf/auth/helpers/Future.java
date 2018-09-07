@@ -98,15 +98,15 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         int count = 0;
         tt = trans.start("Process Futures", Env.SUB);
         try {
-            for(Row row : results.all()) {
+            for (Row row : results.all()) {
                 ++count;
                 Future f = creator.create(row);
                 data.put(f.fdd.id,f);
-                if(f.role==null) {
+                if (f.role==null) {
                     continue;
                 }
                 List<Future> lf = byRole.get(f.role);
-                if(lf==null) {
+                if (lf==null) {
                     lf = new ArrayList<>();
                     byRole.put(f.role,lf);
                 }
@@ -148,16 +148,16 @@ public class Future implements CacheChange.Data, Comparable<Future> {
 
     public Result<Void> delayedDelete(AuthzTrans trans, FutureDAO fd, boolean dryRun, String text) {
         Result<Void> rv;
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log(text,"- Would Delete: ",fdd.id,fdd.memo,"expiring on",Chrono.dateOnlyStamp(fdd.expires));
             rv = Result.ok();
         } else {
             rv = fd.delete(trans, fdd, true); // need to read for undelete
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log(text, "- Deleted:",fdd.id,fdd.memo,"expiring on",Chrono.dateOnlyStamp(fdd.expires));
                 cache.delayedDelete(this);
             } else {
-                if(rv.status!=6) {
+                if (rv.status!=6) {
                     trans.info().log(text,"- Failed to Delete Future", fdd.id);
                 }
             }
@@ -171,9 +171,9 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     @Override
     public void expunge() {
         data.remove(fdd.id);
-        if(role!=null) {
+        if (role!=null) {
             List<Future> lf = byRole.get(role);
-            if(lf!=null) {
+            if (lf!=null) {
                 lf.remove(this);
             }
         }
@@ -181,7 +181,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
 
     @Override
     public int compareTo(Future o) {
-        if(o==null) {
+        if (o==null) {
             return -1;
         }
         return fdd.id.compareTo(o.fdd.id);

@@ -89,7 +89,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
      */
     public Rcli<CLIENT> client(String apiVersion) throws CadiException {
         Rcli<CLIENT> client = clients.get(apiVersion);
-        if(client==null) {
+        if (client==null) {
             client = rclient(initURI(),si.defSS);
             client.apiVersion(apiVersion)
                   .readTimeout(connTimeout);
@@ -136,12 +136,12 @@ public abstract class AAFCon<CLIENT> implements Connector {
     }
     
     protected AAFCon(Access access, String tag, SecurityInfoC<CLIENT> si) throws CadiException{
-        if(tag==null) {
+        if (tag==null) {
             throw new CadiException("AAFCon cannot be constructed without a property tag or URL");
         } else {
             String str = access.getProperty(tag,null);
-            if(str==null) {
-                if(tag.contains("://")) { // assume a URL
+            if (str==null) {
+                if (tag.contains("://")) { // assume a URL
                     str = tag;
                 } else {
                     throw new CadiException("A URL or " + tag + " property is required.");
@@ -152,18 +152,18 @@ public abstract class AAFCon<CLIENT> implements Connector {
         try {
             this.access = access;
             this.si = si;
-            if(si.defSS.getID().equals(SecurityInfoC.DEF_ID)) { // it's the Preliminary SS, try to get a better one
+            if (si.defSS.getID().equals(SecurityInfoC.DEF_ID)) { // it's the Preliminary SS, try to get a better one
                 String mechid = access.getProperty(Config.AAF_APPID, null);
-                if(mechid==null) {
+                if (mechid==null) {
                     mechid=access.getProperty(Config.OAUTH_CLIENT_ID,null);
                 }
                 String encpass = access.getProperty(Config.AAF_APPPASS, null);
-                if(encpass==null) {
+                if (encpass==null) {
                     encpass = access.getProperty(Config.OAUTH_CLIENT_SECRET,null);
                 }
-                if(encpass==null) {
+                if (encpass==null) {
                     String alias = access.getProperty(Config.CADI_ALIAS, mechid);
-                    if(alias==null) {
+                    if (alias==null) {
                         access.printf(Access.Level.WARN,"%s, %s or %s required before use.", Config.CADI_ALIAS, Config.AAF_APPID, Config.OAUTH_CLIENT_ID);
                         set(si.defSS);
                     } else {
@@ -171,7 +171,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
                         set(si.defSS);
                     }
                 } else {
-                    if(mechid!=null) {
+                    if (mechid!=null) {
                         si.defSS=basicAuth(mechid, encpass);
                         set(si.defSS);
                     } else {
@@ -231,16 +231,16 @@ public abstract class AAFCon<CLIENT> implements Connector {
      * @return
      */
     public static final AAFCon<?> obtain(Object servletRequest) {
-        if(servletRequest instanceof CadiWrap) {
+        if (servletRequest instanceof CadiWrap) {
             Lur lur = ((CadiWrap)servletRequest).getLur();
-            if(lur != null) {
-                if(lur instanceof EpiLur) {
+            if (lur != null) {
+                if (lur instanceof EpiLur) {
                     AbsAAFLur<?> aal = (AbsAAFLur<?>) ((EpiLur)lur).subLur(AbsAAFLur.class);
-                    if(aal!=null) {
+                    if (aal!=null) {
                         return aal.aaf;
                     }
                 } else {
-                    if(lur instanceof AbsAAFLur) {
+                    if (lur instanceof AbsAAFLur) {
                         return ((AbsAAFLur<?>)lur).aaf;
                     }
                 }
@@ -265,7 +265,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 
     public AAFLurPerm newLur() throws CadiException {
         try {
-            if(lur==null) {
+            if (lur==null) {
                 lur = new AAFLurPerm(this);
                 return lur;
             } else {
@@ -327,7 +327,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 
     public SecuritySetter<CLIENT> set(final SecuritySetter<CLIENT> ss) {
         si.set(ss);
-        for(Rcli<CLIENT> client : clients.values()) {
+        for (Rcli<CLIENT> client : clients.values()) {
             client.setSecuritySetter(ss);
         }
         return ss;
@@ -338,14 +338,14 @@ public abstract class AAFCon<CLIENT> implements Connector {
     }
 
     public String defID() {
-        if(si!=null) {
+        if (si!=null) {
             return si.defSS.getID();
         }
         return "unknown";
     }
     
     public void invalidate() throws CadiException {
-        for(Rcli<CLIENT> client : clients.values()) {
+        for (Rcli<CLIENT> client : clients.values()) {
             client.invalidate();
         }
         clients.clear();
@@ -353,9 +353,9 @@ public abstract class AAFCon<CLIENT> implements Connector {
 
     public String readableErrMsg(Future<?> f) {
         String text = f.body();
-        if(text==null || text.length()==0) {
+        if (text==null || text.length()==0) {
             text = f.code() + ": **No Message**";
-        } else if(text.contains("%")) {
+        } else if (text.contains("%")) {
             try {
                 Error err = errDF.newData().in(TYPE.JSON).load(f.body()).asObject();
                 return Vars.convert(err.getText(),err.getVariables());

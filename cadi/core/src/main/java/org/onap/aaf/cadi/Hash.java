@@ -132,9 +132,9 @@ public class Hash {
      * @return
      */
     public static boolean isEqual(byte ba1[], byte ba2[]) {
-        if(ba1.length!=ba2.length)return false;
-        for(int i = 0;i<ba1.length; ++i) {
-            if(ba1[i]!=ba2[i])return false;
+        if (ba1.length!=ba2.length)return false;
+        for (int i = 0;i<ba1.length; ++i) {
+            if (ba1[i]!=ba2[i])return false;
         }
         return true;
     }
@@ -142,10 +142,10 @@ public class Hash {
     public static int compareTo(byte[] a, byte[] b) {
         int end = Math.min(a.length, b.length);
         int compare = 0;
-        for(int i=0;compare == 0 && i<end;++i) {
+        for (int i=0;compare == 0 && i<end;++i) {
             compare = a[i]-b[i];
         }
-        if(compare==0)compare=a.length-b.length;
+        if (compare==0)compare=a.length-b.length;
         return compare;
     }
 
@@ -178,7 +178,7 @@ public class Hash {
 
     
     public static byte[] fromHex(String s)  throws CadiException{
-        if(!s.startsWith("0x")) {
+        if (!s.startsWith("0x")) {
             throw new CadiException("HexString must start with \"0x\"");
         }
         boolean high = true;
@@ -186,19 +186,19 @@ public class Hash {
         byte b;
         byte[] ba = new byte[(s.length()-2)/2];
         int idx;
-        for(int i=2;i<s.length();++i) {
+        for (int i=2;i<s.length();++i) {
             c = s.charAt(i);
-            if(c>=0x30 && c<=0x39) {
+            if (c>=0x30 && c<=0x39) {
                 b=(byte)(c-0x30);
-            } else if(c>=0x61 && c<=0x66) {
+            } else if (c>=0x61 && c<=0x66) {
                 b=(byte)(c-0x57);  // account for "A"
-            } else if(c>=0x41 && c<=0x46) {
+            } else if (c>=0x41 && c<=0x46) {
                 b=(byte)(c-0x37);
             } else {
                 throw new CadiException("Invalid char '" + c + "' in HexString");
             }
             idx = (i-2)/2;
-            if(high) {
+            if (high) {
                 ba[idx]=(byte)(b<<4);
                 high = false;
             } else {
@@ -222,7 +222,7 @@ public class Hash {
         byte[] ba;
         boolean high;
         int start;
-        if(s.length()%2==0) {
+        if (s.length()%2==0) {
             ba = new byte[s.length()/2];
             high=true;
             start=0;
@@ -232,19 +232,19 @@ public class Hash {
             start=1;
         }
         int idx;
-        for(int i=start;i<s.length();++i) {
+        for (int i=start;i<s.length();++i) {
             c = s.charAt((i-start));
-            if(c>=0x30 && c<=0x39) {
+            if (c>=0x30 && c<=0x39) {
                 b=(byte)(c-0x30);
-            } else if(c>=0x61 && c<=0x66) {
+            } else if (c>=0x61 && c<=0x66) {
                 b=(byte)(c-0x57);  // account for "A"
-            } else if(c>=0x41 && c<=0x46) {
+            } else if (c>=0x41 && c<=0x46) {
                 b=(byte)(c-0x37);
             } else {
                 return null;
             }
             idx = i/2;
-            if(high) {
+            if (high) {
                 ba[idx]=(byte)(b<<4);
                 high = false;
             } else {

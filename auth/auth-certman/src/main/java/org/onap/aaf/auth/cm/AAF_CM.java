@@ -97,7 +97,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         aafAuthn = aafCon().newAuthn(aafLurPerm);
 
         String aaf_env = env.getProperty(Config.AAF_ENV);
-        if(aaf_env==null) {
+        if (aaf_env==null) {
             throw new APIException("aaf_env needs to be set");
         }
 
@@ -112,17 +112,17 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
         // Load Supported Certificate Authorities by property
         // Note: Some will be dynamic Properties, so we need to look through all
-        for(Entry<Object, Object> es : env.access().getProperties().entrySet()) {
+        for (Entry<Object, Object> es : env.access().getProperties().entrySet()) {
             String key = es.getKey().toString();
-            if(key.startsWith(CA.CM_CA_PREFIX)) {
+            if (key.startsWith(CA.CM_CA_PREFIX)) {
                 int idx = key.indexOf('.');
-                if(idx==key.lastIndexOf('.')) { // else it's a regular property 
+                if (idx==key.lastIndexOf('.')) { // else it's a regular property 
     
                     env.log(Level.INIT, "Loading Certificate Authority Module: " + key.substring(idx+1));
                     String[] segs = Split.split(',', env.getProperty(key));
-                    if(segs.length>0) {
+                    if (segs.length>0) {
                         String[][] multiParams = new String[segs.length-1][];
-                        for(int i=0;i<multiParams.length;++i) {
+                        for (int i=0;i<multiParams.length;++i) {
                             multiParams[i]=Split.split(';',segs[1+i]);
                         }
                         @SuppressWarnings("unchecked")
@@ -141,7 +141,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
                 }
             }
         }
-        if(certAuths.size()==0) {
+        if (certAuths.size()==0) {
             throw new APIException("No Certificate Authorities have been configured in CertMan");
         }
 
@@ -152,7 +152,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
 
         synchronized(env) {
-            if(cacheUser == null) {
+            if (cacheUser == null) {
                 cacheUser = Cache.obtain(USER_PERMS);
                 Cache.startCleansing(env, USER_PERMS);
             }
@@ -184,7 +184,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         String version = "1.0";
         // Get Correct API Class from Mapper
         Class<?> respCls = facade1_0.mapper().getClass(api); 
-        if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
+        if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         // setup Application API HTML ContentTypes for JSON and Route
         String application = applicationJSON(respCls, version);
         route(env,meth,path,code,application,"application/json;version="+version,"*/*");

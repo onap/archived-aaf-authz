@@ -80,21 +80,21 @@ public class NsInfoForm extends Page {
                         final String incomingID= trans.get(sID, "");
                         final String[] info = new String[fields.length];
                         final Object own_adm[] = new Object[2]; 
-                        for(int i=0;i<info.length;++i) {
+                        for (int i=0;i<info.length;++i) {
                             info[i]="";
                         }
-                        if(incomingID.length()>0) {
+                        if (incomingID.length()>0) {
                             TimeTaken tt = trans.start("AAF Namespace Info",Env.REMOTE);
                             try {
                                 gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
                                     @Override
                                     public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                                         Future<Nss> fn = client.read("/authz/nss/"+incomingID,gui.getDF(Nss.class));
-                                        if(fn.get(AAF_GUI.TIMEOUT)) {
-                                            for(Ns ns : fn.value.getNs()) {
+                                        if (fn.get(AAF_GUI.TIMEOUT)) {
+                                            for (Ns ns : fn.value.getNs()) {
                                                 info[0]=ns.getName();
                                                 info[1]=ns.getDescription();
-                                                for(Ns.Attrib attr: ns.getAttrib()) {
+                                                for (Ns.Attrib attr: ns.getAttrib()) {
                                                     switch(attr.getKey()) {
                                                         case "mots":
                                                             info[2]=attr.getValue();
@@ -128,8 +128,8 @@ public class NsInfoForm extends Page {
                                 .end(endTD)
                                 .incr(endTD,HTMLGen.TD)
                                     .tagOnly("input","id="+fields[3],"title=Owner of App, must be an Non-Bargained Employee");
-                                    if(own_adm[0]!=null) {
-                                        for(String s : (List<String>)own_adm[0]) {
+                                    if (own_adm[0]!=null) {
+                                        for (String s : (List<String>)own_adm[0]) {
                                             hgen.incr("label",true).text(s).end();
                                         }
                                     }
@@ -142,8 +142,8 @@ public class NsInfoForm extends Page {
                                 .end(endTD)
                                 .incr(endTD,HTMLGen.TD)
                                     .tagOnly("input","id="+fields[4],"title=Admins may be employees, contractors or mechIDs");
-                                    if(own_adm[1]!=null) {
-                                        for(String s : (List<String>)own_adm[1]) {
+                                    if (own_adm[1]!=null) {
+                                        for (String s : (List<String>)own_adm[1]) {
                                             hgen.incr(HTMLGen.P,true).text(s).end();
                                         }
                                     }

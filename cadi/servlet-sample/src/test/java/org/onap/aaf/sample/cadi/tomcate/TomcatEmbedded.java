@@ -76,10 +76,10 @@ public class TomcatEmbedded {
     
     private static void setAttr(Connector connector, Access access, String ctag, String atag) throws IOException {
         String value = access.getProperty(atag, null);
-        if(value==null) {
+        if (value==null) {
             access.log(Level.ERROR, atag, "is null");
         } else {
-            if(value.startsWith("enc:")) {
+            if (value.startsWith("enc:")) {
                 access.log(Level.INIT,atag,"=enc:************");
                 value = access.decrypt(value, false);
             } else {

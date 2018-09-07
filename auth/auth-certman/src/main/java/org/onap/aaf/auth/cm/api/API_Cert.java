@@ -63,12 +63,12 @@ public class API_Cert {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String key = pathParam(req, ":ca");
                 CA ca;
-                if((ca = aafCM.getCA(key))==null) {
+                if ((ca = aafCM.getCA(key))==null) {
                     context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
                 } else {
                     trans.put(sCertAuth, ca);
                     Result<Void> r = context.requestCert(trans, req, resp, ca);
-                    if(r.isOK()) {
+                    if (r.isOK()) {
                         resp.setStatus(HttpStatus.OK_200);
                     } else {
                         context.error(trans,resp,r);
@@ -82,12 +82,12 @@ public class API_Cert {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 String key = pathParam(req, ":ca");
                 CA ca;
-                if((ca = aafCM.getCA(key))==null) {
+                if ((ca = aafCM.getCA(key))==null) {
                     context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
                 } else {
                     trans.put(sCertAuth, ca);
                     Result<Void> r = context.requestPersonalCert(trans, req, resp, ca);
-                    if(r.isOK()) {
+                    if (r.isOK()) {
                         resp.setStatus(HttpStatus.OK_200);
                     } else {
                         context.error(trans,resp,r);
@@ -104,7 +104,7 @@ public class API_Cert {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.check(trans, resp, pathParam(req,"perm"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     trans.checkpoint(r.errorString());
@@ -125,7 +125,7 @@ public class API_Cert {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.readCertsByMechID(trans, resp, pathParam(req,"id"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);

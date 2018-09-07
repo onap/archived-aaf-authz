@@ -67,13 +67,13 @@ public class AbsJUCass {
     @BeforeClass 
     public static void startup() throws APIException, IOException {
         synchronized(AUTHZ) {
-            if(env==null) {
+            if (env==null) {
                 final String resource = "cadi.properties";
                 File f = new File("etc" + resource);
                 InputStream is=null;
                 Properties props = new Properties();
                 try {
-                    if(f.exists()) {
+                    if (f.exists()) {
                         is = new FileInputStream(f);
                     } else {
                         URL rsrc = ClassLoader.getSystemResource(resource);
@@ -81,7 +81,7 @@ public class AbsJUCass {
                     }
                     props.load(is);
                 } finally {
-                    if(is==null) {
+                    if (is==null) {
                         env= new AuthzEnv();
                         Assert.fail(resource + " must exist in etc dir, or in Classpath");
                     }
@@ -95,7 +95,7 @@ public class AbsJUCass {
         env.info().log("Connecting to Cluster");
         try {
             cluster.connect(AUTHZ);
-        } catch(Exception e) {
+        } catch (Exception e) {
             cluster=null;
             env.error().log(e);
             Assert.fail("Not able to connect to DB: " + e.getLocalizedMessage());
@@ -114,7 +114,7 @@ public class AbsJUCass {
     
     @AfterClass
     public static void shutdown() {
-        if(cluster!=null) {
+        if (cluster!=null) {
             cluster.close();
             cluster = null;
         }
@@ -129,10 +129,10 @@ public class AbsJUCass {
     
     @After
     public void auditTrail() {
-        if(totals==0) { // "updateTotals()" was not called... just do one Trans
+        if (totals==0) { // "updateTotals()" was not called... just do one Trans
             StringBuilder sb = new StringBuilder();
             Metric metric = trans.auditTrail(4, sb, Env.JSON, Env.REMOTE);
-            if(details) {
+            if (details) {
                 env.info().log(
                 sb,
                 "Total time:",
@@ -159,7 +159,7 @@ public class AbsJUCass {
     @AfterClass
     public static void print() {
         float transTime;
-        if(iterations==0) {
+        if (iterations==0) {
             transTime=totals;
         } else {
             transTime=totals/iterations;

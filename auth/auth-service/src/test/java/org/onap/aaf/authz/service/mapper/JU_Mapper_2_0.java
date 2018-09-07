@@ -370,7 +370,7 @@ public class JU_Mapper_2_0 {
         assertTrue(result.isOK());
         assertEquals("Alls Perms added",5,result.value.getPerm().size());
         List<Perm> mappedPerms = result.value.getPerm();
-        for(int i=0; i<5; i++) {
+        for (int i=0; i<5; i++) {
             comparePerm(correctOrderPerms.get(i), mappedPerms.get(i));
         }
     }
@@ -492,7 +492,7 @@ public class JU_Mapper_2_0 {
         assertEquals(2, result.value.getRole().size());
         result.value.getRole().stream().forEach( role -> {
             assertTrue(role.getPerms().isEmpty());
-            if(namespaceRequested) {
+            if (namespaceRequested) {
                 assertEquals(namespace, role.getNs());
             } else {
                 assertNull(role.getNs());

@@ -63,10 +63,10 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
     private TokenClientFactory(Access pa) throws APIException, GeneralSecurityException, IOException, CadiException {
         super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
         
-        if(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
+        if (access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
             access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, Defaults.OAUTH2_TOKEN_URL); // Default to AAF
         }
-        if(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
+        if (access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
             access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, Defaults.OAUTH2_INTROSPECT_URL); // Default to AAF);
         }
 
@@ -75,7 +75,7 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
     }
     
     public synchronized static final TokenClientFactory instance(Access access) throws APIException, GeneralSecurityException, IOException, CadiException {
-        if(instance==null) {
+        if (instance==null) {
             instance = new TokenClientFactory(access);
         }
         return instance;
@@ -96,16 +96,16 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
     
     public<INTR> TokenClient newClient(final String tagOrURL, final int timeout) throws CadiException, LocatorException, APIException {
         AAFConHttp ach;
-        if(tagOrURL==null) {
+        if (tagOrURL==null) {
             throw new CadiException("parameter tagOrURL cannot be null.");
         } else {
             ach = aafcons.get(tagOrURL);
-            if(ach==null) {
+            if (ach==null) {
                 aafcons.put(tagOrURL, ach=new AAFConHttp(access,tagOrURL));
             }
         }
         char okind;
-        if( Config.AAF_OAUTH2_TOKEN_URL.equals(tagOrURL) ||
+        if ( Config.AAF_OAUTH2_TOKEN_URL.equals(tagOrURL) ||
             Config.AAF_OAUTH2_INTROSPECT_URL.equals(tagOrURL) ||
             tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL, null)) ||
             tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL, null))
@@ -136,19 +136,19 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
         try {
             StringBuilder sb = new StringBuilder(client_id);
             sb.append('_');
-            if(username!=null) {
+            if (username!=null) {
                 sb.append(username);
             }
             sb.append('_');
             sb.append(tokenSource);
             byte[] tohash=scope.getBytes();
-            if(hash!=null && hash.length>0) {
+            if (hash!=null && hash.length>0) {
                 byte temp[] = new byte[hash.length+tohash.length];
                 System.arraycopy(tohash, 0, temp, 0, tohash.length);
                 System.arraycopy(hash, 0, temp, tohash.length, hash.length);
                 tohash = temp;
             }
-            if(scope!=null && scope.length()>0) {
+            if (scope!=null && scope.length()>0) {
                 sb.append(Hash.toHexNo0x(Hash.hashSHA256(tohash)));
             }
             return sb.toString();
@@ -170,12 +170,12 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
     
     private static final Pattern locatePattern = Pattern.compile("https://.*/locate/.*");
     public Locator<URI> bestLocator(final String locatorURL ) throws LocatorException, URISyntaxException {
-        if(locatorURL==null) {
+        if (locatorURL==null) {
             throw new LocatorException("Cannot have a null locatorURL in bestLocator");
         }
-        if(locatorURL.startsWith("https://AAF_LOCATE_URL/") || locatePattern.matcher(locatorURL).matches()) {
+        if (locatorURL.startsWith("https://AAF_LOCATE_URL/") || locatePattern.matcher(locatorURL).matches()) {
             return new AAFLocator(hsi,new URI(locatorURL));
-        } else if(locatorURL.indexOf(',')>0) { // multiple URLs is a Property Locator
+        } else if (locatorURL.indexOf(',')>0) { // multiple URLs is a Property Locator
             return new PropertyLocator(locatorURL);
         } else {
             return new SingleEndpointLocator(locatorURL);

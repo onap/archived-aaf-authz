@@ -85,7 +85,7 @@ public class JAXBumar {
         }
         
         public Unmarshaller get(Schema schema) throws JAXBException {
-            if(s != schema) {
+            if (s != schema) {
                 u.setSchema(s = schema);
             }
             return u;
@@ -135,7 +135,7 @@ public class JAXBumar {
         Pool<SUnmarshaller> mp;
         synchronized(pools) {
             mp = pools.get(classes);
-            if(mp==null) {
+            if (mp==null) {
                 pools.put(classes,mp = new Pool<SUnmarshaller>(new Creator(classes)));
             }
         }        
@@ -174,7 +174,7 @@ public class JAXBumar {
     
     @SuppressWarnings("unchecked")
     public<O> O unmarshal(LogTarget env, String xml) throws JAXBException, APIException {
-        if(xml==null) throw new JAXBException("Null Input for String unmarshal");
+        if (xml==null) throw new JAXBException("Null Input for String unmarshal");
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
                 return (O)s.content.get(schema).unmarshal(

@@ -54,7 +54,7 @@ public class TextIndex {
     }
     
     public void close() throws IOException {
-        if(dataFile!=null) {
+        if (dataFile!=null) {
             dataFile.close();
             dataFile=null;
         }
@@ -65,7 +65,7 @@ public class TextIndex {
     }
     
     public int find(Object key, DataFile.Token dtok, Field df, int offset) throws IOException {
-        if(dataFile==null) {
+        if (dataFile==null) {
             throw new IOException("File not opened");
         }
         long hash = hashToLong(key.hashCode());
@@ -74,13 +74,13 @@ public class TextIndex {
         IntBuffer tib = ttok.getIntBuffer();
         long lhash;
         int curr;
-        while((max-min)>100) {
+        while ((max-min)>100) {
             ttok.pos((curr=(min+(max-min)/2))*REC_SIZE);
             tib.rewind();
             lhash = hashToLong(tib.get());
-            if(lhash<hash) {
+            if (lhash<hash) {
                 min=curr+1;
-            } else if(lhash>hash) {
+            } else if (lhash>hash) {
                 max=curr-1;
             } else {
                 min=curr-40;
@@ -90,20 +90,20 @@ public class TextIndex {
         }
         
         List<Integer> entries = new ArrayList<>();
-        for(int i=min;i<=max;++i) {
+        for (int i=min;i<=max;++i) {
             ttok.pos(i*REC_SIZE);
             tib.rewind();
             lhash = hashToLong(tib.get());
-            if(lhash==hash) {
+            if (lhash==hash) {
                 entries.add(tib.get());
-            } else if(lhash>hash) {
+            } else if (lhash>hash) {
                 break;
             }
         }
         
-        for(Integer i : entries) {
+        for (Integer i : entries) {
             dtok.pos(i);
-            if(df.at(offset).equals(key)) {
+            if (df.at(offset).equals(key)) {
                 return i;
             }
         }
@@ -116,7 +116,7 @@ public class TextIndex {
      */
     private static long hashToLong(int hash) {
         long rv;
-        if(hash<0) {
+        if (hash<0) {
             rv = 0xFFFFFFFFL & hash;
         } else {
             rv = hash;
@@ -145,15 +145,15 @@ public class TextIndex {
                 Field f = t.new Field(delim);
                 
                 int count = 0;
-                if(skipLines>0) {
+                if (skipLines>0) {
                     trans.info().log("Skipping",skipLines,"line"+(skipLines==1?" in":"s in"),data.file().getName());
                 }
-                for(int i=0;i<skipLines;++i) {
+                for (int i=0;i<skipLines;++i) {
                     t.nextLine();
                 }
                 tt2 = trans.start("Read", Env.SUB);
                 try {
-                    while(t.nextLine()) {
+                    while (t.nextLine()) {
                         list.add(new Idx(f.at(fieldOffset),t.pos()));
                         ++count;
                     }
@@ -168,8 +168,8 @@ public class TextIndex {
                 try {
                     ByteBuffer bb = ByteBuffer.allocate(8*1024);
                     IntBuffer ib = bb.asIntBuffer();
-                    for(Idx idx : list) {
-                        if(!ib.hasRemaining()) {
+                    for (Idx idx : list) {
+                        if (!ib.hasRemaining()) {
                             fos.write(bb);
                             ib.clear();
                             bb.rewind();
@@ -186,7 +186,7 @@ public class TextIndex {
                 fos.close();
             } 
         } finally {
-            if(raf!=null) {
+            if (raf!=null) {
                 raf.close(); // closed by fos
             }
         }
@@ -244,7 +244,7 @@ public class TextIndex {
          */
         @Override
         public boolean equals(Object o) {
-            if(o!=null && o instanceof Idx) {
+            if (o!=null && o instanceof Idx) {
                 return hash == ((Idx)o).hash;
             }
             return false;

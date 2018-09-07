@@ -53,9 +53,9 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
         DAOGetter getter = new DAOGetter(trans,dao()) {
             public Result<List<Data>> call() {
                 // If the call is for THIS user, and it exists, get from TRANS, add to TRANS if not.
-                if(user!=null && user.equals(trans.user())) {
+                if (user!=null && user.equals(trans.user())) {
                     Result<List<Data>> transLD = trans.get(transURSlot,null);
-                    if(transLD==null ) {
+                    if (transLD==null ) {
                         transLD = dao.readByUser(trans, user);
                     }
                     return transLD;
@@ -65,7 +65,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
             }
         };
         Result<List<Data>> lurd = get(trans, user, getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_UserRoleNotFound,"UserRole not found for [%s]",user);
         }
         return lurd;
@@ -79,7 +79,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
             }
         };
         Result<List<Data>> lurd = get(trans, role, getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_UserRoleNotFound,"UserRole not found for [%s]",role);
         }
         return lurd;
@@ -88,12 +88,12 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
     public Result<List<UserRoleDAO.Data>> readUserInRole(final AuthzTrans trans, final String user, final String role) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
             public Result<List<Data>> call() {
-                if(user.equals(trans.user())) {
+                if (user.equals(trans.user())) {
                     Result<List<Data>> rrbu = readByUser(trans, user);
-                    if(rrbu.isOK()) {
+                    if (rrbu.isOK()) {
                         List<Data> ld = new ArrayList<>(1);
-                        for(Data d : rrbu.value) {
-                            if(d.role.equals(role)) {
+                        for (Data d : rrbu.value) {
+                            if (d.role.equals(role)) {
                                 ld.add(d);
                                 break;
                             }
@@ -107,7 +107,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
             }
         };
         Result<List<Data>> lurd = get(trans, keyFromObjs(user,role), getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_UserRoleNotFound,"UserRole not found for role [%s] and user [%s]",role,user);
         }
         return lurd;

@@ -75,10 +75,10 @@ public class JscepCA extends CA {
          mxcwiS = new ConcurrentHashMap<>();
          mxcwiC = new ConcurrentHashMap<>();
          
-         if(params.length<2) {
+         if (params.length<2) {
              throw new CertException("No Trust Chain parameters are included");
          } 
-         if(params[0].length<2) {
+         if (params[0].length<2) {
              throw new CertException("User/Password required for JSCEP");
          }
          final String id = params[0][0];
@@ -98,21 +98,21 @@ public class JscepCA extends CA {
         
         StringBuilder urlstr = new StringBuilder();
 
-        for(int i=1;i<params.length;++i) { // skip first section, which is user/pass
+        for (int i=1;i<params.length;++i) { // skip first section, which is user/pass
             // Work 
-            if(i>1) {
+            if (i>1) {
                 urlstr.append(','); // delimiter
             }
             urlstr.append(params[i][0]);
             
             String dir = access.getProperty(CM_PUBLIC_DIR, "");
-            if(!"".equals(dir) && !dir.endsWith("/")) {
+            if (!"".equals(dir) && !dir.endsWith("/")) {
                 dir = dir + '/';
             }
             String path;
             List<FileReader> frs = new ArrayList<>(params.length-1);
             try {
-                for(int j=1; j<params[i].length; ++j) { // first 3 taken up, see above
+                for (int j=1; j<params[i].length; ++j) { // first 3 taken up, see above
                     path = !params[i][j].contains("/")?dir+params[i][j]:params[i][j];
                     access.printf(Level.INIT, "Loading a TrustChain Member for %s from %s",name, path);
                     frs.add(new FileReader(path));
@@ -121,8 +121,8 @@ public class JscepCA extends CA {
                 addCaIssuerDN(xcwi.getIssuerDN());
                 mxcwiS.put(params[i][0],xcwi);
             } finally {
-                for(FileReader fr : frs) {
-                    if(fr!=null) {
+                for (FileReader fr : frs) {
+                    if (fr!=null) {
                         fr.close();
                     }
                 }
@@ -139,10 +139,10 @@ public class JscepCA extends CA {
         PKCS10CertificationRequest csr;
         try {
             csr = csrmeta.generateCSR(trans);
-            if(trans.info().isLoggable()) {
+            if (trans.info().isLoggable()) {
                 trans.info().log(BCFactory.toString(csr));
             } 
-            if(trans.info().isLoggable()) {
+            if (trans.info().isLoggable()) {
                 trans.info().log(csr);
             }
         } finally {
@@ -152,7 +152,7 @@ public class JscepCA extends CA {
         tt = trans.start("Enroll CSR", Env.SUB);
         Client client = null;
         Item item = null;
-        for(int i=0; i<MAX_RETRY;++i) {
+        for (int i=0; i<MAX_RETRY;++i) {
             try {
                 item = clients.best();
                 client = clients.get(item);
@@ -163,12 +163,12 @@ public class JscepCA extends CA {
                         csr,
                         MS_PROFILE /* profile... MS can't deal with blanks*/);
                 
-                while(true) {
-                    if(er.isSuccess()) {
+                while (true) {
+                    if (er.isSuccess()) {
                         trans.checkpoint("Cert from " + clients.info(item));
                         X509Certificate x509 = null;
-                        for( Certificate cert : er.getCertStore().getCertificates(null)) {
-                            if(x509==null) {
+                        for ( Certificate cert : er.getCertStore().getCertificates(null)) {
+                            if (x509==null) {
                                 x509 = (X509Certificate)cert;
                                 break;
                             }
@@ -183,14 +183,14 @@ public class JscepCA extends CA {
                         throw new CertException(clients.info(item)+':'+er.getFailInfo().toString());
                     }
                 }
-            } catch(LocatorException e) {
+            } catch (LocatorException e) {
                 trans.error().log(e);
                 i=MAX_RETRY;
             } catch (ClientException e) {
                 trans.error().log(e,"SCEP Client Error, Temporarily Invalidating Client: " + clients.info(item));
                 try  { 
                     clients.invalidate(client);
-                    if(!clients.hasItems()) {
+                    if (!clients.hasItems()) {
                         clients.refresh();
                     }
                 } catch (LocatorException e1) {

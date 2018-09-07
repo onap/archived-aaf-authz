@@ -110,14 +110,14 @@ public class JU_ArtifactDir {
         try {
             ArtifactDir.write(writableFile, Chmod.to755, (String[])null);
             fail("Should've thrown an exception");
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
         }
         
         KeyStore ks = KeyStore.getInstance(Agent.PKCS12);
         try {
             ArtifactDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
             fail("Should've thrown an exception");
-        } catch(CadiException e) {
+        } catch (CadiException e) {
         }
         
         ks.load(null, null);

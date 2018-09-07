@@ -29,7 +29,7 @@ public abstract class Creator<T> {
     
     public String query(String where) {
         StringBuilder sb = new StringBuilder(select());
-        if(where!=null) {
+        if (where!=null) {
             sb.append(" WHERE ");
             sb.append(where);
         }

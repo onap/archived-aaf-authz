@@ -41,7 +41,7 @@ public class CacheTouch extends ActionDAO<String,Void, String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, String table, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf("Would mark %s cache in DB for clearing: %s",table, text);
             return Result.ok();
         } else {

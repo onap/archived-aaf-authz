@@ -90,17 +90,17 @@ public class CreateDelete extends Cmd {
                         
                 }
                 boolean rolesSupplied = (args.length>idx);
-                if(fp == null) {// This useless code brought to you by Sonar.
+                if (fp == null) {// This useless code brought to you by Sonar.
                     throw new CadiException("No call made.");  
                 }
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     rv=fp.code();
                     pw().print(verb);
                     pw().println("d Role");
-                    if(rolesSupplied) {
-                        for(;args.length>idx;++idx ) {
+                    if (rolesSupplied) {
+                        for (;args.length>idx;++idx ) {
                             try {
-                                if(201!=(rv=((Role)parent)._exec(0,new String[] {"user","add",rr.getName(),args[idx]}))) {
+                                if (201!=(rv=((Role)parent)._exec(0,new String[] {"user","add",rr.getName(),args[idx]}))) {
                                     rv = 206 /*HttpStatus.PARTIAL_CONTENT_206*/;
                                 }
                             } catch (LocatorException e) {
@@ -109,7 +109,7 @@ public class CreateDelete extends Cmd {
                         }
                     }
                 } else {
-                    if((rv=fp.code())==202) {
+                    if ((rv=fp.code())==202) {
                         pw().print("Role ");
                         pw().print(verb);
                         pw().println(" Accepted, but requires Approvals before actualizing");

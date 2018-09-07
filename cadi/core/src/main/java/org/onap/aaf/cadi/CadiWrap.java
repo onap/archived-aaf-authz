@@ -118,13 +118,13 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     }
     
     public static boolean checkPerm(Access access, String caller, Principal principal, PermConverter pconv, Lur lur, String perm) {
-        if(principal== null) {
+        if (principal== null) {
             access.log(Level.AUDIT,caller, "No Principal in Transaction");
             return false;
         } else { 
             final long start = System.nanoTime();
             perm = pconv.convert(perm);
-            if(lur.fish(principal,lur.createPerm(perm))) {
+            if (lur.fish(principal,lur.createPerm(perm))) {
                 access.printf(Level.DEBUG,"%s: %s has %s, %f ms", caller, principal.getName(), perm, Timing.millis(start));
                 return true;
             } else {
@@ -158,7 +158,7 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     }
 
     public String getUser() {
-        if(user==null && principal!=null) {
+        if (user==null && principal!=null) {
             user = principal.getName();
         }
         return user;
@@ -183,9 +183,9 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     
     // Add a feature
     public void invalidate(String id) {
-        if(lur instanceof EpiLur) {
+        if (lur instanceof EpiLur) {
             ((EpiLur)lur).remove(id);
-        } else if(lur instanceof CachingLur) {
+        } else if (lur instanceof CachingLur) {
             ((CachingLur<?>)lur).remove(id);
         }
     }

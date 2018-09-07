@@ -55,8 +55,8 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
         
         // Evaluate for "*" once...
         all = false;
-        for(String srole : roles) {
-            if("*".equals(srole)) {
+        for (String srole : roles) {
+            if ("*".equals(srole)) {
                 all = true;
                 break;
             }
@@ -79,11 +79,11 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
      */
     public String pathParam(HttpServletRequest req, String key) {
         String rv = req.getParameter(key);
-        if(rv==null) {
+        if (rv==null) {
             rv = match.param(req.getPathInfo(), key);
-            if(rv!=null) {
+            if (rv!=null) {
                 rv = rv.trim();
-                if(rv.endsWith("/")) {
+                if (rv.endsWith("/")) {
                     rv = rv.substring(0, rv.length()-1);
                 }
             }
@@ -102,10 +102,10 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
      * @return
      */
     public boolean isAuthorized(HttpServletRequest req) {
-        if(all)return true;
-        if(roles!=null) {
-            for(String srole : roles) {
-                if(req.isUserInRole(srole)) return true;
+        if (all)return true;
+        if (roles!=null) {
+            for (String srole : roles) {
+                if (req.isUserInRole(srole)) return true;
             }
         }
         return false;

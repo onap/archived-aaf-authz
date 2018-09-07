@@ -94,7 +94,7 @@ public class HttpEpiTaf implements HttpTaf {
         TafResp firstTry = null;
         List<Redirectable> redirectables = null;
         List<TafResp> log;
-        if(access.willLog(Level.DEBUG)) {
+        if (access.willLog(Level.DEBUG)) {
             log = new ArrayList<>();
         } else {
             log = null;

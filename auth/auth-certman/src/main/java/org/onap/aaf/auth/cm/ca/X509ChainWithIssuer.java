@@ -45,8 +45,8 @@ public class X509ChainWithIssuer extends X509andChain {
         // Trust Chain.  Last one should be the CA
         Collection<? extends Certificate> certs;
         X509Certificate x509;
-        for(Reader rdr : rdrs) {
-            if(rdr==null) { // cover for badly formed array
+        for (Reader rdr : rdrs) {
+            if (rdr==null) { // cover for badly formed array
                 continue;
             }
             
@@ -56,13 +56,13 @@ public class X509ChainWithIssuer extends X509andChain {
             } catch (CertificateException e) {
                 throw new CertException(e);
             }
-            for(Certificate c : certs) {
+            for (Certificate c : certs) {
                 x509=(X509Certificate)c;
                 Principal subject = x509.getSubjectDN();
-                if(subject==null) {
+                if (subject==null) {
                     continue;
                 }
-                if(cert==null) { // first in Trust Chain
+                if (cert==null) { // first in Trust Chain
                     issuerDN = subject.toString();
                     cert=x509; // adding each time makes sure last one is signer.
                 }
@@ -73,12 +73,12 @@ public class X509ChainWithIssuer extends X509andChain {
     
     public X509ChainWithIssuer(Certificate[] certs) throws IOException, CertException {
         X509Certificate x509;
-        for(int i=certs.length-1; i>=0; --i) {
+        for (int i=certs.length-1; i>=0; --i) {
             x509=(X509Certificate)certs[i];
             Principal subject = x509.getSubjectDN();
-            if(subject!=null) {
+            if (subject!=null) {
                 addTrustChainEntry(x509);
-                if(i==0) { // last one is signer
+                if (i==0) { // last one is signer
                     cert=x509; 
                     issuerDN= subject.toString(); 
                 }

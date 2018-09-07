@@ -58,9 +58,9 @@ public abstract class ActionPuntDAO<D, RV, T> extends ActionDAO<D, RV, T> {
          *  This method Randomized date.  This is no longer needed.  Just add the Punt Months.
         temp.setTime(now);
         temp.add(GregorianCalendar.MONTH, months);
-        if(range>0) {
+        if (range>0) {
             int forward = Math.abs(random.nextInt()%range);
-            if(forward>1) {
+            if (forward>1) {
                 temp.add(GregorianCalendar.MONTH, forward);
                 temp.add(GregorianCalendar.DAY_OF_MONTH, (random.nextInt()%30)-15);
             }

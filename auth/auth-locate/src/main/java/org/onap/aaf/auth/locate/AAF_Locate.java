@@ -120,7 +120,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         facade_1_1_XML = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.XML);
 
         synchronized(env) {
-            if(cacheUser == null) {
+            if (cacheUser == null) {
                 cacheUser = Cache.obtain(USER_PERMS);
                 Cache.startCleansing(env, USER_PERMS);
             }
@@ -163,7 +163,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         String version = "1.0";
         // Get Correct API Class from Mapper
         Class<?> respCls = facade.mapper().getClass(api); 
-        if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
+        if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         // setup Application API HTML ContentTypes for JSON and Route
         String application = applicationJSON(respCls, version);
         route(env,meth,path,code,application,"application/json;version="+version,"*/*","*");
@@ -186,7 +186,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     @Override
     protected AAFConHttp _newAAFConHttp() throws CadiException {
         try {
-            if(dal==null) {
+            if (dal==null) {
                 dal = AbsAAFLocator.create(aaf_service_name,Config.AAF_DEFAULT_VERSION);
             }
             // utilize pre-constructed DirectAAFLocator
@@ -197,7 +197,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     }
 
     public Locator<URI> getGUILocator() throws LocatorException {
-        if(gui_locator==null) {
+        if (gui_locator==null) {
             gui_locator = AbsAAFLocator.create(aaf_gui_name,Config.AAF_DEFAULT_VERSION);
         }
         return gui_locator;
@@ -228,7 +228,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     @Override
     public void destroy() {
         Cache.stopTimer();
-        if(cluster!=null) {
+        if (cluster!=null) {
             cluster.close();
         }
         super.destroy();

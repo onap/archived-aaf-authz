@@ -51,13 +51,13 @@ public class InXML implements Parse<Reader, State> {
         State state = parsed.state;
         
         // OK, before anything else, see if there is leftover processing, if so, do it!
-        if(state.unevaluated!=null) {
+        if (state.unevaluated!=null) {
             DerTag dt = state.unevaluated;
             state.unevaluated = null;
-            if(!state.greatExp.eval(parsed, dt))return parsed;
+            if (!state.greatExp.eval(parsed, dt))return parsed;
         }
 
-        if(state.hasAttributes()) {
+        if (state.hasAttributes()) {
             Prop prop = state.pop();
             parsed.event = Parse.ATTRIB;
             parsed.name = prop.tag;
@@ -73,14 +73,14 @@ public class InXML implements Parse<Reader, State> {
         boolean go = true;
         
         try {
-            while(go && (ch=r.read())>=0) {
+            while (go && (ch=r.read())>=0) {
                 c = (char)ch;
-                if(c == '"') {
-                    if(state.greatExp instanceof LeafExpectations) { // within a set of Tags, make a Quote
+                if (c == '"') {
+                    if (state.greatExp instanceof LeafExpectations) { // within a set of Tags, make a Quote
                         sb.append(c);
                     } else {
-                        if(inQuotes) {
-                            if(escaped) {
+                        if (inQuotes) {
+                            if (escaped) {
                                 sb.append('\\');
                                 sb.append(c);
                                 escaped = false;
@@ -92,11 +92,11 @@ public class InXML implements Parse<Reader, State> {
                             inQuotes = true;
                         }
                     }
-                } else if(inQuotes) {
+                } else if (inQuotes) {
                     sb.append(c);
-                } else if(c=='&') {
+                } else if (c=='&') {
                     XmlEscape.xmlEscape(sb,r);
-                } else if(c=='\\') {
+                } else if (c=='\\') {
                     escaped=true;
                 } else {
                     switch(c) {
@@ -106,9 +106,9 @@ public class InXML implements Parse<Reader, State> {
                             break;
                         default:
                             // don't add Whitespace to start of SB... saves removing later
-                            if(sb.length()>0) {
+                            if (sb.length()>0) {
                                 sb.append(c);
-                            } else if(!Character.isWhitespace(c)) { 
+                            } else if (!Character.isWhitespace(c)) { 
                                 sb.append(c);
                             }
                         }
@@ -142,16 +142,16 @@ public class InXML implements Parse<Reader, State> {
             String tag = null;
             
             try {
-                if((ch = r.read())<0) throw new ParseException("Reader content ended before complete");
-                if(ch=='?') {
+                if ((ch = r.read())<0) throw new ParseException("Reader content ended before complete");
+                if (ch=='?') {
                     isXmlInfo = true;
                 }
                 // TODO Check for !-- comments
                 do {
                     c=(char)ch;
-                     if(c=='"') {
-                            if(inQuotes) {
-                                if(escaped) {
+                     if (c=='"') {
+                            if (inQuotes) {
+                                if (escaped) {
                                     sb.append(c);
                                     escaped = false;
                                 } else {
@@ -160,7 +160,7 @@ public class InXML implements Parse<Reader, State> {
                             } else {
                                 inQuotes = true;
                             }
-                     } else if(inQuotes) {
+                     } else if (inQuotes) {
                          sb.append(c);
                      } else {
                          switch(c) {
@@ -184,13 +184,13 @@ public class InXML implements Parse<Reader, State> {
 //                                sb.setLength(0);
 //                                break;
                             case '?':
-                                if(!isXmlInfo)sb.append(c);
+                                if (!isXmlInfo)sb.append(c);
                                 break;
                             default:
                                 sb.append(c);
                          }
                      }
-                } while(go && (ch=r.read())>=0);
+                } while (go && (ch=r.read())>=0);
             } catch (IOException e) {
                 throw new ParseException(e);
             }
@@ -198,14 +198,14 @@ public class InXML implements Parse<Reader, State> {
         }
 
         private void endField(String tag, StringBuilder sb) {
-            if(name==null) {
+            if (name==null) {
                 name = sb.toString();
                 sb.setLength(0);
             } else {
                 String value = sb.toString();
                 sb.setLength(0);
-                if(tag !=null && value != null) {
-                    if(props==null)props = new ArrayList<>();
+                if (tag !=null && value != null) {
+                    if (props==null)props = new ArrayList<>();
                     props.add(new Prop(tag,value));
                 }
             }
@@ -217,7 +217,7 @@ public class InXML implements Parse<Reader, State> {
             sb.append(" Tag\n");
             sb.append("  Name: ");
             sb.append(name);
-            if(props!=null) for(Prop p : props) {
+            if (props!=null) for (Prop p : props) {
                 sb.append("\n     ");
                 sb.append(p.tag);
                 sb.append("=\"");
@@ -250,7 +250,7 @@ public class InXML implements Parse<Reader, State> {
         }
 
         public void push(Prop prop) {
-            if(attribs==null) {
+            if (attribs==null) {
                 attribs = new ArrayList<>();
                 idx = 0;
             }
@@ -259,9 +259,9 @@ public class InXML implements Parse<Reader, State> {
         
         public Prop pop() {
             Prop rv = null;
-            if(attribs!=null) {
+            if (attribs!=null) {
                 rv = attribs.get(idx++);
-                if(idx>=attribs.size())attribs = null;
+                if (idx>=attribs.size())attribs = null;
             }
             return rv;
         }
@@ -282,8 +282,8 @@ public class InXML implements Parse<Reader, State> {
 
         // Recursively look back for any namespaces
         protected Map<String,String> getNS() {
-            if(ns!=null)return ns;
-            if(prev!=null) {
+            if (ns!=null)return ns;
+            if (prev!=null) {
                 return prev.getNS();
             }
             return null;
@@ -291,47 +291,47 @@ public class InXML implements Parse<Reader, State> {
 
         private void addNS(Prop prop) {
             Map<String,String> existingNS = getNS();
-            if(ns==null)ns = new HashMap<>();
+            if (ns==null)ns = new HashMap<>();
             // First make a copy of previous NSs so that we have everything we need, but can overwrite, if necessary
-            if(existingNS!=null && ns!=existingNS) {
+            if (existingNS!=null && ns!=existingNS) {
                 ns.putAll(ns);
             }
             ns.put(prop.tag, prop.value);
         }
 
         private JaxInfo getDerived(State state, JaxInfo ji, DerTag derTag) throws ParseException {
-            if(derTag==null)return ji;
+            if (derTag==null)return ji;
             
             List<Prop> props = derTag.props;
             
             Prop derived = null;
-            if(props!=null) {
+            if (props!=null) {
                 // Load Namespaces (if any)
-                for(Prop prop : props) {
-                    if(prop.tag.startsWith("xmlns:")) {
+                for (Prop prop : props) {
+                    if (prop.tag.startsWith("xmlns:")) {
                         addNS(prop);
                     }
                 }
-                for(Prop prop : props) {
-                    if(prop.tag.endsWith(":type")) {
+                for (Prop prop : props) {
+                    if (prop.tag.endsWith(":type")) {
                         int idx = prop.tag.indexOf(':');
                         String potentialNS = "xmlns:"+prop.tag.substring(0,idx);
                         Map<String,String> ns = getNS();
                         boolean noNamespace = false;
-                        if(ns==null) {
+                        if (ns==null) {
                             noNamespace = true;
                         } else {
                             String nsVal = ns.get(potentialNS);
-                            if(nsVal==null) noNamespace = true;
+                            if (nsVal==null) noNamespace = true;
                             else {
                                 derived = new Prop(Parsed.EXTENSION_TAG,prop.value);
                                 state.push(derived);
                             }
                         }
-                        if(noNamespace) {
+                        if (noNamespace) {
                             throw new ParseException(prop.tag + " utilizes an invalid Namespace prefix");
                         }
-                    } else if(!prop.tag.startsWith("xmlns")) {
+                    } else if (!prop.tag.startsWith("xmlns")) {
                         state.push(prop);
                     }
                 }
@@ -348,10 +348,10 @@ public class InXML implements Parse<Reader, State> {
         
         // @Override
         public boolean eval(Parsed<State> parsed, DerTag derTag) throws ParseException {
-            if(derTag.isXmlInfo) {
+            if (derTag.isXmlInfo) {
                 parsed.event = START_DOC;
-            } else if(ji.name.equals(derTag.name)) {
-                if(derTag.isEndTag) {
+            } else if (ji.name.equals(derTag.name)) {
+                if (derTag.isEndTag) {
                     parsed.event = END_DOC;
                     parsed.state.greatExp = prev;
                 } else {
@@ -374,22 +374,22 @@ public class InXML implements Parse<Reader, State> {
 
         // @Override
         public boolean eval(Parsed<State> parsed, DerTag derTag) throws ParseException {
-            if(derTag.isEndTag && ji.name.equals(derTag.name)) {
+            if (derTag.isEndTag && ji.name.equals(derTag.name)) {
                 parsed.state.greatExp = prev;
                 parsed.event = END_OBJ;
-                if(printName)parsed.name = ji.name;
+                if (printName)parsed.name = ji.name;
             } else {
                 //Standard Members
-                for(JaxInfo memb : ji.members) {
-                    if(memb.name.equals(derTag.name)) {
+                for (JaxInfo memb : ji.members) {
+                    if (memb.name.equals(derTag.name)) {
                         parsed.name = memb.name;
-                        if(memb.isArray) {
+                        if (memb.isArray) {
                             parsed.state.unevaluated = derTag; // evaluate within Array Context
                             parsed.event = START_ARRAY;
                             parsed.state.greatExp = new ArrayExpectations(parsed.state,memb,this);
                             return false;
-                        } else if(memb.isObject()) {
-                            if(derTag.isEndTag) {
+                        } else if (memb.isObject()) {
+                            if (derTag.isEndTag) {
                                 throw new ParseException("Unexpected End Tag </" + derTag.name + '>');
                             } else {
                                 parsed.event = START_OBJ;
@@ -398,7 +398,7 @@ public class InXML implements Parse<Reader, State> {
                                 return false;
                             }
                         } else { // a leaf
-                            if(derTag.isEndTag) {
+                            if (derTag.isEndTag) {
                                  throw new ParseException("Misplaced End Tag </" + parsed.name + '>');
                             } else {
                                 parsed.state.greatExp = new LeafExpectations(parsed.state,memb, this);
@@ -421,7 +421,7 @@ public class InXML implements Parse<Reader, State> {
 
         // @Override
         public boolean eval(Parsed<State> parsed, DerTag derTag) throws ParseException {
-            if(ji.name.equals(derTag.name) && derTag.isEndTag) {
+            if (ji.name.equals(derTag.name) && derTag.isEndTag) {
                 parsed.event = NEXT;
                 parsed.isString = ji.isString;
                 parsed.state.greatExp = prev;
@@ -435,18 +435,18 @@ public class InXML implements Parse<Reader, State> {
     private static class ArrayExpectations extends GreatExpectations {
         public ArrayExpectations(State state, JaxInfo ji, GreatExpectations prev) throws ParseException {
             super(state, ji, prev,null);
-            if(state.arrayInfo==null)state.arrayInfo=new Stack<ArrayState>();
+            if (state.arrayInfo==null)state.arrayInfo=new Stack<ArrayState>();
             state.arrayInfo.push(new ArrayState());
         }
         // @Override
         public boolean eval(Parsed<State> parsed, DerTag derTag) throws ParseException {
-            if(ji.name.equals(derTag.name) && !derTag.isEndTag) {
-                if(ji.isObject()) {
-                    if(derTag.isEndTag) {
+            if (ji.name.equals(derTag.name) && !derTag.isEndTag) {
+                if (ji.isObject()) {
+                    if (derTag.isEndTag) {
                         throw new ParseException("Unexpected End Tag </" + derTag.name + '>');
                     } else {
                         ArrayState ai = parsed.state.arrayInfo.peek();  
-                        if(ai.firstObj || ai.didNext) {
+                        if (ai.firstObj || ai.didNext) {
                             ai.firstObj = false;
                             ai.didNext = false;
                             parsed.event = START_OBJ;
@@ -459,7 +459,7 @@ public class InXML implements Parse<Reader, State> {
                         }
                     }
                 } else { // a leave
-                    if(derTag.isEndTag) {
+                    if (derTag.isEndTag) {
                          throw new ParseException("Misplaced End Tag </" + parsed.name + '>');
                     } else {
                         parsed.state.greatExp = new LeafExpectations(parsed.state, ji, this);

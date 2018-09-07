@@ -268,20 +268,20 @@ public abstract class Rcli<CT> {
             @Override
             public void transfer(OutputStream os) throws IOException, APIException {
                 PrintStream ps;
-                if(os instanceof PrintStream) {
+                if (os instanceof PrintStream) {
                     ps = (PrintStream)os;
                 } else {
                     ps = new PrintStream(os);
                 }
                 boolean first = true;
-                for(String fp : formParam) {
-                    if(fp!=null) {
-                        if(first) {
+                for (String fp : formParam) {
+                    if (fp!=null) {
+                        if (first) {
                             first = false;
                         } else {
                             ps.print('&');
                         }
-                        if(fp.endsWith("=")) {
+                        if (fp.endsWith("=")) {
                             first = true;
                         }
                         ps.print(fp);
@@ -376,7 +376,7 @@ public abstract class Rcli<CT> {
         client.setMethod(GET);
         client.addHeader(ACCEPT, accept);
         
-        for(int i=1;i<headers.length;i=i+2) {
+        for (int i=1;i<headers.length;i=i+2) {
             client.addHeader(headers[i-1],headers[i]);
         }
         client.setPathInfo(pp.path());
@@ -393,7 +393,7 @@ public abstract class Rcli<CT> {
         EClient<CT> client = client();
         client.setMethod(GET);
         client.addHeader(ACCEPT, accept);
-        for(int i=1;i<headers.length;i=i+2) {
+        for (int i=1;i<headers.length;i=i+2) {
             client.addHeader(headers[i-1],headers[i]);
         }
         client.setPathInfo(pp.path());
@@ -410,7 +410,7 @@ public abstract class Rcli<CT> {
         EClient<CT> client = client();
         client.setMethod(GET);
         client.addHeader(ACCEPT, typeString(df.getTypeClass()));
-        for(int i=1;i<headers.length;i=i+2) {
+        for (int i=1;i<headers.length;i=i+2) {
             client.addHeader(headers[i-1],headers[i]);
         }
         client.setPathInfo(pp.path());
@@ -664,7 +664,7 @@ public abstract class Rcli<CT> {
             throw new CadiException("Invalid incoming URI",e);
         }
         String name;
-        for(Enumeration<String> en = req.getHeaderNames();en.hasMoreElements();) {
+        for (Enumeration<String> en = req.getHeaderNames();en.hasMoreElements();) {
             name = en.nextElement();
             client.addHeader(name,req.getHeader(name));
         }
@@ -673,7 +673,7 @@ public abstract class Rcli<CT> {
         client.setPathInfo(pathParam);
         String meth = req.getMethod();
         client.setMethod(meth);
-        if(!"GET".equals(meth)) {
+        if (!"GET".equals(meth)) {
             client.setPayload(new EClient.Transfer() {
                 @Override
                 public void transfer(OutputStream os) throws IOException, APIException {
@@ -682,7 +682,7 @@ public abstract class Rcli<CT> {
                     // reuse Buffers
                     Pooled<byte[]> pbuff = buffPool.get();
                     try { 
-                        while((read=is.read(pbuff.content))>=0) {
+                        while ((read=is.read(pbuff.content))>=0) {
                             os.write(pbuff.content,0,read);
                         }
                     } finally {
@@ -704,21 +704,21 @@ public abstract class Rcli<CT> {
 
         public ParsePath(final String origPath) {
             path = origPath;
-            if(origPath==null) {
+            if (origPath==null) {
                 query=queryEnd=pound=-1;
                 queryParams=null;
             } else {
                 query = origPath.indexOf('?');
                 pound = origPath.indexOf('#');
                 queryEnd = pound>=0?pound:path.length();
-                if(oneCallQueryParams==null) {
-                    if(query>=0) {
+                if (oneCallQueryParams==null) {
+                    if (query>=0) {
                         queryParams = path.substring(query+1,queryEnd); 
                     } else {
                         queryParams=null;
                     }
                 } else {
-                    if(query>=0) {
+                    if (query>=0) {
                         queryParams = oneCallQueryParams + '&' + path.substring(query+1,queryEnd); 
                     } else {
                         queryParams = oneCallQueryParams;
@@ -729,12 +729,12 @@ public abstract class Rcli<CT> {
         }
         
         public String path() {
-            if(query>=0) {
-                if(pound>=0) {
+            if (query>=0) {
+                if (pound>=0) {
                     return path.substring(pound+1);
                 }
                 return path.substring(0,query);
-            } else if(pound>=0) {
+            } else if (pound>=0) {
                 return path.substring(0,pound);
             } else {
                 return path;
@@ -746,7 +746,7 @@ public abstract class Rcli<CT> {
         }
         
         public String frag() {
-            if(pound>=0) {
+            if (pound>=0) {
                 return path.substring(pound+1);
             } else {
                 return null;

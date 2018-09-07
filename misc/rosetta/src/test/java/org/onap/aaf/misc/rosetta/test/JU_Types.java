@@ -120,9 +120,9 @@ public class JU_Types {
         Multi multi = new Multi();
         MultiMarshal pmulti = new MultiMarshal();
     
-        for(int i=0;i<10;++i) {
+        for (int i=0;i<10;++i) {
             System.out.println("===== Multi Iteration " + i + " =====");
-            if(i>0) {
+            if (i>0) {
                 multi.getSingle().add(setSData());
             }
             System.out.println("  ===== RAW =====");
@@ -151,9 +151,9 @@ public class JU_Types {
         Multi multi = new Multi();
         DocMarshal<Multi> doc = DocMarshal.root(new MultiMarshal());
     
-        for(int i=0;i<3;++i) {
+        for (int i=0;i<3;++i) {
             System.out.println("===== Multi Iteration " + i + " =====");
-            if(i>0) {
+            if (i>0) {
                 multi.getSingle().add(setSData());
             }
             System.out.println("  ===== RAW =====");
@@ -194,14 +194,14 @@ public class JU_Types {
         Trans trans = env.newTrans();
         RosettaData<Multi> data = df.newData(trans);
         // Prime pump
-        for(int i=0;i<100;++i) {
+        for (int i=0;i<100;++i) {
             data.load(multi);
         }
         trans = env.newTrans();
         data = df.newData(trans);
         
         int iters = 10000;
-        for(int i=0;i<iters;++i) {
+        for (int i=0;i<iters;++i) {
             data.load(multi);
         }
         Metric metrics = trans.auditTrail(0, null,Env.JSON,Env.XML);
@@ -215,13 +215,13 @@ public class JU_Types {
         data = df.newData(trans);
 
         // Prime pump
-        for(int i=0;i<100;++i) {
+        for (int i=0;i<100;++i) {
             data.load(multi);
         }
         trans = env.newTrans();
         data = df.newData(trans);
         
-        for(int i=0;i<iters;++i) {
+        for (int i=0;i<iters;++i) {
             data.load(multi);
         }
         metrics = trans.auditTrail(0, null,Env.JSON,Env.XML);
@@ -235,14 +235,14 @@ public class JU_Types {
         data = df.newData(trans);
         StringBuilderWriter sbw = new StringBuilderWriter(256);
         // Prime pump
-        for(int i=0;i<100;++i) {
+        for (int i=0;i<100;++i) {
             sbw.reset();
             data.direct(multi, sbw, true);
         }
         trans = env.newTrans();
         data = df.newData(trans);
 
-        for(int i=0;i<iters;++i) {
+        for (int i=0;i<iters;++i) {
             sbw.reset();
             data.direct(multi, sbw, true);
         }
@@ -287,7 +287,7 @@ public class JU_Types {
         System.out.println(sw);
         String result = sw.toString();
         
-        if(!result.equals(str)) {
+        if (!result.equals(str)) {
             sw.getBuffer().setLength(0);
             new OutRaw().extract(new StringReader(str), sw, in);
             System.out.println(sw);

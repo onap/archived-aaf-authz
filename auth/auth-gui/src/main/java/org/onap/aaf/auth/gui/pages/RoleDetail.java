@@ -107,7 +107,7 @@ public class RoleDetail extends Page {
             final String pRole = trans.get(sRoleName, null);
             Validator v = new Validator();
             v.role(pRole);
-            if(v.err()) {
+            if (v.err()) {
                 trans.warn().printf("Error in PermDetail Request: %s", v.errs());
                 return;
             }
@@ -121,9 +121,9 @@ public class RoleDetail extends Page {
                         try {
                             Future<Roles> fr = client.read("/authz/roles/"+pRole+"?ns",gui.getDF(Roles.class));
                             Future<UserRoles> fur = client.read("/authz/userRoles/role/"+pRole,gui.getDF(UserRoles.class));
-                            if(fr.get(AAF_GUI.TIMEOUT)) {
+                            if (fr.get(AAF_GUI.TIMEOUT)) {
                                 List<Role> roles = fr.value.getRole();
-                                if(!roles.isEmpty()) {
+                                if (!roles.isEmpty()) {
                                     Role role = fr.value.getRole().get(0);
                                     trans.put(sRole, role);
                                     Boolean mayWrite = trans.fish(new AAFPermission(role.getNs(),ACCESS,":role:"+role.getName(),"write"));
@@ -131,7 +131,7 @@ public class RoleDetail extends Page {
                                     Boolean mayApprove = trans.fish(new AAFPermission(role.getNs(),ACCESS,":role:"+role.getName(),"approve"));
                                     trans.put(sMayApprove, mayApprove);
                                     
-                                    if(mayWrite || mayApprove) {
+                                    if (mayWrite || mayApprove) {
                                         Mark js = new Mark();
                                         Mark fn = new Mark();
                                         hgen.js(js)
@@ -160,7 +160,7 @@ public class RoleDetail extends Page {
                                 return false;
                             }
                             
-                            if(fur.get(AAF_GUI.TIMEOUT)) {
+                            if (fur.get(AAF_GUI.TIMEOUT)) {
                                 trans.put(sUserRole, fur.value.getUserRole());
                             } else {
                                 trans.error().printf("Error calling AAF for UserRoles in GUI, Role Detail %d: %s",fr.code(),fr.body());
@@ -184,7 +184,7 @@ public class RoleDetail extends Page {
             final Role role = trans.get(sRole,null);
             ArrayList<AbsCell[]> rv = new ArrayList<>();
             
-            if(role!=null) {
+            if (role!=null) {
                 boolean mayWrite = trans.get(sMayWrite, false);
                 boolean mayApprove = trans.get(sMayApprove, false);
 
@@ -192,7 +192,7 @@ public class RoleDetail extends Page {
                 rv.add(new AbsCell[]{
                         new TextCell("Role:","width=45%"),
                         new TextCell(pRole)});
-                if(mayWrite) {
+                if (mayWrite) {
                     rv.add(new AbsCell[]{
                             new TextCell("Description:","width=45%"),
                             new TextInputCell("description","textInput",desc,"id=descText","onkeypress=touchedDesc()"),
@@ -211,9 +211,9 @@ public class RoleDetail extends Page {
                 boolean protectedRole = role.getName().endsWith(".owner") ||
                                         role.getName().endsWith(".admin");
                 boolean first = true;
-                for(Pkey r : role.getPerms()) {
+                for (Pkey r : role.getPerms()) {
                     String key=r.getType() + '|' + r.getInstance() + '|' + r.getAction();
-                    if(mayWrite) {
+                    if (mayWrite) {
                         rv.add(new AbsCell[] {
                             AbsCell.Null,
                             protectedRole && r.getType().endsWith(".access")
@@ -223,7 +223,7 @@ public class RoleDetail extends Page {
                             new TextCell(key)
                         });
                     } else {
-                        if(first) {
+                        if (first) {
                             rv.add(new AbsCell[] {
                                     new TextCell("Associated Permissions:","width=45%"),
                                     new TextCell(key)
@@ -238,7 +238,7 @@ public class RoleDetail extends Page {
                     }
                 }
                         
-                if(mayApprove) {
+                if (mayApprove) {
                     rv.add(AbsCell.HLINE);
 
                     // 
@@ -249,8 +249,8 @@ public class RoleDetail extends Page {
                         });
 
                     List<UserRole> userroles = trans.get(sUserRole,null);
-                    if(userroles!=null) {
-                        for(UserRole ur : userroles) {
+                    if (userroles!=null) {
+                        for (UserRole ur : userroles) {
                             String tag = "userrole";
                             
                             rv.add(new AbsCell[] {
@@ -284,10 +284,10 @@ public class RoleDetail extends Page {
         @Override
         public void postfix(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) {
             final Mark mark = trans.get(sMark, null);
-            if(mark!=null) {
+            if (mark!=null) {
                 hgen.tagOnly("input", "type=submit", "value=Submit");
                 final String pNS = trans.get(sNS, null);
-                if(pNS!=null && pNS.length()>0) {
+                if (pNS!=null && pNS.length()>0) {
                     hgen.leaf(mark,HTMLGen.A,"href="+NsDetail.HREF+"?ns="+pNS,"class=greenbutton").text("Back").end(mark);
                 }
                 hgen.end(mark);

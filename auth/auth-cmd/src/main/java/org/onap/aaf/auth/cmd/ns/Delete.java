@@ -56,7 +56,7 @@ public class Delete extends Cmd {
                 setQueryParamsOn(client);
                 Future<Void> fp = client.delete(path.toString(),Void.class);
                 
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     pw().println("Deleted Namespace");
                 } else {
                     error(fp);

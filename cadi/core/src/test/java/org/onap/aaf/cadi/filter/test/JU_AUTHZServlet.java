@@ -99,7 +99,7 @@ public class JU_AUTHZServlet {
             field.setAccessible(true);
             field.set(target, value);
             field.setAccessible(false);
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.err.println("Could not set field [" + fieldName + "] to " + value);
         }
     }

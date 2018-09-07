@@ -52,12 +52,12 @@ public class PermCreate extends ActionDAO<Perm,Data,String> {
         pdd.description = p.description;
         pdd.roles = p.roles;
         
-        if(dryRun) {
+        if (dryRun) {
             trans.info().log("Would Create Perm:",text,p.fullType());
             return Result.ok(pdd);
         } else {
             Result<Data> rv = q.permDAO.create(trans, pdd); // need to read for undelete
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().log("Created Perm:",text,p.fullType());
             } else {
                 trans.error().log("Error Creating Role -",rv.details,":",p.fullType());

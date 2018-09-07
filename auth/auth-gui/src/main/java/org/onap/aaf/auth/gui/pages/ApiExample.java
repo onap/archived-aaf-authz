@@ -79,7 +79,7 @@ public class ApiExample extends Page {
                                 "application/Void+json"
                                 );
                         Future<String> fs2;
-                        if(typecode.contains("Request+")) {
+                        if (typecode.contains("Request+")) {
                             fs2 = gui.client().read("/api/example/" + encoded+"?optional=true",
                                     "application/Void+json"
                                     );
@@ -88,19 +88,19 @@ public class ApiExample extends Page {
                         }
                         
                         
-                        if(fp.get(5000)) {
+                        if (fp.get(5000)) {
                                 xgen.incr(HTMLGen.H1).text("Sample Code").end()
                                 .incr(HTMLGen.H5).text(typecode).end();
                                 xgen.incr("pre");
-                                if(typecode.contains("+xml")) {
+                                if (typecode.contains("+xml")) {
                                     xgen.xml(fp.body());
-                                    if(fs2!=null && fs2.get(5000)) {
+                                    if (fs2!=null && fs2.get(5000)) {
                                         xgen.text(WITH_OPTIONAL_PARAMETERS);
                                         xgen.xml(fs2.body());
                                     }
                                 } else {
                                     xgen.text(fp.body());
-                                    if(fs2!=null && fs2.get(5000)) {
+                                    if (fs2!=null && fs2.get(5000)) {
                                         xgen.text(WITH_OPTIONAL_PARAMETERS);
                                         xgen.text(fs2.body());
                                     }

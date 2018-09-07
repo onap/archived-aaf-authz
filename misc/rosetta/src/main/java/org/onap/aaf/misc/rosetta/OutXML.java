@@ -43,9 +43,9 @@ public class OutXML extends Out{
     public OutXML(String root, String ... params) {
         this.root = root;
         props = new ArrayList<>();
-        for(String p : params) {
+        for (String p : params) {
             String[] tv=p.split("=");
-            if(tv.length==2)
+            if (tv.length==2)
                 props.add(new Prop(tv[0],tv[1]));
         }
     }
@@ -71,8 +71,8 @@ public class OutXML extends Out{
         boolean pretty = (options.length>0&&options[0]);
     
         IndentPrintWriter ipw;
-        if(pretty) {
-            if(writer instanceof IndentPrintWriter) {
+        if (pretty) {
+            if (writer instanceof IndentPrintWriter) {
                 ipw = (IndentPrintWriter)writer;
             } else {
                 writer = ipw = new IndentPrintWriter(writer);
@@ -82,19 +82,19 @@ public class OutXML extends Out{
         }
         boolean closeTag = false;
         Level level = new Level(null);
-        while((p = prs.parse(in,p.reuse())).valid()) {
-            if(!p.hasName() && level.multi!=null) {
+        while ((p = prs.parse(in,p.reuse())).valid()) {
+            if (!p.hasName() && level.multi!=null) {
                 p.name=level.multi;
             }
-            if(closeTag && p.event!=Parse.ATTRIB) {
+            if (closeTag && p.event!=Parse.ATTRIB) {
                 writer.append('>');
-                if(pretty)writer.append('\n');
+                if (pretty)writer.append('\n');
                 closeTag = false;
             }
             switch(p.event) {
                 case Parse.START_DOC:
-                    if(!(options.length>1&&options[1])) // if not a fragment, print XML Info data
-                        if(pretty)ipw.println(XML_INFO);
+                    if (!(options.length>1&&options[1])) // if not a fragment, print XML Info data
+                        if (pretty)ipw.println(XML_INFO);
                         else writer.append(XML_INFO);
                     break;
                 case Parse.END_DOC:
@@ -102,21 +102,21 @@ public class OutXML extends Out{
                 case Parse.START_OBJ:
                     stack.push(level);
                     level = new Level(level);
-                    if(p.hasName()) {
+                    if (p.hasName()) {
                         closeTag = tag(writer,level.sbw,pretty,pretty,p.name,null);
-                    } else if(root!=null && stack.size()==1) { // first Object
+                    } else if (root!=null && stack.size()==1) { // first Object
                         closeTag = tag(writer,level.sbw,pretty,pretty,root,null);
                         // Write Root Props
-                        for(Prop prop : props) {
+                        for (Prop prop : props) {
                             attrib(writer,pretty,prop.tag, prop.value,level);
                         }
                     }
-                    if(pretty)ipw.inc();
+                    if (pretty)ipw.inc();
                     break;
                 case Parse.END_OBJ:
-                    if(p.hasData())  
+                    if (p.hasData())  
                         closeTag = tag(writer,writer,pretty,false,p.name, XmlEscape.convert(p.sb));
-                    if(pretty)ipw.dec();
+                    if (pretty)ipw.dec();
                     writer.append(level.sbw.getBuffer());
                     level = stack.pop();
                     break;
@@ -124,16 +124,16 @@ public class OutXML extends Out{
                     level.multi = p.name;
                     break;
                 case Parse.END_ARRAY:
-                    if(p.hasData()) 
+                    if (p.hasData()) 
                         closeTag = tag(writer,writer,pretty,false, p.name, XmlEscape.convert(p.sb));
                     level.multi=null;
                     break;
                 case Parse.ATTRIB:
-                    if(p.hasData()) 
+                    if (p.hasData()) 
                         attrib(writer,pretty,p.name, XmlEscape.convert(p.sb), level);
                     break;
                 case Parse.NEXT:
-                    if(p.hasData())
+                    if (p.hasData())
                         closeTag = tag(writer,writer,pretty, false,p.name, XmlEscape.convert(p.sb));
                     break;
             }
@@ -156,15 +156,15 @@ public class OutXML extends Out{
 
         public boolean hasPrinted(String ns, String value, boolean create) {
             boolean rv = false;
-            if(nses==null) {
-                if(prev!=null)rv = prev.hasPrinted(ns, value, false);
+            if (nses==null) {
+                if (prev!=null)rv = prev.hasPrinted(ns, value, false);
             } else {
                 String v = nses.get(ns);
                 return value.equals(v); // note: accomodates not finding NS as well
             }
             
-            if(create && !rv) {
-                if(nses == null) nses = new HashMap<>();
+            if (create && !rv) {
+                if (nses == null) nses = new HashMap<>();
                 nses.put(ns, value);
             }
             return rv;
@@ -177,25 +177,25 @@ public class OutXML extends Out{
     private boolean tag(Writer fore, Writer aft, boolean pretty, boolean returns, String tag, String data) throws IOException {
         fore.append('<');
         fore.append(tag);
-        if(data!=null) {
+        if (data!=null) {
             fore.append('>'); // if no data, it may need some attributes...
             fore.append(data);
-            if(returns)fore.append('\n');
+            if (returns)fore.append('\n');
         }
         aft.append("</");
         aft.append(tag);
         aft.append(">");
-        if(pretty)aft.append('\n');
+        if (pretty)aft.append('\n');
         return data==null;
     }
     
     private void attrib(Writer fore, boolean pretty, String tag, String value, Level level) throws IOException {
         String realTag = tag.startsWith("__")?tag.substring(2):tag; // remove __
-        if(realTag.equals(Parsed.EXTENSION_TAG)) { // Convert Derived name into XML defined Inheritance
+        if (realTag.equals(Parsed.EXTENSION_TAG)) { // Convert Derived name into XML defined Inheritance
             fore.append(" xsi:type=\"");
             fore.append(value);
             fore.append('"');
-            if(!level.hasPrinted(XMLNS_XSI, XML_SCHEMA_INSTANCE,true)) {
+            if (!level.hasPrinted(XMLNS_XSI, XML_SCHEMA_INSTANCE,true)) {
                 fore.append(' ');
                 fore.append(XMLNS_XSI);
                 fore.append("=\"");
@@ -203,8 +203,8 @@ public class OutXML extends Out{
                 fore.append("\"");
             }
         } else {
-            if(realTag.startsWith("xmlns:") ) {
-                if(level.hasPrinted(realTag, value, true)) {
+            if (realTag.startsWith("xmlns:") ) {
+                if (level.hasPrinted(realTag, value, true)) {
                     return;
                 }
             }

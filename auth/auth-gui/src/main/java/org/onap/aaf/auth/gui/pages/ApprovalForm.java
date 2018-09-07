@@ -146,9 +146,9 @@ public class ApprovalForm extends Page {
                     public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         Future<Approvals> fa = client.read("/authz/approval/approver/"+trans.user(),gui.getDF(Approvals.class));
                         int numLeft = 0;
-                        if(fa.get(AAF_GUI.TIMEOUT)) {
+                        if (fa.get(AAF_GUI.TIMEOUT)) {
                             
-                            if(fa.value!=null) {
+                            if (fa.value!=null) {
                                 for (Approval appr : fa.value.getApprovals()) {
                                     if ("pending".equals(appr.getStatus())) {
                                         if (userParam!=null && !appr.getUser().equalsIgnoreCase(userParam)) {
@@ -227,23 +227,23 @@ public class ApprovalForm extends Page {
                     boolean userOK=true;
 
                     for (Approval appr : currApproverList) {
-                        if(++line<MAX_LINE) { // limit number displayed at one time.
+                        if (++line<MAX_LINE) { // limit number displayed at one time.
                             AbsCell userCell;
                             String user = appr.getUser();
-                            if(user.equals(prevUser)) {
+                            if (user.equals(prevUser)) {
                                 userCell = AbsCell.Null; 
                             } else if (user.endsWith(DOMAIN_OF_USER)){
                                 userOK=true;
                                 String title;
                                 Organization org = OrganizationFactory.obtain(trans.env(), user);
-                                if(org==null) {
+                                if (org==null) {
                                     title="";
                                 } else {
                                     Identity au = org.getIdentity(trans, user);
-                                    if(au!=null) {
-                                        if("MECHID".equals(au.type())) {
+                                    if (au!=null) {
+                                        if ("MECHID".equals(au.type())) {
                                             Identity managedBy = au.responsibleTo();
-                                            if(managedBy==null) {
+                                            if (managedBy==null) {
                                                 title ="title=" + au.type();
                                             } else {
                                                 title="title=Sponsor is " + managedBy.fullName();                                                
@@ -276,10 +276,10 @@ public class ApprovalForm extends Page {
                         }
                     }
                 }
-                if(numLeft>0) {
+                if (numLeft>0) {
                     msg = "After these, there will be " + numLeft + " approvals left to process";
                 }
-                if(rv.isEmpty()) {
+                if (rv.isEmpty()) {
                     if (numLeft>0) {
                         msg = "No Approvals to process at this time for user " + userParam +". You have " 
                             + numLeft + " other approvals to process.";

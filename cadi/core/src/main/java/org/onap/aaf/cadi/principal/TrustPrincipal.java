@@ -33,10 +33,10 @@ public class TrustPrincipal extends BearerPrincipal implements UserChain {
     public TrustPrincipal(final Principal actual, final String asName) {
         this.original = actual;
         name = asName.trim();
-        if(actual instanceof UserChain) {
+        if (actual instanceof UserChain) {
             UserChain uc = (UserChain)actual;
             userChain = uc.userChain();
-        } else if(actual instanceof TaggedPrincipal) {
+        } else if (actual instanceof TaggedPrincipal) {
             userChain=((TaggedPrincipal)actual).tag();
         } else {
             userChain = actual.getClass().getSimpleName();

@@ -49,27 +49,27 @@ public class JSGen {
             boolean pretty = htmlGen.pretty;
             String line, el;
             int l, end;
-            while((line=br.readLine())!=null) {
-                if(pretty) {
+            while ((line=br.readLine())!=null) {
+                if (pretty) {
                     String[] elements = line.split("\t");
                     
-                    for(int i=0; i<elements.length;++i) {
+                    for (int i=0; i<elements.length;++i) {
                         el = elements[i];
                         l = el.length();
-                        if(l==0) {// was a Tab
+                        if (l==0) {// was a Tab
                             ipw.print("  ");
                         } else {
                             el = el.trim();
                             l = l-el.length();
                             end = l/tabstop;
-                            for(int j=0;j<end;++j) {
+                            for (int j=0;j<end;++j) {
                                 ipw.print("  ");
                             }
                             end = l%tabstop;
-                            for(int j=0;j<end;++j) {
+                            for (int j=0;j<end;++j) {
                                 ipw.print(' ');
                             }
-                            if(i>0) ipw.print(' ');
+                            if (i>0) ipw.print(' ');
                                 ipw.print(el);
                             }
                     }
@@ -94,40 +94,40 @@ public class JSGen {
     }
     
     public JSGen pst(Mark jm, String ... lines) {
-        if(lines.length>0) ipw.append(lines[0]);
+        if (lines.length>0) ipw.append(lines[0]);
         ipw.append('(');
-        for(int i=1;i<lines.length;++i) {
+        for (int i=1;i<lines.length;++i) {
             ipw.print(lines[i]);
             ipw.print(", ");
         }
         Back back;
 
-        if(htmlGen.pretty) {
+        if (htmlGen.pretty) {
             back = new Back(");\n",false,false);
         } else {
             back = new Back(");",false,false);
         }
         int spot = htmlGen.pushBack(back);
-        if(jm!=null)jm.spot(spot);
+        if (jm!=null)jm.spot(spot);
         return this;
     }
     
     public JSGen li(String ... lines) {
         int current = ipw.getIndent();
-        for(int i=0;i<lines.length;++i) {
-            if(i==1)ipw.inc();
-            if(i>0)ipw.println();
+        for (int i=0;i<lines.length;++i) {
+            if (i==1)ipw.inc();
+            if (i>0)ipw.println();
             ipw.print(lines[i]);
         }
         ipw.setIndent(current);
         ipw.append(';');
-        if(htmlGen.pretty)ipw.println();
+        if (htmlGen.pretty)ipw.println();
         return this;
     }
     
     public JSGen text(String text) {
         ipw.append(text);
-        if(htmlGen.pretty)ipw.println();
+        if (htmlGen.pretty)ipw.println();
         return this;
     }
 
@@ -144,17 +144,17 @@ public class JSGen {
         ipw.print("function ");
         ipw.print(name);
         ipw.print('(');
-        for(int i=0;i<params.length;++i) {
-            if(i!=0)ipw.print(", ");
+        for (int i=0;i<params.length;++i) {
+            if (i!=0)ipw.print(", ");
             ipw.print(params[i]);
         }
         ipw.print(") {");
-        if(htmlGen.pretty) {
+        if (htmlGen.pretty) {
             ipw.println();
             ipw.inc();
         }
         int spot = htmlGen.pushBack(new Back("}",true,true));
-        if(jm!=null)jm.spot(spot); 
+        if (jm!=null)jm.spot(spot); 
         return this;
     }
     
@@ -164,27 +164,27 @@ public class JSGen {
 
     public JSGen cb(Mark jm, String ... lines) {
         int current = ipw.getIndent();
-        for(int i=0;i<lines.length;++i) {
-            if(i==1)ipw.inc();
-            if(i>0)ipw.println();
+        for (int i=0;i<lines.length;++i) {
+            if (i==1)ipw.inc();
+            if (i>0)ipw.println();
             ipw.print(lines[i]);
         }
         ipw.setIndent(current);
         ipw.print('{');
-        if(htmlGen.pretty) {
+        if (htmlGen.pretty) {
             ipw.println();
             ipw.inc();
         }
         int spot = htmlGen.pushBack(new Back("}",true,true));
-        if(jm!=null)jm.spot(spot); 
+        if (jm!=null)jm.spot(spot); 
         return this;
 
     }
 
     
     public JSGen comment(String ... lines) {
-        if(htmlGen.pretty) {
-            for(int i=0;i<lines.length;++i) {
+        if (htmlGen.pretty) {
+            for (int i=0;i<lines.length;++i) {
                 ipw.print("// ");
                 ipw.println(lines[i]);
             }

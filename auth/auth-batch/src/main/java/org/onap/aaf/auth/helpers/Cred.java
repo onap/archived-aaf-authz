@@ -71,20 +71,20 @@ public class Cred  {
     
     public Date last(final int ... types) {
         Date last = null;
-        for(Instance i : instances) {
-            if(types.length>0) { // filter by types, if requested
+        for (Instance i : instances) {
+            if (types.length>0) { // filter by types, if requested
                 boolean quit = true;
-                for(int t : types) {
-                    if(t==i.type) {
+                for (int t : types) {
+                    if (t==i.type) {
                         quit=false;
                         break;
                     }
                 }
-                if(quit) {
+                if (quit) {
                     continue;
                 }
             }
-            if(last==null || i.expires.after(last)) {
+            if (last==null || i.expires.after(last)) {
                 last = i.expires;
             }
         }
@@ -94,7 +94,7 @@ public class Cred  {
     
     public Set<Integer> types() {
         Set<Integer> types = new HashSet<>();
-        for(Instance i : instances) {
+        for (Instance i : instances) {
             types.add(i.type);
         }
         return types;
@@ -129,42 +129,42 @@ public class Cred  {
             String id;
             tt = trans.start("Load Credentials", Env.SUB);
             try {
-                while(iter.hasNext()) {
+                while (iter.hasNext()) {
                     ++count;
                     row = iter.next();
                     id = row.getString(0);
                     type = row.getInt(1);
-                    if(types.length>0) { // filter by types, if requested
+                    if (types.length>0) { // filter by types, if requested
                         boolean quit = true;
-                        for(int t : types) {
-                            if(t==type) {
+                        for (int t : types) {
+                            if (t==type) {
                                 quit=false;
                                 break;
                             }
                         }
-                        if(quit) {
+                        if (quit) {
                             continue;
                         }
                     }
                     Cred cred = data.get(id);
-                    if(cred==null) {
+                    if (cred==null) {
                         cred = new Cred(id);
                         data.put(id, cred);
                     }
                     cred.instances.add(new Instance(type, row.getTimestamp(2), row.getInt(3), row.getLong(4)/1000));
                     
                     List<Cred> lscd = byNS.get(cred.ns);
-                    if(lscd==null) {
+                    if (lscd==null) {
                         byNS.put(cred.ns, (lscd=new ArrayList<>()));
                     }
                     boolean found = false;
-                    for(Cred c : lscd) {
-                        if(c.id.equals(cred.id)) {
+                    for (Cred c : lscd) {
+                        if (c.id.equals(cred.id)) {
                             found=true;
                             break;
                         }
                     }
-                    if(!found) {
+                    if (!found) {
                         lscd.add(cred);
                     }
                 }
@@ -184,7 +184,7 @@ public class Cred  {
      */
     public static CredCount count(int numbuckets) {
         CredCount cc = new CredCount(numbuckets);
-        for(Cred c : data.values()) {
+        for (Cred c : data.values()) {
             for (Instance ci : c.instances) {
                 cc.inc(ci.type,ci.written, ci.expires);
             }
@@ -228,7 +228,7 @@ public class Cred  {
             gc.set(GregorianCalendar.SECOND,0);
             gc.set(GregorianCalendar.MILLISECOND,0);
             gc.add(GregorianCalendar.MILLISECOND, -1); // last milli of month
-            for(int i=1;i<numbuckets;++i) {
+            for (int i=1;i<numbuckets;++i) {
                 dates[i] = gc.getTime();
                 gc.add(GregorianCalendar.MONTH, -1);
             }
@@ -236,14 +236,14 @@ public class Cred  {
         }
         
         public void inc(int type, Date start, Date expires) {
-            for(int i=0;i<dates.length-1;++i) {
-                if(start.before(dates[i])) {
-                    if(type==CredDAO.CERT_SHA256_RSA) {
-                        if(start.after(dates[i+1])) {
+            for (int i=0;i<dates.length-1;++i) {
+                if (start.before(dates[i])) {
+                    if (type==CredDAO.CERT_SHA256_RSA) {
+                        if (start.after(dates[i+1])) {
                             ++x509Added[i];
                         }
                     }
-                    if(expires.after(dates[i])) {
+                    if (expires.after(dates[i])) {
                         switch(type) {
                             case CredDAO.RAW:
                                 ++raw[i];
@@ -276,7 +276,7 @@ public class Cred  {
     public String toString() {
         StringBuilder sb = new StringBuilder(id);
         sb.append('[');
-        for(Instance i : instances) {
+        for (Instance i : instances) {
             sb.append('{');
             sb.append(i.type);
             sb.append(",\"");

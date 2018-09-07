@@ -81,14 +81,14 @@ public class PassChangeForm extends Page {
                         public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
                             String incomingID= trans.get(sID, "");
                             boolean skipCurrent = false;
-                            if(incomingID.length()>0) {
+                            if (incomingID.length()>0) {
                                 try {
                                     Organization org = OrganizationFactory.obtain(trans.env(), incomingID);
-                                    if(org==null) {
+                                    if (org==null) {
                                         hgen.incr(HTMLGen.H4,"style=color:red;").text("Error: There is no supported company for ").text(incomingID).end();
                                     } else {
                                         Identity user = org.getIdentity(trans, incomingID);
-                                        if(user==null) {
+                                        if (user==null) {
                                             int at = incomingID.indexOf('@');
                                             hgen.incr(HTMLGen.H4,"style=color:red;").text("Error: You are not the sponsor of '").text(at<0?incomingID:incomingID.substring(0,at))
                                                 .text("' defined at ").text(org.getName()).end();
@@ -97,23 +97,23 @@ public class PassChangeForm extends Page {
                                             // Owners/or the IDs themselves are allowed to reset password without previous one
                                             skipCurrent=skipCurrent(trans, user);
                                             
-                                            if(!skipCurrent) {
+                                            if (!skipCurrent) {
                                                 final String id = incomingID;
                                                 try {
                                                     skipCurrent=gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Boolean>() {
                                                         @Override
                                                         public Boolean code(Rcli<?> client)    throws CadiException, ConnectException, APIException {
                                                             Future<Users> fc = client.read("/authn/creds/id/"+id,gui.getDF(Users.class));
-                                                            if(fc.get(AAFcli.timeout())) {
+                                                            if (fc.get(AAFcli.timeout())) {
                                                                 GregorianCalendar now = new GregorianCalendar();
-                                                                for(aaf.v2_0.Users.User u : fc.value.getUser()) {
-                                                                    if(u.getType()<10 && u.getType()>=1 && u.getExpires().toGregorianCalendar().after(now)) {
+                                                                for (aaf.v2_0.Users.User u : fc.value.getUser()) {
+                                                                    if (u.getType()<10 && u.getType()>=1 && u.getExpires().toGregorianCalendar().after(now)) {
                                                                         return false; // an existing, non expired, password type exists
                                                                     }
                                                                 }
                                                                 return true; // no existing, no expired password
                                                             } else {
-                                                                if(fc.code()==404) { // not found... 
+                                                                if (fc.code()==404) { // not found... 
                                                                     return true;
                                                                 } else {
                                                                     trans.error().log(gui.aafCon.readableErrMsg(fc));
@@ -135,10 +135,10 @@ public class PassChangeForm extends Page {
                             }
                             
                             hgen.input(fields[0],"ID*",true,"value="+incomingID,(incomingID.length()==0?"":"readonly"));
-                            if(!skipCurrent) {
+                            if (!skipCurrent) {
                                 hgen.input(fields[1],"Current Password*",true,"type=password");
                             }
-                            if(skipCurrent) {
+                            if (skipCurrent) {
                                 hgen.input(fields[1],"",false,"type=hidden", "value=").end();
                             }
 
@@ -166,10 +166,10 @@ public class PassChangeForm extends Page {
                         public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
                             try {
                                 Organization org = OrganizationFactory.obtain(trans.env(),trans.getUserPrincipal().getName());
-                                if(org!=null) {
+                                if (org!=null) {
                                     hgen.incr(HTMLGen.H4).text("Password Rules for ").text(org.getName()).end()
                                         .incr(HTMLGen.UL);
-                                    for(String line : org.getPasswordRules()) {
+                                    for (String line : org.getPasswordRules()) {
                                         hgen.leaf(HTMLGen.LI).text(line).end();
                                     }
                                     hgen.end();
@@ -187,14 +187,14 @@ public class PassChangeForm extends Page {
 
     // Package on Purpose
     static boolean skipCurrent(AuthzTrans trans, Identity user) throws OrganizationException {
-        if(user!=null) {
+        if (user!=null) {
             // Should this be an abstractable Policy?
             String tuser = trans.user();
-            if(user.fullID().equals(trans.user())) {
+            if (user.fullID().equals(trans.user())) {
                 return true;
             } else {
                 Identity manager = user.responsibleTo();
-                if(tuser.equals(user.fullID()) || manager.isFound()) {
+                if (tuser.equals(user.fullID()) || manager.isFound()) {
                     return true;
                 }
             }

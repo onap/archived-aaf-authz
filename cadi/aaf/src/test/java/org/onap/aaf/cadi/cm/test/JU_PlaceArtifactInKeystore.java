@@ -141,8 +141,8 @@ public class JU_PlaceArtifactInKeystore {
         baos.write(br.readLine().getBytes());
         // Here comes the hacky part
         baos.write("\n".getBytes());
-        while((line=br.readLine())!=null) {
-            if(line.length()>0) {
+        while ((line=br.readLine())!=null) {
+            if (line.length()>0) {
                 baos.write(line.getBytes());
                 baos.write("\n".getBytes());
             }

@@ -46,8 +46,8 @@ public enum NsType {
          * @return
          */
         public static NsType fromType(int t) {
-            for(NsType nst : values()) {
-                if(t==nst.type) {
+            for (NsType nst : values()) {
+                if (t==nst.type) {
                     return nst;
                 }
             }
@@ -60,9 +60,9 @@ public enum NsType {
          * @return
          */
         public static NsType fromString(String s) {
-            if(s!=null) {
-                for(NsType nst : values()) {
-                    if(nst.name().equals(s)) {
+            if (s!=null) {
+                for (NsType nst : values()) {
+                    if (nst.name().equals(s)) {
                         return nst;
                     }
                 }

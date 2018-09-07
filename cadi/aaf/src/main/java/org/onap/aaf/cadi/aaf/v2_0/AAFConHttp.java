@@ -104,7 +104,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
      */
     @Override
     public SecuritySetter<HttpURLConnection> basicAuth(String user, String password) throws CadiException {
-        if(password.startsWith("enc:")) {
+        if (password.startsWith("enc:")) {
             try {
                 password = access.decrypt(password, true);
             } catch (IOException e) {
@@ -131,7 +131,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
      */
     @Override
     protected Rcli<HttpURLConnection> rclient(URI ignoredURI, SecuritySetter<HttpURLConnection> ss) throws CadiException {
-        if(hman.loc==null) {
+        if (hman.loc==null) {
             throw new CadiException("No Locator set in AAFConHttp"); 
         }
         try {
@@ -200,7 +200,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
     protected URI initURI() {
         try {
             Item item = hman.loc.best();
-            if(item!=null) {
+            if (item!=null) {
                 return hman.loc.get(item);
             }
         } catch (LocatorException e) {

@@ -76,7 +76,7 @@ public class NsDetail extends Page {
         model.set(this);
         keySlot = gui.env.slot(NAME+".ns");
         gw_url = gui.env.getProperty(Config.GW_URL);
-        if(gw_url==null) {
+        if (gw_url==null) {
             gw_url="";
         } else {
             gw_url+="/aaf/2.0";
@@ -101,12 +101,12 @@ public class NsDetail extends Page {
             final String nsName = trans.get(keySlot, null);
             Validator v = new Validator();
             v.ns(nsName);
-            if(v.err()) {
+            if (v.err()) {
                 trans.warn().printf("Error in NsDetail Request: %s", v.errs());
                 return Cells.EMPTY;
             }
 
-            if(nsName==null) {
+            if (nsName==null) {
                 return Cells.EMPTY;
             }
             final ArrayList<AbsCell[]> rv = new ArrayList<>();
@@ -119,12 +119,12 @@ public class NsDetail extends Page {
                     public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         Future<Nss> fn = client.read("/authz/nss/"+nsName,gui.getDF(Nss.class));
 
-                        if(fn.get(AAF_GUI.TIMEOUT)) {
+                        if (fn.get(AAF_GUI.TIMEOUT)) {
                             tt.done();
                             try {
 //                                TimeTaken tt = trans.start("Load Data", Env.SUB);
                                 
-                                for(Ns n : fn.value.getNs()) {
+                                for (Ns n : fn.value.getNs()) {
                                     String desc = (n.getDescription()!=null?n.getDescription():BLANK);
                                     rv.add(new AbsCell[]{new TextCell("Description:"),new TextCell(desc)});
                                     
@@ -145,7 +145,7 @@ public class NsDetail extends Page {
                                                     gui.getDF(Roles.class)
                                                     );
                                     List<String> roles = new ArrayList<>();
-                                    if(fr.get(AAFcli.timeout())) {
+                                    if (fr.get(AAFcli.timeout())) {
                                         for (Role r : fr.value.getRole()) {
                                             roles.add(r.getName());
                                         }
@@ -159,7 +159,7 @@ public class NsDetail extends Page {
                                                     );
                                     List<String> perms = new ArrayList<>();
             
-                                    if(fp.get(AAFcli.timeout())) {
+                                    if (fp.get(AAFcli.timeout())) {
                                         for (Perm p : fp.value.getPerm()) {
                                             perms.add(p.getType() + "|" + p.getInstance() + "|" + p.getAction());
                                         }

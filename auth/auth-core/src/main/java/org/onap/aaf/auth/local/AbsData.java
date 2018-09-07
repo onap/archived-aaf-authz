@@ -74,14 +74,14 @@ public abstract class AbsData implements Iterable<String> {
         TimeTaken tt = trans.start("Open Data File", Env.SUB);
         boolean first = true;
         try {
-                if(!dataf.exists()) {
+                if (!dataf.exists()) {
                     throw new FileNotFoundException("Data File Missing:" + dataf.getCanonicalPath());
                 }
                 long begin = System.currentTimeMillis();
                 long end = begin+timeout;
                 boolean exists;
-                while((exists=lockf.exists()) && begin<end) {
-                    if(first) {
+                while ((exists=lockf.exists()) && begin<end) {
+                    if (first) {
                         trans.warn().log("Waiting for",lockf.getCanonicalPath(),"to close");
                         first = false;
                     } 
@@ -92,7 +92,7 @@ public abstract class AbsData implements Iterable<String> {
                     }
                     begin = System.currentTimeMillis();
                 }
-                if(exists) {
+                if (exists) {
                     throw new IOException(lockf.getCanonicalPath() + "exists.  May not open Datafile");
                 }
                 data.open();
@@ -110,12 +110,12 @@ public abstract class AbsData implements Iterable<String> {
     }
     
     private synchronized void ensureIdxGood(AuthzTrans trans) throws IOException {
-        if(!idxf.exists() || idxf.length()==0 || dataf.lastModified()>idxf.lastModified()) {
+        if (!idxf.exists() || idxf.length()==0 || dataf.lastModified()>idxf.lastModified()) {
             trans.warn().log(idxf.getAbsolutePath(),"is missing, empty or out of date, creating");
             RandomAccessFile raf = new RandomAccessFile(lockf, "rw");
             try {
                 ti.create(trans, data, maxLineSize, delim, fieldOffset, skipLines);
-                if(!idxf.exists() || (idxf.length()==0 && dataf.length()!=0)) {
+                if (!idxf.exists() || (idxf.length()==0 && dataf.length()!=0)) {
                     throw new IOException("Data Index File did not create correctly");
                 }
             } finally {
@@ -189,7 +189,7 @@ public abstract class AbsData implements Iterable<String> {
 
         @Override
         public String next() {
-            if(!hasNext()) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
             reuse.reset();

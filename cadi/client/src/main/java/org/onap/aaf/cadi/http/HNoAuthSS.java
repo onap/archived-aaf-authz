@@ -37,7 +37,7 @@ public class HNoAuthSS extends AbsAuthentication<HttpURLConnection> {
 
     @Override
     public void setSecurity(HttpURLConnection client) throws CadiException {
-        if(securityInfo!=null && client instanceof HttpsURLConnection) {
+        if (securityInfo!=null && client instanceof HttpsURLConnection) {
             securityInfo.setSocketFactoryOn((HttpsURLConnection)client);
         }
     }

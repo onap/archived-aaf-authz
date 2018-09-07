@@ -35,7 +35,7 @@ public class Version {
         String sparts[] = v.split("\\.");
         parts = new Object[sparts.length];
         System.arraycopy(sparts, 0, parts, 0, sparts.length);
-        if(parts.length>1) { // has at least a minor
+        if (parts.length>1) { // has at least a minor
           try {
               parts[1]=Integer.decode(sparts[1]); // minor elements need to be converted to Integer for comparison
           } catch (NumberFormatException e) {
@@ -46,20 +46,20 @@ public class Version {
     }
 
     public boolean equals(Object obj) {
-        if(obj instanceof Version) {
+        if (obj instanceof Version) {
             Version ver = (Version)obj;
             int length = Math.min(parts.length, ver.parts.length);
-            for(int i=0;i<length;++i) { // match on declared parts
-                if(i==1) {
-                    if(parts[1] instanceof Integer && ver.parts[1] instanceof Integer) {
+            for (int i=0;i<length;++i) { // match on declared parts
+                if (i==1) {
+                    if (parts[1] instanceof Integer && ver.parts[1] instanceof Integer) {
                         // Match on Minor version if this Version is less than Version to be checked
-                        if(((Integer)parts[1])<((Integer)ver.parts[1])) {
+                        if (((Integer)parts[1])<((Integer)ver.parts[1])) {
                             return false;
                         }
                         continue; // don't match next line
                     }
                 }
-                if(!parts[i].equals(ver.parts[i])) {
+                if (!parts[i].equals(ver.parts[i])) {
                     return false; // other spots exact match
                 }
             }
@@ -80,8 +80,8 @@ public class Version {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for(Object obj : parts) {
-            if(first) {
+        for (Object obj : parts) {
+            if (first) {
                 first = false;
             } else {
                 sb.append('.');

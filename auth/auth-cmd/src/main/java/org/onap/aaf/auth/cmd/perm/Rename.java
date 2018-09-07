@@ -71,12 +71,12 @@ public class Rename extends Cmd {
                         pr
                         );
                 int rv;
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     rv = fp.code();
                     pw().println("Updated Permission");
                 } else {
                     rv = fp.code();
-                    if(rv==202) {
+                    if (rv==202) {
                         pw().println("Permission Update Accepted, but requires Approvals before actualizing");
                     } else {
                         error(fp);

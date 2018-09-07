@@ -139,12 +139,12 @@ public class Symm {
         // data (i.e. abcde...).  Therefore, we'll quickly analyze the keyset.  If it proves to have
         // too much entropy, the "Unordered" algorithm, which is faster in such cases is used.
         ArrayList<int[]> la = new ArrayList<>();
-        for(int i=0;i<codeset.length;++i) {
+        for (int i=0;i<codeset.length;++i) {
             curr = codeset[i];
-            if(prev+1==curr) { // is next character in set
+            if (prev+1==curr) { // is next character in set
                 prev = curr;
             } else {
-                if(offset!=Integer.SIZE) { // add previous range 
+                if (offset!=Integer.SIZE) { // add previous range 
                     la.add(new int[]{first,prev,offset});
                 }
                 first = prev = curr;
@@ -152,7 +152,7 @@ public class Symm {
             }
         }
         la.add(new int[]{first,curr,offset});
-        if(la.size()>codeset.length/3) {
+        if (la.size()>codeset.length/3) {
             convert = new Unordered(codeset);
         } else { // too random to get speed enhancement from range algorithm
             int[][] range = new int[la.size()][];
@@ -210,10 +210,10 @@ public class Symm {
 
     public <T> T exec(SyncExec<T> exec) throws Exception {
         synchronized(LOCK) {
-            if(keyBytes == null) {
+            if (keyBytes == null) {
                 keyBytes = new byte[AES.AES_KEY_SIZE/8];
                 int offset = (Math.abs(codeset[0])+47)%(codeset.length-keyBytes.length);
-                for(int i=0;i<keyBytes.length;++i) {
+                for (int i=0;i<keyBytes.length;++i) {
                     keyBytes[i] = (byte)codeset[i+offset];
                 }
             }
@@ -231,7 +231,7 @@ public class Symm {
     }
     
     public byte[] encode(byte[] toEncrypt) throws IOException {
-            if(toEncrypt==null) {
+            if (toEncrypt==null) {
                 return EMPTY;
             } else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream((int)(toEncrypt.length*1.25));
@@ -344,8 +344,8 @@ public class Symm {
         boolean go;
         do {
             read = is.read();
-            if(go = read>=0) {
-                if(line>=splitLinesAt) {
+            if (go = read>=0) {
+                if (line>=splitLinesAt) {
                     os.write('\n');
                     line = 0;
                 }
@@ -362,7 +362,7 @@ public class Symm {
                             // Char 1 is last 4 bits of prev plus the first 2 bits of read
                             // Char 2 is the last 6 bits of read
                         os.write(codeset[(((prev & 0xF)<<2) | (read>>6))]);
-                        if(line==splitLinesAt) { // deal with line splitting for two characters
+                        if (line==splitLinesAt) { // deal with line splitting for two characters
                             os.write('\n');
                             line=0;
                         }
@@ -376,21 +376,21 @@ public class Symm {
                 switch(idx) {
                     case 1: // just the last 2 bits of prev
                         os.write(codeset[(prev & 0x03)<<4]);
-                        if(endEquals)os.write(DOUBLE_EQ);
+                        if (endEquals)os.write(DOUBLE_EQ);
                         break;
                     case 2: // just the last 4 bits of prev
                         os.write(codeset[(prev & 0xF)<<2]);
-                        if(endEquals)os.write('=');
+                        if (endEquals)os.write('=');
                         break;
                 }
                 idx = 0;
             }
             
-        } while(go);
+        } while (go);
     }
 
     public void decode(InputStream is, OutputStream os, int skip) throws IOException {
-        if(is.skip(skip)!=skip) {
+        if (is.skip(skip)!=skip) {
             throw new IOException("Error skipping on IOStream in Symm");
         }
         decode(is,os);
@@ -405,9 +405,9 @@ public class Symm {
     public void decode(InputStream is, OutputStream os) throws IOException {
        int read, idx=0;
        int prev=0, index;
-           while((read = is.read())>=0) {
+           while ((read = is.read())>=0) {
                index = convert.convert(read);
-               if(index>=0) {
+               if (index>=0) {
                 switch(++idx) { // 1 based cases, slightly faster ++
                     case 1: // index goes into first 6 bits of prev
                         prev = index<<2; 
@@ -459,8 +459,8 @@ public class Symm {
                case '\r':
                    return -1;
            }
-           for(int i=0;i<range.length;++i) {
-               if(read >= range[i][0] && read<=range[i][1]) {
+           for (int i=0;i<range.length;++i) {
+               if (read >= range[i][0] && read<=range[i][1]) {
                    return read-range[i][2];
                }
            }
@@ -487,8 +487,8 @@ public class Symm {
                  case '\r':
                    return -1;
            }
-           for(int i=0;i<codec.length;++i) {
-               if(codec[i]==read)return i;
+           for (int i=0;i<codec.length;++i) {
+               if (codec[i]==read)return i;
            }
           // don't give clue in Encryption mode
           throw new IOException("Unacceptable Character in Stream");
@@ -519,7 +519,7 @@ public class Symm {
   
        private Obtain(Symm b64, byte[] key) {
            skip = Math.abs(key[key.length-13]%key.length);
-           if((key.length&0x1) == (skip&0x1)) { // if both are odd or both are even
+           if ((key.length&0x1) == (skip&0x1)) { // if both are odd or both are even
                ++skip;
            }
            length = b64.codeset.length;
@@ -542,7 +542,7 @@ public class Symm {
     */
    public static Symm obtain(Access access) throws CadiException {
         String keyfile = access.getProperty(Config.CADI_KEYFILE,null);
-        if(keyfile!=null) {
+        if (keyfile!=null) {
             Symm symm = Symm.baseCrypt();
 
             File file = new File(keyfile);
@@ -551,7 +551,7 @@ public class Symm {
             } catch (IOException e1) {
                 access.log(Level.INIT, Config.CADI_KEYFILE,"points to",file.getAbsolutePath());
             }
-            if(file.exists()) {
+            if (file.exists()) {
                 try {
                     FileInputStream fis = new FileInputStream(file);
                     try {
@@ -619,7 +619,7 @@ public class Symm {
           throw new IOException("Invalid Key");
       }
       byte[] bkey = baos.toByteArray();
-      if(bkey.length<0x88) { // 2048 bit key
+      if (bkey.length<0x88) { // 2048 bit key
           throw new IOException("Invalid key");
       }
       return baseCrypt().obtain(bkey);
@@ -663,37 +663,37 @@ public class Symm {
    * @throws IOException
    */
   public void enpass(final String password, final OutputStream os) throws IOException {
-        if(password==null) {
+        if (password==null) {
             throw new IOException("Invalid password passed");
         }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         byte[] bytes = password.getBytes();
-        if(this.getClass().getSimpleName().startsWith("base64")) { // don't expose randomization
+        if (this.getClass().getSimpleName().startsWith("base64")) { // don't expose randomization
             dos.write(bytes);
         } else {
             
             Random r = new SecureRandom();
             int start = 0;
             byte b;
-            for(int i=0;i<3;++i) {
+            for (int i=0;i<3;++i) {
                 dos.writeByte(b=(byte)r.nextInt());
                 start+=Math.abs(b);
             }
             start%=0x7;
-            for(int i=0;i<start;++i) {
+            for (int i=0;i<start;++i) {
                 dos.writeByte(r.nextInt());
             }
             dos.writeInt((int)System.currentTimeMillis());
             int minlength = Math.min(0x9,bytes.length);
             dos.writeByte(minlength); // expect truncation
-            if(bytes.length<0x9) {
-                for(int i=0;i<bytes.length;++i) {
+            if (bytes.length<0x9) {
+                for (int i=0;i<bytes.length;++i) {
                     dos.writeByte(r.nextInt());
                     dos.writeByte(bytes[i]);
                 }
                 // make sure it's long enough
-                for(int i=bytes.length;i<0x9;++i) {
+                for (int i=bytes.length;i<0x9;++i) {
                     dos.writeByte(r.nextInt());
                 }
             } else {
@@ -733,7 +733,7 @@ public class Symm {
    * @throws IOException
    */
   public String depass(String password) throws IOException {
-      if(password==null)return null;
+      if (password==null)return null;
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       depass(password,baos);
       return new String(baos.toByteArray());
@@ -772,23 +772,23 @@ public class Symm {
       byte[] bytes = baos.toByteArray();
       DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes));
       long time;
-      if(this.getClass().getSimpleName().startsWith("base64")) { // don't expose randomization
+      if (this.getClass().getSimpleName().startsWith("base64")) { // don't expose randomization
           os.write(bytes);
           time = 0L;
       } else {
           int start=0;
-          for(int i=0;i<3;++i) {
+          for (int i=0;i<3;++i) {
               start+=Math.abs(dis.readByte());
           }
           start%=0x7;
-          for(int i=0;i<start;++i) {
+          for (int i=0;i<start;++i) {
               dis.readByte();
           }
           time = (dis.readInt() & 0xFFFF)|(System.currentTimeMillis()&0xFFFF0000);
           int minlength = dis.readByte();
-          if(minlength<0x9){
+          if (minlength<0x9){
             DataOutputStream dos = new DataOutputStream(os);
-            for(int i=0;i<minlength;++i) {
+            for (int i=0;i<minlength;++i) {
                 dis.readByte();
                 dos.writeByte(dis.readByte());
             }
@@ -807,7 +807,7 @@ public class Symm {
   public static String randomGen(char[] chars ,int numBytes) {
         int rint;
         StringBuilder sb = new StringBuilder(numBytes);
-        for(int i=0;i<numBytes;++i) {
+        for (int i=0;i<numBytes;++i) {
             rint = random.nextInt(chars.length);
             sb.append(chars[rint]);
         }
@@ -829,14 +829,14 @@ public class Symm {
       int index;
       Obtain o = new Obtain(this,key);
 
-      while(filled>=0) {
+      while (filled>=0) {
           index = o.next();
-          if(index<0 || index>=codeset.length) {
+          if (index<0 || index>=codeset.length) {
               System.out.println("uh, oh");
           }
-          if(right) { // alternate going left or right to find the next open slot (keeps it from taking too long to hit something) 
-              for(int j=index;j<end;++j) {
-                  if(seq[j]==0) {
+          if (right) { // alternate going left or right to find the next open slot (keeps it from taking too long to hit something) 
+              for (int j=index;j<end;++j) {
+                  if (seq[j]==0) {
                       seq[j]=codeset[filled];
                       --filled;
                       break;
@@ -844,8 +844,8 @@ public class Symm {
               }
               right = false;
           } else {
-              for(int j=index;j>=0;--j) {
-                  if(seq[j]==0) {
+              for (int j=index;j>=0;--j) {
+                  if (seq[j]==0) {
                       seq[j]=codeset[filled];
                       --filled;
                       break;
@@ -859,7 +859,7 @@ public class Symm {
       try {
           newSymm.keyBytes = new byte[AES.AES_KEY_SIZE/8];
           int offset = (Math.abs(key[(47%key.length)])+137)%(key.length-newSymm.keyBytes.length);
-          for(int i=0;i<newSymm.keyBytes.length;++i) {
+          for (int i=0;i<newSymm.keyBytes.length;++i) {
               newSymm.keyBytes[i] = key[i+offset];
           }
       } catch (Exception e) {
@@ -876,7 +876,7 @@ public class Symm {
  * @throws IOException 
    */
   public static synchronized Symm internalOnly() throws IOException {
-      if(internalOnly==null) {
+      if (internalOnly==null) {
           ByteArrayInputStream baos = new ByteArrayInputStream(keygen());
           try {
               internalOnly = Symm.obtain(baos);

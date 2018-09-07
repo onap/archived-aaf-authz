@@ -55,17 +55,17 @@ public class X509Principal extends BearerPrincipal implements GetCred {
         String _name = null;
         String subj = cert.getSubjectDN().getName();
         int cn = subj.indexOf("OU=");
-        if(cn>=0) {
+        if (cn>=0) {
             cn+=3;
             int space = subj.indexOf(',',cn);
-            if(space>=0) {
+            if (space>=0) {
                 String id = subj.substring(cn, space);
-                if(pattern.matcher(id).matches()) {
+                if (pattern.matcher(id).matches()) {
                     _name = id;
                 }
             }
         }
-        if(_name==null) {
+        if (_name==null) {
             throw new IOException("X509 does not have Identity as CN");
         }
         name = _name;
@@ -74,7 +74,7 @@ public class X509Principal extends BearerPrincipal implements GetCred {
     
     public String getAsHeader() throws IOException {
         try {
-            if(content==null) {
+            if (content==null) {
                 content=cert.getEncoded();
             }
         } catch (CertificateEncodingException e) {

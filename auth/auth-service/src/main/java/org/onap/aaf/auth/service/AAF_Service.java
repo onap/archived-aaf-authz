@@ -104,8 +104,8 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         
         // Initialize Organizations... otherwise, first pass may miss
         int org_size = ORGANIZATION.length();
-        for(String n : env.existingStaticSlotNames()) {
-            if(n.startsWith(ORGANIZATION)) {
+        for (String n : env.existingStaticSlotNames()) {
+            if (n.startsWith(ORGANIZATION)) {
                 OrganizationFactory.obtain(env, n.substring(org_size));
             }
         }
@@ -122,7 +122,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         // Print results and cleanup
         StringBuilder sb = new StringBuilder();
         trans.auditTrail(0, sb);
-        if(sb.length()>0)env.init().log(sb);
+        if (sb.length()>0)env.init().log(sb);
         trans = null;
         sb = null;
 
@@ -167,7 +167,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
                     domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
                     false);
 
-            if(additionalTafLurs.length>0) {
+            if (additionalTafLurs.length>0) {
                 System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
             }
             
@@ -194,7 +194,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
     @Override
     public void destroy() {
         Cache.stopTimer();
-        if(cluster!=null) {
+        if (cluster!=null) {
             cluster.close();
         }
         super.destroy();
@@ -211,7 +211,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
     public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
         String version = "2.0";
         Class<?> respCls = facade.mapper().getClass(api); 
-        if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
+        if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         String application = applicationJSON(respCls, version);
 
         route(env,meth,path,code,application,"application/json;version=2.0","*/*");

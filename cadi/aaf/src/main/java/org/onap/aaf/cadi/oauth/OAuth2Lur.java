@@ -55,16 +55,16 @@ public class OAuth2Lur implements Lur {
     public boolean fish(Principal bait, Permission ... pond) {
         boolean rv = false;
         
-        if(bait instanceof OAuth2Principal) {
+        if (bait instanceof OAuth2Principal) {
             OAuth2Principal oap = (OAuth2Principal)bait; 
             for (Permission p : pond ) {
                 AAFPermission apond = (AAFPermission)p;
         
                 TokenPerm tp = oap.tokenPerm();
-                if(tp==null) {
+                if (tp==null) {
                 } else {
-                    for(Permission perm : tp.perms()) {
-                        if(perm.match(apond)) {
+                    for (Permission perm : tp.perms()) {
+                        if (perm.match(apond)) {
                             return true;
                         }
                     }
@@ -78,8 +78,8 @@ public class OAuth2Lur implements Lur {
     public void fishAll(Principal bait, List<Permission> permissions) {
         OAuth2Principal oap = (OAuth2Principal)bait;
         TokenPerm tp = oap.tokenPerm();
-        if(tp!=null) {
-            for(AAFPermission p : tp.perms()) {
+        if (tp!=null) {
+            for (AAFPermission p : tp.perms()) {
                 permissions.add(p);
             }
         }
@@ -96,7 +96,7 @@ public class OAuth2Lur implements Lur {
 
     @Override
     public boolean handles(Principal p) {
-        if(p!=null && p instanceof BearerPrincipal) {
+        if (p!=null && p instanceof BearerPrincipal) {
             return ((BearerPrincipal)p).getBearer()!=null;
         }
         return false;

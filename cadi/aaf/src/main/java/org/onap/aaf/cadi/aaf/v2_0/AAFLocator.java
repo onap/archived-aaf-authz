@@ -53,7 +53,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     public AAFLocator(SecurityInfoC<HttpURLConnection> si, URI locatorURI) throws LocatorException {
         super(si.access, nameFromLocatorURI(locatorURI), 10000L /* Wait at least 10 seconds between refreshes */);
         synchronized(sr) {
-            if(env==null) {
+            if (env==null) {
                 env = new RosettaEnv(access.getProperties());
             }
         }
@@ -62,10 +62,10 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
         try {
             String[] path = Split.split('/',locatorURI.getPath());
             String host = locatorURI.getHost();
-            if(host==null) {
+            if (host==null) {
                 host = locatorURI.getAuthority(); // this happens when no port
             }
-            if("AAF_LOCATE_URL".equals(host)) {
+            if ("AAF_LOCATE_URL".equals(host)) {
                 URI uri = new URI(
                         locatorURI.getScheme(),
                         locatorURI.getUserInfo(),
@@ -76,9 +76,9 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
                         null
                         );
                 client = createClient(si.defSS, uri, connectTimeout);
-            } else if(path.length>1 && "locate".equals(path[1])) {
+            } else if (path.length>1 && "locate".equals(path[1])) {
                 StringBuilder sb = new StringBuilder();
-                for(int i=3;i<path.length;++i) {
+                for (int i=3;i<path.length;++i) {
                     sb.append('/');
                     sb.append(path[i]);
                 }
@@ -108,9 +108,9 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
             client.setMethod("GET");
             client.send();
             Future<Endpoints> fr = client.futureRead(epsDF, TYPE.JSON);
-            if(fr.get(client.timeout())) {
+            if (fr.get(client.timeout())) {
                 List<EP> epl = new LinkedList<>();
-                for(Endpoint endpoint : fr.value.getEndpoint()) {
+                for (Endpoint endpoint : fr.value.getEndpoint()) {
                     epl.add(new EP(endpoint,latitude,longitude));
                 }
                 

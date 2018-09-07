@@ -68,8 +68,8 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
 
     public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
         securityInfo = si;
-        if((alias=sendAlias) == null) {
-            if(si.defaultAlias == null) {
+        if ((alias=sendAlias) == null) {
+            if (si.defaultAlias == null) {
                 throw new APIException("JKS Alias is required to use X509SS Security.  Use " + Config.CADI_ALIAS +" to set default alias");
             } else {
                 alias = si.defaultAlias;
@@ -78,16 +78,16 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
         
         priv=null;
         X509KeyManager[] xkms = si.getKeyManagers();
-        if(xkms==null || xkms.length==0) {
+        if (xkms==null || xkms.length==0) {
             throw new APIException("There are no valid keys available in given Keystores.  Wrong Keypass?  Expired?");
         }
-        for(int i=0;priv==null&&i<xkms.length;++i) {
+        for (int i=0;priv==null&&i<xkms.length;++i) {
             priv = xkms[i].getPrivateKey(alias);
         }
         try {
-            for(int i=0;cert==null&&i<xkms.length;++i) {
+            for (int i=0;cert==null&&i<xkms.length;++i) {
                 X509Certificate[] chain = xkms[i].getCertificateChain(alias);
-                if(chain!=null&&chain.length>0) {
+                if (chain!=null&&chain.length>0) {
                     algo = chain[0].getSigAlgName(); 
                     pub = chain[0].getEncoded();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream(pub.length*2); 
@@ -99,17 +99,17 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
         } catch (CertificateEncodingException | IOException e) {
             throw new CadiException(e);
         }
-        if(algo==null) {
+        if (algo==null) {
             throw new APIException("X509 Security Setter not configured");
         }
     }
 
     @Override
     public void setSecurity(HttpURLConnection huc) throws CadiException {
-        if(huc instanceof HttpsURLConnection) {
+        if (huc instanceof HttpsURLConnection) {
             securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
         }
-        if(alias==null) { // must be a one-way
+        if (alias==null) { // must be a one-way
             huc.setRequestProperty(AbsAuthentication.AUTHORIZATION, cert);
             
             // Test Signed content

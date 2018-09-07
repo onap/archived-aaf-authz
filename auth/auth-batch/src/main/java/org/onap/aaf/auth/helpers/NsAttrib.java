@@ -76,20 +76,20 @@ public class NsAttrib  {
         tt = trans.start("Process NsAttributes", Env.SUB);
 
         try {
-            for(Row row : results.all()) {
+            for (Row row : results.all()) {
                 ++count;
                 NsAttrib ur = creator.create(row);
                 data.add(ur);
                 
                 List<NsAttrib> lna = byKey.get(ur.key);
-                if(lna==null) {
+                if (lna==null) {
                     lna = new ArrayList<>();
                     byKey.put(ur.key, lna);
                 }
                 lna.add(ur);
                 
                 lna = byNS.get(ur.ns);
-                if(lna==null) {
+                if (lna==null) {
                     lna = new ArrayList<>();
                     byNS.put(ur.ns, lna);
                 }

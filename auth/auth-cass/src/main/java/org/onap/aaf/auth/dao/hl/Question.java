@@ -166,17 +166,17 @@ public class Question {
 
         // Only want to aggressively cleanse User related Caches... The others,
         // just normal refresh
-        if(startClean) {
+        if (startClean) {
             CachedDAO.startCleansing(trans.env(), credDAO, userRoleDAO);
             CachedDAO.startRefresh(trans.env(), cacheInfoDAO);
         }
         // Set a Timer to Check Caches to send messages for Caching changes
         
-        if(specialLogSlot==null) {
+        if (specialLogSlot==null) {
             specialLogSlot = trans.slot(AuthzTransFilter.SPECIAL_LOG_SLOT);
         }
         
-        if(transIDSlot==null) {
+        if (transIDSlot==null) {
             transIDSlot = trans.slot(AuthzTransFilter.TRANS_ID_SLOT);
         }
         
@@ -226,25 +226,25 @@ public class Question {
     public Result<List<PermDAO.Data>> getPermsByUserFromRolesFilter(AuthzTrans trans, String user, String forUser) {
         PermLookup plUser = PermLookup.get(trans, this, user);
         Result<Set<String>> plPermNames = plUser.getPermNames();
-        if(plPermNames.notOK()) {
+        if (plPermNames.notOK()) {
             return Result.err(plPermNames);
         }
         
         Set<String> nss;
-        if(forUser.equals(user)) {
+        if (forUser.equals(user)) {
             nss = null;
         } else {
             // Setup a TreeSet to check on Namespaces to 
             nss = new TreeSet<>();
             PermLookup fUser = PermLookup.get(trans, this, forUser);
             Result<Set<String>> forUpn = fUser.getPermNames();
-            if(forUpn.notOK()) {
+            if (forUpn.notOK()) {
                 return Result.err(forUpn);
             }
             
-            for(String pn : forUpn.value) {
+            for (String pn : forUpn.value) {
                 Result<String[]> decoded = PermDAO.Data.decodeToArray(trans, this, pn);
-                if(decoded.isOKhasData()) {
+                if (decoded.isOKhasData()) {
                     nss.add(decoded.value[0]);
                 } else {
                     trans.error().log(pn,", derived from a Role, is invalid:",decoded.errorString());
@@ -255,11 +255,11 @@ public class Question {
         List<PermDAO.Data> rlpUser = new ArrayList<>();
         Result<PermDAO.Data> rpdd;
         PermDAO.Data pdd;
-        for(String pn : plPermNames.value) {
+        for (String pn : plPermNames.value) {
             rpdd = PermDAO.Data.decode(trans, this, pn);
-            if(rpdd.isOKhasData()) {
+            if (rpdd.isOKhasData()) {
                 pdd=rpdd.value;
-                if(nss==null || nss.contains(pdd.ns)) {
+                if (nss==null || nss.contains(pdd.ns)) {
                     rlpUser.add(pdd);
                 }
             } else {
@@ -314,7 +314,7 @@ public class Question {
                 return Result.err(pr);
             }
 
-            if(lookup) {
+            if (lookup) {
                 Result<List<PermDAO.Data>> rlpd = permDAO.read(trans, pr.value);
                 if (rlpd.isOKhasData()) {
                     for (PermDAO.Data pData : rlpd.value) {
@@ -368,7 +368,7 @@ public class Question {
             return Result.ok(r.value.get(0));
         } else {
             int dot;
-            if(child==null) {
+            if (child==null) {
                 return Result.err(Status.ERR_NsNotFound, "No Namespace");
             } else {
                 dot = child.lastIndexOf('.');
@@ -384,12 +384,12 @@ public class Question {
     public Result<NsDAO.Data> deriveFirstNsForType(AuthzTrans trans, String str, NsType type) {
         NsDAO.Data nsd;
 
-        for(String lookup = str;!".".equals(lookup) && lookup!=null;) {
+        for (String lookup = str;!".".equals(lookup) && lookup!=null;) {
             Result<List<NsDAO.Data>> rld = nsDAO.read(trans, lookup);
-            if(rld.isOKhasData()) {
+            if (rld.isOKhasData()) {
                 nsd=rld.value.get(0);
                 lookup = nsd.parent;
-                if(type.type == nsd.type) {
+                if (type.type == nsd.type) {
                     return Result.ok(nsd);
                 }
             } else {
@@ -455,13 +455,13 @@ public class Question {
     public Result<NsDAO.Data> validNSOfDomain(AuthzTrans trans, String id) {
         // Take domain, reverse order, and check on NS
         String ns;
-        if(id.indexOf('@')<0) { // it's already an ns, not an ID
+        if (id.indexOf('@')<0) { // it's already an ns, not an ID
             ns = id;
         } else {
             ns = domain2ns(id);
         }
         if (ns.length() > 0) {
-            if(!trans.org().getDomain().equals(ns)) { 
+            if (!trans.org().getDomain().equals(ns)) { 
                 Result<List<NsDAO.Data>> rlnsd = nsDAO.read(trans, ns);
                 if (rlnsd.isOKhasData()) {
                     return Result.ok(rlnsd.value.get(0));
@@ -490,7 +490,7 @@ public class Question {
         Result<NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, ":"    + ndd.name + ":ns", access.name());
         if (rv.isOK()) {
             return rv;
-        } else if(rv.status==Result.ERR_Backend) {
+        } else if (rv.status==Result.ERR_Backend) {
             return Result.err(rv);
         } else {
             return Result.err(Status.ERR_Denied, "[%s] may not %s in NS [%s]",
@@ -532,7 +532,7 @@ public class Question {
                 + rdd.ns + roleInst, access.name());
         if (rnsd.isOK()) {
             return rnsd;
-        } else if(rnsd.status==Result.ERR_Backend) {
+        } else if (rnsd.status==Result.ERR_Backend) {
             return Result.err(rnsd);
         }
 
@@ -543,7 +543,7 @@ public class Question {
                 ":" + rdd.ns + ":ns", access.name());
         if (rv.isOK()) {
             return rv;
-        } else if(rnsd.status==Result.ERR_Backend) {
+        } else if (rnsd.status==Result.ERR_Backend) {
             return Result.err(rnsd);
         } else {
             return Result.err(Status.ERR_Denied, "[%s] may not %s Role [%s]",
@@ -582,7 +582,7 @@ public class Question {
         Result<NsDAO.Data> rnsd = mayUserVirtueOfNS(trans, user, ndd, ":" + pdd.ns + permInst, access.name());
         if (rnsd.isOK()) {
             return rnsd;
-        } else if(rnsd.status==Result.ERR_Backend) {
+        } else if (rnsd.status==Result.ERR_Backend) {
             return Result.err(rnsd);
         }
 
@@ -603,7 +603,7 @@ public class Question {
     public Result<Void> mayUser(AuthzTrans trans, DelegateDAO.Data dd, Access access) {
         try {
             Result<NsDAO.Data> rnsd = deriveNs(trans, domain2ns(trans.user()));
-            if(rnsd.isOKhasData() && mayUserVirtueOfNS(trans,trans.user(),rnsd.value, ":"    + rnsd.value.name + ":ns", access.name()).isOK()) {
+            if (rnsd.isOKhasData() && mayUserVirtueOfNS(trans,trans.user(),rnsd.value, ":"    + rnsd.value.name + ":ns", access.name()).isOK()) {
                 return Result.ok();
             }
             boolean isUser = trans.user().equals(dd.user);
@@ -663,7 +663,7 @@ public class Question {
         Result<List<UserRoleDAO.Data>> rurd;
         if ((rurd = userRoleDAO.readUserInRole(trans, user, ns+DOT_ADMIN)).isOKhasData()) {
             return Result.ok(nsd);
-        } else if(rurd.status==Result.ERR_Backend) {
+        } else if (rurd.status==Result.ERR_Backend) {
             return Result.err(rurd);
         }
         
@@ -679,12 +679,12 @@ public class Question {
             Result<NsDAO.Data> rnsd = deriveNs(trans, ns.substring(0, dot));
             if (rnsd.isOK()) {
                 rnsd = mayUserVirtueOfNS(trans, user, rnsd.value, ns_and_type,access);
-            } else if(rnsd.status==Result.ERR_Backend) {
+            } else if (rnsd.status==Result.ERR_Backend) {
                 return Result.err(rnsd);
             }
             if (rnsd.isOK()) {
                 return Result.ok(nsd);
-            } else if(rnsd.status==Result.ERR_Backend) {
+            } else if (rnsd.status==Result.ERR_Backend) {
                 return Result.err(rnsd);
             }
         }
@@ -712,7 +712,7 @@ public class Question {
                 if (ns.equals(pd.ns)) {
                     if (type.equals(pd.type)) {
                         if (PermEval.evalInstance(pd.instance, instance)) {
-                            if(PermEval.evalAction(pd.action, action)) { // don't return action here, might miss other action 
+                            if (PermEval.evalAction(pd.action, action)) { // don't return action here, might miss other action 
                                 return true;
                             }
                         }
@@ -733,7 +733,7 @@ public class Question {
         }
 
         Result<Date> rv = null;
-        if(result.isOK()) {
+        if (result.isOK()) {
             if (result.isEmpty()) {
                 rv = Result.err(Status.ERR_UserNotFound, user);
                 if (willSpecialLog(trans,user)) {
@@ -743,14 +743,14 @@ public class Question {
                 Date now = new Date();//long now = System.currentTimeMillis();
                 // Bug noticed 6/22. Sorting on the result can cause Concurrency Issues.     
                 List<CredDAO.Data> cddl;
-                if(result.value.size() > 1) {
+                if (result.value.size() > 1) {
                     cddl = new ArrayList<>(result.value.size());
-                    for(CredDAO.Data old : result.value) {
-                        if(old.type==CredDAO.BASIC_AUTH || old.type==CredDAO.BASIC_AUTH_SHA256) {
+                    for (CredDAO.Data old : result.value) {
+                        if (old.type==CredDAO.BASIC_AUTH || old.type==CredDAO.BASIC_AUTH_SHA256) {
                             cddl.add(old);
                         }
                     }
-                    if(cddl.size()>1) {
+                    if (cddl.size()>1) {
                         Collections.sort(cddl,new Comparator<CredDAO.Data>() {
                             @Override
                             public int compare(org.onap.aaf.auth.dao.cass.CredDAO.Data a,
@@ -766,7 +766,7 @@ public class Question {
                 Date expired = null;
                 StringBuilder debug = willSpecialLog(trans,user)?new StringBuilder():null;
                 for (CredDAO.Data cdd : cddl) {
-                    if(!cdd.id.equals(user)) {
+                    if (!cdd.id.equals(user)) {
                         trans.error().log("doesUserCredMatch DB call does not match for user: " + user);
                     }
                     if (cdd.expires.after(now)) {
@@ -776,7 +776,7 @@ public class Question {
                             switch(cdd.type) {
                                 case CredDAO.BASIC_AUTH:
                                     byte[] md5=Hash.hashMD5(cred);
-                                    if(Hash.compareTo(md5,dbcred)==0) {
+                                    if (Hash.compareTo(md5,dbcred)==0) {
                                         checkLessThanDays(trans,7,now,cdd);
                                         return Result.ok(cdd.expires);
                                     } else if (debug!=null) {
@@ -789,7 +789,7 @@ public class Question {
                                     bb.put(cred);
                                     byte[] hash = Hash.hashSHA256(bb.array());
     
-                                    if(Hash.compareTo(hash,dbcred)==0) {
+                                    if (Hash.compareTo(hash,dbcred)==0) {
                                         checkLessThanDays(trans,7,now,cdd);
                                         return Result.ok(cdd.expires);
                                     } else if (debug!=null) {
@@ -803,17 +803,17 @@ public class Question {
                             trans.error().log(e);
                         }
                     } else {
-                        if(expired==null || expired.before(cdd.expires)) {
+                        if (expired==null || expired.before(cdd.expires)) {
                             expired = cdd.expires;
                         }
                     }
                 } // end for each
-                if(debug==null) {
+                if (debug==null) {
                     trans.audit().printf("No cred matches ip=%s, user=%s\n",trans.ip(),user);
                 } else {
                     trans.audit().printf("No cred matches ip=%s, user=%s %s\n",trans.ip(),user,debug.toString());
                 }
-                if(expired!=null) {
+                if (expired!=null) {
                     // Note: this is only returned if there are no good Credentials
                     rv = Result.err(Status.ERR_Security,
                             "Credentials %s from %s expired %s",trans.user(), trans.ip(), Chrono.dateTime(expired));
@@ -840,7 +840,7 @@ public class Question {
     private void checkLessThanDays(AuthzTrans trans, int days, Date now, Data cdd) {
         long close = now.getTime() + (days * 86400000);
         long cexp=cdd.expires.getTime();
-        if(cexp<close) {
+        if (cexp<close) {
             int daysLeft = days-(int)((close-cexp)/86400000);
             trans.audit().printf("user=%s,ip=%s,expires=%s,days=%d,msg=\"Password expires in less than %d day%s\"",
                 cdd.id,trans.ip(),Chrono.dateOnlyStamp(cdd.expires),daysLeft, daysLeft,daysLeft==1?"":"s");
@@ -849,7 +849,7 @@ public class Question {
 
 
     public Result<CredDAO.Data> userCredSetup(AuthzTrans trans, CredDAO.Data cred) {
-        if(cred.type==CredDAO.RAW) {
+        if (cred.type==CredDAO.RAW) {
             TimeTaken tt = trans.start("Hash Cred", Env.SUB);
             try {
                 cred.type = CredDAO.BASIC_AUTH_SHA256;
@@ -935,32 +935,32 @@ public class Question {
 
         if (all || NsDAO.TABLE.equals(cname)) {
             int seg[] = series(NsDAO.CACHE_SEG);
-            for(int i: seg) {cacheClear(trans, NsDAO.TABLE,i);}
+            for (int i: seg) {cacheClear(trans, NsDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, NsDAO.TABLE, seg);
         }
         if (all || PermDAO.TABLE.equals(cname)) {
             int seg[] = series(NsDAO.CACHE_SEG);
-            for(int i: seg) {cacheClear(trans, PermDAO.TABLE,i);}
+            for (int i: seg) {cacheClear(trans, PermDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, PermDAO.TABLE,seg);
         }
         if (all || RoleDAO.TABLE.equals(cname)) {
             int seg[] = series(NsDAO.CACHE_SEG);
-            for(int i: seg) {cacheClear(trans, RoleDAO.TABLE,i);}
+            for (int i: seg) {cacheClear(trans, RoleDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, RoleDAO.TABLE,seg);
         }
         if (all || UserRoleDAO.TABLE.equals(cname)) {
             int seg[] = series(NsDAO.CACHE_SEG);
-            for(int i: seg) {cacheClear(trans, UserRoleDAO.TABLE,i);}
+            for (int i: seg) {cacheClear(trans, UserRoleDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, UserRoleDAO.TABLE,seg);
         }
         if (all || CredDAO.TABLE.equals(cname)) {
             int seg[] = series(NsDAO.CACHE_SEG);
-            for(int i: seg) {cacheClear(trans, CredDAO.TABLE,i);}
+            for (int i: seg) {cacheClear(trans, CredDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, CredDAO.TABLE,seg);
         }
         if (all || CertDAO.TABLE.equals(cname)) {
             int seg[] = series(NsDAO.CACHE_SEG);
-            for(int i: seg) {cacheClear(trans, CertDAO.TABLE,i);}
+            for (int i: seg) {cacheClear(trans, CertDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, CertDAO.TABLE,seg);
         }
 
@@ -999,11 +999,11 @@ public class Question {
 
     public boolean isDelegated(AuthzTrans trans, String user, String approver, Map<String,Result<List<DelegateDAO.Data>>> rldd ) {
         Result<List<DelegateDAO.Data>> userDelegatedFor = rldd.get(user);
-        if(userDelegatedFor==null) {
+        if (userDelegatedFor==null) {
             userDelegatedFor=delegateDAO.readByDelegate(trans, user);
             rldd.put(user, userDelegatedFor);
         }
-        if(userDelegatedFor.isOKhasData()) {
+        if (userDelegatedFor.isOKhasData()) {
             for (DelegateDAO.Data curr : userDelegatedFor.value) {
                 if (curr.user.equals(approver) && curr.delegate.equals(user)
                         && curr.expires.after(new Date())) {
@@ -1016,8 +1016,8 @@ public class Question {
 
     public static boolean willSpecialLog(AuthzTrans trans, String user) {
         Boolean b = trans.get(specialLogSlot, null);
-        if(b==null) { // we haven't evaluated in this trans for Special Log yet
-            if(specialLog==null) {
+        if (b==null) { // we haven't evaluated in this trans for Special Log yet
+            if (specialLog==null) {
                 return false;
             } else {
                 b = specialLog.contains(user);
@@ -1042,21 +1042,21 @@ public class Question {
             specialLog = new HashSet<>();
         }
         boolean rc = specialLog.add(id);
-        if(rc) {
+        if (rc) {
             trans.trace().printf("Trace on for %s requested by %s",id,trans.user());            
         }
         return rc;
     }
 
     public static synchronized boolean specialLogOff(AuthzTrans trans, String id) {
-        if(specialLog==null) {
+        if (specialLog==null) {
             return false;
         }
         boolean rv = specialLog.remove(id);
         if (specialLog.isEmpty()) {
             specialLog = null;
         }
-        if(rv) {
+        if (rv) {
             trans.trace().printf("Trace off for %s requested by %s",id,trans.user());            
         }
         return rv;
@@ -1086,8 +1086,8 @@ public class Question {
     public boolean isAdmin(AuthzTrans trans, String user, String ns) {
         Date now = new Date();
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_ADMIN);
-        if(rur.isOKhasData()) {for(UserRoleDAO.Data urdd : rur.value){
-            if(urdd.expires.after(now)) {
+        if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
+            if (urdd.expires.after(now)) {
                 return true;
             }
         }};
@@ -1097,8 +1097,8 @@ public class Question {
     public boolean isOwner(AuthzTrans trans, String user, String ns) {
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_OWNER);
         Date now = new Date();
-        if(rur.isOKhasData()) {for(UserRoleDAO.Data urdd : rur.value){
-            if(urdd.expires.after(now)) {
+        if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
+            if (urdd.expires.after(now)) {
                 return true;
             }
         }};
@@ -1109,8 +1109,8 @@ public class Question {
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.readByRole(trans,ns+DOT_OWNER);
         Date now = new Date();
         int count = 0;
-        if(rur.isOKhasData()) {for(UserRoleDAO.Data urdd : rur.value){
-            if(urdd.expires.after(now)) {
+        if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
+            if (urdd.expires.after(now)) {
                 ++count;
             }
         }};
@@ -1129,7 +1129,7 @@ public class Question {
         byte[] from = name.getBytes();
         StringBuilder sb = new StringBuilder();
         byte f;
-        for(int i=0;i<from.length;++i) {
+        for (int i=0;i<from.length;++i) {
             f=(byte)(from[i]); // printables;
             sb.append((char)((f>>4)+0x61));
             sb.append((char)((f&0x0F)+0x61));
@@ -1141,7 +1141,7 @@ public class Question {
         byte[] from = name.getBytes();
         StringBuilder sb = new StringBuilder();
         char c;
-        for(int i=0;i<from.length;++i) {
+        for (int i=0;i<from.length;++i) {
             c = (char)((from[i]-0x61)<<4);
             c |= (from[++i]-0x61);
             sb.append(c);

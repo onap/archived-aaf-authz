@@ -45,7 +45,7 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
         };
         
         Result<List<Data>> lurd = get(trans, ns, getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,"No Role found");
         }
         return lurd;
@@ -59,7 +59,7 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
         };
         
         Result<List<Data>> lurd = get(trans, name, getter);
-        if(lurd.isOK() && lurd.isEmpty()) {
+        if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,"No Role found");
         }
         return lurd;
@@ -74,7 +74,7 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
 
     public Result<Void> addPerm(AuthzTrans trans, RoleDAO.Data rd, PermDAO.Data perm) {
         Result<Void> rv = dao().addPerm(trans,rd,perm);
-        if(trans.debug().isLoggable())
+        if (trans.debug().isLoggable())
             trans.debug().log("Adding",perm,"to", rd, "with CachedRoleDAO.addPerm");
         invalidate(trans, rd);
         return rv;
@@ -82,7 +82,7 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
 
     public Result<Void> delPerm(AuthzTrans trans, RoleDAO.Data rd, PermDAO.Data perm) {
         Result<Void> rv = dao().delPerm(trans,rd,perm);
-        if(trans.debug().isLoggable())
+        if (trans.debug().isLoggable())
             trans.debug().log("Removing",perm,"from", rd, "with CachedRoleDAO.addPerm");
         invalidate(trans, rd);
         return rv;

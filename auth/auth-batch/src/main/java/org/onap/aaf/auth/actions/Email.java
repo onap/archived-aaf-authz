@@ -55,7 +55,7 @@ public class Email implements Action<Organization,Void, String>{
     public Email clear() {
         toList.clear();
         ccList.clear();
-        for(String s: defaultCC) {
+        for (String s: defaultCC) {
             ccList.add(s);
         }
         return this;
@@ -71,35 +71,35 @@ public class Email implements Action<Organization,Void, String>{
     }
 
     public Email addTo(Identity id) {
-        if(id!=null && !toList.contains(id.email())) {
+        if (id!=null && !toList.contains(id.email())) {
                 toList.add(id.email());
         }
         return this;
     }
 
     public Email addTo(Collection<String> users) {
-        for(String u : users) {
+        for (String u : users) {
             addTo(u);
         }
         return this;
     }
 
     public Email addTo(String email) {
-        if(!toList.contains(email)) {
+        if (!toList.contains(email)) {
             toList.add(email);
         }
         return this;
     }
 
     public Email addCC(Identity id) {
-        if(id!=null && !ccList.contains(id.email())) {
+        if (id!=null && !ccList.contains(id.email())) {
                 ccList.add(id.email());
         }
         return this;
     }
 
     public Email addCC(String email) {
-        if(!ccList.contains(email)) {
+        if (!ccList.contains(email)) {
             ccList.add(email);
         }
         return this;
@@ -108,7 +108,7 @@ public class Email implements Action<Organization,Void, String>{
     
     public Email add(Identity id, boolean toSuper) throws OrganizationException {
         Identity responsible = id.responsibleTo();
-        if(toSuper) {
+        if (toSuper) {
             addTo(responsible.email());
             addCC(id.email());
         } else {
@@ -119,7 +119,7 @@ public class Email implements Action<Organization,Void, String>{
     }
     
     public Email subject(String format, Object ... args) {
-        if(format.contains("%s")) {
+        if (format.contains("%s")) {
             subject = String.format(format, args);
         } else {
             subject = format;
@@ -140,18 +140,18 @@ public class Email implements Action<Organization,Void, String>{
     @Override
     public Result<Void> exec(AuthzTrans trans, Organization org, String text) {
         StringBuilder sb = new StringBuilder();
-        if(preamble!=null) {
+        if (preamble!=null) {
             sb.append(lineIndent);
             sb.append(preamble);
             sb.append("\n\n");
         }
         
-        if(msg!=null) {
+        if (msg!=null) {
             msg.msg(sb,lineIndent);
             sb.append("\n");
         }
 
-        if(sig!=null) {
+        if (sig!=null) {
             sb.append(sig);
             sb.append("\n");
         }
@@ -159,7 +159,7 @@ public class Email implements Action<Organization,Void, String>{
         long ct = System.currentTimeMillis();
         long wait = ct-lastSent;
         lastSent = ct;
-        if(wait < 100) { // 10 per second
+        if (wait < 100) { // 10 per second
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException e) {
@@ -188,8 +188,8 @@ public class Email implements Action<Organization,Void, String>{
     public void log(PrintStream ps, String text) {
         ps.print(Chrono.dateTime());
         boolean first = true;
-        for(String s : toList) {
-            if(first) {
+        for (String s : toList) {
+            if (first) {
                 first = false;
                 ps.print(": ");
             } else {
@@ -197,10 +197,10 @@ public class Email implements Action<Organization,Void, String>{
             }
             ps.print(s);
         }
-        if(!ccList.isEmpty()) {
+        if (!ccList.isEmpty()) {
             first=true;
-            for(String s : ccList) {
-                if(first) {
+            for (String s : ccList) {
+                if (first) {
                     first = false;
                     ps.print(" [");
                 } else {

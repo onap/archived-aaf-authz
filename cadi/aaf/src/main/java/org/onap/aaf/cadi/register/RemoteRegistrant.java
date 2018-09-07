@@ -67,12 +67,12 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
         }
         timeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
         String aaf_locate = access.getProperty(Config.AAF_LOCATE_URL,null);
-        if(aaf_locate==null) {
+        if (aaf_locate==null) {
             throw new CadiException(Config.AAF_LOCATE_URL + " is required.");
         } else {
             // Note: want Property Locator or Single, not AAFLocator, because we want the core service, not what it can find
             try {
-                if(aaf_locate.indexOf(',')>=0) {
+                if (aaf_locate.indexOf(',')>=0) {
                     locator = new PropertyLocator(aaf_locate);
                 } else {
                     locator = new SingleEndpointLocator(aaf_locate);
@@ -88,23 +88,23 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
 
         try {
             String hostnameToRegister = access.getProperty(Config.AAF_REGISTER_AS, null);
-            if(hostnameToRegister==null) {
+            if (hostnameToRegister==null) {
                 hostnameToRegister = access.getProperty(Config.HOSTNAME, null);
             }
-            if(hostnameToRegister==null) {
+            if (hostnameToRegister==null) {
                 hostnameToRegister = Inet4Address.getLocalHost().getHostName();
             }
             mep.setHostname(hostnameToRegister);
             
             String latitude = access.getProperty(Config.CADI_LATITUDE, null);
-            if(latitude==null) {
+            if (latitude==null) {
                 latitude = access.getProperty("AFT_LATITUDE", null);
             }
             String longitude = access.getProperty(Config.CADI_LONGITUDE, null);
-            if(longitude==null) {
+            if (longitude==null) {
                 longitude = access.getProperty("AFT_LONGITUDE", null);
             }
-            if(latitude==null || longitude==null) {
+            if (latitude==null || longitude==null) {
                 throw new CadiException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " is required");
             } else {
                 mep.setLatitude(Float.parseFloat(latitude));
@@ -117,11 +117,11 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
             mep.setMajor(split.length>0?Integer.parseInt(split[0]):0);
             
             String subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
-            if(subprotocols==null) {
+            if (subprotocols==null) {
                 mep.setProtocol("http");
             } else {
                 mep.setProtocol("https");
-                for(String s : Split.split(',', subprotocols)) {
+                for (String s : Split.split(',', subprotocols)) {
                     mep.getSubprotocol().add(s);
                 }
             }
@@ -130,7 +130,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
         }
         meps = new MgmtEndpoints();
         meps.getMgmtEndpoint().add(mep);
-        for(RemoteRegistrant<ENV> rr : others) {
+        for (RemoteRegistrant<ENV> rr : others) {
             meps.getMgmtEndpoint().add(rr.mep);
         }
     }
@@ -141,7 +141,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
             Rcli<?> client = aafcon.client(locator);
             try {
                 Future<MgmtEndpoints> fup = client.update("/registration",mgmtEndpointsDF,meps);
-                if(fup.get(timeout)) {
+                if (fup.get(timeout)) {
                     access.log(Level.INFO, "Registration complete to",client.getURI());
                     return Result.ok(fup.code(),null);
                 } else {
@@ -164,7 +164,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
             Rcli<?> client = aafcon.client(locator);
             try {
                 Future<MgmtEndpoints> fup = client.delete("/registration",mgmtEndpointsDF,meps);
-                if(fup.get(timeout)) {
+                if (fup.get(timeout)) {
                     access.log(Level.INFO, "Deregistration complete on",client.getURI());
                     return Result.ok(fup.code(),null);
                 } else {

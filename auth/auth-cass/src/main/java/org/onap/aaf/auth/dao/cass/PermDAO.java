@@ -114,13 +114,13 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
          */
         public static Result<Data> decode(AuthzTrans trans, Question q, String p) {
             String[] ss = Split.splitTrim('|', p,4);
-            if(ss[2]==null) {
+            if (ss[2]==null) {
                 return Result.err(Status.ERR_BadData,"Perm Encodings must be separated by '|'");
             }
             Data data = new Data();
-            if(ss[3]==null) { // older 3 part encoding must be evaluated for NS
+            if (ss[3]==null) { // older 3 part encoding must be evaluated for NS
                 Result<NsSplit> nss = q.deriveNsSplit(trans, ss[0]);
-                if(nss.notOK()) {
+                if (nss.notOK()) {
                     return Result.err(nss);
                 }
                 data.ns=nss.value.ns;
@@ -146,15 +146,15 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
          */
         public static Result<String[]> decodeToArray(AuthzTrans trans, Question q, String p) {
             String[] ss = Split.splitTrim('|', p,4);
-            if(ss[2]==null) {
+            if (ss[2]==null) {
                 return Result.err(Status.ERR_BadData,"Perm Encodings must be separated by '|'");
             }
             
-            if(ss[3]==null) { // older 3 part encoding must be evaluated for NS
+            if (ss[3]==null) { // older 3 part encoding must be evaluated for NS
                 ss[3] = ss[2];
                 ss[2] = ss[1];
                 Result<NsSplit> nss = q.deriveNsSplit(trans, ss[0]);
-                if(nss.notOK()) {
+                if (nss.notOK()) {
                     return Result.err(nss);
                 }
                 ss[1] = nss.value.name;
@@ -191,7 +191,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             String[] s = name.split("\\|");
             Result<NsSplit> rdns = q.deriveNsSplit(trans, s[0]);
             Data rv = new PermDAO.Data();
-            if(rdns.isOKhasData()) {
+            if (rdns.isOKhasData()) {
                 switch(s.length) {
                     case 3:
                         rv.type=s[1];
@@ -482,7 +482,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             hd.memo = String.format("%sd %s|%s|%s", modified.name(),data.fullType(),data.instance,data.action);
         }
         
-        if(modified==CRUD.delete) {
+        if (modified==CRUD.delete) {
             try {
                 hd.reconstruct = data.bytify();
             } catch (IOException e) {
@@ -490,10 +490,10 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             }
         }
         
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
-        if(infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
+        if (infoDAO.touch(trans, TABLE,data.invalidate(cache)).notOK()) {
             trans.error().log("Cannot touch CacheInfo");
         }
     }

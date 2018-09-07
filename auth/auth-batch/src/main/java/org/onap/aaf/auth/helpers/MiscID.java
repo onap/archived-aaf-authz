@@ -64,7 +64,7 @@ public class MiscID  {
      * @throws IllegalArgumentException 
      */
     public void set(String row []) throws BatchException {
-        if(row.length<4) {throw new BatchException("Row of MiscID_XRef is too short");}
+        if (row.length<4) {throw new BatchException("Row of MiscID_XRef is too short");}
         id      = row[0];
         sponsor = row[1];
         created = row[2];
@@ -106,7 +106,7 @@ public class MiscID  {
         try {
             tt = trans.start("Load Map", Env.SUB);
             try {
-                for( Row row : results.all()) {
+                for ( Row row : results.all()) {
                     MiscID miscID = new MiscID();
                     miscID.set(row);
                     data.put(miscID.id,miscID);
@@ -133,7 +133,7 @@ public class MiscID  {
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj!=null && obj instanceof MiscID) {
+        if (obj!=null && obj instanceof MiscID) {
             return id.equals(((MiscID)obj).id);
         }
         return false;
@@ -156,12 +156,12 @@ public class MiscID  {
     
     public StringBuilder updateStmt(MiscID source) {
         StringBuilder sb = null;
-        if(id.equals(source.id)) {
+        if (id.equals(source.id)) {
             sb = addField(sb,"sponser",sponsor,source.sponsor);
             sb = addField(sb,"created",created,source.created);
             sb = addField(sb,"renewal",renewal,source.renewal);
         }
-        if(sb!=null) {
+        if (sb!=null) {
             sb.append(" WHERE id='");
             sb.append(id);
             sb.append('\'');
@@ -170,8 +170,8 @@ public class MiscID  {
     }
 
     private StringBuilder addField(StringBuilder sb, String name, String a, String b) {
-        if(!a.equals(b)) {
-            if(sb==null) {
+        if (!a.equals(b)) {
+            if (sb==null) {
                 sb = new StringBuilder("UPDATE authz.miscid SET ");        
             } else {
                 sb.append(',');

@@ -80,7 +80,7 @@ public class TokenClient {
         ss = null;
         authn_method = am;
         synchronized(tcf) {
-            if(introspectDF==null) {
+            if (introspectDF==null) {
                 tokenDF = tkCon.env().newDataFactory(Token.class);
                 introspectDF = tkCon.env().newDataFactory(Introspect.class);
             }
@@ -106,9 +106,9 @@ public class TokenClient {
     }
 
     public void client_creds(Access access) throws CadiException {
-        if(okind=='A') {
+        if (okind=='A') {
             String alias = access.getProperty(Config.CADI_ALIAS, null);
-            if(alias == null) {
+            if (alias == null) {
                 client_creds(access.getProperty(Config.AAF_APPID, null),access.getProperty(Config.AAF_APPPASS, null));
             } else {
                 client_creds(alias,null);
@@ -129,15 +129,15 @@ public class TokenClient {
      * @throws IOException
      */
     public void client_creds(final String client_id, final String client_secret) throws CadiException {
-        if(client_id==null) {
+        if (client_id==null) {
             throw new CadiException("client_creds:client_id is null");
         }
         this.client_id = client_id;
         default_scope = FQI.reverseDomain(client_id);
 
-        if(client_secret!=null) {
+        if (client_secret!=null) {
             try {
-                if(client_secret.startsWith("enc:")) {
+                if (client_secret.startsWith("enc:")) {
                     final String temp = factory.access.decrypt(client_secret, false); // this is a more powerful, but non-thread-safe encryption
                     hash = Hash.hashSHA256(temp.getBytes());
                     this.enc_client_secret = factory.symm.encode(temp.getBytes());
@@ -159,7 +159,7 @@ public class TokenClient {
                     };
                 }
                 authn_method = AUTHN_METHOD.client_credentials;
-            } catch(IOException | NoSuchAlgorithmException e) {
+            } catch (IOException | NoSuchAlgorithmException e) {
                 throw new CadiException(e);
             }
         } else {
@@ -193,9 +193,9 @@ public class TokenClient {
      */
     public void password(final String user, final String password) throws CadiException {
         this.username = user;
-        if(password!=null) {
+        if (password!=null) {
             try {
-                if(password.startsWith("enc:")) {
+                if (password.startsWith("enc:")) {
                     final String temp = factory.access.decrypt(password, false); // this is a more powerful, but non-thread-safe encryption
                     hash = Hash.hashSHA256(temp.getBytes());
                     this.enc_password = factory.symm.encode(temp.getBytes());
@@ -226,7 +226,7 @@ public class TokenClient {
     public void clearEndUser() {
         username = null;
         enc_password = null;
-        if(client_id!=null && enc_client_secret!=null) {
+        if (client_id!=null && enc_client_secret!=null) {
             authn_method = AUTHN_METHOD.client_credentials;
         } else {
             authn_method = AUTHN_METHOD.password;
@@ -244,7 +244,7 @@ public class TokenClient {
     public void clearToken(final char kind, final String ... scopes) throws CadiException {
         final String scope = addScope(scopes);
         char c;
-        if(kind==Kind.OAUTH) {
+        if (kind==Kind.OAUTH) {
             c = okind;
         } else {
             c = kind;
@@ -261,13 +261,13 @@ public class TokenClient {
     public Result<TimedToken> getToken(final char kind, final String ... scopes) throws LocatorException, CadiException, APIException {
         final String scope = addScope(scopes);
         char c;
-        if(kind==Kind.OAUTH) {
+        if (kind==Kind.OAUTH) {
             c = okind;
         } else {
             c = kind;
         }
         final String key = TokenClientFactory.getKey(c,client_id,username,hash,scope);
-        if(ss==null) {
+        if (ss==null) {
             throw new APIException("client_creds(...) must be set before obtaining Access Tokens");
         }
         
@@ -285,7 +285,7 @@ public class TokenClient {
                     public Result<Token> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         // /token?grant_type=client_credential&scope=com.att.aaf+com.att.test
                         Future<Token> f = client.postForm(null,tokenDF,paramsa);
-                        if(f.get(timeout)) {
+                        if (f.get(timeout)) {
                             return Result.ok(f.code(),f.value);
                         } else {
                             return Result.err(f.code(), f.body());
@@ -293,7 +293,7 @@ public class TokenClient {
                     }
                 });
                 
-                if(rt.isOK()) {
+                if (rt.isOK()) {
                     try {
                         return Result.ok(rt.code,factory.putTimedToken(key,rt.value, hash));
                     } catch (IOException e) {
@@ -306,11 +306,11 @@ public class TokenClient {
                 }
             }
         });
-        if(rtt.isOK()) { // not validated for Expired
+        if (rtt.isOK()) { // not validated for Expired
             TimedToken tt = rtt.value;
-            if(tt.expired()) {
+            if (tt.expired()) {
                 rtt = refreshToken(tt);
-                if(rtt.isOK()) {
+                if (rtt.isOK()) {
                     tkCon.access.printf(Level.INFO, "Refreshed token %s to %s",tt.getAccessToken(),rtt.value.getAccessToken());
                     return Result.ok(200,rtt.value);
                 } else {
@@ -328,7 +328,7 @@ public class TokenClient {
     }
     
     public Result<TimedToken> refreshToken(Token token) throws APIException, LocatorException, CadiException {
-        if(ss==null) {
+        if (ss==null) {
             throw new APIException("client_creds(...) must be set before obtaining Access Tokens");
         }
         final List<String> params = new ArrayList<>();
@@ -344,7 +344,7 @@ public class TokenClient {
             public Result<Token> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                 // /token?grant_type=client_credential&scope=com.att.aaf+com.att.test
                 Future<Token> f = client.postForm(null,tokenDF,paramsa);
-                if(f.get(timeout)) {
+                if (f.get(timeout)) {
                     return Result.ok(f.code(),f.value);
                 } else {
                     return Result.err(f.code(), f.body());
@@ -352,21 +352,21 @@ public class TokenClient {
             }
         });
         String key =  TokenClientFactory.getKey(okind,client_id, username, hash, scope);
-        if(rt.isOK()) {
+        if (rt.isOK()) {
             try {
                 return Result.ok(200,factory.putTimedToken(key, rt.value, hash));
             } catch (IOException e) {
                 //TODO what to do here?
                 return Result.err(999, e.getMessage());
             }
-        } else if(rt.code==404) {
+        } else if (rt.code==404) {
             factory.deleteFromDisk(key);
         }
         return Result.err(rt);
     }
 
     public Result<Introspect> introspect(final String token) throws APIException, LocatorException, CadiException {
-        if(ss==null) {
+        if (ss==null) {
             throw new APIException("client_creds(...) must be set before introspecting Access Tokens");
         }
 
@@ -380,7 +380,7 @@ public class TokenClient {
                     params.toArray(paramsa);
                     // /token?grant_type=client_credential&scope=com.att.aaf+com.att.test
                     Future<Introspect> f = client.postForm(null,introspectDF,paramsa);
-                    if(f.get(timeout)) {
+                    if (f.get(timeout)) {
                         return Result.ok(f.code(),f.value);
                     } else {
                         return Result.err(f.code(), f.body());
@@ -394,8 +394,8 @@ public class TokenClient {
         String rv = null;
         StringBuilder scope=null;
         boolean first = true;
-        for(String s : scopes) {
-            if(first) {
+        for (String s : scopes) {
+            if (first) {
                 scope = new StringBuilder();
                 scope.append("scope=");
                 first=false;
@@ -404,7 +404,7 @@ public class TokenClient {
             }
             scope.append(s);
         }
-        if(scope!=null) {
+        if (scope!=null) {
             rv=scope.toString();
         }
         return rv;
@@ -432,11 +432,11 @@ public class TokenClient {
         // Set Credentials appropriate 
         switch(authn_method) {
             case client_credentials:
-                if(client_id!=null) {
+                if (client_id!=null) {
                     params.add("client_id="+client_id);
                 }
         
-                if(enc_client_secret!=null) {
+                if (enc_client_secret!=null) {
                     try {
                         params.add("client_secret="+URLEncoder.encode(new String(factory.symm.decode(enc_client_secret)),UTF_8));
                     } catch (IOException e) {
@@ -444,17 +444,17 @@ public class TokenClient {
                     }
                 }
                 
-                if(username!=null) {
+                if (username!=null) {
                     params.add("username="+username);
                 }
 
                 break;
             case refresh_token:
-                if(client_id!=null) {
+                if (client_id!=null) {
                     params.add("client_id="+client_id);
                 }
         
-                if(enc_client_secret!=null) {
+                if (enc_client_secret!=null) {
                     try {
                         params.add("client_secret="+URLEncoder.encode(new String(factory.symm.decode(enc_client_secret)),UTF_8));
                     } catch (IOException e) {
@@ -464,22 +464,22 @@ public class TokenClient {
                 break;
 
             case password:
-                if(client_id!=null) {
+                if (client_id!=null) {
                     params.add("client_id="+client_id);
                 }
         
-                if(enc_client_secret!=null) {
+                if (enc_client_secret!=null) {
                     try {
                         params.add("client_secret="+ URLEncoder.encode(new String(factory.symm.decode(enc_client_secret)),UTF_8));
                     } catch (IOException e) {
                         throw new APIException("Error Decrypting Password",e);
                     }
                 }
-                if(username!=null) {
+                if (username!=null) {
                     params.add("username="+username);
                 }
         
-                if(enc_password!=null) {
+                if (enc_password!=null) {
                     try {
                         params.add("password="+ URLEncoder.encode(new String(factory.symm.decode(enc_password)),UTF_8));
                     } catch (IOException e) {

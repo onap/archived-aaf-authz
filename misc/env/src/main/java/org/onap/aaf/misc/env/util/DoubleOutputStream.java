@@ -43,7 +43,7 @@ public class DoubleOutputStream extends OutputStream {
      */
     @Override
     public void write(int c) throws IOException {
-        for(OutputStream os : oss) {
+        for (OutputStream os : oss) {
             os.write(c);
         }
     }
@@ -58,14 +58,14 @@ public class DoubleOutputStream extends OutputStream {
      */
     @Override
     public void write(byte bbuf[], int off, int len) throws IOException {
-        for(OutputStream os : oss) {
+        for (OutputStream os : oss) {
             os.write(bbuf,off,len);
         }
     }
 
     @Override
     public void write(byte[] b) throws IOException {
-        for(OutputStream os : oss) {
+        for (OutputStream os : oss) {
             os.write(b);
         }
     }
@@ -75,8 +75,8 @@ public class DoubleOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
-        for(int i=0;i<oss.length;++i) {
-            if(close[i]) {
+        for (int i=0;i<oss.length;++i) {
+            if (close[i]) {
                 oss[i].close();
             }
         }
@@ -87,7 +87,7 @@ public class DoubleOutputStream extends OutputStream {
      */
     @Override
     public void flush() throws IOException {
-        for(OutputStream os : oss) {
+        for (OutputStream os : oss) {
             os.flush();
         }
     }

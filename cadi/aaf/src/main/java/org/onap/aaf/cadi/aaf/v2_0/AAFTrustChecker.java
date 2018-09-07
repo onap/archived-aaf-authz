@@ -53,7 +53,7 @@ public class AAFTrustChecker implements TrustChecker {
         id = env.getProperty(Config.CADI_ALIAS,env.getProperty(Config.AAF_APPID)); // share between components
         String str = env.getProperty(Config.CADI_TRUST_PERM);
         AAFPermission temp=null;
-        if(str!=null) {
+        if (str!=null) {
             String[] sp = Split.splitTrim('|', str);
             switch(sp.length) {
                 case 3:
@@ -72,7 +72,7 @@ public class AAFTrustChecker implements TrustChecker {
         id = access.getProperty(Config.CADI_ALIAS,access.getProperty(Config.AAF_APPID,null)); // share between components
         String str = access.getProperty(Config.CADI_TRUST_PERM,null);
         AAFPermission temp=null;
-        if(str!=null) {
+        if (str!=null) {
             String[] sp = Split.splitTrim('|', str);
             switch(sp.length) {
                 case 3:
@@ -111,11 +111,11 @@ public class AAFTrustChecker implements TrustChecker {
         }
 
         String principalName = tresp.getPrincipal().getName();
-        if(principalName.equals(id)  // We do trust our own App Components: if a trust entry is made with self, always accept
+        if (principalName.equals(id)  // We do trust our own App Components: if a trust entry is made with self, always accept
                 || lur.fish(tresp.getPrincipal(), perm)) { // Have Perm set by Config.CADI_TRUST_PERM
             String desc = "  " + flds[0] + " validated using " + flds[2] + " by " + flds[1] + ',';
             return new TrustTafResp(tresp, new TrustPrincipal(tresp.getPrincipal(), flds[0]), desc);
-        } else if(principalName.equals(flds[0])) { // Ignore if same identity
+        } else if (principalName.equals(flds[0])) { // Ignore if same identity
             return tresp;
         } else {
             String desc = tresp.getPrincipal().getName() + " requested trust as " + flds[0] + ", but does not have Authorization";

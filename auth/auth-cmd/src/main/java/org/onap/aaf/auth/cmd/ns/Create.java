@@ -56,16 +56,16 @@ public class Create extends Cmd {
         
         nr.setName(args[idx++]);
         String[] responsible = args[idx++].split(COMMA);
-        for(String s : responsible) {
+        for (String s : responsible) {
             nr.getResponsible().add(fullID(s));
         }
         String[] admin;
-        if(args.length>idx) {
+        if (args.length>idx) {
             admin = args[idx++].split(COMMA);
         } else {
             admin = responsible;
         }
-        for(String s : admin) {
+        for (String s : admin) {
             nr.getAdmin().add(fullID(s));
         }
         
@@ -82,10 +82,10 @@ public class Create extends Cmd {
                         getDF(NsRequest.class),
                         nr
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     pw().println("Created Namespace");
                 } else {
-                    if(fp.code()==202) {
+                    if (fp.code()==202) {
                         pw().println("Namespace Creation Accepted, but requires Approvals before actualizing");
                     } else {
                         error(fp);

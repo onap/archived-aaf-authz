@@ -40,7 +40,7 @@ public class SubStandardConsole implements MyConsole {
         try {
             System.out.printf(fmt,args);
             rv = br.readLine();
-            if(args.length==1 && rv.length()==0) {
+            if (args.length==1 && rv.length()==0) {
                 rv = args[0].toString();
             }
         } catch (IOException e) {

@@ -138,25 +138,25 @@ public class CMArtiChangeForm extends Page {
                                 @Override
                                 public Artifact code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                                     Future<Artifacts> fa = client.read("/cert/artifacts/"+incomingID+'/'+incomingMach, gui.artifactsDF);
-                                    if(fa.get(AAFcli.timeout())) {
-                                        for(Artifact arti : fa.value.getArtifact()) {
+                                    if (fa.get(AAFcli.timeout())) {
+                                        for (Artifact arti : fa.value.getArtifact()) {
                                             return arti; // just need the first one
                                         }
                                     }
                                     return null;
                                 }
                             });
-                            if(arti==null) {
+                            if (arti==null) {
                                 Organization org = OrganizationFactory.get(trans);
                                 Identity user = org.getIdentity(trans, incomingID);
-                                if(user==null) {
+                                if (user==null) {
                                     hgen.p("The mechID you typed, \"" + incomingID + "\", is not a valid " + org.getName() + " ID");
                                     return;
                                 }
                                 arti = new Artifact();
                                 arti.setMechid(incomingID);
                                 Identity managedBy = user.responsibleTo();
-                                if(managedBy == null) {
+                                if (managedBy == null) {
                                     arti.setSponsor("Unknown Sponsor");
                                 } else {
                                     arti.setSponsor(managedBy.fullID());
@@ -173,7 +173,7 @@ public class CMArtiChangeForm extends Page {
                                 submitText = CREATE;
                                 delete = false;
                             } else {
-                                if(arti.getNotification()==null) {
+                                if (arti.getNotification()==null) {
                                     Organization org = OrganizationFactory.get(trans);
                                     Identity user = org.getIdentity(trans, incomingID);
                                     arti.setNotification("mailto:"+user.email());
@@ -184,15 +184,15 @@ public class CMArtiChangeForm extends Page {
                                 .input(fields[0],"AppID*",true,"value="+arti.getMechid())
                                 .input("sponsor", "Sponsor",false,"value="+arti.getSponsor(),"readonly","style=border:none;background-color:white;")
                                 .input(fields[1],"FQDN*",true,"value="+arti.getMachine(),"style=width:130%;");
-//                            if(maySans) {
+//                            if (maySans) {
                                 hgen.incr(HTMLGen.TR).incr(HTMLGen.TD).end()
                                     .incr(HTMLGen.TD,"class=subtext").text("Use Fully Qualified Domain Names (that will be in DNS), ");
-                                    if(!trans.fish(getPerm(arti.getCa(),"ip"))) {
+                                    if (!trans.fish(getPerm(arti.getCa(),"ip"))) {
                                         hgen.text("NO ");
                                     }
                                 StringBuilder sb = null;
-                                for(String s: arti.getSans()) {
-                                    if(sb==null) {
+                                for (String s: arti.getSans()) {
+                                    if (sb==null) {
                                         sb = new StringBuilder();
                                     } else {
                                         sb.append(", ");
@@ -212,7 +212,7 @@ public class CMArtiChangeForm extends Page {
                                 .incr(HTMLGen.TR)
                                 .incr(HTMLGen.TD).leaf("label","for=types","required").text("Artifact Types").end(2)
                                 .incr(HTMLGen.TD);
-                            for(int i=0;i<types.length;++i) {
+                            for (int i=0;i<types.length;++i) {
                                 hgen.leaf("input","type=checkbox","name=types."+i,arti.getType().contains(types[i])?"checked":"").text(types[i]).end().br();
                             }
                             
@@ -232,7 +232,7 @@ public class CMArtiChangeForm extends Page {
                             hgen.tagOnly("input","id="+fields[8],"name="+fields[8],"value="+submitText,"style=display:none;");
                             hgen.tagOnly("input","id=theButton","type=submit", "orig="+submitText,"value="+submitText);
                             
-                        } catch(CadiException | LocatorException | OrganizationException e) {
+                        } catch (CadiException | LocatorException | OrganizationException e) {
                             throw new APIException(e);
                         }
                     }

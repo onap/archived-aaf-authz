@@ -90,7 +90,7 @@ public class JU_FromJSON {
                 tt.done();
             }
             report.glean(trans,Env.JSON);
-        } while(report.go());
+        } while (report.go());
         
         String result = sbw.toString();
         System.out.println(result);
@@ -120,7 +120,7 @@ public class JU_FromJSON {
                 tt.done();
             }
             report.glean(trans,Env.JSON);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());
@@ -147,7 +147,7 @@ public class JU_FromJSON {
                 tt.done();
             }
             report.glean(trans,Env.JSON);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());
@@ -175,7 +175,7 @@ public class JU_FromJSON {
                 tt.done();
             }
             report.glean(trans,Env.JSON);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());
@@ -218,7 +218,7 @@ public class JU_FromJSON {
                 tt.done();
             }
             report.glean(trans,Env.XML);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw.toString());
@@ -260,7 +260,7 @@ public class JU_FromJSON {
                 tt.done();
             }
             report.glean(trans,Env.XML);
-        } while(report.go());
+        } while (report.go());
 
         report.report(sbw);
         System.out.println(sbw.toString());

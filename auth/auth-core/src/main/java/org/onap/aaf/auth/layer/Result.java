@@ -55,12 +55,12 @@ public class Result<RV> {
     
     protected Result(RV value, int status, String details, String[] variables) {
         this.value = value;
-        if(value==null) {
+        if (value==null) {
         specialCondition|=EMPTY_LIST;
         }
         this.status = status;
         this.details = details;
-        if(variables==null) {
+        if (variables==null) {
             this.variables = EMPTY_VARS;
         } else {
             this.variables=variables;
@@ -290,17 +290,17 @@ public class Result<RV> {
 
     @Override
     public String toString() {
-        if(status==0) {
+        if (status==0) {
             return details;
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(status);
             sb.append(':');
             sb.append(String.format(details,((Object[])variables)));
-            if(isEmpty()) {
+            if (isEmpty()) {
                 sb.append("{empty}");
             }
-            if(value!=null) {
+            if (value!=null) {
                 sb.append('-');
                 sb.append(value.toString());
             }

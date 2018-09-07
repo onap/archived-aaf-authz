@@ -58,7 +58,7 @@ public class X509andChain {
     
     
     public void addTrustChainEntry(X509Certificate x509) throws IOException, CertException {
-        if(trustChain==null) {
+        if (trustChain==null) {
             trustChain = new String[] {Factory.toString(NullTrans.singleton(),x509)};
         } else {
             String[] temp = new String[trustChain.length+1];

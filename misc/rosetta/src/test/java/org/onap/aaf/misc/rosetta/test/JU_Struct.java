@@ -57,7 +57,7 @@ public class JU_Struct {
 //         Setter<SampleData> setter = jaxSet.setter("id");
 //         setter.set(sd, "Your ID");
 //         
-//         for(Entry<String, Getter<SampleData>> es : jaxSet.getters()) {
+//         for (Entry<String, Getter<SampleData>> es : jaxSet.getters()) {
 //             System.out.print(es.getKey());
 //             System.out.print(' ');
 //             System.out.println(es.getValue().get(sd));

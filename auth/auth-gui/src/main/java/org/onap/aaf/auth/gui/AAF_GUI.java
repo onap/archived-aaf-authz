@@ -124,7 +124,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
 
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
         String[] component = Split.split(':', access.getProperty(Config.AAF_COMPONENT, "N/A:2.x"));
-        if(component.length>1) {
+        if (component.length>1) {
             deployedVersion =component[1];
         } else {
             deployedVersion = "2.x";
@@ -217,7 +217,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     }
     
     public void writeError(AuthzTrans trans, Future<?> fp, HTMLGen hgen, int indent) {
-        if(hgen!=null) {
+        if (hgen!=null) {
             String msg = aafCon.readableErrMsg(fp);
             hgen.incr(HTMLGen.P,"style=text-indent:"+indent*10+"px")
                 .text("<font color=\"red\"><i>Error</i>:</font> ")

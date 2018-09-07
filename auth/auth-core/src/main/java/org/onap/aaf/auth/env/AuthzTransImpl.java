@@ -60,12 +60,12 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         meth = req.getMethod();
         path = req.getPathInfo();
         
-        for(REQD_TYPE rt : REQD_TYPE.values()) {
+        for (REQD_TYPE rt : REQD_TYPE.values()) {
             requested(rt,req);
         }
         // Handle alternate "request" for "future"
         String request = req.getParameter("request");
-        if(request!=null) {
+        if (request!=null) {
             requested(REQD_TYPE.future,(request.length()==0 || "true".equalsIgnoreCase(request)));
         }
 
@@ -146,7 +146,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     }
     
     public void requested(REQD_TYPE requested, boolean b) {
-        if(b) {
+        if (b) {
             mask|=requested.bit;
         } else {
             mask&=~requested.bit;
@@ -155,7 +155,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     
     private void requested(REQD_TYPE reqtype, HttpServletRequest req) {
         String p = req.getParameter(reqtype.name());
-        if(p!=null) {
+        if (p!=null) {
             requested(reqtype,p.length()==0 || "true".equalsIgnoreCase(p));
         }
     }
@@ -167,7 +167,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     
     @Override
     public boolean fish(Permission ... pond) {
-        if(lur!=null) {
+        if (lur!=null) {
             return lur.fish(user, pond);
         }
         return false;
@@ -178,9 +178,9 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public Organization org() {
-        if(org==null) {
+        if (org==null) {
             try {
-                if((org = OrganizationFactory.obtain(env(), user()))==null) {
+                if ((org = OrganizationFactory.obtain(env(), user()))==null) {
                     org = Organization.NULL;
                 }
             } catch (Exception e) {
@@ -196,7 +196,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public void logAuditTrail(LogTarget lt) {
-        if(lt.isLoggable()) {
+        if (lt.isLoggable()) {
             StringBuilder sb = new StringBuilder();
             auditTrail(1, sb);
             lt.log(sb);
@@ -208,7 +208,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public Date now() {
-        if(now==null) {
+        if (now==null) {
             now = new Date();
         }
         return now;

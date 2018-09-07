@@ -98,7 +98,7 @@ public final class LocalLur extends AbsUserCache<LocalPermission> implements Lur
         if (pond == null) {
             return false;
         }
-        for(Permission p : pond) {
+        for (Permission p : pond) {
             if (handles(bait) && p instanceof LocalPermission) { // local Users only have LocalPermissions
                 User<LocalPermission> user = getUser(bait);
                 if (user != null) {
@@ -134,7 +134,7 @@ public final class LocalLur extends AbsUserCache<LocalPermission> implements Lur
     public boolean handlesExclusively(Permission ... pond) {
         boolean rv = false;
         for (Permission p : pond) {
-            if(rv=supportingGroups.contains(p.getKey())) {
+            if (rv=supportingGroups.contains(p.getKey())) {
                 break;
             }
         }

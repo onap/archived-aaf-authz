@@ -52,16 +52,16 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
 
     @Override
     public Result<OP_STATUS> exec(AuthzTrans trans, List<Approval> app, Future future) {
-        if(dryRun) {
+        if (dryRun) {
             return Result.err(Result.ERR_ActionNotCompleted,"Not Executed");
         } else {
             // Save on Lookups
             final List<ApprovalDAO.Data> apprs = new ArrayList<>();
             final List<UserRoleDAO.Data> urs = new ArrayList<>();
-            for(Approval a : app) {
+            for (Approval a : app) {
                 apprs.add(a.add);
                 UserRole ur = UserRole.get(a.add.user, future.role);
-                if(ur!=null) {
+                if (ur!=null) {
                     urs.add(ur.urdd());
                 }
             }
@@ -76,9 +76,9 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
                     @Override
                     public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
                         List<UserRole> lur = UserRole.getByUser().get(keys[0]);
-                        if(lur!=null) {
-                            for(UserRole ur : lur) {
-                                if(ur.role().equals(keys[1])) {
+                        if (lur!=null) {
+                            for (UserRole ur : lur) {
+                                if (ur.role().equals(keys[1])) {
                                     return ur.urdd();
                                 }
                             }
@@ -86,7 +86,7 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
                         return null;
                     }
                 });
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 switch(rv.value) {
                     case D:
                         trans.info().printf("Denied %s on %s", future.memo(),future.fdd.target);

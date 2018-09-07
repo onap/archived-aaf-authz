@@ -76,20 +76,20 @@ public class ExpiringNext extends Batch {
         List<String> expiring = new ArrayList<>();
         
         trans.info().log("Checking for Expired UserRoles");
-        for(UserRole ur : UserRole.getData()) {
-            if(ur.expires().after(now)) {
-                if(ur.expires().before(twoWeeks)) {
+        for (UserRole ur : UserRole.getData()) {
+            if (ur.expires().after(now)) {
+                if (ur.expires().before(twoWeeks)) {
                     expiring.add(Chrono.dateOnlyStamp(ur.expires()) + ":\t" + ur.user() + '\t' + ur.role());
                 }
-                if(ur.expires().before(earliestUR)) {
+                if (ur.expires().before(earliestUR)) {
                     earliestUR = ur.expires();
                 }
             }
         }
 
-        if(expiring.size()>0) {
+        if (expiring.size()>0) {
             Collections.sort(expiring,Collections.reverseOrder());
-            for(String s : expiring) {
+            for (String s : expiring) {
                 System.err.print('\t');
                 System.err.println(s);
             }
@@ -101,30 +101,30 @@ public class ExpiringNext extends Batch {
         expiring.clear();
         
         trans.info().log("Checking for Expired Credentials");
-        for( Cred creds : Cred.data.values()) {
+        for ( Cred creds : Cred.data.values()) {
             Instance lastInstance=null;
-            for(Instance inst : creds.instances) {
-                if(inst.type==CredDAO.BASIC_AUTH || inst.type==CredDAO.BASIC_AUTH_SHA256) {
-                    if(lastInstance == null || inst.expires.after(lastInstance.expires)) {
+            for (Instance inst : creds.instances) {
+                if (inst.type==CredDAO.BASIC_AUTH || inst.type==CredDAO.BASIC_AUTH_SHA256) {
+                    if (lastInstance == null || inst.expires.after(lastInstance.expires)) {
                         lastInstance = inst;
                     }
                 }
             }
-            if(lastInstance!=null) {
-                if(lastInstance.expires.after(now)) {
-                    if(lastInstance.expires.before(twoWeeks)) {
+            if (lastInstance!=null) {
+                if (lastInstance.expires.after(now)) {
+                    if (lastInstance.expires.before(twoWeeks)) {
                         expiring.add(Chrono.dateOnlyStamp(lastInstance.expires) + ": \t" + creds.id);
                     }
                 }
-                if(lastInstance.expires.before(earliestCred)) {
+                if (lastInstance.expires.before(earliestCred)) {
                     earliestCred = lastInstance.expires;
                 }
             }
         }
         
-        if(expiring.size()>0) {
+        if (expiring.size()>0) {
             Collections.sort(expiring,Collections.reverseOrder());
-            for(String s : expiring) {
+            for (String s : expiring) {
                 System.err.print('\t');
                 System.err.println(s);
             }

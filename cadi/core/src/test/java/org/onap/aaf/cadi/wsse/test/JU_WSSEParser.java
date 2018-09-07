@@ -130,12 +130,12 @@ public class JU_WSSEParser {
 //        is = new BufferedServletInputStream(fis);
 //        is.mark(0);
 //        try {
-//            while(is.read()>=0);
+//            while (is.read()>=0);
 //        } finally {
 //            fis.close();
 //        }
 //
-//        for(int i=0;i<iter;++i) {
+//        for (int i=0;i<iter;++i) {
 //            start = System.nanoTime();
 //            is.reset();
 //            try {

@@ -31,14 +31,14 @@ public class FQI {
         StringBuilder sb = null;
         String[] split = Split.split('.',fqi);
         int at;
-        for(int i=split.length-1;i>=0;--i) {
-            if(sb == null) {
+        for (int i=split.length-1;i>=0;--i) {
+            if (sb == null) {
                 sb = new StringBuilder();
             } else {
                 sb.append('.');
             }
 
-            if((at = split[i].indexOf('@'))>0) {
+            if ((at = split[i].indexOf('@'))>0) {
                 sb.append(split[i].subSequence(at+1, split[i].length()));
             } else {
                 sb.append(split[i]);

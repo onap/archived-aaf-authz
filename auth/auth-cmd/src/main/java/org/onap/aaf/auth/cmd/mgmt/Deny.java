@@ -59,9 +59,9 @@ public class Deny extends BaseCmd<Mgmt> {
             String action = args[idx++];
             final int option = whichOption(options, action);
             int rv=409;
-            for(final String name : args[idx++].split(COMMA)) {
+            for (final String name : args[idx++].split(COMMA)) {
                 final String append;
-                if(isID && name.indexOf("@")<0) {
+                if (isID && name.indexOf("@")<0) {
                     append='@'+ access.getProperty(Config.AAF_DEFAULT_REALM,null);
                 } else {
                     append = "";
@@ -82,11 +82,11 @@ public class Deny extends BaseCmd<Mgmt> {
                                 fp = client.delete(path, Void.class);
                                 resp = " deleted";
                         }
-                        if(fp.get(AAFcli.timeout())) {
+                        if (fp.get(AAFcli.timeout())) {
                             pw().println(name + append + resp + " on " + client);
                             rv=fp.code();
                         } else {
-                            if(rv==409)rv = fp.code();
+                            if (rv==409)rv = fp.code();
                             error(fp);
                         }
                         return rv;

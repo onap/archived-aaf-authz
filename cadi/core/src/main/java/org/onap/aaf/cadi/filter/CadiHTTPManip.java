@@ -78,18 +78,18 @@ public class CadiHTTPManip {
             Config.setDefaultRealm(access);
     
             aaf_id = access.getProperty(Config.CADI_ALIAS,access.getProperty(Config.AAF_APPID, null));
-            if(aaf_id==null) {
+            if (aaf_id==null) {
                 access.printf(Level.INIT, "%s is not set. %s can be used instead",Config.AAF_APPID,Config.CADI_ALIAS);
             } else {
                 access.printf(Level.INIT, "%s is set to %s",Config.AAF_APPID,aaf_id);
             }
             String ns = aaf_id==null?null:UserChainManip.idToNS(aaf_id);
-            if(ns!=null) {
+            if (ns!=null) {
                 thisPerm = ns+ACCESS_CADI_CONTROL;
                 int dot = ns.indexOf('.');
-                if(dot>=0) {
+                if (dot>=0) {
                     int dot2=ns.indexOf('.',dot+1);
-                    if(dot2<0) {
+                    if (dot2<0) {
                         dot2=dot;
                     }
                     companyPerm = ns.substring(0, dot2)+ACCESS_CADI_CONTROL;
@@ -105,9 +105,9 @@ public class CadiHTTPManip {
             lur = Config.configLur(si, con, additionalTafLurs);
             
             tc.setLur(lur);
-            if(lur instanceof EpiLur) {
+            if (lur instanceof EpiLur) {
                 up = ((EpiLur)lur).getUserPassImpl();
-            } else if(lur instanceof CredVal) {
+            } else if (lur instanceof CredVal) {
                 up = (CredVal)lur;
             } else {
                 up = null;
@@ -160,20 +160,20 @@ public class CadiHTTPManip {
     public boolean notCadi(CadiWrap req, HttpServletResponse resp) {
         
         String pathInfo = req.getPathInfo();
-        if(METH.equalsIgnoreCase(req.getMethod()) && pathInfo!=null && pathInfo.contains(CADI)) {
-            if(req.getUser().equals(aaf_id) || req.isUserInRole(thisPerm) || req.isUserInRole(companyPerm)) {
+        if (METH.equalsIgnoreCase(req.getMethod()) && pathInfo!=null && pathInfo.contains(CADI)) {
+            if (req.getUser().equals(aaf_id) || req.isUserInRole(thisPerm) || req.isUserInRole(companyPerm)) {
                 try {
-                    if(pathInfo.contains(CADI_CACHE_PRINT)) {
+                    if (pathInfo.contains(CADI_CACHE_PRINT)) {
                         resp.getOutputStream().println(lur.toString());
                         resp.setStatus(200);
                         return false;
-                    } else if(pathInfo.contains(CADI_CACHE_CLEAR)) {
+                    } else if (pathInfo.contains(CADI_CACHE_CLEAR)) {
                         StringBuilder report = new StringBuilder();
                         lur.clear(req.getUserPrincipal(), report);
                         resp.getOutputStream().println(report.toString());
                         resp.setStatus(200);
                         return false;
-                    } else if(pathInfo.contains(CADI_LOG_SET))  {
+                    } else if (pathInfo.contains(CADI_LOG_SET))  {
                         Level l;
                         int slash = pathInfo.lastIndexOf('/');
                         String level = pathInfo.substring(slash+1);
@@ -200,7 +200,7 @@ public class CadiHTTPManip {
     
     public void destroy() {
         access.log(Level.INFO,"CadiHttpChecker destroyed.");
-        if(lur!=null) {
+        if (lur!=null) {
             lur.destroy();
             lur=null;
         }

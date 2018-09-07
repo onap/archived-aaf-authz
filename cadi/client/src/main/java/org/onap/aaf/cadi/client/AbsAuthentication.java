@@ -76,7 +76,7 @@ public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT
     }
 
     protected String headValue() throws IOException {
-        if(headValue==null) {
+        if (headValue==null) {
             return "";
         } else {
             return new String(symm.decode(headValue));
@@ -93,7 +93,7 @@ public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT
     }
 
     public boolean isDenied() {
-        if(lastMiss>0 && lastMiss>System.currentTimeMillis()) {
+        if (lastMiss>0 && lastMiss>System.currentTimeMillis()) {
             return true;
         } else {
             lastMiss=0L;
@@ -102,17 +102,17 @@ public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT
     }
 
     public synchronized int setLastResponse(int httpcode) {
-        if(httpcode == 401) {
+        if (httpcode == 401) {
             ++count;
-            if(lastMiss==0L && count>MAX_TEMP_COUNT) {
+            if (lastMiss==0L && count>MAX_TEMP_COUNT) {
                 lastMiss=System.currentTimeMillis()+WAIT_TIME;
             }
-            //                if(count>MAX_SPAM_COUNT) {
+            //                if (count>MAX_SPAM_COUNT) {
             //                    System.err.printf("Your service has %d consecutive bad service logins to AAF. \nIt will now exit\n",
             //                            count);
             //                    System.exit(401);
             //                }
-            if(count%1000==0) {
+            if (count%1000==0) {
                 System.err.printf("Your service has %d consecutive bad service logins to AAF. AAF Access will be disabled after %d\n",
                         count,MAX_SPAM_COUNT);
             }

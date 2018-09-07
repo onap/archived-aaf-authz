@@ -52,7 +52,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         this.dao = dao;
         //read_str = "Cached READ for " + dao.table();
 //        dirty_str = "Cache DIRTY on " + dao.table();
-        if(dao instanceof CassDAOImpl) {
+        if (dao instanceof CassDAOImpl) {
             ((CassDAOImpl<?,?>)dao).cache = this;
         }
     }
@@ -80,14 +80,14 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
 
     public static String keyFromObjs(Object ... objs) {
         String key;
-        if(objs.length==1 && objs[0] instanceof String) {
+        if (objs.length==1 && objs[0] instanceof String) {
             key = (String)objs[0];
         } else {
             StringBuilder sb = new StringBuilder();
             boolean first = true;
-            for(Object o : objs) {
-                if(o!=null) {
-                    if(first) {
+            for (Object o : objs) {
+                if (o!=null) {
+                    if (first) {
                         first =false;
                     } else {
                         sb.append('|');
@@ -102,7 +102,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
 
     public Result<DATA> create(TRANS trans, DATA data) {
         Result<DATA> d = dao.create(trans,data);
-        if(d.status==Status.OK) {
+        if (d.status==Status.OK) {
             add(d.value);
         } else {
             trans.error().log(d.errorString());
@@ -134,7 +134,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         @Override
         public final Result<List<DATA>> get() {
             return call();
-//            if(result.isOKhasData()) { // Note, given above logic, could exist, but stale
+//            if (result.isOKhasData()) { // Note, given above logic, could exist, but stale
 //                return result.value;
 //            } else {
 //                return null;
@@ -146,11 +146,11 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     public Result<List<DATA>> read(final TRANS trans, final Object ... objs) {
         DAOGetter getter = new DAOGetter(trans,dao,objs); 
         return get(trans, keyFromObjs(objs),getter);
-//        if(ld!=null) {
+//        if (ld!=null) {
 //            return Result.ok(ld);//.emptyList(ld.isEmpty());
 //        }
 //        // Result Result if exists
-//        if(getter.result==null) {
+//        if (getter.result==null) {
 //            return Result.err(Status.ERR_NotFound, "No Cache or Lookup found on [%s]",dao.table());
 //        }
 //        return getter.result;
@@ -160,11 +160,11 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     public Result<List<DATA>> read(final String key, final TRANS trans, final Object[] objs) {
         DAOGetter getter = new DAOGetter(trans,dao,objs); 
         return get(trans, key, getter);
-//        if(ld!=null) {
+//        if (ld!=null) {
 //            return Result.ok(ld);//.emptyList(ld.isEmpty());
 //        }
 //        // Result Result if exists
-//        if(getter.result==null) {
+//        if (getter.result==null) {
 //            return Result.err(Status.ERR_NotFound, "No Cache or Lookup found on [%s]",dao.table());
 //        }
 //        return getter.result;
@@ -176,7 +176,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     }
     public Result<Void> update(TRANS trans, DATA data) {
         Result<Void> d = dao.update(trans, data);
-        if(d.status==Status.OK) {
+        if (d.status==Status.OK) {
             add(data);
         } else {
             trans.error().log(d.errorString());
@@ -185,14 +185,14 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     }
 
     public Result<Void> delete(TRANS trans, DATA data, boolean reread) {
-        if(reread) { // If reread, get from Cache, if possible, not DB exclusively
+        if (reread) { // If reread, get from Cache, if possible, not DB exclusively
             Result<List<DATA>> rd = read(trans,data);
-            if(rd.notOK()) {
+            if (rd.notOK()) {
                 return Result.err(rd);
 //            } else {
 //                trans.error().log(rd.errorString());
             }
-            if(rd.isEmpty()) {
+            if (rd.isEmpty()) {
                 data.invalidate(this);
                 return Result.err(Status.ERR_NotFound,"Not Found");
             }
@@ -205,7 +205,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     
     @Override
     public void close(TRANS trans) {
-        if(dao!=null) {
+        if (dao!=null) {
             dao.close(trans);
         }
     }
@@ -221,7 +221,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     }
     
     public void invalidate(TRANS trans, DATA data) {
-        if(info.touch(trans, dao.table(),data.invalidate(this)).notOK()) {
+        if (info.touch(trans, dao.table(),data.invalidate(this)).notOK()) {
         trans.error().log("Cannot touch CacheInfo for Role");
     }
     }

@@ -78,12 +78,12 @@ public class JU_Bytification {
         assertEquals(a.type,b.type);
 //        assertEquals(a.admin.size(),b.admin.size());
         
-//        for(String s: a.admin) {
+//        for (String s: a.admin) {
 //            assertTrue(b.admin.contains(s));
 //        }
 //        
 //        assertEquals(a.responsible.size(),b.responsible.size());
-//        for(String s: a.responsible) {
+//        for (String s: a.responsible) {
 //            assertTrue(b.responsible.contains(s));
 //        }
     }
@@ -105,7 +105,7 @@ public class JU_Bytification {
         // Overshoot Buffer
         StringBuilder sb = new StringBuilder(300);
         sb.append("role|instance|veryLongAction...");
-        for(int i=0;i<280;++i) {
+        for (int i=0;i<280;++i) {
             sb.append('a');
         }
         rd1.perms(true).add(sb.toString());
@@ -123,7 +123,7 @@ public class JU_Bytification {
         check(rd1,rd2);
         
         // 1000 Perms
-        for(int i=0;i<1000;++i) {
+        for (int i=0;i<1000;++i) {
             rd1.perms(true).add("com|inst|action"+ i);
         }
 
@@ -139,7 +139,7 @@ public class JU_Bytification {
         assertEquals(a.name,b.name);
         
         assertEquals(a.perms.size(),b.perms.size());
-        for(String s: a.perms) {
+        for (String s: a.perms) {
             assertTrue(b.perms.contains(s));
         }
     }
@@ -169,7 +169,7 @@ public class JU_Bytification {
         check(pd1,rd2);
         
         // 1000 Perms
-        for(int i=0;i<1000;++i) {
+        for (int i=0;i<1000;++i) {
             pd1.roles(true).add("org.osaaf.<pass>.my.Role"+ i);
         }
 
@@ -187,7 +187,7 @@ public class JU_Bytification {
         assertEquals(a.action,b.action);
         
         assertEquals(a.roles.size(),b.roles.size());
-        for(String s: a.roles) {
+        for (String s: a.roles) {
             assertTrue(b.roles.contains(s));
         }
     }
@@ -252,7 +252,7 @@ public class JU_Bytification {
         assertEquals(a.id,b.id);
         assertEquals(a.ns,b.ns);
         assertEquals(a.type,b.type);
-        if(a.cred==null) {
+        if (a.cred==null) {
             assertEquals(a.cred,b.cred); 
         } else {
             int l = a.cred.limit();

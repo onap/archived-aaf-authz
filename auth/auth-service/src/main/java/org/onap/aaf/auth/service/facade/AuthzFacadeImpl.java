@@ -169,7 +169,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         String msgId;
         String[] detail;
         boolean hidemsg = false;
-        if(result.variables==null) {
+        if (result.variables==null) {
             detail = new String[1];
         } else {
             int l = result.variables.length;
@@ -307,7 +307,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     "] " +
                     holder.toString(),
                     Env.ALWAYS);
-            if(hidemsg) {
+            if (hidemsg) {
                 holder.setLength(0);
                 em = mapper().errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }
@@ -344,11 +344,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST request;
             try {
                 Data<REQUEST> rd = nsRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,rd.asString());
                 }
                 request = rd.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,CREATE_NS);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -476,7 +476,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<NSS> data = nssDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -505,7 +505,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<NSS> data = nssDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -534,7 +534,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<NSS> data = nssDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -564,7 +564,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<NSS> data = nssDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -593,7 +593,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<NSS> data = nssDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -617,11 +617,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = nsRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,UPDATE_NS_DESC);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -706,7 +706,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<KEYS> data = keysDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -799,11 +799,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = permRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();            
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,CREATE_PERMISSION);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -836,7 +836,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK:
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -866,7 +866,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK:
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -895,7 +895,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -924,7 +924,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -954,11 +954,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             PERMS perms;
             try {
                 RosettaData<PERMS> data = permsDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 perms = data.asObject();            
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,GET_PERMISSIONS_BY_USER_WITH_QUERY);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -967,7 +967,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -997,7 +997,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK:
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1023,7 +1023,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK:
                     RosettaData<PERMS> data = permsDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1054,11 +1054,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = permRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();            
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,cmdDescription);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -1086,11 +1086,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = permRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,UPDATE_PERM_DESC);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -1119,11 +1119,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = rolePermRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN, SET_PERMISSION_ROLES_TO);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -1152,11 +1152,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = permRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,DELETE_PERMISSION);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -1218,11 +1218,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = roleRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,CREATE_ROLE);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -1254,7 +1254,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<ROLES> data = roleDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1283,7 +1283,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<ROLES> data = roleDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1311,9 +1311,9 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             Result<ROLES> rp = service.getRolesByNS(trans, ns);
             switch(rp.status) {
                 case OK: 
-                    if(!rp.isEmpty()) {
+                    if (!rp.isEmpty()) {
                         RosettaData<ROLES> data = roleDF.newData(trans).load(rp.value);
-                        if(Question.willSpecialLog(trans, trans.user())) {
+                        if (Question.willSpecialLog(trans, trans.user())) {
                             Question.logEncryptTrace(trans,data.asString());
                         }
                         data.to(resp.getOutputStream());
@@ -1345,9 +1345,9 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             Result<ROLES> rp = service.getRolesByNameOnly(trans, nameOnly);
             switch(rp.status) {
                 case OK: 
-                    if(!rp.isEmpty()) {
+                    if (!rp.isEmpty()) {
                         RosettaData<ROLES> data = roleDF.newData(trans).load(rp.value);
-                        if(Question.willSpecialLog(trans, trans.user())) {
+                        if (Question.willSpecialLog(trans, trans.user())) {
                             Question.logEncryptTrace(trans,data.asString());
                         }
                         data.to(resp.getOutputStream());
@@ -1379,7 +1379,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<ROLES> data = roleDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1408,11 +1408,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = roleRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,UPDATE_ROLE_DESC);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -1440,11 +1440,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = rolePermRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,ADD_PERM_TO_ROLE);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -1473,11 +1473,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = rolePermRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,DELETE_PERM_FROM_ROLE);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -1551,11 +1551,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = roleRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,CREATE_ROLE);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -1596,11 +1596,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(CREATE_CRED, Env.SUB|Env.ALWAYS);
         try {
             RosettaData<REQUEST> data = credRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
             return service.createUserCred(trans, data.asObject());
-        } catch(APIException e) {
+        } catch (APIException e) {
             trans.error().log(e,"Bad Input data");
             return Result.err(Status.ERR_BadData, e.getLocalizedMessage());
         } catch (Exception e) {
@@ -1616,12 +1616,12 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(UPDATE_CRED, Env.SUB|Env.ALWAYS);
         try {
             RosettaData<REQUEST> data = credRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
             return service.changeUserCred(trans, data.asObject());
-        } catch(APIException e) {
+        } catch (APIException e) {
             trans.error().log(e,"Bad Input data");
             return Result.err(Status.ERR_BadData, e.getLocalizedMessage());
         } catch (Exception e) {
@@ -1640,12 +1640,12 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(EXTEND_CRED, Env.SUB|Env.ALWAYS);
         try {
             RosettaData<REQUEST> data = credRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
             return service.extendUserCred(trans, data.asObject(), days);
-        } catch(APIException e) {
+        } catch (APIException e) {
             trans.error().log(e,"Bad Input data");
             return Result.err(Status.ERR_BadData, e.getLocalizedMessage());
         } catch (Exception e) {
@@ -1665,7 +1665,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERS> data = usersDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans,trans.user())) {
+                    if (Question.willSpecialLog(trans,trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1696,7 +1696,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERS> data = usersDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1719,12 +1719,12 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(DELETE_CRED, Env.SUB|Env.ALWAYS);
         try {
             RosettaData<REQUEST> data = credRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
             return service.deleteUserCred(trans, data.asObject());
-        } catch(APIException e) {
+        } catch (APIException e) {
             trans.error().log(e,"Bad Input data");
             return Result.err(Status.ERR_BadData, e.getLocalizedMessage());
         } catch (Exception e) {
@@ -1741,12 +1741,12 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(DOES_CRED_MATCH, Env.SUB|Env.ALWAYS);
         try {
             RosettaData<REQUEST> data = credRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
             return service.doesCredentialMatch(trans, data.asObject());
-        } catch(APIException e) {
+        } catch (APIException e) {
             trans.error().log(e,"Bad Input data");
             return Result.err(Status.ERR_BadData, e.getLocalizedMessage());
         } catch (IOException e) {
@@ -1788,7 +1788,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             
             switch(rci.status) {
                 case OK: 
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         RosettaData<CERTS> data = certsDF.newData(trans).load(rci.value);
                         Question.logEncryptTrace(trans,data.asString());
                         data.to(resp.getOutputStream());
@@ -1819,7 +1819,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(CREATE_DELEGATE, Env.SUB|Env.ALWAYS);
         try {    
             Data<REQUEST> data = delgRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
@@ -1837,7 +1837,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(UPDATE_DELEGATE, Env.SUB|Env.ALWAYS);
         try {    
             Data<REQUEST> data = delgRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
@@ -1855,7 +1855,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(DELETE_DELEGATE, Env.SUB|Env.ALWAYS);
         try {
             Data<REQUEST> data = delgRequestDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
@@ -1890,7 +1890,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rd.status) {
                 case OK: 
                     RosettaData<DELGS> data = delgDF.newData(trans).load(rd.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1915,7 +1915,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rd.status) {
                 case OK: 
                     RosettaData<DELGS> data = delgDF.newData(trans).load(rd.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -1947,12 +1947,12 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST request;
             try {
                 Data<REQUEST> data = userRoleRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
 
                 request = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
             
@@ -1980,7 +1980,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERS> data = usersDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2008,7 +2008,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERROLES> data = userrolesDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2036,7 +2036,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERROLES> data = userrolesDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2064,11 +2064,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = userRoleRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN, SET_USERS_FOR_ROLE);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -2098,12 +2098,12 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             REQUEST rreq;
             try {
                 RosettaData<REQUEST> data = userRoleRequestDF.newData().load(req.getInputStream());
-                if(Question.willSpecialLog(trans, trans.user())) {
+                if (Question.willSpecialLog(trans, trans.user())) {
                     Question.logEncryptTrace(trans,data.asString());
                 }
 
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN, SET_ROLES_FOR_USER);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
             }
@@ -2172,7 +2172,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start(UPDATE_APPROVAL, Env.SUB|Env.ALWAYS);
         try {
             Data<APPROVALS> data = approvalDF.newData().load(req.getInputStream());
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 
@@ -2201,7 +2201,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<APPROVALS> data = approvalDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -2227,7 +2227,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<APPROVALS> data = approvalDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2253,7 +2253,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rp.status) {
                 case OK: 
                     RosettaData<APPROVALS> data = approvalDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2287,7 +2287,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERS> data = usersDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2317,7 +2317,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(ru.status) {
                 case OK: 
                     RosettaData<USERS> data = usersDF.newData(trans).load(ru.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2351,8 +2351,8 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         sb.append(user);
         sb.append(" for ");
         boolean first = true;
-        for(int i : yyyymm) {
-            if(first) {
+        for (int i : yyyymm) {
+            if (first) {
                 first = false;
             } else {
                 sb.append(',');
@@ -2366,7 +2366,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rh.status) {
                 case OK: 
                     RosettaData<HISTORY> data = historyDF.newData(trans).load(rh.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2395,8 +2395,8 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         sb.append(role);
         sb.append(" for ");
         boolean first = true;
-        for(int i : yyyymm) {
-            if(first) {
+        for (int i : yyyymm) {
+            if (first) {
                 first = false;
             } else {
                 sb.append(',');
@@ -2409,7 +2409,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rh.status) {
                 case OK: 
                     RosettaData<HISTORY> data = historyDF.newData(trans).load(rh.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2438,8 +2438,8 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         sb.append(ns);
         sb.append(" for ");
         boolean first = true;
-        for(int i : yyyymm) {
-            if(first) {
+        for (int i : yyyymm) {
+            if (first) {
                 first = false;
             } else {
                 sb.append(',');
@@ -2452,7 +2452,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rh.status) {
                 case OK: 
                     RosettaData<HISTORY> data = historyDF.newData(trans).load(rh.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2481,8 +2481,8 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         sb.append(perm);
         sb.append(" for ");
         boolean first = true;
-        for(int i : yyyymm) {
-            if(first) {
+        for (int i : yyyymm) {
+            if (first) {
                 first = false;
             } else {
                 sb.append(',');
@@ -2495,7 +2495,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             switch(rh.status) {
                 case OK: 
                     RosettaData<HISTORY> data = historyDF.newData(trans).load(rh.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
 
@@ -2541,10 +2541,10 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         try {
             String[] segs = segments.split("\\s*,\\s*");
             int isegs[] = new int[segs.length];
-            for(int i=0;i<segs.length;++i) {
+            for (int i=0;i<segs.length;++i) {
                 try {
                     isegs[i] = Integer.parseInt(segs[i]);
-                } catch(NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
                     isegs[i] = -1;
                 }
             }
@@ -2576,32 +2576,32 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             Api api = new Api();
             Api.Route ar;
             Method[] meths = AuthzCassServiceImpl.class.getDeclaredMethods();
-            for(RouteReport rr : rservlet.routeReport()) {
+            for (RouteReport rr : rservlet.routeReport()) {
                 api.getRoute().add(ar = new Api.Route());
                 ar.setMeth(rr.meth.name());
                 ar.setPath(rr.path);
                 ar.setDesc(rr.desc);
                 ar.getContentType().addAll(rr.contextTypes);
-                for(Method m : meths) {
+                for (Method m : meths) {
                     ApiDoc ad;
-                    if((ad = m.getAnnotation(ApiDoc.class))!=null &&
+                    if ((ad = m.getAnnotation(ApiDoc.class))!=null &&
                             rr.meth.equals(ad.method()) &&
                             rr.path.equals(ad.path())) {
-                        for(String param : ad.params()) {
+                        for (String param : ad.params()) {
                             ar.getParam().add(param);
                         }
-                        for(String text : ad.text()) {
+                        for (String text : ad.text()) {
                             ar.getComments().add(text);
                         }
                         ar.setExpected(ad.expectedCode());
-                        for(int ec : ad.errorCodes()) {
+                        for (int ec : ad.errorCodes()) {
                             ar.getExplicitErr().add(ec);
                         }
                     }
                 }
             }
             RosettaData<Api> data = apiDF.newData(trans).load(api);
-            if(Question.willSpecialLog(trans, trans.user())) {
+            if (Question.willSpecialLog(trans, trans.user())) {
                 Question.logEncryptTrace(trans,data.asString());
             }
 

@@ -161,7 +161,7 @@ public class AAFcli {
                 sb.append(largs[idx], e, v);
                 if ((e = largs[idx].indexOf(']', v)) >= 0) {
                     String p = access.getProperty(largs[idx].substring(v + 2, e),null);
-                    if(p==null) {
+                    if (p==null) {
                         p = System.getProperty(largs[idx].substring(v+2,e));
                     }
                     ++e;
@@ -183,7 +183,7 @@ public class AAFcli {
         while (rv && idx < largs.length) {
             // Allow Script to change Credential
             if (!gui) {
-                if("as".equalsIgnoreCase(largs[idx])) {
+                if ("as".equalsIgnoreCase(largs[idx])) {
                     if (largs.length > ++idx) {
                         // get Password from Props with ID as Key
                         String user = largs[idx++];
@@ -255,13 +255,13 @@ public class AAFcli {
 
             } 
             
-            if("REQUEST".equalsIgnoreCase(largs[idx])) {
+            if ("REQUEST".equalsIgnoreCase(largs[idx])) {
                 request=true;
                 ++idx;
-            } else if("FORCE".equalsIgnoreCase(largs[idx])) {
+            } else if ("FORCE".equalsIgnoreCase(largs[idx])) {
                 force="true";
                 ++idx;
-            } else if("DETAILS".equalsIgnoreCase(largs[idx])) {
+            } else if ("DETAILS".equalsIgnoreCase(largs[idx])) {
                 showDetails=true;
                 ++idx;
             } else if ("set".equalsIgnoreCase(largs[idx])) {
@@ -271,11 +271,11 @@ public class AAFcli {
                     if (equals < 0) {
                         tag = largs[idx];
                         value = access.getProperty(Config.AAF_APPPASS,null);
-                        if(value==null) {
+                        if (value==null) {
                             break;
                         } else {
                             value = access.decrypt(value, false);
-                            if(value==null) {
+                            if (value==null) {
                                 break;
                             }
                             access.getProperties().put(tag, value);
@@ -287,11 +287,11 @@ public class AAFcli {
                         pw.println("set " + tag + ' ' + value);
                     }
                     boolean isTrue = "TRUE".equalsIgnoreCase(value);
-                    if("FORCE".equalsIgnoreCase(tag)) {
+                    if ("FORCE".equalsIgnoreCase(tag)) {
                         force = value;
-                    } else if("REQUEST".equalsIgnoreCase(tag)) {
+                    } else if ("REQUEST".equalsIgnoreCase(tag)) {
                         request = isTrue;
-                    } else if("DETAILS".equalsIgnoreCase(tag)) {
+                    } else if ("DETAILS".equalsIgnoreCase(tag)) {
                         showDetails = isTrue;
                     } else {
                         access.getProperties().put(tag, value);
@@ -380,7 +380,7 @@ public class AAFcli {
                 } else {
                     quote = ch;
                 }
-            } else if(ch=='|' && quote==0) {
+            } else if (ch=='|' && quote==0) {
                 arr.add(sb.toString());
                 sb.setLength(0);
                 start = true;
@@ -437,7 +437,7 @@ public class AAFcli {
             try {
                 PropAccess access = aafsso.access();
 
-                if(aafsso.ok()) {
+                if (aafsso.ok()) {
                     Define.set(access);
                     AuthzEnv env = new AuthzEnv(access);
                     
@@ -450,7 +450,7 @@ public class AAFcli {
                     for (int i = 0; i < args.length; ++i) {
                         if ("-i".equalsIgnoreCase(args[i])) {
                             rdr = new InputStreamReader(System.in);
-                            // } else if("-o".equalsIgnoreCase(args[i])) {
+                            // } else if ("-o".equalsIgnoreCase(args[i])) {
                             // // shall we do something different? Output stream is
                             // already done...
                         } else if ("-f".equalsIgnoreCase(args[i])) {
@@ -488,7 +488,7 @@ public class AAFcli {
                     aafsso.setStdErrDefault();
     
                     // Note, with AAF Locator, this may not longer be necessary 3/2018 Jonathan
-                    if(!aafsso.loginOnly()) {
+                    if (!aafsso.loginOnly()) {
 //                        try {
 //                            loc = new AAFLocator(si,new URI(access.getProperty(Config.AAF_URL)));
 //                        } catch (Throwable t) {
@@ -502,7 +502,7 @@ public class AAFcli {
                         TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
 //                        HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
                         
-                        if(access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
+                        if (access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
                             access.setProperty(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
                             aafsso.addProp(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
                         }
@@ -511,13 +511,13 @@ public class AAFcli {
                                 aafcon.hman(), aafcon.securityInfo(), aafcon.securityInfo().defSS);
 //                            new HBasicAuthSS(si,aafsso.user(), access.decrypt(aafsso.enc_pass(),false)));
 //                        }
-                        if(!ignoreDelay) {
+                        if (!ignoreDelay) {
                             File delay = new File("aafcli.delay");
-                            if(delay.exists()) {
+                            if (delay.exists()) {
                                 BufferedReader br = new BufferedReader(new FileReader(delay));
                                 try {
                                     globalDelay = Integer.parseInt(br.readLine());
-                                } catch(Exception e) {
+                                } catch (Exception e) {
                                     access.log(Level.DEBUG,e);
                                 } finally {
                                     br.close();
@@ -596,7 +596,7 @@ public class AAFcli {
                     System.err.println(err);
                 }
             }
-            if(noexit==null) {
+            if (noexit==null) {
                 return;
             }
 

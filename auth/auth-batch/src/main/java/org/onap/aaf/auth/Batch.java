@@ -98,11 +98,11 @@ public abstract class Batch {
         // load extra properties, i.e.
         // PERF.cassandra.clusters=....
         batchEnv = env.getProperty(CASS_ENV);
-        if(batchEnv != null) {
+        if (batchEnv != null) {
             batchEnv = batchEnv.trim();
             env.info().log("Redirecting to ",batchEnv,"environment");
             String str;
-            for(String key : new String[]{
+            for (String key : new String[]{
                     CassAccess.CASSANDRA_CLUSTERS,
                     CassAccess.CASSANDRA_CLUSTERS_PORT,
                     CassAccess.CASSANDRA_CLUSTERS_USER_NAME,
@@ -111,7 +111,7 @@ public abstract class Batch {
                     LOG_DIR,
                     "SPECIAL_NAMES"
                     }) {
-                if((str = env.getProperty(batchEnv+'.'+key))!=null) {
+                if ((str = env.getProperty(batchEnv+'.'+key))!=null) {
                     env.setProperty(key, str);
                 }
             }
@@ -319,8 +319,8 @@ public abstract class Batch {
 
     private static void transferVMProps(AuthzEnv env, String ... props) {
         String value;
-        for(String key : props) {
-            if((value = System.getProperty(key))!=null) {
+        for (String key : props) {
+            if ((value = System.getProperty(key))!=null) {
                 env.setProperty(key, value);
             }
         }
@@ -357,8 +357,8 @@ public abstract class Batch {
     
     protected static String logDir() {
         String ld = env.getProperty(LOG_DIR);
-        if(ld==null) {
-            if(batchEnv==null) { // Deployed Batch doesn't use different ENVs, and a common logdir
+        if (ld==null) {
+            if (batchEnv==null) { // Deployed Batch doesn't use different ENVs, and a common logdir
                 ld = "logs/";
             } else {
                 ld = "logs/"+batchEnv;
@@ -367,11 +367,11 @@ public abstract class Batch {
         return ld;
     }
     protected int count(String str, char c) {
-        if(str==null || str.isEmpty()) {
+        if (str==null || str.isEmpty()) {
             return 0;
         } else {
             int count=1;
-            for(int i=str.indexOf(c);i>=0;i=str.indexOf(c,i+1)) {
+            for (int i=str.indexOf(c);i>=0;i=str.indexOf(c,i+1)) {
                 ++count;
             }
             return count;

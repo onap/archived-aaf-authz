@@ -55,7 +55,7 @@ public class API_Perms {
                 
                 String scopes = req.getParameter("scopes");
                 Result<Void> r;
-                if(scopes==null) {
+                if (scopes==null) {
                     r = context.getPermsByUser(trans, resp, pathParam(req, "user"));
                 } else {
                     r = context.getPermsByUserScope(trans, resp, pathParam(req, "user"),Split.split(':', scopes));

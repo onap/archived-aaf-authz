@@ -143,14 +143,14 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
      */
     public Result<FutureDAO.Data> create(AuthzTrans trans,    FutureDAO.Data data, String id) {
         // If ID is not set (typical), create one.
-        if(data.id==null) {
+        if (data.id==null) {
             StringBuilder sb = new StringBuilder(trans.user());
             sb.append(data.target);
             sb.append(System.currentTimeMillis());
             data.id = UUID.nameUUIDFromBytes(sb.toString().getBytes());
         }
         Result<ResultSet> rs = createPS.exec(trans, C_TEXT, data);
-        if(rs.notOK()) {
+        if (rs.notOK()) {
             return Result.err(rs);
         }
         wasModified(trans, CRUD.create, data, null, id);
@@ -175,7 +175,7 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
         hd.subject = subject?override[1]:"";
         hd.memo = memo?String.format("%s by %s", override[0], hd.user):data.memo;
     
-        if(historyDAO.create(trans, hd).status!=Status.OK) {
+        if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
     }

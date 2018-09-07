@@ -56,7 +56,7 @@ public class NetMask {
     public static long derive(byte[] inBytes) {
         long addr = 0L;
         int offset = inBytes.length*8;
-        for(int i=0;i<inBytes.length;++i) {
+        for (int i=0;i<inBytes.length;++i) {
             addr&=(inBytes[i]<<offset);
             offset-=8;
         }
@@ -68,22 +68,22 @@ public class NetMask {
         int idx=str.indexOf(':');
         int slash = str.indexOf('/');
 
-        if(idx<0) { // Not IPV6, so it's IPV4... Is there a mask of 123/254?
+        if (idx<0) { // Not IPV6, so it's IPV4... Is there a mask of 123/254?
             idx=str.indexOf('.');
             int offset = 24;
             int end = slash>=0?slash:str.length();
             int bits = slash>=0?Integer.parseInt(str.substring(slash+1)):32;
-            if(check && bits>32) {
+            if (check && bits>32) {
                 throw new MaskFormatException("Invalid Mask Offset in IPV4 Address");
             }
             int prev = 0;
             long lbyte;
-            while(prev<end) {
-                if(idx<0) {
+            while (prev<end) {
+                if (idx<0) {
                     idx = end;
                 }
                 lbyte = Long.parseLong(str.substring(prev, idx));
-                if(check && (lbyte>255 || lbyte<0)) {
+                if (check && (lbyte>255 || lbyte<0)) {
                     throw new MaskFormatException("Invalid Byte in IPV4 Address");
                 }
                 rv|=lbyte<<offset;

@@ -84,11 +84,11 @@ public class PermsShow extends Page {
                     @Override
                     public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         Future<Perms> fp = client.read("/authz/perms/user/"+trans.user(), gui.getDF(Perms.class));
-                        if(fp.get(5000)) {
+                        if (fp.get(5000)) {
                             TimeTaken ttld = trans.start("Load Data", Env.SUB);
                             try {
-                                if(fp.value!=null) {    
-                                    for(Perm p : fp.value.getPerm()) {
+                                if (fp.value!=null) {    
+                                    for (Perm p : fp.value.getPerm()) {
                                         AbsCell[] sa = new AbsCell[] {
                                             new RefCell(p.getType(),PermDetail.HREF
                                                     +"?type="+p.getType()

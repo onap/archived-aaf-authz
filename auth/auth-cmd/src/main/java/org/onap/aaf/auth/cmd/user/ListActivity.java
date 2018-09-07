@@ -58,7 +58,7 @@ public class ListActivity extends Cmd {
                         "/authz/hist/user/"+user, 
                         getDF(History.class)
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     activity(fp.value,HEADER + " [ " + user + " ]");
                 } else {
                     error(fp);

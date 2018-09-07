@@ -119,7 +119,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
     public void error(AuthzTrans trans, HttpServletResponse response, Result<?> result) {
         String msg = result.details==null?"":result.details.trim();
         String[] detail;
-        if(result.variables==null) {
+        if (result.variables==null) {
             detail = new String[1];
         } else {
             int l = result.variables.length;
@@ -132,7 +132,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
     @Override
     public void error(AuthzTrans trans, HttpServletResponse response, int status, String msg, String ... _detail) {
             String[] detail = _detail;
-        if(detail.length==0) {
+        if (detail.length==0) {
             detail=new String[1];
         }
         boolean hidemsg = false;
@@ -199,7 +199,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
                     "] " +
                     holder.toString(),
                     Env.ALWAYS);
-            if(hidemsg) {
+            if (hidemsg) {
                 holder.setLength(0);
                 em = mapper().errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }
@@ -221,25 +221,25 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
             Api api = new Api();
             Api.Route ar;
             Method[] meths = LocateServiceImpl.class.getDeclaredMethods();
-            for(RouteReport rr : rservlet.routeReport()) {
+            for (RouteReport rr : rservlet.routeReport()) {
                 api.getRoute().add(ar = new Api.Route());
                 ar.setMeth(rr.meth.name());
                 ar.setPath(rr.path);
                 ar.setDesc(rr.desc);
                 ar.getContentType().addAll(rr.contextTypes);
-                for(Method m : meths) {
+                for (Method m : meths) {
                     ApiDoc ad;
-                    if((ad = m.getAnnotation(ApiDoc.class))!=null &&
+                    if ((ad = m.getAnnotation(ApiDoc.class))!=null &&
                             rr.meth.equals(ad.method()) &&
                             rr.path.equals(ad.path())) {
-                        for(String param : ad.params()) {
+                        for (String param : ad.params()) {
                             ar.getParam().add(param);
                         }
-                        for(String text : ad.text()) {
+                        for (String text : ad.text()) {
                             ar.getComments().add(text);
                         }
                         ar.setExpected(ad.expectedCode());
-                        for(int ec : ad.errorCodes()) {
+                        for (int ec : ad.errorCodes()) {
                             ar.getExplicitErr().add(ec);
                         }
                     }
@@ -289,20 +289,20 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
             String output=null;
             long temp=System.currentTimeMillis();
             synchronized(LOCK) {
-                if(cacheClear<temp) {
+                if (cacheClear<temp) {
                     epsCache.clear();
                     cacheClear = temp+1000*60*2; // 2 mins standard cache clear
                 } else {
                     output = epsCache.get(key);
-                    if("{}".equals(output) && emptyCheck<temp) {
+                    if ("{}".equals(output) && emptyCheck<temp) {
                         output = null;
                         emptyCheck = temp+5000; // 5 second check  
                     }
                 }
             }
-            if(output==null) {
+            if (output==null) {
                 Result<ENDPOINTS> reps = this.service.getEndPoints(trans,service,version,other);
-                if(reps.notOK()) {
+                if (reps.notOK()) {
                     return Result.err(reps);
                 } else {
                     output = epDF.newData(trans).load(reps.value).asString();
@@ -334,7 +334,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
             try {
                 RosettaData<MGMT_ENDPOINTS> data = mepDF.newData().load(req.getInputStream());
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,PUT_MGMT_ENDPOINTS);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 
@@ -370,7 +370,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
             try {
                 RosettaData<MGMT_ENDPOINTS> data = mepDF.newData().load(req.getInputStream());
                 rreq = data.asObject();
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log("Invalid Input",IN,DELETE_MGMT_ENDPOINTS);
                 return Result.err(Status.ERR_BadData,"Invalid Input");
 

@@ -74,15 +74,15 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
          this.invalidateTime = invalidateTime;
 
          double distance = Double.MAX_VALUE;
-         for(int i=0;i<urlstrs.length;++i) {
+         for (int i=0;i<urlstrs.length;++i) {
              String[] info = Split.split('/', urlstrs[i]);
-             if(info.length<3) {
+             if (info.length<3) {
                  throw new LocatorException("Configuration needs LAT and LONG, i.e. ip:port/lat/long");
              }
              try {
                  clients[i] = _newClient(urlstrs[i]);
                  failures[i] = 0L;
-             } catch(LocatorException le) {
+             } catch (LocatorException le) {
                  failures[i] = System.currentTimeMillis()+invalidateTime;
              }
 
@@ -90,15 +90,15 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
              distances[i]=d;
 
              // find preferred server
-             if(d<distance) {
+             if (d<distance) {
                  preferred = i;
                  distance=d;
              }
          }
 
          access.printf(Level.INIT,"Preferred Client is %s",urlstrs[preferred]);
-         for(int i=0;i<urlstrs.length;++i) {
-             if(i!=preferred) {
+         for (int i=0;i<urlstrs.length;++i) {
+             if (i!=preferred) {
                  access.printf(Level.INIT,"Alternate Client is %s",urlstrs[i]);
              }
          }
@@ -117,7 +117,7 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
 
     @Override
     public Item best() throws LocatorException {
-        if(failures[preferred]==0L) {
+        if (failures[preferred]==0L) {
             return new HPItem(preferred);
         } else {
             long now = System.currentTimeMillis();
@@ -125,9 +125,9 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
             int best = -1;
             boolean tickle = false;
             // try for best existing client
-            for(int i=0;i<urlstrs.length;++i) {
-                if(failures[i]<now && distances[i]<d) {
-                    if(clients[i]!=null) {
+            for (int i=0;i<urlstrs.length;++i) {
+                if (failures[i]<now && distances[i]<d) {
+                    if (clients[i]!=null) {
                         best = i;
                         break;
                     } else {
@@ -135,13 +135,13 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
                     }
                 }
             }
-            if(best<0 && tickle) {
+            if (best<0 && tickle) {
                 tickle=false;
-                if(refresh()) {
+                if (refresh()) {
                     // try again
-                    for(int i=0;i<urlstrs.length;++i) {
-                        if(failures[i]==0L && distances[i]<d) {
-                            if(clients[i]!=null) {
+                    for (int i=0;i<urlstrs.length;++i) {
+                        if (failures[i]==0L && distances[i]<d) {
+                            if (clients[i]!=null) {
                                 best = i;
                                 break;
                             }
@@ -154,9 +154,9 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
              * If a valid client is available, but there are some that can refresh, return the client immediately
              * but start a Thread to do the background Client setup.
              */
-            if(tickle) {
+            if (tickle) {
                 synchronized(clients) {
-                    if(refreshThread==null) {
+                    if (refreshThread==null) {
                         refreshThread = new Thread(new Runnable(){
                             @Override
                             public void run() {
@@ -170,7 +170,7 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
                 }
             }
 
-            if(best<0) {
+            if (best<0) {
                 throw new LocatorException("No Clients available");
             }
 
@@ -183,8 +183,8 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
     public CLIENT get(Item item) throws LocatorException {
         HPItem hpi = (HPItem)item;
         CLIENT c = clients[hpi.idx];
-        if(c==null) {
-            if(failures[hpi.idx]>System.currentTimeMillis()) {
+        if (c==null) {
+            if (failures[hpi.idx]>System.currentTimeMillis()) {
                 throw new LocatorException("Client requested is invalid");
             } else {
                 synchronized(clients) {
@@ -192,7 +192,7 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
                     failures[hpi.idx]=0L;
                 }
             }
-        } else if(failures[hpi.idx]>0){
+        } else if (failures[hpi.idx]>0){
             throw new LocatorException("Client requested is invalid");
         }
         return c;
@@ -200,7 +200,7 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
 
     public String info(Item item) {
         HPItem hpi = (HPItem)item;
-        if(hpi!=null && hpi.idx<urlstrs.length) {
+        if (hpi!=null && hpi.idx<urlstrs.length) {
             return urlstrs[hpi.idx];
         } else {
             return "Invalid Item";
@@ -209,8 +209,8 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
 
     @Override
     public boolean hasItems() {
-        for(int i=0;i<clients.length;++i) {
-            if(clients[i]!=null && failures[i]==0L) {
+        for (int i=0;i<clients.length;++i) {
+            if (clients[i]!=null && failures[i]==0L) {
                 return true;
             }
         }
@@ -233,7 +233,7 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
     @Override
     public Item next(Item item) throws LocatorException {
         HPItem hpi = (HPItem)item;
-        if(++hpi.idx>=clients.length) {
+        if (++hpi.idx>=clients.length) {
             return null;
         }
         return hpi;
@@ -244,11 +244,11 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
         boolean force = !hasItems(); // If no Items at all, reset
         boolean rv = true;
         long now = System.currentTimeMillis();
-        for(int i=0;i<clients.length;++i) {
-            if(failures[i]>0L && (failures[i]<now || force)) { // retry
+        for (int i=0;i<clients.length;++i) {
+            if (failures[i]>0L && (failures[i]<now || force)) { // retry
                 try {
                     synchronized(clients) {
-                        if(clients[i]==null) {
+                        if (clients[i]==null) {
                             clients[i]=_newClient(urlstrs[i]);
                         }
                         failures[i]=0L;
@@ -264,8 +264,8 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
 
     @Override
     public void destroy() {
-        for(int i=0;i<clients.length;++i) {
-            if(clients[i]!=null) {
+        for (int i=0;i<clients.length;++i) {
+            if (clients[i]!=null) {
                 _destroy(clients[i]);
                 clients[i] = null;
             }
@@ -289,8 +289,8 @@ public abstract class HotPeerLocator<CLIENT> implements Locator<CLIENT> {
     }
 
     public boolean invalidate(CLIENT client) throws LocatorException {
-        for(int i=0;i<clients.length;++i) {
-            if(clients[i]==client) { // yes, "==" is appropriate here.. Comparing Java Object Reference
+        for (int i=0;i<clients.length;++i) {
+            if (clients[i]==client) { // yes, "==" is appropriate here.. Comparing Java Object Reference
                 invalidate(new HPItem(i));
                 return true;
             }

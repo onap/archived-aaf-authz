@@ -70,11 +70,11 @@ public class Describe extends Cmd {
                     nsr
                     );
 
-                if(fn.get(AAFcli.timeout())) {
+                if (fn.get(AAFcli.timeout())) {
                     rv=fn.code();
                     pw().println("Description added to Namespace");
                 } else {
-                    if((rv=fn.code())==202) {
+                    if ((rv=fn.code())==202) {
                         pw().print("Adding description");
                         pw().println(" Accepted, but requires Approvals before actualizing");
                     } else {

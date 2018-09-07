@@ -74,7 +74,7 @@ public class JU_AbsData {
         FileOutputStream is = new FileOutputStream(keyfile);
         OutputStreamWriter osw = new OutputStreamWriter(is);
         BufferedWriter  w = new BufferedWriter(osw);
-        for(int i = 0; i< 10; i++) {        //Write lines to file
+        for (int i = 0; i< 10; i++) {        //Write lines to file
             w.write("a\nsdfasdfxasdf" + i + "\n");
         }
         w.close();

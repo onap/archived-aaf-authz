@@ -81,15 +81,15 @@ public class StoreImpl implements Store {
          staticMap = new HashMap<>();
          localMap = new HashMap<>();
 
-         if(tag!=null) {
+         if (tag!=null) {
             String tequals = tag + '=';
-            for(String arg : args) {
-                if(arg.startsWith(tequals) && !arg.equals(tequals)) { // needs to have something after =
+            for (String arg : args) {
+                if (arg.startsWith(tequals) && !arg.equals(tequals)) { // needs to have something after =
                     Properties props = new Properties();
-                    for(String f : Split.split(File.pathSeparatorChar,arg.substring(tequals.length()))) {
+                    for (String f : Split.split(File.pathSeparatorChar,arg.substring(tequals.length()))) {
                         moreProps(new File(f),props);
                     }
-                    for(Entry<Object, Object> es : props.entrySet()) {
+                    for (Entry<Object, Object> es : props.entrySet()) {
                         put(staticSlot(es.getKey().toString()),es.getValue());
                     }
                 }
@@ -105,29 +105,29 @@ public class StoreImpl implements Store {
          staticMap = new HashMap<>();
          localMap = new HashMap<>();
          
-         if(tag!=null) {
+         if (tag!=null) {
              String fname = props.getProperty(tag);
-             if(fname!=null) {
-                 for(String f : Split.split(File.pathSeparatorChar,fname)) {
-                     if(!moreProps(new File(f),props)) {
+             if (fname!=null) {
+                 for (String f : Split.split(File.pathSeparatorChar,fname)) {
+                     if (!moreProps(new File(f),props)) {
                         System.err.println("Unable to load Properties from " + f); 
                      }
                  }
              }
          }
 
-         for(Entry<Object, Object> es : props.entrySet()) {
+         for (Entry<Object, Object> es : props.entrySet()) {
              put(staticSlot(es.getKey().toString()),es.getValue());
          }
     }
 
     public void propsFromArgs(String tag, String[] args) {
-        if(tag!=null) {
-            for(String arg : args) {
+        if (tag!=null) {
+            for (String arg : args) {
                 String sarg[] = Split.split('=',arg);
-                if(sarg.length==2) {
-                    if(tag.equals(sarg[0])) {
-                        for(String fname : Split.split(File.pathSeparatorChar,sarg[1])) {
+                if (sarg.length==2) {
+                    if (tag.equals(sarg[0])) {
+                        for (String fname : Split.split(File.pathSeparatorChar,sarg[1])) {
                             moreProps(new File(fname),null /* no target */);
                         }
                     }
@@ -138,22 +138,22 @@ public class StoreImpl implements Store {
     }
 
     private boolean moreProps(File f, Properties target) {
-         if(f.exists()) {
+         if (f.exists()) {
              Properties props = new Properties();
              try {
                  FileInputStream fis = new FileInputStream(f);
                  try {
                      props.load(fis);
-                     if(target!=null) {
+                     if (target!=null) {
                          target.load(fis);
                      }
                  } finally {
                      fis.close();
                  }
-             } catch(IOException e) {
+             } catch (IOException e) {
                  System.err.println(e);
              }
-             for(Entry<Object, Object> es : props.entrySet()) {
+             for (Entry<Object, Object> es : props.entrySet()) {
                  put(staticSlot(es.getKey().toString()),es.getValue());
              }
              return true;

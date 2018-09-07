@@ -119,27 +119,27 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
             TOKEN_REQ request;
             try {
                 request = mapper.tokenReqFromParams(req);
-                if(request==null) {
+                if (request==null) {
                     Data<TOKEN_REQ> rd = tokenReqDF.newData().load(req.getInputStream());
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,rd.asString());
                     }
                     request = rd.asObject();
                 }
-            } catch(APIException e) {
+            } catch (APIException e) {
                 trans.error().log(INVALID_INPUT,IN,CREATE_TOKEN);
                 return Result.err(Status.ERR_BadData,INVALID_INPUT);
             }
 
             // Already validated for Oauth2FormPrincipal
 //            Result<Void> rv = service.validate(trans,mapper.credsFromReq(request));
-//            if(rv.notOK()) {
+//            if (rv.notOK()) {
 //                return rv;
 //            }
             Holder<GRANT_TYPE> hgt = new Holder<GRANT_TYPE>(GRANT_TYPE.unknown);
             Result<OAuthTokenDAO.Data> rs = service.createToken(trans,req,mapper.clientTokenReq(request,hgt),hgt);
             Result<TOKEN> rp;
-            if(rs.isOKhasData()) {
+            if (rs.isOKhasData()) {
                 rp = mapper.tokenFromData(rs);
             } else {
                 rp = Result.err(rs);
@@ -147,7 +147,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
             switch(rp.status) {
                 case OK: 
                     RosettaData<TOKEN> data = tokenDF.newData(trans).load(rp.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -175,30 +175,30 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
         try {
             Principal p = req.getUserPrincipal();
             String token=null;
-            if(p != null) {
-                if(p instanceof OAuth2Principal) {
+            if (p != null) {
+                if (p instanceof OAuth2Principal) {
                     RosettaData<INTROSPECT> data = introspectDF.newData(trans).load(mapper.fromPrincipal((OAuth2Principal)p));
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
                     resp.getOutputStream().print('\n');
                     setContentType(resp,tokenDF.getOutType());
                     return Result.ok();
-                } else if(p instanceof OAuth2FormPrincipal) {
+                } else if (p instanceof OAuth2FormPrincipal) {
                     token = req.getParameter("token"); 
                 }
             }
             
-            if(token==null) {
+            if (token==null) {
                 token = req.getParameter("access_token");
-                if(token==null || token.isEmpty()) {
+                if (token==null || token.isEmpty()) {
                     token = req.getHeader("Authorization");
-                    if(token != null && token.startsWith("Bearer ")) {
+                    if (token != null && token.startsWith("Bearer ")) {
                         token = token.substring(7);
                     } else {
                         token = req.getParameter("token");
-                        if(token==null) {
+                        if (token==null) {
                             return Result.err(Result.ERR_Security,"token is required");
                         }
                     }
@@ -209,7 +209,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
             switch(rti.status) {
                 case OK: 
                     RosettaData<INTROSPECT> data = introspectDF.newData(trans).load(rti.value);
-                    if(Question.willSpecialLog(trans, trans.user())) {
+                    if (Question.willSpecialLog(trans, trans.user())) {
                         Question.logEncryptTrace(trans,data.asString());
                     }
                     data.to(resp.getOutputStream());
@@ -308,7 +308,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
                     "] " +
                     holder.toString(),
                     Env.ALWAYS);
-            if(hidemsg) {
+            if (hidemsg) {
                 holder.setLength(0);
                 em = mapper.errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }

@@ -41,12 +41,12 @@ public class NSACreate extends ActionDAO<NsAttrib,Void,String> {
 
     @Override
     public Result<Void> exec(AuthzTrans trans, NsAttrib nsa, String text) {
-        if(dryRun) {
+        if (dryRun) {
             trans.info().printf("Would Create %s Attrib '%s=%s' in %s",text,nsa.key,nsa.value,nsa.ns);
             return Result.ok();
         } else {
             Result<Void> rv = q.nsDAO.dao().attribAdd(trans, nsa.ns, nsa.key, nsa.value);
-            if(rv.isOK()) {
+            if (rv.isOK()) {
                 trans.info().printf("%s - Created Attrib '%s=%s' in %s",text,nsa.key,nsa.value,nsa.ns);
             } else {
                 trans.error().printf("Error Creating Attrib '%s=%s' in %s - %s",nsa.key,nsa.value,nsa.ns,rv.details);

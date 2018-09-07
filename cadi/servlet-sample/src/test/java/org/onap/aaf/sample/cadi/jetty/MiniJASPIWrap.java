@@ -55,9 +55,9 @@ public class MiniJASPIWrap extends ServletHolder {
         this.rolesAllowed = servlet.getAnnotation(RolesAllowed.class);
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        if(rolesAllowed!=null) {
-            for(String str : rolesAllowed.value()) {
-                if(first)first=false;
+        if (rolesAllowed!=null) {
+            for (String str : rolesAllowed.value()) {
+                if (first)first=false;
                 else sb.append(',');
                 sb.append(str);
             }
@@ -73,26 +73,26 @@ public class MiniJASPIWrap extends ServletHolder {
      */
     @Override
     public void handle(Request baseRequest, ServletRequest request,    ServletResponse response) throws ServletException,    UnavailableException, IOException {
-        if(rolesAllowed==null) {
+        if (rolesAllowed==null) {
             super.handle(baseRequest, request, response);
         } else { // Validate
             try {
                 
                 HttpServletRequest hreq = (HttpServletRequest)request;
                 boolean proceed = false;
-                for(String role : rolesAllowed.value()) {
-                    if(hreq.isUserInRole(role)) {
+                for (String role : rolesAllowed.value()) {
+                    if (hreq.isUserInRole(role)) {
                         proceed = true;
                         break;
                     }
                 }
-                if(proceed) {
+                if (proceed) {
                     super.handle(baseRequest, request, response);
                 } else {
                     //baseRequest.getServletContext().log(hreq.getUserPrincipal().getName()+" Refused " + roles);
                     ((HttpServletResponse)response).sendError(403); // forbidden
                 }
-            } catch(ClassCastException e) {
+            } catch (ClassCastException e) {
                 throw new ServletException("JASPIWrap only supports HTTPServletRequest/HttpServletResponse");
             }
         }        

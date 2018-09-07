@@ -64,10 +64,10 @@ public class Delg extends BaseCmd<User> {
                 int option= whichOption(options, args[idx++]);
                 String user = fullID(args[idx++]);
                 dr.setUser(user);
-                if(option<2) {
+                if (option<2) {
                     String delegate = fullID(args[idx++]);
                     dr.setDelegate(delegate);
-                    if(option<2 && args.length>idx) {
+                    if (option<2 && args.length>idx) {
                         Date date;
                         try {
                             date = Chrono.dateOnlyFmt.parse(args[idx++]);
@@ -100,7 +100,7 @@ public class Delg extends BaseCmd<User> {
                         throw new CadiException("Bad Argument");
                 };
                 
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     pw().append("Delegate ");
                     pw().println(verb);
                 } else {

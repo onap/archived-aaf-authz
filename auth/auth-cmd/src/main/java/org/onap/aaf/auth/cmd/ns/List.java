@@ -58,34 +58,34 @@ public class List extends BaseCmd<NS> {
     
     public void report(Future<Nss> fp, String ... str) {
         reportHead(str);
-        if(fp==null) {
+        if (fp==null) {
             pw().println("    *** Namespace Not Found ***");
         }
         
-        if(fp!=null && fp.value!=null) {
-            for(Ns ns : fp.value.getNs()) {
+        if (fp!=null && fp.value!=null) {
+            for (Ns ns : fp.value.getNs()) {
                 pw().println(ns.getName());
                 if (this.aafcli.isDetailed()) {
                     pw().println("    Description");
                     pw().format(sformat,ns.getDescription()==null?"":ns.getDescription());
                 }
-                if(ns.getAdmin().size()>0) {
+                if (ns.getAdmin().size()>0) {
                     pw().println("    Administrators");
-                    for(String admin : ns.getAdmin()) {
+                    for (String admin : ns.getAdmin()) {
                         pw().format(sformat,admin);
                     }
                 }
-                if(ns.getResponsible().size()>0) {
+                if (ns.getResponsible().size()>0) {
                     pw().println("    Owners (Responsible for Namespace)");
-                    for(String responsible : ns.getResponsible()) {
+                    for (String responsible : ns.getResponsible()) {
                         pw().format(sformat,responsible);
                     }
                 }
-                if(ns.getAttrib().size()>0) {
+                if (ns.getAttrib().size()>0) {
                     pw().println("    Namespace Attributes");
-                    for(  Ns.Attrib attr : ns.getAttrib()) {
+                    for (  Ns.Attrib attr : ns.getAttrib()) {
                         StringBuilder sb = new StringBuilder(attr.getKey());
-                        if(attr.getValue()==null || attr.getValue().length()>0) {
+                        if (attr.getValue()==null || attr.getValue().length()>0) {
                             sb.append('=');
                             sb.append(attr.getValue());
                         }
@@ -99,7 +99,7 @@ public class List extends BaseCmd<NS> {
     
     public void reportName(Future<Nss> fp, String ... str) {
         reportHead(str);
-        if(fp!=null && fp.value!=null) {
+        if (fp!=null && fp.value!=null) {
             java.util.List<Ns> nss = fp.value.getNs();
             Collections.sort(nss, new Comparator<Ns>() {
                 @Override
@@ -108,7 +108,7 @@ public class List extends BaseCmd<NS> {
                 }
             });
             
-            for(Ns ns : nss) {
+            for (Ns ns : nss) {
                 pw().println(ns.getName());
                 if (this.aafcli.isDetailed() && ns.getDescription() != null) {
                     pw().println("   " + ns.getDescription());
@@ -118,9 +118,9 @@ public class List extends BaseCmd<NS> {
     }
 
     public void reportRole(Future<Roles> fr) {
-        if(fr!=null && fr.value!=null && fr.value.getRole().size()>0) {
+        if (fr!=null && fr.value!=null && fr.value.getRole().size()>0) {
             pw().println("    Roles");
-            for(aaf.v2_0.Role r : fr.value.getRole()) {
+            for (aaf.v2_0.Role r : fr.value.getRole()) {
                 pw().format(sformat,r.getName());
             }
         }
@@ -128,9 +128,9 @@ public class List extends BaseCmd<NS> {
 
     private static final String pformat = "        %-30s %-24s %-15s\n";
     public void reportPerm(Future<Perms> fp) {
-        if(fp!=null && fp.value!=null && fp.value.getPerm().size()>0) {
+        if (fp!=null && fp.value!=null && fp.value.getPerm().size()>0) {
             pw().println("    Permissions");
-            for(aaf.v2_0.Perm p : fp.value.getPerm()) {
+            for (aaf.v2_0.Perm p : fp.value.getPerm()) {
                 pw().format(pformat,p.getType(),p.getInstance(),p.getAction());
             }
         }
@@ -139,7 +139,7 @@ public class List extends BaseCmd<NS> {
     
     private static final String cformat = "        %-30s %-6s %-24s\n";
     public void reportCred(Future<Users> fc) {        
-        if(fc!=null && fc.value!=null && fc.value.getUser().size()>0) {
+        if (fc!=null && fc.value!=null && fc.value.getUser().size()>0) {
             pw().println("    Credentials");
             java.util.List<User> users = fc.value.getUser();
             Collections.sort(users, new Comparator<User>() {
@@ -148,7 +148,7 @@ public class List extends BaseCmd<NS> {
                     return u1.getId().compareTo(u2.getId());
                 }
             });
-            for(aaf.v2_0.Users.User u : users) {
+            for (aaf.v2_0.Users.User u : users) {
                 if (this.aafcli.isTest()) {
                     pw().format(sformat,u.getId());
                 } else {
@@ -160,7 +160,7 @@ public class List extends BaseCmd<NS> {
 
     public static String getType(User u) {
         Integer type;
-        if((type=u.getType())==null) {
+        if ((type=u.getType())==null) {
             type = 9999;
         } 
         switch(type) {

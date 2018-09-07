@@ -49,25 +49,25 @@ class FCGet implements Get {
     public String get(String name, String def, boolean print) {
         String str = null;
         // Try Server Context First
-        if(context!=null) {
+        if (context!=null) {
             str = context.getInitParameter(name);
         }
         
         // Try Filter Context next
-        if(str==null && filterConfig != null) {
+        if (str==null && filterConfig != null) {
             str = filterConfig.getInitParameter(name);
         }
         
-        if(str==null) {
+        if (str==null) {
             str = access.getProperty(name, def);
         }
         // Take def if nothing else
-        if(str==null) {
+        if (str==null) {
             str = def;
             // don't log defaults
         } else {
             str = str.trim(); // this is vital in Property File based values, as spaces can hide easily
-            if(print) {
+            if (print) {
                 access.log(Level.INFO,"Setting", name, "to", str);
             }
         }

@@ -56,7 +56,7 @@ public class JU_Identities {
 //        AuthzTrans trans = env.newTransNoAvg();
 //        // Note: utilize TimeTaken, from trans.start if you want to time.
 //        fids = new File(DATA_IDENTITIES);
-//        if(fids.exists()) {
+//        if (fids.exists()) {
 //            ids = new Identities(fids);
 //            ids.open(trans, 5000);
 //        } else {
@@ -72,7 +72,7 @@ public class JU_Identities {
 //    @AfterClass
 //    public static void tearDownAfterClass() throws Exception {
 //        AuthzTrans trans = env.newTransNoAvg();
-//        if(ids!=null) {
+//        if (ids!=null) {
 //            ids.close(trans);
 //        }
 //    }

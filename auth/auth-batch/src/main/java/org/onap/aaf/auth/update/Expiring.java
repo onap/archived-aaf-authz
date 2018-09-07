@@ -117,7 +117,7 @@ public class Expiring extends Batch {
             }
             
             File data_dir = new File(env.getProperty("aaf_data_dir"));
-            if(!data_dir.exists() || !data_dir.canWrite() || !data_dir.canRead()) {
+            if (!data_dir.exists() || !data_dir.canWrite() || !data_dir.canRead()) {
                 throw new IOException("Cannot read/write to Data Directory "+ data_dir.getCanonicalPath() + ": EXITING!!!");
             }
             UserRole.setDeleteStream(
@@ -137,7 +137,7 @@ public class Expiring extends Batch {
             email.preamble("Expiring Process Alert for %s",batchEnv);
             email.signature("Sincerely,\nAAF Expiring Batch Process\n");
             String address = env.getProperty("ALERT_TO_ADDRESS");
-            if(address==null) {
+            if (address==null) {
                 throw new APIException("ALERT_TO_ADDRESS property is required");
             }
             email.addTo(address);
@@ -169,30 +169,30 @@ public class Expiring extends Batch {
        
         // Clean out Approvals UserRoles are fixed up.
         String memo;
-        for(List<Approval> la : Approval.byUser.values()) {
-            for(Approval a : la ) {
+        for (List<Approval> la : Approval.byUser.values()) {
+            for (Approval a : la ) {
                 memo = a.getMemo();
-                if(memo!=null && (memo.contains("Re-Approval") || memo.contains("Re-Validate"))) {
+                if (memo!=null && (memo.contains("Re-Approval") || memo.contains("Re-Validate"))) {
                         String role = a.getRole();
-                        if(role!=null) {
+                        if (role!=null) {
                         UserRole ur = UserRole.get(a.getUser(), a.getRole());
                         Future f=null;
-                        if(ur!=null) {
-                            if(ur.expires().after(future)) { // no need for Approval anymore
+                        if (ur!=null) {
+                            if (ur.expires().after(future)) { // no need for Approval anymore
                                 a.delayDelete(noAvg, apprDAO, dryRun, "User Role already Extended");
                                 UUID tkt = a.getTicket();
-                                if(tkt!=null && Future.data.containsKey(tkt)) {
+                                if (tkt!=null && Future.data.containsKey(tkt)) {
                                     f = Future.data.get(a.getTicket());
                                 }
                             }
                         } else {
                             a.delayDelete(noAvg, apprDAO, dryRun, "User Role does not exist");
                             UUID tkt = a.getTicket();
-                            if(tkt !=null && Future.data.containsKey(tkt)) {
+                            if (tkt !=null && Future.data.containsKey(tkt)) {
                                 f = Future.data.get(a.getTicket());
                             }
                         }
-                        if(f!=null) {
+                        if (f!=null) {
                             f.delayedDelete(noAvg, futureDAO, dryRun, "Approvals removed");
                         }
                         }
@@ -212,12 +212,12 @@ public class Expiring extends Batch {
         tt = trans.start("Delete old Futures", Env.REMOTE);
         trans.info().log("### Running Future Execution on ",Future.data.size(), "Items");
         // Execute any Futures waiting
-            for(Future f : Future.data.values()) {
-                if(f.memo().contains("Re-Approval") || f.memo().contains("Re-Validate")) {
+            for (Future f : Future.data.values()) {
+                if (f.memo().contains("Re-Approval") || f.memo().contains("Re-Validate")) {
                     List<Approval> la = Approval.byTicket.get(f.id());
-                    if(la!=null) {
+                    if (la!=null) {
                         Result<OP_STATUS> ruf = urFutureApproveExec.exec(noAvg,la,f);
-                        if(ruf.isOK()) {
+                        if (ruf.isOK()) {
                             switch(ruf.value) {
                                 case P:
                                     break;
@@ -246,11 +246,11 @@ public class Expiring extends Batch {
         String expiredBeforeNow = "Expired before " + tooLate;
         String expiredAfterFuture = "Expired after " + future;
         try {
-                for(Future f : Future.data.values()) {
-                    if(f.expires().before(tooLate)) {
+                for (Future f : Future.data.values()) {
+                    if (f.expires().before(tooLate)) {
                         f.delayedDelete(noAvg,futureDAO,dryRun, expiredBeforeNow);
                         Approval.delayDelete(noAvg, apprDAO, dryRun, Approval.byTicket.get(f.id()), expiredBeforeNow);
-                    } else if(f.expires().after(future)) {
+                    } else if (f.expires().after(future)) {
                         f.delayedDelete(noAvg,futureDAO,dryRun, expiredAfterFuture);
                         Approval.delayDelete(noAvg,apprDAO,dryRun, Approval.byTicket.get(f.id()), expiredAfterFuture);
                     }
@@ -268,19 +268,19 @@ public class Expiring extends Batch {
         
         trans.info().log("### Checking Approvals valid (",Approval.byApprover.size(),"Items)");
         // Make sure users of Approvals are still valid
-        for(List<Approval> lapp : Approval.byTicket.values()) {
-                for(Approval app : lapp) {
+        for (List<Approval> lapp : Approval.byTicket.values()) {
+                for (Approval app : lapp) {
                     Future f;
-                    if(app.getTicket()==null) {
+                    if (app.getTicket()==null) {
                         f = null;
                     } else {
                         f = Future.data.get(app.getTicket());
-                        if(Future.pendingDelete(f)) {
+                        if (Future.pendingDelete(f)) {
                             f=null;
                         }
                     }
                     String msg;
-                    if(f!=null && app.getRole()!=null && Role.byName.get(app.getRole())==null) {
+                    if (f!=null && app.getRole()!=null && Role.byName.get(app.getRole())==null) {
                         f.delayedDelete(noAvg,futureDAO,dryRun,msg="Role '" + app.getRole() + "' no longer exists");
                         Approval.delayDelete(noAvg,apprDAO,dryRun, Approval.byTicket.get(f.id()), msg);
                         continue;
@@ -288,7 +288,7 @@ public class Expiring extends Batch {
                     
                     switch(app.getStatus()) {
                         case "pending":
-                            if(f==null) {
+                            if (f==null) {
                             app.delayDelete(noAvg,apprDAO, isDryRun(), "ticketDeleted");
                             continue;
                             }
@@ -296,19 +296,19 @@ public class Expiring extends Batch {
                                 case "owner":
                                 boolean anOwner=false;
                                     String approle = app.getRole();
-                                    if(approle!=null) {
+                                    if (approle!=null) {
                                         Role role = Role.byName.get(approle);
-                                        if(role==null) {
+                                        if (role==null) {
                                         app.delayDelete(noAvg, apprDAO, dryRun, "Role No Longer Exists");
                                         continue;
                                     } else {
                                         // Make sure Owner Role exists
                                         String owner = role.ns + ".owner";
-                                        if(Role.byName.containsKey(owner)) {
+                                        if (Role.byName.containsKey(owner)) {
                                                 List<UserRole> lur = UserRole.getByRole().get(owner);
-                                                if(lur != null) {
-                                                    for(UserRole ur : lur) {
-                                                        if(ur.user().equals(app.getApprover())) {
+                                                if (lur != null) {
+                                                    for (UserRole ur : lur) {
+                                                        if (ur.user().equals(app.getApprover())) {
                                                             anOwner = true;
                                                             break;
                                                         }
@@ -316,7 +316,7 @@ public class Expiring extends Batch {
                                                 }
                                         }
                                         }
-                                        if(!anOwner) {
+                                        if (!anOwner) {
                                         app.delayDelete(noAvg, apprDAO, dryRun, "No longer Owner");
                                         }
     
@@ -325,14 +325,14 @@ public class Expiring extends Batch {
                                 case "supervisor":
                                 try {
                                     Identity identity = org.getIdentity(noAvg, app.getUser());
-                                    if(identity==null) {
-                                        if(f!=null) {
+                                    if (identity==null) {
+                                        if (f!=null) {
                                                 f.delayedDelete(noAvg,futureDAO,dryRun,msg = app.getUser() + " is no longer associated with " + org.getName());
                                                 Approval.delayDelete(noAvg,apprDAO,dryRun, Approval.byTicket.get(f.id()), msg);
                                         }
                                     } else {
-                                        if(!app.getApprover().equals(identity.responsibleTo().fullID())) {
-                                            if(f!=null) {
+                                        if (!app.getApprover().equals(identity.responsibleTo().fullID())) {
+                                            if (f!=null) {
                                                     f.delayedDelete(noAvg,futureDAO,dryRun,msg = app.getApprover() + " is no longer a Supervisor of " + app.getUser());
                                                     Approval.delayDelete(noAvg,apprDAO,dryRun, Approval.byTicket.get(f.id()), msg);
                                             }
@@ -360,9 +360,9 @@ public class Expiring extends Batch {
         // Run for User Roles
         trans.info().log("Checking for Expired User Roles");
         try {
-                for(UserRole ur : UserRole.getData()) {
-                    if(org.getIdentity(noAvg, ur.user())==null) {  // if not part of Organization;
-                        if(isSpecial(ur.user())) {
+                for (UserRole ur : UserRole.getData()) {
+                    if (org.getIdentity(noAvg, ur.user())==null) {  // if not part of Organization;
+                        if (isSpecial(ur.user())) {
                             trans.info().log(ur.user(),"is not part of organization, but may not be deleted");
                         } else {
                             ur.delayDelete(noAvg, "Not Part of Organization", dryRun);
@@ -370,16 +370,16 @@ public class Expiring extends Batch {
                             ++delayedURDeletes;
                         }
                     } else {
-                        if(NS.data.get(ur.ns())==null) {
+                        if (NS.data.get(ur.ns())==null) {
                             ur.delayDelete(noAvg,"Namespace " + ur.ns() + " does not exist.",dryRun);
                             ++delayedURDeletes;
                             ++deleted;
-                        } else if(!Role.byName.containsKey(ur.role())) {
+                        } else if (!Role.byName.containsKey(ur.role())) {
                             ur.delayDelete(noAvg,"Role " + ur.role() + " does not exist.",dryRun);
                             ++deleted;
                             ++delayedURDeletes;
-                        } else if(ur.expires().before(tooLate)) {
-                            if("owner".equals(ur.rname())) { // don't delete Owners, even if Expired
+                        } else if (ur.expires().before(tooLate)) {
+                            if ("owner".equals(ur.rname())) { // don't delete Owners, even if Expired
                                 urPrint.exec(noAvg,ur,"Owner Expired (but not deleted)");
                             } else {
                                 // In this case, when UR is expired, not dependent on other lookups, we delete straight out.
@@ -387,16 +387,16 @@ public class Expiring extends Batch {
                                 ++deleted;
                             }
                             //trans.logAuditTrail(trans.info());
-                        } else if(ur.expires().before(future) && ur.expires().after(now)) {
+                        } else if (ur.expires().before(future) && ur.expires().after(now)) {
                             ++count;
                             // Is there an Approval set already
                             boolean needNew = true;
-                            if(ur.role()!=null && ur.user()!=null) {
+                            if (ur.role()!=null && ur.user()!=null) {
                                 List<Approval> abm = Approval.byUser.get(ur.user());
-                                if(abm!=null) {
-                                    for(Approval a : abm) {
-                                        if(a.getOperation().equals(FUTURE_OP.A.name()) && ur.role().equals(a.getRole())) {
-                                            if(Future.data.get(a.getTicket())!=null) {
+                                if (abm!=null) {
+                                    for (Approval a : abm) {
+                                        if (a.getOperation().equals(FUTURE_OP.A.name()) && ur.role().equals(a.getRole())) {
+                                            if (Future.data.get(a.getTicket())!=null) {
                                                 needNew = false;
                                                 break;
                                             }
@@ -404,7 +404,7 @@ public class Expiring extends Batch {
                                     }
                                 }
                             }
-                            if(needNew) {
+                            if (needNew) {
                                 urFutureApprove.exec(noAvg, ur,"");
                             }
                         }
@@ -418,10 +418,10 @@ public class Expiring extends Batch {
         }
         
         // Actualize UR Deletes, or send Email
-        if(UserRole.sizeForDeletion()>0) {
+        if (UserRole.sizeForDeletion()>0) {
                 count+=UserRole.sizeForDeletion();
             double onePercent = 0.01;
-            if(((double)UserRole.sizeForDeletion())/UserRole.getData().size() > onePercent) {
+            if (((double)UserRole.sizeForDeletion())/UserRole.getData().size() > onePercent) {
                     Message msg = new Message();
                     try {
                     msg.line("Found %d of %d UserRoles marked for Deletion in file %s", 
@@ -448,7 +448,7 @@ public class Expiring extends Batch {
                     }
             }
         }
-        if(count>0) {
+        if (count>0) {
                 String str = String.format("%d UserRoles modified or deleted", count);
                 cacheTouch.exec(trans, "user_role", str);
         }
@@ -460,20 +460,20 @@ public class Expiring extends Batch {
         try {
                 CredDAO.Data crd = new CredDAO.Data();
                 Date last = null;
-                for( Cred creds : Cred.data.values()) {
+                for ( Cred creds : Cred.data.values()) {
                 crd.id = creds.id;
-                    for(int type : creds.types()) {
+                    for (int type : creds.types()) {
                     crd.type = type;
-                        for( Instance inst : creds.instances) {
-                            if(inst.expires.before(tooLate)) {
+                        for ( Instance inst : creds.instances) {
+                            if (inst.expires.before(tooLate)) {
                                 crd.expires = inst.expires;
                                 crDelete.exec(noAvg, crd,"Expired before " + tooLate);
-                            } else if(last==null || inst.expires.after(last)) {
+                            } else if (last==null || inst.expires.after(last)) {
                                 last = inst.expires;
                             }
                         }
-                        if(last!=null) {
-                            if(last.before(future)) {
+                        if (last!=null) {
+                            if (last.before(future)) {
                                 crd.expires = last;
                                 crPrint.exec(noAvg, crd,"");
                                 ++count;
@@ -483,7 +483,7 @@ public class Expiring extends Batch {
                 }
         } finally {
                 String str = String.format("Found %d current creds expiring before %s", count, Chrono.dateOnlyStamp(future));
-                if(count>0) {
+                if (count>0) {
                     cacheTouch.exec(trans, "cred", str);
                 }
         }
@@ -493,8 +493,8 @@ public class Expiring extends Batch {
     @Override
     protected void _close(AuthzTrans trans) {
         aspr.info("End " + this.getClass().getSimpleName() + " processing" );
-        for(Action<?,?,?> action : new Action<?,?,?>[] {crDelete}) {
-            if(action instanceof ActionDAO) {
+        for (Action<?,?,?> action : new Action<?,?,?>[] {crDelete}) {
+            if (action instanceof ActionDAO) {
                 ((ActionDAO<?,?,?>)action).close(trans);
             }
         }

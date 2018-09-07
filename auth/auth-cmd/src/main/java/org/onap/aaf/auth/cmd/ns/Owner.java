@@ -55,7 +55,7 @@ public class Owner extends BaseCmd<NS> {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Void> fp=null;
-                for(String id : ids) {
+                for (String id : ids) {
                     id=fullID(id);
                     String verb;
                     switch(option) {
@@ -71,7 +71,7 @@ public class Owner extends BaseCmd<NS> {
                             throw new CadiException("Bad Argument");
                     };
                 
-                    if(fp.get(AAFcli.timeout())) {
+                    if (fp.get(AAFcli.timeout())) {
                         pw().append(id);
                         pw().append(verb);
                         pw().append("responsible for ");

@@ -44,7 +44,7 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
     @SuppressWarnings("unchecked")
     public static synchronized <CLIENT> SecurityInfoC<CLIENT> instance(Access access, Class<CLIENT> cls) throws CadiException {
         SecurityInfoInit<CLIENT> sii;
-        if(cls.isAssignableFrom(HttpURLConnection.class)) {
+        if (cls.isAssignableFrom(HttpURLConnection.class)) {
             try {
                 @SuppressWarnings("rawtypes")
                 Class<SecurityInfoInit> initCls = (Class<SecurityInfoInit>)Class.forName("org.onap.aaf.cadi.http.HSecurityInfoInit");
@@ -62,7 +62,7 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
         }
         
         SecurityInfoC<CLIENT> sic = (SecurityInfoC<CLIENT>) sicMap.get(cls);
-        if(sic==null) {
+        if (sic==null) {
             sic = new SecurityInfoC<CLIENT>(access);
             sic.set(sii.bestDefault(sic));
             sicMap.put(cls, sic);

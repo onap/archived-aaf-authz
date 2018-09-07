@@ -69,13 +69,13 @@ public class AAFListedCertIdentity implements CertIdentity {
 
     public AAFListedCertIdentity(Access access, AAFCon<?> aafcon) throws APIException {
         synchronized(AAFListedCertIdentity.class) {
-            if(certIDs==null) {
+            if (certIDs==null) {
                 String cip = access.getProperty(Config.AAF_CERT_IDS, null);
-                if(cip!=null) {
+                if (cip!=null) {
                     certIDs = Split.split(',',cip);
                 }
             }
-            if(certIDs!=null && certs==null) {
+            if (certIDs!=null && certs==null) {
                 TimerTask cu = new CertUpdate(aafcon);
                 cu.run(); // want this to run in this thread first...
                 new Timer("AAF Identity Refresh Timer",true).scheduleAtFixedRate(cu, EIGHT_HOURS,EIGHT_HOURS);
@@ -88,11 +88,11 @@ public class AAFListedCertIdentity implements CertIdentity {
     }
     
     public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert,    byte[] certBytes) throws CertificateException {
-        if(cert==null && certBytes==null)return null;
-        if(certBytes==null)certBytes = cert.getEncoded();
+        if (cert==null && certBytes==null)return null;
+        if (certBytes==null)certBytes = cert.getEncoded();
         byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
         String id = certs.get(new ByteArrayHolder(fingerprint));
-        if(id!=null) { // Caller is Validated
+        if (id!=null) { // Caller is Validated
             return new X509Principal(id,cert,certBytes,null);
         }
         return null;
@@ -121,19 +121,19 @@ public class AAFListedCertIdentity implements CertIdentity {
                 TreeMap<ByteArrayHolder, String> newCertsMap = new TreeMap<>();
                 Map<String,Set<String>> newTrustMap = new TreeMap<>();
                 Set<String> userLookup = new HashSet<>();
-                for(String s : certIDs) {
+                for (String s : certIDs) {
                     userLookup.add(s);
                 }
-                for(String authMech : authMechanisms) {
+                for (String authMech : authMechanisms) {
                     Future<Users> fusr = aafcon.client(Config.AAF_DEFAULT_VERSION).read("/authz/users/perm/com.att.aaf.trust/"+authMech+"/authenticate", Users.class, aafcon.usersDF);
-                    if(fusr.get(5000)) {
+                    if (fusr.get(5000)) {
                         List<User> users = fusr.value.getUser();
-                        if(users.isEmpty()) {
+                        if (users.isEmpty()) {
                             aafcon.access.log(Level.WARN, "AAF Lookup-No IDs in Role com.att.aaf.trustForID <> "+authMech);
                         } else {
                             aafcon.access.log(Level.INFO,"Loading Trust Authentication Info for",authMech);
                             Set<String> hsUser = new HashSet<>();
-                            for(User u : users) {
+                            for (User u : users) {
                                 userLookup.add(u.getId());
                                 hsUser.add(u.getId());
                             }
@@ -145,17 +145,17 @@ public class AAFListedCertIdentity implements CertIdentity {
                     
                 }
                 
-                for(String u : userLookup) {
+                for (String u : userLookup) {
                     Future<Certs> fc = aafcon.client(Config.AAF_DEFAULT_VERSION).read("/authn/cert/id/"+u, Certs.class, aafcon.certsDF);
                     XMLGregorianCalendar now = Chrono.timeStamp();
-                    if(fc.get(5000)) {
+                    if (fc.get(5000)) {
                         List<Cert> certs = fc.value.getCert();
-                        if(certs.isEmpty()) {
+                        if (certs.isEmpty()) {
                             aafcon.access.log(Level.WARN, "No Cert Associations for",u);
                         } else {
-                            for(Cert c : fc.value.getCert()) {
+                            for (Cert c : fc.value.getCert()) {
                                 XMLGregorianCalendar then =c.getExpires();
-                                if(then !=null && then.compare(now)>0) {
+                                if (then !=null && then.compare(now)>0) {
                                     newCertsMap.put(new ByteArrayHolder(c.getFingerprint()), c.getId());
                                     aafcon.access.log(Level.INIT,"Associating "+ c.getId() + " expiring " + Chrono.dateOnlyStamp(c.getExpires()) + " with " + c.getX500());
                                 }
@@ -168,7 +168,7 @@ public class AAFListedCertIdentity implements CertIdentity {
 
                 certs = newCertsMap;
                 trusted = newTrustMap;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 aafcon.access.log(e, "Failure to update Certificate Identities from AAF");
             }
         }

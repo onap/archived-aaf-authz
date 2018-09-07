@@ -38,7 +38,7 @@ public class HAuthorizationHeader extends AbsAuthentication<HttpURLConnection> {
 
     @Override
     public void setSecurity(HttpURLConnection huc) throws CadiException {
-        if(isDenied()) {
+        if (isDenied()) {
             throw new CadiException(REPEAT_OFFENDER);
         }
         try {
@@ -46,7 +46,7 @@ public class HAuthorizationHeader extends AbsAuthentication<HttpURLConnection> {
         } catch (IOException e) {
             throw new CadiException(e);
         }
-        if(securityInfo!=null && huc instanceof HttpsURLConnection) {
+        if (securityInfo!=null && huc instanceof HttpsURLConnection) {
             securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
         }
     }

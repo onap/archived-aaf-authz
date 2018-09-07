@@ -69,10 +69,10 @@ public class TzHClient extends TzClient {
     }
 
     public <RET> RET best (Retryable<RET> retryable) throws CadiException, LocatorException, APIException {
-        if(token == null || tokenSS==null) {
+        if (token == null || tokenSS==null) {
             throw new CadiException("OAuth2 Token has not been set");
         }
-        if(token.expired()) {
+        if (token.expired()) {
             //TODO Refresh?
             throw new CadiException("Expired Token");
         } else {

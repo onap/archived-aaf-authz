@@ -49,7 +49,7 @@ public class JU_AAFToken {
 
     @Test
     public void testRandom() throws CadiException {
-        for(int i=0;i<100;++i) {
+        for (int i=0;i<100;++i) {
             UUID uuid = UUID.randomUUID();
             String token = AAFToken.toToken(uuid);
             UUID uuid2 = AAFToken.fromToken(token);

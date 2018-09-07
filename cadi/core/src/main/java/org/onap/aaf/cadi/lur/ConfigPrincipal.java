@@ -57,10 +57,10 @@ public class ConfigPrincipal implements Principal, GetCred {
     }
     
     public String getAsBasicAuthHeader() throws IOException {
-        if(content ==null) {
+        if (content ==null) {
             String s = name + ':' + new String(cred);
             content = "Basic " + Symm.base64.encode(s);  
-        } else if(!content.startsWith("Basic ")) { // content is the saved password from construction
+        } else if (!content.startsWith("Basic ")) { // content is the saved password from construction
             String s = name + ':' + content;
             content = "Basic " + Symm.base64.encode(s);  
         }

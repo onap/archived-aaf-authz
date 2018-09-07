@@ -89,7 +89,7 @@ public class Cache<TRANS extends Trans, DATA> {
     
     public static Map<String,Dated> obtain(String key) {
         Map<String, Dated> m = cacheMap.get(key);
-        if(m==null) {
+        if (m==null) {
             m = new ConcurrentHashMap<>();
             synchronized(cacheMap) {
                 cacheMap.put(key, m);
@@ -137,13 +137,13 @@ public class Cache<TRANS extends Trans, DATA> {
             Date now = new Date(System.currentTimeMillis() + advance);
             
             
-            for(String name : set) {
+            for (String name : set) {
                 Map<String,Dated> map = cacheMap.get(name);
-                if(map==null) {
+                if (map==null) {
                     continue;
                 }
 
-                for(Map.Entry<String,Dated> me : map.entrySet()) {
+                for (Map.Entry<String,Dated> me : map.entrySet()) {
                     ++total;
                     if (me.getValue().timestamp.before(now)) {
                         map.remove(me.getKey());
@@ -152,13 +152,13 @@ public class Cache<TRANS extends Trans, DATA> {
                 }
             }
             
-            if(count>0) {
+            if (count>0) {
                 env.info().log(Level.INFO, "Cache removed",count,"expired Cached Elements out of", total);
             }
 
             // If High (total) is reached during this period, increase the number of expired services removed for next time.
             // There's no point doing it again here, as there should have been cleaned items.
-            if(total>high) {
+            if (total>high) {
                 // advance cleanup by 10%, without getting greater than timeInterval.
                 advance = Math.min(timeInterval, advance+(timeInterval/10));
             } else {
@@ -169,20 +169,20 @@ public class Cache<TRANS extends Trans, DATA> {
     }
 
     public static synchronized void startCleansing(Env env, String ... keys) {
-        if(cleanseTimer==null) {
+        if (cleanseTimer==null) {
             cleanseTimer = new Timer("Cache Cleanup Timer");
             int cleanInterval = Integer.parseInt(env.getProperty(CACHE_CLEAN_INTERVAL,"60000")); // 1 minute clean cycles 
             int highCount = Integer.parseInt(env.getProperty(CACHE_HIGH_COUNT,"5000"));
             cleanseTimer.schedule(clean = new Clean(env, cleanInterval, highCount), cleanInterval, cleanInterval);
         }
         
-        for(String key : keys) {
+        for (String key : keys) {
             clean.add(key);
         }
     }
 
     public static void stopTimer() {
-        if(cleanseTimer!=null) {
+        if (cleanseTimer!=null) {
             cleanseTimer.cancel();
             cleanseTimer = null;
         }

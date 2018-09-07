@@ -75,7 +75,7 @@ public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
         err.setText(Vars.convert(holder, text, var));
-        for(String s : var) {
+        for (String s : var) {
             err.getVariables().add(s);
         }
         return err;
@@ -86,25 +86,25 @@ public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
      */
     @Override
     public Result<Endpoints> endpoints(Result<List<Data>> resultDB, String version, String other) {
-        if(resultDB.notOK()) {
+        if (resultDB.notOK()) {
             return Result.err(resultDB);
         }
         int major=-1, minor=-1, patch=-1, pkg=-1;
-        if(version!=null) {
+        if (version!=null) {
             try { 
                 String[] v = Split.split('.',version);
-                if(v.length>0) {major = Integer.parseInt(v[0]);}
-                if(v.length>1) {minor = Integer.parseInt(v[1]);}
-                if(v.length>2) {patch = Integer.parseInt(v[2]);}
-                if(v.length>3) {pkg   = Integer.parseInt(v[3]);}
+                if (v.length>0) {major = Integer.parseInt(v[0]);}
+                if (v.length>1) {minor = Integer.parseInt(v[1]);}
+                if (v.length>2) {patch = Integer.parseInt(v[2]);}
+                if (v.length>3) {pkg   = Integer.parseInt(v[3]);}
             } catch (NumberFormatException e) {
                 return Result.err(Result.ERR_BadData,"Invalid Version String " + version);
             }
         }
         Endpoints eps = new Endpoints();
         List<Endpoint> leps = eps.getEndpoint();
-        for(Data d : resultDB.value) {
-            if((major<0 || major==d.major) &&
+        for (Data d : resultDB.value) {
+            if ((major<0 || major==d.major) &&
                (minor<0 || minor<=d.minor) &&
                (patch<0 || patch==d.patch) &&
                (pkg<0   || pkg  ==d.pkg)) {
@@ -119,7 +119,7 @@ public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
                 ep.setLatitude(d.latitude);
                 ep.setLongitude(d.longitude);
                 ep.setProtocol(d.protocol);
-                for(String s : d.subprotocol(false)) {
+                for (String s : d.subprotocol(false)) {
                     ep.getSubprotocol().add(s);
                 }
                 leps.add(ep);
@@ -144,7 +144,7 @@ public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
         data.latitude = me.getLatitude();
         data.longitude = me.getLongitude();
         data.protocol = me.getProtocol();
-        for(String s : me.getSubprotocol()) {
+        for (String s : me.getSubprotocol()) {
             data.subprotocol(true).add(s);
         }
         return data;

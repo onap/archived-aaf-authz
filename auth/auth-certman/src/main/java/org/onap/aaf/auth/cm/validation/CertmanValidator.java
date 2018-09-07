@@ -49,13 +49,13 @@ public class CertmanValidator extends Validator{
     private static final String ARTIFACTS_MUST_HAVE_AT_LEAST = "Artifacts must have at least ";
 
     public CertmanValidator nullBlankMin(String name, List<String> list, int min) {
-        if(list==null) {
+        if (list==null) {
             msg(name + IS_NULL);
         } else {
-            if(list.size()<min) {
+            if (list.size()<min) {
                 msg(name + MUST_HAVE_AT_LEAST + min + ENTR + (min==1?Y:IES));
             } else {
-                for(String s : list) {
+                for (String s : list) {
                     nullOrBlank("List Item",s);
                 }
             }
@@ -64,13 +64,13 @@ public class CertmanValidator extends Validator{
     }
 
     public CertmanValidator artisRequired(List<ArtiDAO.Data> list, int min) {
-        if(list==null) {
+        if (list==null) {
             msg(ARTIFACT_LIST_IS_NULL);
         } else {
-            if(list.size()<min) {
+            if (list.size()<min) {
                 msg(ARTIFACTS_MUST_HAVE_AT_LEAST + min + ENTR + (min==1?Y:IES));
             } else {
-                for(ArtiDAO.Data a : list) {
+                for (ArtiDAO.Data a : list) {
                     allRequired(a);
                 }
             }
@@ -79,13 +79,13 @@ public class CertmanValidator extends Validator{
     }
 
     public CertmanValidator artisKeys(List<ArtiDAO.Data> list, int min) {
-        if(list==null) {
+        if (list==null) {
             msg(ARTIFACT_LIST_IS_NULL);
         } else {
-            if(list.size()<min) {
+            if (list.size()<min) {
                 msg(ARTIFACTS_MUST_HAVE_AT_LEAST + min + ENTR + (min==1?Y:IES));
             } else {
-                for(ArtiDAO.Data a : list) {
+                for (ArtiDAO.Data a : list) {
                     keys(a);
                 }
             }
@@ -95,7 +95,7 @@ public class CertmanValidator extends Validator{
 
 
     public CertmanValidator keys(ArtiDAO.Data add) {
-        if(add==null) {
+        if (add==null) {
             msg("Artifact is null.");
         } else {
             nullOrBlank(MECHID, add.mechid);
@@ -105,7 +105,7 @@ public class CertmanValidator extends Validator{
     }
     
     private CertmanValidator allRequired(Data a) {
-        if(a==null) {
+        if (a==null) {
             msg("Artifact is null.");
         } else {
             nullOrBlank(MECHID, a.mechid);

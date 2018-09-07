@@ -61,10 +61,10 @@ public class DirectAAFLur implements Lur {
         Result<List<Data>> pdr = question.getPermsByUser(trans, bait.getName(),false);
         switch(pdr.status) {
             case OK:
-                for(PermDAO.Data d : pdr.value) {
-                    if(!rv) {
+                for (PermDAO.Data d : pdr.value) {
+                    if (!rv) {
                         for (Permission p : pond) {
-                            if(new PermPermission(d).match(p)) {
+                            if (new PermPermission(d).match(p)) {
                                 rv=true;
                                 break;
                             }
@@ -86,7 +86,7 @@ public class DirectAAFLur implements Lur {
         Result<List<Data>> pdr = question.getPermsByUser(env.newTrans(), bait.getName(),false);
         switch(pdr.status) {
             case OK:
-                for(PermDAO.Data d : pdr.value) {
+                for (PermDAO.Data d : pdr.value) {
                     permissions.add(new PermPermission(d));
                 }
                 break;
@@ -135,23 +135,23 @@ public class DirectAAFLur implements Lur {
 
         @Override
         public boolean match(Permission p) {
-            if(p==null) {
+            if (p==null) {
                 return false;
             }
             PermDAO.Data pd;
-            if(p instanceof DirectAAFLur.PermPermission) {
+            if (p instanceof DirectAAFLur.PermPermission) {
                 pd = ((DirectAAFLur.PermPermission)p).data;
-                if(data.ns.equals(pd.ns))
-                    if(data.type.equals(pd.type))
-                        if(data.instance!=null && (data.instance.equals(pd.instance) || "*".equals(data.instance)))
-                            if(data.action!=null && (data.action.equals(pd.action) || "*".equals(data.action)))
+                if (data.ns.equals(pd.ns))
+                    if (data.type.equals(pd.type))
+                        if (data.instance!=null && (data.instance.equals(pd.instance) || "*".equals(data.instance)))
+                            if (data.action!=null && (data.action.equals(pd.action) || "*".equals(data.action)))
                                 return true;
             } else{
                 String[] lp = p.getKey().split("\\|");
-                if(lp.length<3)return false;
-                if(data.fullType().equals(lp[0]))
-                    if(data.instance!=null && (data.instance.equals(lp[1]) || "*".equals(data.instance)))
-                        if(data.action!=null && (data.action.equals(lp[2]) || "*".equals(data.action)))
+                if (lp.length<3)return false;
+                if (data.fullType().equals(lp[0]))
+                    if (data.instance!=null && (data.instance.equals(lp[1]) || "*".equals(data.instance)))
+                        if (data.action!=null && (data.action.equals(lp[2]) || "*".equals(data.action)))
                             return true;
             }
             return false;
@@ -180,9 +180,9 @@ public class DirectAAFLur implements Lur {
     @Override
     public Permission createPerm(String p) {
         String[] params = Split.split('|', p);
-        if(params.length==3) {
+        if (params.length==3) {
             Result<NsSplit> nss = question.deriveNsSplit(NullTrans.singleton(), params[0]);
-            if(nss.isOK()) {
+            if (nss.isOK()) {
                 return new PermPermission(nss.value.ns,nss.value.name,params[1],params[2]);
             }
         }

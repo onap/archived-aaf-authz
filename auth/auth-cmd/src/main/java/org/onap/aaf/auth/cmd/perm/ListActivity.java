@@ -57,7 +57,7 @@ public class ListActivity extends Cmd {
                         "/authz/hist/perm/"+type, 
                         getDF(History.class)
                         );
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     activity(fp.value, HEADER + " [ " + type + " ]");
                 } else {
                     error(fp);

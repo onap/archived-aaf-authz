@@ -108,7 +108,7 @@ public class PermGrantForm extends Page {
                         hgen
                         .incr("option", "value=").text("Other").end()                    
                         .end(selectRow);
-                        if(roleValue==null) {
+                        if (roleValue==null) {
                             hgen.input(fields[3],"Role", true, "placeholder=or type a role here");
                         } else {
                             hgen.input(fields[3],"Role",true, "value="+roleValue);
@@ -133,7 +133,7 @@ public class PermGrantForm extends Page {
                     TimeTaken tt = trans.start("AAF get my roles",Env.REMOTE);
                     try {
                         Future<Roles> fr = client.read("/authz/roles/user/"+trans.user(),gui.getDF(Roles.class));
-                        if(fr.get(5000)) {
+                        if (fr.get(5000)) {
                             tt.done();
                             tt = trans.start("Load Data", Env.SUB);
                             if (fr.value != null) for (Role r : fr.value.getRole()) {

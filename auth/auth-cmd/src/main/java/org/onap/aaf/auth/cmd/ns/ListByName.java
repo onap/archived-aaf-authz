@@ -59,29 +59,29 @@ public class ListByName extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Nss> fn = client.read("/authz/nss/"+ns,getDF(Nss.class));
-                if(fn.get(AAFcli.timeout())) {
+                if (fn.get(AAFcli.timeout())) {
                     ((List)parent).report(fn,HEADER,ns);
-                    if(fn.value!=null) {
-                        for(Ns n : fn.value.getNs()) {
+                    if (fn.value!=null) {
+                        for (Ns n : fn.value.getNs()) {
                             Future<Roles> fr = client.read("/authz/roles/ns/"+n.getName(), getDF(Roles.class));
-                            if(fr.get(AAFcli.timeout())) {
+                            if (fr.get(AAFcli.timeout())) {
                                 ((List)parent).reportRole(fr);
                             }
                         }
-                        for(Ns n : fn.value.getNs()) {
+                        for (Ns n : fn.value.getNs()) {
                             Future<Perms> fp = client.read("/authz/perms/ns/"+n.getName()+(aafcli.isDetailed()?"?ns":""), getDF(Perms.class));
-                            if(fp.get(AAFcli.timeout())) {
+                            if (fp.get(AAFcli.timeout())) {
                                 ((List)parent).reportPerm(fp);
                             }
                         }
-                        for(Ns n : fn.value.getNs()) {
+                        for (Ns n : fn.value.getNs()) {
                             Future<Users> fu = client.read("/authn/creds/ns/"+n.getName()+(aafcli.isDetailed()?"?ns":""), getDF(Users.class));
-                            if(fu.get(AAFcli.timeout())) {
+                            if (fu.get(AAFcli.timeout())) {
                                 ((List)parent).reportCred(fu);
                             }
                         }
                     }
-                } else if(fn.code()==404) {
+                } else if (fn.code()==404) {
                     ((List)parent).report(null,HEADER,ns);
                     return 200;
                 } else {    

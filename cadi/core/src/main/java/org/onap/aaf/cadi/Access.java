@@ -57,7 +57,7 @@ public interface Access {
         }
 
         public int toggle(int mask) {
-            if(inMask(mask)) {
+            if (inMask(mask)) {
                 return delFromMask(mask);
             } else {
                 return addToMask(mask);
@@ -67,8 +67,8 @@ public interface Access {
 
         public int maskOf() {
             int mask=0;
-            for(Level l : values()) {
-                if(ordinal()<=l.ordinal() && l!=NONE) {
+            for (Level l : values()) {
+                if (ordinal()<=l.ordinal() && l!=NONE) {
                     mask|=l.bit;
                 }
             }

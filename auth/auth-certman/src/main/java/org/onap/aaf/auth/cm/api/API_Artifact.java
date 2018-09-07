@@ -52,7 +52,7 @@ public class API_Artifact {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.createArtifacts(trans, req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.CREATED_201);
                 } else {
                     context.error(trans,resp,r);
@@ -67,7 +67,7 @@ public class API_Artifact {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.readArtifacts(trans, req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -81,7 +81,7 @@ public class API_Artifact {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 
                 Result<Void> r = context.readArtifacts(trans, resp, pathParam(req,":mechid"), pathParam(req,":machine"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -94,7 +94,7 @@ public class API_Artifact {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.updateArtifacts(trans, req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -107,7 +107,7 @@ public class API_Artifact {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.deleteArtifacts(trans, resp, 
                         pathParam(req, ":mechid"), pathParam(req,":machine"));
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
@@ -120,7 +120,7 @@ public class API_Artifact {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.deleteArtifacts(trans, req, resp);
-                if(r.isOK()) {
+                if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);

@@ -138,7 +138,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     }
     
     public static<T extends Trans> void startUpdate(AuthzEnv env, HMangr hman, SecuritySetter<HttpURLConnection> ss, String ip, int port) {
-        if(cacheUpdate==null) {
+        if (cacheUpdate==null) {
             Thread t= new Thread(cacheUpdate = new CacheUpdate(env,hman,ss, ip,port),"CacheInfo Update Thread");
             t.setDaemon(true);
             t.start();
@@ -146,7 +146,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     }
 
     public static<T extends Trans> void stopUpdate() {
-        if(cacheUpdate!=null) {
+        if (cacheUpdate!=null) {
             cacheUpdate.go=false;
         }
     }
@@ -195,9 +195,9 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         @Override
             public Integer code(Rcli<?> client) throws APIException, CadiException {
                 URI to = client.getURI();
-                if(!to.getAuthority().equals(authority)) {
+                if (!to.getAuthority().equals(authority)) {
                     Future<Void> f = client.delete("/mgmt/cache/"+type+'/'+segs,VOID_CT);
-                    if(f.get(hman.readTimeout())) {
+                    if (f.get(hman.readTimeout())) {
                         ++total;
                     } else {
                         trans.error().log("Error During AAF Peer Notify",f.code(),f.body());
@@ -216,14 +216,14 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                 set = null;
             }
             public void add(int[] ints) {
-                if(set==null) {
+                if (set==null) {
                     set = new HashSet<>();
                     
-                    for(int i=0;i<raw.length;++i) {
+                    for (int i=0;i<raw.length;++i) {
                         set.add(raw[i]);
                     }
                 }
-                for(int i=0;i<ints.length;++i) {
+                for (int i=0;i<ints.length;++i) {
                     set.add(ints[i]);
                 }
             }
@@ -232,9 +232,9 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             public String toString() {
                 StringBuilder sb = new StringBuilder();
                 boolean first = true;
-                if(set==null) {
-                    for(int i : raw) {
-                        if(first) {
+                if (set==null) {
+                    for (int i : raw) {
+                        if (first) {
                             first=false;
                         } else {
                             sb.append(',');
@@ -242,8 +242,8 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                         sb.append(i);
                     }
                 } else {
-                    for(Integer i : set) {
-                        if(first) {
+                    for (Integer i : set) {
+                        if (first) {
                             first=false;
                         } else {
                             sb.append(',');
@@ -260,7 +260,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             do {
                 try {
                     Transfer data = notifyDQ.poll(4,TimeUnit.SECONDS);
-                    if(data==null) {
+                    if (data==null) {
                         continue;
                     }
                     
@@ -271,37 +271,37 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                     long start=0;
                     // Do a block poll first
                     do {
-                        if(gather==null) {
+                        if (gather==null) {
                             start = System.nanoTime();
                             trans = env.newTransNoAvg();
                             cc = new CacheClear(trans);
                             gather = new HashMap<>();
                         }
                         IntHolder prev = gather.get(data.table);
-                        if(prev==null) {
+                        if (prev==null) {
                             gather.put(data.table,new IntHolder(data.segs));
                         } else {
                             prev.add(data.segs);
                         }
                         // continue while there is data
-                    } while((data = notifyDQ.poll())!=null);
-                    if(gather!=null) {
-                        for(Entry<String, IntHolder> es : gather.entrySet()) {
+                    } while ((data = notifyDQ.poll())!=null);
+                    if (gather!=null) {
+                        for (Entry<String, IntHolder> es : gather.entrySet()) {
                             cc.set(es);
                             try {
-                                if(hman.all(ss, cc, false)!=null) {
+                                if (hman.all(ss, cc, false)!=null) {
                                     ++count;
                                 }
                             } catch (Exception e) {
                                 trans.error().log(e, "Error on Cache Update");
                             }
                         }
-                        if(env.debug().isLoggable()) {
+                        if (env.debug().isLoggable()) {
                             float millis = (System.nanoTime()-start)/1000000f;
                             StringBuilder sb = new StringBuilder("Direct Cache Refresh: ");
                             sb.append("Updated ");
                             sb.append(count);
-                            if(count==1) {
+                            if (count==1) {
                                 sb.append(" entry for ");
                             } else { 
                                 sb.append(" entries for ");
@@ -309,7 +309,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                             int peers = count<=0?0:cc.total/count;
                             sb.append(peers);
                             sb.append(" client");
-                            if(peers!=1) {
+                            if (peers!=1) {
                                 sb.append('s');
                             }
                             sb.append(" in ");
@@ -323,7 +323,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                     go = false;
                     Thread.currentThread().interrupt();
                 }
-            } while(go);
+            } while (go);
         }
     }
 
@@ -347,9 +347,9 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         /////////////
         // ConcurrentQueues are open-ended.  We don't want any Memory leaks 
         // Note: we keep a separate counter, because "size()" on a Linked Queue is expensive
-        if(cacheUpdate!=null) {
+        if (cacheUpdate!=null) {
             try {
-                if(!CacheUpdate.notifyDQ.offer(new CacheUpdate.Transfer(name, seg),2,TimeUnit.SECONDS)) {
+                if (!CacheUpdate.notifyDQ.offer(new CacheUpdate.Transfer(name, seg),2,TimeUnit.SECONDS)) {
                     trans.error().log("Cache Notify Queue is not accepting messages, bouncing may be appropriate" );
                 }
             } catch (InterruptedException e) {
@@ -367,7 +367,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         start.append(": ");
         StringBuilder sb = new StringBuilder("BEGIN BATCH\n");
         boolean first = true;
-        for(int s : seg) {
+        for (int s : seg) {
             sb.append(UPDATE_SP);
             sb.append(TABLE);
             sb.append(" SET touched=dateof(now()) WHERE name = '");
@@ -375,7 +375,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             sb.append("' AND seg = ");
             sb.append(s);
             sb.append(";\n");    
-            if(first) {
+            if (first) {
                 first =false;
             } else {
                 start.append(',');
@@ -413,24 +413,24 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         
         String lastName = null;
         Date[] dates = null;
-        for(Row row : rs.all()) {
+        for (Row row : rs.all()) {
             String name = row.getString(0);
             int seg = row.getInt(1);
-            if(!name.equals(lastName)) {
+            if (!name.equals(lastName)) {
                 dates = info.get(name);
                 lastName=name;
             }
-            if(dates==null) {
+            if (dates==null) {
                 dates=new Date[seg+1];
                 info.put(name,dates);
-            } else if(dates.length<=seg) {
+            } else if (dates.length<=seg) {
                 Date[] temp = new Date[seg+1];
                 System.arraycopy(dates, 0, temp, 0, dates.length);
                 dates = temp;
                 info.put(name, dates);
             }
             Date temp = row.getTimestamp(2);
-            if(dates[seg]==null || dates[seg].before(temp)) {
+            if (dates[seg]==null || dates[seg].before(temp)) {
                 dates[seg]=temp;
             }
         }
@@ -443,16 +443,16 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     @Override
     public Date get(AuthzTrans trans, String table, int seg) {
         Date[] dates = info.get(table);
-        if(dates==null) {
+        if (dates==null) {
             dates = new Date[seg+1];
             touch(trans,table, seg);
-        } else if(dates.length<=seg) {
+        } else if (dates.length<=seg) {
             Date[] temp = new Date[seg+1];
             System.arraycopy(dates, 0, temp, 0, dates.length);
             dates = temp;
         }
         Date rv = dates[seg];
-        if(rv==null) {
+        if (rv==null) {
             rv=dates[seg]=startTime;
         }
         return rv;

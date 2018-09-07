@@ -100,7 +100,7 @@ public class AES implements Encryption {
     public CipherOutputStream outputStream(OutputStream os, boolean encrypt) {
         try {
             Cipher c = Cipher.getInstance(AES);
-            if(encrypt) {
+            if (encrypt) {
                 c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
             } else {
                 c.init(Cipher.DECRYPT_MODE,aeskeySpec);
@@ -116,7 +116,7 @@ public class AES implements Encryption {
     public CipherInputStream inputStream(InputStream is, boolean encrypt) {
         try {
             Cipher c = Cipher.getInstance(AES);
-            if(encrypt) {
+            if (encrypt) {
                 c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
             } else {
                 c.init(Cipher.DECRYPT_MODE,aeskeySpec);

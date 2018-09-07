@@ -150,7 +150,7 @@ public class JavaxMailer implements Mailer {
                 try{
                     addressArray[count] = new InternetAddress(addr);
                     count++;
-                }catch(Exception e){
+                } catch (Exception e){
                     throw new OrganizationException("Failed to parse the email address "+ addr +": "+e.getMessage());
                 }
             }

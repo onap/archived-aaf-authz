@@ -95,7 +95,7 @@ public class JU_RosettaDF {
                 tt.done();
             }
             report.glean(trans, 1,2,3,4,5);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw);
@@ -117,7 +117,7 @@ public class JU_RosettaDF {
             RosettaData<?> data = df.newData(trans).in(Data.TYPE.JSON).out(Data.TYPE.XML);
             data.direct(new StringReader(JU_FromJSON.str), sbw);
             report.glean(trans);
-        } while(report.go());
+        } while (report.go());
         
         report.report(sbw);
         System.out.println(sbw);

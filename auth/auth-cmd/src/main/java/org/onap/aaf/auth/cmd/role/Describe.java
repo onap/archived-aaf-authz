@@ -70,11 +70,11 @@ public class Describe extends Cmd {
                     rr
                     );
 
-                if(fp.get(AAFcli.timeout())) {
+                if (fp.get(AAFcli.timeout())) {
                     rv=fp.code();
                     pw().println("Description added to role");
                 } else {
-                    if((rv=fp.code())==202) {
+                    if ((rv=fp.code())==202) {
                         pw().print("Adding description");
                         pw().println(" Accepted, but requires Approvals before actualizing");
                     } else {

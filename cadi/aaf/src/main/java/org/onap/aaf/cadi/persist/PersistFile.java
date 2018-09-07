@@ -63,8 +63,8 @@ public class PersistFile {
         this.access = access;
         tokenPath = Paths.get(access.getProperty(Config.CADI_TOKEN_DIR,"tokens"), sub_dir);
         try {
-            if(!Files.exists(tokenPath)) {
-                if(isWindows) {
+            if (!Files.exists(tokenPath)) {
+                if (isWindows) {
                     // Sorry Windows users, you need to secure your own paths
                     Files.createDirectories(tokenPath);
                 } else {
@@ -77,7 +77,7 @@ public class PersistFile {
             throw new CadiException(e);
         }
         synchronized(LOCK) {
-            if(symm==null) {
+            if (symm==null) {
                 symm = Symm.obtain(access);
             }
         }
@@ -94,7 +94,7 @@ public class PersistFile {
             final OutputStream dos = Files.newOutputStream(tpath, StandardOpenOption.CREATE,StandardOpenOption.WRITE);
                 try {
                 // Write Expires so that we can read unencrypted.
-                for(int i=0;i<Long.SIZE;i+=8) {
+                for (int i=0;i<Long.SIZE;i+=8) {
                     dos.write((byte)((expires>>i)&0xFF));
                 }
 
@@ -104,10 +104,10 @@ public class PersistFile {
                         CipherOutputStream os = enc.outputStream(dos, true);
                         try {
                             int size = cred==null?0:cred.length;
-                            for(int i=0;i<Integer.SIZE;i+=8) {
+                            for (int i=0;i<Integer.SIZE;i+=8) {
                                 os.write((byte)((size>>i)&0xFF));
                             }
-                            if(cred!=null) {
+                            if (cred!=null) {
                                 os.write(cred);
                             }
                             df.newData().load(t).to(os);
@@ -128,7 +128,7 @@ public class PersistFile {
                         return null;
                     }
                 });
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new CadiException(e);
             } finally {
                 dos.close();
@@ -141,7 +141,7 @@ public class PersistFile {
     }
 
     public <T> T readDisk(final RosettaDF<T> df, final byte[] cred, final String filename,final Holder<Path> hp, final Holder<Long> hl) throws CadiException {
-        if(hp.get()==null) {
+        if (hp.get()==null) {
             hp.set(Paths.get(tokenDir,filename));
         }
         return readDisk(df,cred,hp.get(),hl);
@@ -150,13 +150,13 @@ public class PersistFile {
     public <T> T readDisk(final RosettaDF<T> df, final byte[] cred, final Path target, final Holder<Long> hexpired) throws CadiException {
         // Try from Disk
         T t = null;
-        if(Files.exists(target)) {
+        if (Files.exists(target)) {
             try {
                 final InputStream is = Files.newInputStream(target,StandardOpenOption.READ);
                 try {
                     // Read Expired unencrypted
                     long exp=0;
-                    for(int i=0;i<Long.SIZE;i+=8) {
+                    for (int i=0;i<Long.SIZE;i+=8) {
                         exp |= ((long)is.read()<<i);
                     }
                     hexpired.set(exp);
@@ -167,19 +167,19 @@ public class PersistFile {
                             CipherInputStream dis = enc.inputStream(is,false);
                             try {
                                 int size=0;
-                                for(int i=0;i<Integer.SIZE;i+=8) {
+                                for (int i=0;i<Integer.SIZE;i+=8) {
                                     size |= ((int)dis.read()<<i);
                                 }
-                                if(size>256) {
+                                if (size>256) {
                                     throw new CadiException("Invalid size in Token Persistence");
-                                } else if(cred!=null && size!=cred.length) {
+                                } else if (cred!=null && size!=cred.length) {
                                     throw new CadiException(HASH_NO_MATCH);
                                 }
-                                if(cred!=null) {
+                                if (cred!=null) {
                                     byte[] array = new byte[size];
-                                    if(dis.read(array)>0) {
-                                        for(int i=0;i<size;++i) {
-                                            if(cred[i]!=array[i]) {
+                                    if (dis.read(array)>0) {
+                                        for (int i=0;i<size;++i) {
+                                            if (cred[i]!=array[i]) {
                                                 throw new CadiException(HASH_NO_MATCH);
                                             }
                                         }
@@ -205,11 +205,11 @@ public class PersistFile {
     
     public long readExpiration(final Path target) throws CadiException {
         long exp=0L;
-        if(Files.exists(target)) {
+        if (Files.exists(target)) {
             try {
                 final InputStream is = Files.newInputStream(target,StandardOpenOption.READ);
                 try {
-                    for(int i=0;i<Long.SIZE;i+=8) {
+                    for (int i=0;i<Long.SIZE;i+=8) {
                         exp |= ((long)is.read()<<i);
                     }
                 } finally {
@@ -246,7 +246,7 @@ public class PersistFile {
     
     public FileTime getFileTime(String filename, Holder<Path> hp) throws IOException {
         Path p = hp.get();
-        if(p==null) {
+        if (p==null) {
             hp.set(p=Paths.get(tokenDir,filename));
         }
         return Files.getLastModifiedTime(p);

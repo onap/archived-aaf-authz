@@ -25,7 +25,7 @@ public class TheConsole implements MyConsole {
     @Override
     public String readLine(String fmt, Object... args) {
         String rv = System.console().readLine(fmt, args);
-        if(args.length>0 && args[0]!=null && rv.length()==0) {
+        if (args.length>0 && args[0]!=null && rv.length()==0) {
             rv = args[0].toString();
         }
         return rv;

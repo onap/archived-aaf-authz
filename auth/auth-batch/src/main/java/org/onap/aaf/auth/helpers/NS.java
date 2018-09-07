@@ -81,7 +81,7 @@ public class NS implements Comparable<NS> {
             Row row;
             tt = trans.start("Load Namespaces", Env.SUB);
             try {
-                while(iter.hasNext()) {
+                while (iter.hasNext()) {
                     row = iter.next();
                     NS ns = creator.create(row);
                     data.put(ns.name,ns);
@@ -143,9 +143,9 @@ public class NS implements Comparable<NS> {
         }
     }
     public static NSSplit deriveParent(String dotted) {
-        if(dotted==null)return null;
-        for(int idx = dotted.lastIndexOf('.');idx>=0; idx=dotted.lastIndexOf('.',idx-1)) {
-            if(data.get(dotted.substring(0, idx))!=null) {
+        if (dotted==null)return null;
+        for (int idx = dotted.lastIndexOf('.');idx>=0; idx=dotted.lastIndexOf('.',idx-1)) {
+            if (data.get(dotted.substring(0, idx))!=null) {
                 return new NSSplit(dotted,idx);
             }
         }
