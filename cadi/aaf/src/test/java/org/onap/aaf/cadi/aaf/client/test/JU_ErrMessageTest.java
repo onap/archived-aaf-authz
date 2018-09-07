@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.cadi.aaf.client.test;
 
 import static org.junit.Assert.assertEquals;

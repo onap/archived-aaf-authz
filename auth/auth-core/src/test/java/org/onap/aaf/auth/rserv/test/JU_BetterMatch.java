@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.rserv.test;
 
 import static junit.framework.Assert.assertEquals;

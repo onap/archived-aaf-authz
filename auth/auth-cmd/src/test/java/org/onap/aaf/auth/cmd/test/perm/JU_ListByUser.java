@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.cmd.test.perm;
 
 import org.junit.Assert;

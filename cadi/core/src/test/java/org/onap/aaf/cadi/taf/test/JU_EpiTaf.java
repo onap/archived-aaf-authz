@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.cadi.taf.test;
 
 import static org.junit.Assert.*;

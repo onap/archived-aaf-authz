@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.cmd.test.role;
 
 import static org.junit.Assert.assertEquals;

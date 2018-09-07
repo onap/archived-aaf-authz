@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.auth.local.test;
 
 import java.io.File;

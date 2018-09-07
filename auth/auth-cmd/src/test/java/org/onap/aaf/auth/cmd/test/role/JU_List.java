@@ -16,6 +16,7 @@
  * limitations under the License.
  * ============LICENSE_END============================================
  */
+
 package org.onap.aaf.auth.cmd.test.role;
 
 import static org.junit.Assert.*;

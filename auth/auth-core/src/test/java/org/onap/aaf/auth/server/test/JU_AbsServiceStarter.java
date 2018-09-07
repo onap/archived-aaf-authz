@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.auth.server.test;
 
 import static org.junit.Assert.*;

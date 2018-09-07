@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.cmd.test.mgmt;
 
 import static org.mockito.Mockito.mock;

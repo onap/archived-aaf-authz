@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.org.test;
 
 import static org.junit.Assert.assertEquals;

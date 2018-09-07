@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.service.validation.test;
 
 import static org.junit.Assert.assertFalse;

@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.misc.env;
 
 import static org.junit.Assert.assertFalse;

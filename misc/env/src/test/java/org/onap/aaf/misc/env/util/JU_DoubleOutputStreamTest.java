@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.misc.env.util;
 
 import static org.mockito.Mockito.mock;

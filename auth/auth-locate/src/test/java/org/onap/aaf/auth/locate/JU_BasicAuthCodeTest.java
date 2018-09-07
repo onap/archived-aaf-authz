@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.auth.locate;
 
 import static org.junit.Assert.assertEquals;

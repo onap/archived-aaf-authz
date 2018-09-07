@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.authz.service.mapper;
 
 import static org.junit.Assert.assertEquals;

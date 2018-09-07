@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.client.test;
 
 import static org.hamcrest.CoreMatchers.is;

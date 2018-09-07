@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.direct.test;
 
 import static org.junit.Assert.*;

@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.auth.cm.ca;
 
 import static org.junit.Assert.assertNotNull;

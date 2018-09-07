@@ -19,6 +19,7 @@
  * *
  * *
  ******************************************************************************/
+
 package org.onap.aaf.cadi.test;
 
 import static org.hamcrest.CoreMatchers.*;

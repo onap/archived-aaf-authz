@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.misc.xgen.html;
 
 import static org.junit.Assert.assertEquals;
