@@ -209,6 +209,11 @@ public class PropAccess implements Access {
 			Object value = es.getValue();
 			if(value instanceof String) {
 				String trim = ((String)value).trim();
+				// Remove Beginning/End Quotes, which might be there if mixed with Bash Props
+				int s = 0, e=trim.length()-1;
+				if(s<e && trim.charAt(s)=='"' && trim.charAt(e)=='"') {
+					trim=trim.substring(s+1,e);
+				}
 				if(trim!=value) { // Yes, I want OBJECT equals
 					props.setProperty((String)es.getKey(), trim);
 				}
