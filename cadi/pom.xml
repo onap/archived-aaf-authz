@@ -127,6 +127,7 @@
 		<module>client</module>
 		<module>aaf</module>
 		<module>oauth-enduser</module>
+		<module>servlet-sample</module>
 	</modules>
 
 

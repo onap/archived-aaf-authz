@@ -1,0 +1,8 @@
+/target/
+/.settings/
+/META-INF/
+/.classpath
+/.project
+/logs/
+/run/
+/caditest.war
