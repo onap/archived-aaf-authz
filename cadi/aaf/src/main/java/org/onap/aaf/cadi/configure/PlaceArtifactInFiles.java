@@ -31,23 +31,23 @@ import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;
 
 public class PlaceArtifactInFiles extends ArtifactDir {
-	@Override
-	public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-		try {
-			// Setup Public Cert
-			File f = new File(dir,arti.getNs()+".crt");
-			// In Version 1.0, App Cert is first
-			write(f,Chmod.to644,certInfo.getCerts().get(0),C_R);
-			
-			// Setup Private Key
-			f = new File(dir,arti.getNs()+".key");
-			write(f,Chmod.to400,certInfo.getPrivatekey(),C_R);
-			
-		} catch (Exception e) {
-			throw new CadiException(e);
-		}
-		return true;
-	}
+    @Override
+    public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
+        try {
+            // Setup Public Cert
+            File f = new File(dir,arti.getNs()+".crt");
+            // In Version 1.0, App Cert is first
+            write(f,Chmod.to644,certInfo.getCerts().get(0),C_R);
+            
+            // Setup Private Key
+            f = new File(dir,arti.getNs()+".key");
+            write(f,Chmod.to400,certInfo.getPrivatekey(),C_R);
+            
+        } catch (Exception e) {
+            throw new CadiException(e);
+        }
+        return true;
+    }
 }
 
 

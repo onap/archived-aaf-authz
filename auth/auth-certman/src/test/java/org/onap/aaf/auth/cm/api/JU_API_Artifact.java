@@ -41,67 +41,67 @@ import org.onap.aaf.auth.env.AuthzTrans;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_API_Artifact {
-	
-	@Mock
-	private static API_Artifact api;
-	
-	@Mock
-	private static AAF_CM certManApi;
-	
-	private static AAF_CM noMockAPI;
-	private static API_Artifact api_1;
-	
-	private static HttpServletRequest req;
-	private static HttpServletResponse res;
-	
-	@BeforeClass
-	public static void setUp() {
-		AuthzTrans trans = mock(AuthzTrans.class);
-		req = mock(HttpServletRequest.class);
-		trans.setProperty("testTag", "UserValue");
-		trans.set(req);
-	}
-	
-	@Rule
+    
+    @Mock
+    private static API_Artifact api;
+    
+    @Mock
+    private static AAF_CM certManApi;
+    
+    private static AAF_CM noMockAPI;
+    private static API_Artifact api_1;
+    
+    private static HttpServletRequest req;
+    private static HttpServletResponse res;
+    
+    @BeforeClass
+    public static void setUp() {
+        AuthzTrans trans = mock(AuthzTrans.class);
+        req = mock(HttpServletRequest.class);
+        trans.setProperty("testTag", "UserValue");
+        trans.set(req);
+    }
+    
+    @Rule
     public ExpectedException thrown= ExpectedException.none();
-	
-	@Test
-	public void init_bothValued() {
-		try {
-			api.init(certManApi);
-		} catch (Exception e) {
-			thrown.expect(NullPointerException.class);
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void init_Null_() {
-		try {
-			api.init(null);
-		} catch (Exception e) {
-			//thrown.expect(Exception.class);
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void init_NMC_Null() {
-		try {
-			api_1.init(null);
-		} catch (Exception e) {
-			//thrown.expect(NullPointerException.class);
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void init_NMC() {
-		try {
-			api_1.init(noMockAPI);
-		} catch (Exception e) {
-			//thrown.expect(NullPointerException.class);
-			e.printStackTrace();
-		}
-	}
+    
+    @Test
+    public void init_bothValued() {
+        try {
+            api.init(certManApi);
+        } catch (Exception e) {
+            thrown.expect(NullPointerException.class);
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void init_Null_() {
+        try {
+            api.init(null);
+        } catch (Exception e) {
+            //thrown.expect(Exception.class);
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void init_NMC_Null() {
+        try {
+            api_1.init(null);
+        } catch (Exception e) {
+            //thrown.expect(NullPointerException.class);
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void init_NMC() {
+        try {
+            api_1.init(noMockAPI);
+        } catch (Exception e) {
+            //thrown.expect(NullPointerException.class);
+            e.printStackTrace();
+        }
+    }
 }

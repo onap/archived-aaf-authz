@@ -39,33 +39,33 @@ import aafoauth.v2_0.Introspect;
 
 public class JU_OACodeTest {
 
-	@Mock
-	private OAFacade<Introspect> facade;
+    @Mock
+    private OAFacade<Introspect> facade;
 
-	@Mock
-	private OAFacade<Introspect> facade1;
+    @Mock
+    private OAFacade<Introspect> facade1;
 
-	@Before
-	public void setup() {
-		initMocks(this);
-	}
+    @Before
+    public void setup() {
+        initMocks(this);
+    }
 
-	@Test
-	public void testOACodeDefaultMethod() throws Exception {
-		OACode code = new OACode(facade, "Original Description", true, "role1") {
+    @Test
+    public void testOACodeDefaultMethod() throws Exception {
+        OACode code = new OACode(facade, "Original Description", true, "role1") {
 
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				// Blank implementation to test abstract OACode class.
-			}
-		};
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                // Blank implementation to test abstract OACode class.
+            }
+        };
 
-		OACode clone = code.clone(facade1, false);
+        OACode clone = code.clone(facade1, false);
 
-		assertNotSame(code, clone);
+        assertNotSame(code, clone);
 
-		assertTrue(code.useJSON);
-		assertFalse(clone.useJSON);
+        assertTrue(code.useJSON);
+        assertFalse(clone.useJSON);
 
-	}
+    }
 }

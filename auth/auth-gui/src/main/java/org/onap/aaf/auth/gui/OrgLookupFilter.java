@@ -40,40 +40,40 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class OrgLookupFilter implements Filter {
-	
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-	}
+    
+    @Override
+    public void init(FilterConfig arg0) throws ServletException {
+    }
 
-	@Override
-	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
-		final AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
-		if(req instanceof HttpServletRequest) {
-			Principal p = ((HttpServletRequest)req).getUserPrincipal();
-			if(p instanceof TaggedPrincipal) {
-				((TaggedPrincipal)p).setTagLookup(new TaggedPrincipal.TagLookup() {
-					@Override
-					public String lookup() throws CadiException {
-						Identity id;
-						try {
-							id = trans.org().getIdentity(trans, p.getName());
-							if(id!=null && id.isFound()) {
-								return id.firstName();
-							}
-						} catch (OrganizationException e) {
-							throw new CadiException(e);
-						}
-						return p.getName();
-					}
-				});
-			}
-			fc.doFilter(req, resp);
-		}
-		
-	}
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
+        final AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
+        if(req instanceof HttpServletRequest) {
+            Principal p = ((HttpServletRequest)req).getUserPrincipal();
+            if(p instanceof TaggedPrincipal) {
+                ((TaggedPrincipal)p).setTagLookup(new TaggedPrincipal.TagLookup() {
+                    @Override
+                    public String lookup() throws CadiException {
+                        Identity id;
+                        try {
+                            id = trans.org().getIdentity(trans, p.getName());
+                            if(id!=null && id.isFound()) {
+                                return id.firstName();
+                            }
+                        } catch (OrganizationException e) {
+                            throw new CadiException(e);
+                        }
+                        return p.getName();
+                    }
+                });
+            }
+            fc.doFilter(req, resp);
+        }
+        
+    }
 
 
-	@Override
-	public void destroy() {
-	}
+    @Override
+    public void destroy() {
+    }
 }

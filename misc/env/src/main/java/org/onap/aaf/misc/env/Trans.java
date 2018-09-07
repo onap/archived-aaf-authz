@@ -39,36 +39,36 @@ package org.onap.aaf.misc.env;
  *
  */
 public interface Trans extends Env {
-	/**
-	 * Add a completed entry in the Audit Trail for tracking purposes.
-	 * 
-	 * @param text
-	 */
-	public void checkpoint(String text);
+    /**
+     * Add a completed entry in the Audit Trail for tracking purposes.
+     * 
+     * @param text
+     */
+    public void checkpoint(String text);
 
-	/**
-	 * Add a completed entry in the Audit Trail for tracking purposes, and combine flag with "CHECKPOINT" 
-	 * 
-	 * @param text
-	 */
-	public void checkpoint(String text, int additionalFlag);
+    /**
+     * Add a completed entry in the Audit Trail for tracking purposes, and combine flag with "CHECKPOINT" 
+     * 
+     * @param text
+     */
+    public void checkpoint(String text, int additionalFlag);
 
-	/**
-	 * Output an Audit Trail onto the StringBuilder
-	 *
-	 * Load metrics into an array of floats from passed in Flags
-	 * 
-	 * @param flag
-	 * @param sb
-	 * @return	 
-	 */
-	public Metric auditTrail(LogTarget lt, int indent, StringBuilder sb, int ... flag);
+    /**
+     * Output an Audit Trail onto the StringBuilder
+     *
+     * Load metrics into an array of floats from passed in Flags
+     * 
+     * @param flag
+     * @param sb
+     * @return     
+     */
+    public Metric auditTrail(LogTarget lt, int indent, StringBuilder sb, int ... flag);
 
-	public Metric auditTrail(int indent, StringBuilder sb, int ... flag);
+    public Metric auditTrail(int indent, StringBuilder sb, int ... flag);
 
-	public class Metric {
-		public float[] buckets;
-		public float   total;
-		public int     entries;
-	}
+    public class Metric {
+        public float[] buckets;
+        public float   total;
+        public int     entries;
+    }
 }

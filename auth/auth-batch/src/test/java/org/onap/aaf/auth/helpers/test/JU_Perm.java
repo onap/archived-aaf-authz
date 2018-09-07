@@ -39,60 +39,60 @@ import java.util.Set;
 import org.junit.Test;
 
 public class JU_Perm {
-	
-	Perm perm;
-	Set set;
-	
-	@Before
-	public void setUp() {
-		set = new HashSet();
-		perm = new Perm("ns","type", "instance", "action","description", set);
-	}
+    
+    Perm perm;
+    Set set;
+    
+    @Before
+    public void setUp() {
+        set = new HashSet();
+        perm = new Perm("ns","type", "instance", "action","description", set);
+    }
 
-	@Test
-	public void testFullType() {
-		Assert.assertEquals("ns.type", perm.fullType());
-	}
-	
-	@Test
-	public void testFullPerm() {
-		Assert.assertEquals("ns.type|instance|action", perm.fullPerm());
-	}
-	
-	@Test
-	public void testEncode() {
-		Assert.assertEquals("ns|type|instance|action", perm.encode());
-	}
-	
-	@Test
-	public void testHashCode() {
-		Assert.assertEquals(850667666, perm.hashCode());
-	}
-	
-	@Test
-	public void testToString() {
-		Assert.assertEquals("ns|type|instance|action", perm.toString());
-	}
-	
-	@Test
-	public void testEquals() {
-		Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
-		Assert.assertEquals(false, perm.equals(perm1));
-	}
-	
-	@Test
-	public void testCompareTo() {
-		Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
-		Perm perm2 = new Perm("ns1","type", "instance", "action","description", set);
-		
-		Assert.assertEquals(0, perm.compareTo(perm1));
-		Assert.assertEquals(75, perm.compareTo(perm2));
-	}
-	
-	@Test
-	public void testStageRemove() {
-		Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
-		perm.stageRemove(perm1);
-	}
+    @Test
+    public void testFullType() {
+        Assert.assertEquals("ns.type", perm.fullType());
+    }
+    
+    @Test
+    public void testFullPerm() {
+        Assert.assertEquals("ns.type|instance|action", perm.fullPerm());
+    }
+    
+    @Test
+    public void testEncode() {
+        Assert.assertEquals("ns|type|instance|action", perm.encode());
+    }
+    
+    @Test
+    public void testHashCode() {
+        Assert.assertEquals(850667666, perm.hashCode());
+    }
+    
+    @Test
+    public void testToString() {
+        Assert.assertEquals("ns|type|instance|action", perm.toString());
+    }
+    
+    @Test
+    public void testEquals() {
+        Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
+        Assert.assertEquals(false, perm.equals(perm1));
+    }
+    
+    @Test
+    public void testCompareTo() {
+        Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
+        Perm perm2 = new Perm("ns1","type", "instance", "action","description", set);
+        
+        Assert.assertEquals(0, perm.compareTo(perm1));
+        Assert.assertEquals(75, perm.compareTo(perm2));
+    }
+    
+    @Test
+    public void testStageRemove() {
+        Perm perm1 = new Perm("ns","type", "instance", "action","description", set);
+        perm.stageRemove(perm1);
+    }
 
 }

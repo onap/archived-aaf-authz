@@ -22,8 +22,8 @@
 package org.onap.aaf.auth.rserv;
 
 public enum HttpMethods {
-	POST,
-	GET,
-	PUT,
-	DELETE
+    POST,
+    GET,
+    PUT,
+    DELETE
 }

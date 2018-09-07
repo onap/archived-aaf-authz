@@ -23,19 +23,19 @@ package org.onap.aaf.auth;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class BatchPrincipal extends TaggedPrincipal {
-	private final String name;
-	
-	public BatchPrincipal(final String name) {
-		this.name = "batch:"+name;
-	}
+    private final String name;
+    
+    public BatchPrincipal(final String name) {
+        this.name = "batch:"+name;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String tag() {
-		return "Btch";
-	}
+    @Override
+    public String tag() {
+        return "Btch";
+    }
 }

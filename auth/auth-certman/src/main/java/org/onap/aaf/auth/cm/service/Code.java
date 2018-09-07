@@ -28,18 +28,18 @@ import org.onap.aaf.auth.rserv.HttpCode;
 
 public abstract class Code extends HttpCode<AuthzTrans,Facade1_0> implements Cloneable {
 
-	public Code(AAF_CM cma, String description, String ... roles) {
-		super(cma.facade1_0, description, roles);
-		// Note, the first "Code" will be created with default Facade, "JSON".
-		// use clone for another Code with XML
-	}
-	
+    public Code(AAF_CM cma, String description, String ... roles) {
+        super(cma.facade1_0, description, roles);
+        // Note, the first "Code" will be created with default Facade, "JSON".
+        // use clone for another Code with XML
+    }
+    
 
-	public <D extends Code> D clone(Facade1_0 facade) throws Exception {
-		@SuppressWarnings("unchecked")
-		D d = (D)clone();
-		d.context = facade;
-		return d;
-	}
+    public <D extends Code> D clone(Facade1_0 facade) throws Exception {
+        @SuppressWarnings("unchecked")
+        D d = (D)clone();
+        d.context = facade;
+        return d;
+    }
 
 }

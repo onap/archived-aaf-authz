@@ -39,33 +39,33 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_DirectCertIdentity {
-	
-	public DirectCertIdentity directCertIdentity;
-	
-	@Before
-	public void setUp(){
-		directCertIdentity = new DirectCertIdentity();
-	}
+    
+    public DirectCertIdentity directCertIdentity;
+    
+    @Before
+    public void setUp(){
+        directCertIdentity = new DirectCertIdentity();
+    }
 
 
-	@Mock
-	HttpServletRequest req;
-	X509Certificate cert;
-	byte[] _certBytes;
-	
-	@Test
-	public void testidentity(){
-		
-		try {
-		Principal p = directCertIdentity.identity(req, cert, _certBytes);
-		assertEquals(( (p) == null),true);
-			
-		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//assertTrue(true);
-		
-	}
+    @Mock
+    HttpServletRequest req;
+    X509Certificate cert;
+    byte[] _certBytes;
+    
+    @Test
+    public void testidentity(){
+        
+        try {
+        Principal p = directCertIdentity.identity(req, cert, _certBytes);
+        assertEquals(( (p) == null),true);
+            
+        } catch (CertificateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //assertTrue(true);
+        
+    }
 
 }

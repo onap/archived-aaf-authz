@@ -28,41 +28,41 @@ import org.onap.aaf.misc.xgen.Cache;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class Form extends NamedCode {
-	private String preamble;
-	private NamedCode content;
-	
-	public Form(boolean no_cache, NamedCode content) {
-		super(no_cache,content);
-		this.content = content;
-		preamble=null;
-	}
-	
-	public Form preamble(String preamble) {
-		this.preamble = preamble;
-		return this;
-	}
-	
+    private String preamble;
+    private NamedCode content;
+    
+    public Form(boolean no_cache, NamedCode content) {
+        super(no_cache,content);
+        this.content = content;
+        preamble=null;
+    }
+    
+    public Form preamble(String preamble) {
+        this.preamble = preamble;
+        return this;
+    }
+    
 
-	@Override
-	public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-		if(preamble!=null) {
-			hgen.incr("p","class=preamble").text(preamble).end();
-		}
-		hgen.incr("form","method=post");
-	
-		content.code(cache, hgen);
-		
-		hgen.tagOnly("input", "type=submit", "value=Submit")
-			.tagOnly("input", "type=reset", "value=Reset")
-		.end();
-	}
+    @Override
+    public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+        if(preamble!=null) {
+            hgen.incr("p","class=preamble").text(preamble).end();
+        }
+        hgen.incr("form","method=post");
+    
+        content.code(cache, hgen);
+        
+        hgen.tagOnly("input", "type=submit", "value=Submit")
+            .tagOnly("input", "type=reset", "value=Reset")
+        .end();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.gui.NamedCode#idattrs()
-	 */
-	@Override
-	public String[] idattrs() {
-		return content.idattrs();
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.gui.NamedCode#idattrs()
+     */
+    @Override
+    public String[] idattrs() {
+        return content.idattrs();
+    }
 
 }

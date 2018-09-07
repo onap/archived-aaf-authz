@@ -51,111 +51,111 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.cadi.taf.TafResp;
 
 public class JU_CadiWrap {
-	
-	@Mock
-	private HttpServletRequest request;
-	
-	@Mock
-	private TafResp tafResp;
-	
-	@Mock
-	private TaggedPrincipal principle;
+    
+    @Mock
+    private HttpServletRequest request;
+    
+    @Mock
+    private TafResp tafResp;
+    
+    @Mock
+    private TaggedPrincipal principle;
 
-	@Mock
-	private Lur lur;
+    @Mock
+    private Lur lur;
 
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
 
-		System.setOut(new PrintStream(new ByteArrayOutputStream()));
-	}
+        System.setOut(new PrintStream(new ByteArrayOutputStream()));
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-	}
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testInstantiate() throws CadiException {
-		Access a = new PropAccess();
-		when(tafResp.getAccess()).thenReturn(a);
-		
-		lur.fishAll(isA(Principal.class), (List<Permission>)isA(List.class));
-		
-		EpiLur lur1 = new EpiLur(lur);
-		
-		CadiWrap wrap = new CadiWrap(request, tafResp, lur1);
-		
-		assertNull(wrap.getUserPrincipal());
-		assertNull(wrap.getRemoteUser());
-		assertNull(wrap.getUser());
-		assertEquals(wrap.getPermissions(principle).size(), 0);
-		assertTrue(wrap.access() instanceof PropAccess);
-		
-		byte[] arr = {'1','2'};
-		wrap.setCred(arr);
-		
-		assertEquals(arr, wrap.getCred());
-		
-		wrap.setUser("User1");
-		assertEquals("User1", wrap.getUser());
-		
-		wrap.invalidate("1");
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testInstantiate() throws CadiException {
+        Access a = new PropAccess();
+        when(tafResp.getAccess()).thenReturn(a);
+        
+        lur.fishAll(isA(Principal.class), (List<Permission>)isA(List.class));
+        
+        EpiLur lur1 = new EpiLur(lur);
+        
+        CadiWrap wrap = new CadiWrap(request, tafResp, lur1);
+        
+        assertNull(wrap.getUserPrincipal());
+        assertNull(wrap.getRemoteUser());
+        assertNull(wrap.getUser());
+        assertEquals(wrap.getPermissions(principle).size(), 0);
+        assertTrue(wrap.access() instanceof PropAccess);
+        
+        byte[] arr = {'1','2'};
+        wrap.setCred(arr);
+        
+        assertEquals(arr, wrap.getCred());
+        
+        wrap.setUser("User1");
+        assertEquals("User1", wrap.getUser());
+        
+        wrap.invalidate("1");
 
-		assertFalse(wrap.isUserInRole(null));
-		
-		wrap.set(tafResp, lur);
-		
-		wrap.invalidate("2");
-		
-		assertFalse(wrap.isUserInRole("User1"));
-	}
+        assertFalse(wrap.isUserInRole(null));
+        
+        wrap.set(tafResp, lur);
+        
+        wrap.invalidate("2");
+        
+        assertFalse(wrap.isUserInRole("User1"));
+    }
 
-	@Test
-	public void testInstantiateWithPermConverter() throws CadiException {
-		Access a = new PropAccess();
-		when(tafResp.getAccess()).thenReturn(a);
-		when(tafResp.getPrincipal()).thenReturn(principle);
-		
-		// Anonymous object for testing purposes
-		CachingLur<Permission> lur1 = new CachingLur<Permission>() {
-			@Override public Permission createPerm(String p) { return null; }
-			@Override public boolean fish(Principal bait, Permission ... pond) { return true; }
-			@Override public void fishAll(Principal bait, List<Permission> permissions) { }
-			@Override public void destroy() { }
-			@Override public boolean handlesExclusively(Permission ... pond) { return false; }
-			@Override public boolean handles(Principal principal) { return false; }
-			@Override public void remove(String user) { }
-			@Override public Resp reload(User<Permission> user) { return null; }
-			@Override public void setDebug(String commaDelimIDsOrNull) { }
-			@Override public void clear(Principal p, StringBuilder sb) { }
-		};
-		
-		MapPermConverter pc = new MapPermConverter();
-		
-		CadiWrap wrap = new CadiWrap(request, tafResp, lur1, pc);
-		
-		assertNotNull(wrap.getUserPrincipal());
-		assertNull(wrap.getRemoteUser());
-		assertNull(wrap.getUser());
-		
-		byte[] arr = {'1','2'};
-		wrap.setCred(arr);
-		
-		assertEquals(arr, wrap.getCred());
-		
-		wrap.setUser("User1");
-		assertEquals("User1", wrap.getUser());
-		
-		wrap.invalidate("1");
-		wrap.setPermConverter(new MapPermConverter());
-		
-		assertTrue(wrap.getLur() instanceof CachingLur);
-		assertTrue(wrap.isUserInRole("User1"));
-		
-		wrap.set(tafResp, lur);
-		assertFalse(wrap.isUserInRole("Perm1"));
-	}
+    @Test
+    public void testInstantiateWithPermConverter() throws CadiException {
+        Access a = new PropAccess();
+        when(tafResp.getAccess()).thenReturn(a);
+        when(tafResp.getPrincipal()).thenReturn(principle);
+        
+        // Anonymous object for testing purposes
+        CachingLur<Permission> lur1 = new CachingLur<Permission>() {
+            @Override public Permission createPerm(String p) { return null; }
+            @Override public boolean fish(Principal bait, Permission ... pond) { return true; }
+            @Override public void fishAll(Principal bait, List<Permission> permissions) { }
+            @Override public void destroy() { }
+            @Override public boolean handlesExclusively(Permission ... pond) { return false; }
+            @Override public boolean handles(Principal principal) { return false; }
+            @Override public void remove(String user) { }
+            @Override public Resp reload(User<Permission> user) { return null; }
+            @Override public void setDebug(String commaDelimIDsOrNull) { }
+            @Override public void clear(Principal p, StringBuilder sb) { }
+        };
+        
+        MapPermConverter pc = new MapPermConverter();
+        
+        CadiWrap wrap = new CadiWrap(request, tafResp, lur1, pc);
+        
+        assertNotNull(wrap.getUserPrincipal());
+        assertNull(wrap.getRemoteUser());
+        assertNull(wrap.getUser());
+        
+        byte[] arr = {'1','2'};
+        wrap.setCred(arr);
+        
+        assertEquals(arr, wrap.getCred());
+        
+        wrap.setUser("User1");
+        assertEquals("User1", wrap.getUser());
+        
+        wrap.invalidate("1");
+        wrap.setPermConverter(new MapPermConverter());
+        
+        assertTrue(wrap.getLur() instanceof CachingLur);
+        assertTrue(wrap.isUserInRole("User1"));
+        
+        wrap.set(tafResp, lur);
+        assertFalse(wrap.isUserInRole("Perm1"));
+    }
 }

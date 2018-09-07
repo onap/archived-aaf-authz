@@ -30,40 +30,40 @@ import org.onap.aaf.misc.env.util.Chrono;
 import aaf.v2_0.MultiRequest;
 
 public class MultiCompare extends RosettaCompare<MultiRequest>  {
-	public MultiCompare() {
-		super(MultiRequest.class);
-	}
-	
-	@Override
-	public MultiRequest newOne() {
-		MultiRequest multi = new MultiRequest();
-		multi.setNsRequest(NSCompare.create());
-		multi.getNsAttribRequest().add(NSAttribCompare.create());
-		multi.getNsAttribRequest().add(NSAttribCompare.create());
-		multi.getRoleRequest().add(RoleCompare.create());
-		multi.getRoleRequest().add(RoleCompare.create());
-		multi.getPermRequest().add(PermCompare.create());
-		multi.getPermRequest().add(PermCompare.create());
-		multi.getCredRequest().add(CredCompare.create());
-		multi.getCredRequest().add(CredCompare.create());
-		multi.getUserRoleRequest().add(UserRoleCompare.create());
-		multi.getUserRoleRequest().add(UserRoleCompare.create());
-		multi.getRolePermRequest().add(RolePermCompare.create());
-		multi.getRolePermRequest().add(RolePermCompare.create());
-		
-		
-		GregorianCalendar gc = new GregorianCalendar();
-		multi.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		multi.setEnd(Chrono.timeStamp(gc));
-		return multi;
-	}
-	
-	public void compare(MultiRequest t1, MultiRequest t2) {
-		new NSCompare().compare(t1.getNsRequest(), t2.getNsRequest());
-		// Will have to find by key for others.
-		
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public MultiCompare() {
+        super(MultiRequest.class);
+    }
+    
+    @Override
+    public MultiRequest newOne() {
+        MultiRequest multi = new MultiRequest();
+        multi.setNsRequest(NSCompare.create());
+        multi.getNsAttribRequest().add(NSAttribCompare.create());
+        multi.getNsAttribRequest().add(NSAttribCompare.create());
+        multi.getRoleRequest().add(RoleCompare.create());
+        multi.getRoleRequest().add(RoleCompare.create());
+        multi.getPermRequest().add(PermCompare.create());
+        multi.getPermRequest().add(PermCompare.create());
+        multi.getCredRequest().add(CredCompare.create());
+        multi.getCredRequest().add(CredCompare.create());
+        multi.getUserRoleRequest().add(UserRoleCompare.create());
+        multi.getUserRoleRequest().add(UserRoleCompare.create());
+        multi.getRolePermRequest().add(RolePermCompare.create());
+        multi.getRolePermRequest().add(RolePermCompare.create());
+        
+        
+        GregorianCalendar gc = new GregorianCalendar();
+        multi.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        multi.setEnd(Chrono.timeStamp(gc));
+        return multi;
+    }
+    
+    public void compare(MultiRequest t1, MultiRequest t2) {
+        new NSCompare().compare(t1.getNsRequest(), t2.getNsRequest());
+        // Will have to find by key for others.
+        
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 }

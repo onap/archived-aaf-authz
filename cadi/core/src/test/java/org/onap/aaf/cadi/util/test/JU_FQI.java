@@ -30,15 +30,15 @@ import org.onap.aaf.cadi.util.FQI;
 
 public class JU_FQI {
 
-	@Test
-	public void reverseDomainTest() {
-		assertThat(FQI.reverseDomain("user@att.com"), is("com.att"));
-	}
+    @Test
+    public void reverseDomainTest() {
+        assertThat(FQI.reverseDomain("user@att.com"), is("com.att"));
+    }
 
-	@Test
-	public void coverageTest() {
-		@SuppressWarnings("unused")
-		FQI fqi = new FQI();
-	}
+    @Test
+    public void coverageTest() {
+        @SuppressWarnings("unused")
+        FQI fqi = new FQI();
+    }
 
 }

@@ -39,34 +39,34 @@ import aaf.v2_0.Perms;
  *
  */
 public class ListByRole extends Cmd {
-	private static final String HEADER = "List Perms by Role ";
-	
-	public ListByRole(List parent) {
-		super(parent,"role", 
-				new Param("name",true)); 
-	}
+    private static final String HEADER = "List Perms by Role ";
+    
+    public ListByRole(List parent) {
+        super(parent,"role", 
+                new Param("name",true)); 
+    }
 
-	public int _exec(final int idx, final String ... args) throws CadiException, APIException, LocatorException {
-		final String role=args[idx];
+    public int _exec(final int idx, final String ... args) throws CadiException, APIException, LocatorException {
+        final String role=args[idx];
 
-		return same(((List)parent).new ListPerms() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
+        return same(((List)parent).new ListPerms() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
 
-				Future<Perms> fp = client.read(
-						"/authz/perms/role/"+role+(aafcli.isDetailed()?"?ns":""), 
-						getDF(Perms.class)
-						);
-				return list(fp, HEADER, role);
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/perms/role/<role>",Perms.class,true);
-	}
+                Future<Perms> fp = client.read(
+                        "/authz/perms/role/"+role+(aafcli.isDetailed()?"?ns":""), 
+                        getDF(Perms.class)
+                        );
+                return list(fp, HEADER, role);
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/perms/role/<role>",Perms.class,true);
+    }
 
 
 }

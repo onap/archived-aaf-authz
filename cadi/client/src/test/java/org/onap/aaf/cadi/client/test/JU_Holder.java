@@ -29,17 +29,17 @@ import org.onap.aaf.cadi.client.Holder;
 
 public class JU_Holder {
 
-	@Test
-	public void test() {
-		String str1 = "a string";
-		String str2 = "another string";
-		Holder<String> holder = new Holder<String>(str1);
-		assertThat(holder.get(), is(str1));
-		assertThat(holder.toString(), is(str1));
-		
-		holder.set(str2);
-		assertThat(holder.get(), is(str2));
-		assertThat(holder.toString(), is(str2));
-	}
+    @Test
+    public void test() {
+        String str1 = "a string";
+        String str2 = "another string";
+        Holder<String> holder = new Holder<String>(str1);
+        assertThat(holder.get(), is(str1));
+        assertThat(holder.toString(), is(str1));
+        
+        holder.set(str2);
+        assertThat(holder.get(), is(str2));
+        assertThat(holder.toString(), is(str2));
+    }
 
 }

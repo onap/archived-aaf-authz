@@ -26,25 +26,25 @@ package org.onap.aaf.cadi;
  * @author Jonathan
  */
 public class CadiException extends Exception {
-	/**
-	 *  Generated ID 
-	 */
-	private static final long serialVersionUID = -4180145363107742619L;
+    /**
+     *  Generated ID 
+     */
+    private static final long serialVersionUID = -4180145363107742619L;
 
-	public CadiException() {
-		super();
-	}
+    public CadiException() {
+        super();
+    }
 
-	public CadiException(String message) {
-		super(message);
-	}
+    public CadiException(String message) {
+        super(message);
+    }
 
-	public CadiException(Throwable cause) {
-		super(cause);
-	}
+    public CadiException(Throwable cause) {
+        super(cause);
+    }
 
-	public CadiException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public CadiException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

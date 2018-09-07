@@ -51,92 +51,92 @@ import aaf.v2_0.Nss;
 import aaf.v2_0.Nss.Ns;
 
 public class NssShow extends Page {
-	public static final String HREF = "/gui/ns";
+    public static final String HREF = "/gui/ns";
 
-	public NssShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env, "MyNamespaces",HREF, NO_FIELDS,
-				new BreadCrumbs(breadcrumbs), 
-				new Table<AAF_GUI,AuthzTrans>("Namespaces I administer",gui.env.newTransNoAvg(),new Model(true,"Administrator",gui.env), 
-						"class=std", "style=display: inline-block; width: 45%; margin: 10px;"),
-				new Table<AAF_GUI,AuthzTrans>("Namespaces I own",gui.env.newTransNoAvg(),new Model(false,"Owner",gui.env),
-						"class=std", "style=display: inline-block; width: 45%; margin: 10px;"));
-	}
-	
-	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		private String[] headers;
-		private String privilege = null;
-		public final Slot sNssByUser;
-		private boolean isAdmin;
+    public NssShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env, "MyNamespaces",HREF, NO_FIELDS,
+                new BreadCrumbs(breadcrumbs), 
+                new Table<AAF_GUI,AuthzTrans>("Namespaces I administer",gui.env.newTransNoAvg(),new Model(true,"Administrator",gui.env), 
+                        "class=std", "style=display: inline-block; width: 45%; margin: 10px;"),
+                new Table<AAF_GUI,AuthzTrans>("Namespaces I own",gui.env.newTransNoAvg(),new Model(false,"Owner",gui.env),
+                        "class=std", "style=display: inline-block; width: 45%; margin: 10px;"));
+    }
+    
+    private static class Model extends TableData<AAF_GUI,AuthzTrans> {
+        private String[] headers;
+        private String privilege = null;
+        public final Slot sNssByUser;
+        private boolean isAdmin;
 
-		public Model(boolean admin, String privilege,AuthzEnv env) {
-			super();
-			headers = new String[] {privilege};
-			this.privilege = privilege;
-			isAdmin = admin;
-			sNssByUser = env.slot("NSS_SHOW_MODEL_DATA");
-		}
+        public Model(boolean admin, String privilege,AuthzEnv env) {
+            super();
+            headers = new String[] {privilege};
+            this.privilege = privilege;
+            isAdmin = admin;
+            sNssByUser = env.slot("NSS_SHOW_MODEL_DATA");
+        }
 
-		@Override
-		public String[] headers() {
-			return headers;
-		}
-		
-		@Override
-		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			ArrayList<AbsCell[]> rv = new ArrayList<>();
-			List<Ns> nss = trans.get(sNssByUser, null);
-			if(nss==null) {
-				TimeTaken tt = trans.start("AAF Nss by User for " + privilege,Env.REMOTE);
-				try {
-					nss = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<List<Ns>>() {
-						@Override
-						public List<Ns> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-							List<Ns> nss = null;
-							Future<Nss> fp = client.read("/authz/nss/either/" + trans.user(),gui.getDF(Nss.class));
-							if(fp.get(AAF_GUI.TIMEOUT)) {
-								TimeTaken tt = trans.start("Load Data for " + privilege, Env.SUB);
-								try {
-									if(fp.value!=null) {
-										nss = fp.value.getNs();
-										Collections.sort(nss, new Comparator<Ns>() {
-											public int compare(Ns ns1, Ns ns2) {
-												return ns1.getName().compareToIgnoreCase(ns2.getName());
-											}
-										});
-										trans.put(sNssByUser,nss);
-									} 
-								} finally {
-									tt.done();
-								}
-							}else {
-								gui.writeError(trans, fp, null,0);
-							}
-							return nss;
-						}
-					});
-				} catch (Exception e) {
-					trans.error().log(e);
-				} finally {
-					tt.done();
-				}
-			}
-			
-			if(nss!=null) {
-				for(Ns n : nss) {
-					if((isAdmin && !n.getAdmin().isEmpty())
-					  || (!isAdmin && !n.getResponsible().isEmpty())) {
-						AbsCell[] sa = new AbsCell[] {
-							new RefCell(n.getName(),NsDetail.HREF
-									+"?ns="+n.getName(),false),
-						};
-						rv.add(sa);
-					}
-				}
-			}
+        @Override
+        public String[] headers() {
+            return headers;
+        }
+        
+        @Override
+        public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
+            ArrayList<AbsCell[]> rv = new ArrayList<>();
+            List<Ns> nss = trans.get(sNssByUser, null);
+            if(nss==null) {
+                TimeTaken tt = trans.start("AAF Nss by User for " + privilege,Env.REMOTE);
+                try {
+                    nss = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<List<Ns>>() {
+                        @Override
+                        public List<Ns> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                            List<Ns> nss = null;
+                            Future<Nss> fp = client.read("/authz/nss/either/" + trans.user(),gui.getDF(Nss.class));
+                            if(fp.get(AAF_GUI.TIMEOUT)) {
+                                TimeTaken tt = trans.start("Load Data for " + privilege, Env.SUB);
+                                try {
+                                    if(fp.value!=null) {
+                                        nss = fp.value.getNs();
+                                        Collections.sort(nss, new Comparator<Ns>() {
+                                            public int compare(Ns ns1, Ns ns2) {
+                                                return ns1.getName().compareToIgnoreCase(ns2.getName());
+                                            }
+                                        });
+                                        trans.put(sNssByUser,nss);
+                                    } 
+                                } finally {
+                                    tt.done();
+                                }
+                            }else {
+                                gui.writeError(trans, fp, null,0);
+                            }
+                            return nss;
+                        }
+                    });
+                } catch (Exception e) {
+                    trans.error().log(e);
+                } finally {
+                    tt.done();
+                }
+            }
+            
+            if(nss!=null) {
+                for(Ns n : nss) {
+                    if((isAdmin && !n.getAdmin().isEmpty())
+                      || (!isAdmin && !n.getResponsible().isEmpty())) {
+                        AbsCell[] sa = new AbsCell[] {
+                            new RefCell(n.getName(),NsDetail.HREF
+                                    +"?ns="+n.getName(),false),
+                        };
+                        rv.add(sa);
+                    }
+                }
+            }
 
-			return new Cells(rv,null);
-		}
-	}
-	
+            return new Cells(rv,null);
+        }
+    }
+    
 
 }

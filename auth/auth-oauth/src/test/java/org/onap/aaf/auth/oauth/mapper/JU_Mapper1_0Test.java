@@ -49,178 +49,178 @@ import aafoauth.v2_0.Token;
 import aafoauth.v2_0.TokenRequest;
 
 public class JU_Mapper1_0Test {
-	@Mock
-	private HttpServletRequest req;
+    @Mock
+    private HttpServletRequest req;
 
-	@Mock
-	private TokenRequest tokenRequest;
+    @Mock
+    private TokenRequest tokenRequest;
 
-	@Mock
-	private Holder<GRANT_TYPE> hgt;
+    @Mock
+    private Holder<GRANT_TYPE> hgt;
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	private OAuth2Principal p;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private OAuth2Principal p;
 
-	private Data data;
+    private Data data;
 
-	@Before
-	public void setup() {
-		initMocks(this);
-		data = new Data();
-		data.id = "id";
-	}
+    @Before
+    public void setup() {
+        initMocks(this);
+        data = new Data();
+        data.id = "id";
+    }
 
-	@Test
-	public void testMapper() {
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
-		assertEquals(TokenRequest.class, mapper.getClass(API.TOKEN_REQ));
-		assertEquals(Token.class, mapper.getClass(API.TOKEN));
-		assertEquals(Introspect.class, mapper.getClass(API.INTROSPECT));
-		assertEquals(Error.class, mapper.getClass(API.ERROR));
-		assertEquals(Void.class, mapper.getClass(API.VOID));
+    @Test
+    public void testMapper() {
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        assertEquals(TokenRequest.class, mapper.getClass(API.TOKEN_REQ));
+        assertEquals(Token.class, mapper.getClass(API.TOKEN));
+        assertEquals(Introspect.class, mapper.getClass(API.INTROSPECT));
+        assertEquals(Error.class, mapper.getClass(API.ERROR));
+        assertEquals(Void.class, mapper.getClass(API.VOID));
 
-		assertTrue(mapper.newInstance(API.TOKEN_REQ) instanceof TokenRequest);
-		assertTrue(mapper.newInstance(API.TOKEN) instanceof Token);
-		assertTrue(mapper.newInstance(API.INTROSPECT) instanceof Introspect);
-		assertTrue(mapper.newInstance(API.ERROR) instanceof Error);
-		assertEquals(null, mapper.newInstance(API.VOID));
+        assertTrue(mapper.newInstance(API.TOKEN_REQ) instanceof TokenRequest);
+        assertTrue(mapper.newInstance(API.TOKEN) instanceof Token);
+        assertTrue(mapper.newInstance(API.INTROSPECT) instanceof Introspect);
+        assertTrue(mapper.newInstance(API.ERROR) instanceof Error);
+        assertEquals(null, mapper.newInstance(API.VOID));
 
-		Error error = mapper.errorFromMessage(null, null, "text", "var1", "var2");
-		assertEquals("text", error.getText());
+        Error error = mapper.errorFromMessage(null, null, "text", "var1", "var2");
+        assertEquals("text", error.getText());
 
-		Object tokenReqFromParams = mapper.tokenReqFromParams(req);
-		assertNull(tokenReqFromParams);
-	}
+        Object tokenReqFromParams = mapper.tokenReqFromParams(req);
+        assertNull(tokenReqFromParams);
+    }
 
-	@Test
-	public void testTokeReqFromParams() {
-		Map<String, String[]> parameterMap = new TreeMap<String, String[]>();
-		parameterMap.put("client_id", new String[] { "ClientId1" });
-		parameterMap.put("client_secret", new String[] { "client_secret" });
-		parameterMap.put("username", new String[] { "username" });
-		parameterMap.put("password", new String[] { "password" });
-		parameterMap.put("scope", new String[] { "scope" });
-		parameterMap.put("grant_type", new String[] { "grant_type" });
-		parameterMap.put("refresh_token", new String[] { "refresh_token" });
-		parameterMap.put("etc", new String[] { "etc" });
-		when(req.getParameterMap()).thenReturn(parameterMap);
+    @Test
+    public void testTokeReqFromParams() {
+        Map<String, String[]> parameterMap = new TreeMap<String, String[]>();
+        parameterMap.put("client_id", new String[] { "ClientId1" });
+        parameterMap.put("client_secret", new String[] { "client_secret" });
+        parameterMap.put("username", new String[] { "username" });
+        parameterMap.put("password", new String[] { "password" });
+        parameterMap.put("scope", new String[] { "scope" });
+        parameterMap.put("grant_type", new String[] { "grant_type" });
+        parameterMap.put("refresh_token", new String[] { "refresh_token" });
+        parameterMap.put("etc", new String[] { "etc" });
+        when(req.getParameterMap()).thenReturn(parameterMap);
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		TokenRequest param = mapper.tokenReqFromParams(req);
+        TokenRequest param = mapper.tokenReqFromParams(req);
 
-		assertEquals("ClientId1", param.getClientId());
-		assertEquals("client_secret", param.getClientSecret());
-		assertEquals("username", param.getUsername());
-		assertEquals("password", param.getPassword());
-		assertEquals("scope", param.getScope());
-		assertEquals("grant_type", param.getGrantType());
-		assertEquals("refresh_token", param.getRefreshToken());
+        assertEquals("ClientId1", param.getClientId());
+        assertEquals("client_secret", param.getClientSecret());
+        assertEquals("username", param.getUsername());
+        assertEquals("password", param.getPassword());
+        assertEquals("scope", param.getScope());
+        assertEquals("grant_type", param.getGrantType());
+        assertEquals("refresh_token", param.getRefreshToken());
 
-		OCreds credsFromReq = mapper.credsFromReq(param);
-		assertEquals("ClientId1", credsFromReq.client_id);
-		assertEquals("username", credsFromReq.username);
+        OCreds credsFromReq = mapper.credsFromReq(param);
+        assertEquals("ClientId1", credsFromReq.client_id);
+        assertEquals("username", credsFromReq.username);
 
-	}
+    }
 
-	@Test
-	public void testTokeReqFromParamsWithNoValues() {
-		Map<String, String[]> parameterMap = new TreeMap<String, String[]>();
-		parameterMap.put("client_id", new String[] {});
-		parameterMap.put("client_secret", new String[] {});
-		parameterMap.put("username", new String[] {});
-		parameterMap.put("password", new String[] {});
-		parameterMap.put("scope", new String[] {});
-		parameterMap.put("grant_type", new String[] {});
-		parameterMap.put("refresh_token", new String[] {});
-		parameterMap.put("etc", new String[] {});
-		when(req.getParameterMap()).thenReturn(parameterMap);
+    @Test
+    public void testTokeReqFromParamsWithNoValues() {
+        Map<String, String[]> parameterMap = new TreeMap<String, String[]>();
+        parameterMap.put("client_id", new String[] {});
+        parameterMap.put("client_secret", new String[] {});
+        parameterMap.put("username", new String[] {});
+        parameterMap.put("password", new String[] {});
+        parameterMap.put("scope", new String[] {});
+        parameterMap.put("grant_type", new String[] {});
+        parameterMap.put("refresh_token", new String[] {});
+        parameterMap.put("etc", new String[] {});
+        when(req.getParameterMap()).thenReturn(parameterMap);
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Object param = mapper.tokenReqFromParams(req);
+        Object param = mapper.tokenReqFromParams(req);
 
-		assertNull(param);
+        assertNull(param);
 
-	}
+    }
 
-	@Test
-	public void testClientTokenReqWithClientCred() {
-		when(hgt.get()).thenReturn(GRANT_TYPE.client_credentials);
-		when(tokenRequest.getState()).thenReturn("State");
-		when(tokenRequest.getGrantType()).thenReturn("client_credentials");
-		when(tokenRequest.getScope()).thenReturn("Scope");
+    @Test
+    public void testClientTokenReqWithClientCred() {
+        when(hgt.get()).thenReturn(GRANT_TYPE.client_credentials);
+        when(tokenRequest.getState()).thenReturn("State");
+        when(tokenRequest.getGrantType()).thenReturn("client_credentials");
+        when(tokenRequest.getScope()).thenReturn("Scope");
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Data clientTokenReq = mapper.clientTokenReq(tokenRequest, hgt);
+        Data clientTokenReq = mapper.clientTokenReq(tokenRequest, hgt);
 
-		assertEquals("State", clientTokenReq.state);
-		assertTrue(clientTokenReq.scopes.contains("Scope"));
+        assertEquals("State", clientTokenReq.state);
+        assertTrue(clientTokenReq.scopes.contains("Scope"));
 
-	}
+    }
 
-	@Test
-	public void testClientTokenReqWithPassword() {
-		when(hgt.get()).thenReturn(GRANT_TYPE.unknown);
-		when(tokenRequest.getState()).thenReturn("State");
-		when(tokenRequest.getRefreshToken()).thenReturn("UnKnown");
+    @Test
+    public void testClientTokenReqWithPassword() {
+        when(hgt.get()).thenReturn(GRANT_TYPE.unknown);
+        when(tokenRequest.getState()).thenReturn("State");
+        when(tokenRequest.getRefreshToken()).thenReturn("UnKnown");
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Data clientTokenReq = mapper.clientTokenReq(tokenRequest, hgt);
+        Data clientTokenReq = mapper.clientTokenReq(tokenRequest, hgt);
 
-		assertEquals("State", clientTokenReq.state);
-		assertEquals(clientTokenReq.type, 0);
-	}
+        assertEquals("State", clientTokenReq.state);
+        assertEquals(clientTokenReq.type, 0);
+    }
 
-	@Test
-	public void testTokenFromDataWithNotOk() {
-		Result<Data> dataResult = Result.create(null, 1, "detail", "var");
+    @Test
+    public void testTokenFromDataWithNotOk() {
+        Result<Data> dataResult = Result.create(null, 1, "detail", "var");
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Result<Token> clientTokenReq = mapper.tokenFromData(dataResult);
+        Result<Token> clientTokenReq = mapper.tokenFromData(dataResult);
 
-		assertEquals(null, clientTokenReq.value);
-	}
+        assertEquals(null, clientTokenReq.value);
+    }
 
-	@Test
-	public void testTokenFromData() {
+    @Test
+    public void testTokenFromData() {
 
-		Result<Data> dataResult = Result.create(data, 0, "detail", "var");
+        Result<Data> dataResult = Result.create(data, 0, "detail", "var");
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Result<Token> clientTokenReq = mapper.tokenFromData(dataResult);
+        Result<Token> clientTokenReq = mapper.tokenFromData(dataResult);
 
-		assertEquals(clientTokenReq.value.getAccessToken(), data.id);
-	}
+        assertEquals(clientTokenReq.value.getAccessToken(), data.id);
+    }
 
-	@Test
-	public void testTokenFromDataWithNoTokenType() {
-		data.type = 20;
+    @Test
+    public void testTokenFromDataWithNoTokenType() {
+        data.type = 20;
 
-		Result<Data> dataResult = Result.create(data, 0, "detail", "var");
+        Result<Data> dataResult = Result.create(data, 0, "detail", "var");
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Result<Token> clientTokenReq = mapper.tokenFromData(dataResult);
+        Result<Token> clientTokenReq = mapper.tokenFromData(dataResult);
 
-		assertEquals(clientTokenReq.value.getAccessToken(), data.id);
-		assertEquals(clientTokenReq.value.getTokenType(), "Invalid");
-	}
+        assertEquals(clientTokenReq.value.getAccessToken(), data.id);
+        assertEquals(clientTokenReq.value.getTokenType(), "Invalid");
+    }
 
-	@Test
-	public void testFromPrincipal() {
+    @Test
+    public void testFromPrincipal() {
 
-		Introspect introspect = new Introspect();
-		when(p.tokenPerm().getIntrospect()).thenReturn(introspect);
+        Introspect introspect = new Introspect();
+        when(p.tokenPerm().getIntrospect()).thenReturn(introspect);
 
-		Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
+        Mapper<TokenRequest, Token, Introspect, Error> mapper = new Mapper1_0();
 
-		Introspect intro = mapper.fromPrincipal(p);
+        Introspect intro = mapper.fromPrincipal(p);
 
-		assertEquals(introspect, intro);
-	}
+        assertEquals(introspect, intro);
+    }
 }

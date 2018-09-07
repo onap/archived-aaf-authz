@@ -27,33 +27,33 @@ import org.onap.aaf.misc.rosetta.Parse;
 import org.onap.aaf.misc.rosetta.Parsed;
 
 public abstract class FieldMarshal<T> extends Marshal<T> {
-	private String name;
+    private String name;
 
-	public FieldMarshal(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	@Override
-	public Parsed<State> parse(T t, Parsed<State> parsed) {
-		parsed.state.ladder.push(DONE_ITERATOR);
-		parsed.event = Parse.NEXT;
-		parsed.name = name;
-		parsed.isString = data(t,parsed.sb);
-		return parsed;
-	}
+    public FieldMarshal(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public Parsed<State> parse(T t, Parsed<State> parsed) {
+        parsed.state.ladder.push(DONE_ITERATOR);
+        parsed.event = Parse.NEXT;
+        parsed.name = name;
+        parsed.isString = data(t,parsed.sb);
+        return parsed;
+    }
 
-	/**
-	 * Write Value to StringBuilder
-	 * Return true if value looks like a String
-	 *        false if it is Numeric
-	 * @param t
-	 * @param sb
-	 * @return
-	 */
-	protected abstract boolean data(T t, StringBuilder sb);
-	
+    /**
+     * Write Value to StringBuilder
+     * Return true if value looks like a String
+     *        false if it is Numeric
+     * @param t
+     * @param sb
+     * @return
+     */
+    protected abstract boolean data(T t, StringBuilder sb);
+    
 }

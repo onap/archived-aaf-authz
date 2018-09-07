@@ -25,9 +25,9 @@ import org.junit.Test;
 
 public class JU_BetterRoute {
 
-	@Test
-	public void test() {
-		
-	}
+    @Test
+    public void test() {
+        
+    }
 
 }

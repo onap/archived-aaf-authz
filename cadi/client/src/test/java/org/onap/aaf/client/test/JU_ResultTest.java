@@ -30,79 +30,79 @@ import org.onap.aaf.cadi.client.Result;
 
 public class JU_ResultTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void testOk() {
-		Result<String> t = Result.ok(1, "Ok");
-		assertNotNull(t);
-		assertThat(t.code, is(1));
-		assertTrue(t.isOK());
-		assertThat(t.toString(), is("Code: 1"));
-	}
+    @Test
+    public void testOk() {
+        Result<String> t = Result.ok(1, "Ok");
+        assertNotNull(t);
+        assertThat(t.code, is(1));
+        assertTrue(t.isOK());
+        assertThat(t.toString(), is("Code: 1"));
+    }
 
-	@Test
-	public void testErr() {
-		Result<String> t = Result.err(1, "Error Body");
-		assertNotNull(t);
-		assertThat(t.error, is("Error Body"));
-		assertFalse(t.isOK());
-		assertThat(t.toString(), is("Code: 1 = Error Body"));
-	}
-	
-	@Test
-	public void testOk1() {
-		Result<String> t = Result.ok(1, "Ok");
-		assertNotNull(t);
-		assertThat(t.code, is(1));
-		assertTrue(t.isOK());
-		assertThat(t.toString(), is("Code: 1"));
-	}
+    @Test
+    public void testErr() {
+        Result<String> t = Result.err(1, "Error Body");
+        assertNotNull(t);
+        assertThat(t.error, is("Error Body"));
+        assertFalse(t.isOK());
+        assertThat(t.toString(), is("Code: 1 = Error Body"));
+    }
+    
+    @Test
+    public void testOk1() {
+        Result<String> t = Result.ok(1, "Ok");
+        assertNotNull(t);
+        assertThat(t.code, is(1));
+        assertTrue(t.isOK());
+        assertThat(t.toString(), is("Code: 1"));
+    }
 
-	@Test
-	public void testErr1() {
-		Result<String> t = Result.err(1, "Error Body");
-		assertNotNull(t);
-		assertThat(t.error, is("Error Body"));
-		assertFalse(t.isOK());
-		assertThat(t.toString(), is("Code: 1 = Error Body"));
-	}
-	
-	@Test
-	public void testOk2() {
-		Result<String> t = Result.ok(1, "Ok");
-		assertNotNull(t);
-		assertThat(t.code, is(1));
-		assertTrue(t.isOK());
-		assertThat(t.toString(), is("Code: 1"));
-	}
+    @Test
+    public void testErr1() {
+        Result<String> t = Result.err(1, "Error Body");
+        assertNotNull(t);
+        assertThat(t.error, is("Error Body"));
+        assertFalse(t.isOK());
+        assertThat(t.toString(), is("Code: 1 = Error Body"));
+    }
+    
+    @Test
+    public void testOk2() {
+        Result<String> t = Result.ok(1, "Ok");
+        assertNotNull(t);
+        assertThat(t.code, is(1));
+        assertTrue(t.isOK());
+        assertThat(t.toString(), is("Code: 1"));
+    }
 
-	@Test
-	public void testErr2() {
-		Result<String> t = Result.err(1, "Error Body");
-		assertNotNull(t);
-		assertThat(t.error, is("Error Body"));
-		assertFalse(t.isOK());
-		assertThat(t.toString(), is("Code: 1 = Error Body"));
-	}
-	
-	@Test
-	public void testOk3() {
-		Result<String> t = Result.ok(1, "Ok");
-		assertNotNull(t);
-		assertThat(t.code, is(1));
-		assertTrue(t.isOK());
-		assertThat(t.toString(), is("Code: 1"));
-	}
+    @Test
+    public void testErr2() {
+        Result<String> t = Result.err(1, "Error Body");
+        assertNotNull(t);
+        assertThat(t.error, is("Error Body"));
+        assertFalse(t.isOK());
+        assertThat(t.toString(), is("Code: 1 = Error Body"));
+    }
+    
+    @Test
+    public void testOk3() {
+        Result<String> t = Result.ok(1, "Ok");
+        assertNotNull(t);
+        assertThat(t.code, is(1));
+        assertTrue(t.isOK());
+        assertThat(t.toString(), is("Code: 1"));
+    }
 
-	@Test
-	public void testErr3() {
-		Result<String> t = Result.err(1, "Error Body");
-		assertNotNull(t);
-		assertThat(t.error, is("Error Body"));
-		assertFalse(t.isOK());
-		assertThat(t.toString(), is("Code: 1 = Error Body"));
-	}
+    @Test
+    public void testErr3() {
+        Result<String> t = Result.err(1, "Error Body");
+        assertNotNull(t);
+        assertThat(t.error, is("Error Body"));
+        assertFalse(t.isOK());
+        assertThat(t.toString(), is("Code: 1 = Error Body"));
+    }
 }

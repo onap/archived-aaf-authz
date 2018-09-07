@@ -32,31 +32,31 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class RoleDelete extends ActionDAO<Role,Void,String> {
-	public RoleDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster, dryRun);
-	}
-	
-	public RoleDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public RoleDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster, dryRun);
+    }
+    
+    public RoleDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, Role r,String text) {
-		if(dryRun) {
-			trans.info().log("Would Delete Role:",text,r.fullName());
-			return Result.ok();
-		} else {
-			RoleDAO.Data rdd = new RoleDAO.Data();
-			rdd.ns = r.ns;
-			rdd.name = r.name;
-			Result<Void> rv = q.roleDAO.delete(trans, rdd, true); // need to read for undelete
-			if(rv.isOK()) {
-				trans.info().log("Deleted Role:",text,r.fullName());
-			} else {
-				trans.error().log("Error Deleting Role -",rv.details,":",r.fullName());
-			}
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Void> exec(AuthzTrans trans, Role r,String text) {
+        if(dryRun) {
+            trans.info().log("Would Delete Role:",text,r.fullName());
+            return Result.ok();
+        } else {
+            RoleDAO.Data rdd = new RoleDAO.Data();
+            rdd.ns = r.ns;
+            rdd.name = r.name;
+            Result<Void> rv = q.roleDAO.delete(trans, rdd, true); // need to read for undelete
+            if(rv.isOK()) {
+                trans.info().log("Deleted Role:",text,r.fullName());
+            } else {
+                trans.error().log("Error Deleting Role -",rv.details,":",r.fullName());
+            }
+            return rv;
+        }
+    }
+    
 }

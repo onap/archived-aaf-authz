@@ -24,30 +24,30 @@ package org.onap.aaf.cadi.principal;
 import java.security.Principal;
 
 public class Kind {
-	public static final char X509 = 'X';
-	public static final char OAUTH = 'O';
-	public static final char AAF_OAUTH='A';
-	public static final char BASIC_AUTH = 'B';
-	public static final char UNKNOWN = 'U';
-	
-	
-	public static char getKind(final Principal principal) {
-		Principal check;
-		if(principal instanceof TrustPrincipal) {
-			check = ((TrustPrincipal)principal).original();
-		} else {
-			check = principal;
-		}
-		if(check instanceof X509Principal) {
-			return X509;
-		}
-		if(check instanceof OAuth2FormPrincipal) {
-			// Note: if AAF, will turn into 'A'
-			return OAUTH;
-		}
-		if(check instanceof BasicPrincipal) {
-			return BASIC_AUTH;
-		}
-		return UNKNOWN;
-	}
+    public static final char X509 = 'X';
+    public static final char OAUTH = 'O';
+    public static final char AAF_OAUTH='A';
+    public static final char BASIC_AUTH = 'B';
+    public static final char UNKNOWN = 'U';
+    
+    
+    public static char getKind(final Principal principal) {
+        Principal check;
+        if(principal instanceof TrustPrincipal) {
+            check = ((TrustPrincipal)principal).original();
+        } else {
+            check = principal;
+        }
+        if(check instanceof X509Principal) {
+            return X509;
+        }
+        if(check instanceof OAuth2FormPrincipal) {
+            // Note: if AAF, will turn into 'A'
+            return OAUTH;
+        }
+        if(check instanceof BasicPrincipal) {
+            return BASIC_AUTH;
+        }
+        return UNKNOWN;
+    }
 }

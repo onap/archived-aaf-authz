@@ -37,84 +37,84 @@ import java.util.TreeMap;
 
 public class MonthData {
     public final Map<Integer,Set<Row>> data = new TreeMap<>();
-	private File f;
+    private File f;
     
     public MonthData(String env) throws IOException {
-    	f = new File("Monthly"+env+".dat");
-    	
-    	if(f.exists()) {
-    		BufferedReader br = new BufferedReader(new FileReader(f));
-    		try {
-    			String line;
-    			String[] split;
-    			while((line=br.readLine())!=null) {
-    				if(!line.startsWith("#")) {
-    					split = Split.split(',', line);
-    					if(split.length==5) {
-    						add(Integer.parseInt(split[0]),split[1],
-    							Integer.parseInt(split[2]),
-    							Integer.parseInt(split[3]),
-    							Integer.parseInt(split[4])
-    						);
-    					}
-    				}
-    			}
-    		} finally {
-    			br.close();
-    		}
-    	}
+        f = new File("Monthly"+env+".dat");
+        
+        if(f.exists()) {
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            try {
+                String line;
+                String[] split;
+                while((line=br.readLine())!=null) {
+                    if(!line.startsWith("#")) {
+                        split = Split.split(',', line);
+                        if(split.length==5) {
+                            add(Integer.parseInt(split[0]),split[1],
+                                Integer.parseInt(split[2]),
+                                Integer.parseInt(split[3]),
+                                Integer.parseInt(split[4])
+                            );
+                        }
+                    }
+                }
+            } finally {
+                br.close();
+            }
+        }
     }
     
     public void add(int yr_mon, String target, long total, long adds, long drops) {
-		Set<Row> row = data.get(yr_mon);
-		if(row==null) {
-			data.put(yr_mon, (row=new HashSet<>()));
-		}
-		row.add(new Row(target,total,adds,drops));
-	}
-    
-    public boolean notExists(int yr_mon) {
-    	return data.get(yr_mon)==null;
+        Set<Row> row = data.get(yr_mon);
+        if(row==null) {
+            data.put(yr_mon, (row=new HashSet<>()));
+        }
+        row.add(new Row(target,total,adds,drops));
     }
     
- 	public static class Row implements Comparable<Row> {
-    	public final String target;
-    	public final long total;
-    	public final long adds;
-    	public final long drops;
-    	
-    	public Row(String t, long it, long a, long d) {
-    		target = t;
-    		total = it;
-    		adds = a;
-    		drops = d;
-    	}
+    public boolean notExists(int yr_mon) {
+        return data.get(yr_mon)==null;
+    }
+    
+     public static class Row implements Comparable<Row> {
+        public final String target;
+        public final long total;
+        public final long adds;
+        public final long drops;
+        
+        public Row(String t, long it, long a, long d) {
+            target = t;
+            total = it;
+            adds = a;
+            drops = d;
+        }
 
-		@Override
-		public int compareTo(Row o) {
-			return target.compareTo(o.target);
-		}
-		
-		public String toString() {
-			return target + '|' + total + '|' + drops + '|' + adds;
-		}
+        @Override
+        public int compareTo(Row o) {
+            return target.compareTo(o.target);
+        }
+        
+        public String toString() {
+            return target + '|' + total + '|' + drops + '|' + adds;
+        }
     }
 
     public void write() throws IOException {
-    	if(f.exists()) {
-    		File bu = new File(f.getName()+".bak");
-    		f.renameTo(bu);
-    	}
-		PrintStream ps = new PrintStream(f);
-		try {
-			for( Entry<Integer, Set<Row>> rows : data.entrySet()) {
-				for(Row row : rows.getValue()) {
-					ps.printf("%d,%s,%d,%d,%d\n",rows.getKey(),row.target,row.total,row.adds,row.drops);
-				}
-			}
-		} finally {
-			ps.close();
-		}
+        if(f.exists()) {
+            File bu = new File(f.getName()+".bak");
+            f.renameTo(bu);
+        }
+        PrintStream ps = new PrintStream(f);
+        try {
+            for( Entry<Integer, Set<Row>> rows : data.entrySet()) {
+                for(Row row : rows.getValue()) {
+                    ps.printf("%d,%s,%d,%d,%d\n",rows.getKey(),row.target,row.total,row.adds,row.drops);
+                }
+            }
+        } finally {
+            ps.close();
+        }
     }
 
 }

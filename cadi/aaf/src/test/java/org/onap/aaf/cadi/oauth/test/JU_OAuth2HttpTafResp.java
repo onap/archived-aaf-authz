@@ -40,29 +40,29 @@ import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_OAuth2HttpTafResp {
 
-	private static final String description = "description";
+    private static final String description = "description";
 
-	@Mock private TrustPrincipal princMock;
-	@Mock private OAuth2Principal oauthMock;
-	@Mock private HttpServletResponse respMock;
+    @Mock private TrustPrincipal princMock;
+    @Mock private OAuth2Principal oauthMock;
+    @Mock private HttpServletResponse respMock;
 
-	private PropAccess access;
+    private PropAccess access;
 
-	private RESP status;
+    private RESP status;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		status = RESP.NO_FURTHER_PROCESSING;
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        status = RESP.NO_FURTHER_PROCESSING;
+    }
 
-	@Test
-	public void test() throws IOException {
-		OAuth2HttpTafResp resp = new OAuth2HttpTafResp(access, princMock,  description, status, respMock);
-		resp = new OAuth2HttpTafResp(access, oauthMock,  description, status, respMock, true);
-		assertThat(resp.isFailedAttempt(), is(true));
-		assertThat(resp.isAuthenticated(), is(status));
-		assertThat(resp.authenticate(), is(RESP.HTTP_REDIRECT_INVOKED));
-	}
+    @Test
+    public void test() throws IOException {
+        OAuth2HttpTafResp resp = new OAuth2HttpTafResp(access, princMock,  description, status, respMock);
+        resp = new OAuth2HttpTafResp(access, oauthMock,  description, status, respMock, true);
+        assertThat(resp.isFailedAttempt(), is(true));
+        assertThat(resp.isAuthenticated(), is(status));
+        assertThat(resp.authenticate(), is(RESP.HTTP_REDIRECT_INVOKED));
+    }
 
 }

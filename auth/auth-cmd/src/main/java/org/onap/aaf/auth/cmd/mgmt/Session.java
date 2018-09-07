@@ -25,8 +25,8 @@ import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.misc.env.APIException;
 
 public class Session extends BaseCmd<Mgmt> {
-	public Session(Mgmt mgmt) throws APIException {
-		super(mgmt, "dbsession");
-		cmds.add(new SessClear(this));
-	}
+    public Session(Mgmt mgmt) throws APIException {
+        super(mgmt, "dbsession");
+        cmds.add(new SessClear(this));
+    }
 }

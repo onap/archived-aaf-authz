@@ -33,61 +33,61 @@ import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.cadi.configure.Factory;
 
 public class X509ChainWithIssuer extends X509andChain {
-	private String issuerDN;
-	public X509Certificate caX509;
+    private String issuerDN;
+    public X509Certificate caX509;
 
-	public X509ChainWithIssuer(X509ChainWithIssuer orig, X509Certificate x509) throws IOException, CertException {
-		super(x509,orig.trustChain);
-		issuerDN=orig.issuerDN;		
-	}
-	
-	public X509ChainWithIssuer(final List<? extends Reader> rdrs) throws IOException, CertException {
-		// Trust Chain.  Last one should be the CA
-		Collection<? extends Certificate> certs;
-		X509Certificate x509;
-		for(Reader rdr : rdrs) {
-			if(rdr==null) { // cover for badly formed array
-				continue;
-			}
-			
-			byte[] bytes = Factory.decode(rdr,null);
-			try {
-				certs = Factory.toX509Certificate(bytes);
-			} catch (CertificateException e) {
-				throw new CertException(e);
-			}
-			for(Certificate c : certs) {
-				x509=(X509Certificate)c;
-				Principal subject = x509.getSubjectDN();
-				if(subject==null) {
-					continue;
-				}
-				if(cert==null) { // first in Trust Chain
-					issuerDN = subject.toString();
-					cert=x509; // adding each time makes sure last one is signer.
-				}
-				addTrustChainEntry(x509);
-			}
-		}
-	}
-	
-	public X509ChainWithIssuer(Certificate[] certs) throws IOException, CertException {
-		X509Certificate x509;
-		for(int i=certs.length-1; i>=0; --i) {
-			x509=(X509Certificate)certs[i];
-			Principal subject = x509.getSubjectDN();
-			if(subject!=null) {
-				addTrustChainEntry(x509);
-				if(i==0) { // last one is signer
-					cert=x509; 
-					issuerDN= subject.toString(); 
-				}
-			}
-		}
-	}
+    public X509ChainWithIssuer(X509ChainWithIssuer orig, X509Certificate x509) throws IOException, CertException {
+        super(x509,orig.trustChain);
+        issuerDN=orig.issuerDN;        
+    }
+    
+    public X509ChainWithIssuer(final List<? extends Reader> rdrs) throws IOException, CertException {
+        // Trust Chain.  Last one should be the CA
+        Collection<? extends Certificate> certs;
+        X509Certificate x509;
+        for(Reader rdr : rdrs) {
+            if(rdr==null) { // cover for badly formed array
+                continue;
+            }
+            
+            byte[] bytes = Factory.decode(rdr,null);
+            try {
+                certs = Factory.toX509Certificate(bytes);
+            } catch (CertificateException e) {
+                throw new CertException(e);
+            }
+            for(Certificate c : certs) {
+                x509=(X509Certificate)c;
+                Principal subject = x509.getSubjectDN();
+                if(subject==null) {
+                    continue;
+                }
+                if(cert==null) { // first in Trust Chain
+                    issuerDN = subject.toString();
+                    cert=x509; // adding each time makes sure last one is signer.
+                }
+                addTrustChainEntry(x509);
+            }
+        }
+    }
+    
+    public X509ChainWithIssuer(Certificate[] certs) throws IOException, CertException {
+        X509Certificate x509;
+        for(int i=certs.length-1; i>=0; --i) {
+            x509=(X509Certificate)certs[i];
+            Principal subject = x509.getSubjectDN();
+            if(subject!=null) {
+                addTrustChainEntry(x509);
+                if(i==0) { // last one is signer
+                    cert=x509; 
+                    issuerDN= subject.toString(); 
+                }
+            }
+        }
+    }
 
-	public String getIssuerDN() {
-		return issuerDN;
-	}
+    public String getIssuerDN() {
+        return issuerDN;
+    }
 
 }

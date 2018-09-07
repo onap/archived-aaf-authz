@@ -57,58 +57,58 @@ import org.onap.aaf.auth.cmd.test.HMangrStub;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Describe {
 
-	@Mock private SecuritySetter<HttpURLConnection> ssMock;
-	@Mock private Locator<URI> locMock;
-	@Mock private Writer wrtMock;
-	@Mock private Rcli<HttpURLConnection> clientMock;
-	@Mock private Future<String> futureMock;
+    @Mock private SecuritySetter<HttpURLConnection> ssMock;
+    @Mock private Locator<URI> locMock;
+    @Mock private Writer wrtMock;
+    @Mock private Rcli<HttpURLConnection> clientMock;
+    @Mock private Future<String> futureMock;
 
-	private PropAccess access;
-	private HMangrStub hman;	
-	private AuthzEnv aEnv;
-	private AAFcli aafcli;
-	
-	private Describe desc;
-	
-	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		MockitoAnnotations.initMocks(this);
+    private PropAccess access;
+    private HMangrStub hman;    
+    private AuthzEnv aEnv;
+    private AAFcli aafcli;
+    
+    private Describe desc;
+    
+    @Before
+    public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        MockitoAnnotations.initMocks(this);
 
-		when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
-		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
-		when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
+        when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
+        when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
+        when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
 
-		hman = new HMangrStub(access, locMock, clientMock);
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		aEnv = new AuthzEnv();
-		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+        hman = new HMangrStub(access, locMock, clientMock);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        aEnv = new AuthzEnv();
+        aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
 
-		Role role = new Role(aafcli);
-		Perm perm = new Perm(role);
+        Role role = new Role(aafcli);
+        Perm perm = new Perm(role);
 
-		desc = new Describe(perm);
-	}
-	
-	@Test
-	public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
-		desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
-	
-	@Test
-	public void testExecSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(futureMock.code()).thenReturn(202);
-		desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
-	
-	@Test
-	public void testExecSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(futureMock.get(any(Integer.class))).thenReturn(true);
-		desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		desc.detailedHelp(0, sb);
-	}
+        desc = new Describe(perm);
+    }
+    
+    @Test
+    public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
+        desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+    }
+    
+    @Test
+    public void testExecSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
+        when(futureMock.code()).thenReturn(202);
+        desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+    }
+    
+    @Test
+    public void testExecSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
+        when(futureMock.get(any(Integer.class))).thenReturn(true);
+        desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+    }
+    
+    @Test
+    public void testDetailedHelp() {
+        StringBuilder sb = new StringBuilder();
+        desc.detailedHelp(0, sb);
+    }
 }

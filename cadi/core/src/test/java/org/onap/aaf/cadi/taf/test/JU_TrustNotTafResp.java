@@ -37,36 +37,36 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class JU_TrustNotTafResp {
 
-	@Mock
-	TafResp delegateMock;
+    @Mock
+    TafResp delegateMock;
 
-	@Mock
-	TaggedPrincipal principalMock;
+    @Mock
+    TaggedPrincipal principalMock;
 
-	@Mock
-	Access accessMock;
+    @Mock
+    Access accessMock;
 
-	private final String description = "Example Description";
+    private final String description = "Example Description";
 
-	@Before
-	public void setup() throws IOException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws IOException {
+        MockitoAnnotations.initMocks(this);
 
-		when(delegateMock.getPrincipal()).thenReturn(principalMock);
-		when(delegateMock.getAccess()).thenReturn(accessMock);
-	}
+        when(delegateMock.getPrincipal()).thenReturn(principalMock);
+        when(delegateMock.getAccess()).thenReturn(accessMock);
+    }
 
-	@Test
-	public void test() throws IOException {
-		TrustNotTafResp ttr = new TrustNotTafResp(delegateMock, description);
-		assertThat(ttr.isValid(), is(false));
-		assertThat(ttr.desc(), is(description));
-		assertThat(ttr.authenticate(), is(RESP.NO_FURTHER_PROCESSING));
-		assertThat(ttr.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
-		assertThat(ttr.getPrincipal(), is(principalMock));
-		assertThat(ttr.getAccess(), is(accessMock));
-		assertThat(ttr.isFailedAttempt(), is(true));
-		assertThat(ttr.toString(), is(description));
-	}
+    @Test
+    public void test() throws IOException {
+        TrustNotTafResp ttr = new TrustNotTafResp(delegateMock, description);
+        assertThat(ttr.isValid(), is(false));
+        assertThat(ttr.desc(), is(description));
+        assertThat(ttr.authenticate(), is(RESP.NO_FURTHER_PROCESSING));
+        assertThat(ttr.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
+        assertThat(ttr.getPrincipal(), is(principalMock));
+        assertThat(ttr.getAccess(), is(accessMock));
+        assertThat(ttr.isFailedAttempt(), is(true));
+        assertThat(ttr.toString(), is(description));
+    }
 
 }

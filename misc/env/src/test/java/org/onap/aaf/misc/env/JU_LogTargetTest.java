@@ -34,54 +34,54 @@ import org.mockito.Mock;
 
 public class JU_LogTargetTest {
 
-	@Mock
-	Throwable t;
+    @Mock
+    Throwable t;
 
-	@Before
-	public void setup() {
-		t = mock(Throwable.class);
-	}
+    @Before
+    public void setup() {
+        t = mock(Throwable.class);
+    }
 
-	@Test
-	public void testLogTargetNull() {
-		LogTarget nullTarget = LogTarget.NULL;
+    @Test
+    public void testLogTargetNull() {
+        LogTarget nullTarget = LogTarget.NULL;
 
-		// Expect methods doing nothing as no implemenation provided.
-		nullTarget.log(new Throwable(), null, null);
-		nullTarget.log("String", null);
-		nullTarget.printf(null, null, null);
+        // Expect methods doing nothing as no implemenation provided.
+        nullTarget.log(new Throwable(), null, null);
+        nullTarget.log("String", null);
+        nullTarget.printf(null, null, null);
 
-		assertFalse(nullTarget.isLoggable());
-	}
+        assertFalse(nullTarget.isLoggable());
+    }
 
-	@Test
-	public void testLogTargetSysOut() {
-		LogTarget outTarget = LogTarget.SYSOUT;
+    @Test
+    public void testLogTargetSysOut() {
+        LogTarget outTarget = LogTarget.SYSOUT;
 
-		outTarget.printf("format", new Date());
-		outTarget.log("null", null, null);
+        outTarget.printf("format", new Date());
+        outTarget.log("null", null, null);
 
-		outTarget.log(t);
-		outTarget.log(t, "First String Object");
+        outTarget.log(t);
+        outTarget.log(t, "First String Object");
 
-		assertTrue(outTarget.isLoggable());
+        assertTrue(outTarget.isLoggable());
 
-		verify(t, times(2)).printStackTrace(System.out);
-	}
+        verify(t, times(2)).printStackTrace(System.out);
+    }
 
-	@Test
-	public void testLogTargetSysErr() {
-		LogTarget errTarget = LogTarget.SYSERR;
+    @Test
+    public void testLogTargetSysErr() {
+        LogTarget errTarget = LogTarget.SYSERR;
 
-		errTarget.printf("format", new Date());
-		errTarget.log("null", "null");
+        errTarget.printf("format", new Date());
+        errTarget.log("null", "null");
 
-		errTarget.log(t);
-		errTarget.log(t, "First String Object");
+        errTarget.log(t);
+        errTarget.log(t, "First String Object");
 
-		assertTrue(errTarget.isLoggable());
+        assertTrue(errTarget.isLoggable());
 
-		verify(t, times(2)).printStackTrace(System.err);
-	}
+        verify(t, times(2)).printStackTrace(System.err);
+    }
 
 }

@@ -27,19 +27,19 @@ import org.onap.aaf.auth.rserv.HttpCode;
 import aafoauth.v2_0.Introspect;
 
 public abstract class OACode extends HttpCode<AuthzTrans, OAFacade<Introspect>> implements Cloneable {
-	public boolean useJSON;
+    public boolean useJSON;
 
-	public OACode(OAFacade<Introspect> facade, String description, boolean useJSON, String ... roles) {
-		super(facade, description, roles);
-		this.useJSON = useJSON;
-	}
-	
-	public <D extends OACode> D clone(OAFacade<Introspect> facade, boolean useJSON) throws Exception {
-		@SuppressWarnings("unchecked")
-		D d = (D)clone();
-		d.useJSON = useJSON;
-		d.context = facade;
-		return d;
-	}
-	
+    public OACode(OAFacade<Introspect> facade, String description, boolean useJSON, String ... roles) {
+        super(facade, description, roles);
+        this.useJSON = useJSON;
+    }
+    
+    public <D extends OACode> D clone(OAFacade<Introspect> facade, boolean useJSON) throws Exception {
+        @SuppressWarnings("unchecked")
+        D d = (D)clone();
+        d.useJSON = useJSON;
+        d.context = facade;
+        return d;
+    }
+    
 }

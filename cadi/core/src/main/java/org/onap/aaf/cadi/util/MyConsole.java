@@ -22,7 +22,7 @@
 package org.onap.aaf.cadi.util;
 
 public interface MyConsole {
-	public String readLine(String fmt, Object ... args);
-	public char[] readPassword(String fmt, Object ... args);
-	public void printf(String fmt, Object ...args);
+    public String readLine(String fmt, Object ... args);
+    public char[] readPassword(String fmt, Object ... args);
+    public void printf(String fmt, Object ...args);
 }

@@ -33,26 +33,26 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.http.HMangr;
 
 public class HMangrStub extends HMangr {
-	
-	private Rcli<HttpURLConnection> clientMock;
+    
+    private Rcli<HttpURLConnection> clientMock;
 
-	public HMangrStub(Access access, Locator<URI> loc, Rcli<HttpURLConnection> clientMock) throws LocatorException {
-		super(access, loc);
-		this.clientMock = clientMock;
-	}
+    public HMangrStub(Access access, Locator<URI> loc, Rcli<HttpURLConnection> clientMock) throws LocatorException {
+        super(access, loc);
+        this.clientMock = clientMock;
+    }
 
-	@Override public<RET> RET same(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable) {
-		try {
-			return retryable.code(clientMock);
-		} catch (Exception e) {
-		}
-		return null;
-	}
-	@Override public<RET> RET oneOf(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable, boolean notify, String host) {
-		try {
-			return retryable.code(clientMock);
-		} catch (Exception e) {
-		}
-		return null;
-	}
+    @Override public<RET> RET same(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable) {
+        try {
+            return retryable.code(clientMock);
+        } catch (Exception e) {
+        }
+        return null;
+    }
+    @Override public<RET> RET oneOf(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable, boolean notify, String host) {
+        try {
+            return retryable.code(clientMock);
+        } catch (Exception e) {
+        }
+        return null;
+    }
 }

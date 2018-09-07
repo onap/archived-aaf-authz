@@ -46,32 +46,32 @@ import org.onap.aaf.misc.env.TransStore;
  *
  */
 public abstract class TransOnlyFilter<TRANS extends TransStore> implements Filter {
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-	}
-	
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+    
 
 
-	protected abstract TRANS newTrans();
-	protected abstract TimeTaken start(TRANS trans, ServletRequest request);
-	protected abstract void authenticated(TRANS trans, TaggedPrincipal p);
-	protected abstract void tallyHo(TRANS trans);
-	
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		TRANS trans = newTrans();
-		
-		TimeTaken overall = start(trans,request);
-		try {
-			request.setAttribute(TransFilter.TRANS_TAG, trans);
-			chain.doFilter(request, response);
-		} finally {
-			overall.done();
-		}
-		tallyHo(trans);
-	}
+    protected abstract TRANS newTrans();
+    protected abstract TimeTaken start(TRANS trans, ServletRequest request);
+    protected abstract void authenticated(TRANS trans, TaggedPrincipal p);
+    protected abstract void tallyHo(TRANS trans);
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        TRANS trans = newTrans();
+        
+        TimeTaken overall = start(trans,request);
+        try {
+            request.setAttribute(TransFilter.TRANS_TAG, trans);
+            chain.doFilter(request, response);
+        } finally {
+            overall.done();
+        }
+        tallyHo(trans);
+    }
 
-	@Override
-	public void destroy() {
-	};
+    @Override
+    public void destroy() {
+    };
 }

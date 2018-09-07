@@ -34,71 +34,71 @@ import org.mockito.Mock;
 
 public class JU_DoubleOutputStreamTest {
 
-	@Mock
-	private OutputStream stream1;
+    @Mock
+    private OutputStream stream1;
 
-	@Mock
-	private OutputStream stream2;
+    @Mock
+    private OutputStream stream2;
 
-	private DoubleOutputStream doubleOutputStream;
+    private DoubleOutputStream doubleOutputStream;
 
-	@Before
-	public void setup() {
-		stream1 = mock(OutputStream.class);
-		stream2 = mock(OutputStream.class);
-	}
+    @Before
+    public void setup() {
+        stream1 = mock(OutputStream.class);
+        stream2 = mock(OutputStream.class);
+    }
 
-	@Test
-	public void testWriteInt() throws IOException {
-		doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
+    @Test
+    public void testWriteInt() throws IOException {
+        doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
 
-		doubleOutputStream.write(123);
+        doubleOutputStream.write(123);
 
-		verify(stream1, only()).write(123);
-		verify(stream2, only()).write(123);
-	}
+        verify(stream1, only()).write(123);
+        verify(stream2, only()).write(123);
+    }
 
-	@Test
-	public void testWriteByteArray() throws IOException {
-		doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
+    @Test
+    public void testWriteByteArray() throws IOException {
+        doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
 
-		byte[] bytes = { 1, 2, 3, 4 };
+        byte[] bytes = { 1, 2, 3, 4 };
 
-		doubleOutputStream.write(bytes);
+        doubleOutputStream.write(bytes);
 
-		verify(stream1, only()).write(bytes);
-		verify(stream2, only()).write(bytes);
+        verify(stream1, only()).write(bytes);
+        verify(stream2, only()).write(bytes);
 
-	}
+    }
 
-	@Test
-	public void testWriteByteArrayWithOffset() throws IOException {
-		doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
+    @Test
+    public void testWriteByteArrayWithOffset() throws IOException {
+        doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
 
-		byte[] bytes = { 1, 2, 3, 4 };
+        byte[] bytes = { 1, 2, 3, 4 };
 
-		doubleOutputStream.write(bytes, 1, 3);
-		verify(stream1, only()).write(bytes, 1, 3);
-		verify(stream2, only()).write(bytes, 1, 3);
-	}
+        doubleOutputStream.write(bytes, 1, 3);
+        verify(stream1, only()).write(bytes, 1, 3);
+        verify(stream2, only()).write(bytes, 1, 3);
+    }
 
-	@Test
-	public void testFlush() throws IOException {
-		doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
+    @Test
+    public void testFlush() throws IOException {
+        doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, true);
 
-		doubleOutputStream.flush();
+        doubleOutputStream.flush();
 
-		verify(stream1, only()).flush();
-		verify(stream2, only()).flush();
-	}
+        verify(stream1, only()).flush();
+        verify(stream2, only()).flush();
+    }
 
-	@Test
-	public void testClose() throws IOException {
-		doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, false);
+    @Test
+    public void testClose() throws IOException {
+        doubleOutputStream = new DoubleOutputStream(stream1, true, stream2, false);
 
-		doubleOutputStream.close();
+        doubleOutputStream.close();
 
-		verify(stream1, only()).close();
-		verify(stream2, never()).close();
-	}
+        verify(stream1, only()).close();
+        verify(stream2, never()).close();
+    }
 }

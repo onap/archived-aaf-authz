@@ -31,39 +31,39 @@ import aaf.v2_0.Pkey;
 import aaf.v2_0.RolePermRequest;
 
 public class RolePermCompare extends RosettaCompare<RolePermRequest>  {
-	public RolePermCompare() {
-		super(RolePermRequest.class);
-	}
-	
-	public static RolePermRequest create() {
-		RolePermRequest urr = new RolePermRequest();
-		String in = instance();
-		urr.setRole("org.osaaf.ns.role"+in);
-		Pkey pkey = new Pkey();
-		pkey.setType("org.osaaf.ns.myType"+in);
-		pkey.setInstance("myInstance"+in);
-		pkey.setAction("myAction"+in);
-		urr.setPerm(pkey);
-		GregorianCalendar gc = new GregorianCalendar();
-		urr.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		urr.setEnd(Chrono.timeStamp(gc));
-		return urr;
-	}
-	
-	@Override
-	public void compare(RolePermRequest t1, RolePermRequest t2) {
-		assertEquals(t1.getRole(),t2.getRole());
-		assertEquals(t1.getPerm().getType(),t1.getPerm().getType());
-		assertEquals(t1.getPerm().getInstance(),t1.getPerm().getInstance());
-		assertEquals(t1.getPerm().getAction(),t1.getPerm().getAction());
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public RolePermCompare() {
+        super(RolePermRequest.class);
+    }
+    
+    public static RolePermRequest create() {
+        RolePermRequest urr = new RolePermRequest();
+        String in = instance();
+        urr.setRole("org.osaaf.ns.role"+in);
+        Pkey pkey = new Pkey();
+        pkey.setType("org.osaaf.ns.myType"+in);
+        pkey.setInstance("myInstance"+in);
+        pkey.setAction("myAction"+in);
+        urr.setPerm(pkey);
+        GregorianCalendar gc = new GregorianCalendar();
+        urr.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        urr.setEnd(Chrono.timeStamp(gc));
+        return urr;
+    }
+    
+    @Override
+    public void compare(RolePermRequest t1, RolePermRequest t2) {
+        assertEquals(t1.getRole(),t2.getRole());
+        assertEquals(t1.getPerm().getType(),t1.getPerm().getType());
+        assertEquals(t1.getPerm().getInstance(),t1.getPerm().getInstance());
+        assertEquals(t1.getPerm().getAction(),t1.getPerm().getAction());
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public RolePermRequest newOne() {
-		return create();
-	}
+    @Override
+    public RolePermRequest newOne() {
+        return create();
+    }
 }

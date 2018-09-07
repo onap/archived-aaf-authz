@@ -31,29 +31,29 @@ import java.util.List;
  * @param <T>
  */
 final class ListIterator<T> implements Iterator<T> {
-	private T curr;
-	private Iterator<T> delg;
-	public ListIterator(List<T> list) {
-		curr = null;
-		delg = list.iterator(); 
-	}
-	@Override
-	public boolean hasNext() {
-		return delg.hasNext();
-	}
+    private T curr;
+    private Iterator<T> delg;
+    public ListIterator(List<T> list) {
+        curr = null;
+        delg = list.iterator(); 
+    }
+    @Override
+    public boolean hasNext() {
+        return delg.hasNext();
+    }
 
-	@Override
-	public T next() {
-		return curr = delg.hasNext()?delg.next():null;
-	}
-	
-	public T peek() {
-		return curr==null?next():curr;
-	}
+    @Override
+    public T next() {
+        return curr = delg.hasNext()?delg.next():null;
+    }
+    
+    public T peek() {
+        return curr==null?next():curr;
+    }
 
-	@Override
-	public void remove() {
-		delg.remove();
-	}
-	
+    @Override
+    public void remove() {
+        delg.remove();
+    }
+    
 }

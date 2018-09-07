@@ -26,17 +26,17 @@ import org.onap.aaf.auth.cmd.role.Role;
 import org.onap.aaf.misc.env.APIException;
 
 public class Perm extends BaseCmd<Perm> {
-	Role role;
+    Role role;
 
-	public Perm(Role role) throws APIException {
-		super(role.aafcli, "perm");
-		this.role = role;
+    public Perm(Role role) throws APIException {
+        super(role.aafcli, "perm");
+        this.role = role;
 
-		cmds.add(new Create(this));
-		cmds.add(new Delete(this));
-		cmds.add(new Grant(this));
-		cmds.add(new Rename(this));
-		cmds.add(new Describe(this));
-		cmds.add(new List(this));
-	}
+        cmds.add(new Create(this));
+        cmds.add(new Delete(this));
+        cmds.add(new Grant(this));
+        cmds.add(new Rename(this));
+        cmds.add(new Describe(this));
+        cmds.add(new List(this));
+    }
 }

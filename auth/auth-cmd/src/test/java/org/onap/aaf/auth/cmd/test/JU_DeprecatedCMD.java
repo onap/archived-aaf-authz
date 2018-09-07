@@ -47,32 +47,32 @@ import org.junit.Test;
 
 public class JU_DeprecatedCMD {
 
-	CmdStub cmd;
-	AAFcli cli;
-	
-	private class CmdStub extends Cmd {
+    CmdStub cmd;
+    AAFcli cli;
+    
+    private class CmdStub extends Cmd {
 
-		public CmdStub(AAFcli aafcli, String name, Param[] params) {
-			super(aafcli, name, params);
-			// TODO Auto-generated constructor stub
-		}
+        public CmdStub(AAFcli aafcli, String name, Param[] params) {
+            super(aafcli, name, params);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		protected int _exec(int idx, String... args) throws CadiException, APIException, LocatorException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-		
-	}
-	
-	@Test
-	public void testExec() throws CadiException, APIException, LocatorException, GeneralSecurityException, IOException {
-		cli = JU_AAFCli.getAAfCli();
-		Param[] param = new Param[] {new Param("name",true)};
-		
-		cmd = new CmdStub(cli,"test", param);
-		DeprecatedCMD deprecatedcmd = new DeprecatedCMD(cmd,"test", "test");
-		deprecatedcmd._exec(0, "test");
-	}
+        @Override
+        protected int _exec(int idx, String... args) throws CadiException, APIException, LocatorException {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+        
+    }
+    
+    @Test
+    public void testExec() throws CadiException, APIException, LocatorException, GeneralSecurityException, IOException {
+        cli = JU_AAFCli.getAAfCli();
+        Param[] param = new Param[] {new Param("name",true)};
+        
+        cmd = new CmdStub(cli,"test", param);
+        DeprecatedCMD deprecatedcmd = new DeprecatedCMD(cmd,"test", "test");
+        deprecatedcmd._exec(0, "test");
+    }
 
 }

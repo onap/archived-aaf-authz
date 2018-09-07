@@ -50,93 +50,93 @@ import java.util.Date;
 import org.junit.Test;
 
 public class JU_Cred {
-	
-	private ByteArrayOutputStream outStream;
-	private ByteArrayOutputStream errStream;
-	Cred cred;
-	Instance instance;
-	Date date;
-	Integer integer;
-	PropAccess prop;
-	Define define = new Define();
-	Trans trans;
-	Session session;
-	CredCount cc;
+    
+    private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream errStream;
+    Cred cred;
+    Instance instance;
+    Date date;
+    Integer integer;
+    PropAccess prop;
+    Define define = new Define();
+    Trans trans;
+    Session session;
+    CredCount cc;
 
-	@Before
-	public void setUp() throws CadiException {
-		outStream = new ByteArrayOutputStream();
-		errStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-		System.setErr(new PrintStream(errStream));
-		date = new Date();
-		integer = new Integer(20);
-		trans = mock(Trans.class);
-		session = mock(Session.class);
-		cc = new CredCount(3);
-		prop = new PropAccess();
-		prop.setProperty(Config.AAF_ROOT_NS, "org.onap.aaf");
-		prop.setProperty(Config.AAF_ROOT_COMPANY,"test");
-		define.set(prop);
-		
-		instance = new Instance(12, date, integer, 125642678910L);
-		cred = new Cred("myid1234@aaf.att.com");
-	}
-	
-	@Test
-	public void testLast() {		//TODO: set instances 
-		Assert.assertNull(cred.last(null));
-	}
-	
-	@Test
-	public void testTypes() {		//TODO: set instances 
-		Assert.assertNotNull(cred.types());
-	}
-	
-	@Test
-	public void testCount() {		//TODO: set instances 
-		Assert.assertNotNull(cred.count(3));
-	}
-	
-	@Test
-	public void testToString() {		//TODO: set instances 
-		Assert.assertEquals("myid1234@aaf.att.com[]", cred.toString());
-	}
-	
-	@Test
-	public void testHashCode() {		//TODO: set instances 
-		Assert.assertEquals(-1619358251, cred.hashCode());
-	}
-	
-	@Test
-	public void testEquals() {		//TODO: set instances 
-		Assert.assertEquals(true, cred.equals("myid1234@aaf.att.com"));
-	}
-	
-	@Test
-	public void testInc() {		
-		Date begin = new Date(date.getTime() - 10);
-		Date after = new Date(date.getTime() + 10);
-		cc.inc(-1, begin, after);
-		cc.inc(1, begin, after);
-		cc.inc(2, begin, after);
-		cc.inc(200, begin, after);
-	}
-	
-	@Test
-	public void testAuthCount() {		//TODO: set instances 
-		Assert.assertEquals(0, cc.authCount(1));
-	}
-	
-	@Test
-	public void testX509Count() {		//TODO: set instances 
-		Assert.assertEquals(0, cc.x509Count(0));
-	}
-	
-	@After
-	public void cleanUp() {
-		System.setErr(System.err);
-		System.setOut(System.out);
-	}
+    @Before
+    public void setUp() throws CadiException {
+        outStream = new ByteArrayOutputStream();
+        errStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+        System.setErr(new PrintStream(errStream));
+        date = new Date();
+        integer = new Integer(20);
+        trans = mock(Trans.class);
+        session = mock(Session.class);
+        cc = new CredCount(3);
+        prop = new PropAccess();
+        prop.setProperty(Config.AAF_ROOT_NS, "org.onap.aaf");
+        prop.setProperty(Config.AAF_ROOT_COMPANY,"test");
+        define.set(prop);
+        
+        instance = new Instance(12, date, integer, 125642678910L);
+        cred = new Cred("myid1234@aaf.att.com");
+    }
+    
+    @Test
+    public void testLast() {        //TODO: set instances 
+        Assert.assertNull(cred.last(null));
+    }
+    
+    @Test
+    public void testTypes() {        //TODO: set instances 
+        Assert.assertNotNull(cred.types());
+    }
+    
+    @Test
+    public void testCount() {        //TODO: set instances 
+        Assert.assertNotNull(cred.count(3));
+    }
+    
+    @Test
+    public void testToString() {        //TODO: set instances 
+        Assert.assertEquals("myid1234@aaf.att.com[]", cred.toString());
+    }
+    
+    @Test
+    public void testHashCode() {        //TODO: set instances 
+        Assert.assertEquals(-1619358251, cred.hashCode());
+    }
+    
+    @Test
+    public void testEquals() {        //TODO: set instances 
+        Assert.assertEquals(true, cred.equals("myid1234@aaf.att.com"));
+    }
+    
+    @Test
+    public void testInc() {        
+        Date begin = new Date(date.getTime() - 10);
+        Date after = new Date(date.getTime() + 10);
+        cc.inc(-1, begin, after);
+        cc.inc(1, begin, after);
+        cc.inc(2, begin, after);
+        cc.inc(200, begin, after);
+    }
+    
+    @Test
+    public void testAuthCount() {        //TODO: set instances 
+        Assert.assertEquals(0, cc.authCount(1));
+    }
+    
+    @Test
+    public void testX509Count() {        //TODO: set instances 
+        Assert.assertEquals(0, cc.x509Count(0));
+    }
+    
+    @After
+    public void cleanUp() {
+        System.setErr(System.err);
+        System.setOut(System.out);
+    }
 
 }

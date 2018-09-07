@@ -35,31 +35,31 @@ import org.onap.aaf.misc.xgen.DynamicCode;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class LoginLandingAction extends Page {
-	public LoginLandingAction(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env,"Login",LoginLanding.HREF, LoginLanding.fields,
-			new BreadCrumbs(breadcrumbs),
-			new NamedCode(true,"content") {
-				final Slot sID = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[0]);
-//				final Slot sPassword = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[1]);
-				
-				@Override
-				public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-					cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
-						@Override
-						public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-							String username = trans.get(sID,null);
-//							String password = trans.get(sPassword,null);
+    public LoginLandingAction(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env,"Login",LoginLanding.HREF, LoginLanding.fields,
+            new BreadCrumbs(breadcrumbs),
+            new NamedCode(true,"content") {
+                final Slot sID = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[0]);
+//                final Slot sPassword = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[1]);
+                
+                @Override
+                public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                    cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
+                        @Override
+                        public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                            String username = trans.get(sID,null);
+//                            String password = trans.get(sPassword,null);
 
-							hgen.p("User: "+username);
-							hgen.p("Pass: ********");
-							
-							// TODO: clarification from JG
-							// put in request header?
-							// then pass through authn/basicAuth call?
-							
-						}
-					});
-				}
-		});
-	}
+                            hgen.p("User: "+username);
+                            hgen.p("Pass: ********");
+                            
+                            // TODO: clarification from JG
+                            // put in request header?
+                            // then pass through authn/basicAuth call?
+                            
+                        }
+                    });
+                }
+        });
+    }
 }

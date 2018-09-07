@@ -29,17 +29,17 @@ import org.onap.aaf.cadi.client.Future;
 
 public class JU_Future {
 
-	@Test
-	public void test() {
-		@SuppressWarnings("unused")
-		Future<Integer> f = new FutureStub();
-	}
-	
-	private class FutureStub extends Future<Integer> {
-		@Override public boolean get(int timeout) throws CadiException { return false; } 
-		@Override public int code() { return 0; } 
-		@Override public String body() { return null; } 
-		@Override public String header(String tag) { return null; }
-	}
+    @Test
+    public void test() {
+        @SuppressWarnings("unused")
+        Future<Integer> f = new FutureStub();
+    }
+    
+    private class FutureStub extends Future<Integer> {
+        @Override public boolean get(int timeout) throws CadiException { return false; } 
+        @Override public int code() { return 0; } 
+        @Override public String body() { return null; } 
+        @Override public String header(String tag) { return null; }
+    }
 
 }

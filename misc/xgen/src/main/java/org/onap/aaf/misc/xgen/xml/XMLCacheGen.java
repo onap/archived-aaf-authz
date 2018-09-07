@@ -30,16 +30,16 @@ import org.onap.aaf.misc.xgen.Code;
 
 public class XMLCacheGen extends CacheGen<XMLGen> {
 
-	public XMLCacheGen(int flags, Code<XMLGen> code) throws APIException,
-			IOException {
-		super(flags, code);
-	}
+    public XMLCacheGen(int flags, Code<XMLGen> code) throws APIException,
+            IOException {
+        super(flags, code);
+    }
 
-	@Override
-	public XMLGen create(int style, Writer w) {
-		XMLGen xg = new XMLGen(w);
-		xg.pretty = (style & PRETTY)==PRETTY;
-		return xg;
-	}
+    @Override
+    public XMLGen create(int style, Writer w) {
+        XMLGen xg = new XMLGen(w);
+        xg.pretty = (style & PRETTY)==PRETTY;
+        return xg;
+    }
 
 }

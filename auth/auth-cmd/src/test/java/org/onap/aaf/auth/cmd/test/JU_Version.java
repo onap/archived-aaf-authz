@@ -45,24 +45,24 @@ import junit.framework.Assert;
 //TODO: Gabe [JUnit] Import missing
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Version {
-	
-	private static AAFcli cli;
-	private static Version version;
-	
-	@BeforeClass
-	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
-		cli = JU_AAFCli.getAAfCli();
-		version = new Version(cli);
-	}
-	
-//	@Test
-//	public void exec_HTTP_200() throws CadiException, APIException, LocatorException {
-//		assertEquals(version._exec(0, "Version"), HttpStatus.OK_200);
+    
+    private static AAFcli cli;
+    private static Version version;
+    
+    @BeforeClass
+    public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
+        cli = JU_AAFCli.getAAfCli();
+        version = new Version(cli);
+    }
+    
+//    @Test
+//    public void exec_HTTP_200() throws CadiException, APIException, LocatorException {
+//        assertEquals(version._exec(0, "Version"), HttpStatus.OK_200);
 //
-//	}
-	
-	@Test						//TODO: Temporary fix AAF-111
-	public void netYetTested() {
-		Assert.assertTrue(true);
-	}
+//    }
+    
+    @Test                        //TODO: Temporary fix AAF-111
+    public void netYetTested() {
+        Assert.assertTrue(true);
+    }
 }

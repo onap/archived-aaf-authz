@@ -27,16 +27,16 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class URPrint implements Action<UserRole,Void,String> {
-	private String info;
+    private String info;
 
-	public URPrint(String text) {
-		this.info = text;
-	}
+    public URPrint(String text) {
+        this.info = text;
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, UserRole ur, String text) {
-		trans.info().log(info,text,ur.user(),"to",ur.role(),"expiring on",Chrono.dateOnlyStamp(ur.expires()));
-		return Result.ok();
-	}
+    @Override
+    public Result<Void> exec(AuthzTrans trans, UserRole ur, String text) {
+        trans.info().log(info,text,ur.user(),"to",ur.role(),"expiring on",Chrono.dateOnlyStamp(ur.expires()));
+        return Result.ok();
+    }
 
 }

@@ -32,7 +32,7 @@ import org.onap.aaf.misc.env.util.Chrono;
  * Implement for any Logging Library of your choice, and for any logging string Format desired.
  * 
  * Included are several Static Implementations for various uses:
- * 	 NULL: Does nothing with Logging Messages
+ *      NULL: Does nothing with Logging Messages
  *   SYSOUT: Writes messages in general form to System Out
  *   SYSERR: Writes messages in general form to System Err
  *   
@@ -40,103 +40,103 @@ import org.onap.aaf.misc.env.util.Chrono;
  *
  */
 public interface LogTarget {
-	public abstract void log(Object... msgs);
-	public abstract void log(Throwable e, Object ... msgs);
-	public abstract boolean isLoggable();
-	public abstract void printf(String fmt, Object ... vars);
+    public abstract void log(Object... msgs);
+    public abstract void log(Throwable e, Object ... msgs);
+    public abstract boolean isLoggable();
+    public abstract void printf(String fmt, Object ... vars);
 
-	// A Convenient LogTarget to insert when a NO-OP is desired.
-	public static final LogTarget NULL = new LogTarget() {
-		public void log(Object ... msgs) {
-		}
+    // A Convenient LogTarget to insert when a NO-OP is desired.
+    public static final LogTarget NULL = new LogTarget() {
+        public void log(Object ... msgs) {
+        }
 
-		public void log(Throwable t, Object ... msgs) {
-		}
+        public void log(Throwable t, Object ... msgs) {
+        }
 
-		public boolean isLoggable() {
-			return false;
-		}
+        public boolean isLoggable() {
+            return false;
+        }
 
-		@Override
-		public void printf(String fmt, Object ... vars) {
-		}
-	};
+        @Override
+        public void printf(String fmt, Object ... vars) {
+        }
+    };
 
-	// A Convenient LogTarget to write to the Console
-	public static final LogTarget SYSOUT = new LogTarget() {
-		public void log(Object ... msgs) {
-			PrintStream out = System.out;
-			out.print(org.onap.aaf.misc.env.util.Chrono.dateFmt.format(new Date()));
-			out.print(": ");
-			for(Object str : msgs) {
-				if(str!=null) {
-					out.print(str.toString());
-					out.print(' ');
-				} else {
-					out.print("null ");
-				}
-			}
-			out.println();
-		}
+    // A Convenient LogTarget to write to the Console
+    public static final LogTarget SYSOUT = new LogTarget() {
+        public void log(Object ... msgs) {
+            PrintStream out = System.out;
+            out.print(org.onap.aaf.misc.env.util.Chrono.dateFmt.format(new Date()));
+            out.print(": ");
+            for(Object str : msgs) {
+                if(str!=null) {
+                    out.print(str.toString());
+                    out.print(' ');
+                } else {
+                    out.print("null ");
+                }
+            }
+            out.println();
+        }
 
-		public void log(Throwable t, Object ... msgs) {
-			PrintStream out = System.out;
-			out.print(Chrono.dateFmt.format(new Date()));
-			out.print(": ");
-			for(Object str : msgs) {
-				out.print(str.toString());
-				out.print(' ');
-			}
-			out.println();
-			t.printStackTrace(out);
-			out.println();
-		}
+        public void log(Throwable t, Object ... msgs) {
+            PrintStream out = System.out;
+            out.print(Chrono.dateFmt.format(new Date()));
+            out.print(": ");
+            for(Object str : msgs) {
+                out.print(str.toString());
+                out.print(' ');
+            }
+            out.println();
+            t.printStackTrace(out);
+            out.println();
+        }
 
-		public boolean isLoggable() {
-			return true;
-		}
+        public boolean isLoggable() {
+            return true;
+        }
 
-		@Override
-		public void printf(String fmt, Object ... vars) {
-			log(String.format(fmt,vars));
-		}
-	};
-	
-	// A Convenient LogTarget to write to the Console
-	public static final LogTarget SYSERR = new LogTarget() {
-		public void log(Object ... msgs) {
-			PrintStream out = System.err;
-			out.print(Chrono.dateFmt.format(new Date()));
-			out.print(": ");
-			for(Object str : msgs) {
-				out.print(str.toString());
-				out.print(' ');
-			}
-			out.println();
-			out.flush();
-		}
+        @Override
+        public void printf(String fmt, Object ... vars) {
+            log(String.format(fmt,vars));
+        }
+    };
+    
+    // A Convenient LogTarget to write to the Console
+    public static final LogTarget SYSERR = new LogTarget() {
+        public void log(Object ... msgs) {
+            PrintStream out = System.err;
+            out.print(Chrono.dateFmt.format(new Date()));
+            out.print(": ");
+            for(Object str : msgs) {
+                out.print(str.toString());
+                out.print(' ');
+            }
+            out.println();
+            out.flush();
+        }
 
-		public void log(Throwable t, Object ... msgs) {
-			PrintStream out = System.err;
-			out.print(Chrono.dateFmt.format(new Date()));
-			out.print(": ");
-			for(Object str : msgs) {
-				out.print(str.toString());
-				out.print(' ');
-			}
-			out.println();
-			t.printStackTrace(out);
-		}
+        public void log(Throwable t, Object ... msgs) {
+            PrintStream out = System.err;
+            out.print(Chrono.dateFmt.format(new Date()));
+            out.print(": ");
+            for(Object str : msgs) {
+                out.print(str.toString());
+                out.print(' ');
+            }
+            out.println();
+            t.printStackTrace(out);
+        }
 
-		public boolean isLoggable() {
-			return true;
-		}
-		@Override
-		public void printf(String fmt, Object ... vars) {
-			log(String.format(fmt,vars));
-		}
+        public boolean isLoggable() {
+            return true;
+        }
+        @Override
+        public void printf(String fmt, Object ... vars) {
+            log(String.format(fmt,vars));
+        }
 
-	};
+    };
 
 
 };

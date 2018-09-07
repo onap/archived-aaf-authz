@@ -27,45 +27,45 @@ import org.junit.Test;
 
 public class JU_APIExceptionTest {
 
-	private static final String EXCEPTION_MESSAGE = "New API Exception for test";
+    private static final String EXCEPTION_MESSAGE = "New API Exception for test";
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void testNewAPIExceptionWithMessage() {
-		APIException exception = new APIException(EXCEPTION_MESSAGE);
+    @Test
+    public void testNewAPIExceptionWithMessage() {
+        APIException exception = new APIException(EXCEPTION_MESSAGE);
 
-		assertEquals(exception.getMessage(), EXCEPTION_MESSAGE);
-	}
+        assertEquals(exception.getMessage(), EXCEPTION_MESSAGE);
+    }
 
-	@Test
-	public void testNewAPIExceptionCreatedWithMessageAndThrowable() {
-		Throwable throwable = new Throwable();
-		APIException exception = new APIException(EXCEPTION_MESSAGE, throwable);
+    @Test
+    public void testNewAPIExceptionCreatedWithMessageAndThrowable() {
+        Throwable throwable = new Throwable();
+        APIException exception = new APIException(EXCEPTION_MESSAGE, throwable);
 
-		assertEquals(exception.getMessage(), EXCEPTION_MESSAGE);
-		assertEquals(exception.getCause(), throwable);
-	}
+        assertEquals(exception.getMessage(), EXCEPTION_MESSAGE);
+        assertEquals(exception.getCause(), throwable);
+    }
 
-	@Test
-	public void testNewAPIExceptionCreatedWithThrowable() {
-		Throwable throwable = new Throwable();
-		APIException exception = new APIException(throwable);
+    @Test
+    public void testNewAPIExceptionCreatedWithThrowable() {
+        Throwable throwable = new Throwable();
+        APIException exception = new APIException(throwable);
 
-		assertEquals(exception.getCause(), throwable);
-	}
+        assertEquals(exception.getCause(), throwable);
+    }
 
-	@Test
-	public void testPayloadSetter() {
-		Throwable throwable = new Throwable();
-		Object payload = new Object();
+    @Test
+    public void testPayloadSetter() {
+        Throwable throwable = new Throwable();
+        Object payload = new Object();
 
-		APIException exception = new APIException(throwable);
+        APIException exception = new APIException(throwable);
 
-		exception.setPayload(payload);
+        exception.setPayload(payload);
 
-		assertEquals(exception.getPayload(), payload);
-	}
+        assertEquals(exception.getPayload(), payload);
+    }
 }

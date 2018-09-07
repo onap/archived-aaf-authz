@@ -31,24 +31,24 @@ import org.onap.aaf.cadi.client.AbsAuthentication;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class HAuthorizationHeader extends AbsAuthentication<HttpURLConnection> {
-	
-	public HAuthorizationHeader(SecurityInfoC<HttpURLConnection> si, String user, String headValue) throws IOException {
-		super(si,user,headValue==null?null:headValue.getBytes());
-	}
+    
+    public HAuthorizationHeader(SecurityInfoC<HttpURLConnection> si, String user, String headValue) throws IOException {
+        super(si,user,headValue==null?null:headValue.getBytes());
+    }
 
-	@Override
-	public void setSecurity(HttpURLConnection huc) throws CadiException {
-		if(isDenied()) {
-			throw new CadiException(REPEAT_OFFENDER);
-		}
-		try {
-			huc.addRequestProperty(AUTHORIZATION , headValue());
-		} catch (IOException e) {
-			throw new CadiException(e);
-		}
-		if(securityInfo!=null && huc instanceof HttpsURLConnection) {
-			securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
-		}
-	}
+    @Override
+    public void setSecurity(HttpURLConnection huc) throws CadiException {
+        if(isDenied()) {
+            throw new CadiException(REPEAT_OFFENDER);
+        }
+        try {
+            huc.addRequestProperty(AUTHORIZATION , headValue());
+        } catch (IOException e) {
+            throw new CadiException(e);
+        }
+        if(securityInfo!=null && huc instanceof HttpsURLConnection) {
+            securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
+        }
+    }
 
 }

@@ -34,31 +34,31 @@ import org.onap.aaf.misc.env.APIException;
 
 public class JU_SectionTest {
 
-	@Mock
-	private Writer writer;
+    @Mock
+    private Writer writer;
 
-	@Before
-	public void setup() {
-		writer = mock(Writer.class);
-	}
+    @Before
+    public void setup() {
+        writer = mock(Writer.class);
+    }
 
-	@Test
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void test() throws APIException, IOException {
-		Section section = new Section();
-		section.forward = "Forward";
-		section.backward = "Backward";
+    @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void test() throws APIException, IOException {
+        Section section = new Section();
+        section.forward = "Forward";
+        section.backward = "Backward";
 
-		section.setIndent(10);
-		section.forward(writer);
-		section.back(writer);
+        section.setIndent(10);
+        section.forward(writer);
+        section.back(writer);
 
-		assertEquals(section.use(null, null, null), section);
-		assertEquals(section.getIndent(), 10);
-		assertEquals(section.toString(), "Forward");
+        assertEquals(section.use(null, null, null), section);
+        assertEquals(section.getIndent(), 10);
+        assertEquals(section.toString(), "Forward");
 
-		verify(writer).write("Forward");
-		verify(writer).write("Backward");
-	}
+        verify(writer).write("Forward");
+        verify(writer).write("Backward");
+    }
 
 }

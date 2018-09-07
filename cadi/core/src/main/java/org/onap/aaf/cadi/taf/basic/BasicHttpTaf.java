@@ -60,139 +60,139 @@ import org.onap.aaf.cadi.taf.dos.DenialOfServiceTaf;
  *
  */
 public class BasicHttpTaf implements HttpTaf {
-	private Access access;
-	private String realm;
-	private CredVal rbac;
-	private Map<String,CredVal> rbacs = new TreeMap<>();
-	private boolean warn;
-	private long timeToLive;
-	
-	public BasicHttpTaf(Access access, CredVal rbac, String realm, long timeToLive, boolean turnOnWarning) {
-		this.access = access;
-		this.realm = realm;
-		this.rbac = rbac;
-		this.warn = turnOnWarning;
-		this.timeToLive = timeToLive;
-	}
+    private Access access;
+    private String realm;
+    private CredVal rbac;
+    private Map<String,CredVal> rbacs = new TreeMap<>();
+    private boolean warn;
+    private long timeToLive;
+    
+    public BasicHttpTaf(Access access, CredVal rbac, String realm, long timeToLive, boolean turnOnWarning) {
+        this.access = access;
+        this.realm = realm;
+        this.rbac = rbac;
+        this.warn = turnOnWarning;
+        this.timeToLive = timeToLive;
+    }
 
-	public void add(final CredValDomain cvd) {
-		rbacs.put(cvd.domain(), cvd);
-	}
-	
-	/**
-	 * Note: BasicHttp works for either Carbon Based (Humans) or Silicon Based (machine) Lifeforms.  
-	 * @see Taf
-	 */
-	public TafResp validate(Taf.LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
-		// See if Request implements BasicCred (aka CadiWrap or other), and if User/Pass has already been set separately
-		if(req instanceof BasicCred) {
-			BasicCred bc = (BasicCred)req;
-			if(bc.getUser()!=null) { // CadiWrap, if set, makes sure User & Password are both valid, or both null
-				if(DenialOfServiceTaf.isDeniedID(bc.getUser())!=null) {
-					return DenialOfServiceTaf.respDenyID(access,bc.getUser());
-				}
-				CachedBasicPrincipal bp = new CachedBasicPrincipal(this,bc,realm,timeToLive);
-				
-				// Be able to do Organizational specific lookups by Domain
-				CredVal cv = rbacs.get(bp.getDomain());
-				if(cv==null) {
-					cv = rbac;
-				}
-				
-				// ONLY FOR Last Ditch DEBUGGING... 
-				// access.log(Level.WARN,bp.getName() + ":" + new String(bp.getCred()));
-				if(cv.validate(bp.getName(),Type.PASSWORD,bp.getCred(),req)) {
-					return new BasicHttpTafResp(access,bp,bp.getName()+" authenticated by password",RESP.IS_AUTHENTICATED,resp,realm,false);
-				} else {
-					//TODO may need timed retries in a given time period
-					return new BasicHttpTafResp(access,null,buildMsg(bp,req,"user/pass combo invalid for ",bc.getUser(),"from",req.getRemoteAddr()), 
-							RESP.TRY_AUTHENTICATING,resp,realm,true);
-				}
-			}
-		}
-		// Get User/Password from Authorization Header value
-		String authz = req.getHeader("Authorization");
-		if(authz != null && authz.startsWith("Basic ")) {
-			if(warn&&!req.isSecure()) {
-				access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
-			}
-			try {
-				CachedBasicPrincipal ba = new CachedBasicPrincipal(this,authz,realm,timeToLive);
-				if(DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
-					return DenialOfServiceTaf.respDenyID(access,ba.getName());
-				}
-				
-				final int at = ba.getName().indexOf('@');
-				CredVal cv = rbacs.get(ba.getName().substring(at+1));
-				if(cv==null) { 
-					cv = rbac; // default
-				}
+    public void add(final CredValDomain cvd) {
+        rbacs.put(cvd.domain(), cvd);
+    }
+    
+    /**
+     * Note: BasicHttp works for either Carbon Based (Humans) or Silicon Based (machine) Lifeforms.  
+     * @see Taf
+     */
+    public TafResp validate(Taf.LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
+        // See if Request implements BasicCred (aka CadiWrap or other), and if User/Pass has already been set separately
+        if(req instanceof BasicCred) {
+            BasicCred bc = (BasicCred)req;
+            if(bc.getUser()!=null) { // CadiWrap, if set, makes sure User & Password are both valid, or both null
+                if(DenialOfServiceTaf.isDeniedID(bc.getUser())!=null) {
+                    return DenialOfServiceTaf.respDenyID(access,bc.getUser());
+                }
+                CachedBasicPrincipal bp = new CachedBasicPrincipal(this,bc,realm,timeToLive);
+                
+                // Be able to do Organizational specific lookups by Domain
+                CredVal cv = rbacs.get(bp.getDomain());
+                if(cv==null) {
+                    cv = rbac;
+                }
+                
+                // ONLY FOR Last Ditch DEBUGGING... 
+                // access.log(Level.WARN,bp.getName() + ":" + new String(bp.getCred()));
+                if(cv.validate(bp.getName(),Type.PASSWORD,bp.getCred(),req)) {
+                    return new BasicHttpTafResp(access,bp,bp.getName()+" authenticated by password",RESP.IS_AUTHENTICATED,resp,realm,false);
+                } else {
+                    //TODO may need timed retries in a given time period
+                    return new BasicHttpTafResp(access,null,buildMsg(bp,req,"user/pass combo invalid for ",bc.getUser(),"from",req.getRemoteAddr()), 
+                            RESP.TRY_AUTHENTICATING,resp,realm,true);
+                }
+            }
+        }
+        // Get User/Password from Authorization Header value
+        String authz = req.getHeader("Authorization");
+        if(authz != null && authz.startsWith("Basic ")) {
+            if(warn&&!req.isSecure()) {
+                access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
+            }
+            try {
+                CachedBasicPrincipal ba = new CachedBasicPrincipal(this,authz,realm,timeToLive);
+                if(DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
+                    return DenialOfServiceTaf.respDenyID(access,ba.getName());
+                }
+                
+                final int at = ba.getName().indexOf('@');
+                CredVal cv = rbacs.get(ba.getName().substring(at+1));
+                if(cv==null) { 
+                    cv = rbac; // default
+                }
 
-				// ONLY FOR Last Ditch DEBUGGING... 
-				// access.log(Level.WARN,ba.getName() + ":" + new String(ba.getCred()));
-				if(cv.validate(ba.getName(), Type.PASSWORD, ba.getCred(), req)) {
-					return new BasicHttpTafResp(access,ba, ba.getName()+" authenticated by BasicAuth password",RESP.IS_AUTHENTICATED,resp,realm,false);
-				} else {
-					//TODO may need timed retries in a given time period
-					return new BasicHttpTafResp(access,null,buildMsg(ba,req,"user/pass combo invalid"), 
-							RESP.TRY_AUTHENTICATING,resp,realm,true);
-				}
-			} catch (IOException e) {
-				String msg = buildMsg(null,req,"Failed HTTP Basic Authorization (", e.getMessage(), ')');
-				access.log(Level.INFO,msg);
-				return new BasicHttpTafResp(access,null,msg, RESP.TRY_AUTHENTICATING, resp, realm,true);
-			}
-		}
-		return new BasicHttpTafResp(access,null,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,realm,false);
-	}
-	
-	protected String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {
-		StringBuilder sb = new StringBuilder();
-		if(pr!=null) {
-			sb.append("user=");
-			sb.append(pr.getName());
-			sb.append(',');
-		}
-		sb.append("ip=");
-		sb.append(req.getRemoteAddr());
-		sb.append(",port=");
-		sb.append(req.getRemotePort());
-		if(msg.length>0) {
-			sb.append(",msg=\"");
-			for(Object s : msg) {
-				sb.append(s.toString());
-			}
-			sb.append('"');
-		}
-		return sb.toString();
-	}
-	
-	public void addCredVal(final String realm, final CredVal cv) {
-		rbacs.put(realm, cv);
-	}
+                // ONLY FOR Last Ditch DEBUGGING... 
+                // access.log(Level.WARN,ba.getName() + ":" + new String(ba.getCred()));
+                if(cv.validate(ba.getName(), Type.PASSWORD, ba.getCred(), req)) {
+                    return new BasicHttpTafResp(access,ba, ba.getName()+" authenticated by BasicAuth password",RESP.IS_AUTHENTICATED,resp,realm,false);
+                } else {
+                    //TODO may need timed retries in a given time period
+                    return new BasicHttpTafResp(access,null,buildMsg(ba,req,"user/pass combo invalid"), 
+                            RESP.TRY_AUTHENTICATING,resp,realm,true);
+                }
+            } catch (IOException e) {
+                String msg = buildMsg(null,req,"Failed HTTP Basic Authorization (", e.getMessage(), ')');
+                access.log(Level.INFO,msg);
+                return new BasicHttpTafResp(access,null,msg, RESP.TRY_AUTHENTICATING, resp, realm,true);
+            }
+        }
+        return new BasicHttpTafResp(access,null,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,realm,false);
+    }
+    
+    protected String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {
+        StringBuilder sb = new StringBuilder();
+        if(pr!=null) {
+            sb.append("user=");
+            sb.append(pr.getName());
+            sb.append(',');
+        }
+        sb.append("ip=");
+        sb.append(req.getRemoteAddr());
+        sb.append(",port=");
+        sb.append(req.getRemotePort());
+        if(msg.length>0) {
+            sb.append(",msg=\"");
+            for(Object s : msg) {
+                sb.append(s.toString());
+            }
+            sb.append('"');
+        }
+        return sb.toString();
+    }
+    
+    public void addCredVal(final String realm, final CredVal cv) {
+        rbacs.put(realm, cv);
+    }
 
-	public CredVal getCredVal(String key) {
-		CredVal cv = rbacs.get(key);
-		if(cv==null) {
-			cv = rbac;
-		}
-		return cv;
-	}
-	
-	@Override
-	public Resp revalidate(CachedPrincipal prin, Object state) {
-		if(prin instanceof BasicPrincipal) {
-			BasicPrincipal ba = (BasicPrincipal)prin;
-			if(DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
-				return Resp.UNVALIDATED;
-			}
-			return rbac.validate(ba.getName(), Type.PASSWORD, ba.getCred(), state)?Resp.REVALIDATED:Resp.UNVALIDATED;
-		}
-		return Resp.NOT_MINE;
-	}
-	
-	public String toString() {
-		return "Basic Auth enabled on realm: " + realm;
-	}
+    public CredVal getCredVal(String key) {
+        CredVal cv = rbacs.get(key);
+        if(cv==null) {
+            cv = rbac;
+        }
+        return cv;
+    }
+    
+    @Override
+    public Resp revalidate(CachedPrincipal prin, Object state) {
+        if(prin instanceof BasicPrincipal) {
+            BasicPrincipal ba = (BasicPrincipal)prin;
+            if(DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
+                return Resp.UNVALIDATED;
+            }
+            return rbac.validate(ba.getName(), Type.PASSWORD, ba.getCred(), state)?Resp.REVALIDATED:Resp.UNVALIDATED;
+        }
+        return Resp.NOT_MINE;
+    }
+    
+    public String toString() {
+        return "Basic Auth enabled on realm: " + realm;
+    }
 
 }

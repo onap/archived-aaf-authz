@@ -67,82 +67,82 @@ import java.security.Principal;
 import javax.servlet.Filter;
 
 public class JU_AbsServiceStarter {
-	
-	ByteArrayOutputStream outStream;
-	AbsServiceStub absServiceStub;
-	AbsServiceStarterStub absServiceStarterStub;
-	
-	private class AbsServiceStarterStub extends AbsServiceStarter {
+    
+    ByteArrayOutputStream outStream;
+    AbsServiceStub absServiceStub;
+    AbsServiceStarterStub absServiceStarterStub;
+    
+    private class AbsServiceStarterStub extends AbsServiceStarter {
 
-		public AbsServiceStarterStub(AbsService service) {
-			super(service);
-			// TODO Auto-generated constructor stub
-		}
+        public AbsServiceStarterStub(AbsService service) {
+            super(service);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public void _start(RServlet rserv) throws Exception {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void _start(RServlet rserv) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
 
-		@Override
-		public void _propertyAdjustment() {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	private class AbsServiceStub extends AbsService {
+        @Override
+        public void _propertyAdjustment() {
+            // TODO Auto-generated method stub
+            
+        }
+    }
+    
+    private class AbsServiceStub extends AbsService {
 
-		public AbsServiceStub(Access access, BasicEnv env) throws CadiException {
-			super(access, env);
-			// TODO Auto-generated constructor stub
-		}
+        public AbsServiceStub(Access access, BasicEnv env) throws CadiException {
+            super(access, env);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public Registrant[] registrants(int port) throws CadiException, LocatorException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	
-	}
-	
-	@Before
-	public void setUp() {
-		outStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-	}
-	
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-	}
-	
-	
-	@Test
-	public void testStub() throws CadiException {
-		BasicEnv bEnv = new BasicEnv();
-		PropAccess prop = new PropAccess();
-		
-		prop.setProperty(Config.AAF_COMPONENT, "te.st:te.st");
-		prop.setLogLevel(Level.DEBUG);
-		absServiceStub = new AbsServiceStub(prop, bEnv);
-		
-		absServiceStarterStub = new AbsServiceStarterStub(absServiceStub);
-	}
-	
-//	@Test
-//	public void testStart() throws Exception {
-//		absServiceStarterStub.env();
-//		absServiceStarterStub.start();
-//	}
-	
+        @Override
+        public Registrant[] registrants(int port) throws CadiException, LocatorException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+    
+    }
+    
+    @Before
+    public void setUp() {
+        outStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+    }
+    
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+    }
+    
+    
+    @Test
+    public void testStub() throws CadiException {
+        BasicEnv bEnv = new BasicEnv();
+        PropAccess prop = new PropAccess();
+        
+        prop.setProperty(Config.AAF_COMPONENT, "te.st:te.st");
+        prop.setLogLevel(Level.DEBUG);
+        absServiceStub = new AbsServiceStub(prop, bEnv);
+        
+        absServiceStarterStub = new AbsServiceStarterStub(absServiceStub);
+    }
+    
+//    @Test
+//    public void testStart() throws Exception {
+//        absServiceStarterStub.env();
+//        absServiceStarterStub.start();
+//    }
+    
 }
 
 

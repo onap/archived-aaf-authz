@@ -39,52 +39,52 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_AbsTafResp {
-	
-	private static final String JUNIT = "Junit";
-	private static final String name = "name";
-	private static final String tag = "tag";
-	private static final String description = "description";
-	
-	private Access access;
-	private TaggedPrincipal taggedPrinc;
-	
-	@Before
-	public void setup() {
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		taggedPrinc = new TaggedPrincipal() {
-			@Override public String getName() { return name; }
-			@Override public String tag() { return tag; }
-		};
-	}
+    
+    private static final String JUNIT = "Junit";
+    private static final String name = "name";
+    private static final String tag = "tag";
+    private static final String description = "description";
+    
+    private Access access;
+    private TaggedPrincipal taggedPrinc;
+    
+    @Before
+    public void setup() {
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        taggedPrinc = new TaggedPrincipal() {
+            @Override public String getName() { return name; }
+            @Override public String tag() { return tag; }
+        };
+    }
 
-	@Test
-	public void test() {
-		AbsTafResp tafResp = new AbsTafResp(access, JUNIT, taggedPrinc, description) {
-			@Override public RESP authenticate() throws IOException {
-				return null;
-			}
-		};
+    @Test
+    public void test() {
+        AbsTafResp tafResp = new AbsTafResp(access, JUNIT, taggedPrinc, description) {
+            @Override public RESP authenticate() throws IOException {
+                return null;
+            }
+        };
 
-		assertThat(tafResp.isValid(), is(true));
-		assertThat(tafResp.desc(), is(description));
-		assertThat(tafResp.taf(), is(JUNIT));
-		assertThat(tafResp.isAuthenticated(), is(RESP.IS_AUTHENTICATED));
-		assertThat(tafResp.getPrincipal(), is(taggedPrinc));
-		assertThat(tafResp.getAccess(), is(access));
-		assertThat(tafResp.isFailedAttempt(), is(false));
+        assertThat(tafResp.isValid(), is(true));
+        assertThat(tafResp.desc(), is(description));
+        assertThat(tafResp.taf(), is(JUNIT));
+        assertThat(tafResp.isAuthenticated(), is(RESP.IS_AUTHENTICATED));
+        assertThat(tafResp.getPrincipal(), is(taggedPrinc));
+        assertThat(tafResp.getAccess(), is(access));
+        assertThat(tafResp.isFailedAttempt(), is(false));
 
-		tafResp = new AbsTafResp(null, JUNIT, null, null) {
-			@Override public RESP authenticate() throws IOException {
-				return null;
-			}
-		};
+        tafResp = new AbsTafResp(null, JUNIT, null, null) {
+            @Override public RESP authenticate() throws IOException {
+                return null;
+            }
+        };
 
-		assertThat(tafResp.isValid(), is(false));
-		assertThat(tafResp.isAuthenticated(), is(RESP.TRY_ANOTHER_TAF));
-		assertThat(tafResp.getPrincipal(), is(nullValue()));
-		assertThat(tafResp.getAccess(), is(nullValue()));
-		assertThat(tafResp.taf(), is(JUNIT));
-		assertThat(tafResp.isFailedAttempt(), is(false));
-	}
+        assertThat(tafResp.isValid(), is(false));
+        assertThat(tafResp.isAuthenticated(), is(RESP.TRY_ANOTHER_TAF));
+        assertThat(tafResp.getPrincipal(), is(nullValue()));
+        assertThat(tafResp.getAccess(), is(nullValue()));
+        assertThat(tafResp.taf(), is(JUNIT));
+        assertThat(tafResp.isFailedAttempt(), is(false));
+    }
 
 }

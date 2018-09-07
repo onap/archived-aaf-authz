@@ -32,21 +32,21 @@ import org.onap.aaf.cadi.taf.TafResp;
  *
  */
 public interface TrustChecker {
-	public TafResp mayTrust(TafResp tresp, HttpServletRequest req);
-	
-	/**
-	 * A class that trusts no-one else, so just return same TResp
-	 */
-	public static TrustChecker NOTRUST = new TrustChecker() {
-		@Override
-		public TafResp mayTrust(TafResp tresp, HttpServletRequest req) {
-			return tresp;
-		}
+    public TafResp mayTrust(TafResp tresp, HttpServletRequest req);
+    
+    /**
+     * A class that trusts no-one else, so just return same TResp
+     */
+    public static TrustChecker NOTRUST = new TrustChecker() {
+        @Override
+        public TafResp mayTrust(TafResp tresp, HttpServletRequest req) {
+            return tresp;
+        }
 
-		@Override
-		public void setLur(Lur lur) {
-		}
-	};
+        @Override
+        public void setLur(Lur lur) {
+        }
+    };
 
-	public void setLur(Lur lur);
+    public void setLur(Lur lur);
 }

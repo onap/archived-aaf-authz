@@ -35,41 +35,41 @@ import org.onap.aaf.auth.service.facade.AuthzFacade;
 import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_API_Perms {
-	API_Perms api_Perms;
-	@Mock
-	AAF_Service authzAPI;
-	AuthzFacade facade;
+    API_Perms api_Perms;
+    @Mock
+    AAF_Service authzAPI;
+    AuthzFacade facade;
 
-	@Before
-	public void setUp(){
+    @Before
+    public void setUp(){
 
-	}
+    }
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testInit(){
-		try {
-			api_Perms.init(authzAPI, facade);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    @SuppressWarnings("static-access")
+    @Test
+    public void testInit(){
+        try {
+            api_Perms.init(authzAPI, facade);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testTimeSensitiveInit(){
-		try {
-			api_Perms.timeSensitiveInit(authzAPI, facade);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    @SuppressWarnings("static-access")
+    @Test
+    public void testTimeSensitiveInit(){
+        try {
+            api_Perms.timeSensitiveInit(authzAPI, facade);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-//	@Test
-//	public void notYetImplemented() {
-//		fail("Tests in this file should not be trusted");
-//	}
+//    @Test
+//    public void notYetImplemented() {
+//        fail("Tests in this file should not be trusted");
+//    }
 
 }

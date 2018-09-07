@@ -28,5 +28,5 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.Trans;
 
 public interface PlaceArtifact {
-	public boolean place(Trans trans, CertInfo cert, Artifact arti, String machine) throws CadiException;
+    public boolean place(Trans trans, CertInfo cert, Artifact arti, String machine) throws CadiException;
 }

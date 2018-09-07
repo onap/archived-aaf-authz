@@ -27,39 +27,39 @@ import org.onap.aaf.cadi.util.NetMask;
 
 public class JU_NetMask {
 
-	@Test
-	public void deriveTest() {
-		String test = "test";
-		assertEquals(NetMask.derive(test.getBytes()), 0);
-	}
+    @Test
+    public void deriveTest() {
+        String test = "test";
+        assertEquals(NetMask.derive(test.getBytes()), 0);
+    }
 
-	@Test
-	public void deriveTest2() {
-		String test = "1.2.3.4";
-		assertEquals(NetMask.derive(test.getBytes()), 0);
-	}
-	
-	@Test
-	public void deriveTest3() {
-		String test = "1.2.4";
-		assertEquals(NetMask.derive(test.getBytes()), 0);
-	}
-	
-	@Test
-	public void deriveTest4() {
-		String test = "1.3.4";
-		assertEquals(NetMask.derive(test.getBytes()), 0);
-	}
-	
-	@Test
-	public void deriveTest5() {
-		String test = "2.3.4";
-		assertEquals(NetMask.derive(test.getBytes()), 0);
-	}
-	
-	@Test
-	public void deriveTest6() {
-		String test = "3.4";
-		assertEquals(NetMask.derive(test.getBytes()), 0);
-	}
+    @Test
+    public void deriveTest2() {
+        String test = "1.2.3.4";
+        assertEquals(NetMask.derive(test.getBytes()), 0);
+    }
+    
+    @Test
+    public void deriveTest3() {
+        String test = "1.2.4";
+        assertEquals(NetMask.derive(test.getBytes()), 0);
+    }
+    
+    @Test
+    public void deriveTest4() {
+        String test = "1.3.4";
+        assertEquals(NetMask.derive(test.getBytes()), 0);
+    }
+    
+    @Test
+    public void deriveTest5() {
+        String test = "2.3.4";
+        assertEquals(NetMask.derive(test.getBytes()), 0);
+    }
+    
+    @Test
+    public void deriveTest6() {
+        String test = "3.4";
+        assertEquals(NetMask.derive(test.getBytes()), 0);
+    }
 }

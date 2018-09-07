@@ -52,100 +52,100 @@ import org.onap.aaf.misc.env.Trans;
  *
  */
 public class BCFactory extends Factory {
-	private static final JcaContentSignerBuilder jcsb;
+    private static final JcaContentSignerBuilder jcsb;
 
 
-	static {
-		// Bouncy
-		jcsb = new JcaContentSignerBuilder(Factory.SIG_ALGO);
-	}
-	
-	public static ContentSigner contentSigner(PrivateKey pk) throws OperatorCreationException {
-		return jcsb.build(pk);
-	}
-	
-	public static String toString(PKCS10CertificationRequest csr) throws IOException, CertException {
-		if(csr==null) {
-			throw new CertException("x509 Certificate Request not built");
-		}
-		return textBuilder("CERTIFICATE REQUEST",csr.getEncoded());
-	}
+    static {
+        // Bouncy
+        jcsb = new JcaContentSignerBuilder(Factory.SIG_ALGO);
+    }
+    
+    public static ContentSigner contentSigner(PrivateKey pk) throws OperatorCreationException {
+        return jcsb.build(pk);
+    }
+    
+    public static String toString(PKCS10CertificationRequest csr) throws IOException, CertException {
+        if(csr==null) {
+            throw new CertException("x509 Certificate Request not built");
+        }
+        return textBuilder("CERTIFICATE REQUEST",csr.getEncoded());
+    }
 
-	public static PKCS10CertificationRequest toCSR(Trans trans, File file) throws IOException {
-		TimeTaken tt = trans.start("Reconstitute CSR", Env.SUB);
-		try {
-			FileReader fr = new FileReader(file);
-			return new PKCS10CertificationRequest(decode(strip(fr)));
-		} finally {
-			tt.done();
-		}
-	}
+    public static PKCS10CertificationRequest toCSR(Trans trans, File file) throws IOException {
+        TimeTaken tt = trans.start("Reconstitute CSR", Env.SUB);
+        try {
+            FileReader fr = new FileReader(file);
+            return new PKCS10CertificationRequest(decode(strip(fr)));
+        } finally {
+            tt.done();
+        }
+    }
 
-	public static byte[] sign(Trans trans, ASN1Object toSign, PrivateKey pk) throws IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
-		TimeTaken tt = trans.start("Encode Security Object", Env.SUB);
-		try {
-			return sign(trans,toSign.getEncoded(),pk);
-		} finally {
-			tt.done();
-		}
-	}
-	
-	public static CSRMeta createCSRMeta(CA ca, String mechid, String sponsorEmail, List<String> fqdns) throws CertException {
-		CSRMeta csr = ca.newCSRMeta();
-		boolean first = true;
-		// Set CN (and SAN)
-		for(String fqdn : fqdns) {
-			if(first) {
-				first = false;
-				csr.cn(fqdn);
-			}
-			csr.san(fqdn); // duplicate CN in SAN, per RFC 5280 section 4.2.1.6 
-		}
-		
-		csr.challenge(new String(Symm.randomGen(24)));
-		csr.mechID(mechid);
-		csr.email(sponsorEmail);
-		String errs;
-		if((errs=validateApp(csr))!=null) {
-			throw new CertException(errs);
-		}
-		return csr;
-	}
-	
-	private static String validateApp(CSRMeta csr) {
-		CertmanValidator v = new CertmanValidator();
-		if(v.nullOrBlank("cn", csr.cn())
-			.nullOrBlank("mechID", csr.mechID())
-//			.nullOrBlank("email", csr.email())
-			.err()) {
-			return v.errs();
-		} else {
-			return null;
-		}
-	}
+    public static byte[] sign(Trans trans, ASN1Object toSign, PrivateKey pk) throws IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+        TimeTaken tt = trans.start("Encode Security Object", Env.SUB);
+        try {
+            return sign(trans,toSign.getEncoded(),pk);
+        } finally {
+            tt.done();
+        }
+    }
+    
+    public static CSRMeta createCSRMeta(CA ca, String mechid, String sponsorEmail, List<String> fqdns) throws CertException {
+        CSRMeta csr = ca.newCSRMeta();
+        boolean first = true;
+        // Set CN (and SAN)
+        for(String fqdn : fqdns) {
+            if(first) {
+                first = false;
+                csr.cn(fqdn);
+            }
+            csr.san(fqdn); // duplicate CN in SAN, per RFC 5280 section 4.2.1.6 
+        }
+        
+        csr.challenge(new String(Symm.randomGen(24)));
+        csr.mechID(mechid);
+        csr.email(sponsorEmail);
+        String errs;
+        if((errs=validateApp(csr))!=null) {
+            throw new CertException(errs);
+        }
+        return csr;
+    }
+    
+    private static String validateApp(CSRMeta csr) {
+        CertmanValidator v = new CertmanValidator();
+        if(v.nullOrBlank("cn", csr.cn())
+            .nullOrBlank("mechID", csr.mechID())
+//            .nullOrBlank("email", csr.email())
+            .err()) {
+            return v.errs();
+        } else {
+            return null;
+        }
+    }
 
-	public static CSRMeta createPersonalCSRMeta(CA ca, String personal, String email) throws CertException {
-		CSRMeta csr = ca.newCSRMeta();
-		csr.cn(personal);
-		csr.challenge(new String(Symm.randomGen(24)));
-		csr.email(email);
-		String errs;
-		if((errs=validatePersonal(csr))!=null) {
-			throw new CertException(errs);
-		}
-		return csr;
-	}
+    public static CSRMeta createPersonalCSRMeta(CA ca, String personal, String email) throws CertException {
+        CSRMeta csr = ca.newCSRMeta();
+        csr.cn(personal);
+        csr.challenge(new String(Symm.randomGen(24)));
+        csr.email(email);
+        String errs;
+        if((errs=validatePersonal(csr))!=null) {
+            throw new CertException(errs);
+        }
+        return csr;
+    }
 
-	private static String validatePersonal(CSRMeta csr) {
-		CertmanValidator v = new CertmanValidator();
-		if(v.nullOrBlank("cn", csr.cn())
-			.nullOrBlank("email", csr.email())
-			.err()) {
-			return v.errs();
-		} else {
-			return null;
-		}
-	}
-	
+    private static String validatePersonal(CSRMeta csr) {
+        CertmanValidator v = new CertmanValidator();
+        if(v.nullOrBlank("cn", csr.cn())
+            .nullOrBlank("email", csr.email())
+            .err()) {
+            return v.errs();
+        } else {
+            return null;
+        }
+    }
+    
 
 }

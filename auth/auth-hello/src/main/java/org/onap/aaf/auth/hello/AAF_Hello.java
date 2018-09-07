@@ -48,85 +48,85 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 
 public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
-	public enum API{TOKEN_REQ, TOKEN,INTROSPECT, ERROR,VOID};
-	public Map<String, Dated> cacheUser;
-	public AAFAuthn<?> aafAuthn;
-	public AAFLurPerm aafLurPerm;
-	
-	/**
-	 * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-	 * 
-	 * @param env
-	 * @param si 
-	 * @param dm 
-	 * @param decryptor 
-	 * @throws APIException 
-	 */
-	public AAF_Hello(final AuthzEnv env) throws Exception {
-		super(env.access(), env);
-		
-		aafLurPerm = aafCon().newLur();
-		// Note: If you need both Authn and Authz construct the following:
-		aafAuthn = aafCon().newAuthn(aafLurPerm);
+    public enum API{TOKEN_REQ, TOKEN,INTROSPECT, ERROR,VOID};
+    public Map<String, Dated> cacheUser;
+    public AAFAuthn<?> aafAuthn;
+    public AAFLurPerm aafLurPerm;
+    
+    /**
+     * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
+     * 
+     * @param env
+     * @param si 
+     * @param dm 
+     * @param decryptor 
+     * @throws APIException 
+     */
+    public AAF_Hello(final AuthzEnv env) throws Exception {
+        super(env.access(), env);
+        
+        aafLurPerm = aafCon().newLur();
+        // Note: If you need both Authn and Authz construct the following:
+        aafAuthn = aafCon().newAuthn(aafLurPerm);
 
-		String aaf_env = env.getProperty(Config.AAF_ENV);
-		if(aaf_env==null) {
-			throw new APIException("aaf_env needs to be set");
-		}
-		
-		// Initialize Facade for all uses
-		AuthzTrans trans = env.newTrans();
-		StringBuilder sb = new StringBuilder();
-		trans.auditTrail(2, sb);
-		trans.init().log(sb);
-		
-		API_Hello.init(this);
+        String aaf_env = env.getProperty(Config.AAF_ENV);
+        if(aaf_env==null) {
+            throw new APIException("aaf_env needs to be set");
+        }
+        
+        // Initialize Facade for all uses
+        AuthzTrans trans = env.newTrans();
+        StringBuilder sb = new StringBuilder();
+        trans.auditTrail(2, sb);
+        trans.init().log(sb);
+        
+        API_Hello.init(this);
 }
-	
-	/**
-	 * Setup XML and JSON implementations for each supported Version type
-	 * 
-	 * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
-	 * to do Versions and Content switches
-	 * 
-	 */
-	public void route(HttpMethods meth, String path, API api, HttpCode<AuthzTrans, AAF_Hello> code) throws Exception {
-		String version = "1.0";
-		// Get Correct API Class from Mapper
-		route(env,meth,path,code,"text/plain;version="+version,"*/*");
-	}
-	
-	@Override
-	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-		try {
-			return new Filter[] {
-					new AuthzTransFilter(env,aafCon(),
-		        		new AAFTrustChecker((Env)env),
-		        		additionalTafLurs)
-				};
-		} catch (NumberFormatException e) {
-			throw new CadiException("Invalid Property information", e);
-		}
-	}
+    
+    /**
+     * Setup XML and JSON implementations for each supported Version type
+     * 
+     * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
+     * to do Versions and Content switches
+     * 
+     */
+    public void route(HttpMethods meth, String path, API api, HttpCode<AuthzTrans, AAF_Hello> code) throws Exception {
+        String version = "1.0";
+        // Get Correct API Class from Mapper
+        route(env,meth,path,code,"text/plain;version="+version,"*/*");
+    }
+    
+    @Override
+    public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+        try {
+            return new Filter[] {
+                    new AuthzTransFilter(env,aafCon(),
+                        new AAFTrustChecker((Env)env),
+                        additionalTafLurs)
+                };
+        } catch (NumberFormatException e) {
+            throw new CadiException("Invalid Property information", e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
-		return new Registrant[] {
-			new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
-		};
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
+        return new Registrant[] {
+            new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
+        };
+    }
 
-	public static void main(final String[] args) {
-		try {
-			Log4JLogIt logIt = new Log4JLogIt(args, "hello");
-			PropAccess propAccess = new PropAccess(logIt,args);
+    public static void main(final String[] args) {
+        try {
+            Log4JLogIt logIt = new Log4JLogIt(args, "hello");
+            PropAccess propAccess = new PropAccess(logIt,args);
 
- 			AAF_Hello service = new AAF_Hello(new AuthzEnv(propAccess));
-			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-			jss.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+             AAF_Hello service = new AAF_Hello(new AuthzEnv(propAccess));
+            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
+            jss.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -51,52 +51,52 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Create {
 
-	private static Create create;//might need to replace import with org.onap.aaf.auth.cmd.perm
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	
-	@Before
-	public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		NS ns = new NS(aafcli);
-		create = new Create(ns);
-	}
-	
-	
+    private static Create create;//might need to replace import with org.onap.aaf.auth.cmd.perm
+    PropAccess prop;
+    AuthzEnv aEnv;
+    Writer wtr;
+    Locator<URI> loc;
+    HMangr hman;    
+    AAFcli aafcli;
+    
+    @Before
+    public void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        prop = new PropAccess();
+        aEnv = new AuthzEnv();
+        wtr = mock(Writer.class);
+        loc = mock(Locator.class);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+        hman = new HMangr(aEnv, loc);    
+        aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+        NS ns = new NS(aafcli);
+        create = new Create(ns);
+    }
+    
+    
 
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		String[] strArr = {"add","upd","del","add","upd","del"};
-		create._exec(0, strArr);
-		
-	}
+    @Test
+    public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+        Item value = mock(Item.class);
+        Locator.Item item = new Locator.Item() {
+        };
+        when(loc.best()).thenReturn(value);
+        URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
+        when(loc.get(value)).thenReturn(uri);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+        HRcli hcli = new HRcli(hman, uri, item, secSet);
+        String[] strArr = {"add","upd","del","add","upd","del"};
+        create._exec(0, strArr);
+        
+    }
 
-	@Test
-	public void detailedHelp() {
-		boolean hasNoError = true;
-		try {
-			create.detailedHelp(1, new StringBuilder("test"));
-		} catch (Exception e) {
-			hasNoError = false;
-		}
-		assertEquals(hasNoError, true);
-	}
+    @Test
+    public void detailedHelp() {
+        boolean hasNoError = true;
+        try {
+            create.detailedHelp(1, new StringBuilder("test"));
+        } catch (Exception e) {
+            hasNoError = false;
+        }
+        assertEquals(hasNoError, true);
+    }
 }

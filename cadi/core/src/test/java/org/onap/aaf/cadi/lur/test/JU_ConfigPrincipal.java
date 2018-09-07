@@ -32,48 +32,48 @@ import org.onap.aaf.cadi.lur.ConfigPrincipal;
 
 public class JU_ConfigPrincipal {
 
-	private final String name = "User";
-	private final String pass = "pass";
+    private final String name = "User";
+    private final String pass = "pass";
 
-	// Expected output of base64("User:pass")
-	private final String b64encoded = "VXNlcjpwYXNz";
+    // Expected output of base64("User:pass")
+    private final String b64encoded = "VXNlcjpwYXNz";
 
-	private Field content_field;
-	
-	@Before
-	public void setup() throws NoSuchFieldException {
-		content_field = ConfigPrincipal.class.getDeclaredField("content");
-		content_field.setAccessible(true);
-	}
+    private Field content_field;
+    
+    @Before
+    public void setup() throws NoSuchFieldException {
+        content_field = ConfigPrincipal.class.getDeclaredField("content");
+        content_field.setAccessible(true);
+    }
 
-	@Test
-	public void testConfigPrincipalStringString() throws IOException, IllegalArgumentException, IllegalAccessException {
-		ConfigPrincipal p =  new ConfigPrincipal(name, pass);
-		
-		assertThat(p.getName(), is(name));
-		assertThat(p.toString(), is(name));
-		assertThat(p.getCred(), is(pass.getBytes()));
-		assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
-		content_field.set(p, "pass");
-		assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
+    @Test
+    public void testConfigPrincipalStringString() throws IOException, IllegalArgumentException, IllegalAccessException {
+        ConfigPrincipal p =  new ConfigPrincipal(name, pass);
+        
+        assertThat(p.getName(), is(name));
+        assertThat(p.toString(), is(name));
+        assertThat(p.getCred(), is(pass.getBytes()));
+        assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
+        content_field.set(p, "pass");
+        assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
 
-		// One more time for coverage purposes
-		assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
-	}
+        // One more time for coverage purposes
+        assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
+    }
 
-	@Test
-	public void testConfigPrincipalStringByteArray() throws IOException, IllegalArgumentException, IllegalAccessException {
-		ConfigPrincipal p =  new ConfigPrincipal(name, pass.getBytes());
-		
-		assertThat(p.getName(), is(name));
-		assertThat(p.toString(), is(name));
-		assertThat(p.getCred(), is(pass.getBytes()));
-		assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
-		content_field.set(p, "pass");
-		assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
+    @Test
+    public void testConfigPrincipalStringByteArray() throws IOException, IllegalArgumentException, IllegalAccessException {
+        ConfigPrincipal p =  new ConfigPrincipal(name, pass.getBytes());
+        
+        assertThat(p.getName(), is(name));
+        assertThat(p.toString(), is(name));
+        assertThat(p.getCred(), is(pass.getBytes()));
+        assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
+        content_field.set(p, "pass");
+        assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
 
-		// One more time for coverage purposes
-		assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
-	}
-	
+        // One more time for coverage purposes
+        assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
+    }
+    
 }

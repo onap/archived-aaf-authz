@@ -47,10 +47,10 @@ import javax.servlet.Servlet;
 @Target({TYPE})
 @Retention(RUNTIME)
 public @interface ServletImpl {
-	/**
-	 * Security role of the implementation, which doesn't have to be an EJB or CORBA like object.  Can be just a
-	 * Handler
-	 * @return
-	 */
-	Class<? extends Servlet> value();
+    /**
+     * Security role of the implementation, which doesn't have to be an EJB or CORBA like object.  Can be just a
+     * Handler
+     * @return
+     */
+    Class<? extends Servlet> value();
 }

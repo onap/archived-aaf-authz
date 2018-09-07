@@ -22,7 +22,7 @@
 package org.onap.aaf.cadi;
 
 public interface Permission {
-	public String permType();
-	public String getKey();
-	public boolean match(Permission p);
+    public String permType();
+    public String getKey();
+    public boolean match(Permission p);
 }

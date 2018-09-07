@@ -31,45 +31,45 @@ import org.onap.aaf.misc.env.util.Chrono;
 import aaf.v2_0.NsRequest;
 
 public class NSCompare extends RosettaCompare<NsRequest>  {
-	public NSCompare() {
-		super(NsRequest.class);
-	}
-	
-	public static NsRequest create() {
-		NsRequest nsr = new NsRequest();
-		String in = instance();
-		nsr.setName("org.osaaf.ns"+in);
-		nsr.setDescription("Hello World"+in);
-		nsr.getAdmin().add("Fred"+in);
-		nsr.getAdmin().add("Barney"+in);
-		nsr.getResponsible().add("Wilma"+in);
-		nsr.getResponsible().add("Betty"+in);
-		nsr.setType("Hello"+in);
-		GregorianCalendar gc = new GregorianCalendar();
-		nsr.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		nsr.setEnd(Chrono.timeStamp(gc));
-		return nsr;
-	}
-	
-	@Override
-	public void compare(NsRequest t1, NsRequest t2) {
-		assertEquals(t1.getName(),t2.getName());
-		assertEquals(t1.getDescription(),t2.getDescription());
-		for(String s : t1.getAdmin()) {
-			assertTrue(t2.getAdmin().contains(s));
-		}
-		for(String s : t2.getAdmin()) {
-			assertTrue(t1.getAdmin().contains(s));
-		}
-		assertEquals(t1.getType(),t2.getType());
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public NSCompare() {
+        super(NsRequest.class);
+    }
+    
+    public static NsRequest create() {
+        NsRequest nsr = new NsRequest();
+        String in = instance();
+        nsr.setName("org.osaaf.ns"+in);
+        nsr.setDescription("Hello World"+in);
+        nsr.getAdmin().add("Fred"+in);
+        nsr.getAdmin().add("Barney"+in);
+        nsr.getResponsible().add("Wilma"+in);
+        nsr.getResponsible().add("Betty"+in);
+        nsr.setType("Hello"+in);
+        GregorianCalendar gc = new GregorianCalendar();
+        nsr.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        nsr.setEnd(Chrono.timeStamp(gc));
+        return nsr;
+    }
+    
+    @Override
+    public void compare(NsRequest t1, NsRequest t2) {
+        assertEquals(t1.getName(),t2.getName());
+        assertEquals(t1.getDescription(),t2.getDescription());
+        for(String s : t1.getAdmin()) {
+            assertTrue(t2.getAdmin().contains(s));
+        }
+        for(String s : t2.getAdmin()) {
+            assertTrue(t1.getAdmin().contains(s));
+        }
+        assertEquals(t1.getType(),t2.getType());
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public NsRequest newOne() {
-		return create();
-	}
+    @Override
+    public NsRequest newOne() {
+        return create();
+    }
 }

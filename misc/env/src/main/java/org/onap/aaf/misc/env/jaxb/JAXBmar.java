@@ -63,191 +63,191 @@ import org.onap.aaf.misc.env.util.Pool.Pooled;
  *
  */
 public class JAXBmar {
-	// Need to store off possible JAXBContexts based on Class, which will be stored in Creator
-	private static Map<Class<?>[],Pool<PMarshaller>> pools = new HashMap<>();
+    // Need to store off possible JAXBContexts based on Class, which will be stored in Creator
+    private static Map<Class<?>[],Pool<PMarshaller>> pools = new HashMap<>();
 
-	// Handle Marshaller class setting of properties only when needed
-	private class PMarshaller {
-		private Marshaller m;
-		private boolean p;
-		private boolean f;
-		
-		public PMarshaller(Marshaller marshaller) throws JAXBException {
-			m = marshaller;
-    		m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-    		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, p = false);
-    		m.setProperty(Marshaller.JAXB_FRAGMENT, f = false);
-		}
-		
-		public Marshaller get(boolean pretty, boolean fragment) throws JAXBException {
-			if(pretty != p) {
-	    		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, p = pretty);
-			}
-			if(fragment != f) {
-	    		m.setProperty(Marshaller.JAXB_FRAGMENT, f = fragment);
-			}
-			return m;
-		}
-	}
-	
-	private class Creator implements Pool.Creator<PMarshaller> {
-		private JAXBContext jc;
-		private String name;
-		public Creator(Class<?>[] classes) throws JAXBException {
-			jc = JAXBContext.newInstance(classes);
-			name = "JAXBmar: " + classes[0].getName();
-		}
-		
-		// @Override
-		public PMarshaller create() throws APIException {
-			try {
-				return new PMarshaller(jc.createMarshaller());
-			} catch (JAXBException e) {
-				throw new APIException(e);
-			}
-		}
+    // Handle Marshaller class setting of properties only when needed
+    private class PMarshaller {
+        private Marshaller m;
+        private boolean p;
+        private boolean f;
+        
+        public PMarshaller(Marshaller marshaller) throws JAXBException {
+            m = marshaller;
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, p = false);
+            m.setProperty(Marshaller.JAXB_FRAGMENT, f = false);
+        }
+        
+        public Marshaller get(boolean pretty, boolean fragment) throws JAXBException {
+            if(pretty != p) {
+                m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, p = pretty);
+            }
+            if(fragment != f) {
+                m.setProperty(Marshaller.JAXB_FRAGMENT, f = fragment);
+            }
+            return m;
+        }
+    }
+    
+    private class Creator implements Pool.Creator<PMarshaller> {
+        private JAXBContext jc;
+        private String name;
+        public Creator(Class<?>[] classes) throws JAXBException {
+            jc = JAXBContext.newInstance(classes);
+            name = "JAXBmar: " + classes[0].getName();
+        }
+        
+        // @Override
+        public PMarshaller create() throws APIException {
+            try {
+                return new PMarshaller(jc.createMarshaller());
+            } catch (JAXBException e) {
+                throw new APIException(e);
+            }
+        }
 
-		public String toString() {
-			return name;
-		}
+        public String toString() {
+            return name;
+        }
 
-		// @Override
-		public void reuse(PMarshaller pm) {
-			// Nothing to do
-		}
-		
-		// @Override
-		public void destroy(PMarshaller pm) {
-			// Nothing to do
-		}
+        // @Override
+        public void reuse(PMarshaller pm) {
+            // Nothing to do
+        }
+        
+        // @Override
+        public void destroy(PMarshaller pm) {
+            // Nothing to do
+        }
 
-		// @Override
-		public boolean isValid(PMarshaller t) {
-			return true; 
-		}
-	}
+        // @Override
+        public boolean isValid(PMarshaller t) {
+            return true; 
+        }
+    }
 
-	//TODO isn't UTF-8 a standard string somewhere for encoding?
-	private boolean fragment= false;
-	private boolean pretty=false;
-	private QName qname;
-	
-	private Pool<PMarshaller> mpool; // specific Pool associated with constructed Classes
-	private Class<?> cls;
-	
-	private Pool<PMarshaller> getPool(Class<?> ... classes) throws JAXBException {
-		Pool<PMarshaller> mp;
-		synchronized(pools) {
-			mp = pools.get(classes);
-			if(mp==null) {
-				pools.put(classes,mp = new Pool<PMarshaller>(new Creator(classes)));
-			}
-		}		
-		return mp;
-	}
-	
-	public JAXBmar(Class<?>... classes) throws JAXBException {
-		cls = classes[0];
-		mpool = getPool(classes);
-		qname = null;
-	}
+    //TODO isn't UTF-8 a standard string somewhere for encoding?
+    private boolean fragment= false;
+    private boolean pretty=false;
+    private QName qname;
+    
+    private Pool<PMarshaller> mpool; // specific Pool associated with constructed Classes
+    private Class<?> cls;
+    
+    private Pool<PMarshaller> getPool(Class<?> ... classes) throws JAXBException {
+        Pool<PMarshaller> mp;
+        synchronized(pools) {
+            mp = pools.get(classes);
+            if(mp==null) {
+                pools.put(classes,mp = new Pool<PMarshaller>(new Creator(classes)));
+            }
+        }        
+        return mp;
+    }
+    
+    public JAXBmar(Class<?>... classes) throws JAXBException {
+        cls = classes[0];
+        mpool = getPool(classes);
+        qname = null;
+    }
 
-	public JAXBmar(QName theQname, Class<?>... classes) throws JAXBException {
-		cls = classes[0];
-		mpool = getPool(classes);
-		qname = theQname;
-	}
+    public JAXBmar(QName theQname, Class<?>... classes) throws JAXBException {
+        cls = classes[0];
+        mpool = getPool(classes);
+        qname = theQname;
+    }
 
-	@SuppressWarnings("unchecked")
-	public<O> O marshal(LogTarget lt,O o, Writer writer, boolean ... options) throws JAXBException, APIException {
-		boolean pretty, fragment;
-		pretty = options.length>0?options[0]:this.pretty;
-		fragment = options.length>1?options[1]:this.fragment;
-		Pooled<PMarshaller> m = mpool.get(lt);
-		try {
-			if(qname==null) {
-				m.content.get(pretty,fragment).marshal(o, writer);
-			} else {
-				m.content.get(pretty,fragment).marshal(
-					new JAXBElement<O>(qname, (Class<O>)cls, o ),
-					writer);
-			}
-			return o;
-		} finally {
-			m.done();
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public<O> O marshal(LogTarget lt,O o, Writer writer, boolean ... options) throws JAXBException, APIException {
+        boolean pretty, fragment;
+        pretty = options.length>0?options[0]:this.pretty;
+        fragment = options.length>1?options[1]:this.fragment;
+        Pooled<PMarshaller> m = mpool.get(lt);
+        try {
+            if(qname==null) {
+                m.content.get(pretty,fragment).marshal(o, writer);
+            } else {
+                m.content.get(pretty,fragment).marshal(
+                    new JAXBElement<O>(qname, (Class<O>)cls, o ),
+                    writer);
+            }
+            return o;
+        } finally {
+            m.done();
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public<O> O marshal(LogTarget lt, O o, OutputStream os, boolean ... options) throws JAXBException, APIException {
-		boolean pretty, fragment;
-		pretty = options.length>0?options[0]:this.pretty;
-		fragment = options.length>1?options[1]:this.fragment;
-		Pooled<PMarshaller> m = mpool.get(lt);
-		try {
-			if(qname==null) {
-				m.content.get(pretty,fragment).marshal(o, os);
-			} else {
-				m.content.get(pretty,fragment).marshal(
-					new JAXBElement<O>(qname, (Class<O>)cls, o ),os);
-			}
-			return o;
-		} finally {
-			m.done();
-		}
-	}
-	
-	public<O> O marshal(LogTarget lt, O o, Writer writer, Class<O> clss) throws JAXBException, APIException {
-		Pooled<PMarshaller> m = mpool.get(lt);
-		try {
-			if(qname==null) {
-				m.content.get(pretty,fragment).marshal(o, writer);
-			} else {
-				m.content.get(pretty,fragment).marshal(
-					new JAXBElement<O>(qname, clss, o),writer);
-			}
-			return o;
-		} finally {
-			m.done();
-		}
-			
-	}
+    @SuppressWarnings("unchecked")
+    public<O> O marshal(LogTarget lt, O o, OutputStream os, boolean ... options) throws JAXBException, APIException {
+        boolean pretty, fragment;
+        pretty = options.length>0?options[0]:this.pretty;
+        fragment = options.length>1?options[1]:this.fragment;
+        Pooled<PMarshaller> m = mpool.get(lt);
+        try {
+            if(qname==null) {
+                m.content.get(pretty,fragment).marshal(o, os);
+            } else {
+                m.content.get(pretty,fragment).marshal(
+                    new JAXBElement<O>(qname, (Class<O>)cls, o ),os);
+            }
+            return o;
+        } finally {
+            m.done();
+        }
+    }
+    
+    public<O> O marshal(LogTarget lt, O o, Writer writer, Class<O> clss) throws JAXBException, APIException {
+        Pooled<PMarshaller> m = mpool.get(lt);
+        try {
+            if(qname==null) {
+                m.content.get(pretty,fragment).marshal(o, writer);
+            } else {
+                m.content.get(pretty,fragment).marshal(
+                    new JAXBElement<O>(qname, clss, o),writer);
+            }
+            return o;
+        } finally {
+            m.done();
+        }
+            
+    }
 
-	public<O> O marshal(LogTarget lt, O o, OutputStream os, Class<O> clss) throws JAXBException, APIException {
-		Pooled<PMarshaller> m = mpool.get(lt);
-		try {
-			if(qname==null) { 
-				m.content.get(pretty,fragment).marshal(o, os);
-			} else {
-				m.content.get(pretty,fragment).marshal(
-					new JAXBElement<O>(qname, clss, o ),os);
-			}
-			return o;
-		} finally {
-			m.done();
-		}
-	}
+    public<O> O marshal(LogTarget lt, O o, OutputStream os, Class<O> clss) throws JAXBException, APIException {
+        Pooled<PMarshaller> m = mpool.get(lt);
+        try {
+            if(qname==null) { 
+                m.content.get(pretty,fragment).marshal(o, os);
+            } else {
+                m.content.get(pretty,fragment).marshal(
+                    new JAXBElement<O>(qname, clss, o ),os);
+            }
+            return o;
+        } finally {
+            m.done();
+        }
+    }
 
-	/**
-	 * @return
-	 */
-	public Class<?> getMarshalClass() {
-		return cls;
-	}
+    /**
+     * @return
+     */
+    public Class<?> getMarshalClass() {
+        return cls;
+    }
 
-	public<O> String stringify(LogTarget lt, O o) throws JAXBException, APIException {
-		StringWriter sw = new StringWriter();
-		marshal(lt,o,sw);
-		return sw.toString();
-	}
+    public<O> String stringify(LogTarget lt, O o) throws JAXBException, APIException {
+        StringWriter sw = new StringWriter();
+        marshal(lt,o,sw);
+        return sw.toString();
+    }
 
-	public JAXBmar pretty(boolean pretty) {
-		this.pretty = pretty;
-		return this;
-	}
-	
-	public JAXBmar asFragment(boolean fragment) {
-		this.fragment = fragment;
-		return this;
-	}
+    public JAXBmar pretty(boolean pretty) {
+        this.pretty = pretty;
+        return this;
+    }
+    
+    public JAXBmar asFragment(boolean fragment) {
+        this.fragment = fragment;
+        return this;
+    }
 }

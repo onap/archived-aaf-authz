@@ -24,43 +24,43 @@ package org.onap.aaf.auth.gui.table;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class CheckBoxCell extends AbsCell {
-	public enum ALIGN{ left, right, center };
-	private String[] attrs;
-	private ALIGN align;
-	
-	public CheckBoxCell(String name, ALIGN align, String value, String ... attributes) {
-		this.align = align;
-		attrs = new String[3 + attributes.length];
-		attrs[0]="type=checkbox";
-		attrs[1]="name="+name;
-		attrs[2]="value="+value;
-		System.arraycopy(attributes, 0, attrs, 3, attributes.length);
-	}
+    public enum ALIGN{ left, right, center };
+    private String[] attrs;
+    private ALIGN align;
+    
+    public CheckBoxCell(String name, ALIGN align, String value, String ... attributes) {
+        this.align = align;
+        attrs = new String[3 + attributes.length];
+        attrs[0]="type=checkbox";
+        attrs[1]="name="+name;
+        attrs[2]="value="+value;
+        System.arraycopy(attributes, 0, attrs, 3, attributes.length);
+    }
 
-	public CheckBoxCell(String name, String value, String ... attributes) {
-		this.align = ALIGN.center;
-		attrs = new String[3 + attributes.length];
-		attrs[0]="type=checkbox";
-		attrs[1]="name="+name;
-		attrs[2]="value="+value;
-		System.arraycopy(attributes, 0, attrs, 3, attributes.length);
-	}
+    public CheckBoxCell(String name, String value, String ... attributes) {
+        this.align = ALIGN.center;
+        attrs = new String[3 + attributes.length];
+        attrs[0]="type=checkbox";
+        attrs[1]="name="+name;
+        attrs[2]="value="+value;
+        System.arraycopy(attributes, 0, attrs, 3, attributes.length);
+    }
 
-	@Override
-	public void write(HTMLGen hgen) {
-		hgen.tagOnly("input",attrs);
-	}
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.tagOnly("input",attrs);
+    }
 
-	@Override
-	public String[] attrs() {
-		switch(align) {
-			case left:
-				return AbsCell.LEFT;
-			case right:
-				return AbsCell.RIGHT;
-			case center:
-				default:
-				return AbsCell.CENTER;
-			}
-	}
+    @Override
+    public String[] attrs() {
+        switch(align) {
+            case left:
+                return AbsCell.LEFT;
+            case right:
+                return AbsCell.RIGHT;
+            case center:
+                default:
+                return AbsCell.CENTER;
+            }
+    }
 }

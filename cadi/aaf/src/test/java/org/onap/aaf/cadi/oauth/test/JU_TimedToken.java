@@ -40,45 +40,45 @@ import aafoauth.v2_0.Token;
 
 public class JU_TimedToken {
 
-	private static final byte[] hash = "hashstring".getBytes();
+    private static final byte[] hash = "hashstring".getBytes();
 
-	private static final int expires = 10000;
+    private static final int expires = 10000;
 
-	private Path path;
+    private Path path;
 
-	@Mock private Persist<Token, ?> persistMock;
-	@Mock private Token tokenMock;
+    @Mock private Persist<Token, ?> persistMock;
+    @Mock private Token tokenMock;
 
-	@Before
-	public void setup() throws IOException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws IOException {
+        MockitoAnnotations.initMocks(this);
 
-		when(tokenMock.getExpiresIn()).thenReturn(expires);
-		path = Files.createTempFile("fake", ".txt");
-	}
+        when(tokenMock.getExpiresIn()).thenReturn(expires);
+        path = Files.createTempFile("fake", ".txt");
+    }
 
-	@Test
-	public void test() {
-		int actuallyExpires = ((int)(System.currentTimeMillis() / 1000)) + expires;
-		TimedToken ttoken = new TimedToken(persistMock, tokenMock, hash, path);
+    @Test
+    public void test() {
+        int actuallyExpires = ((int)(System.currentTimeMillis() / 1000)) + expires;
+        TimedToken ttoken = new TimedToken(persistMock, tokenMock, hash, path);
 
-		assertThat(ttoken.get(), is(tokenMock));
-		assertThat(ttoken.checkSyncTime(), is(true));
-		assertThat(ttoken.checkReloadable(), is(false));
-		assertThat(ttoken.hasBeenTouched(), is(false));
-		assertThat(Math.abs(ttoken.expires() - actuallyExpires) < 10, is(true));
-		assertThat(ttoken.expired(), is(false));
+        assertThat(ttoken.get(), is(tokenMock));
+        assertThat(ttoken.checkSyncTime(), is(true));
+        assertThat(ttoken.checkReloadable(), is(false));
+        assertThat(ttoken.hasBeenTouched(), is(false));
+        assertThat(Math.abs(ttoken.expires() - actuallyExpires) < 10, is(true));
+        assertThat(ttoken.expired(), is(false));
 
-		assertThat(ttoken.match(hash), is(true));
-		assertThat(ttoken.getHash(), is(hash));
+        assertThat(ttoken.match(hash), is(true));
+        assertThat(ttoken.getHash(), is(hash));
 
-		assertThat(ttoken.path(), is(path));
+        assertThat(ttoken.path(), is(path));
 
-		assertThat(ttoken.count(), is(0));
-		ttoken.inc();
-		assertThat(ttoken.count(), is(1));
-		ttoken.clearCount();
-		assertThat(ttoken.count(), is(0));
-	}
+        assertThat(ttoken.count(), is(0));
+        ttoken.inc();
+        assertThat(ttoken.count(), is(1));
+        ttoken.clearCount();
+        assertThat(ttoken.count(), is(0));
+    }
 
 }

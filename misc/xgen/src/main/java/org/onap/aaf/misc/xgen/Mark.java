@@ -22,19 +22,19 @@
 package org.onap.aaf.misc.xgen;
 
 public class Mark {
-	// package on purpose
-	int spot = 0;
-	public String comment;
-	
-	public Mark() {
-		comment = null; 
-	}
-	
-	public Mark(String string) {
-		comment = string;
-	}
+    // package on purpose
+    int spot = 0;
+    public String comment;
+    
+    public Mark() {
+        comment = null; 
+    }
+    
+    public Mark(String string) {
+        comment = string;
+    }
 
-	public void spot(int spot) {
-		this.spot = spot;
-	}
+    public void spot(int spot) {
+        this.spot = spot;
+    }
 }

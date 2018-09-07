@@ -33,36 +33,36 @@ import org.onap.aaf.cadi.principal.StringTagLookup;
 
 public class JU_TaggedPrincipal {
 
-	private final String name = "stubbedName";
-	private final String tag = "tag";
+    private final String name = "stubbedName";
+    private final String tag = "tag";
 
-	private class TaggedPrincipalStub extends TaggedPrincipal {
-		public TaggedPrincipalStub() { super(); }
-		public TaggedPrincipalStub(final TagLookup tl) { super(tl); }
-		@Override public String getName() { return name; }
-		@Override public String tag() { return null; }
-	}
+    private class TaggedPrincipalStub extends TaggedPrincipal {
+        public TaggedPrincipalStub() { super(); }
+        public TaggedPrincipalStub(final TagLookup tl) { super(tl); }
+        @Override public String getName() { return name; }
+        @Override public String tag() { return null; }
+    }
 
-	private class WhinyTagLookup implements TagLookup {
-		public WhinyTagLookup(final String tag) { }
-		@Override
-		public String lookup() throws CadiException {
-			throw new CadiException();
-		}
-	}
+    private class WhinyTagLookup implements TagLookup {
+        public WhinyTagLookup(final String tag) { }
+        @Override
+        public String lookup() throws CadiException {
+            throw new CadiException();
+        }
+    }
 
-	@Test
-	public void personalNameTest() {
-		TaggedPrincipal tp = new TaggedPrincipalStub();
-		assertThat(tp.personalName(), is(name));
+    @Test
+    public void personalNameTest() {
+        TaggedPrincipal tp = new TaggedPrincipalStub();
+        assertThat(tp.personalName(), is(name));
 
-		StringTagLookup stl = new StringTagLookup(tag);
-		tp = new TaggedPrincipalStub(stl);
-		assertThat(tp.personalName(), is(tag));
+        StringTagLookup stl = new StringTagLookup(tag);
+        tp = new TaggedPrincipalStub(stl);
+        assertThat(tp.personalName(), is(tag));
 
-		WhinyTagLookup wtl = new WhinyTagLookup(tag);
-		tp.setTagLookup(wtl);
-		assertThat(tp.personalName(), is(name));
-	}
+        WhinyTagLookup wtl = new WhinyTagLookup(tag);
+        tp.setTagLookup(wtl);
+        assertThat(tp.personalName(), is(name));
+    }
 
 }

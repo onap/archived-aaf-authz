@@ -35,11 +35,11 @@ import java.security.Principal;
  *
  */
 public interface Transmutate<T> {
-	/**
-	 * Mutate the (assumed validated) Principal into the expected Principal name to be used to construct
-	 * 
-	 * @param p
-	 * @return
-	 */
-	public T mutate(Principal p);
+    /**
+     * Mutate the (assumed validated) Principal into the expected Principal name to be used to construct
+     * 
+     * @param p
+     * @return
+     */
+    public T mutate(Principal p);
 }

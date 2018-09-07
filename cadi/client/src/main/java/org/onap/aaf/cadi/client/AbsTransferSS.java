@@ -38,39 +38,39 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
  * @param <CLIENT>
  */
 public abstract class AbsTransferSS<CLIENT> implements SecuritySetter<CLIENT> {
-	protected String value;
-	protected SecurityInfoC<CLIENT> securityInfo;
-	protected SecuritySetter<CLIENT> defSS;
-	private Principal principal;
+    protected String value;
+    protected SecurityInfoC<CLIENT> securityInfo;
+    protected SecuritySetter<CLIENT> defSS;
+    private Principal principal;
 
-	//Format:<ID>:<APP>:<protocol>[:AS][,<ID>:<APP>:<protocol>]*
-	public AbsTransferSS(TaggedPrincipal principal, String app) {
-		init(principal, app);
-	}
+    //Format:<ID>:<APP>:<protocol>[:AS][,<ID>:<APP>:<protocol>]*
+    public AbsTransferSS(TaggedPrincipal principal, String app) {
+        init(principal, app);
+    }
 
-	public AbsTransferSS(TaggedPrincipal principal, String app, SecurityInfoC<CLIENT> si) {
-		init(principal,app);
-		securityInfo = si;
-		this.defSS = si.defSS;
-	}
+    public AbsTransferSS(TaggedPrincipal principal, String app, SecurityInfoC<CLIENT> si) {
+        init(principal,app);
+        securityInfo = si;
+        this.defSS = si.defSS;
+    }
 
-	private void init(TaggedPrincipal principal, String app)  {
-		this.principal=principal;
-		if(principal==null) {
-			return;
-		} else  {
-			value = principal.getName() + ':' + 
-					app + ':' + 
-					principal.tag() + ':' +
-					"AS";
-		}
-	}
+    private void init(TaggedPrincipal principal, String app)  {
+        this.principal=principal;
+        if(principal==null) {
+            return;
+        } else  {
+            value = principal.getName() + ':' + 
+                    app + ':' + 
+                    principal.tag() + ':' +
+                    "AS";
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.SecuritySetter#getID()
-	 */
-	@Override
-	public String getID() {
-		return principal==null?"":principal.getName();
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.SecuritySetter#getID()
+     */
+    @Override
+    public String getID() {
+        return principal==null?"":principal.getName();
+    }
 }

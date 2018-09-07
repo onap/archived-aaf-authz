@@ -22,5 +22,5 @@
 package org.onap.aaf.auth.helpers;
 
 public interface Loader<T> {
-	public void exec(T t);
+    public void exec(T t);
 }

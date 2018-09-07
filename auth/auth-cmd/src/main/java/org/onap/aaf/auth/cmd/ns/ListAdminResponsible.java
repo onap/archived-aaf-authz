@@ -35,43 +35,43 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.Nss;
 
 public class ListAdminResponsible extends Cmd {
-	private static final String HEADER="List Namespaces with ";
-	private final static String[] options = {"admin","owner"};
-	
-	public ListAdminResponsible(List parent) {
-		super(parent,null, 
-				new Param(optionsToString(options),true),
-				new Param("user",true)); 
-	}
+    private static final String HEADER="List Namespaces with ";
+    private final static String[] options = {"admin","owner"};
+    
+    public ListAdminResponsible(List parent) {
+        super(parent,null, 
+                new Param(optionsToString(options),true),
+                new Param("user",true)); 
+    }
 
-	@Override
-	protected int _exec(final int index, final String... args) throws CadiException, APIException, LocatorException {
+    @Override
+    protected int _exec(final int index, final String... args) throws CadiException, APIException, LocatorException {
 
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				int idx = index;
-				String title = args[idx++];
-				String user = fullID(args[idx++]);
-				String apipart = "owner".equals(title)?"responsible":title;
-				
-				Future<Nss> fn = client.read("/authz/nss/"+apipart+"/"+user,getDF(Nss.class));
-				if(fn.get(AAFcli.timeout())) {
-					((List)parent).reportName(fn,HEADER + title + " privileges for ",user);
-				} else if(fn.code()==404) {
-					((List)parent).report(null,HEADER + title + " privileges for ",user);
-					return 200;
-				} else {	
-					error(fn);
-				}
-				return fn.code();
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER + "admin or owner privileges for user");
-		api(sb,indent,HttpMethods.GET,"authz/nss/<admin|owner>/<user>",Nss.class,true);
-	}
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                int idx = index;
+                String title = args[idx++];
+                String user = fullID(args[idx++]);
+                String apipart = "owner".equals(title)?"responsible":title;
+                
+                Future<Nss> fn = client.read("/authz/nss/"+apipart+"/"+user,getDF(Nss.class));
+                if(fn.get(AAFcli.timeout())) {
+                    ((List)parent).reportName(fn,HEADER + title + " privileges for ",user);
+                } else if(fn.code()==404) {
+                    ((List)parent).report(null,HEADER + title + " privileges for ",user);
+                    return 200;
+                } else {    
+                    error(fn);
+                }
+                return fn.code();
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER + "admin or owner privileges for user");
+        api(sb,indent,HttpMethods.GET,"authz/nss/<admin|owner>/<user>",Nss.class,true);
+    }
 }

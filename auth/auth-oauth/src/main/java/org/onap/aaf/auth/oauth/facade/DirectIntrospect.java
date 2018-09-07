@@ -25,5 +25,5 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 
 public interface DirectIntrospect<INTROSPECT> {
-	Result<INTROSPECT> mappedIntrospect(AuthzTrans trans, String token);
+    Result<INTROSPECT> mappedIntrospect(AuthzTrans trans, String token);
 }

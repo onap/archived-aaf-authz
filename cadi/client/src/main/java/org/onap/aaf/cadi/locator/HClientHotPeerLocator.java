@@ -30,31 +30,31 @@ import org.onap.aaf.cadi.http.HClient;
 import org.onap.aaf.cadi.http.HX509SS;
 
 public class HClientHotPeerLocator extends HotPeerLocator<HClient> {
-	private final HX509SS ss;
+    private final HX509SS ss;
 
-	public HClientHotPeerLocator(Access access, String urlstr, long invalidateTime, String localLatitude,
-			String localLongitude, HX509SS ss) throws LocatorException {
-		super(access, urlstr, invalidateTime, localLatitude, localLongitude);
-		
-		this.ss = ss;
-	}
+    public HClientHotPeerLocator(Access access, String urlstr, long invalidateTime, String localLatitude,
+            String localLongitude, HX509SS ss) throws LocatorException {
+        super(access, urlstr, invalidateTime, localLatitude, localLongitude);
+        
+        this.ss = ss;
+    }
 
-	@Override
-	protected HClient _newClient(String clientInfo) throws LocatorException {
-		try {
-			int idx = clientInfo.indexOf('/');
-			return new HClient(ss,new URI("https://"+(idx<0?clientInfo:clientInfo.substring(0, idx))),3000);
-		} catch (URISyntaxException e) {
-			throw new LocatorException(e);
-		}
-	}
+    @Override
+    protected HClient _newClient(String clientInfo) throws LocatorException {
+        try {
+            int idx = clientInfo.indexOf('/');
+            return new HClient(ss,new URI("https://"+(idx<0?clientInfo:clientInfo.substring(0, idx))),3000);
+        } catch (URISyntaxException e) {
+            throw new LocatorException(e);
+        }
+    }
 
-	@Override
-	protected HClient _invalidate(HClient client) {
-		return null;
-	}
+    @Override
+    protected HClient _invalidate(HClient client) {
+        return null;
+    }
 
-	@Override
-	protected void _destroy(HClient client) {
-	}
+    @Override
+    protected void _destroy(HClient client) {
+    }
 }

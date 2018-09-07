@@ -22,12 +22,12 @@
 package org.onap.aaf.auth.oauth.service;
 
 public class OCreds {
-	public final String client_id, username;
-	public final byte[] client_secret, password;
-	public OCreds(String client_id, String client_secret, String username, String password) {
-		this.client_id = client_id;
-		this.client_secret = client_secret==null?null:client_secret.getBytes();
-		this.username = username;
-		this.password = password==null?null:password.getBytes();
-	}
+    public final String client_id, username;
+    public final byte[] client_secret, password;
+    public OCreds(String client_id, String client_secret, String username, String password) {
+        this.client_id = client_id;
+        this.client_secret = client_secret==null?null:client_secret.getBytes();
+        this.username = username;
+        this.password = password==null?null:password.getBytes();
+    }
 }

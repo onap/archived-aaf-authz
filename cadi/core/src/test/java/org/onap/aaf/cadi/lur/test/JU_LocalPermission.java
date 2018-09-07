@@ -34,38 +34,38 @@ import org.onap.aaf.cadi.Permission;
 
 public class JU_LocalPermission {
 
-	@Mock
-	Permission perm;
+    @Mock
+    Permission perm;
 
-	private LocalPermission localPerm;
-	private String role = "Fake Role";
+    private LocalPermission localPerm;
+    private String role = "Fake Role";
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		when(perm.getKey()).thenReturn(role);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        when(perm.getKey()).thenReturn(role);
 
-		localPerm = new LocalPermission(role);
-	}
+        localPerm = new LocalPermission(role);
+    }
 
-	@Test
-	public void getKeyTest() {
-		assertThat(localPerm.getKey(), is(role));
-	}
+    @Test
+    public void getKeyTest() {
+        assertThat(localPerm.getKey(), is(role));
+    }
 
-	@Test
-	public void toStringTest() {
-		assertThat(localPerm.toString(), is(role));
-	}
+    @Test
+    public void toStringTest() {
+        assertThat(localPerm.toString(), is(role));
+    }
 
-	@Test
-	public void matchTest() {
-		assertTrue(localPerm.match(perm));
-	}
+    @Test
+    public void matchTest() {
+        assertTrue(localPerm.match(perm));
+    }
 
-	@Test
-	public void permTypeTest() {
-		assertThat(localPerm.permType(), is("LOCAL"));
-	}
+    @Test
+    public void permTypeTest() {
+        assertThat(localPerm.permType(), is("LOCAL"));
+    }
 
 }

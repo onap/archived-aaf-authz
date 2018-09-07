@@ -22,10 +22,10 @@
 package org.onap.aaf.cadi.taf;
 
 public interface Redirectable extends TafResp {
-	/**
-	 * Create a Redirectable URL entry prefaced by a URLEncoder.String for a Menu
-	 * example:
-	 * "Global Login=https://xxxx....."
-	 */
-	public String get();
+    /**
+     * Create a Redirectable URL entry prefaced by a URLEncoder.String for a Menu
+     * example:
+     * "Global Login=https://xxxx....."
+     */
+    public String get();
 }

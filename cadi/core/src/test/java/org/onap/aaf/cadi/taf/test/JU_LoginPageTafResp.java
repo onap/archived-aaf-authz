@@ -52,50 +52,50 @@ import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_LoginPageTafResp {
 
-	private static final String uriString = "example.com";
+    private static final String uriString = "example.com";
 
-	private URI uri;
-	private Access access;
-	private List<Redirectable> redirectables;
+    private URI uri;
+    private Access access;
+    private List<Redirectable> redirectables;
 
-	@Mock private HttpServletResponse respMock;
-	@Mock private Locator<URI> locatorMock;
-	@Mock private Redirectable redirMock;
+    @Mock private HttpServletResponse respMock;
+    @Mock private Locator<URI> locatorMock;
+    @Mock private Redirectable redirMock;
 
-	@Before
-	public void setup() throws URISyntaxException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws URISyntaxException {
+        MockitoAnnotations.initMocks(this);
 
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 
-		redirectables = new ArrayList<>();
-		uri = new URI(uriString);
-	}
+        redirectables = new ArrayList<>();
+        uri = new URI(uriString);
+    }
 
-	@Test
-	public void test() throws LocatorException, IOException {
-		TafResp resp;
-		resp = LoginPageTafResp.create(access, null, respMock, redirectables);
-		assertThat(resp.desc(), is("All Authentication denied"));
+    @Test
+    public void test() throws LocatorException, IOException {
+        TafResp resp;
+        resp = LoginPageTafResp.create(access, null, respMock, redirectables);
+        assertThat(resp.desc(), is("All Authentication denied"));
 
-		redirectables.add(redirMock);
-		redirectables.add(redirMock);
-		resp = LoginPageTafResp.create(access, null, respMock, redirectables);
-		assertThat((Redirectable)resp, is(redirMock));
+        redirectables.add(redirMock);
+        redirectables.add(redirMock);
+        resp = LoginPageTafResp.create(access, null, respMock, redirectables);
+        assertThat((Redirectable)resp, is(redirMock));
 
-		resp = LoginPageTafResp.create(access, locatorMock, respMock, redirectables);
-		assertThat(resp.desc(), is("All Authentication denied"));
+        resp = LoginPageTafResp.create(access, locatorMock, respMock, redirectables);
+        assertThat(resp.desc(), is("All Authentication denied"));
 
-		when(locatorMock.get((Item)any())).thenReturn(uri);
-		resp = LoginPageTafResp.create(access, locatorMock, respMock, redirectables);
-		assertThat(resp.desc(), is("Multiple Possible HTTP Logins available.  Redirecting to Login Choice Page"));
-		assertThat(resp.authenticate(), is(RESP.HTTP_REDIRECT_INVOKED));
-		assertThat(resp.isAuthenticated(), is(RESP.TRY_AUTHENTICATING));
+        when(locatorMock.get((Item)any())).thenReturn(uri);
+        resp = LoginPageTafResp.create(access, locatorMock, respMock, redirectables);
+        assertThat(resp.desc(), is("Multiple Possible HTTP Logins available.  Redirecting to Login Choice Page"));
+        assertThat(resp.authenticate(), is(RESP.HTTP_REDIRECT_INVOKED));
+        assertThat(resp.isAuthenticated(), is(RESP.TRY_AUTHENTICATING));
 
-		redirectables = new ArrayList<>();
-		resp = LoginPageTafResp.create(access, locatorMock, respMock, redirectables);
-		assertThat(resp.desc(), is("All Authentication denied"));
+        redirectables = new ArrayList<>();
+        resp = LoginPageTafResp.create(access, locatorMock, respMock, redirectables);
+        assertThat(resp.desc(), is("All Authentication denied"));
 
-	}
+    }
 
 }

@@ -28,19 +28,19 @@ package org.onap.aaf.cadi.client;
  * @param <T>
  */
 public class Holder<T> {
-	private T value;
-	public Holder(T t) {
-		value = t;
-	}
-	public T set(T t) {
-		value = t;
-		return t;
-	}
-	
-	public T get() {
-		return value;
-	}
-	public String toString() {
-		return value.toString();
-	}
+    private T value;
+    public Holder(T t) {
+        value = t;
+    }
+    public T set(T t) {
+        value = t;
+        return t;
+    }
+    
+    public T get() {
+        return value;
+    }
+    public String toString() {
+        return value.toString();
+    }
 }

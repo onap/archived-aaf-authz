@@ -44,120 +44,120 @@ import java.io.IOException;
 @RunWith(PowerMockRunner.class)
 public class JU_DefaultOrgIdentity {
 
-	private DefaultOrg defaultOrgMock;
+    private DefaultOrg defaultOrgMock;
 
-	@Mock
-	private Reuse rMock;
+    @Mock
+    private Reuse rMock;
 
-	@Mock
-	AuthzTrans authzTransMock;
+    @Mock
+    AuthzTrans authzTransMock;
 
-	@Mock
-	private Data dataMock;
+    @Mock
+    private Data dataMock;
 
-	@Mock
-	private DefaultOrgIdentity defaultOrgIdentity;
+    @Mock
+    private DefaultOrgIdentity defaultOrgIdentity;
 
-	static String key = "iowna@deforg";
-	static String orgDomain = "@deforg";
+    static String key = "iowna@deforg";
+    static String orgDomain = "@deforg";
 
-	@Before
-	public void setUp() throws IOException, OrganizationException {
-		MockitoAnnotations.initMocks(this);
-		defaultOrgMock = PowerMockito.mock(DefaultOrg.class);
-		defaultOrgMock.identities = mock(Identities.class);
-
-
-		authzTransMock = PowerMockito.mock(AuthzTrans.class);
-
-		when(defaultOrgMock.getDomain()).thenReturn(orgDomain);
-		when(defaultOrgMock.identities.reuse()).thenReturn(rMock);
-		when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(dataMock);
-
-		defaultOrgIdentity = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
-
-	}
+    @Before
+    public void setUp() throws IOException, OrganizationException {
+        MockitoAnnotations.initMocks(this);
+        defaultOrgMock = PowerMockito.mock(DefaultOrg.class);
+        defaultOrgMock.identities = mock(Identities.class);
 
 
-	@Test
-	public void testIdentify_returnIdentifiedEntity()  {
+        authzTransMock = PowerMockito.mock(AuthzTrans.class);
 
-		assertTrue(defaultOrgIdentity.id() != null);
+        when(defaultOrgMock.getDomain()).thenReturn(orgDomain);
+        when(defaultOrgMock.identities.reuse()).thenReturn(rMock);
+        when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(dataMock);
 
-	}
+        defaultOrgIdentity = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
 
-	@Test
-	public void testIdentify_returnIdentifiedEntityWithDataNull() throws IOException, OrganizationException {
-
-		when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(null);
-
-		DefaultOrgIdentity defaultOrgIdentityDataNull = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
-		assertTrue(defaultOrgIdentityDataNull.id() != null);
-
-	}
-
-	@Test(expected = OrganizationException.class)
-	public void testIdentify_returnThrowIOException() throws OrganizationException {
-
-		when(defaultOrgMock.getDomain()).thenReturn(orgDomain);
-		when(defaultOrgMock.identities.reuse()).thenThrow(IOException.class);
-		DefaultOrgIdentity defaultOrgIdentityException = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
-
-	}
+    }
 
 
-	@Test
-	public void testEquals_returnTrue() {
+    @Test
+    public void testIdentify_returnIdentifiedEntity()  {
 
-		Object b = defaultOrgIdentity;
-		assertTrue(defaultOrgIdentity.equals(b) == true );
-	}
+        assertTrue(defaultOrgIdentity.id() != null);
 
-	@Test
-	public void testStatus_returnUnknown() {
+    }
 
-		assertEquals(defaultOrgIdentity.type(), "Unknown");
+    @Test
+    public void testIdentify_returnIdentifiedEntityWithDataNull() throws IOException, OrganizationException {
 
-	}
+        when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(null);
 
-	@Test
-	public void testHash_returnHashCode() {
+        DefaultOrgIdentity defaultOrgIdentityDataNull = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
+        assertTrue(defaultOrgIdentityDataNull.id() != null);
 
-		assertTrue(defaultOrgIdentity.hashCode() != 0 );
+    }
 
-	}
+    @Test(expected = OrganizationException.class)
+    public void testIdentify_returnThrowIOException() throws OrganizationException {
 
-	@Test
-	public void testFullId_returnFullId() throws IOException, OrganizationException{
-		String key="toto@deforg";
-		String orgDomain="@deforg";
-		when(defaultOrgMock.getDomain()).thenReturn(orgDomain);
-		when(defaultOrgMock.identities.reuse()).thenReturn(rMock);
-		when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(dataMock);
-		defaultOrgIdentity = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
+        when(defaultOrgMock.getDomain()).thenReturn(orgDomain);
+        when(defaultOrgMock.identities.reuse()).thenThrow(IOException.class);
+        DefaultOrgIdentity defaultOrgIdentityException = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
 
-		assertTrue(defaultOrgIdentity.fullID().contains("@") );
-	}
-
-	@Test
-	public void testEmail_returnEmail() {
-
-		assertTrue(defaultOrgIdentity.email() != null  );
-	}
+    }
 
 
-	@Test
-	public void testFullName_returnFullName() {
+    @Test
+    public void testEquals_returnTrue() {
 
-		assertTrue(defaultOrgIdentity.fullName() != null );
-	}
+        Object b = defaultOrgIdentity;
+        assertTrue(defaultOrgIdentity.equals(b) == true );
+    }
+
+    @Test
+    public void testStatus_returnUnknown() {
+
+        assertEquals(defaultOrgIdentity.type(), "Unknown");
+
+    }
+
+    @Test
+    public void testHash_returnHashCode() {
+
+        assertTrue(defaultOrgIdentity.hashCode() != 0 );
+
+    }
+
+    @Test
+    public void testFullId_returnFullId() throws IOException, OrganizationException{
+        String key="toto@deforg";
+        String orgDomain="@deforg";
+        when(defaultOrgMock.getDomain()).thenReturn(orgDomain);
+        when(defaultOrgMock.identities.reuse()).thenReturn(rMock);
+        when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(dataMock);
+        defaultOrgIdentity = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
+
+        assertTrue(defaultOrgIdentity.fullID().contains("@") );
+    }
+
+    @Test
+    public void testEmail_returnEmail() {
+
+        assertTrue(defaultOrgIdentity.email() != null  );
+    }
 
 
-	@Test
-	public void testFirstName_returnFirstName() {
+    @Test
+    public void testFullName_returnFullName() {
 
-		assertTrue(defaultOrgIdentity.firstName() != null );
-	}
+        assertTrue(defaultOrgIdentity.fullName() != null );
+    }
+
+
+    @Test
+    public void testFirstName_returnFirstName() {
+
+        assertTrue(defaultOrgIdentity.firstName() != null );
+    }
 
 
 

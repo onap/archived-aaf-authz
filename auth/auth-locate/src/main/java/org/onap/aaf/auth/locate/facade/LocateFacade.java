@@ -37,79 +37,79 @@ import org.onap.aaf.auth.rserv.RServlet;
 public interface LocateFacade {
 
 /////////////////////  STANDARD ELEMENTS //////////////////
-	/** 
-	 * @param trans
-	 * @param response
-	 * @param result
-	 */
-	void error(AuthzTrans trans, HttpServletResponse response, Result<?> result);
+    /** 
+     * @param trans
+     * @param response
+     * @param result
+     */
+    void error(AuthzTrans trans, HttpServletResponse response, Result<?> result);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param response
-	 * @param status
-	 */
-	void error(AuthzTrans trans, HttpServletResponse response, int status,	String msg, String ... detail);
+    /**
+     * 
+     * @param trans
+     * @param response
+     * @param status
+     */
+    void error(AuthzTrans trans, HttpServletResponse response, int status,    String msg, String ... detail);
 
 
-	/**
-	 * 
-	 * @param trans
-	 * @param resp
-	 * @param rservlet
-	 * @return
-	 */
-	public Result<Void> getAPI(AuthzTrans trans, HttpServletResponse resp, RServlet<AuthzTrans> rservlet);
+    /**
+     * 
+     * @param trans
+     * @param resp
+     * @param rservlet
+     * @return
+     */
+    public Result<Void> getAPI(AuthzTrans trans, HttpServletResponse resp, RServlet<AuthzTrans> rservlet);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param resp
-	 * @param typeCode
-	 * @param optional
-	 * @return
-	 */
-	public abstract Result<Void> getAPIExample(AuthzTrans trans, HttpServletResponse resp, String typeCode, boolean optional);
+    /**
+     * 
+     * @param trans
+     * @param resp
+     * @param typeCode
+     * @param optional
+     * @return
+     */
+    public abstract Result<Void> getAPIExample(AuthzTrans trans, HttpServletResponse resp, String typeCode, boolean optional);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param resp
-	 * @param service
-	 * @param version
-	 * @param other
-	 * @param string 
-	 * @return
-	 */
-	public abstract Result<Void> getEndpoints(AuthzTrans trans, HttpServletResponse resp, String key, 
-			String service, String version, String other);
+    /**
+     * 
+     * @param trans
+     * @param resp
+     * @param service
+     * @param version
+     * @param other
+     * @param string 
+     * @return
+     */
+    public abstract Result<Void> getEndpoints(AuthzTrans trans, HttpServletResponse resp, String key, 
+            String service, String version, String other);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param req
-	 * @param resp
-	 * @return
-	 */
-	public abstract Result<Void> putMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
+    /**
+     * 
+     * @param trans
+     * @param req
+     * @param resp
+     * @return
+     */
+    public abstract Result<Void> putMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param req
-	 * @param resp
-	 * @return
-	 */
-	public abstract Result<Void> removeMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
+    /**
+     * 
+     * @param trans
+     * @param req
+     * @param resp
+     * @return
+     */
+    public abstract Result<Void> removeMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param req
-	 * @param resp
-	 * @return
-	 */
-	public Result<Void> getConfig(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, String id, String type);
+    /**
+     * 
+     * @param trans
+     * @param req
+     * @param resp
+     * @return
+     */
+    public Result<Void> getConfig(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, String id, String type);
 
 }

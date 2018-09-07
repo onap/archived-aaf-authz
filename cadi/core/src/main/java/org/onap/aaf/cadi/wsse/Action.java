@@ -33,5 +33,5 @@ package org.onap.aaf.cadi.wsse;
  * @param <OUTPUT>
  */
 interface Action<OUTPUT> {
-	public boolean content(OUTPUT output, String text);
+    public boolean content(OUTPUT output, String text);
 }

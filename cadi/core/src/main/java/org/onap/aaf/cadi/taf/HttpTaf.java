@@ -38,23 +38,23 @@ import org.onap.aaf.cadi.Taf.LifeForm;
  *
  */
 public interface HttpTaf {
-	/**
-	 * validate
-	 * 
-	 * Validate the Request, and respond with created TafResp object.
-	 * 
-	 * @param reading
-	 * @param req
-	 * @param resp
-	 * @return
-	 */
-	public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp);
-	
-	/**
-	 * Re-Validate Credential
-	 * 
-	 * @param prin
-	 * @return
-	 */
-	public CachedPrincipal.Resp revalidate(CachedPrincipal prin,Object state);
+    /**
+     * validate
+     * 
+     * Validate the Request, and respond with created TafResp object.
+     * 
+     * @param reading
+     * @param req
+     * @param resp
+     * @return
+     */
+    public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp);
+    
+    /**
+     * Re-Validate Credential
+     * 
+     * @param prin
+     * @return
+     */
+    public CachedPrincipal.Resp revalidate(CachedPrincipal prin,Object state);
 }

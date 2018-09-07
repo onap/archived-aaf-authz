@@ -58,51 +58,51 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Clear {
-	
-	private static Clear clr;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	Cache cache;
-	Mgmt mgmt;
-	
-	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		hman = new HMangr(aEnv, loc);	
-//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-//		mgmt = new Mgmt(aafcli);
-//		cache = new Cache(mgmt);
-//		clr = new Clear(cache);
-		
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		when(loc.first()).thenReturn(value);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, value, secSet);
-//		String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
-		//clr._exec(0, strArr);				
+    
+    private static Clear clr;
+    PropAccess prop;
+    AuthzEnv aEnv;
+    Writer wtr;
+    Locator<URI> loc;
+    HMangr hman;    
+    AAFcli aafcli;
+    Cache cache;
+    Mgmt mgmt;
+    
+    @Before
+    public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        prop = new PropAccess();
+        aEnv = new AuthzEnv();
+        wtr = mock(Writer.class);
+        loc = mock(Locator.class);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+//        hman = new HMangr(aEnv, loc);    
+//        aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+//        mgmt = new Mgmt(aafcli);
+//        cache = new Cache(mgmt);
+//        clr = new Clear(cache);
+        
+    }
+    
+    @Test
+    public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+        Item value = mock(Item.class);
+        when(loc.best()).thenReturn(value);
+        URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
+        when(loc.get(value)).thenReturn(uri);
+        when(loc.first()).thenReturn(value);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+//        HRcli hcli = new HRcli(hman, uri, value, secSet);
+//        String[] strArr = {"grant","ungrant","setTo","grant","ungrant","setTo"};
+        //clr._exec(0, strArr);                
 
-	}
-	
-	@Test
-	public void testDetailedHelp() throws CadiException {
-		Define define = new Define();
-		define.set(prop);
-		StringBuilder sb = new StringBuilder();
-//		clr.detailedHelp(0, sb);
-	}
+    }
+    
+    @Test
+    public void testDetailedHelp() throws CadiException {
+        Define define = new Define();
+        define.set(prop);
+        StringBuilder sb = new StringBuilder();
+//        clr.detailedHelp(0, sb);
+    }
 }

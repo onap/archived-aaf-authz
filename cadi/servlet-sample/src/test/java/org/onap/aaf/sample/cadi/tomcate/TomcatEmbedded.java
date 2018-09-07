@@ -39,7 +39,7 @@ import org.onap.aaf.cadi.PropAccess;
  */
 public class TomcatEmbedded {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
         Tomcat tomcat = new Tomcat();
         
@@ -51,8 +51,8 @@ public class TomcatEmbedded {
         tomcat.start();
         tomcat.getServer().await();
 
-	}
-	
+    }
+    
     private static Connector getSslConnector(PropAccess access, int port) throws IOException {
         Connector connector = new Connector();
         connector.setPort(port);
@@ -75,34 +75,34 @@ public class TomcatEmbedded {
      }
     
     private static void setAttr(Connector connector, Access access, String ctag, String atag) throws IOException {
-    	String value = access.getProperty(atag, null);
-    	if(value==null) {
-    		access.log(Level.ERROR, atag, "is null");
-    	} else {
-    		if(value.startsWith("enc:")) {
-    			access.log(Level.INIT,atag,"=enc:************");
-    			value = access.decrypt(value, false);
-    		} else {
-    			access.log(Level.INIT,atag,"=",value);
-    		}
-    		connector.setAttribute(ctag, value);
-    	}
+        String value = access.getProperty(atag, null);
+        if(value==null) {
+            access.log(Level.ERROR, atag, "is null");
+        } else {
+            if(value.startsWith("enc:")) {
+                access.log(Level.INIT,atag,"=enc:************");
+                value = access.decrypt(value, false);
+            } else {
+                access.log(Level.INIT,atag,"=",value);
+            }
+            connector.setAttribute(ctag, value);
+        }
     }
 
-	private static File getRootFolder() {
-	    try {
-	        File root;
-	        String runningJarPath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceAll("\\\\", "/");
-	        int lastIndexOf = runningJarPath.lastIndexOf("/target/");
-	        if (lastIndexOf < 0) {
-	            root = new File("");
-	        } else {
-	            root = new File(runningJarPath.substring(0, lastIndexOf));
-	        }
-	        System.out.println("application resolved root folder: " + root.getAbsolutePath());
-	        return root;
-	    } catch (URISyntaxException ex) {
-	        throw new RuntimeException(ex);
-	    }
-	}
+    private static File getRootFolder() {
+        try {
+            File root;
+            String runningJarPath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().replaceAll("\\\\", "/");
+            int lastIndexOf = runningJarPath.lastIndexOf("/target/");
+            if (lastIndexOf < 0) {
+                root = new File("");
+            } else {
+                root = new File(runningJarPath.substring(0, lastIndexOf));
+            }
+            System.out.println("application resolved root folder: " + root.getAbsolutePath());
+            return root;
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }

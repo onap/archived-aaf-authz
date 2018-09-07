@@ -22,6 +22,6 @@
 package org.onap.aaf.misc.xgen.html;
 
 public interface Thematic {
-	String themePath(String theTheme);
-	String themeResolve(String theTheme);
+    String themePath(String theTheme);
+    String themeResolve(String theTheme);
 }

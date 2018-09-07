@@ -37,35 +37,35 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_OrganizationFactory {
-	private static final String ORG_SLOT = null;
-	OrganizationFactory organizationFactory;
-	BasicEnv bEnv;
-	@Mock
-	AuthzEnv authzEnvMock;
-	String orgClass="orgclass";
-	String orgNS="orgns";
-	@Before
-	public void setUp(){
-		organizationFactory = new OrganizationFactory();
-		bEnv = new BasicEnv();
-	}
+    private static final String ORG_SLOT = null;
+    OrganizationFactory organizationFactory;
+    BasicEnv bEnv;
+    @Mock
+    AuthzEnv authzEnvMock;
+    String orgClass="orgclass";
+    String orgNS="orgns";
+    @Before
+    public void setUp(){
+        organizationFactory = new OrganizationFactory();
+        bEnv = new BasicEnv();
+    }
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testInit() throws OrganizationException {
-		organizationFactory.init(bEnv);
-	}
+    @SuppressWarnings("static-access")
+    @Test
+    public void testInit() throws OrganizationException {
+        organizationFactory.init(bEnv);
+    }
 
-	@SuppressWarnings("static-access")				//TODO:Fix this once real input is available AAF-111
-	@Test
-	public void testObtain() throws OrganizationException{
-		PowerMockito.when(authzEnvMock.getProperty("Organization."+orgNS)).thenReturn("notnull");
-		//organizationFactory.obtain(authzEnvMock, orgNS);
-	}
+    @SuppressWarnings("static-access")                //TODO:Fix this once real input is available AAF-111
+    @Test
+    public void testObtain() throws OrganizationException{
+        PowerMockito.when(authzEnvMock.getProperty("Organization."+orgNS)).thenReturn("notnull");
+        //organizationFactory.obtain(authzEnvMock, orgNS);
+    }
 
-	@Test
-	public void testGet() throws OrganizationException {  //TODO: Fix with when then return on fail
-		AuthzTrans trans = mock(AuthzTrans.class);
-		//organizationFactory.get(trans);
-	}
+    @Test
+    public void testGet() throws OrganizationException {  //TODO: Fix with when then return on fail
+        AuthzTrans trans = mock(AuthzTrans.class);
+        //organizationFactory.get(trans);
+    }
 }

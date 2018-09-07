@@ -39,17 +39,17 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 public class JU_NsAttrib {
-	
-	NsAttrib nsAttrib;
-	
-	@Before
-	public void setUp() {
-		nsAttrib = new NsAttrib("ns", "key", "value");
-	}
+    
+    NsAttrib nsAttrib;
+    
+    @Before
+    public void setUp() {
+        nsAttrib = new NsAttrib("ns", "key", "value");
+    }
 
-	@Test
-	public void testToString() {
-		Assert.assertEquals("\"ns\",\"key\",\"value\"", nsAttrib.toString());
-	}
+    @Test
+    public void testToString() {
+        Assert.assertEquals("\"ns\",\"key\",\"value\"", nsAttrib.toString());
+    }
 
 }

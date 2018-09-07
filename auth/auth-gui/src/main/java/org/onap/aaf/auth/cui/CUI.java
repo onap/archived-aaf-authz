@@ -38,56 +38,56 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
 public class CUI extends HttpCode<AuthzTrans, Void> {
-	private final AAF_GUI gui;
-	public CUI(AAF_GUI gui) {
-		super(null,"Command Line");
-		this.gui = gui;
-	}
+    private final AAF_GUI gui;
+    public CUI(AAF_GUI gui) {
+        super(null,"Command Line");
+        this.gui = gui;
+    }
 
-	@Override
-	public void handle(AuthzTrans trans, HttpServletRequest req,HttpServletResponse resp) throws Exception {
-		ServletInputStream isr = req.getInputStream();
-		PrintWriter pw = resp.getWriter();
-		int c;
-		StringBuilder cmd = new StringBuilder();
+    @Override
+    public void handle(AuthzTrans trans, HttpServletRequest req,HttpServletResponse resp) throws Exception {
+        ServletInputStream isr = req.getInputStream();
+        PrintWriter pw = resp.getWriter();
+        int c;
+        StringBuilder cmd = new StringBuilder();
 
-		while((c=isr.read())>=0) {
-			cmd.append((char)c);
-		}
+        while((c=isr.read())>=0) {
+            cmd.append((char)c);
+        }
 
-		TimeTaken tt = trans.start("Execute AAFCLI", Env.REMOTE);
-		try {
-			TaggedPrincipal p = trans.getUserPrincipal();
-			// Access needs to be set after overall construction.  Thus, the lazy create.
-			AAFcli aafcli;
-			AAFConHttp aafcon = gui.aafCon();
-			aafcli= new AAFcli(gui.access,gui.env, pw, 
-					aafcon.hman(), 
-					aafcon.securityInfo(), 
-					new HTransferSS(p,AAF_GUI.app,
-					aafcon.securityInfo()));
-			aafcli.verbose(false);
-			aafcli.gui(true);
+        TimeTaken tt = trans.start("Execute AAFCLI", Env.REMOTE);
+        try {
+            TaggedPrincipal p = trans.getUserPrincipal();
+            // Access needs to be set after overall construction.  Thus, the lazy create.
+            AAFcli aafcli;
+            AAFConHttp aafcon = gui.aafCon();
+            aafcli= new AAFcli(gui.access,gui.env, pw, 
+                    aafcon.hman(), 
+                    aafcon.securityInfo(), 
+                    new HTransferSS(p,AAF_GUI.app,
+                    aafcon.securityInfo()));
+            aafcli.verbose(false);
+            aafcli.gui(true);
 
-			String cmdStr = cmd.toString();
-			if (!cmdStr.contains("--help")) {
-				cmdStr = cmdStr.replaceAll("help", "--help");
-			}
-			if (!cmdStr.contains("--version")) {
-				cmdStr = cmdStr.replaceAll("version", "--version");
-			}
-			try {
-				aafcli.eval(cmdStr);
-				pw.flush();
-			} catch (Exception e) {
-				pw.flush();
-				pw.println(e.getMessage());
-			} finally {
-				aafcli.close();
-			}
-		} finally {
-			tt.done();
-		}
-		
-	}
+            String cmdStr = cmd.toString();
+            if (!cmdStr.contains("--help")) {
+                cmdStr = cmdStr.replaceAll("help", "--help");
+            }
+            if (!cmdStr.contains("--version")) {
+                cmdStr = cmdStr.replaceAll("version", "--version");
+            }
+            try {
+                aafcli.eval(cmdStr);
+                pw.flush();
+            } catch (Exception e) {
+                pw.flush();
+                pw.println(e.getMessage());
+            } finally {
+                aafcli.close();
+            }
+        } finally {
+            tt.done();
+        }
+        
+    }
 }

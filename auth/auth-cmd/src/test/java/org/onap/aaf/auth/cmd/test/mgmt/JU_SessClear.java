@@ -56,50 +56,50 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_SessClear {
-	
-	private static SessClear sessclr;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	
-	@Before
-	public  void setUp() throws LocatorException, APIException, CadiException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		hman = new HMangr(aEnv, loc);	
-//		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-//		Mgmt mgmt = new Mgmt(aafcli);
-//		Session sess = new Session(mgmt);
-//		sessclr = new SessClear(sess);
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
-//		when(loc.first()).thenReturn(value);
-//		String[] strArr = {"add","upd","del","add","upd","del"};
-		//sessclr._exec(0, strArr);
+    
+    private static SessClear sessclr;
+    PropAccess prop;
+    AuthzEnv aEnv;
+    Writer wtr;
+    Locator<URI> loc;
+    HMangr hman;    
+    AAFcli aafcli;
+    
+    @Before
+    public  void setUp() throws LocatorException, APIException, CadiException {
+        prop = new PropAccess();
+        aEnv = new AuthzEnv();
+        wtr = mock(Writer.class);
+        loc = mock(Locator.class);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+//        hman = new HMangr(aEnv, loc);    
+//        aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+//        Mgmt mgmt = new Mgmt(aafcli);
+//        Session sess = new Session(mgmt);
+//        sessclr = new SessClear(sess);
+    }
+    
+    @Test
+    public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+        Item value = mock(Item.class);
+        Locator.Item item = new Locator.Item() {
+        };
+        when(loc.best()).thenReturn(value);
+        URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
+        when(loc.get(value)).thenReturn(uri);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+//        HRcli hcli = new HRcli(hman, uri, item, secSet);
+//        when(loc.first()).thenReturn(value);
+//        String[] strArr = {"add","upd","del","add","upd","del"};
+        //sessclr._exec(0, strArr);
 
-	}
-	
-	@Test
-	public void testDetailedHelp() throws CadiException {
-		Define define = new Define();
-		define.set(prop);
-		StringBuilder sb = new StringBuilder();
-//		sessclr.detailedHelp(0, sb);
-	}
+    }
+    
+    @Test
+    public void testDetailedHelp() throws CadiException {
+        Define define = new Define();
+        define.set(prop);
+        StringBuilder sb = new StringBuilder();
+//        sessclr.detailedHelp(0, sb);
+    }
 }

@@ -44,33 +44,33 @@ import java.io.Reader;
 import org.junit.Test;
 
 public class JU_InputIterator {
-	
-	InputIterator inputIterator;
-	File f;
-	BufferedReader bReader;
-	PrintStream pStream;
-	
-	@Before
-	public void setUp() throws IOException {
-		f = new File("file");
-		f.createNewFile();
-		bReader = new BufferedReader(new FileReader(f));
-		pStream = new PrintStream(f);
-		inputIterator = new InputIterator(bReader, pStream, "prompt", "instructions");
-	}
+    
+    InputIterator inputIterator;
+    File f;
+    BufferedReader bReader;
+    PrintStream pStream;
+    
+    @Before
+    public void setUp() throws IOException {
+        f = new File("file");
+        f.createNewFile();
+        bReader = new BufferedReader(new FileReader(f));
+        pStream = new PrintStream(f);
+        inputIterator = new InputIterator(bReader, pStream, "prompt", "instructions");
+    }
 
-	@Test
-	public void test() {
-		inputIterator.iterator();
-		inputIterator.iterator().hasNext();
-		inputIterator.iterator().next();
-		inputIterator.iterator().remove();
-	}
-	
-	@After
-	public void cleanUp() {
-		if(f.exists()) {
-			f.delete();
-		}
-	}
+    @Test
+    public void test() {
+        inputIterator.iterator();
+        inputIterator.iterator().hasNext();
+        inputIterator.iterator().next();
+        inputIterator.iterator().remove();
+    }
+    
+    @After
+    public void cleanUp() {
+        if(f.exists()) {
+            f.delete();
+        }
+    }
 }

@@ -45,84 +45,84 @@ import org.onap.aaf.cadi.lur.EpiLur;
 
 public class JU_EpiLur {
 
-	private ArrayList<Permission> perms;
-	private CredValStub lurMock3;
+    private ArrayList<Permission> perms;
+    private CredValStub lurMock3;
 
-	@Mock private Lur lurMock1;
-	@Mock private CachingLur<?> lurMock2;
-	@Mock private Principal princMock;
-	@Mock private Permission permMock;
+    @Mock private Lur lurMock1;
+    @Mock private CachingLur<?> lurMock2;
+    @Mock private Principal princMock;
+    @Mock private Permission permMock;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
 
-		perms = new ArrayList<>();
-		perms.add(permMock);
+        perms = new ArrayList<>();
+        perms.add(permMock);
 
-		lurMock3 = new CredValStub();
-	}
+        lurMock3 = new CredValStub();
+    }
 
-	@Test
-	public void test() throws CadiException {
-		EpiLur lur;
-		try {
-			lur = new EpiLur();
-		} catch (CadiException e) {
-			assertThat(e.getMessage(), is("Need at least one Lur implementation in constructor"));
-		}
-		lur = new EpiLur(lurMock1, lurMock2, lurMock3);
-		assertThat(lur.fish(null,  null), is(false));
+    @Test
+    public void test() throws CadiException {
+        EpiLur lur;
+        try {
+            lur = new EpiLur();
+        } catch (CadiException e) {
+            assertThat(e.getMessage(), is("Need at least one Lur implementation in constructor"));
+        }
+        lur = new EpiLur(lurMock1, lurMock2, lurMock3);
+        assertThat(lur.fish(null,  null), is(false));
 
-		assertThat(lur.fish(princMock, permMock), is(false));
+        assertThat(lur.fish(princMock, permMock), is(false));
 
-		when(lurMock2.handlesExclusively(permMock)).thenReturn(true);
-		assertThat(lur.fish(princMock, permMock), is(false));
+        when(lurMock2.handlesExclusively(permMock)).thenReturn(true);
+        assertThat(lur.fish(princMock, permMock), is(false));
 
-		when(lurMock2.fish(princMock, permMock)).thenReturn(true);
-		assertThat(lur.fish(princMock, permMock), is(true));
+        when(lurMock2.fish(princMock, permMock)).thenReturn(true);
+        assertThat(lur.fish(princMock, permMock), is(true));
 
-		lur.fishAll(princMock, perms);
+        lur.fishAll(princMock, perms);
 
-		assertThat(lur.handlesExclusively(permMock), is(false));
+        assertThat(lur.handlesExclusively(permMock), is(false));
 
-		assertThat(lur.get(-1), is(nullValue()));
-		assertThat(lur.get(0), is(lurMock1));
-		assertThat(lur.get(1), is((Lur)lurMock2));
-		assertThat(lur.get(2), is((Lur)lurMock3));
-		assertThat(lur.get(3), is(nullValue()));
+        assertThat(lur.get(-1), is(nullValue()));
+        assertThat(lur.get(0), is(lurMock1));
+        assertThat(lur.get(1), is((Lur)lurMock2));
+        assertThat(lur.get(2), is((Lur)lurMock3));
+        assertThat(lur.get(3), is(nullValue()));
 
-		assertThat(lur.handles(princMock), is(false));
-		when(lurMock2.handles(princMock)).thenReturn(true);
-		assertThat(lur.handles(princMock), is(true));
+        assertThat(lur.handles(princMock), is(false));
+        when(lurMock2.handles(princMock)).thenReturn(true);
+        assertThat(lur.handles(princMock), is(true));
 
-		lur.remove("id");
+        lur.remove("id");
 
-		lur.clear(princMock, null);
+        lur.clear(princMock, null);
 
-		assertThat(lur.createPerm("perm"), is(not(nullValue())));
+        assertThat(lur.createPerm("perm"), is(not(nullValue())));
 
-		lur.getUserPassImpl();
-		assertThat(lur.getUserPassImpl(), is((CredVal)lurMock3));
+        lur.getUserPassImpl();
+        assertThat(lur.getUserPassImpl(), is((CredVal)lurMock3));
 
-		lur.toString();
-		lur.destroy();
+        lur.toString();
+        lur.destroy();
 
-		lur = new EpiLur(lurMock1, lurMock2);
-		assertThat(lur.getUserPassImpl(), is(nullValue()));
+        lur = new EpiLur(lurMock1, lurMock2);
+        assertThat(lur.getUserPassImpl(), is(nullValue()));
 
-		assertThat(lur.subLur(Lur.class), is(nullValue()));
-	}
+        assertThat(lur.subLur(Lur.class), is(nullValue()));
+    }
 
-	private class CredValStub implements Lur, CredVal {
-		@Override public boolean validate(String user, Type type, byte[] cred, Object state) { return false; }
-		@Override public Permission createPerm(String p) { return null; }
-		@Override public boolean fish(Principal bait, Permission ... pond) { return false; }
-		@Override public void fishAll(Principal bait, List<Permission> permissions) { }
-		@Override public void destroy() { }
-		@Override public boolean handlesExclusively(Permission ... pond) { return false; }
-		@Override public boolean handles(Principal principal) { return false; }
-		@Override public void clear(Principal p, StringBuilder report) { }
-	}
+    private class CredValStub implements Lur, CredVal {
+        @Override public boolean validate(String user, Type type, byte[] cred, Object state) { return false; }
+        @Override public Permission createPerm(String p) { return null; }
+        @Override public boolean fish(Principal bait, Permission ... pond) { return false; }
+        @Override public void fishAll(Principal bait, List<Permission> permissions) { }
+        @Override public void destroy() { }
+        @Override public boolean handlesExclusively(Permission ... pond) { return false; }
+        @Override public boolean handles(Principal principal) { return false; }
+        @Override public void clear(Principal p, StringBuilder report) { }
+    }
 
 }

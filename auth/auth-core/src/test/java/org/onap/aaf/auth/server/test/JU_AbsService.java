@@ -62,51 +62,51 @@ import java.security.Principal;
 import javax.servlet.Filter;
 
 public class JU_AbsService {
-	
-	ByteArrayOutputStream outStream;
-	
-	private class AbsServiceStub extends AbsService {
+    
+    ByteArrayOutputStream outStream;
+    
+    private class AbsServiceStub extends AbsService {
 
-		public AbsServiceStub(Access access, BasicEnv env) throws CadiException {
-			super(access, env);
-			// TODO Auto-generated constructor stub
-		}
+        public AbsServiceStub(Access access, BasicEnv env) throws CadiException {
+            super(access, env);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public Registrant[] registrants(int port) throws CadiException, LocatorException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	
-	}
-	
-	@Before
-	public void setUp() {
-		outStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-	}
-	
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-	}
-	
-	@Test
-	public void testStub() throws CadiException {
-		BasicEnv bEnv = new BasicEnv();
-		PropAccess prop = new PropAccess();
-		
-		prop.setProperty(Config.AAF_COMPONENT, "te.st:te.st");
-		prop.setLogLevel(Level.DEBUG);
-		AbsServiceStub absServiceStub = new AbsServiceStub(prop, bEnv);	//Testing other branches requires "fails" due to exception handling, will leave that off for now.
-	}
-	
+        @Override
+        public Registrant[] registrants(int port) throws CadiException, LocatorException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+    
+    }
+    
+    @Before
+    public void setUp() {
+        outStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+    }
+    
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+    }
+    
+    @Test
+    public void testStub() throws CadiException {
+        BasicEnv bEnv = new BasicEnv();
+        PropAccess prop = new PropAccess();
+        
+        prop.setProperty(Config.AAF_COMPONENT, "te.st:te.st");
+        prop.setLogLevel(Level.DEBUG);
+        AbsServiceStub absServiceStub = new AbsServiceStub(prop, bEnv);    //Testing other branches requires "fails" due to exception handling, will leave that off for now.
+    }
+    
 }
 
 

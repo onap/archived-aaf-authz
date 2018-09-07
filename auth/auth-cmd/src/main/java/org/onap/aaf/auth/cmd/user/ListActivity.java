@@ -39,40 +39,40 @@ import aaf.v2_0.History;
  *
  */
 public class ListActivity extends Cmd {
-	private static final String HEADER = "List Activity of User";
+    private static final String HEADER = "List Activity of User";
 
-	public ListActivity(List parent) {
-		super(parent,"activity", 
-				new Param("user",true));
-	}
+    public ListActivity(List parent) {
+        super(parent,"activity", 
+                new Param("user",true));
+    }
 
-	@Override
-	public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-	        int idx = _idx;
-		final String user = fullID(args[idx++]);
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-		
-				Future<History> fp = client.read(
-						"/authz/hist/user/"+user, 
-						getDF(History.class)
-						);
-				if(fp.get(AAFcli.timeout())) {
-					activity(fp.value,HEADER + " [ " + user + " ]");
-				} else {
-					error(fp);
-				}
-				return fp.code();
-			}
-		});
-	}
-	
+    @Override
+    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = _idx;
+        final String user = fullID(args[idx++]);
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+        
+                Future<History> fp = client.read(
+                        "/authz/hist/user/"+user, 
+                        getDF(History.class)
+                        );
+                if(fp.get(AAFcli.timeout())) {
+                    activity(fp.value,HEADER + " [ " + user + " ]");
+                } else {
+                    error(fp);
+                }
+                return fp.code();
+            }
+        });
+    }
+    
 
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/hist/user/<user>",History.class,true);
-	}
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/hist/user/<user>",History.class,true);
+    }
 
 }

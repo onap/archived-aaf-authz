@@ -30,5 +30,5 @@ package org.onap.aaf.auth.dao;
  *
  */
 public interface Cacheable {
-	public int[] invalidate(Cached<?,?> cache);
+    public int[] invalidate(Cached<?,?> cache);
 }

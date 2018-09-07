@@ -27,8 +27,8 @@ import org.onap.aaf.cadi.util.TheConsole;
 
 public class JU_TheConsole {
 
-	@Test
-	public void implemented(){
-		assertEquals(TheConsole.implemented(),false);
-	}
+    @Test
+    public void implemented(){
+        assertEquals(TheConsole.implemented(),false);
+    }
 }

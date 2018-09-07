@@ -29,17 +29,17 @@ import org.onap.aaf.cadi.filter.MapPermConverter;
 
 public class JU_MapPermConverter {
 
-	private static final String tag = "tag";
-	private static final String value = "value";
-	private static final String nontag = "nontag";
+    private static final String tag = "tag";
+    private static final String value = "value";
+    private static final String nontag = "nontag";
 
-	@Test
-	public void test() {
-		MapPermConverter converter = new MapPermConverter();
-		assertThat(converter.map().isEmpty(), is(true));
-		converter.map().put(tag, value);
-		assertThat(converter.convert(tag), is(value));
-		assertThat(converter.convert(nontag), is(nontag));
-	}
+    @Test
+    public void test() {
+        MapPermConverter converter = new MapPermConverter();
+        assertThat(converter.map().isEmpty(), is(true));
+        converter.map().put(tag, value);
+        assertThat(converter.convert(tag), is(value));
+        assertThat(converter.convert(nontag), is(nontag));
+    }
 
 }

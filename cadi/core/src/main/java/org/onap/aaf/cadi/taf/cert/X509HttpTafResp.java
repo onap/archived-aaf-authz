@@ -29,25 +29,25 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp;
 
 public class X509HttpTafResp extends AbsTafResp implements TafResp {
-	private static final String tafName = X509Taf.class.getSimpleName();
+    private static final String tafName = X509Taf.class.getSimpleName();
 
-	private RESP status;
-	
-	public X509HttpTafResp(Access access, TaggedPrincipal principal, String description, RESP status) {
-		super(access, tafName, principal, description);
- 		this.status = status;
-	}
+    private RESP status;
+    
+    public X509HttpTafResp(Access access, TaggedPrincipal principal, String description, RESP status) {
+        super(access, tafName, principal, description);
+         this.status = status;
+    }
 
-	public RESP authenticate() throws IOException {
-		return RESP.TRY_ANOTHER_TAF;
-	}
+    public RESP authenticate() throws IOException {
+        return RESP.TRY_ANOTHER_TAF;
+    }
 
-	public RESP isAuthenticated() {
-		return status;
-	}
+    public RESP isAuthenticated() {
+        return status;
+    }
 
-	public String toString() {
-		return status.name();
-	}
+    public String toString() {
+        return status.name();
+    }
 
 }

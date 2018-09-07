@@ -40,113 +40,113 @@ import org.onap.aaf.cadi.wsse.XReader;
 
 public class JU_XReader {
 
-	private final static String TEST_DIR_NAME = "src/test/resources";
-	private final static String TEST_XML_NAME = "test.xml";
-	private static File testXML;
+    private final static String TEST_DIR_NAME = "src/test/resources";
+    private final static String TEST_XML_NAME = "test.xml";
+    private static File testXML;
 
-	private final static String COMMENT = "a comment";
-	private final static String OUTER_TAG = "outerTag";
-	private final static String INNER_TAG = "innerTag";
-	private final static String DATA_TAG = "dataTag";
-	private final static String DATA = "some text that represents data";
-	private final static String SELF_CLOSING_TAG = "selfClosingTag";
-	private final static String PREFIX = "prefix";
-	private final static String SUFFIX = "suffix";
+    private final static String COMMENT = "a comment";
+    private final static String OUTER_TAG = "outerTag";
+    private final static String INNER_TAG = "innerTag";
+    private final static String DATA_TAG = "dataTag";
+    private final static String DATA = "some text that represents data";
+    private final static String SELF_CLOSING_TAG = "selfClosingTag";
+    private final static String PREFIX = "prefix";
+    private final static String SUFFIX = "suffix";
 
-	@BeforeClass
-	public static void setupOnce() throws IOException {
-		testXML = setupXMLFile();
-	}
+    @BeforeClass
+    public static void setupOnce() throws IOException {
+        testXML = setupXMLFile();
+    }
 
-	@AfterClass
-	public static void tearDownOnce() {
-		testXML.delete();
-	}
+    @AfterClass
+    public static void tearDownOnce() {
+        testXML.delete();
+    }
 
-	@Test
-	public void test() throws XMLStreamException, IOException {
-		FileInputStream fis = new FileInputStream(TEST_DIR_NAME + '/' + TEST_XML_NAME);
-		try {
-			XReader xr = new XReader(fis);
-			assertThat(xr.hasNext(), is(true));
-			XEvent xe;
+    @Test
+    public void test() throws XMLStreamException, IOException {
+        FileInputStream fis = new FileInputStream(TEST_DIR_NAME + '/' + TEST_XML_NAME);
+        try {
+            XReader xr = new XReader(fis);
+            assertThat(xr.hasNext(), is(true));
+            XEvent xe;
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_DOCUMENT));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_DOCUMENT));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.COMMENT));
-			assertThat(((XEvent.Comment)xe).value, is(COMMENT));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.COMMENT));
+            assertThat(((XEvent.Comment)xe).value, is(COMMENT));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
-			assertThat(xe.asStartElement().getName().toString(), is(OUTER_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+            assertThat(xe.asStartElement().getName().toString(), is(OUTER_TAG));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
-			assertThat(xe.asStartElement().getName().toString(), is(INNER_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+            assertThat(xe.asStartElement().getName().toString(), is(INNER_TAG));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
-			assertThat(xe.asStartElement().getName().toString(), is(DATA_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+            assertThat(xe.asStartElement().getName().toString(), is(DATA_TAG));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.CHARACTERS));
-			assertThat(xe.asCharacters().getData().toString(), is(DATA));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.CHARACTERS));
+            assertThat(xe.asCharacters().getData().toString(), is(DATA));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
-			assertThat(xe.asEndElement().getName().toString(), is(DATA_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
+            assertThat(xe.asEndElement().getName().toString(), is(DATA_TAG));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
-			assertThat(xe.asStartElement().getName().toString(), is(SELF_CLOSING_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+            assertThat(xe.asStartElement().getName().toString(), is(SELF_CLOSING_TAG));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
-			assertThat(xe.asStartElement().getName().toString(), is(SUFFIX));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.START_ELEMENT));
+            assertThat(xe.asStartElement().getName().toString(), is(SUFFIX));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
-			assertThat(xe.asEndElement().getName().toString(), is(INNER_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
+            assertThat(xe.asEndElement().getName().toString(), is(INNER_TAG));
 
-			xe = getNextEvent(xr);
-			assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
-			assertThat(xe.asEndElement().getName().toString(), is(OUTER_TAG));
+            xe = getNextEvent(xr);
+            assertThat(xe.getEventType(), is(XMLEvent.END_ELEMENT));
+            assertThat(xe.asEndElement().getName().toString(), is(OUTER_TAG));
 
-			assertThat(xr.hasNext(), is(false));
+            assertThat(xr.hasNext(), is(false));
 
-		} finally {
-			fis.close();
-		}
-	}
+        } finally {
+            fis.close();
+        }
+    }
 
-	private static XEvent getNextEvent(XReader xr) throws XMLStreamException {
-		if (xr.hasNext()) {
-			return xr.nextEvent();
-		}
-		return null;
-	}
+    private static XEvent getNextEvent(XReader xr) throws XMLStreamException {
+        if (xr.hasNext()) {
+            return xr.nextEvent();
+        }
+        return null;
+    }
 
-	private static File setupXMLFile() throws IOException {
-		File xmlFile = new File(TEST_DIR_NAME, TEST_XML_NAME);
-		PrintWriter writer = new PrintWriter(xmlFile);
-		writer.println("    ");  // Whitespace before the document - this is for coverage
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<!DOCTYPE xml>");
-		writer.println("<!--" + COMMENT + "-->");
-		writer.println("<" + OUTER_TAG + ">");
-		writer.println("  <" + INNER_TAG + ">");
-		writer.println("    <" + DATA_TAG + ">" + DATA + "</" + DATA_TAG + ">");
-		writer.println("    <" + SELF_CLOSING_TAG + " withAnAttribute=\"That has nested \\\" marks\" />");
-		writer.println("    <" + PREFIX + ":" + SUFFIX + "/>");
-		writer.println("  </" + INNER_TAG + ">");
-		writer.println("</" + OUTER_TAG + ">");
-		writer.flush();
-		writer.close();
-		return xmlFile;
-	}
+    private static File setupXMLFile() throws IOException {
+        File xmlFile = new File(TEST_DIR_NAME, TEST_XML_NAME);
+        PrintWriter writer = new PrintWriter(xmlFile);
+        writer.println("    ");  // Whitespace before the document - this is for coverage
+        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        writer.println("<!DOCTYPE xml>");
+        writer.println("<!--" + COMMENT + "-->");
+        writer.println("<" + OUTER_TAG + ">");
+        writer.println("  <" + INNER_TAG + ">");
+        writer.println("    <" + DATA_TAG + ">" + DATA + "</" + DATA_TAG + ">");
+        writer.println("    <" + SELF_CLOSING_TAG + " withAnAttribute=\"That has nested \\\" marks\" />");
+        writer.println("    <" + PREFIX + ":" + SUFFIX + "/>");
+        writer.println("  </" + INNER_TAG + ">");
+        writer.println("</" + OUTER_TAG + ">");
+        writer.flush();
+        writer.close();
+        return xmlFile;
+    }
 }

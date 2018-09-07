@@ -26,5 +26,5 @@ import java.io.IOException;
 import org.onap.aaf.misc.env.APIException;
 
 public interface Code<G extends XGen<G>> {
-	public void code(Cache<G> cache, G xgen) throws APIException, IOException;
+    public void code(Cache<G> cache, G xgen) throws APIException, IOException;
 }

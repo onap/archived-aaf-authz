@@ -41,23 +41,23 @@ import aaf.v2_0.UserRoles;
 import aaf.v2_0.Users;
 
 public class AuthzFacade_2_0 extends AuthzFacadeImpl<
-	Nss,
-	Perms,
-	Pkey,
-	Roles,
-	Users,
-	UserRoles,
-	Delgs,
-	Certs,
-	Keys,
-	Request,
-	History,
-	Error,
-	Approvals>
+    Nss,
+    Perms,
+    Pkey,
+    Roles,
+    Users,
+    UserRoles,
+    Delgs,
+    Certs,
+    Keys,
+    Request,
+    History,
+    Error,
+    Approvals>
 {
-	public AuthzFacade_2_0(AuthzEnv env,
-			AuthzService<Nss, Perms, Pkey, Roles, Users, UserRoles, Delgs, Certs, Keys, Request, History, Error, Approvals> service,
-			Data.TYPE type) throws APIException {
-		super(env, service, type);
-	}
+    public AuthzFacade_2_0(AuthzEnv env,
+            AuthzService<Nss, Perms, Pkey, Roles, Users, UserRoles, Delgs, Certs, Keys, Request, History, Error, Approvals> service,
+            Data.TYPE type) throws APIException {
+        super(env, service, type);
+    }
 }

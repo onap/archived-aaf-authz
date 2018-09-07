@@ -44,57 +44,57 @@ import aaf.v2_0.Users.User;
  *
  */
 public class ListForCreds extends Cmd {
-	private final static String[] options = {"ns","id"};
+    private final static String[] options = {"ns","id"};
 
-	private static final String HEADER = "List creds by Namespace or ID ";
-	public ListForCreds(List parent) {
-		super(parent,"cred",
-				new Param(optionsToString(options),true),
-				new Param("value",true)); 
-	}
+    private static final String HEADER = "List creds by Namespace or ID ";
+    public ListForCreds(List parent) {
+        super(parent,"cred",
+                new Param(optionsToString(options),true),
+                new Param("value",true)); 
+    }
 
-	@Override
-	public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-	        int idx = _idx;
-		final int option = whichOption(options, args[idx++]);
-		final String which = options[option];
-		final String value = args[idx++];
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				Future<Users> fp = client.read(
-						"/authn/creds/"+which+'/'+value, 
-						getDF(Users.class)
-						);
-				if(fp.get(AAFcli.timeout())) {
-					if (aafcli.isTest())
-						Collections.sort(fp.value.getUser(), new Comparator<User>() {
-							@Override
-							public int compare(User u1, User u2) {
-								return u1.getId().compareTo(u2.getId());
-							}			
-						});
-					((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,option==1,HEADER+which,value);
-					if(fp.code()==404)return 200;
-				} else {
-					error(fp);
-				}
-				return fp.code();
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int _indent, StringBuilder sb) {
-	        int indent = _indent;
-		detailLine(sb,indent,HEADER);
-		indent+=2;
-		detailLine(sb,indent,"This report lists the users associated to either Namespaces or IDs.");
-		detailLine(sb,indent,"ns (literal) - which Namespace");
-		detailLine(sb,indent,"id (literal) - identity");
-		indent-=2;
-		api(sb,indent,HttpMethods.GET,"authn/creds/ns/<ns>",Users.class,true);
-		api(sb,indent,HttpMethods.GET,"authn/creds/id/<identity>",Users.class,true);
-	}
+    @Override
+    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = _idx;
+        final int option = whichOption(options, args[idx++]);
+        final String which = options[option];
+        final String value = args[idx++];
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                Future<Users> fp = client.read(
+                        "/authn/creds/"+which+'/'+value, 
+                        getDF(Users.class)
+                        );
+                if(fp.get(AAFcli.timeout())) {
+                    if (aafcli.isTest())
+                        Collections.sort(fp.value.getUser(), new Comparator<User>() {
+                            @Override
+                            public int compare(User u1, User u2) {
+                                return u1.getId().compareTo(u2.getId());
+                            }            
+                        });
+                    ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,option==1,HEADER+which,value);
+                    if(fp.code()==404)return 200;
+                } else {
+                    error(fp);
+                }
+                return fp.code();
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int _indent, StringBuilder sb) {
+            int indent = _indent;
+        detailLine(sb,indent,HEADER);
+        indent+=2;
+        detailLine(sb,indent,"This report lists the users associated to either Namespaces or IDs.");
+        detailLine(sb,indent,"ns (literal) - which Namespace");
+        detailLine(sb,indent,"id (literal) - identity");
+        indent-=2;
+        api(sb,indent,HttpMethods.GET,"authn/creds/ns/<ns>",Users.class,true);
+        api(sb,indent,HttpMethods.GET,"authn/creds/id/<identity>",Users.class,true);
+    }
 
 }

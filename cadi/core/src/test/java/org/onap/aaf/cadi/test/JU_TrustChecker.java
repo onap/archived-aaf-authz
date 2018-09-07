@@ -29,9 +29,9 @@ import org.onap.aaf.cadi.TrustChecker;
 
 public class JU_TrustChecker {
 
-	@Test
-	public void noTrustTests() {
-		assertThat(TrustChecker.NOTRUST.mayTrust(null, null), is(nullValue()));
-		TrustChecker.NOTRUST.setLur(null);
-	}
+    @Test
+    public void noTrustTests() {
+        assertThat(TrustChecker.NOTRUST.mayTrust(null, null), is(nullValue()));
+        TrustChecker.NOTRUST.setLur(null);
+    }
 }

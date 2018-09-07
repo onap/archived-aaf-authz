@@ -28,86 +28,86 @@ import org.onap.aaf.cadi.util.Split;
 
 public class JU_Split {
 
-	@Test
-	public void splitTest() {
-		String[] output = Split.split('c', "ctestctc", 0, "ctestctc".length());
-		assertThat(output.length, is(4));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("test"));
-		assertThat(output[2], is("t"));
-		assertThat(output[3], is(""));
+    @Test
+    public void splitTest() {
+        String[] output = Split.split('c', "ctestctc", 0, "ctestctc".length());
+        assertThat(output.length, is(4));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("test"));
+        assertThat(output[2], is("t"));
+        assertThat(output[3], is(""));
 
-		output = Split.split('c', "ctestctc", 0, 4);
-		assertThat(output.length, is(2));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("tes"));
+        output = Split.split('c', "ctestctc", 0, 4);
+        assertThat(output.length, is(2));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("tes"));
 
         output = Split.split('c', "test", 0, "test".length());
-		assertThat(output.length, is(1));
-		assertThat(output[0], is("test"));
+        assertThat(output.length, is(1));
+        assertThat(output[0], is("test"));
 
-		assertThat(Split.split('c', null, 0, 0).length, is(0));
+        assertThat(Split.split('c', null, 0, 0).length, is(0));
 
         // Test with fewer arguments
-		output = Split.split('c', "ctestctc");
-		assertThat(output.length, is(4));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("test"));
-		assertThat(output[2], is("t"));
-		assertThat(output[3], is(""));
-	}
+        output = Split.split('c', "ctestctc");
+        assertThat(output.length, is(4));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("test"));
+        assertThat(output[2], is("t"));
+        assertThat(output[3], is(""));
+    }
 
-	@Test
-	public void splitTrimTest() {
-		String[] output = Split.splitTrim('c', " cte stc ctc ", 0, " cte stc ctc ".length());
-		assertThat(output.length, is(5));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("te st"));
-		assertThat(output[2], is(""));
-		assertThat(output[3], is("t"));
-		assertThat(output[4], is(""));
+    @Test
+    public void splitTrimTest() {
+        String[] output = Split.splitTrim('c', " cte stc ctc ", 0, " cte stc ctc ".length());
+        assertThat(output.length, is(5));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("te st"));
+        assertThat(output[2], is(""));
+        assertThat(output[3], is("t"));
+        assertThat(output[4], is(""));
 
-		output = Split.splitTrim('c', " cte stc ctc ", 0, 5);
-		assertThat(output.length, is(2));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("te"));
+        output = Split.splitTrim('c', " cte stc ctc ", 0, 5);
+        assertThat(output.length, is(2));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("te"));
 
-		assertThat(Split.splitTrim('c', " te st ", 0, " te st ".length())[0], is("te st"));
+        assertThat(Split.splitTrim('c', " te st ", 0, " te st ".length())[0], is("te st"));
 
         assertThat(Split.splitTrim('c', null, 0, 0).length, is(0));
 
-		// Test with 2 arguments
-		output = Split.splitTrim('c', " cte stc ctc ");
-		assertThat(output.length, is(5));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("te st"));
-		assertThat(output[2], is(""));
-		assertThat(output[3], is("t"));
-		assertThat(output[4], is(""));
+        // Test with 2 arguments
+        output = Split.splitTrim('c', " cte stc ctc ");
+        assertThat(output.length, is(5));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("te st"));
+        assertThat(output[2], is(""));
+        assertThat(output[3], is("t"));
+        assertThat(output[4], is(""));
 
-		// Tests with 1 argument
-		output = Split.splitTrim('c', " cte stc ctc ", 1);
-		assertThat(output.length, is(1));
-		assertThat(output[0], is("cte stc ctc"));
+        // Tests with 1 argument
+        output = Split.splitTrim('c', " cte stc ctc ", 1);
+        assertThat(output.length, is(1));
+        assertThat(output[0], is("cte stc ctc"));
 
-		output = Split.splitTrim('c', "testctest2", 2);
-		assertThat(output.length, is(2));
-		assertThat(output[0], is("test"));
-		assertThat(output[1], is("test2"));
+        output = Split.splitTrim('c', "testctest2", 2);
+        assertThat(output.length, is(2));
+        assertThat(output[0], is("test"));
+        assertThat(output[1], is("test2"));
 
-		output = Split.splitTrim('c', " cte stc ctc ", 4);
-		assertThat(output.length, is(4));
-		assertThat(output[0], is(""));
-		assertThat(output[1], is("te st"));
-		assertThat(output[2], is(""));
+        output = Split.splitTrim('c', " cte stc ctc ", 4);
+        assertThat(output.length, is(4));
+        assertThat(output[0], is(""));
+        assertThat(output[1], is("te st"));
+        assertThat(output[2], is(""));
 
-		assertThat(Split.splitTrim('c', null, 0).length, is(0));
-	}
-	
-	@Test
-	public void coverageTest() {
-		@SuppressWarnings("unused")
-		Split split = new Split();
-	}
+        assertThat(Split.splitTrim('c', null, 0).length, is(0));
+    }
+    
+    @Test
+    public void coverageTest() {
+        @SuppressWarnings("unused")
+        Split split = new Split();
+    }
 
 }

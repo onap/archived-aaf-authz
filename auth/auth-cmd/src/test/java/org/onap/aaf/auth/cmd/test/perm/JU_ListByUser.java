@@ -41,37 +41,37 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListByUser {
-	
-	private static ListByUser lsByName;
-	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		Role role = new Role(cli);
-		Perm perm = new Perm(role);
-		List ls = new List(perm);
-		lsByName = new ListByUser(ls);
-	}
-	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsByName._exec(0, "add","del","reset","extend"),500);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		lsByName.detailedHelp(0, sb);
-	}
+    
+    private static ListByUser lsByName;
+    
+    @BeforeClass
+    public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        AAFcli cli = JU_AAFCli.getAAfCli();
+        Role role = new Role(cli);
+        Perm perm = new Perm(role);
+        List ls = new List(perm);
+        lsByName = new ListByUser(ls);
+    }
+    
+//    @Test
+//    public void exec() {
+//        try {
+//            assertEquals(lsByName._exec(0, "add","del","reset","extend"),500);
+//        } catch (CadiException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (APIException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (LocatorException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
+    
+    @Test
+    public void testDetailedHelp() {
+        StringBuilder sb = new StringBuilder();
+        lsByName.detailedHelp(0, sb);
+    }
 }

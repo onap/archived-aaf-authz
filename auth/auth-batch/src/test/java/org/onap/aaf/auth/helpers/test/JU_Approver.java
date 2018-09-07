@@ -36,30 +36,30 @@ import org.junit.Test;
 
 public class JU_Approver {
 
-	Approver approver;
-	Organization org;
-	Message msg;
-	
-	@Before
-	public void setUp() {
-		org = mock(Organization.class);
-		approver = new Approver("approver", org);
-		msg = new Message();
-	}
-	
-	@Test
-	public void testAddRequest() {
-		approver.addRequest("user");
-		approver.addRequest("user");
-	}
-	
-	@Test
-	public void testBuild() {
-		approver.addRequest("user");
-		approver.addRequest("user1");
-		approver.addRequest("user2");
-		approver.addRequest("user3");
-		approver.build(msg);
-	}
+    Approver approver;
+    Organization org;
+    Message msg;
+    
+    @Before
+    public void setUp() {
+        org = mock(Organization.class);
+        approver = new Approver("approver", org);
+        msg = new Message();
+    }
+    
+    @Test
+    public void testAddRequest() {
+        approver.addRequest("user");
+        approver.addRequest("user");
+    }
+    
+    @Test
+    public void testBuild() {
+        approver.addRequest("user");
+        approver.addRequest("user1");
+        approver.addRequest("user2");
+        approver.addRequest("user3");
+        approver.build(msg);
+    }
 
 }

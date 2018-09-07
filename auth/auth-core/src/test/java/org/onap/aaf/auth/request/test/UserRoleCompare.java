@@ -30,33 +30,33 @@ import org.onap.aaf.misc.env.util.Chrono;
 import aaf.v2_0.UserRoleRequest;
 
 public class UserRoleCompare extends RosettaCompare<UserRoleRequest>  {
-	public UserRoleCompare() {
-		super(UserRoleRequest.class);
-	}
-	
-	public static UserRoleRequest create() {
-		UserRoleRequest urr = new UserRoleRequest();
-		String in = instance();
-		urr.setUser("m125"+in + "@ns.att.com");
-		urr.setRole("org.osaaf.ns.role"+in);
-		GregorianCalendar gc = new GregorianCalendar();
-		urr.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		urr.setEnd(Chrono.timeStamp(gc));
-		return urr;
-	}
-	
-	@Override
-	public void compare(UserRoleRequest t1, UserRoleRequest t2) {
-		assertEquals(t1.getUser(),t2.getUser());
-		assertEquals(t1.getRole(),t2.getRole());
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public UserRoleCompare() {
+        super(UserRoleRequest.class);
+    }
+    
+    public static UserRoleRequest create() {
+        UserRoleRequest urr = new UserRoleRequest();
+        String in = instance();
+        urr.setUser("m125"+in + "@ns.att.com");
+        urr.setRole("org.osaaf.ns.role"+in);
+        GregorianCalendar gc = new GregorianCalendar();
+        urr.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        urr.setEnd(Chrono.timeStamp(gc));
+        return urr;
+    }
+    
+    @Override
+    public void compare(UserRoleRequest t1, UserRoleRequest t2) {
+        assertEquals(t1.getUser(),t2.getUser());
+        assertEquals(t1.getRole(),t2.getRole());
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public UserRoleRequest newOne() {
-		return create();
-	}
+    @Override
+    public UserRoleRequest newOne() {
+        return create();
+    }
 }

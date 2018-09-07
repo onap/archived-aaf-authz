@@ -25,5 +25,5 @@ import org.onap.aaf.auth.dao.cass.OAuthTokenDAO;
 import org.onap.aaf.auth.layer.Result;
 
 public interface MapperIntrospect<INTROSPECT> {
-	public Result<INTROSPECT> introspect(Result<OAuthTokenDAO.Data> rs);
+    public Result<INTROSPECT> introspect(Result<OAuthTokenDAO.Data> rs);
 }

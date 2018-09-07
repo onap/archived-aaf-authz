@@ -28,52 +28,52 @@ import org.onap.aaf.cadi.routing.GreatCircle;
 
 public class JU_GreatCircle {
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	@Test
-	public void calc1Test() {
-		assertEquals(7.803062505568182, GreatCircle.calc(38.627345, -90.193774, 35.252234, -81.384929), 0.000000001);
-		assertEquals(0.0, GreatCircle.calc(38.627345, -90.193774, 38.627345, -90.193774), 0.000000001);
-		assertEquals(7.803062505568182, GreatCircle.calc(35.252234, -81.384929, 38.627345, -90.193774), 0.000000001);
-		assertEquals(7.803062505568182, GreatCircle.calc(38.627345, -90.193774, 35.252234, -81.384929), 0.000000001);
-		assertEquals(7.803062505568182, GreatCircle.calc(-38.627345, 90.193774, -35.252234, 81.384929), 0.000000001);
-		assertEquals(105.71060033936052, GreatCircle.calc(-38.627345, 90.193774, -35.252234, -81.384929), 0.000000001);
-		assertEquals(105.71060033936052, GreatCircle.calc(38.627345, -90.193774, 35.252234, 81.384929), 0.000000001);
-		assertEquals(74.32786874922931, GreatCircle.calc(-38.627345, 90.193774, 35.252234, 81.384929), 0.000000001);
-	}
+    @Test
+    public void calc1Test() {
+        assertEquals(7.803062505568182, GreatCircle.calc(38.627345, -90.193774, 35.252234, -81.384929), 0.000000001);
+        assertEquals(0.0, GreatCircle.calc(38.627345, -90.193774, 38.627345, -90.193774), 0.000000001);
+        assertEquals(7.803062505568182, GreatCircle.calc(35.252234, -81.384929, 38.627345, -90.193774), 0.000000001);
+        assertEquals(7.803062505568182, GreatCircle.calc(38.627345, -90.193774, 35.252234, -81.384929), 0.000000001);
+        assertEquals(7.803062505568182, GreatCircle.calc(-38.627345, 90.193774, -35.252234, 81.384929), 0.000000001);
+        assertEquals(105.71060033936052, GreatCircle.calc(-38.627345, 90.193774, -35.252234, -81.384929), 0.000000001);
+        assertEquals(105.71060033936052, GreatCircle.calc(38.627345, -90.193774, 35.252234, 81.384929), 0.000000001);
+        assertEquals(74.32786874922931, GreatCircle.calc(-38.627345, 90.193774, 35.252234, 81.384929), 0.000000001);
+    }
 
-	@Test
-	public void calc2Test() {
-		assertEquals(7.803062505568182, GreatCircle.calc(new String[] {"38.627345", "-90.193774", "35.252234", "-81.384929"}), 0.000000001);
-		assertEquals(7.803062505568182, GreatCircle.calc(new String[] {"38.627345,-90.193774", "35.252234,-81.384929"}), 0.000000001);
-		assertEquals(7.803062505568182, GreatCircle.calc(new String[] {"38.627345,-90.193774,35.252234,-81.384929"}), 0.000000001);
+    @Test
+    public void calc2Test() {
+        assertEquals(7.803062505568182, GreatCircle.calc(new String[] {"38.627345", "-90.193774", "35.252234", "-81.384929"}), 0.000000001);
+        assertEquals(7.803062505568182, GreatCircle.calc(new String[] {"38.627345,-90.193774", "35.252234,-81.384929"}), 0.000000001);
+        assertEquals(7.803062505568182, GreatCircle.calc(new String[] {"38.627345,-90.193774,35.252234,-81.384929"}), 0.000000001);
 
-		assertEquals(-1, GreatCircle.calc(new String[0]), 0.000000001);
-		assertEquals(-1, GreatCircle.calc(new String[] {"38.627345;-90.193774", "35.252234,-81.384929"}), 0.000000001);
-		assertEquals(-1, GreatCircle.calc(new String[] {"38.627345,-90.193774", "35.252234;-81.384929"}), 0.000000001);
-		assertEquals(-1, GreatCircle.calc(new String[] {"38.627345,-90.193774;35.252234,-81.384929"}), 0.000000001);
+        assertEquals(-1, GreatCircle.calc(new String[0]), 0.000000001);
+        assertEquals(-1, GreatCircle.calc(new String[] {"38.627345;-90.193774", "35.252234,-81.384929"}), 0.000000001);
+        assertEquals(-1, GreatCircle.calc(new String[] {"38.627345,-90.193774", "35.252234;-81.384929"}), 0.000000001);
+        assertEquals(-1, GreatCircle.calc(new String[] {"38.627345,-90.193774;35.252234,-81.384929"}), 0.000000001);
 
-		assertEquals(-1, GreatCircle.calc(new String[] {"Invalid input", "Invalid input", "Invalid input", "Invalid input"}), 0.000000001);
-	}
+        assertEquals(-1, GreatCircle.calc(new String[] {"Invalid input", "Invalid input", "Invalid input", "Invalid input"}), 0.000000001);
+    }
 
-	@Test
-	public void coverageTest() {
-		@SuppressWarnings("unused")
-		GreatCircle gc = new GreatCircle();
-	}
+    @Test
+    public void coverageTest() {
+        @SuppressWarnings("unused")
+        GreatCircle gc = new GreatCircle();
+    }
 
 }

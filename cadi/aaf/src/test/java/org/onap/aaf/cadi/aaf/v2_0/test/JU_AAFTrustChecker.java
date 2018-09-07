@@ -47,84 +47,84 @@ import org.onap.aaf.misc.env.Env;
 
 public class JU_AAFTrustChecker {
 
-	private final static String type = "type";
-	private final static String instance = "instance";
-	private final static String action = "action";
-	private final static String key = type + '|' + instance + '|' + action;
-	private final static String name = "name";
-	private final static String otherName = "otherName";
+    private final static String type = "type";
+    private final static String instance = "instance";
+    private final static String action = "action";
+    private final static String key = type + '|' + instance + '|' + action;
+    private final static String name = "name";
+    private final static String otherName = "otherName";
 
-	private PropAccess access;
+    private PropAccess access;
 
-	@Mock private Env envMock;
-	@Mock private TafResp trespMock;
-	@Mock private HttpServletRequest reqMock;
-	@Mock private TaggedPrincipal tpMock;
-	@Mock private Lur lurMock;
-	@Mock private TaggedPrincipal princMock;
+    @Mock private Env envMock;
+    @Mock private TafResp trespMock;
+    @Mock private HttpServletRequest reqMock;
+    @Mock private TaggedPrincipal tpMock;
+    @Mock private Lur lurMock;
+    @Mock private TaggedPrincipal princMock;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+    }
 
-	@Test
-	public void test() {
-		AAFTrustChecker trustChecker;
+    @Test
+    public void test() {
+        AAFTrustChecker trustChecker;
 
-		// coverage calls
-		trustChecker = new AAFTrustChecker(access);
-		trustChecker = new AAFTrustChecker(envMock);
+        // coverage calls
+        trustChecker = new AAFTrustChecker(access);
+        trustChecker = new AAFTrustChecker(envMock);
 
-		access.setProperty(Config.CADI_TRUST_PERM, "example");
-		when(envMock.getProperty(Config.CADI_TRUST_PERM)).thenReturn("example");
-		trustChecker = new AAFTrustChecker(access);
-		trustChecker = new AAFTrustChecker(envMock);
+        access.setProperty(Config.CADI_TRUST_PERM, "example");
+        when(envMock.getProperty(Config.CADI_TRUST_PERM)).thenReturn("example");
+        trustChecker = new AAFTrustChecker(access);
+        trustChecker = new AAFTrustChecker(envMock);
 
-		access.setProperty(Config.CADI_TRUST_PERM, key);
-		when(envMock.getProperty(Config.CADI_TRUST_PERM)).thenReturn(key);
-		trustChecker = new AAFTrustChecker(access);
-		trustChecker = new AAFTrustChecker(envMock);
+        access.setProperty(Config.CADI_TRUST_PERM, key);
+        when(envMock.getProperty(Config.CADI_TRUST_PERM)).thenReturn(key);
+        trustChecker = new AAFTrustChecker(access);
+        trustChecker = new AAFTrustChecker(envMock);
 
-		trustChecker.setLur(lurMock);
+        trustChecker.setLur(lurMock);
 
-		assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
+        assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
 
-		when(reqMock.getHeader(null)).thenReturn("comma,comma,comma");
-		assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
+        when(reqMock.getHeader(null)).thenReturn("comma,comma,comma");
+        assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
 
-		when(reqMock.getHeader(null)).thenReturn("colon:colon:colon:colon,comma,comma");
-		assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
+        when(reqMock.getHeader(null)).thenReturn("colon:colon:colon:colon,comma,comma");
+        assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
 
-		when(reqMock.getHeader(null)).thenReturn("colon:colon:colon:AS,comma,comma");
-		when(trespMock.getPrincipal()).thenReturn(tpMock);
-		when(tpMock.getName()).thenReturn(name);
-		when(lurMock.fish(princMock, null)).thenReturn(true);
-		TafResp tntResp = trustChecker.mayTrust(trespMock, reqMock);
+        when(reqMock.getHeader(null)).thenReturn("colon:colon:colon:AS,comma,comma");
+        when(trespMock.getPrincipal()).thenReturn(tpMock);
+        when(tpMock.getName()).thenReturn(name);
+        when(lurMock.fish(princMock, null)).thenReturn(true);
+        TafResp tntResp = trustChecker.mayTrust(trespMock, reqMock);
 
-		assertThat(tntResp instanceof TrustNotTafResp, is(true));
-		assertThat(tntResp.toString(), is("name requested trust as colon, but does not have Authorization"));
+        assertThat(tntResp instanceof TrustNotTafResp, is(true));
+        assertThat(tntResp.toString(), is("name requested trust as colon, but does not have Authorization"));
 
-		when(reqMock.getHeader(null)).thenReturn(name + ":colon:colon:AS,comma,comma");
-		assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
+        when(reqMock.getHeader(null)).thenReturn(name + ":colon:colon:AS,comma,comma");
+        assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
 
-		when(envMock.getProperty(Config.CADI_ALIAS, null)).thenReturn(name);
-		when(envMock.getProperty(Config.CADI_TRUST_PERM)).thenReturn(null);
-		trustChecker = new AAFTrustChecker(envMock);
-		trustChecker.setLur(lurMock);
+        when(envMock.getProperty(Config.CADI_ALIAS, null)).thenReturn(name);
+        when(envMock.getProperty(Config.CADI_TRUST_PERM)).thenReturn(null);
+        trustChecker = new AAFTrustChecker(envMock);
+        trustChecker.setLur(lurMock);
 
-		when(trespMock.getPrincipal()).thenReturn(princMock);
-		when(princMock.getName()).thenReturn(otherName);
-		when(lurMock.fish(princMock, null)).thenReturn(true);
-		TafResp ttResp = trustChecker.mayTrust(trespMock, reqMock);
-		assertThat(ttResp instanceof TrustTafResp, is(true));
-		assertThat(ttResp.toString(), is(name + " by trust of   " + name + " validated using colon by colon, null"));
+        when(trespMock.getPrincipal()).thenReturn(princMock);
+        when(princMock.getName()).thenReturn(otherName);
+        when(lurMock.fish(princMock, null)).thenReturn(true);
+        TafResp ttResp = trustChecker.mayTrust(trespMock, reqMock);
+        assertThat(ttResp instanceof TrustTafResp, is(true));
+        assertThat(ttResp.toString(), is(name + " by trust of   " + name + " validated using colon by colon, null"));
 
-		when(princMock.getName()).thenReturn(name);
-		ttResp = trustChecker.mayTrust(trespMock, reqMock);
-		assertThat(ttResp instanceof TrustTafResp, is(true));
-		assertThat(ttResp.toString(), is(name + " by trust of   " + name + " validated using colon by colon, null"));
-	}
+        when(princMock.getName()).thenReturn(name);
+        ttResp = trustChecker.mayTrust(trespMock, reqMock);
+        assertThat(ttResp instanceof TrustTafResp, is(true));
+        assertThat(ttResp.toString(), is(name + " by trust of   " + name + " validated using colon by colon, null"));
+    }
 
 }

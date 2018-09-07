@@ -40,195 +40,195 @@ import org.onap.aaf.misc.env.TimeTaken;
  * A NULL implementation of AuthzTrans, for use in DirectAAF Taf/Lurs
  */
 public class NullTrans implements AuthzTrans {
-	private static final AuthzTrans singleton = new NullTrans();
-	
-	public static final AuthzTrans singleton() {
-		return singleton;
-	}
+    private static final AuthzTrans singleton = new NullTrans();
+    
+    public static final AuthzTrans singleton() {
+        return singleton;
+    }
 
-	private Date now;
-	
-	public void checkpoint(String text) {}
-	public void checkpoint(String text, int additionalFlag) {}
-	public Metric auditTrail(int indent, StringBuilder sb, int... flag) {return null;}
+    private Date now;
+    
+    public void checkpoint(String text) {}
+    public void checkpoint(String text, int additionalFlag) {}
+    public Metric auditTrail(int indent, StringBuilder sb, int... flag) {return null;}
 
-	@Override
-	public Metric auditTrail(LogTarget lt, int indent, StringBuilder sb, int... flag) {
-		return null;
-	}
+    @Override
+    public Metric auditTrail(LogTarget lt, int indent, StringBuilder sb, int... flag) {
+        return null;
+    }
 
-	public LogTarget fatal() {
-		return LogTarget.NULL;
-	}
+    public LogTarget fatal() {
+        return LogTarget.NULL;
+    }
 
-	public LogTarget error() {
-		return LogTarget.NULL;
-	}
+    public LogTarget error() {
+        return LogTarget.NULL;
+    }
 
-	public LogTarget audit() {
-		return LogTarget.NULL;
-	}
+    public LogTarget audit() {
+        return LogTarget.NULL;
+    }
 
-	/* (non-Javadoc)
-	 * @see com.att.env.Env#init()
-	 */
-	@Override
-	public LogTarget init() {
-		return LogTarget.NULL;
-	}
+    /* (non-Javadoc)
+     * @see com.att.env.Env#init()
+     */
+    @Override
+    public LogTarget init() {
+        return LogTarget.NULL;
+    }
 
-	public LogTarget warn() {
-		return LogTarget.NULL;
-	}
+    public LogTarget warn() {
+        return LogTarget.NULL;
+    }
 
-	public LogTarget info() {
-		return LogTarget.NULL;
-	}
+    public LogTarget info() {
+        return LogTarget.NULL;
+    }
 
-	public LogTarget debug() {
-		return LogTarget.NULL;
-	}
+    public LogTarget debug() {
+        return LogTarget.NULL;
+    }
 
-	public LogTarget trace() {
-		return LogTarget.NULL;
-	}
+    public LogTarget trace() {
+        return LogTarget.NULL;
+    }
 
-	public TimeTaken start(String name, int flag) {
-		return new TimeTaken(name,flag) {
-			public void output(StringBuilder sb) {
-				sb.append(name);
-				sb.append(' ');
-				sb.append(millis());
-				sb.append("ms");
-			}
-		};
-	}
+    public TimeTaken start(String name, int flag) {
+        return new TimeTaken(name,flag) {
+            public void output(StringBuilder sb) {
+                sb.append(name);
+                sb.append(' ');
+                sb.append(millis());
+                sb.append("ms");
+            }
+        };
+    }
 
-	@Override
-	public String setProperty(String tag, String value) {
-		return value;
-	}
+    @Override
+    public String setProperty(String tag, String value) {
+        return value;
+    }
 
-	@Override
-	public String getProperty(String tag) {
-		return tag;
-	}
+    @Override
+    public String getProperty(String tag) {
+        return tag;
+    }
 
-	@Override
-	public String getProperty(String tag, String deflt) {
-		return deflt;
-	}
+    @Override
+    public String getProperty(String tag, String deflt) {
+        return deflt;
+    }
 
-	@Override
-	public Decryptor decryptor() {
-		return null;
-	}
+    @Override
+    public Decryptor decryptor() {
+        return null;
+    }
 
-	@Override
-	public Encryptor encryptor() {
-		return null;
-	}
-	@Override
-	public AuthzTrans set(HttpServletRequest req) {
-		return null;
-	}
+    @Override
+    public Encryptor encryptor() {
+        return null;
+    }
+    @Override
+    public AuthzTrans set(HttpServletRequest req) {
+        return null;
+    }
 
-	@Override
-	public String user() {
-		return null;
-	}
+    @Override
+    public String user() {
+        return null;
+    }
 
-	@Override
-	public TaggedPrincipal getUserPrincipal() {
-		return null;
-	}
+    @Override
+    public TaggedPrincipal getUserPrincipal() {
+        return null;
+    }
 
-	@Override
-	public void setUser(TaggedPrincipal p) {
-	}
-	
-	@Override
-	public String ip() {
-		return null;
-	}
+    @Override
+    public void setUser(TaggedPrincipal p) {
+    }
+    
+    @Override
+    public String ip() {
+        return null;
+    }
 
-	@Override
-	public int port() {
-		return 0;
-	}
-	@Override
-	public String meth() {
-		return null;
-	}
+    @Override
+    public int port() {
+        return 0;
+    }
+    @Override
+    public String meth() {
+        return null;
+    }
 
-	@Override
-	public String path() {
-		return null;
-	}
+    @Override
+    public String path() {
+        return null;
+    }
 
-	@Override
-	public void put(Slot slot, Object value) {
-	}
-	@Override
-	public <T> T get(Slot slot, T deflt) {
-		return null;
-	}
-	@Override
-	public <T> T get(StaticSlot slot, T dflt) {
-		return null;
-	}
-	@Override
-	public Slot slot(String name) {
-		return null;
-	}
-	@Override
-	public AuthzEnv env() {
-		return null;
-	}
-	@Override
-	public String agent() {
-		return null;
-	}
+    @Override
+    public void put(Slot slot, Object value) {
+    }
+    @Override
+    public <T> T get(Slot slot, T deflt) {
+        return null;
+    }
+    @Override
+    public <T> T get(StaticSlot slot, T dflt) {
+        return null;
+    }
+    @Override
+    public Slot slot(String name) {
+        return null;
+    }
+    @Override
+    public AuthzEnv env() {
+        return null;
+    }
+    @Override
+    public String agent() {
+        return null;
+    }
 
-	@Override
-	public void setLur(Lur lur) {
-	}
+    @Override
+    public void setLur(Lur lur) {
+    }
 
-	@Override
-	public boolean fish(Permission ... p) {
-		return false;
-	}
+    @Override
+    public boolean fish(Permission ... p) {
+        return false;
+    }
 
-	@Override
-	public Organization org() {
-		return Organization.NULL;
-	}
+    @Override
+    public Organization org() {
+        return Organization.NULL;
+    }
 
-	@Override
-	public void logAuditTrail(LogTarget lt) {
-	}
+    @Override
+    public void logAuditTrail(LogTarget lt) {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.env.test.AuthzTrans#requested(org.onap.aaf.auth.env.test.AuthzTrans.REQD_TYPE)
-	 */
-	@Override
-	public boolean requested(REQD_TYPE requested) {
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.env.test.AuthzTrans#requested(org.onap.aaf.auth.env.test.AuthzTrans.REQD_TYPE)
+     */
+    @Override
+    public boolean requested(REQD_TYPE requested) {
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.env.test.AuthzTrans#requested(org.onap.aaf.auth.env.test.AuthzTrans.REQD_TYPE, boolean)
-	 */
-	@Override
-	public void requested(REQD_TYPE requested, boolean b) {
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.env.test.AuthzTrans#requested(org.onap.aaf.auth.env.test.AuthzTrans.REQD_TYPE, boolean)
+     */
+    @Override
+    public void requested(REQD_TYPE requested, boolean b) {
+    }
 
-	@Override
-	public Date now() {
-		if(now==null) {
-			now = new Date();
-		}
-		return now;
-	}
+    @Override
+    public Date now() {
+        if(now==null) {
+            now = new Date();
+        }
+        return now;
+    }
 }
 

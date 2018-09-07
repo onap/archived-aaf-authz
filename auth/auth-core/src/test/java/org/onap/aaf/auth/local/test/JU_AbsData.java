@@ -49,68 +49,68 @@ import java.lang.reflect.Method;
 import java.security.Principal;
 
 public class JU_AbsData {
-	char character = 'x';
-	String filePath = "test/output_.key";
-	File keyfile = new File(filePath);
-	AuthzTrans trans = mock(AuthzTrans.class);
-	
-	private class AbsDataStub extends AbsData {
+    char character = 'x';
+    String filePath = "test/output_.key";
+    File keyfile = new File(filePath);
+    AuthzTrans trans = mock(AuthzTrans.class);
+    
+    private class AbsDataStub extends AbsData {
 
-		
-		public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
-			super(dataf, sepChar, maxLineSize, fieldOffset);
-			// TODO Auto-generated constructor stub
-			
-		}
-		
-	}
+        
+        public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
+            super(dataf, sepChar, maxLineSize, fieldOffset);
+            // TODO Auto-generated constructor stub
+            
+        }
+        
+    }
 
-	@Test
-	public void testStub() throws IOException {
-		char character = 'x';
-		String filePath = "test/output_.key";
-		File keyfile = new File(filePath);
-		FileOutputStream is = new FileOutputStream(keyfile);
+    @Test
+    public void testStub() throws IOException {
+        char character = 'x';
+        String filePath = "test/output_.key";
+        File keyfile = new File(filePath);
+        FileOutputStream is = new FileOutputStream(keyfile);
         OutputStreamWriter osw = new OutputStreamWriter(is);
         BufferedWriter  w = new BufferedWriter(osw);
-        for(int i = 0; i< 10; i++) {		//Write lines to file
-        	w.write("a\nsdfasdfxasdf" + i + "\n");
+        for(int i = 0; i< 10; i++) {        //Write lines to file
+            w.write("a\nsdfasdfxasdf" + i + "\n");
         }
         w.close();
-		AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
-		ads.skipLines(0);
-		ads.name();
-		
-		long lng = 1823286886660L;
-		//ads.open(trans, lng);
-		keyfile.delete();
-	}
-	
-	@Test
-	public void testClose() throws IOException {
-		AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
-		ads.close(trans);
-	}
-	
-	@Test
-	public void testReuse() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		char character = 'x';
-		AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
-		Reuse reuse = ads.reuse();
-		reuse.reset();
-		Assert.assertEquals("", reuse.at(1));
-		Assert.assertNull(reuse.next());
-		//reuse.atToEnd(0);
-		//reuse.pos(10);
-		keyfile.delete();
-	}
-	
-	@Test
-	public void testIter() throws IOException {
-		AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
-		TextIndex textIndex = new TextIndex(keyfile);
-		//Iter iter = ads.iterator();		//Need actual input to run textIndex.create to have a datafile to read
+        AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
+        ads.skipLines(0);
+        ads.name();
+        
+        long lng = 1823286886660L;
+        //ads.open(trans, lng);
+        keyfile.delete();
+    }
+    
+    @Test
+    public void testClose() throws IOException {
+        AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
+        ads.close(trans);
+    }
+    
+    @Test
+    public void testReuse() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        char character = 'x';
+        AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
+        Reuse reuse = ads.reuse();
+        reuse.reset();
+        Assert.assertEquals("", reuse.at(1));
+        Assert.assertNull(reuse.next());
+        //reuse.atToEnd(0);
+        //reuse.pos(10);
+        keyfile.delete();
+    }
+    
+    @Test
+    public void testIter() throws IOException {
+        AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
+        TextIndex textIndex = new TextIndex(keyfile);
+        //Iter iter = ads.iterator();        //Need actual input to run textIndex.create to have a datafile to read
 
-	}
+    }
 
 }

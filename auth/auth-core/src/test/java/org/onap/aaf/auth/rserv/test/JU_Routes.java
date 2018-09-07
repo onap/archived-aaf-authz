@@ -42,31 +42,31 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_Routes {
-	Routes routes;
-	@Mock
-	HttpServletRequest reqMock;
-	//TODO: Gabe [JUnit] Not visible to junit
-	//CodeSetter<Trans> codeSetterMock;
-	Route<Trans> routeObj;
-	
-	@Before
-	public void setUp(){
-		routes = new Routes();
-	}
-	
-	@Test
-	public void testRouteReport(){
-		List listVal = routes.routeReport(); 
-		assertNotNull(listVal);
-	}
-	
-	@Test
-	public void testDerive() throws IOException, ServletException{
-		routeObj = routes.derive(reqMock, null);
-		
-	}
-	
-	
-	
+    Routes routes;
+    @Mock
+    HttpServletRequest reqMock;
+    //TODO: Gabe [JUnit] Not visible to junit
+    //CodeSetter<Trans> codeSetterMock;
+    Route<Trans> routeObj;
+    
+    @Before
+    public void setUp(){
+        routes = new Routes();
+    }
+    
+    @Test
+    public void testRouteReport(){
+        List listVal = routes.routeReport(); 
+        assertNotNull(listVal);
+    }
+    
+    @Test
+    public void testDerive() throws IOException, ServletException{
+        routeObj = routes.derive(reqMock, null);
+        
+    }
+    
+    
+    
 
 }

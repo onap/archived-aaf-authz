@@ -30,57 +30,57 @@ import org.onap.aaf.misc.env.util.Pool;
 
 public class JU_PoolTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void test() {
-		Pool pool = new Pool<Integer>(new Pool.Creator<Integer>() {
+    @Test
+    public void test() {
+        Pool pool = new Pool<Integer>(new Pool.Creator<Integer>() {
 
-			Integer content = 0;
+            Integer content = 0;
 
-			@Override
-			public Integer create() throws APIException {
-				return content++;
-			}
+            @Override
+            public Integer create() throws APIException {
+                return content++;
+            }
 
-			@Override
-			public void destroy(Integer t) {
+            @Override
+            public void destroy(Integer t) {
 
-			}
+            }
 
-			@Override
-			public boolean isValid(Integer t) {
-				return t == content;
-			}
+            @Override
+            public boolean isValid(Integer t) {
+                return t == content;
+            }
 
-			@Override
-			public void reuse(Integer t) {
-				content = t;
-			}
-		});
-		Pool.Pooled<Integer> pooled = new Pool.Pooled<Integer>(new Integer(123), pool, LogTarget.SYSOUT);
-		Pool.Pooled<Integer> pooled1 = new Pool.Pooled<Integer>(new Integer(123), null, LogTarget.SYSOUT);
-		try {
-			// pool.drain();
-			assertEquals("Should return intial value", 0, pool.get().content);
-			// pooled.toss();
-			pool.prime(LogTarget.SYSOUT, 23);
-			assertEquals("Should Return 23 as added at last prime", 23, pool.get(LogTarget.SYSOUT).content);
-			pool.prime(LogTarget.SYSERR, 13);
-			assertEquals("Should add another 13 from SysErr and remove 1", 35, pool.get(LogTarget.SYSERR).content);
-			assertEquals("Create a new creator with create method", 1, pool.get().content);
-			assertEquals("Create a new creator with create method", 2, pool.get().content);
-			assertEquals("Should remove last from pool", 34, pool.get(LogTarget.SYSOUT).content);
+            @Override
+            public void reuse(Integer t) {
+                content = t;
+            }
+        });
+        Pool.Pooled<Integer> pooled = new Pool.Pooled<Integer>(new Integer(123), pool, LogTarget.SYSOUT);
+        Pool.Pooled<Integer> pooled1 = new Pool.Pooled<Integer>(new Integer(123), null, LogTarget.SYSOUT);
+        try {
+            // pool.drain();
+            assertEquals("Should return intial value", 0, pool.get().content);
+            // pooled.toss();
+            pool.prime(LogTarget.SYSOUT, 23);
+            assertEquals("Should Return 23 as added at last prime", 23, pool.get(LogTarget.SYSOUT).content);
+            pool.prime(LogTarget.SYSERR, 13);
+            assertEquals("Should add another 13 from SysErr and remove 1", 35, pool.get(LogTarget.SYSERR).content);
+            assertEquals("Create a new creator with create method", 1, pool.get().content);
+            assertEquals("Create a new creator with create method", 2, pool.get().content);
+            assertEquals("Should remove last from pool", 34, pool.get(LogTarget.SYSOUT).content);
 
-			pool.drain();
-			assertEquals("Should remove last from pool", 17, pool.get(LogTarget.SYSOUT).content);
-			pool.setMaxRange(10);
-			assertEquals(10, pool.getMaxRange());
-			pooled.toss();
-			pooled1.toss();
-		} catch (APIException e) {
-		}
-	}
+            pool.drain();
+            assertEquals("Should remove last from pool", 17, pool.get(LogTarget.SYSOUT).content);
+            pool.setMaxRange(10);
+            assertEquals(10, pool.getMaxRange());
+            pooled.toss();
+            pooled1.toss();
+        } catch (APIException e) {
+        }
+    }
 }

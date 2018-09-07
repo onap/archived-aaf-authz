@@ -40,41 +40,41 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListByPerm {
-	
-	private static ListByPerm lsByPerm;
-	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		Role role = new Role(cli);
-		List ls = new List(role);
-		lsByPerm = new ListByPerm(ls);
-	}
-	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsByPerm._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-	@Test
-	public void detailedHelp() {
-		boolean hasNoError = true;
-		try {
-			lsByPerm.detailedHelp(1, new StringBuilder("test"));
-		} catch (Exception e) {
-			hasNoError = false;
-		}
-		assertEquals(hasNoError, true);
-	}
+    
+    private static ListByPerm lsByPerm;
+    
+    @BeforeClass
+    public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        AAFcli cli = JU_AAFCli.getAAfCli();
+        Role role = new Role(cli);
+        List ls = new List(role);
+        lsByPerm = new ListByPerm(ls);
+    }
+    
+//    @Test
+//    public void exec() {
+//        try {
+//            assertEquals(lsByPerm._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
+//        } catch (CadiException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (APIException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (LocatorException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
+    
+    @Test
+    public void detailedHelp() {
+        boolean hasNoError = true;
+        try {
+            lsByPerm.detailedHelp(1, new StringBuilder("test"));
+        } catch (Exception e) {
+            hasNoError = false;
+        }
+        assertEquals(hasNoError, true);
+    }
 }

@@ -45,92 +45,92 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfo;
 
 public class JU_SecurityInfo {
-	
-	private static PropAccess access;
-	
-	private static final String keyStoreFileName = "src/test/resources/keystore.p12";
-	private static final String keyStorePassword = "Password for the keystore";
-	private static final String keyPassword = "Password for the key";
-		
-	private static final String trustStoreFileName = "src/test/resources/truststore.jks";
-	private static final String trustStorePasswd = "Password for the truststore";
-	
-	@BeforeClass
-	public static void setupOnce() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
-		KeyStore keyStore = KeyStore.getInstance("PKCS12");
-		keyStore.load(null, null);
-		keyStore.store(new FileOutputStream(keyStoreFileName), keyStorePassword.toCharArray());
+    
+    private static PropAccess access;
+    
+    private static final String keyStoreFileName = "src/test/resources/keystore.p12";
+    private static final String keyStorePassword = "Password for the keystore";
+    private static final String keyPassword = "Password for the key";
+        
+    private static final String trustStoreFileName = "src/test/resources/truststore.jks";
+    private static final String trustStorePasswd = "Password for the truststore";
+    
+    @BeforeClass
+    public static void setupOnce() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        keyStore.load(null, null);
+        keyStore.store(new FileOutputStream(keyStoreFileName), keyStorePassword.toCharArray());
 
-		KeyStore trustStore = KeyStore.getInstance("JKS");
-		trustStore.load(null, null);
-		trustStore.store(new FileOutputStream(trustStoreFileName), trustStorePasswd.toCharArray());
-	}
-	
-	@Before
-	public void setup() throws IOException {
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        KeyStore trustStore = KeyStore.getInstance("JKS");
+        trustStore.load(null, null);
+        trustStore.store(new FileOutputStream(trustStoreFileName), trustStorePasswd.toCharArray());
+    }
+    
+    @Before
+    public void setup() throws IOException {
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
 
-		access.setProperty(Config.CADI_KEYSTORE, keyStoreFileName);
-		access.setProperty(Config.CADI_KEYSTORE_PASSWORD, access.encrypt(keyStorePassword));
-		access.setProperty(Config.CADI_KEY_PASSWORD, access.encrypt(keyPassword));
-		
-		access.setProperty(Config.CADI_TRUSTSTORE, trustStoreFileName);
-		access.setProperty(Config.CADI_TRUSTSTORE_PASSWORD, access.encrypt(trustStorePasswd));
-	}
+        access.setProperty(Config.CADI_KEYSTORE, keyStoreFileName);
+        access.setProperty(Config.CADI_KEYSTORE_PASSWORD, access.encrypt(keyStorePassword));
+        access.setProperty(Config.CADI_KEY_PASSWORD, access.encrypt(keyPassword));
+        
+        access.setProperty(Config.CADI_TRUSTSTORE, trustStoreFileName);
+        access.setProperty(Config.CADI_TRUSTSTORE_PASSWORD, access.encrypt(trustStorePasswd));
+    }
 
-	@AfterClass
-	public static void tearDownOnce() {
-		File keyStoreFile = new File(keyStoreFileName);
-		if (keyStoreFile.exists()) {
-			keyStoreFile.delete();
-		}
-		File trustStoreFile = new File(trustStoreFileName);
-		if (trustStoreFile.exists()) {
-			trustStoreFile.delete();
-		}
-	}
+    @AfterClass
+    public static void tearDownOnce() {
+        File keyStoreFile = new File(keyStoreFileName);
+        if (keyStoreFile.exists()) {
+            keyStoreFile.delete();
+        }
+        File trustStoreFile = new File(trustStoreFileName);
+        if (trustStoreFile.exists()) {
+            trustStoreFile.delete();
+        }
+    }
 
-	@Test
-	public void test() throws CadiException {
-		SecurityInfo si = new SecurityInfo(access);
+    @Test
+    public void test() throws CadiException {
+        SecurityInfo si = new SecurityInfo(access);
 
-		assertNotNull(si.getSSLSocketFactory());
-		assertNotNull(si.getSSLContext());
-		assertNotNull(si.getKeyManagers());
-		
-		access.setProperty(Config.CADI_TRUST_MASKS, "123.123.123.123");
-		si = new SecurityInfo(access);
-	}
+        assertNotNull(si.getSSLSocketFactory());
+        assertNotNull(si.getSSLContext());
+        assertNotNull(si.getKeyManagers());
+        
+        access.setProperty(Config.CADI_TRUST_MASKS, "123.123.123.123");
+        si = new SecurityInfo(access);
+    }
 
-	@Test(expected = CadiException.class)
-	public void nullkeyStoreTest() throws CadiException {
-		access.setProperty(Config.CADI_KEYSTORE, "passwords.txt");
-		@SuppressWarnings("unused")
-		SecurityInfo si = new SecurityInfo(access);
-	}
+    @Test(expected = CadiException.class)
+    public void nullkeyStoreTest() throws CadiException {
+        access.setProperty(Config.CADI_KEYSTORE, "passwords.txt");
+        @SuppressWarnings("unused")
+        SecurityInfo si = new SecurityInfo(access);
+    }
 
-	@Test(expected = CadiException.class)
-	public void nullTrustStoreTest() throws CadiException {
-		access.setProperty(Config.CADI_TRUSTSTORE, "passwords.txt");
-		@SuppressWarnings("unused")
-		SecurityInfo si = new SecurityInfo(access);
-	}
-	
-	
-	@Test(expected = NumberFormatException.class)
-	public void badTrustMaskTest() throws CadiException {
-		access.setProperty(Config.CADI_TRUST_MASKS, "trustMask");
-		@SuppressWarnings("unused")
-		SecurityInfo si = new SecurityInfo(access);
-	}
+    @Test(expected = CadiException.class)
+    public void nullTrustStoreTest() throws CadiException {
+        access.setProperty(Config.CADI_TRUSTSTORE, "passwords.txt");
+        @SuppressWarnings("unused")
+        SecurityInfo si = new SecurityInfo(access);
+    }
+    
+    
+    @Test(expected = NumberFormatException.class)
+    public void badTrustMaskTest() throws CadiException {
+        access.setProperty(Config.CADI_TRUST_MASKS, "trustMask");
+        @SuppressWarnings("unused")
+        SecurityInfo si = new SecurityInfo(access);
+    }
 
-	@Test
-	public void coverageTest() throws CadiException {
-		PropAccess badAccess = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		@SuppressWarnings("unused")
-		SecurityInfo si = new SecurityInfo(badAccess);
-		badAccess.setProperty(Config.CADI_KEYSTORE, keyStoreFileName);
-		si = new SecurityInfo(badAccess);
-	}
+    @Test
+    public void coverageTest() throws CadiException {
+        PropAccess badAccess = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        @SuppressWarnings("unused")
+        SecurityInfo si = new SecurityInfo(badAccess);
+        badAccess.setProperty(Config.CADI_KEYSTORE, keyStoreFileName);
+        si = new SecurityInfo(badAccess);
+    }
 
 }

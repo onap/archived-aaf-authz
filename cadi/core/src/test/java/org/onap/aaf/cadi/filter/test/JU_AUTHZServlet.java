@@ -44,64 +44,64 @@ import javax.servlet.http.HttpServletResponse;
 
 public class JU_AUTHZServlet {
 
-	@Mock private Servlet servletMock;
-	@Mock private ServletConfig servletConfigMock;
-	@Mock private HttpServletRequest reqMock;
-	@Mock private HttpServletResponse respMock;
-	@Mock private ServletRequestWrapper servletWrapperMock;
+    @Mock private Servlet servletMock;
+    @Mock private ServletConfig servletConfigMock;
+    @Mock private HttpServletRequest reqMock;
+    @Mock private HttpServletResponse respMock;
+    @Mock private ServletRequestWrapper servletWrapperMock;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void test() throws ServletException, IOException {
-		AUTHZServletStub servlet = new AUTHZServletStub(Servlet.class);
+    @Test
+    public void test() throws ServletException, IOException {
+        AUTHZServletStub servlet = new AUTHZServletStub(Servlet.class);
 
-		try {
-			servlet.init(servletConfigMock);
-			fail("Should've thrown an exception");
-		} catch (ServletException e) {
-			assertThat(e.getMessage(), is("Invalid Servlet Delegate"));
-		}
+        try {
+            servlet.init(servletConfigMock);
+            fail("Should've thrown an exception");
+        } catch (ServletException e) {
+            assertThat(e.getMessage(), is("Invalid Servlet Delegate"));
+        }
 
-		setPrivateField(AUTHZServlet.class, "delegate", servlet, servletMock);
-		servlet.init(servletConfigMock);
-		servlet.getServletConfig();
-		servlet.getServletInfo();
+        setPrivateField(AUTHZServlet.class, "delegate", servlet, servletMock);
+        servlet.init(servletConfigMock);
+        servlet.getServletConfig();
+        servlet.getServletInfo();
 
-		servlet.service(reqMock, respMock);
+        servlet.service(reqMock, respMock);
 
-		String[] roles = new String[] {"role1", "role2"};
-		setPrivateField(AUTHZServlet.class, "roles", servlet, roles);
-		servlet.service(reqMock, respMock);
+        String[] roles = new String[] {"role1", "role2"};
+        setPrivateField(AUTHZServlet.class, "roles", servlet, roles);
+        servlet.service(reqMock, respMock);
 
-		when(reqMock.isUserInRole("role1")).thenReturn(true);
-		servlet.service(reqMock, respMock);
+        when(reqMock.isUserInRole("role1")).thenReturn(true);
+        servlet.service(reqMock, respMock);
 
-		try {
-			servlet.service(servletWrapperMock, respMock);
-			fail("Should've thrown an exception");
-		} catch (ServletException e) {
-			assertThat(e.getMessage(), is("JASPIServlet only supports HTTPServletRequest/HttpServletResponse"));
-		}
-		servlet.destroy();
-	}
+        try {
+            servlet.service(servletWrapperMock, respMock);
+            fail("Should've thrown an exception");
+        } catch (ServletException e) {
+            assertThat(e.getMessage(), is("JASPIServlet only supports HTTPServletRequest/HttpServletResponse"));
+        }
+        servlet.destroy();
+    }
 
-	private class AUTHZServletStub extends AUTHZServlet<Servlet> {
-		public AUTHZServletStub(Class<Servlet> cls) { super(cls); }
-	}
+    private class AUTHZServletStub extends AUTHZServlet<Servlet> {
+        public AUTHZServletStub(Class<Servlet> cls) { super(cls); }
+    }
 
-	private void setPrivateField(Class<?> clazz, String fieldName, Object target, Object value) {
-		try {
-			Field field = clazz.getDeclaredField(fieldName);
-			field.setAccessible(true);
-			field.set(target, value);
-			field.setAccessible(false);
-		} catch(Exception e) {
-			System.err.println("Could not set field [" + fieldName + "] to " + value);
-		}
-	}
+    private void setPrivateField(Class<?> clazz, String fieldName, Object target, Object value) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+            field.setAccessible(false);
+        } catch(Exception e) {
+            System.err.println("Could not set field [" + fieldName + "] to " + value);
+        }
+    }
 
 }

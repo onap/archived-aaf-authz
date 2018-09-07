@@ -35,46 +35,46 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class URModify extends ActionDAO<UserRole,Void,URModify.Modify> {
-	public URModify(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public URModify(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public URModify(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public URModify(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, UserRole ur,Modify modify) {
-		if(dryRun) {
-			trans.info().printf("Would Update %s %s", ur.user(), ur.role());
-			return Result.ok();
-		} else {
-			Result<List<Data>> rr = q.userRoleDAO.read(trans, ur.user(),ur.role());
-			if(rr.notOKorIsEmpty()) {
-				return Result.err(rr);
-			}
-			for(Data d : rr.value) {
-				modify.change(d);
-				if(!(ur.expires().equals(d.expires))) {
-					ur.expires(d.expires);
-				}
-				if(ur.user().equals(d.user) && ur.role().equals(d.role)){
-					Result<Void> rv = q.userRoleDAO.update(trans, d);
-					if(rv.isOK()) {
-						trans.info().printf("Updated %s %s to %s", ur.user(), ur.role(), d.toString());
-					} else {
-						trans.info().log(rv.errorString());
-					}
-				} else {
-					return Result.err(Status.ERR_Denied, "You cannot change the key of this Data");
-				}
-			}
-			return Result.err(Status.ERR_UserRoleNotFound,"No User Role with %s %s",ur.user(),ur.role());
-		}
-	}
-	
-	public static interface Modify {
-		void change(UserRoleDAO.Data ur);
-	}
-	
+    @Override
+    public Result<Void> exec(AuthzTrans trans, UserRole ur,Modify modify) {
+        if(dryRun) {
+            trans.info().printf("Would Update %s %s", ur.user(), ur.role());
+            return Result.ok();
+        } else {
+            Result<List<Data>> rr = q.userRoleDAO.read(trans, ur.user(),ur.role());
+            if(rr.notOKorIsEmpty()) {
+                return Result.err(rr);
+            }
+            for(Data d : rr.value) {
+                modify.change(d);
+                if(!(ur.expires().equals(d.expires))) {
+                    ur.expires(d.expires);
+                }
+                if(ur.user().equals(d.user) && ur.role().equals(d.role)){
+                    Result<Void> rv = q.userRoleDAO.update(trans, d);
+                    if(rv.isOK()) {
+                        trans.info().printf("Updated %s %s to %s", ur.user(), ur.role(), d.toString());
+                    } else {
+                        trans.info().log(rv.errorString());
+                    }
+                } else {
+                    return Result.err(Status.ERR_Denied, "You cannot change the key of this Data");
+                }
+            }
+            return Result.err(Status.ERR_UserRoleNotFound,"No User Role with %s %s",ur.user(),ur.role());
+        }
+    }
+    
+    public static interface Modify {
+        void change(UserRoleDAO.Data ur);
+    }
+    
 }

@@ -22,16 +22,16 @@
 package org.onap.aaf.auth.cmd;
 
 public class Param {
-	public final String tag;
-	public final boolean required;
-	
-	/**
-	 * 
-	 * @param t
-	 * @param b
-	 */
-	public Param(String t, boolean required) {
-		tag = t;
-		this.required=required;
-	}
+    public final String tag;
+    public final boolean required;
+    
+    /**
+     * 
+     * @param t
+     * @param b
+     */
+    public Param(String t, boolean required) {
+        tag = t;
+        this.required=required;
+    }
 }

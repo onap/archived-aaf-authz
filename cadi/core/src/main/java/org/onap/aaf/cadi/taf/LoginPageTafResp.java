@@ -33,68 +33,68 @@ import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.Locator.Item;
 
 public class LoginPageTafResp extends AbsTafResp {
-	private final HttpServletResponse httpResp;
-	private final String loginPageURL;
+    private final HttpServletResponse httpResp;
+    private final String loginPageURL;
 
-	private LoginPageTafResp(Access access, final HttpServletResponse resp, String loginPageURL) {
-		super(access, "LoginPage", null, "Multiple Possible HTTP Logins available.  Redirecting to Login Choice Page");
-		httpResp = resp;
-		this.loginPageURL = loginPageURL;
-	}
+    private LoginPageTafResp(Access access, final HttpServletResponse resp, String loginPageURL) {
+        super(access, "LoginPage", null, "Multiple Possible HTTP Logins available.  Redirecting to Login Choice Page");
+        httpResp = resp;
+        this.loginPageURL = loginPageURL;
+    }
 
-	@Override
-	public RESP authenticate() throws IOException {
-		httpResp.sendRedirect(loginPageURL);
-		return RESP.HTTP_REDIRECT_INVOKED;
-	}
-	
-	@Override
-	public RESP isAuthenticated() {
-		return RESP.TRY_AUTHENTICATING;
-	}
-	
-	public static TafResp create(Access access, Locator<URI> locator, final HttpServletResponse resp, List<Redirectable> redirectables) {
-		if (locator == null) {
-			if (!redirectables.isEmpty()) { 
-				access.log(Level.DEBUG,"LoginPage Locator is not configured. Taking first Redirectable Taf");
-				return redirectables.get(0);
-			}
-			return NullTafResp.singleton();
-		}
+    @Override
+    public RESP authenticate() throws IOException {
+        httpResp.sendRedirect(loginPageURL);
+        return RESP.HTTP_REDIRECT_INVOKED;
+    }
+    
+    @Override
+    public RESP isAuthenticated() {
+        return RESP.TRY_AUTHENTICATING;
+    }
+    
+    public static TafResp create(Access access, Locator<URI> locator, final HttpServletResponse resp, List<Redirectable> redirectables) {
+        if (locator == null) {
+            if (!redirectables.isEmpty()) { 
+                access.log(Level.DEBUG,"LoginPage Locator is not configured. Taking first Redirectable Taf");
+                return redirectables.get(0);
+            }
+            return NullTafResp.singleton();
+        }
 
-		try {
-			Item item = locator.best();
-			URI uri = locator.get(item);
-			if (uri == null) {
-				return NullTafResp.singleton();
-			}
+        try {
+            Item item = locator.best();
+            URI uri = locator.get(item);
+            if (uri == null) {
+                return NullTafResp.singleton();
+            }
 
-			StringBuilder sb = new StringBuilder(uri.toString());
-			String query = uri.getQuery();
-			boolean first = ((query == null) || (query.length() == 0));
-			for (Redirectable redir : redirectables) {
-				if (first) {
-					sb.append('?');
-					first = false;
-				}
-				else {
-					sb.append('&');
-				}
-				sb.append(redir.get());
-			}
-			if (!redirectables.isEmpty()) {
-				return new LoginPageTafResp(access, resp, sb.toString());
-			}
-		} catch (Exception e) {
-			access.log(e, "Error deriving Login Page location");
-		}
+            StringBuilder sb = new StringBuilder(uri.toString());
+            String query = uri.getQuery();
+            boolean first = ((query == null) || (query.length() == 0));
+            for (Redirectable redir : redirectables) {
+                if (first) {
+                    sb.append('?');
+                    first = false;
+                }
+                else {
+                    sb.append('&');
+                }
+                sb.append(redir.get());
+            }
+            if (!redirectables.isEmpty()) {
+                return new LoginPageTafResp(access, resp, sb.toString());
+            }
+        } catch (Exception e) {
+            access.log(e, "Error deriving Login Page location");
+        }
 
-		return NullTafResp.singleton();
-	}
-	
-	@Override
-	public String taf() {
-		return "LoginPage";
-	}
+        return NullTafResp.singleton();
+    }
+    
+    @Override
+    public String taf() {
+        return "LoginPage";
+    }
 
 }

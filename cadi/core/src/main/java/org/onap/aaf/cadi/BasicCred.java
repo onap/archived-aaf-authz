@@ -30,7 +30,7 @@ package org.onap.aaf.cadi;
  *
  */
 public interface BasicCred extends GetCred {
-	public void setUser(String user);
-	public void setCred(byte[] passwd);
-	public String getUser();
+    public void setUser(String user);
+    public void setCred(byte[] passwd);
+    public String getUser();
 }

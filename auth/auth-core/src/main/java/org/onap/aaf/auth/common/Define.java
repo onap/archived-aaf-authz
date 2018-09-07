@@ -29,60 +29,60 @@ import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.config.Config;
 
 public class Define {
-	private static String ROOT_NS = null;
-	private static String ROOT_COMPANY = null;
-	private static boolean initialized = false;
+    private static String ROOT_NS = null;
+    private static String ROOT_COMPANY = null;
+    private static boolean initialized = false;
 
-	private final static String MSG = ".set(Access access) must be called before use";
-	public static final CharSequence ROOT_NS_TAG = "AAF_NS"; // use for certain Replacements in Location
-	private static final String ROOT_NS_TAG_DOT = ROOT_NS_TAG +".";
+    private final static String MSG = ".set(Access access) must be called before use";
+    public static final CharSequence ROOT_NS_TAG = "AAF_NS"; // use for certain Replacements in Location
+    private static final String ROOT_NS_TAG_DOT = ROOT_NS_TAG +".";
 
-	public static String ROOT_NS() {
-		if(ROOT_NS==null) {
-			throw new RuntimeException(Define.class.getName() + MSG);
-		}
-		return ROOT_NS;
-	}
-	
-	public static String ROOT_COMPANY() {
-		if(ROOT_NS==null) {
-			throw new RuntimeException(Define.class.getName() + MSG);
-		}
-		return ROOT_COMPANY;
-	}
-	
-	public static void set(Access access) throws CadiException {
-		ROOT_NS = access.getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
-		ROOT_COMPANY = access.getProperty(Config.AAF_ROOT_COMPANY,null);
-		if(ROOT_COMPANY==null) {
-			int last = ROOT_NS.lastIndexOf('.');
-			if(last>=0) {
-				ROOT_COMPANY = ROOT_NS.substring(0, last);
-			} else {
-				throw new CadiException(Config.AAF_ROOT_COMPANY + " or " + Config.AAF_ROOT_NS + " property with 3 positions is required.");
-			}
-		}
-		
-		for( Entry<Object, Object> es : access.getProperties().entrySet()) {
-			if(es.getKey().toString().startsWith(ROOT_NS_TAG_DOT)) {
-				access.getProperties().setProperty(es.getKey().toString(),varReplace(es.getValue().toString()));
-			}
-		}
+    public static String ROOT_NS() {
+        if(ROOT_NS==null) {
+            throw new RuntimeException(Define.class.getName() + MSG);
+        }
+        return ROOT_NS;
+    }
+    
+    public static String ROOT_COMPANY() {
+        if(ROOT_NS==null) {
+            throw new RuntimeException(Define.class.getName() + MSG);
+        }
+        return ROOT_COMPANY;
+    }
+    
+    public static void set(Access access) throws CadiException {
+        ROOT_NS = access.getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
+        ROOT_COMPANY = access.getProperty(Config.AAF_ROOT_COMPANY,null);
+        if(ROOT_COMPANY==null) {
+            int last = ROOT_NS.lastIndexOf('.');
+            if(last>=0) {
+                ROOT_COMPANY = ROOT_NS.substring(0, last);
+            } else {
+                throw new CadiException(Config.AAF_ROOT_COMPANY + " or " + Config.AAF_ROOT_NS + " property with 3 positions is required.");
+            }
+        }
+        
+        for( Entry<Object, Object> es : access.getProperties().entrySet()) {
+            if(es.getKey().toString().startsWith(ROOT_NS_TAG_DOT)) {
+                access.getProperties().setProperty(es.getKey().toString(),varReplace(es.getValue().toString()));
+            }
+        }
 
-		initialized = true;
-		access.printf(Level.INIT,"AAF Root NS is %s, and AAF Company Root is %s",ROOT_NS,ROOT_COMPANY);
-	}
+        initialized = true;
+        access.printf(Level.INIT,"AAF Root NS is %s, and AAF Company Root is %s",ROOT_NS,ROOT_COMPANY);
+    }
 
-	public static String varReplace(final String potential) {
-		if(potential.startsWith(ROOT_NS_TAG_DOT)) {
-			return ROOT_NS + potential.substring(6);
-		} else {
-			return potential;
-		}
-	}
+    public static String varReplace(final String potential) {
+        if(potential.startsWith(ROOT_NS_TAG_DOT)) {
+            return ROOT_NS + potential.substring(6);
+        } else {
+            return potential;
+        }
+    }
 
-	public static boolean isInitialized() {
-		return initialized;
-	}
-	
+    public static boolean isInitialized() {
+        return initialized;
+    }
+    
 }

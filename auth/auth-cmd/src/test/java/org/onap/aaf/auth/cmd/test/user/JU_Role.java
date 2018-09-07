@@ -55,57 +55,57 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Role {
-	
-	private static Role role;
-	User user;
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	
-	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		User usr = new User(aafcli);
-		role = new Role(usr);
-		
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//		HRcli hcli = new HRcli(hman, uri, item, secSet);
-//		String[] strArr = {"add", "del", "setTo","extend", "del", "setTo","extend"};
-//		Assert.assertEquals(200, role._exec(0, strArr));
-//		
-//		String[] strArr1 = { "del", "setTo","extend","add", "del", "setTo","extend"};
-//		Assert.assertEquals(501, role._exec(0, strArr1));
-//		
-//		String[] strArr2 = {"setTo","extend","add", "del", "del", "setTo","extend" };
-//		Assert.assertEquals(501, role._exec(0, strArr2));
-//		
-//		String[] strArr3 = {"extend","add", "del","setTo", "del", "setTo","extend" };
-//		Assert.assertEquals(501, role._exec(0, strArr3));
+    
+    private static Role role;
+    User user;
+    PropAccess prop;
+    AuthzEnv aEnv;
+    Writer wtr;
+    Locator<URI> loc;
+    HMangr hman;    
+    AAFcli aafcli;
+    
+    @Before
+    public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        prop = new PropAccess();
+        aEnv = new AuthzEnv();
+        wtr = mock(Writer.class);
+        loc = mock(Locator.class);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+        hman = new HMangr(aEnv, loc);    
+        aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+        User usr = new User(aafcli);
+        role = new Role(usr);
+        
+    }
+    
+    @Test
+    public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+        Item value = mock(Item.class);
+        Locator.Item item = new Locator.Item() {
+        };
+        when(loc.best()).thenReturn(value);
+        URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
+        when(loc.get(value)).thenReturn(uri);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+//        HRcli hcli = new HRcli(hman, uri, item, secSet);
+//        String[] strArr = {"add", "del", "setTo","extend", "del", "setTo","extend"};
+//        Assert.assertEquals(200, role._exec(0, strArr));
+//        
+//        String[] strArr1 = { "del", "setTo","extend","add", "del", "setTo","extend"};
+//        Assert.assertEquals(501, role._exec(0, strArr1));
+//        
+//        String[] strArr2 = {"setTo","extend","add", "del", "del", "setTo","extend" };
+//        Assert.assertEquals(501, role._exec(0, strArr2));
+//        
+//        String[] strArr3 = {"extend","add", "del","setTo", "del", "setTo","extend" };
+//        Assert.assertEquals(501, role._exec(0, strArr3));
 
-	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		role.detailedHelp(0, sb);
-	}
+    }
+    
+    @Test
+    public void testDetailedHelp() {
+        StringBuilder sb = new StringBuilder();
+        role.detailedHelp(0, sb);
+    }
 }

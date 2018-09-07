@@ -40,55 +40,55 @@ import java.util.Set;
 import org.junit.Test;
 
 public class JU_Role {
-	
-	Role shortRole;
-	Role longRole;
-	Set set;
-	
-	@Before
-	public void setUp() {
-		set = new HashSet();
-		shortRole = new Role("full");
-		longRole = new Role("ns", "name", "description", set);
-	}
+    
+    Role shortRole;
+    Role longRole;
+    Set set;
+    
+    @Before
+    public void setUp() {
+        set = new HashSet();
+        shortRole = new Role("full");
+        longRole = new Role("ns", "name", "description", set);
+    }
 
-	@Test
-	public void testEncode() {
-		Assert.assertEquals("ns|name", longRole.encode());
-	}
-	
-	@Test
-	public void testFullName() {
-		Assert.assertEquals("ns.name", longRole.fullName());
-		Assert.assertEquals("full", shortRole.fullName());
-		
-		longRole.fullName("test");
-	}
-	
-	@Test
-	public void testToString() {
-		Assert.assertEquals("ns|name", longRole.toString());
-	}
-	
-	@Test
-	public void testHashCode() {
-		Assert.assertEquals(-2043567518, longRole.hashCode());
-	}
-	
-	@Test
-	public void testEquals() {
-		Assert.assertEquals(false, longRole.equals(longRole));
-	}
-	
-	@Test
-	public void testCompareTo() {
-		Assert.assertEquals(-14, longRole.compareTo(shortRole));
-		Assert.assertEquals(14, shortRole.compareTo(longRole));
-	}
-	
-	@Test
-	public void testStageRemove() {
-		longRole.stageRemove(shortRole);
-	}
+    @Test
+    public void testEncode() {
+        Assert.assertEquals("ns|name", longRole.encode());
+    }
+    
+    @Test
+    public void testFullName() {
+        Assert.assertEquals("ns.name", longRole.fullName());
+        Assert.assertEquals("full", shortRole.fullName());
+        
+        longRole.fullName("test");
+    }
+    
+    @Test
+    public void testToString() {
+        Assert.assertEquals("ns|name", longRole.toString());
+    }
+    
+    @Test
+    public void testHashCode() {
+        Assert.assertEquals(-2043567518, longRole.hashCode());
+    }
+    
+    @Test
+    public void testEquals() {
+        Assert.assertEquals(false, longRole.equals(longRole));
+    }
+    
+    @Test
+    public void testCompareTo() {
+        Assert.assertEquals(-14, longRole.compareTo(shortRole));
+        Assert.assertEquals(14, shortRole.compareTo(longRole));
+    }
+    
+    @Test
+    public void testStageRemove() {
+        longRole.stageRemove(shortRole);
+    }
 
 }

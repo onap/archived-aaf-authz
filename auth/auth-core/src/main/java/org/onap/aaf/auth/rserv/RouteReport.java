@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RouteReport {
-	public HttpMethods meth;
-	public String path;
-	public String desc;
-	public final List<String> contextTypes = new ArrayList<>();
+    public HttpMethods meth;
+    public String path;
+    public String desc;
+    public final List<String> contextTypes = new ArrayList<>();
 
 }

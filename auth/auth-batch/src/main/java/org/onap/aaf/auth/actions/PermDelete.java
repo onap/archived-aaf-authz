@@ -32,33 +32,33 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class PermDelete extends ActionDAO<Perm,Void,String> {
-	public PermDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster, dryRun);
-	}
-	
-	public PermDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public PermDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster, dryRun);
+    }
+    
+    public PermDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, Perm p,String text) {
-		PermDAO.Data pdd = new PermDAO.Data();
-		pdd.ns = p.ns;
-		pdd.type = p.type;
-		pdd.instance = p.instance;
-		pdd.action = p.action;
-		if(dryRun) {
-			trans.info().log("Would Delete Perm:",text,p.fullType());
-			return Result.ok();
-		} else {
-			Result<Void> rv = q.permDAO.delete(trans, pdd, true); // need to read for undelete
-			if(rv.isOK()) {
-				trans.info().log("Deleted Perm:",text,p.fullType());
-			} else {
-				trans.error().log("Error Deleting Perm -",rv.details,":",p.fullType());
-			}
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Void> exec(AuthzTrans trans, Perm p,String text) {
+        PermDAO.Data pdd = new PermDAO.Data();
+        pdd.ns = p.ns;
+        pdd.type = p.type;
+        pdd.instance = p.instance;
+        pdd.action = p.action;
+        if(dryRun) {
+            trans.info().log("Would Delete Perm:",text,p.fullType());
+            return Result.ok();
+        } else {
+            Result<Void> rv = q.permDAO.delete(trans, pdd, true); // need to read for undelete
+            if(rv.isOK()) {
+                trans.info().log("Deleted Perm:",text,p.fullType());
+            } else {
+                trans.error().log("Error Deleting Perm -",rv.details,":",p.fullType());
+            }
+            return rv;
+        }
+    }
+    
 }

@@ -40,44 +40,44 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.impl.BasicTrans;
 
 public class TestHClient {
-	public static void main(String[] args) {
-		try {
-			PropAccess access = new PropAccess(args);
-			String aaf_url = access.getProperty(Config.AAF_URL);
-			if(aaf_url == null) {
-				access.log(Level.ERROR, Config.AAF_URL," is required");
-			} else {
-				HMangr hman = null;
-				try {
-					SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
-					AbsAAFLocator<BasicTrans> loc = new AAFLocator(si,new URI(aaf_url));
-					for(Item item = loc.first(); item!=null; item=loc.next(item)) {
-						System.out.println(loc.get(item));
-					}
-					
-					hman = new HMangr(access,loc);
-					final String path = String.format("/authz/perms/user/%s",
-							access.getProperty(Config.AAF_APPID,"xx9999@people.osaaf.org"));
-					hman.best(si.defSS, new Retryable<Void>() {
-						@Override
-						public Void code(Rcli<?> cli) throws APIException, CadiException {
-							Future<String> ft = cli.read(path,"application/json");  
-							if(ft.get(10000)) {
-								System.out.println("Hurray,\n"+ft.body());
-							} else {
-								System.out.println("not quite: " + ft.code());
-							}
-							return null;
-						}});
-				} finally {
-					if(hman!=null) {
-						hman.close();
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
+    public static void main(String[] args) {
+        try {
+            PropAccess access = new PropAccess(args);
+            String aaf_url = access.getProperty(Config.AAF_URL);
+            if(aaf_url == null) {
+                access.log(Level.ERROR, Config.AAF_URL," is required");
+            } else {
+                HMangr hman = null;
+                try {
+                    SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
+                    AbsAAFLocator<BasicTrans> loc = new AAFLocator(si,new URI(aaf_url));
+                    for(Item item = loc.first(); item!=null; item=loc.next(item)) {
+                        System.out.println(loc.get(item));
+                    }
+                    
+                    hman = new HMangr(access,loc);
+                    final String path = String.format("/authz/perms/user/%s",
+                            access.getProperty(Config.AAF_APPID,"xx9999@people.osaaf.org"));
+                    hman.best(si.defSS, new Retryable<Void>() {
+                        @Override
+                        public Void code(Rcli<?> cli) throws APIException, CadiException {
+                            Future<String> ft = cli.read(path,"application/json");  
+                            if(ft.get(10000)) {
+                                System.out.println("Hurray,\n"+ft.body());
+                            } else {
+                                System.out.println("not quite: " + ft.code());
+                            }
+                            return null;
+                        }});
+                } finally {
+                    if(hman!=null) {
+                        hman.close();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

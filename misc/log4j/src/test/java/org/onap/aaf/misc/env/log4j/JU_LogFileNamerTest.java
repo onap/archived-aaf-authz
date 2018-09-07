@@ -34,60 +34,60 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JU_LogFileNamerTest {
-	private File dir = new File(".");
+    private File dir = new File(".");
 
-	private String ending = new SimpleDateFormat("YYYYMMdd").format(new Date());
+    private String ending = new SimpleDateFormat("YYYYMMdd").format(new Date());
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void test() throws IOException {
-		LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
-		assertEquals(logFileNamer, logFileNamer.noPID());
+    @Test
+    public void test() throws IOException {
+        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
+        assertEquals(logFileNamer, logFileNamer.noPID());
 
-		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-			dir.getCanonicalFile() + File.separator + "log-Append" + ending + "_0.log");
+        logFileNamer.setAppender("Append");
+        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+            dir.getCanonicalFile() + File.separator + "log-Append" + ending + "_0.log");
 
-		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-			dir.getCanonicalFile() + File.separator + "log-Append" + ending + "_1.log");
-	}
+        logFileNamer.setAppender("Append");
+        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+            dir.getCanonicalFile() + File.separator + "log-Append" + ending + "_1.log");
+    }
 
-	@Test
-	public void testBlankRoot() throws IOException {
-		LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
-		assertEquals(logFileNamer, logFileNamer.noPID());
+    @Test
+    public void testBlankRoot() throws IOException {
+        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
+        assertEquals(logFileNamer, logFileNamer.noPID());
 
-		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-			dir.getCanonicalPath() + File.separator + "Append" + ending + "_0.log");
+        logFileNamer.setAppender("Append");
+        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+            dir.getCanonicalPath() + File.separator + "Append" + ending + "_0.log");
 
-		logFileNamer.setAppender("Append");
-		assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-			dir.getCanonicalPath() + File.separator + "Append" + ending + "_1.log");
-	}
+        logFileNamer.setAppender("Append");
+        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+            dir.getCanonicalPath() + File.separator + "Append" + ending + "_1.log");
+    }
 
-	@After
-	public void tearDown() throws IOException {
-		File file = new File("./log-Append" + ending + "_0.log");
-		if (file.exists()) {
-			Files.delete(Paths.get(file.getAbsolutePath()));
-		}
-		file = new File("./log-Append" + ending + "_1.log");
-		if (file.exists()) {
-			Files.delete(Paths.get(file.getAbsolutePath()));
-		}
-		file = new File("./Append" + ending + "_0.log");
-		if (file.exists()) {
-			Files.delete(Paths.get(file.getAbsolutePath()));
-		}
-		file = new File("./Append" + ending + "_1.log");
-		if (file.exists()) {
-			Files.delete(Paths.get(file.getAbsolutePath()));
-		}
-	}
+    @After
+    public void tearDown() throws IOException {
+        File file = new File("./log-Append" + ending + "_0.log");
+        if (file.exists()) {
+            Files.delete(Paths.get(file.getAbsolutePath()));
+        }
+        file = new File("./log-Append" + ending + "_1.log");
+        if (file.exists()) {
+            Files.delete(Paths.get(file.getAbsolutePath()));
+        }
+        file = new File("./Append" + ending + "_0.log");
+        if (file.exists()) {
+            Files.delete(Paths.get(file.getAbsolutePath()));
+        }
+        file = new File("./Append" + ending + "_1.log");
+        if (file.exists()) {
+            Files.delete(Paths.get(file.getAbsolutePath()));
+        }
+    }
 
 }

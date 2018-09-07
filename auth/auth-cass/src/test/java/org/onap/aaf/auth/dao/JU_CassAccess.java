@@ -41,33 +41,33 @@ import com.datastax.driver.core.Cluster.Builder;
 
 @RunWith(PowerMockRunner.class)
 public class JU_CassAccess {
-	CassAccess cassAccess;
-	
-	public static final String KEYSPACE = "authz";
-	public static final String CASSANDRA_CLUSTERS = "cassandra.clusters";
-	public static final String CASSANDRA_CLUSTERS_PORT = "cassandra.clusters.port";
-	public static final String CASSANDRA_CLUSTERS_USER_NAME = "cassandra.clusters.user";
-	public static final String CASSANDRA_CLUSTERS_PASSWORD = "cassandra.clusters.password";
-	public static final String CASSANDRA_RESET_EXCEPTIONS = "cassandra.reset.exceptions";
-	public static final String LATITUDE = "LATITUDE";
-	public static final String LONGITUDE = "LONGITUDE";
-	//private static final List<Resettable> resetExceptions = new ArrayList<>();
-	public static final String ERR_ACCESS_MSG = "Accessing Backend";
-	private static Builder cb = null;
-	@Mock
-	Env envMock;
-	String prefix=null;
-	
-	@Before
-	public void setUp(){
-		cassAccess = new CassAccess();
-	}
+    CassAccess cassAccess;
+    
+    public static final String KEYSPACE = "authz";
+    public static final String CASSANDRA_CLUSTERS = "cassandra.clusters";
+    public static final String CASSANDRA_CLUSTERS_PORT = "cassandra.clusters.port";
+    public static final String CASSANDRA_CLUSTERS_USER_NAME = "cassandra.clusters.user";
+    public static final String CASSANDRA_CLUSTERS_PASSWORD = "cassandra.clusters.password";
+    public static final String CASSANDRA_RESET_EXCEPTIONS = "cassandra.reset.exceptions";
+    public static final String LATITUDE = "LATITUDE";
+    public static final String LONGITUDE = "LONGITUDE";
+    //private static final List<Resettable> resetExceptions = new ArrayList<>();
+    public static final String ERR_ACCESS_MSG = "Accessing Backend";
+    private static Builder cb = null;
+    @Mock
+    Env envMock;
+    String prefix=null;
+    
+    @Before
+    public void setUp(){
+        cassAccess = new CassAccess();
+    }
 
 
-	@Test(expected=APIException.class)
-	public void testCluster() throws APIException, IOException {
-		cassAccess.cluster(envMock, prefix);
-		
-	}
+    @Test(expected=APIException.class)
+    public void testCluster() throws APIException, IOException {
+        cassAccess.cluster(envMock, prefix);
+        
+    }
 
 }

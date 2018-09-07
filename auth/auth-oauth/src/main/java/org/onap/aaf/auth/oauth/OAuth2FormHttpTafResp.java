@@ -32,36 +32,36 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp;
 
 public class OAuth2FormHttpTafResp extends AbsTafResp implements TafResp {
-	private static final String tafName = DirectOAuthTAF.class.getSimpleName();
-	private HttpServletResponse httpResp;
-	private RESP status;
-	private final boolean wasFailed;
-	
-	public OAuth2FormHttpTafResp(Access access, OAuth2FormPrincipal principal, String desc, RESP status, HttpServletResponse resp, boolean wasFailed) {
-		super(access,tafName,principal, desc);
-		httpResp = resp;
-		this.status = status; 
-		this.wasFailed = wasFailed;
-	}
+    private static final String tafName = DirectOAuthTAF.class.getSimpleName();
+    private HttpServletResponse httpResp;
+    private RESP status;
+    private final boolean wasFailed;
+    
+    public OAuth2FormHttpTafResp(Access access, OAuth2FormPrincipal principal, String desc, RESP status, HttpServletResponse resp, boolean wasFailed) {
+        super(access,tafName,principal, desc);
+        httpResp = resp;
+        this.status = status; 
+        this.wasFailed = wasFailed;
+    }
 
-	public OAuth2FormHttpTafResp(Access access, TrustPrincipal principal, String desc, RESP status,HttpServletResponse resp) {
-		super(access,tafName,principal, desc);
-		httpResp = resp;
-		this.status = status; 
-		wasFailed = true; // if Trust Principal added, must be good
-	}
+    public OAuth2FormHttpTafResp(Access access, TrustPrincipal principal, String desc, RESP status,HttpServletResponse resp) {
+        super(access,tafName,principal, desc);
+        httpResp = resp;
+        this.status = status; 
+        wasFailed = true; // if Trust Principal added, must be good
+    }
 
-	public RESP authenticate() throws IOException {
-		httpResp.setStatus(401); // Unauthorized	
-		return RESP.HTTP_REDIRECT_INVOKED;
-	}
+    public RESP authenticate() throws IOException {
+        httpResp.setStatus(401); // Unauthorized    
+        return RESP.HTTP_REDIRECT_INVOKED;
+    }
 
-	public RESP isAuthenticated() {
-		return status;
-	}
+    public RESP isAuthenticated() {
+        return status;
+    }
 
-	public boolean isFailedAttempt() {
-		return wasFailed;
-	}
+    public boolean isFailedAttempt() {
+        return wasFailed;
+    }
 
 }

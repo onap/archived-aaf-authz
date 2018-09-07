@@ -37,46 +37,46 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class JU_TrustTafResp {
 
-	@Mock
-	TafResp delegateMock;
+    @Mock
+    TafResp delegateMock;
 
-	@Mock
-	TaggedPrincipal principalMock;
+    @Mock
+    TaggedPrincipal principalMock;
 
-	@Mock
-	Access accessMock;
+    @Mock
+    Access accessMock;
 
-	private final String description = "Example Description";
-	private final String anotherDescription = "Another Description";
-	private final String name = "name";
+    private final String description = "Example Description";
+    private final String anotherDescription = "Another Description";
+    private final String name = "name";
 
-	private final RESP resp = RESP.IS_AUTHENTICATED;
+    private final RESP resp = RESP.IS_AUTHENTICATED;
 
-	@Before
-	public void setup() throws IOException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws IOException {
+        MockitoAnnotations.initMocks(this);
 
-		when(delegateMock.desc()).thenReturn(anotherDescription);
-		when(delegateMock.isValid()).thenReturn(true);
-		when(delegateMock.isAuthenticated()).thenReturn(resp);
-		when(delegateMock.authenticate()).thenReturn(resp);
-		when(delegateMock.getAccess()).thenReturn(accessMock);
-		when(delegateMock.isFailedAttempt()).thenReturn(true);
+        when(delegateMock.desc()).thenReturn(anotherDescription);
+        when(delegateMock.isValid()).thenReturn(true);
+        when(delegateMock.isAuthenticated()).thenReturn(resp);
+        when(delegateMock.authenticate()).thenReturn(resp);
+        when(delegateMock.getAccess()).thenReturn(accessMock);
+        when(delegateMock.isFailedAttempt()).thenReturn(true);
 
-		when(principalMock.getName()).thenReturn(name);
-	}
+        when(principalMock.getName()).thenReturn(name);
+    }
 
-	@Test
-	public void test() throws IOException {
-		TrustTafResp ttr = new TrustTafResp(delegateMock, principalMock, description);
-		assertThat(ttr.isValid(), is(true));
-		assertThat(ttr.desc(), is(description + ' ' + anotherDescription));
-		assertThat(ttr.authenticate(), is(resp));
-		assertThat(ttr.isAuthenticated(), is(resp));
-		assertThat(ttr.getPrincipal(), is(principalMock));
-		assertThat(ttr.getAccess(), is(accessMock));
-		assertThat(ttr.isFailedAttempt(), is(true));
-		assertThat(ttr.toString(), is(name + " by trust of " + description + ' ' + anotherDescription));
-	}
+    @Test
+    public void test() throws IOException {
+        TrustTafResp ttr = new TrustTafResp(delegateMock, principalMock, description);
+        assertThat(ttr.isValid(), is(true));
+        assertThat(ttr.desc(), is(description + ' ' + anotherDescription));
+        assertThat(ttr.authenticate(), is(resp));
+        assertThat(ttr.isAuthenticated(), is(resp));
+        assertThat(ttr.getPrincipal(), is(principalMock));
+        assertThat(ttr.getAccess(), is(accessMock));
+        assertThat(ttr.isFailedAttempt(), is(true));
+        assertThat(ttr.toString(), is(name + " by trust of " + description + ' ' + anotherDescription));
+    }
 
 }

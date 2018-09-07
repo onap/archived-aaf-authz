@@ -41,60 +41,60 @@ import certman.v1_0.CertInfo;
 
 public class JU_PlaceArtifactOnStream {
 
-	@Mock private Trans transMock;
-	@Mock private CertInfo certInfoMock;
-	@Mock private Artifact artiMock;
+    @Mock private Trans transMock;
+    @Mock private CertInfo certInfoMock;
+    @Mock private Artifact artiMock;
 
-	private static final String luggagePassword = "12345";  // That's the stupidest combination I've ever heard in my life
-	private static final String privateKeyString = "I'm a private key!";
-	
-	private ByteArrayOutputStream outStream;
+    private static final String luggagePassword = "12345";  // That's the stupidest combination I've ever heard in my life
+    private static final String privateKeyString = "I'm a private key!";
+    
+    private ByteArrayOutputStream outStream;
 
-	private List<String> certs;
+    private List<String> certs;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
 
-		certs = new ArrayList<>();
-		certs.add("cert1");
-		certs.add("cert2");
+        certs = new ArrayList<>();
+        certs.add("cert1");
+        certs.add("cert2");
 
-		when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
-		when(certInfoMock.getCerts()).thenReturn(certs);
-		when(certInfoMock.getPrivatekey()).thenReturn(privateKeyString);
-		
-		outStream = new ByteArrayOutputStream();
-	}
+        when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
+        when(certInfoMock.getCerts()).thenReturn(certs);
+        when(certInfoMock.getPrivatekey()).thenReturn(privateKeyString);
+        
+        outStream = new ByteArrayOutputStream();
+    }
 
-	@Test
-	public void test() {
-		PlaceArtifactOnStream placer = new PlaceArtifactOnStream(new PrintStream(outStream));
-		placer.place(transMock, certInfoMock, artiMock, "machine");
-		
-		String[] output = outStream.toString().split(System.lineSeparator(), 0);
-		
-		String[] expected = {
-				"Challenge:  " + luggagePassword,
-				"PrivateKey:",
-				privateKeyString,
-				"Certificate Chain:",
-				"cert1",
-				"cert2"
-		};
-		
-		assertThat(output.length, is(expected.length));
-		for (int i = 0; i < output.length; i++) {
-			assertThat(output[i], is(expected[i]));
-		}
+    @Test
+    public void test() {
+        PlaceArtifactOnStream placer = new PlaceArtifactOnStream(new PrintStream(outStream));
+        placer.place(transMock, certInfoMock, artiMock, "machine");
+        
+        String[] output = outStream.toString().split(System.lineSeparator(), 0);
+        
+        String[] expected = {
+                "Challenge:  " + luggagePassword,
+                "PrivateKey:",
+                privateKeyString,
+                "Certificate Chain:",
+                "cert1",
+                "cert2"
+        };
+        
+        assertThat(output.length, is(expected.length));
+        for (int i = 0; i < output.length; i++) {
+            assertThat(output[i], is(expected[i]));
+        }
 
-		// coverage
-		when(certInfoMock.getNotes()).thenReturn("");
-		placer.place(transMock, certInfoMock, artiMock, "machine");
+        // coverage
+        when(certInfoMock.getNotes()).thenReturn("");
+        placer.place(transMock, certInfoMock, artiMock, "machine");
 
-		when(certInfoMock.getNotes()).thenReturn("Some Notes");
-		when(transMock.info()).thenReturn(mock(LogTarget.class));
-		placer.place(transMock, certInfoMock, artiMock, "machine");
-	}
+        when(certInfoMock.getNotes()).thenReturn("Some Notes");
+        when(transMock.info()).thenReturn(mock(LogTarget.class));
+        placer.place(transMock, certInfoMock, artiMock, "machine");
+    }
 
 }

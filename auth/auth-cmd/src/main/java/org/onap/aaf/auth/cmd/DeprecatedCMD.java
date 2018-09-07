@@ -36,18 +36,18 @@ import org.onap.aaf.misc.env.APIException;
  * @param <X>
  */
 public class DeprecatedCMD<X extends Cmd> extends BaseCmd<X> {
-	private String text;
+    private String text;
 
-	@SuppressWarnings("unchecked")
-	public DeprecatedCMD(Cmd cmd, String name, String text) {
-		super((X)cmd,name);
-		this.text = text;
-	}
+    @SuppressWarnings("unchecked")
+    public DeprecatedCMD(Cmd cmd, String name, String text) {
+        super((X)cmd,name);
+        this.text = text;
+    }
 
-	@Override
-	public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-		pw().println(text);
-		return _idx;
-	}
+    @Override
+    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
+        pw().println(text);
+        return _idx;
+    }
 
 }

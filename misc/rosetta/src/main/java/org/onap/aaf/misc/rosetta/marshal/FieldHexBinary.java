@@ -22,14 +22,14 @@
 package org.onap.aaf.misc.rosetta.marshal;
 
 public abstract class FieldHexBinary<T> extends FieldMarshal<T>{
-	public FieldHexBinary(String name) {
-		super(name);
-	}
+    public FieldHexBinary(String name) {
+        super(name);
+    }
 
-	protected abstract byte[] data(T t); 
+    protected abstract byte[] data(T t); 
 
-	@Override
-	protected boolean data(T t, StringBuilder sb) {
-		return DataWriter.HEX_BINARY.write(data(t), sb);
-	}
+    @Override
+    protected boolean data(T t, StringBuilder sb) {
+        return DataWriter.HEX_BINARY.write(data(t), sb);
+    }
 }

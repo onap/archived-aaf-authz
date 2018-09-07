@@ -42,198 +42,198 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Split;
 
 public abstract class CA {
-	private static final String MUST_EXIST_TO_CREATE_CSRS_FOR = " must exist to create CSRs for ";
-	//TODO figuring out what is an Issuing CA is a matter of convention.  Consider SubClassing for Open Source
-	public static final String ISSUING_CA = "Issuing CA";
-	public static final String CM_CA_PREFIX = "cm_ca.";
-	public static final String CM_CA_BASE_SUBJECT = ".baseSubject";
-	protected static final String CM_PUBLIC_DIR = "cm_public_dir";
-	private static final String CM_TRUST_CAS = "cm_trust_cas";
-	protected static final String CM_BACKUP_CAS = "cm_backup_cas";
+    private static final String MUST_EXIST_TO_CREATE_CSRS_FOR = " must exist to create CSRs for ";
+    //TODO figuring out what is an Issuing CA is a matter of convention.  Consider SubClassing for Open Source
+    public static final String ISSUING_CA = "Issuing CA";
+    public static final String CM_CA_PREFIX = "cm_ca.";
+    public static final String CM_CA_BASE_SUBJECT = ".baseSubject";
+    protected static final String CM_PUBLIC_DIR = "cm_public_dir";
+    private static final String CM_TRUST_CAS = "cm_trust_cas";
+    protected static final String CM_BACKUP_CAS = "cm_backup_cas";
 
-	public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<>());
+    public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<>());
 
-	
-	private final String name;
-	private final String env;
-	private MessageDigest messageDigest;
-	private final String permNS; 
-	private final String permType;
-	private final ArrayList<String> idDomains;
-	private String[] trustedCAs;
-	private String[] caIssuerDNs;
-	private List<RDN> rdns;
+    
+    private final String name;
+    private final String env;
+    private MessageDigest messageDigest;
+    private final String permNS; 
+    private final String permType;
+    private final ArrayList<String> idDomains;
+    private String[] trustedCAs;
+    private String[] caIssuerDNs;
+    private List<RDN> rdns;
 
 
-	protected CA(Access access, String caName, String env) throws IOException, CertException {
-		trustedCAs = new String[4]; // starting array
-		this.name = caName;
-		this.env = env;
-		permNS = CM_CA_PREFIX + name;
-		permType = access.getProperty(permNS + ".perm_type",null);
-		if(permType==null) {
-			throw new CertException(permNS + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
-		}
-		caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
-		
-		String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
-		
-		String fields = access.getProperty(tag, null);
-		if(fields==null) {
-			throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
-		}
-		access.log(Level.INFO, tag, "=",fields);
-		rdns = RDN.parse('/',fields);
-		for(RDN rdn : rdns) {
-			if(rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
-				throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);
-			}
-		}
-		
-		idDomains = new ArrayList<>();
-		StringBuilder sb = null;
-		for(String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
-			if(s.length()>0) {
-				if(sb==null) {
-					sb = new StringBuilder();
-				} else {
-					sb.append(", ");
-				}
-				idDomains.add(s);
-				sb.append(s);
-			}
-		}
-		if(sb!=null) {
-			access.printf(Level.INIT, "CA '%s' supports Personal Certificates for %s", caName, sb);
-		}
-		
-		String dataDir = access.getProperty(CM_PUBLIC_DIR,null);
-		if(dataDir!=null) {
-			File data = new File(dataDir);
-			byte[] bytes;
-			if(data.exists()) {
-				String trustCas = access.getProperty(CM_TRUST_CAS,null);
-				if(trustCas!=null) {
-					for(String fname : Split.splitTrim(',', trustCas)) {
-						File crt;
-						if(fname.contains("/")) {
-							crt = new File(fname);
-						} else {
-							crt = new File(data,fname);
-						}
-						if(crt.exists()) {
-							access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
-							bytes = new byte[(int)crt.length()];
-							FileInputStream fis = new FileInputStream(crt);
-							try {
-								int read = fis.read(bytes);
-								if(read>0) {	
-									addTrustedCA(new String(bytes));
-								}
-							} finally {
-								fis.close();
-							}
-						} else {
-							access.printf(Level.INIT, "FAILED to Load CA Cert from %s", crt.getAbsolutePath());
-						}
-					}
-				} else {
-					access.printf(Level.INIT, "Cannot load external TRUST CAs: No property %s",CM_TRUST_CAS);
-				}
-			} else {
-				access.printf(Level.INIT, "Cannot load external TRUST CAs: %s doesn't exist, or is not accessible",data.getAbsolutePath());
-			}
-		}
-	}
+    protected CA(Access access, String caName, String env) throws IOException, CertException {
+        trustedCAs = new String[4]; // starting array
+        this.name = caName;
+        this.env = env;
+        permNS = CM_CA_PREFIX + name;
+        permType = access.getProperty(permNS + ".perm_type",null);
+        if(permType==null) {
+            throw new CertException(permNS + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
+        }
+        caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
+        
+        String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
+        
+        String fields = access.getProperty(tag, null);
+        if(fields==null) {
+            throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
+        }
+        access.log(Level.INFO, tag, "=",fields);
+        rdns = RDN.parse('/',fields);
+        for(RDN rdn : rdns) {
+            if(rdn.aoi==BCStyle.EmailAddress) { // Cert Specs say Emails belong in Subject
+                throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);
+            }
+        }
+        
+        idDomains = new ArrayList<>();
+        StringBuilder sb = null;
+        for(String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
+            if(s.length()>0) {
+                if(sb==null) {
+                    sb = new StringBuilder();
+                } else {
+                    sb.append(", ");
+                }
+                idDomains.add(s);
+                sb.append(s);
+            }
+        }
+        if(sb!=null) {
+            access.printf(Level.INIT, "CA '%s' supports Personal Certificates for %s", caName, sb);
+        }
+        
+        String dataDir = access.getProperty(CM_PUBLIC_DIR,null);
+        if(dataDir!=null) {
+            File data = new File(dataDir);
+            byte[] bytes;
+            if(data.exists()) {
+                String trustCas = access.getProperty(CM_TRUST_CAS,null);
+                if(trustCas!=null) {
+                    for(String fname : Split.splitTrim(',', trustCas)) {
+                        File crt;
+                        if(fname.contains("/")) {
+                            crt = new File(fname);
+                        } else {
+                            crt = new File(data,fname);
+                        }
+                        if(crt.exists()) {
+                            access.printf(Level.INIT, "Loading CA Cert from %s", crt.getAbsolutePath());
+                            bytes = new byte[(int)crt.length()];
+                            FileInputStream fis = new FileInputStream(crt);
+                            try {
+                                int read = fis.read(bytes);
+                                if(read>0) {    
+                                    addTrustedCA(new String(bytes));
+                                }
+                            } finally {
+                                fis.close();
+                            }
+                        } else {
+                            access.printf(Level.INIT, "FAILED to Load CA Cert from %s", crt.getAbsolutePath());
+                        }
+                    }
+                } else {
+                    access.printf(Level.INIT, "Cannot load external TRUST CAs: No property %s",CM_TRUST_CAS);
+                }
+            } else {
+                access.printf(Level.INIT, "Cannot load external TRUST CAs: %s doesn't exist, or is not accessible",data.getAbsolutePath());
+            }
+        }
+    }
 
-	protected void addCaIssuerDN(String issuerDN) {
-		boolean changed = true;
-		for(String id : caIssuerDNs) {
-			if(id.equals(issuerDN)) {
-				changed = false;
-				break;
-			}
-		}
-		if(changed) {
-			String[] newsa = new String[caIssuerDNs.length+1];
-			newsa[0]=issuerDN;
-			System.arraycopy(caIssuerDNs, 0, newsa, 1, caIssuerDNs.length);
-			caIssuerDNs = newsa;
-		}
-	}
-	
-	protected synchronized void addTrustedCA(final String crtString) {
-		String crt;
-		if(crtString.endsWith("\n")) {
-			crt = crtString;
-		} else {
-			crt = crtString + '\n';
-		}
-		for(int i=0;i<trustedCAs.length;++i) {
-			if(trustedCAs[i]==null) {
-				trustedCAs[i]=crt;
-				return;
-			}
-		}
-		String[] temp = new String[trustedCAs.length+5];
-		System.arraycopy(trustedCAs,0,temp, 0, trustedCAs.length);
-		temp[trustedCAs.length]=crt;
-		trustedCAs = temp;
-	}
-	
-	public String[] getCaIssuerDNs() {
-		return caIssuerDNs;
-	}
-	
-	public String[] getTrustedCAs() {
-		return trustedCAs;
-	}
-	
-	public String getEnv() {
-		return env;
-	}
+    protected void addCaIssuerDN(String issuerDN) {
+        boolean changed = true;
+        for(String id : caIssuerDNs) {
+            if(id.equals(issuerDN)) {
+                changed = false;
+                break;
+            }
+        }
+        if(changed) {
+            String[] newsa = new String[caIssuerDNs.length+1];
+            newsa[0]=issuerDN;
+            System.arraycopy(caIssuerDNs, 0, newsa, 1, caIssuerDNs.length);
+            caIssuerDNs = newsa;
+        }
+    }
+    
+    protected synchronized void addTrustedCA(final String crtString) {
+        String crt;
+        if(crtString.endsWith("\n")) {
+            crt = crtString;
+        } else {
+            crt = crtString + '\n';
+        }
+        for(int i=0;i<trustedCAs.length;++i) {
+            if(trustedCAs[i]==null) {
+                trustedCAs[i]=crt;
+                return;
+            }
+        }
+        String[] temp = new String[trustedCAs.length+5];
+        System.arraycopy(trustedCAs,0,temp, 0, trustedCAs.length);
+        temp[trustedCAs.length]=crt;
+        trustedCAs = temp;
+    }
+    
+    public String[] getCaIssuerDNs() {
+        return caIssuerDNs;
+    }
+    
+    public String[] getTrustedCAs() {
+        return trustedCAs;
+    }
+    
+    public String getEnv() {
+        return env;
+    }
 
-	protected void setMessageDigest(MessageDigest md) {
-		messageDigest = md;
-	}
+    protected void setMessageDigest(MessageDigest md) {
+        messageDigest = md;
+    }
 
-	/*
-	 * End Required Constructor calls
-	 */
+    /*
+     * End Required Constructor calls
+     */
 
-	public String getName() {
-		return name;
-	}
-	
-	
-	public String getPermNS() {
-		return permNS;
-	}
-	
-	public String getPermType() {
-		return permType;
-	}
-	
-	public abstract X509andChain sign(Trans trans, CSRMeta csrmeta) throws IOException, CertException;
+    public String getName() {
+        return name;
+    }
+    
+    
+    public String getPermNS() {
+        return permNS;
+    }
+    
+    public String getPermType() {
+        return permType;
+    }
+    
+    public abstract X509andChain sign(Trans trans, CSRMeta csrmeta) throws IOException, CertException;
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.cm.ca.CA#inPersonalDomains(java.security.Principal)
-	 */
-	public boolean inPersonalDomains(Principal p) {
-		int at = p.getName().indexOf('@');
-		if(at>=0) {
-			return idDomains.contains(p.getName().substring(at+1));
-		} else {
-			return false;
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.cm.ca.CA#inPersonalDomains(java.security.Principal)
+     */
+    public boolean inPersonalDomains(Principal p) {
+        int at = p.getName().indexOf('@');
+        if(at>=0) {
+            return idDomains.contains(p.getName().substring(at+1));
+        } else {
+            return false;
+        }
+    }
 
-	public MessageDigest messageDigest() {
-		return messageDigest;
-	}
+    public MessageDigest messageDigest() {
+        return messageDigest;
+    }
 
-	public CSRMeta newCSRMeta() {
-		return new CSRMeta(rdns);
-	}
+    public CSRMeta newCSRMeta() {
+        return new CSRMeta(rdns);
+    }
 
 }

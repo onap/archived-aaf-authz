@@ -55,51 +55,51 @@ import org.junit.Test;
 
 public class JU_ListUsersContact {
 
-	PropAccess prop;
-	AuthzEnv aEnv;
-	Writer wtr;
-	Locator<URI> loc;
-	HMangr hman;	
-	AAFcli aafcli;
-	NS ns;
-	List list;
-	ListUsers lUsers;
-	ListUsersContact lUContact;
-	
-	@Before
-	public void setUp() throws LocatorException, APIException, CadiException {
-		prop = new PropAccess();
-		aEnv = new AuthzEnv();
-		wtr = mock(Writer.class);
-		loc = mock(Locator.class);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		hman = new HMangr(aEnv, loc);	
-		aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
-		ns = new NS(aafcli);
-		list = new List(ns);
-		lUsers = new ListUsers(list);
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		lUContact = new ListUsersContact(lUsers);
-		Item value = mock(Item.class);
-		Locator.Item item = new Locator.Item() {
-		};
-		when(loc.best()).thenReturn(value);
-		URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
-		when(loc.get(value)).thenReturn(uri);
-		SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-		HRcli hcli = new HRcli(hman, uri, item, secSet);
-		//lUContact._exec(0, "test");
-		
-	}
-	
-	@Test
-	public void testDetailedHelp() {
-		lUContact = new ListUsersContact(lUsers);
-		StringBuilder sb = new StringBuilder();
-		lUContact.detailedHelp(0, sb);
-	}
+    PropAccess prop;
+    AuthzEnv aEnv;
+    Writer wtr;
+    Locator<URI> loc;
+    HMangr hman;    
+    AAFcli aafcli;
+    NS ns;
+    List list;
+    ListUsers lUsers;
+    ListUsersContact lUContact;
+    
+    @Before
+    public void setUp() throws LocatorException, APIException, CadiException {
+        prop = new PropAccess();
+        aEnv = new AuthzEnv();
+        wtr = mock(Writer.class);
+        loc = mock(Locator.class);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+        hman = new HMangr(aEnv, loc);    
+        aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
+        ns = new NS(aafcli);
+        list = new List(ns);
+        lUsers = new ListUsers(list);
+    }
+    
+    @Test
+    public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+        lUContact = new ListUsersContact(lUsers);
+        Item value = mock(Item.class);
+        Locator.Item item = new Locator.Item() {
+        };
+        when(loc.best()).thenReturn(value);
+        URI uri = new URI("http://www.oracle.com/technetwork/java/index.html");
+        when(loc.get(value)).thenReturn(uri);
+        SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
+        HRcli hcli = new HRcli(hman, uri, item, secSet);
+        //lUContact._exec(0, "test");
+        
+    }
+    
+    @Test
+    public void testDetailedHelp() {
+        lUContact = new ListUsersContact(lUsers);
+        StringBuilder sb = new StringBuilder();
+        lUContact.detailedHelp(0, sb);
+    }
 
 }

@@ -67,177 +67,177 @@ import org.w3c.dom.Node;
  *
  */
 public class JAXBumar {
-	// Need to store off possible JAXBContexts based on Class, which will be stored in Creator
-	private static Map<Class<?>[],Pool<SUnmarshaller>> pools = new HashMap<>();
+    // Need to store off possible JAXBContexts based on Class, which will be stored in Creator
+    private static Map<Class<?>[],Pool<SUnmarshaller>> pools = new HashMap<>();
 
-	private Class<?> cls;
-	private Schema schema;
-	private Pool<SUnmarshaller> mpool;;
+    private Class<?> cls;
+    private Schema schema;
+    private Pool<SUnmarshaller> mpool;;
 
-	// Handle Marshaller class setting of properties only when needed
-	private class SUnmarshaller {
-		private Unmarshaller u;
-		private Schema s;
-		
-		public SUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
-			u = unmarshaller;
-			s = null;
-		}
-		
-		public Unmarshaller get(Schema schema) throws JAXBException {
-			if(s != schema) {
-				u.setSchema(s = schema);
-			}
-			return u;
-		}
-	}
-	
-	private class Creator implements Pool.Creator<SUnmarshaller> {
-		private JAXBContext jc;
-		private String name;
-		
-		public Creator(Class<?>[] classes) throws JAXBException {
-			jc = JAXBContext.newInstance(classes);
-			name = "JAXBumar: " + classes[0].getName();
-		}
-		
-		// @Override
-		public SUnmarshaller create() throws APIException {
-			try {
-				return new SUnmarshaller(jc.createUnmarshaller());
-			} catch (JAXBException e) {
-				throw new APIException(e);
-			}
-		}
-		
-		public String toString() {
-			return name;
-		}
+    // Handle Marshaller class setting of properties only when needed
+    private class SUnmarshaller {
+        private Unmarshaller u;
+        private Schema s;
+        
+        public SUnmarshaller(Unmarshaller unmarshaller) throws JAXBException {
+            u = unmarshaller;
+            s = null;
+        }
+        
+        public Unmarshaller get(Schema schema) throws JAXBException {
+            if(s != schema) {
+                u.setSchema(s = schema);
+            }
+            return u;
+        }
+    }
+    
+    private class Creator implements Pool.Creator<SUnmarshaller> {
+        private JAXBContext jc;
+        private String name;
+        
+        public Creator(Class<?>[] classes) throws JAXBException {
+            jc = JAXBContext.newInstance(classes);
+            name = "JAXBumar: " + classes[0].getName();
+        }
+        
+        // @Override
+        public SUnmarshaller create() throws APIException {
+            try {
+                return new SUnmarshaller(jc.createUnmarshaller());
+            } catch (JAXBException e) {
+                throw new APIException(e);
+            }
+        }
+        
+        public String toString() {
+            return name;
+        }
 
-		// @Override
-		public void destroy(SUnmarshaller sui) {
-			// Nothing to do
-		}
-		
-		// @Override
-		public boolean isValid(SUnmarshaller t) {
-			return true; 
-		}
+        // @Override
+        public void destroy(SUnmarshaller sui) {
+            // Nothing to do
+        }
+        
+        // @Override
+        public boolean isValid(SUnmarshaller t) {
+            return true; 
+        }
 
-		// @Override
-		public void reuse(SUnmarshaller t) {
-			// Nothing to do here
-		}
+        // @Override
+        public void reuse(SUnmarshaller t) {
+            // Nothing to do here
+        }
 
-	}
+    }
 
-	private Pool<SUnmarshaller> getPool(Class<?> ... classes) throws JAXBException {
-		Pool<SUnmarshaller> mp;
-		synchronized(pools) {
-			mp = pools.get(classes);
-			if(mp==null) {
-				pools.put(classes,mp = new Pool<SUnmarshaller>(new Creator(classes)));
-			}
-		}		
-		return mp;
-	}
+    private Pool<SUnmarshaller> getPool(Class<?> ... classes) throws JAXBException {
+        Pool<SUnmarshaller> mp;
+        synchronized(pools) {
+            mp = pools.get(classes);
+            if(mp==null) {
+                pools.put(classes,mp = new Pool<SUnmarshaller>(new Creator(classes)));
+            }
+        }        
+        return mp;
+    }
 
-	public JAXBumar(Class<?> ... classes) throws JAXBException {
-		cls = classes[0];
-		mpool = getPool(classes);
-		schema = null;
-	}
-	
-	/**
-	 * Constructs a new JAXBumar with schema validation enabled.
-	 * 
-	 * @param schema
-	 * @param theClass
-	 * @throws JAXBException
-	 */
-	public JAXBumar(Schema schema, Class<?> ... classes) throws JAXBException {
-		cls = classes[0];
-		mpool = getPool(classes);
-		this.schema = schema;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env, Node node) throws JAXBException, APIException {
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-			return s.content.get(schema).unmarshal(node,(Class<O>)cls).getValue();
-		} finally {
-			s.done();
-		}
+    public JAXBumar(Class<?> ... classes) throws JAXBException {
+        cls = classes[0];
+        mpool = getPool(classes);
+        schema = null;
+    }
+    
+    /**
+     * Constructs a new JAXBumar with schema validation enabled.
+     * 
+     * @param schema
+     * @param theClass
+     * @throws JAXBException
+     */
+    public JAXBumar(Schema schema, Class<?> ... classes) throws JAXBException {
+        cls = classes[0];
+        mpool = getPool(classes);
+        this.schema = schema;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env, Node node) throws JAXBException, APIException {
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+            return s.content.get(schema).unmarshal(node,(Class<O>)cls).getValue();
+        } finally {
+            s.done();
+        }
 
-	}
-	
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env, String xml) throws JAXBException, APIException {
-		if(xml==null) throw new JAXBException("Null Input for String unmarshal");
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-				return (O)s.content.get(schema).unmarshal(
-					new StreamSource(new StringReader(xml))
-					,(Class<O>)cls).getValue();
-		} finally {
-			s.done();
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env, File xmlFile) throws JAXBException, APIException {
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-			return (O)s.content.get(schema).unmarshal(xmlFile);
-		} finally {
-			s.done();
-		}
+    }
+    
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env, String xml) throws JAXBException, APIException {
+        if(xml==null) throw new JAXBException("Null Input for String unmarshal");
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+                return (O)s.content.get(schema).unmarshal(
+                    new StreamSource(new StringReader(xml))
+                    ,(Class<O>)cls).getValue();
+        } finally {
+            s.done();
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env, File xmlFile) throws JAXBException, APIException {
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+            return (O)s.content.get(schema).unmarshal(xmlFile);
+        } finally {
+            s.done();
+        }
 
-	}
-	
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env,InputStream is) throws JAXBException, APIException {
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-			return (O)s.content.get(schema).unmarshal(is);
-		} finally {
-			s.done();
-		}
-	}
+    }
+    
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env,InputStream is) throws JAXBException, APIException {
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+            return (O)s.content.get(schema).unmarshal(is);
+        } finally {
+            s.done();
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env, Reader rdr) throws JAXBException, APIException {
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-			return (O)s.content.get(schema).unmarshal(rdr);
-		} finally {
-			s.done();
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env, Reader rdr) throws JAXBException, APIException {
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+            return (O)s.content.get(schema).unmarshal(rdr);
+        } finally {
+            s.done();
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env, XMLStreamReader xsr) throws JAXBException, APIException {
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-			return (O)s.content.get(schema).unmarshal(xsr,(Class<O>)cls).getValue();
-		} finally {
-			s.done();
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env, XMLStreamReader xsr) throws JAXBException, APIException {
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+            return (O)s.content.get(schema).unmarshal(xsr,(Class<O>)cls).getValue();
+        } finally {
+            s.done();
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public<O> O unmarshal(LogTarget env, XMLEventReader xer) throws JAXBException, APIException {
-		Pooled<SUnmarshaller> s = mpool.get(env);
-		try {
-			return (O)s.content.get(schema).unmarshal(xer,(Class<O>)cls).getValue();
-		} finally {
-			s.done();
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public<O> O unmarshal(LogTarget env, XMLEventReader xer) throws JAXBException, APIException {
+        Pooled<SUnmarshaller> s = mpool.get(env);
+        try {
+            return (O)s.content.get(schema).unmarshal(xer,(Class<O>)cls).getValue();
+        } finally {
+            s.done();
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public<O> O newInstance() throws InstantiationException, IllegalAccessException{
-		return ((Class<O>)cls).newInstance();
-	}
+    @SuppressWarnings("unchecked")
+    public<O> O newInstance() throws InstantiationException, IllegalAccessException{
+        return ((Class<O>)cls).newInstance();
+    }
 }

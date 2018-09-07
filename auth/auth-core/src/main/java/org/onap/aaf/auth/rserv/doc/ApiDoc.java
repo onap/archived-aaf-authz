@@ -29,12 +29,12 @@ import org.onap.aaf.auth.rserv.HttpMethods;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface ApiDoc {
-	HttpMethods method();
-	String path();
-	int expectedCode();
-	int[] errorCodes();
-	String[] text();
-	/** Format with name|type|[true|false] */
-	String[] params();
-	
+    HttpMethods method();
+    String path();
+    int expectedCode();
+    int[] errorCodes();
+    String[] text();
+    /** Format with name|type|[true|false] */
+    String[] params();
+    
 }

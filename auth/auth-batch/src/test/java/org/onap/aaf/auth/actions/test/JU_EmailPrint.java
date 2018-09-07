@@ -43,50 +43,50 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 
 public class JU_EmailPrint {
-	
-	private ByteArrayOutputStream outStream;
-	private ByteArrayOutputStream errStream;
-	EmailPrint ePrint;
-	AuthzTrans trans;
-	Organization org;
-	StringBuilder strBuilder;
-	
-	@Before
-	public void setUp() {
-		outStream = new ByteArrayOutputStream();
-		errStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-		System.setErr(new PrintStream(errStream));
-		ePrint = new EmailPrint();
-		trans = mock(AuthzTrans.class);
-		org = mock(Organization.class);
-		strBuilder = new StringBuilder();
-		strBuilder.append("test\nte\nst");
-		ePrint.addTo("test");
-		ePrint.addTo("test1");
-		ePrint.addTo("test2");
-		ePrint.addCC("test");
-		ePrint.addCC("test1");
-		ePrint.addCC("test2");
-		
-	}
+    
+    private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream errStream;
+    EmailPrint ePrint;
+    AuthzTrans trans;
+    Organization org;
+    StringBuilder strBuilder;
+    
+    @Before
+    public void setUp() {
+        outStream = new ByteArrayOutputStream();
+        errStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+        System.setErr(new PrintStream(errStream));
+        ePrint = new EmailPrint();
+        trans = mock(AuthzTrans.class);
+        org = mock(Organization.class);
+        strBuilder = new StringBuilder();
+        strBuilder.append("test\nte\nst");
+        ePrint.addTo("test");
+        ePrint.addTo("test1");
+        ePrint.addTo("test2");
+        ePrint.addCC("test");
+        ePrint.addCC("test1");
+        ePrint.addCC("test2");
+        
+    }
 
-	@Test
-	public void testExec() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Class c = ePrint.getClass();
-		Class[] cArg = new Class[3];
-		cArg[0] = AuthzTrans.class;
-		cArg[1] = Organization.class;
-		cArg[2] = StringBuilder.class;//Steps to test a protected method
-		Method execMethod = c.getDeclaredMethod("exec", cArg);
-		execMethod.setAccessible(true);
-		execMethod.invoke(ePrint, trans, org, strBuilder);
-	}
-	
-	@After
-	public void cleanUp() {
-		System.setErr(System.err);
-		System.setOut(System.out);
-	}
+    @Test
+    public void testExec() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Class c = ePrint.getClass();
+        Class[] cArg = new Class[3];
+        cArg[0] = AuthzTrans.class;
+        cArg[1] = Organization.class;
+        cArg[2] = StringBuilder.class;//Steps to test a protected method
+        Method execMethod = c.getDeclaredMethod("exec", cArg);
+        execMethod.setAccessible(true);
+        execMethod.invoke(ePrint, trans, org, strBuilder);
+    }
+    
+    @After
+    public void cleanUp() {
+        System.setErr(System.err);
+        System.setOut(System.out);
+    }
 
 }

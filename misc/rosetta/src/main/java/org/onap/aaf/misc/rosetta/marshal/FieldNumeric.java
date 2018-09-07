@@ -22,15 +22,15 @@
 package org.onap.aaf.misc.rosetta.marshal;
 
 public abstract class FieldNumeric<N,T> extends FieldMarshal<T> {
-	public FieldNumeric(String name) {
-		super(name);
-	}
+    public FieldNumeric(String name) {
+        super(name);
+    }
 
-	@Override
-	final protected boolean data(T t, StringBuilder sb) {
-		sb.append(data(t));
-		return false;
-	}
+    @Override
+    final protected boolean data(T t, StringBuilder sb) {
+        sb.append(data(t));
+        return false;
+    }
 
-	protected abstract N data(T t); 
+    protected abstract N data(T t); 
 }

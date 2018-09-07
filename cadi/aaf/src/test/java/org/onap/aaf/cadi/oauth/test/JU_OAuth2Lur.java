@@ -42,59 +42,59 @@ import org.onap.aaf.cadi.oauth.TokenPerm;
 import org.onap.aaf.cadi.principal.BearerPrincipal;
 
 public class JU_OAuth2Lur {
-	
-	private List<AAFPermission> aafPerms;
-	private List<Permission> perms;
-	
-	@Mock private TokenMgr tmMock;
-	@Mock private AAFPermission pondMock;
-	@Mock private Principal princMock;
-	@Mock private OAuth2Principal oauthPrincMock;
-	@Mock private BearerPrincipal bearPrincMock;
-	@Mock private TokenPerm tpMock;
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
+    
+    private List<AAFPermission> aafPerms;
+    private List<Permission> perms;
+    
+    @Mock private TokenMgr tmMock;
+    @Mock private AAFPermission pondMock;
+    @Mock private Principal princMock;
+    @Mock private OAuth2Principal oauthPrincMock;
+    @Mock private BearerPrincipal bearPrincMock;
+    @Mock private TokenPerm tpMock;
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void test() {
-		OAuth2Lur lur = new OAuth2Lur(tmMock);
-		lur.createPerm("testPerm");
-		lur.createPerm("testPerm1|testPerm2|testPerm3");
+    @Test
+    public void test() {
+        OAuth2Lur lur = new OAuth2Lur(tmMock);
+        lur.createPerm("testPerm");
+        lur.createPerm("testPerm1|testPerm2|testPerm3");
 
-		assertThat(lur.fish(princMock, pondMock), is(false));
-		assertThat(lur.fish(oauthPrincMock, pondMock), is(false));
-		
-		when(oauthPrincMock.tokenPerm()).thenReturn(tpMock);
-		assertThat(lur.fish(oauthPrincMock, pondMock), is(false));
-		
-		aafPerms = new ArrayList<>();
-		aafPerms.add(pondMock);
-		aafPerms.add(pondMock);
-		when(tpMock.perms()).thenReturn(aafPerms);
-		when(pondMock.match(pondMock)).thenReturn(false).thenReturn(true);
-		assertThat(lur.fish(oauthPrincMock, pondMock), is(true));
+        assertThat(lur.fish(princMock, pondMock), is(false));
+        assertThat(lur.fish(oauthPrincMock, pondMock), is(false));
+        
+        when(oauthPrincMock.tokenPerm()).thenReturn(tpMock);
+        assertThat(lur.fish(oauthPrincMock, pondMock), is(false));
+        
+        aafPerms = new ArrayList<>();
+        aafPerms.add(pondMock);
+        aafPerms.add(pondMock);
+        when(tpMock.perms()).thenReturn(aafPerms);
+        when(pondMock.match(pondMock)).thenReturn(false).thenReturn(true);
+        assertThat(lur.fish(oauthPrincMock, pondMock), is(true));
 
-		perms = new ArrayList<>();
-		perms.add(pondMock);
-		perms.add(pondMock);
-		lur.fishAll(oauthPrincMock, perms);
+        perms = new ArrayList<>();
+        perms.add(pondMock);
+        perms.add(pondMock);
+        lur.fishAll(oauthPrincMock, perms);
 
-		when(oauthPrincMock.tokenPerm()).thenReturn(null);
-		lur.fishAll(oauthPrincMock, perms);
-		
-		assertThat(lur.handlesExclusively(pondMock), is(false));
-		
-		assertThat(lur.handles(null), is(false));
-		assertThat(lur.handles(princMock), is(false));
-		assertThat(lur.handles(bearPrincMock), is(false));
-		when(bearPrincMock.getBearer()).thenReturn("not null :)");
-		assertThat(lur.handles(bearPrincMock), is(true));
+        when(oauthPrincMock.tokenPerm()).thenReturn(null);
+        lur.fishAll(oauthPrincMock, perms);
+        
+        assertThat(lur.handlesExclusively(pondMock), is(false));
+        
+        assertThat(lur.handles(null), is(false));
+        assertThat(lur.handles(princMock), is(false));
+        assertThat(lur.handles(bearPrincMock), is(false));
+        when(bearPrincMock.getBearer()).thenReturn("not null :)");
+        assertThat(lur.handles(bearPrincMock), is(true));
 
-		lur.destroy();
-		lur.clear(null, null);
-	}
+        lur.destroy();
+        lur.clear(null, null);
+    }
 
 }

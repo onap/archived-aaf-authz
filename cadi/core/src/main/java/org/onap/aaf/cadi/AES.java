@@ -52,80 +52,80 @@ import org.onap.aaf.cadi.util.Chmod;
  *
  */
 public class AES implements Encryption {
-	public static final String AES = AES.class.getSimpleName();
-	public static final int AES_KEY_SIZE = 128; // 256 isn't supported on all JDKs.
-		
-	private SecretKeySpec aeskeySpec;
+    public static final String AES = AES.class.getSimpleName();
+    public static final int AES_KEY_SIZE = 128; // 256 isn't supported on all JDKs.
+        
+    private SecretKeySpec aeskeySpec;
 
-	public static SecretKey newKey() throws NoSuchAlgorithmException {
-		KeyGenerator kgen = KeyGenerator.getInstance(AES);
-	    kgen.init(AES_KEY_SIZE);
-	    return kgen.generateKey();
-	}
+    public static SecretKey newKey() throws NoSuchAlgorithmException {
+        KeyGenerator kgen = KeyGenerator.getInstance(AES);
+        kgen.init(AES_KEY_SIZE);
+        return kgen.generateKey();
+    }
 
-	public AES(byte[] aeskey, int offset, int len) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException {
-		aeskeySpec = new SecretKeySpec(aeskey,offset,len,AES);
-	}
-	
-	public byte[] encrypt(byte[] in) throws CadiException {
-		try {
-			Cipher c = Cipher.getInstance(AES);
-			c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
-			return c.doFinal(in);
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-			throw new CadiException(e);
-		}
-	}
-	
-	public byte[] decrypt(byte[] in) throws CadiException {
-		try {
-			Cipher c = Cipher.getInstance(AES);
-			c.init(Cipher.DECRYPT_MODE,aeskeySpec); 
-			return c.doFinal(in);
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-			throw new CadiException(e);
-		}
-	}
-	
-	public void save(File keyfile) throws IOException {
-		FileOutputStream fis = new FileOutputStream(keyfile);
-		try {
-			fis.write(aeskeySpec.getEncoded());
-		} finally {
-			fis.close();
-		}
-		Chmod.to400.chmod(keyfile);
-	}
+    public AES(byte[] aeskey, int offset, int len) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException {
+        aeskeySpec = new SecretKeySpec(aeskey,offset,len,AES);
+    }
+    
+    public byte[] encrypt(byte[] in) throws CadiException {
+        try {
+            Cipher c = Cipher.getInstance(AES);
+            c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
+            return c.doFinal(in);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new CadiException(e);
+        }
+    }
+    
+    public byte[] decrypt(byte[] in) throws CadiException {
+        try {
+            Cipher c = Cipher.getInstance(AES);
+            c.init(Cipher.DECRYPT_MODE,aeskeySpec); 
+            return c.doFinal(in);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new CadiException(e);
+        }
+    }
+    
+    public void save(File keyfile) throws IOException {
+        FileOutputStream fis = new FileOutputStream(keyfile);
+        try {
+            fis.write(aeskeySpec.getEncoded());
+        } finally {
+            fis.close();
+        }
+        Chmod.to400.chmod(keyfile);
+    }
 
-	public CipherOutputStream outputStream(OutputStream os, boolean encrypt) {
-		try {
-			Cipher c = Cipher.getInstance(AES);
-			if(encrypt) {
-				c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
-			} else {
-				c.init(Cipher.DECRYPT_MODE,aeskeySpec);
-			}
-			return new CipherOutputStream(os,c);
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-			// Cannot add Exception to this API.  throw Runtime
-			System.err.println("Error creating Aes CipherOutputStream");
-			return null;  // should never get here.
-		}
-	}
-	
-	public CipherInputStream inputStream(InputStream is, boolean encrypt) {
-		try {
-			Cipher c = Cipher.getInstance(AES);
-			if(encrypt) {
-				c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
-			} else {
-				c.init(Cipher.DECRYPT_MODE,aeskeySpec);
-			}
-			return new CipherInputStream(is,c);
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-			// Cannot add Exception to this API.  throw Runtime
-			System.err.println("Error creating Aes CipherInputStream");
-			return null;  // should never get here.
-		}
-	}
+    public CipherOutputStream outputStream(OutputStream os, boolean encrypt) {
+        try {
+            Cipher c = Cipher.getInstance(AES);
+            if(encrypt) {
+                c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
+            } else {
+                c.init(Cipher.DECRYPT_MODE,aeskeySpec);
+            }
+            return new CipherOutputStream(os,c);
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            // Cannot add Exception to this API.  throw Runtime
+            System.err.println("Error creating Aes CipherOutputStream");
+            return null;  // should never get here.
+        }
+    }
+    
+    public CipherInputStream inputStream(InputStream is, boolean encrypt) {
+        try {
+            Cipher c = Cipher.getInstance(AES);
+            if(encrypt) {
+                c.init(Cipher.ENCRYPT_MODE,aeskeySpec);
+            } else {
+                c.init(Cipher.DECRYPT_MODE,aeskeySpec);
+            }
+            return new CipherInputStream(is,c);
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+            // Cannot add Exception to this API.  throw Runtime
+            System.err.println("Error creating Aes CipherInputStream");
+            return null;  // should never get here.
+        }
+    }
 }

@@ -37,28 +37,28 @@ import org.onap.aaf.cadi.util.Split;
 
 public class OAuth2Filter implements Filter {
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-	}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest hreq = (HttpServletRequest)request;
-		Principal p = hreq.getUserPrincipal();
-		if(request.getContentType().equals("application/x-www-form-urlencoded")) {
-			
-		} else if(p instanceof BearerPrincipal) { 
-			for(String authz : Split.splitTrim(';', hreq.getHeader("Authorization"))) {
-				if(authz.startsWith("Bearer ")) {
-					((BearerPrincipal)p).setBearer(authz.substring(7));
-				}
-			}
-		}
-		chain.doFilter(request, response);
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest hreq = (HttpServletRequest)request;
+        Principal p = hreq.getUserPrincipal();
+        if(request.getContentType().equals("application/x-www-form-urlencoded")) {
+            
+        } else if(p instanceof BearerPrincipal) { 
+            for(String authz : Split.splitTrim(';', hreq.getHeader("Authorization"))) {
+                if(authz.startsWith("Bearer ")) {
+                    ((BearerPrincipal)p).setBearer(authz.substring(7));
+                }
+            }
+        }
+        chain.doFilter(request, response);
+    }
 
-	@Override
-	public void destroy() {
-	}
+    @Override
+    public void destroy() {
+    }
 
 }

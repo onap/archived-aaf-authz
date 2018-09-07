@@ -29,31 +29,31 @@ import org.onap.aaf.misc.xgen.CacheGen;
 import org.onap.aaf.misc.xgen.Code;
 
 public class HTMLCacheGen extends CacheGen<HTMLGen> {
-	protected int flags;
+    protected int flags;
 
-	public HTMLCacheGen(int flags, Code<HTMLGen> code) throws APIException,IOException {
-		super(flags, code);
-		this.flags = flags;
-	}
+    public HTMLCacheGen(int flags, Code<HTMLGen> code) throws APIException,IOException {
+        super(flags, code);
+        this.flags = flags;
+    }
 
-	@Override
-	public HTMLGen create(int htmlStyle, Writer w) {
-		HTMLGen hg;
-		switch(htmlStyle&(CacheGen.HTML4|CacheGen.HTML5)) {
-			case CacheGen.HTML4:
-				hg = new HTML4Gen(w);
-				break;
-			case CacheGen.HTML5:
-			default:
-				hg = new HTML5Gen(w);
-				break;
+    @Override
+    public HTMLGen create(int htmlStyle, Writer w) {
+        HTMLGen hg;
+        switch(htmlStyle&(CacheGen.HTML4|CacheGen.HTML5)) {
+            case CacheGen.HTML4:
+                hg = new HTML4Gen(w);
+                break;
+            case CacheGen.HTML5:
+            default:
+                hg = new HTML5Gen(w);
+                break;
 
-		}
-		hg.pretty = (htmlStyle&CacheGen.PRETTY)>0;
-		return hg;
-	}
+        }
+        hg.pretty = (htmlStyle&CacheGen.PRETTY)>0;
+        return hg;
+    }
 
-	protected HTMLGen clone(Writer w) {
-		return create(flags,w);
-	}
+    protected HTMLGen clone(Writer w) {
+        return create(flags,w);
+    }
 }

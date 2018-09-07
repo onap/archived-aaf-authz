@@ -26,15 +26,15 @@ import java.io.OutputStream;
 
 public class DoubleOutputStream extends OutputStream {
     private OutputStream[] oss;
-	private boolean[] close;
+    private boolean[] close;
 
-	/**
+    /**
      * Create a Double Stream Writer
      * Some Streams should not be closed by this object (i.e. System.out), therefore, mark them with booleans
      */
     public DoubleOutputStream(OutputStream a, boolean closeA, OutputStream b, boolean closeB) {
-		oss = new OutputStream[] {a,b};
-		close = new boolean[] {closeA,closeB};
+        oss = new OutputStream[] {a,b};
+        close = new boolean[] {closeA,closeB};
     }
 
     /**
@@ -43,9 +43,9 @@ public class DoubleOutputStream extends OutputStream {
      */
     @Override
     public void write(int c) throws IOException {
-    	for(OutputStream os : oss) {
-    		os.write(c);
-    	}
+        for(OutputStream os : oss) {
+            os.write(c);
+        }
     }
 
     /**
@@ -58,39 +58,39 @@ public class DoubleOutputStream extends OutputStream {
      */
     @Override
     public void write(byte bbuf[], int off, int len) throws IOException {
-    	for(OutputStream os : oss) {
-    		os.write(bbuf,off,len);
-    	}
+        for(OutputStream os : oss) {
+            os.write(bbuf,off,len);
+        }
     }
 
     @Override
-	public void write(byte[] b) throws IOException {
-    	for(OutputStream os : oss) {
-    		os.write(b);
-    	}
-	}
+    public void write(byte[] b) throws IOException {
+        for(OutputStream os : oss) {
+            os.write(b);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see java.io.OutputStream#close()
-	 */
-	@Override
-	public void close() throws IOException {
-		for(int i=0;i<oss.length;++i) {
-			if(close[i]) {
-				oss[i].close();
-			}
-    	}
-	}
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#close()
+     */
+    @Override
+    public void close() throws IOException {
+        for(int i=0;i<oss.length;++i) {
+            if(close[i]) {
+                oss[i].close();
+            }
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see java.io.OutputStream#flush()
-	 */
-	@Override
-	public void flush() throws IOException {
-    	for(OutputStream os : oss) {
-    		os.flush();
-    	}
-	}
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#flush()
+     */
+    @Override
+    public void flush() throws IOException {
+        for(OutputStream os : oss) {
+            os.flush();
+        }
+    }
 
 
 

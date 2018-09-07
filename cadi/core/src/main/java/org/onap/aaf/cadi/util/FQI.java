@@ -22,30 +22,30 @@
 package org.onap.aaf.cadi.util;
 
 public class FQI {
-	/**
-	 * Take a Fully Qualified User, and get a Namespace from it.
-	 * @param fqi
-	 * @return
-	 */
-	public final static String reverseDomain(final String fqi) {
-		StringBuilder sb = null;
-		String[] split = Split.split('.',fqi);
-		int at;
-		for(int i=split.length-1;i>=0;--i) {
-			if(sb == null) {
-				sb = new StringBuilder();
-			} else {
-				sb.append('.');
-			}
+    /**
+     * Take a Fully Qualified User, and get a Namespace from it.
+     * @param fqi
+     * @return
+     */
+    public final static String reverseDomain(final String fqi) {
+        StringBuilder sb = null;
+        String[] split = Split.split('.',fqi);
+        int at;
+        for(int i=split.length-1;i>=0;--i) {
+            if(sb == null) {
+                sb = new StringBuilder();
+            } else {
+                sb.append('.');
+            }
 
-			if((at = split[i].indexOf('@'))>0) {
-				sb.append(split[i].subSequence(at+1, split[i].length()));
-			} else {
-				sb.append(split[i]);
-			}
-		}
-		
-		return sb==null?"":sb.toString();
-	}
+            if((at = split[i].indexOf('@'))>0) {
+                sb.append(split[i].subSequence(at+1, split[i].length()));
+            } else {
+                sb.append(split[i]);
+            }
+        }
+        
+        return sb==null?"":sb.toString();
+    }
 
 }

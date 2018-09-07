@@ -31,72 +31,72 @@ import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 
 public class Registrar<ENV extends BasicEnv> {
-	private static final String REGISTRAR = "Registrar";
-	private static final long INTERVAL = 15*60*1000L; // 15 mins
-	private static final long START = 3000; // Start in 3 seconds
-	private static final Object LOCK = new Object();
-	private Deque<Registrant<ENV>> registrants;
-	private Timer timer, erroringTimer;
+    private static final String REGISTRAR = "Registrar";
+    private static final long INTERVAL = 15*60*1000L; // 15 mins
+    private static final long START = 3000; // Start in 3 seconds
+    private static final Object LOCK = new Object();
+    private Deque<Registrant<ENV>> registrants;
+    private Timer timer, erroringTimer;
 
-	public Registrar(final ENV env, boolean shutdownHook) {
-		registrants = new ConcurrentLinkedDeque<Registrant<ENV>>();
+    public Registrar(final ENV env, boolean shutdownHook) {
+        registrants = new ConcurrentLinkedDeque<Registrant<ENV>>();
 
-		erroringTimer = null;
-		timer = new Timer(REGISTRAR,true);
-		timer.schedule(new RegistrationTimerTask(env), START, INTERVAL); 
-		
-		if(shutdownHook) {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				public void run() {
-					close(env);
-				}
-			});
-		}
-	}
-	
-	private class RegistrationTimerTask extends TimerTask {
-		private final ENV env;
-		public RegistrationTimerTask(ENV env) {
-			this.env = env;
-		}
-		@Override
-		public void run() {
-			for(Iterator<Registrant<ENV>> iter = registrants.iterator(); iter.hasNext();) {
-				Registrant<ENV> reg = iter.next();
-				Result<Void> rv = reg.update(env);
-				synchronized(LOCK) {
-					if(rv.isOK()) {
-						if(erroringTimer!=null) {
-							erroringTimer.cancel();
-							erroringTimer = null;
-						}
-					} else {
-						// Account for different Registrations not being to same place
-						if(erroringTimer==null) {
-							erroringTimer =  new Timer(REGISTRAR + " error re-check ",true);
-							erroringTimer.schedule(new RegistrationTimerTask(env),20000,20000);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	public void register(Registrant<ENV> r) {
-		registrants.addLast(r);
-	}
-	
-	public void deregister(Registrant<ENV> r) {
-		registrants.remove(r);
-	}
+        erroringTimer = null;
+        timer = new Timer(REGISTRAR,true);
+        timer.schedule(new RegistrationTimerTask(env), START, INTERVAL); 
+        
+        if(shutdownHook) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    close(env);
+                }
+            });
+        }
+    }
+    
+    private class RegistrationTimerTask extends TimerTask {
+        private final ENV env;
+        public RegistrationTimerTask(ENV env) {
+            this.env = env;
+        }
+        @Override
+        public void run() {
+            for(Iterator<Registrant<ENV>> iter = registrants.iterator(); iter.hasNext();) {
+                Registrant<ENV> reg = iter.next();
+                Result<Void> rv = reg.update(env);
+                synchronized(LOCK) {
+                    if(rv.isOK()) {
+                        if(erroringTimer!=null) {
+                            erroringTimer.cancel();
+                            erroringTimer = null;
+                        }
+                    } else {
+                        // Account for different Registrations not being to same place
+                        if(erroringTimer==null) {
+                            erroringTimer =  new Timer(REGISTRAR + " error re-check ",true);
+                            erroringTimer.schedule(new RegistrationTimerTask(env),20000,20000);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void register(Registrant<ENV> r) {
+        registrants.addLast(r);
+    }
+    
+    public void deregister(Registrant<ENV> r) {
+        registrants.remove(r);
+    }
 
-	public void close(ENV env) {
-		timer.cancel();
+    public void close(ENV env) {
+        timer.cancel();
 
-		Registrant<ENV> r;
-		while(registrants.peek()!=null) {
-			r = registrants.pop();
-			r.cancel(env);
-		}
-	}
+        Registrant<ENV> r;
+        while(registrants.peek()!=null) {
+            r = registrants.pop();
+            r.cancel(env);
+        }
+    }
 }

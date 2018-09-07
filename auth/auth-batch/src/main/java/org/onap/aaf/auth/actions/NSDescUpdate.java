@@ -31,28 +31,28 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class NSDescUpdate extends ActionDAO<NS,Void,String> {
-	public NSDescUpdate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public NSDescUpdate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public NSDescUpdate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public NSDescUpdate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, NS ns, String desc) {
-		if(dryRun) {
-			trans.info().printf("Would Update '%s' Description to '%s'",ns,desc);
-			return Result.ok();
-		} else {
-			Result<Void> rv = q.nsDAO.dao().addDescription(trans, ns.name, desc);
-			if(rv.isOK()) {
-				trans.info().printf("Updated '%s' Description to '%s'",ns,desc);
-			} else {
-				trans.error().printf("Error Updating '%s' Description to '%s' - %s",ns,desc,rv.details);
-			}
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Void> exec(AuthzTrans trans, NS ns, String desc) {
+        if(dryRun) {
+            trans.info().printf("Would Update '%s' Description to '%s'",ns,desc);
+            return Result.ok();
+        } else {
+            Result<Void> rv = q.nsDAO.dao().addDescription(trans, ns.name, desc);
+            if(rv.isOK()) {
+                trans.info().printf("Updated '%s' Description to '%s'",ns,desc);
+            } else {
+                trans.error().printf("Error Updating '%s' Description to '%s' - %s",ns,desc,rv.details);
+            }
+            return rv;
+        }
+    }
+    
 }

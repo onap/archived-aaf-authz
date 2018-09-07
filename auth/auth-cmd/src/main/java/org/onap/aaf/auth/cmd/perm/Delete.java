@@ -40,50 +40,50 @@ import aaf.v2_0.PermRequest;
  *
  */
 public class Delete extends Cmd {
-	public Delete(Perm parent) {
-		super(parent,"delete", 
-				new Param("type",true), 
-				new Param("instance",true),
-				new Param("action", true));
-	}
+    public Delete(Perm parent) {
+        super(parent,"delete", 
+                new Param("type",true), 
+                new Param("instance",true),
+                new Param("action", true));
+    }
 
-	@Override
-	public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				int idx = index;
-				// Object Style Delete
-				PermRequest pk = new PermRequest();
-				pk.setType(args[idx++]);
-				pk.setInstance(args[idx++]);
-				pk.setAction(args[idx++]);
-		
-				// Set "Force" if set
-				setQueryParamsOn(client);
-				Future<PermRequest> fp = client.delete(
-						"/authz/perm", 
-						getDF(PermRequest.class),
-						pk);
-				if(fp.get(AAFcli.timeout())) {
-					pw().println("Deleted Permission");
-				} else {
-					if(fp.code()==202) {
-						pw().println("Permission Deletion Accepted, but requires Approvals before actualizing");
-					} else {
-						error(fp);
-					}
-				}
-				return fp.code();
-			}
-		});
-	}
+    @Override
+    public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                int idx = index;
+                // Object Style Delete
+                PermRequest pk = new PermRequest();
+                pk.setType(args[idx++]);
+                pk.setInstance(args[idx++]);
+                pk.setAction(args[idx++]);
+        
+                // Set "Force" if set
+                setQueryParamsOn(client);
+                Future<PermRequest> fp = client.delete(
+                        "/authz/perm", 
+                        getDF(PermRequest.class),
+                        pk);
+                if(fp.get(AAFcli.timeout())) {
+                    pw().println("Deleted Permission");
+                } else {
+                    if(fp.code()==202) {
+                        pw().println("Permission Deletion Accepted, but requires Approvals before actualizing");
+                    } else {
+                        error(fp);
+                    }
+                }
+                return fp.code();
+            }
+        });
+    }
 
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,"Delete a Permission with type,instance and action");
-		detailLine(sb,indent+4,"see Create for definitions");
-		api(sb,indent,HttpMethods.DELETE,"authz/perm",PermRequest.class,true);
-	}
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,"Delete a Permission with type,instance and action");
+        detailLine(sb,indent+4,"see Create for definitions");
+        api(sb,indent,HttpMethods.DELETE,"authz/perm",PermRequest.class,true);
+    }
 
 }

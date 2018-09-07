@@ -36,35 +36,35 @@ import org.onap.aaf.cadi.principal.X509Principal;
 
 public class JU_Kind {
 
-	@Mock
-	private TrustPrincipal trust;
+    @Mock
+    private TrustPrincipal trust;
 
-	@Mock
-	private X509Principal x509;
+    @Mock
+    private X509Principal x509;
 
-	@Mock
-	private OAuth2FormPrincipal oauth;
+    @Mock
+    private OAuth2FormPrincipal oauth;
 
-	@Mock
-	private BasicPrincipal basic;
+    @Mock
+    private BasicPrincipal basic;
 
-	@Before
-	public void setup() throws SecurityException {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() throws SecurityException {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void getKind() {
-		assertThat(Kind.getKind(trust), is('U'));
-		assertThat(Kind.getKind(x509), is('X'));
-		assertThat(Kind.getKind(oauth), is('O'));
-		assertThat(Kind.getKind(basic), is('B'));
-	}
+    @Test
+    public void getKind() {
+        assertThat(Kind.getKind(trust), is('U'));
+        assertThat(Kind.getKind(x509), is('X'));
+        assertThat(Kind.getKind(oauth), is('O'));
+        assertThat(Kind.getKind(basic), is('B'));
+    }
 
-	@Test
-	public void coverageTest() {
-		@SuppressWarnings("unused")
-		Kind kind = new Kind();
-	}
+    @Test
+    public void coverageTest() {
+        @SuppressWarnings("unused")
+        Kind kind = new Kind();
+    }
 
 }

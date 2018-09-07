@@ -44,462 +44,462 @@ import org.onap.aaf.misc.env.util.Split;
 import locate.v1_0.Endpoint;
 
 public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI> {
-	protected static final SecureRandom sr = new SecureRandom();
-	private static LocatorCreator locatorCreator;
-	protected final Access access;
+    protected static final SecureRandom sr = new SecureRandom();
+    private static LocatorCreator locatorCreator;
+    protected final Access access;
 
-	protected final double latitude;
-	protected final double longitude;
-	protected List<EP> epList;
-	protected final String name, version;
-	private String pathInfo = null;
-	private String query = null;
-	private String fragment = null;
-	private boolean additional = false;
-	protected String myhostname;
-	protected int myport;
-	protected final String aaf_locator_host;
-	protected final URI aaf_locator_uri;
-	private long earliest;
-	private final long refreshWait;
-
-
-	public AbsAAFLocator(Access access, String name, final long refreshMin) throws LocatorException {
-		aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL, null);
-		if(aaf_locator_host==null) {
-			aaf_locator_uri = null;
-		} else {
-			try {
-				aaf_locator_uri = new URI(aaf_locator_host);
-			} catch (URISyntaxException e) {
-				throw new LocatorException(e);
-			}
-		}
-
-		epList = new LinkedList<>();
-		refreshWait = refreshMin;
-
-		this.access = access;
-		String lat = access.getProperty(Config.CADI_LATITUDE,null);
-		String lng = access.getProperty(Config.CADI_LONGITUDE,null);
-		if(lat==null || lng==null) {
-			throw new LocatorException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " properties are required.");
-		} else {
-			latitude = Double.parseDouble(lat);
-			longitude = Double.parseDouble(lng);
-		}
-		if(name.startsWith(Defaults.AAF_NS)) {
-			String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
-			if(root_ns!=null) {
-				name=name.replace(Defaults.AAF_NS, root_ns);
-			}
-		}
-		if(name.startsWith("http")) { // simple URL
-			this.name = name;
-			this.version = Config.AAF_DEFAULT_VERSION;
-		} else {
-			String[] split = Split.split(':', name);
-			this.name = split[0];
-			this.version = (split.length > 1) ? split[1] : Config.AAF_DEFAULT_VERSION;
-		}
-		
-	}
-
-	/**
-	 * This is the way to setup specialized AAFLocators ahead of time.
-	 * @param preload
-	 */
-	public static void setCreator(LocatorCreator lc) {
-		locatorCreator = lc; 
-	}
-	
-	public static Locator<URI> create(String key) throws LocatorException {
-		String name = null;
-		String version = Config.AAF_DEFAULT_VERSION;
-		String pathInfo = null;
-		int prev = key.indexOf("/locate");
-		if(prev>0) {
-			prev = key.indexOf('/',prev+6);
-			if(prev>0) {
-				int next = key.indexOf('/',++prev);
-				if(next>0) {
-					name = key.substring(prev, next);
-					pathInfo=key.substring(next);
-				} else {
-					name = key.substring(prev);
-				}
-				String[] split = Split.split(':', name);
-				switch(split.length) {
-					case 3:
-					case 2:
-						version = split[1];
-						name = split[0];
-						break;
-					default:
-						break;
-				}
-			}
-		}
-
-		if(key.startsWith("http")) {
-			if(name!=null) {
-				if(locatorCreator != null) {
-					AbsAAFLocator<?> aal = locatorCreator.create(name, version);
-					if(pathInfo!=null) {
-						aal.setPathInfo(pathInfo);
-					}
-					return aal;
-				}
-			} else {
-				return new PropertyLocator(key);
-			}
-		}
-		return null;
-	}
-	
-	public static Locator<URI> create(final String name, final String version) throws LocatorException {
-		return locatorCreator.create(name, version);
-	}
-
-	public interface LocatorCreator {
-		public AbsAAFLocator<?> create(String key, String version) throws LocatorException;
-		public void setSelf(String hostname, int port);
-	}
-
-	protected static String nameFromLocatorURI(URI locatorURI) {
-		String[] path = Split.split('/', locatorURI.getPath());
-		if(path.length>2 && "locate".equals(path[1])) {
-			return path[2];
-		} else {
-			return locatorURI.toString();
-		}
-	}
-	
-	/**
-	 * Setting "self" excludes this service from the list.  Critical for contacting peers. 
-	 */
-	public void setSelf(final String hostname, final int port) {
-		myhostname=hostname;
-		myport=port;
-	}
+    protected final double latitude;
+    protected final double longitude;
+    protected List<EP> epList;
+    protected final String name, version;
+    private String pathInfo = null;
+    private String query = null;
+    private String fragment = null;
+    private boolean additional = false;
+    protected String myhostname;
+    protected int myport;
+    protected final String aaf_locator_host;
+    protected final URI aaf_locator_uri;
+    private long earliest;
+    private final long refreshWait;
 
 
-	public static void setCreatorSelf(final String hostname, final int port) {
-		if(locatorCreator!=null) {
-			locatorCreator.setSelf(hostname,port);
-		}
-	}
+    public AbsAAFLocator(Access access, String name, final long refreshMin) throws LocatorException {
+        aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL, null);
+        if(aaf_locator_host==null) {
+            aaf_locator_uri = null;
+        } else {
+            try {
+                aaf_locator_uri = new URI(aaf_locator_host);
+            } catch (URISyntaxException e) {
+                throw new LocatorException(e);
+            }
+        }
 
-	protected final synchronized void replace(List<EP> list) {
-		epList = list;
-	}
-	
-	/**
-	 * Call _refresh as needed during calls, but actual refresh will not occur if there
-	 * are existing entities or if it has been called in the last 10 (settable) seconds.  
-	 * Timed Refreshes happen by Scheduled Thread
-	 */
-	private final boolean _refresh() {
-		boolean rv = false;
-		long now=System.currentTimeMillis();
-		if(noEntries()) {
-			if(earliest<now) {
-				synchronized(epList) {
-					rv = refresh();
-					earliest = now + refreshWait; // call only up to 10 seconds.
-				}
-			} else {
-				access.log(Level.ERROR, "Must wait at least " + refreshWait/1000 + " seconds for Locator Refresh");
-			}
-		}
-		return rv;
-	}
+        epList = new LinkedList<>();
+        refreshWait = refreshMin;
 
-	private boolean noEntries() {
-		return epList.isEmpty();
-	}
+        this.access = access;
+        String lat = access.getProperty(Config.CADI_LATITUDE,null);
+        String lng = access.getProperty(Config.CADI_LONGITUDE,null);
+        if(lat==null || lng==null) {
+            throw new LocatorException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " properties are required.");
+        } else {
+            latitude = Double.parseDouble(lat);
+            longitude = Double.parseDouble(lng);
+        }
+        if(name.startsWith(Defaults.AAF_NS)) {
+            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
+            if(root_ns!=null) {
+                name=name.replace(Defaults.AAF_NS, root_ns);
+            }
+        }
+        if(name.startsWith("http")) { // simple URL
+            this.name = name;
+            this.version = Config.AAF_DEFAULT_VERSION;
+        } else {
+            String[] split = Split.split(':', name);
+            this.name = split[0];
+            this.version = (split.length > 1) ? split[1] : Config.AAF_DEFAULT_VERSION;
+        }
+        
+    }
 
-	@Override
-	public URI get(Item item) throws LocatorException {
-		if(item==null) {
-			return null;
-		} else if(item instanceof AAFLItem) {
-			return getURI(((AAFLItem)item).uri);
-		} else {
-			throw new LocatorException(item.getClass().getName() + " does not belong to AAFLocator");
-		}
-	}
+    /**
+     * This is the way to setup specialized AAFLocators ahead of time.
+     * @param preload
+     */
+    public static void setCreator(LocatorCreator lc) {
+        locatorCreator = lc; 
+    }
+    
+    public static Locator<URI> create(String key) throws LocatorException {
+        String name = null;
+        String version = Config.AAF_DEFAULT_VERSION;
+        String pathInfo = null;
+        int prev = key.indexOf("/locate");
+        if(prev>0) {
+            prev = key.indexOf('/',prev+6);
+            if(prev>0) {
+                int next = key.indexOf('/',++prev);
+                if(next>0) {
+                    name = key.substring(prev, next);
+                    pathInfo=key.substring(next);
+                } else {
+                    name = key.substring(prev);
+                }
+                String[] split = Split.split(':', name);
+                switch(split.length) {
+                    case 3:
+                    case 2:
+                        version = split[1];
+                        name = split[0];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
-	@Override
-	public boolean hasItems() {
-		boolean isEmpty = epList.isEmpty();
-		if(!isEmpty) {
-			for(Iterator<EP> iter = epList.iterator(); iter.hasNext(); ) {
-				EP ep = iter.next();
-				if(ep.valid) {
-					return true;
-				}
-			}
-			isEmpty = true;
-		}
-		if(_refresh()) { // is refreshed... check again
-			isEmpty = epList.isEmpty();
-		}
-		return !isEmpty;
-	}
+        if(key.startsWith("http")) {
+            if(name!=null) {
+                if(locatorCreator != null) {
+                    AbsAAFLocator<?> aal = locatorCreator.create(name, version);
+                    if(pathInfo!=null) {
+                        aal.setPathInfo(pathInfo);
+                    }
+                    return aal;
+                }
+            } else {
+                return new PropertyLocator(key);
+            }
+        }
+        return null;
+    }
+    
+    public static Locator<URI> create(final String name, final String version) throws LocatorException {
+        return locatorCreator.create(name, version);
+    }
 
-	@Override
-	public void invalidate(Item item) throws LocatorException {
-		if(item!=null) {
-			if(item instanceof AAFLItem) {
-				AAFLItem ali =(AAFLItem)item; 
-				EP ep = ali.ep;
-				synchronized(epList) {
-					epList.remove(ep);
-				}
-				ep.invalid();
-				ali.iter = getIterator(); // for next guy... fresh iterator
-			} else {
-				throw new LocatorException(item.getClass().getName() + " does not belong to AAFLocator");
-			}
-		}
-	}
+    public interface LocatorCreator {
+        public AbsAAFLocator<?> create(String key, String version) throws LocatorException;
+        public void setSelf(String hostname, int port);
+    }
 
-	@Override
-	public Item best() throws LocatorException {
-		if(!hasItems()) {
-			throw new LocatorException("No Entries found for '" + aaf_locator_uri.toString() + "/locate/" + name + ':' + version + '\'');
-		}
-		List<EP> lep = new ArrayList<>();
-		EP first = null;
-		// Note: Deque is sorted on the way by closest distance
-		Iterator<EP> iter = getIterator();
-		EP ep;
-		while(iter.hasNext()) {
-			ep = iter.next();
-			if(ep.valid) {
-				if(first==null) {
-					first = ep;
-					lep.add(first);
-				} else {
-					if(Math.abs(ep.distance-first.distance)<.1) { // allow for nearby/precision issues.
-						lep.add(ep);
-					} else {
-						break;
-					}
-				}
-			}
-		}
-		switch(lep.size()) {
-			case 0:
-				return null;
-			case 1:
-				return new AAFLItem(iter,first);
-			default:
-				int rand = sr.nextInt(); // Sonar chokes without.
-				int i = Math.abs(rand)%lep.size();
-				if(i<0) {
-					return null;
-				} else {
-					return new AAFLItem(iter,lep.get(i));
-				}
-			
-		}
-	}
+    protected static String nameFromLocatorURI(URI locatorURI) {
+        String[] path = Split.split('/', locatorURI.getPath());
+        if(path.length>2 && "locate".equals(path[1])) {
+            return path[2];
+        } else {
+            return locatorURI.toString();
+        }
+    }
+    
+    /**
+     * Setting "self" excludes this service from the list.  Critical for contacting peers. 
+     */
+    public void setSelf(final String hostname, final int port) {
+        myhostname=hostname;
+        myport=port;
+    }
 
-	private Iterator<EP> getIterator() {
-		Object[] epa = epList.toArray();
-		if(epa.length==0) {
-			_refresh();
-			epa = epList.toArray();
-		}
-		return new EPIterator(epa, epList);
-	}
 
-	public class EPIterator implements Iterator<EP> {
-		private final Object[] epa;
-		private final List<EP> epList;
-		private int idx;
-		
-		public EPIterator(Object[] epa, List<EP> epList) {
-			this.epa = epa;
-			this.epList = epList;
-			idx = epa.length>0?0:-1;
-		}
+    public static void setCreatorSelf(final String hostname, final int port) {
+        if(locatorCreator!=null) {
+            locatorCreator.setSelf(hostname,port);
+        }
+    }
 
-		@Override
-		public boolean hasNext() {
-			if(idx<0) {
-				return false;
-			} else {
-				Object obj;
-				while(idx<epa.length) {
-					if((obj=epa[idx])==null || !((EP)obj).valid) {
-						++idx;
-						continue;
-					}
-					break;
-				}
-				return idx<epa.length;
-			}
-		}
+    protected final synchronized void replace(List<EP> list) {
+        epList = list;
+    }
+    
+    /**
+     * Call _refresh as needed during calls, but actual refresh will not occur if there
+     * are existing entities or if it has been called in the last 10 (settable) seconds.  
+     * Timed Refreshes happen by Scheduled Thread
+     */
+    private final boolean _refresh() {
+        boolean rv = false;
+        long now=System.currentTimeMillis();
+        if(noEntries()) {
+            if(earliest<now) {
+                synchronized(epList) {
+                    rv = refresh();
+                    earliest = now + refreshWait; // call only up to 10 seconds.
+                }
+            } else {
+                access.log(Level.ERROR, "Must wait at least " + refreshWait/1000 + " seconds for Locator Refresh");
+            }
+        }
+        return rv;
+    }
 
-		@Override
-		public EP next() {
-			if(!hasNext() ) {
-				throw new NoSuchElementException();
-			}
-			return (EP)epa[idx++];
-		}
+    private boolean noEntries() {
+        return epList.isEmpty();
+    }
 
-		@Override
-		public void remove() {
-			if(idx>=0 && idx<epa.length) {
-				synchronized(epList) {
-					epList.remove(epa[idx]);
-				}
-			}
-		}
-	}
-	
-	@Override
-	public Item first()  {
-		Iterator<EP> iter = getIterator();
-		EP ep = AAFLItem.next(iter);
-		if(ep==null) {
-			return null;
-		}
-		return new AAFLItem(iter,ep);
-	}
+    @Override
+    public URI get(Item item) throws LocatorException {
+        if(item==null) {
+            return null;
+        } else if(item instanceof AAFLItem) {
+            return getURI(((AAFLItem)item).uri);
+        } else {
+            throw new LocatorException(item.getClass().getName() + " does not belong to AAFLocator");
+        }
+    }
 
-	@Override
-	public Item next(Item prev) throws LocatorException {
-		if(prev==null) {
-			StringBuilder sb = new StringBuilder("Locator Item passed in next(item) is null.");
-			int lines = 0;
-			for(StackTraceElement st : Thread.currentThread().getStackTrace()) {
-				sb.append("\n\t");
-				sb.append(st.toString());
-				if(++lines > 5) {
-					sb.append("\n\t...");
-					break;
-				}
-			}
-			access.log(Level.ERROR, sb);
-		} else {
-			if(prev instanceof AAFLItem) {
-				AAFLItem ali = (AAFLItem)prev;
-				EP ep = AAFLItem.next(ali.iter);
-				if(ep!=null) {
-					return new AAFLItem(ali.iter,ep);
-				}
-			} else {
-				throw new LocatorException(prev.getClass().getName() + " does not belong to AAFLocator");
-			}
-		}
-		return null;
-	}
+    @Override
+    public boolean hasItems() {
+        boolean isEmpty = epList.isEmpty();
+        if(!isEmpty) {
+            for(Iterator<EP> iter = epList.iterator(); iter.hasNext(); ) {
+                EP ep = iter.next();
+                if(ep.valid) {
+                    return true;
+                }
+            }
+            isEmpty = true;
+        }
+        if(_refresh()) { // is refreshed... check again
+            isEmpty = epList.isEmpty();
+        }
+        return !isEmpty;
+    }
 
-	protected static class AAFLItem implements Item {
-			private Iterator<EP> iter;
-			private URI uri;
-			private EP ep;
-	
-			public AAFLItem(Iterator<EP> iter, EP ep) {
-				this.iter = iter;
-				this.ep = ep;
-				uri = ep.uri;
-			}
-			
-			private static EP next(Iterator<EP> iter) {
-				EP ep=null;
-				while(iter.hasNext() && (ep==null || !ep.valid)) {
-					ep = iter.next();
-				}
-				return ep;
-			}
-			
-			public String toString() {
-				return ep==null?"Locator Item Invalid":ep.toString();
-			}
-		}
+    @Override
+    public void invalidate(Item item) throws LocatorException {
+        if(item!=null) {
+            if(item instanceof AAFLItem) {
+                AAFLItem ali =(AAFLItem)item; 
+                EP ep = ali.ep;
+                synchronized(epList) {
+                    epList.remove(ep);
+                }
+                ep.invalid();
+                ali.iter = getIterator(); // for next guy... fresh iterator
+            } else {
+                throw new LocatorException(item.getClass().getName() + " does not belong to AAFLocator");
+            }
+        }
+    }
 
-	protected static class EP implements Comparable<EP> {
-		private URI uri;
-		private final double distance;
-		private boolean valid;
-		
-		public EP(final Endpoint ep, double latitude, double longitude) throws URISyntaxException {
-			uri = new URI(ep.getProtocol(),null,ep.getHostname(),ep.getPort(),null,null,null);
-			distance = GreatCircle.calc(latitude, longitude, ep.getLatitude(), ep.getLongitude());
-			valid = true;
-		}
+    @Override
+    public Item best() throws LocatorException {
+        if(!hasItems()) {
+            throw new LocatorException("No Entries found for '" + aaf_locator_uri.toString() + "/locate/" + name + ':' + version + '\'');
+        }
+        List<EP> lep = new ArrayList<>();
+        EP first = null;
+        // Note: Deque is sorted on the way by closest distance
+        Iterator<EP> iter = getIterator();
+        EP ep;
+        while(iter.hasNext()) {
+            ep = iter.next();
+            if(ep.valid) {
+                if(first==null) {
+                    first = ep;
+                    lep.add(first);
+                } else {
+                    if(Math.abs(ep.distance-first.distance)<.1) { // allow for nearby/precision issues.
+                        lep.add(ep);
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        switch(lep.size()) {
+            case 0:
+                return null;
+            case 1:
+                return new AAFLItem(iter,first);
+            default:
+                int rand = sr.nextInt(); // Sonar chokes without.
+                int i = Math.abs(rand)%lep.size();
+                if(i<0) {
+                    return null;
+                } else {
+                    return new AAFLItem(iter,lep.get(i));
+                }
+            
+        }
+    }
 
-		public void invalid() {
-			valid = false;
-		}
+    private Iterator<EP> getIterator() {
+        Object[] epa = epList.toArray();
+        if(epa.length==0) {
+            _refresh();
+            epa = epList.toArray();
+        }
+        return new EPIterator(epa, epList);
+    }
 
-		@Override
-		public int compareTo(EP o) {
-			if(distance<o.distance) {
-				return -1;
-			} else if(distance>o.distance) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-		
-		@Override
-		public String toString() {
-			return distance + ": " + uri + (valid?" valid":" invalidate");
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.Locator#destroy()
-	 */
-	@Override
-	public void destroy() {
-		// Nothing to do
-	}
-	
-	@Override
-	public String toString() {
-		return "AAFLocator for " + name + " on " + getURI();
-	}
+    public class EPIterator implements Iterator<EP> {
+        private final Object[] epa;
+        private final List<EP> epList;
+        private int idx;
+        
+        public EPIterator(Object[] epa, List<EP> epList) {
+            this.epa = epa;
+            this.epList = epList;
+            idx = epa.length>0?0:-1;
+        }
 
-	public AbsAAFLocator<TRANS> setPathInfo(String pathInfo) {
-		this.pathInfo = pathInfo;
-		additional=true;
-		return this;
-	}
+        @Override
+        public boolean hasNext() {
+            if(idx<0) {
+                return false;
+            } else {
+                Object obj;
+                while(idx<epa.length) {
+                    if((obj=epa[idx])==null || !((EP)obj).valid) {
+                        ++idx;
+                        continue;
+                    }
+                    break;
+                }
+                return idx<epa.length;
+            }
+        }
 
-	public AbsAAFLocator<TRANS> setQuery(String query) {
-		this.query = query;
-		additional=true;
-		return this;
-	}
+        @Override
+        public EP next() {
+            if(!hasNext() ) {
+                throw new NoSuchElementException();
+            }
+            return (EP)epa[idx++];
+        }
 
-	public AbsAAFLocator<TRANS>  setFragment(String fragment) {
-		this.fragment = fragment;
-		additional=true;
-		return this;
-	}
+        @Override
+        public void remove() {
+            if(idx>=0 && idx<epa.length) {
+                synchronized(epList) {
+                    epList.remove(epa[idx]);
+                }
+            }
+        }
+    }
+    
+    @Override
+    public Item first()  {
+        Iterator<EP> iter = getIterator();
+        EP ep = AAFLItem.next(iter);
+        if(ep==null) {
+            return null;
+        }
+        return new AAFLItem(iter,ep);
+    }
 
-	// Core URI, for reporting purposes
-	protected abstract URI getURI();
+    @Override
+    public Item next(Item prev) throws LocatorException {
+        if(prev==null) {
+            StringBuilder sb = new StringBuilder("Locator Item passed in next(item) is null.");
+            int lines = 0;
+            for(StackTraceElement st : Thread.currentThread().getStackTrace()) {
+                sb.append("\n\t");
+                sb.append(st.toString());
+                if(++lines > 5) {
+                    sb.append("\n\t...");
+                    break;
+                }
+            }
+            access.log(Level.ERROR, sb);
+        } else {
+            if(prev instanceof AAFLItem) {
+                AAFLItem ali = (AAFLItem)prev;
+                EP ep = AAFLItem.next(ali.iter);
+                if(ep!=null) {
+                    return new AAFLItem(ali.iter,ep);
+                }
+            } else {
+                throw new LocatorException(prev.getClass().getName() + " does not belong to AAFLocator");
+            }
+        }
+        return null;
+    }
 
-	protected URI getURI(URI rv) throws LocatorException {
-		if(additional) {
-			try {
-				return new URI(rv.getScheme(),rv.getUserInfo(),rv.getHost(),rv.getPort(),pathInfo,query,fragment);
-			} catch (URISyntaxException e) {
-				throw new LocatorException("Error copying URL", e);
-			}
-		}
-		return rv;
-	}
+    protected static class AAFLItem implements Item {
+            private Iterator<EP> iter;
+            private URI uri;
+            private EP ep;
+    
+            public AAFLItem(Iterator<EP> iter, EP ep) {
+                this.iter = iter;
+                this.ep = ep;
+                uri = ep.uri;
+            }
+            
+            private static EP next(Iterator<EP> iter) {
+                EP ep=null;
+                while(iter.hasNext() && (ep==null || !ep.valid)) {
+                    ep = iter.next();
+                }
+                return ep;
+            }
+            
+            public String toString() {
+                return ep==null?"Locator Item Invalid":ep.toString();
+            }
+        }
+
+    protected static class EP implements Comparable<EP> {
+        private URI uri;
+        private final double distance;
+        private boolean valid;
+        
+        public EP(final Endpoint ep, double latitude, double longitude) throws URISyntaxException {
+            uri = new URI(ep.getProtocol(),null,ep.getHostname(),ep.getPort(),null,null,null);
+            distance = GreatCircle.calc(latitude, longitude, ep.getLatitude(), ep.getLongitude());
+            valid = true;
+        }
+
+        public void invalid() {
+            valid = false;
+        }
+
+        @Override
+        public int compareTo(EP o) {
+            if(distance<o.distance) {
+                return -1;
+            } else if(distance>o.distance) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        
+        @Override
+        public String toString() {
+            return distance + ": " + uri + (valid?" valid":" invalidate");
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.Locator#destroy()
+     */
+    @Override
+    public void destroy() {
+        // Nothing to do
+    }
+    
+    @Override
+    public String toString() {
+        return "AAFLocator for " + name + " on " + getURI();
+    }
+
+    public AbsAAFLocator<TRANS> setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
+        additional=true;
+        return this;
+    }
+
+    public AbsAAFLocator<TRANS> setQuery(String query) {
+        this.query = query;
+        additional=true;
+        return this;
+    }
+
+    public AbsAAFLocator<TRANS>  setFragment(String fragment) {
+        this.fragment = fragment;
+        additional=true;
+        return this;
+    }
+
+    // Core URI, for reporting purposes
+    protected abstract URI getURI();
+
+    protected URI getURI(URI rv) throws LocatorException {
+        if(additional) {
+            try {
+                return new URI(rv.getScheme(),rv.getUserInfo(),rv.getHost(),rv.getPort(),pathInfo,query,fragment);
+            } catch (URISyntaxException e) {
+                throw new LocatorException("Error copying URL", e);
+            }
+        }
+        return rv;
+    }
 
 
 }

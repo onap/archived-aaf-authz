@@ -32,24 +32,24 @@ import org.onap.aaf.misc.env.util.Chrono;
 import com.datastax.driver.core.Cluster;
 
 public class CredDelete extends ActionDAO<CredDAO.Data,Void, String> {
-	
-	public CredDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster, dryRun);
-	}
+    
+    public CredDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster, dryRun);
+    }
 
-	public CredDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public CredDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, CredDAO.Data cred, String text) {
-		if(dryRun) {
-			trans.info().log("Would Delete:",text,cred.id,CredPrint.type(cred.type),Chrono.dateOnlyStamp(cred.expires));
-			return Result.ok();
-		} else {
-			Result<Void> rv = q.credDAO.delete(trans, cred, true); // need to read for undelete
-			trans.info().log("Deleted:",text,cred.id,CredPrint.type(cred.type),Chrono.dateOnlyStamp(cred.expires));
-			return rv;
-		}
-	}
+    @Override
+    public Result<Void> exec(AuthzTrans trans, CredDAO.Data cred, String text) {
+        if(dryRun) {
+            trans.info().log("Would Delete:",text,cred.id,CredPrint.type(cred.type),Chrono.dateOnlyStamp(cred.expires));
+            return Result.ok();
+        } else {
+            Result<Void> rv = q.credDAO.delete(trans, cred, true); // need to read for undelete
+            trans.info().log("Deleted:",text,cred.id,CredPrint.type(cred.type),Chrono.dateOnlyStamp(cred.expires));
+            return rv;
+        }
+    }
 }

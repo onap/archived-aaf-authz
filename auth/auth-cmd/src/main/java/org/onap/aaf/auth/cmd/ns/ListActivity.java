@@ -39,41 +39,41 @@ import aaf.v2_0.History;
  *
  */
 public class ListActivity extends Cmd {
-	private static final String HEADER = "List Activity of Namespace";
-	
-	public ListActivity(List parent) {
-		super(parent,"activity", 
-				new Param("ns-name",true));
-	}
+    private static final String HEADER = "List Activity of Namespace";
+    
+    public ListActivity(List parent) {
+        super(parent,"activity", 
+                new Param("ns-name",true));
+    }
 
-	@Override
-	public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-	        int idx = _idx;
-		final String ns = args[idx++];
-		
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				Future<History> fp = client.read(
-						"/authz/hist/ns/"+ns, 
-						getDF(History.class)
-						);
-	
-				if(fp.get(AAFcli.timeout())) {
-					activity(fp.value, HEADER + " [ " + ns + " ]");
-				} else {
-					error(fp);
-				}
-				return fp.code();
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/hist/ns/<ns>",History.class,true);
-	}
+    @Override
+    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = _idx;
+        final String ns = args[idx++];
+        
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                Future<History> fp = client.read(
+                        "/authz/hist/ns/"+ns, 
+                        getDF(History.class)
+                        );
+    
+                if(fp.get(AAFcli.timeout())) {
+                    activity(fp.value, HEADER + " [ " + ns + " ]");
+                } else {
+                    error(fp);
+                }
+                return fp.code();
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/hist/ns/<ns>",History.class,true);
+    }
 
 
 

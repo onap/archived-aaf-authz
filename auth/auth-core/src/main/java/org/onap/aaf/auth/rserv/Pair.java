@@ -30,15 +30,15 @@ package org.onap.aaf.auth.rserv;
  * @param <Y>
  */
 public class Pair<X,Y> {
-	public X x;
-	public Y y;
-	
-	public Pair(X x, Y y) {
-		this.x = x;
-		this.y = y;
-	}
-	
-	public String toString() {
-		return "X: " + x.toString() + "-->" + y.toString();
-	}
+    public X x;
+    public Y y;
+    
+    public Pair(X x, Y y) {
+        this.x = x;
+        this.y = y;
+    }
+    
+    public String toString() {
+        return "X: " + x.toString() + "-->" + y.toString();
+    }
 }

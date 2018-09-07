@@ -33,84 +33,84 @@ import org.onap.aaf.cadi.config.Get;
 
 public class JU_Get {
 
-	private String defaultVal = "some default value";
+    private String defaultVal = "some default value";
 
-	private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream outStream;
 
-	private TestBean tb;
+    private TestBean tb;
 
-	@Before
-	public void setup() {
-		outStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-	}
+    @Before
+    public void setup() {
+        outStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-	}
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+    }
 
-	@Test
-	public void beanTest() {
-		tb = new TestBean();
-		tb.setProperty1("prop1");
+    @Test
+    public void beanTest() {
+        tb = new TestBean();
+        tb.setProperty1("prop1");
 
-		Get.Bean testBean = new Get.Bean(tb);
-		assertThat(testBean.get("property1", defaultVal, true), is("prop1"));
-		assertThat(testBean.get("property2", defaultVal, true), is(defaultVal));
-		assertThat(testBean.get("thrower", defaultVal, true), is(defaultVal));
-	}
+        Get.Bean testBean = new Get.Bean(tb);
+        assertThat(testBean.get("property1", defaultVal, true), is("prop1"));
+        assertThat(testBean.get("property2", defaultVal, true), is(defaultVal));
+        assertThat(testBean.get("thrower", defaultVal, true), is(defaultVal));
+    }
 
-	@Test
-	public void nullTest() {
-		assertThat(Get.NULL.get("name", defaultVal, true), is(defaultVal));
-	}
+    @Test
+    public void nullTest() {
+        assertThat(Get.NULL.get("name", defaultVal, true), is(defaultVal));
+    }
 
-	@Test
-	public void accessTest() {
-		String output;
+    @Test
+    public void accessTest() {
+        String output;
 
-		PropAccess access = new PropAccess();
-		access.setProperty("tag", "value");
-		Get.AccessGet accessGet = new Get.AccessGet(access);
+        PropAccess access = new PropAccess();
+        access.setProperty("tag", "value");
+        Get.AccessGet accessGet = new Get.AccessGet(access);
 
-		assertThat(accessGet.get("tag", defaultVal, true), is("value"));
-		output = outStream.toString().split(" ", 2)[1];
-		assertThat(output, is("INIT [cadi] tag is set to value" + System.lineSeparator()));
+        assertThat(accessGet.get("tag", defaultVal, true), is("value"));
+        output = outStream.toString().split(" ", 2)[1];
+        assertThat(output, is("INIT [cadi] tag is set to value" + System.lineSeparator()));
 
-		outStream.reset();
+        outStream.reset();
 
-		assertThat(accessGet.get("not a real tag", defaultVal, true), is(defaultVal));
-		output = outStream.toString().split(" ", 2)[1];
-		assertThat(output, is("INIT [cadi] not a real tag is set to " + defaultVal + System.lineSeparator()));
+        assertThat(accessGet.get("not a real tag", defaultVal, true), is(defaultVal));
+        output = outStream.toString().split(" ", 2)[1];
+        assertThat(output, is("INIT [cadi] not a real tag is set to " + defaultVal + System.lineSeparator()));
 
-		outStream.reset();
+        outStream.reset();
 
-		assertThat(accessGet.get("not a real tag", null, true), is(nullValue()));
-		output = outStream.toString().split(" ", 2)[1];
-		assertThat(output, is("INIT [cadi] not a real tag is not set" + System.lineSeparator()));
+        assertThat(accessGet.get("not a real tag", null, true), is(nullValue()));
+        output = outStream.toString().split(" ", 2)[1];
+        assertThat(output, is("INIT [cadi] not a real tag is not set" + System.lineSeparator()));
 
-		outStream.reset();
+        outStream.reset();
 
-		assertThat(accessGet.get("tag", defaultVal, false), is("value"));
-		assertThat(outStream.toString(), is(""));
-	}
+        assertThat(accessGet.get("tag", defaultVal, false), is("value"));
+        assertThat(outStream.toString(), is(""));
+    }
 
-	public class TestBean implements java.io.Serializable {
+    public class TestBean implements java.io.Serializable {
 
-		private static final long serialVersionUID = 1L;
-		private String property1 = null;
-		private String property2 = null;
-		@SuppressWarnings("unused")
-		private String thrower = null;
+        private static final long serialVersionUID = 1L;
+        private String property1 = null;
+        private String property2 = null;
+        @SuppressWarnings("unused")
+        private String thrower = null;
 
-		public TestBean() { } 
-		public String getProperty1() { return property1; }
-		public void setProperty1(final String value) { this.property1 = value; }
-		public String getProperty2() { return property2; }
-		public void setProperty2(final String value) { this.property2 = value; }
-		public String getThrower() throws Exception { throw new Exception(); }
-		public void setThrower(final String value) { this.thrower = value; }
+        public TestBean() { } 
+        public String getProperty1() { return property1; }
+        public void setProperty1(final String value) { this.property1 = value; }
+        public String getProperty2() { return property2; }
+        public void setProperty2(final String value) { this.property2 = value; }
+        public String getThrower() throws Exception { throw new Exception(); }
+        public void setThrower(final String value) { this.thrower = value; }
 
-	}
+    }
 }

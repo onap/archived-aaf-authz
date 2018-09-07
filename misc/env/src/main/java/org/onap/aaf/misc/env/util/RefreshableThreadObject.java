@@ -54,71 +54,71 @@ import org.onap.aaf.misc.env.LifeCycle;
  * @param <T>
  */
 public class RefreshableThreadObject<T extends Creatable<T>> {
-	private Map<Thread,T> objs;
-	private long refreshed;
-	private Constructor<T> cnst;
-	
-	/**
-	 * The passed in class <b>must</b> implement the constructor
-	 * <pre>
-	 *   public MyClass(Env env) {
-	 *     ...
-	 *   }
-	 * </pre>
-	 * @param clss
-	 * @throws APIException
-	 */
-	public RefreshableThreadObject(Class<T> clss) throws APIException {
-		objs = new ConcurrentHashMap<>();
-		try {
-			cnst = clss.getConstructor(new Class[]{Env.class} );
-		} catch (Exception e) {
-			throw new APIException(e);
-		}
-	}
-	
-	/**
-	 * Get the "T" class from the current thread
-	 * 
-	 * @param env
-	 * @return T
-	 * @throws APIException
-	 */
-	public T get(Env env) throws APIException {
-		Thread t = Thread.currentThread();
-		T obj = objs.get(t);
-		if(obj==null || refreshed>obj.created()) {
-			try {
-				obj = cnst.newInstance(new Object[]{env});
-			} catch (InvocationTargetException e) {
-				throw new APIException(e.getTargetException());
-			} catch (Exception e) {
-				throw new APIException(e);
-			}
-			T destroyMe = objs.put(t,obj);
-			if(destroyMe!=null) {
-				destroyMe.destroy(env);
-			}
-		} 
-		return obj;
-	}
-	
-	/**
-	 * Mark the timestamp of refreshed.
-	 * 
-	 * @param env
-	 */
-	public void refresh(Env env) {
-		refreshed = System.currentTimeMillis();
-	}
-	
-	/**
-	 * Remove the object from the Thread instances
-	 * @param env
-	 */
-	public void remove(Env env) {
-		T obj = objs.remove(Thread.currentThread());
-		if(obj!=null)
-			obj.destroy(env);
-	}
+    private Map<Thread,T> objs;
+    private long refreshed;
+    private Constructor<T> cnst;
+    
+    /**
+     * The passed in class <b>must</b> implement the constructor
+     * <pre>
+     *   public MyClass(Env env) {
+     *     ...
+     *   }
+     * </pre>
+     * @param clss
+     * @throws APIException
+     */
+    public RefreshableThreadObject(Class<T> clss) throws APIException {
+        objs = new ConcurrentHashMap<>();
+        try {
+            cnst = clss.getConstructor(new Class[]{Env.class} );
+        } catch (Exception e) {
+            throw new APIException(e);
+        }
+    }
+    
+    /**
+     * Get the "T" class from the current thread
+     * 
+     * @param env
+     * @return T
+     * @throws APIException
+     */
+    public T get(Env env) throws APIException {
+        Thread t = Thread.currentThread();
+        T obj = objs.get(t);
+        if(obj==null || refreshed>obj.created()) {
+            try {
+                obj = cnst.newInstance(new Object[]{env});
+            } catch (InvocationTargetException e) {
+                throw new APIException(e.getTargetException());
+            } catch (Exception e) {
+                throw new APIException(e);
+            }
+            T destroyMe = objs.put(t,obj);
+            if(destroyMe!=null) {
+                destroyMe.destroy(env);
+            }
+        } 
+        return obj;
+    }
+    
+    /**
+     * Mark the timestamp of refreshed.
+     * 
+     * @param env
+     */
+    public void refresh(Env env) {
+        refreshed = System.currentTimeMillis();
+    }
+    
+    /**
+     * Remove the object from the Thread instances
+     * @param env
+     */
+    public void remove(Env env) {
+        T obj = objs.remove(Thread.currentThread());
+        if(obj!=null)
+            obj.destroy(env);
+    }
 }

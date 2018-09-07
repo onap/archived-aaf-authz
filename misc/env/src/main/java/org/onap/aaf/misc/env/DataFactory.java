@@ -23,8 +23,8 @@ package org.onap.aaf.misc.env;
 
 
 public interface DataFactory<T> {
-	public abstract Data<T> newData();
-	public abstract Data<T> newData(Env trans); // and Env or Trans object
-	public abstract Class<T> getTypeClass();
+    public abstract Data<T> newData();
+    public abstract Data<T> newData(Env trans); // and Env or Trans object
+    public abstract Class<T> getTypeClass();
 }
 

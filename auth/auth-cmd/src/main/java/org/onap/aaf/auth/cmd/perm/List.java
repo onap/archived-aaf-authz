@@ -34,83 +34,83 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.Perms;
 
 public class List extends BaseCmd<Perm> {
-//	private static final String LIST_PERM_DETAILS = "list permission details";
-	
-	public List(Perm parent) {
-		super(parent,"list");
+//    private static final String LIST_PERM_DETAILS = "list permission details";
+    
+    public List(Perm parent) {
+        super(parent,"list");
 
-		cmds.add(new ListByUser(this));
-		cmds.add(new ListByName(this));
-		cmds.add(new ListByNS(this));
-		cmds.add(new ListByRole(this));
-		cmds.add(new ListActivity(this));
-	}
-	// Package Level on purpose
-	abstract class ListPerms extends Retryable<Integer> {
-		protected int list(Future<Perms> fp,String header, String parentPerm) throws CadiException, APIException  {
-			if(fp.get(AAFcli.timeout())) {	
-				report(fp,header, parentPerm);
-			} else {
-				error(fp);
-			}
-			return fp.code();
-		}
-	}
+        cmds.add(new ListByUser(this));
+        cmds.add(new ListByName(this));
+        cmds.add(new ListByNS(this));
+        cmds.add(new ListByRole(this));
+        cmds.add(new ListActivity(this));
+    }
+    // Package Level on purpose
+    abstract class ListPerms extends Retryable<Integer> {
+        protected int list(Future<Perms> fp,String header, String parentPerm) throws CadiException, APIException  {
+            if(fp.get(AAFcli.timeout())) {    
+                report(fp,header, parentPerm);
+            } else {
+                error(fp);
+            }
+            return fp.code();
+        }
+    }
 
-	private static final Comparator<aaf.v2_0.Perm> permCompare = new Comparator<aaf.v2_0.Perm>() {
-		@Override
-		public int compare(aaf.v2_0.Perm a, aaf.v2_0.Perm b) {
-			int rc;
-			if((rc=a.getType().compareTo(b.getType()))!=0) {
-			    return rc;
-			}
-			if((rc=a.getInstance().compareTo(b.getInstance()))!=0) {
-			    return rc;
-			}
-			return a.getAction().compareTo(b.getAction());
-		}
-	};
-	
-	private static final String permFormat = "%-30s %-30s %-10s\n";
-	
-	void report(Future<Perms> fp, String ... str) {
-		reportHead(str);
-		if (this.aafcli.isDetailed()) {		
-			String format = "%-36s %-30s %-15s\n";
-			String descFmt = "   %-75s\n";
-			reportColHead(format + descFmt,"[PERM NS].Type","Instance","Action", "Description");
-			Collections.sort(fp.value.getPerm(),permCompare);
-			for(aaf.v2_0.Perm p : fp.value.getPerm()) {
-				String pns = p.getNs();
-				if(pns==null) {
-					pw().format(format,
-							p.getType(),
-							p.getInstance(),
-							p.getAction());
-				} else {
-					pw().format(format,
-							'['+pns + "]." + p.getType().substring(pns.length()+1),
-							p.getInstance(),
-							p.getAction());
-				}
-				String desc = p.getDescription();
-				if(desc!=null && desc.length()>0) {
-					pw().format(descFmt,p.getDescription());
-				}
-			}
-			pw().println();
-		} else {
-			String format = reportColHead(permFormat,"PERM Type","Instance","Action");
+    private static final Comparator<aaf.v2_0.Perm> permCompare = new Comparator<aaf.v2_0.Perm>() {
+        @Override
+        public int compare(aaf.v2_0.Perm a, aaf.v2_0.Perm b) {
+            int rc;
+            if((rc=a.getType().compareTo(b.getType()))!=0) {
+                return rc;
+            }
+            if((rc=a.getInstance().compareTo(b.getInstance()))!=0) {
+                return rc;
+            }
+            return a.getAction().compareTo(b.getAction());
+        }
+    };
+    
+    private static final String permFormat = "%-30s %-30s %-10s\n";
+    
+    void report(Future<Perms> fp, String ... str) {
+        reportHead(str);
+        if (this.aafcli.isDetailed()) {        
+            String format = "%-36s %-30s %-15s\n";
+            String descFmt = "   %-75s\n";
+            reportColHead(format + descFmt,"[PERM NS].Type","Instance","Action", "Description");
+            Collections.sort(fp.value.getPerm(),permCompare);
+            for(aaf.v2_0.Perm p : fp.value.getPerm()) {
+                String pns = p.getNs();
+                if(pns==null) {
+                    pw().format(format,
+                            p.getType(),
+                            p.getInstance(),
+                            p.getAction());
+                } else {
+                    pw().format(format,
+                            '['+pns + "]." + p.getType().substring(pns.length()+1),
+                            p.getInstance(),
+                            p.getAction());
+                }
+                String desc = p.getDescription();
+                if(desc!=null && desc.length()>0) {
+                    pw().format(descFmt,p.getDescription());
+                }
+            }
+            pw().println();
+        } else {
+            String format = reportColHead(permFormat,"PERM Type","Instance","Action");
 
-			Collections.sort(fp.value.getPerm(),permCompare);
-			for(aaf.v2_0.Perm p : fp.value.getPerm()) {
-				pw().format(format,
-					p.getType(),
-					p.getInstance(),
-					p.getAction());
-			}
-			pw().println();
-		}
-	}
+            Collections.sort(fp.value.getPerm(),permCompare);
+            for(aaf.v2_0.Perm p : fp.value.getPerm()) {
+                pw().format(format,
+                    p.getType(),
+                    p.getInstance(),
+                    p.getAction());
+            }
+            pw().println();
+        }
+    }
 
 }

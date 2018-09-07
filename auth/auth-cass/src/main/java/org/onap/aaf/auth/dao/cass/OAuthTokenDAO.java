@@ -50,7 +50,7 @@ import com.datastax.driver.core.Row;
  */
 public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
     public static final String TABLE = "oauth_token";
-	private AbsCassDAO<AuthzTrans, Data>.PSInfo psByUser;
+    private AbsCassDAO<AuthzTrans, Data>.PSInfo psByUser;
     
     public OAuthTokenDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, OAuthTokenDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
@@ -58,63 +58,63 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
     }
     
     public OAuthTokenDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) {
-    		super(trans, OAuthTokenDAO.class.getSimpleName(),aDao, Data.class, TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
-    		init(trans);
+            super(trans, OAuthTokenDAO.class.getSimpleName(),aDao, Data.class, TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
+            init(trans);
     }
 
 
     public static final int KEYLIMIT = 1;
-	public static class Data implements Bytification {
-		public String	       			id;
-		public String					client_id;
-		public String					user;
-		public boolean					active;
-        public int						type;
-		public String					refresh;
-        public Date      				expires;
-        public long						exp_sec;
-        public String	 				content;  
-        public Set<String>	      		scopes;
-        public String					state;
-        public String					req_ip; // requesting
+    public static class Data implements Bytification {
+        public String                       id;
+        public String                    client_id;
+        public String                    user;
+        public boolean                    active;
+        public int                        type;
+        public String                    refresh;
+        public Date                      expires;
+        public long                        exp_sec;
+        public String                     content;  
+        public Set<String>                  scopes;
+        public String                    state;
+        public String                    req_ip; // requesting
 
-		public Set<String> scopes(boolean mutable) {
-			if (scopes == null) {
-				scopes = new HashSet<>();
-			} else if (mutable && !(scopes instanceof HashSet)) {
-				scopes = new HashSet<>(scopes);
-			}
-			return scopes;
-		}
+        public Set<String> scopes(boolean mutable) {
+            if (scopes == null) {
+                scopes = new HashSet<>();
+            } else if (mutable && !(scopes instanceof HashSet)) {
+                scopes = new HashSet<>(scopes);
+            }
+            return scopes;
+        }
 
-		@Override
-		public ByteBuffer bytify() throws IOException {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			OAuthLoader.deflt.marshal(this,new DataOutputStream(baos));
-			return ByteBuffer.wrap(baos.toByteArray());
-		}
-		
-		@Override
-		public void reconstitute(ByteBuffer bb) throws IOException {
-			OAuthLoader.deflt.unmarshal(this, toDIS(bb));
-		}
+        @Override
+        public ByteBuffer bytify() throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            OAuthLoader.deflt.marshal(this,new DataOutputStream(baos));
+            return ByteBuffer.wrap(baos.toByteArray());
+        }
+        
+        @Override
+        public void reconstitute(ByteBuffer bb) throws IOException {
+            OAuthLoader.deflt.unmarshal(this, toDIS(bb));
+        }
 
-		public String toString() {
-			return user.toString() + ' ' + id.toString() + ' ' + Chrono.dateTime(expires) + (active?"":"in") + "active";
-		}
+        public String toString() {
+            return user.toString() + ' ' + id.toString() + ' ' + Chrono.dateTime(expires) + (active?"":"in") + "active";
+        }
     }
 
     private static class OAuthLoader extends Loader<Data> implements Streamer<Data>{
-		public static final int MAGIC=235677843;
-    		public static final int VERSION=1;
-	    	public static final int BUFF_SIZE=96; // Note: only used when  
-	
-	    	public static final OAuthLoader deflt = new OAuthLoader(KEYLIMIT);
-	    	public OAuthLoader(int keylimit) {
-	            super(keylimit);
-	        }
-	
-	    	@Override
+        public static final int MAGIC=235677843;
+            public static final int VERSION=1;
+            public static final int BUFF_SIZE=96; // Note: only used when  
+    
+            public static final OAuthLoader deflt = new OAuthLoader(KEYLIMIT);
+            public OAuthLoader(int keylimit) {
+                super(keylimit);
+            }
+    
+            @Override
         public Data load(Data data, Row row) {
             data.id = row.getString(0);
             data.client_id = row.getString(1);
@@ -152,43 +152,43 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
             obj[++i] = data.req_ip;
         }
 
-		@Override
-		public void marshal(Data data, DataOutputStream os) throws IOException {
-			writeHeader(os,MAGIC,VERSION);
-			writeString(os, data.id);
-			writeString(os, data.client_id);
-			writeString(os, data.user);
-			os.writeBoolean(data.active);
-			os.writeInt(data.type);
-			writeString(os, data.refresh);
-			os.writeLong(data.expires==null?-1:data.expires.getTime());
-			os.writeLong(data.exp_sec);
-			writeString(os, data.content);
-			writeStringSet(os,data.scopes);
-			writeString(os, data.state);
-			writeString(os, data.req_ip);
-		}
+        @Override
+        public void marshal(Data data, DataOutputStream os) throws IOException {
+            writeHeader(os,MAGIC,VERSION);
+            writeString(os, data.id);
+            writeString(os, data.client_id);
+            writeString(os, data.user);
+            os.writeBoolean(data.active);
+            os.writeInt(data.type);
+            writeString(os, data.refresh);
+            os.writeLong(data.expires==null?-1:data.expires.getTime());
+            os.writeLong(data.exp_sec);
+            writeString(os, data.content);
+            writeStringSet(os,data.scopes);
+            writeString(os, data.state);
+            writeString(os, data.req_ip);
+        }
 
 
-		@Override
-		public void unmarshal(Data data, DataInputStream is) throws IOException {
-			/*int version = */readHeader(is,MAGIC,VERSION);
-			// If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
-			byte[] buff = new byte[BUFF_SIZE]; // used only if fits
-			data.id = readString(is,buff);
-			data.client_id = readString(is,buff);
-			data.user = readString(is,buff);
-			data.active = is.readBoolean();
-			data.type = is.readInt();
-			data.refresh = readString(is,buff);
-			long l = is.readLong();
-			data.expires = l<0?null:new Date(l);
-			data.exp_sec = is.readLong();
-			data.content = readString(is,buff); // note, large strings still ok with small buffer
-			data.scopes = readStringSet(is,buff);
-			data.state = readString(is,buff);
-			data.req_ip = readString(is,buff);
-		}
+        @Override
+        public void unmarshal(Data data, DataInputStream is) throws IOException {
+            /*int version = */readHeader(is,MAGIC,VERSION);
+            // If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
+            byte[] buff = new byte[BUFF_SIZE]; // used only if fits
+            data.id = readString(is,buff);
+            data.client_id = readString(is,buff);
+            data.user = readString(is,buff);
+            data.active = is.readBoolean();
+            data.type = is.readInt();
+            data.refresh = readString(is,buff);
+            long l = is.readLong();
+            data.expires = l<0?null:new Date(l);
+            data.exp_sec = is.readLong();
+            data.content = readString(is,buff); // note, large strings still ok with small buffer
+            data.scopes = readStringSet(is,buff);
+            data.state = readString(is,buff);
+            data.req_ip = readString(is,buff);
+        }
     }
 
     private void init(AuthzTrans trans) {
@@ -196,7 +196,7 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
         psByUser = new PSInfo(trans, "SELECT " + helpers[0] + " from " + TABLE + " WHERE user=?",OAuthLoader.deflt,readConsistency);
     }
 
-	/**
+    /**
      * Log Modification statements to History
      *
      * @param modified        which CRUD action was done
@@ -207,7 +207,7 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
     protected void wasModified(AuthzTrans trans, CRUD modified, Data data, String ... override) {
     }
 
-	public Result<List<Data>> readByUser(AuthzTrans trans, String user) {
-		return psByUser.read(trans, "Read By User", new Object[]{user});
-	}
+    public Result<List<Data>> readByUser(AuthzTrans trans, String user) {
+        return psByUser.read(trans, "Read By User", new Object[]{user});
+    }
 }

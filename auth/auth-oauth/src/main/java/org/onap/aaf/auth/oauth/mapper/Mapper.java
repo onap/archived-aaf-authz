@@ -31,17 +31,17 @@ import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.cadi.oauth.OAuth2Principal;
 
 public interface Mapper<TOKEN_REQ,TOKEN,INTROSPECT,ERROR> extends MapperIntrospect<INTROSPECT>
-{	
-	public enum API{TOKEN_REQ, TOKEN,INTROSPECT, ERROR,VOID};
-	
-	public Class<?> getClass(API api);
-	public<A> A newInstance(API api);
+{    
+    public enum API{TOKEN_REQ, TOKEN,INTROSPECT, ERROR,VOID};
+    
+    public Class<?> getClass(API api);
+    public<A> A newInstance(API api);
 
-	public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
-	public TOKEN_REQ tokenReqFromParams(HttpServletRequest req);
-	public OCreds credsFromReq(TOKEN_REQ tokReq);
-	
-	public OAuthTokenDAO.Data clientTokenReq(TOKEN_REQ tokReq, Holder<GRANT_TYPE> hgt);
-	public Result<TOKEN> tokenFromData(Result<OAuthTokenDAO.Data> rs);
-	public INTROSPECT fromPrincipal(OAuth2Principal p);
+    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
+    public TOKEN_REQ tokenReqFromParams(HttpServletRequest req);
+    public OCreds credsFromReq(TOKEN_REQ tokReq);
+    
+    public OAuthTokenDAO.Data clientTokenReq(TOKEN_REQ tokReq, Holder<GRANT_TYPE> hgt);
+    public Result<TOKEN> tokenFromData(Result<OAuthTokenDAO.Data> rs);
+    public INTROSPECT fromPrincipal(OAuth2Principal p);
 }

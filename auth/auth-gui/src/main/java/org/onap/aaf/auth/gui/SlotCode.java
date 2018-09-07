@@ -26,24 +26,24 @@ import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.TransStore;
 
 public abstract class SlotCode<TRANS extends TransStore> extends NamedCode {
-	private Slot[] slots;
+    private Slot[] slots;
 
-	public SlotCode(boolean no_cache,EnvStore<?> env, String root, Enum<?> ... params) {
-		super(no_cache,root);
-		slots = new Slot[params.length];
-		for(int i=0;i<params.length;++i) {
-			slots[i] = env.slot(root + '.' + params[i].name());
-		}
-	}
+    public SlotCode(boolean no_cache,EnvStore<?> env, String root, Enum<?> ... params) {
+        super(no_cache,root);
+        slots = new Slot[params.length];
+        for(int i=0;i<params.length;++i) {
+            slots[i] = env.slot(root + '.' + params[i].name());
+        }
+    }
 
-	public<T> T get(TRANS trans,Enum<?> en, T dflt) {
-		return get(trans,en.ordinal(),dflt);
-	}
-	
-	public<T> T get(TRANS trans,int idx, T dflt) {
-		if(idx>slots.length) {
-			return dflt;
-		}
-		return trans.get(slots[idx],dflt);
-	}
+    public<T> T get(TRANS trans,Enum<?> en, T dflt) {
+        return get(trans,en.ordinal(),dflt);
+    }
+    
+    public<T> T get(TRANS trans,int idx, T dflt) {
+        if(idx>slots.length) {
+            return dflt;
+        }
+        return trans.get(slots[idx],dflt);
+    }
 }

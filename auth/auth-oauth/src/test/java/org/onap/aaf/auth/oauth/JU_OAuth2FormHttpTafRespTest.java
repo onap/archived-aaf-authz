@@ -37,28 +37,28 @@ import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_OAuth2FormHttpTafRespTest {
 
-	@Mock
-	private HttpServletResponse resp;
+    @Mock
+    private HttpServletResponse resp;
 
-	@Before
-	public void setup() {
-		initMocks(this);
-	}
+    @Before
+    public void setup() {
+        initMocks(this);
+    }
 
-	@Test
-	public void testAuthenticated() throws IOException {
-		OAuth2FormHttpTafResp oAuth2 = new OAuth2FormHttpTafResp(null, null, null, null, resp);
+    @Test
+    public void testAuthenticated() throws IOException {
+        OAuth2FormHttpTafResp oAuth2 = new OAuth2FormHttpTafResp(null, null, null, null, resp);
 
-		assertEquals(oAuth2.authenticate(), RESP.HTTP_REDIRECT_INVOKED);
+        assertEquals(oAuth2.authenticate(), RESP.HTTP_REDIRECT_INVOKED);
 
-		verify(resp, only()).setStatus(401);
-	}
+        verify(resp, only()).setStatus(401);
+    }
 
-	@Test
-	public void testIsAuthenticated() throws IOException {
-		OAuth2FormHttpTafResp oAuth2 = new OAuth2FormHttpTafResp(null, null, null, RESP.HAS_PROCESSED, null, false);
+    @Test
+    public void testIsAuthenticated() throws IOException {
+        OAuth2FormHttpTafResp oAuth2 = new OAuth2FormHttpTafResp(null, null, null, RESP.HAS_PROCESSED, null, false);
 
-		assertEquals(oAuth2.isAuthenticated(), RESP.HAS_PROCESSED);
-		assertFalse(oAuth2.isFailedAttempt());
-	}
+        assertEquals(oAuth2.isAuthenticated(), RESP.HAS_PROCESSED);
+        assertFalse(oAuth2.isFailedAttempt());
+    }
 }

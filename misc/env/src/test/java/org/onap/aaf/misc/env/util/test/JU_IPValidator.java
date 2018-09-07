@@ -29,39 +29,39 @@ import org.onap.aaf.misc.env.util.IPValidator;
 
 public class JU_IPValidator {
 
-	@Test
-	public void test() {
-		assertTrue(IPValidator.ipv4("10.10.10.10"));
-		assertTrue(IPValidator.ipv4("127.0.0.0"));
-		assertFalse(IPValidator.ipv4("10"));
-		assertFalse(IPValidator.ipv4("10.10.10"));
-		assertFalse(IPValidator.ipv4("10.10.10."));
-		assertFalse(IPValidator.ipv4("10.10.10.10."));
-		assertFalse(IPValidator.ipv4("10.10.10.10.10"));
-		assertFalse(IPValidator.ipv4("something10.10.10.10"));
-		assertTrue(IPValidator.ipv4("0.10.10.10"));
-		assertTrue(IPValidator.ipv4("0.0.0.0"));
-		assertTrue(IPValidator.ipv4("0.10.10.10"));
-		assertFalse(IPValidator.ipv4("011.255.255.255"));
-		assertFalse(IPValidator.ipv4("255.01.255.255"));
-		assertFalse(IPValidator.ipv4("255.255.255.256"));
-		assertFalse(IPValidator.ipv4("255.299.255.255"));
+    @Test
+    public void test() {
+        assertTrue(IPValidator.ipv4("10.10.10.10"));
+        assertTrue(IPValidator.ipv4("127.0.0.0"));
+        assertFalse(IPValidator.ipv4("10"));
+        assertFalse(IPValidator.ipv4("10.10.10"));
+        assertFalse(IPValidator.ipv4("10.10.10."));
+        assertFalse(IPValidator.ipv4("10.10.10.10."));
+        assertFalse(IPValidator.ipv4("10.10.10.10.10"));
+        assertFalse(IPValidator.ipv4("something10.10.10.10"));
+        assertTrue(IPValidator.ipv4("0.10.10.10"));
+        assertTrue(IPValidator.ipv4("0.0.0.0"));
+        assertTrue(IPValidator.ipv4("0.10.10.10"));
+        assertFalse(IPValidator.ipv4("011.255.255.255"));
+        assertFalse(IPValidator.ipv4("255.01.255.255"));
+        assertFalse(IPValidator.ipv4("255.255.255.256"));
+        assertFalse(IPValidator.ipv4("255.299.255.255"));
 
-		assertTrue(IPValidator.ipv6("0000:0000:0000:0000:0000:0000:0000:0000"));
-		assertTrue(IPValidator.ipv6("0:0:0:0:0:0:0:0"));
-		assertTrue(IPValidator.ipv6("2001:08DB:0000:0000:0023:F422:FE3B:AC10"));
-		assertTrue(IPValidator.ipv6("2001:8DB:0:0:23:F422:FE3B:AC10"));
-		assertTrue(IPValidator.ipv6("2001:8DB::23:F422:FE3B:AC10"));
-		assertTrue(IPValidator.ipv6("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
-		assertTrue(IPValidator.ipv6("FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"));
-		assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10"));
-		assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10"));
-		// more than one Double Colons
-		assertFalse(IPValidator.ipv6("0000:0000:0000::0000::0000"));
-		assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10:FFFF"));
+        assertTrue(IPValidator.ipv6("0000:0000:0000:0000:0000:0000:0000:0000"));
+        assertTrue(IPValidator.ipv6("0:0:0:0:0:0:0:0"));
+        assertTrue(IPValidator.ipv6("2001:08DB:0000:0000:0023:F422:FE3B:AC10"));
+        assertTrue(IPValidator.ipv6("2001:8DB:0:0:23:F422:FE3B:AC10"));
+        assertTrue(IPValidator.ipv6("2001:8DB::23:F422:FE3B:AC10"));
+        assertTrue(IPValidator.ipv6("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
+        assertTrue(IPValidator.ipv6("FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF"));
+        assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10"));
+        assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10"));
+        // more than one Double Colons
+        assertFalse(IPValidator.ipv6("0000:0000:0000::0000::0000"));
+        assertFalse(IPValidator.ipv6("2001:8DB::23:G422:FE3B:AC10:FFFF"));
 
-		assertTrue(IPValidator.ip("2001:08DB:0000:0000:0023:F422:FE3B:AC10"));
-		assertTrue(IPValidator.ip("192.168.7.2"));
-	}
+        assertTrue(IPValidator.ip("2001:08DB:0000:0000:0023:F422:FE3B:AC10"));
+        assertTrue(IPValidator.ip("192.168.7.2"));
+    }
 
 }

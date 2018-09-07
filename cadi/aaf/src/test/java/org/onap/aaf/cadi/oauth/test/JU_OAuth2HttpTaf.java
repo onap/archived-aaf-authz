@@ -48,38 +48,38 @@ import org.onap.aaf.cadi.client.Result;
 
 public class JU_OAuth2HttpTaf {
 
-	private static final String authz = "Bearer John Doe";
+    private static final String authz = "Bearer John Doe";
 
-	@Mock private TokenMgr tmgrMock;
-	@Mock private HttpServletResponse respMock;
-	@Mock private HttpServletRequest reqMock;
-	@Mock private OAuth2Principal princMock;
+    @Mock private TokenMgr tmgrMock;
+    @Mock private HttpServletResponse respMock;
+    @Mock private HttpServletRequest reqMock;
+    @Mock private OAuth2Principal princMock;
 
-	private PropAccess access;
+    private PropAccess access;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
 
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-	}
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+    }
 
-	@Test
-	public void test() throws APIException, CadiException, LocatorException {
-		OAuth2HttpTaf taf = new OAuth2HttpTaf(access, tmgrMock);
+    @Test
+    public void test() throws APIException, CadiException, LocatorException {
+        OAuth2HttpTaf taf = new OAuth2HttpTaf(access, tmgrMock);
 
-		taf.validate(LifeForm.CBLF, reqMock, respMock);
-		when(reqMock.getHeader("Authorization")).thenReturn(authz);
+        taf.validate(LifeForm.CBLF, reqMock, respMock);
+        when(reqMock.getHeader("Authorization")).thenReturn(authz);
 
-		doReturn(Result.ok(200, princMock)).when(tmgrMock).toPrincipal(anyString(), (byte[])any());
-		taf.validate(LifeForm.CBLF, reqMock, respMock);
+        doReturn(Result.ok(200, princMock)).when(tmgrMock).toPrincipal(anyString(), (byte[])any());
+        taf.validate(LifeForm.CBLF, reqMock, respMock);
 
-		when(reqMock.isSecure()).thenReturn(true);
+        when(reqMock.isSecure()).thenReturn(true);
 
-		doReturn(Result.err(404, "not found")).when(tmgrMock).toPrincipal(anyString(), (byte[])any());
-		taf.validate(LifeForm.CBLF, reqMock, respMock);
+        doReturn(Result.err(404, "not found")).when(tmgrMock).toPrincipal(anyString(), (byte[])any());
+        taf.validate(LifeForm.CBLF, reqMock, respMock);
 
-		taf.revalidate(null, null);
-	}
+        taf.revalidate(null, null);
+    }
 
 }

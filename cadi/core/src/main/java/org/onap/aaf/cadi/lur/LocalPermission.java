@@ -24,27 +24,27 @@ package org.onap.aaf.cadi.lur;
 import org.onap.aaf.cadi.Permission;
 
 public class LocalPermission implements Permission {
-	private String key;
-	
-	public LocalPermission(String role) {
-		this.key = role;
-	}
-	
-	public String getKey() {
-		return key;
-	}
+    private String key;
+    
+    public LocalPermission(String role) {
+        this.key = role;
+    }
+    
+    public String getKey() {
+        return key;
+    }
 
-	public String toString() {
-		return key;
-	}
+    public String toString() {
+        return key;
+    }
 
-	public boolean match(Permission p) {
-		return key.equals(p.getKey());
-	}
+    public boolean match(Permission p) {
+        return key.equals(p.getKey());
+    }
 
-	public String permType() {
-		return "LOCAL";
-	}
-	
-	
+    public String permType() {
+        return "LOCAL";
+    }
+    
+    
 }

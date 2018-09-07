@@ -35,20 +35,20 @@ import org.onap.aaf.auth.layer.Result;
 
 public interface Mapper<REQ,CERT,ARTIFACTS,ERROR>
 {
-	public enum API{ERROR,VOID,CERT,CERT_REQ,CERT_RENEW,CERT_DROP,ARTIFACTS};
-	
-	public Class<?> getClass(API api);
-	public<A> A newInstance(API api);
+    public enum API{ERROR,VOID,CERT,CERT_REQ,CERT_RENEW,CERT_DROP,ARTIFACTS};
+    
+    public Class<?> getClass(API api);
+    public<A> A newInstance(API api);
 
-	public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
-	
-	public Result<CERT> toCert(AuthzTrans trans, Result<CertResp> in, boolean withTrustChain) throws IOException;
-	public Result<CERT> toCert(AuthzTrans trans, Result<List<CertDAO.Data>> in);
+    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
+    
+    public Result<CERT> toCert(AuthzTrans trans, Result<CertResp> in, boolean withTrustChain) throws IOException;
+    public Result<CERT> toCert(AuthzTrans trans, Result<List<CertDAO.Data>> in);
 
-	public Result<CertReq> toReq(AuthzTrans trans, REQ req);
-	public Result<CertRenew> toRenew(AuthzTrans trans, REQ req);
-	public Result<CertDrop>  toDrop(AuthzTrans trans, REQ req);
-	
-	public List<ArtiDAO.Data> toArtifact(AuthzTrans trans, ARTIFACTS arti);
-	public Result<ARTIFACTS> fromArtifacts(Result<List<ArtiDAO.Data>> readArtifactsByMachine);
+    public Result<CertReq> toReq(AuthzTrans trans, REQ req);
+    public Result<CertRenew> toRenew(AuthzTrans trans, REQ req);
+    public Result<CertDrop>  toDrop(AuthzTrans trans, REQ req);
+    
+    public List<ArtiDAO.Data> toArtifact(AuthzTrans trans, ARTIFACTS arti);
+    public Result<ARTIFACTS> fromArtifacts(Result<List<ArtiDAO.Data>> readArtifactsByMachine);
 }

@@ -30,15 +30,15 @@ import org.onap.aaf.cadi.util.MaskFormatException;
 
 public class JU_MaskFormatException {
 
-	@Test
-	public void throwsTest() {
-		String errorMessage = "This is a MaskFormatException";
-		try {
-			throw new MaskFormatException(errorMessage);
-		} catch (Exception e) {
-			assertThat(e.getMessage(), is(errorMessage));
-			assertTrue(e instanceof MaskFormatException);
-		}
-	}
+    @Test
+    public void throwsTest() {
+        String errorMessage = "This is a MaskFormatException";
+        try {
+            throw new MaskFormatException(errorMessage);
+        } catch (Exception e) {
+            assertThat(e.getMessage(), is(errorMessage));
+            assertTrue(e instanceof MaskFormatException);
+        }
+    }
 
 }

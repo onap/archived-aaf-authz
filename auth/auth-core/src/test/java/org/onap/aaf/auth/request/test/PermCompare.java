@@ -30,37 +30,37 @@ import org.onap.aaf.misc.env.util.Chrono;
 import aaf.v2_0.PermRequest;
 
 public class PermCompare extends RosettaCompare<PermRequest>  {
-	public PermCompare() {
-		super(PermRequest.class);
-	}
-	
-	public static PermRequest create() {
-		PermRequest pr = new PermRequest();
-		String in = instance();
-		pr.setType("org.osaaf.ns.perm"+in);
-		pr.setInstance("instance"+in);
-		pr.setAction("read");
-		pr.setDescription("Hello World, Perm"+in);
-		GregorianCalendar gc = new GregorianCalendar();
-		pr.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		pr.setEnd(Chrono.timeStamp(gc));
-		return pr;
-	}
-	
-	@Override
-	public void compare(PermRequest t1, PermRequest t2) {
-		assertEquals(t1.getType(),t2.getType());
-		assertEquals(t1.getInstance(),t2.getInstance());
-		assertEquals(t1.getAction(),t2.getAction());
-		assertEquals(t1.getDescription(),t2.getDescription());
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public PermCompare() {
+        super(PermRequest.class);
+    }
+    
+    public static PermRequest create() {
+        PermRequest pr = new PermRequest();
+        String in = instance();
+        pr.setType("org.osaaf.ns.perm"+in);
+        pr.setInstance("instance"+in);
+        pr.setAction("read");
+        pr.setDescription("Hello World, Perm"+in);
+        GregorianCalendar gc = new GregorianCalendar();
+        pr.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        pr.setEnd(Chrono.timeStamp(gc));
+        return pr;
+    }
+    
+    @Override
+    public void compare(PermRequest t1, PermRequest t2) {
+        assertEquals(t1.getType(),t2.getType());
+        assertEquals(t1.getInstance(),t2.getInstance());
+        assertEquals(t1.getAction(),t2.getAction());
+        assertEquals(t1.getDescription(),t2.getDescription());
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public PermRequest newOne() {
-		return create();
-	}
+    @Override
+    public PermRequest newOne() {
+        return create();
+    }
 }

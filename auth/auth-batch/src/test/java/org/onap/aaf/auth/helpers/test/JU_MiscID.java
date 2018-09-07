@@ -38,60 +38,60 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 public class JU_MiscID {
-	
-	MiscID miscId;
-	
-	@Before
-	public void setUp() {
-		miscId = new MiscID();
-	}
-	
-	@Test
-	public void testRowSet() {
-		Row row = mock(Row.class);
-		miscId.set(row);
-	}
-	
-	@Test
-	public void testStringSet() throws BatchException {
-		String[] strArr = {"id", "sponsor", "created", "renewal"};
-		miscId.set(strArr);
-	}
-	
-	@Test
-	public void testHashcode() throws BatchException {
-		String[] strArr = {"id", "sponsor", "created", "renewal"};
-		miscId.set(strArr);
-		Assert.assertEquals(3355, miscId.hashCode());
-	}
-	
-	@Test
-	public void testEquals() throws BatchException {
-		String[] strArr = {"id", "sponsor", "created", "renewal"};
-		miscId.set(strArr);
-		Assert.assertFalse(miscId.equals("id"));
-		Assert.assertTrue(miscId.equals(miscId));
-	}
-	
-	@Test
-	public void testInsertStmt() throws IllegalArgumentException, IllegalAccessException {
-		String expected = "INSERT INTO authz.miscid (id,created,sponsor,renewal) VALUES ('null','null','null','null')";
-		String result = miscId.insertStmt().toString();
-		Assert.assertEquals(expected, result);
-	}
-	
-	@Test
-	public void testUpdateStmt() throws IllegalArgumentException, IllegalAccessException, BatchException {
-		String expected = "UPDATE authz.miscid SET sponser='sponsor1',created='created1',renewal='renewal1' WHERE id='id'";
-		String[] strArr = {"id", "sponsor", "created", "renewal"};
-		miscId.set(strArr);
-		MiscID miscId1 = new MiscID();
-		String[] strArr1 = {"id", "sponsor1", "created1", "renewal1"};
-		miscId1.set(strArr1);		
-		StringBuilder result = miscId.updateStmt(miscId1);
+    
+    MiscID miscId;
+    
+    @Before
+    public void setUp() {
+        miscId = new MiscID();
+    }
+    
+    @Test
+    public void testRowSet() {
+        Row row = mock(Row.class);
+        miscId.set(row);
+    }
+    
+    @Test
+    public void testStringSet() throws BatchException {
+        String[] strArr = {"id", "sponsor", "created", "renewal"};
+        miscId.set(strArr);
+    }
+    
+    @Test
+    public void testHashcode() throws BatchException {
+        String[] strArr = {"id", "sponsor", "created", "renewal"};
+        miscId.set(strArr);
+        Assert.assertEquals(3355, miscId.hashCode());
+    }
+    
+    @Test
+    public void testEquals() throws BatchException {
+        String[] strArr = {"id", "sponsor", "created", "renewal"};
+        miscId.set(strArr);
+        Assert.assertFalse(miscId.equals("id"));
+        Assert.assertTrue(miscId.equals(miscId));
+    }
+    
+    @Test
+    public void testInsertStmt() throws IllegalArgumentException, IllegalAccessException {
+        String expected = "INSERT INTO authz.miscid (id,created,sponsor,renewal) VALUES ('null','null','null','null')";
+        String result = miscId.insertStmt().toString();
+        Assert.assertEquals(expected, result);
+    }
+    
+    @Test
+    public void testUpdateStmt() throws IllegalArgumentException, IllegalAccessException, BatchException {
+        String expected = "UPDATE authz.miscid SET sponser='sponsor1',created='created1',renewal='renewal1' WHERE id='id'";
+        String[] strArr = {"id", "sponsor", "created", "renewal"};
+        miscId.set(strArr);
+        MiscID miscId1 = new MiscID();
+        String[] strArr1 = {"id", "sponsor1", "created1", "renewal1"};
+        miscId1.set(strArr1);        
+        StringBuilder result = miscId.updateStmt(miscId1);
 
-		Assert.assertEquals(expected, result.toString());
-	}
+        Assert.assertEquals(expected, result.toString());
+    }
 
 
 }

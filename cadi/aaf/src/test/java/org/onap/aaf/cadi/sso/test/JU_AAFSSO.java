@@ -39,82 +39,82 @@ import org.onap.aaf.cadi.sso.AAFSSO;
 
 public class JU_AAFSSO {
 
-	private static final String resourceDirString = "src/test/resources";
-	private static final String aafDir = resourceDirString + "/aaf";
+    private static final String resourceDirString = "src/test/resources";
+    private static final String aafDir = resourceDirString + "/aaf";
 
-	private ByteArrayInputStream inStream;
+    private ByteArrayInputStream inStream;
 
-	@Before
-	public void setup() {
-		System.setProperty("user.home", aafDir);
+    @Before
+    public void setup() {
+        System.setProperty("user.home", aafDir);
 
-		// Simulate user input
-		inStream = new ByteArrayInputStream("test\npassword".getBytes());
-		System.setIn(inStream);
-	}
+        // Simulate user input
+        inStream = new ByteArrayInputStream("test\npassword".getBytes());
+        System.setIn(inStream);
+    }
 
-	@After
-	public void tearDown() {
-		recursiveDelete(new File(aafDir));
-	}
+    @After
+    public void tearDown() {
+        recursiveDelete(new File(aafDir));
+    }
 
-	@Test
-	public void test() throws IOException, CadiException {
-		AAFSSO sso;
-		String[] args;
+    @Test
+    public void test() throws IOException, CadiException {
+        AAFSSO sso;
+        String[] args;
 
-		args = new String[] {
-				"-login",
-				"-noexit",
-		};
-		sso = new AAFSSO(args);
-		
-		assertThat(new File(aafDir).exists(), is(true));
-		assertThat(new File(aafDir + "/.aaf").exists(), is(true));
-		assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(true));
-		assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
-		assertThat(sso.loginOnly(), is(true));
+        args = new String[] {
+                "-login",
+                "-noexit",
+        };
+        sso = new AAFSSO(args);
+        
+        assertThat(new File(aafDir).exists(), is(true));
+        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
+        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(true));
+        assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
+        assertThat(sso.loginOnly(), is(true));
 
 // Not necessarily true
-//		assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(true));
-		
-		sso.setLogDefault();
-		sso.setStdErrDefault();
+//        assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(true));
+        
+        sso.setLogDefault();
+        sso.setStdErrDefault();
 
-		inStream.reset();
-		args = new String[] {
-				"-logout",
-				"\\*",
-				"-noexit",
-		};
-		sso = new AAFSSO(args);
+        inStream.reset();
+        args = new String[] {
+                "-logout",
+                "\\*",
+                "-noexit",
+        };
+        sso = new AAFSSO(args);
 
-		assertThat(new File(aafDir).exists(), is(true));
-		assertThat(new File(aafDir + "/.aaf").exists(), is(true));
-		assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(false));
-		assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
-		assertThat(sso.loginOnly(), is(false));
+        assertThat(new File(aafDir).exists(), is(true));
+        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
+        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(false));
+        assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
+        assertThat(sso.loginOnly(), is(false));
 
-		PropAccess access = sso.access();
-		assertThat(sso.enc_pass(), is(access.getProperty(Config.AAF_APPPASS)));
-		assertThat(sso.user(), is(access.getProperty(Config.AAF_APPID)));
+        PropAccess access = sso.access();
+        assertThat(sso.enc_pass(), is(access.getProperty(Config.AAF_APPPASS)));
+        assertThat(sso.user(), is(access.getProperty(Config.AAF_APPID)));
 
-		sso.addProp("key", "value");
-		assertThat(sso.err(), is(nullValue()));
-		
-		assertThat(sso.useX509(), is(false));
+        sso.addProp("key", "value");
+        assertThat(sso.err(), is(nullValue()));
+        
+        assertThat(sso.useX509(), is(false));
 
-		sso.close();
-	}
+        sso.close();
+    }
 
-	private void recursiveDelete(File file) {
-		for (File f : file.listFiles()) {
-			if (f.isDirectory()) {
-				recursiveDelete(f);
-			}
-			f.delete();
-		}
-		file.delete();
-	}
+    private void recursiveDelete(File file) {
+        for (File f : file.listFiles()) {
+            if (f.isDirectory()) {
+                recursiveDelete(f);
+            }
+            f.delete();
+        }
+        file.delete();
+    }
 
 }

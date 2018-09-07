@@ -35,22 +35,22 @@ import junit.framework.Assert;
 //TODO: Gabe [JUnit] Import missing
 @RunWith(MockitoJUnitRunner.class)
 public class JU_BasicAuth {
-	
-//	@Test
-//	public void getID () {
-//		try {
-//			BasicAuth bAuth = new BasicAuth("testUser", "nopass");
-//			assertEquals(bAuth.getID(), "testUser");
-//			System.out.println(bAuth.getID());
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//	}
-	
-	@Test
-	public void netYetTested() {
-		Assert.assertTrue(true);
-	}
+    
+//    @Test
+//    public void getID () {
+//        try {
+//            BasicAuth bAuth = new BasicAuth("testUser", "nopass");
+//            assertEquals(bAuth.getID(), "testUser");
+//            System.out.println(bAuth.getID());
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        
+//    }
+    
+    @Test
+    public void netYetTested() {
+        Assert.assertTrue(true);
+    }
 }

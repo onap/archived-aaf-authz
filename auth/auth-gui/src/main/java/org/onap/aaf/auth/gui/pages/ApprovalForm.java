@@ -64,235 +64,235 @@ import aaf.v2_0.Approval;
 import aaf.v2_0.Approvals;
 
 public class ApprovalForm extends Page {
-	// Package on purpose
-	static final String NAME="Approvals";
-	static final String HREF = "/gui/approve";
-	static final String[] FIELDS = new String[] {"line[]","user"};
-	
-	
-	public ApprovalForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env,NAME,HREF, FIELDS,
+    // Package on purpose
+    static final String NAME="Approvals";
+    static final String HREF = "/gui/approve";
+    static final String[] FIELDS = new String[] {"line[]","user"};
+    
+    
+    public ApprovalForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env,NAME,HREF, FIELDS,
 
-			new BreadCrumbs(breadcrumbs),
-			new NamedCode(false, "filterByUser") {
-				@Override
-				public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-					cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
-						@Override
-						public void code(final AAF_GUI gui, final AuthzTrans trans,	final Cache<HTMLGen> cache, final HTMLGen hgen)	throws APIException, IOException {
-							String user = trans.get(trans.env().slot(NAME+".user"),"");
-							hgen.incr("p", "class=userFilter")
-								.text("Filter by User:")
-								.tagOnly("input", "type=text", "value="+user, "id=userTextBox")
-								.tagOnly("input", "type=button", "onclick=userFilter('"+HREF+"');", "value=Go!")
-								.end();
-								}
-					});
-				}
-			},
-			new Form(true,new Table<AAF_GUI,AuthzTrans>("Approval Requests", gui.env.newTransNoAvg(),new Model(gui.env),"class=stdform"))
-				.preamble("The following requires your Approval to proceed in the AAF System.</p><p class=subtext>Hover on Identity for Name; click for WebPhone; If Deny is the only option, User is no longer valid."),
-			new NamedCode(false, "selectAlljs") {
-				@Override
-				public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-					Mark jsStart = new Mark();
-					hgen.js(jsStart);
-					hgen.text("function selectAll(radioClass) {");
-					hgen.text("var radios = document.querySelectorAll(\".\"+radioClass);");
-					hgen.text("for (i = 0; i < radios.length; i++) {");
-					hgen.text("radios[i].checked = true;");
-					hgen.text("}");
-					hgen.text("}");
-					hgen.end(jsStart);
-				}
-			});
-		
-	}
-	
-	/**
-	 * Implement the Table Content for Approvals
-	 * 
-	 * @author Jonathan
-	 *
-	 */
-	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		//TODO come up with a generic way to do ILM Info (people page)
-		private static final String TODO_ILM_INFO = "TODO: ILM Info";
-		private static final String DOMAIN_OF_USER = "@DOMAIN";
-		
-		private static final String[] headers = new String[] {"Identity","Request","Approve","Deny"};
-		private Slot sUser;
-		
-		public Model(AuthzEnv env) {
-			sUser = env.slot(NAME+".user");
-		}
-		
-		@Override
-		public String[] headers() {
-			return headers;
-		}
-		
-		@Override
-		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			final String userParam = trans.get(sUser, null);
-			ArrayList<AbsCell[]> rv = new ArrayList<>();
-			String msg = null;
-			TimeTaken tt = trans.start("AAF Get Approvals for Approver",Env.REMOTE);
-			try {
-				final List<Approval> pendingApprovals = new ArrayList<>();
-				final List<Integer> beginIndicesPerApprover = new ArrayList<>();
-				int numLeft = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Integer>() {
-					@Override
-					public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-						Future<Approvals> fa = client.read("/authz/approval/approver/"+trans.user(),gui.getDF(Approvals.class));
-						int numLeft = 0;
-						if(fa.get(AAF_GUI.TIMEOUT)) {
-							
-							if(fa.value!=null) {
-								for (Approval appr : fa.value.getApprovals()) {
-									if ("pending".equals(appr.getStatus())) {
-										if (userParam!=null && !appr.getUser().equalsIgnoreCase(userParam)) {
-												numLeft++;
-												continue;
-										}
-										pendingApprovals.add(appr);
-									}
-								}
-							}
-							
-							String prevApprover = null;
-							int overallIndex = 0;
-								
-							for (Approval appr : pendingApprovals) {
-								String currApprover = appr.getApprover();
-								if (!currApprover.equals(prevApprover)) {
-									prevApprover = currApprover;
-									beginIndicesPerApprover.add(overallIndex);
-								}
-								overallIndex++;
-							}
-						}
-						return numLeft;
-					}
-				});
-				
-				if (!pendingApprovals.isEmpty()) {
-					// Only add select all links if we have approvals
-					AbsCell[] selectAllRow = new AbsCell[] {
-							AbsCell.Null,
-							AbsCell.Null,
-							new ButtonCell("all", "onclick=selectAll('approve')", "class=selectAllButton"),
-							new ButtonCell("all", "onclick=selectAll('deny')", "class=selectAllButton")
-						};
-					rv.add(selectAllRow);
-				}
-						
-				int line=-1;
-				
-				while (!beginIndicesPerApprover.isEmpty()) {
-					int beginIndex = beginIndicesPerApprover.remove(0);
-					int endIndex = (beginIndicesPerApprover.isEmpty()?pendingApprovals.size():beginIndicesPerApprover.get(0));
-					List<Approval> currApproverList = pendingApprovals.subList(beginIndex, endIndex);
-					
-					String currApproverFull = currApproverList.get(0).getApprover();
-					String currApproverShort = currApproverFull.substring(0,currApproverFull.indexOf('@'));
-					String currApprover = (trans.user().indexOf('@')<0?currApproverShort:currApproverFull);
-					if (!currApprover.equals(trans.user())) {
-						AbsCell[] approverHeader;
-						if (currApproverFull.substring(currApproverFull.indexOf('@')).equals(DOMAIN_OF_USER)) {
-							approverHeader = new AbsCell[] { 
-									new TextAndRefCell("Approvals Delegated to Me by ", currApprover,
-											TODO_ILM_INFO + currApproverShort, 
-											true,
-											new String[] {"colspan=4", "class=head"})
-							};
-						} else {
-							approverHeader = new AbsCell[] { 
-									new TextCell("Approvals Delegated to Me by " + currApprover,
-											new String[] {"colspan=4", "class=head"})
-							};
-						}
-						rv.add(approverHeader);
-					}
-					
-					// Sort by User Requesting
-					Collections.sort(currApproverList, new Comparator<Approval>() {
-						@Override
-						public int compare(Approval a1, Approval a2) {
-							return a1.getUser().compareTo(a2.getUser());
-						}
-					});
-					
-					String prevUser = null;
-					boolean userOK=true;
+            new BreadCrumbs(breadcrumbs),
+            new NamedCode(false, "filterByUser") {
+                @Override
+                public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                    cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
+                        @Override
+                        public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
+                            String user = trans.get(trans.env().slot(NAME+".user"),"");
+                            hgen.incr("p", "class=userFilter")
+                                .text("Filter by User:")
+                                .tagOnly("input", "type=text", "value="+user, "id=userTextBox")
+                                .tagOnly("input", "type=button", "onclick=userFilter('"+HREF+"');", "value=Go!")
+                                .end();
+                                }
+                    });
+                }
+            },
+            new Form(true,new Table<AAF_GUI,AuthzTrans>("Approval Requests", gui.env.newTransNoAvg(),new Model(gui.env),"class=stdform"))
+                .preamble("The following requires your Approval to proceed in the AAF System.</p><p class=subtext>Hover on Identity for Name; click for WebPhone; If Deny is the only option, User is no longer valid."),
+            new NamedCode(false, "selectAlljs") {
+                @Override
+                public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                    Mark jsStart = new Mark();
+                    hgen.js(jsStart);
+                    hgen.text("function selectAll(radioClass) {");
+                    hgen.text("var radios = document.querySelectorAll(\".\"+radioClass);");
+                    hgen.text("for (i = 0; i < radios.length; i++) {");
+                    hgen.text("radios[i].checked = true;");
+                    hgen.text("}");
+                    hgen.text("}");
+                    hgen.end(jsStart);
+                }
+            });
+        
+    }
+    
+    /**
+     * Implement the Table Content for Approvals
+     * 
+     * @author Jonathan
+     *
+     */
+    private static class Model extends TableData<AAF_GUI,AuthzTrans> {
+        //TODO come up with a generic way to do ILM Info (people page)
+        private static final String TODO_ILM_INFO = "TODO: ILM Info";
+        private static final String DOMAIN_OF_USER = "@DOMAIN";
+        
+        private static final String[] headers = new String[] {"Identity","Request","Approve","Deny"};
+        private Slot sUser;
+        
+        public Model(AuthzEnv env) {
+            sUser = env.slot(NAME+".user");
+        }
+        
+        @Override
+        public String[] headers() {
+            return headers;
+        }
+        
+        @Override
+        public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
+            final String userParam = trans.get(sUser, null);
+            ArrayList<AbsCell[]> rv = new ArrayList<>();
+            String msg = null;
+            TimeTaken tt = trans.start("AAF Get Approvals for Approver",Env.REMOTE);
+            try {
+                final List<Approval> pendingApprovals = new ArrayList<>();
+                final List<Integer> beginIndicesPerApprover = new ArrayList<>();
+                int numLeft = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Integer>() {
+                    @Override
+                    public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                        Future<Approvals> fa = client.read("/authz/approval/approver/"+trans.user(),gui.getDF(Approvals.class));
+                        int numLeft = 0;
+                        if(fa.get(AAF_GUI.TIMEOUT)) {
+                            
+                            if(fa.value!=null) {
+                                for (Approval appr : fa.value.getApprovals()) {
+                                    if ("pending".equals(appr.getStatus())) {
+                                        if (userParam!=null && !appr.getUser().equalsIgnoreCase(userParam)) {
+                                                numLeft++;
+                                                continue;
+                                        }
+                                        pendingApprovals.add(appr);
+                                    }
+                                }
+                            }
+                            
+                            String prevApprover = null;
+                            int overallIndex = 0;
+                                
+                            for (Approval appr : pendingApprovals) {
+                                String currApprover = appr.getApprover();
+                                if (!currApprover.equals(prevApprover)) {
+                                    prevApprover = currApprover;
+                                    beginIndicesPerApprover.add(overallIndex);
+                                }
+                                overallIndex++;
+                            }
+                        }
+                        return numLeft;
+                    }
+                });
+                
+                if (!pendingApprovals.isEmpty()) {
+                    // Only add select all links if we have approvals
+                    AbsCell[] selectAllRow = new AbsCell[] {
+                            AbsCell.Null,
+                            AbsCell.Null,
+                            new ButtonCell("all", "onclick=selectAll('approve')", "class=selectAllButton"),
+                            new ButtonCell("all", "onclick=selectAll('deny')", "class=selectAllButton")
+                        };
+                    rv.add(selectAllRow);
+                }
+                        
+                int line=-1;
+                
+                while (!beginIndicesPerApprover.isEmpty()) {
+                    int beginIndex = beginIndicesPerApprover.remove(0);
+                    int endIndex = (beginIndicesPerApprover.isEmpty()?pendingApprovals.size():beginIndicesPerApprover.get(0));
+                    List<Approval> currApproverList = pendingApprovals.subList(beginIndex, endIndex);
+                    
+                    String currApproverFull = currApproverList.get(0).getApprover();
+                    String currApproverShort = currApproverFull.substring(0,currApproverFull.indexOf('@'));
+                    String currApprover = (trans.user().indexOf('@')<0?currApproverShort:currApproverFull);
+                    if (!currApprover.equals(trans.user())) {
+                        AbsCell[] approverHeader;
+                        if (currApproverFull.substring(currApproverFull.indexOf('@')).equals(DOMAIN_OF_USER)) {
+                            approverHeader = new AbsCell[] { 
+                                    new TextAndRefCell("Approvals Delegated to Me by ", currApprover,
+                                            TODO_ILM_INFO + currApproverShort, 
+                                            true,
+                                            new String[] {"colspan=4", "class=head"})
+                            };
+                        } else {
+                            approverHeader = new AbsCell[] { 
+                                    new TextCell("Approvals Delegated to Me by " + currApprover,
+                                            new String[] {"colspan=4", "class=head"})
+                            };
+                        }
+                        rv.add(approverHeader);
+                    }
+                    
+                    // Sort by User Requesting
+                    Collections.sort(currApproverList, new Comparator<Approval>() {
+                        @Override
+                        public int compare(Approval a1, Approval a2) {
+                            return a1.getUser().compareTo(a2.getUser());
+                        }
+                    });
+                    
+                    String prevUser = null;
+                    boolean userOK=true;
 
-					for (Approval appr : currApproverList) {
-						if(++line<MAX_LINE) { // limit number displayed at one time.
-							AbsCell userCell;
-							String user = appr.getUser();
-							if(user.equals(prevUser)) {
-								userCell = AbsCell.Null; 
-							} else if (user.endsWith(DOMAIN_OF_USER)){
-								userOK=true;
-								String title;
-								Organization org = OrganizationFactory.obtain(trans.env(), user);
-								if(org==null) {
-									title="";
-								} else {
-									Identity au = org.getIdentity(trans, user);
-									if(au!=null) {
-										if("MECHID".equals(au.type())) {
-											Identity managedBy = au.responsibleTo();
-											if(managedBy==null) {
-												title ="title=" + au.type();
-											} else {
-												title="title=Sponsor is " + managedBy.fullName();												
-											}
-										} else {
-											title="title=" + au.fullName();
-										}
-									} else {
-										userOK=false;
-										title="title=Not a User at " + org.getName();
-									}
-								}
-								prevUser=user;
-								userCell = new RefCell(prevUser,
-									TODO_ILM_INFO+user.substring(0, user.length()-DOMAIN_OF_USER.length()),
-									true,
-									title);
-							} else {
-								userCell = new TextCell(prevUser);
-							}
-							AbsCell[] sa = new AbsCell[] {
-								userCell,
-								new TextCell(appr.getMemo()),
-								userOK?new RadioCell("line."+ line,"approve", "approved|"+appr.getTicket()):new TextCell(""),
-								new RadioCell("line."+ line,"deny", "denied|"+appr.getTicket())
-							};
-							rv.add(sa);
-						} else {
-							++numLeft;
-						}
-					}
-				}
-				if(numLeft>0) {
-					msg = "After these, there will be " + numLeft + " approvals left to process";
-				}
-				if(rv.isEmpty()) {
-					if (numLeft>0) {
-						msg = "No Approvals to process at this time for user " + userParam +". You have " 
-							+ numLeft + " other approvals to process.";
-					} else {
-						msg = "No Approvals to process at this time";
-					}
-				}
-			} catch (Exception e) {
-				trans.error().log(e);
-			} finally {
-				tt.done();
-			}
-		return new Cells(rv,msg);
-		}
-	}
+                    for (Approval appr : currApproverList) {
+                        if(++line<MAX_LINE) { // limit number displayed at one time.
+                            AbsCell userCell;
+                            String user = appr.getUser();
+                            if(user.equals(prevUser)) {
+                                userCell = AbsCell.Null; 
+                            } else if (user.endsWith(DOMAIN_OF_USER)){
+                                userOK=true;
+                                String title;
+                                Organization org = OrganizationFactory.obtain(trans.env(), user);
+                                if(org==null) {
+                                    title="";
+                                } else {
+                                    Identity au = org.getIdentity(trans, user);
+                                    if(au!=null) {
+                                        if("MECHID".equals(au.type())) {
+                                            Identity managedBy = au.responsibleTo();
+                                            if(managedBy==null) {
+                                                title ="title=" + au.type();
+                                            } else {
+                                                title="title=Sponsor is " + managedBy.fullName();                                                
+                                            }
+                                        } else {
+                                            title="title=" + au.fullName();
+                                        }
+                                    } else {
+                                        userOK=false;
+                                        title="title=Not a User at " + org.getName();
+                                    }
+                                }
+                                prevUser=user;
+                                userCell = new RefCell(prevUser,
+                                    TODO_ILM_INFO+user.substring(0, user.length()-DOMAIN_OF_USER.length()),
+                                    true,
+                                    title);
+                            } else {
+                                userCell = new TextCell(prevUser);
+                            }
+                            AbsCell[] sa = new AbsCell[] {
+                                userCell,
+                                new TextCell(appr.getMemo()),
+                                userOK?new RadioCell("line."+ line,"approve", "approved|"+appr.getTicket()):new TextCell(""),
+                                new RadioCell("line."+ line,"deny", "denied|"+appr.getTicket())
+                            };
+                            rv.add(sa);
+                        } else {
+                            ++numLeft;
+                        }
+                    }
+                }
+                if(numLeft>0) {
+                    msg = "After these, there will be " + numLeft + " approvals left to process";
+                }
+                if(rv.isEmpty()) {
+                    if (numLeft>0) {
+                        msg = "No Approvals to process at this time for user " + userParam +". You have " 
+                            + numLeft + " other approvals to process.";
+                    } else {
+                        msg = "No Approvals to process at this time";
+                    }
+                }
+            } catch (Exception e) {
+                trans.error().log(e);
+            } finally {
+                tt.done();
+            }
+        return new Cells(rv,msg);
+        }
+    }
 }

@@ -30,18 +30,18 @@ import org.onap.aaf.auth.rserv.Pair;
 import junit.framework.Assert;
 
 public class JU_Pair {
-	Pair<Integer, Integer> pair;
-	Integer x;
-	Integer y;
-	
-	@Before
-	public void setUp(){
-		pair = new Pair<Integer, Integer>(1, 2);
-	}
+    Pair<Integer, Integer> pair;
+    Integer x;
+    Integer y;
+    
+    @Before
+    public void setUp(){
+        pair = new Pair<Integer, Integer>(1, 2);
+    }
 
-	@Test
-	public void testToString() {
-		String result = pair.toString();
-		Assert.assertEquals("X: " + pair.x.toString() + "-->" + pair.y.toString(), result);
-	}
+    @Test
+    public void testToString() {
+        String result = pair.toString();
+        Assert.assertEquals("X: " + pair.x.toString() + "-->" + pair.y.toString(), result);
+    }
 }

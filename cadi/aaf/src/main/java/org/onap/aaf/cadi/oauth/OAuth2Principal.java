@@ -24,31 +24,31 @@ package org.onap.aaf.cadi.oauth;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class OAuth2Principal extends TaggedPrincipal {
-	private TokenPerm tp;
-//	private byte[] hash; // hashed cred for disk validation
-	
-	public OAuth2Principal(TokenPerm tp, byte[] hash) {
-		this.tp = tp;
-//		this.hash = hash;
-	}
-	
-	@Override
-	public String getName() {
-		return tp.getUsername();
-	}
-	
-	public TokenPerm tokenPerm() {
-		return tp;
-	}
+    private TokenPerm tp;
+//    private byte[] hash; // hashed cred for disk validation
+    
+    public OAuth2Principal(TokenPerm tp, byte[] hash) {
+        this.tp = tp;
+//        this.hash = hash;
+    }
+    
+    @Override
+    public String getName() {
+        return tp.getUsername();
+    }
+    
+    public TokenPerm tokenPerm() {
+        return tp;
+    }
 
-	@Override
-	public String tag() {
-		return "OAuth";
-	}
+    @Override
+    public String tag() {
+        return "OAuth";
+    }
 
-	@Override
-	public String personalName() {
-		return tp.getUsername();
-	}
-	
+    @Override
+    public String personalName() {
+        return tp.getUsername();
+    }
+    
 }

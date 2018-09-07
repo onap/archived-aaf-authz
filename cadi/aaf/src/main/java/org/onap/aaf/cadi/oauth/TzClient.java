@@ -35,6 +35,6 @@ import org.onap.aaf.misc.env.APIException;
  *
  */
 public abstract class TzClient {
-	public abstract void setToken(final String client_id, final TimedToken token) throws IOException;
-	public abstract <RET> RET best(Retryable<RET> rcode) throws CadiException, LocatorException, APIException;
+    public abstract void setToken(final String client_id, final TimedToken token) throws IOException;
+    public abstract <RET> RET best(Retryable<RET> rcode) throws CadiException, LocatorException, APIException;
 }

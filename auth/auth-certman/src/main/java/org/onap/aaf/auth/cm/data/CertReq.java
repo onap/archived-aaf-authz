@@ -31,19 +31,19 @@ import org.onap.aaf.auth.cm.cert.CSRMeta;
 import org.onap.aaf.cadi.configure.CertException;
 
 public class CertReq {
-	// These cannot be null
-	public CA certAuthority;
-	public String mechid;
-	public List<String> fqdns;
-	// Notify
-	public List<String> emails;
-	
-	
-	// These may be null
-	public String sponsor;
-	public XMLGregorianCalendar start, end;
-	
-	public CSRMeta getCSRMeta() throws CertException {
-		return BCFactory.createCSRMeta(certAuthority, mechid, sponsor,fqdns);
-	}
+    // These cannot be null
+    public CA certAuthority;
+    public String mechid;
+    public List<String> fqdns;
+    // Notify
+    public List<String> emails;
+    
+    
+    // These may be null
+    public String sponsor;
+    public XMLGregorianCalendar start, end;
+    
+    public CSRMeta getCSRMeta() throws CertException {
+        return BCFactory.createCSRMeta(certAuthority, mechid, sponsor,fqdns);
+    }
 }

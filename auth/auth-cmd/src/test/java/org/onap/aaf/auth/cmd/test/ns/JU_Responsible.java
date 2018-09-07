@@ -37,39 +37,39 @@ import org.onap.aaf.misc.env.APIException;
 
 public class JU_Responsible {
 
-//	private static Responsible responsible;//TODO: Gabe[JUnit] check with Jonathan
+//    private static Responsible responsible;//TODO: Gabe[JUnit] check with Jonathan
 //
-//	@BeforeClass
-//	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
-//		AAFcli cli = JU_AAFCli.getAAfCli();
-//		NS ns = new NS(cli);
-//		responsible = new Responsible(ns);
+//    @BeforeClass
+//    public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException {
+//        AAFcli cli = JU_AAFCli.getAAfCli();
+//        NS ns = new NS(cli);
+//        responsible = new Responsible(ns);
 //
-//	}
+//    }
 //
-//	@Test
-//	public void exec1() {
-//		try {
-//			responsible._exec(0, "del", "del", "del");
-//		} catch (Exception e) {
-//			assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
-//		}
-//	}
+//    @Test
+//    public void exec1() {
+//        try {
+//            responsible._exec(0, "del", "del", "del");
+//        } catch (Exception e) {
+//            assertEquals(e.getMessage(), "java.net.UnknownHostException: DME2RESOLVE");
+//        }
+//    }
 //
-//	@Test
-//	public void detailedHelp() {
-//		boolean hasNoError = true;
-//		try {
-//			responsible.detailedHelp(1, new StringBuilder("test"));
-//		} catch (Exception e) {
-//			hasNoError = false;
-//		}
-//		assertEquals(hasNoError, true);
-//	}
-	
-	@Test
-	public void netYetTested() {
-		Assert.assertTrue(true);
-	}
+//    @Test
+//    public void detailedHelp() {
+//        boolean hasNoError = true;
+//        try {
+//            responsible.detailedHelp(1, new StringBuilder("test"));
+//        } catch (Exception e) {
+//            hasNoError = false;
+//        }
+//        assertEquals(hasNoError, true);
+//    }
+    
+    @Test
+    public void netYetTested() {
+        Assert.assertTrue(true);
+    }
 
 }

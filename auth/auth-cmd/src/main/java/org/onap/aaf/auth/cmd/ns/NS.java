@@ -27,19 +27,19 @@ import org.onap.aaf.auth.cmd.DeprecatedCMD;
 import org.onap.aaf.misc.env.APIException;
 
 public class NS extends BaseCmd<NS> {
-//	final Role role;
+//    final Role role;
 
-	public NS(AAFcli aafcli) throws APIException {
-		super(aafcli, "ns");
-//		this.role = role;
-	
-		cmds.add(new Create(this));
-		cmds.add(new Delete(this));
-		cmds.add(new Admin(this));
-		cmds.add(new Owner(this));
-		cmds.add(new DeprecatedCMD<NS>(this,"responsible","'responsible' is deprecated.  use 'owner'")); // deprecated
-		cmds.add(new Describe(this));
-		cmds.add(new Attrib(this));
-		cmds.add(new List(this));
-	}
+    public NS(AAFcli aafcli) throws APIException {
+        super(aafcli, "ns");
+//        this.role = role;
+    
+        cmds.add(new Create(this));
+        cmds.add(new Delete(this));
+        cmds.add(new Admin(this));
+        cmds.add(new Owner(this));
+        cmds.add(new DeprecatedCMD<NS>(this,"responsible","'responsible' is deprecated.  use 'owner'")); // deprecated
+        cmds.add(new Describe(this));
+        cmds.add(new Attrib(this));
+        cmds.add(new List(this));
+    }
 }

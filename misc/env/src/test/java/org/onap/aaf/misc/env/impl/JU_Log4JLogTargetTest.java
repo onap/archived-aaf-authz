@@ -40,23 +40,23 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({ Log4JLogTarget.class, Logger.class })
 public class JU_Log4JLogTargetTest {
 
-	@Mock
-	Logger log;
+    @Mock
+    Logger log;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		PowerMockito.mockStatic(Logger.class);
-		when(Logger.getLogger("Info")).thenReturn(log);
-		when(log.isEnabledFor(Level.DEBUG)).thenReturn(false);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        PowerMockito.mockStatic(Logger.class);
+        when(Logger.getLogger("Info")).thenReturn(log);
+        when(log.isEnabledFor(Level.DEBUG)).thenReturn(false);
+    }
 
-	@Test
-	public void test() throws APIException {
-		Log4JLogTarget target = new Log4JLogTarget(null, Level.INFO);
-		Log4JLogTarget target1 = new Log4JLogTarget("Info", Level.DEBUG);
+    @Test
+    public void test() throws APIException {
+        Log4JLogTarget target = new Log4JLogTarget(null, Level.INFO);
+        Log4JLogTarget target1 = new Log4JLogTarget("Info", Level.DEBUG);
 
-		assertFalse(target1.isLoggable());
+        assertFalse(target1.isLoggable());
 
-	}
+    }
 }

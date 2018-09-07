@@ -22,5 +22,5 @@
 package org.onap.aaf.auth.actions;
 
 public interface Key<HELPER> {
-	public String key(HELPER H);
+    public String key(HELPER H);
 }

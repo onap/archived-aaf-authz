@@ -26,35 +26,35 @@ import org.onap.aaf.cadi.CadiException;
 
 public abstract class TaggedPrincipal implements Principal {
 
-	public TaggedPrincipal() {
-		tagLookup = null;
-	}
+    public TaggedPrincipal() {
+        tagLookup = null;
+    }
 
-	public TaggedPrincipal(final TagLookup tl) {
-		tagLookup = tl;
-	}
+    public TaggedPrincipal(final TagLookup tl) {
+        tagLookup = tl;
+    }
 
-	public abstract String tag();  // String representing what kind of Authentication occurred.
+    public abstract String tag();  // String representing what kind of Authentication occurred.
 
-	public interface TagLookup {
-		public String lookup() throws CadiException;
-	}
-	
-	private TagLookup tagLookup;
-	
-	public void setTagLookup(TagLookup tl) {
-		tagLookup = tl;
-	}
+    public interface TagLookup {
+        public String lookup() throws CadiException;
+    }
+    
+    private TagLookup tagLookup;
+    
+    public void setTagLookup(TagLookup tl) {
+        tagLookup = tl;
+    }
 
-	public String personalName() {
-		if(tagLookup == null) {
-			return getName();
-		}
-		try {
-			return tagLookup.lookup();
-		} catch (CadiException e) {
-			return getName();
-		}
-	}
+    public String personalName() {
+        if(tagLookup == null) {
+            return getName();
+        }
+        try {
+            return tagLookup.lookup();
+        } catch (CadiException e) {
+            return getName();
+        }
+    }
 
 }

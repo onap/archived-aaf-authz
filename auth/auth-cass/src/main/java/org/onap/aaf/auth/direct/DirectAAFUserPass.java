@@ -42,42 +42,42 @@ import org.onap.aaf.cadi.CredVal;
  *
  */
 public class DirectAAFUserPass implements CredVal {
-	private final AuthzEnv env;
-	private final Question question;
-	
-	public DirectAAFUserPass(AuthzEnv env, Question question) {
-		this.env = env;
-		this.question = question;
-	}
+    private final AuthzEnv env;
+    private final Question question;
+    
+    public DirectAAFUserPass(AuthzEnv env, Question question) {
+        this.env = env;
+        this.question = question;
+    }
 
-	@Override
-	public boolean validate(String user, Type type, byte[] pass, Object state) {
-			try {
-				AuthzTrans trans;
-				if(state !=null) {
-					if(state instanceof AuthzTrans) {
-						trans = (AuthzTrans)state;
-					} else {
-						trans = env.newTransNoAvg();
-						if(state instanceof HttpServletRequest) {
-							trans.set((HttpServletRequest)state);
-						}
-					}
-				} else {
-					trans = env.newTransNoAvg();
-				}
-				Result<Date> result = question.doesUserCredMatch(trans, user, pass);
-				trans.logAuditTrail(env.info());
-				switch(result.status) {
-					case OK:
-						return true;
-					default:
-						String ip = trans.ip()==null?"":(", ip="+trans.ip());
-						env.warn().log(user, "failed password validation" + ip + ':',result.errorString());
-				}
-			} catch (DAOException e) {
-				env.error().log(e,"Cannot validate user/pass from cassandra");
-			}
-		return false;
-	}
+    @Override
+    public boolean validate(String user, Type type, byte[] pass, Object state) {
+            try {
+                AuthzTrans trans;
+                if(state !=null) {
+                    if(state instanceof AuthzTrans) {
+                        trans = (AuthzTrans)state;
+                    } else {
+                        trans = env.newTransNoAvg();
+                        if(state instanceof HttpServletRequest) {
+                            trans.set((HttpServletRequest)state);
+                        }
+                    }
+                } else {
+                    trans = env.newTransNoAvg();
+                }
+                Result<Date> result = question.doesUserCredMatch(trans, user, pass);
+                trans.logAuditTrail(env.info());
+                switch(result.status) {
+                    case OK:
+                        return true;
+                    default:
+                        String ip = trans.ip()==null?"":(", ip="+trans.ip());
+                        env.warn().log(user, "failed password validation" + ip + ':',result.errorString());
+                }
+            } catch (DAOException e) {
+                env.error().log(e,"Cannot validate user/pass from cassandra");
+            }
+        return false;
+    }
 }

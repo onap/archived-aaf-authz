@@ -22,39 +22,39 @@
 package org.onap.aaf.cadi.client;
 
 public class Result<T> {
-	public final int code;
-	public final T value;
-	public final String error;
+    public final int code;
+    public final T value;
+    public final String error;
 
-	private Result(int code, T value, String error) {
-		this.code = code;
-		this.value = value;
-		this.error = error;
-	}
+    private Result(int code, T value, String error) {
+        this.code = code;
+        this.value = value;
+        this.error = error;
+    }
 
-	public static<T> Result<T> ok(int code,T t) {
-		return new Result<T>(code,t,null);
-	}
-	
-	public static<T> Result<T> err(int code,String body) {
-		return new Result<T>(code,null,body);
-	}
+    public static<T> Result<T> ok(int code,T t) {
+        return new Result<T>(code,t,null);
+    }
+    
+    public static<T> Result<T> err(int code,String body) {
+        return new Result<T>(code,null,body);
+    }
 
-	public static<T> Result<T> err(Result<?> r) {
-		return new Result<T>(r.code,null,r.error);
-	}
+    public static<T> Result<T> err(Result<?> r) {
+        return new Result<T>(r.code,null,r.error);
+    }
 
-	public boolean isOK() {
-		return error==null;
-	}
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder("Code: ");
-		sb.append(code);
-		if(error!=null) {
-			sb.append(" = ");
-			sb.append(error);
-		}
-		return sb.toString();
-	}
+    public boolean isOK() {
+        return error==null;
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Code: ");
+        sb.append(code);
+        if(error!=null) {
+            sb.append(" = ");
+            sb.append(error);
+        }
+        return sb.toString();
+    }
 }

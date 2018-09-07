@@ -48,31 +48,31 @@ import org.onap.aaf.cadi.taf.cert.X509Taf;
  *
  */
 public class DirectCertIdentity implements CertIdentity {
-	private static CachedCertDAO certDAO;
+    private static CachedCertDAO certDAO;
 
-	@Override
-	public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert,	byte[] _certBytes) throws CertificateException {
-	    	byte[] certBytes = _certBytes;
-		if(cert==null && certBytes==null) {
-		    return null;
-		}
-		if(certBytes==null) {
-		    certBytes = cert.getEncoded();
-		}
-		byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
+    @Override
+    public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert,    byte[] _certBytes) throws CertificateException {
+            byte[] certBytes = _certBytes;
+        if(cert==null && certBytes==null) {
+            return null;
+        }
+        if(certBytes==null) {
+            certBytes = cert.getEncoded();
+        }
+        byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
 
-		AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
-		
-		Result<List<Data>> cresp = certDAO.read(trans, ByteBuffer.wrap(fingerprint));
-		if(cresp.isOKhasData()) {
-			Data cdata = cresp.value.get(0);
-			return new X509Principal(cdata.id,cert,certBytes,null);
-		}
-		return null;
-	}
+        AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
+        
+        Result<List<Data>> cresp = certDAO.read(trans, ByteBuffer.wrap(fingerprint));
+        if(cresp.isOKhasData()) {
+            Data cdata = cresp.value.get(0);
+            return new X509Principal(cdata.id,cert,certBytes,null);
+        }
+        return null;
+    }
 
-	public static void set(CachedCertDAO ccd) {
-		certDAO = ccd;
-	}
+    public static void set(CachedCertDAO ccd) {
+        certDAO = ccd;
+    }
 
 }

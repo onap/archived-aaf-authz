@@ -33,34 +33,34 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class RoleCreate extends ActionDAO<Role,Data,String> {
-	public RoleCreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public RoleCreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public RoleCreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public RoleCreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Data> exec(AuthzTrans trans, Role r,String text) {
-		RoleDAO.Data rdd = new RoleDAO.Data();
-		rdd.ns = r.ns;
-		rdd.name = r.name;
-		rdd.description = r.description;
-		rdd.perms = r.perms;
-		
-		if(dryRun) {
-			trans.info().log("Would Create Role:",text,r.fullName());
-			return Result.ok(rdd);
-		} else {
-			Result<Data> rv = q.roleDAO.create(trans, rdd); // need to read for undelete
-			if(rv.isOK()) {
-				trans.info().log("Created Role:",text,r.fullName());
-			} else {
-				trans.error().log("Error Creating Role -",rv.details,":",r.fullName());
-			}
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Data> exec(AuthzTrans trans, Role r,String text) {
+        RoleDAO.Data rdd = new RoleDAO.Data();
+        rdd.ns = r.ns;
+        rdd.name = r.name;
+        rdd.description = r.description;
+        rdd.perms = r.perms;
+        
+        if(dryRun) {
+            trans.info().log("Would Create Role:",text,r.fullName());
+            return Result.ok(rdd);
+        } else {
+            Result<Data> rv = q.roleDAO.create(trans, rdd); // need to read for undelete
+            if(rv.isOK()) {
+                trans.info().log("Created Role:",text,r.fullName());
+            } else {
+                trans.error().log("Error Creating Role -",rv.details,":",r.fullName());
+            }
+            return rv;
+        }
+    }
+    
 }

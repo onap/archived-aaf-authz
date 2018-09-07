@@ -30,27 +30,27 @@ import org.onap.aaf.cadi.principal.OAuth2FormPrincipal;
 
 public class JU_OAuth2FormPrincipal {
 
-	private String username = "user";
-	private String id = "id";
+    private String username = "user";
+    private String id = "id";
 
-	@Test
-	public void accessorsTest() {
-		OAuth2FormPrincipal oauth = new OAuth2FormPrincipal(id, username);
-		assertThat(oauth.getName(), is(username));
-		assertThat(oauth.client_id(), is(id));
-		assertThat(oauth.tag(), is("OAuth"));
-	}
+    @Test
+    public void accessorsTest() {
+        OAuth2FormPrincipal oauth = new OAuth2FormPrincipal(id, username);
+        assertThat(oauth.getName(), is(username));
+        assertThat(oauth.client_id(), is(id));
+        assertThat(oauth.tag(), is("OAuth"));
+    }
 
-	@Test
-	public void personalNameTest() {
-		OAuth2FormPrincipal oauth = new OAuth2FormPrincipal(id, username);
-		assertThat(oauth.personalName(), is(username + "|" + id));
+    @Test
+    public void personalNameTest() {
+        OAuth2FormPrincipal oauth = new OAuth2FormPrincipal(id, username);
+        assertThat(oauth.personalName(), is(username + "|" + id));
 
-		oauth = new OAuth2FormPrincipal(id, null);
-		assertThat(oauth.personalName(), is(id));
+        oauth = new OAuth2FormPrincipal(id, null);
+        assertThat(oauth.personalName(), is(id));
 
-		oauth = new OAuth2FormPrincipal(id, id);
-		assertThat(oauth.personalName(), is(id));
-	}
+        oauth = new OAuth2FormPrincipal(id, id);
+        assertThat(oauth.personalName(), is(id));
+    }
 
 }

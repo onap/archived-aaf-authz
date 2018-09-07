@@ -22,25 +22,25 @@
 package org.onap.aaf.cadi;
 
 public class LocatorException extends Exception {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4267929804321134469L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4267929804321134469L;
 
-	public LocatorException(String arg0) {
-		super(arg0);
-	}
+    public LocatorException(String arg0) {
+        super(arg0);
+    }
 
-	public LocatorException(Throwable arg0) {
-		super(arg0);
-	}
+    public LocatorException(Throwable arg0) {
+        super(arg0);
+    }
 
-	public LocatorException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    public LocatorException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
-	public LocatorException(CharSequence cs) {
-		super(cs.toString());
-	}
+    public LocatorException(CharSequence cs) {
+        super(cs.toString());
+    }
 
 }

@@ -40,37 +40,37 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListActivity {
-	
-	private static ListActivity lsActivity;
-	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		User usr = new User(cli);
-		List parent = new List(usr);
-		lsActivity = new ListActivity(parent);
-		
-	}
-//	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsActivity._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			
-//			e.printStackTrace();
-//		}
-//	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		lsActivity.detailedHelp(0, sb);
-	}
+    
+    private static ListActivity lsActivity;
+    
+    @BeforeClass
+    public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        AAFcli cli = JU_AAFCli.getAAfCli();
+        User usr = new User(cli);
+        List parent = new List(usr);
+        lsActivity = new ListActivity(parent);
+        
+    }
+//    
+//    @Test
+//    public void exec() {
+//        try {
+//            assertEquals(lsActivity._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
+//        } catch (CadiException e) {
+//            
+//            e.printStackTrace();
+//        } catch (APIException e) {
+//            
+//            e.printStackTrace();
+//        } catch (LocatorException e) {
+//            
+//            e.printStackTrace();
+//        }
+//    }
+    
+    @Test
+    public void testDetailedHelp() {
+        StringBuilder sb = new StringBuilder();
+        lsActivity.detailedHelp(0, sb);
+    }
 }

@@ -37,105 +37,105 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class PermModify extends ActionDAO<Perm,PermDAO.Data,PermModify.Modify> {
-	public PermModify(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public PermModify(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public PermModify(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public PermModify(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<PermDAO.Data> exec(AuthzTrans trans, final Perm p, final Modify modify) {
-		Result<List<PermDAO.Data>> rr = q.permDAO.read(trans, p.ns,p.type,p.instance,p.action);
-		if(dryRun) {
-			if(rr.isOKhasData()) {
-				return Result.ok(rr.value.get(0));
-			} else {
-				return Result.err(Result.ERR_NotFound, "Data not Found " + p.toString());
-			}
-		} else {
-			Result<PermDAO.Data> rv = null;
-			if(rr.isOKhasData()) {
-				for(final Data d : rr.value) {
-					modify.change(d);
-					if(d.ns.equals(p.ns) && d.type.equals(p.type) && d.instance.equals(p.instance) && d.action.equals(p.action)) {
-						// update for fields
-						// In either case, adjust Permissions
-						for(String r : d.roles) {
-							if(!p.roles.contains(r)) {
-								q.permDAO.dao().addRole(trans, d, r);
-							}
-						}
-						for(String r : p.roles) {
-							if(!d.roles.contains(r)) {
-								q.permDAO.dao().delRole(trans, d, r);
-							}
-						}
-						rv = Result.ok(d);
-					} else {
-						for(String r : d.roles) {
-							Role role = Role.keys.get(r);
-							if(role.perms.contains(p.encode())) {
-								modify.roleModify().exec(trans, role, new RoleModify.Modify() {
-									@Override
-									public PermModify permModify() {
-										return PermModify.this;
-									}
-									
-									@Override
-									public void change(RoleDAO.Data rdd) {
-										rdd.perms.remove(p.encode());
-										rdd.perms.add(d.encode());
-									}
-								});
-							}
-						}
-		
-						rv = q.permDAO.create(trans, d);
-						if(rv.isOK()) {
-							PermDAO.Data pdd = new PermDAO.Data();
-							pdd.ns = p.ns;
-							pdd.type = p.type;
-							pdd.instance = p.instance;
-							pdd.action = p.action;
-							q.permDAO.delete(trans, pdd, false);
-							trans.info().printf("Updated %s|%s|%s|%s to %s|%s|%s|%s\n", 
-								p.ns, p.type, p.instance, p.action, 
-								d.ns, d.type, d.instance, d.action);
-						} else {
-							trans.info().log(rv.errorString());
-						}
-					}
-					
-				}
-			} else {
-				rv = Result.err(rr);
-			}
-			if(rv==null) {
-				rv = Result.err(Status.ERR_General,"Never get to this code");
-			}
-	
-			return rv;
-		}
-	}
-	
-	public static interface Modify {
-		void change(PermDAO.Data ur);
-		RoleModify roleModify();
-	}
+    @Override
+    public Result<PermDAO.Data> exec(AuthzTrans trans, final Perm p, final Modify modify) {
+        Result<List<PermDAO.Data>> rr = q.permDAO.read(trans, p.ns,p.type,p.instance,p.action);
+        if(dryRun) {
+            if(rr.isOKhasData()) {
+                return Result.ok(rr.value.get(0));
+            } else {
+                return Result.err(Result.ERR_NotFound, "Data not Found " + p.toString());
+            }
+        } else {
+            Result<PermDAO.Data> rv = null;
+            if(rr.isOKhasData()) {
+                for(final Data d : rr.value) {
+                    modify.change(d);
+                    if(d.ns.equals(p.ns) && d.type.equals(p.type) && d.instance.equals(p.instance) && d.action.equals(p.action)) {
+                        // update for fields
+                        // In either case, adjust Permissions
+                        for(String r : d.roles) {
+                            if(!p.roles.contains(r)) {
+                                q.permDAO.dao().addRole(trans, d, r);
+                            }
+                        }
+                        for(String r : p.roles) {
+                            if(!d.roles.contains(r)) {
+                                q.permDAO.dao().delRole(trans, d, r);
+                            }
+                        }
+                        rv = Result.ok(d);
+                    } else {
+                        for(String r : d.roles) {
+                            Role role = Role.keys.get(r);
+                            if(role.perms.contains(p.encode())) {
+                                modify.roleModify().exec(trans, role, new RoleModify.Modify() {
+                                    @Override
+                                    public PermModify permModify() {
+                                        return PermModify.this;
+                                    }
+                                    
+                                    @Override
+                                    public void change(RoleDAO.Data rdd) {
+                                        rdd.perms.remove(p.encode());
+                                        rdd.perms.add(d.encode());
+                                    }
+                                });
+                            }
+                        }
+        
+                        rv = q.permDAO.create(trans, d);
+                        if(rv.isOK()) {
+                            PermDAO.Data pdd = new PermDAO.Data();
+                            pdd.ns = p.ns;
+                            pdd.type = p.type;
+                            pdd.instance = p.instance;
+                            pdd.action = p.action;
+                            q.permDAO.delete(trans, pdd, false);
+                            trans.info().printf("Updated %s|%s|%s|%s to %s|%s|%s|%s\n", 
+                                p.ns, p.type, p.instance, p.action, 
+                                d.ns, d.type, d.instance, d.action);
+                        } else {
+                            trans.info().log(rv.errorString());
+                        }
+                    }
+                    
+                }
+            } else {
+                rv = Result.err(rr);
+            }
+            if(rv==null) {
+                rv = Result.err(Status.ERR_General,"Never get to this code");
+            }
+    
+            return rv;
+        }
+    }
+    
+    public static interface Modify {
+        void change(PermDAO.Data ur);
+        RoleModify roleModify();
+    }
 
-	public Result<Void> delete(AuthzTrans trans, Perm p) {
-		if(dryRun) {
-			return Result.ok();
-		} else {
-			PermDAO.Data data = new PermDAO.Data();
-			data.ns=p.ns;
-			data.type = p.type;
-			data.instance = p.instance;
-			data.action = p.action;
-			return q.permDAO.delete(trans,data,false);
-		}
-	}
-	
+    public Result<Void> delete(AuthzTrans trans, Perm p) {
+        if(dryRun) {
+            return Result.ok();
+        } else {
+            PermDAO.Data data = new PermDAO.Data();
+            data.ns=p.ns;
+            data.type = p.type;
+            data.instance = p.instance;
+            data.action = p.action;
+            return q.permDAO.delete(trans,data,false);
+        }
+    }
+    
 }

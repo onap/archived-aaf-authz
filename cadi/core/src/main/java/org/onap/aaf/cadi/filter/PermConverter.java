@@ -28,5 +28,5 @@ package org.onap.aaf.cadi.filter;
  *
  */
 public interface PermConverter {
-	public String convert(String minimal);
+    public String convert(String minimal);
 }

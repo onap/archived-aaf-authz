@@ -30,11 +30,11 @@ import org.onap.aaf.cadi.principal.StringTagLookup;
 
 public class JU_StringTagLookup {
 
-	@Test
-	public void accessorsTest() throws Exception {
-		String tag = "tag";
-		StringTagLookup stl = new StringTagLookup(tag);
-		assertThat(stl.lookup(), is(tag));
-	}
+    @Test
+    public void accessorsTest() throws Exception {
+        String tag = "tag";
+        StringTagLookup stl = new StringTagLookup(tag);
+        assertThat(stl.lookup(), is(tag));
+    }
 
 }

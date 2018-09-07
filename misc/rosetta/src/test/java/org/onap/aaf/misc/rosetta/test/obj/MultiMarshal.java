@@ -30,12 +30,12 @@ import types.xsd.Multi;
 import types.xsd.Multi.Single;
 
 public class MultiMarshal extends ObjMarshal<Multi> {
-	public MultiMarshal() {
-		add(new ObjArray<Multi,Single>("single",new SingleMarshal()) {
-			@Override
-			protected List<Single> data(Multi t) {
-				return t.getSingle();
-			}
-		});
-	}
+    public MultiMarshal() {
+        add(new ObjArray<Multi,Single>("single",new SingleMarshal()) {
+            @Override
+            protected List<Single> data(Multi t) {
+                return t.getSingle();
+            }
+        });
+    }
 }

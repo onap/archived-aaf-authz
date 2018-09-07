@@ -22,40 +22,40 @@
 package org.onap.aaf.cadi.principal;
 
 public class OAuth2FormPrincipal extends TaggedPrincipal {
-	private final String username;
-	private final String client_id;
-	
-	/*
-	 * Note: client_id and username might be the same, if only authenticating the Client_ID
-	 */
-	public OAuth2FormPrincipal(final String client_id, final String username) {
-		this.username = username;
-		this.client_id = client_id; 
-	}
-	
-	@Override
-	public String getName() {
-		return username;
-	}
-	
-	public String client_id() {
-		return client_id;
-	}
+    private final String username;
+    private final String client_id;
+    
+    /*
+     * Note: client_id and username might be the same, if only authenticating the Client_ID
+     */
+    public OAuth2FormPrincipal(final String client_id, final String username) {
+        this.username = username;
+        this.client_id = client_id; 
+    }
+    
+    @Override
+    public String getName() {
+        return username;
+    }
+    
+    public String client_id() {
+        return client_id;
+    }
 
-	@Override
-	public String tag() {
-		return "OAuth";
-	}
+    @Override
+    public String tag() {
+        return "OAuth";
+    }
 
-	@Override
-	public String personalName() {
-		if(username!=null && username!=client_id) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(username);
-			sb.append('|');
-			sb.append(client_id);
-			return sb.toString();
-		}
-		return client_id;
-	}
+    @Override
+    public String personalName() {
+        if(username!=null && username!=client_id) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(username);
+            sb.append('|');
+            sb.append(client_id);
+            return sb.toString();
+        }
+        return client_id;
+    }
 }

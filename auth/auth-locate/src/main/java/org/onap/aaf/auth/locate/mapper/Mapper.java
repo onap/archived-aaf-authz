@@ -30,12 +30,12 @@ import locate.v1_0.MgmtEndpoint;
 
 public interface Mapper<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIG,ERROR>
 {
-	public enum API{IN_REQ,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIG,ERROR,VOID};
-	public Class<?> getClass(API api);
-	public<A> A newInstance(API api);
+    public enum API{IN_REQ,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIG,ERROR,VOID};
+    public Class<?> getClass(API api);
+    public<A> A newInstance(API api);
 
-	public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
-	public Result<ENDPOINTS> endpoints(Result<List<Data>> resultDB, String version, String other);
-	public Data locateData(MgmtEndpoint me);
+    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
+    public Result<ENDPOINTS> endpoints(Result<List<Data>> resultDB, String version, String other);
+    public Data locateData(MgmtEndpoint me);
 
 }

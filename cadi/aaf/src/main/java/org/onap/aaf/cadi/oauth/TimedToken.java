@@ -42,91 +42,91 @@ import aafoauth.v2_0.Token;
  */
 // Package on purpose
 public class TimedToken extends Token implements Persistable<Token> {
-	private Persisting<Token> cacheable; // no double inheritance... 
+    private Persisting<Token> cacheable; // no double inheritance... 
 
-//	public TimedToken(Token t, byte[] hash) {
-//		this(t,(System.currentTimeMillis()/1000)+t.getExpiresIn(),hash,null);
-//	}
+//    public TimedToken(Token t, byte[] hash) {
+//        this(t,(System.currentTimeMillis()/1000)+t.getExpiresIn(),hash,null);
+//    }
 //
-	public TimedToken(Persist<Token,?> p, Token t, byte[] hash, Path path){
-		this(p,t,t.getExpiresIn()+(System.currentTimeMillis()/1000),hash, path);
-	}
-	
-	public TimedToken(Persist<Token,?> p, Token t, long expires_secsFrom1970, byte[] hash, Path path) {
-		cacheable = new Persisting<Token>(p, t,expires_secsFrom1970, hash, path);
-		accessToken=t.getAccessToken();
-		expiresIn=t.getExpiresIn();
-		refreshToken=t.getRefreshToken();
-		scope = t.getScope();
-		state = t.getState();
-		tokenType = t.getTokenType();
-	}
+    public TimedToken(Persist<Token,?> p, Token t, byte[] hash, Path path){
+        this(p,t,t.getExpiresIn()+(System.currentTimeMillis()/1000),hash, path);
+    }
+    
+    public TimedToken(Persist<Token,?> p, Token t, long expires_secsFrom1970, byte[] hash, Path path) {
+        cacheable = new Persisting<Token>(p, t,expires_secsFrom1970, hash, path);
+        accessToken=t.getAccessToken();
+        expiresIn=t.getExpiresIn();
+        refreshToken=t.getRefreshToken();
+        scope = t.getScope();
+        state = t.getState();
+        tokenType = t.getTokenType();
+    }
 
 
-	@Override
-	public Token get() {
-		return cacheable.get();
-	}
+    @Override
+    public Token get() {
+        return cacheable.get();
+    }
 
-	@Override
-	public boolean checkSyncTime() {
-		return cacheable.checkSyncTime();
-	}
+    @Override
+    public boolean checkSyncTime() {
+        return cacheable.checkSyncTime();
+    }
 
-	@Override
-	public boolean checkReloadable() {
-		return cacheable.checkReloadable();
-	}
+    @Override
+    public boolean checkReloadable() {
+        return cacheable.checkReloadable();
+    }
 
-	@Override
-	public boolean hasBeenTouched() {
-		return cacheable.hasBeenTouched();
-	}
+    @Override
+    public boolean hasBeenTouched() {
+        return cacheable.hasBeenTouched();
+    }
 
-	@Override
-	public long expires() {
-		return cacheable.expires();
-	}
+    @Override
+    public long expires() {
+        return cacheable.expires();
+    }
 
-	@Override
-	public boolean expired() {
-		return cacheable.expired();
-	}
+    @Override
+    public boolean expired() {
+        return cacheable.expired();
+    }
 
-	@Override
-	public boolean match(byte[] hashIn) {
-		return cacheable.match(hashIn);
-	}
+    @Override
+    public boolean match(byte[] hashIn) {
+        return cacheable.match(hashIn);
+    }
 
-	@Override
-	public byte[] getHash() {
-		return cacheable.getHash();
-	}
+    @Override
+    public byte[] getHash() {
+        return cacheable.getHash();
+    }
 
-	@Override
-	public void inc() {
-		cacheable.inc();
-	}
+    @Override
+    public void inc() {
+        cacheable.inc();
+    }
 
-	@Override
-	public int count() {
-		return cacheable.count();
-	}
+    @Override
+    public int count() {
+        return cacheable.count();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.oauth.Persistable#clearCount()
-	 */
-	@Override
-	public void clearCount() {
-		cacheable.clearCount();
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.oauth.Persistable#clearCount()
+     */
+    @Override
+    public void clearCount() {
+        cacheable.clearCount();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.persist.Persistable#path()
-	 */
-	@Override
-	public Path path() {
-		return cacheable.path();
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.persist.Persistable#path()
+     */
+    @Override
+    public Path path() {
+        return cacheable.path();
+    }
 
 }

@@ -47,88 +47,88 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 
 public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> extends RServlet<TRANS> {
-	public final Access access;
-	public final ENV env;
-	private AAFConHttp aafCon;
+    public final Access access;
+    public final ENV env;
+    private AAFConHttp aafCon;
 
-	public final String app_name;
-	public final String app_version;
-	public final String app_interface_version;
-	public final String ROOT_NS;
+    public final String app_name;
+    public final String app_version;
+    public final String app_interface_version;
+    public final String ROOT_NS;
 
     public AbsService(final Access access, final ENV env) throws CadiException {
-    		Define.set(access);
-    		ROOT_NS = Define.ROOT_NS();
-		this.access = access;
-		this.env = env;
+            Define.set(access);
+            ROOT_NS = Define.ROOT_NS();
+        this.access = access;
+        this.env = env;
 
-		String component = access.getProperty(Config.AAF_COMPONENT, null);
-		final String[] locator_deploy;
-		
-		if(component == null) {
-			locator_deploy = null;
-		} else {
-			locator_deploy = Split.splitTrim(':', component);
-		}
-			
-		if(component == null || locator_deploy==null || locator_deploy.length<2) {
-			throw new CadiException("AAF Component must include the " + Config.AAF_COMPONENT + " property, <fully qualified service name>:<full deployed version (i.e. 2.1.3.13)");
-		}
-		final String[] version = Split.splitTrim('.', locator_deploy[1]);
-		if(version==null || version.length<2) {
-			throw new CadiException("AAF Component Version must have at least Major.Minor version");
-		}
-    		app_name = Define.varReplace(locator_deploy[0]);
-    		app_version = locator_deploy[1];
-    		app_interface_version = version[0]+'.'+version[1];
-    		
-		// Print Cipher Suites Available
-		if(access.willLog(Level.DEBUG)) {
-			SSLContext context;
-			try {
-				context = SSLContext.getDefault();
-			} catch (NoSuchAlgorithmException e) {
-				throw new CadiException("SSLContext issue",e);
-			}
-			SSLSocketFactory sf = context.getSocketFactory();
-			StringBuilder sb = new StringBuilder("Available Cipher Suites: ");
-			boolean first = true;
-			int count=0;
-			for( String cs : sf.getSupportedCipherSuites()) {
-				if(first)first = false;
-				else sb.append(',');
-				sb.append(cs);
-				if(++count%4==0){sb.append('\n');}
-			}
-			access.log(Level.DEBUG,sb);
-		}
+        String component = access.getProperty(Config.AAF_COMPONENT, null);
+        final String[] locator_deploy;
+        
+        if(component == null) {
+            locator_deploy = null;
+        } else {
+            locator_deploy = Split.splitTrim(':', component);
+        }
+            
+        if(component == null || locator_deploy==null || locator_deploy.length<2) {
+            throw new CadiException("AAF Component must include the " + Config.AAF_COMPONENT + " property, <fully qualified service name>:<full deployed version (i.e. 2.1.3.13)");
+        }
+        final String[] version = Split.splitTrim('.', locator_deploy[1]);
+        if(version==null || version.length<2) {
+            throw new CadiException("AAF Component Version must have at least Major.Minor version");
+        }
+            app_name = Define.varReplace(locator_deploy[0]);
+            app_version = locator_deploy[1];
+            app_interface_version = version[0]+'.'+version[1];
+            
+        // Print Cipher Suites Available
+        if(access.willLog(Level.DEBUG)) {
+            SSLContext context;
+            try {
+                context = SSLContext.getDefault();
+            } catch (NoSuchAlgorithmException e) {
+                throw new CadiException("SSLContext issue",e);
+            }
+            SSLSocketFactory sf = context.getSocketFactory();
+            StringBuilder sb = new StringBuilder("Available Cipher Suites: ");
+            boolean first = true;
+            int count=0;
+            for( String cs : sf.getSupportedCipherSuites()) {
+                if(first)first = false;
+                else sb.append(',');
+                sb.append(cs);
+                if(++count%4==0){sb.append('\n');}
+            }
+            access.log(Level.DEBUG,sb);
+        }
     }
 
-	protected abstract Filter[] _filters(Object ... additionalTafLurs) throws CadiException,  LocatorException;
-	
-	/**
-	 * Overload this method to add new TAF or LURs
-	 * 
-	 * @return
-	 * @throws CadiException
-	 * @throws LocatorException
-	 */
-	public Filter[] filters() throws CadiException,  LocatorException {
-		return _filters();
-	}
+    protected abstract Filter[] _filters(Object ... additionalTafLurs) throws CadiException,  LocatorException;
+    
+    /**
+     * Overload this method to add new TAF or LURs
+     * 
+     * @return
+     * @throws CadiException
+     * @throws LocatorException
+     */
+    public Filter[] filters() throws CadiException,  LocatorException {
+        return _filters();
+    }
 
     public abstract Registrant<ENV>[] registrants(final int port) throws CadiException, LocatorException;
 
-	// Lazy Instantiation
+    // Lazy Instantiation
     public synchronized AAFConHttp aafCon() throws CadiException, LocatorException {
-	    	if(aafCon==null) {
-		    	if(access.getProperty(Config.AAF_URL,null)!=null) {
-		    		aafCon = _newAAFConHttp();
-		    	} else {
-		    		throw new CadiException("AAFCon cannot be constructed without " + Config.AAF_URL);
-		    	}
-	    	}
-	    	return aafCon;
+            if(aafCon==null) {
+                if(access.getProperty(Config.AAF_URL,null)!=null) {
+                    aafCon = _newAAFConHttp();
+                } else {
+                    throw new CadiException("AAFCon cannot be constructed without " + Config.AAF_URL);
+                }
+            }
+            return aafCon;
     }
     
     /**
@@ -136,52 +136,52 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
      * @return
      * @throws LocatorException 
      */
-		protected synchronized AAFConHttp _newAAFConHttp() throws CadiException, LocatorException {
-			if(aafCon==null) {
-				aafCon = new AAFConHttp(access);
-			}
-			return aafCon;
+        protected synchronized AAFConHttp _newAAFConHttp() throws CadiException, LocatorException {
+            if(aafCon==null) {
+                aafCon = new AAFConHttp(access);
+            }
+            return aafCon;
 
-		}
+        }
     
     // This is a method, so we can overload for AAFAPI
     public String aaf_url() {
-    		return access.getProperty(Config.AAF_URL, null);
+            return access.getProperty(Config.AAF_URL, null);
     }
     
-	public Rcli<?> client() throws CadiException {
-		return aafCon.client(Config.AAF_DEFAULT_VERSION);
-	}
+    public Rcli<?> client() throws CadiException {
+        return aafCon.client(Config.AAF_DEFAULT_VERSION);
+    }
 
-	public Rcli<?> clientAsUser(TaggedPrincipal p) throws CadiException {
-		return aafCon.client(Config.AAF_DEFAULT_VERSION).forUser(
-				new HTransferSS(p,app_name, aafCon.securityInfo()));
-	}
+    public Rcli<?> clientAsUser(TaggedPrincipal p) throws CadiException {
+        return aafCon.client(Config.AAF_DEFAULT_VERSION).forUser(
+                new HTransferSS(p,app_name, aafCon.securityInfo()));
+    }
 
-	public<RET> RET clientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
-			return aafCon.hman().best(new HTransferSS(p,app_name, aafCon.securityInfo()), retryable);
-	}
-	
-	protected static final String loadFromArgOrSystem(final Properties props, final String tag, final String args[], final String def) {
-		String tagEQ = tag + '=';
-		String value;
-		for(String arg : args) {
-			if(arg.startsWith(tagEQ)) {
-				props.put(tag, value=arg.substring(tagEQ.length()));
-				return value;
-			}
-		}
-		// check System.properties
-		value = System.getProperty(tag);
-		if(value!=null) { 
-			props.put(tag, value);
-			return value;
-		}
-		
-		if(def!=null) {
-			props.put(tag,def);
-		}
-		return def;
-	}
+    public<RET> RET clientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
+            return aafCon.hman().best(new HTransferSS(p,app_name, aafCon.securityInfo()), retryable);
+    }
+    
+    protected static final String loadFromArgOrSystem(final Properties props, final String tag, final String args[], final String def) {
+        String tagEQ = tag + '=';
+        String value;
+        for(String arg : args) {
+            if(arg.startsWith(tagEQ)) {
+                props.put(tag, value=arg.substring(tagEQ.length()));
+                return value;
+            }
+        }
+        // check System.properties
+        value = System.getProperty(tag);
+        if(value!=null) { 
+            props.put(tag, value);
+            return value;
+        }
+        
+        if(def!=null) {
+            props.put(tag,def);
+        }
+        return def;
+    }
 
 }

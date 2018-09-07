@@ -31,40 +31,40 @@ import org.onap.aaf.cadi.oauth.AAFToken;
 
 public class JU_AAFToken {
 
-	@Test
-	public void testMax() throws CadiException {
-		UUID uuid = new UUID(Long.MAX_VALUE,Long.MAX_VALUE);
-		String token = AAFToken.toToken(uuid);
-		UUID uuid2 = AAFToken.fromToken(token);
-		assertEquals(uuid, uuid2);
-	}
-	
-	@Test
-	public void testMin() throws CadiException {
-		UUID uuid = new UUID(Long.MIN_VALUE,Long.MIN_VALUE);
-		String token = AAFToken.toToken(uuid);
-		UUID uuid2 = AAFToken.fromToken(token);
-		assertEquals(uuid, uuid2);
-	}
+    @Test
+    public void testMax() throws CadiException {
+        UUID uuid = new UUID(Long.MAX_VALUE,Long.MAX_VALUE);
+        String token = AAFToken.toToken(uuid);
+        UUID uuid2 = AAFToken.fromToken(token);
+        assertEquals(uuid, uuid2);
+    }
+    
+    @Test
+    public void testMin() throws CadiException {
+        UUID uuid = new UUID(Long.MIN_VALUE,Long.MIN_VALUE);
+        String token = AAFToken.toToken(uuid);
+        UUID uuid2 = AAFToken.fromToken(token);
+        assertEquals(uuid, uuid2);
+    }
 
-	@Test
-	public void testRandom() throws CadiException {
-		for(int i=0;i<100;++i) {
-			UUID uuid = UUID.randomUUID();
-			String token = AAFToken.toToken(uuid);
-			UUID uuid2 = AAFToken.fromToken(token);
-			assertEquals(uuid, uuid2);
-		}
-	}
+    @Test
+    public void testRandom() throws CadiException {
+        for(int i=0;i<100;++i) {
+            UUID uuid = UUID.randomUUID();
+            String token = AAFToken.toToken(uuid);
+            UUID uuid2 = AAFToken.fromToken(token);
+            assertEquals(uuid, uuid2);
+        }
+    }
 
-	@Test
-	public void nullTest() {
-		// Invalid characters
-		assertNull(AAFToken.fromToken("~~invalid characters~~"));
-		
-		// Invalid CADI tokens
-		assertNull(AAFToken.fromToken("ABCDEF"));
-		assertNull(AAFToken.fromToken("12345678901234567890123456789012345678"));
-	}
+    @Test
+    public void nullTest() {
+        // Invalid characters
+        assertNull(AAFToken.fromToken("~~invalid characters~~"));
+        
+        // Invalid CADI tokens
+        assertNull(AAFToken.fromToken("ABCDEF"));
+        assertNull(AAFToken.fromToken("12345678901234567890123456789012345678"));
+    }
 
 }

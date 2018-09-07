@@ -24,12 +24,12 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.principal.TaggedPrincipal.TagLookup;
 
 public class StringTagLookup implements TagLookup {
-	private String tag;
-	public StringTagLookup(final String tag) {
-		this.tag = tag;
-	}
-	@Override
-	public String lookup() throws CadiException {
-		return tag;
-	}
+    private String tag;
+    public StringTagLookup(final String tag) {
+        this.tag = tag;
+    }
+    @Override
+    public String lookup() throws CadiException {
+        return tag;
+    }
 }

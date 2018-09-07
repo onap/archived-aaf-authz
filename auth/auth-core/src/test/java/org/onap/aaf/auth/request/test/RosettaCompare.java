@@ -29,38 +29,38 @@ import org.onap.aaf.misc.rosetta.env.RosettaData;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 public abstract class RosettaCompare<T> {
-	protected Class<T> cls;
-	private static int count = 0;
-	
-	public RosettaCompare(Class<T> cls) {
-		this.cls = cls;
-	}
-	
-	public void run(RosettaEnv env) throws APIException {
-		RosettaDF<T> nsrDF = env.newDataFactory(cls);
-		compare(nsrDF.newData().option(Data.PRETTY),newOne(),this);
-	}
-	
-	private void compare(RosettaData<T> rdt, T t, RosettaCompare<T> comp) throws APIException {
-		//System.out.println("########### Testing " + cls.getName() + " ##############");
-		String s = rdt.load(t).out(TYPE.JSON).asString();
-		//System.out.println(s);
-		T t2 = rdt.in(TYPE.JSON).load(s).asObject();
-		comp.compare(t, t2);
-		
-		//System.out.println();
-		
-		s = rdt.load(t).out(TYPE.XML).asString();
-		//System.out.println(s);
-		t2 = rdt.in(TYPE.XML).load(s).asObject();
-		comp.compare(t, t2);
-	}
-	
-	public synchronized static String instance() {
-		return "_"+ ++count;
-	}
-	
-	public abstract void compare(T t1, T t2);
-	public abstract T newOne();
-	
+    protected Class<T> cls;
+    private static int count = 0;
+    
+    public RosettaCompare(Class<T> cls) {
+        this.cls = cls;
+    }
+    
+    public void run(RosettaEnv env) throws APIException {
+        RosettaDF<T> nsrDF = env.newDataFactory(cls);
+        compare(nsrDF.newData().option(Data.PRETTY),newOne(),this);
+    }
+    
+    private void compare(RosettaData<T> rdt, T t, RosettaCompare<T> comp) throws APIException {
+        //System.out.println("########### Testing " + cls.getName() + " ##############");
+        String s = rdt.load(t).out(TYPE.JSON).asString();
+        //System.out.println(s);
+        T t2 = rdt.in(TYPE.JSON).load(s).asObject();
+        comp.compare(t, t2);
+        
+        //System.out.println();
+        
+        s = rdt.load(t).out(TYPE.XML).asString();
+        //System.out.println(s);
+        t2 = rdt.in(TYPE.XML).load(s).asObject();
+        comp.compare(t, t2);
+    }
+    
+    public synchronized static String instance() {
+        return "_"+ ++count;
+    }
+    
+    public abstract void compare(T t1, T t2);
+    public abstract T newOne();
+    
 }

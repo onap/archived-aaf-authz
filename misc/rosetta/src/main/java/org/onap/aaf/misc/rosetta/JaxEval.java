@@ -22,5 +22,5 @@
 package org.onap.aaf.misc.rosetta;
 
 public interface JaxEval{
-	public abstract JaxEval eval(Parsed<?> p) throws ParseException;
+    public abstract JaxEval eval(Parsed<?> p) throws ParseException;
 }

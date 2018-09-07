@@ -39,57 +39,57 @@ import org.onap.aaf.cadi.http.HSecurityInfoInit;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 
 public class JU_HBasicAuthSS {
-	
-	@Mock
-	BasicPrincipal bpMock;
-	
-	private SecurityInfoC<HttpURLConnection> si;
-	private PropAccess access;
-	
-	private final static String id = "id";
-	private final static String password = "password";
-	
-	@Before
-	public void setup() throws CadiException, IOException {
-		MockitoAnnotations.initMocks(this);
-		
-		when(bpMock.getName()).thenReturn(id);
-		when(bpMock.getCred()).thenReturn(password.getBytes());
-		
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(Config.AAF_APPID, id);
-		access.setProperty(Config.AAF_APPPASS, access.encrypt(password));
+    
+    @Mock
+    BasicPrincipal bpMock;
+    
+    private SecurityInfoC<HttpURLConnection> si;
+    private PropAccess access;
+    
+    private final static String id = "id";
+    private final static String password = "password";
+    
+    @Before
+    public void setup() throws CadiException, IOException {
+        MockitoAnnotations.initMocks(this);
+        
+        when(bpMock.getName()).thenReturn(id);
+        when(bpMock.getCred()).thenReturn(password.getBytes());
+        
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(Config.AAF_APPID, id);
+        access.setProperty(Config.AAF_APPPASS, access.encrypt(password));
 
-		si = SecurityInfoC.instance(access, HttpURLConnection.class);
-	}
+        si = SecurityInfoC.instance(access, HttpURLConnection.class);
+    }
 
-	@Test
-	public void test() throws IOException {
-		// All the constructors accomplish the same thing
-		@SuppressWarnings("unused")
-		HBasicAuthSS auth = new HBasicAuthSS(si);
-		
-		// TODO: While these test _should_ pass, and they _do_ pass on my local machine, they won't
-		//       pass when then onap jobbuilder runs them. Good luck!
-//		assertThat(auth.getID(), is(id));
+    @Test
+    public void test() throws IOException {
+        // All the constructors accomplish the same thing
+        @SuppressWarnings("unused")
+        HBasicAuthSS auth = new HBasicAuthSS(si);
+        
+        // TODO: While these test _should_ pass, and they _do_ pass on my local machine, they won't
+        //       pass when then onap jobbuilder runs them. Good luck!
+//        assertThat(auth.getID(), is(id));
 
-		auth = new HBasicAuthSS(si, false);
-//		assertThat(auth.getID(), is(id));
+        auth = new HBasicAuthSS(si, false);
+//        assertThat(auth.getID(), is(id));
 
-		auth = new HBasicAuthSS(si, id, password, false);
-//		assertThat(auth.getID(), is(id));
+        auth = new HBasicAuthSS(si, id, password, false);
+//        assertThat(auth.getID(), is(id));
 
-		auth = new HBasicAuthSS(si, id, password, true);
-//		assertThat(auth.getID(), is(id));
+        auth = new HBasicAuthSS(si, id, password, true);
+//        assertThat(auth.getID(), is(id));
 
-		auth = new HBasicAuthSS(bpMock, si);
-//		assertThat(auth.getID(), is(id));
-		
-		auth = new HBasicAuthSS(bpMock, si, false);
-//		assertThat(auth.getID(), is(id));
-		
-		auth = new HBasicAuthSS(bpMock, si, true);
-//		assertThat(auth.getID(), is(id));
-	}
+        auth = new HBasicAuthSS(bpMock, si);
+//        assertThat(auth.getID(), is(id));
+        
+        auth = new HBasicAuthSS(bpMock, si, false);
+//        assertThat(auth.getID(), is(id));
+        
+        auth = new HBasicAuthSS(bpMock, si, true);
+//        assertThat(auth.getID(), is(id));
+    }
 
 }

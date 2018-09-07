@@ -30,35 +30,35 @@ import org.onap.aaf.misc.env.util.Chrono;
 import aaf.v2_0.CredRequest;
 
 public class CredCompare extends RosettaCompare<CredRequest>  {
-	public CredCompare() {
-		super(CredRequest.class);
-	}
-	
-	public static CredRequest create() {
-		CredRequest rr = new CredRequest();
-		String in = instance();
-		rr.setId("m888"+ in + "@ns.att.com");
-		rr.setPassword("Bogus0"+in);
-		rr.setType(200);
-		GregorianCalendar gc = new GregorianCalendar();
-		rr.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		rr.setEnd(Chrono.timeStamp(gc));
-		return rr;
-	}
-	
-	@Override
-	public void compare(CredRequest t1, CredRequest t2) {
-		assertEquals(t1.getId(),t2.getId());
-		assertEquals(t1.getPassword(),t2.getPassword());
-		assertEquals(t1.getType(),t2.getType());
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public CredCompare() {
+        super(CredRequest.class);
+    }
+    
+    public static CredRequest create() {
+        CredRequest rr = new CredRequest();
+        String in = instance();
+        rr.setId("m888"+ in + "@ns.att.com");
+        rr.setPassword("Bogus0"+in);
+        rr.setType(200);
+        GregorianCalendar gc = new GregorianCalendar();
+        rr.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        rr.setEnd(Chrono.timeStamp(gc));
+        return rr;
+    }
+    
+    @Override
+    public void compare(CredRequest t1, CredRequest t2) {
+        assertEquals(t1.getId(),t2.getId());
+        assertEquals(t1.getPassword(),t2.getPassword());
+        assertEquals(t1.getType(),t2.getType());
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public CredRequest newOne() {
-		return create();
-	}
+    @Override
+    public CredRequest newOne() {
+        return create();
+    }
 }

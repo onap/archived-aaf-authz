@@ -46,113 +46,113 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class ExpiringP2 extends Batch {
-	private final URDelete urDelete;
-	private final CacheTouch cacheTouch;
-	private final AuthzTrans noAvg;
-	private final BufferedReader urDeleteF;
+    private final URDelete urDelete;
+    private final CacheTouch cacheTouch;
+    private final AuthzTrans noAvg;
+    private final BufferedReader urDeleteF;
 
-	public ExpiringP2(AuthzTrans trans) throws APIException, IOException, OrganizationException {
-		super(trans.env());
-	    trans.info().log("Starting Connection Process");
-	    
-		noAvg = env.newTransNoAvg();
-		noAvg.setUser(new BatchPrincipal("batch:ExpiringP2"));
+    public ExpiringP2(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+        super(trans.env());
+        trans.info().log("Starting Connection Process");
+        
+        noAvg = env.newTransNoAvg();
+        noAvg.setUser(new BatchPrincipal("batch:ExpiringP2"));
 
-	    TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
-	    try {
-	    		urDelete = new URDelete(trans, cluster,isDryRun());
-				TimeTaken tt2 = trans.start("Connect to Cluster", Env.REMOTE);
-				try {
-					session = urDelete.getSession(trans);
-				} finally {
-					tt2.done();
-				}
-			cacheTouch = new CacheTouch(trans,urDelete);
-			
-			File data_dir = new File(env.getProperty("aaf_data_dir"));
-			if(!data_dir.exists() || !data_dir.canWrite() || !data_dir.canRead()) {
-				throw new IOException("Cannot read/write to Data Directory "+ data_dir.getCanonicalPath() + ": EXITING!!!");
-			}
-			urDeleteF = new BufferedReader(new FileReader(new File(data_dir,"UserRoleDeletes.dat")));
-			
-		} finally {
-	    	tt0.done();
-	    }
-	}
+        TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
+        try {
+                urDelete = new URDelete(trans, cluster,isDryRun());
+                TimeTaken tt2 = trans.start("Connect to Cluster", Env.REMOTE);
+                try {
+                    session = urDelete.getSession(trans);
+                } finally {
+                    tt2.done();
+                }
+            cacheTouch = new CacheTouch(trans,urDelete);
+            
+            File data_dir = new File(env.getProperty("aaf_data_dir"));
+            if(!data_dir.exists() || !data_dir.canWrite() || !data_dir.canRead()) {
+                throw new IOException("Cannot read/write to Data Directory "+ data_dir.getCanonicalPath() + ": EXITING!!!");
+            }
+            urDeleteF = new BufferedReader(new FileReader(new File(data_dir,"UserRoleDeletes.dat")));
+            
+        } finally {
+            tt0.done();
+        }
+    }
 
-	@Override
-	protected void run(AuthzTrans trans) {
-		deleteURs(noAvg, urDeleteF, urDelete, cacheTouch);
-	}
-	
-	public static void deleteURs(AuthzTrans trans, BufferedReader urDeleteF, URDelete urDelete, CacheTouch cacheTouch) {
-		String line,prev="";
-		try {
-			UserRole ur;
-			Map<String,Count> tally = new HashMap<>();
-			int count=0;
-			try {
-				while((line=urDeleteF.readLine())!=null) {
-					if(line.startsWith("#")) {
-						Count cnt = tally.get(line);
-						if(cnt==null) {
-							tally.put(line, cnt=new Count());
-						}
-						cnt.inc();
-						prev = line;
-					} else {
-						String[] l = Split.splitTrim('|', line);
-						try {
-							// Note: following default order from "COPY TO"
-							ur = new UserRole(l[0],l[1],l[3],l[4],Chrono.iso8601Fmt.parse(l[2]));
-							urDelete.exec(trans, ur, prev);
-							++count;
-						} catch (ParseException e) {
-							trans.error().log(e);
-						}
-					}
-				}
-				
-				System.out.println("Tallies of UserRole Deletions");
-				for(Entry<String, Count> es : tally.entrySet()) {
-					System.out.printf("  %6d\t%20s\n", es.getValue().cnt,es.getKey());
-				}
-			} finally {
-				if(cacheTouch!=null && count>0) {
-	        			cacheTouch.exec(trans, "user_roles", "Removing UserRoles");
-				}
-			}
-		} catch (IOException e) {
-			trans.error().log(e);
-		}
-		
-	}
-	private static class Count {
-		private int cnt=0;
-		
-		public /*synchonized*/ void inc() {
-			++cnt;
-		}
-		
-		public String toString() {
-			return Integer.toString(cnt);
-		}
-	}
-	
-	@Override
-	protected void _close(AuthzTrans trans) {
+    @Override
+    protected void run(AuthzTrans trans) {
+        deleteURs(noAvg, urDeleteF, urDelete, cacheTouch);
+    }
+    
+    public static void deleteURs(AuthzTrans trans, BufferedReader urDeleteF, URDelete urDelete, CacheTouch cacheTouch) {
+        String line,prev="";
+        try {
+            UserRole ur;
+            Map<String,Count> tally = new HashMap<>();
+            int count=0;
+            try {
+                while((line=urDeleteF.readLine())!=null) {
+                    if(line.startsWith("#")) {
+                        Count cnt = tally.get(line);
+                        if(cnt==null) {
+                            tally.put(line, cnt=new Count());
+                        }
+                        cnt.inc();
+                        prev = line;
+                    } else {
+                        String[] l = Split.splitTrim('|', line);
+                        try {
+                            // Note: following default order from "COPY TO"
+                            ur = new UserRole(l[0],l[1],l[3],l[4],Chrono.iso8601Fmt.parse(l[2]));
+                            urDelete.exec(trans, ur, prev);
+                            ++count;
+                        } catch (ParseException e) {
+                            trans.error().log(e);
+                        }
+                    }
+                }
+                
+                System.out.println("Tallies of UserRole Deletions");
+                for(Entry<String, Count> es : tally.entrySet()) {
+                    System.out.printf("  %6d\t%20s\n", es.getValue().cnt,es.getKey());
+                }
+            } finally {
+                if(cacheTouch!=null && count>0) {
+                        cacheTouch.exec(trans, "user_roles", "Removing UserRoles");
+                }
+            }
+        } catch (IOException e) {
+            trans.error().log(e);
+        }
+        
+    }
+    private static class Count {
+        private int cnt=0;
+        
+        public /*synchonized*/ void inc() {
+            ++cnt;
+        }
+        
+        public String toString() {
+            return Integer.toString(cnt);
+        }
+    }
+    
+    @Override
+    protected void _close(AuthzTrans trans) {
         aspr.info("End " + this.getClass().getSimpleName() + " processing" );
         for(Action<?,?,?> action : new Action<?,?,?>[] {urDelete,cacheTouch}) {
-	        	if(action instanceof ActionDAO) {
-	        		((ActionDAO<?,?,?>)action).close(trans);
-	        	}
+                if(action instanceof ActionDAO) {
+                    ((ActionDAO<?,?,?>)action).close(trans);
+                }
         }
         session.close();
         try {
-			urDeleteF.close();
-		} catch (IOException e) {
-			trans.error().log(e);
-		}
-	}
+            urDeleteF.close();
+        } catch (IOException e) {
+            trans.error().log(e);
+        }
+    }
 
 }

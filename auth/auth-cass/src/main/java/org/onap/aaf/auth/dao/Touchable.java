@@ -22,5 +22,5 @@
 package org.onap.aaf.auth.dao;
 
 public interface Touchable {
-	 // Or make all DAOs accept list of CIDAOs...
+     // Or make all DAOs accept list of CIDAOs...
 }

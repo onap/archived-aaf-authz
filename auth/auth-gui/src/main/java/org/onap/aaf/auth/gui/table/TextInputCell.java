@@ -29,26 +29,26 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
  *
  */
 public class TextInputCell extends AbsCell {
-	private static final String[] NULL_ATTRS=new String[0];
-	private String[] attrs;
-	
-	public TextInputCell(String name, String textClass, String value, String ... attributes) {
-		attrs = new String[5 + attributes.length];
-		attrs[0]="type=text";
-		attrs[1]="name="+name;
-		attrs[2]="class="+textClass;
-		attrs[3]="value="+value;
-		attrs[4]="style=font-size:100%;";
-		System.arraycopy(attributes, 0, attrs, 5, attributes.length);
-	}
-	
-	@Override
-	public void write(HTMLGen hgen) {
-		hgen.tagOnly("input",attrs);
-	}
-	
-	@Override
-	public String[] attrs() {
-		return NULL_ATTRS;
-	}
+    private static final String[] NULL_ATTRS=new String[0];
+    private String[] attrs;
+    
+    public TextInputCell(String name, String textClass, String value, String ... attributes) {
+        attrs = new String[5 + attributes.length];
+        attrs[0]="type=text";
+        attrs[1]="name="+name;
+        attrs[2]="class="+textClass;
+        attrs[3]="value="+value;
+        attrs[4]="style=font-size:100%;";
+        System.arraycopy(attributes, 0, attrs, 5, attributes.length);
+    }
+    
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.tagOnly("input",attrs);
+    }
+    
+    @Override
+    public String[] attrs() {
+        return NULL_ATTRS;
+    }
 }

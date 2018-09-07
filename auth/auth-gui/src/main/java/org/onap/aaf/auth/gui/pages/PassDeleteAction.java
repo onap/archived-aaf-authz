@@ -43,46 +43,46 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 import aaf.v2_0.CredRequest;
 
 public class PassDeleteAction extends Page {
-	public static final String NAME = "PassDeleteAction";
-	public static final String HREF = "/gui/passdelete";
-	private static enum Params{id,date,ns,type};
-	
-	public PassDeleteAction(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env,NAME,HREF,Params.values(),
-			new BreadCrumbs(breadcrumbs),
-			new SlotCode<AuthzTrans>(true,gui.env,NAME,Params.values()) {
-				@Override
-				public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-					cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
-						@Override
-						public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-							final CredRequest cr = new CredRequest();
-							cr.setId(get(trans,Params.id, ""));
-							cr.setType(Integer.parseInt(get(trans,Params.type, "0")));
-							cr.setEntry(get(trans,Params.date,"1960-01-01"));
-							try {
-								String err = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<String>() {
-									@Override
-									public String code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-										Future<CredRequest> fcr = client.delete("/authn/cred", gui.getDF(CredRequest.class),cr);
-										if(!fcr.get(AAFcli.timeout())) {
-											return gui.aafCon.readableErrMsg(fcr);
-										}
-										return null;
-									}
-								});
-								if(err==null) {
-									hgen.p("Password " + cr.getId() + ", " + cr.getEntry() + " is Deleted");
-								} else {
-									hgen.p(err);
-								}
-							} catch (LocatorException | CadiException e) {
-								throw new APIException(e);
-							}
-						}
-					});
-				}
-			}
-		);
-	}
+    public static final String NAME = "PassDeleteAction";
+    public static final String HREF = "/gui/passdelete";
+    private static enum Params{id,date,ns,type};
+    
+    public PassDeleteAction(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env,NAME,HREF,Params.values(),
+            new BreadCrumbs(breadcrumbs),
+            new SlotCode<AuthzTrans>(true,gui.env,NAME,Params.values()) {
+                @Override
+                public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                    cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
+                        @Override
+                        public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                            final CredRequest cr = new CredRequest();
+                            cr.setId(get(trans,Params.id, ""));
+                            cr.setType(Integer.parseInt(get(trans,Params.type, "0")));
+                            cr.setEntry(get(trans,Params.date,"1960-01-01"));
+                            try {
+                                String err = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<String>() {
+                                    @Override
+                                    public String code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                                        Future<CredRequest> fcr = client.delete("/authn/cred", gui.getDF(CredRequest.class),cr);
+                                        if(!fcr.get(AAFcli.timeout())) {
+                                            return gui.aafCon.readableErrMsg(fcr);
+                                        }
+                                        return null;
+                                    }
+                                });
+                                if(err==null) {
+                                    hgen.p("Password " + cr.getId() + ", " + cr.getEntry() + " is Deleted");
+                                } else {
+                                    hgen.p(err);
+                                }
+                            } catch (LocatorException | CadiException e) {
+                                throw new APIException(e);
+                            }
+                        }
+                    });
+                }
+            }
+        );
+    }
 }

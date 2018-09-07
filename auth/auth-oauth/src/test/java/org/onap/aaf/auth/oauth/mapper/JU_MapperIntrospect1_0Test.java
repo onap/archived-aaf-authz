@@ -37,58 +37,58 @@ import org.onap.aaf.auth.layer.Result;
 import aafoauth.v2_0.Introspect;
 
 public class JU_MapperIntrospect1_0Test {
-	@Mock
-	private HttpServletRequest req;
+    @Mock
+    private HttpServletRequest req;
 
-	Data data;
+    Data data;
 
-	@Before
-	public void setup() {
-		initMocks(this);
-		data = new Data();
-	}
+    @Before
+    public void setup() {
+        initMocks(this);
+        data = new Data();
+    }
 
-	@Test
-	public void testIntrospect() {
-		data.type = 1;
+    @Test
+    public void testIntrospect() {
+        data.type = 1;
 
-		Result<Data> dataResult = Result.create(data, 0, "detail", "var");
+        Result<Data> dataResult = Result.create(data, 0, "detail", "var");
 
-		MapperIntrospect<Introspect> mapper = new MapperIntrospect1_0();
+        MapperIntrospect<Introspect> mapper = new MapperIntrospect1_0();
 
-		Result<Introspect> intro = mapper.introspect(dataResult);
+        Result<Introspect> intro = mapper.introspect(dataResult);
 
-		assertEquals(intro.value.getClientType(), "confidential");
-	}
+        assertEquals(intro.value.getClientType(), "confidential");
+    }
 
-	@Test
-	public void testIntrospectWithUnknowType() {
-		data.type = 5;
-		data.scopes = new HashSet<String>();
+    @Test
+    public void testIntrospectWithUnknowType() {
+        data.type = 5;
+        data.scopes = new HashSet<String>();
 
-		data.scopes.add(Scope.APPLICATION.toString());
-		data.scopes.add(Scope.HANDLER.toString());
+        data.scopes.add(Scope.APPLICATION.toString());
+        data.scopes.add(Scope.HANDLER.toString());
 
-		Result<Data> dataResult = Result.create(data, 0, "detail", "var");
+        Result<Data> dataResult = Result.create(data, 0, "detail", "var");
 
-		MapperIntrospect<Introspect> mapper = new MapperIntrospect1_0();
+        MapperIntrospect<Introspect> mapper = new MapperIntrospect1_0();
 
-		Result<Introspect> intro = mapper.introspect(dataResult);
+        Result<Introspect> intro = mapper.introspect(dataResult);
 
-		assertEquals(intro.value.getClientType(), "unknown");
-	}
+        assertEquals(intro.value.getClientType(), "unknown");
+    }
 
-	@Test
-	public void testIntrospectWithNotOk() {
-		data.type = 5;
+    @Test
+    public void testIntrospectWithNotOk() {
+        data.type = 5;
 
-		Result<Data> dataResult = Result.create(data, 1, "detail", "var");
+        Result<Data> dataResult = Result.create(data, 1, "detail", "var");
 
-		MapperIntrospect<Introspect> mapper = new MapperIntrospect1_0();
+        MapperIntrospect<Introspect> mapper = new MapperIntrospect1_0();
 
-		Result<Introspect> intro = mapper.introspect(dataResult);
+        Result<Introspect> intro = mapper.introspect(dataResult);
 
-		assertEquals(intro.value, null);
-	}
+        assertEquals(intro.value, null);
+    }
 
 }

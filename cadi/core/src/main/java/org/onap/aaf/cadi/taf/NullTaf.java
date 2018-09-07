@@ -37,28 +37,28 @@ import org.onap.aaf.cadi.CachedPrincipal.Resp;
  *
  */
 public class NullTaf implements Taf, HttpTaf {
-	// Singleton Pattern
-	public NullTaf() {}
+    // Singleton Pattern
+    public NullTaf() {}
 
-	/**
-	 * validate 
-	 * 
-	 * Always Respond with a NullTafResp, which declares it is unauthenticated, and unauthorized
-	 */
-	public TafResp validate(LifeForm reading, String... info) {
-		return NullTafResp.singleton();
-	}
+    /**
+     * validate 
+     * 
+     * Always Respond with a NullTafResp, which declares it is unauthenticated, and unauthorized
+     */
+    public TafResp validate(LifeForm reading, String... info) {
+        return NullTafResp.singleton();
+    }
 
-	/**
-	 * validate 
-	 * 
-	 * Always Respond with a NullTafResp, which declares it is unauthenticated, and unauthorized
-	 */
-	public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
-		return NullTafResp.singleton();
-	}
+    /**
+     * validate 
+     * 
+     * Always Respond with a NullTafResp, which declares it is unauthenticated, and unauthorized
+     */
+    public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
+        return NullTafResp.singleton();
+    }
 
-	public Resp revalidate(CachedPrincipal prin, Object state) {
-		return Resp.NOT_MINE;
-	}
+    public Resp revalidate(CachedPrincipal prin, Object state) {
+        return Resp.NOT_MINE;
+    }
 }

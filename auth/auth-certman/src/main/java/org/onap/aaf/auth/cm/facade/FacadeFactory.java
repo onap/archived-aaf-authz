@@ -30,12 +30,12 @@ import org.onap.aaf.misc.env.Data;
 
 
 public class FacadeFactory {
-	public static Facade1_0 v1_0(AAF_CM certman, AuthzTrans trans, CMService service, Data.TYPE type) throws APIException {
-		return new Facade1_0(
-				certman,
-				service,
-				new Mapper1_0(),
-				type);  
-	}
+    public static Facade1_0 v1_0(AAF_CM certman, AuthzTrans trans, CMService service, Data.TYPE type) throws APIException {
+        return new Facade1_0(
+                certman,
+                service,
+                new Mapper1_0(),
+                type);  
+    }
 
 }

@@ -26,9 +26,9 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.locate.mapper.Mapper;
 
 public interface LocateService<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIG,ERROR> {
-	public Mapper<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIG,ERROR> mapper();
-	public Result<ENDPOINTS> getEndPoints(AuthzTrans trans, String service, String version, String other);
-	public Result<Void> putMgmtEndPoints(AuthzTrans trans, MGMT_ENDPOINTS meps);
-	public Result<Void> removeMgmtEndPoints(AuthzTrans trans, MGMT_ENDPOINTS meps);
-	public Result<CONFIG> getConfig(AuthzTrans trans, String id, String type);
+    public Mapper<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIG,ERROR> mapper();
+    public Result<ENDPOINTS> getEndPoints(AuthzTrans trans, String service, String version, String other);
+    public Result<Void> putMgmtEndPoints(AuthzTrans trans, MGMT_ENDPOINTS meps);
+    public Result<Void> removeMgmtEndPoints(AuthzTrans trans, MGMT_ENDPOINTS meps);
+    public Result<CONFIG> getConfig(AuthzTrans trans, String id, String type);
 }

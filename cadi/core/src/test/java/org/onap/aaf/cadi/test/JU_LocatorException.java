@@ -29,32 +29,32 @@ import org.onap.aaf.cadi.LocatorException;
 import static org.hamcrest.CoreMatchers.is;
 
 public class JU_LocatorException {
-	@Test
-	public void stringTest() {
-		LocatorException exception = new LocatorException("New Exception");
-		assertNotNull(exception);
-		assertThat(exception.getMessage(), is("New Exception"));
-	}
+    @Test
+    public void stringTest() {
+        LocatorException exception = new LocatorException("New Exception");
+        assertNotNull(exception);
+        assertThat(exception.getMessage(), is("New Exception"));
+    }
 
-	@Test
-	public void throwableTest() {
-		LocatorException exception = new LocatorException(new Throwable("New Exception"));
-		assertNotNull(exception);
-		assertThat(exception.getMessage(), is("java.lang.Throwable: New Exception"));
-	}
+    @Test
+    public void throwableTest() {
+        LocatorException exception = new LocatorException(new Throwable("New Exception"));
+        assertNotNull(exception);
+        assertThat(exception.getMessage(), is("java.lang.Throwable: New Exception"));
+    }
 
-	@Test
-	public void stringThrowableTest() {
-		LocatorException exception = new LocatorException("New Exception",new Throwable("New Exception"));
-		assertNotNull(exception);
-		assertThat(exception.getMessage(), is("New Exception"));
-	}
+    @Test
+    public void stringThrowableTest() {
+        LocatorException exception = new LocatorException("New Exception",new Throwable("New Exception"));
+        assertNotNull(exception);
+        assertThat(exception.getMessage(), is("New Exception"));
+    }
 
-	@Test
-	public void characterSequenceTest() {
-		CharSequence testCS = new String("New Exception");
-		LocatorException exception = new LocatorException(testCS);
-		assertNotNull(exception);
-		assertThat(exception.getMessage(), is("New Exception"));
-	}
+    @Test
+    public void characterSequenceTest() {
+        CharSequence testCS = new String("New Exception");
+        LocatorException exception = new LocatorException(testCS);
+        assertNotNull(exception);
+        assertThat(exception.getMessage(), is("New Exception"));
+    }
 }

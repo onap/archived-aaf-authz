@@ -34,36 +34,36 @@ import com.datastax.driver.core.Cluster;
 
 
 public class PermCreate extends ActionDAO<Perm,Data,String> {
-	public PermCreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster, dryRun);
-	}
-	
-	public PermCreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public PermCreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster, dryRun);
+    }
+    
+    public PermCreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Data> exec(AuthzTrans trans, Perm p,String text) {
-		PermDAO.Data pdd = new PermDAO.Data();
-		pdd.ns = p.ns;
-		pdd.type = p.type;
-		pdd.instance = p.instance;
-		pdd.action = p.action;
-		pdd.description = p.description;
-		pdd.roles = p.roles;
-		
-		if(dryRun) {
-			trans.info().log("Would Create Perm:",text,p.fullType());
-			return Result.ok(pdd);
-		} else {
-			Result<Data> rv = q.permDAO.create(trans, pdd); // need to read for undelete
-			if(rv.isOK()) {
-				trans.info().log("Created Perm:",text,p.fullType());
-			} else {
-				trans.error().log("Error Creating Role -",rv.details,":",p.fullType());
-			}
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Data> exec(AuthzTrans trans, Perm p,String text) {
+        PermDAO.Data pdd = new PermDAO.Data();
+        pdd.ns = p.ns;
+        pdd.type = p.type;
+        pdd.instance = p.instance;
+        pdd.action = p.action;
+        pdd.description = p.description;
+        pdd.roles = p.roles;
+        
+        if(dryRun) {
+            trans.info().log("Would Create Perm:",text,p.fullType());
+            return Result.ok(pdd);
+        } else {
+            Result<Data> rv = q.permDAO.create(trans, pdd); // need to read for undelete
+            if(rv.isOK()) {
+                trans.info().log("Created Perm:",text,p.fullType());
+            } else {
+                trans.error().log("Error Creating Role -",rv.details,":",p.fullType());
+            }
+            return rv;
+        }
+    }
+    
 }

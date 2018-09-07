@@ -31,15 +31,15 @@ import org.onap.aaf.cadi.client.AbsAuthentication;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class HNoAuthSS extends AbsAuthentication<HttpURLConnection> {
-	public HNoAuthSS(SecurityInfoC<HttpURLConnection> si) throws IOException {
-		super(si,"noauth",null);
-	}
+    public HNoAuthSS(SecurityInfoC<HttpURLConnection> si) throws IOException {
+        super(si,"noauth",null);
+    }
 
-	@Override
-	public void setSecurity(HttpURLConnection client) throws CadiException {
-		if(securityInfo!=null && client instanceof HttpsURLConnection) {
-			securityInfo.setSocketFactoryOn((HttpsURLConnection)client);
-		}
-	}
+    @Override
+    public void setSecurity(HttpURLConnection client) throws CadiException {
+        if(securityInfo!=null && client instanceof HttpsURLConnection) {
+            securityInfo.setSocketFactoryOn((HttpsURLConnection)client);
+        }
+    }
 
 }

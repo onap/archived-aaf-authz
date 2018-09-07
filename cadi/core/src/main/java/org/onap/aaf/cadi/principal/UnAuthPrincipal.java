@@ -24,14 +24,14 @@ package org.onap.aaf.cadi.principal;
 import java.security.Principal;
 
 public class UnAuthPrincipal implements Principal {
-	private String name;
-	
-	public UnAuthPrincipal(final String name) {
-		this.name = name;
-	}
-	@Override
-	public String getName() {
-		return name;
-	}
+    private String name;
+    
+    public UnAuthPrincipal(final String name) {
+        this.name = name;
+    }
+    @Override
+    public String getName() {
+        return name;
+    }
 
 }

@@ -27,30 +27,30 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class CredPrint implements Action<CredDAO.Data,Void,String> {
-	private String info;
+    private String info;
 
-	public CredPrint(String text) {
-		this.info = text;
-	}
+    public CredPrint(String text) {
+        this.info = text;
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, CredDAO.Data cred, String text) {
-		trans.info().log(info,cred.id,text, type(cred.type),Chrono.dateOnlyStamp(cred.expires));
-		return Result.ok();
-	}
-	
-	
-	public static String type(int type) {
-		switch(type) {
-			case CredDAO.BASIC_AUTH: // 1
-					return "OLD";
-			case CredDAO.BASIC_AUTH_SHA256: // 2 
-					return "U/P"; 
-			case CredDAO.CERT_SHA256_RSA: // 200
-					return "Cert"; 
-			default: 
-				return "Unknown";
-		}
-	}
+    @Override
+    public Result<Void> exec(AuthzTrans trans, CredDAO.Data cred, String text) {
+        trans.info().log(info,cred.id,text, type(cred.type),Chrono.dateOnlyStamp(cred.expires));
+        return Result.ok();
+    }
+    
+    
+    public static String type(int type) {
+        switch(type) {
+            case CredDAO.BASIC_AUTH: // 1
+                    return "OLD";
+            case CredDAO.BASIC_AUTH_SHA256: // 2 
+                    return "U/P"; 
+            case CredDAO.CERT_SHA256_RSA: // 200
+                    return "Cert"; 
+            default: 
+                return "Unknown";
+        }
+    }
 
 }

@@ -23,12 +23,12 @@ package org.onap.aaf.cadi;
 
 
 public interface Revalidator<TRANS> {
-	/**
-	 * Re-Validate Credential
-	 * 
-	 * @param prin
-	 * @return
-	 */
-	public CachedPrincipal.Resp revalidate(TRANS trans, CachedPrincipal prin);
+    /**
+     * Re-Validate Credential
+     * 
+     * @param prin
+     * @return
+     */
+    public CachedPrincipal.Resp revalidate(TRANS trans, CachedPrincipal prin);
 
 }

@@ -43,82 +43,82 @@ import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 import org.onap.aaf.cadi.taf.HttpTaf;
 
 public class JU_CachedBasicPrincipal {
-	private Field creatorField;
-	private Field timeToLiveField;
+    private Field creatorField;
+    private Field timeToLiveField;
 
-	@Mock
-	private HttpTaf creator;
+    @Mock
+    private HttpTaf creator;
 
-	private CachedPrincipal.Resp resp;
+    private CachedPrincipal.Resp resp;
 
-	@Before
-	public void setup() throws NoSuchFieldException, SecurityException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws NoSuchFieldException, SecurityException {
+        MockitoAnnotations.initMocks(this);
 
-		creatorField = CachedBasicPrincipal.class.getDeclaredField("creator");
-		timeToLiveField = CachedBasicPrincipal.class.getDeclaredField("timeToLive");
+        creatorField = CachedBasicPrincipal.class.getDeclaredField("creator");
+        timeToLiveField = CachedBasicPrincipal.class.getDeclaredField("timeToLive");
 
-		creatorField.setAccessible(true);
-		timeToLiveField.setAccessible(true);
-	}
+        creatorField.setAccessible(true);
+        timeToLiveField.setAccessible(true);
+    }
 
-	@Test
-	public void Constructor1Test() throws IllegalArgumentException, IllegalAccessException {
-		String name = "User";
-		String password = "password";
-		BasicCred bc = mock(BasicCred.class);
-		when(bc.getUser()).thenReturn(name);
-		when(bc.getCred()).thenReturn(password.getBytes());
+    @Test
+    public void Constructor1Test() throws IllegalArgumentException, IllegalAccessException {
+        String name = "User";
+        String password = "password";
+        BasicCred bc = mock(BasicCred.class);
+        when(bc.getUser()).thenReturn(name);
+        when(bc.getCred()).thenReturn(password.getBytes());
 
-		long timeToLive = 10000L;
-		long expires = System.currentTimeMillis() + timeToLive;
-		CachedBasicPrincipal cbp = new CachedBasicPrincipal(creator, bc, "domain", timeToLive);
+        long timeToLive = 10000L;
+        long expires = System.currentTimeMillis() + timeToLive;
+        CachedBasicPrincipal cbp = new CachedBasicPrincipal(creator, bc, "domain", timeToLive);
 
-		assertThat((HttpTaf)creatorField.get(cbp), is(creator));
-		assertThat((Long)timeToLiveField.get(cbp), is(timeToLive));
-		assertTrue(Math.abs(cbp.expires() - expires) < 10);
-	}
+        assertThat((HttpTaf)creatorField.get(cbp), is(creator));
+        assertThat((Long)timeToLiveField.get(cbp), is(timeToLive));
+        assertTrue(Math.abs(cbp.expires() - expires) < 10);
+    }
 
-	@Test
-	public void Constructor2Test() throws Exception {
-		String name = "User";
-		String password = "password";
-		String content = name + ":" + password;
-		long timeToLive = 10000L;
-		long expires = System.currentTimeMillis() + timeToLive;
-		CachedBasicPrincipal cbp = new CachedBasicPrincipal(creator, content, "domain", timeToLive);
+    @Test
+    public void Constructor2Test() throws Exception {
+        String name = "User";
+        String password = "password";
+        String content = name + ":" + password;
+        long timeToLive = 10000L;
+        long expires = System.currentTimeMillis() + timeToLive;
+        CachedBasicPrincipal cbp = new CachedBasicPrincipal(creator, content, "domain", timeToLive);
 
-		assertThat((HttpTaf)creatorField.get(cbp), is(creator));
-		assertThat((Long)timeToLiveField.get(cbp), is(timeToLive));
-		assertTrue(Math.abs(cbp.expires() - expires) < 10);
-	}
+        assertThat((HttpTaf)creatorField.get(cbp), is(creator));
+        assertThat((Long)timeToLiveField.get(cbp), is(timeToLive));
+        assertTrue(Math.abs(cbp.expires() - expires) < 10);
+    }
 
-	@Test
-	public void revalidateTest() throws IOException, IllegalArgumentException, IllegalAccessException, InterruptedException {
-		resp = CachedPrincipal.Resp.REVALIDATED;
-		when(creator.revalidate((CachedPrincipal)any(), any())).thenReturn(resp);
+    @Test
+    public void revalidateTest() throws IOException, IllegalArgumentException, IllegalAccessException, InterruptedException {
+        resp = CachedPrincipal.Resp.REVALIDATED;
+        when(creator.revalidate((CachedPrincipal)any(), any())).thenReturn(resp);
 
-		String name = "User";
-		String password = "password";
-		String content = name + ":" + password;
-		long timeToLive = 10000L;
-		long expires = System.currentTimeMillis() + timeToLive;
-		CachedBasicPrincipal cbp = new CachedBasicPrincipal(creator, content, "domain", timeToLive);
+        String name = "User";
+        String password = "password";
+        String content = name + ":" + password;
+        long timeToLive = 10000L;
+        long expires = System.currentTimeMillis() + timeToLive;
+        CachedBasicPrincipal cbp = new CachedBasicPrincipal(creator, content, "domain", timeToLive);
 
-		assertTrue(Math.abs(cbp.expires() - expires) < 10);
+        assertTrue(Math.abs(cbp.expires() - expires) < 10);
 
-		Thread.sleep(1);
-		expires = System.currentTimeMillis() + timeToLive;
-		assertThat(cbp.revalidate(new Object()), is(resp));
-		assertTrue(Math.abs(cbp.expires() - expires) < 10);
+        Thread.sleep(1);
+        expires = System.currentTimeMillis() + timeToLive;
+        assertThat(cbp.revalidate(new Object()), is(resp));
+        assertTrue(Math.abs(cbp.expires() - expires) < 10);
 
-		resp = CachedPrincipal.Resp.UNVALIDATED;
-		when(creator.revalidate((CachedPrincipal)any(), any())).thenReturn(resp);
-		expires = System.currentTimeMillis() + timeToLive;
-		cbp = new CachedBasicPrincipal(creator, content, "domain", timeToLive);
+        resp = CachedPrincipal.Resp.UNVALIDATED;
+        when(creator.revalidate((CachedPrincipal)any(), any())).thenReturn(resp);
+        expires = System.currentTimeMillis() + timeToLive;
+        cbp = new CachedBasicPrincipal(creator, content, "domain", timeToLive);
 
-		assertThat(cbp.revalidate(new Object()), is(resp));
-		assertTrue(Math.abs(cbp.expires() - expires) < 10);
-	}
+        assertThat(cbp.revalidate(new Object()), is(resp));
+        assertTrue(Math.abs(cbp.expires() - expires) < 10);
+    }
 
 }

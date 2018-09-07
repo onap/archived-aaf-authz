@@ -30,32 +30,32 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.xgen.html.State;
 
 public class Section<G extends XGen<G>> {
-	protected int indent;
-	protected String forward;
-	protected String backward;
-	
-	// Default is to use the set Strings (static) 
-	public Section<G> use(State<Env> state, Trans trans, XGenBuff<G> buff) throws APIException, IOException {
-		return this;
-	}
-	
-	public int getIndent() {
-		return indent;
-	}
+    protected int indent;
+    protected String forward;
+    protected String backward;
+    
+    // Default is to use the set Strings (static) 
+    public Section<G> use(State<Env> state, Trans trans, XGenBuff<G> buff) throws APIException, IOException {
+        return this;
+    }
+    
+    public int getIndent() {
+        return indent;
+    }
 
-	public void setIndent(int indent) {
-		this.indent = indent;
-	}
+    public void setIndent(int indent) {
+        this.indent = indent;
+    }
 
-	public void forward(Writer w) throws IOException {
-		w.write(forward);
-	}
-	
-	public void back(Writer w) throws IOException {
-		w.write(backward);
-	}
-	
-	public String toString() {
-		return forward;
-	}
+    public void forward(Writer w) throws IOException {
+        w.write(forward);
+    }
+    
+    public void back(Writer w) throws IOException {
+        w.write(backward);
+    }
+    
+    public String toString() {
+        return forward;
+    }
 }

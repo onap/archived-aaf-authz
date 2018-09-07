@@ -31,105 +31,105 @@ import org.junit.Test;
 
 public class JU_StringBuilderWriterTest {
 
-	StringBuilderWriter streamWriter;
+    StringBuilderWriter streamWriter;
 
-	StringBuilder builder = new StringBuilder();
+    StringBuilder builder = new StringBuilder();
 
-	@Before
-	public void setUp() throws Exception {
-		streamWriter = new StringBuilderWriter(builder);
-	}
+    @Before
+    public void setUp() throws Exception {
+        streamWriter = new StringBuilderWriter(builder);
+    }
 
-	@Test
-	public void testWriteIntAndReset() {
-		streamWriter.write(1);
+    @Test
+    public void testWriteIntAndReset() {
+        streamWriter.write(1);
 
-		assertEquals(1, streamWriter.getBuffer().length());
-		streamWriter.reset();
-		assertEquals("", streamWriter.toString());
-	}
+        assertEquals(1, streamWriter.getBuffer().length());
+        streamWriter.reset();
+        assertEquals("", streamWriter.toString());
+    }
 
-	@Test
-	public void testWriteByteArrayWithoutException() throws IOException {
-		char[] bytes = { 1, 2, 3, 4 };
-		streamWriter.write(bytes);
-		assertEquals(4, streamWriter.getBuffer().length());
+    @Test
+    public void testWriteByteArrayWithoutException() throws IOException {
+        char[] bytes = { 1, 2, 3, 4 };
+        streamWriter.write(bytes);
+        assertEquals(4, streamWriter.getBuffer().length());
 
-		streamWriter.write(bytes, 1, 2);
-		assertEquals(6, streamWriter.getBuffer().length());
+        streamWriter.write(bytes, 1, 2);
+        assertEquals(6, streamWriter.getBuffer().length());
 
-		streamWriter.write(bytes, 1, 0);
-		assertEquals(6, streamWriter.getBuffer().length());
+        streamWriter.write(bytes, 1, 0);
+        assertEquals(6, streamWriter.getBuffer().length());
 
-		streamWriter.append(bytes[0]);
-		assertEquals(7, streamWriter.getBuffer().length());
-	}
+        streamWriter.append(bytes[0]);
+        assertEquals(7, streamWriter.getBuffer().length());
+    }
 
-	@Test
-	public void testWriteByteArrayWithIndexOutOfBoundException() {
-		char[] bytes = { 1, 2, 3, 4 };
+    @Test
+    public void testWriteByteArrayWithIndexOutOfBoundException() {
+        char[] bytes = { 1, 2, 3, 4 };
 
-		try {
-			streamWriter.write(bytes, -1, 2);
-			fail("This is supposed to throw IndexOutOfBounds Excetpion");
-		} catch (IndexOutOfBoundsException e) {
-		} catch (Exception e) {
-			fail("This should throw only IndexOutOfBounds Exception");
-		}
-		assertEquals(0, streamWriter.getBuffer().length());
+        try {
+            streamWriter.write(bytes, -1, 2);
+            fail("This is supposed to throw IndexOutOfBounds Excetpion");
+        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
+            fail("This should throw only IndexOutOfBounds Exception");
+        }
+        assertEquals(0, streamWriter.getBuffer().length());
 
-	}
+    }
 
-	@Test
-	public void testDefaultConstructor() throws IOException {
-		StringBuilderWriter stream = new StringBuilderWriter();
+    @Test
+    public void testDefaultConstructor() throws IOException {
+        StringBuilderWriter stream = new StringBuilderWriter();
 
-		assertNotNull(stream.getBuffer());
-		stream.close();
-	}
+        assertNotNull(stream.getBuffer());
+        stream.close();
+    }
 
-	@Test
-	public void testConstructorWithPositiveDefaultCapacity() throws IOException {
-		StringBuilderWriter stream = new StringBuilderWriter(10);
+    @Test
+    public void testConstructorWithPositiveDefaultCapacity() throws IOException {
+        StringBuilderWriter stream = new StringBuilderWriter(10);
 
-		assertNotNull(stream.getBuffer());
-		assertEquals(10, stream.getBuffer().capacity());
-		stream.close();
-	}
+        assertNotNull(stream.getBuffer());
+        assertEquals(10, stream.getBuffer().capacity());
+        stream.close();
+    }
 
-	@Test
-	public void testConstructorWithNegativeCapacityException() {
-		try {
-			StringBuilderWriter stream = new StringBuilderWriter(-1);
-			fail("This should throw IllegalArgumentException");
-		} catch (IllegalArgumentException e) {
-		} catch (Exception e) {
-			fail("This should throw only IllegalArgumentException");
-		}
-	}
+    @Test
+    public void testConstructorWithNegativeCapacityException() {
+        try {
+            StringBuilderWriter stream = new StringBuilderWriter(-1);
+            fail("This should throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
+            fail("This should throw only IllegalArgumentException");
+        }
+    }
 
-	@Test
-	public void testWriteString() {
-		streamWriter.write("1234");
+    @Test
+    public void testWriteString() {
+        streamWriter.write("1234");
 
-		assertEquals("1234", streamWriter.toString());
+        assertEquals("1234", streamWriter.toString());
 
-		streamWriter.write("1234", 1, 2);
-		assertEquals("123423", streamWriter.toString());
-	}
+        streamWriter.write("1234", 1, 2);
+        assertEquals("123423", streamWriter.toString());
+    }
 
-	@Test
-	public void testAppendCharSequence() {
-		streamWriter.append("1234");
-		assertEquals("1234", streamWriter.toString());
+    @Test
+    public void testAppendCharSequence() {
+        streamWriter.append("1234");
+        assertEquals("1234", streamWriter.toString());
 
-		streamWriter.append(null);
-		assertEquals("1234null", streamWriter.toString());
+        streamWriter.append(null);
+        assertEquals("1234null", streamWriter.toString());
 
-		streamWriter.append("1234", 1, 2);
-		assertEquals("1234null2", streamWriter.toString());
+        streamWriter.append("1234", 1, 2);
+        assertEquals("1234null2", streamWriter.toString());
 
-		streamWriter.append(null, 1, 2);
-		assertEquals("1234null2u", streamWriter.toString());
-	}
+        streamWriter.append(null, 1, 2);
+        assertEquals("1234null2u", streamWriter.toString());
+    }
 }

@@ -46,95 +46,95 @@ import locate.v1_0.Endpoint;
 import locate.v1_0.Endpoints;
 
 public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
-	private static RosettaEnv env;
-	HClient client;
-	private RosettaDF<Endpoints> epsDF;
+    private static RosettaEnv env;
+    HClient client;
+    private RosettaDF<Endpoints> epsDF;
 
-	public AAFLocator(SecurityInfoC<HttpURLConnection> si, URI locatorURI) throws LocatorException {
-		super(si.access, nameFromLocatorURI(locatorURI), 10000L /* Wait at least 10 seconds between refreshes */);
-		synchronized(sr) {
-			if(env==null) {
-				env = new RosettaEnv(access.getProperties());
-			}
-		}
-		
-		int connectTimeout = Integer.parseInt(si.access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-		try {
-			String[] path = Split.split('/',locatorURI.getPath());
-			String host = locatorURI.getHost();
-			if(host==null) {
-				host = locatorURI.getAuthority(); // this happens when no port
-			}
-			if("AAF_LOCATE_URL".equals(host)) {
-				URI uri = new URI(
-						locatorURI.getScheme(),
-						locatorURI.getUserInfo(),
-						aaf_locator_uri.getHost(),
-						aaf_locator_uri.getPort(),
-						"/locate"+locatorURI.getPath(),
-						null,
-						null
-						);
-				client = createClient(si.defSS, uri, connectTimeout);
-			} else if(path.length>1 && "locate".equals(path[1])) {
-				StringBuilder sb = new StringBuilder();
-				for(int i=3;i<path.length;++i) {
-					sb.append('/');
-					sb.append(path[i]);
-				}
-				setPathInfo(sb.toString());
-				URI uri = new URI(
-							locatorURI.getScheme(),
-							locatorURI.getUserInfo(),
-							locatorURI.getHost(),
-							locatorURI.getPort(),
-							"/locate/"+name + ':' + version,
-							null,
-							null
-							);
-				client = createClient(si.defSS, uri, connectTimeout);
-			} else {
-				client = new HClient(si.defSS, locatorURI, connectTimeout);
-			}
-			epsDF = env.newDataFactory(Endpoints.class);
-		} catch (APIException | URISyntaxException e) {
-			throw new LocatorException(e);
-		}
-	}
+    public AAFLocator(SecurityInfoC<HttpURLConnection> si, URI locatorURI) throws LocatorException {
+        super(si.access, nameFromLocatorURI(locatorURI), 10000L /* Wait at least 10 seconds between refreshes */);
+        synchronized(sr) {
+            if(env==null) {
+                env = new RosettaEnv(access.getProperties());
+            }
+        }
+        
+        int connectTimeout = Integer.parseInt(si.access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
+        try {
+            String[] path = Split.split('/',locatorURI.getPath());
+            String host = locatorURI.getHost();
+            if(host==null) {
+                host = locatorURI.getAuthority(); // this happens when no port
+            }
+            if("AAF_LOCATE_URL".equals(host)) {
+                URI uri = new URI(
+                        locatorURI.getScheme(),
+                        locatorURI.getUserInfo(),
+                        aaf_locator_uri.getHost(),
+                        aaf_locator_uri.getPort(),
+                        "/locate"+locatorURI.getPath(),
+                        null,
+                        null
+                        );
+                client = createClient(si.defSS, uri, connectTimeout);
+            } else if(path.length>1 && "locate".equals(path[1])) {
+                StringBuilder sb = new StringBuilder();
+                for(int i=3;i<path.length;++i) {
+                    sb.append('/');
+                    sb.append(path[i]);
+                }
+                setPathInfo(sb.toString());
+                URI uri = new URI(
+                            locatorURI.getScheme(),
+                            locatorURI.getUserInfo(),
+                            locatorURI.getHost(),
+                            locatorURI.getPort(),
+                            "/locate/"+name + ':' + version,
+                            null,
+                            null
+                            );
+                client = createClient(si.defSS, uri, connectTimeout);
+            } else {
+                client = new HClient(si.defSS, locatorURI, connectTimeout);
+            }
+            epsDF = env.newDataFactory(Endpoints.class);
+        } catch (APIException | URISyntaxException e) {
+            throw new LocatorException(e);
+        }
+    }
 
-	@Override
-	public boolean refresh() {
-		try {
-			client.setMethod("GET");
-			client.send();
-			Future<Endpoints> fr = client.futureRead(epsDF, TYPE.JSON);
-			if(fr.get(client.timeout())) {
-				List<EP> epl = new LinkedList<>();
-				for(Endpoint endpoint : fr.value.getEndpoint()) {
-					epl.add(new EP(endpoint,latitude,longitude));
-				}
-				
-				Collections.sort(epl);
-				replace(epl);
-				return true;
-			} else {
-				env.error().printf("Error reading location information from %s: %d %s\n",client.getURI().toString(),fr.code(),fr.body());
-			}
-		} catch (CadiException | URISyntaxException | APIException e) {
-			env.error().log(e,"Error connecting " + client.getURI() + " for location.");
-		}
-		return false;
-	}
+    @Override
+    public boolean refresh() {
+        try {
+            client.setMethod("GET");
+            client.send();
+            Future<Endpoints> fr = client.futureRead(epsDF, TYPE.JSON);
+            if(fr.get(client.timeout())) {
+                List<EP> epl = new LinkedList<>();
+                for(Endpoint endpoint : fr.value.getEndpoint()) {
+                    epl.add(new EP(endpoint,latitude,longitude));
+                }
+                
+                Collections.sort(epl);
+                replace(epl);
+                return true;
+            } else {
+                env.error().printf("Error reading location information from %s: %d %s\n",client.getURI().toString(),fr.code(),fr.body());
+            }
+        } catch (CadiException | URISyntaxException | APIException e) {
+            env.error().log(e,"Error connecting " + client.getURI() + " for location.");
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator#getURI()
-	 */
-	@Override
-	protected URI getURI() {
-		return client.getURI();
-	}
-	
-	protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
-		return new HClient(ss, uri, connectTimeout);
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator#getURI()
+     */
+    @Override
+    protected URI getURI() {
+        return client.getURI();
+    }
+    
+    protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
+        return new HClient(ss, uri, connectTimeout);
+    }
 }

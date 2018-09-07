@@ -28,65 +28,65 @@ import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 
 public class SingleEndpointLocator implements Locator<URI> {
-	private final URI uri;
-	private final static Item item = new Item() {};  
-	private Date noRetryUntil;
-	
-	public SingleEndpointLocator(final URI uri) {
-		this.uri = uri;
-	}
-	
-	public SingleEndpointLocator(final String endpoint) throws URISyntaxException {
-		this.uri = new URI(endpoint);
-	}
+    private final URI uri;
+    private final static Item item = new Item() {};  
+    private Date noRetryUntil;
+    
+    public SingleEndpointLocator(final URI uri) {
+        this.uri = uri;
+    }
+    
+    public SingleEndpointLocator(final String endpoint) throws URISyntaxException {
+        this.uri = new URI(endpoint);
+    }
 
-	@Override
-	public URI get(Item item) throws LocatorException {
-		return uri;
-	}
+    @Override
+    public URI get(Item item) throws LocatorException {
+        return uri;
+    }
 
-	@Override
-	public boolean hasItems() {
-		if(noRetryUntil!=null) {
-			if(new Date().after(noRetryUntil)) {
-				noRetryUntil = null;
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean hasItems() {
+        if(noRetryUntil!=null) {
+            if(new Date().after(noRetryUntil)) {
+                noRetryUntil = null;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public void invalidate(Item item) throws LocatorException {
-		// one minute timeout, because there is no other item
-		noRetryUntil = new Date(System.currentTimeMillis()+60000); 
-	}
+    @Override
+    public void invalidate(Item item) throws LocatorException {
+        // one minute timeout, because there is no other item
+        noRetryUntil = new Date(System.currentTimeMillis()+60000); 
+    }
 
-	@Override
-	public Item best() throws LocatorException {
-		return item;
-	}
+    @Override
+    public Item best() throws LocatorException {
+        return item;
+    }
 
-	@Override
-	public Item first() throws LocatorException {
-		return item;
-	}
+    @Override
+    public Item first() throws LocatorException {
+        return item;
+    }
 
-	@Override
-	public Item next(Item inItem) throws LocatorException {
-		// only one item
-		return null;
-	}
+    @Override
+    public Item next(Item inItem) throws LocatorException {
+        // only one item
+        return null;
+    }
 
-	@Override
-	public boolean refresh() {
-		// Never refreshed
-		return true;
-	}
+    @Override
+    public boolean refresh() {
+        // Never refreshed
+        return true;
+    }
 
-	@Override
-	public void destroy() {
-		// Nothing to do here
-	}
+    @Override
+    public void destroy() {
+        // Nothing to do here
+    }
 }

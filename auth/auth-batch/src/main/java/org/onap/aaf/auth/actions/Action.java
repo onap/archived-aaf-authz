@@ -25,5 +25,5 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 
 public interface Action<D,RV,T> {
-	public Result<RV> exec(AuthzTrans trans, D data, T t);
+    public Result<RV> exec(AuthzTrans trans, D data, T t);
 }

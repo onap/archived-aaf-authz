@@ -37,29 +37,29 @@ import org.onap.aaf.misc.xgen.html.State;
 
 public class JU_DynamicCodeTest {
 
-	@Test
-	public void test() throws APIException, IOException {
-		final Cache<HTMLGen> cache1 = new Cache<HTMLGen>() {
+    @Test
+    public void test() throws APIException, IOException {
+        final Cache<HTMLGen> cache1 = new Cache<HTMLGen>() {
 
-			@Override
-			public void dynamic(HTMLGen hgen, Code<HTMLGen> code) {
-			}
-		};
+            @Override
+            public void dynamic(HTMLGen hgen, Code<HTMLGen> code) {
+            }
+        };
 
-		final HTMLGen xgen1 = new HTML4Gen(new PrintWriter(System.out));
-		DynamicCode<HTMLGen, State<Env>, Trans> g = new DynamicCode<HTMLGen, State<Env>, Trans>() {
+        final HTMLGen xgen1 = new HTML4Gen(new PrintWriter(System.out));
+        DynamicCode<HTMLGen, State<Env>, Trans> g = new DynamicCode<HTMLGen, State<Env>, Trans>() {
 
-			@Override
-			public void code(State<Env> state, Trans trans, Cache<HTMLGen> cache, HTMLGen xgen)
-					throws APIException, IOException {
-				assertNull(state);
-				assertNull(trans);
-				assertEquals(cache, cache1);
-				assertEquals(xgen, xgen1);
-			}
-		};
+            @Override
+            public void code(State<Env> state, Trans trans, Cache<HTMLGen> cache, HTMLGen xgen)
+                    throws APIException, IOException {
+                assertNull(state);
+                assertNull(trans);
+                assertEquals(cache, cache1);
+                assertEquals(xgen, xgen1);
+            }
+        };
 
-		g.code(cache1, xgen1);
-	}
+        g.code(cache1, xgen1);
+    }
 
 }

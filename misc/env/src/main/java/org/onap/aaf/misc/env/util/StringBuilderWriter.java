@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 public class StringBuilderWriter extends Writer {
-	private StringBuilder buf;
+    private StringBuilder buf;
 
 
     /**
@@ -33,7 +33,7 @@ public class StringBuilderWriter extends Writer {
      * size.
      */
     public StringBuilderWriter() {
-	buf = new StringBuilder();
+    buf = new StringBuilder();
     }
 
     /**
@@ -41,7 +41,7 @@ public class StringBuilderWriter extends Writer {
      * size.
      */
     public StringBuilderWriter(StringBuilder sb) {
-	buf = sb;
+    buf = sb;
     }
 
     /**
@@ -56,17 +56,17 @@ public class StringBuilderWriter extends Writer {
      *         If <tt>initialSize</tt> is negative
      */
     public StringBuilderWriter(int initialSize) {
-	if (initialSize < 0) {
-	    throw new IllegalArgumentException("Negative buffer size");
-	}
-	buf = new StringBuilder(initialSize);
+    if (initialSize < 0) {
+        throw new IllegalArgumentException("Negative buffer size");
+    }
+    buf = new StringBuilder(initialSize);
     }
 
     /**
      * Write a single character.
      */
     public void write(int c) {
-	buf.append((char) c);
+    buf.append((char) c);
     }
 
     /**
@@ -90,7 +90,7 @@ public class StringBuilderWriter extends Writer {
      * Write a string.
      */
     public void write(String str) {
-	buf.append(str);
+    buf.append(str);
     }
 
     /**
@@ -101,23 +101,23 @@ public class StringBuilderWriter extends Writer {
      * @param  len  Number of characters to write
      */
     public void write(String str, int off, int len)  {
-    	char[] chars = new char[len];
-    	str.getChars(off, off+len, chars, 0);
-    	buf.append(chars);
+        char[] chars = new char[len];
+        str.getChars(off, off+len, chars, 0);
+        buf.append(chars);
     }
 
     public StringBuilderWriter append(CharSequence csq) {
-    	if (csq == null) {
-    		write("null");
-    	} else {
-    		buf.append(csq);
-    	}
-    	return this;
+        if (csq == null) {
+            write("null");
+        } else {
+            buf.append(csq);
+        }
+        return this;
     }
 
     public StringBuilderWriter append(CharSequence csq, int start, int end) {
-		CharSequence cs = (csq == null ? "null" : csq);
-		return append(cs.subSequence(start, end));
+        CharSequence cs = (csq == null ? "null" : csq);
+        return append(cs.subSequence(start, end));
     }
 
     /**
@@ -137,15 +137,15 @@ public class StringBuilderWriter extends Writer {
      * @since 1.5
      */
     public StringBuilderWriter append(char c) {
-    	buf.append(c);
-    	return this;
+        buf.append(c);
+        return this;
     }
 
     /**
      * Return the buffer's current value as a string.
      */
     public String toString() {
-    	return buf.toString();
+        return buf.toString();
     }
 
     /**
@@ -154,19 +154,19 @@ public class StringBuilderWriter extends Writer {
      * @return StringBuffer holding the current buffer value.
      */
     public StringBuilder getBuffer() {
-	return buf;
+    return buf;
     }
     
     public void reset() {
-    	buf.setLength(0);
+        buf.setLength(0);
     }
 
-	@Override
-	public void flush() throws IOException {
-	}
+    @Override
+    public void flush() throws IOException {
+    }
 
-	@Override
-	public void close() throws IOException {
-	}
+    @Override
+    public void close() throws IOException {
+    }
 
 }

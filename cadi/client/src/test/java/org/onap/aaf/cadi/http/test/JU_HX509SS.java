@@ -48,70 +48,70 @@ import org.onap.aaf.cadi.http.HX509SS;
 import org.onap.aaf.misc.env.APIException;
 
 public class JU_HX509SS {
-	
-	@Mock X509Certificate x509Mock;
-	@Mock X509KeyManager keyManagerMock;
-	@Mock PrivateKey privateKeyMock;
-	@Mock SecurityInfoC<HttpURLConnection> siMock;
-	@Mock HttpURLConnection hucMock;
-	@Mock HttpsURLConnection hucsMock;
-	
-	private final static String alias = "Some alias";
-	private final static String algName = "Some algName";
-	private final static byte[] publicKeyBytes = "a public key".getBytes();
-	
-	private PropAccess access;
-	private SecurityInfoC<HttpURLConnection> si;
-	
-	@Before
-	public void setup() throws IOException, CadiException, CertificateEncodingException {
-		MockitoAnnotations.initMocks(this);
-		
-		when(x509Mock.getSigAlgName()).thenReturn(algName);
-		when(x509Mock.getEncoded()).thenReturn(publicKeyBytes);
-		
-		when(keyManagerMock.getCertificateChain(alias)).thenReturn(new X509Certificate[] {x509Mock});
-		when(keyManagerMock.getPrivateKey(alias)).thenReturn(privateKeyMock);
+    
+    @Mock X509Certificate x509Mock;
+    @Mock X509KeyManager keyManagerMock;
+    @Mock PrivateKey privateKeyMock;
+    @Mock SecurityInfoC<HttpURLConnection> siMock;
+    @Mock HttpURLConnection hucMock;
+    @Mock HttpsURLConnection hucsMock;
+    
+    private final static String alias = "Some alias";
+    private final static String algName = "Some algName";
+    private final static byte[] publicKeyBytes = "a public key".getBytes();
+    
+    private PropAccess access;
+    private SecurityInfoC<HttpURLConnection> si;
+    
+    @Before
+    public void setup() throws IOException, CadiException, CertificateEncodingException {
+        MockitoAnnotations.initMocks(this);
+        
+        when(x509Mock.getSigAlgName()).thenReturn(algName);
+        when(x509Mock.getEncoded()).thenReturn(publicKeyBytes);
+        
+        when(keyManagerMock.getCertificateChain(alias)).thenReturn(new X509Certificate[] {x509Mock});
+        when(keyManagerMock.getPrivateKey(alias)).thenReturn(privateKeyMock);
 
-		when(siMock.getKeyManagers()).thenReturn(new X509KeyManager[] {keyManagerMock});
-		
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(Config.CADI_ALIAS, alias);
-		// si = SecurityInfoC.instance(access, HttpURLConnectionStub.class);
-	}
+        when(siMock.getKeyManagers()).thenReturn(new X509KeyManager[] {keyManagerMock});
+        
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(Config.CADI_ALIAS, alias);
+        // si = SecurityInfoC.instance(access, HttpURLConnectionStub.class);
+    }
 
-	@Test
-	public void test() throws APIException, CadiException {
-		HX509SS x509 = new HX509SS(alias, siMock);
-		assertThat(x509.getID(), is(alias));
-		assertThat(x509.setLastResponse(0), is(0));
-		assertThat(x509.setLastResponse(1), is(0));
-		assertThat(x509.setLastResponse(2), is(0));
-		
-		// coverage...
-		x509.setSecurity(hucMock);
-		x509.setSecurity(hucsMock);
-	}
-	
-	// TODO: Test the setSecurity method - Ian
-	// @Test
-	// public void test2() throws APIException, CadiException {
-		// HX509SS x509 = new HX509SS(si, false);
-		// x509.setSecurity(hucMock);
-		// x509.setSecurity(hucsMock);
-	// }
-	
-	@Test(expected = APIException.class)
-	public void throws1Test() throws APIException, CadiException {
-		@SuppressWarnings("unused")
-		HX509SS x509 = new HX509SS(siMock);
-	}
+    @Test
+    public void test() throws APIException, CadiException {
+        HX509SS x509 = new HX509SS(alias, siMock);
+        assertThat(x509.getID(), is(alias));
+        assertThat(x509.setLastResponse(0), is(0));
+        assertThat(x509.setLastResponse(1), is(0));
+        assertThat(x509.setLastResponse(2), is(0));
+        
+        // coverage...
+        x509.setSecurity(hucMock);
+        x509.setSecurity(hucsMock);
+    }
+    
+    // TODO: Test the setSecurity method - Ian
+    // @Test
+    // public void test2() throws APIException, CadiException {
+        // HX509SS x509 = new HX509SS(si, false);
+        // x509.setSecurity(hucMock);
+        // x509.setSecurity(hucsMock);
+    // }
+    
+    @Test(expected = APIException.class)
+    public void throws1Test() throws APIException, CadiException {
+        @SuppressWarnings("unused")
+        HX509SS x509 = new HX509SS(siMock);
+    }
 
-	@Test(expected = APIException.class)
-	public void throws3Test() throws APIException, CadiException {
-		when(keyManagerMock.getCertificateChain(alias)).thenReturn(new X509Certificate[0]);
-		@SuppressWarnings("unused")
-		HX509SS x509 = new HX509SS(alias, siMock);
-	}
-	
+    @Test(expected = APIException.class)
+    public void throws3Test() throws APIException, CadiException {
+        when(keyManagerMock.getCertificateChain(alias)).thenReturn(new X509Certificate[0]);
+        @SuppressWarnings("unused")
+        HX509SS x509 = new HX509SS(alias, siMock);
+    }
+    
 }

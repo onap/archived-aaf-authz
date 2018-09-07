@@ -27,9 +27,9 @@ import org.onap.aaf.misc.xgen.Cache.Null;
 
 public class JU_NullCacheTest {
 
-	@Test
-	public void testNullIsSingleton() {
-		Null<?> singleton = Cache.Null.singleton();
-		assertEquals(singleton, Cache.Null.singleton());
-	}
+    @Test
+    public void testNullIsSingleton() {
+        Null<?> singleton = Cache.Null.singleton();
+        assertEquals(singleton, Cache.Null.singleton());
+    }
 }

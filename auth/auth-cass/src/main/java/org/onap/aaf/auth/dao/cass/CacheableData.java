@@ -26,10 +26,10 @@ import org.onap.aaf.auth.dao.Cached;
 import org.onap.aaf.auth.dao.CachedDAO;
 
 public abstract class CacheableData implements Cacheable {
-	// WARNING:  DON'T attempt to add any members here, as it will 
-	// be treated by system as fields expected in Tables
-	protected int seg(Cached<?,?> cache, Object ... fields) {
-		return cache==null?0:cache.invalidate(CachedDAO.keyFromObjs(fields));
-	}
-	
+    // WARNING:  DON'T attempt to add any members here, as it will 
+    // be treated by system as fields expected in Tables
+    protected int seg(Cached<?,?> cache, Object ... fields) {
+        return cache==null?0:cache.invalidate(CachedDAO.keyFromObjs(fields));
+    }
+    
 }

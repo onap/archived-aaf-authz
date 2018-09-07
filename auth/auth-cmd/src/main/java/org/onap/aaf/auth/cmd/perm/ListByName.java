@@ -38,32 +38,32 @@ import aaf.v2_0.Perms;
  *
  */
 public class ListByName extends Cmd {
-	private static final String HEADER = "List Child Permissions";
-	
-	public ListByName(List parent) {
-		super(parent,"name", 
-				new Param("root perm name",true)); 
-	}
+    private static final String HEADER = "List Child Permissions";
+    
+    public ListByName(List parent) {
+        super(parent,"name", 
+                new Param("root perm name",true)); 
+    }
 
-	public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
-		return same(((List)parent).new ListPerms() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				String parentPerm=args[index];
-				
-				Future<Perms> fp = client.read(
-						"/authz/perms/"+parentPerm+(aafcli.isDetailed()?"?ns":""), 
-						getDF(Perms.class) 
-						);
-				return list(fp,HEADER,parentPerm);
-			}
-		});
-	}
+    public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
+        return same(((List)parent).new ListPerms() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                String parentPerm=args[index];
+                
+                Future<Perms> fp = client.read(
+                        "/authz/perms/"+parentPerm+(aafcli.isDetailed()?"?ns":""), 
+                        getDF(Perms.class) 
+                        );
+                return list(fp,HEADER,parentPerm);
+            }
+        });
+    }
 
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/perms/<parent type>",Perms.class,true);
-	}
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/perms/<parent type>",Perms.class,true);
+    }
 
 }

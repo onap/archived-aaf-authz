@@ -35,10 +35,10 @@ import org.onap.aaf.misc.xgen.html.State;
  *
  */
 public abstract class DynamicCode<G extends XGen<G>, AS extends State<Env>, TRANS extends Trans> implements Code<G> {
-	public abstract void code(final AS state, final TRANS trans, final Cache<G> cache, final G xgen) throws APIException, IOException;
-	
-	// We expect not to have this section of the code engaged at any time
-	public void code(final Cache<G> cache, final G xgen) throws APIException, IOException {
-		code(null, null,cache,xgen);
-	}
+    public abstract void code(final AS state, final TRANS trans, final Cache<G> cache, final G xgen) throws APIException, IOException;
+    
+    // We expect not to have this section of the code engaged at any time
+    public void code(final Cache<G> cache, final G xgen) throws APIException, IOException {
+        code(null, null,cache,xgen);
+    }
 }

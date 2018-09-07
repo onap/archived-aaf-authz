@@ -41,41 +41,41 @@ import aaf.v2_0.Nss.Ns;
  *
  */
 public class ListChildren extends Cmd {
-	private static final String HEADER="List Child Namespaces";
-	
-	public ListChildren(List parent) {
-		super(parent,"children", 
-				new Param("ns-name",true));
-	}
+    private static final String HEADER="List Child Namespaces";
+    
+    public ListChildren(List parent) {
+        super(parent,"children", 
+                new Param("ns-name",true));
+    }
 
-	@Override
-	public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-	        int idx = _idx;
-		final String ns=args[idx++];
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				Future<Nss> fn = client.read("/authz/nss/children/"+ns,getDF(Nss.class));
-				if(fn.get(AAFcli.timeout())) {
-					parent.reportHead(HEADER);
-					for(Ns ns : fn.value.getNs()) {
-						pw().format(List.kformat, ns.getName());
-					}
-				} else if(fn.code()==404) {
-					((List)parent).report(null,HEADER,ns);
-					return 200;
-				} else {	
-					error(fn);
-				}
-				return fn.code();
-			}
-		});
-	}
+    @Override
+    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = _idx;
+        final String ns=args[idx++];
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                Future<Nss> fn = client.read("/authz/nss/children/"+ns,getDF(Nss.class));
+                if(fn.get(AAFcli.timeout())) {
+                    parent.reportHead(HEADER);
+                    for(Ns ns : fn.value.getNs()) {
+                        pw().format(List.kformat, ns.getName());
+                    }
+                } else if(fn.code()==404) {
+                    ((List)parent).report(null,HEADER,ns);
+                    return 200;
+                } else {    
+                    error(fn);
+                }
+                return fn.code();
+            }
+        });
+    }
 
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/nss/children/<ns>",Nss.class,true);
-	}
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/nss/children/<ns>",Nss.class,true);
+    }
 
 }

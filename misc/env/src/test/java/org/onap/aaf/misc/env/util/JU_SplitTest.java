@@ -27,30 +27,30 @@ import org.junit.Test;
 
 public class JU_SplitTest {
 
-	@Test
-	public void testSplit() {
-		String[] splits = Split.split('c', "character c to break string");
+    @Test
+    public void testSplit() {
+        String[] splits = Split.split('c', "character c to break string");
 
-		assertEquals(splits.length, 4);
-		assertEquals(splits[0], "");
-		assertEquals(splits[1], "hara");
-		assertEquals(splits[2], "ter ");
-		assertEquals(splits[3], " to break string");
-	}
+        assertEquals(splits.length, 4);
+        assertEquals(splits[0], "");
+        assertEquals(splits[1], "hara");
+        assertEquals(splits[2], "ter ");
+        assertEquals(splits[3], " to break string");
+    }
 
-	@Test
-	public void testSplitTrim() {
-		String[] splits = Split.splitTrim('c', "character c to break string", 5);
+    @Test
+    public void testSplitTrim() {
+        String[] splits = Split.splitTrim('c', "character c to break string", 5);
 
-		assertEquals(splits.length, 5);
-		assertEquals(splits[0], "");
-		assertEquals(splits[1], "hara");
-		assertEquals(splits[2], "ter");
-		assertEquals(splits[3], "to break string");
-		assertEquals(splits[4], null);
+        assertEquals(splits.length, 5);
+        assertEquals(splits[0], "");
+        assertEquals(splits[1], "hara");
+        assertEquals(splits[2], "ter");
+        assertEquals(splits[3], "to break string");
+        assertEquals(splits[4], null);
 
-		splits = Split.splitTrim('c', " character ", 1);
-		assertEquals(splits.length, 1);
-		assertEquals(splits[0], "character");
-	}
+        splits = Split.splitTrim('c', " character ", 1);
+        assertEquals(splits.length, 1);
+        assertEquals(splits[0], "character");
+    }
 }

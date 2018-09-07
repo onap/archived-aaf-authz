@@ -44,150 +44,150 @@ import org.onap.aaf.misc.env.impl.BasicTrans;
 
 public class JU_AbsAAFLocator {
 
-	@Mock private LocatorCreator locatorCreatorMock;
+    @Mock private LocatorCreator locatorCreatorMock;
 
-	private PropAccess access;
-	private URI uri;
+    private PropAccess access;
+    private URI uri;
 
-	private static final String uriString = "example.com";
+    private static final String uriString = "example.com";
 
-	@Before
-	public void setup() throws URISyntaxException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws URISyntaxException {
+        MockitoAnnotations.initMocks(this);
 
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
-		access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
+        access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon
 
-		uri = new URI(uriString);
-	}
+        uri = new URI(uriString);
+    }
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		AbsAAFLocator.setCreator(null);
-	}
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        AbsAAFLocator.setCreator(null);
+    }
 
-	@Test
-	public void test() throws LocatorException {
-		AAFLocatorStub loc;
+    @Test
+    public void test() throws LocatorException {
+        AAFLocatorStub loc;
 
-		// Test with http
-		loc = new AAFLocatorStub(access, "httpname");
-		assertThat(loc.getName(), is("httpname"));
-		assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_VERSION));
-		assertThat(loc.toString(), is("AAFLocator for " + "httpname" + " on " + loc.getURI()));
+        // Test with http
+        loc = new AAFLocatorStub(access, "httpname");
+        assertThat(loc.getName(), is("httpname"));
+        assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_VERSION));
+        assertThat(loc.toString(), is("AAFLocator for " + "httpname" + " on " + loc.getURI()));
 
-		loc = new AAFLocatorStub(access, "name");
-		assertThat(loc.getName(), is("name"));
-		assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_VERSION));
-		loc = new AAFLocatorStub(access, "name:v2.0");
-		assertThat(loc.getName(), is("name"));
-		assertThat(loc.getVersion(), is("v2.0"));
-	}
+        loc = new AAFLocatorStub(access, "name");
+        assertThat(loc.getName(), is("name"));
+        assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_VERSION));
+        loc = new AAFLocatorStub(access, "name:v2.0");
+        assertThat(loc.getName(), is("name"));
+        assertThat(loc.getVersion(), is("v2.0"));
+    }
 
-	@Test
-	public void createTest() throws LocatorException {
-		AbsAAFLocator.setCreator(locatorCreatorMock);
+    @Test
+    public void createTest() throws LocatorException {
+        AbsAAFLocator.setCreator(locatorCreatorMock);
 
-		assertThat(AbsAAFLocator.create("nonsense"), is(nullValue()));
-		assertThat(AbsAAFLocator.create("nonsense/locate"), is(nullValue()));
-		assertThat(AbsAAFLocator.create("nonsense/locate/"), is(nullValue()));
-		assertThat(AbsAAFLocator.create("nonsense/locate//"), is(nullValue()));
-		assertThat(AbsAAFLocator.create("nonsense/locate/name:v2.0"), is(nullValue()));
+        assertThat(AbsAAFLocator.create("nonsense"), is(nullValue()));
+        assertThat(AbsAAFLocator.create("nonsense/locate"), is(nullValue()));
+        assertThat(AbsAAFLocator.create("nonsense/locate/"), is(nullValue()));
+        assertThat(AbsAAFLocator.create("nonsense/locate//"), is(nullValue()));
+        assertThat(AbsAAFLocator.create("nonsense/locate/name:v2.0"), is(nullValue()));
 
-		assertThat(AbsAAFLocator.create("http/locate/name:v2.0"), is(nullValue()));
+        assertThat(AbsAAFLocator.create("http/locate/name:v2.0"), is(nullValue()));
 
-		doReturn(mock(AbsAAFLocator.class)).when(locatorCreatorMock).create(anyString(), anyString());
-		assertThat(AbsAAFLocator.create("http/locate/name:v2.0/path"), is(not(nullValue())));
+        doReturn(mock(AbsAAFLocator.class)).when(locatorCreatorMock).create(anyString(), anyString());
+        assertThat(AbsAAFLocator.create("http/locate/name:v2.0/path"), is(not(nullValue())));
 
-		AbsAAFLocator.setCreator(null);
-		assertThat(AbsAAFLocator.create("http/locate/name:v2.0"), is(nullValue()));
+        AbsAAFLocator.setCreator(null);
+        assertThat(AbsAAFLocator.create("http/locate/name:v2.0"), is(nullValue()));
 
-		assertThat(AbsAAFLocator.create("http"), is(not(nullValue())));
+        assertThat(AbsAAFLocator.create("http"), is(not(nullValue())));
 
-		AbsAAFLocator.setCreator(locatorCreatorMock);
-		assertThat(AbsAAFLocator.create("first", "second"), is(not(nullValue())));
-	}
+        AbsAAFLocator.setCreator(locatorCreatorMock);
+        assertThat(AbsAAFLocator.create("first", "second"), is(not(nullValue())));
+    }
 
-	@Test
-	public void nameFromLocatorURITest() throws LocatorException, URISyntaxException {
-		AAFLocatorStub loc = new AAFLocatorStub(access, "name:v2.0");
-		assertThat(loc.getNameFromURI(new URI("example.com")), is("example.com"));
-		assertThat(loc.getNameFromURI(new URI("example.com/extra/stuff")), is("example.com/extra/stuff"));
-		assertThat(loc.getNameFromURI(new URI("example.com/locate/stuff")), is("stuff")); // n' stuff
-	}
+    @Test
+    public void nameFromLocatorURITest() throws LocatorException, URISyntaxException {
+        AAFLocatorStub loc = new AAFLocatorStub(access, "name:v2.0");
+        assertThat(loc.getNameFromURI(new URI("example.com")), is("example.com"));
+        assertThat(loc.getNameFromURI(new URI("example.com/extra/stuff")), is("example.com/extra/stuff"));
+        assertThat(loc.getNameFromURI(new URI("example.com/locate/stuff")), is("stuff")); // n' stuff
+    }
 
-	@Test
-	public void setSelfTest() throws LocatorException {
-		AbsAAFLocator.setCreatorSelf("host", 8000);
-		AbsAAFLocator.setCreator(null);
-		AbsAAFLocator.setCreatorSelf("host", 8000);
-		(new AAFLocatorStub(access, "name:v2.0")).setSelf("host", 8000);  // oof
-	}
+    @Test
+    public void setSelfTest() throws LocatorException {
+        AbsAAFLocator.setCreatorSelf("host", 8000);
+        AbsAAFLocator.setCreator(null);
+        AbsAAFLocator.setCreatorSelf("host", 8000);
+        (new AAFLocatorStub(access, "name:v2.0")).setSelf("host", 8000);  // oof
+    }
 
-	@Test
-	public void coverage() throws LocatorException {
-		AAFLocatorStub loc = new AAFLocatorStub(access, "name:v2.0");
-		assertThat(loc.get(null), is(nullValue()));
+    @Test
+    public void coverage() throws LocatorException {
+        AAFLocatorStub loc = new AAFLocatorStub(access, "name:v2.0");
+        assertThat(loc.get(null), is(nullValue()));
 
-		try {
-			loc.get(mock(Item.class));
-			fail("Should've thrown an exception");
-		} catch (Exception e) {
-		}
+        try {
+            loc.get(mock(Item.class));
+            fail("Should've thrown an exception");
+        } catch (Exception e) {
+        }
 
-		try {
-			loc.invalidate(mock(Item.class));
-			fail("Should've thrown an exception");
-		} catch (Exception e) {
-		}
+        try {
+            loc.invalidate(mock(Item.class));
+            fail("Should've thrown an exception");
+        } catch (Exception e) {
+        }
 
-		try {
-			loc.best();
-			fail("Should've thrown an exception");
-		} catch (Exception e) {
-		}
+        try {
+            loc.best();
+            fail("Should've thrown an exception");
+        } catch (Exception e) {
+        }
 
-		assertThat(loc.first(), is(nullValue()));
+        assertThat(loc.first(), is(nullValue()));
 
-		assertThat(loc.hasItems(), is(false));
-		assertThat(loc.next(null), is(nullValue()));
+        assertThat(loc.hasItems(), is(false));
+        assertThat(loc.next(null), is(nullValue()));
 
-		try {
-			loc.next(mock(Item.class));
-			fail("Should've thrown an exception");
-		} catch (Exception e) {
-		}
+        try {
+            loc.next(mock(Item.class));
+            fail("Should've thrown an exception");
+        } catch (Exception e) {
+        }
 
-		loc.destroy();
-
-
-		assertThat(loc.exposeGetURI(uri), is(uri));
-
-		assertThat(loc.setPathInfo("pathInfo"), is(not(nullValue())));
-		assertThat(loc.setQuery("query"), is(not(nullValue())));
-		assertThat(loc.setFragment("fragment"), is(not(nullValue())));
-		
-		assertThat(loc.exposeGetURI(uri), is(not(uri)));
-	}
+        loc.destroy();
 
 
-	@Test(expected = LocatorException.class)
-	public void throwsTest() throws LocatorException {
-		@SuppressWarnings("unused")
-		AAFLocatorStub loc = new AAFLocatorStub(new PropAccess(), "name");
-	}
+        assertThat(loc.exposeGetURI(uri), is(uri));
 
-	private class AAFLocatorStub extends AbsAAFLocator<BasicTrans> {
-		public AAFLocatorStub(Access access, String name) throws LocatorException {
-			super(access, name, 10000L);
-		}
-		@Override public boolean refresh() { return false; }
-		@Override protected URI getURI() { return uri; }
-		public String getName() { return name; }
-		public String getVersion() { return version; }
-		public String getNameFromURI(URI uri) { return nameFromLocatorURI(uri); }
-		public URI exposeGetURI(URI uri) throws LocatorException { return super.getURI(uri); }
-	}
+        assertThat(loc.setPathInfo("pathInfo"), is(not(nullValue())));
+        assertThat(loc.setQuery("query"), is(not(nullValue())));
+        assertThat(loc.setFragment("fragment"), is(not(nullValue())));
+        
+        assertThat(loc.exposeGetURI(uri), is(not(uri)));
+    }
+
+
+    @Test(expected = LocatorException.class)
+    public void throwsTest() throws LocatorException {
+        @SuppressWarnings("unused")
+        AAFLocatorStub loc = new AAFLocatorStub(new PropAccess(), "name");
+    }
+
+    private class AAFLocatorStub extends AbsAAFLocator<BasicTrans> {
+        public AAFLocatorStub(Access access, String name) throws LocatorException {
+            super(access, name, 10000L);
+        }
+        @Override public boolean refresh() { return false; }
+        @Override protected URI getURI() { return uri; }
+        public String getName() { return name; }
+        public String getVersion() { return version; }
+        public String getNameFromURI(URI uri) { return nameFromLocatorURI(uri); }
+        public URI exposeGetURI(URI uri) throws LocatorException { return super.getURI(uri); }
+    }
 
 }

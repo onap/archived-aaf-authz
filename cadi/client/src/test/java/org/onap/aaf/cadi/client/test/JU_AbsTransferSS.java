@@ -34,39 +34,39 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import java.net.HttpURLConnection;
 
 public class JU_AbsTransferSS {
-	
-	@Mock TaggedPrincipal princMock;
-	@Mock SecurityInfoC<HttpURLConnection> siMock;
-	
-	private static final String princName = "name";
-	private static final String princTag = "tag";
-	private static final String app = "app";
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		
-		when(princMock.getName()).thenReturn(princName);
-		when(princMock.tag()).thenReturn(princTag);
-	}
+    
+    @Mock TaggedPrincipal princMock;
+    @Mock SecurityInfoC<HttpURLConnection> siMock;
+    
+    private static final String princName = "name";
+    private static final String princTag = "tag";
+    private static final String app = "app";
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        
+        when(princMock.getName()).thenReturn(princName);
+        when(princMock.tag()).thenReturn(princTag);
+    }
 
-	@Test
-	public void test() {
-		TransferSSStub stub = new TransferSSStub(princMock, app);
-		assertThat(stub.getID(), is(princName));
-		assertThat(stub.getValue(), is(princName + ':' + app + ':' + princTag + ':' + "AS"));
-		
-		stub = new TransferSSStub(null, app, siMock);
-		assertThat(stub.getID(), is(""));
-		assertThat(stub.getValue(), is(nullValue()));
-	}
-	
-	private class TransferSSStub extends AbsTransferSS<HttpURLConnection> {
-		public TransferSSStub(TaggedPrincipal principal, String app) { super(principal, app); }
-		public TransferSSStub(TaggedPrincipal principal, String app, SecurityInfoC<HttpURLConnection> si) { super(principal, app, si); }
-		@Override public void setSecurity(HttpURLConnection client) throws CadiException { }
-		@Override public int setLastResponse(int respCode) { return 0; }
-		public String getValue() { return value; }
-	}
+    @Test
+    public void test() {
+        TransferSSStub stub = new TransferSSStub(princMock, app);
+        assertThat(stub.getID(), is(princName));
+        assertThat(stub.getValue(), is(princName + ':' + app + ':' + princTag + ':' + "AS"));
+        
+        stub = new TransferSSStub(null, app, siMock);
+        assertThat(stub.getID(), is(""));
+        assertThat(stub.getValue(), is(nullValue()));
+    }
+    
+    private class TransferSSStub extends AbsTransferSS<HttpURLConnection> {
+        public TransferSSStub(TaggedPrincipal principal, String app) { super(principal, app); }
+        public TransferSSStub(TaggedPrincipal principal, String app, SecurityInfoC<HttpURLConnection> si) { super(principal, app, si); }
+        @Override public void setSecurity(HttpURLConnection client) throws CadiException { }
+        @Override public int setLastResponse(int respCode) { return 0; }
+        public String getValue() { return value; }
+    }
 
 }

@@ -22,5 +22,5 @@
 package org.onap.aaf.cadi;
 
 public interface GetCred {
-	byte[] getCred();
+    byte[] getCred();
 }

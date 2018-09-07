@@ -27,28 +27,28 @@ import org.junit.Test;
 
 public class JU_ImportsTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void test() {
-		Imports imports = new Imports(2);
-		imports.css("styles.css");
-		imports.js("main.js");
-		imports.theme("New Theme");
+    @Test
+    public void test() {
+        Imports imports = new Imports(2);
+        imports.css("styles.css");
+        imports.js("main.js");
+        imports.theme("New Theme");
 
-		assertEquals("New Theme", imports.themeResolve(null));
-		assertEquals("New Theme", imports.themeResolve(""));
-		assertEquals("The Theme", imports.themeResolve("The Theme"));
+        assertEquals("New Theme", imports.themeResolve(null));
+        assertEquals("New Theme", imports.themeResolve(""));
+        assertEquals("The Theme", imports.themeResolve("The Theme"));
 
-		assertEquals("build/../../", imports.dots(new StringBuilder("build/")).toString());
-		assertEquals("../../Theme/", imports.themePath("Theme"));
-		assertEquals("../../New Theme/", imports.themePath(""));
-		assertEquals("../../New Theme/", imports.themePath(null));
+        assertEquals("build/../../", imports.dots(new StringBuilder("build/")).toString());
+        assertEquals("../../Theme/", imports.themePath("Theme"));
+        assertEquals("../../New Theme/", imports.themePath(""));
+        assertEquals("../../New Theme/", imports.themePath(null));
 
-		imports.theme(null);
-		assertEquals("../../", imports.themePath(null));
-	}
+        imports.theme(null);
+        assertEquals("../../", imports.themePath(null));
+    }
 
 }

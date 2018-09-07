@@ -24,10 +24,10 @@ package org.onap.aaf.cadi.client;
 import org.onap.aaf.cadi.CadiException;
 
 public abstract class Future<T> {
-	public T value;
-	public abstract boolean get(int timeout) throws CadiException;
-	
-	public abstract int code();
-	public abstract String body();
-	public abstract String header(String tag);
+    public T value;
+    public abstract boolean get(int timeout) throws CadiException;
+    
+    public abstract int code();
+    public abstract String body();
+    public abstract String header(String tag);
 }

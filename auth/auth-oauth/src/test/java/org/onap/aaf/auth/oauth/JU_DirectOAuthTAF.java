@@ -50,78 +50,78 @@ import aafoauth.v2_0.Introspect;
 
 public class JU_DirectOAuthTAF {
 
-	@Mock
-	private AuthzEnv env;
+    @Mock
+    private AuthzEnv env;
 
-	@Mock
-	private PropAccess access;
+    @Mock
+    private PropAccess access;
 
-	private Properties props = new Properties();
+    private Properties props = new Properties();
 
-	@Mock
-	private HttpServletRequest req;
+    @Mock
+    private HttpServletRequest req;
 
-	private Map<String, String[]> parameterMap;
-	@Mock
-	private DirectIntrospect<Introspect> facade;
-	@Mock
-	private AuthzTrans trans;
-	@Mock
-	private Result<Introspect> ri;
+    private Map<String, String[]> parameterMap;
+    @Mock
+    private DirectIntrospect<Introspect> facade;
+    @Mock
+    private AuthzTrans trans;
+    @Mock
+    private Result<Introspect> ri;
 
-	@Before
-	public void setup() {
-		initMocks(this);
-		parameterMap = new TreeMap<String, String[]>();
+    @Before
+    public void setup() {
+        initMocks(this);
+        parameterMap = new TreeMap<String, String[]>();
 
-	}
+    }
 
-	@Test
-	public void testValidateWithoutSecret() throws APIException, CadiException {
-		parameterMap.put("client_id", new String[] { "Client1" });
-		// parameterMap.put("client_secret", new String[] { "Secret1" });
-		parameterMap.put("username", new String[] { "User1" });
-		parameterMap.put("password", new String[] { "Pass1" });
-		parameterMap.put("token", new String[] { "token1" });
-		when(env.access()).thenReturn(access);
-		when(access.getProperties()).thenReturn(props);
-		when(req.getContentType()).thenReturn("application/x-www-form-urlencoded");
-		when(req.getParameterMap()).thenReturn(parameterMap);
+    @Test
+    public void testValidateWithoutSecret() throws APIException, CadiException {
+        parameterMap.put("client_id", new String[] { "Client1" });
+        // parameterMap.put("client_secret", new String[] { "Secret1" });
+        parameterMap.put("username", new String[] { "User1" });
+        parameterMap.put("password", new String[] { "Pass1" });
+        parameterMap.put("token", new String[] { "token1" });
+        when(env.access()).thenReturn(access);
+        when(access.getProperties()).thenReturn(props);
+        when(req.getContentType()).thenReturn("application/x-www-form-urlencoded");
+        when(req.getParameterMap()).thenReturn(parameterMap);
 
-		DirectOAuthTAF oAuthTaf = new DirectOAuthTAF(env, null, null);
+        DirectOAuthTAF oAuthTaf = new DirectOAuthTAF(env, null, null);
 
-		TafResp validate = oAuthTaf.validate(null, req, null);
+        TafResp validate = oAuthTaf.validate(null, req, null);
 
-		assertNotNull(validate);
-		assertEquals(validate.getAccess(), access);
-		assertEquals(validate.desc(), "client_id and client_secret required");
-	}
+        assertNotNull(validate);
+        assertEquals(validate.getAccess(), access);
+        assertEquals(validate.desc(), "client_id and client_secret required");
+    }
 
-	@Test
-	public void testValidateWithSecret() throws APIException, CadiException {
-		parameterMap.put("client_id", new String[] { "Client1" });
-		parameterMap.put("client_secret", new String[] { "Secret1" });
-		parameterMap.put("username", new String[] { "User1" });
-		parameterMap.put("password", new String[] { "Pass1" });
-		parameterMap.put("token", new String[] { "token1" });
+    @Test
+    public void testValidateWithSecret() throws APIException, CadiException {
+        parameterMap.put("client_id", new String[] { "Client1" });
+        parameterMap.put("client_secret", new String[] { "Secret1" });
+        parameterMap.put("username", new String[] { "User1" });
+        parameterMap.put("password", new String[] { "Pass1" });
+        parameterMap.put("token", new String[] { "token1" });
 
-		when(env.access()).thenReturn(access);
-		when(access.getProperties()).thenReturn(props);
-		when(req.getContentType()).thenReturn("application/x-www-form-urlencoded");
-		when(req.getParameterMap()).thenReturn(parameterMap);
-		when(req.getAttribute(TransFilter.TRANS_TAG)).thenReturn(trans);
-		when(facade.mappedIntrospect(trans, "token1")).thenReturn(ri);
+        when(env.access()).thenReturn(access);
+        when(access.getProperties()).thenReturn(props);
+        when(req.getContentType()).thenReturn("application/x-www-form-urlencoded");
+        when(req.getParameterMap()).thenReturn(parameterMap);
+        when(req.getAttribute(TransFilter.TRANS_TAG)).thenReturn(trans);
+        when(facade.mappedIntrospect(trans, "token1")).thenReturn(ri);
 
-		DirectOAuthTAF oAuthTaf = new DirectOAuthTAF(env, null, facade);
+        DirectOAuthTAF oAuthTaf = new DirectOAuthTAF(env, null, facade);
 
-		TafResp validate = oAuthTaf.validate(null, req, null);
+        TafResp validate = oAuthTaf.validate(null, req, null);
 
-		assertNotNull(validate);
-		assertEquals(validate.getAccess(), access);
-		assertEquals(validate.desc(), ri.errorString());
+        assertNotNull(validate);
+        assertEquals(validate.getAccess(), access);
+        assertEquals(validate.desc(), ri.errorString());
 
-		assertNull(oAuthTaf.revalidate(null, null));
-		assertNotNull(oAuthTaf.directUserPass());
-	}
+        assertNull(oAuthTaf.revalidate(null, null));
+        assertNotNull(oAuthTaf.directUserPass());
+    }
 
 }

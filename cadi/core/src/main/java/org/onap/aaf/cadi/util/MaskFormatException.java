@@ -24,8 +24,8 @@ package org.onap.aaf.cadi.util;
 @SuppressWarnings("serial")
 public class MaskFormatException extends Exception {
 
-	public MaskFormatException(String string) {
-			super(string);
-	}
+    public MaskFormatException(String string) {
+            super(string);
+    }
 
 }

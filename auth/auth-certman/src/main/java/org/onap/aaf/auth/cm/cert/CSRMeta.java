@@ -54,212 +54,212 @@ import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.misc.env.Trans;
 
 public class CSRMeta {
-	private String cn;
-	private String mechID;
-	private String environment;
-	private String email;
-	private String challenge;
-	private List<RDN> rdns;
-	private ArrayList<String> sanList = new ArrayList<>();
-	private KeyPair keyPair;
-	private X500Name name = null;
-	private SecureRandom random = new SecureRandom();
+    private String cn;
+    private String mechID;
+    private String environment;
+    private String email;
+    private String challenge;
+    private List<RDN> rdns;
+    private ArrayList<String> sanList = new ArrayList<>();
+    private KeyPair keyPair;
+    private X500Name name = null;
+    private SecureRandom random = new SecureRandom();
 
-	public CSRMeta(List<RDN> rdns) {
-		this.rdns = rdns;
-	}
+    public CSRMeta(List<RDN> rdns) {
+        this.rdns = rdns;
+    }
 
-	public X500Name x500Name() {
-		if(name==null) {
-			X500NameBuilder xnb = new X500NameBuilder();
-			xnb.addRDN(BCStyle.CN,cn);
-			xnb.addRDN(BCStyle.E,email);
-			if(mechID!=null) {
-				if(environment==null) {
-					xnb.addRDN(BCStyle.OU,mechID);
-				} else {
-					xnb.addRDN(BCStyle.OU,mechID+':'+environment);
-				}
-			}
-			for(RDN rdn : rdns) {
-				xnb.addRDN(rdn.aoi,rdn.value);
-			}
-			name = xnb.build();
-		}
-		return name;
-	}
-	
-	
-	public PKCS10CertificationRequest  generateCSR(Trans trans) throws IOException, CertException {
-		PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(x500Name(),keypair(trans).getPublic());
-		if(challenge!=null) {
-			DERPrintableString password = new DERPrintableString(challenge);
-			builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
-		}
-		
-		int plus = email==null?0:1;
-		if(!sanList.isEmpty()) {
-			GeneralName[] gna = new GeneralName[sanList.size()+plus];
-			int i=-1;
-			for(String s : sanList) {
-				gna[++i]=new GeneralName(GeneralName.dNSName,s);
-			}
-			gna[++i]=new GeneralName(GeneralName.rfc822Name,email);
-			
-			builder.addAttribute(
-					PKCSObjectIdentifiers.pkcs_9_at_extensionRequest,
-					new Extensions(new Extension[] {
-							new Extension(Extension.subjectAlternativeName,false,new GeneralNames(gna).getEncoded())
-					})
-			);
-		}
+    public X500Name x500Name() {
+        if(name==null) {
+            X500NameBuilder xnb = new X500NameBuilder();
+            xnb.addRDN(BCStyle.CN,cn);
+            xnb.addRDN(BCStyle.E,email);
+            if(mechID!=null) {
+                if(environment==null) {
+                    xnb.addRDN(BCStyle.OU,mechID);
+                } else {
+                    xnb.addRDN(BCStyle.OU,mechID+':'+environment);
+                }
+            }
+            for(RDN rdn : rdns) {
+                xnb.addRDN(rdn.aoi,rdn.value);
+            }
+            name = xnb.build();
+        }
+        return name;
+    }
+    
+    
+    public PKCS10CertificationRequest  generateCSR(Trans trans) throws IOException, CertException {
+        PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(x500Name(),keypair(trans).getPublic());
+        if(challenge!=null) {
+            DERPrintableString password = new DERPrintableString(challenge);
+            builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
+        }
+        
+        int plus = email==null?0:1;
+        if(!sanList.isEmpty()) {
+            GeneralName[] gna = new GeneralName[sanList.size()+plus];
+            int i=-1;
+            for(String s : sanList) {
+                gna[++i]=new GeneralName(GeneralName.dNSName,s);
+            }
+            gna[++i]=new GeneralName(GeneralName.rfc822Name,email);
+            
+            builder.addAttribute(
+                    PKCSObjectIdentifiers.pkcs_9_at_extensionRequest,
+                    new Extensions(new Extension[] {
+                            new Extension(Extension.subjectAlternativeName,false,new GeneralNames(gna).getEncoded())
+                    })
+            );
+        }
 
-		try {
-			return builder.build(BCFactory.contentSigner(keypair(trans).getPrivate()));
-		} catch (OperatorCreationException e) {
-			throw new CertException(e);
-		}
-	}
-	
-	@SuppressWarnings("deprecation")
-	public static void dump(PKCS10CertificationRequest csr) {
-		 Attribute[] certAttributes = csr.getAttributes();
-		 for (Attribute attribute : certAttributes) {
-		     if (!attribute.getAttrType().equals(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest)) {
-					 continue;
-				 }
+        try {
+            return builder.build(BCFactory.contentSigner(keypair(trans).getPrivate()));
+        } catch (OperatorCreationException e) {
+            throw new CertException(e);
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    public static void dump(PKCS10CertificationRequest csr) {
+         Attribute[] certAttributes = csr.getAttributes();
+         for (Attribute attribute : certAttributes) {
+             if (!attribute.getAttrType().equals(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest)) {
+                     continue;
+                 }
 
-				 Extensions extensions = Extensions.getInstance(attribute.getAttrValues().getObjectAt(0));
-				 GeneralNames gns = GeneralNames.fromExtensions(extensions,Extension.subjectAlternativeName);
-				 GeneralName[] names = gns.getNames();
-				 for(int k=0; k < names.length; k++) {
-						 String title = "";
-						 if(names[k].getTagNo() == GeneralName.dNSName) {
-								 title = "dNSName";
-						 } else if(names[k].getTagNo() == GeneralName.iPAddress) {
-								 title = "iPAddress";
-								 // Deprecated, but I don't see anything better to use.
-								 names[k].toASN1Object();
-						 } else if(names[k].getTagNo() == GeneralName.otherName) {
-								 title = "otherName";
-						 } else if(names[k].getTagNo() == GeneralName.rfc822Name) {
-								 title = "email";
-						 }
+                 Extensions extensions = Extensions.getInstance(attribute.getAttrValues().getObjectAt(0));
+                 GeneralNames gns = GeneralNames.fromExtensions(extensions,Extension.subjectAlternativeName);
+                 GeneralName[] names = gns.getNames();
+                 for(int k=0; k < names.length; k++) {
+                         String title = "";
+                         if(names[k].getTagNo() == GeneralName.dNSName) {
+                                 title = "dNSName";
+                         } else if(names[k].getTagNo() == GeneralName.iPAddress) {
+                                 title = "iPAddress";
+                                 // Deprecated, but I don't see anything better to use.
+                                 names[k].toASN1Object();
+                         } else if(names[k].getTagNo() == GeneralName.otherName) {
+                                 title = "otherName";
+                         } else if(names[k].getTagNo() == GeneralName.rfc822Name) {
+                                 title = "email";
+                         }
 
-						 System.out.println(title + ": "+ names[k].getName());
-				 }
-		 }
-	}
-	
-	public X509Certificate initialConversationCert(Trans trans) throws IOException, CertificateException, OperatorCreationException {
-		GregorianCalendar gc = new GregorianCalendar();
-		Date start = gc.getTime();
-		gc.add(GregorianCalendar.DAY_OF_MONTH,2);
-		Date end = gc.getTime();
-		@SuppressWarnings("deprecation")
-		X509v3CertificateBuilder xcb = new X509v3CertificateBuilder(
-				x500Name(),
-				new BigInteger(12,random), // replace with Serialnumber scheme
-				start,
-				end,
-				x500Name(),
-				new SubjectPublicKeyInfo(ASN1Sequence.getInstance(keypair(trans).getPublic().getEncoded()))
-				);
-		return new JcaX509CertificateConverter().getCertificate(
-				xcb.build(BCFactory.contentSigner(keypair(trans).getPrivate())));
-	}
+                         System.out.println(title + ": "+ names[k].getName());
+                 }
+         }
+    }
+    
+    public X509Certificate initialConversationCert(Trans trans) throws IOException, CertificateException, OperatorCreationException {
+        GregorianCalendar gc = new GregorianCalendar();
+        Date start = gc.getTime();
+        gc.add(GregorianCalendar.DAY_OF_MONTH,2);
+        Date end = gc.getTime();
+        @SuppressWarnings("deprecation")
+        X509v3CertificateBuilder xcb = new X509v3CertificateBuilder(
+                x500Name(),
+                new BigInteger(12,random), // replace with Serialnumber scheme
+                start,
+                end,
+                x500Name(),
+                new SubjectPublicKeyInfo(ASN1Sequence.getInstance(keypair(trans).getPublic().getEncoded()))
+                );
+        return new JcaX509CertificateConverter().getCertificate(
+                xcb.build(BCFactory.contentSigner(keypair(trans).getPrivate())));
+    }
 
-	public CSRMeta san(String v) {
-		sanList.add(v);
-		return this;
-	}
+    public CSRMeta san(String v) {
+        sanList.add(v);
+        return this;
+    }
 
-	public List<String> sans() {
-		return sanList;
-	}
-
-
-	public KeyPair keypair(Trans trans) {
-		if(keyPair == null) {
-			keyPair = Factory.generateKeyPair(trans);
-		}
-		return keyPair;
-	}
-
-	/**
-	 * @return the cn
-	 */
-	public String cn() {
-		return cn;
-	}
+    public List<String> sans() {
+        return sanList;
+    }
 
 
-	/**
-	 * @param cn the cn to set
-	 */
-	public void cn(String cn) {
-		this.cn = cn;
-	}
+    public KeyPair keypair(Trans trans) {
+        if(keyPair == null) {
+            keyPair = Factory.generateKeyPair(trans);
+        }
+        return keyPair;
+    }
 
-	/**
-	 * Environment of Service MechID is good for
-	 */
-	public void environment(String env) {
-		environment = env;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String environment() {
-		return environment;
-	}
-	
-	/**
-	 * @return the mechID
-	 */
-	public String mechID() {
-		return mechID;
-	}
+    /**
+     * @return the cn
+     */
+    public String cn() {
+        return cn;
+    }
 
 
-	/**
-	 * @param mechID the mechID to set
-	 */
-	public void mechID(String mechID) {
-		this.mechID = mechID;
-	}
+    /**
+     * @param cn the cn to set
+     */
+    public void cn(String cn) {
+        this.cn = cn;
+    }
+
+    /**
+     * Environment of Service MechID is good for
+     */
+    public void environment(String env) {
+        environment = env;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String environment() {
+        return environment;
+    }
+    
+    /**
+     * @return the mechID
+     */
+    public String mechID() {
+        return mechID;
+    }
 
 
-	/**
-	 * @return the email
-	 */
-	public String email() {
-		return email;
-	}
+    /**
+     * @param mechID the mechID to set
+     */
+    public void mechID(String mechID) {
+        this.mechID = mechID;
+    }
 
 
-	/**
-	 * @param email the email to set
-	 */
-	public void email(String email) {
-		this.email = email;
-	}
-
-	/**
-	 * @return the challenge
-	 */
-	public String challenge() {
-		return challenge;
-	}
+    /**
+     * @return the email
+     */
+    public String email() {
+        return email;
+    }
 
 
-	/**
-	 * @param challenge the challenge to set
-	 */
-	public void challenge(String challenge) {
-		this.challenge = challenge;
-	}
-	
+    /**
+     * @param email the email to set
+     */
+    public void email(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the challenge
+     */
+    public String challenge() {
+        return challenge;
+    }
+
+
+    /**
+     * @param challenge the challenge to set
+     */
+    public void challenge(String challenge) {
+        this.challenge = challenge;
+    }
+    
 }

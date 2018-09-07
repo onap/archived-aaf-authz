@@ -38,28 +38,28 @@ import org.onap.aaf.auth.service.mapper.Mapper.API;
 
 public class API_Multi {
 
-	public static void init(AAF_Service authzAPI, AuthzFacade facade) throws Exception {
-	
-		authzAPI.route(POST,"/authz/multi",API.VOID, new Code(facade,"Multiple Request API",true) {
-			@Override
-			public void handle(
-				AuthzTrans trans,
-				HttpServletRequest req, 
-				HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.addResponsibilityForNS(trans, resp, pathParam(req,":ns"), pathParam(req,":id"));
-					switch(r.status) {
-						case OK:
-							resp.setStatus(HttpStatus.CREATED_201); 
-							break;
-						case Status.ACC_Future:
-							resp.setStatus(HttpStatus.ACCEPTED_202); 
-							break;
-						default:
-							context.error(trans,resp,r);
-					}
-				}
-			}
-		);
-	}
+    public static void init(AAF_Service authzAPI, AuthzFacade facade) throws Exception {
+    
+        authzAPI.route(POST,"/authz/multi",API.VOID, new Code(facade,"Multiple Request API",true) {
+            @Override
+            public void handle(
+                AuthzTrans trans,
+                HttpServletRequest req, 
+                HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.addResponsibilityForNS(trans, resp, pathParam(req,":ns"), pathParam(req,":id"));
+                    switch(r.status) {
+                        case OK:
+                            resp.setStatus(HttpStatus.CREATED_201); 
+                            break;
+                        case Status.ACC_Future:
+                            resp.setStatus(HttpStatus.ACCEPTED_202); 
+                            break;
+                        default:
+                            context.error(trans,resp,r);
+                    }
+                }
+            }
+        );
+    }
 
 }

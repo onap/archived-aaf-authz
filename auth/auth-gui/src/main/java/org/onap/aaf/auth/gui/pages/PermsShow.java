@@ -53,69 +53,69 @@ import aaf.v2_0.Perms;
  *
  */
 public class PermsShow extends Page {
-	public static final String HREF = "/gui/myperms";
-	
-	public PermsShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env, "MyPerms",HREF, NO_FIELDS,
-			new BreadCrumbs(breadcrumbs), 
-			new Table<AAF_GUI,AuthzTrans>("Permissions",gui.env.newTransNoAvg(),new Model(), "class=std"));
-	}
+    public static final String HREF = "/gui/myperms";
+    
+    public PermsShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env, "MyPerms",HREF, NO_FIELDS,
+            new BreadCrumbs(breadcrumbs), 
+            new Table<AAF_GUI,AuthzTrans>("Permissions",gui.env.newTransNoAvg(),new Model(), "class=std"));
+    }
 
-	/**
-	 * Implement the Table Content for Permissions by User
-	 * 
-	 * @author Jonathan
-	 *
-	 */
-	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		private static final String[] headers = new String[] {"Type","Instance","Action"};
+    /**
+     * Implement the Table Content for Permissions by User
+     * 
+     * @author Jonathan
+     *
+     */
+    private static class Model extends TableData<AAF_GUI,AuthzTrans> {
+        private static final String[] headers = new String[] {"Type","Instance","Action"};
 
-		@Override
-		public String[] headers() {
-			return headers;
-		}
-		
-		@Override
-		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			final ArrayList<AbsCell[]> rv = new ArrayList<>();
-			TimeTaken tt = trans.start("AAF Perms by User",Env.REMOTE);
-			try {
-				gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
-					@Override
-					public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-						Future<Perms> fp = client.read("/authz/perms/user/"+trans.user(), gui.getDF(Perms.class));
-						if(fp.get(5000)) {
-							TimeTaken ttld = trans.start("Load Data", Env.SUB);
-							try {
-								if(fp.value!=null) {	
-									for(Perm p : fp.value.getPerm()) {
-										AbsCell[] sa = new AbsCell[] {
-											new RefCell(p.getType(),PermDetail.HREF
-													+"?type="+p.getType()
-													+"&amp;instance="+p.getInstance()
-													+"&amp;action="+p.getAction(),
-													false),
-											new TextCell(p.getInstance()),
-											new TextCell(p.getAction())
-										};
-										rv.add(sa);
-									}
-								} else {
-									gui.writeError(trans, fp, null,0);
-								}
-							} finally {
-								ttld.done();
-							}
-						}
-						return null;
-					}
-				});
-			} catch (Exception e) {
-				trans.error().log(e);
-			} finally {
-				tt.done();
-			}
-			return new Cells(rv,null);
-		}
-	}
+        @Override
+        public String[] headers() {
+            return headers;
+        }
+        
+        @Override
+        public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
+            final ArrayList<AbsCell[]> rv = new ArrayList<>();
+            TimeTaken tt = trans.start("AAF Perms by User",Env.REMOTE);
+            try {
+                gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
+                    @Override
+                    public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                        Future<Perms> fp = client.read("/authz/perms/user/"+trans.user(), gui.getDF(Perms.class));
+                        if(fp.get(5000)) {
+                            TimeTaken ttld = trans.start("Load Data", Env.SUB);
+                            try {
+                                if(fp.value!=null) {    
+                                    for(Perm p : fp.value.getPerm()) {
+                                        AbsCell[] sa = new AbsCell[] {
+                                            new RefCell(p.getType(),PermDetail.HREF
+                                                    +"?type="+p.getType()
+                                                    +"&amp;instance="+p.getInstance()
+                                                    +"&amp;action="+p.getAction(),
+                                                    false),
+                                            new TextCell(p.getInstance()),
+                                            new TextCell(p.getAction())
+                                        };
+                                        rv.add(sa);
+                                    }
+                                } else {
+                                    gui.writeError(trans, fp, null,0);
+                                }
+                            } finally {
+                                ttld.done();
+                            }
+                        }
+                        return null;
+                    }
+                });
+            } catch (Exception e) {
+                trans.error().log(e);
+            } finally {
+                tt.done();
+            }
+            return new Cells(rv,null);
+        }
+    }
 }

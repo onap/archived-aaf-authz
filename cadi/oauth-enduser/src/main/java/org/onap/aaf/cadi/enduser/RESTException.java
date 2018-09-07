@@ -23,44 +23,44 @@ package org.onap.aaf.cadi.enduser;
 import org.onap.aaf.cadi.client.Future;
 
 public class RESTException extends Exception {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5232371598208651058L;
-	private Future<?> future;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5232371598208651058L;
+    private Future<?> future;
 
-	public RESTException(Future<?> future) {
-		this.future = future;
-	}
-	
-	public int getCode() {
-		return future.code();
-	}
-	
-	public String getMsg() {
-		return future.body();
-	}
+    public RESTException(Future<?> future) {
+        this.future = future;
+    }
+    
+    public int getCode() {
+        return future.code();
+    }
+    
+    public String getMsg() {
+        return future.body();
+    }
 
-	public String errorString() {
-		String body = future.body();
-		return "RESTClient Error: "  + future.code() + ": " + (body.isEmpty()?"<no message in call>":body);
-	}
+    public String errorString() {
+        String body = future.body();
+        return "RESTClient Error: "  + future.code() + ": " + (body.isEmpty()?"<no message in call>":body);
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return errorString();
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Throwable#getMessage()
+     */
+    @Override
+    public String getMessage() {
+        return errorString();
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getLocalizedMessage()
-	 */
-	@Override
-	public String getLocalizedMessage() {
-		return errorString();
-	}
-	
+    /* (non-Javadoc)
+     * @see java.lang.Throwable#getLocalizedMessage()
+     */
+    @Override
+    public String getLocalizedMessage() {
+        return errorString();
+    }
+    
 
 }

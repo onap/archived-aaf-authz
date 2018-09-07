@@ -30,17 +30,17 @@ import org.onap.aaf.cadi.PropAccess;
 
 
 public class JettyStandalone {
-	public static void main(String[] args) {
-		PropAccess access = new PropAccess(args);
-		try {
-			Server server = JettyServletServer.run(access, "/caditest", MyServlet.class, 3456);
-	        server.join();
-		} catch (Exception e) {
-			access.log(Level.ERROR, e);
-		} finally {
-			access.log(Level.INFO,"Stopping Service");
-		}
-		
-	}	
+    public static void main(String[] args) {
+        PropAccess access = new PropAccess(args);
+        try {
+            Server server = JettyServletServer.run(access, "/caditest", MyServlet.class, 3456);
+            server.join();
+        } catch (Exception e) {
+            access.log(Level.ERROR, e);
+        } finally {
+            access.log(Level.INFO,"Stopping Service");
+        }
+        
+    }    
 
 }

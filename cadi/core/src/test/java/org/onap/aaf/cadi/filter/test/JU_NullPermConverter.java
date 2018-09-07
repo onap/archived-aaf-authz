@@ -29,10 +29,10 @@ import org.onap.aaf.cadi.filter.NullPermConverter;
 
 public class JU_NullPermConverter {
 
-	@Test
-	public void test() {
-		NullPermConverter converter = NullPermConverter.singleton();
-		assertThat(converter.convert("test"), is("test"));
-	}
+    @Test
+    public void test() {
+        NullPermConverter converter = NullPermConverter.singleton();
+        assertThat(converter.convert("test"), is("test"));
+    }
 
 }

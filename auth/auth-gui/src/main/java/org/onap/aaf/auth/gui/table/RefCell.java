@@ -31,24 +31,24 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
  *
  */
 public class RefCell extends AbsCell {
-	public final String name;
-	public final String[] str;
-	
-	public RefCell(String name, String href, boolean newWindow, String... attributes) {
-		this.name = name;
-		if(newWindow) {
-			str = new String[attributes.length+2];
-			str[attributes.length]="target=_blank";
-		} else {
-			str = new String[attributes.length+1];
-		}
-		str[0]="href="+href;
-		System.arraycopy(attributes, 0, str, 1, attributes.length);
+    public final String name;
+    public final String[] str;
+    
+    public RefCell(String name, String href, boolean newWindow, String... attributes) {
+        this.name = name;
+        if(newWindow) {
+            str = new String[attributes.length+2];
+            str[attributes.length]="target=_blank";
+        } else {
+            str = new String[attributes.length+1];
+        }
+        str[0]="href="+href;
+        System.arraycopy(attributes, 0, str, 1, attributes.length);
 
-	}
-	
-	@Override
-	public void write(HTMLGen hgen) {
-		hgen.leaf(A,str).text(name);
-	}
+    }
+    
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.leaf(A,str).text(name);
+    }
 }

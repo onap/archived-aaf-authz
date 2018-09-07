@@ -49,70 +49,70 @@ import org.onap.aaf.misc.env.APIException;
 
 public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
 
-	public AAF_FS(final AuthzEnv env) throws APIException, IOException, CadiException {
-		super(env.access(),env);
-		try {
-			///////////////////////  
-			// File Server 
-			///////////////////////
-			// creates StaticSlot, needed for CachingFileAccess, and sets to public Dir
-			env.staticSlot(CachingFileAccess.CFA_WEB_PATH,"aaf_public_dir");
+    public AAF_FS(final AuthzEnv env) throws APIException, IOException, CadiException {
+        super(env.access(),env);
+        try {
+            ///////////////////////  
+            // File Server 
+            ///////////////////////
+            // creates StaticSlot, needed for CachingFileAccess, and sets to public Dir
+            env.staticSlot(CachingFileAccess.CFA_WEB_PATH,"aaf_public_dir");
 
-			CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
-			route(env,GET,"/:key", cfa); 
-			route(env,GET,"/:key/:cmd", cfa);
-			final String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL, null);
-			if(aaf_locate_url == null) {
-				access.printf(Level.WARN, "Redirection requires property %s",Config.AAF_LOCATE_URL);
-			} else {
-				route(env,GET,"/", new Redirect(this,aaf_locate_url));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private static class Redirect extends HttpCode<AuthzTrans, AAF_FS> {
-		private final String url;
+            CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
+            route(env,GET,"/:key", cfa); 
+            route(env,GET,"/:key/:cmd", cfa);
+            final String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL, null);
+            if(aaf_locate_url == null) {
+                access.printf(Level.WARN, "Redirection requires property %s",Config.AAF_LOCATE_URL);
+            } else {
+                route(env,GET,"/", new Redirect(this,aaf_locate_url));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static class Redirect extends HttpCode<AuthzTrans, AAF_FS> {
+        private final String url;
 
-		public Redirect(AAF_FS context,String url) {
-			super(context, "Redirect to HTTP/S");
-			this.url = url;
-		}
+        public Redirect(AAF_FS context,String url) {
+            super(context, "Redirect to HTTP/S");
+            this.url = url;
+        }
 
-		@Override
-		public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-			trans.info().printf("Redirecting %s to HTTP/S %s", req.getRemoteAddr(), req.getLocalAddr());
-			resp.sendRedirect(url);
-		}
-	};
-	
-	@Override
-	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-		// Note: No TAFs and Lurs on FileServer
-		return new Filter[] {
-			new AuthzTransOnlyFilter(env)
-		};
-	}
+        @Override
+        public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+            trans.info().printf("Redirecting %s to HTTP/S %s", req.getRemoteAddr(), req.getLocalAddr());
+            resp.sendRedirect(url);
+        }
+    };
+    
+    @Override
+    public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+        // Note: No TAFs and Lurs on FileServer
+        return new Filter[] {
+            new AuthzTransOnlyFilter(env)
+        };
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
-		return new Registrant[] {
-			new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
-		};
-	}
-	
-	public static void main(final String[] args) {
-		try {
-			Log4JLogIt logIt = new Log4JLogIt(args, "fs");
-			PropAccess propAccess = new PropAccess(logIt,args);
+    @SuppressWarnings("unchecked")
+    @Override
+    public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
+        return new Registrant[] {
+            new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
+        };
+    }
+    
+    public static void main(final String[] args) {
+        try {
+            Log4JLogIt logIt = new Log4JLogIt(args, "fs");
+            PropAccess propAccess = new PropAccess(logIt,args);
 
- 			AAF_FS service = new AAF_FS(new AuthzEnv(propAccess));
-			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-			jss.insecure().start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+             AAF_FS service = new AAF_FS(new AuthzEnv(propAccess));
+            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
+            jss.insecure().start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

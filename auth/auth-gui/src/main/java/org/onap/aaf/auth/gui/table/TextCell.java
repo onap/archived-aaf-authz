@@ -29,21 +29,21 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
  *
  */
 public class TextCell extends AbsCell {
-	public final String name;
-	private String[] attrs;
-	
-	public TextCell(String name, String... attributes) {
-		attrs = attributes;
-		this.name = name;
-	}
-	
-	@Override
-	public void write(HTMLGen hgen) {
-		hgen.text(name);
-	}
-	
-	@Override
-	public String[] attrs() {
-		return attrs;
-	}
+    public final String name;
+    private String[] attrs;
+    
+    public TextCell(String name, String... attributes) {
+        attrs = attributes;
+        this.name = name;
+    }
+    
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.text(name);
+    }
+    
+    @Override
+    public String[] attrs() {
+        return attrs;
+    }
 }

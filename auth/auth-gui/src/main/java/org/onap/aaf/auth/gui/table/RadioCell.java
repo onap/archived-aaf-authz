@@ -24,25 +24,25 @@ package org.onap.aaf.auth.gui.table;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class RadioCell extends AbsCell {
-	private String[] attrs;
-	
-	public RadioCell(String name, String radioClass, String value, String ... attributes) {
-		attrs = new String[4 + attributes.length];
-		attrs[0]="type=radio";
-		attrs[1]="name="+name;
-		attrs[2]="class="+radioClass;
-		attrs[3]="value="+value;
-		System.arraycopy(attributes, 0, attrs, 4, attributes.length);
+    private String[] attrs;
+    
+    public RadioCell(String name, String radioClass, String value, String ... attributes) {
+        attrs = new String[4 + attributes.length];
+        attrs[0]="type=radio";
+        attrs[1]="name="+name;
+        attrs[2]="class="+radioClass;
+        attrs[3]="value="+value;
+        System.arraycopy(attributes, 0, attrs, 4, attributes.length);
 
-	}
-	
-	@Override
-	public void write(HTMLGen hgen) {
-		hgen.tagOnly("input",attrs);
-	}
+    }
+    
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.tagOnly("input",attrs);
+    }
 
-	@Override
-	public String[] attrs() {
-		return AbsCell.CENTER;
-	}
+    @Override
+    public String[] attrs() {
+        return AbsCell.CENTER;
+    }
 }

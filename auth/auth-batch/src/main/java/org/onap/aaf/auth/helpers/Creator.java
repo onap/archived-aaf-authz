@@ -24,18 +24,18 @@ package org.onap.aaf.auth.helpers;
 import com.datastax.driver.core.Row;
 
 public abstract class Creator<T> {
-	public abstract T create(Row row);
-	public abstract String select();
-	
-	public String query(String where) {
-		StringBuilder sb = new StringBuilder(select());
-		if(where!=null) {
-			sb.append(" WHERE ");
-			sb.append(where);
-		}
-		sb.append(';');
-		return sb.toString();
-	}
+    public abstract T create(Row row);
+    public abstract String select();
+    
+    public String query(String where) {
+        StringBuilder sb = new StringBuilder(select());
+        if(where!=null) {
+            sb.append(" WHERE ");
+            sb.append(where);
+        }
+        sb.append(';');
+        return sb.toString();
+    }
 
 
 }

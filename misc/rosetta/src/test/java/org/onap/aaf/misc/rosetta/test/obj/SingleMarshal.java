@@ -37,55 +37,55 @@ import org.onap.aaf.misc.rosetta.marshal.ObjMarshal;
 import types.xsd.Multi.Single;
 
 public class SingleMarshal extends ObjMarshal<Single> {
-	public SingleMarshal() {
-		add(new FieldString<Single>("str") {
-			@Override
-			protected String data(Single t) {
-				return t.getStr();
-			}
-		});
-		
-		add(new FieldNumeric<Integer, Single>("int") {
-			@Override
-			protected Integer data(Single t) {
-				return t.getInt();
-			}
-		});
-		
-		add(new FieldNumeric<Long,Single>("long") {
-			@Override
-			protected Long data(Single t) {
-				return t.getLong();
-			}
-		});
+    public SingleMarshal() {
+        add(new FieldString<Single>("str") {
+            @Override
+            protected String data(Single t) {
+                return t.getStr();
+            }
+        });
+        
+        add(new FieldNumeric<Integer, Single>("int") {
+            @Override
+            protected Integer data(Single t) {
+                return t.getInt();
+            }
+        });
+        
+        add(new FieldNumeric<Long,Single>("long") {
+            @Override
+            protected Long data(Single t) {
+                return t.getLong();
+            }
+        });
 
-		add(new FieldDate<Single>("date") {
-			@Override
-			protected XMLGregorianCalendar data(Single t) {
-				return t.getDate();
-			}
-		});
+        add(new FieldDate<Single>("date") {
+            @Override
+            protected XMLGregorianCalendar data(Single t) {
+                return t.getDate();
+            }
+        });
 
-		add(new FieldDateTime<Single>("datetime") {
-			@Override
-			protected XMLGregorianCalendar data(Single t) {
-				return t.getDate();
-			}
-		});
-		
-		add(new FieldHexBinary<Single>("binary") {
-			@Override
-			protected byte[] data(Single t) {
-				return t.getBinary();
-			}
-		});
-		
-		add(new FieldArray<Single,String>("array", DataWriter.STRING) {
-			@Override
-			protected List<String> data(Single t) {
-				return t.getArray();
-			}
-		});
+        add(new FieldDateTime<Single>("datetime") {
+            @Override
+            protected XMLGregorianCalendar data(Single t) {
+                return t.getDate();
+            }
+        });
+        
+        add(new FieldHexBinary<Single>("binary") {
+            @Override
+            protected byte[] data(Single t) {
+                return t.getBinary();
+            }
+        });
+        
+        add(new FieldArray<Single,String>("array", DataWriter.STRING) {
+            @Override
+            protected List<String> data(Single t) {
+                return t.getArray();
+            }
+        });
 
-	}
+    }
 }

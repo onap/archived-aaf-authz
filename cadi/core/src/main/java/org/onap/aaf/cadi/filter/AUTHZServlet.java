@@ -37,62 +37,62 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 public class AUTHZServlet<S extends Servlet> implements Servlet {
-	private String[] roles;
-	private Servlet delegate;
+    private String[] roles;
+    private Servlet delegate;
 
-	protected AUTHZServlet(Class<S> cls) {
-		try {
-			delegate = cls.newInstance();
-		} catch (Exception e) {
-			delegate = null;
-		}
-		RolesAllowed rolesAllowed = cls.getAnnotation(RolesAllowed.class);
-		if (rolesAllowed == null) {
-			roles = null;
-		} else {
-			roles = rolesAllowed.value();
-		}
-	}
-	
-	public void init(ServletConfig sc) throws ServletException {
-		if (delegate == null) {
-			throw new ServletException("Invalid Servlet Delegate");
-		}
-		delegate.init(sc);
-	}
-	
-	public ServletConfig getServletConfig() {
-		return delegate.getServletConfig();
-	}
+    protected AUTHZServlet(Class<S> cls) {
+        try {
+            delegate = cls.newInstance();
+        } catch (Exception e) {
+            delegate = null;
+        }
+        RolesAllowed rolesAllowed = cls.getAnnotation(RolesAllowed.class);
+        if (rolesAllowed == null) {
+            roles = null;
+        } else {
+            roles = rolesAllowed.value();
+        }
+    }
+    
+    public void init(ServletConfig sc) throws ServletException {
+        if (delegate == null) {
+            throw new ServletException("Invalid Servlet Delegate");
+        }
+        delegate.init(sc);
+    }
+    
+    public ServletConfig getServletConfig() {
+        return delegate.getServletConfig();
+    }
 
-	public String getServletInfo() {
-		return delegate.getServletInfo();
-	}
+    public String getServletInfo() {
+        return delegate.getServletInfo();
+    }
 
-	public void service(ServletRequest req, ServletResponse resp) throws ServletException, IOException {
-		if (roles == null) {
-			delegate.service(req, resp);
-			return;
-		}
+    public void service(ServletRequest req, ServletResponse resp) throws ServletException, IOException {
+        if (roles == null) {
+            delegate.service(req, resp);
+            return;
+        }
 
-		// Validate
-		try {
-			HttpServletRequest hreq = (HttpServletRequest)req;
-			for (String role : roles) {
-				if (hreq.isUserInRole(role)) {
-					delegate.service(req, resp);
-					return;
-				}
-			}
+        // Validate
+        try {
+            HttpServletRequest hreq = (HttpServletRequest)req;
+            for (String role : roles) {
+                if (hreq.isUserInRole(role)) {
+                    delegate.service(req, resp);
+                    return;
+                }
+            }
 
-			((HttpServletResponse)resp).sendError(403); // forbidden
-		} catch (ClassCastException e) {
-			throw new ServletException("JASPIServlet only supports HTTPServletRequest/HttpServletResponse");
-		}
-	}
+            ((HttpServletResponse)resp).sendError(403); // forbidden
+        } catch (ClassCastException e) {
+            throw new ServletException("JASPIServlet only supports HTTPServletRequest/HttpServletResponse");
+        }
+    }
 
-	public void destroy() {
-		delegate.destroy();
-	}
+    public void destroy() {
+        delegate.destroy();
+    }
 
 }

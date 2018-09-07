@@ -33,15 +33,15 @@ import aafoauth.v2_0.Introspect;
 
 
 public class OAFacadeFactory {
-	public static OAFacade1_0 v1_0(AAF_OAuth certman, AuthzTrans trans, OAuthService service, Data.TYPE type) throws APIException {
-		return new OAFacade1_0(
-				certman,
-				service,
-				new Mapper1_0(),
-				type);  
-	}
+    public static OAFacade1_0 v1_0(AAF_OAuth certman, AuthzTrans trans, OAuthService service, Data.TYPE type) throws APIException {
+        return new OAFacade1_0(
+                certman,
+                service,
+                new Mapper1_0(),
+                type);  
+    }
    
-	public static DirectIntrospect<Introspect> directV1_0(OAuthService service) {
-		return new DirectIntrospectImpl<Introspect>(service, new MapperIntrospect1_0());
-	}
+    public static DirectIntrospect<Introspect> directV1_0(OAuthService service) {
+        return new DirectIntrospectImpl<Introspect>(service, new MapperIntrospect1_0());
+    }
 }

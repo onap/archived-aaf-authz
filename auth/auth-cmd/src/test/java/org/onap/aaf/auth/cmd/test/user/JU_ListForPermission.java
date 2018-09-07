@@ -40,37 +40,37 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListForPermission {
-	
-	private static ListForPermission lsForPermission;
-	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		User usr = new User(cli);
-		List parent = new List(usr);
-		lsForPermission = new ListForPermission(parent);
-		
-	}
-	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsForPermission._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			
-//			e.printStackTrace();
-//		}
-//	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		lsForPermission.detailedHelp(0, sb);
-	}
+    
+    private static ListForPermission lsForPermission;
+    
+    @BeforeClass
+    public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        AAFcli cli = JU_AAFCli.getAAfCli();
+        User usr = new User(cli);
+        List parent = new List(usr);
+        lsForPermission = new ListForPermission(parent);
+        
+    }
+    
+//    @Test
+//    public void exec() {
+//        try {
+//            assertEquals(lsForPermission._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
+//        } catch (CadiException e) {
+//            
+//            e.printStackTrace();
+//        } catch (APIException e) {
+//            
+//            e.printStackTrace();
+//        } catch (LocatorException e) {
+//            
+//            e.printStackTrace();
+//        }
+//    }
+    
+    @Test
+    public void testDetailedHelp() {
+        StringBuilder sb = new StringBuilder();
+        lsForPermission.detailedHelp(0, sb);
+    }
 }

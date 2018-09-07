@@ -26,19 +26,19 @@ import org.onap.aaf.auth.locate.facade.LocateFacade;
 import org.onap.aaf.auth.rserv.HttpCode;
 
 public abstract class LocateCode extends HttpCode<AuthzTrans, LocateFacade> implements Cloneable {
-	public boolean useJSON;
+    public boolean useJSON;
 
-	public LocateCode(LocateFacade facade, String description, boolean useJSON, String ... roles) {
-		super(facade, description, roles);
-		this.useJSON = useJSON;
-	}
-	
-	public <D extends LocateCode> D clone(LocateFacade facade, boolean useJSON) throws Exception {
-		@SuppressWarnings("unchecked")
-		D d = (D)clone();
-		d.useJSON = useJSON;
-		d.context = facade;
-		return d;
-	}
-	
+    public LocateCode(LocateFacade facade, String description, boolean useJSON, String ... roles) {
+        super(facade, description, roles);
+        this.useJSON = useJSON;
+    }
+    
+    public <D extends LocateCode> D clone(LocateFacade facade, boolean useJSON) throws Exception {
+        @SuppressWarnings("unchecked")
+        D d = (D)clone();
+        d.useJSON = useJSON;
+        d.context = facade;
+        return d;
+    }
+    
 }

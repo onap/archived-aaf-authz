@@ -39,34 +39,34 @@ import aaf.v2_0.Roles;
  *
  */
 public class ListByNS extends Cmd {
-	private static final String HEADER = "List Roles by NS ";
-	
-	public ListByNS(List parent) {
-		super(parent,"ns", 
-				new Param("name",true)); 
-	}
+    private static final String HEADER = "List Roles by NS ";
+    
+    public ListByNS(List parent) {
+        super(parent,"ns", 
+                new Param("name",true)); 
+    }
 
-	@Override
-	public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
-		final String ns=args[idx];
+    @Override
+    public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
+        final String ns=args[idx];
 
-		return same(((List)parent).new ListRoles() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				Future<Roles> fp = client.read(
-						"/authz/roles/ns/"+ns+(aafcli.isDetailed()?"?ns":""), 
-						getDF(Roles.class)
-						);
-				return list(fp,client, HEADER+"["+ns+"]");
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/roles/name/<ns>",Roles.class,true);
-	}
+        return same(((List)parent).new ListRoles() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                Future<Roles> fp = client.read(
+                        "/authz/roles/ns/"+ns+(aafcli.isDetailed()?"?ns":""), 
+                        getDF(Roles.class)
+                        );
+                return list(fp,client, HEADER+"["+ns+"]");
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/roles/name/<ns>",Roles.class,true);
+    }
 
 
 }

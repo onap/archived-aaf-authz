@@ -53,66 +53,66 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class JU_TzHClient {
-	
-	@Mock private Retryable<Integer> retryableMock;
-	@Mock private TimedToken tokenMock;
-	@Mock private SecurityInfoC<HttpURLConnection> siMock;
-	@Mock private Locator<URI> locMock;
-	@Mock private Item itemMock;
-	@Mock private Rcli<HttpURLConnection> clientMock;
-	
-	private PropAccess access;
-	
-	private ByteArrayOutputStream errStream;
-	
-	private final static String client_id = "id";
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
-		access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon	}
-		
-		errStream = new ByteArrayOutputStream();
-		System.setErr(new PrintStream(errStream));
-	}
-	
-	@After
-	public void tearDown() {
-		System.setErr(System.err);
-	}
+    
+    @Mock private Retryable<Integer> retryableMock;
+    @Mock private TimedToken tokenMock;
+    @Mock private SecurityInfoC<HttpURLConnection> siMock;
+    @Mock private Locator<URI> locMock;
+    @Mock private Item itemMock;
+    @Mock private Rcli<HttpURLConnection> clientMock;
+    
+    private PropAccess access;
+    
+    private ByteArrayOutputStream errStream;
+    
+    private final static String client_id = "id";
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
+        access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon    }
+        
+        errStream = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(errStream));
+    }
+    
+    @After
+    public void tearDown() {
+        System.setErr(System.err);
+    }
 
-	@Test
-	public void test() throws CadiException, LocatorException, APIException, IOException {
-		TzHClient client;
-		try {
-			client = new TzHClient(access, "tag");
-		} catch (Exception e) {
-			throw e;
-		}
-		try {
-			client.best(retryableMock);
-			fail("Should've thrown an exception");
-		} catch (CadiException e) {
-			assertThat(e.getMessage(), is("OAuth2 Token has not been set"));
-		}
-		client.setToken(client_id, tokenMock);
-		when(tokenMock.expired()).thenReturn(true);
-		try {
-			client.best(retryableMock);
-			fail("Should've thrown an exception");
-		} catch (CadiException e) {
-			assertThat(e.getMessage(), is("Expired Token"));
-		}
+    @Test
+    public void test() throws CadiException, LocatorException, APIException, IOException {
+        TzHClient client;
+        try {
+            client = new TzHClient(access, "tag");
+        } catch (Exception e) {
+            throw e;
+        }
+        try {
+            client.best(retryableMock);
+            fail("Should've thrown an exception");
+        } catch (CadiException e) {
+            assertThat(e.getMessage(), is("OAuth2 Token has not been set"));
+        }
+        client.setToken(client_id, tokenMock);
+        when(tokenMock.expired()).thenReturn(true);
+        try {
+            client.best(retryableMock);
+            fail("Should've thrown an exception");
+        } catch (CadiException e) {
+            assertThat(e.getMessage(), is("Expired Token"));
+        }
 
-		client = new TzHClient(access, siMock, locMock);
-		when(tokenMock.expired()).thenReturn(false);
-		doReturn(clientMock).when(retryableMock).lastClient();
+        client = new TzHClient(access, siMock, locMock);
+        when(tokenMock.expired()).thenReturn(false);
+        doReturn(clientMock).when(retryableMock).lastClient();
 
-		when(retryableMock.item()).thenReturn(itemMock);
-		client.setToken(client_id, tokenMock);
-		assertThat(client.best(retryableMock), is(nullValue()));
-	}
+        when(retryableMock.item()).thenReturn(itemMock);
+        client.setToken(client_id, tokenMock);
+        assertThat(client.best(retryableMock), is(nullValue()));
+    }
 
 }

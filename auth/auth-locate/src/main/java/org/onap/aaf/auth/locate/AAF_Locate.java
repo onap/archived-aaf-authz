@@ -67,183 +67,183 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 import com.datastax.driver.core.Cluster;
 
 public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
-	private static final String DOT_LOCATOR = ".locator";
+    private static final String DOT_LOCATOR = ".locator";
 
-	private static final String USER_PERMS = "userPerms";
-	private LocateFacade_1_1 facade; // this is the default Facade
-	private LocateFacade_1_1 facade_1_1_XML;
-	public Map<String, Dated> cacheUser;
-	public final AAFAuthn<?> aafAuthn;
-	public final AAFLurPerm aafLurPerm;
-	private Locator<URI> gui_locator;
-	public final long expireIn;
-	private final Cluster cluster;
-	public final LocateDAO locateDAO;
-	public final ConfigDAO configDAO;
-	private Locator<URI> dal;
-	private final String aaf_service_name;
-	private final String aaf_gui_name;
+    private static final String USER_PERMS = "userPerms";
+    private LocateFacade_1_1 facade; // this is the default Facade
+    private LocateFacade_1_1 facade_1_1_XML;
+    public Map<String, Dated> cacheUser;
+    public final AAFAuthn<?> aafAuthn;
+    public final AAFLurPerm aafLurPerm;
+    private Locator<URI> gui_locator;
+    public final long expireIn;
+    private final Cluster cluster;
+    public final LocateDAO locateDAO;
+    public final ConfigDAO configDAO;
+    private Locator<URI> dal;
+    private final String aaf_service_name;
+    private final String aaf_gui_name;
 
-	
-	/**
-	 * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-	 * 
-	 * @param env
-	 * @param si 
-	 * @param dm 
-	 * @param decryptor 
-	 * @throws APIException 
-	 */
-	public AAF_Locate(final AuthzEnv env) throws Exception {
-		super(env.access(), env);
-		aaf_service_name = app_name.replace(DOT_LOCATOR, ".service");
-		aaf_gui_name = app_name.replace(DOT_LOCATOR, ".gui");
-		
-		expireIn = Long.parseLong(env.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
+    
+    /**
+     * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
+     * 
+     * @param env
+     * @param si 
+     * @param dm 
+     * @param decryptor 
+     * @throws APIException 
+     */
+    public AAF_Locate(final AuthzEnv env) throws Exception {
+        super(env.access(), env);
+        aaf_service_name = app_name.replace(DOT_LOCATOR, ".service");
+        aaf_gui_name = app_name.replace(DOT_LOCATOR, ".gui");
+        
+        expireIn = Long.parseLong(env.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
 
-		// Initialize Facade for all uses
-		AuthzTrans trans = env.newTransNoAvg();
+        // Initialize Facade for all uses
+        AuthzTrans trans = env.newTransNoAvg();
 
-		cluster = org.onap.aaf.auth.dao.CassAccess.cluster(env,null);
-		locateDAO = new LocateDAO(trans,cluster,CassAccess.KEYSPACE);
-		configDAO = new ConfigDAO(trans,locateDAO); // same stuff
+        cluster = org.onap.aaf.auth.dao.CassAccess.cluster(env,null);
+        locateDAO = new LocateDAO(trans,cluster,CassAccess.KEYSPACE);
+        configDAO = new ConfigDAO(trans,locateDAO); // same stuff
 
-		// Have AAFLocator object Create DirectLocators for Location needs
-		AbsAAFLocator.setCreator(new DirectLocatorCreator(env, locateDAO));
+        // Have AAFLocator object Create DirectLocators for Location needs
+        AbsAAFLocator.setCreator(new DirectLocatorCreator(env, locateDAO));
 
-		aafLurPerm = aafCon().newLur();
-		// Note: If you need both Authn and Authz construct the following:
-		aafAuthn = aafCon().newAuthn(aafLurPerm);
-
-
-		facade = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.JSON);   // Default Facade
-		facade_1_1_XML = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.XML);
-
-		synchronized(env) {
-			if(cacheUser == null) {
-				cacheUser = Cache.obtain(USER_PERMS);
-				Cache.startCleansing(env, USER_PERMS);
-			}
-		}
+        aafLurPerm = aafCon().newLur();
+        // Note: If you need both Authn and Authz construct the following:
+        aafAuthn = aafCon().newAuthn(aafLurPerm);
 
 
-		////////////////////////////////////////////////////////////////////////////
-		// Time Critical
-		//  These will always be evaluated first
-		////////////////////////////////////////////////////////////////////////
-		API_AAFAccess.init(this,facade);
-		API_Find.init(this, facade);
-		API_Proxy.init(this, facade);
-		
-		////////////////////////////////////////////////////////////////////////
-		// Management APIs
-		////////////////////////////////////////////////////////////////////////
-		// There are several APIs around each concept, and it gets a bit too
-		// long in this class to create.  The initialization of these Management
-		// APIs have therefore been pushed to StandAlone Classes with static
-		// init functions
-		API_Api.init(this, facade);
+        facade = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.JSON);   // Default Facade
+        facade_1_1_XML = LocateFacadeFactory.v1_1(env,this,trans,Data.TYPE.XML);
 
-		////////////////////////////////////////////////////////////////////////
-		// Default Function
-		////////////////////////////////////////////////////////////////////////
-		API_AAFAccess.initDefault(this,facade);
-		
-	}
-
-	
-	/**
-	 * Setup XML and JSON implementations for each supported Version type
-	 * 
-	 * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
-	 * to do Versions and Content switches
-	 * 
-	 */
-	public void route(HttpMethods meth, String path, API api, LocateCode code) throws Exception {
-		String version = "1.0";
-		// Get Correct API Class from Mapper
-		Class<?> respCls = facade.mapper().getClass(api); 
-		if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
-		// setup Application API HTML ContentTypes for JSON and Route
-		String application = applicationJSON(respCls, version);
-		route(env,meth,path,code,application,"application/json;version="+version,"*/*","*");
-
-		// setup Application API HTML ContentTypes for XML and Route
-		application = applicationXML(respCls, version);
-		route(env,meth,path,code.clone(facade_1_1_XML,false),application,"text/xml;version="+version);
-		
-		// Add other Supported APIs here as created
-	}
-	
-	public void routeAll(HttpMethods meth, String path, API api, LocateCode code) throws Exception {
-		route(env,meth,path,code,""); // this will always match
-	}
+        synchronized(env) {
+            if(cacheUser == null) {
+                cacheUser = Cache.obtain(USER_PERMS);
+                Cache.startCleansing(env, USER_PERMS);
+            }
+        }
 
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.server.AbsServer#_newAAFConHttp()
-	 */
-	@Override
-	protected AAFConHttp _newAAFConHttp() throws CadiException {
-		try {
-			if(dal==null) {
-				dal = AbsAAFLocator.create(aaf_service_name,Config.AAF_DEFAULT_VERSION);
-			}
-			// utilize pre-constructed DirectAAFLocator
-			return new AAFConHttp(env.access(),dal);
-		} catch (LocatorException e) {
-			throw new CadiException(e);
-		}
-	}
+        ////////////////////////////////////////////////////////////////////////////
+        // Time Critical
+        //  These will always be evaluated first
+        ////////////////////////////////////////////////////////////////////////
+        API_AAFAccess.init(this,facade);
+        API_Find.init(this, facade);
+        API_Proxy.init(this, facade);
+        
+        ////////////////////////////////////////////////////////////////////////
+        // Management APIs
+        ////////////////////////////////////////////////////////////////////////
+        // There are several APIs around each concept, and it gets a bit too
+        // long in this class to create.  The initialization of these Management
+        // APIs have therefore been pushed to StandAlone Classes with static
+        // init functions
+        API_Api.init(this, facade);
 
-	public Locator<URI> getGUILocator() throws LocatorException {
-		if(gui_locator==null) {
-			gui_locator = AbsAAFLocator.create(aaf_gui_name,Config.AAF_DEFAULT_VERSION);
-		}
-		return gui_locator;
-	}
+        ////////////////////////////////////////////////////////////////////////
+        // Default Function
+        ////////////////////////////////////////////////////////////////////////
+        API_AAFAccess.initDefault(this,facade);
+        
+    }
+
+    
+    /**
+     * Setup XML and JSON implementations for each supported Version type
+     * 
+     * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
+     * to do Versions and Content switches
+     * 
+     */
+    public void route(HttpMethods meth, String path, API api, LocateCode code) throws Exception {
+        String version = "1.0";
+        // Get Correct API Class from Mapper
+        Class<?> respCls = facade.mapper().getClass(api); 
+        if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
+        // setup Application API HTML ContentTypes for JSON and Route
+        String application = applicationJSON(respCls, version);
+        route(env,meth,path,code,application,"application/json;version="+version,"*/*","*");
+
+        // setup Application API HTML ContentTypes for XML and Route
+        application = applicationXML(respCls, version);
+        route(env,meth,path,code.clone(facade_1_1_XML,false),application,"text/xml;version="+version);
+        
+        // Add other Supported APIs here as created
+    }
+    
+    public void routeAll(HttpMethods meth, String path, API api, LocateCode code) throws Exception {
+        route(env,meth,path,code,""); // this will always match
+    }
 
 
-	@Override
-	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-		try {
-			return new Filter[] {
-				new AuthzTransFilter(env, aafCon(), 
-					new AAFTrustChecker((Env)env)
-					,additionalTafLurs
-				)};
-		} catch (NumberFormatException e) {
-			throw new CadiException("Invalid Property information", e);
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.server.AbsServer#_newAAFConHttp()
+     */
+    @Override
+    protected AAFConHttp _newAAFConHttp() throws CadiException {
+        try {
+            if(dal==null) {
+                dal = AbsAAFLocator.create(aaf_service_name,Config.AAF_DEFAULT_VERSION);
+            }
+            // utilize pre-constructed DirectAAFLocator
+            return new AAFConHttp(env.access(),dal);
+        } catch (LocatorException e) {
+            throw new CadiException(e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
-		return new Registrant[] {
-			new DirectRegistrar(access,locateDAO,app_name,app_version,port)
-		};
-	}
+    public Locator<URI> getGUILocator() throws LocatorException {
+        if(gui_locator==null) {
+            gui_locator = AbsAAFLocator.create(aaf_gui_name,Config.AAF_DEFAULT_VERSION);
+        }
+        return gui_locator;
+    }
 
-	@Override
-	public void destroy() {
-		Cache.stopTimer();
-		if(cluster!=null) {
-			cluster.close();
-		}
-		super.destroy();
-	}
 
-	public static void main(final String[] args) {
-		try {
-			Log4JLogIt logIt = new Log4JLogIt(args, "locate");
-			PropAccess propAccess = new PropAccess(logIt,args);
+    @Override
+    public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+        try {
+            return new Filter[] {
+                new AuthzTransFilter(env, aafCon(), 
+                    new AAFTrustChecker((Env)env)
+                    ,additionalTafLurs
+                )};
+        } catch (NumberFormatException e) {
+            throw new CadiException("Invalid Property information", e);
+        }
+    }
 
- 			AAF_Locate service = new AAF_Locate(new AuthzEnv(propAccess));
-			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-			jss.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
+        return new Registrant[] {
+            new DirectRegistrar(access,locateDAO,app_name,app_version,port)
+        };
+    }
+
+    @Override
+    public void destroy() {
+        Cache.stopTimer();
+        if(cluster!=null) {
+            cluster.close();
+        }
+        super.destroy();
+    }
+
+    public static void main(final String[] args) {
+        try {
+            Log4JLogIt logIt = new Log4JLogIt(args, "locate");
+            PropAccess propAccess = new PropAccess(logIt,args);
+
+             AAF_Locate service = new AAF_Locate(new AuthzEnv(propAccess));
+            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
+            jss.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

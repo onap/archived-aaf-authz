@@ -25,8 +25,8 @@ import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.misc.env.APIException;
 
 public class Cache extends BaseCmd<Mgmt> {
-	public Cache(Mgmt mgmt) throws APIException {
-		super(mgmt, "cache");
-		cmds.add(new Clear(this));
-	}
+    public Cache(Mgmt mgmt) throws APIException {
+        super(mgmt, "cache");
+        cmds.add(new Clear(this));
+    }
 }

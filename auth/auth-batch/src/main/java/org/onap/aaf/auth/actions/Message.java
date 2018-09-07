@@ -25,29 +25,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Message {
-	public final List<String> lines;
-		
-	public Message() {
-		lines = new ArrayList<>();
-	}
+    public final List<String> lines;
+        
+    public Message() {
+        lines = new ArrayList<>();
+    }
 
-	public void clear() {
-		lines.clear();
-	}
-	
-	public String line(String format, Object ... args) {
-		String rv=String.format(format, args);
-		lines.add(rv);
-		return rv;
-	}
+    public void clear() {
+        lines.clear();
+    }
+    
+    public String line(String format, Object ... args) {
+        String rv=String.format(format, args);
+        lines.add(rv);
+        return rv;
+    }
 
-	public void msg(StringBuilder sb, String lineIndent) {
-		if(!lines.isEmpty()) {
-			for(String line : lines) {
-				sb.append(lineIndent);
-				sb.append(line);
-				sb.append('\n');
-			}
-		}
-	}
+    public void msg(StringBuilder sb, String lineIndent) {
+        if(!lines.isEmpty()) {
+            for(String line : lines) {
+                sb.append(lineIndent);
+                sb.append(line);
+                sb.append('\n');
+            }
+        }
+    }
 }

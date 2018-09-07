@@ -26,12 +26,12 @@ import org.junit.Test;
 
 public class JU_BackTest {
 
-	@Test
-	public void testBackConstructor() {
-		Back back = new Back("String", true, false);
+    @Test
+    public void testBackConstructor() {
+        Back back = new Back("String", true, false);
 
-		assertEquals(back.str, "String");
-		assertEquals(back.dec, true);
-		assertEquals(back.cr, false);
-	}
+        assertEquals(back.str, "String");
+        assertEquals(back.dec, true);
+        assertEquals(back.cr, false);
+    }
 }

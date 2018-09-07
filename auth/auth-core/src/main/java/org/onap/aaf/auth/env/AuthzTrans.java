@@ -33,46 +33,46 @@ import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TransStore;
 
 public interface AuthzTrans extends TransStore {
-	public enum REQD_TYPE {future(1),force(2),move(4),ns(8);
-		public final int bit;
+    public enum REQD_TYPE {future(1),force(2),move(4),ns(8);
+        public final int bit;
 
-		REQD_TYPE(int bit) {
-			this.bit = bit;
-		}
-	};
-	
-	public abstract AuthzTrans set(HttpServletRequest req);
+        REQD_TYPE(int bit) {
+            this.bit = bit;
+        }
+    };
+    
+    public abstract AuthzTrans set(HttpServletRequest req);
 
-	public abstract String user();
+    public abstract String user();
 
-	public abstract void setUser(TaggedPrincipal p);
-	
-	public abstract TaggedPrincipal getUserPrincipal();
+    public abstract void setUser(TaggedPrincipal p);
+    
+    public abstract TaggedPrincipal getUserPrincipal();
 
-	public abstract String ip();
+    public abstract String ip();
 
-	public abstract int port();
+    public abstract int port();
 
-	public abstract String meth();
+    public abstract String meth();
 
-	public abstract String path();
+    public abstract String path();
 
-	public abstract String agent();
-	
-	public abstract AuthzEnv env();
+    public abstract String agent();
+    
+    public abstract AuthzEnv env();
 
-	public abstract void setLur(Lur lur);
+    public abstract void setLur(Lur lur);
 
-	public abstract boolean fish(Permission ... p);
-	
-	public abstract Organization org();
+    public abstract boolean fish(Permission ... p);
+    
+    public abstract Organization org();
 
-	public abstract boolean requested(REQD_TYPE requested);
-	
-	public void requested(REQD_TYPE requested, boolean b);
-	
-	public abstract void logAuditTrail(LogTarget lt);
-	
-	public abstract Date now();
+    public abstract boolean requested(REQD_TYPE requested);
+    
+    public void requested(REQD_TYPE requested, boolean b);
+    
+    public abstract void logAuditTrail(LogTarget lt);
+    
+    public abstract Date now();
 
 }

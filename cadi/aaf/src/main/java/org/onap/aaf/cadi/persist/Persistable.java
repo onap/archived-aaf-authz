@@ -24,16 +24,16 @@ package org.onap.aaf.cadi.persist;
 import java.nio.file.Path;
 
 public interface Persistable<T> {
-	public boolean checkSyncTime();
-	public boolean checkReloadable();
-	public void inc();
-	public int count();
-	public void clearCount();
-	public boolean hasBeenTouched();
-	public long expires(); // seconds from 1970
-	public boolean expired();
-	public byte[] getHash();
-	public boolean match(byte[] hashIn);
-	public T get();
-	public Path path();
+    public boolean checkSyncTime();
+    public boolean checkReloadable();
+    public void inc();
+    public int count();
+    public void clearCount();
+    public boolean hasBeenTouched();
+    public long expires(); // seconds from 1970
+    public boolean expired();
+    public byte[] getHash();
+    public boolean match(byte[] hashIn);
+    public T get();
+    public Path path();
 }

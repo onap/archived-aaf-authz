@@ -37,72 +37,72 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class NsAttrib  {
-	public static final List<NsAttrib> data = new ArrayList<>();
+    public static final List<NsAttrib> data = new ArrayList<>();
     public static final SortedMap<String,List<NsAttrib>> byKey = new TreeMap<>();
     public static final SortedMap<String,List<NsAttrib>> byNS = new TreeMap<>();
 
-	public final String ns;
-	public final String key;
-	public final String value;
-	public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
-		@Override
-		public NsAttrib create(Row row) {
-			return new NsAttrib(row.getString(0), row.getString(1), row.getString(2));
-		}
+    public final String ns;
+    public final String key;
+    public final String value;
+    public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
+        @Override
+        public NsAttrib create(Row row) {
+            return new NsAttrib(row.getString(0), row.getString(1), row.getString(2));
+        }
 
-		@Override
-		public String select() {
-			return "select ns,key,value from authz.ns_attrib";
-		}
-	};
-	
-	public NsAttrib(String ns, String key, String value) {
-		this.ns = ns;
-		this.key = key;
-		this.value = value;
-	}
-	
-	public static void load(Trans trans, Session session, Creator<NsAttrib> creator ) {
-		trans.info().log( "query: " + creator.select() );
+        @Override
+        public String select() {
+            return "select ns,key,value from authz.ns_attrib";
+        }
+    };
+    
+    public NsAttrib(String ns, String key, String value) {
+        this.ns = ns;
+        this.key = key;
+        this.value = value;
+    }
+    
+    public static void load(Trans trans, Session session, Creator<NsAttrib> creator ) {
+        trans.info().log( "query: " + creator.select() );
         ResultSet results;
         TimeTaken tt = trans.start("Load NsAttributes", Env.REMOTE);
-		try {
-	        Statement stmt = new SimpleStatement(creator.select());
-	        results = session.execute(stmt);
+        try {
+            Statement stmt = new SimpleStatement(creator.select());
+            results = session.execute(stmt);
         } finally {
-        	tt.done();
+            tt.done();
         }
-		int count = 0;
+        int count = 0;
         tt = trans.start("Process NsAttributes", Env.SUB);
 
         try {
-        	for(Row row : results.all()) {
-        		++count;
-	        	NsAttrib ur = creator.create(row);
-	        	data.add(ur);
-	        	
-	        	List<NsAttrib> lna = byKey.get(ur.key);
-	        	if(lna==null) {
-	        		lna = new ArrayList<>();
-		        	byKey.put(ur.key, lna);
-	        	}
-	        	lna.add(ur);
-	        	
-	        	lna = byNS.get(ur.ns);
-	        	if(lna==null) {
-	        		lna = new ArrayList<>();
-		        	byNS.put(ur.ns, lna);
-	        	}
-	        	lna.add(ur);
-        	}
+            for(Row row : results.all()) {
+                ++count;
+                NsAttrib ur = creator.create(row);
+                data.add(ur);
+                
+                List<NsAttrib> lna = byKey.get(ur.key);
+                if(lna==null) {
+                    lna = new ArrayList<>();
+                    byKey.put(ur.key, lna);
+                }
+                lna.add(ur);
+                
+                lna = byNS.get(ur.ns);
+                if(lna==null) {
+                    lna = new ArrayList<>();
+                    byNS.put(ur.ns, lna);
+                }
+                lna.add(ur);
+            }
         } finally {
-        	tt.done();
-        	trans.info().log("Found",count,"NS Attributes");
+            tt.done();
+            trans.info().log("Found",count,"NS Attributes");
         }
-	}
+    }
 
-	public String toString() {
-		return '"' + ns + "\",\"" + key + "\",\""  + value +'"';
-	}
+    public String toString() {
+        return '"' + ns + "\",\"" + key + "\",\""  + value +'"';
+    }
 
 }

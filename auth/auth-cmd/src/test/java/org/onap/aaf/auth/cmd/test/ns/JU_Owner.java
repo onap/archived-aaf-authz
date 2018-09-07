@@ -52,31 +52,31 @@ import org.junit.Test;
 
 public class JU_Owner {
 
-	private static Owner owner;
+    private static Owner owner;
 
-	@BeforeClass
-	public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		NS ns = new NS(cli);
-		owner = new Owner(ns);
-	}
-	
-	@Test
-	public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
-		String[] strArr = {"add","del","add","del"};
-		//owner._exec(0, strArr);
+    @BeforeClass
+    public static void setUp() throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        AAFcli cli = JU_AAFCli.getAAfCli();
+        NS ns = new NS(cli);
+        owner = new Owner(ns);
+    }
+    
+    @Test
+    public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
+        String[] strArr = {"add","del","add","del"};
+        //owner._exec(0, strArr);
 
-	}
-	
-	@Test
-	public void detailedHelp() {
-		boolean hasNoError = true;
-		try {
-			owner.detailedHelp(1, new StringBuilder("test"));
-		} catch (Exception e) {
-			hasNoError = false;
-		}
-		assertEquals(hasNoError, true);
-	}
+    }
+    
+    @Test
+    public void detailedHelp() {
+        boolean hasNoError = true;
+        try {
+            owner.detailedHelp(1, new StringBuilder("test"));
+        } catch (Exception e) {
+            hasNoError = false;
+        }
+        assertEquals(hasNoError, true);
+    }
 
 }

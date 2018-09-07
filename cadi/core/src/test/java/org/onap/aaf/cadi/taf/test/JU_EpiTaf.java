@@ -40,71 +40,71 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class JU_EpiTaf {
 
-	@Test(expected = CadiException.class)
-	@SuppressWarnings("unused")
-	public void constructorTest() throws CadiException {
-		EpiTaf et = new EpiTaf();
-	}
+    @Test(expected = CadiException.class)
+    @SuppressWarnings("unused")
+    public void constructorTest() throws CadiException {
+        EpiTaf et = new EpiTaf();
+    }
 
-	@Test
-	public void validateTryAnotherTest() throws CadiException {
-		EpiTaf et = new EpiTaf(new TryAnotherTaf());
-		TafResp output = et.validate(LifeForm.CBLF);
-		assertThat(output.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
-	}
+    @Test
+    public void validateTryAnotherTest() throws CadiException {
+        EpiTaf et = new EpiTaf(new TryAnotherTaf());
+        TafResp output = et.validate(LifeForm.CBLF);
+        assertThat(output.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
+    }
 
-	@Test
-	public void validateTryAuthenticatingTest() throws CadiException {
-		EpiTaf et = new EpiTaf(new TryAuthenticatingTaf(), new TryAuthenticatingTaf());
-		TafResp output = et.validate(LifeForm.CBLF);
-		assertThat(output.isAuthenticated(), is(RESP.TRY_AUTHENTICATING));
-		output = et.validate(LifeForm.CBLF);
-		assertThat(output.isAuthenticated(), is(RESP.TRY_AUTHENTICATING));
-	}
+    @Test
+    public void validateTryAuthenticatingTest() throws CadiException {
+        EpiTaf et = new EpiTaf(new TryAuthenticatingTaf(), new TryAuthenticatingTaf());
+        TafResp output = et.validate(LifeForm.CBLF);
+        assertThat(output.isAuthenticated(), is(RESP.TRY_AUTHENTICATING));
+        output = et.validate(LifeForm.CBLF);
+        assertThat(output.isAuthenticated(), is(RESP.TRY_AUTHENTICATING));
+    }
 
-	@Test
-	public void validateDefaultCaseTest() throws CadiException {
-		EpiTaf et = new EpiTaf(new NullTaf());
-		TafResp output = et.validate(LifeForm.CBLF);
-		assertThat(output.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
-	}
+    @Test
+    public void validateDefaultCaseTest() throws CadiException {
+        EpiTaf et = new EpiTaf(new NullTaf());
+        TafResp output = et.validate(LifeForm.CBLF);
+        assertThat(output.isAuthenticated(), is(RESP.NO_FURTHER_PROCESSING));
+    }
 
-	class TryAnotherTafResp implements TafResp {
-		@Override public boolean isValid() { return false; } 
-		@Override public String desc() { return null; } 
-		@Override public RESP isAuthenticated() { return RESP.TRY_ANOTHER_TAF; } 
-		@Override public RESP authenticate() throws IOException { return null; } 
-		@Override public TaggedPrincipal getPrincipal() { return null; } 
-		@Override public Access getAccess() { return null; } 
-		@Override public boolean isFailedAttempt() { return false; }
-		@Override public float timing() { return 0; }
-		@Override public void timing(long start) {} 
-		@Override public String taf() {return "JUnit";}
-	}
+    class TryAnotherTafResp implements TafResp {
+        @Override public boolean isValid() { return false; } 
+        @Override public String desc() { return null; } 
+        @Override public RESP isAuthenticated() { return RESP.TRY_ANOTHER_TAF; } 
+        @Override public RESP authenticate() throws IOException { return null; } 
+        @Override public TaggedPrincipal getPrincipal() { return null; } 
+        @Override public Access getAccess() { return null; } 
+        @Override public boolean isFailedAttempt() { return false; }
+        @Override public float timing() { return 0; }
+        @Override public void timing(long start) {} 
+        @Override public String taf() {return "JUnit";}
+    }
 
-	class TryAnotherTaf implements Taf {
-		@Override public TafResp validate(LifeForm reading, String ... info) { return new TryAnotherTafResp(); }
-	}
+    class TryAnotherTaf implements Taf {
+        @Override public TafResp validate(LifeForm reading, String ... info) { return new TryAnotherTafResp(); }
+    }
 
-	class TryAuthenticatingResp implements TafResp {
-		@Override public boolean isValid() { return false; } 
-		@Override public String desc() { return null; } 
-		@Override public RESP isAuthenticated() { return RESP.TRY_AUTHENTICATING; } 
-		@Override public RESP authenticate() throws IOException { return null; } 
-		@Override public TaggedPrincipal getPrincipal() { return null; } 
-		@Override public Access getAccess() { return null; } 
-		@Override public boolean isFailedAttempt() { return false; } 
-		@Override public float timing() { return 0; }
-		@Override public void timing(long start) {} 
-		@Override public String taf() {return "JUnit";}
-	}
+    class TryAuthenticatingResp implements TafResp {
+        @Override public boolean isValid() { return false; } 
+        @Override public String desc() { return null; } 
+        @Override public RESP isAuthenticated() { return RESP.TRY_AUTHENTICATING; } 
+        @Override public RESP authenticate() throws IOException { return null; } 
+        @Override public TaggedPrincipal getPrincipal() { return null; } 
+        @Override public Access getAccess() { return null; } 
+        @Override public boolean isFailedAttempt() { return false; } 
+        @Override public float timing() { return 0; }
+        @Override public void timing(long start) {} 
+        @Override public String taf() {return "JUnit";}
+    }
 
-	class TryAuthenticatingTaf implements Taf {
-		@Override public TafResp validate(LifeForm reading, String ... info) { return new TryAuthenticatingResp(); }
-	}
+    class TryAuthenticatingTaf implements Taf {
+        @Override public TafResp validate(LifeForm reading, String ... info) { return new TryAuthenticatingResp(); }
+    }
 
-	class EpiTafStub extends EpiTaf {
-		public EpiTafStub() throws CadiException { }
-	}
+    class EpiTafStub extends EpiTaf {
+        public EpiTafStub() throws CadiException { }
+    }
 
 }

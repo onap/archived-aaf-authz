@@ -22,46 +22,46 @@
 package org.onap.aaf.auth.gui;
 
 public abstract class NamedCode implements ContentCode {
-	private final boolean no_cache;
-	private String name;
-	private String[] idattrs;
-	
-	/*
-	 *  Mark whether this code should not be cached, and any attributes 
-	 */
-	public NamedCode(final boolean no_cache, final String name) {
-		this.name = name;
-		idattrs = new String[] {name};
-		this.no_cache = no_cache;
-	}
-	
-	public NamedCode(boolean no_cache, NamedCode content) {
-		this.no_cache = no_cache;
-		name=content.name;
-		idattrs = content.idattrs;
-	}
+    private final boolean no_cache;
+    private String name;
+    private String[] idattrs;
+    
+    /*
+     *  Mark whether this code should not be cached, and any attributes 
+     */
+    public NamedCode(final boolean no_cache, final String name) {
+        this.name = name;
+        idattrs = new String[] {name};
+        this.no_cache = no_cache;
+    }
+    
+    public NamedCode(boolean no_cache, NamedCode content) {
+        this.no_cache = no_cache;
+        name=content.name;
+        idattrs = content.idattrs;
+    }
 
-	/**
-	 * Return ID and Any Attributes needed to create a "div" section of this code
-	 * @return
-	 */
-	public String[] idattrs() {
-		return idattrs;
-	}
-	
-	public void addAttr(boolean first, String attr) {
-		String[] temp = new String[idattrs.length+1];
-		if(first) {
-			temp[0] = attr;
-			System.arraycopy(idattrs, 0, temp, 1, idattrs.length);
-		} else {
-			temp[idattrs.length] = attr;
-			System.arraycopy(idattrs, 0, temp, 0, idattrs.length);
-		}
-		idattrs = temp;
-	}
+    /**
+     * Return ID and Any Attributes needed to create a "div" section of this code
+     * @return
+     */
+    public String[] idattrs() {
+        return idattrs;
+    }
+    
+    public void addAttr(boolean first, String attr) {
+        String[] temp = new String[idattrs.length+1];
+        if(first) {
+            temp[0] = attr;
+            System.arraycopy(idattrs, 0, temp, 1, idattrs.length);
+        } else {
+            temp[idattrs.length] = attr;
+            System.arraycopy(idattrs, 0, temp, 0, idattrs.length);
+        }
+        idattrs = temp;
+    }
 
-	public boolean no_cache() {
-		return no_cache;
-	}
+    public boolean no_cache() {
+        return no_cache;
+    }
 }

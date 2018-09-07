@@ -39,176 +39,176 @@ import org.onap.aaf.misc.xgen.Mark;
 
 public class JU_JSGenTest {
 
-	@Mock
-	private HTMLGen hg;
-	@Mock
-	private Mark mark;
-	@Mock
-	private IndentPrintWriter writer;
-	@Mock
-	private Mark jm;
+    @Mock
+    private HTMLGen hg;
+    @Mock
+    private Mark mark;
+    @Mock
+    private IndentPrintWriter writer;
+    @Mock
+    private Mark jm;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void testFileNotFoundException() {
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testFileNotFoundException() {
+        JSGen gen = new JSGen(mark, hg);
 
-		try {
-			gen.inline("JSScript", 2);
-			fail("This file should not be found.");
-		} catch (Exception e) {
+        try {
+            gen.inline("JSScript", 2);
+            fail("This file should not be found.");
+        } catch (Exception e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void testJSRead() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testJSRead() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.inline("./sampletest.js", 2);
+        gen.inline("./sampletest.js", 2);
 
-		verify(writer).print("function myFunction() {");
-		verify(writer).print("document.getElementById(\"demo\").innerHTML = \"Paragraph changed.\";");
-		verify(writer).print("}");
-		verify(writer, times(0)).println();
-	}
+        verify(writer).print("function myFunction() {");
+        verify(writer).print("document.getElementById(\"demo\").innerHTML = \"Paragraph changed.\";");
+        verify(writer).print("}");
+        verify(writer, times(0)).println();
+    }
 
-	@Test
-	public void testJSReadPrettyPrint() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		hg.pretty = true;
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testJSReadPrettyPrint() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        hg.pretty = true;
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.inline("./sampletest.js", 2);
+        gen.inline("./sampletest.js", 2);
 
-		verify(writer).print("function myFunction() {");
-		verify(writer).print("document.getElementById(\"demo\").innerHTML = \"Paragraph changed.\";");
-		verify(writer).print("}");
-		verify(writer, times(3)).println();
-		verify(hg).setIndent(0);
-	}
+        verify(writer).print("function myFunction() {");
+        verify(writer).print("document.getElementById(\"demo\").innerHTML = \"Paragraph changed.\";");
+        verify(writer).print("}");
+        verify(writer, times(3)).println();
+        verify(hg).setIndent(0);
+    }
 
-	@Test
-	public void testPst() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		when(hg.pushBack(any(Back.class))).thenReturn(3);
-		hg.pretty = true;
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testPst() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        when(hg.pushBack(any(Back.class))).thenReturn(3);
+        hg.pretty = true;
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.pst("line 1", "line 2");
+        gen.pst("line 1", "line 2");
 
-		verify(writer).append('(');
-		verify(writer).append("line 1");
-		verify(writer).print("line 2");
-		verify(writer, times(1)).print(", ");
-	}
+        verify(writer).append('(');
+        verify(writer).append("line 1");
+        verify(writer).print("line 2");
+        verify(writer, times(1)).print(", ");
+    }
 
-	@Test
-	public void testPstWithMark() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		when(hg.pushBack(any(Back.class))).thenReturn(3);
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testPstWithMark() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        when(hg.pushBack(any(Back.class))).thenReturn(3);
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.pst(jm, "line 1", "line 2");
+        gen.pst(jm, "line 1", "line 2");
 
-		verify(writer).append('(');
-		verify(writer).append("line 1");
-		verify(writer).print("line 2");
-		verify(writer, times(1)).print(", ");
-	}
+        verify(writer).append('(');
+        verify(writer).append("line 1");
+        verify(writer).print("line 2");
+        verify(writer, times(1)).print(", ");
+    }
 
-	@Test
-	public void testPstWithNoLines() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		when(hg.pushBack(any(Back.class))).thenReturn(3);
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testPstWithNoLines() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        when(hg.pushBack(any(Back.class))).thenReturn(3);
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.pst(jm);
+        gen.pst(jm);
 
-		verify(writer).append('(');
-	}
+        verify(writer).append('(');
+    }
 
-	@Test
-	public void testLi() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		when(writer.getIndent()).thenReturn(3);
+    @Test
+    public void testLi() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        when(writer.getIndent()).thenReturn(3);
 
-		JSGen gen = new JSGen(mark, hg);
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.li("line 1", "line 2");
+        gen.li("line 1", "line 2");
 
-		verify(writer).setIndent(3);
-		verify(writer).inc();
-		verify(writer).println();
-		verify(writer).print("line 1");
-		verify(writer).print("line 2");
+        verify(writer).setIndent(3);
+        verify(writer).inc();
+        verify(writer).println();
+        verify(writer).print("line 1");
+        verify(writer).print("line 2");
 
-		hg.pretty = true;
-		gen.li("line 1", "line 2");
-		verify(writer, times(3)).println();
-	}
+        hg.pretty = true;
+        gen.li("line 1", "line 2");
+        verify(writer, times(3)).println();
+    }
 
-	@Test
-	public void testText() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		hg.pretty = true;
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testText() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        hg.pretty = true;
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.text("line 1");
+        gen.text("line 1");
 
-		verify(writer).append("line 1");
-		verify(writer).println();
+        verify(writer).append("line 1");
+        verify(writer).println();
 
-		hg.pretty = false;
-		gen.text("line 1");
+        hg.pretty = false;
+        gen.text("line 1");
 
-		verify(writer, times(2)).append("line 1");
-	}
+        verify(writer, times(2)).append("line 1");
+    }
 
-	@Test
-	public void testFunction() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		when(hg.pushBack(any(Back.class))).thenReturn(3);
-		hg.pretty = true;
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testFunction() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        when(hg.pushBack(any(Back.class))).thenReturn(3);
+        hg.pretty = true;
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.function("line 1", "line 2", "line 3");
+        gen.function("line 1", "line 2", "line 3");
 
-		verify(writer).print("function ");
-		verify(writer).print("line 1");
-		verify(writer).print('(');
+        verify(writer).print("function ");
+        verify(writer).print("line 1");
+        verify(writer).print('(');
 
-		verify(writer).print("line 2");
-		verify(writer).print("line 3");
-		verify(writer, times(1)).print(", ");
-		verify(writer).print(") {");
-		verify(writer).inc();
-		verify(writer).println();
-	}
+        verify(writer).print("line 2");
+        verify(writer).print("line 3");
+        verify(writer, times(1)).print(", ");
+        verify(writer).print(") {");
+        verify(writer).inc();
+        verify(writer).println();
+    }
 
-	@Test
-	public void testFunctionWithMark() throws IOException {
-		when(hg.getWriter()).thenReturn(writer);
-		when(hg.pushBack(any(Back.class))).thenReturn(3);
-		JSGen gen = new JSGen(mark, hg);
+    @Test
+    public void testFunctionWithMark() throws IOException {
+        when(hg.getWriter()).thenReturn(writer);
+        when(hg.pushBack(any(Back.class))).thenReturn(3);
+        JSGen gen = new JSGen(mark, hg);
 
-		gen.function(jm, "line 1", "line 2", "line 3");
+        gen.function(jm, "line 1", "line 2", "line 3");
 
-		verify(writer).print("function ");
-		verify(writer).print("line 1");
-		verify(writer).print('(');
+        verify(writer).print("function ");
+        verify(writer).print("line 1");
+        verify(writer).print('(');
 
-		verify(writer).print("line 2");
-		verify(writer).print("line 3");
-		verify(writer, times(1)).print(", ");
-		verify(writer).print(") {");
-		verify(writer, times(0)).inc();
-		verify(writer, times(0)).println();
-	}
+        verify(writer).print("line 2");
+        verify(writer).print("line 3");
+        verify(writer, times(1)).print(", ");
+        verify(writer).print(") {");
+        verify(writer, times(0)).inc();
+        verify(writer, times(0)).println();
+    }
 
 }

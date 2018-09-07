@@ -39,71 +39,71 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class JU_SecurityInfoC {
 
-	ByteArrayOutputStream outStream;
-	ByteArrayOutputStream errStream;
+    ByteArrayOutputStream outStream;
+    ByteArrayOutputStream errStream;
 
-	@Before
-	public void setup() {
-		outStream = new ByteArrayOutputStream();
-		errStream = new ByteArrayOutputStream();
+    @Before
+    public void setup() {
+        outStream = new ByteArrayOutputStream();
+        errStream = new ByteArrayOutputStream();
 
-		System.setOut(new PrintStream(outStream));
-		System.setErr(new PrintStream(errStream));
-	}
+        System.setOut(new PrintStream(outStream));
+        System.setErr(new PrintStream(errStream));
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-		System.setErr(System.err);
-	}
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+        System.setErr(System.err);
+    }
 
-//	@Test
-//	public void instanceTest() throws CadiException, MalformedURLException {
-//		SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class );
-//		assertThat(si.defSS.getID(), is(SecurityInfoC.DEF_ID));
-//		try {
-//			si.defSS.setSecurity(new HttpURLConnectionStub());
-//			fail("Should have thrown an exception");
-//		} catch (CadiException e) {
-//			assertTrue(e instanceof CadiException);
-//			assertThat(e.getMessage(), is("No Client Credentials set."));
-//		}
-//		assertThat(si.defSS.setLastResponse(0), is(0));
+//    @Test
+//    public void instanceTest() throws CadiException, MalformedURLException {
+//        SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class );
+//        assertThat(si.defSS.getID(), is(SecurityInfoC.DEF_ID));
+//        try {
+//            si.defSS.setSecurity(new HttpURLConnectionStub());
+//            fail("Should have thrown an exception");
+//        } catch (CadiException e) {
+//            assertTrue(e instanceof CadiException);
+//            assertThat(e.getMessage(), is("No Client Credentials set."));
+//        }
+//        assertThat(si.defSS.setLastResponse(0), is(0));
 //
-//		// Try it again for coverage
-//		SecurityInfoC<HttpURLConnection> siClone = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
-//		assertThat(siClone, is(si));
-//	}
-	
-	@Test
-	public void setTest() throws MalformedURLException, CadiException {
-		SecurityInfoC<HttpURLConnectionStub> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnectionStub.class);
-		SecuritySetter<HttpURLConnectionStub> ss = new SecuritySetterStub<HttpURLConnectionStub>();
-		assertThat(si.set(ss), is(si));
-		assertThat(si.defSS.getID(), is("Example ID"));
-		try {
-			si.defSS.setSecurity(new HttpURLConnectionStub());
-			fail("Should have thrown an exception");
-		} catch (CadiException e) {
-			assertTrue(e instanceof CadiException);
-			assertThat(e.getMessage(), is("Example exception"));
-		}
-		assertThat(si.defSS.setLastResponse(0), is(0));
-		assertThat(si.defSS.setLastResponse(1), is(1));
-		assertThat(si.defSS.setLastResponse(-1), is(-1));
-	}
+//        // Try it again for coverage
+//        SecurityInfoC<HttpURLConnection> siClone = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
+//        assertThat(siClone, is(si));
+//    }
+    
+    @Test
+    public void setTest() throws MalformedURLException, CadiException {
+        SecurityInfoC<HttpURLConnectionStub> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnectionStub.class);
+        SecuritySetter<HttpURLConnectionStub> ss = new SecuritySetterStub<HttpURLConnectionStub>();
+        assertThat(si.set(ss), is(si));
+        assertThat(si.defSS.getID(), is("Example ID"));
+        try {
+            si.defSS.setSecurity(new HttpURLConnectionStub());
+            fail("Should have thrown an exception");
+        } catch (CadiException e) {
+            assertTrue(e instanceof CadiException);
+            assertThat(e.getMessage(), is("Example exception"));
+        }
+        assertThat(si.defSS.setLastResponse(0), is(0));
+        assertThat(si.defSS.setLastResponse(1), is(1));
+        assertThat(si.defSS.setLastResponse(-1), is(-1));
+    }
 
-	public static class HttpURLConnectionStub extends HttpURLConnection {
-		public HttpURLConnectionStub() throws MalformedURLException { super(new URL("http://www.example.com")); } 
-		@Override public void disconnect() { } 
-		@Override public boolean usingProxy() { return false; } 
-		@Override public void connect() throws IOException { }
-	}
+    public static class HttpURLConnectionStub extends HttpURLConnection {
+        public HttpURLConnectionStub() throws MalformedURLException { super(new URL("http://www.example.com")); } 
+        @Override public void disconnect() { } 
+        @Override public boolean usingProxy() { return false; } 
+        @Override public void connect() throws IOException { }
+    }
 
-	private class SecuritySetterStub<CT> implements SecuritySetter<CT> {
-		public String getID() { return "Example ID"; }
-		public void setSecurity(CT client) throws CadiException { throw new CadiException("Example exception"); }
-		public int setLastResponse(int respCode) { return respCode; }
-	}
+    private class SecuritySetterStub<CT> implements SecuritySetter<CT> {
+        public String getID() { return "Example ID"; }
+        public void setSecurity(CT client) throws CadiException { throw new CadiException("Example exception"); }
+        public int setLastResponse(int respCode) { return respCode; }
+    }
 
 }

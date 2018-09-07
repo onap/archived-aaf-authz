@@ -34,24 +34,24 @@ import org.onap.aaf.misc.env.util.Chrono;
 import com.datastax.driver.core.Cluster;
 
 public class URAdd extends ActionDAO<UserRole,UserRoleDAO.Data,String> {
-	public URAdd(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public URAdd(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public URAdd(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public URAdd(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Data> exec(AuthzTrans trans, UserRole ur, String text) {
-		if(dryRun) {
-			trans.info().log("Would Add:",text,ur.role(),ur.user(),"on",Chrono.dateOnlyStamp(ur.expires()));
-			return Result.ok(ur.urdd());
-		} else {
-			Result<Data> rv = q.userRoleDAO.create(trans, ur.urdd());
-			trans.info().log("Added:",text,ur.role(),ur.user(),"on",Chrono.dateOnlyStamp(ur.expires()));
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Data> exec(AuthzTrans trans, UserRole ur, String text) {
+        if(dryRun) {
+            trans.info().log("Would Add:",text,ur.role(),ur.user(),"on",Chrono.dateOnlyStamp(ur.expires()));
+            return Result.ok(ur.urdd());
+        } else {
+            Result<Data> rv = q.userRoleDAO.create(trans, ur.urdd());
+            trans.info().log("Added:",text,ur.role(),ur.user(),"on",Chrono.dateOnlyStamp(ur.expires()));
+            return rv;
+        }
+    }
+    
 }

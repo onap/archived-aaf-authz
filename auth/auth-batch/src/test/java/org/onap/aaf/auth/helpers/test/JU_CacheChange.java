@@ -39,42 +39,42 @@ import org.junit.Test;
 
 public class JU_CacheChange {
 
-	CacheChange cc;
-	
-	
-	@Before
-	public void setUp() {
-		cc = new CacheChange();
-	}
-	
-	@Test
-	public void testDelayedDelete() {
-		cc.delayedDelete(null);
-	}
+    CacheChange cc;
+    
+    
+    @Before
+    public void setUp() {
+        cc = new CacheChange();
+    }
+    
+    @Test
+    public void testDelayedDelete() {
+        cc.delayedDelete(null);
+    }
 
-	@Test
-	public void testGetRemoved() {
-		List list = cc.getRemoved();
-		Assert.assertNotNull(list);
-	}
-	
-	@Test
-	public void testResetLocalData() {
-		cc.resetLocalData();
-	}
-	
-	@Test
-	public void testCacheSize() {
-		int size;
-		size = cc.cacheSize();
-		Assert.assertEquals(0, size);
-	}
-	
-	@Test
-	public void testContains() {
-		boolean containsBools;
-		containsBools = cc.contains(null);
-		Assert.assertEquals(false, containsBools);
-	}
+    @Test
+    public void testGetRemoved() {
+        List list = cc.getRemoved();
+        Assert.assertNotNull(list);
+    }
+    
+    @Test
+    public void testResetLocalData() {
+        cc.resetLocalData();
+    }
+    
+    @Test
+    public void testCacheSize() {
+        int size;
+        size = cc.cacheSize();
+        Assert.assertEquals(0, size);
+    }
+    
+    @Test
+    public void testContains() {
+        boolean containsBools;
+        containsBools = cc.contains(null);
+        Assert.assertEquals(false, containsBools);
+    }
 
 }

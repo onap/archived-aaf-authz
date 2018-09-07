@@ -26,45 +26,45 @@ import java.security.Principal;
 import org.onap.aaf.cadi.UserChain;
 
 public class TrustPrincipal extends BearerPrincipal implements UserChain {
-	private final String name;
-	private final Principal original;
-	private String userChain;
-	
-	public TrustPrincipal(final Principal actual, final String asName) {
-		this.original = actual;
-		name = asName.trim();
-		if(actual instanceof UserChain) {
-			UserChain uc = (UserChain)actual;
-			userChain = uc.userChain();
-		} else if(actual instanceof TaggedPrincipal) {
-			userChain=((TaggedPrincipal)actual).tag();
-		} else {
-			userChain = actual.getClass().getSimpleName();
-		}
-	}
-	
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	@Override
-	public String userChain() {
-		return userChain;
-	}
-	
-	public Principal original() {
-		return original;
-	}
+    private final String name;
+    private final Principal original;
+    private String userChain;
+    
+    public TrustPrincipal(final Principal actual, final String asName) {
+        this.original = actual;
+        name = asName.trim();
+        if(actual instanceof UserChain) {
+            UserChain uc = (UserChain)actual;
+            userChain = uc.userChain();
+        } else if(actual instanceof TaggedPrincipal) {
+            userChain=((TaggedPrincipal)actual).tag();
+        } else {
+            userChain = actual.getClass().getSimpleName();
+        }
+    }
+    
+    @Override
+    public String getName() {
+        return name;
+    }
+    
+    @Override
+    public String userChain() {
+        return userChain;
+    }
+    
+    public Principal original() {
+        return original;
+    }
 
-	@Override
-	public String tag() {
-		return userChain;
-	}
+    @Override
+    public String tag() {
+        return userChain;
+    }
 
-	@Override
-	public String personalName() {
-		return original.getName() + '[' + userChain + ']';
-	}
-	
+    @Override
+    public String personalName() {
+        return original.getName() + '[' + userChain + ']';
+    }
+    
 }

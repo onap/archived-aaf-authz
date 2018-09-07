@@ -42,56 +42,56 @@ import org.onap.aaf.cadi.Symm;
  *
  */
 public class API_Api {
-	/**
-	 * Normal Init level APIs
-	 * 
-	 * @param gwAPI
-	 * @param facade
-	 * @throws Exception
-	 */
-	public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
-		////////
-		// Overall APIs
-		///////
-		gwAPI.route(HttpMethods.GET,"/api",API.VOID,new LocateCode(facade,"Document API", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.getAPI(trans,resp,gwAPI);
-				switch(r.status) {
-				case OK:
-					resp.setStatus(HttpStatus.OK_200);
-					break;
-				default:
-					context.error(trans,resp,r);
-			}
+    /**
+     * Normal Init level APIs
+     * 
+     * @param gwAPI
+     * @param facade
+     * @throws Exception
+     */
+    public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
+        ////////
+        // Overall APIs
+        ///////
+        gwAPI.route(HttpMethods.GET,"/api",API.VOID,new LocateCode(facade,"Document API", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.getAPI(trans,resp,gwAPI);
+                switch(r.status) {
+                case OK:
+                    resp.setStatus(HttpStatus.OK_200);
+                    break;
+                default:
+                    context.error(trans,resp,r);
+            }
 
-			}
-		});
+            }
+        });
 
-		////////
-		// Overall Examples
-		///////
-		gwAPI.route(HttpMethods.GET,"/api/example/*",API.VOID,new LocateCode(facade,"Document API", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				String pathInfo = req.getPathInfo();
-				int question = pathInfo.lastIndexOf('?');
-				
-				pathInfo = pathInfo.substring(13, question<0?pathInfo.length():question);// IMPORTANT, this is size of "/api/example/"
-				String nameOrContextType=Symm.base64noSplit.decode(pathInfo);
-//				String param = req.getParameter("optional");
-				Result<Void> r = context.getAPIExample(trans,resp,nameOrContextType,
-						question>=0 && "optional=true".equalsIgnoreCase(req.getPathInfo().substring(question+1))
-						);
-				switch(r.status) {
-					case OK:
-						resp.setStatus(HttpStatus.OK_200);
-						break;
-					default:
-						context.error(trans,resp,r);
-				}
-			}
-		});
+        ////////
+        // Overall Examples
+        ///////
+        gwAPI.route(HttpMethods.GET,"/api/example/*",API.VOID,new LocateCode(facade,"Document API", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                String pathInfo = req.getPathInfo();
+                int question = pathInfo.lastIndexOf('?');
+                
+                pathInfo = pathInfo.substring(13, question<0?pathInfo.length():question);// IMPORTANT, this is size of "/api/example/"
+                String nameOrContextType=Symm.base64noSplit.decode(pathInfo);
+//                String param = req.getParameter("optional");
+                Result<Void> r = context.getAPIExample(trans,resp,nameOrContextType,
+                        question>=0 && "optional=true".equalsIgnoreCase(req.getPathInfo().substring(question+1))
+                        );
+                switch(r.status) {
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
+                        break;
+                    default:
+                        context.error(trans,resp,r);
+                }
+            }
+        });
 
-	}
+    }
 }

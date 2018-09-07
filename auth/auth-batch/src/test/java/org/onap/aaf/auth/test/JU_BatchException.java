@@ -35,25 +35,25 @@ import org.junit.Test;
 
 public class JU_BatchException {
 
-	BatchException bExcept1;
-	BatchException bExcept2;
-	BatchException bExcept3;
-	BatchException bExcept4;
-	BatchException bExcept5;
-	Throwable throwable;
-	
-	@Before
-	public void setUp() {
-		throwable = new Throwable();
-	}
-	
-	@Test
-	public void testBatchException() {
-		bExcept1 = new BatchException();
-		bExcept2 = new BatchException("test");
-		bExcept3 = new BatchException(throwable);
-		bExcept4 = new BatchException("test", throwable);
-		bExcept5 = new BatchException("test", throwable,true,true);
-	}
+    BatchException bExcept1;
+    BatchException bExcept2;
+    BatchException bExcept3;
+    BatchException bExcept4;
+    BatchException bExcept5;
+    Throwable throwable;
+    
+    @Before
+    public void setUp() {
+        throwable = new Throwable();
+    }
+    
+    @Test
+    public void testBatchException() {
+        bExcept1 = new BatchException();
+        bExcept2 = new BatchException("test");
+        bExcept3 = new BatchException(throwable);
+        bExcept4 = new BatchException("test", throwable);
+        bExcept5 = new BatchException("test", throwable,true,true);
+    }
 
 }

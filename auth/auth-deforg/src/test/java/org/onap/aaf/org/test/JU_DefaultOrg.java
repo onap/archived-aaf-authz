@@ -53,219 +53,219 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class JU_DefaultOrg {
 
 
-	private DefaultOrg defaultOrg;
+    private DefaultOrg defaultOrg;
 
 
-	Identities.Data data;
+    Identities.Data data;
 
-	@Mock
-	Env envMock;
+    @Mock
+    Env envMock;
 
-	@Mock
-	AuthzTrans authzTransMock;
+    @Mock
+    AuthzTrans authzTransMock;
 
-	@Mock
-	TimeTaken ttMock;
+    @Mock
+    TimeTaken ttMock;
 
-	@Mock
-	LogTarget logTargetMock;
-
-
-	private static final String PROPERTY_IS_REQUIRED = " property is Required";
-	private static final String DOMAIN = "osaaf.com";
-	private static final String REALM = "com.osaaf";
-	private static final String NAME = "Default Organization";
-	private static final String NO_PASS = NAME + " does not support Passwords.  Use AAF";
-
-	private static final String URL = "www.deforg.com";
-	private static final String IDENT = "ccontra|iowna";
-	private static final String CCS = "mmanager|bdevl";
-	String mailHost,mailFromUserId,summary,supportAddress;
-
-	private final static int TIMEOUT = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
+    @Mock
+    LogTarget logTargetMock;
 
 
+    private static final String PROPERTY_IS_REQUIRED = " property is Required";
+    private static final String DOMAIN = "osaaf.com";
+    private static final String REALM = "com.osaaf";
+    private static final String NAME = "Default Organization";
+    private static final String NO_PASS = NAME + " does not support Passwords.  Use AAF";
 
-	@Before
-	public void setUp() throws OrganizationException{
+    private static final String URL = "www.deforg.com";
+    private static final String IDENT = "ccontra|iowna";
+    private static final String CCS = "mmanager|bdevl";
+    String mailHost,mailFromUserId,summary,supportAddress;
 
-		mailFromUserId = "frommail";
-		mailHost = "hostmail";
-		File file = new File("src/test/resources/");
-		when(envMock.getProperty(REALM + ".name","Default Organization")).thenReturn(NAME);
-		when(envMock.getProperty(REALM + ".mailHost",null)).thenReturn(mailHost);
-		when(envMock.getProperty(REALM + ".mailFrom",null)).thenReturn(mailFromUserId);
-		when(envMock.getProperty("aaf_data_dir")).thenReturn(file.getAbsolutePath());
-		when(envMock.warn()).thenReturn(logTargetMock);
-		when(authzTransMock.warn()).thenReturn(logTargetMock);
-		when(authzTransMock.start(any(String.class),any(Integer.class))).thenReturn(ttMock);
-		when(authzTransMock.error()).thenReturn(logTargetMock);
-		when(authzTransMock.getProperty("CASS_ENV", "")).thenReturn("Cassandra env");
-
-		defaultOrg = new DefaultOrg(envMock, REALM);
-
-	}
-
-	@Test
-	public void testDefOrg_returnDataIdentityNotNull() throws OrganizationException {
-
-
-		try {
-			defaultOrg.identities.open(authzTransMock, TIMEOUT);
-			try {
-				Reuse r = defaultOrg.identities.reuse();
-				data = defaultOrg.identities.find("iowna", defaultOrg.identities.reuse());
-				System.out.println("here is identities data: "+ data.toString());
-
-			} finally {
-				defaultOrg.identities.close(authzTransMock);
-			}
-		} catch (IOException e) {
-			throw new OrganizationException(e);
-		}
-
-
-		assertTrue(data.toString() != null);
-
-	}
+    private final static int TIMEOUT = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
 
 
 
-	@Test
-	public void testDefOrg_returnDefOrgEntity()  {
+    @Before
+    public void setUp() throws OrganizationException{
+
+        mailFromUserId = "frommail";
+        mailHost = "hostmail";
+        File file = new File("src/test/resources/");
+        when(envMock.getProperty(REALM + ".name","Default Organization")).thenReturn(NAME);
+        when(envMock.getProperty(REALM + ".mailHost",null)).thenReturn(mailHost);
+        when(envMock.getProperty(REALM + ".mailFrom",null)).thenReturn(mailFromUserId);
+        when(envMock.getProperty("aaf_data_dir")).thenReturn(file.getAbsolutePath());
+        when(envMock.warn()).thenReturn(logTargetMock);
+        when(authzTransMock.warn()).thenReturn(logTargetMock);
+        when(authzTransMock.start(any(String.class),any(Integer.class))).thenReturn(ttMock);
+        when(authzTransMock.error()).thenReturn(logTargetMock);
+        when(authzTransMock.getProperty("CASS_ENV", "")).thenReturn("Cassandra env");
+
+        defaultOrg = new DefaultOrg(envMock, REALM);
+
+    }
+
+    @Test
+    public void testDefOrg_returnDataIdentityNotNull() throws OrganizationException {
 
 
-		assertTrue(defaultOrg != null);
+        try {
+            defaultOrg.identities.open(authzTransMock, TIMEOUT);
+            try {
+                Reuse r = defaultOrg.identities.reuse();
+                data = defaultOrg.identities.find("iowna", defaultOrg.identities.reuse());
+                System.out.println("here is identities data: "+ data.toString());
 
-	}
+            } finally {
+                defaultOrg.identities.close(authzTransMock);
+            }
+        } catch (IOException e) {
+            throw new OrganizationException(e);
+        }
 
 
-	@Test
-	public void testDefOrgNotifyApproval_returnResponseOK() {
+        assertTrue(data.toString() != null);
 
-		summary = "Approval";
-		Boolean urgent = false;
-		DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.Approval, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-		assertEquals(response.name(), "OK");
-
-	}
-	
-	@Test
-	public void testDefOrgPasswords() {
-		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
-		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2you!", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newtoyou", "Pilgrim"),"");
-	}
-
-	@Test
-	public void testDefOrgNotifyPasswordExpiration_returnResponseOK() {
-
-		summary = "PasswordExpiration";
-		Boolean urgent = false;
-		DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.PasswordExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-		assertEquals(response.name(), "OK");
-
-	}
-
-	@Test
-	public void testDefOrgNotifyRoleExpiration_returnResponseOK() {
-
-		summary = "RoleExpiration";
-		Boolean urgent = false;
-		DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-		assertEquals(response.name(), "OK");
-	}
-
-	@Test
-	public void testDefOrgNotifyRoleExpirationUrgent_returnResponseOK() {
-
-		summary = "RoleExpirationUrgent";
-		Boolean urgent = true;
-		when(authzTransMock.info()).thenReturn(logTargetMock);
-		DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-		assertEquals(response.name(), "OK");
-
-	}
-
-	@Test
-	public void testDefOrgNotifyModeTest_returnResponseOK()  {
-
-		summary = "ModeTest";
-		Boolean urgent = false;
-		when(authzTransMock.info()).thenReturn(logTargetMock);
-		defaultOrg.setTestMode(true);
-		DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-		assertEquals(response.name(), "OK");
-
-	}
+    }
 
 
 
+    @Test
+    public void testDefOrg_returnDefOrgEntity()  {
 
 
-	//@Test    //(expected=OrganizationException.class)
-	public void testMultipleCreds() throws OrganizationException{
-		String id = "test";
-		boolean canHaveMultipleCreds;
-		canHaveMultipleCreds = defaultOrg.canHaveMultipleCreds(id );
-		System.out.println("value of canHaveMultipleCreds:  " + canHaveMultipleCreds);
-		assertTrue(canHaveMultipleCreds);
-	}
+        assertTrue(defaultOrg != null);
+
+    }
 
 
-	//@Test
-	public void testGetIdentityTypes() throws OrganizationException{
-		Set<String> identityTypes = defaultOrg.getIdentityTypes();
-		System.out.println("value of IdentityTypes:  " + identityTypes);
-		assertTrue(identityTypes.size() == 4);
-	}
+    @Test
+    public void testDefOrgNotifyApproval_returnResponseOK() {
+
+        summary = "Approval";
+        Boolean urgent = false;
+        DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.Approval, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
+        assertEquals(response.name(), "OK");
+
+    }
+    
+    @Test
+    public void testDefOrgPasswords() {
+        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
+        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2you!", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newtoyou", "Pilgrim"),"");
+    }
+
+    @Test
+    public void testDefOrgNotifyPasswordExpiration_returnResponseOK() {
+
+        summary = "PasswordExpiration";
+        Boolean urgent = false;
+        DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.PasswordExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
+        assertEquals(response.name(), "OK");
+
+    }
+
+    @Test
+    public void testDefOrgNotifyRoleExpiration_returnResponseOK() {
+
+        summary = "RoleExpiration";
+        Boolean urgent = false;
+        DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
+        assertEquals(response.name(), "OK");
+    }
+
+    @Test
+    public void testDefOrgNotifyRoleExpirationUrgent_returnResponseOK() {
+
+        summary = "RoleExpirationUrgent";
+        Boolean urgent = true;
+        when(authzTransMock.info()).thenReturn(logTargetMock);
+        DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
+        assertEquals(response.name(), "OK");
+
+    }
+
+    @Test
+    public void testDefOrgNotifyModeTest_returnResponseOK()  {
+
+        summary = "ModeTest";
+        Boolean urgent = false;
+        when(authzTransMock.info()).thenReturn(logTargetMock);
+        defaultOrg.setTestMode(true);
+        DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
+        assertEquals(response.name(), "OK");
+
+    }
 
 
-	//@Test
-	public void testGetRealm() throws OrganizationException{
-		String realmTest = defaultOrg.getRealm();
-		System.out.println("value of realm:  " + realmTest);
-		assertTrue(realmTest == REALM);
-	}
-
-	public void supportsRealm() {
-		String otherRealm = "org.ossaf.something";
-		defaultOrg.addSupportedRealm(otherRealm);
-		assertTrue(defaultOrg.supportsRealm(otherRealm));
-	}
-	//@Test
-	public void testGetName() throws OrganizationException{
-		String testName = defaultOrg.getName();
-		System.out.println("value of name:  " + testName);
-		assertTrue(testName == NAME);
-	}
 
 
-	//@Test
-	public void testGetDomain() throws OrganizationException{
-		String testDomain = defaultOrg.getDomain();
-		System.out.println("value of domain:  " + testDomain);
-		assertTrue(testDomain == DOMAIN);
-	}
 
-	// @Test
-	// public void testIsValidID(){
-	// 	String Result = defaultOrg.isValidID(Matchers.anyString());
-	// 	System.out.println("value of res " +Result);
-	// 	assertNotNull(Result);
-	// }
-	
-	@Test
-	public void testResponsible() throws OrganizationException {
-		Identity id = defaultOrg.getIdentity(authzTransMock, "osaaf");
-		Identity rt = id.responsibleTo();
-		assertTrue(rt.id().equals("bdevl"));
-		
-	}
-	
-	//@Test
-	public void notYetImplemented() {
-		fail("Tests in this file should not be trusted");
-	}
+    //@Test    //(expected=OrganizationException.class)
+    public void testMultipleCreds() throws OrganizationException{
+        String id = "test";
+        boolean canHaveMultipleCreds;
+        canHaveMultipleCreds = defaultOrg.canHaveMultipleCreds(id );
+        System.out.println("value of canHaveMultipleCreds:  " + canHaveMultipleCreds);
+        assertTrue(canHaveMultipleCreds);
+    }
+
+
+    //@Test
+    public void testGetIdentityTypes() throws OrganizationException{
+        Set<String> identityTypes = defaultOrg.getIdentityTypes();
+        System.out.println("value of IdentityTypes:  " + identityTypes);
+        assertTrue(identityTypes.size() == 4);
+    }
+
+
+    //@Test
+    public void testGetRealm() throws OrganizationException{
+        String realmTest = defaultOrg.getRealm();
+        System.out.println("value of realm:  " + realmTest);
+        assertTrue(realmTest == REALM);
+    }
+
+    public void supportsRealm() {
+        String otherRealm = "org.ossaf.something";
+        defaultOrg.addSupportedRealm(otherRealm);
+        assertTrue(defaultOrg.supportsRealm(otherRealm));
+    }
+    //@Test
+    public void testGetName() throws OrganizationException{
+        String testName = defaultOrg.getName();
+        System.out.println("value of name:  " + testName);
+        assertTrue(testName == NAME);
+    }
+
+
+    //@Test
+    public void testGetDomain() throws OrganizationException{
+        String testDomain = defaultOrg.getDomain();
+        System.out.println("value of domain:  " + testDomain);
+        assertTrue(testDomain == DOMAIN);
+    }
+
+    // @Test
+    // public void testIsValidID(){
+    //     String Result = defaultOrg.isValidID(Matchers.anyString());
+    //     System.out.println("value of res " +Result);
+    //     assertNotNull(Result);
+    // }
+    
+    @Test
+    public void testResponsible() throws OrganizationException {
+        Identity id = defaultOrg.getIdentity(authzTransMock, "osaaf");
+        Identity rt = id.responsibleTo();
+        assertTrue(rt.id().equals("bdevl"));
+        
+    }
+    
+    //@Test
+    public void notYetImplemented() {
+        fail("Tests in this file should not be trusted");
+    }
 
 }

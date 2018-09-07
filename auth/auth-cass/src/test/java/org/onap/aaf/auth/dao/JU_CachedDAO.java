@@ -39,26 +39,26 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_CachedDAO {
-	CachedDAO cachedDAO;
-	@Mock
-	DAO daoMock;
-	@Mock
-	CIDAO<Trans> ciDAOMock; 
-	int segsize=1;
-	Object[ ] objs = new Object[2];
-	
-	@Before
-	public void setUp(){
-		objs[0] = "helo";
-		objs[1] = "polo";
-		cachedDAO = new CachedDAO(daoMock, ciDAOMock, segsize, segsize);
-	}
-		
-	@Test
-	public void testKeyFromObjs(){
-		String result = cachedDAO.keyFromObjs(objs);
-		System.out.println("value of resut " +result);
-		assertTrue(true);
-	}
-	
+    CachedDAO cachedDAO;
+    @Mock
+    DAO daoMock;
+    @Mock
+    CIDAO<Trans> ciDAOMock; 
+    int segsize=1;
+    Object[ ] objs = new Object[2];
+    
+    @Before
+    public void setUp(){
+        objs[0] = "helo";
+        objs[1] = "polo";
+        cachedDAO = new CachedDAO(daoMock, ciDAOMock, segsize, segsize);
+    }
+        
+    @Test
+    public void testKeyFromObjs(){
+        String result = cachedDAO.keyFromObjs(objs);
+        System.out.println("value of resut " +result);
+        assertTrue(true);
+    }
+    
 }

@@ -32,62 +32,62 @@ import aaf.v2_0.NsAttribRequest;
 import aaf.v2_0.NsAttribRequest.Attrib;
 
 public class NSAttribCompare extends RosettaCompare<NsAttribRequest>  {
-	public NSAttribCompare() {
-		super(NsAttribRequest.class);
-	}
-	
-	public static NsAttribRequest create() {
-		NsAttribRequest nar = new NsAttribRequest();
-		String in = instance();
-		
-		nar.setNs("org.osaaf.ns"+in);
-		Attrib attrib = new Attrib();
-		attrib.setKey("swm");
-		attrib.setValue("v"+instance());
-		nar.getAttrib().add(attrib);
-		attrib = new Attrib();
-		attrib.setKey("scamp");
-		attrib.setValue("v"+instance());
-		nar.getAttrib().add(attrib);
-		GregorianCalendar gc = new GregorianCalendar();
-		nar.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		nar.setEnd(Chrono.timeStamp(gc));
-		return nar;
-	}
-	
-	@Override
-	public void compare(NsAttribRequest t1, NsAttribRequest t2) {
-		assertEquals(t1.getNs(),t2.getNs());
-		for(Attrib a1 : t1.getAttrib()) {
-			boolean ok = false;
-			for(Attrib a2 : t2.getAttrib()) {
-				if(a1.getKey().equals(a2.getKey()) &&
-					a1.getValue().equals(a2.getValue())) {
-					ok = true;
-					break;
-				}
-			}
-			assertTrue("a2 Attribs in a1",ok);
-		}
-		for(Attrib a2 : t2.getAttrib()) {
-			boolean ok = false;
-			for(Attrib a1 : t1.getAttrib()) {
-				if(a1.getKey().equals(a2.getKey()) &&
-					a1.getValue().equals(a2.getValue())) {
-					ok = true;
-					break;
-				}
-			}
-			assertTrue("a2 Attribs in a1",ok);
-		}
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public NSAttribCompare() {
+        super(NsAttribRequest.class);
+    }
+    
+    public static NsAttribRequest create() {
+        NsAttribRequest nar = new NsAttribRequest();
+        String in = instance();
+        
+        nar.setNs("org.osaaf.ns"+in);
+        Attrib attrib = new Attrib();
+        attrib.setKey("swm");
+        attrib.setValue("v"+instance());
+        nar.getAttrib().add(attrib);
+        attrib = new Attrib();
+        attrib.setKey("scamp");
+        attrib.setValue("v"+instance());
+        nar.getAttrib().add(attrib);
+        GregorianCalendar gc = new GregorianCalendar();
+        nar.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        nar.setEnd(Chrono.timeStamp(gc));
+        return nar;
+    }
+    
+    @Override
+    public void compare(NsAttribRequest t1, NsAttribRequest t2) {
+        assertEquals(t1.getNs(),t2.getNs());
+        for(Attrib a1 : t1.getAttrib()) {
+            boolean ok = false;
+            for(Attrib a2 : t2.getAttrib()) {
+                if(a1.getKey().equals(a2.getKey()) &&
+                    a1.getValue().equals(a2.getValue())) {
+                    ok = true;
+                    break;
+                }
+            }
+            assertTrue("a2 Attribs in a1",ok);
+        }
+        for(Attrib a2 : t2.getAttrib()) {
+            boolean ok = false;
+            for(Attrib a1 : t1.getAttrib()) {
+                if(a1.getKey().equals(a2.getKey()) &&
+                    a1.getValue().equals(a2.getValue())) {
+                    ok = true;
+                    break;
+                }
+            }
+            assertTrue("a2 Attribs in a1",ok);
+        }
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public NsAttribRequest newOne() {
-		return create();
-	}
+    @Override
+    public NsAttribRequest newOne() {
+        return create();
+    }
 }

@@ -32,35 +32,35 @@ import org.onap.aaf.cadi.Access.Level;
 
 public class JU_Access {
 
-	@Test
-	public void levelTests() {
-		assertTrue(Level.DEBUG.inMask(0x1));
-		for (int i = 2; i > 0; i <<= 1) {
-			assertFalse(Level.DEBUG.inMask(i));
-		}
-		assertFalse(Level.DEBUG.inMask(0x80000000));
+    @Test
+    public void levelTests() {
+        assertTrue(Level.DEBUG.inMask(0x1));
+        for (int i = 2; i > 0; i <<= 1) {
+            assertFalse(Level.DEBUG.inMask(i));
+        }
+        assertFalse(Level.DEBUG.inMask(0x80000000));
 
-		assertThat(Level.DEBUG.addToMask(0x2), is(0x3));
-		assertThat(Level.DEBUG.delFromMask(0x1), is(0x0));
-		assertThat(Level.DEBUG.toggle(0x2), is(0x3));
-		assertThat(Level.DEBUG.toggle(0x1), is(0x0));
-		assertThat(Level.DEBUG.maskOf(), is(123153));
-		assertThat(Level.NONE.maskOf(), is(0));
-	}
+        assertThat(Level.DEBUG.addToMask(0x2), is(0x3));
+        assertThat(Level.DEBUG.delFromMask(0x1), is(0x0));
+        assertThat(Level.DEBUG.toggle(0x2), is(0x3));
+        assertThat(Level.DEBUG.toggle(0x1), is(0x0));
+        assertThat(Level.DEBUG.maskOf(), is(123153));
+        assertThat(Level.NONE.maskOf(), is(0));
+    }
 
-	@Test
-	public void nullTests() throws IOException {
-		// These are entirely for coverage
-		Access.NULL.log(Level.DEBUG);
-		Access.NULL.printf(Level.DEBUG, "");
-		Access.NULL.log(new Exception());
-		Access.NULL.classLoader();
-		assertThat(Access.NULL.getProperty("", ""), is(nullValue()));
-		Access.NULL.load(System.in);
-		Access.NULL.setLogLevel(Level.DEBUG);
-		assertThat(Access.NULL.decrypt("test", true), is("test"));
-		assertFalse(Access.NULL.willLog(Level.DEBUG));
-		assertThat(Access.NULL.getProperties(), is(not(nullValue())));
-	}
+    @Test
+    public void nullTests() throws IOException {
+        // These are entirely for coverage
+        Access.NULL.log(Level.DEBUG);
+        Access.NULL.printf(Level.DEBUG, "");
+        Access.NULL.log(new Exception());
+        Access.NULL.classLoader();
+        assertThat(Access.NULL.getProperty("", ""), is(nullValue()));
+        Access.NULL.load(System.in);
+        Access.NULL.setLogLevel(Level.DEBUG);
+        assertThat(Access.NULL.decrypt("test", true), is("test"));
+        assertFalse(Access.NULL.willLog(Level.DEBUG));
+        assertThat(Access.NULL.getProperties(), is(not(nullValue())));
+    }
 
 }

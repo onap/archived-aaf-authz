@@ -36,14 +36,14 @@ import locate_local.v1_0.Error;;
 
 
 public class LocateFacadeFactory {
-	public static LocateFacade_1_1 v1_1(AuthzEnv env, AAF_Locate locate, AuthzTrans trans, Data.TYPE type) throws APIException {
-		return new LocateFacade_1_1(
-				env,
-				new LocateServiceImpl<
-					InRequest,
-					Out,
-					Error>(trans,locate,new Mapper_1_1()),
-				type);  
-	}
+    public static LocateFacade_1_1 v1_1(AuthzEnv env, AAF_Locate locate, AuthzTrans trans, Data.TYPE type) throws APIException {
+        return new LocateFacade_1_1(
+                env,
+                new LocateServiceImpl<
+                    InRequest,
+                    Out,
+                    Error>(trans,locate,new Mapper_1_1()),
+                type);  
+    }
 
 }

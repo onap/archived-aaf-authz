@@ -32,79 +32,79 @@ import org.onap.aaf.cadi.principal.BearerPrincipal;
 import org.onap.aaf.misc.env.util.Split;
 
 public class OAuth2Lur implements Lur {
-	private TokenMgr tm;
+    private TokenMgr tm;
 
-	public OAuth2Lur(TokenMgr tm) {
-		this.tm = tm;
-	}
-	
-	@Override
-	public Permission createPerm(String p) {
-		String[] params = Split.split('|', p);
-		switch(params.length) {
-			case 3:
-				return new AAFPermission(null,params[0],params[1],params[2]);
-			case 4:
-				return new AAFPermission(params[0],params[1],params[2],params[3]);
-			default:
-				return new LocalPermission(p);
-		}
-	}
+    public OAuth2Lur(TokenMgr tm) {
+        this.tm = tm;
+    }
+    
+    @Override
+    public Permission createPerm(String p) {
+        String[] params = Split.split('|', p);
+        switch(params.length) {
+            case 3:
+                return new AAFPermission(null,params[0],params[1],params[2]);
+            case 4:
+                return new AAFPermission(params[0],params[1],params[2],params[3]);
+            default:
+                return new LocalPermission(p);
+        }
+    }
 
-	@Override
-	public boolean fish(Principal bait, Permission ... pond) {
-		boolean rv = false;
-		
-		if(bait instanceof OAuth2Principal) {
-			OAuth2Principal oap = (OAuth2Principal)bait; 
-			for (Permission p : pond ) {
-				AAFPermission apond = (AAFPermission)p;
-		
-				TokenPerm tp = oap.tokenPerm();
-				if(tp==null) {
-				} else {
-					for(Permission perm : tp.perms()) {
-						if(perm.match(apond)) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return rv;
-	}
+    @Override
+    public boolean fish(Principal bait, Permission ... pond) {
+        boolean rv = false;
+        
+        if(bait instanceof OAuth2Principal) {
+            OAuth2Principal oap = (OAuth2Principal)bait; 
+            for (Permission p : pond ) {
+                AAFPermission apond = (AAFPermission)p;
+        
+                TokenPerm tp = oap.tokenPerm();
+                if(tp==null) {
+                } else {
+                    for(Permission perm : tp.perms()) {
+                        if(perm.match(apond)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return rv;
+    }
 
-	@Override
-	public void fishAll(Principal bait, List<Permission> permissions) {
-		OAuth2Principal oap = (OAuth2Principal)bait;
-		TokenPerm tp = oap.tokenPerm();
-		if(tp!=null) {
-			for(AAFPermission p : tp.perms()) {
-				permissions.add(p);
-			}
-		}
-	}
+    @Override
+    public void fishAll(Principal bait, List<Permission> permissions) {
+        OAuth2Principal oap = (OAuth2Principal)bait;
+        TokenPerm tp = oap.tokenPerm();
+        if(tp!=null) {
+            for(AAFPermission p : tp.perms()) {
+                permissions.add(p);
+            }
+        }
+    }
 
-	@Override
-	public void destroy() {
-	}
+    @Override
+    public void destroy() {
+    }
 
-	@Override
-	public boolean handlesExclusively(Permission ... pond) {
-		return false;
-	}
+    @Override
+    public boolean handlesExclusively(Permission ... pond) {
+        return false;
+    }
 
-	@Override
-	public boolean handles(Principal p) {
-		if(p!=null && p instanceof BearerPrincipal) {
-			return ((BearerPrincipal)p).getBearer()!=null;
-		}
-		return false;
-	}
+    @Override
+    public boolean handles(Principal p) {
+        if(p!=null && p instanceof BearerPrincipal) {
+            return ((BearerPrincipal)p).getBearer()!=null;
+        }
+        return false;
+    }
 
-	@Override
-	public void clear(Principal p, StringBuilder report) {
-		tm.clear(p,report);
-	}
+    @Override
+    public void clear(Principal p, StringBuilder report) {
+        tm.clear(p,report);
+    }
 
 }

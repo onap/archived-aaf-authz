@@ -28,68 +28,68 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.cadi.util.Timing;
 
 public class TrustTafResp implements TafResp {
-	private final TafResp delegate;
-	private final TaggedPrincipal principal;
-	private final String desc;
-	private float timing;
-	
-	public TrustTafResp(final TafResp delegate, final TaggedPrincipal principal, final String desc) {
-		this.delegate = delegate;
-		this.principal = principal;
-		this.desc = desc + ' ' + delegate.desc();
-	}
-	
-	@Override
-	public boolean isValid() {
-		return delegate.isValid();
-	}
+    private final TafResp delegate;
+    private final TaggedPrincipal principal;
+    private final String desc;
+    private float timing;
+    
+    public TrustTafResp(final TafResp delegate, final TaggedPrincipal principal, final String desc) {
+        this.delegate = delegate;
+        this.principal = principal;
+        this.desc = desc + ' ' + delegate.desc();
+    }
+    
+    @Override
+    public boolean isValid() {
+        return delegate.isValid();
+    }
 
-	@Override
-	public String desc() {
-		return desc;
-	}
+    @Override
+    public String desc() {
+        return desc;
+    }
 
-	@Override
-	public RESP isAuthenticated() {
-		return delegate.isAuthenticated();
-	}
+    @Override
+    public RESP isAuthenticated() {
+        return delegate.isAuthenticated();
+    }
 
-	@Override
-	public RESP authenticate() throws IOException {
-		return delegate.authenticate();
-	}
+    @Override
+    public RESP authenticate() throws IOException {
+        return delegate.authenticate();
+    }
 
-	@Override
-	public TaggedPrincipal getPrincipal() {
-		return principal;
-	}
+    @Override
+    public TaggedPrincipal getPrincipal() {
+        return principal;
+    }
 
-	@Override
-	public Access getAccess() {
-		return delegate.getAccess();
-	}
+    @Override
+    public Access getAccess() {
+        return delegate.getAccess();
+    }
 
-	@Override
-	public boolean isFailedAttempt() {
-		return delegate.isFailedAttempt();
-	}
-	@Override
-	public float timing() {
-		return timing;
-	}
+    @Override
+    public boolean isFailedAttempt() {
+        return delegate.isFailedAttempt();
+    }
+    @Override
+    public float timing() {
+        return timing;
+    }
 
-	@Override
-	public void timing(long start) {
-		timing = Timing.millis(start);
-	}
-	
-	public String toString() {
-		return principal.getName() + " by trust of " + desc();
-	}
-	
-	@Override
-	public String taf() {
-		return "Trust";
-	}
+    @Override
+    public void timing(long start) {
+        timing = Timing.millis(start);
+    }
+    
+    public String toString() {
+        return principal.getName() + " by trust of " + desc();
+    }
+    
+    @Override
+    public String taf() {
+        return "Trust";
+    }
 
 }

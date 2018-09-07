@@ -30,24 +30,24 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class CacheTouch extends ActionDAO<String,Void, String> {
-	
-	public CacheTouch(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster, dryRun);
-	}
+    
+    public CacheTouch(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster, dryRun);
+    }
 
-	public CacheTouch(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public CacheTouch(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, String table, String text) {
-		if(dryRun) {
-			trans.info().printf("Would mark %s cache in DB for clearing: %s",table, text);
-			return Result.ok();
-		} else {
-			Result<Void> rv = q.clearCache(trans, table);
-			trans.info().printf("Set DB Cache %s for clearing: %s",table, text);
-			return rv;
-		}
-	}
+    @Override
+    public Result<Void> exec(AuthzTrans trans, String table, String text) {
+        if(dryRun) {
+            trans.info().printf("Would mark %s cache in DB for clearing: %s",table, text);
+            return Result.ok();
+        } else {
+            Result<Void> rv = q.clearCache(trans, table);
+            trans.info().printf("Set DB Cache %s for clearing: %s",table, text);
+            return rv;
+        }
+    }
 }

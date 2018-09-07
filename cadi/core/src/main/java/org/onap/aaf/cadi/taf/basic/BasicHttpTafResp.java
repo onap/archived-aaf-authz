@@ -31,31 +31,31 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp;
 
 public class BasicHttpTafResp extends AbsTafResp implements TafResp {
-	private static final String tafName = BasicHttpTaf.class.getSimpleName();
-	private HttpServletResponse httpResp;
-	private String realm;
-	private RESP status;
-	private final boolean wasFailed;
-	
-	public BasicHttpTafResp(Access access, TaggedPrincipal principal, String description, RESP status, HttpServletResponse resp, String realm, boolean wasFailed) {
-		super(access, tafName, principal, description);
-		httpResp = resp;
-		this.realm = realm;
-		this.status = status;
-		this.wasFailed = wasFailed;
-	}
+    private static final String tafName = BasicHttpTaf.class.getSimpleName();
+    private HttpServletResponse httpResp;
+    private String realm;
+    private RESP status;
+    private final boolean wasFailed;
+    
+    public BasicHttpTafResp(Access access, TaggedPrincipal principal, String description, RESP status, HttpServletResponse resp, String realm, boolean wasFailed) {
+        super(access, tafName, principal, description);
+        httpResp = resp;
+        this.realm = realm;
+        this.status = status;
+        this.wasFailed = wasFailed;
+    }
 
-	public RESP authenticate() throws IOException {
-		httpResp.setStatus(401); // Unauthorized	
-		httpResp.setHeader("WWW-Authenticate", "Basic realm=\""+realm+'"');
-		return RESP.HTTP_REDIRECT_INVOKED;
-	}
+    public RESP authenticate() throws IOException {
+        httpResp.setStatus(401); // Unauthorized    
+        httpResp.setHeader("WWW-Authenticate", "Basic realm=\""+realm+'"');
+        return RESP.HTTP_REDIRECT_INVOKED;
+    }
 
-	public RESP isAuthenticated() {
-		return status;
-	}
+    public RESP isAuthenticated() {
+        return status;
+    }
 
-	public boolean isFailedAttempt() {
-		return wasFailed;
-	}
+    public boolean isFailedAttempt() {
+        return wasFailed;
+    }
 }

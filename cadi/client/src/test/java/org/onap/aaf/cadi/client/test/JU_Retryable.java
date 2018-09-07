@@ -35,25 +35,25 @@ import org.onap.aaf.misc.env.APIException;
 
 public class JU_Retryable {
 
-	@Test
-	public void test() {
-		RetryableStub retry = new RetryableStub();
-		assertThat(retry.item(), is(nullValue()));
-		assertThat(retry.lastClient(), is(nullValue()));
-		
-		Locator.Item item = null;
-		assertThat(retry.item(item), is(item));
-		
-		retry = new RetryableStub(retry);
-		assertThat(retry.item(), is(nullValue()));
-		assertThat(retry.lastClient(), is(nullValue()));
-		assertThat(retry.item(item), is(item));
-	}
+    @Test
+    public void test() {
+        RetryableStub retry = new RetryableStub();
+        assertThat(retry.item(), is(nullValue()));
+        assertThat(retry.lastClient(), is(nullValue()));
+        
+        Locator.Item item = null;
+        assertThat(retry.item(item), is(item));
+        
+        retry = new RetryableStub(retry);
+        assertThat(retry.item(), is(nullValue()));
+        assertThat(retry.lastClient(), is(nullValue()));
+        assertThat(retry.item(item), is(item));
+    }
 
-	private class RetryableStub extends Retryable<Integer> {
-		public RetryableStub() { super(); }
-		public RetryableStub(Retryable<?> ret) { super(ret); }
-		@Override public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException { return null; }
-	}
+    private class RetryableStub extends Retryable<Integer> {
+        public RetryableStub() { super(); }
+        public RetryableStub(Retryable<?> ret) { super(ret); }
+        @Override public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException { return null; }
+    }
 
 }

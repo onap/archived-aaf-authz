@@ -35,102 +35,102 @@ import org.onap.aaf.cadi.util.Timing;
  */
 public abstract class AbsTafResp implements TafResp {
 
-	protected final Access access;
-	protected final String tafName;
-	protected final TaggedPrincipal principal;
-	protected final String desc;
-	private float timing;
+    protected final Access access;
+    protected final String tafName;
+    protected final TaggedPrincipal principal;
+    protected final String desc;
+    private float timing;
 
-	/**
-	 * AbsTafResp
-	 * 
-	 * Set and hold
-	 * Description (for logging)
-	 * Principal (as created by derived class)
-	 * Access (for access to underlying container, i.e. for Logging, auditing, ClassLoaders, etc)
-	 *  
-	 * @param access
-	 * @param tafname 
-	 * @param principal
-	 * @param description
-	 */
-	public AbsTafResp(Access access, String tafname, TaggedPrincipal principal, String description) {
-		this.access = access;
-		this.tafName = tafname;
-		this.principal = principal;
-		this.desc = description;
-	}
+    /**
+     * AbsTafResp
+     * 
+     * Set and hold
+     * Description (for logging)
+     * Principal (as created by derived class)
+     * Access (for access to underlying container, i.e. for Logging, auditing, ClassLoaders, etc)
+     *  
+     * @param access
+     * @param tafname 
+     * @param principal
+     * @param description
+     */
+    public AbsTafResp(Access access, String tafname, TaggedPrincipal principal, String description) {
+        this.access = access;
+        this.tafName = tafname;
+        this.principal = principal;
+        this.desc = description;
+    }
 
-	/**
-	 * isValid()
-	 * 
-	 * Respond in the affirmative if the TAF was able to Authenticate
-	 */
-	public boolean isValid() {
-		return principal != null;
-	}
+    /**
+     * isValid()
+     * 
+     * Respond in the affirmative if the TAF was able to Authenticate
+     */
+    public boolean isValid() {
+        return principal != null;
+    }
 
-	/**
-	 * desc()
-	 * 
-	 * Respond with description of response as given by the TAF  
-	 */
-	public String desc() {
-		return desc;
-	}
+    /**
+     * desc()
+     * 
+     * Respond with description of response as given by the TAF  
+     */
+    public String desc() {
+        return desc;
+    }
 
-	/**
-	 * isAuthenticated()
-	 * 
-	 * Respond with the TAF's code of whether Authenticated, or suggested next steps
-	 * default is either IS_AUTHENTICATED, or TRY_ANOTHER_TAF.  The TAF can overload
-	 * and suggest others, such as "NO_FURTHER_PROCESSING", if it can detect that this
-	 * is some sort of security breach (i.e. Denial of Service)  
-	 */
-	public RESP isAuthenticated() {
-		return principal==null?RESP.TRY_ANOTHER_TAF:RESP.IS_AUTHENTICATED;
-	}
+    /**
+     * isAuthenticated()
+     * 
+     * Respond with the TAF's code of whether Authenticated, or suggested next steps
+     * default is either IS_AUTHENTICATED, or TRY_ANOTHER_TAF.  The TAF can overload
+     * and suggest others, such as "NO_FURTHER_PROCESSING", if it can detect that this
+     * is some sort of security breach (i.e. Denial of Service)  
+     */
+    public RESP isAuthenticated() {
+        return principal==null?RESP.TRY_ANOTHER_TAF:RESP.IS_AUTHENTICATED;
+    }
 
-	/**
-	 * getPrincipal()
-	 * 
-	 * Return the principal created by the TAF based on Authentication. 
-	 * 
-	 * Returns "null" if Authentication failed (no principal)
-	 */
-	public TaggedPrincipal getPrincipal() {
-		return principal;
-	}
+    /**
+     * getPrincipal()
+     * 
+     * Return the principal created by the TAF based on Authentication. 
+     * 
+     * Returns "null" if Authentication failed (no principal)
+     */
+    public TaggedPrincipal getPrincipal() {
+        return principal;
+    }
 
-	/**
-	 * getAccess()
-	 * 
-	 * Get the Access object from the TAF, so that appropriate Logging, etc can be coordinated.
-	 */
-	public Access getAccess() {
-		return access;
-	}
+    /**
+     * getAccess()
+     * 
+     * Get the Access object from the TAF, so that appropriate Logging, etc can be coordinated.
+     */
+    public Access getAccess() {
+        return access;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.taf.TafResp#isFailedAttempt()
-	 */
-	public boolean isFailedAttempt() {
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.taf.TafResp#isFailedAttempt()
+     */
+    public boolean isFailedAttempt() {
+        return false;
+    }
 
-	@Override
-	public float timing() {
-		return timing;
-	}
-	
-	@Override
-	public void timing(final long start) {
-		timing = Timing.millis(start);
-	}
+    @Override
+    public float timing() {
+        return timing;
+    }
+    
+    @Override
+    public void timing(final long start) {
+        timing = Timing.millis(start);
+    }
 
-	@Override
-	public String taf() {
-		return tafName;
-	}
+    @Override
+    public String taf() {
+        return tafName;
+    }
 
 }

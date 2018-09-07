@@ -32,16 +32,16 @@ import org.onap.aaf.misc.env.DataFactory;
 import org.onap.aaf.misc.env.Env;
 
 public interface OldDataFactory<T> extends DataFactory<T> {
-	public abstract String stringify(T type) throws APIException;
-	public abstract void stringify(T type, OutputStream os)	throws APIException;
-	public abstract void stringify(T type, Writer writer) throws APIException;
-	public abstract T objectify(InputStream is) throws APIException;
-	public abstract T objectify(Reader rdr) throws APIException;
-	public abstract T objectify(String text) throws APIException;
-	public abstract T newInstance() throws APIException;
-	public abstract Data<T> newData(T type);
-	public abstract Data<T> newDataFromStream(Env env, InputStream input) throws APIException;
-	public abstract Data<T> newDataFromString(String string);
-	
+    public abstract String stringify(T type) throws APIException;
+    public abstract void stringify(T type, OutputStream os)    throws APIException;
+    public abstract void stringify(T type, Writer writer) throws APIException;
+    public abstract T objectify(InputStream is) throws APIException;
+    public abstract T objectify(Reader rdr) throws APIException;
+    public abstract T objectify(String text) throws APIException;
+    public abstract T newInstance() throws APIException;
+    public abstract Data<T> newData(T type);
+    public abstract Data<T> newDataFromStream(Env env, InputStream input) throws APIException;
+    public abstract Data<T> newDataFromString(String string);
+    
 }
 

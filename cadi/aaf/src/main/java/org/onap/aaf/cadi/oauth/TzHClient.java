@@ -45,38 +45,38 @@ import org.onap.aaf.misc.env.APIException;
  *
  */
 public class TzHClient extends TzClient {
-	private HMangr hman;
-	public SecurityInfoC<HttpURLConnection> si;
-	private TimedToken token;
-	private SecuritySetter<HttpURLConnection> tokenSS;
+    private HMangr hman;
+    public SecurityInfoC<HttpURLConnection> si;
+    private TimedToken token;
+    private SecuritySetter<HttpURLConnection> tokenSS;
 
-	public TzHClient(Access access, String tagOrURL) throws CadiException, LocatorException {
-		try {
-			si = SecurityInfoC.instance(access, HttpURLConnection.class);
-			hman = new HMangr(access, new AAFLocator(si,new URI(access.getProperty(tagOrURL, tagOrURL))));
-		} catch (URISyntaxException e) {
-			throw new CadiException(e);
-		}
-	}
-	public TzHClient(Access access, SecurityInfoC<HttpURLConnection> hsi, Locator<URI> loc) throws LocatorException {
-		si = hsi;
-		hman = new HMangr(access, loc);
-	}
-	
-	public void setToken(final String client_id, TimedToken token) throws IOException {
-		this.token = token;
-		tokenSS = new HTokenSS(si, client_id, token.getAccessToken());
-	}
+    public TzHClient(Access access, String tagOrURL) throws CadiException, LocatorException {
+        try {
+            si = SecurityInfoC.instance(access, HttpURLConnection.class);
+            hman = new HMangr(access, new AAFLocator(si,new URI(access.getProperty(tagOrURL, tagOrURL))));
+        } catch (URISyntaxException e) {
+            throw new CadiException(e);
+        }
+    }
+    public TzHClient(Access access, SecurityInfoC<HttpURLConnection> hsi, Locator<URI> loc) throws LocatorException {
+        si = hsi;
+        hman = new HMangr(access, loc);
+    }
+    
+    public void setToken(final String client_id, TimedToken token) throws IOException {
+        this.token = token;
+        tokenSS = new HTokenSS(si, client_id, token.getAccessToken());
+    }
 
-	public <RET> RET best (Retryable<RET> retryable) throws CadiException, LocatorException, APIException {
-		if(token == null || tokenSS==null) {
-			throw new CadiException("OAuth2 Token has not been set");
-		}
-		if(token.expired()) {
-			//TODO Refresh?
-			throw new CadiException("Expired Token");
-		} else {
-			return hman.best(tokenSS, retryable);
-		}
-	}
+    public <RET> RET best (Retryable<RET> retryable) throws CadiException, LocatorException, APIException {
+        if(token == null || tokenSS==null) {
+            throw new CadiException("OAuth2 Token has not been set");
+        }
+        if(token.expired()) {
+            //TODO Refresh?
+            throw new CadiException("Expired Token");
+        } else {
+            return hman.best(tokenSS, retryable);
+        }
+    }
 }

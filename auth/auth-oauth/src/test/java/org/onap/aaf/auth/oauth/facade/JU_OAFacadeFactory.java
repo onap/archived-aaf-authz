@@ -37,51 +37,51 @@ import aafoauth.v2_0.Introspect;
 
 public class JU_OAFacadeFactory {
 
-	@Mock
-	private OAuthService service;
+    @Mock
+    private OAuthService service;
 
-	private String token;
+    private String token;
 
-	private AuthzTrans trans;
-	@Mock
-	private Result<Data> rs;
+    private AuthzTrans trans;
+    @Mock
+    private Result<Data> rs;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void testStatusNotOk() throws APIException {
-		when(service.introspect(trans, token)).thenReturn(rs);
-		when(rs.notOK()).thenReturn(true);
+    @Test
+    public void testStatusNotOk() throws APIException {
+        when(service.introspect(trans, token)).thenReturn(rs);
+        when(rs.notOK()).thenReturn(true);
 
-		DirectIntrospect<Introspect> direct = OAFacadeFactory.directV1_0(service);
-		Result<Introspect> rti = direct.mappedIntrospect(trans, token);
+        DirectIntrospect<Introspect> direct = OAFacadeFactory.directV1_0(service);
+        Result<Introspect> rti = direct.mappedIntrospect(trans, token);
 
-		assertEquals(rti.status, 0);
-	}
+        assertEquals(rti.status, 0);
+    }
 
-	@Test
-	public void testStatusOk() throws APIException {
-		when(service.introspect(trans, token)).thenReturn(rs);
-		when(rs.notOK()).thenReturn(false);
+    @Test
+    public void testStatusOk() throws APIException {
+        when(service.introspect(trans, token)).thenReturn(rs);
+        when(rs.notOK()).thenReturn(false);
 
-		DirectIntrospect<Introspect> directV1_0 = OAFacadeFactory.directV1_0(service);
-		Result<Introspect> rti = directV1_0.mappedIntrospect(trans, token);
+        DirectIntrospect<Introspect> directV1_0 = OAFacadeFactory.directV1_0(service);
+        Result<Introspect> rti = directV1_0.mappedIntrospect(trans, token);
 
-		assertEquals(rti.status, 0);
-	}
+        assertEquals(rti.status, 0);
+    }
 
-	@Test
-	public void testStatusOkWithResultSetEmpty() throws APIException {
-		when(service.introspect(trans, token)).thenReturn(rs);
-		when(rs.isEmpty()).thenReturn(true);
-		when(rs.notOK()).thenReturn(false);
+    @Test
+    public void testStatusOkWithResultSetEmpty() throws APIException {
+        when(service.introspect(trans, token)).thenReturn(rs);
+        when(rs.isEmpty()).thenReturn(true);
+        when(rs.notOK()).thenReturn(false);
 
-		DirectIntrospect<Introspect> directV1_0 = OAFacadeFactory.directV1_0(service);
-		Result<Introspect> rti = directV1_0.mappedIntrospect(trans, token);
+        DirectIntrospect<Introspect> directV1_0 = OAFacadeFactory.directV1_0(service);
+        Result<Introspect> rti = directV1_0.mappedIntrospect(trans, token);
 
-		assertEquals(rti.status, Result.ERR_NotFound);
-	}
+        assertEquals(rti.status, Result.ERR_NotFound);
+    }
 }

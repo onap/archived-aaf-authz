@@ -37,27 +37,27 @@ import org.onap.aaf.auth.oauth.service.OAuthService;
 public interface OAFacade<INTROSPECT> {
 
 /////////////////////  STANDARD ELEMENTS //////////////////
-	/** 
-	 * @param trans
-	 * @param response
-	 * @param result
-	 */
-	public void error(AuthzTrans trans, HttpServletResponse response, Result<?> result);
+    /** 
+     * @param trans
+     * @param response
+     * @param result
+     */
+    public void error(AuthzTrans trans, HttpServletResponse response, Result<?> result);
 
-	/**
-	 * 
-	 * @param trans
-	 * @param response
-	 * @param status
-	 */
-	public void error(AuthzTrans trans, HttpServletResponse response, int status,	String msg, String ... detail);
+    /**
+     * 
+     * @param trans
+     * @param response
+     * @param status
+     */
+    public void error(AuthzTrans trans, HttpServletResponse response, int status,    String msg, String ... detail);
 
-	public Result<Void> createBearerToken(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
+    public Result<Void> createBearerToken(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
-	public Result<Void> introspect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
+    public Result<Void> introspect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
-	public OAuthService service();
-	
+    public OAuthService service();
+    
 
 /////////////////////  STANDARD ELEMENTS //////////////////
 

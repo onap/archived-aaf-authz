@@ -42,58 +42,58 @@ import aaf.v2_0.UserRoles;
  *
  */
 public class ListByUser extends Cmd {
-	private static final String HEADER = "List Roles for User ";
-	
-	public ListByUser(List parent) {
-		super(parent,"user", 
-				new Param("id",true),
-				new Param("detail", false)); 
-	}
+    private static final String HEADER = "List Roles for User ";
+    
+    public ListByUser(List parent) {
+        super(parent,"user", 
+                new Param("id",true),
+                new Param("detail", false)); 
+    }
 
-	@Override
-	public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
-		final String user=fullID(args[idx]);
-		
+    @Override
+    public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
+        final String user=fullID(args[idx]);
+        
 
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				Perms perms=null;
-				UserRoles urs=null;
-				Future<Roles> fr = client.read(
-						"/authz/roles/user/"+user+(aafcli.isDetailed()?"?ns":""), 
-						getDF(Roles.class)
-						);
-				Future<UserRoles> fur = client.read(
-						"/authz/userRoles/user/"+user,
-						getDF(UserRoles.class)
-					);
-				if(fr.get(AAFcli.timeout())) {
-					if (aafcli.isDetailed()) {
-						Future<Perms> fp = client.read(
-								"/authz/perms/user/"+user+(aafcli.isDetailed()?"?ns":""), 
-								getDF(Perms.class)
-							);
-						if(fp.get(AAFcli.timeout())) {
-							perms = fp.value;
-						}
-					}
-					if (fur.get(AAFcli.timeout())) {
-						urs = fur.value;
-					}
-					
-					((List)parent).report(fr.value,perms,urs,HEADER,user);
-				} else {
-					error(fr);
-				}
-				return fr.code();
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/roles/user/<user>",Roles.class,true);
-	}
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                Perms perms=null;
+                UserRoles urs=null;
+                Future<Roles> fr = client.read(
+                        "/authz/roles/user/"+user+(aafcli.isDetailed()?"?ns":""), 
+                        getDF(Roles.class)
+                        );
+                Future<UserRoles> fur = client.read(
+                        "/authz/userRoles/user/"+user,
+                        getDF(UserRoles.class)
+                    );
+                if(fr.get(AAFcli.timeout())) {
+                    if (aafcli.isDetailed()) {
+                        Future<Perms> fp = client.read(
+                                "/authz/perms/user/"+user+(aafcli.isDetailed()?"?ns":""), 
+                                getDF(Perms.class)
+                            );
+                        if(fp.get(AAFcli.timeout())) {
+                            perms = fp.value;
+                        }
+                    }
+                    if (fur.get(AAFcli.timeout())) {
+                        urs = fur.value;
+                    }
+                    
+                    ((List)parent).report(fr.value,perms,urs,HEADER,user);
+                } else {
+                    error(fr);
+                }
+                return fr.code();
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/roles/user/<user>",Roles.class,true);
+    }
 }

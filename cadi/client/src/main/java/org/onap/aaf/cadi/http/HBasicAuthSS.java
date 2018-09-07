@@ -31,38 +31,38 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 
 public class HBasicAuthSS extends HAuthorizationHeader implements BasicAuth {
-	public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String password) throws IOException {
-		super(si, user, "Basic " + Symm.base64noSplit.encode(user + ':' + password));
-	}
+    public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String password) throws IOException {
+        super(si, user, "Basic " + Symm.base64noSplit.encode(user + ':' + password));
+    }
 
-	public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si) throws IOException {
-		this(si,si.access.getProperty(Config.AAF_APPID, null),
-				si.access.decrypt(si.access.getProperty(Config.AAF_APPPASS, null), false));
-	}
-	
-	public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, boolean setDefault) throws IOException {
-		this(si,si.access.getProperty(Config.AAF_APPID, null),
-				si.access.decrypt(si.access.getProperty(Config.AAF_APPPASS, null), false),setDefault);
-	}
-	
+    public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si) throws IOException {
+        this(si,si.access.getProperty(Config.AAF_APPID, null),
+                si.access.decrypt(si.access.getProperty(Config.AAF_APPPASS, null), false));
+    }
+    
+    public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, boolean setDefault) throws IOException {
+        this(si,si.access.getProperty(Config.AAF_APPID, null),
+                si.access.decrypt(si.access.getProperty(Config.AAF_APPPASS, null), false),setDefault);
+    }
+    
 
-	public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String pass, boolean asDefault) throws IOException {
-		this(si, user,pass);
-		if(asDefault) {
-			si.set(this);
-		}
-	}
-	
-	public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si) throws IOException {
-		this(si, bp.getName(),new String(bp.getCred()));
-	}
-	
-	public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws IOException {
-		this(si, bp.getName(),new String(bp.getCred()));
-		if(asDefault) {
-			si.set(this);
-		}
-	}
+    public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String pass, boolean asDefault) throws IOException {
+        this(si, user,pass);
+        if(asDefault) {
+            si.set(this);
+        }
+    }
+    
+    public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si) throws IOException {
+        this(si, bp.getName(),new String(bp.getCred()));
+    }
+    
+    public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws IOException {
+        this(si, bp.getName(),new String(bp.getCred()));
+        if(asDefault) {
+            si.set(this);
+        }
+    }
 
 
 }

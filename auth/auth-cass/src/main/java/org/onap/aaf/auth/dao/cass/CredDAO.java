@@ -51,16 +51,16 @@ import com.datastax.driver.core.Row;
 public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     public static final String TABLE = "cred";
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
-	public static final int RAW = -1;
+    public static final int RAW = -1;
     public static final int BASIC_AUTH = 1;
     public static final int BASIC_AUTH_SHA256 = 2;
     public static final int CERT_SHA256_RSA =200;
     
     private HistoryDAO historyDAO;
-	private CIDAO<AuthzTrans> infoDAO;
-	private PSInfo psNS;
-	private PSInfo psID;
-	
+    private CIDAO<AuthzTrans> infoDAO;
+    private PSInfo psNS;
+    private PSInfo psID;
+    
     public CredDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CredDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -74,52 +74,52 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     }
 
     public static final int KEYLIMIT = 3;
-	public static class Data extends CacheableData implements Bytification {
-    	
-		public String       			id;
-        public Integer      			type;
-        public Date      				expires;
-        public Integer					other;
-		public String					ns;
-		public String					notes;
-        public ByteBuffer				cred;  //   this is a blob in cassandra
+    public static class Data extends CacheableData implements Bytification {
+        
+        public String                   id;
+        public Integer                  type;
+        public Date                      expires;
+        public Integer                    other;
+        public String                    ns;
+        public String                    notes;
+        public ByteBuffer                cred;  //   this is a blob in cassandra
 
 
         @Override
-		public int[] invalidate(Cached<?,?> cache) {
-        	return new int[] {
-        		seg(cache,id) // cache is for all entities
-        	};
-		}
+        public int[] invalidate(Cached<?,?> cache) {
+            return new int[] {
+                seg(cache,id) // cache is for all entities
+            };
+        }
         
-		@Override
-		public ByteBuffer bytify() throws IOException {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			CredLoader.deflt.marshal(this,new DataOutputStream(baos));
-			return ByteBuffer.wrap(baos.toByteArray());
-		}
-		
-		@Override
-		public void reconstitute(ByteBuffer bb) throws IOException {
-			CredLoader.deflt.unmarshal(this, toDIS(bb));
-		}
+        @Override
+        public ByteBuffer bytify() throws IOException {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            CredLoader.deflt.marshal(this,new DataOutputStream(baos));
+            return ByteBuffer.wrap(baos.toByteArray());
+        }
+        
+        @Override
+        public void reconstitute(ByteBuffer bb) throws IOException {
+            CredLoader.deflt.unmarshal(this, toDIS(bb));
+        }
 
-		public String toString() {
-			return id + ' ' + type + ' ' + Chrono.dateTime(expires);
-		}
+        public String toString() {
+            return id + ' ' + type + ' ' + Chrono.dateTime(expires);
+        }
     }
 
     private static class CredLoader extends Loader<Data> implements Streamer<Data>{
-		public static final int MAGIC=153323443;
-    	public static final int VERSION=1;
-    	public static final int BUFF_SIZE=48; // Note: 
+        public static final int MAGIC=153323443;
+        public static final int VERSION=1;
+        public static final int BUFF_SIZE=48; // Note: 
 
-    	public static final CredLoader deflt = new CredLoader(KEYLIMIT);
-    	public CredLoader(int keylimit) {
+        public static final CredLoader deflt = new CredLoader(KEYLIMIT);
+        public CredLoader(int keylimit) {
             super(keylimit);
         }
 
-    	@Override
+        @Override
         public Data load(Data data, Row row) {
             data.id = row.getString(0);
             data.type = row.getInt(1);    // NOTE: in datastax driver,  If the int value is NULL, 0 is returned!
@@ -133,7 +133,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
 
         @Override
         protected void key(Data data, int _idx, Object[] obj) {
-	    int idx = _idx;
+        int idx = _idx;
 
             obj[idx] = data.id;
             obj[++idx] = data.type;
@@ -149,77 +149,77 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             obj[++i] = data.cred;
         }
 
-		@Override
-		public void marshal(Data data, DataOutputStream os) throws IOException {
-			writeHeader(os,MAGIC,VERSION);
-			writeString(os, data.id);
-			os.writeInt(data.type);	
-			os.writeLong(data.expires==null?-1:data.expires.getTime());
-			os.writeInt(data.other==null?0:data.other);
-			writeString(os, data.ns);
-			writeString(os, data.notes);
-			if(data.cred==null) {
-				os.writeInt(-1);
-			} else {
-				int l = data.cred.limit()-data.cred.position();
-				os.writeInt(l);
-				os.write(data.cred.array(),data.cred.position(),l);
-			}
-		}
+        @Override
+        public void marshal(Data data, DataOutputStream os) throws IOException {
+            writeHeader(os,MAGIC,VERSION);
+            writeString(os, data.id);
+            os.writeInt(data.type);    
+            os.writeLong(data.expires==null?-1:data.expires.getTime());
+            os.writeInt(data.other==null?0:data.other);
+            writeString(os, data.ns);
+            writeString(os, data.notes);
+            if(data.cred==null) {
+                os.writeInt(-1);
+            } else {
+                int l = data.cred.limit()-data.cred.position();
+                os.writeInt(l);
+                os.write(data.cred.array(),data.cred.position(),l);
+            }
+        }
 
-		@Override
-		public void unmarshal(Data data, DataInputStream is) throws IOException {
-			/*int version = */readHeader(is,MAGIC,VERSION);
-			// If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
-			byte[] buff = new byte[BUFF_SIZE];
-			data.id = readString(is,buff);
-			data.type = is.readInt();
-			
-			long l = is.readLong();
-			data.expires = l<0?null:new Date(l);
-			data.other = is.readInt();
-			data.ns = readString(is,buff);
-			data.notes = readString(is,buff);
-			
-			int i = is.readInt();
-			data.cred=null;
-			if(i>=0) {
-				byte[] bytes = new byte[i]; // a bit dangerous, but lessened because of all the previous sized data reads
-				int read = is.read(bytes);
-				if(read>0) {
-					data.cred = ByteBuffer.wrap(bytes);
-				}
-			}
-		}
+        @Override
+        public void unmarshal(Data data, DataInputStream is) throws IOException {
+            /*int version = */readHeader(is,MAGIC,VERSION);
+            // If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
+            byte[] buff = new byte[BUFF_SIZE];
+            data.id = readString(is,buff);
+            data.type = is.readInt();
+            
+            long l = is.readLong();
+            data.expires = l<0?null:new Date(l);
+            data.other = is.readInt();
+            data.ns = readString(is,buff);
+            data.notes = readString(is,buff);
+            
+            int i = is.readInt();
+            data.cred=null;
+            if(i>=0) {
+                byte[] bytes = new byte[i]; // a bit dangerous, but lessened because of all the previous sized data reads
+                int read = is.read(bytes);
+                if(read>0) {
+                    data.cred = ByteBuffer.wrap(bytes);
+                }
+            }
+        }
     }
 
     private void init(AuthzTrans trans) throws APIException, IOException {
         // Set up sub-DAOs
         if(historyDAO==null) {
-        	historyDAO = new HistoryDAO(trans,this);
+            historyDAO = new HistoryDAO(trans,this);
         }
-		if(infoDAO==null) {
-			infoDAO = new CacheInfoDAO(trans,this);
-		}
-		
+        if(infoDAO==null) {
+            infoDAO = new CacheInfoDAO(trans,this);
+        }
+        
 
-		String[] helpers = setCRUD(trans, TABLE, Data.class, CredLoader.deflt);
-		
-		psNS = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
-				" WHERE ns = ?", CredLoader.deflt,readConsistency);
-		
-		psID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
-				" WHERE id = ?", CredLoader.deflt,readConsistency);
+        String[] helpers = setCRUD(trans, TABLE, Data.class, CredLoader.deflt);
+        
+        psNS = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
+                " WHERE ns = ?", CredLoader.deflt,readConsistency);
+        
+        psID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
+                " WHERE id = ?", CredLoader.deflt,readConsistency);
     }
     
-	public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
-		return psNS.read(trans, R_TEXT, new Object[]{ns});
-	}
-	
-	public Result<List<Data>> readID(AuthzTrans trans, String id) {
-		return psID.read(trans, R_TEXT, new Object[]{id});
-	}
-	
+    public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
+        return psNS.read(trans, R_TEXT, new Object[]{ns});
+    }
+    
+    public Result<List<Data>> readID(AuthzTrans trans, String id) {
+        return psID.read(trans, R_TEXT, new Object[]{id});
+    }
+    
     /**
      * Log Modification statements to History
      *
@@ -229,8 +229,8 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
      */
     @Override
     protected void wasModified(AuthzTrans trans, CRUD modified, Data data, String ... override) {
-    	boolean memo = override.length>0 && override[0]!=null;
-    	boolean subject = override.length>1 && override[1]!=null;
+        boolean memo = override.length>0 && override[0]!=null;
+        boolean subject = override.length>1 && override[1]!=null;
 
         HistoryDAO.Data hd = HistoryDAO.newInitedData();
         hd.user = trans.user();
@@ -241,19 +241,19 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
                 ? String.format("%s by %s", override[0], hd.user)
                 : (modified.name() + "d credential for " + data.id);
         // Detail?
-   		if(modified==CRUD.delete) {
-        			try {
-        				hd.reconstruct = data.bytify();
-        			} catch (IOException e) {
-        				trans.error().log(e,"Could not serialize CredDAO.Data");
-        			}
-        		}
+           if(modified==CRUD.delete) {
+                    try {
+                        hd.reconstruct = data.bytify();
+                    } catch (IOException e) {
+                        trans.error().log(e,"Could not serialize CredDAO.Data");
+                    }
+                }
 
         if(historyDAO.create(trans, hd).status!=Status.OK) {
-        	trans.error().log("Cannot log to History");
+            trans.error().log("Cannot log to History");
         }
         if(infoDAO.touch(trans, TABLE,data.invalidate(cache)).status!=Status.OK) {
-        	trans.error().log("Cannot touch Cred");
+            trans.error().log("Cannot touch Cred");
         }
     }
 }

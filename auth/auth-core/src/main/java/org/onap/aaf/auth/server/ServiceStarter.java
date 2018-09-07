@@ -21,6 +21,6 @@
 package org.onap.aaf.auth.server;
 
 public interface ServiceStarter {
-	public void start() throws Exception;
-	public void shutdown();
+    public void start() throws Exception;
+    public void shutdown();
 }

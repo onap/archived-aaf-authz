@@ -43,103 +43,103 @@ import org.onap.aaf.cadi.util.Split;
 
 public class JU_UsersDump {
 
-	private ByteArrayOutputStream outStream;
-	private ByteArrayOutputStream stdoutSuppressor;
+    private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream stdoutSuppressor;
 
-	private static final String expected = "<?xml version='1.0' encoding='utf-8'?>\n" +
-		"<!--\n" +
-		"    Code Generated Tomcat Users and Roles from AT&T LUR on ...\n" +
-		"-->\n" +
-		"<tomcat-users>\n" +
-		"  <role rolename=\"suser\"/>\n" +
-		"  <role rolename=\"admin\"/>\n" +
-		"  <role rolename=\"groupB\"/>\n" +
-		"  <role rolename=\"groupA\"/>\n" +
-		"  \n" +
-		"  <user username=\"yourname@none\" roles=\"admin\"/>\n" +
-		"  <user username=\"m1234@none\" roles=\"suser\"/>\n" +
-		"  <user username=\"hisname@none\" roles=\"suser\"/>\n" +
-		"  <user username=\"hername@none\" roles=\"suser\"/>\n" +
-		"  <user username=\"myname\" roles=\"groupB,groupA\"/>\n" +
-		"  <user username=\"myname@none\" roles=\"admin\"/>\n" +
-		"</tomcat-users>\n";
+    private static final String expected = "<?xml version='1.0' encoding='utf-8'?>\n" +
+        "<!--\n" +
+        "    Code Generated Tomcat Users and Roles from AT&T LUR on ...\n" +
+        "-->\n" +
+        "<tomcat-users>\n" +
+        "  <role rolename=\"suser\"/>\n" +
+        "  <role rolename=\"admin\"/>\n" +
+        "  <role rolename=\"groupB\"/>\n" +
+        "  <role rolename=\"groupA\"/>\n" +
+        "  \n" +
+        "  <user username=\"yourname@none\" roles=\"admin\"/>\n" +
+        "  <user username=\"m1234@none\" roles=\"suser\"/>\n" +
+        "  <user username=\"hisname@none\" roles=\"suser\"/>\n" +
+        "  <user username=\"hername@none\" roles=\"suser\"/>\n" +
+        "  <user username=\"myname\" roles=\"groupB,groupA\"/>\n" +
+        "  <user username=\"myname@none\" roles=\"admin\"/>\n" +
+        "</tomcat-users>\n";
 
-	private final static String groups = "myname:groupA,groupB";
-	private final static String names = "admin:myname,yourname;suser:hisname,hername,m1234";
+    private final static String groups = "myname:groupA,groupB";
+    private final static String names = "admin:myname,yourname;suser:hisname,hername,m1234";
 
-	private AbsUserCache<LocalPermission> lur;
+    private AbsUserCache<LocalPermission> lur;
 
-	@Before
-	public void setup() throws IOException {
-		outStream = new ByteArrayOutputStream();
-		stdoutSuppressor = new ByteArrayOutputStream();
+    @Before
+    public void setup() throws IOException {
+        outStream = new ByteArrayOutputStream();
+        stdoutSuppressor = new ByteArrayOutputStream();
 
-		System.setOut(new PrintStream(stdoutSuppressor));
+        System.setOut(new PrintStream(stdoutSuppressor));
 
-		lur = new LocalLur(new PropAccess(), groups, names);
-	}
+        lur = new LocalLur(new PropAccess(), groups, names);
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-	}
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+    }
 
-	@Test
-	public void writeTest() throws IOException {
-		UsersDump.write(outStream, lur);
-		String[] actualLines = Split.splitTrim('\n', outStream.toString());
-		String[] expectedLines = Split.splitTrim('\n', expected);
-		for (String s : actualLines) {
-			System.out.println(s);
-		}
+    @Test
+    public void writeTest() throws IOException {
+        UsersDump.write(outStream, lur);
+        String[] actualLines = Split.splitTrim('\n', outStream.toString());
+        String[] expectedLines = Split.splitTrim('\n', expected);
+        for (String s : actualLines) {
+            System.out.println(s);
+        }
 
-		assertThat(actualLines.length, is(expectedLines.length));
+        assertThat(actualLines.length, is(expectedLines.length));
 
-		// Check that the output starts with an XML tag
-		assertThat(actualLines[0], is(expectedLines[0]));
-		// Check that lines 2-4 are a comment
-		assertThat(actualLines[1], is(expectedLines[1]));
-		assertThat(actualLines[3], is(expectedLines[3]));
+        // Check that the output starts with an XML tag
+        assertThat(actualLines[0], is(expectedLines[0]));
+        // Check that lines 2-4 are a comment
+        assertThat(actualLines[1], is(expectedLines[1]));
+        assertThat(actualLines[3], is(expectedLines[3]));
 
-		// Check that the rest of the output matches the expected output
-		for (int i = 4; i < actualLines.length; i++) {
-			assertThat(actualLines[i], is(expectedLines[i]));
-		}
+        // Check that the rest of the output matches the expected output
+        for (int i = 4; i < actualLines.length; i++) {
+            assertThat(actualLines[i], is(expectedLines[i]));
+        }
 
-		// Run the test again with outStream as a PrintStream (for coverage)
-		outStream.reset();
-		UsersDump.write(new PrintStream(outStream), lur);
-		actualLines = Split.splitTrim('\n', outStream.toString());
+        // Run the test again with outStream as a PrintStream (for coverage)
+        outStream.reset();
+        UsersDump.write(new PrintStream(outStream), lur);
+        actualLines = Split.splitTrim('\n', outStream.toString());
 
-		assertThat(actualLines.length, is(expectedLines.length));
+        assertThat(actualLines.length, is(expectedLines.length));
 
-		// Check that the output starts with an XML tag
-		assertThat(actualLines[0], is(expectedLines[0]));
-		// Check that lines 2-4 are a comment
-		assertThat(actualLines[1], is(expectedLines[1]));
-		assertThat(actualLines[3], is(expectedLines[3]));
+        // Check that the output starts with an XML tag
+        assertThat(actualLines[0], is(expectedLines[0]));
+        // Check that lines 2-4 are a comment
+        assertThat(actualLines[1], is(expectedLines[1]));
+        assertThat(actualLines[3], is(expectedLines[3]));
 
-		// Check that the rest of the output matches the expected output
-		for (int i = 4; i < actualLines.length; i++) {
-			assertThat(actualLines[i], is(expectedLines[i]));
-		}
-	}
+        // Check that the rest of the output matches the expected output
+        for (int i = 4; i < actualLines.length; i++) {
+            assertThat(actualLines[i], is(expectedLines[i]));
+        }
+    }
 
-	@Test
-	public void updateUsersTest() {
-		String output;
-		File outputFile = new File("src/test/resources/userdump.xml");
-		assertThat(outputFile.exists(), is(false));
+    @Test
+    public void updateUsersTest() {
+        String output;
+        File outputFile = new File("src/test/resources/userdump.xml");
+        assertThat(outputFile.exists(), is(false));
 
-		output = UsersDump.updateUsers("src/test/resources/userdump.xml", (LocalLur) lur);
-		assertThat(output, is(nullValue()));
-		assertThat(outputFile.exists(), is(true));
+        output = UsersDump.updateUsers("src/test/resources/userdump.xml", (LocalLur) lur);
+        assertThat(output, is(nullValue()));
+        assertThat(outputFile.exists(), is(true));
 
-		output = UsersDump.updateUsers("src/test/resources/userdump.xml", (LocalLur) lur);
-		assertThat(output, is(nullValue()));
-		assertThat(outputFile.exists(), is(true));
+        output = UsersDump.updateUsers("src/test/resources/userdump.xml", (LocalLur) lur);
+        assertThat(output, is(nullValue()));
+        assertThat(outputFile.exists(), is(true));
 
-		outputFile.delete();
-	}
+        outputFile.delete();
+    }
 
 }

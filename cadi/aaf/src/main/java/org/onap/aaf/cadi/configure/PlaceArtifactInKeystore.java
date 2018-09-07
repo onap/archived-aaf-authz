@@ -42,109 +42,109 @@ import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;
 
 public class PlaceArtifactInKeystore extends ArtifactDir {
-	private String kst;
+    private String kst;
 
-	public PlaceArtifactInKeystore(String kst) {
-		this.kst = kst;
-	}
+    public PlaceArtifactInKeystore(String kst) {
+        this.kst = kst;
+    }
 
-	@Override
-	public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-		File fks = new File(dir,arti.getNs()+'.'+(kst==Agent.PKCS12?"p12":kst));
-		try {
-			KeyStore jks = KeyStore.getInstance(kst);
-			if(fks.exists()) {
-				File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
-				fks.renameTo(backup);
-			}	
+    @Override
+    public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
+        File fks = new File(dir,arti.getNs()+'.'+(kst==Agent.PKCS12?"p12":kst));
+        try {
+            KeyStore jks = KeyStore.getInstance(kst);
+            if(fks.exists()) {
+                File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
+                fks.renameTo(backup);
+            }    
 
-			// Get the Cert(s)... Might include Trust store
-			Collection<? extends Certificate> certColl = Factory.toX509Certificate(certInfo.getCerts());
-			// find where the trusts end in 1.0 API
-		
-			X509Certificate x509;
-			List<X509Certificate> chainList = new ArrayList<>();
-			Set<X509Certificate> caSet = new HashSet<>();
-			for(Certificate c : certColl) {
-				x509 = (X509Certificate)c;
-				// Is a Root (self-signed, anyway)
-				if(x509.getSubjectDN().equals(x509.getIssuerDN())) {
-					caSet.add(x509);
-				} else {
-					chainList.add(x509);
-				}
-			}
-//			chainList.addAll(caSet);
-			//Collections.reverse(chainList);
+            // Get the Cert(s)... Might include Trust store
+            Collection<? extends Certificate> certColl = Factory.toX509Certificate(certInfo.getCerts());
+            // find where the trusts end in 1.0 API
+        
+            X509Certificate x509;
+            List<X509Certificate> chainList = new ArrayList<>();
+            Set<X509Certificate> caSet = new HashSet<>();
+            for(Certificate c : certColl) {
+                x509 = (X509Certificate)c;
+                // Is a Root (self-signed, anyway)
+                if(x509.getSubjectDN().equals(x509.getIssuerDN())) {
+                    caSet.add(x509);
+                } else {
+                    chainList.add(x509);
+                }
+            }
+//            chainList.addAll(caSet);
+            //Collections.reverse(chainList);
 
-			// Properties, etc
-			// Add CADI Keyfile Entry to Properties
-			addProperty(Config.CADI_KEYFILE,arti.getDir()+'/'+arti.getNs() + ".keyfile");
-			// Set Keystore Password
-			addProperty(Config.CADI_KEYSTORE,fks.getAbsolutePath());
-			String keystorePass = Symm.randomGen(Agent.PASS_SIZE);
-			addEncProperty(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
-			char[] keystorePassArray = keystorePass.toCharArray();
-			jks.load(null,keystorePassArray); // load in
-			
-			// Add Private Key/Cert Entry for App
-			// Note: Java SSL security classes, while having a separate key from keystore,
-			// is documented to not actually work. 
-			// java.security.UnrecoverableKeyException: Cannot recover key
-			// You can create a custom Key Manager to make it work, but Practicality  
-			// dictates that you live with the default, meaning, they are the same
-			String keyPass = keystorePass; //Symm.randomGen(CmAgent.PASS_SIZE);
-			PrivateKey pk = Factory.toPrivateKey(trans, certInfo.getPrivatekey());
-			addEncProperty(Config.CADI_KEY_PASSWORD, keyPass);
-			addProperty(Config.CADI_ALIAS, arti.getMechid());
-//			Set<Attribute> attribs = new HashSet<>();
-//			if(kst.equals("pkcs12")) {
-//				// Friendly Name
-//				attribs.add(new PKCS12Attribute("1.2.840.113549.1.9.20", arti.getNs()));
-//			} 
-//			
-			KeyStore.ProtectionParameter protParam = 
-					new KeyStore.PasswordProtection(keyPass.toCharArray());
-			
-			Certificate[] trustChain = new Certificate[chainList.size()];
-			chainList.toArray(trustChain);
-			KeyStore.PrivateKeyEntry pkEntry = 
-				new KeyStore.PrivateKeyEntry(pk, trustChain);
-			jks.setEntry(arti.getMechid(), 
-					pkEntry, protParam);
+            // Properties, etc
+            // Add CADI Keyfile Entry to Properties
+            addProperty(Config.CADI_KEYFILE,arti.getDir()+'/'+arti.getNs() + ".keyfile");
+            // Set Keystore Password
+            addProperty(Config.CADI_KEYSTORE,fks.getAbsolutePath());
+            String keystorePass = Symm.randomGen(Agent.PASS_SIZE);
+            addEncProperty(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
+            char[] keystorePassArray = keystorePass.toCharArray();
+            jks.load(null,keystorePassArray); // load in
+            
+            // Add Private Key/Cert Entry for App
+            // Note: Java SSL security classes, while having a separate key from keystore,
+            // is documented to not actually work. 
+            // java.security.UnrecoverableKeyException: Cannot recover key
+            // You can create a custom Key Manager to make it work, but Practicality  
+            // dictates that you live with the default, meaning, they are the same
+            String keyPass = keystorePass; //Symm.randomGen(CmAgent.PASS_SIZE);
+            PrivateKey pk = Factory.toPrivateKey(trans, certInfo.getPrivatekey());
+            addEncProperty(Config.CADI_KEY_PASSWORD, keyPass);
+            addProperty(Config.CADI_ALIAS, arti.getMechid());
+//            Set<Attribute> attribs = new HashSet<>();
+//            if(kst.equals("pkcs12")) {
+//                // Friendly Name
+//                attribs.add(new PKCS12Attribute("1.2.840.113549.1.9.20", arti.getNs()));
+//            } 
+//            
+            KeyStore.ProtectionParameter protParam = 
+                    new KeyStore.PasswordProtection(keyPass.toCharArray());
+            
+            Certificate[] trustChain = new Certificate[chainList.size()];
+            chainList.toArray(trustChain);
+            KeyStore.PrivateKeyEntry pkEntry = 
+                new KeyStore.PrivateKeyEntry(pk, trustChain);
+            jks.setEntry(arti.getMechid(), 
+                    pkEntry, protParam);
 
-			// Write out
-			write(fks,Chmod.to400,jks,keystorePassArray);
-			
-			// Change out to TrustStore
-			// NOTE: PKCS12 does NOT support Trusted Entries.  Put in JKS Always
-			fks = new File(dir,arti.getNs()+".trust.jks");
-			if(fks.exists()) {
-				File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
-				fks.renameTo(backup);
-			}	
+            // Write out
+            write(fks,Chmod.to400,jks,keystorePassArray);
+            
+            // Change out to TrustStore
+            // NOTE: PKCS12 does NOT support Trusted Entries.  Put in JKS Always
+            fks = new File(dir,arti.getNs()+".trust.jks");
+            if(fks.exists()) {
+                File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
+                fks.renameTo(backup);
+            }    
 
-			jks = KeyStore.getInstance(Agent.JKS);
-			
-			// Set Truststore Password
-			addProperty(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());
-			String trustStorePass = Symm.randomGen(Agent.PASS_SIZE);
-			addEncProperty(Config.CADI_TRUSTSTORE_PASSWORD,trustStorePass);
-			char[] truststorePassArray = trustStorePass.toCharArray();
-			jks.load(null,truststorePassArray); // load in
-			
-			// Add Trusted Certificates, but PKCS12 doesn't support
-			Certificate[] trustCAs = new Certificate[caSet.size()];
-			caSet.toArray(trustCAs);
-			for(int i=0; i<trustCAs.length;++i) {
-				jks.setCertificateEntry("ca_" + arti.getCa() + '_' + i, trustCAs[i]);
-			}
-			// Write out
-			write(fks,Chmod.to644,jks,truststorePassArray);
-			return true;
-		} catch (Exception e) {
-			throw new CadiException(e);
-		}
-	}
+            jks = KeyStore.getInstance(Agent.JKS);
+            
+            // Set Truststore Password
+            addProperty(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());
+            String trustStorePass = Symm.randomGen(Agent.PASS_SIZE);
+            addEncProperty(Config.CADI_TRUSTSTORE_PASSWORD,trustStorePass);
+            char[] truststorePassArray = trustStorePass.toCharArray();
+            jks.load(null,truststorePassArray); // load in
+            
+            // Add Trusted Certificates, but PKCS12 doesn't support
+            Certificate[] trustCAs = new Certificate[caSet.size()];
+            caSet.toArray(trustCAs);
+            for(int i=0; i<trustCAs.length;++i) {
+                jks.setCertificateEntry("ca_" + arti.getCa() + '_' + i, trustCAs[i]);
+            }
+            // Write out
+            write(fks,Chmod.to644,jks,truststorePassArray);
+            return true;
+        } catch (Exception e) {
+            throw new CadiException(e);
+        }
+    }
 
 }

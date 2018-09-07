@@ -34,18 +34,18 @@ import org.onap.aaf.cadi.http.HTokenSS;
 
 public class JU_HTokenSS {
 
-	@Mock
-	SecurityInfoC<HttpURLConnection> siMock;
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Mock
+    SecurityInfoC<HttpURLConnection> siMock;
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void test() throws IOException {
-		HTokenSS token = new HTokenSS(siMock, "string1", "string2");
-		assertThat(token, is(not(nullValue())));
-	}
+    @Test
+    public void test() throws IOException {
+        HTokenSS token = new HTokenSS(siMock, "string1", "string2");
+        assertThat(token, is(not(nullValue())));
+    }
 
 }

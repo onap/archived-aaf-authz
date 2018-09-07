@@ -22,12 +22,12 @@
 package org.onap.aaf.cadi.principal;
 
 public abstract class BearerPrincipal extends TaggedPrincipal {
-	private String bearer = null;
-	public BearerPrincipal setBearer(String bearer) {
-		this.bearer = bearer;
-		return this;
-	}
-	public String getBearer() {
-		return bearer;
-	}
+    private String bearer = null;
+    public BearerPrincipal setBearer(String bearer) {
+        this.bearer = bearer;
+        return this;
+    }
+    public String getBearer() {
+        return bearer;
+    }
 }

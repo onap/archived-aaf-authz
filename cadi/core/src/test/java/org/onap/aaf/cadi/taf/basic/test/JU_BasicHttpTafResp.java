@@ -41,27 +41,27 @@ import org.onap.aaf.cadi.taf.basic.BasicHttpTafResp;
 
 public class JU_BasicHttpTafResp {
 
-	private final static String realm = "realm";
-	private final static String description = "description";
+    private final static String realm = "realm";
+    private final static String description = "description";
 
-	private PropAccess access;
+    private PropAccess access;
 
-	@Mock private HttpServletResponse respMock;
-	@Mock private TaggedPrincipal princMock;
+    @Mock private HttpServletResponse respMock;
+    @Mock private TaggedPrincipal princMock;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+    }
 
-	@Test
-	public void test() throws IOException {
-		BasicHttpTafResp tafResp = new BasicHttpTafResp(access, princMock, description, RESP.IS_AUTHENTICATED, respMock, realm, false);
+    @Test
+    public void test() throws IOException {
+        BasicHttpTafResp tafResp = new BasicHttpTafResp(access, princMock, description, RESP.IS_AUTHENTICATED, respMock, realm, false);
 
-		assertThat(tafResp.authenticate(), is(RESP.HTTP_REDIRECT_INVOKED));
-		assertThat(tafResp.isAuthenticated(), is (RESP.IS_AUTHENTICATED));
-		assertThat(tafResp.isFailedAttempt(), is(false));
-	}
+        assertThat(tafResp.authenticate(), is(RESP.HTTP_REDIRECT_INVOKED));
+        assertThat(tafResp.isAuthenticated(), is (RESP.IS_AUTHENTICATED));
+        assertThat(tafResp.isFailedAttempt(), is(false));
+    }
 
 }

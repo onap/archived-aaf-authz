@@ -33,59 +33,59 @@ import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.misc.env.Trans;
 
 public class CertResp {
-	private CA ca;
-	private KeyPair keyPair;
-	private String challenge;
-	
-	private String privateKey, certString;
-	private String[] trustChain;
-	private String[] notes;
-	
-	public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] notes) throws IOException, GeneralSecurityException, CertException {
-		keyPair = csrMeta.keypair(trans);
-		privateKey = Factory.toString(trans, keyPair.getPrivate());
-		certString = Factory.toString(trans,x509);
-		challenge=csrMeta.challenge();
-		this.ca = ca;
-		this.trustChain = trustChain;
-		this.notes = notes;
-	}
+    private CA ca;
+    private KeyPair keyPair;
+    private String challenge;
+    
+    private String privateKey, certString;
+    private String[] trustChain;
+    private String[] notes;
+    
+    public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] notes) throws IOException, GeneralSecurityException, CertException {
+        keyPair = csrMeta.keypair(trans);
+        privateKey = Factory.toString(trans, keyPair.getPrivate());
+        certString = Factory.toString(trans,x509);
+        challenge=csrMeta.challenge();
+        this.ca = ca;
+        this.trustChain = trustChain;
+        this.notes = notes;
+    }
 
-	// Use for Read Responses, etc
-	public CertResp(String cert) {
-		certString = cert;
-	}
+    // Use for Read Responses, etc
+    public CertResp(String cert) {
+        certString = cert;
+    }
 
-	
-	public String asCertString() {
-		return certString;
-	}
-	
-	public String privateString() throws IOException {
-		return privateKey;
-	}
-	
-	public String challenge() {
-		return challenge==null?"":challenge;
-	}
-	
-	public String[] notes() {
-		return notes;
-	}
-	
-	public String[] caIssuerDNs() {
-		return ca.getCaIssuerDNs();
-	}
-	
-	public String env() {
-		return ca.getEnv();
-	}
-	
-	public String[] trustChain() {
-		return trustChain;
-	}
-	
-	public String[] trustCAs() {
-		return ca.getTrustedCAs();
-	}
+    
+    public String asCertString() {
+        return certString;
+    }
+    
+    public String privateString() throws IOException {
+        return privateKey;
+    }
+    
+    public String challenge() {
+        return challenge==null?"":challenge;
+    }
+    
+    public String[] notes() {
+        return notes;
+    }
+    
+    public String[] caIssuerDNs() {
+        return ca.getCaIssuerDNs();
+    }
+    
+    public String env() {
+        return ca.getEnv();
+    }
+    
+    public String[] trustChain() {
+        return trustChain;
+    }
+    
+    public String[] trustCAs() {
+        return ca.getTrustedCAs();
+    }
 }

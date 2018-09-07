@@ -38,43 +38,43 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_API_Creds {
 
-	API_Creds api_Creds;
-	@Mock
-	AAF_Service authzAPI;
-	AuthzFacade facade;
-	Env env;
-	DirectAAFUserPass directAAFUserPass;
-	@Before
-	public void setUp(){
+    API_Creds api_Creds;
+    @Mock
+    AAF_Service authzAPI;
+    AuthzFacade facade;
+    Env env;
+    DirectAAFUserPass directAAFUserPass;
+    @Before
+    public void setUp(){
 
-	}
+    }
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testInit(){		
-		try {
-			api_Creds.init(authzAPI, facade);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
+    @SuppressWarnings("static-access")
+    @Test
+    public void testInit(){        
+        try {
+            api_Creds.init(authzAPI, facade);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }        
+    }
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testTimeSensitiveInit(){
+    @SuppressWarnings("static-access")
+    @Test
+    public void testTimeSensitiveInit(){
 
-		try {
-			api_Creds.timeSensitiveInit(env, authzAPI, facade, directAAFUserPass);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        try {
+            api_Creds.timeSensitiveInit(env, authzAPI, facade, directAAFUserPass);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 //
-//	@Test
-//	public void notYetImplemented() {
-//		fail("Tests in this file should not be trusted");
-//	}
+//    @Test
+//    public void notYetImplemented() {
+//        fail("Tests in this file should not be trusted");
+//    }
 
 }

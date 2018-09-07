@@ -27,17 +27,17 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 public abstract class Out {
-	public abstract<IN,S> void extract(IN in, Writer writer, Parse<IN, S> parse, boolean ... options) throws IOException, ParseException;
-	
-	public<IN,S> void extract(IN in, OutputStream os, Parse<IN, S> parse, boolean ... options) throws IOException, ParseException {
-		Writer w = new OutputStreamWriter(os);
-		try {
-			extract(in, w, parse, options);
-		} finally {
-			w.flush();
-		}
-	}
-	
-	public abstract String logName();
-	
+    public abstract<IN,S> void extract(IN in, Writer writer, Parse<IN, S> parse, boolean ... options) throws IOException, ParseException;
+    
+    public<IN,S> void extract(IN in, OutputStream os, Parse<IN, S> parse, boolean ... options) throws IOException, ParseException {
+        Writer w = new OutputStreamWriter(os);
+        try {
+            extract(in, w, parse, options);
+        } finally {
+            w.flush();
+        }
+    }
+    
+    public abstract String logName();
+    
 }

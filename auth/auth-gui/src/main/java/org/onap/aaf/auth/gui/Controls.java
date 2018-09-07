@@ -28,18 +28,18 @@ import org.onap.aaf.misc.xgen.Cache;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class Controls extends NamedCode {
-	public Controls() {
-		super(false,"controls");
-	}
-	
-	@Override
-	public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-		hgen.incr("form","method=post")
-			.incr("input", true, "type=checkbox", "name=vehicle", "value=Bike").text("I have a bike").end()
-			.text("Password: ")
-			.incr("input", true, "type=password", "id=password1").end()
-			.tagOnly("input", "type=submit", "value=Submit")
-			.end();
-	}
+    public Controls() {
+        super(false,"controls");
+    }
+    
+    @Override
+    public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+        hgen.incr("form","method=post")
+            .incr("input", true, "type=checkbox", "name=vehicle", "value=Bike").text("I have a bike").end()
+            .text("Password: ")
+            .incr("input", true, "type=password", "id=password1").end()
+            .tagOnly("input", "type=submit", "value=Submit")
+            .end();
+    }
 
 }

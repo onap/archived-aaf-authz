@@ -46,80 +46,80 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class JU_Passwords {
 
 
-	private DefaultOrg defaultOrg;
+    private DefaultOrg defaultOrg;
 
 
-	Identities.Data data;
+    Identities.Data data;
 
-	@Mock
-	Env envMock;
+    @Mock
+    Env envMock;
 
-	@Mock
-	AuthzTrans authzTransMock;
+    @Mock
+    AuthzTrans authzTransMock;
 
-	@Mock
-	TimeTaken ttMock;
+    @Mock
+    TimeTaken ttMock;
 
-	@Mock
-	LogTarget logTargetMock;
-
-
-	private static final String REALM = "org.osaaf";
-	private static final String NAME = "Default Organization";
-
-	String mailHost,mailFromUserId,summary,supportAddress;
-
-	@Before
-	public void setUp() throws OrganizationException{
-
-		mailFromUserId = "frommail";
-		mailHost = "hostmail";
-		File file = new File("src/test/resources/");
-		when(envMock.getProperty(REALM + ".name","Default Organization")).thenReturn(NAME);
-		when(envMock.getProperty(REALM + ".mailHost",null)).thenReturn(mailHost);
-		when(envMock.getProperty(REALM + ".mailFrom",null)).thenReturn(mailFromUserId);
-		when(envMock.getProperty("aaf_data_dir")).thenReturn(file.getAbsolutePath());
-		when(envMock.warn()).thenReturn(logTargetMock);
-		when(authzTransMock.warn()).thenReturn(logTargetMock);
-		when(authzTransMock.start(any(String.class),any(Integer.class))).thenReturn(ttMock);
-		when(authzTransMock.error()).thenReturn(logTargetMock);
-		when(authzTransMock.getProperty("CASS_ENV", "")).thenReturn("Cassandra env");
-
-		defaultOrg = new DefaultOrg(envMock, REALM);
-
-	}
+    @Mock
+    LogTarget logTargetMock;
 
 
-	@Test
-	public void testDefOrgPasswords() {
-		// Accepts letters and one of (number, Special Char, Upper)
-		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou2", "Pilgrim"),"");
-		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou!", "Pilgrim"),"");
-		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou!", "Pilgrim"),"");
-		
-		// Don't accept just letters, Numbers or Special Chars, or without ANY letters
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newyouA", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "NEWYOU", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newyou", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "125343", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "#$@*^#", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "#$3333", "Pilgrim"),"");
+    private static final String REALM = "org.osaaf";
+    private static final String NAME = "Default Organization";
 
-		// Length
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "w2Yu!", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "moreThan20somethingCharacters, even though good", "Pilgrim"),"");
+    String mailHost,mailFromUserId,summary,supportAddress;
 
-		// May not contain ID
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "Pilgrim", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "Pilgrim1", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "Pilgrim#", "Pilgrim"),"");
-		assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "aPilgrim1", "Pilgrim"),"");
+    @Before
+    public void setUp() throws OrganizationException{
 
-		// Solid
-		assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
+        mailFromUserId = "frommail";
+        mailHost = "hostmail";
+        File file = new File("src/test/resources/");
+        when(envMock.getProperty(REALM + ".name","Default Organization")).thenReturn(NAME);
+        when(envMock.getProperty(REALM + ".mailHost",null)).thenReturn(mailHost);
+        when(envMock.getProperty(REALM + ".mailFrom",null)).thenReturn(mailFromUserId);
+        when(envMock.getProperty("aaf_data_dir")).thenReturn(file.getAbsolutePath());
+        when(envMock.warn()).thenReturn(logTargetMock);
+        when(authzTransMock.warn()).thenReturn(logTargetMock);
+        when(authzTransMock.start(any(String.class),any(Integer.class))).thenReturn(ttMock);
+        when(authzTransMock.error()).thenReturn(logTargetMock);
+        when(authzTransMock.getProperty("CASS_ENV", "")).thenReturn("Cassandra env");
 
-		
-	}
+        defaultOrg = new DefaultOrg(envMock, REALM);
+
+    }
+
+
+    @Test
+    public void testDefOrgPasswords() {
+        // Accepts letters and one of (number, Special Char, Upper)
+        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou2", "Pilgrim"),"");
+        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou!", "Pilgrim"),"");
+        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou!", "Pilgrim"),"");
+        
+        // Don't accept just letters, Numbers or Special Chars, or without ANY letters
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newyouA", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "NEWYOU", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newyou", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "125343", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "#$@*^#", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "#$3333", "Pilgrim"),"");
+
+        // Length
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "w2Yu!", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "moreThan20somethingCharacters, even though good", "Pilgrim"),"");
+
+        // May not contain ID
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "Pilgrim", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "Pilgrim1", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "Pilgrim#", "Pilgrim"),"");
+        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "aPilgrim1", "Pilgrim"),"");
+
+        // Solid
+        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
+
+        
+    }
 
 }

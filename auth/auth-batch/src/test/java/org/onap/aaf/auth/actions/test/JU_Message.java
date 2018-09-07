@@ -33,30 +33,30 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 public class JU_Message {
-	
-	Message msg;
-	
-	@Before
-	public void setUp() {
-		msg = new Message();
-	}
+    
+    Message msg;
+    
+    @Before
+    public void setUp() {
+        msg = new Message();
+    }
 
-	@Test
-	public void testLine() {
-		msg.line("test");
-	}
-	
-	@Test
-	public void testClear() {
-		msg.clear();
-	}
-	
-	@Test
-	public void testMsg() {
-		StringBuilder sb = new StringBuilder();
-		msg.line("test");
-		msg.line("test1");
-		msg.msg(sb, "indent");
-	}
+    @Test
+    public void testLine() {
+        msg.line("test");
+    }
+    
+    @Test
+    public void testClear() {
+        msg.clear();
+    }
+    
+    @Test
+    public void testMsg() {
+        StringBuilder sb = new StringBuilder();
+        msg.line("test");
+        msg.line("test1");
+        msg.msg(sb, "indent");
+    }
 
 }

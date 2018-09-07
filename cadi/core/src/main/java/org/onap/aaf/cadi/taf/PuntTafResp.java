@@ -34,56 +34,56 @@ import org.onap.aaf.cadi.util.Timing;
  *
  */
 public class PuntTafResp implements TafResp {
-	private final String name;
-	private final String desc;
-	private float timing;
+    private final String name;
+    private final String desc;
+    private float timing;
 
-	public PuntTafResp(String name, String explanation) {
-		this.name = name;
-		desc = "Not processing this transaction: " + explanation;
-	}
-	
-	public boolean isValid() {
-		return false;
-	}
-	
-	public RESP isAuthenticated() {
-		return RESP.TRY_ANOTHER_TAF;
-	}
-	
-	public String desc() {
-		return desc;
-	}
-	
-	public RESP authenticate() throws IOException {
-		return RESP.TRY_ANOTHER_TAF;
-	}
+    public PuntTafResp(String name, String explanation) {
+        this.name = name;
+        desc = "Not processing this transaction: " + explanation;
+    }
+    
+    public boolean isValid() {
+        return false;
+    }
+    
+    public RESP isAuthenticated() {
+        return RESP.TRY_ANOTHER_TAF;
+    }
+    
+    public String desc() {
+        return desc;
+    }
+    
+    public RESP authenticate() throws IOException {
+        return RESP.TRY_ANOTHER_TAF;
+    }
 
-	public TaggedPrincipal getPrincipal() {
-		return null;
-	}
+    public TaggedPrincipal getPrincipal() {
+        return null;
+    }
 
-	public Access getAccess() {
-		return NullTafResp.singleton().getAccess();
-	}
+    public Access getAccess() {
+        return NullTafResp.singleton().getAccess();
+    }
 
-	public boolean isFailedAttempt() {
-		return false;
-	}
+    public boolean isFailedAttempt() {
+        return false;
+    }
 
-	@Override
-	public float timing() {
-		return timing;
-	}
+    @Override
+    public float timing() {
+        return timing;
+    }
 
-	@Override
-	public void timing(long start) {
-		timing = Timing.millis(start);
-	}
-	
-	@Override
-	public String taf() {
-		return name;
-	}
+    @Override
+    public void timing(long start) {
+        timing = Timing.millis(start);
+    }
+    
+    @Override
+    public String taf() {
+        return name;
+    }
 
 }

@@ -70,168 +70,168 @@ import com.datastax.driver.core.Cluster;
 
 public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 
-	private static final String ORGANIZATION = "Organization.";
+    private static final String ORGANIZATION = "Organization.";
 
-	public final Question question;
-	private AuthzFacade_2_0 facade;
-	private AuthzFacade_2_0 facade_XML;
-	private DirectAAFUserPass directAAFUserPass;
-	private final Cluster cluster;
-	//private final OAuthService oauthService;
-	
-	/**
-	 * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-	 * 
-	 * @param env
-	 * @param decryptor 
-	 * @throws APIException 
-	 */
-	public AAF_Service( final AuthzEnv env) throws Exception {
-		super(env.access(), env);
+    public final Question question;
+    private AuthzFacade_2_0 facade;
+    private AuthzFacade_2_0 facade_XML;
+    private DirectAAFUserPass directAAFUserPass;
+    private final Cluster cluster;
+    //private final OAuthService oauthService;
+    
+    /**
+     * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
+     * 
+     * @param env
+     * @param decryptor 
+     * @throws APIException 
+     */
+    public AAF_Service( final AuthzEnv env) throws Exception {
+        super(env.access(), env);
 
-		// Initialize Facade for all uses
-		AuthzTrans trans = env.newTrans();
+        // Initialize Facade for all uses
+        AuthzTrans trans = env.newTrans();
 
-		cluster = org.onap.aaf.auth.dao.CassAccess.cluster(env,null);
+        cluster = org.onap.aaf.auth.dao.CassAccess.cluster(env,null);
 
-		// Need Question for Security purposes (direct User/Authz Query in Filter)
-		// Start Background Processing
-		question = new Question(trans, cluster, CassAccess.KEYSPACE, true);
-		DirectCertIdentity.set(question.certDAO);
+        // Need Question for Security purposes (direct User/Authz Query in Filter)
+        // Start Background Processing
+        question = new Question(trans, cluster, CassAccess.KEYSPACE, true);
+        DirectCertIdentity.set(question.certDAO);
 
-		// Have AAFLocator object Create DirectLocators for Location needs
-		AbsAAFLocator.setCreator(new DirectLocatorCreator(env, question.locateDAO));
-		
-		// Initialize Organizations... otherwise, first pass may miss
-		int org_size = ORGANIZATION.length();
-		for(String n : env.existingStaticSlotNames()) {
-			if(n.startsWith(ORGANIZATION)) {
-				OrganizationFactory.obtain(env, n.substring(org_size));
-			}
-		}
-		
+        // Have AAFLocator object Create DirectLocators for Location needs
+        AbsAAFLocator.setCreator(new DirectLocatorCreator(env, question.locateDAO));
+        
+        // Initialize Organizations... otherwise, first pass may miss
+        int org_size = ORGANIZATION.length();
+        for(String n : env.existingStaticSlotNames()) {
+            if(n.startsWith(ORGANIZATION)) {
+                OrganizationFactory.obtain(env, n.substring(org_size));
+            }
+        }
+        
 
-		// For direct Introspection needs.
-		//oauthService = new OAuthService(trans, question);
-		
-		facade = AuthzFacadeFactory.v2_0(env,trans,Data.TYPE.JSON,question);
-		facade_XML = AuthzFacadeFactory.v2_0(env,trans,Data.TYPE.XML,question);
+        // For direct Introspection needs.
+        //oauthService = new OAuthService(trans, question);
+        
+        facade = AuthzFacadeFactory.v2_0(env,trans,Data.TYPE.JSON,question);
+        facade_XML = AuthzFacadeFactory.v2_0(env,trans,Data.TYPE.XML,question);
 
-		directAAFUserPass = new DirectAAFUserPass(trans.env(),question);
-	
-		// Print results and cleanup
-		StringBuilder sb = new StringBuilder();
-		trans.auditTrail(0, sb);
-		if(sb.length()>0)env.init().log(sb);
-		trans = null;
-		sb = null;
+        directAAFUserPass = new DirectAAFUserPass(trans.env(),question);
+    
+        // Print results and cleanup
+        StringBuilder sb = new StringBuilder();
+        trans.auditTrail(0, sb);
+        if(sb.length()>0)env.init().log(sb);
+        trans = null;
+        sb = null;
 
-		////////////////////////////////////////////////////////////////////////////
-		// Time Critical
-		//  These will always be evaluated first
-		////////////////////////////////////////////////////////////////////////
-		API_Creds.timeSensitiveInit(env, this, facade,directAAFUserPass);
-		API_Perms.timeSensitiveInit(this, facade);
-		////////////////////////////////////////////////////////////////////////
-		// Service APIs
-		////////////////////////////////////////////////////////////////////////
-		API_Creds.init(this, facade);
-		API_UserRole.init(this, facade);
-		API_Roles.init(this, facade);
-		API_Perms.init(this, facade);
-		API_NS.init(this, facade);
-		API_User.init(this, facade);
-		API_Delegate.init(this,facade);
-		API_Approval.init(this, facade);
-		API_History.init(this, facade);
+        ////////////////////////////////////////////////////////////////////////////
+        // Time Critical
+        //  These will always be evaluated first
+        ////////////////////////////////////////////////////////////////////////
+        API_Creds.timeSensitiveInit(env, this, facade,directAAFUserPass);
+        API_Perms.timeSensitiveInit(this, facade);
+        ////////////////////////////////////////////////////////////////////////
+        // Service APIs
+        ////////////////////////////////////////////////////////////////////////
+        API_Creds.init(this, facade);
+        API_UserRole.init(this, facade);
+        API_Roles.init(this, facade);
+        API_Perms.init(this, facade);
+        API_NS.init(this, facade);
+        API_User.init(this, facade);
+        API_Delegate.init(this,facade);
+        API_Approval.init(this, facade);
+        API_History.init(this, facade);
 
-		////////////////////////////////////////////////////////////////////////
-		// Management APIs
-		////////////////////////////////////////////////////////////////////////
-		// There are several APIs around each concept, and it gets a bit too
-		// long in this class to create.  The initialization of these Management
-		// APIs have therefore been pushed to StandAlone Classes with static
-		// init functions
-		API_Mgmt.init(this, facade);
-		API_Api.init(this, facade);
-		
-	}
-	
-	@Override
-	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-		final String domain = FQI.reverseDomain(access.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF));
-		try {
-        	Object[] atl=new Object[additionalTafLurs.length+2];
-        	atl[0]=new DirectAAFLur(env,question); // Note, this will be assigned by AuthzTransFilter to TrustChecker
-			atl[1]= new BasicHttpTaf(env, directAAFUserPass,
-					domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
-					false);
+        ////////////////////////////////////////////////////////////////////////
+        // Management APIs
+        ////////////////////////////////////////////////////////////////////////
+        // There are several APIs around each concept, and it gets a bit too
+        // long in this class to create.  The initialization of these Management
+        // APIs have therefore been pushed to StandAlone Classes with static
+        // init functions
+        API_Mgmt.init(this, facade);
+        API_Api.init(this, facade);
+        
+    }
+    
+    @Override
+    public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+        final String domain = FQI.reverseDomain(access.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF));
+        try {
+            Object[] atl=new Object[additionalTafLurs.length+2];
+            atl[0]=new DirectAAFLur(env,question); // Note, this will be assigned by AuthzTransFilter to TrustChecker
+            atl[1]= new BasicHttpTaf(env, directAAFUserPass,
+                    domain,Long.parseLong(env.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF)),
+                    false);
 
-	        if(additionalTafLurs.length>0) {
-	        	System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
-	        }
-	        
-			return new Filter[] {
-				new AuthzTransFilter(env,aafCon(),
-	        		new AAFTrustChecker((Env)env),
-	        		atl
-	        )};
-		} catch (NumberFormatException e) {
-			throw new CadiException("Invalid Property information", e);
-		}
-	}
+            if(additionalTafLurs.length>0) {
+                System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
+            }
+            
+            return new Filter[] {
+                new AuthzTransFilter(env,aafCon(),
+                    new AAFTrustChecker((Env)env),
+                    atl
+            )};
+        } catch (NumberFormatException e) {
+            throw new CadiException("Invalid Property information", e);
+        }
+    }
 
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
-		return new Registrant[] {
-			new DirectRegistrar(access,question.locateDAO,app_name,app_interface_version,port)
-		};
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
+        return new Registrant[] {
+            new DirectRegistrar(access,question.locateDAO,app_name,app_interface_version,port)
+        };
+    }
 
-	@Override
-	public void destroy() {
-		Cache.stopTimer();
-		if(cluster!=null) {
-			cluster.close();
-		}
-		super.destroy();
-	}
+    @Override
+    public void destroy() {
+        Cache.stopTimer();
+        if(cluster!=null) {
+            cluster.close();
+        }
+        super.destroy();
+    }
 
-	
-	/**
-	 * Setup XML and JSON implementations for each supported Version type
-	 * 
-	 * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
-	 * to do Versions and Content switches
-	 * 
-	 */
-	public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
-		String version = "2.0";
-		Class<?> respCls = facade.mapper().getClass(api); 
-		if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
-		String application = applicationJSON(respCls, version);
+    
+    /**
+     * Setup XML and JSON implementations for each supported Version type
+     * 
+     * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
+     * to do Versions and Content switches
+     * 
+     */
+    public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
+        String version = "2.0";
+        Class<?> respCls = facade.mapper().getClass(api); 
+        if(respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
+        String application = applicationJSON(respCls, version);
 
-		route(env,meth,path,code,application,"application/json;version=2.0","*/*");
-		application = applicationXML(respCls, version);
-		route(env,meth,path,code.clone(facade_XML,false),application,"text/xml;version=2.0");
-	}
+        route(env,meth,path,code,application,"application/json;version=2.0","*/*");
+        application = applicationXML(respCls, version);
+        route(env,meth,path,code.clone(facade_XML,false),application,"text/xml;version=2.0");
+    }
 
-	/**
-	 * Start up AAF_Service as Jetty Service
-	 */
-	public static void main(final String[] args) {
-		try {
-			Log4JLogIt logIt = new Log4JLogIt(args, "authz");
-			PropAccess propAccess = new PropAccess(logIt,args);
-			
- 			AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
-			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-			jss.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Start up AAF_Service as Jetty Service
+     */
+    public static void main(final String[] args) {
+        try {
+            Log4JLogIt logIt = new Log4JLogIt(args, "authz");
+            PropAccess propAccess = new PropAccess(logIt,args);
+            
+             AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
+            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
+            jss.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

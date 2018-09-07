@@ -30,33 +30,33 @@ import org.onap.aaf.misc.env.util.Chrono;
 import aaf.v2_0.RoleRequest;
 
 public class RoleCompare extends RosettaCompare<RoleRequest>  {
-	public RoleCompare() {
-		super(RoleRequest.class);
-	}
-	
-	public static RoleRequest create() {
-		RoleRequest rr = new RoleRequest();
-		String in = instance();
-		rr.setName("org.osaaf.ns.role"+in);
-		rr.setDescription("Hello World, Role"+in);
-		GregorianCalendar gc = new GregorianCalendar();
-		rr.setStart(Chrono.timeStamp(gc));
-		gc.add(GregorianCalendar.MONTH, 1);
-		rr.setEnd(Chrono.timeStamp(gc));
-		return rr;
-	}
-	
-	@Override
-	public void compare(RoleRequest t1, RoleRequest t2) {
-		assertEquals(t1.getName(),t2.getName());
-		assertEquals(t1.getDescription(),t2.getDescription());
-		assertEquals(t1.getStart(),t2.getStart());
-		assertEquals(t1.getEnd(),t2.getEnd());
-	}
+    public RoleCompare() {
+        super(RoleRequest.class);
+    }
+    
+    public static RoleRequest create() {
+        RoleRequest rr = new RoleRequest();
+        String in = instance();
+        rr.setName("org.osaaf.ns.role"+in);
+        rr.setDescription("Hello World, Role"+in);
+        GregorianCalendar gc = new GregorianCalendar();
+        rr.setStart(Chrono.timeStamp(gc));
+        gc.add(GregorianCalendar.MONTH, 1);
+        rr.setEnd(Chrono.timeStamp(gc));
+        return rr;
+    }
+    
+    @Override
+    public void compare(RoleRequest t1, RoleRequest t2) {
+        assertEquals(t1.getName(),t2.getName());
+        assertEquals(t1.getDescription(),t2.getDescription());
+        assertEquals(t1.getStart(),t2.getStart());
+        assertEquals(t1.getEnd(),t2.getEnd());
+    }
 
 
-	@Override
-	public RoleRequest newOne() {
-		return create();
-	}
+    @Override
+    public RoleRequest newOne() {
+        return create();
+    }
 }

@@ -40,42 +40,42 @@ import org.onap.aaf.misc.env.APIException;
 
 public class HelloTester {
 
-	public static void main(String[] args) {
-		// Do Once and ONLY once
-		PropAccess access =  new PropAccess(args);
-		try {
-			Define.set(access);
-			String uriPrefix = access.getProperty("locatorURI","https://aaftest.test.att.com");
-			
-			SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
-			AAFLocator loc = new AAFLocator(si,new URI(uriPrefix+"/locate/"+Define.ROOT_NS()+".hello:1.0"));
-			AAFConHttp aafcon = new AAFConHttp(access,loc,si);
-			
-			//
-			String pathinfo = "/hello";
-			final int iterations = Integer.parseInt(access.getProperty("iterations","5"));
-			System.out.println("Calling " + loc + " with Path " + pathinfo + ' ' + iterations + " time" + (iterations==1?"":"s"));
-			for(int i=0;i<iterations;++i) {
-				aafcon.best(new Retryable<Void> () {
-					@Override
-					public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-						Future<String> fs = client.read("/hello","text/plain");
-						if(fs.get(5000)) {
-							System.out.print(fs.body());
-						} else {
-							System.err.println("Ooops, missed one: " + fs.code() + ": " + fs.body());
-						}
-						return null;
-
-					}
-				});
-				Thread.sleep(500L);
-			}
-		} catch (CadiException | LocatorException | URISyntaxException | APIException | InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		
-	}
-
+    public static void main(String[] args) {
+        // Do Once and ONLY once
+        PropAccess access =  new PropAccess(args);
+        try {
+            Define.set(access);
+            String uriPrefix = access.getProperty("locatorURI",null);
+            if(uriPrefix==null) {
+                System.out.println("You must add \"locatorURI=<uri>\" to the command line or VM_Args");
+            } else {
+                SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
+                AAFLocator loc = new AAFLocator(si,new URI(uriPrefix+"/locate/"+Define.ROOT_NS()+".hello:1.0"));
+                AAFConHttp aafcon = new AAFConHttp(access,loc,si);
+                
+                //
+                String pathinfo = "/hello";
+                final int iterations = Integer.parseInt(access.getProperty("iterations","5"));
+                System.out.println("Calling " + loc + " with Path " + pathinfo + ' ' + iterations + " time" + (iterations==1?"":"s"));
+                for(int i=0;i<iterations;++i) {
+                    aafcon.best(new Retryable<Void> () {
+                        @Override
+                        public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                            Future<String> fs = client.read("/hello","text/plain");
+                            if(fs.get(5000)) {
+                                System.out.print(fs.body());
+                            } else {
+                                System.err.println("Ooops, missed one: " + fs.code() + ": " + fs.body());
+                            }
+                            return null;
+    
+                        }
+                    });
+                    Thread.sleep(500L);
+                }
+            }
+        } catch (CadiException | LocatorException | URISyntaxException | APIException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

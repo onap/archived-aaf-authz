@@ -22,13 +22,13 @@
 package org.onap.aaf.misc.xgen;
 
 public class Back {
-	public String str;
-	public boolean dec;
-	public boolean cr;
-	
-	public Back(String string, boolean decrement, boolean newline) {
-		str = string;
-		dec = decrement;
-		cr = newline;
-	}
+    public String str;
+    public boolean dec;
+    public boolean cr;
+    
+    public Back(String string, boolean decrement, boolean newline) {
+        str = string;
+        dec = decrement;
+        cr = newline;
+    }
 }

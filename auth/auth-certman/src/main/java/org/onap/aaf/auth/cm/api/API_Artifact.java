@@ -39,95 +39,95 @@ import org.onap.aaf.auth.rserv.HttpMethods;
  *
  */
 public class API_Artifact {
-	private static final String GET_ARTIFACTS = "Get Artifacts";
+    private static final String GET_ARTIFACTS = "Get Artifacts";
   private static final String CERT_ARTIFACTS = "/cert/artifacts";
-	/**
-	 * Normal Init level APIs
-	 * 
-	 * @param cmAPI
-	 * @throws Exception
-	 */
-	public static void init(final AAF_CM cmAPI) throws Exception {
-		cmAPI.route(HttpMethods.POST, CERT_ARTIFACTS, API.ARTIFACTS, new Code(cmAPI,"Create Artifacts") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.createArtifacts(trans, req, resp);
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.CREATED_201);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+    /**
+     * Normal Init level APIs
+     * 
+     * @param cmAPI
+     * @throws Exception
+     */
+    public static void init(final AAF_CM cmAPI) throws Exception {
+        cmAPI.route(HttpMethods.POST, CERT_ARTIFACTS, API.ARTIFACTS, new Code(cmAPI,"Create Artifacts") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.createArtifacts(trans, req, resp);
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.CREATED_201);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
-		/**
-		 * Use Query Params to get Artifacts by Machine or MechID
-		 */
-		cmAPI.route(HttpMethods.GET, CERT_ARTIFACTS, API.ARTIFACTS, new Code(cmAPI,GET_ARTIFACTS) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.readArtifacts(trans, req, resp);
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+        /**
+         * Use Query Params to get Artifacts by Machine or MechID
+         */
+        cmAPI.route(HttpMethods.GET, CERT_ARTIFACTS, API.ARTIFACTS, new Code(cmAPI,GET_ARTIFACTS) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.readArtifacts(trans, req, resp);
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
 
-		cmAPI.route(HttpMethods.GET, "/cert/artifacts/:mechid/:machine", API.ARTIFACTS, new Code(cmAPI,GET_ARTIFACTS) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				
-				Result<Void> r = context.readArtifacts(trans, resp, pathParam(req,":mechid"), pathParam(req,":machine"));
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
-		
-		
-		cmAPI.route(HttpMethods.PUT, CERT_ARTIFACTS, API.ARTIFACTS, new Code(cmAPI,"Update Artifacts") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.updateArtifacts(trans, req, resp);
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+        cmAPI.route(HttpMethods.GET, "/cert/artifacts/:mechid/:machine", API.ARTIFACTS, new Code(cmAPI,GET_ARTIFACTS) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                
+                Result<Void> r = context.readArtifacts(trans, resp, pathParam(req,":mechid"), pathParam(req,":machine"));
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
+        
+        
+        cmAPI.route(HttpMethods.PUT, CERT_ARTIFACTS, API.ARTIFACTS, new Code(cmAPI,"Update Artifacts") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.updateArtifacts(trans, req, resp);
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
-		cmAPI.route(HttpMethods.DELETE, "/cert/artifacts/:mechid/:machine", API.VOID, new Code(cmAPI,"Delete Artifacts") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.deleteArtifacts(trans, resp, 
-						pathParam(req, ":mechid"), pathParam(req,":machine"));
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
-		
+        cmAPI.route(HttpMethods.DELETE, "/cert/artifacts/:mechid/:machine", API.VOID, new Code(cmAPI,"Delete Artifacts") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.deleteArtifacts(trans, resp, 
+                        pathParam(req, ":mechid"), pathParam(req,":machine"));
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
+        
 
-		cmAPI.route(HttpMethods.DELETE, CERT_ARTIFACTS, API.VOID, new Code(cmAPI,"Delete Artifacts") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.deleteArtifacts(trans, req, resp);
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
-		
+        cmAPI.route(HttpMethods.DELETE, CERT_ARTIFACTS, API.VOID, new Code(cmAPI,"Delete Artifacts") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.deleteArtifacts(trans, req, resp);
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
+        
 
-	}
+    }
 }

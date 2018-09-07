@@ -40,53 +40,53 @@ import org.onap.aaf.cadi.Symm;
  *
  */
 public class API_Api {
-	// Hide Public Constructor
-	private API_Api() {}
-	
-	/**
-	 * Normal Init level APIs
-	 * 
-	 * @param authzAPI
-	 * @param facade
-	 * @throws Exception
-	 */
-	public static void init(final AAF_Service authzAPI, AuthzFacade facade) throws Exception {
-		////////
-		// Overall APIs
-		///////
-		authzAPI.route(HttpMethods.GET,"/api",API.API,new Code(facade,"Document API", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.getAPI(trans,resp,authzAPI);
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+    // Hide Public Constructor
+    private API_Api() {}
+    
+    /**
+     * Normal Init level APIs
+     * 
+     * @param authzAPI
+     * @param facade
+     * @throws Exception
+     */
+    public static void init(final AAF_Service authzAPI, AuthzFacade facade) throws Exception {
+        ////////
+        // Overall APIs
+        ///////
+        authzAPI.route(HttpMethods.GET,"/api",API.API,new Code(facade,"Document API", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.getAPI(trans,resp,authzAPI);
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
-		////////
-		// Overall Examples
-		///////
-		authzAPI.route(HttpMethods.GET,"/api/example/*",API.VOID,new Code(facade,"Document API", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				String pathInfo = req.getPathInfo();
-				int question = pathInfo.lastIndexOf('?');
-				
-				pathInfo = pathInfo.substring(13, question<0?pathInfo.length():question);// IMPORTANT, this is size of "/api/example/"
-				String nameOrContextType=Symm.base64noSplit.decode(pathInfo);
-				Result<Void> r = context.getAPIExample(trans,resp,nameOrContextType,
-						question>=0 && "optional=true".equalsIgnoreCase(req.getPathInfo().substring(question+1))
-						);
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+        ////////
+        // Overall Examples
+        ///////
+        authzAPI.route(HttpMethods.GET,"/api/example/*",API.VOID,new Code(facade,"Document API", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                String pathInfo = req.getPathInfo();
+                int question = pathInfo.lastIndexOf('?');
+                
+                pathInfo = pathInfo.substring(13, question<0?pathInfo.length():question);// IMPORTANT, this is size of "/api/example/"
+                String nameOrContextType=Symm.base64noSplit.decode(pathInfo);
+                Result<Void> r = context.getAPIExample(trans,resp,nameOrContextType,
+                        question>=0 && "optional=true".equalsIgnoreCase(req.getPathInfo().substring(question+1))
+                        );
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
-	}
+    }
 }

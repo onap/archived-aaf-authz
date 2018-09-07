@@ -41,102 +41,102 @@ import org.onap.aaf.misc.env.Slot;
  *
  */
 public class API_Cert {
-	public static final String CERT_AUTH = "CertAuthority";
-	private static Slot sCertAuth;
+    public static final String CERT_AUTH = "CertAuthority";
+    private static Slot sCertAuth;
 
-	/**
-	 * Normal Init level APIs
-	 * 
-	 * @param aafCM
-	 * @param facade
-	 * @throws Exception
-	 */
-	public static void init(final AAF_CM aafCM) throws Exception {
-		// Check for Created Certificate Authorities in TRANS
-		sCertAuth = aafCM.env.slot(CERT_AUTH);
-		
-		////////
-		// Overall APIs
-		///////
-		aafCM.route(HttpMethods.PUT,"/cert/:ca",API.CERT_REQ,new Code(aafCM,"Request Certificate") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				String key = pathParam(req, ":ca");
-				CA ca;
-				if((ca = aafCM.getCA(key))==null) {
-					context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
-				} else {
-					trans.put(sCertAuth, ca);
-					Result<Void> r = context.requestCert(trans, req, resp, ca);
-					if(r.isOK()) {
-						resp.setStatus(HttpStatus.OK_200);
-					} else {
-						context.error(trans,resp,r);
-					}
-				}
-			}
-		});
-		
-		aafCM.route(HttpMethods.GET,"/cert/:ca/personal",API.CERT,new Code(aafCM,"Request Personal Certificate") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				String key = pathParam(req, ":ca");
-				CA ca;
-				if((ca = aafCM.getCA(key))==null) {
-					context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
-				} else {
-					trans.put(sCertAuth, ca);
-					Result<Void> r = context.requestPersonalCert(trans, req, resp, ca);
-					if(r.isOK()) {
-						resp.setStatus(HttpStatus.OK_200);
-					} else {
-						context.error(trans,resp,r);
-					}
-				}
-			}
-		});
+    /**
+     * Normal Init level APIs
+     * 
+     * @param aafCM
+     * @param facade
+     * @throws Exception
+     */
+    public static void init(final AAF_CM aafCM) throws Exception {
+        // Check for Created Certificate Authorities in TRANS
+        sCertAuth = aafCM.env.slot(CERT_AUTH);
+        
+        ////////
+        // Overall APIs
+        ///////
+        aafCM.route(HttpMethods.PUT,"/cert/:ca",API.CERT_REQ,new Code(aafCM,"Request Certificate") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                String key = pathParam(req, ":ca");
+                CA ca;
+                if((ca = aafCM.getCA(key))==null) {
+                    context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
+                } else {
+                    trans.put(sCertAuth, ca);
+                    Result<Void> r = context.requestCert(trans, req, resp, ca);
+                    if(r.isOK()) {
+                        resp.setStatus(HttpStatus.OK_200);
+                    } else {
+                        context.error(trans,resp,r);
+                    }
+                }
+            }
+        });
+        
+        aafCM.route(HttpMethods.GET,"/cert/:ca/personal",API.CERT,new Code(aafCM,"Request Personal Certificate") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                String key = pathParam(req, ":ca");
+                CA ca;
+                if((ca = aafCM.getCA(key))==null) {
+                    context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
+                } else {
+                    trans.put(sCertAuth, ca);
+                    Result<Void> r = context.requestPersonalCert(trans, req, resp, ca);
+                    if(r.isOK()) {
+                        resp.setStatus(HttpStatus.OK_200);
+                    } else {
+                        context.error(trans,resp,r);
+                    }
+                }
+            }
+        });
 
-		
-		/**
-		 * 
-		 */
-		aafCM.route(HttpMethods.GET, "/cert/may/:perm", API.VOID, new Code(aafCM,"Check Permission") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.check(trans, resp, pathParam(req,"perm"));
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					trans.checkpoint(r.errorString());
-					context.error(trans,resp,Result.err(Result.ERR_Denied,"%s does not have Permission.",trans.user()));
-				}
-			}
-		});
+        
+        /**
+         * 
+         */
+        aafCM.route(HttpMethods.GET, "/cert/may/:perm", API.VOID, new Code(aafCM,"Check Permission") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.check(trans, resp, pathParam(req,"perm"));
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    trans.checkpoint(r.errorString());
+                    context.error(trans,resp,Result.err(Result.ERR_Denied,"%s does not have Permission.",trans.user()));
+                }
+            }
+        });
 
-		/**
-		 * Get Cert by ID and Machine 
-		 */
+        /**
+         * Get Cert by ID and Machine 
+         */
 
-		
-		/**
-		 * Get Certs by ID
-		 */
-		aafCM.route(HttpMethods.GET, "/cert/id/:id", API.CERT, new Code(aafCM,"GetByID") {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.readCertsByMechID(trans, resp, pathParam(req,"id"));
-				if(r.isOK()) {
-					resp.setStatus(HttpStatus.OK_200);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+        
+        /**
+         * Get Certs by ID
+         */
+        aafCM.route(HttpMethods.GET, "/cert/id/:id", API.CERT, new Code(aafCM,"GetByID") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.readCertsByMechID(trans, resp, pathParam(req,"id"));
+                if(r.isOK()) {
+                    resp.setStatus(HttpStatus.OK_200);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
-		
-		/**
-		 * Get Certs by Machine
-		 */
-		
-	}
+        
+        /**
+         * Get Certs by Machine
+         */
+        
+    }
 }

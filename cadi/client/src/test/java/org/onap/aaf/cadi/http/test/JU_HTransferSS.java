@@ -41,52 +41,52 @@ import org.onap.aaf.cadi.http.HTransferSS;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class JU_HTransferSS {
-	
-	@Mock
-	TaggedPrincipal princMock;
-	
-	@Mock
-	HttpURLConnection hucMock;
+    
+    @Mock
+    TaggedPrincipal princMock;
+    
+    @Mock
+    HttpURLConnection hucMock;
 
-	@Mock
-	HttpsURLConnection hucsMock;
+    @Mock
+    HttpsURLConnection hucsMock;
 
-	@Mock
-	SecurityInfoC<HttpURLConnection> siMock;
-	
-	@Mock
-	SecurityInfoC<HttpURLConnection> siMockNoDefSS;
+    @Mock
+    SecurityInfoC<HttpURLConnection> siMock;
+    
+    @Mock
+    SecurityInfoC<HttpURLConnection> siMockNoDefSS;
 
-	@Mock
-	SecuritySetter<HttpURLConnection> ssMock;
-	
-	private static final String princName = "name";
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		when(princMock.getName()).thenReturn(princName);
-		siMock.defSS = ssMock;
-	}
+    @Mock
+    SecuritySetter<HttpURLConnection> ssMock;
+    
+    private static final String princName = "name";
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        when(princMock.getName()).thenReturn(princName);
+        siMock.defSS = ssMock;
+    }
 
-	@Test
-	public void test() throws IOException, CadiException {
-		HTransferSS transfer = new HTransferSS(princMock, "string1");
-		assertThat(transfer.setLastResponse(0), is(0));
-		
-		transfer = new HTransferSS(princMock, "string1", siMock);
-		transfer.setSecurity(hucsMock);
-		assertThat(transfer.getID(), is(princName));
+    @Test
+    public void test() throws IOException, CadiException {
+        HTransferSS transfer = new HTransferSS(princMock, "string1");
+        assertThat(transfer.setLastResponse(0), is(0));
+        
+        transfer = new HTransferSS(princMock, "string1", siMock);
+        transfer.setSecurity(hucsMock);
+        assertThat(transfer.getID(), is(princName));
 
-		transfer = new HTransferSS(null, "string1", siMock);
-		transfer.setSecurity(hucsMock);
-		assertThat(transfer.getID(), is(""));
-	}
+        transfer = new HTransferSS(null, "string1", siMock);
+        transfer.setSecurity(hucsMock);
+        assertThat(transfer.getID(), is(""));
+    }
 
-	@Test(expected = CadiException.class)
-	public void testThrows() throws CadiException {
-		HTransferSS transfer = new HTransferSS(princMock, "string1", siMockNoDefSS);
-		transfer.setSecurity(hucMock);
-	}
+    @Test(expected = CadiException.class)
+    public void testThrows() throws CadiException {
+        HTransferSS transfer = new HTransferSS(princMock, "string1", siMockNoDefSS);
+        transfer.setSecurity(hucMock);
+    }
 
 }

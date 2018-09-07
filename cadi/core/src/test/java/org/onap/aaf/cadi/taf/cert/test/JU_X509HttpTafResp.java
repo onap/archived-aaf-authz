@@ -39,25 +39,25 @@ import org.onap.aaf.cadi.taf.cert.X509HttpTafResp;
 
 public class JU_X509HttpTafResp {
 
-	private final static String description = "description";
-	private final static RESP status = RESP.IS_AUTHENTICATED;
+    private final static String description = "description";
+    private final static RESP status = RESP.IS_AUTHENTICATED;
 
-	private PropAccess access;
+    private PropAccess access;
 
-	@Mock private TaggedPrincipal princMock;
+    @Mock private TaggedPrincipal princMock;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+    }
 
-	@Test
-	public void test() throws IOException {
-		X509HttpTafResp resp = new X509HttpTafResp(access, princMock, description, status);
-		assertThat(resp.authenticate(), is(RESP.TRY_ANOTHER_TAF));
-		assertThat(resp.isAuthenticated(), is(status));
-		assertThat(resp.toString(), is(status.name()));
-	}
+    @Test
+    public void test() throws IOException {
+        X509HttpTafResp resp = new X509HttpTafResp(access, princMock, description, status);
+        assertThat(resp.authenticate(), is(RESP.TRY_ANOTHER_TAF));
+        assertThat(resp.isAuthenticated(), is(status));
+        assertThat(resp.toString(), is(status.name()));
+    }
 
 }

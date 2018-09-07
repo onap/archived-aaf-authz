@@ -25,6 +25,6 @@ import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 
 public interface Registrant<ENV extends BasicEnv> {
-	public Result<Void> update(ENV env);
-	public Result<Void> cancel(ENV env);
+    public Result<Void> update(ENV env);
+    public Result<Void> cancel(ENV env);
 }

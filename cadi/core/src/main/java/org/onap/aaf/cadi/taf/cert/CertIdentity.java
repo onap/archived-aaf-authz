@@ -29,18 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public interface CertIdentity {
-	/**
-	 * identity from X509Certificate Object and/or certBytes
-	 * 
-	 * If you have both, include them.  If you only have one, leave the other null, and it will be generated if needed
-	 * 
-	 * The Request is there to obtain Header or Attribute info of ultimate user
-	 * 
-	 * @param req
-	 * @param cert
-	 * @param certBytes
-	 * @return
-	 * @throws CertificateException 
-	 */
-	public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert, byte[] certBytes) throws CertificateException;
+    /**
+     * identity from X509Certificate Object and/or certBytes
+     * 
+     * If you have both, include them.  If you only have one, leave the other null, and it will be generated if needed
+     * 
+     * The Request is there to obtain Header or Attribute info of ultimate user
+     * 
+     * @param req
+     * @param cert
+     * @param certBytes
+     * @return
+     * @throws CertificateException 
+     */
+    public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert, byte[] certBytes) throws CertificateException;
 }

@@ -34,58 +34,58 @@ import org.onap.aaf.cadi.principal.TrustPrincipal;
 
 public class JU_TrustPrincipal {
 
-	private final String ucName = "UserChain";
-	private final String uc = "This is a UserChain";
-	private final String taggedName = "TaggedPrincipal";
-	private final String tag = "tag";
-	private final String pName = "Principal";
+    private final String ucName = "UserChain";
+    private final String uc = "This is a UserChain";
+    private final String taggedName = "TaggedPrincipal";
+    private final String tag = "tag";
+    private final String pName = "Principal";
 
-	private class UserChainPrincipalStub implements Principal, UserChain {
-		@Override public String userChain() { return uc; }
-		@Override public String getName() { return ucName; }
-	}
+    private class UserChainPrincipalStub implements Principal, UserChain {
+        @Override public String userChain() { return uc; }
+        @Override public String getName() { return ucName; }
+    }
 
-	private class TaggedPrincipalStub extends TaggedPrincipal {
-		public TaggedPrincipalStub() { super(); }
-		@Override public String getName() { return taggedName; }
-		@Override public String tag() { return tag; }
-	}
+    private class TaggedPrincipalStub extends TaggedPrincipal {
+        public TaggedPrincipalStub() { super(); }
+        @Override public String getName() { return taggedName; }
+        @Override public String tag() { return tag; }
+    }
 
-	private class PrincipalStub implements Principal {
-		@Override public String getName() { return pName; }
-	}
+    private class PrincipalStub implements Principal {
+        @Override public String getName() { return pName; }
+    }
 
-	@Test
-	public void userChainConstructorTest() {
-		UserChainPrincipalStub ucps = new UserChainPrincipalStub();
-		TrustPrincipal tp = new TrustPrincipal(ucps, taggedName);
-		assertThat(tp.getName(), is(taggedName));
-		assertThat(tp.userChain(), is(uc));
-		assertSame(tp.original(), ucps);
-		assertThat(tp.tag(), is(uc));
-		assertThat(tp.personalName(), is(ucName + '[' + uc + ']'));
-	}
+    @Test
+    public void userChainConstructorTest() {
+        UserChainPrincipalStub ucps = new UserChainPrincipalStub();
+        TrustPrincipal tp = new TrustPrincipal(ucps, taggedName);
+        assertThat(tp.getName(), is(taggedName));
+        assertThat(tp.userChain(), is(uc));
+        assertSame(tp.original(), ucps);
+        assertThat(tp.tag(), is(uc));
+        assertThat(tp.personalName(), is(ucName + '[' + uc + ']'));
+    }
 
-	@Test
-	public void taggedPrincipalConstructorTest() {
-		TaggedPrincipal tagged = new TaggedPrincipalStub();
-		TrustPrincipal tp = new TrustPrincipal(tagged, taggedName);
-		assertThat(tp.getName(), is(taggedName));
-		assertThat(tp.userChain(), is(tag));
-		assertSame(tp.original(), tagged);
-		assertThat(tp.tag(), is(tag));
-		assertThat(tp.personalName(), is(taggedName + '[' + tag + ']'));
-	}
+    @Test
+    public void taggedPrincipalConstructorTest() {
+        TaggedPrincipal tagged = new TaggedPrincipalStub();
+        TrustPrincipal tp = new TrustPrincipal(tagged, taggedName);
+        assertThat(tp.getName(), is(taggedName));
+        assertThat(tp.userChain(), is(tag));
+        assertSame(tp.original(), tagged);
+        assertThat(tp.tag(), is(tag));
+        assertThat(tp.personalName(), is(taggedName + '[' + tag + ']'));
+    }
 
-	@Test
-	public void principalConstructorTest() {
-		Principal principal = new PrincipalStub();
-		TrustPrincipal tp = new TrustPrincipal(principal, pName);
-		assertThat(tp.getName(), is(pName));
-		assertThat(tp.userChain(), is(principal.getClass().getSimpleName()));
-		assertSame(tp.original(), principal);
-		assertThat(tp.tag(), is(principal.getClass().getSimpleName()));
-		assertThat(tp.personalName(), is(pName + '[' + principal.getClass().getSimpleName() + ']'));
-	}
+    @Test
+    public void principalConstructorTest() {
+        Principal principal = new PrincipalStub();
+        TrustPrincipal tp = new TrustPrincipal(principal, pName);
+        assertThat(tp.getName(), is(pName));
+        assertThat(tp.userChain(), is(principal.getClass().getSimpleName()));
+        assertSame(tp.original(), principal);
+        assertThat(tp.tag(), is(principal.getClass().getSimpleName()));
+        assertThat(tp.personalName(), is(pName + '[' + principal.getClass().getSimpleName() + ']'));
+    }
 
 }

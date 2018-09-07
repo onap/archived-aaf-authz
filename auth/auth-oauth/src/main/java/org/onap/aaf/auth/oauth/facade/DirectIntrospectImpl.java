@@ -29,29 +29,29 @@ import org.onap.aaf.auth.oauth.mapper.MapperIntrospect;
 import org.onap.aaf.auth.oauth.service.OAuthService;
 
 public class DirectIntrospectImpl<INTROSPECT> extends FacadeImpl implements DirectIntrospect<INTROSPECT> {
-	protected OAuthService service;
-	private MapperIntrospect<INTROSPECT> mapper;
+    protected OAuthService service;
+    private MapperIntrospect<INTROSPECT> mapper;
 
-	public DirectIntrospectImpl(OAuthService service, MapperIntrospect<INTROSPECT> mapper) {
-		this.service = service;
-		this.mapper = mapper;
-	}
+    public DirectIntrospectImpl(OAuthService service, MapperIntrospect<INTROSPECT> mapper) {
+        this.service = service;
+        this.mapper = mapper;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.oauth.facade.OAFacade#mappedIntrospect(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.String)
-	 */
-	@Override
-	public Result<INTROSPECT> mappedIntrospect(AuthzTrans trans, String token) {
-		Result<INTROSPECT> rti;
- 		Result<OAuthTokenDAO.Data> rs = service.introspect(trans,token);
-		if(rs.notOK()) {
-			rti = Result.err(rs);
-		} else if(rs.isEmpty()) {
-			rti = Result.err(Result.ERR_NotFound,"No Token %s found",token);
-		} else {
-			rti = mapper.introspect(rs);
-		}
-		return rti;
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.oauth.facade.OAFacade#mappedIntrospect(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.String)
+     */
+    @Override
+    public Result<INTROSPECT> mappedIntrospect(AuthzTrans trans, String token) {
+        Result<INTROSPECT> rti;
+         Result<OAuthTokenDAO.Data> rs = service.introspect(trans,token);
+        if(rs.notOK()) {
+            rti = Result.err(rs);
+        } else if(rs.isEmpty()) {
+            rti = Result.err(Result.ERR_NotFound,"No Token %s found",token);
+        } else {
+            rti = mapper.introspect(rs);
+        }
+        return rti;
+    }
 
 }

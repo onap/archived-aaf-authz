@@ -28,22 +28,22 @@ import org.onap.aaf.cadi.configure.CertException;
 
 public class JU_CertException {
 
-	private static final String message = "The message associated with the exception";
+    private static final String message = "The message associated with the exception";
 
-	@Test(expected = CertException.class)
-	public void test() throws CertException {
-		CertException except;
+    @Test(expected = CertException.class)
+    public void test() throws CertException {
+        CertException except;
 
-		except = new CertException(message);
-		assertThat(except.getMessage(), is(message));
+        except = new CertException(message);
+        assertThat(except.getMessage(), is(message));
 
-		except = new CertException(new Exception(message));
-		assertThat(except.getMessage(), is("java.lang.Exception: " + message));
+        except = new CertException(new Exception(message));
+        assertThat(except.getMessage(), is("java.lang.Exception: " + message));
 
-		except = new CertException(message, new Exception(message));
-		assertThat(except.getMessage(), is(message));
+        except = new CertException(message, new Exception(message));
+        assertThat(except.getMessage(), is(message));
 
-		throw new CertException();
-	}
+        throw new CertException();
+    }
 
 }

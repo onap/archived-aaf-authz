@@ -54,147 +54,147 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
 public class JU_JSONPermLoaderFactoryTest {
-	@Mock
-	private AAFCon<?> aafcon;
-	@Mock
-	private AuthzTrans trans;
-	@Mock
-	private TimeTaken tt;
-	@Mock
-	Rcli c;
-	@Mock
-	private Future fs;
-	@Mock
-	private Question question;
-	@Mock
-	private Result<NsSplit> rdns;
-	private NsSplit nss;
+    @Mock
+    private AAFCon<?> aafcon;
+    @Mock
+    private AuthzTrans trans;
+    @Mock
+    private TimeTaken tt;
+    @Mock
+    Rcli c;
+    @Mock
+    private Future fs;
+    @Mock
+    private Question question;
+    @Mock
+    private Result<NsSplit> rdns;
+    private NsSplit nss;
 
-	private Access access;
+    private Access access;
 
-	@Before
-	public void setup() throws CadiException {
-		access = new AuthzEnv();
-		Define.set(access);
-		initMocks(this);
-		nss = new NsSplit("APPLICATION", "APPLICATION");
-	}
+    @Before
+    public void setup() throws CadiException {
+        access = new AuthzEnv();
+        Define.set(access);
+        initMocks(this);
+        nss = new NsSplit("APPLICATION", "APPLICATION");
+    }
 
-	@Test
-	public void testRemoteWithTimeOut() throws APIException, CadiException {
-		when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
-		when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
-		when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
-				"application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
-		when(fs.get(0)).thenReturn(true);
+    @Test
+    public void testRemoteWithTimeOut() throws APIException, CadiException {
+        when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
+        when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
+        when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
+                "application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
+        when(fs.get(0)).thenReturn(true);
 
-		Set<String> scopes = new HashSet<String>();
-		scopes.add(Scope.APPLICATION.toString());
-		scopes.add(Scope.HANDLER.toString());
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(Scope.APPLICATION.toString());
+        scopes.add(Scope.HANDLER.toString());
 
-		JSONPermLoader factory = JSONPermLoaderFactory.remote(aafcon, 0);
+        JSONPermLoader factory = JSONPermLoaderFactory.remote(aafcon, 0);
 
-		Result<String> loadJSONPerms = factory.loadJSONPerms(trans, null, scopes);
+        Result<String> loadJSONPerms = factory.loadJSONPerms(trans, null, scopes);
 
-		assertEquals(0, loadJSONPerms.status);
+        assertEquals(0, loadJSONPerms.status);
 
-		verify(tt, only()).done();
-	}
+        verify(tt, only()).done();
+    }
 
-	@Test
-	public void testRemoteWith404() throws APIException, CadiException {
-		when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
-		when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
-		when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
-				"application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
-		when(fs.get(0)).thenReturn(false);
-		when(fs.code()).thenReturn(404);
+    @Test
+    public void testRemoteWith404() throws APIException, CadiException {
+        when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
+        when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
+        when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
+                "application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
+        when(fs.get(0)).thenReturn(false);
+        when(fs.code()).thenReturn(404);
 
-		Set<String> scopes = new HashSet<String>();
-		scopes.add(Scope.APPLICATION.toString());
-		scopes.add(Scope.HANDLER.toString());
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(Scope.APPLICATION.toString());
+        scopes.add(Scope.HANDLER.toString());
 
-		JSONPermLoader factory = JSONPermLoaderFactory.remote(aafcon, 0);
+        JSONPermLoader factory = JSONPermLoaderFactory.remote(aafcon, 0);
 
-		Result<String> loadJSONPerms = factory.loadJSONPerms(trans, null, scopes);
+        Result<String> loadJSONPerms = factory.loadJSONPerms(trans, null, scopes);
 
-		assertEquals(Result.ERR_NotFound, loadJSONPerms.status);
+        assertEquals(Result.ERR_NotFound, loadJSONPerms.status);
 
-		verify(tt, only()).done();
-	}
+        verify(tt, only()).done();
+    }
 
-	@Test
-	public void testRemote() throws APIException, CadiException {
-		when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
-		when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
-		when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
-				"application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
-		when(fs.get(0)).thenReturn(false);
+    @Test
+    public void testRemote() throws APIException, CadiException {
+        when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
+        when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
+        when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
+                "application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
+        when(fs.get(0)).thenReturn(false);
 
-		Set<String> scopes = new HashSet<String>();
-		scopes.add(Scope.APPLICATION.toString());
-		scopes.add(Scope.HANDLER.toString());
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(Scope.APPLICATION.toString());
+        scopes.add(Scope.HANDLER.toString());
 
-		JSONPermLoader factory = JSONPermLoaderFactory.remote(aafcon, 0);
+        JSONPermLoader factory = JSONPermLoaderFactory.remote(aafcon, 0);
 
-		Result<String> loadJSONPerms = factory.loadJSONPerms(trans, null, scopes);
+        Result<String> loadJSONPerms = factory.loadJSONPerms(trans, null, scopes);
 
-		assertEquals(Result.ERR_Backend, loadJSONPerms.status);
+        assertEquals(Result.ERR_Backend, loadJSONPerms.status);
 
-		verify(tt, only()).done();
-	}
+        verify(tt, only()).done();
+    }
 
-	@Test
-	public void testDirectWhenPdNotOk() throws APIException, CadiException {
+    @Test
+    public void testDirectWhenPdNotOk() throws APIException, CadiException {
 
-		Result<List<PermDAO.Data>> pd = Result.create(null, Result.ERR_Backend, "details", "vars");
+        Result<List<PermDAO.Data>> pd = Result.create(null, Result.ERR_Backend, "details", "vars");
 
-		when(question.getPermsByUser(trans, "user", false)).thenReturn(pd);
-		when(trans.start("Cached DB Perm lookup", Env.SUB)).thenReturn(tt);
+        when(question.getPermsByUser(trans, "user", false)).thenReturn(pd);
+        when(trans.start("Cached DB Perm lookup", Env.SUB)).thenReturn(tt);
 
-		Set<String> scopes = new HashSet<String>();
-		scopes.add(Scope.APPLICATION.toString());
-		scopes.add(Scope.HANDLER.toString());
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(Scope.APPLICATION.toString());
+        scopes.add(Scope.HANDLER.toString());
 
-		JSONPermLoader factory = JSONPermLoaderFactory.direct(question);
+        JSONPermLoader factory = JSONPermLoaderFactory.direct(question);
 
-		Result<String> loadJSONPerms = factory.loadJSONPerms(trans, "user", scopes);
+        Result<String> loadJSONPerms = factory.loadJSONPerms(trans, "user", scopes);
 
-		assertEquals(Result.ERR_Backend, loadJSONPerms.status);
+        assertEquals(Result.ERR_Backend, loadJSONPerms.status);
 
-		verify(tt, only()).done();
-	}
+        verify(tt, only()).done();
+    }
 
-	@Test
-	public void testDirectWhenPdOk() throws APIException, CadiException {
+    @Test
+    public void testDirectWhenPdOk() throws APIException, CadiException {
 
-		when(trans.start("Cached DB Perm lookup", Env.SUB)).thenReturn(tt);
-		when(question.deriveNsSplit(trans, "name")).thenReturn(rdns);
-		when(rdns.isOKhasData()).thenReturn(false);
+        when(trans.start("Cached DB Perm lookup", Env.SUB)).thenReturn(tt);
+        when(question.deriveNsSplit(trans, "name")).thenReturn(rdns);
+        when(rdns.isOKhasData()).thenReturn(false);
 
-		List<PermDAO.Data> list = new ArrayList<PermDAO.Data>();
-		list.add(new PermDAO.Data(nss, "instance", "action"));
-		list.add(new PermDAO.Data(nss, "instance", "action"));
+        List<PermDAO.Data> list = new ArrayList<PermDAO.Data>();
+        list.add(new PermDAO.Data(nss, "instance", "action"));
+        list.add(new PermDAO.Data(nss, "instance", "action"));
 
-		Result<List<PermDAO.Data>> pd = Result.create(list, Result.OK, "details", "vars");
+        Result<List<PermDAO.Data>> pd = Result.create(list, Result.OK, "details", "vars");
 
-		when(question.getPermsByUser(trans, "user", false)).thenReturn(pd);
+        when(question.getPermsByUser(trans, "user", false)).thenReturn(pd);
 
-		Set<String> scopes = new HashSet<String>();
-		scopes.add(Scope.APPLICATION.toString());
-		scopes.add(Scope.HANDLER.toString());
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(Scope.APPLICATION.toString());
+        scopes.add(Scope.HANDLER.toString());
 
-		JSONPermLoader factory = JSONPermLoaderFactory.direct(question);
+        JSONPermLoader factory = JSONPermLoaderFactory.direct(question);
 
-		Result<String> loadJSONPerms = factory.loadJSONPerms(trans, "user", scopes);
+        Result<String> loadJSONPerms = factory.loadJSONPerms(trans, "user", scopes);
 
-		assertEquals(Result.OK, loadJSONPerms.status);
-		assertEquals("Success", loadJSONPerms.details);
-		assertEquals(
-				"{\"perm\":[{\"ns\":\"APPLICATION\",\"type\":\"APPLICATION\",\"instance\":\"instance\",\"action\":\"action\"},{\"ns\":\"APPLICATION\",\"type\":\"APPLICATION\",\"instance\":\"instance\",\"action\":\"action\"}]}",
-				loadJSONPerms.value);
+        assertEquals(Result.OK, loadJSONPerms.status);
+        assertEquals("Success", loadJSONPerms.details);
+        assertEquals(
+                "{\"perm\":[{\"ns\":\"APPLICATION\",\"type\":\"APPLICATION\",\"instance\":\"instance\",\"action\":\"action\"},{\"ns\":\"APPLICATION\",\"type\":\"APPLICATION\",\"instance\":\"instance\",\"action\":\"action\"}]}",
+                loadJSONPerms.value);
 
-		verify(tt, only()).done();
-	}
+        verify(tt, only()).done();
+    }
 
 }

@@ -37,54 +37,54 @@ import org.onap.aaf.misc.xgen.Mark;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class BreadCrumbs extends NamedCode {
-	private Page[] breadcrumbs;
+    private Page[] breadcrumbs;
 
-	public BreadCrumbs(Page ... pages) {
-		super(false,"breadcrumbs");
-		breadcrumbs = pages;
-	}
-	
-	@Override
-	public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-		// BreadCrumbs
-		Mark mark = new Mark();
-		hgen.incr(mark, UL);
-			cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, TransStore>() {
-				@Override
-				public void code(AAF_GUI gui, TransStore trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-					HttpServletRequest req = trans.get(gui.slot_httpServletRequest, null);
-					StringBuilder key = new StringBuilder();
-					String value, hidden;
-					for(Page p : breadcrumbs) {
-						hidden="";
-						// Add keys for page from commandline, where possible.
-						if(p.fields().length>0) {
-							boolean first = true;
-							key.setLength(0);
-							for(String field : p.fields()) {
-								if((value=req.getParameter(field))==null) {
-									hidden="style=display:none;";
-									break;
-								}
-								if(first) {
-									first = false;
-									key.append('?');
-								} else {
-									key.append("&amp;");
-								}
-								key.append(field);
-								key.append('=');
-								key.append(value);
-							}
-							hgen.incr(LI,true,hidden);
-							hgen.leaf(A,"href="+p.url()+key.toString(),hidden).text(p.name()).end(2);
-						} else {
-							hgen.incr(LI,true);
-							hgen.leaf(A,"href="+p.url(),hidden).text(p.name()).end(2);
-						}
-					}
-				}
-			});
-		hgen.end(mark);
-	}
+    public BreadCrumbs(Page ... pages) {
+        super(false,"breadcrumbs");
+        breadcrumbs = pages;
+    }
+    
+    @Override
+    public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+        // BreadCrumbs
+        Mark mark = new Mark();
+        hgen.incr(mark, UL);
+            cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, TransStore>() {
+                @Override
+                public void code(AAF_GUI gui, TransStore trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                    HttpServletRequest req = trans.get(gui.slot_httpServletRequest, null);
+                    StringBuilder key = new StringBuilder();
+                    String value, hidden;
+                    for(Page p : breadcrumbs) {
+                        hidden="";
+                        // Add keys for page from commandline, where possible.
+                        if(p.fields().length>0) {
+                            boolean first = true;
+                            key.setLength(0);
+                            for(String field : p.fields()) {
+                                if((value=req.getParameter(field))==null) {
+                                    hidden="style=display:none;";
+                                    break;
+                                }
+                                if(first) {
+                                    first = false;
+                                    key.append('?');
+                                } else {
+                                    key.append("&amp;");
+                                }
+                                key.append(field);
+                                key.append('=');
+                                key.append(value);
+                            }
+                            hgen.incr(LI,true,hidden);
+                            hgen.leaf(A,"href="+p.url()+key.toString(),hidden).text(p.name()).end(2);
+                        } else {
+                            hgen.incr(LI,true);
+                            hgen.leaf(A,"href="+p.url(),hidden).text(p.name()).end(2);
+                        }
+                    }
+                }
+            });
+        hgen.end(mark);
+    }
 }

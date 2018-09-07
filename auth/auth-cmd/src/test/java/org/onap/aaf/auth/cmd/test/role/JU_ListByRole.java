@@ -40,42 +40,42 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListByRole {
-	
-	private static ListByRole lsByRole;
-	
-	@BeforeClass
-	public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		AAFcli cli = JU_AAFCli.getAAfCli();
-		Role role = new Role(cli);
-		List ls = new List(role);
-		lsByRole = new ListByRole(ls);
-	}
-	
-//	@Test
-//	public void exec() {
-//		try {
-//			assertEquals(lsByRole._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
-//		} catch (CadiException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (APIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-	@Test
-	public void detailedHelp() {
-		boolean hasNoError = true;
-		try {
-			lsByRole.detailedHelp(1, new StringBuilder("test"));
-		} catch (Exception e) {
-			hasNoError = false;
-		}
-		assertEquals(hasNoError, true);
-	}
-	
+    
+    private static ListByRole lsByRole;
+    
+    @BeforeClass
+    public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        AAFcli cli = JU_AAFCli.getAAfCli();
+        Role role = new Role(cli);
+        List ls = new List(role);
+        lsByRole = new ListByRole(ls);
+    }
+    
+//    @Test
+//    public void exec() {
+//        try {
+//            assertEquals(lsByRole._exec(0, "add","del","reset","extend","clear", "rename", "create"),500);
+//        } catch (CadiException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (APIException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (LocatorException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
+    
+    @Test
+    public void detailedHelp() {
+        boolean hasNoError = true;
+        try {
+            lsByRole.detailedHelp(1, new StringBuilder("test"));
+        } catch (Exception e) {
+            hasNoError = false;
+        }
+        assertEquals(hasNoError, true);
+    }
+    
 }

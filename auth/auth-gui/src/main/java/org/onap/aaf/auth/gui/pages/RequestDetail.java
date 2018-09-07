@@ -51,124 +51,124 @@ import aaf.v2_0.Approval;
 import aaf.v2_0.Approvals;
 
 public class RequestDetail extends Page {
-	public static final String HREF = "/gui/requestdetail";
-	public static final String NAME = "RequestDetail";
-	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	public static final String[] FIELDS = {"ticket"};
+    public static final String HREF = "/gui/requestdetail";
+    public static final String NAME = "RequestDetail";
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String[] FIELDS = {"ticket"};
 
-	public RequestDetail(final AAF_GUI gui, Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env, NAME, HREF, FIELDS,
-				new BreadCrumbs(breadcrumbs),
-				new Table<AAF_GUI,AuthzTrans>("Request Details",gui.env.newTransNoAvg(),new Model(gui.env),"class=detail")
-				);
-	}
+    public RequestDetail(final AAF_GUI gui, Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env, NAME, HREF, FIELDS,
+                new BreadCrumbs(breadcrumbs),
+                new Table<AAF_GUI,AuthzTrans>("Request Details",gui.env.newTransNoAvg(),new Model(gui.env),"class=detail")
+                );
+    }
 
-	/**
-	 * Implement the table content for Request Detail
-	 * 
-	 * @author Jeremiah
-	 *
-	 */
-	private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-		final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
-		private Slot sTicket;
-		public Model(AuthzEnv env) {
-			sTicket = env.slot(NAME+".ticket");
-		}
+    /**
+     * Implement the table content for Request Detail
+     * 
+     * @author Jeremiah
+     *
+     */
+    private static class Model extends TableData<AAF_GUI,AuthzTrans> {
+        final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
+        private Slot sTicket;
+        public Model(AuthzEnv env) {
+            sTicket = env.slot(NAME+".ticket");
+        }
 
-		@Override
-		public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
-			Cells rv=Cells.EMPTY;
-			final String ticket = trans.get(sTicket, null);
-			if(ticket!=null) {
-				try {
-					rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
-						@Override
-						public Cells code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-							TimeTaken tt = trans.start("AAF Approval Details",Env.REMOTE);
-							ArrayList<AbsCell[]> rv = new ArrayList<>();
-							try {
-								Future<Approvals> fa = client.read(
-									"/authz/approval/ticket/"+ticket, 
-									gui.getDF(Approvals.class)
-									);
-								
-								if(fa.get(AAF_GUI.TIMEOUT)) {
-									if (!trans.user().equals(fa.value.getApprovals().get(0).getUser())) {
-										return Cells.EMPTY;
-									}
-									tt.done();
-									tt = trans.start("Load Data", Env.SUB);
-									boolean first = true;
-									for ( Approval approval : fa.value.getApprovals()) {
-										AbsCell[] approverLine = new AbsCell[4];
-										// only print common elements once
-										if (first) {
-											DateFormat createdDF = new SimpleDateFormat(DATE_TIME_FORMAT);
-											UUID id = UUID.fromString(approval.getId());
-											
-											rv.add(new AbsCell[]{new TextCell("Ticket ID:"),new TextCell(approval.getTicket(),"colspan=3")});
-											rv.add(new AbsCell[]{new TextCell("Memo:"),new TextCell(approval.getMemo(),"colspan=3")});
-											rv.add(new AbsCell[]{new TextCell("Requested On:"), 
-													new TextCell(createdDF.format((id.timestamp() - NUM_100NS_INTERVALS_SINCE_UUID_EPOCH)/10000),"colspan=3")
-											});
-											rv.add(new AbsCell[]{new TextCell("Operation:"),new TextCell(decodeOp(approval.getOperation()),"colspan=3")});
-											String user = approval.getUser();
-											rv.add(new AbsCell[]{new TextCell("User:"),new TextCell(user,"colspan=3")});
-											
-											// headers for listing each approver
-											rv.add(new AbsCell[]{new TextCell(" ","colspan=4","class=blank_line")});
-											rv.add(new AbsCell[]{AbsCell.Null,
-													new TextCell("Approver","class=bold"), 
-													new TextCell("Type","class=bold"), 
-													new TextCell("Status","class=bold")});
-											approverLine[0] = new TextCell("Approvals:");
-											
-											first = false;
-										} else {
-										    approverLine[0] = AbsCell.Null;
-										}
-										
-										approverLine[1] = new TextCell(approval.getApprover());
-										String type = approval.getType();
-										if ("owner".equalsIgnoreCase(type)) {
-											type = "resource owner";
-										}
-										
-										approverLine[2] = new TextCell(type);
-										approverLine[3] = new TextCell(approval.getStatus());
-										rv.add(approverLine);
-									
-									}
-								} else {
-									rv.add(new AbsCell[] {new TextCell("*** Data Unavailable ***")});
-								}
-							} finally {
-								tt.done();
-							}
-							return new Cells(rv,null);
-						}
-					});
-				} catch (Exception e) {
-					trans.error().log(e);
-				}
-			}
-			return rv;
-		}
+        @Override
+        public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
+            Cells rv=Cells.EMPTY;
+            final String ticket = trans.get(sTicket, null);
+            if(ticket!=null) {
+                try {
+                    rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
+                        @Override
+                        public Cells code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                            TimeTaken tt = trans.start("AAF Approval Details",Env.REMOTE);
+                            ArrayList<AbsCell[]> rv = new ArrayList<>();
+                            try {
+                                Future<Approvals> fa = client.read(
+                                    "/authz/approval/ticket/"+ticket, 
+                                    gui.getDF(Approvals.class)
+                                    );
+                                
+                                if(fa.get(AAF_GUI.TIMEOUT)) {
+                                    if (!trans.user().equals(fa.value.getApprovals().get(0).getUser())) {
+                                        return Cells.EMPTY;
+                                    }
+                                    tt.done();
+                                    tt = trans.start("Load Data", Env.SUB);
+                                    boolean first = true;
+                                    for ( Approval approval : fa.value.getApprovals()) {
+                                        AbsCell[] approverLine = new AbsCell[4];
+                                        // only print common elements once
+                                        if (first) {
+                                            DateFormat createdDF = new SimpleDateFormat(DATE_TIME_FORMAT);
+                                            UUID id = UUID.fromString(approval.getId());
+                                            
+                                            rv.add(new AbsCell[]{new TextCell("Ticket ID:"),new TextCell(approval.getTicket(),"colspan=3")});
+                                            rv.add(new AbsCell[]{new TextCell("Memo:"),new TextCell(approval.getMemo(),"colspan=3")});
+                                            rv.add(new AbsCell[]{new TextCell("Requested On:"), 
+                                                    new TextCell(createdDF.format((id.timestamp() - NUM_100NS_INTERVALS_SINCE_UUID_EPOCH)/10000),"colspan=3")
+                                            });
+                                            rv.add(new AbsCell[]{new TextCell("Operation:"),new TextCell(decodeOp(approval.getOperation()),"colspan=3")});
+                                            String user = approval.getUser();
+                                            rv.add(new AbsCell[]{new TextCell("User:"),new TextCell(user,"colspan=3")});
+                                            
+                                            // headers for listing each approver
+                                            rv.add(new AbsCell[]{new TextCell(" ","colspan=4","class=blank_line")});
+                                            rv.add(new AbsCell[]{AbsCell.Null,
+                                                    new TextCell("Approver","class=bold"), 
+                                                    new TextCell("Type","class=bold"), 
+                                                    new TextCell("Status","class=bold")});
+                                            approverLine[0] = new TextCell("Approvals:");
+                                            
+                                            first = false;
+                                        } else {
+                                            approverLine[0] = AbsCell.Null;
+                                        }
+                                        
+                                        approverLine[1] = new TextCell(approval.getApprover());
+                                        String type = approval.getType();
+                                        if ("owner".equalsIgnoreCase(type)) {
+                                            type = "resource owner";
+                                        }
+                                        
+                                        approverLine[2] = new TextCell(type);
+                                        approverLine[3] = new TextCell(approval.getStatus());
+                                        rv.add(approverLine);
+                                    
+                                    }
+                                } else {
+                                    rv.add(new AbsCell[] {new TextCell("*** Data Unavailable ***")});
+                                }
+                            } finally {
+                                tt.done();
+                            }
+                            return new Cells(rv,null);
+                        }
+                    });
+                } catch (Exception e) {
+                    trans.error().log(e);
+                }
+            }
+            return rv;
+        }
 
-		private String decodeOp(String operation) {
-			if ("C".equalsIgnoreCase(operation)) {
-				return "Create";
-			} else if ("D".equalsIgnoreCase(operation)) {
-				return "Delete";
-			} else if ("U".equalsIgnoreCase(operation)) {
-				return "Update";
-			} else if ("G".equalsIgnoreCase(operation)) {
-				return "Grant";
-			} else if ("UG".equalsIgnoreCase(operation)) {
-				return "Un-Grant";
-			}
-			return operation;
-		}
-	}
+        private String decodeOp(String operation) {
+            if ("C".equalsIgnoreCase(operation)) {
+                return "Create";
+            } else if ("D".equalsIgnoreCase(operation)) {
+                return "Delete";
+            } else if ("U".equalsIgnoreCase(operation)) {
+                return "Update";
+            } else if ("G".equalsIgnoreCase(operation)) {
+                return "Grant";
+            } else if ("UG".equalsIgnoreCase(operation)) {
+                return "Un-Grant";
+            }
+            return operation;
+        }
+    }
 }

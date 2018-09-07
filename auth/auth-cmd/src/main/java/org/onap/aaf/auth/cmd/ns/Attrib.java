@@ -33,83 +33,83 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 
 public class Attrib extends BaseCmd<NS> {
-	private final static String[] options = {"add","upd","del"};
+    private final static String[] options = {"add","upd","del"};
 
-	public Attrib(NS ns) throws APIException {
-		super(ns,"attrib",
-				new Param(optionsToString(options),true),
-				new Param("ns-name",true),
-				new Param("key",true),
-				new Param("value",false)
-		);
-	}
+    public Attrib(NS ns) throws APIException {
+        super(ns,"attrib",
+                new Param(optionsToString(options),true),
+                new Param("ns-name",true),
+                new Param("key",true),
+                new Param("value",false)
+        );
+    }
 
-	@Override
-	public int _exec(final int idx, final String ... args) throws CadiException, APIException, LocatorException {
-		final int option = whichOption(options, args[idx]);
-		final String ns = args[idx+1];
-		final String key = args[idx+2];
-		final String value;
-		if(option!=2) {
-			if(args.length<=idx+3) {
-				throw new CadiException("Not added: Need more Data");
-			}
-			value = args[idx+3];
-		} else {
-			value = "";
-		}
-		
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {	
-				Future<Void> fp = null;
-				String message;
-				switch(option) {
-					case 0: 
-						fp = client.create("/authz/ns/"+ns+"/attrib/"+key+'/'+value,Void.class);
-						message = String.format("Add Attrib %s=%s to %s",
-								key,value,ns);
-						break;
-					case 1: 
-						fp = client.update("/authz/ns/"+ns+"/attrib/"+key+'/'+value);
-						message = String.format("Update Attrib %s=%s for %s",
-								key,value,ns);
-						break;
-					case 2: 
-						fp = client.delete("/authz/ns/"+ns+"/attrib/"+key,Void.class);
-						message = String.format("Attrib %s deleted from %s",
-								key,ns);
-						break;
-					default:
-						throw new CadiException("Bad Argument");
-				};
-				if(fp==null) {
-					return 500;
-				} else {
-					if(fp.get(AAFcli.timeout())) {
-						pw().println(message);
-					} else {
-						error(fp);
-					}
-						
-					return fp.code(); 
-				}
-			}
-		});
-	}
+    @Override
+    public int _exec(final int idx, final String ... args) throws CadiException, APIException, LocatorException {
+        final int option = whichOption(options, args[idx]);
+        final String ns = args[idx+1];
+        final String key = args[idx+2];
+        final String value;
+        if(option!=2) {
+            if(args.length<=idx+3) {
+                throw new CadiException("Not added: Need more Data");
+            }
+            value = args[idx+3];
+        } else {
+            value = "";
+        }
+        
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {    
+                Future<Void> fp = null;
+                String message;
+                switch(option) {
+                    case 0: 
+                        fp = client.create("/authz/ns/"+ns+"/attrib/"+key+'/'+value,Void.class);
+                        message = String.format("Add Attrib %s=%s to %s",
+                                key,value,ns);
+                        break;
+                    case 1: 
+                        fp = client.update("/authz/ns/"+ns+"/attrib/"+key+'/'+value);
+                        message = String.format("Update Attrib %s=%s for %s",
+                                key,value,ns);
+                        break;
+                    case 2: 
+                        fp = client.delete("/authz/ns/"+ns+"/attrib/"+key,Void.class);
+                        message = String.format("Attrib %s deleted from %s",
+                                key,ns);
+                        break;
+                    default:
+                        throw new CadiException("Bad Argument");
+                };
+                if(fp==null) {
+                    return 500;
+                } else {
+                    if(fp.get(AAFcli.timeout())) {
+                        pw().println(message);
+                    } else {
+                        error(fp);
+                    }
+                        
+                    return fp.code(); 
+                }
+            }
+        });
+    }
 
-	@Override
-	public void detailedHelp(int _indent, StringBuilder sb) {
-	    	int indent = _indent;
-		detailLine(sb,indent,"Add or Delete Administrator to/from Namespace");
-		indent+=4;
-		detailLine(sb,indent,"name - Name of Namespace");
-		detailLine(sb,indent,"id   - Credential of Person(s) to be Administrator");
-		sb.append('\n');
-		detailLine(sb,indent,"aafcli will call API on each ID presented.");
-		indent-=4;
-		api(sb,indent,HttpMethods.POST,"authz/ns/<ns>/admin/<id>",Void.class,true);
-		api(sb,indent,HttpMethods.DELETE,"authz/ns/<ns>/admin/<id>",Void.class,false);
-	}
+    @Override
+    public void detailedHelp(int _indent, StringBuilder sb) {
+            int indent = _indent;
+        detailLine(sb,indent,"Add or Delete Administrator to/from Namespace");
+        indent+=4;
+        detailLine(sb,indent,"name - Name of Namespace");
+        detailLine(sb,indent,"id   - Credential of Person(s) to be Administrator");
+        sb.append('\n');
+        detailLine(sb,indent,"aafcli will call API on each ID presented.");
+        indent-=4;
+        api(sb,indent,HttpMethods.POST,"authz/ns/<ns>/admin/<id>",Void.class,true);
+        api(sb,indent,HttpMethods.DELETE,"authz/ns/<ns>/admin/<id>",Void.class,false);
+    }
 
 }

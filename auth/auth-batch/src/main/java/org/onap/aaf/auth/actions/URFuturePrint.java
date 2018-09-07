@@ -28,14 +28,14 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 
 public class URFuturePrint implements  Action<UserRole,String,String> {
-	private String info;
+    private String info;
 
-	public URFuturePrint(String text) {
-		this.info = text;
-	}
+    public URFuturePrint(String text) {
+        this.info = text;
+    }
 
-	@Override
-	public Result<String> exec(AuthzTrans trans, UserRole ur, String text) {
-		trans.info().log(info,text,ur.user(),"to",ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
-		return Result.ok(info);
-	}}
+    @Override
+    public Result<String> exec(AuthzTrans trans, UserRole ur, String text) {
+        trans.info().log(info,text,ur.user(),"to",ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
+        return Result.ok(info);
+    }}

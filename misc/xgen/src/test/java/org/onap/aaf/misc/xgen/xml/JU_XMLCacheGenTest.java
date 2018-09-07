@@ -34,30 +34,30 @@ import org.onap.aaf.misc.xgen.Code;
 
 public class JU_XMLCacheGenTest {
 
-	@Mock
-	Writer writer;
+    @Mock
+    Writer writer;
 
-	@Mock
-	Code code;
+    @Mock
+    Code code;
 
-	@Before
-	public void setup() {
+    @Before
+    public void setup() {
 
-		code = mock(Code.class);
-		writer = mock(Writer.class);
-	}
+        code = mock(Code.class);
+        writer = mock(Writer.class);
+    }
 
-	@Test
-	public void test() throws APIException, IOException {
-		XMLCacheGen cacheGen = new XMLCacheGen(0, code);
-		assertEquals(cacheGen.PRETTY, 1);
+    @Test
+    public void test() throws APIException, IOException {
+        XMLCacheGen cacheGen = new XMLCacheGen(0, code);
+        assertEquals(cacheGen.PRETTY, 1);
 
-		XMLGen xgen = cacheGen.create(1, writer);
-		assertEquals(0, xgen.getIndent());
+        XMLGen xgen = cacheGen.create(1, writer);
+        assertEquals(0, xgen.getIndent());
 
-		xgen.setIndent(10);
-		assertEquals(10, xgen.getIndent());
-		xgen.comment("Comment");
-	}
+        xgen.setIndent(10);
+        assertEquals(10, xgen.getIndent());
+        xgen.comment("Comment");
+    }
 
 }

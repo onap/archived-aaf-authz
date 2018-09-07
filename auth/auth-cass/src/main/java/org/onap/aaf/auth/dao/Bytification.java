@@ -25,6 +25,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public interface Bytification {
-	public ByteBuffer bytify() throws IOException;
-	public void reconstitute(ByteBuffer bb) throws IOException;
+    public ByteBuffer bytify() throws IOException;
+    public void reconstitute(ByteBuffer bb) throws IOException;
 }

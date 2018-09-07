@@ -27,17 +27,17 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class TextAndRefCell extends RefCell {
 
-	private String text;
-		
-	public TextAndRefCell(String text, String name, String href, boolean newWindow, String[] attributes) {
-		super(name, href, newWindow, attributes);
-		this.text = text;
-	}
+    private String text;
+        
+    public TextAndRefCell(String text, String name, String href, boolean newWindow, String[] attributes) {
+        super(name, href, newWindow, attributes);
+        this.text = text;
+    }
 
-	@Override
-	public void write(HTMLGen hgen) {
-		hgen.text(text);
-		hgen.leaf(A,str).text(name);
-	}
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.text(text);
+        hgen.leaf(A,str).text(name);
+    }
 
 }

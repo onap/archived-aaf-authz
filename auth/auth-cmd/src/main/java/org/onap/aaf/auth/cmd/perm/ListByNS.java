@@ -39,33 +39,33 @@ import aaf.v2_0.Perms;
  *
  */
 public class ListByNS extends Cmd {
-	private static final String HEADER = "List Perms by NS ";
-	
-	public ListByNS(List parent) {
-		super(parent,"ns", 
-				new Param("name",true)); 
-	}
+    private static final String HEADER = "List Perms by NS ";
+    
+    public ListByNS(List parent) {
+        super(parent,"ns", 
+                new Param("name",true)); 
+    }
 
-	public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
-		final String ns=args[idx];
+    public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
+        final String ns=args[idx];
 
-		return same(((List)parent).new ListPerms() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				Future<Perms> fp = client.read(
-						"/authz/perms/ns/"+ns+(aafcli.isDetailed()?"?ns":""), 
-						getDF(Perms.class)
-						);
-				return list(fp, HEADER, ns);
-			}
-		});
-	}
-	
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/perms/ns/<ns>",Perms.class,true);
-	}
+        return same(((List)parent).new ListPerms() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                Future<Perms> fp = client.read(
+                        "/authz/perms/ns/"+ns+(aafcli.isDetailed()?"?ns":""), 
+                        getDF(Perms.class)
+                        );
+                return list(fp, HEADER, ns);
+            }
+        });
+    }
+    
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/perms/ns/<ns>",Perms.class,true);
+    }
 
 
 }

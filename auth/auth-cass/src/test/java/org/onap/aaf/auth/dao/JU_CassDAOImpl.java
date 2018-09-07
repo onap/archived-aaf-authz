@@ -64,33 +64,33 @@ AuthzTrans authzTransMock;
 
 
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Before
-	public void setUp()
-	{
-		String name = "name";
-		String keySpace = "keySpace";
-		String table = "table";
-		cassDAOImpl = new CassDAOImpl(transStoreMock, name, clusterMock, keySpace, classDataMock, table, consistencyLevelMock, consistencyLevelMock);
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Before
+    public void setUp()
+    {
+        String name = "name";
+        String keySpace = "keySpace";
+        String table = "table";
+        cassDAOImpl = new CassDAOImpl(transStoreMock, name, clusterMock, keySpace, classDataMock, table, consistencyLevelMock, consistencyLevelMock);
+    }
 
-	//TODO: Gabe [JUnit] Visibility issue
-	@Test 
-	public void testReadConsistency() {
-		String table = "users";
-		PowerMockito.when(authzTransMock.getProperty(CASS_READ_CONSISTENCY+'.'+table)).thenReturn("TWO");
-		ConsistencyLevel consistencyLevel = cassDAOImpl.readConsistency(authzTransMock, table);
-		System.out.println("Consistency level" + consistencyLevel.name());
-		assertEquals("TWO", consistencyLevel.name());
-	}
-	
-	@Test 
-	public void testWriteConsistency() {
-		String table = "users";
-		PowerMockito.when(authzTransMock.getProperty(CASS_WRITE_CONSISTENCY+'.'+table)).thenReturn(null);
-		ConsistencyLevel consistencyLevel = cassDAOImpl.writeConsistency(authzTransMock, table);
-		System.out.println("Consistency level" + consistencyLevel.name());
-		assertEquals("ONE", consistencyLevel.name());
-	}
-	
+    //TODO: Gabe [JUnit] Visibility issue
+    @Test 
+    public void testReadConsistency() {
+        String table = "users";
+        PowerMockito.when(authzTransMock.getProperty(CASS_READ_CONSISTENCY+'.'+table)).thenReturn("TWO");
+        ConsistencyLevel consistencyLevel = cassDAOImpl.readConsistency(authzTransMock, table);
+        System.out.println("Consistency level" + consistencyLevel.name());
+        assertEquals("TWO", consistencyLevel.name());
+    }
+    
+    @Test 
+    public void testWriteConsistency() {
+        String table = "users";
+        PowerMockito.when(authzTransMock.getProperty(CASS_WRITE_CONSISTENCY+'.'+table)).thenReturn(null);
+        ConsistencyLevel consistencyLevel = cassDAOImpl.writeConsistency(authzTransMock, table);
+        System.out.println("Consistency level" + consistencyLevel.name());
+        assertEquals("ONE", consistencyLevel.name());
+    }
+    
 }

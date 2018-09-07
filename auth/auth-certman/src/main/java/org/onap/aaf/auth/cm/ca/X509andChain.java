@@ -37,44 +37,44 @@ import org.onap.aaf.cadi.configure.Factory;
  *
  */
 public class X509andChain {
-	protected X509Certificate cert;
-	protected String[] trustChain;
-	
-	public X509andChain() {
-		cert = null;
-		trustChain = null;
-	}
-	
-	public X509andChain(X509Certificate cert, String[] tc) throws IOException, CertException {
-		this.cert = cert;
-		trustChain=tc;
-	}
+    protected X509Certificate cert;
+    protected String[] trustChain;
+    
+    public X509andChain() {
+        cert = null;
+        trustChain = null;
+    }
+    
+    public X509andChain(X509Certificate cert, String[] tc) throws IOException, CertException {
+        this.cert = cert;
+        trustChain=tc;
+    }
 
-	public X509andChain(X509Certificate cert, List<String> chain) throws IOException, CertException {
-		this.cert = cert;
-		trustChain = new String[chain.size()+1];
-		chain.toArray(trustChain);
-	}
-	
-	
-	public void addTrustChainEntry(X509Certificate x509) throws IOException, CertException {
-		if(trustChain==null) {
-			trustChain = new String[] {Factory.toString(NullTrans.singleton(),x509)};
-		} else {
-			String[] temp = new String[trustChain.length+1];
-			System.arraycopy(trustChain, 0, temp, 0, trustChain.length);
-			temp[trustChain.length]=Factory.toString(NullTrans.singleton(),x509);
-			trustChain=temp;
-		}
-	}
-	
+    public X509andChain(X509Certificate cert, List<String> chain) throws IOException, CertException {
+        this.cert = cert;
+        trustChain = new String[chain.size()+1];
+        chain.toArray(trustChain);
+    }
+    
+    
+    public void addTrustChainEntry(X509Certificate x509) throws IOException, CertException {
+        if(trustChain==null) {
+            trustChain = new String[] {Factory.toString(NullTrans.singleton(),x509)};
+        } else {
+            String[] temp = new String[trustChain.length+1];
+            System.arraycopy(trustChain, 0, temp, 0, trustChain.length);
+            temp[trustChain.length]=Factory.toString(NullTrans.singleton(),x509);
+            trustChain=temp;
+        }
+    }
+    
 
-	public X509Certificate getX509() {
-		return cert;
-	}
-	
-	public String[] getTrustChain() {
-		return trustChain;
-	}
-	
+    public X509Certificate getX509() {
+        return cert;
+    }
+    
+    public String[] getTrustChain() {
+        return trustChain;
+    }
+    
 }

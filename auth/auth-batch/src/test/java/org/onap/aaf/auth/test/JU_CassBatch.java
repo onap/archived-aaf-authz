@@ -39,29 +39,29 @@ import java.io.IOException;
 import org.junit.Test;
 
 public class JU_CassBatch {
-	
-	AuthzTrans aTrans;
-	
-	private class CassBatchStub extends CassBatch {
+    
+    AuthzTrans aTrans;
+    
+    private class CassBatchStub extends CassBatch {
 
-		protected CassBatchStub(AuthzTrans trans, String log4jName)
-				throws APIException, IOException, OrganizationException {
-			super(trans, log4jName);
-			// TODO Auto-generated constructor stub
-		}
+        protected CassBatchStub(AuthzTrans trans, String log4jName)
+                throws APIException, IOException, OrganizationException {
+            super(trans, log4jName);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		protected void run(AuthzTrans trans) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	
-	@Before
-	public void setUp() throws APIException, IOException, OrganizationException {
-		aTrans = mock(AuthzTrans.class);
-		//CassBatchStub cassBatchStub = new CassBatchStub(aTrans,"log");		//Cannot do until Batch is understood
-	}
+        @Override
+        protected void run(AuthzTrans trans) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+    }
+    
+    @Before
+    public void setUp() throws APIException, IOException, OrganizationException {
+        aTrans = mock(AuthzTrans.class);
+        //CassBatchStub cassBatchStub = new CassBatchStub(aTrans,"log");        //Cannot do until Batch is understood
+    }
 
 }

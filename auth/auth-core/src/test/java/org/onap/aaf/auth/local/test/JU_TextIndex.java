@@ -56,88 +56,88 @@ import org.onap.aaf.misc.env.Trans;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_TextIndex {
-	TextIndex textIndex;
-	Iter iter;
-	Trans trans;
-	DataFile datafile;
-	@Mock
-	File file;
-	
-	private class AbsDataStub extends AbsData {
+    TextIndex textIndex;
+    Iter iter;
+    Trans trans;
+    DataFile datafile;
+    @Mock
+    File file;
+    
+    private class AbsDataStub extends AbsData {
 
-		
-		public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
-			super(dataf, sepChar, maxLineSize, fieldOffset);
-			// TODO Auto-generated constructor stub
-			
-		}
-		
-	}
-	
-	@Before
-	public void setUp() throws IOException{	
-		char character = 'x';
-		String filePath = "test/output_key";
-		File keyfile = new File(filePath);
-		FileOutputStream is = new FileOutputStream(keyfile);
+        
+        public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
+            super(dataf, sepChar, maxLineSize, fieldOffset);
+            // TODO Auto-generated constructor stub
+            
+        }
+        
+    }
+    
+    @Before
+    public void setUp() throws IOException{    
+        char character = 'x';
+        String filePath = "test/output_key";
+        File keyfile = new File(filePath);
+        FileOutputStream is = new FileOutputStream(keyfile);
         OutputStreamWriter osw = new OutputStreamWriter(is);
         BufferedWriter  w = new BufferedWriter(osw);
-        for(int i = 0; i< 10; i++) {		//Write lines to file
-        	w.write("a\nsdfasdfxasdf" + i + "\n");
+        for(int i = 0; i< 10; i++) {        //Write lines to file
+            w.write("a\nsdfasdfxasdf" + i + "\n");
         }
         w.close();
         
-		datafile = new DataFile(keyfile, "r");
-		datafile.open();
-		datafile = new DataFile(keyfile, "rws");// "S" for synchronized
-		datafile.open();
-		
-		trans = mock(Trans.class);
-		TimeTaken ttMock = mock(TimeTaken.class);
-		TimeTaken ttMock1 = mock(TimeTaken.class);
-		when(trans.start("Open Files", Env.SUB)).thenReturn(ttMock);
-		when(trans.start("Read", Env.SUB)).thenReturn(ttMock);
-		textIndex = new TextIndex(keyfile);	
-		textIndex.close();
-		textIndex.open();
-		//textIndex.create(trans, datafile, 4, character, 2, 0);	//TODO: AAF-111 once actual input is aquired
-		keyfile.delete();
-		
-		iter = textIndex.new Iter();
-	}
-	
-	@Test
-	public void testClose() throws IOException {
-		textIndex.close();
-	}
-	
-	@Test
-	public void testFind() throws IOException {
-		char character = 'x';
-		String filePath = "test/output_.key";
-		File keyfile = new File(filePath);
-		AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
-		Reuse reuse = ads.reuse();
-		textIndex.find("a", reuse , 0);
-	}
-	
-	@Test
-	public void testIterNext() {
-		iter.next();
-		iter.hasNext();
-	}
-	
-	@Test
-	public void testIdx() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		TextIndex outerObject = new TextIndex(file);
+        datafile = new DataFile(keyfile, "r");
+        datafile.open();
+        datafile = new DataFile(keyfile, "rws");// "S" for synchronized
+        datafile.open();
+        
+        trans = mock(Trans.class);
+        TimeTaken ttMock = mock(TimeTaken.class);
+        TimeTaken ttMock1 = mock(TimeTaken.class);
+        when(trans.start("Open Files", Env.SUB)).thenReturn(ttMock);
+        when(trans.start("Read", Env.SUB)).thenReturn(ttMock);
+        textIndex = new TextIndex(keyfile);    
+        textIndex.close();
+        textIndex.open();
+        //textIndex.create(trans, datafile, 4, character, 2, 0);    //TODO: AAF-111 once actual input is aquired
+        keyfile.delete();
+        
+        iter = textIndex.new Iter();
+    }
+    
+    @Test
+    public void testClose() throws IOException {
+        textIndex.close();
+    }
+    
+    @Test
+    public void testFind() throws IOException {
+        char character = 'x';
+        String filePath = "test/output_.key";
+        File keyfile = new File(filePath);
+        AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
+        Reuse reuse = ads.reuse();
+        textIndex.find("a", reuse , 0);
+    }
+    
+    @Test
+    public void testIterNext() {
+        iter.next();
+        iter.hasNext();
+    }
+    
+    @Test
+    public void testIdx() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        TextIndex outerObject = new TextIndex(file);
         Class<?> idxClass = TextIndex.class.getDeclaredClasses()[0];
         Constructor<?> idxConstructor = idxClass.getDeclaredConstructors()[0];
         Class[] cArg = new Class[2];
-		cArg[0] = Object.class;
-		cArg[1] = Integer.class;
+        cArg[0] = Object.class;
+        cArg[1] = Integer.class;
         idxConstructor.setAccessible(true);
         //Object innerObject = idxConstructor.newInstance(outerObject,cArg);
-        //idxConstructor.hashCode();											//TODO: AAF-111 access inner private class
-	}
+        //idxConstructor.hashCode();                                            //TODO: AAF-111 access inner private class
+    }
 
 }

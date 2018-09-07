@@ -29,25 +29,25 @@ import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;
 
 public class PlaceArtifactOnStream implements PlaceArtifact {
-	private PrintStream out;
+    private PrintStream out;
 
-	public PlaceArtifactOnStream(PrintStream printStream) {
-		out = printStream;
-	}
+    public PlaceArtifactOnStream(PrintStream printStream) {
+        out = printStream;
+    }
 
-	@Override
-	public boolean place(Trans trans, CertInfo capi, Artifact a, String machine) {
-		String lineSeparator = System.lineSeparator();
+    @Override
+    public boolean place(Trans trans, CertInfo capi, Artifact a, String machine) {
+        String lineSeparator = System.lineSeparator();
 
-		if(capi.getNotes()!=null && capi.getNotes().length()>0) {
-			trans.info().printf("Warning:    %s" + lineSeparator, capi.getNotes());
-		}
-		out.printf("Challenge:  %s" + lineSeparator, capi.getChallenge());
-		out.printf("PrivateKey:" + lineSeparator + "%s" + lineSeparator, capi.getPrivatekey());
-		out.println("Certificate Chain:");
-		for(String c : capi.getCerts()) {
-			out.println(c);
-		}
-		return true;
-	}
+        if(capi.getNotes()!=null && capi.getNotes().length()>0) {
+            trans.info().printf("Warning:    %s" + lineSeparator, capi.getNotes());
+        }
+        out.printf("Challenge:  %s" + lineSeparator, capi.getChallenge());
+        out.printf("PrivateKey:" + lineSeparator + "%s" + lineSeparator, capi.getPrivatekey());
+        out.println("Certificate Chain:");
+        for(String c : capi.getCerts()) {
+            out.println(c);
+        }
+        return true;
+    }
 }

@@ -37,39 +37,39 @@ import org.onap.aaf.cadi.util.Chmod;
 
 public class JU_Chmod {
 
-	private File file;
-	private String filePath;
+    private File file;
+    private String filePath;
 
-	@Before
-	public void setup() throws IOException {
-		file = File.createTempFile("chmod_test", "");
-		filePath = file.getAbsolutePath();
-	}
+    @Before
+    public void setup() throws IOException {
+        file = File.createTempFile("chmod_test", "");
+        filePath = file.getAbsolutePath();
+    }
 
-	@After
-	public void tearDown() {
-		file.delete();
-	}
+    @After
+    public void tearDown() {
+        file.delete();
+    }
 
-	@Test
-	public void to755Test() throws IOException {
-		Chmod.to755.chmod(file);
-		Set<PosixFilePermission> set = Files.getPosixFilePermissions(Paths.get(filePath));
-		assertThat(PosixFilePermissions.toString(set), is("rwxr-xr-x"));
-	}
+    @Test
+    public void to755Test() throws IOException {
+        Chmod.to755.chmod(file);
+        Set<PosixFilePermission> set = Files.getPosixFilePermissions(Paths.get(filePath));
+        assertThat(PosixFilePermissions.toString(set), is("rwxr-xr-x"));
+    }
 
-	@Test
-	public void to644Test() throws IOException {
-		Chmod.to644.chmod(file);
-		Set<PosixFilePermission> set = Files.getPosixFilePermissions(Paths.get(filePath));
-		assertThat(PosixFilePermissions.toString(set), is("rw-r--r--"));
-	}
+    @Test
+    public void to644Test() throws IOException {
+        Chmod.to644.chmod(file);
+        Set<PosixFilePermission> set = Files.getPosixFilePermissions(Paths.get(filePath));
+        assertThat(PosixFilePermissions.toString(set), is("rw-r--r--"));
+    }
 
-	@Test
-	public void to400Test() throws IOException {
-		Chmod.to400.chmod(file);
-		Set<PosixFilePermission> set = Files.getPosixFilePermissions(Paths.get(filePath));
-		assertThat(PosixFilePermissions.toString(set), is("r--------"));
-	}
+    @Test
+    public void to400Test() throws IOException {
+        Chmod.to400.chmod(file);
+        Set<PosixFilePermission> set = Files.getPosixFilePermissions(Paths.get(filePath));
+        assertThat(PosixFilePermissions.toString(set), is("r--------"));
+    }
 
 }

@@ -36,58 +36,58 @@ import org.onap.aaf.cadi.util.JsonOutputStream;
 
 public class JU_JsonOutputStream {
 
-	private JsonOutputStream jos;
+    private JsonOutputStream jos;
 
-	@Before
-	public void setup() {
-		jos = new JsonOutputStream(new ByteArrayOutputStream());
-	}
+    @Before
+    public void setup() {
+        jos = new JsonOutputStream(new ByteArrayOutputStream());
+    }
 
-	@Test
-	public void constructorTest() {
-		jos = new JsonOutputStream(System.out);
-		jos = new JsonOutputStream(System.err);
-	}
+    @Test
+    public void constructorTest() {
+        jos = new JsonOutputStream(System.out);
+        jos = new JsonOutputStream(System.err);
+    }
 
-	@Test
-	public void writeTest() throws IOException {
-		byte[] json = ("{" +
-				         "name: user," +
-				         "password: pass," +
-				         "contact: {" +
-				           "email: user@att.com," +
-				           "phone: 555-5555" +
-				         "}," +
-					     "list: [" +
-					       "item1," +
-					       "item2" +
-					     "],[],{}," +
-					     "list:" +
-					     "[" +
-					       "item1," +
-					       "item2" +
-					     "]" +
-				       "}").getBytes();
-		jos.write(json);
-	}
+    @Test
+    public void writeTest() throws IOException {
+        byte[] json = ("{" +
+                         "name: user," +
+                         "password: pass," +
+                         "contact: {" +
+                           "email: user@att.com," +
+                           "phone: 555-5555" +
+                         "}," +
+                         "list: [" +
+                           "item1," +
+                           "item2" +
+                         "],[],{}," +
+                         "list:" +
+                         "[" +
+                           "item1," +
+                           "item2" +
+                         "]" +
+                       "}").getBytes();
+        jos.write(json);
+    }
 
-	@Test
-	public void resetIndentTest() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		Field indentField = JsonOutputStream.class.getDeclaredField("indent");
-		indentField.setAccessible(true);
+    @Test
+    public void resetIndentTest() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        Field indentField = JsonOutputStream.class.getDeclaredField("indent");
+        indentField.setAccessible(true);
 
-		assertThat((int)indentField.get(jos), is(0));
-		jos.resetIndent();
-		assertThat((int)indentField.get(jos), is(1));
-	}
+        assertThat((int)indentField.get(jos), is(0));
+        jos.resetIndent();
+        assertThat((int)indentField.get(jos), is(1));
+    }
 
-	@Test
-	public void coverageTest() throws IOException {
-		jos.flush();
-		jos.close();
+    @Test
+    public void coverageTest() throws IOException {
+        jos.flush();
+        jos.close();
 
-		jos = new JsonOutputStream(System.out);
-		jos.close();
-	}
+        jos = new JsonOutputStream(System.out);
+        jos.close();
+    }
 
 }

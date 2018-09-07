@@ -40,85 +40,85 @@ import org.onap.aaf.cadi.principal.BasicPrincipal;
 
 public class JU_BasicPrincipal {
 
-	@Test
-	public void Constructor1Test() throws Exception {
-		// Test that everything works when the content doesn't contain "Basic"
-		BasicPrincipal bp = new BasicPrincipal("content", "domain");
-		assertThat(bp.getName(), is("content"));
-		assertThat(bp.getCred(), is(nullValue()));
+    @Test
+    public void Constructor1Test() throws Exception {
+        // Test that everything works when the content doesn't contain "Basic"
+        BasicPrincipal bp = new BasicPrincipal("content", "domain");
+        assertThat(bp.getName(), is("content"));
+        assertThat(bp.getCred(), is(nullValue()));
 
-		// Test sending a user without an implicit domain
-		String name = "User";
-		String password = "password";
-		String content = name + ":" + password;
-		String domain = "exampledomain.com";
-		String encrypted = new String(Symm.base64.encode(content.getBytes()));
-		bp = new BasicPrincipal("Basic " + encrypted, domain);
-		assertThat(bp.getShortName(), is(name));
-		assertThat(bp.getName(), is(name + "@" + domain));
-		assertThat(bp.getCred(), is(password.getBytes()));
+        // Test sending a user without an implicit domain
+        String name = "User";
+        String password = "password";
+        String content = name + ":" + password;
+        String domain = "exampledomain.com";
+        String encrypted = new String(Symm.base64.encode(content.getBytes()));
+        bp = new BasicPrincipal("Basic " + encrypted, domain);
+        assertThat(bp.getShortName(), is(name));
+        assertThat(bp.getName(), is(name + "@" + domain));
+        assertThat(bp.getCred(), is(password.getBytes()));
 
-		// Test sending a user with an implicit domain
-		String longName = name + "@" + domain + ":" + password;
-		encrypted = new String(Symm.base64.encode(longName.getBytes()));
-		bp = new BasicPrincipal("Basic " + encrypted, domain);
-		assertThat(bp.getShortName(), is(name));
-		assertThat(bp.getName(), is(name + "@" + domain));
-		assertThat(bp.getCred(), is(password.getBytes()));
+        // Test sending a user with an implicit domain
+        String longName = name + "@" + domain + ":" + password;
+        encrypted = new String(Symm.base64.encode(longName.getBytes()));
+        bp = new BasicPrincipal("Basic " + encrypted, domain);
+        assertThat(bp.getShortName(), is(name));
+        assertThat(bp.getName(), is(name + "@" + domain));
+        assertThat(bp.getCred(), is(password.getBytes()));
 
-		// Check that an exception is throw if no name is given in the content
-		try {
-			bp = new BasicPrincipal("Basic " + new String(Symm.base64.encode("no name".getBytes())), "");
-			fail("Should have thrown an exception");
-		} catch (IOException e) {
-			assertThat(e.getMessage(), is("Invalid Coding"));
-		}
-	}
+        // Check that an exception is throw if no name is given in the content
+        try {
+            bp = new BasicPrincipal("Basic " + new String(Symm.base64.encode("no name".getBytes())), "");
+            fail("Should have thrown an exception");
+        } catch (IOException e) {
+            assertThat(e.getMessage(), is("Invalid Coding"));
+        }
+    }
 
-	@Test
-	public void Constructor2Test() {
-		String name = "User";
-		String password = "password";
-		BasicCred bc = mock(BasicCred.class);
-		when(bc.getUser()).thenReturn(name);
-		when(bc.getCred()).thenReturn(password.getBytes());
+    @Test
+    public void Constructor2Test() {
+        String name = "User";
+        String password = "password";
+        BasicCred bc = mock(BasicCred.class);
+        when(bc.getUser()).thenReturn(name);
+        when(bc.getCred()).thenReturn(password.getBytes());
 
-		BasicPrincipal bp = new BasicPrincipal(bc, "domain");
-		assertThat(bp.getName(), is(name));
-		assertThat(bp.getCred(), is(password.getBytes()));
-	}
+        BasicPrincipal bp = new BasicPrincipal(bc, "domain");
+        assertThat(bp.getName(), is(name));
+        assertThat(bp.getCred(), is(password.getBytes()));
+    }
 
-	@Test
-	public void accessorsTest() throws IOException {
-		String name = "User";
-		String password = "password";
-		String content = name + ":" + password;
-		String domain = "exampledomain.com";
-		String encrypted = new String(Symm.base64.encode(content.getBytes()));
-		String bearer = "bearer";
-		long created = System.currentTimeMillis();
-		BasicPrincipal bp = new BasicPrincipal("Basic " + encrypted, domain);
-		bp.setBearer(bearer);
+    @Test
+    public void accessorsTest() throws IOException {
+        String name = "User";
+        String password = "password";
+        String content = name + ":" + password;
+        String domain = "exampledomain.com";
+        String encrypted = new String(Symm.base64.encode(content.getBytes()));
+        String bearer = "bearer";
+        long created = System.currentTimeMillis();
+        BasicPrincipal bp = new BasicPrincipal("Basic " + encrypted, domain);
+        bp.setBearer(bearer);
 
-		String expected = "Basic Authorization for " + name + "@" + domain + " evaluated on " + new Date(bp.created()).toString();
-		assertTrue(Math.abs(bp.created() - created) < 10);
-		assertThat(bp.toString(), is(expected));
-		assertThat(bp.tag(), is("BAth"));
-		assertThat(bp.personalName(), is(bp.getName()));
+        String expected = "Basic Authorization for " + name + "@" + domain + " evaluated on " + new Date(bp.created()).toString();
+        assertTrue(Math.abs(bp.created() - created) < 10);
+        assertThat(bp.toString(), is(expected));
+        assertThat(bp.tag(), is("BAth"));
+        assertThat(bp.personalName(), is(bp.getName()));
 
-		// This test hits the abstract class BearerPrincipal
-		assertThat(bp.getBearer(), is(bearer));
-	}
+        // This test hits the abstract class BearerPrincipal
+        assertThat(bp.getBearer(), is(bearer));
+    }
 
 
-	@Test
-	public void coverageTest() throws IOException {
-		String name = "User";
-		String password = "password:with:colons";
-		String content = name + ":" + password;
-		String encrypted = new String(Symm.base64.encode(content.getBytes()));
-		@SuppressWarnings("unused")
-		BasicPrincipal bp = new BasicPrincipal("Basic " + encrypted, "domain");
-	}
+    @Test
+    public void coverageTest() throws IOException {
+        String name = "User";
+        String password = "password:with:colons";
+        String content = name + ":" + password;
+        String encrypted = new String(Symm.base64.encode(content.getBytes()));
+        @SuppressWarnings("unused")
+        BasicPrincipal bp = new BasicPrincipal("Basic " + encrypted, "domain");
+    }
 
 }

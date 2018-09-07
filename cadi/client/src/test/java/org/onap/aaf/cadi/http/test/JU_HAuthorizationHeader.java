@@ -36,44 +36,44 @@ import org.onap.aaf.cadi.http.HAuthorizationHeader;
 
 public class JU_HAuthorizationHeader {
 
-	@Mock
-	SecurityInfoC<HttpURLConnection> siMock;
+    @Mock
+    SecurityInfoC<HttpURLConnection> siMock;
 
-	@Mock
-	HttpsURLConnection hucsMock;
-	
-	@Mock
-	HttpURLConnection hucMock;
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Mock
+    HttpsURLConnection hucsMock;
+    
+    @Mock
+    HttpURLConnection hucMock;
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void test() throws IOException, CadiException {
-		HAuthorizationHeader header = new HAuthorizationHeader(siMock, null, null);
-		header.setSecurity(hucsMock);
-		header.setSecurity(hucMock);
+    @Test
+    public void test() throws IOException, CadiException {
+        HAuthorizationHeader header = new HAuthorizationHeader(siMock, null, null);
+        header.setSecurity(hucsMock);
+        header.setSecurity(hucMock);
 
-		header = new HAuthorizationHeader(null, null, null);
-		header.setSecurity(hucsMock);
-	}
-	
-	@Test(expected = CadiException.class)
-	public void throwsWhenDeniedTest() throws CadiException, IOException {
-		HAuthorizationHeader header = new HAuthorizationHeader(siMock, "string1", "string2") {
-			@Override public boolean isDenied() { return true; }
-		};
-		header.setSecurity(null);
-	}
+        header = new HAuthorizationHeader(null, null, null);
+        header.setSecurity(hucsMock);
+    }
+    
+    @Test(expected = CadiException.class)
+    public void throwsWhenDeniedTest() throws CadiException, IOException {
+        HAuthorizationHeader header = new HAuthorizationHeader(siMock, "string1", "string2") {
+            @Override public boolean isDenied() { return true; }
+        };
+        header.setSecurity(null);
+    }
 
-	@Test(expected = CadiException.class)
-	public void throwsTest() throws CadiException, IOException {
-		HAuthorizationHeader header = new HAuthorizationHeader(siMock, "string1", "string2") {
-			@Override public String headValue() throws IOException { throw new IOException(); }
-		};
-		header.setSecurity(null);
-	}
+    @Test(expected = CadiException.class)
+    public void throwsTest() throws CadiException, IOException {
+        HAuthorizationHeader header = new HAuthorizationHeader(siMock, "string1", "string2") {
+            @Override public String headValue() throws IOException { throw new IOException(); }
+        };
+        header.setSecurity(null);
+    }
 
 }

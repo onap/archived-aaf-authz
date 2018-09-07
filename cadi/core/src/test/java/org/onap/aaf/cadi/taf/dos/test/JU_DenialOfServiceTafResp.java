@@ -37,21 +37,21 @@ import org.onap.aaf.cadi.taf.dos.DenialOfServiceTafResp;
 
 public class JU_DenialOfServiceTafResp {
 
-	private final static String description = "description";
-	private final static RESP status = RESP.IS_AUTHENTICATED;
+    private final static String description = "description";
+    private final static RESP status = RESP.IS_AUTHENTICATED;
 
-	private PropAccess access;
+    private PropAccess access;
 
-	@Before
-	public void setup() {
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-	}
+    @Before
+    public void setup() {
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+    }
 
-	@Test
-	public void test() throws IOException {
-		DenialOfServiceTafResp resp = new DenialOfServiceTafResp(access, status, description);
-		assertThat(resp.isAuthenticated(), is(status));
-		assertThat(resp.authenticate(), is(status));
-	}
+    @Test
+    public void test() throws IOException {
+        DenialOfServiceTafResp resp = new DenialOfServiceTafResp(access, status, description);
+        assertThat(resp.isAuthenticated(), is(status));
+        assertThat(resp.authenticate(), is(status));
+    }
 
 }

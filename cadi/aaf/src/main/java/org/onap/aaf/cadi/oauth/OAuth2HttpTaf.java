@@ -41,42 +41,42 @@ import org.onap.aaf.cadi.taf.TafResp.RESP;
 import org.onap.aaf.misc.env.APIException;
 
 public class OAuth2HttpTaf implements HttpTaf {
-	final private Access access;
-	final private TokenMgr tmgr;
+    final private Access access;
+    final private TokenMgr tmgr;
 
-	public OAuth2HttpTaf(final Access access, final TokenMgr tmgr) {
-		this.tmgr = tmgr;
-		this.access = access;
-	}
-	
-	@Override
-	public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
-		String authz = req.getHeader("Authorization");
-		if(authz != null && authz.length()>7 && authz.startsWith("Bearer ")) {
-			if(!req.isSecure()) {
-				access.log(Level.WARN,"WARNING! OAuth has been used over an insecure channel");
-			}
-			try {
-				String tkn = authz.substring(7);
-				Result<OAuth2Principal> rp = tmgr.toPrincipal(tkn,Hash.hashSHA256(tkn.getBytes()));
-				if(rp.isOK()) {
-					return new OAuth2HttpTafResp(access,rp.value,rp.value.getName()+" authenticated by Bearer Token",RESP.IS_AUTHENTICATED,resp,false);
-				} else {
-					return new OAuth2HttpTafResp(access,null,rp.error,RESP.FAIL,resp,true);
-				}
-			} catch (APIException | CadiException | LocatorException e) {
-				return new OAuth2HttpTafResp(access,null,"Bearer Token invalid",RESP.FAIL,resp,true);
-			} catch (NoSuchAlgorithmException e) {
-				return new OAuth2HttpTafResp(access,null,"Security Algorithm not available",RESP.FAIL,resp,true);
-			}
-		}
-		return new OAuth2HttpTafResp(access,null,"No OAuth2 ",RESP.TRY_ANOTHER_TAF,resp,true);
-	}
+    public OAuth2HttpTaf(final Access access, final TokenMgr tmgr) {
+        this.tmgr = tmgr;
+        this.access = access;
+    }
+    
+    @Override
+    public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
+        String authz = req.getHeader("Authorization");
+        if(authz != null && authz.length()>7 && authz.startsWith("Bearer ")) {
+            if(!req.isSecure()) {
+                access.log(Level.WARN,"WARNING! OAuth has been used over an insecure channel");
+            }
+            try {
+                String tkn = authz.substring(7);
+                Result<OAuth2Principal> rp = tmgr.toPrincipal(tkn,Hash.hashSHA256(tkn.getBytes()));
+                if(rp.isOK()) {
+                    return new OAuth2HttpTafResp(access,rp.value,rp.value.getName()+" authenticated by Bearer Token",RESP.IS_AUTHENTICATED,resp,false);
+                } else {
+                    return new OAuth2HttpTafResp(access,null,rp.error,RESP.FAIL,resp,true);
+                }
+            } catch (APIException | CadiException | LocatorException e) {
+                return new OAuth2HttpTafResp(access,null,"Bearer Token invalid",RESP.FAIL,resp,true);
+            } catch (NoSuchAlgorithmException e) {
+                return new OAuth2HttpTafResp(access,null,"Security Algorithm not available",RESP.FAIL,resp,true);
+            }
+        }
+        return new OAuth2HttpTafResp(access,null,"No OAuth2 ",RESP.TRY_ANOTHER_TAF,resp,true);
+    }
 
-	@Override
-	public Resp revalidate(CachedPrincipal prin,Object state) {
-		//TODO!!!!
-		return null;
-	}
+    @Override
+    public Resp revalidate(CachedPrincipal prin,Object state) {
+        //TODO!!!!
+        return null;
+    }
 
 }

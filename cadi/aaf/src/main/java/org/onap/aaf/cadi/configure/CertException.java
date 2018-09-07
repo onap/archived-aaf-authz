@@ -23,23 +23,23 @@ package org.onap.aaf.cadi.configure;
 
 public class CertException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1373028409048516401L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1373028409048516401L;
 
-	public CertException() {
-	}
+    public CertException() {
+    }
 
-	public CertException(String message) {
-		super(message);
-	}
+    public CertException(String message) {
+        super(message);
+    }
 
-	public CertException(Throwable cause) {
-		super(cause);
-	}
+    public CertException(Throwable cause) {
+        super(cause);
+    }
 
-	public CertException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public CertException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

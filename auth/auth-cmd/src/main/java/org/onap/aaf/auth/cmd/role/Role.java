@@ -26,14 +26,14 @@ import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.misc.env.APIException;
 
 public class Role extends BaseCmd<Role> {
-	public List list;
+    public List list;
 
-	public Role(AAFcli aafcli) throws APIException {
-		super(aafcli, "role");
-		cmds.add(new CreateDelete(this));
-//		cmds.add(new Delete(this));
-		cmds.add(new User(this));
-		cmds.add(new Describe(this));
-		cmds.add(list = new List(this));
-	}
+    public Role(AAFcli aafcli) throws APIException {
+        super(aafcli, "role");
+        cmds.add(new CreateDelete(this));
+//        cmds.add(new Delete(this));
+        cmds.add(new User(this));
+        cmds.add(new Describe(this));
+        cmds.add(list = new List(this));
+    }
 }

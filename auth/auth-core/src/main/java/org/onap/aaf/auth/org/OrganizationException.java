@@ -23,30 +23,30 @@ package org.onap.aaf.auth.org;
 
 public class OrganizationException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public OrganizationException() {
-		super();
-	}
+    public OrganizationException() {
+        super();
+    }
 
-	public OrganizationException(String message) {
-		super(message);
-	}
+    public OrganizationException(String message) {
+        super(message);
+    }
 
-	public OrganizationException(Throwable cause) {
-		super(cause);
-	}
+    public OrganizationException(Throwable cause) {
+        super(cause);
+    }
 
-	public OrganizationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public OrganizationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public OrganizationException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    public OrganizationException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 
 }

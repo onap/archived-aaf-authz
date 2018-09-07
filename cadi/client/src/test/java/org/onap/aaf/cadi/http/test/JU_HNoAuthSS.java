@@ -33,28 +33,28 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HNoAuthSS;
 
 public class JU_HNoAuthSS {
-	
-	@Mock
-	SecurityInfoC<HttpURLConnection> siMock;
-	
-	@Mock
-	HttpURLConnection httpMock;
+    
+    @Mock
+    SecurityInfoC<HttpURLConnection> siMock;
+    
+    @Mock
+    HttpURLConnection httpMock;
 
-	@Mock
-	HttpsURLConnection httpsMock;
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
-	
-	@Test
-	public void test() throws IOException, CadiException {
-		HNoAuthSS noAuth = new HNoAuthSS(null);
-		noAuth.setSecurity(httpMock);
-		noAuth = new HNoAuthSS(siMock);
-		noAuth.setSecurity(httpMock);
-		noAuth.setSecurity(httpsMock);
-	}
+    @Mock
+    HttpsURLConnection httpsMock;
+    
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
+    
+    @Test
+    public void test() throws IOException, CadiException {
+        HNoAuthSS noAuth = new HNoAuthSS(null);
+        noAuth.setSecurity(httpMock);
+        noAuth = new HNoAuthSS(siMock);
+        noAuth.setSecurity(httpMock);
+        noAuth.setSecurity(httpsMock);
+    }
 
 }

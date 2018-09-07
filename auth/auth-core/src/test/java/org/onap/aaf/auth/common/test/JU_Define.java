@@ -37,48 +37,48 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_Define {
-	private static final String AAF_NS_DOT = "AAF_NS.";
-	public static String ROOT_NS="NS.Not.Set";
-	public static String ROOT_COMPANY=ROOT_NS;
-	Access acc;
-	@Mock
-	Env envMock;
+    private static final String AAF_NS_DOT = "AAF_NS.";
+    public static String ROOT_NS="NS.Not.Set";
+    public static String ROOT_COMPANY=ROOT_NS;
+    Access acc;
+    @Mock
+    Env envMock;
 
 
-	@Before
-	public void setUp() throws CadiException{
-		acc = mock(Access.class);
-	}
-	
-	@Test
-	public void testSet() throws CadiException {
-		PropAccess prop = new PropAccess();
-		prop.setProperty(AAF_NS_DOT, AAF_NS_DOT);
-		prop.setProperty(Config.AAF_ROOT_NS, ".ns_Test");
-		prop.setProperty(Config.AAF_ROOT_COMPANY, "company_Test");
-		Define.set(prop);
-		Define.ROOT_NS();
-		Define.ROOT_COMPANY();
-		
-		PropAccess prop1 = new PropAccess();
-		prop1.setProperty(AAF_NS_DOT, AAF_NS_DOT);
-		prop1.setProperty(Config.AAF_ROOT_NS, ".ns_Test");
-		Define.set(prop1);
-	}
+    @Before
+    public void setUp() throws CadiException{
+        acc = mock(Access.class);
+    }
+    
+    @Test
+    public void testSet() throws CadiException {
+        PropAccess prop = new PropAccess();
+        prop.setProperty(AAF_NS_DOT, AAF_NS_DOT);
+        prop.setProperty(Config.AAF_ROOT_NS, ".ns_Test");
+        prop.setProperty(Config.AAF_ROOT_COMPANY, "company_Test");
+        Define.set(prop);
+        Define.ROOT_NS();
+        Define.ROOT_COMPANY();
+        
+        PropAccess prop1 = new PropAccess();
+        prop1.setProperty(AAF_NS_DOT, AAF_NS_DOT);
+        prop1.setProperty(Config.AAF_ROOT_NS, ".ns_Test");
+        Define.set(prop1);
+    }
 
-//	@Test					//TODO: AAF-111 exception fix
-//	public void testRootNS() throws RuntimeException{
-//		Define.ROOT_NS();
-//	}
+//    @Test                    //TODO: AAF-111 exception fix
+//    public void testRootNS() throws RuntimeException{
+//        Define.ROOT_NS();
+//    }
 //
-//	@Test
-//	public void testRootCompany() throws RuntimeException{
-//		Define.ROOT_COMPANY();
-//	}
+//    @Test
+//    public void testRootCompany() throws RuntimeException{
+//        Define.ROOT_COMPANY();
+//    }
 
-	@Test
-	public void testVarReplace() {
-		Define.varReplace(AAF_NS_DOT);
-		Define.varReplace("test");
-	}
+    @Test
+    public void testVarReplace() {
+        Define.varReplace(AAF_NS_DOT);
+        Define.varReplace("test");
+    }
 }

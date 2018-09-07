@@ -41,29 +41,29 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class ExpiringNext extends Batch {
-	
-	public ExpiringNext(AuthzTrans trans) throws APIException, IOException, OrganizationException {
-		super(trans.env());
-	    trans.info().log("Starting Connection Process");
-	    
-	    TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
-	    try {
-			TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
-			try {
-				session = cluster.connect();
-			} finally {
-				tt.done();
-			}
+    
+    public ExpiringNext(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+        super(trans.env());
+        trans.info().log("Starting Connection Process");
+        
+        TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
+        try {
+            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
+            try {
+                session = cluster.connect();
+            } finally {
+                tt.done();
+            }
 
-			UserRole.load(trans, session, UserRole.v2_0_11);
-			Cred.load(trans, session);
-	    } finally {
-	    	tt0.done();
-	    }
-	}
+            UserRole.load(trans, session, UserRole.v2_0_11);
+            Cred.load(trans, session);
+        } finally {
+            tt0.done();
+        }
+    }
 
-	@Override
-	protected void run(AuthzTrans trans) {
+    @Override
+    protected void run(AuthzTrans trans) {
         GregorianCalendar gc = new GregorianCalendar();
         Date now = gc.getTime();
         gc.add(GregorianCalendar.WEEK_OF_MONTH, 2);
@@ -76,68 +76,68 @@ public class ExpiringNext extends Batch {
         List<String> expiring = new ArrayList<>();
         
         trans.info().log("Checking for Expired UserRoles");
-    	for(UserRole ur : UserRole.getData()) {
-    		if(ur.expires().after(now)) {
-    			if(ur.expires().before(twoWeeks)) {
-    				expiring.add(Chrono.dateOnlyStamp(ur.expires()) + ":\t" + ur.user() + '\t' + ur.role());
-    			}
-        		if(ur.expires().before(earliestUR)) {
-        			earliestUR = ur.expires();
-        		}
-    		}
-    	}
+        for(UserRole ur : UserRole.getData()) {
+            if(ur.expires().after(now)) {
+                if(ur.expires().before(twoWeeks)) {
+                    expiring.add(Chrono.dateOnlyStamp(ur.expires()) + ":\t" + ur.user() + '\t' + ur.role());
+                }
+                if(ur.expires().before(earliestUR)) {
+                    earliestUR = ur.expires();
+                }
+            }
+        }
 
-    	if(expiring.size()>0) {
-	    	Collections.sort(expiring,Collections.reverseOrder());
-	    	for(String s : expiring) {
-	    		System.err.print('\t');
-	    		System.err.println(s);
-	    	}
-	    	trans.info().printf("Earliest Expiring UR is %s\n\n", Chrono.dateOnlyStamp(earliestUR));
-    	} else {
-    		trans.info().printf("No Expiring UserRoles within 2 weeks");
-    	}
-    	
-    	expiring.clear();
-    	
+        if(expiring.size()>0) {
+            Collections.sort(expiring,Collections.reverseOrder());
+            for(String s : expiring) {
+                System.err.print('\t');
+                System.err.println(s);
+            }
+            trans.info().printf("Earliest Expiring UR is %s\n\n", Chrono.dateOnlyStamp(earliestUR));
+        } else {
+            trans.info().printf("No Expiring UserRoles within 2 weeks");
+        }
+        
+        expiring.clear();
+        
         trans.info().log("Checking for Expired Credentials");
-    	for( Cred creds : Cred.data.values()) {
-    		Instance lastInstance=null;
-    		for(Instance inst : creds.instances) {
-    			if(inst.type==CredDAO.BASIC_AUTH || inst.type==CredDAO.BASIC_AUTH_SHA256) {
-	        		if(lastInstance == null || inst.expires.after(lastInstance.expires)) {
-	        			lastInstance = inst;
-	        		}
-    			}
-    		}
-    		if(lastInstance!=null) {
-    			if(lastInstance.expires.after(now)) {
-					if(lastInstance.expires.before(twoWeeks)) {
-	    				expiring.add(Chrono.dateOnlyStamp(lastInstance.expires) + ": \t" + creds.id);
-					}
-    			}
-	    		if(lastInstance.expires.before(earliestCred)) {
-	    			earliestCred = lastInstance.expires;
-	    		}
-    		}
-    	}
-    	
-    	if(expiring.size()>0) {
-	    	Collections.sort(expiring,Collections.reverseOrder());
-	    	for(String s : expiring) {
-	    		System.err.print('\t');
-	    		System.err.println(s);
-	    	}
-	    	trans.info().printf("Earliest Expiring Cred is %s\n\n", Chrono.dateOnlyStamp(earliestCred));
-    	} else {
-    		trans.info().printf("No Expiring Creds within 2 weeks");
-    	}
+        for( Cred creds : Cred.data.values()) {
+            Instance lastInstance=null;
+            for(Instance inst : creds.instances) {
+                if(inst.type==CredDAO.BASIC_AUTH || inst.type==CredDAO.BASIC_AUTH_SHA256) {
+                    if(lastInstance == null || inst.expires.after(lastInstance.expires)) {
+                        lastInstance = inst;
+                    }
+                }
+            }
+            if(lastInstance!=null) {
+                if(lastInstance.expires.after(now)) {
+                    if(lastInstance.expires.before(twoWeeks)) {
+                        expiring.add(Chrono.dateOnlyStamp(lastInstance.expires) + ": \t" + creds.id);
+                    }
+                }
+                if(lastInstance.expires.before(earliestCred)) {
+                    earliestCred = lastInstance.expires;
+                }
+            }
+        }
+        
+        if(expiring.size()>0) {
+            Collections.sort(expiring,Collections.reverseOrder());
+            for(String s : expiring) {
+                System.err.print('\t');
+                System.err.println(s);
+            }
+            trans.info().printf("Earliest Expiring Cred is %s\n\n", Chrono.dateOnlyStamp(earliestCred));
+        } else {
+            trans.info().printf("No Expiring Creds within 2 weeks");
+        }
 
-	}
-	
-	@Override
-	protected void _close(AuthzTrans trans) {
+    }
+    
+    @Override
+    protected void _close(AuthzTrans trans) {
         session.close();
-	}
+    }
 
 }

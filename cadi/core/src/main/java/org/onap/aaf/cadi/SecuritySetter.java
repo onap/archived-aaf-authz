@@ -31,14 +31,14 @@ package org.onap.aaf.cadi;
  *
  */
 public interface SecuritySetter<CT> {
-	public String getID();
-	
-	public void setSecurity(CT client) throws CadiException;
-	
-	/**
-	 * Returns number of bad logins registered
-	 * @param respCode
-	 * @return
-	 */
-	public int setLastResponse(int respCode);
+    public String getID();
+    
+    public void setSecurity(CT client) throws CadiException;
+    
+    /**
+     * Returns number of bad logins registered
+     * @param respCode
+     * @return
+     */
+    public int setLastResponse(int respCode);
 }

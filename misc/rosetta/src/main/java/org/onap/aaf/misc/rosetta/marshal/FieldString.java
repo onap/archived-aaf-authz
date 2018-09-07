@@ -22,15 +22,15 @@
 package org.onap.aaf.misc.rosetta.marshal;
 
 public abstract class FieldString<T> extends FieldMarshal<T> {
-	public FieldString(String name) {
-		super(name);
-	}
+    public FieldString(String name) {
+        super(name);
+    }
 
-	protected abstract String data(T t); 
+    protected abstract String data(T t); 
 
-	@Override
-	final protected boolean data(T t, StringBuilder sb) {
-		return DataWriter.STRING.write(data(t), sb);
-	}
+    @Override
+    final protected boolean data(T t, StringBuilder sb) {
+        return DataWriter.STRING.write(data(t), sb);
+    }
 
 }

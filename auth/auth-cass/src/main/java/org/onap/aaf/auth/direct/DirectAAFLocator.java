@@ -41,92 +41,92 @@ import org.onap.aaf.misc.env.util.Split;
 import locate.v1_0.Endpoint;
 
 public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
-	private LocateDAO ldao;
-	private int major=-1, minor=-1, patch=-1, pkg=-1;
-	private AuthzEnv env;
-	private final URI uri;
+    private LocateDAO ldao;
+    private int major=-1, minor=-1, patch=-1, pkg=-1;
+    private AuthzEnv env;
+    private final URI uri;
 
-	/**
-	 * 
-	 * @param env
-	 * @param ldao
-	 * @param key  must be one or more of service, version, other in that order
-	 * @throws LocatorException 
-	 */
-	public DirectAAFLocator(AuthzEnv env, LocateDAO ldao, String name, String version) throws LocatorException {
-		super(env.access(), name, 1000L /* Don't hit DB more than once a second */); 
-		this.env = env;
-		this.ldao = ldao;
-		if(version!=null) {
-			try { 
-				String[] v = Split.split('.',version);
-				if(v.length>0) {major = Integer.parseInt(v[0]);}
-				if(v.length>1) {minor = Integer.parseInt(v[1]);}
-				if(v.length>2) {patch = Integer.parseInt(v[2]);}
-				if(v.length>3) {pkg   = Integer.parseInt(v[3]);}
-			} catch (NumberFormatException e) {
-				throw new LocatorException("Invalid Version String: " + version);
-			}
-		}
-		
-		try {
-			uri = new URI(access.getProperty(Config.AAF_LOCATE_URL, "localhost")+"/locate/"+name+':'+version);
-		} catch (URISyntaxException e) {
-			throw new LocatorException(e);
-		}
-		myhostname=null;
-		myport = 0; 
-	}
-	
-	
-	@Override
-	public boolean refresh() {
-		AuthzTrans trans = env.newTransNoAvg();
-		Result<List<Data>> rl = ldao.readByName(trans, name);
-		if(rl.isOK()) {
-			LinkedList<EP> epl = new LinkedList<>();
-			for(Data d : rl.value) {
-//				if(myhostname!=null && d.port==myport && d.hostname.equals(myhostname)) {
-//					continue;
-//				}
-				if((major<0 || major==d.major) &&
-				   (minor<0 || minor<=d.minor) &&
-				   (patch<0 || patch==d.patch) &&
-				   (pkg<0   || pkg  ==d.pkg)) {
-					Endpoint endpoint = new Endpoint();
-					endpoint.setName(d.name);
-					endpoint.setHostname(d.hostname);
-					endpoint.setPort(d.port);
-					endpoint.setMajor(d.major);
-					endpoint.setMinor(d.minor);
-					endpoint.setPatch(d.patch);
-					endpoint.setPkg(d.pkg);
-					endpoint.setLatitude(d.latitude);
-					endpoint.setLongitude(d.longitude);
-					endpoint.setProtocol(d.protocol);
-					for(String s : d.subprotocol(false)) {
-						endpoint.getSubprotocol().add(s);
-					}
-					
-					try {
-						epl.add(new EP(endpoint,latitude,longitude));
-					} catch (URISyntaxException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			Collections.sort(epl);
-			replace(epl);
-			return true;
-		} else {
-			access.log(Level.ERROR, rl.errorString());
-		}
-		return false;
-	}
+    /**
+     * 
+     * @param env
+     * @param ldao
+     * @param key  must be one or more of service, version, other in that order
+     * @throws LocatorException 
+     */
+    public DirectAAFLocator(AuthzEnv env, LocateDAO ldao, String name, String version) throws LocatorException {
+        super(env.access(), name, 1000L /* Don't hit DB more than once a second */); 
+        this.env = env;
+        this.ldao = ldao;
+        if(version!=null) {
+            try { 
+                String[] v = Split.split('.',version);
+                if(v.length>0) {major = Integer.parseInt(v[0]);}
+                if(v.length>1) {minor = Integer.parseInt(v[1]);}
+                if(v.length>2) {patch = Integer.parseInt(v[2]);}
+                if(v.length>3) {pkg   = Integer.parseInt(v[3]);}
+            } catch (NumberFormatException e) {
+                throw new LocatorException("Invalid Version String: " + version);
+            }
+        }
+        
+        try {
+            uri = new URI(access.getProperty(Config.AAF_LOCATE_URL, "localhost")+"/locate/"+name+':'+version);
+        } catch (URISyntaxException e) {
+            throw new LocatorException(e);
+        }
+        myhostname=null;
+        myport = 0; 
+    }
+    
+    
+    @Override
+    public boolean refresh() {
+        AuthzTrans trans = env.newTransNoAvg();
+        Result<List<Data>> rl = ldao.readByName(trans, name);
+        if(rl.isOK()) {
+            LinkedList<EP> epl = new LinkedList<>();
+            for(Data d : rl.value) {
+//                if(myhostname!=null && d.port==myport && d.hostname.equals(myhostname)) {
+//                    continue;
+//                }
+                if((major<0 || major==d.major) &&
+                   (minor<0 || minor<=d.minor) &&
+                   (patch<0 || patch==d.patch) &&
+                   (pkg<0   || pkg  ==d.pkg)) {
+                    Endpoint endpoint = new Endpoint();
+                    endpoint.setName(d.name);
+                    endpoint.setHostname(d.hostname);
+                    endpoint.setPort(d.port);
+                    endpoint.setMajor(d.major);
+                    endpoint.setMinor(d.minor);
+                    endpoint.setPatch(d.patch);
+                    endpoint.setPkg(d.pkg);
+                    endpoint.setLatitude(d.latitude);
+                    endpoint.setLongitude(d.longitude);
+                    endpoint.setProtocol(d.protocol);
+                    for(String s : d.subprotocol(false)) {
+                        endpoint.getSubprotocol().add(s);
+                    }
+                    
+                    try {
+                        epl.add(new EP(endpoint,latitude,longitude));
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            Collections.sort(epl);
+            replace(epl);
+            return true;
+        } else {
+            access.log(Level.ERROR, rl.errorString());
+        }
+        return false;
+    }
 
-	@Override
-	protected URI getURI() {
-		return uri;
-	}
+    @Override
+    protected URI getURI() {
+        return uri;
+    }
 
 }

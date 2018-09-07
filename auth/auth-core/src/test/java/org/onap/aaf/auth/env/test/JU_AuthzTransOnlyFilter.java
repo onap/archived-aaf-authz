@@ -49,71 +49,71 @@ import org.onap.aaf.misc.env.Trans.Metric;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_AuthzTransOnlyFilter {
-	AuthzTransFilter authzTransFilter;
-	AuthzEnv authzEnvMock = mock(AuthzEnv.class);
-	Connector connectorMock = mock(Connector.class);
-	TrustChecker trustCheckerMock = mock(TrustChecker.class);
-	AuthzTrans authzTransMock = mock(AuthzTrans.class);
-	Object additionalTafLurs = mock(Object.class);
-	ServletRequest servletRequestMock = mock(ServletRequest.class);
-	AuthzTransOnlyFilter authzTransOnlyFilter;
+    AuthzTransFilter authzTransFilter;
+    AuthzEnv authzEnvMock = mock(AuthzEnv.class);
+    Connector connectorMock = mock(Connector.class);
+    TrustChecker trustCheckerMock = mock(TrustChecker.class);
+    AuthzTrans authzTransMock = mock(AuthzTrans.class);
+    Object additionalTafLurs = mock(Object.class);
+    ServletRequest servletRequestMock = mock(ServletRequest.class);
+    AuthzTransOnlyFilter authzTransOnlyFilter;
 
-	@Before
-	public void setUp(){
-		authzTransOnlyFilter = new AuthzTransOnlyFilter(authzEnvMock);
-	}
+    @Before
+    public void setUp(){
+        authzTransOnlyFilter = new AuthzTransOnlyFilter(authzEnvMock);
+    }
 
-	/*@Test
-	public void testProtected() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method newTransMethod = AuthzTransFilter.class.getDeclaredMethod("newTrans");
-		newTransMethod.setAccessible(true);
+    /*@Test
+    public void testProtected() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Method newTransMethod = AuthzTransFilter.class.getDeclaredMethod("newTrans");
+        newTransMethod.setAccessible(true);
 
-		newTransMethod.invoke(authzTransFilter);
-	}*/
+        newTransMethod.invoke(authzTransFilter);
+    }*/
 
-	@Test
-	public void testStart() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
-		Class c = aTF.getClass();
-		Class[] cArg = new Class[2];
-		cArg[0] = AuthzTrans.class;
-		cArg[1] = ServletRequest.class;		//Steps to test a protected method
-		Method startMethod = c.getDeclaredMethod("start", cArg);
-		startMethod.setAccessible(true);
-		//startMethod.invoke(aTF, authzTransMock, servletRequestMock);
-	}
+    @Test
+    public void testStart() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
+        Class c = aTF.getClass();
+        Class[] cArg = new Class[2];
+        cArg[0] = AuthzTrans.class;
+        cArg[1] = ServletRequest.class;        //Steps to test a protected method
+        Method startMethod = c.getDeclaredMethod("start", cArg);
+        startMethod.setAccessible(true);
+        //startMethod.invoke(aTF, authzTransMock, servletRequestMock);
+    }
 
-	@Test
-	public void testAuthenticated() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, CadiException {
-		TaggedPrincipal p = mock(TaggedPrincipal.class);
-		AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
-		Class c = aTF.getClass();
-		Class[] cArg = new Class[2];
-		cArg[0] = AuthzTrans.class;
-		cArg[1] = TaggedPrincipal.class;		//Steps to test a protected method
-		Method authenticatedMethod = c.getDeclaredMethod("authenticated", cArg);
-		authenticatedMethod.setAccessible(true);
-		authenticatedMethod.invoke(aTF,authzTransMock, null);
-	}
+    @Test
+    public void testAuthenticated() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, CadiException {
+        TaggedPrincipal p = mock(TaggedPrincipal.class);
+        AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
+        Class c = aTF.getClass();
+        Class[] cArg = new Class[2];
+        cArg[0] = AuthzTrans.class;
+        cArg[1] = TaggedPrincipal.class;        //Steps to test a protected method
+        Method authenticatedMethod = c.getDeclaredMethod("authenticated", cArg);
+        authenticatedMethod.setAccessible(true);
+        authenticatedMethod.invoke(aTF,authzTransMock, null);
+    }
 
-	@Test
-	public void testTallyHo() throws CadiException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
-		LogTarget log = mock(LogTarget.class);
-		Metric met = new Metric();
-		met.total = 199.33F;
-		met.entries = 15;
-		met.buckets = new float[] {199.33F,99.33F};
-		Class c = aTF.getClass();
-		Class[] cArg = new Class[1];
-		cArg[0] = AuthzTrans.class;		//Steps to test a protected method
-		StringBuilder sb = new StringBuilder("AuditTrail\n");
-		when(authzTransMock.auditTrail(anyInt(),(StringBuilder)any(),anyInt(),anyInt())).thenReturn(met);
-		when(authzTransMock.info()).thenReturn(log);
-		doNothing().when(log).log((StringBuilder)any());
-		Method tallyHoMethod = c.getDeclaredMethod("tallyHo", cArg);
-		tallyHoMethod.setAccessible(true);
-		tallyHoMethod.invoke(aTF,authzTransMock);
-	}
+    @Test
+    public void testTallyHo() throws CadiException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
+        LogTarget log = mock(LogTarget.class);
+        Metric met = new Metric();
+        met.total = 199.33F;
+        met.entries = 15;
+        met.buckets = new float[] {199.33F,99.33F};
+        Class c = aTF.getClass();
+        Class[] cArg = new Class[1];
+        cArg[0] = AuthzTrans.class;        //Steps to test a protected method
+        StringBuilder sb = new StringBuilder("AuditTrail\n");
+        when(authzTransMock.auditTrail(anyInt(),(StringBuilder)any(),anyInt(),anyInt())).thenReturn(met);
+        when(authzTransMock.info()).thenReturn(log);
+        doNothing().when(log).log((StringBuilder)any());
+        Method tallyHoMethod = c.getDeclaredMethod("tallyHo", cArg);
+        tallyHoMethod.setAccessible(true);
+        tallyHoMethod.invoke(aTF,authzTransMock);
+    }
 
 }

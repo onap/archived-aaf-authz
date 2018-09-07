@@ -36,7 +36,7 @@ import locate_local.v1_0.Error;
 
 public class LocateFacade_1_1 extends LocateFacadeImpl<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error>
 {
-	public LocateFacade_1_1(AuthzEnv env, LocateService<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error> service, Data.TYPE type) throws APIException {
-		super(env, service, type);
-	}
+    public LocateFacade_1_1(AuthzEnv env, LocateService<InRequest,Out,Endpoints,MgmtEndpoints,Configuration,Error> service, Data.TYPE type) throws APIException {
+        super(env, service, type);
+    }
 }

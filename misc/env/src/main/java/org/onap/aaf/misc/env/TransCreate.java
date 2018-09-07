@@ -22,5 +22,5 @@
 package org.onap.aaf.misc.env;
 
 public interface TransCreate<TRANS> {
-	public TRANS newTrans();
+    public TRANS newTrans();
 }

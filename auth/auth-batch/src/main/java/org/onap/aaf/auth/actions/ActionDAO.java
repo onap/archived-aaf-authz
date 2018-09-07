@@ -33,41 +33,41 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 public abstract class ActionDAO<D,RV,T> implements Action<D,RV,T> {
-	protected final Question q; 
-	protected final Function f;
-	private boolean clean;
-	protected final boolean dryRun;
+    protected final Question q; 
+    protected final Function f;
+    private boolean clean;
+    protected final boolean dryRun;
 
-	public ActionDAO(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		q = new Question(trans, cluster, CassAccess.KEYSPACE, false);
-		f = new Function(trans,q);
-		clean = true;
-		this.dryRun = dryRun;
-	}
-	
-	public ActionDAO(AuthzTrans trans, ActionDAO<?,?,?> predecessor) {
-		q = predecessor.q;
-		f = new Function(trans,q);
-		clean = false;
-		dryRun = predecessor.dryRun;
-	}
-	
-	public Session getSession(AuthzTrans trans) throws APIException, IOException {
-		return q.historyDAO.getSession(trans);
-	}
-	
-	public Question question() {
-		return q;
-	}
-	
-	public Function function() {
-		return f;
-	}
+    public ActionDAO(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        q = new Question(trans, cluster, CassAccess.KEYSPACE, false);
+        f = new Function(trans,q);
+        clean = true;
+        this.dryRun = dryRun;
+    }
+    
+    public ActionDAO(AuthzTrans trans, ActionDAO<?,?,?> predecessor) {
+        q = predecessor.q;
+        f = new Function(trans,q);
+        clean = false;
+        dryRun = predecessor.dryRun;
+    }
+    
+    public Session getSession(AuthzTrans trans) throws APIException, IOException {
+        return q.historyDAO.getSession(trans);
+    }
+    
+    public Question question() {
+        return q;
+    }
+    
+    public Function function() {
+        return f;
+    }
 
-	public void close(AuthzTrans trans) {
-		if(clean) {
-			q.close(trans);
-		}
-	}
+    public void close(AuthzTrans trans) {
+        if(clean) {
+            q.close(trans);
+        }
+    }
 
 }

@@ -32,20 +32,20 @@ import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
 
 public interface EClient<CT> {
-	public void setMethod(String meth);
-	public void setPathInfo(String pathinfo);
-	public void setPayload(Transfer transfer);
-	public void addHeader(String tag, String value);
-	public void setQueryParams(String q);
-	public void setFragment(String f);
-	public void send() throws APIException;
-	public<T> Future<T> futureCreate(Class<T> t);
-	public Future<String> futureReadString();
-	public<T> Future<T> futureRead(RosettaDF<T> df,Data.TYPE type);
-	public<T> Future<T> future(T t);
-	public Future<Void> future(HttpServletResponse resp, int expected) throws APIException;
-	
-	public interface Transfer {
-		public void transfer(OutputStream os) throws IOException, APIException;
-	}
+    public void setMethod(String meth);
+    public void setPathInfo(String pathinfo);
+    public void setPayload(Transfer transfer);
+    public void addHeader(String tag, String value);
+    public void setQueryParams(String q);
+    public void setFragment(String f);
+    public void send() throws APIException;
+    public<T> Future<T> futureCreate(Class<T> t);
+    public Future<String> futureReadString();
+    public<T> Future<T> futureRead(RosettaDF<T> df,Data.TYPE type);
+    public<T> Future<T> future(T t);
+    public Future<Void> future(HttpServletResponse resp, int expected) throws APIException;
+    
+    public interface Transfer {
+        public void transfer(OutputStream os) throws IOException, APIException;
+    }
 }

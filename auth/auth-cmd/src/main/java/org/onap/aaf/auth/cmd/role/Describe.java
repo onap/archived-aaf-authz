@@ -35,60 +35,60 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.RoleRequest;
 
 public class Describe extends Cmd {
-	private static final String ROLE_PATH = "/authz/role";
-	public Describe(Role parent) {
-		super(parent,"describe", 
-				new Param("name",true),
-				new Param("description",true)); 
-	}
+    private static final String ROLE_PATH = "/authz/role";
+    public Describe(Role parent) {
+        super(parent,"describe", 
+                new Param("name",true),
+                new Param("description",true)); 
+    }
 
-	@Override
-	public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				int idx = index;
-				String role = args[idx++];
-				StringBuilder desc = new StringBuilder();
-				while (idx < args.length) {
-					desc.append(args[idx++] + ' ');
-				}
-		
-				RoleRequest rr = new RoleRequest();
-				rr.setName(role);
-				rr.setDescription(desc.toString());
-		
-				// Set Start/End commands
-				setStartEnd(rr);
-				
-				Future<RoleRequest> fp = null;
-				int rv;
+    @Override
+    public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                int idx = index;
+                String role = args[idx++];
+                StringBuilder desc = new StringBuilder();
+                while (idx < args.length) {
+                    desc.append(args[idx++] + ' ');
+                }
+        
+                RoleRequest rr = new RoleRequest();
+                rr.setName(role);
+                rr.setDescription(desc.toString());
+        
+                // Set Start/End commands
+                setStartEnd(rr);
+                
+                Future<RoleRequest> fp = null;
+                int rv;
 
-				fp = client.update(
-					ROLE_PATH,
-					getDF(RoleRequest.class),
-					rr
-					);
+                fp = client.update(
+                    ROLE_PATH,
+                    getDF(RoleRequest.class),
+                    rr
+                    );
 
-				if(fp.get(AAFcli.timeout())) {
-					rv=fp.code();
-					pw().println("Description added to role");
-				} else {
-					if((rv=fp.code())==202) {
-						pw().print("Adding description");
-						pw().println(" Accepted, but requires Approvals before actualizing");
-					} else {
-						error(fp);
-					}
-				}
-				return rv;
-			}
-		});
-	}
+                if(fp.get(AAFcli.timeout())) {
+                    rv=fp.code();
+                    pw().println("Description added to role");
+                } else {
+                    if((rv=fp.code())==202) {
+                        pw().print("Adding description");
+                        pw().println(" Accepted, but requires Approvals before actualizing");
+                    } else {
+                        error(fp);
+                    }
+                }
+                return rv;
+            }
+        });
+    }
 
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,"Add a description to a role");
-		api(sb,indent,HttpMethods.PUT,"authz/role",RoleRequest.class,true);
-	}
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,"Add a description to a role");
+        api(sb,indent,HttpMethods.PUT,"authz/role",RoleRequest.class,true);
+    }
 }

@@ -50,71 +50,71 @@ import aaf.v2_0.History;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_BaseCmd {
 
-	private static AAFcli cli;
-	private static BaseCmd bCmd;
+    private static AAFcli cli;
+    private static BaseCmd bCmd;
 
-	@BeforeClass
-	public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
-		cli = JU_AAFCli.getAAfCli();
-		bCmd = new BaseCmd<>(cli, "testString");
-	}
+    @BeforeClass
+    public static void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
+        cli = JU_AAFCli.getAAfCli();
+        bCmd = new BaseCmd<>(cli, "testString");
+    }
 
-	@Test
-	public void exec() throws CadiException, APIException, LocatorException {
-		assertEquals(bCmd._exec(4, "add", "del", "reset", "extend"), 0);
+    @Test
+    public void exec() throws CadiException, APIException, LocatorException {
+        assertEquals(bCmd._exec(4, "add", "del", "reset", "extend"), 0);
 
-	}
-	
-	@Test
-	public void exec1() throws CadiException, APIException, LocatorException {
-		assertEquals(bCmd._exec(0, "add", "del", "reset", "extend"), 0);
+    }
+    
+    @Test
+    public void exec1() throws CadiException, APIException, LocatorException {
+        assertEquals(bCmd._exec(0, "add", "del", "reset", "extend"), 0);
 
-	}
+    }
 
-	@Test
-	public void activity() throws DatatypeConfigurationException {
-		boolean noError = true;
-		History history = new History();
-		History.Item item = new History.Item();
-		item.setTarget("target");
-		item.setUser("user");
-		item.setMemo("memo");
+    @Test
+    public void activity() throws DatatypeConfigurationException {
+        boolean noError = true;
+        History history = new History();
+        History.Item item = new History.Item();
+        item.setTarget("target");
+        item.setUser("user");
+        item.setMemo("memo");
 
-		GregorianCalendar c = new GregorianCalendar();
-		c.setTime(new Date());
-		XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-		item.setTimestamp(date);
-		history.getItem().add(item);
-		try {
-			bCmd.activity(history, "history");
-		} catch (Exception e) {
-			noError = false;
-		}
-		assertEquals(noError, true);
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        item.setTimestamp(date);
+        history.getItem().add(item);
+        try {
+            bCmd.activity(history, "history");
+        } catch (Exception e) {
+            noError = false;
+        }
+        assertEquals(noError, true);
 
-	}
+    }
 
-	@Test
-	public void activity1() throws DatatypeConfigurationException {
-		boolean noError = true;
-		History history = new History();
-		History.Item item = new History.Item();
-		item.setTarget("target");
-		item.setUser("user");
-		item.setMemo("memo");
+    @Test
+    public void activity1() throws DatatypeConfigurationException {
+        boolean noError = true;
+        History history = new History();
+        History.Item item = new History.Item();
+        item.setTarget("target");
+        item.setUser("user");
+        item.setMemo("memo");
 
-		GregorianCalendar c = new GregorianCalendar();
-		c.setTime(new Date());
-		XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-		item.setTimestamp(date);
-		history.getItem().add(item);
-		try {
-			bCmd.activity(history, "1[]");
-		} catch (Exception e) {
-			noError = false;
-		}
-		assertEquals(noError, true);
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        item.setTimestamp(date);
+        history.getItem().add(item);
+        try {
+            bCmd.activity(history, "1[]");
+        } catch (Exception e) {
+            noError = false;
+        }
+        assertEquals(noError, true);
 
-	}
+    }
 
 }

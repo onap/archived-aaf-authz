@@ -26,16 +26,16 @@ import org.junit.Test;
 
 public class JU_MarkTest {
 
-	@Test
-	public void testMark() {
-		Mark mark = new Mark();
-		assertEquals(mark.spot, 0);
-		assertEquals(mark.comment, null);
+    @Test
+    public void testMark() {
+        Mark mark = new Mark();
+        assertEquals(mark.spot, 0);
+        assertEquals(mark.comment, null);
 
-		mark = new Mark("New Comment");
-		mark.spot(10);
-		assertEquals(mark.spot, 10);
-		assertEquals(mark.comment, "New Comment");
+        mark = new Mark("New Comment");
+        mark.spot(10);
+        assertEquals(mark.spot, 10);
+        assertEquals(mark.comment, "New Comment");
 
-	}
+    }
 }

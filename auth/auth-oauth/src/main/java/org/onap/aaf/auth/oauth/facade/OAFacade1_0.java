@@ -37,11 +37,11 @@ import aafoauth.v2_0.TokenRequest;
  *
  */
 public class OAFacade1_0 extends OAFacadeImpl<TokenRequest,Token,Introspect,Error> {
-	public OAFacade1_0(AAF_OAuth api, 
-					 OAuthService service,
-					 Mapper<TokenRequest,Token,Introspect,Error> mapper, 
-					 Data.TYPE type) throws APIException {
-		super(api, service, mapper, type);
-	}
+    public OAFacade1_0(AAF_OAuth api, 
+                     OAuthService service,
+                     Mapper<TokenRequest,Token,Introspect,Error> mapper, 
+                     Data.TYPE type) throws APIException {
+        super(api, service, mapper, type);
+    }
 
 }

@@ -35,55 +35,55 @@ package org.onap.aaf.misc.env;
  *
  */
 public class APIException extends Exception {
-	
-	private Object payload = null;
-	
-	/**
-	 * @param t
-	 */
-	public APIException(Throwable t) {
-		super(t);
-	}
-	
-	/**
-	 * @param string
-	 */
-	public APIException(String string) {
-		super(string);
-	}
+    
+    private Object payload = null;
+    
+    /**
+     * @param t
+     */
+    public APIException(Throwable t) {
+        super(t);
+    }
+    
+    /**
+     * @param string
+     */
+    public APIException(String string) {
+        super(string);
+    }
 
-	/**
-	 * @param errorMessage
-	 * @param t
-	 */
-	public APIException(String errorMessage, Throwable t) {
-		super(errorMessage,t);
-	}
+    /**
+     * @param errorMessage
+     * @param t
+     */
+    public APIException(String errorMessage, Throwable t) {
+        super(errorMessage,t);
+    }
 
-	/**
-	 * Return payload, or null if none was set.  Type is up to the calling
-	 * System.
-	 * 
-	 * @return Object
-	 */
-	public Object getPayload() {
-		return payload;
-	}
+    /**
+     * Return payload, or null if none was set.  Type is up to the calling
+     * System.
+     * 
+     * @return Object
+     */
+    public Object getPayload() {
+        return payload;
+    }
 
-	/**
-	 * Set a specific payload into this Exception, which doesn't necessarily
-	 * inherit from Throwable.
-	 * 
-	 * @param payload
-	 * @return APIException
-	 */
-	public APIException setPayload(Object payload) {
-		this.payload = payload;
-		return this;
-	}
+    /**
+     * Set a specific payload into this Exception, which doesn't necessarily
+     * inherit from Throwable.
+     * 
+     * @param payload
+     * @return APIException
+     */
+    public APIException setPayload(Object payload) {
+        this.payload = payload;
+        return this;
+    }
 
-	/**
-	 * Java expected serial ID
-	 */
-	private static final long serialVersionUID = 3505343458251445169L;
+    /**
+     * Java expected serial ID
+     */
+    private static final long serialVersionUID = 3505343458251445169L;
 }

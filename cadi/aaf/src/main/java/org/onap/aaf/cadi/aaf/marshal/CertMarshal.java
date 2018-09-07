@@ -31,35 +31,35 @@ import org.onap.aaf.misc.rosetta.marshal.ObjMarshal;
 import aaf.v2_0.Certs.Cert;
 
 public class CertMarshal extends ObjMarshal<Cert> {
-	public CertMarshal() {
-		add(new FieldHexBinary<Cert>("fingerprint") {
-			@Override
-			protected byte[] data(Cert t) {
-				return t.getFingerprint();
-			}
-		});
+    public CertMarshal() {
+        add(new FieldHexBinary<Cert>("fingerprint") {
+            @Override
+            protected byte[] data(Cert t) {
+                return t.getFingerprint();
+            }
+        });
 
-		add(new FieldString<Cert>("id") {
-			@Override
-			protected String data(Cert t) {
-				return t.getId();
-			}
-		});
+        add(new FieldString<Cert>("id") {
+            @Override
+            protected String data(Cert t) {
+                return t.getId();
+            }
+        });
 
-		add(new FieldString<Cert>("x500") {
-			@Override
-			protected String data(Cert t) {
-				return t.getX500();
-			}
-		});
-		
-		add(new FieldDateTime<Cert>("expires") {
-			@Override
-			protected XMLGregorianCalendar data(Cert t) {
-				return t.getExpires();
-			}
-		});
+        add(new FieldString<Cert>("x500") {
+            @Override
+            protected String data(Cert t) {
+                return t.getX500();
+            }
+        });
+        
+        add(new FieldDateTime<Cert>("expires") {
+            @Override
+            protected XMLGregorianCalendar data(Cert t) {
+                return t.getExpires();
+            }
+        });
 
 
-	}
+    }
 }

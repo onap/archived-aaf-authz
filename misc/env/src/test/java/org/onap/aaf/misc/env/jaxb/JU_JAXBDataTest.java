@@ -43,138 +43,138 @@ import org.onap.aaf.misc.env.old.Stringifier;
 
 public class JU_JAXBDataTest {
 
-	@Mock
-	private Objectifier<String> objfr;
+    @Mock
+    private Objectifier<String> objfr;
 
-	private String object = "Text";
+    private String object = "Text";
 
-	@Mock
-	private Stringifier<String> strfr;
+    @Mock
+    private Stringifier<String> strfr;
 
-	@Mock
-	private IOStringifier<String> ioStrfr;
+    @Mock
+    private IOStringifier<String> ioStrfr;
 
-	@Mock
-	private JAXBDF<String> df;
+    @Mock
+    private JAXBDF<String> df;
 
-	@Mock
-	private Env env;
+    @Mock
+    private Env env;
 
-	@Mock
-	private Class<String> typeClass;
+    @Mock
+    private Class<String> typeClass;
 
-	@Mock
-	private OutputStream os;
+    @Mock
+    private OutputStream os;
 
-	@Mock
-	private Writer writer;
+    @Mock
+    private Writer writer;
 
-	@Mock
-	private EnvJAXB env1;
+    @Mock
+    private EnvJAXB env1;
 
-	@Before
-	public void setUp() throws Exception {
-		writer = mock(Writer.class);
-		os = mock(OutputStream.class);
-		strfr = mock(Stringifier.class);
-		ioStrfr = mock(IOStringifier.class);
-		objfr = mock(Objectifier.class);
-		env1 = mock(EnvJAXB.class);
-	}
+    @Before
+    public void setUp() throws Exception {
+        writer = mock(Writer.class);
+        os = mock(OutputStream.class);
+        strfr = mock(Stringifier.class);
+        ioStrfr = mock(IOStringifier.class);
+        objfr = mock(Objectifier.class);
+        env1 = mock(EnvJAXB.class);
+    }
 
-	@Test
-	public void testJAXBDataEnv() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object, typeClass);
+    @Test
+    public void testJAXBDataEnv() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object, typeClass);
 
-		when(objfr.objectify(env, object)).thenReturn("String1");
+        when(objfr.objectify(env, object)).thenReturn("String1");
 
-		jaxb.to(os);
-		jaxb.to(writer);
+        jaxb.to(os);
+        jaxb.to(writer);
 
-		verify(writer).write(object);
-		verify(os).write(object.getBytes());
+        verify(writer).write(object);
+        verify(os).write(object.getBytes());
 
-		assertEquals(jaxb.asString(), object);
-		assertEquals(jaxb.asString(null), object);
-		assertEquals(jaxb.toString(), object);
-		assertEquals(jaxb.getTypeClass(), typeClass);
-		assertEquals(jaxb.out(null), jaxb);
-		assertEquals(jaxb.in(null), jaxb);
-		assertTrue(jaxb.getInputStream() instanceof ByteArrayInputStream);
-		assertEquals(jaxb.asObject(), "String1");
-		assertEquals(jaxb.asObject(env1), "String1");
-		assertEquals(jaxb.toString(), object);
-	}
+        assertEquals(jaxb.asString(), object);
+        assertEquals(jaxb.asString(null), object);
+        assertEquals(jaxb.toString(), object);
+        assertEquals(jaxb.getTypeClass(), typeClass);
+        assertEquals(jaxb.out(null), jaxb);
+        assertEquals(jaxb.in(null), jaxb);
+        assertTrue(jaxb.getInputStream() instanceof ByteArrayInputStream);
+        assertEquals(jaxb.asObject(), "String1");
+        assertEquals(jaxb.asObject(env1), "String1");
+        assertEquals(jaxb.toString(), object);
+    }
 
-	@Test
-	public void testJAXBDataEnvForObjectifier() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object, typeClass);
+    @Test
+    public void testJAXBDataEnvForObjectifier() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object, typeClass);
 
-		when(objfr.objectify(env1, object)).thenReturn("String1");
+        when(objfr.objectify(env1, object)).thenReturn("String1");
 
-		assertEquals(jaxb.asObject(env1), "String1");
-	}
+        assertEquals(jaxb.asObject(env1), "String1");
+    }
 
-	@Test
-	public void testJAXBDataEnvWithObject() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
+    @Test
+    public void testJAXBDataEnvWithObject() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
 
-		when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
+        when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
 
-		jaxb.to(os);
+        jaxb.to(os);
 
-		verify(os).write(object.getBytes());
+        verify(os).write(object.getBytes());
 
-		assertEquals(jaxb.asString(), object);
-		assertEquals(jaxb.asString(null), object);
-		assertEquals(jaxb.toString(), object);
-	}
+        assertEquals(jaxb.asString(), object);
+        assertEquals(jaxb.asString(null), object);
+        assertEquals(jaxb.toString(), object);
+    }
 
-	@Test
-	public void testJAXBDataEnvForWriter() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
+    @Test
+    public void testJAXBDataEnvForWriter() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
 
-		when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
+        when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
 
-		jaxb.to(writer);
+        jaxb.to(writer);
 
-		verify(writer).write(object);
+        verify(writer).write(object);
 
-		assertEquals(jaxb.asString(), object);
-		assertEquals(jaxb.asString(null), object);
-		assertEquals(jaxb.toString(), object);
-		assertEquals(jaxb.asObject(), object);
-		assertEquals(jaxb.asObject(null), object);
-	}
+        assertEquals(jaxb.asString(), object);
+        assertEquals(jaxb.asString(null), object);
+        assertEquals(jaxb.toString(), object);
+        assertEquals(jaxb.asObject(), object);
+        assertEquals(jaxb.asObject(null), object);
+    }
 
-	@Test
-	public void testAsStringWithNullString() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
+    @Test
+    public void testAsStringWithNullString() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
 
-		when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
+        when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
 
-		assertEquals(jaxb.asString(), object);
-	}
+        assertEquals(jaxb.asString(), object);
+    }
 
-	@Test
-	public void testAsStringWithNullStringWithEnv() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
+    @Test
+    public void testAsStringWithNullStringWithEnv() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
 
-		when(strfr.stringify(env1, object)).thenReturn(object);
+        when(strfr.stringify(env1, object)).thenReturn(object);
 
-		assertEquals(jaxb.asString(env1), object);
-	}
+        assertEquals(jaxb.asString(env1), object);
+    }
 
-	@Test
-	public void testToWithIOStrifier() throws APIException, IOException {
-		JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
+    @Test
+    public void testToWithIOStrifier() throws APIException, IOException {
+        JAXBData<String> jaxb = new JAXBData<String>(env, df, strfr, objfr, object);
 
-		jaxb.option(0);
+        jaxb.option(0);
 
-		when(strfr.stringify(env1, object)).thenReturn(object);
-		when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
+        when(strfr.stringify(env1, object)).thenReturn(object);
+        when(strfr.stringify(env, object, new boolean[] { false, false })).thenReturn(object);
 
-		assertTrue(jaxb.getInputStream() instanceof ByteArrayInputStream);
-		assertEquals(jaxb.asString(env1), object);
-	}
+        assertTrue(jaxb.getInputStream() instanceof ByteArrayInputStream);
+        assertEquals(jaxb.asString(env1), object);
+    }
 }

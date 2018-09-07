@@ -57,95 +57,95 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 public class JU_Persist {
 
-	private static final String resourceDirString = "src/test/resources";
-	private static final String tokenDirString = "tokenDir";
-	private static final String key = "key";
+    private static final String resourceDirString = "src/test/resources";
+    private static final String tokenDirString = "tokenDir";
+    private static final String key = "key";
 
-	private static final int data = 5;
+    private static final int data = 5;
 
-	private static final byte[] cred = "password".getBytes();
+    private static final byte[] cred = "password".getBytes();
 
-	private PropAccess access;
-	private Result<Persistable<Integer>> result;
+    private PropAccess access;
+    private Result<Persistable<Integer>> result;
 
-	@Mock private RosettaEnv envMock;
-	@Mock private Persist<Integer, ?> persistMock;
-	@Mock private RosettaDF<Integer> dfMock;
-	@Mock private RosettaData<Integer> dataMock;
-	@Mock private Persistable<Integer> ctMock1;
-	@Mock private Persisting<Integer> ctMock2;
-	@Mock private Loader<Persistable<Integer>> loaderMock;
+    @Mock private RosettaEnv envMock;
+    @Mock private Persist<Integer, ?> persistMock;
+    @Mock private RosettaDF<Integer> dfMock;
+    @Mock private RosettaData<Integer> dataMock;
+    @Mock private Persistable<Integer> ctMock1;
+    @Mock private Persisting<Integer> ctMock2;
+    @Mock private Loader<Persistable<Integer>> loaderMock;
 
-	@Before
-	public void setup() throws APIException, CadiException, LocatorException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws APIException, CadiException, LocatorException {
+        MockitoAnnotations.initMocks(this);
 
-		doReturn(dfMock).when(envMock).newDataFactory((Class<?>[]) any());
-		when(dfMock.newData()).thenReturn(dataMock);
-		when(dataMock.load(data)).thenReturn(dataMock);
+        doReturn(dfMock).when(envMock).newDataFactory((Class<?>[]) any());
+        when(dfMock.newData()).thenReturn(dataMock);
+        when(dataMock.load(data)).thenReturn(dataMock);
 
 
-		result = Result.ok(200, ctMock1);
-		when(loaderMock.load(key)).thenReturn(result);
+        result = Result.ok(200, ctMock1);
+        when(loaderMock.load(key)).thenReturn(result);
 
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(Config.CADI_TOKEN_DIR, resourceDirString);
-	}
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(Config.CADI_TOKEN_DIR, resourceDirString);
+    }
 
-	@After
-	public void tearDown() {
-		File dir = new File(resourceDirString + '/' + tokenDirString);
-		for (File f : dir.listFiles()) {
-			f.delete();
-		}
-		dir.delete();
-	}
+    @After
+    public void tearDown() {
+        File dir = new File(resourceDirString + '/' + tokenDirString);
+        for (File f : dir.listFiles()) {
+            f.delete();
+        }
+        dir.delete();
+    }
 
-	@Test
-	public void test() throws CadiException, APIException, LocatorException, InterruptedException {
-		Persist<Integer, Persistable<Integer>> persist = new PersistStub(access, envMock, null, tokenDirString);
-		// Second call for coverage
-		persist = new PersistStub(access, envMock, null, tokenDirString);
-		assertThat(persist.getDF(), is(dfMock));
-		persist.put(key, ctMock2);
-		Result<Persistable<Integer>> output = persist.get(key, cred, loaderMock);
-		assertThat(output.code, is(200));
-		assertThat(output.isOK(), is(true));
+    @Test
+    public void test() throws CadiException, APIException, LocatorException, InterruptedException {
+        Persist<Integer, Persistable<Integer>> persist = new PersistStub(access, envMock, null, tokenDirString);
+        // Second call for coverage
+        persist = new PersistStub(access, envMock, null, tokenDirString);
+        assertThat(persist.getDF(), is(dfMock));
+        persist.put(key, ctMock2);
+        Result<Persistable<Integer>> output = persist.get(key, cred, loaderMock);
+        assertThat(output.code, is(200));
+        assertThat(output.isOK(), is(true));
 
-		when(ctMock2.checkSyncTime()).thenReturn(true);
-		when(ctMock2.hasBeenTouched()).thenReturn(true);
-		output = persist.get(key, cred, loaderMock);
-		assertThat(output.code, is(200));
-		assertThat(output.isOK(), is(true));
+        when(ctMock2.checkSyncTime()).thenReturn(true);
+        when(ctMock2.hasBeenTouched()).thenReturn(true);
+        output = persist.get(key, cred, loaderMock);
+        assertThat(output.code, is(200));
+        assertThat(output.isOK(), is(true));
 
-		persist.delete(key);
+        persist.delete(key);
 
-		assertThat(persist.get(null, null, null), is(nullValue()));
+        assertThat(persist.get(null, null, null), is(nullValue()));
 
-		// Uncommenting this lets us begin to test the nested Clean class, but
-		// will dramatically slow down every build that runs tests - We need to
-		// either refactor or find a more creative way to test Clean
-//		Thread.sleep(25000);
+        // Uncommenting this lets us begin to test the nested Clean class, but
+        // will dramatically slow down every build that runs tests - We need to
+        // either refactor or find a more creative way to test Clean
+//        Thread.sleep(25000);
 
-		persist.close();
-	}
+        persist.close();
+    }
 
-	private class PersistStub extends Persist<Integer, Persistable<Integer>> {
-		public PersistStub(Access access, RosettaEnv env, Class<Integer> cls, String sub_dir)
-				throws CadiException, APIException { super(access, env, cls, sub_dir); }
-		@Override
-		protected Persistable<Integer> newCacheable(Integer t, long expires_secsFrom1970, byte[] hash, Path path)
-				throws APIException, IOException { return null; }
-		@Override
-		public<T> Path writeDisk(final RosettaDF<T> df, final T t, final byte[] cred, final Path target, final long expires) throws CadiException {
-			return null;
-		}
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T> T readDisk(final RosettaDF<T> df, final byte[] cred, final String filename,final Holder<Path> hp, final Holder<Long> hl) throws CadiException {
-			return (T)new Integer(data);
-		}
+    private class PersistStub extends Persist<Integer, Persistable<Integer>> {
+        public PersistStub(Access access, RosettaEnv env, Class<Integer> cls, String sub_dir)
+                throws CadiException, APIException { super(access, env, cls, sub_dir); }
+        @Override
+        protected Persistable<Integer> newCacheable(Integer t, long expires_secsFrom1970, byte[] hash, Path path)
+                throws APIException, IOException { return null; }
+        @Override
+        public<T> Path writeDisk(final RosettaDF<T> df, final T t, final byte[] cred, final Path target, final long expires) throws CadiException {
+            return null;
+        }
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T readDisk(final RosettaDF<T> df, final byte[] cred, final String filename,final Holder<Path> hp, final Holder<Long> hl) throws CadiException {
+            return (T)new Integer(data);
+        }
 
-	}
+    }
 
 }

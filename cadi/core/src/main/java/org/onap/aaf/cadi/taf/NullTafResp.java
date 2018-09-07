@@ -32,57 +32,57 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
  *
  */
 class NullTafResp implements TafResp {
-	private NullTafResp(){}
-	
-	private static TafResp singleton = new NullTafResp();
-	
-	public static TafResp singleton() {
-		return singleton;
-	}
-	
-	public boolean isValid() {
-		return false;
-	}
-	
-	public RESP isAuthenticated() {
-		return RESP.NO_FURTHER_PROCESSING;
-	}
-	
-	public String desc() {
-		return "All Authentication denied";
-	}
-	
-	public RESP authenticate() throws IOException {
-		return RESP.NO_FURTHER_PROCESSING;
-	}
+    private NullTafResp(){}
+    
+    private static TafResp singleton = new NullTafResp();
+    
+    public static TafResp singleton() {
+        return singleton;
+    }
+    
+    public boolean isValid() {
+        return false;
+    }
+    
+    public RESP isAuthenticated() {
+        return RESP.NO_FURTHER_PROCESSING;
+    }
+    
+    public String desc() {
+        return "All Authentication denied";
+    }
+    
+    public RESP authenticate() throws IOException {
+        return RESP.NO_FURTHER_PROCESSING;
+    }
 
-	public TaggedPrincipal getPrincipal() {
-		return null;
-	}
+    public TaggedPrincipal getPrincipal() {
+        return null;
+    }
 
-	public Access getAccess() {
-		return Access.NULL;
-	}
+    public Access getAccess() {
+        return Access.NULL;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.taf.TafResp#isFailedAttempt()
-	 */
-	public boolean isFailedAttempt() {
-		return true;
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.taf.TafResp#isFailedAttempt()
+     */
+    public boolean isFailedAttempt() {
+        return true;
+    }
 
-	@Override
-	public float timing() {
-		return 0;
-	}
+    @Override
+    public float timing() {
+        return 0;
+    }
 
-	@Override
-	public void timing(long start) {
-	}
-	
-	@Override
-	public String taf() {
-		return "NULL";
-	}
+    @Override
+    public void timing(long start) {
+    }
+    
+    @Override
+    public String taf() {
+        return "NULL";
+    }
 
 }

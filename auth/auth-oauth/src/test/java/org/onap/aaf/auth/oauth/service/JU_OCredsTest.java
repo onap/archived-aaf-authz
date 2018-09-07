@@ -26,24 +26,24 @@ import org.junit.Test;
 
 public class JU_OCredsTest {
 
-	@Test
-	public void test() {
-		OCreds cred = new OCreds("client_id", "client_secret", "username", "password");
+    @Test
+    public void test() {
+        OCreds cred = new OCreds("client_id", "client_secret", "username", "password");
 
-		assertEquals(cred.client_id, "client_id");
-		assertEquals(cred.username, "username");
-		assertEquals(new String(cred.client_secret), "client_secret");
-		assertEquals(new String(cred.password), "password");
-	}
+        assertEquals(cred.client_id, "client_id");
+        assertEquals(cred.username, "username");
+        assertEquals(new String(cred.client_secret), "client_secret");
+        assertEquals(new String(cred.password), "password");
+    }
 
-	@Test
-	public void testWithNullValues() {
-		OCreds cred = new OCreds("client_id", null, "username", null);
+    @Test
+    public void testWithNullValues() {
+        OCreds cred = new OCreds("client_id", null, "username", null);
 
-		assertEquals(cred.client_id, "client_id");
-		assertEquals(cred.username, "username");
-		assertEquals(cred.client_secret, null);
-		assertEquals(cred.password, null);
-	}
+        assertEquals(cred.client_id, "client_id");
+        assertEquals(cred.username, "username");
+        assertEquals(cred.client_secret, null);
+        assertEquals(cred.password, null);
+    }
 
 }

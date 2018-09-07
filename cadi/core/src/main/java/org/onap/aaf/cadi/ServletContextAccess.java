@@ -28,40 +28,40 @@ import javax.servlet.ServletContext;
 
 public class ServletContextAccess extends PropAccess {
 
-	private ServletContext context;
+    private ServletContext context;
 
-	public ServletContextAccess(FilterConfig filterConfig) {
-		super(filterConfig); // protected constructor... does not have "init" called.
-		context = filterConfig.getServletContext();
+    public ServletContextAccess(FilterConfig filterConfig) {
+        super(filterConfig); // protected constructor... does not have "init" called.
+        context = filterConfig.getServletContext();
 
-		for(Enumeration<?> en = filterConfig.getInitParameterNames();en.hasMoreElements();) {
-			String name = (String)en.nextElement();
-			setProperty(name, filterConfig.getInitParameter(name));
-		}
-		init(getProperties());
-	}
+        for(Enumeration<?> en = filterConfig.getInitParameterNames();en.hasMoreElements();) {
+            String name = (String)en.nextElement();
+            setProperty(name, filterConfig.getInitParameter(name));
+        }
+        init(getProperties());
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.PropAccess#log(org.onap.aaf.cadi.Access.Level, java.lang.Object[])
-	 */
-	@Override
-	public void log(Level level, Object... elements) {
-		if(willLog(level)) {
-			StringBuilder sb = buildMsg(level, elements);
-			context.log(sb.toString());
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.PropAccess#log(org.onap.aaf.cadi.Access.Level, java.lang.Object[])
+     */
+    @Override
+    public void log(Level level, Object... elements) {
+        if(willLog(level)) {
+            StringBuilder sb = buildMsg(level, elements);
+            context.log(sb.toString());
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.PropAccess#log(java.lang.Exception, java.lang.Object[])
-	 */
-	@Override
-	public void log(Exception e, Object... elements) {
-		StringBuilder sb = buildMsg(Level.ERROR, elements);
-		context.log(sb.toString(),e);
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.PropAccess#log(java.lang.Exception, java.lang.Object[])
+     */
+    @Override
+    public void log(Exception e, Object... elements) {
+        StringBuilder sb = buildMsg(Level.ERROR, elements);
+        context.log(sb.toString(),e);
+    }
 
-	public ServletContext context() {
-		return context;
-	}
+    public ServletContext context() {
+        return context;
+    }
 }

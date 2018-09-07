@@ -37,10 +37,10 @@ import certman.v1_0.CertInfo;
  *
  */
 public class Facade1_0 extends FacadeImpl<BaseRequest,CertInfo, Artifacts, Error> {
-	public Facade1_0(AAF_CM certman, 
-					 CMService service, 
-					 Mapper<BaseRequest,CertInfo,Artifacts,Error> mapper, 
-					 Data.TYPE type) throws APIException {
-		super(certman, service, mapper, type);
-	}
+    public Facade1_0(AAF_CM certman, 
+                     CMService service, 
+                     Mapper<BaseRequest,CertInfo,Artifacts,Error> mapper, 
+                     Data.TYPE type) throws APIException {
+        super(certman, service, mapper, type);
+    }
 }

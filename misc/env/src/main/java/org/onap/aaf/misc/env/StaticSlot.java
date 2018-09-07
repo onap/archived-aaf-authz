@@ -41,45 +41,45 @@ package org.onap.aaf.misc.env;
  */
 public final class StaticSlot {
 
-	/*
-	 * The name of the StaticSlot.
-	 */
-	private final String key;
-	
-	/*
-	 * The index of the Organizer's static map associated with this StaticSlot.
-	 */
-	final int slot; 
-	
-	/**
-	 * Constructs a new StaticSlot.
-	 * 
-	 * @param index
-	 * 			The index of Organizer's static map this StaticSlot is associated with.
-	 * @param name
-	 * 			The name of the StaticSlot's key.
-	 */
-	StaticSlot(int index, String name) {
-		slot = index;
-		key = name;
-	}
-	
-	/**
-	 * Debug method only to print key=slot pairs.
-	 */
-	public String toString() {
-		return key + '=' + slot;
-	}
-	
-	/**
-	 * Returns the name of this StaticSlot's key.
-	 * 
-	 * @return
-	 * 			The name of this StaticSlot's key.
-	 */
-	public String getKey() {
-		return key;
-	}
+    /*
+     * The name of the StaticSlot.
+     */
+    private final String key;
+    
+    /*
+     * The index of the Organizer's static map associated with this StaticSlot.
+     */
+    final int slot; 
+    
+    /**
+     * Constructs a new StaticSlot.
+     * 
+     * @param index
+     *             The index of Organizer's static map this StaticSlot is associated with.
+     * @param name
+     *             The name of the StaticSlot's key.
+     */
+    StaticSlot(int index, String name) {
+        slot = index;
+        key = name;
+    }
+    
+    /**
+     * Debug method only to print key=slot pairs.
+     */
+    public String toString() {
+        return key + '=' + slot;
+    }
+    
+    /**
+     * Returns the name of this StaticSlot's key.
+     * 
+     * @return
+     *             The name of this StaticSlot's key.
+     */
+    public String getKey() {
+        return key;
+    }
 
 }
 

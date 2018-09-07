@@ -34,31 +34,31 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 
 public class HTransferSS extends AbsTransferSS<HttpURLConnection> {
-	public HTransferSS(TaggedPrincipal principal, String app) throws IOException {
-		super(principal, app);
-	}
-	
-	public HTransferSS(TaggedPrincipal principal, String app, SecurityInfoC<HttpURLConnection> si) {
-		super(principal, app, si);
-	}
+    public HTransferSS(TaggedPrincipal principal, String app) throws IOException {
+        super(principal, app);
+    }
+    
+    public HTransferSS(TaggedPrincipal principal, String app, SecurityInfoC<HttpURLConnection> si) {
+        super(principal, app, si);
+    }
 
-	@Override
-	public void setSecurity(HttpURLConnection huc) throws CadiException {
-		if(defSS==null) {
-			throw new CadiException("Need App Credentials to send message");
-		}
-		defSS.setSecurity(huc);
-		if(value!=null) {
-				huc.addRequestProperty(Config.CADI_USER_CHAIN, value);
-		}
-		if(securityInfo!=null) {
-			securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
-		}
-	}
-	
-	@Override
-	public int setLastResponse(int respCode) {
-		return 0;
-	}
+    @Override
+    public void setSecurity(HttpURLConnection huc) throws CadiException {
+        if(defSS==null) {
+            throw new CadiException("Need App Credentials to send message");
+        }
+        defSS.setSecurity(huc);
+        if(value!=null) {
+                huc.addRequestProperty(Config.CADI_USER_CHAIN, value);
+        }
+        if(securityInfo!=null) {
+            securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
+        }
+    }
+    
+    @Override
+    public int setLastResponse(int respCode) {
+        return 0;
+    }
 
 }

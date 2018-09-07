@@ -33,77 +33,77 @@ import org.onap.aaf.misc.env.impl.BasicTrans;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_BasicTransTest {
 
-	BasicTrans trans = null;
+    BasicTrans trans = null;
 
-	@Mock
-	private EnvJAXB env;
+    @Mock
+    private EnvJAXB env;
 
-	@Mock
-	private TimeTaken timeTaken;
+    @Mock
+    private TimeTaken timeTaken;
 
-	@Before
-	public void setUp() throws Exception {
-		trans = new BasicTrans(env);
-	}
+    @Before
+    public void setUp() throws Exception {
+        trans = new BasicTrans(env);
+    }
 
-	@Test
-	public void testSlot() {
-		Slot slot = new Slot(1, "XML");
-		when(env.slot("XML")).thenReturn(slot);
+    @Test
+    public void testSlot() {
+        Slot slot = new Slot(1, "XML");
+        when(env.slot("XML")).thenReturn(slot);
 
-		Slot outputSlot = trans.slot("XML");
-		Object[] state = new Object[2];
+        Slot outputSlot = trans.slot("XML");
+        Object[] state = new Object[2];
 
-		slot.put(state, "JSON");
+        slot.put(state, "JSON");
 
-		assertEquals(slot.get(state), "JSON");
-		assertEquals(slot.getKey(), outputSlot.getKey());
-		assertEquals(slot.toString(), outputSlot.toString());
-	}
+        assertEquals(slot.get(state), "JSON");
+        assertEquals(slot.getKey(), outputSlot.getKey());
+        assertEquals(slot.toString(), outputSlot.toString());
+    }
 
-	@Test
-	public void testGetStaticSlot() {
-		StaticSlot staticSlot = new StaticSlot(1, "XML");
-		when(env.get(staticSlot)).thenReturn(staticSlot.toString());
+    @Test
+    public void testGetStaticSlot() {
+        StaticSlot staticSlot = new StaticSlot(1, "XML");
+        when(env.get(staticSlot)).thenReturn(staticSlot.toString());
 
-		assertEquals(staticSlot.toString(), trans.get(staticSlot));
-	}
+        assertEquals(staticSlot.toString(), trans.get(staticSlot));
+    }
 
-	@Test
-	public void testGetStaticSlotWithT() {
-		StaticSlot staticSlot = new StaticSlot(1, "XML");
-		when(env.get(staticSlot, "XML")).thenReturn(staticSlot.getKey());
+    @Test
+    public void testGetStaticSlotWithT() {
+        StaticSlot staticSlot = new StaticSlot(1, "XML");
+        when(env.get(staticSlot, "XML")).thenReturn(staticSlot.getKey());
 
-		assertEquals(staticSlot.getKey(), trans.get(staticSlot, "XML"));
-	}
+        assertEquals(staticSlot.getKey(), trans.get(staticSlot, "XML"));
+    }
 
-	@Test
-	public void testSetProperty() {
-		String tag = "tag";
-		String value = "value";
-		String defltValue = "diffValue";
-		when(env.setProperty(tag, value)).thenReturn(value);
-		when(env.getProperty(tag)).thenReturn(value);
-		when(env.getProperty(tag, defltValue)).thenReturn(defltValue);
+    @Test
+    public void testSetProperty() {
+        String tag = "tag";
+        String value = "value";
+        String defltValue = "diffValue";
+        when(env.setProperty(tag, value)).thenReturn(value);
+        when(env.getProperty(tag)).thenReturn(value);
+        when(env.getProperty(tag, defltValue)).thenReturn(defltValue);
 
-		assertEquals(value, trans.setProperty(tag, value));
-		assertEquals(value, trans.getProperty(tag));
-		assertEquals(defltValue, trans.getProperty(tag, defltValue));
-	}
+        assertEquals(value, trans.setProperty(tag, value));
+        assertEquals(value, trans.getProperty(tag));
+        assertEquals(defltValue, trans.getProperty(tag, defltValue));
+    }
 
-	@Test
-	public void testDecryptor() {
-		when(env.decryptor()).thenReturn(Decryptor.NULL);
+    @Test
+    public void testDecryptor() {
+        when(env.decryptor()).thenReturn(Decryptor.NULL);
 
-		assertEquals(Decryptor.NULL, trans.decryptor());
-		assertEquals("tag", trans.decryptor().decrypt("tag"));
-	}
+        assertEquals(Decryptor.NULL, trans.decryptor());
+        assertEquals("tag", trans.decryptor().decrypt("tag"));
+    }
 
-	@Test
-	public void testEncryptor() {
-		when(env.encryptor()).thenReturn(Encryptor.NULL);
+    @Test
+    public void testEncryptor() {
+        when(env.encryptor()).thenReturn(Encryptor.NULL);
 
-		assertEquals(Encryptor.NULL, trans.encryptor());
-		assertEquals("tag", trans.encryptor().encrypt("tag"));
-	}
+        assertEquals(Encryptor.NULL, trans.encryptor());
+        assertEquals("tag", trans.encryptor().encrypt("tag"));
+    }
 }

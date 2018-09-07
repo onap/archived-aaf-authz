@@ -39,260 +39,260 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.misc.env.util.Split;
 
 public class PropertyLocator implements Locator<URI> {
-	private final URI [] orig;
-	private PLItem[] current;
-	private int end;
-	private final SecureRandom random;
-	private URI[] resolved;
-	private long lastRefreshed;
-	private long minRefresh;
-	private long backgroundRefresh;
+    private final URI [] orig;
+    private PLItem[] current;
+    private int end;
+    private final SecureRandom random;
+    private URI[] resolved;
+    private long lastRefreshed;
+    private long minRefresh;
+    private long backgroundRefresh;
 
-	public PropertyLocator(String locList) throws LocatorException {
-		this(locList,10000L, 1000*60*20L); // defaults, do not refresh more than once in 10 seconds, Refresh Locator every 20 mins.
-	}
-	/**
-	 * comma delimited root url list
-	 * 
-	 * @param locList
-	 * @throws LocatorException
-	 */
-	public PropertyLocator(String locList, long minRefreshMillis, long backgroundRefreshMillis) throws LocatorException {
-		minRefresh = minRefreshMillis;
-		backgroundRefresh = backgroundRefreshMillis;
-		lastRefreshed=0L;
-		if(locList==null) {
-			throw new LocatorException("No Location List given for PropertyLocator");
-		}
-		String[] locarray = Split.split(',',locList);
-		List<URI> uriList = new ArrayList<>();
-		
-		random = new SecureRandom();
-		
-		for(int i=0;i<locarray.length;++i) {
-			try {
-				int range = locarray[i].indexOf(":[");
-				if(range<0) {
-					uriList.add(new URI(locarray[i]));
-				} else {
-					String mach_colon = locarray[i].substring(0, range+1);
-					int dash = locarray[i].indexOf('-',range+2);
-					int brac = locarray[i].indexOf(']',dash+1);
-					int slash = locarray[i].indexOf('/',brac);
-					int start = Integer.parseInt(locarray[i].substring(range+2, dash));
-					int end = Integer.parseInt(locarray[i].substring(dash+1, brac));
-					for(int port=start;port<=end;++port) {
-						uriList.add(new URI(mach_colon+port + (slash>=0?locarray[i].substring(slash):"")));
-					}
-				}
-			} catch (NumberFormatException nf) {
-				throw new LocatorException("Invalid URI format: " + locarray[i]);
-			} catch (URISyntaxException e) {
-				throw new LocatorException(e);
-			}
-		}
-		orig = new URI[uriList.size()];
-		uriList.toArray(orig);
+    public PropertyLocator(String locList) throws LocatorException {
+        this(locList,10000L, 1000*60*20L); // defaults, do not refresh more than once in 10 seconds, Refresh Locator every 20 mins.
+    }
+    /**
+     * comma delimited root url list
+     * 
+     * @param locList
+     * @throws LocatorException
+     */
+    public PropertyLocator(String locList, long minRefreshMillis, long backgroundRefreshMillis) throws LocatorException {
+        minRefresh = minRefreshMillis;
+        backgroundRefresh = backgroundRefreshMillis;
+        lastRefreshed=0L;
+        if(locList==null) {
+            throw new LocatorException("No Location List given for PropertyLocator");
+        }
+        String[] locarray = Split.split(',',locList);
+        List<URI> uriList = new ArrayList<>();
+        
+        random = new SecureRandom();
+        
+        for(int i=0;i<locarray.length;++i) {
+            try {
+                int range = locarray[i].indexOf(":[");
+                if(range<0) {
+                    uriList.add(new URI(locarray[i]));
+                } else {
+                    String mach_colon = locarray[i].substring(0, range+1);
+                    int dash = locarray[i].indexOf('-',range+2);
+                    int brac = locarray[i].indexOf(']',dash+1);
+                    int slash = locarray[i].indexOf('/',brac);
+                    int start = Integer.parseInt(locarray[i].substring(range+2, dash));
+                    int end = Integer.parseInt(locarray[i].substring(dash+1, brac));
+                    for(int port=start;port<=end;++port) {
+                        uriList.add(new URI(mach_colon+port + (slash>=0?locarray[i].substring(slash):"")));
+                    }
+                }
+            } catch (NumberFormatException nf) {
+                throw new LocatorException("Invalid URI format: " + locarray[i]);
+            } catch (URISyntaxException e) {
+                throw new LocatorException(e);
+            }
+        }
+        orig = new URI[uriList.size()];
+        uriList.toArray(orig);
 
-		refresh();
-		new Timer("PropertyLocator Refresh Timer",true).scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				refresh();
-			}
-		}, backgroundRefresh,backgroundRefresh);
-	}
+        refresh();
+        new Timer("PropertyLocator Refresh Timer",true).scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                refresh();
+            }
+        }, backgroundRefresh,backgroundRefresh);
+    }
 
-	@Override
-	public URI get(Item item) throws LocatorException {
-		synchronized(orig) {
-			if(item==null) {
-				return null;
-			} else {
-				return resolved[((PLItem)item).idx];
-			}
-		}
-	}
+    @Override
+    public URI get(Item item) throws LocatorException {
+        synchronized(orig) {
+            if(item==null) {
+                return null;
+            } else {
+                return resolved[((PLItem)item).idx];
+            }
+        }
+    }
 
-	@Override
-	public Item first() throws LocatorException {
-		return end>0?current[0]:null;
-	}
+    @Override
+    public Item first() throws LocatorException {
+        return end>0?current[0]:null;
+    }
 
-	@Override
-	public boolean hasItems() {
-		return end>0;
-	}
+    @Override
+    public boolean hasItems() {
+        return end>0;
+    }
 
-	@Override
-	public Item next(Item item) throws LocatorException {
-		if(item==null) {
-			return null;
-		} else {
-			int spot;
-			if((spot=(((PLItem)item).order+1))>=end)return null;
-			return current[spot];
-		}
-	}
+    @Override
+    public Item next(Item item) throws LocatorException {
+        if(item==null) {
+            return null;
+        } else {
+            int spot;
+            if((spot=(((PLItem)item).order+1))>=end)return null;
+            return current[spot];
+        }
+    }
 
-	@Override
-	public synchronized void invalidate(Item item) throws LocatorException {
-		if(--end<0) {
-			refresh();
-			return;
-		}
-		if(item==null) {
-			return;
-		}
-		PLItem pli = (PLItem)item;
-		int i,order;
-		for(i=0;i<end;++i) {
-			if(pli==current[i])break;
-		}
-		order = current[i].order;
-		for(;i<end;++i) {
-			current[i]=current[i+1];
-			current[i].order=order++;
-		}
-		current[end]=pli;
-	}
+    @Override
+    public synchronized void invalidate(Item item) throws LocatorException {
+        if(--end<0) {
+            refresh();
+            return;
+        }
+        if(item==null) {
+            return;
+        }
+        PLItem pli = (PLItem)item;
+        int i,order;
+        for(i=0;i<end;++i) {
+            if(pli==current[i])break;
+        }
+        order = current[i].order;
+        for(;i<end;++i) {
+            current[i]=current[i+1];
+            current[i].order=order++;
+        }
+        current[end]=pli;
+    }
 
-	@Override
-	public Item best() throws LocatorException {
-		if(current.length==0) {
-			refresh();
-		}
-		switch(current.length) {
-			case 0:
-				return null;
-			case 1:
-				return current[0];
-			default:
-				int rand = random.nextInt(); // sonar driven syntax
-				return current[Math.abs(rand)%current.length];
-		}
-	}
+    @Override
+    public Item best() throws LocatorException {
+        if(current.length==0) {
+            refresh();
+        }
+        switch(current.length) {
+            case 0:
+                return null;
+            case 1:
+                return current[0];
+            default:
+                int rand = random.nextInt(); // sonar driven syntax
+                return current[Math.abs(rand)%current.length];
+        }
+    }
 
-	@Override
-	public synchronized boolean refresh() {
-		if(System.currentTimeMillis()>lastRefreshed) {
-			// Build up list
-			List<URI> resolve = new ArrayList<>();
-			String realname;
-			for(int i = 0; i < orig.length ; ++i) {
-				try {
-					InetAddress ia[] = InetAddress.getAllByName(orig[i].getHost());
+    @Override
+    public synchronized boolean refresh() {
+        if(System.currentTimeMillis()>lastRefreshed) {
+            // Build up list
+            List<URI> resolve = new ArrayList<>();
+            String realname;
+            for(int i = 0; i < orig.length ; ++i) {
+                try {
+                    InetAddress ia[] = InetAddress.getAllByName(orig[i].getHost());
 
-					URI o,n;
-					for(int j=0;j<ia.length;++j) {
-						o = orig[i];
-						Socket socket = createSocket();
-						try {
-							realname=ia[j].getHostAddress().equals(ia[j].getHostName())?ia[j].getCanonicalHostName():ia[j].getHostName();
-							int port = o.getPort();
-							if(port<0) { // default
-								port = "https".equalsIgnoreCase(o.getScheme())?443:80;
-							}
-							socket.connect(new InetSocketAddress(realname,port),3000);
-							try {
-								if(socket.isConnected()) {
-									n = new URI(
-											o.getScheme(),
-											o.getUserInfo(),
-											realname,
-											o.getPort(),
-											o.getPath(),
-											o.getQuery(),
-											o.getFragment()
-											);
-									resolve.add(n);
-								}
-							} finally {
-								socket.close();
-							}
-						} catch (IOException e) {
-						} finally {
-							if(!socket.isClosed()) {
-								try {
-									socket.close();
-								} catch (IOException e) {
-									// nothing to do.
-								}
-							}
-						}
-					}
-				} catch (UnknownHostException | URISyntaxException e) {
-					// Note: Orig Name already known as valid, based on constructor
-				}
-			}
-			end=resolve.size();
-			PLItem[] newCurrent;
-			if(current==null || current.length!=end) {
-				newCurrent = new PLItem[end];
-			} else {
-				newCurrent = current;
-			}
-	
-			for(int i=0; i< end; ++i) {
-				if(newCurrent[i]==null){
-					newCurrent[i]=new PLItem(i);
-				} else {
-					newCurrent[i].idx=newCurrent[i].order=i;
-				}
-			}
-			synchronized(orig) {
-				resolved = new URI[end];
-				resolve.toArray(resolved);
-				current = newCurrent;
-			}
-			lastRefreshed = System.currentTimeMillis()+minRefresh;
-			return !resolve.isEmpty();
-		} else {
-			return false;
-		}
-	}
+                    URI o,n;
+                    for(int j=0;j<ia.length;++j) {
+                        o = orig[i];
+                        Socket socket = createSocket();
+                        try {
+                            realname=ia[j].getHostAddress().equals(ia[j].getHostName())?ia[j].getCanonicalHostName():ia[j].getHostName();
+                            int port = o.getPort();
+                            if(port<0) { // default
+                                port = "https".equalsIgnoreCase(o.getScheme())?443:80;
+                            }
+                            socket.connect(new InetSocketAddress(realname,port),3000);
+                            try {
+                                if(socket.isConnected()) {
+                                    n = new URI(
+                                            o.getScheme(),
+                                            o.getUserInfo(),
+                                            realname,
+                                            o.getPort(),
+                                            o.getPath(),
+                                            o.getQuery(),
+                                            o.getFragment()
+                                            );
+                                    resolve.add(n);
+                                }
+                            } finally {
+                                socket.close();
+                            }
+                        } catch (IOException e) {
+                        } finally {
+                            if(!socket.isClosed()) {
+                                try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    // nothing to do.
+                                }
+                            }
+                        }
+                    }
+                } catch (UnknownHostException | URISyntaxException e) {
+                    // Note: Orig Name already known as valid, based on constructor
+                }
+            }
+            end=resolve.size();
+            PLItem[] newCurrent;
+            if(current==null || current.length!=end) {
+                newCurrent = new PLItem[end];
+            } else {
+                newCurrent = current;
+            }
+    
+            for(int i=0; i< end; ++i) {
+                if(newCurrent[i]==null){
+                    newCurrent[i]=new PLItem(i);
+                } else {
+                    newCurrent[i].idx=newCurrent[i].order=i;
+                }
+            }
+            synchronized(orig) {
+                resolved = new URI[end];
+                resolve.toArray(resolved);
+                current = newCurrent;
+            }
+            lastRefreshed = System.currentTimeMillis()+minRefresh;
+            return !resolve.isEmpty();
+        } else {
+            return false;
+        }
+    }
 
-	protected Socket createSocket() {
-		return new Socket();
-	}
-	
-	private class PLItem implements Item {
-		public int idx,order;
-		
-		public PLItem(int i) {
-			idx = order =i;
-		}
-		
-		public String toString() {
-			return "Item: " + idx + " order: " + order;
-		}
-	}
+    protected Socket createSocket() {
+        return new Socket();
+    }
+    
+    private class PLItem implements Item {
+        public int idx,order;
+        
+        public PLItem(int i) {
+            idx = order =i;
+        }
+        
+        public String toString() {
+            return "Item: " + idx + " order: " + order;
+        }
+    }
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for(URI uri : orig) {
-			boolean isResolved=false;
-			if(uri!=null) {
-				if(first) {
-					first = false;
-				} else {
-					sb.append(", ");
-				}
-				sb.append(uri.toString());
-				sb.append(" [");
-				for(URI u2 : resolved) {
-					if(uri.equals(u2)) {
-						isResolved = true;
-						break;
-					}
-				}
-				sb.append(isResolved?"X]\n":" ]");
-			}
-		}
-		return sb.toString();
-	}
-	
-	public void destroy() {
-	}
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for(URI uri : orig) {
+            boolean isResolved=false;
+            if(uri!=null) {
+                if(first) {
+                    first = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(uri.toString());
+                sb.append(" [");
+                for(URI u2 : resolved) {
+                    if(uri.equals(u2)) {
+                        isResolved = true;
+                        break;
+                    }
+                }
+                sb.append(isResolved?"X]\n":" ]");
+            }
+        }
+        return sb.toString();
+    }
+    
+    public void destroy() {
+    }
 }

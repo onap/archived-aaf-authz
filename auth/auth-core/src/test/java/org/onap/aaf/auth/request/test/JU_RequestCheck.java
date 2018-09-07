@@ -26,17 +26,17 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 public class JU_RequestCheck {
-	
-	@Test
-	public void testNSRequest() throws APIException {
-		RosettaEnv env = new RosettaEnv();
-		new NSCompare().run(env);
-		new NSAttribCompare().run(env);
-		new RoleCompare().run(env);
-		new PermCompare().run(env);
-		new CredCompare().run(env);
-		new UserRoleCompare().run(env);
-		new RolePermCompare().run(env);
-		new MultiCompare().run(env);
-	};
+    
+    @Test
+    public void testNSRequest() throws APIException {
+        RosettaEnv env = new RosettaEnv();
+        new NSCompare().run(env);
+        new NSAttribCompare().run(env);
+        new RoleCompare().run(env);
+        new PermCompare().run(env);
+        new CredCompare().run(env);
+        new UserRoleCompare().run(env);
+        new RolePermCompare().run(env);
+        new MultiCompare().run(env);
+    };
 }

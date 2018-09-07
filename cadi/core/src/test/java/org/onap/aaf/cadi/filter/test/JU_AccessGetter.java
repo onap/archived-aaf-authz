@@ -34,21 +34,21 @@ import org.onap.aaf.cadi.filter.AccessGetter;
 
 public class JU_AccessGetter {
 
-	private static final String tag = "tag";
-	private static final String value = "value";
+    private static final String tag = "tag";
+    private static final String value = "value";
 
-	private PropAccess access;
+    private PropAccess access;
 
-	@Before
-	public void setup() {
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(tag, value);
-	}
+    @Before
+    public void setup() {
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(tag, value);
+    }
 
-	@Test
-	public void test() {
-		AccessGetter getter = new AccessGetter(access);
-		assertThat(getter.get(tag, null, false), is(value));
-	}
+    @Test
+    public void test() {
+        AccessGetter getter = new AccessGetter(access);
+        assertThat(getter.get(tag, null, false), is(value));
+    }
 
 }

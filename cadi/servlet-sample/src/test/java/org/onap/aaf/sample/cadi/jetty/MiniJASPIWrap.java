@@ -48,54 +48,54 @@ import org.onap.aaf.cadi.filter.RolesAllowed;
  *
  */
 public class MiniJASPIWrap extends ServletHolder {
-	private RolesAllowed rolesAllowed;
-	//private String roles;
-	public MiniJASPIWrap(Class<? extends Servlet> servlet) {
-		super(servlet);
-		this.rolesAllowed = servlet.getAnnotation(RolesAllowed.class);
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		if(rolesAllowed!=null) {
-			for(String str : rolesAllowed.value()) {
-				if(first)first=false;
-				else sb.append(',');
-				sb.append(str);
-			}
-		}
-		//roles = sb.toString();
-	}
+    private RolesAllowed rolesAllowed;
+    //private String roles;
+    public MiniJASPIWrap(Class<? extends Servlet> servlet) {
+        super(servlet);
+        this.rolesAllowed = servlet.getAnnotation(RolesAllowed.class);
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        if(rolesAllowed!=null) {
+            for(String str : rolesAllowed.value()) {
+                if(first)first=false;
+                else sb.append(',');
+                sb.append(str);
+            }
+        }
+        //roles = sb.toString();
+    }
 
-	/**
-	 * handle
-	 * 
-	 * When utilized, this class authorizes the transaction by first calling the standard J2EE API call
-	 * "isUserInRole" with the role(s) found in the class Annotations (JASPI Style) 
-	 */
-	@Override
-	public void handle(Request baseRequest, ServletRequest request,	ServletResponse response) throws ServletException,	UnavailableException, IOException {
-		if(rolesAllowed==null) {
-			super.handle(baseRequest, request, response);
-		} else { // Validate
-			try {
-				
-				HttpServletRequest hreq = (HttpServletRequest)request;
-				boolean proceed = false;
-				for(String role : rolesAllowed.value()) {
-					if(hreq.isUserInRole(role)) {
-						proceed = true;
-						break;
-					}
-				}
-				if(proceed) {
-					super.handle(baseRequest, request, response);
-				} else {
-					//baseRequest.getServletContext().log(hreq.getUserPrincipal().getName()+" Refused " + roles);
-					((HttpServletResponse)response).sendError(403); // forbidden
-				}
-			} catch(ClassCastException e) {
-				throw new ServletException("JASPIWrap only supports HTTPServletRequest/HttpServletResponse");
-			}
-		}		
-	}
+    /**
+     * handle
+     * 
+     * When utilized, this class authorizes the transaction by first calling the standard J2EE API call
+     * "isUserInRole" with the role(s) found in the class Annotations (JASPI Style) 
+     */
+    @Override
+    public void handle(Request baseRequest, ServletRequest request,    ServletResponse response) throws ServletException,    UnavailableException, IOException {
+        if(rolesAllowed==null) {
+            super.handle(baseRequest, request, response);
+        } else { // Validate
+            try {
+                
+                HttpServletRequest hreq = (HttpServletRequest)request;
+                boolean proceed = false;
+                for(String role : rolesAllowed.value()) {
+                    if(hreq.isUserInRole(role)) {
+                        proceed = true;
+                        break;
+                    }
+                }
+                if(proceed) {
+                    super.handle(baseRequest, request, response);
+                } else {
+                    //baseRequest.getServletContext().log(hreq.getUserPrincipal().getName()+" Refused " + roles);
+                    ((HttpServletResponse)response).sendError(403); // forbidden
+                }
+            } catch(ClassCastException e) {
+                throw new ServletException("JASPIWrap only supports HTTPServletRequest/HttpServletResponse");
+            }
+        }        
+    }
 
 }

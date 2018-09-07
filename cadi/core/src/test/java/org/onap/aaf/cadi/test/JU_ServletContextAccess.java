@@ -47,58 +47,58 @@ import javax.servlet.ServletContext;
 @SuppressWarnings("unused")
 public class JU_ServletContextAccess {
 
-	private FilterConfig filter_mock;
-	Enumeration<String> enumeration;
-	
-	private class CustomEnumeration implements Enumeration<String> {
-		private int idx = 0;
-		private final String[] elements = {"This", "is", "a", "test"};
-		@Override
-		public String nextElement() {
-			return idx >= elements.length ? null : elements[idx++];
-		}
-		@Override
-		public boolean hasMoreElements() {
-			return idx < elements.length;
-		}
-	}
+    private FilterConfig filter_mock;
+    Enumeration<String> enumeration;
+    
+    private class CustomEnumeration implements Enumeration<String> {
+        private int idx = 0;
+        private final String[] elements = {"This", "is", "a", "test"};
+        @Override
+        public String nextElement() {
+            return idx >= elements.length ? null : elements[idx++];
+        }
+        @Override
+        public boolean hasMoreElements() {
+            return idx < elements.length;
+        }
+    }
 
-	@Before
-	public void setup() {
-		enumeration = new CustomEnumeration();
-		filter_mock = mock(FilterConfig.class);
-		when(filter_mock.getInitParameterNames()).thenReturn(enumeration);
-	}
-	
-	@Test
-	public void ConstructorTest() throws Exception {
-		ServletContextAccess sca = new ServletContextAccess(filter_mock);
-	}
+    @Before
+    public void setup() {
+        enumeration = new CustomEnumeration();
+        filter_mock = mock(FilterConfig.class);
+        when(filter_mock.getInitParameterNames()).thenReturn(enumeration);
+    }
+    
+    @Test
+    public void ConstructorTest() throws Exception {
+        ServletContextAccess sca = new ServletContextAccess(filter_mock);
+    }
 
-	@Test
-	public void logTest() throws Exception {
-		ServletContext sc_mock = mock(ServletContext.class);
-		when(filter_mock.getServletContext()).thenReturn(sc_mock);
-		ServletContextAccess sca = new ServletContextAccess(filter_mock);
+    @Test
+    public void logTest() throws Exception {
+        ServletContext sc_mock = mock(ServletContext.class);
+        when(filter_mock.getServletContext()).thenReturn(sc_mock);
+        ServletContextAccess sca = new ServletContextAccess(filter_mock);
 
-		sca.log(Level.DEBUG);
+        sca.log(Level.DEBUG);
 
-		sca.setLogLevel(Level.DEBUG);
-		sca.log(Level.DEBUG);
+        sca.setLogLevel(Level.DEBUG);
+        sca.log(Level.DEBUG);
 
-		try {
-			sca.log(new Exception("This exception was thrown intentionally, please ignore it"));
-		} catch(Exception e) {
-			fail("Should have thrown an exception");
-		}
-	}
+        try {
+            sca.log(new Exception("This exception was thrown intentionally, please ignore it"));
+        } catch(Exception e) {
+            fail("Should have thrown an exception");
+        }
+    }
 
-	@Test
-	public void contextTest() {
-		ServletContext sc_mock = mock(ServletContext.class);
-		when(filter_mock.getServletContext()).thenReturn(sc_mock);
-		ServletContextAccess sca = new ServletContextAccess(filter_mock);
-		assertThat(sca.context(), instanceOf(ServletContext.class));
-	}
+    @Test
+    public void contextTest() {
+        ServletContext sc_mock = mock(ServletContext.class);
+        when(filter_mock.getServletContext()).thenReturn(sc_mock);
+        ServletContextAccess sca = new ServletContextAccess(filter_mock);
+        assertThat(sca.context(), instanceOf(ServletContext.class));
+    }
 
 }

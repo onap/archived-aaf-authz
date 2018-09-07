@@ -36,100 +36,100 @@ import org.mockito.Mock;
 
 public class JU_HTML5GenTest {
 
-//	private final static String DOCTYPE = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\""
-//			+ " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
+//    private final static String DOCTYPE = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\""
+//            + " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
 
-	private String charset = "utf-8";
+    private String charset = "utf-8";
 
-	private final String CHARSET_LINE = "<meta charset=\"" + charset + "\">";
+    private final String CHARSET_LINE = "<meta charset=\"" + charset + "\">";
 
-	@Mock
-	Writer w;
+    @Mock
+    Writer w;
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
-		w = mock(Writer.class);
-	}
+        w = mock(Writer.class);
+    }
 
-	@Test
-	public void testHTML() throws IOException {
+    @Test
+    public void testHTML() throws IOException {
 
-		HTML5Gen gen = new HTML5Gen(w);
+        HTML5Gen gen = new HTML5Gen(w);
 
-		gen.html("attributes");
+        gen.html("attributes");
 
-		Map<Character, Integer> map = new TreeMap<>();
+        Map<Character, Integer> map = new TreeMap<>();
 
-		for (char ch : "html".toCharArray()) {
-			Integer times = map.get(ch);
-			map.put(ch, (times == null ? 0 : times) + 1);
-		}
+        for (char ch : "html".toCharArray()) {
+            Integer times = map.get(ch);
+            map.put(ch, (times == null ? 0 : times) + 1);
+        }
 
-		for (char ch : map.keySet()) {
-			verify(w, atLeast(map.get(ch))).write(ch);
-		}
-		verify(w, atLeast(1)).write(anyInt());
-	}
+        for (char ch : map.keySet()) {
+            verify(w, atLeast(map.get(ch))).write(ch);
+        }
+        verify(w, atLeast(1)).write(anyInt());
+    }
 
-	@Test
-	public void testHead() throws IOException {
+    @Test
+    public void testHead() throws IOException {
 
-		HTML5Gen gen = new HTML5Gen(w);
+        HTML5Gen gen = new HTML5Gen(w);
 
-		gen.head();
+        gen.head();
 
-		Map<Character, Integer> map = new TreeMap<>();
+        Map<Character, Integer> map = new TreeMap<>();
 
-		for (char ch : "head".toCharArray()) {
-			Integer times = map.get(ch);
-			map.put(ch, (times == null ? 0 : times) + 1);
-		}
+        for (char ch : "head".toCharArray()) {
+            Integer times = map.get(ch);
+            map.put(ch, (times == null ? 0 : times) + 1);
+        }
 
-		for (char ch : map.keySet()) {
-			verify(w, atLeast(map.get(ch))).write(ch);
-		}
-	}
+        for (char ch : map.keySet()) {
+            verify(w, atLeast(map.get(ch))).write(ch);
+        }
+    }
 
-	@Test
-	public void testBody() throws IOException {
+    @Test
+    public void testBody() throws IOException {
 
-		HTML5Gen gen = new HTML5Gen(w);
+        HTML5Gen gen = new HTML5Gen(w);
 
-		gen.body("attributes");
+        gen.body("attributes");
 
-		Map<Character, Integer> map = new TreeMap<>();
+        Map<Character, Integer> map = new TreeMap<>();
 
-		for (char ch : "body".toCharArray()) {
-			Integer times = map.get(ch);
-			map.put(ch, (times == null ? 0 : times) + 1);
-		}
-		for (char ch : "attributes".toCharArray()) {
-			Integer times = map.get(ch);
-			map.put(ch, (times == null ? 0 : times) + 1);
-		}
+        for (char ch : "body".toCharArray()) {
+            Integer times = map.get(ch);
+            map.put(ch, (times == null ? 0 : times) + 1);
+        }
+        for (char ch : "attributes".toCharArray()) {
+            Integer times = map.get(ch);
+            map.put(ch, (times == null ? 0 : times) + 1);
+        }
 
-		for (char ch : map.keySet()) {
-			verify(w, atLeast(map.get(ch))).write(ch);
-		}
-	}
+        for (char ch : map.keySet()) {
+            verify(w, atLeast(map.get(ch))).write(ch);
+        }
+    }
 
-	@Test
-	public void testCharSet() throws IOException {
+    @Test
+    public void testCharSet() throws IOException {
 
-		HTML5Gen gen = new HTML5Gen(w);
+        HTML5Gen gen = new HTML5Gen(w);
 
-		gen.charset(charset);
+        gen.charset(charset);
 
-		Map<Character, Integer> map = new TreeMap<>();
+        Map<Character, Integer> map = new TreeMap<>();
 
-		for (char ch : CHARSET_LINE.toCharArray()) {
-			Integer times = map.get(ch);
-			map.put(ch, (times == null ? 0 : times) + 1);
-		}
+        for (char ch : CHARSET_LINE.toCharArray()) {
+            Integer times = map.get(ch);
+            map.put(ch, (times == null ? 0 : times) + 1);
+        }
 
-		for (char ch : map.keySet()) {
-			verify(w, atLeast(map.get(ch))).write(ch);
-		}
-	}
+        for (char ch : map.keySet()) {
+            verify(w, atLeast(map.get(ch))).write(ch);
+        }
+    }
 }

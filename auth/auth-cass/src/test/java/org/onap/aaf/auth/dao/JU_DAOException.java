@@ -34,16 +34,16 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class JU_DAOException {
 DAOException daoException;
 
-	//DAOException daoException = new DAOException();
-	String message = "message";
-	Throwable cause;	
-	@Before
-	public void setUp(){
-	daoException = new DAOException();	
-	}
+    //DAOException daoException = new DAOException();
+    String message = "message";
+    Throwable cause;    
+    @Before
+    public void setUp(){
+    daoException = new DAOException();    
+    }
 
-	@Test
-	public void test(){
-		assertTrue(true);
-	}
+    @Test
+    public void test(){
+        assertTrue(true);
+    }
 }

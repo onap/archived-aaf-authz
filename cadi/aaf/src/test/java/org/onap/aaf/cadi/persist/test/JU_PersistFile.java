@@ -52,70 +52,70 @@ import org.onap.aaf.misc.rosetta.env.RosettaData;
 
 public class JU_PersistFile {
 
-	private static final String resourceDirString = "src/test/resources";
-	private static final String tokenDirString = "tokenDir";
-	private static final String tokenFileName = "token";
+    private static final String resourceDirString = "src/test/resources";
+    private static final String tokenDirString = "tokenDir";
+    private static final String tokenFileName = "token";
 
-	private static final int data = 5;
-	private static final long expires = 10000;
+    private static final int data = 5;
+    private static final long expires = 10000;
 
-	private static final byte[] cred = "password".getBytes();
+    private static final byte[] cred = "password".getBytes();
 
-	private PropAccess access;
-	private Holder<Path> hp = new Holder<Path>(null);
-	private Holder<Long> hl = new Holder<Long>(null);
+    private PropAccess access;
+    private Holder<Path> hp = new Holder<Path>(null);
+    private Holder<Long> hl = new Holder<Long>(null);
 
-	@Mock private RosettaDF<Integer> dfMock;
-	@Mock private RosettaData<Integer> dataMock;
-	@Mock private Holder<Path> hpMock;
+    @Mock private RosettaDF<Integer> dfMock;
+    @Mock private RosettaData<Integer> dataMock;
+    @Mock private Holder<Path> hpMock;
 
-	@Before
-	public void setup() throws APIException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws APIException {
+        MockitoAnnotations.initMocks(this);
 
-		when(dfMock.newData()).thenReturn(dataMock);
-		when(dataMock.load(data)).thenReturn(dataMock);
-		when(dataMock.load((CipherInputStream)any())).thenReturn(dataMock);
+        when(dfMock.newData()).thenReturn(dataMock);
+        when(dataMock.load(data)).thenReturn(dataMock);
+        when(dataMock.load((CipherInputStream)any())).thenReturn(dataMock);
 
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		access.setProperty(Config.CADI_TOKEN_DIR, resourceDirString);
-	}
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        access.setProperty(Config.CADI_TOKEN_DIR, resourceDirString);
+    }
 
-	@After
-	public void tearDown() {
-		File dir = new File(resourceDirString + '/' + tokenDirString);
-		for (File f : dir.listFiles()) {
-			f.delete();
-		}
-		dir.delete();
-	}
+    @After
+    public void tearDown() {
+        File dir = new File(resourceDirString + '/' + tokenDirString);
+        for (File f : dir.listFiles()) {
+            f.delete();
+        }
+        dir.delete();
+    }
 
-	@Test
-	public void test() throws CadiException, APIException, IOException {
-		PersistFile persistFile = new PersistFile(access, tokenDirString);
-		// Second call is for coverage
-		persistFile = new PersistFile(access, tokenDirString);
-		Path filepath = persistFile.writeDisk(dfMock, data, cred, tokenFileName, expires);
-		persistFile.readDisk(dfMock, cred, tokenFileName, hp, hl);
-		assertThat(persistFile.readExpiration(filepath), is(expires));
+    @Test
+    public void test() throws CadiException, APIException, IOException {
+        PersistFile persistFile = new PersistFile(access, tokenDirString);
+        // Second call is for coverage
+        persistFile = new PersistFile(access, tokenDirString);
+        Path filepath = persistFile.writeDisk(dfMock, data, cred, tokenFileName, expires);
+        persistFile.readDisk(dfMock, cred, tokenFileName, hp, hl);
+        assertThat(persistFile.readExpiration(filepath), is(expires));
 
-		FileTime ft1 = persistFile.getFileTime(tokenFileName, hp);
-		FileTime ft2 = persistFile.getFileTime(tokenFileName, hpMock);
-		assertThat(ft1.toMillis(), is(ft2.toMillis()));
+        FileTime ft1 = persistFile.getFileTime(tokenFileName, hp);
+        FileTime ft2 = persistFile.getFileTime(tokenFileName, hpMock);
+        assertThat(ft1.toMillis(), is(ft2.toMillis()));
 
-		persistFile.deleteFromDisk(filepath);
-		persistFile.deleteFromDisk(resourceDirString + '/' + tokenDirString + '/' + tokenFileName);
-		assertThat(persistFile.readExpiration(filepath), is(0L));
+        persistFile.deleteFromDisk(filepath);
+        persistFile.deleteFromDisk(resourceDirString + '/' + tokenDirString + '/' + tokenFileName);
+        assertThat(persistFile.readExpiration(filepath), is(0L));
 
-		persistFile.getPath(resourceDirString + '/' + tokenDirString + '/' + tokenFileName);
+        persistFile.getPath(resourceDirString + '/' + tokenDirString + '/' + tokenFileName);
 
-		persistFile.writeDisk(dfMock, data, null, tokenFileName, expires);
-		try {
-			persistFile.readDisk(dfMock, cred, tokenFileName, hp, hl);
-			fail("Should've thrown an exception");
-		} catch (CadiException e) {
-			assertThat(e.getMessage(), is(CadiException.class.getName() + ": Hash does not match in Persistence"));
-		}
-	}
+        persistFile.writeDisk(dfMock, data, null, tokenFileName, expires);
+        try {
+            persistFile.readDisk(dfMock, cred, tokenFileName, hp, hl);
+            fail("Should've thrown an exception");
+        } catch (CadiException e) {
+            assertThat(e.getMessage(), is(CadiException.class.getName() + ": Hash does not match in Persistence"));
+        }
+    }
 
 }

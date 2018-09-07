@@ -28,18 +28,18 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class JU_BufferedCadiWrap {
-	@Mock
-	private HttpServletRequest request;
-	
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Mock
+    private HttpServletRequest request;
+    
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void constructorTest() {
-		// TODO: Ian - This will always fail beacuse the constructor is invalid
-		// BufferedCadiWrap bcw = new BufferedCadiWrap(request);
-	}
+    @Test
+    public void constructorTest() {
+        // TODO: Ian - This will always fail beacuse the constructor is invalid
+        // BufferedCadiWrap bcw = new BufferedCadiWrap(request);
+    }
 
 }

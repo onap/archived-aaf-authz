@@ -35,34 +35,34 @@ import org.onap.aaf.auth.service.facade.AuthzFacade;
 import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_API_Approval {
-	API_Approval api_Approval;
+    API_Approval api_Approval;
 
-	@Mock
-	AAF_Service authzAPI;
-	AuthzFacade facade;
+    @Mock
+    AAF_Service authzAPI;
+    AuthzFacade facade;
 
-	@Before
-	public void setUp()
-	{
+    @Before
+    public void setUp()
+    {
 
-	}
+    }
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testInit() {
+    @SuppressWarnings("static-access")
+    @Test
+    public void testInit() {
 
-		try {
-			api_Approval.init(authzAPI, facade);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//assertTrue(true);
-	}
+        try {
+            api_Approval.init(authzAPI, facade);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //assertTrue(true);
+    }
 
-//	@Test
-//	public void notYetImplemented() {
-//		fail("Tests in this file should not be trusted");
-//	}
+//    @Test
+//    public void notYetImplemented() {
+//        fail("Tests in this file should not be trusted");
+//    }
 
 }

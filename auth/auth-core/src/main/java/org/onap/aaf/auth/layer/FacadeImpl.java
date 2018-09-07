@@ -29,14 +29,14 @@ import org.onap.aaf.misc.env.Data.TYPE;
 
 
 public abstract class FacadeImpl {
-	protected static final String IN = "in";
+    protected static final String IN = "in";
 
-	protected void setContentType(HttpServletResponse response, TYPE type) {
-		response.setContentType(type==Data.TYPE.JSON?"application/json":"text.xml");
-	}
-	
-	protected void setCacheControlOff(HttpServletResponse response) {
-		response.setHeader("Cache-Control", "no-store");
-		response.setHeader("Pragma", "no-cache");
-	}
+    protected void setContentType(HttpServletResponse response, TYPE type) {
+        response.setContentType(type==Data.TYPE.JSON?"application/json":"text.xml");
+    }
+    
+    protected void setCacheControlOff(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Pragma", "no-cache");
+    }
 }

@@ -35,91 +35,91 @@ import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.locator.DNSLocator;
 
 public class JU_DNSLocator {
-	
-	private PropAccess access;
-	
-	@Before
-	public void setup() {
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-	}
+    
+    private PropAccess access;
+    
+    @Before
+    public void setup() {
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+    }
 
-	@Test
-	public void test() throws LocatorException {
-		DNSLocator dl;
-		Item item;
-		URI uri;
+    @Test
+    public void test() throws LocatorException {
+        DNSLocator dl;
+        Item item;
+        URI uri;
 
-		dl = new DNSLocator(access, "https", "localhost", "8100-8101");
-		
-		item = dl.best();
-		uri = dl.get(item);
-		assertThat(uri.toString(), is("https://127.0.0.1:8100"));
-		item = dl.best();
-		assertThat(uri.toString(), is("https://127.0.0.1:8100"));
+        dl = new DNSLocator(access, "https", "localhost", "8100-8101");
+        
+        item = dl.best();
+        uri = dl.get(item);
+        assertThat(uri.toString(), is("https://127.0.0.1:8100"));
+        item = dl.best();
+        assertThat(uri.toString(), is("https://127.0.0.1:8100"));
 
-		assertThat(dl.hasItems(), is(true));
-		for (item = dl.first(); item != null; item = dl.next(item)) {
-			dl.invalidate(item);
-		}
-		assertThat(dl.hasItems(), is(false));
+        assertThat(dl.hasItems(), is(true));
+        for (item = dl.first(); item != null; item = dl.next(item)) {
+            dl.invalidate(item);
+        }
+        assertThat(dl.hasItems(), is(false));
 
-		// This doesn't actually do anything besides increase coverage 
-		dl.destroy();
-	}
-	
-	@Test
-	public void constructorTest() throws LocatorException {
-		// For coverage
-		new DNSLocator(access, "https", "localhost", "8100");
-		new DNSLocator(access, "https", "localhost", "8100-8101");
+        // This doesn't actually do anything besides increase coverage 
+        dl.destroy();
+    }
+    
+    @Test
+    public void constructorTest() throws LocatorException {
+        // For coverage
+        new DNSLocator(access, "https", "localhost", "8100");
+        new DNSLocator(access, "https", "localhost", "8100-8101");
 
-		new DNSLocator(access, "http:localhost");
-		new DNSLocator(access, "https:localhost");
-		new DNSLocator(access, "https:localhost:8100");
-		new DNSLocator(access, "https:localhost:[8100]");
-		new DNSLocator(access, "https:localhost:[8100-8101]");
-		new DNSLocator(access, "https:localhost:8000/");
-	}
-	
-	@Test
-	public void refreshTest() throws LocatorException {
-		DNSLocator dl = new DNSLocator(access, "https", "bogushost", "8100-8101");
-		assertThat(dl.refresh(), is(false));
-	}
-	
-	@Test(expected = LocatorException.class)
-	public void throws1Test() throws LocatorException {
-		new DNSLocator(access, null);
-	}
+        new DNSLocator(access, "http:localhost");
+        new DNSLocator(access, "https:localhost");
+        new DNSLocator(access, "https:localhost:8100");
+        new DNSLocator(access, "https:localhost:[8100]");
+        new DNSLocator(access, "https:localhost:[8100-8101]");
+        new DNSLocator(access, "https:localhost:8000/");
+    }
+    
+    @Test
+    public void refreshTest() throws LocatorException {
+        DNSLocator dl = new DNSLocator(access, "https", "bogushost", "8100-8101");
+        assertThat(dl.refresh(), is(false));
+    }
+    
+    @Test(expected = LocatorException.class)
+    public void throws1Test() throws LocatorException {
+        new DNSLocator(access, null);
+    }
 
-	@Test(expected = LocatorException.class)
-	public void throws2Test() throws LocatorException {
-		new DNSLocator(access, "ftp:invalid");
-	}
+    @Test(expected = LocatorException.class)
+    public void throws2Test() throws LocatorException {
+        new DNSLocator(access, "ftp:invalid");
+    }
 
-	@Test(expected = LocatorException.class)
-	public void throws3Test() throws LocatorException {
-		new DNSLocator(access, "https:localhost:[8100");
-	}
+    @Test(expected = LocatorException.class)
+    public void throws3Test() throws LocatorException {
+        new DNSLocator(access, "https:localhost:[8100");
+    }
 
-	@Test(expected = LocatorException.class)
-	public void throws4Test() throws LocatorException {
-		new DNSLocator(access, "https:localhost:[]");
-	}
+    @Test(expected = LocatorException.class)
+    public void throws4Test() throws LocatorException {
+        new DNSLocator(access, "https:localhost:[]");
+    }
 
-	@Test(expected = LocatorException.class)
-	public void throws5Test() throws LocatorException {
-		new DNSLocator(access, "https:localhost:[8100-]");
-	}
+    @Test(expected = LocatorException.class)
+    public void throws5Test() throws LocatorException {
+        new DNSLocator(access, "https:localhost:[8100-]");
+    }
 
-	@Test(expected = LocatorException.class)
-	public void throws6Test() throws LocatorException {
-		new DNSLocator(access, "https:localhost:[-8101]");
-	}
+    @Test(expected = LocatorException.class)
+    public void throws6Test() throws LocatorException {
+        new DNSLocator(access, "https:localhost:[-8101]");
+    }
 
-	@Test(expected = LocatorException.class)
-	public void throws7Test() throws LocatorException {
-		new DNSLocator(access, "https:localhost:/");
-	}
+    @Test(expected = LocatorException.class)
+    public void throws7Test() throws LocatorException {
+        new DNSLocator(access, "https:localhost:/");
+    }
 
 }

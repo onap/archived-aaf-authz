@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class StringBuilderOutputStream extends OutputStream {
-	private StringBuilder buf;
+    private StringBuilder buf;
 
 
     /**
@@ -33,7 +33,7 @@ public class StringBuilderOutputStream extends OutputStream {
      * size.
      */
     public StringBuilderOutputStream() {
-	buf = new StringBuilder();
+    buf = new StringBuilder();
     }
 
     /**
@@ -41,7 +41,7 @@ public class StringBuilderOutputStream extends OutputStream {
      * size.
      */
     public StringBuilderOutputStream(StringBuilder sb) {
-	buf = sb;
+    buf = sb;
     }
 
     /**
@@ -56,17 +56,17 @@ public class StringBuilderOutputStream extends OutputStream {
      *         If <tt>initialSize</tt> is negative
      */
     public StringBuilderOutputStream(int initialSize) {
-	if (initialSize < 0) {
-	    throw new IllegalArgumentException("Negative buffer size");
-	}
-	buf = new StringBuilder(initialSize);
+    if (initialSize < 0) {
+        throw new IllegalArgumentException("Negative buffer size");
+    }
+    buf = new StringBuilder(initialSize);
     }
 
     /**
      * Write a single character.
      */
     public void write(int c) {
-	buf.append((byte) c);
+    buf.append((byte) c);
     }
 
     /**
@@ -88,15 +88,15 @@ public class StringBuilderOutputStream extends OutputStream {
     }
 
     @Override
-	public void write(byte[] b) throws IOException {
-		buf.append(new String(b));
-	}
+    public void write(byte[] b) throws IOException {
+        buf.append(new String(b));
+    }
 
-	/**
+    /**
      * Write a string.
      */
     public void write(String str) {
-    	buf.append(str);
+        buf.append(str);
     }
 
     /**
@@ -107,23 +107,23 @@ public class StringBuilderOutputStream extends OutputStream {
      * @param  len  Number of characters to write
      */
     public void write(String str, int off, int len)  {
-    	buf.append(str,off,len);
+        buf.append(str,off,len);
     }
 
     public StringBuilderOutputStream append(CharSequence csq) {
-    	if (csq == null) {
-    		write("null");
-    	} else {
-    		for(int i = 0;i<csq.length();++i) {
-    			buf.append(csq.charAt(i));
-    		}
-    	}
-    	return this;
+        if (csq == null) {
+            write("null");
+        } else {
+            for(int i = 0;i<csq.length();++i) {
+                buf.append(csq.charAt(i));
+            }
+        }
+        return this;
     }
 
     public StringBuilderOutputStream append(CharSequence csq, int start, int end) {
-		CharSequence cs = (csq == null ? "null" : csq);
-		return append(cs.subSequence(start, end));
+        CharSequence cs = (csq == null ? "null" : csq);
+        return append(cs.subSequence(start, end));
     }
 
     /**
@@ -143,15 +143,15 @@ public class StringBuilderOutputStream extends OutputStream {
      * @since 1.5
      */
     public StringBuilderOutputStream append(byte c) {
-    	buf.append(c);
-    	return this;
+        buf.append(c);
+        return this;
     }
 
     /**
      * Return the buffer's current value as a string.
      */
     public String toString() {
-    	return buf.toString();
+        return buf.toString();
     }
 
     /**
@@ -160,19 +160,19 @@ public class StringBuilderOutputStream extends OutputStream {
      * @return StringBuffer holding the current buffer value.
      */
     public StringBuilder getBuffer() {
-	return buf;
+    return buf;
     }
     
     public void reset() {
-    	buf.setLength(0);
+        buf.setLength(0);
     }
 
-	@Override
-	public void flush() throws IOException {
-	}
+    @Override
+    public void flush() throws IOException {
+    }
 
-	@Override
-	public void close() throws IOException {
-	}
+    @Override
+    public void close() throws IOException {
+    }
 
 }

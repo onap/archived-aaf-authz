@@ -37,118 +37,118 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
 public abstract class RServlet<TRANS extends Trans> implements Servlet {
-	private Routes<TRANS> routes = new Routes<TRANS>();
+    private Routes<TRANS> routes = new Routes<TRANS>();
 
-	private ServletConfig config;
+    private ServletConfig config;
 
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		this.config = config;
-	}
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        this.config = config;
+    }
 
-	@Override
-	public ServletConfig getServletConfig() {
-		return config;
-	}
+    @Override
+    public ServletConfig getServletConfig() {
+        return config;
+    }
 
-	public void route(Env env, HttpMethods meth, String path, HttpCode<TRANS, ?> code, String ... moreTypes) {
-		Route<TRANS> r = routes.findOrCreate(meth,path);
-		r.add(code,moreTypes);
-		env.init().log(r.report(code),code);
-	}
-	
-	@Override
-	public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-		HttpServletRequest request = (HttpServletRequest)req;
-		HttpServletResponse response = (HttpServletResponse)res;
-		
-		@SuppressWarnings("unchecked")
-		TRANS trans = (TRANS)req.getAttribute(TransFilter.TRANS_TAG);
-		if(trans==null) {
-			response.setStatus(404); // Not Found, because it didn't go through TransFilter
-			return;
-		}
-		
-		Route<TRANS> route;
-		HttpCode<TRANS,?> code=null;
-		String ct = req.getContentType();
-		TimeTaken tt = trans.start("Resolve to Code", Env.SUB);
-		try {
-			// routes have multiple code sets.  This object picks the best code set
-			// based on Accept or Content-Type
-			CodeSetter<TRANS> codesetter = new CodeSetter<TRANS>(trans,request,response);
-			// Find declared route
-			route = routes.derive(request, codesetter);
-			if(route==null) {
-				String method = request.getMethod();
-				trans.checkpoint("No Route matches "+ method + ' ' + request.getPathInfo());
-				response.setStatus(404); // Not Found
-			} else {
-				// Find best Code in Route based on "Accepts (Get) or Content-Type" (if exists)
-				code = codesetter.code();// route.getCode(trans, request, response);
-			}
-		} finally {
-			tt.done();
-		}
-		
-		if(route!=null && code!=null) {
-			StringBuilder sb = new StringBuilder(72);
-			sb.append(route.auditText);
-			sb.append(',');
-			sb.append(code.desc());
-			if(ct!=null) {
-				sb.append(", ContentType: ");
-				sb.append(ct);
-			}
-			tt = trans.start(sb.toString(),Env.SUB);
-			try {
-				/*obj = */
-				code.handle(trans, request, response);
-				response.flushBuffer();
-			} catch (ServletException e) {
-				trans.error().log(e);
-				throw e;
-			} catch (Exception e) {
-				trans.error().log(e,request.getMethod(),request.getPathInfo());
-				throw new ServletException(e);
-			} finally {
-				tt.done();
-			}
-		}
-	}
-	
-	@Override
-	public String getServletInfo() {
-		return "RServlet for Jetty";
-	}
+    public void route(Env env, HttpMethods meth, String path, HttpCode<TRANS, ?> code, String ... moreTypes) {
+        Route<TRANS> r = routes.findOrCreate(meth,path);
+        r.add(code,moreTypes);
+        env.init().log(r.report(code),code);
+    }
+    
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        HttpServletRequest request = (HttpServletRequest)req;
+        HttpServletResponse response = (HttpServletResponse)res;
+        
+        @SuppressWarnings("unchecked")
+        TRANS trans = (TRANS)req.getAttribute(TransFilter.TRANS_TAG);
+        if(trans==null) {
+            response.setStatus(404); // Not Found, because it didn't go through TransFilter
+            return;
+        }
+        
+        Route<TRANS> route;
+        HttpCode<TRANS,?> code=null;
+        String ct = req.getContentType();
+        TimeTaken tt = trans.start("Resolve to Code", Env.SUB);
+        try {
+            // routes have multiple code sets.  This object picks the best code set
+            // based on Accept or Content-Type
+            CodeSetter<TRANS> codesetter = new CodeSetter<TRANS>(trans,request,response);
+            // Find declared route
+            route = routes.derive(request, codesetter);
+            if(route==null) {
+                String method = request.getMethod();
+                trans.checkpoint("No Route matches "+ method + ' ' + request.getPathInfo());
+                response.setStatus(404); // Not Found
+            } else {
+                // Find best Code in Route based on "Accepts (Get) or Content-Type" (if exists)
+                code = codesetter.code();// route.getCode(trans, request, response);
+            }
+        } finally {
+            tt.done();
+        }
+        
+        if(route!=null && code!=null) {
+            StringBuilder sb = new StringBuilder(72);
+            sb.append(route.auditText);
+            sb.append(',');
+            sb.append(code.desc());
+            if(ct!=null) {
+                sb.append(", ContentType: ");
+                sb.append(ct);
+            }
+            tt = trans.start(sb.toString(),Env.SUB);
+            try {
+                /*obj = */
+                code.handle(trans, request, response);
+                response.flushBuffer();
+            } catch (ServletException e) {
+                trans.error().log(e);
+                throw e;
+            } catch (Exception e) {
+                trans.error().log(e,request.getMethod(),request.getPathInfo());
+                throw new ServletException(e);
+            } finally {
+                tt.done();
+            }
+        }
+    }
+    
+    @Override
+    public String getServletInfo() {
+        return "RServlet for Jetty";
+    }
 
-	@Override
-	public void destroy() {
-	}
+    @Override
+    public void destroy() {
+    }
 
-	public String applicationJSON(Class<?> cls, String version) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("application/");
-		sb.append(cls.getSimpleName());
-		sb.append("+json");
-		sb.append(";charset=utf-8");
-		sb.append(";version=");
-		sb.append(version);
-		return sb.toString();
-	}
+    public String applicationJSON(Class<?> cls, String version) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("application/");
+        sb.append(cls.getSimpleName());
+        sb.append("+json");
+        sb.append(";charset=utf-8");
+        sb.append(";version=");
+        sb.append(version);
+        return sb.toString();
+    }
 
-	public String applicationXML(Class<?> cls, String version) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("application/");
-		sb.append(cls.getSimpleName());
-		sb.append("+xml");
-		sb.append(";charset=utf-8");
-		sb.append(";version=");
-		sb.append(version);
-		return sb.toString();
-	}
+    public String applicationXML(Class<?> cls, String version) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("application/");
+        sb.append(cls.getSimpleName());
+        sb.append("+xml");
+        sb.append(";charset=utf-8");
+        sb.append(";version=");
+        sb.append(version);
+        return sb.toString();
+    }
 
-	public List<RouteReport> routeReport() {
-		return routes.routeReport();
-	}
+    public List<RouteReport> routeReport() {
+        return routes.routeReport();
+    }
 }

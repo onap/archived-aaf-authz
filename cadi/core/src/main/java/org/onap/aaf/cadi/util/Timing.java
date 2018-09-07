@@ -21,7 +21,7 @@
 package org.onap.aaf.cadi.util;
 
 public class Timing {
-	public static float millis(final long start) {
-		return (System.nanoTime() - start) / 1000000f;
-	}
+    public static float millis(final long start) {
+        return (System.nanoTime() - start) / 1000000f;
+    }
 }

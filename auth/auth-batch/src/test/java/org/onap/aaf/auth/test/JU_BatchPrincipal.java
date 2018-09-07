@@ -36,13 +36,13 @@ import org.junit.Test;
 
 public class JU_BatchPrincipal {
 
-	BatchPrincipal bPrincipal;
-	
-	@Test
-	public void testBatchPrincipal() {
-		bPrincipal = new BatchPrincipal("name");
-		Assert.assertEquals("batch:name", bPrincipal.getName());
-		Assert.assertEquals("Btch", bPrincipal.tag());
-	}
+    BatchPrincipal bPrincipal;
+    
+    @Test
+    public void testBatchPrincipal() {
+        bPrincipal = new BatchPrincipal("name");
+        Assert.assertEquals("batch:name", bPrincipal.getName());
+        Assert.assertEquals("Btch", bPrincipal.tag());
+    }
 
 }

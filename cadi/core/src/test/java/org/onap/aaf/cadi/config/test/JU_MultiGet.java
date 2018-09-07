@@ -35,34 +35,34 @@ import org.onap.aaf.cadi.config.MultiGet;
 
 public class JU_MultiGet {
 
-	private String defaultVal = "some default value";
+    private String defaultVal = "some default value";
 
-	private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream outStream;
 
-	private MultiGet multiGet;
-	private Get.AccessGet accessGet;
-	private PropAccess access;
+    private MultiGet multiGet;
+    private Get.AccessGet accessGet;
+    private PropAccess access;
 
-	@Before
-	public void setup() throws IOException {
-		outStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
+    @Before
+    public void setup() throws IOException {
+        outStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
 
-		access = new PropAccess();
-		access.setProperty("tag", "value");
-		accessGet = new Get.AccessGet(access);
-		multiGet = new MultiGet(accessGet, Get.NULL);
-	}
+        access = new PropAccess();
+        access.setProperty("tag", "value");
+        accessGet = new Get.AccessGet(access);
+        multiGet = new MultiGet(accessGet, Get.NULL);
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-	}
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+    }
 
     @Test
     public void getTest() {
-		assertThat(multiGet.get("tag", defaultVal, false), is("value"));
-		assertThat(multiGet.get("not_a_tag", defaultVal, false), is(defaultVal));
-	}
+        assertThat(multiGet.get("tag", defaultVal, false), is("value"));
+        assertThat(multiGet.get("not_a_tag", defaultVal, false), is(defaultVal));
+    }
 
 }

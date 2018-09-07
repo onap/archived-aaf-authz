@@ -70,435 +70,435 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
 public class Factory {
-	private static final String PRIVATE_KEY_HEADER = "PRIVATE KEY";
-	public static final String KEY_ALGO = "RSA";
-	public static final String SIG_ALGO = "SHA256withRSA";
+    private static final String PRIVATE_KEY_HEADER = "PRIVATE KEY";
+    public static final String KEY_ALGO = "RSA";
+    public static final String SIG_ALGO = "SHA256withRSA";
 
-	public  static final int KEY_LENGTH = 2048;
-	private static final KeyPairGenerator keygen;
-	private static final KeyFactory keyFactory;
-	private static final CertificateFactory certificateFactory;
-	private static final SecureRandom random;
-	
-	
-	private static final Symm base64 = Symm.base64.copy(64);
+    public  static final int KEY_LENGTH = 2048;
+    private static final KeyPairGenerator keygen;
+    private static final KeyFactory keyFactory;
+    private static final CertificateFactory certificateFactory;
+    private static final SecureRandom random;
+    
+    
+    private static final Symm base64 = Symm.base64.copy(64);
 
-	static {
-			random = new SecureRandom();
-			KeyPairGenerator tempKeygen;
-			try {
-				tempKeygen = KeyPairGenerator.getInstance(KEY_ALGO);//,"BC");
-				tempKeygen.initialize(KEY_LENGTH, random);
-			} catch (NoSuchAlgorithmException e) {
-				tempKeygen = null;
-				e.printStackTrace(System.err);
-			}
-			keygen = tempKeygen;
+    static {
+            random = new SecureRandom();
+            KeyPairGenerator tempKeygen;
+            try {
+                tempKeygen = KeyPairGenerator.getInstance(KEY_ALGO);//,"BC");
+                tempKeygen.initialize(KEY_LENGTH, random);
+            } catch (NoSuchAlgorithmException e) {
+                tempKeygen = null;
+                e.printStackTrace(System.err);
+            }
+            keygen = tempKeygen;
 
-			KeyFactory tempKeyFactory;
-			try {
-				tempKeyFactory=KeyFactory.getInstance(KEY_ALGO);//,"BC"
-			} catch (NoSuchAlgorithmException e) {
-				tempKeyFactory = null;
-				e.printStackTrace(System.err);
-			};
-			keyFactory = tempKeyFactory;
-			 
-			CertificateFactory tempCertificateFactory;
-			try {
-				tempCertificateFactory = CertificateFactory.getInstance("X.509");
-			} catch (CertificateException e) {
-				tempCertificateFactory = null;
-				e.printStackTrace(System.err);
-			}
-			certificateFactory = tempCertificateFactory;
+            KeyFactory tempKeyFactory;
+            try {
+                tempKeyFactory=KeyFactory.getInstance(KEY_ALGO);//,"BC"
+            } catch (NoSuchAlgorithmException e) {
+                tempKeyFactory = null;
+                e.printStackTrace(System.err);
+            };
+            keyFactory = tempKeyFactory;
+             
+            CertificateFactory tempCertificateFactory;
+            try {
+                tempCertificateFactory = CertificateFactory.getInstance("X.509");
+            } catch (CertificateException e) {
+                tempCertificateFactory = null;
+                e.printStackTrace(System.err);
+            }
+            certificateFactory = tempCertificateFactory;
 
-		 
-	}
-
-
-	public static KeyPair generateKeyPair(Trans trans) {
-		TimeTaken tt;
-		if(trans!=null) {
-			tt = trans.start("Generate KeyPair", Env.SUB);
-		} else {
-			tt = null;
-		}
-		try {
-			return keygen.generateKeyPair();
-		} finally {
-			if(tt!=null) {
-				tt.done();
-			}
-		}
-	}  
-
-	private static final String LINE_END = "-----\n";
-
-	protected static String textBuilder(String kind, byte[] bytes) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append("-----BEGIN ");
-		sb.append(kind);
-		sb.append(LINE_END);
-
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		base64.encode(bais, baos);
-		sb.append(new String(baos.toByteArray()));
-		
-		if(sb.charAt(sb.length()-1)!='\n') {
-			sb.append('\n');
-		}
-		sb.append("-----END ");
-		sb.append(kind);
-		sb.append(LINE_END);
-		return sb.toString();
-	}
-	
-	public static PrivateKey toPrivateKey(Trans trans, String pk) throws IOException, CertException {
-		byte[] bytes = decode(new StringReader(pk), null);
-		return toPrivateKey(trans, bytes);
-	}
-
-	public static PrivateKey toPrivateKey(Trans trans, byte[] bytes) throws IOException, CertException {
-		TimeTaken tt=trans.start("Reconstitute Private Key", Env.SUB);
-		try {
-			return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(bytes));
-		} catch (InvalidKeySpecException e) {
-			throw new CertException("Translating Private Key from PKCS8 KeySpec",e);
-		} finally {
-			tt.done();
-		}
-	}
-
-	public static PrivateKey toPrivateKey(Trans trans, File file) throws IOException, CertException {
-		TimeTaken tt = trans.start("Decode Private Key File", Env.SUB);
-		try {
-			Holder<String> firstLine = new Holder<String>(null);
-			return toPrivateKey(trans,decode(file,firstLine));
-		}finally {
-			tt.done();
-		}
-	}
-
-	public static String toString(Trans trans, PrivateKey pk) throws IOException {
-//		PKCS8EncodedKeySpec pemContents = new PKCS8EncodedKeySpec(pk.getEncoded());
-		trans.debug().log("Private Key to String");
-		return textBuilder(PRIVATE_KEY_HEADER,pk.getEncoded());
-	}
-
-	public static PublicKey toPublicKey(Trans trans, String pk) throws IOException {
-		TimeTaken tt = trans.start("Reconstitute Public Key", Env.SUB);
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(pk.getBytes());
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			Symm.base64noSplit.decode(new StripperInputStream(bais), baos);
-
-			return keyFactory.generatePublic(new X509EncodedKeySpec(baos.toByteArray()));
-		} catch (InvalidKeySpecException e) {
-			trans.error().log(e,"Translating Public Key from X509 KeySpec");
-			return null;
-		} finally {
-			tt.done();
-		}
-	}
-	
-	public static String toString(Trans trans, PublicKey pk) throws IOException {
-		trans.debug().log("Public Key to String");
-		return textBuilder("PUBLIC KEY",pk.getEncoded());
-	}
-
-	public static Collection<? extends Certificate> toX509Certificate(String x509) throws CertificateException {
-		return toX509Certificate(x509.getBytes());
-	}
-	
-	public static Collection<? extends Certificate> toX509Certificate(List<String> x509s) throws CertificateException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			for(String x509 : x509s) {
-				baos.write(x509.getBytes());
-			}
-		} catch (IOException e) {
-			throw new CertificateException(e);
-		}
-		return toX509Certificate(new ByteArrayInputStream(baos.toByteArray()));
-	}
-
-	public static Collection<? extends Certificate> toX509Certificate(byte[] x509) throws CertificateException {
-		return certificateFactory.generateCertificates(new ByteArrayInputStream(x509));
-	}
-
-	public static Collection<? extends Certificate> toX509Certificate(Trans trans, File file) throws CertificateException, FileNotFoundException {
-		FileInputStream fis = new FileInputStream(file);
-		try {
-			try {
-				return toX509Certificate(fis);
-			} finally {
-					fis.close();
-			}
-		} catch (IOException e) {
-			throw new CertificateException(e);
-		}
-	}
-
-	public static Collection<? extends Certificate> toX509Certificate(InputStream is) throws CertificateException {
-		return certificateFactory.generateCertificates(is);
-	}
-
-	public static String toString(Trans trans, Certificate cert) throws IOException, CertException {
-		if(trans.debug().isLoggable()) {
-			StringBuilder sb = new StringBuilder("Certificate to String");
-			if(cert instanceof X509Certificate) {
-				sb.append(" - ");
-				sb.append(((X509Certificate)cert).getSubjectDN());
-			}
-			trans.debug().log(sb);
-		}
-		try {
-			if(cert==null) {
-				throw new CertException("Certificate not built");
-			}
-			return textBuilder("CERTIFICATE",cert.getEncoded());
-		} catch (CertificateEncodingException e) {
-			throw new CertException(e);
-		}
-	}
-
-	public static Cipher pkCipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		return Cipher.getInstance(KEY_ALGO); 
-	}
-
-	public static Cipher pkCipher(Key key, boolean encrypt) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
-		Cipher cipher = Cipher.getInstance(KEY_ALGO);
-		cipher.init(encrypt?Cipher.ENCRYPT_MODE:Cipher.DECRYPT_MODE,key);
-		return cipher;
-	}
-
-	public static byte[] strip(Reader rdr) throws IOException {
-		return strip(rdr,null);
-	}
-	
-	public static byte[] strip(Reader rdr, Holder<String> hs) throws IOException {
-		BufferedReader br = new BufferedReader(rdr);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		String line;
-		boolean notStarted = true;
-		while((line=br.readLine())!=null) {
-			if(notStarted) {
-				if(line.startsWith("-----")) {
-					notStarted = false;
-					if(hs!=null) {
-						hs.set(line);
-					}
-				} else {
-					continue;
-				}
-			}
-			if(line.length()>0 &&
-			   !line.startsWith("-----") &&
-			   line.indexOf(':')<0) {  // Header elements
-				baos.write(line.getBytes());
-			}
-		}
-		return baos.toByteArray();
-	}
-
-	public static class StripperInputStream extends InputStream {
-		private Reader created;
-		private BufferedReader br;
-		private int idx;
-		private String line;
-
-		public StripperInputStream(Reader rdr) {
-			if(rdr instanceof BufferedReader) {
-				br = (BufferedReader)rdr;
-			} else {
-				br = new BufferedReader(rdr);
-			}
-			created = null;
-		}
-		
-		public StripperInputStream(File file) throws FileNotFoundException {
-			this(new FileReader(file));
-			created = br;
-		}
-
-		public StripperInputStream(InputStream is) throws FileNotFoundException {
-			this(new InputStreamReader(is));
-			created = br;
-		}
-
-		@Override
-		public int read() throws IOException {
-			if(line==null || idx>=line.length()) {
-				while((line=br.readLine())!=null) {
-					if(line.length()>0 &&
-					   !line.startsWith("-----") &&
-					   line.indexOf(':')<0) {  // Header elements
-						break;
-					}
-				}
-
-				if(line==null) {
-					return -1;
-				}
-				idx = 0;
-			}
-			return line.charAt(idx++);
-		}
-
-		/* (non-Javadoc)
-		 * @see java.io.InputStream#close()
-		 */
-		@Override
-		public void close() throws IOException {
-			if(created!=null) {
-				created.close();
-			}
-		}
-	}
-
-	public static class Base64InputStream extends InputStream {
-		private InputStream created;
-		private InputStream is;
-		private byte trio[];
-		private byte duo[];
-		private int idx;
-
-		
-		public Base64InputStream(File file) throws FileNotFoundException {
-			this(new FileInputStream(file));
-			created = is;
-		}
-
-		public Base64InputStream(InputStream is) throws FileNotFoundException {
-			this.is = is;
-			trio = new byte[3];
-			idx = 4;
-		}
-
-		@Override
-		public int read() throws IOException {
-			if(duo==null || idx>=duo.length) {
-				int read = is.read(trio);
-				if(read==-1) {
-					return -1;
-				}
-				duo = Symm.base64.decode(trio);
-				if(duo==null || duo.length==0) {
-					return -1;
-				}
-				idx=0;
-			}
-			
-			return duo[idx++];
-		}
-
-		/* (non-Javadoc)
-		 * @see java.io.InputStream#close()
-		 */
-		@Override
-		public void close() throws IOException {
-			if(created!=null) {
-				created.close();
-			}
-		}
-	}
-
-	public static byte[] decode(byte[] bytes) throws IOException {
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Symm.base64.decode(bais, baos);
-		return baos.toByteArray();
-	}
-	
-	public static byte[] decode(File f, Holder<String> hs) throws IOException {
-		FileReader fr = new FileReader(f);
-		try {
-			return Factory.decode(fr,hs);
-		} finally {
-			fr.close();
-		}
-	}
+         
+    }
 
 
-	public static byte[] decode(Reader rdr,Holder<String> hs) throws IOException {
-		return decode(strip(rdr,hs));
-	}
+    public static KeyPair generateKeyPair(Trans trans) {
+        TimeTaken tt;
+        if(trans!=null) {
+            tt = trans.start("Generate KeyPair", Env.SUB);
+        } else {
+            tt = null;
+        }
+        try {
+            return keygen.generateKeyPair();
+        } finally {
+            if(tt!=null) {
+                tt.done();
+            }
+        }
+    }  
+
+    private static final String LINE_END = "-----\n";
+
+    protected static String textBuilder(String kind, byte[] bytes) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("-----BEGIN ");
+        sb.append(kind);
+        sb.append(LINE_END);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        base64.encode(bais, baos);
+        sb.append(new String(baos.toByteArray()));
+        
+        if(sb.charAt(sb.length()-1)!='\n') {
+            sb.append('\n');
+        }
+        sb.append("-----END ");
+        sb.append(kind);
+        sb.append(LINE_END);
+        return sb.toString();
+    }
+    
+    public static PrivateKey toPrivateKey(Trans trans, String pk) throws IOException, CertException {
+        byte[] bytes = decode(new StringReader(pk), null);
+        return toPrivateKey(trans, bytes);
+    }
+
+    public static PrivateKey toPrivateKey(Trans trans, byte[] bytes) throws IOException, CertException {
+        TimeTaken tt=trans.start("Reconstitute Private Key", Env.SUB);
+        try {
+            return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(bytes));
+        } catch (InvalidKeySpecException e) {
+            throw new CertException("Translating Private Key from PKCS8 KeySpec",e);
+        } finally {
+            tt.done();
+        }
+    }
+
+    public static PrivateKey toPrivateKey(Trans trans, File file) throws IOException, CertException {
+        TimeTaken tt = trans.start("Decode Private Key File", Env.SUB);
+        try {
+            Holder<String> firstLine = new Holder<String>(null);
+            return toPrivateKey(trans,decode(file,firstLine));
+        }finally {
+            tt.done();
+        }
+    }
+
+    public static String toString(Trans trans, PrivateKey pk) throws IOException {
+//        PKCS8EncodedKeySpec pemContents = new PKCS8EncodedKeySpec(pk.getEncoded());
+        trans.debug().log("Private Key to String");
+        return textBuilder(PRIVATE_KEY_HEADER,pk.getEncoded());
+    }
+
+    public static PublicKey toPublicKey(Trans trans, String pk) throws IOException {
+        TimeTaken tt = trans.start("Reconstitute Public Key", Env.SUB);
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(pk.getBytes());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Symm.base64noSplit.decode(new StripperInputStream(bais), baos);
+
+            return keyFactory.generatePublic(new X509EncodedKeySpec(baos.toByteArray()));
+        } catch (InvalidKeySpecException e) {
+            trans.error().log(e,"Translating Public Key from X509 KeySpec");
+            return null;
+        } finally {
+            tt.done();
+        }
+    }
+    
+    public static String toString(Trans trans, PublicKey pk) throws IOException {
+        trans.debug().log("Public Key to String");
+        return textBuilder("PUBLIC KEY",pk.getEncoded());
+    }
+
+    public static Collection<? extends Certificate> toX509Certificate(String x509) throws CertificateException {
+        return toX509Certificate(x509.getBytes());
+    }
+    
+    public static Collection<? extends Certificate> toX509Certificate(List<String> x509s) throws CertificateException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            for(String x509 : x509s) {
+                baos.write(x509.getBytes());
+            }
+        } catch (IOException e) {
+            throw new CertificateException(e);
+        }
+        return toX509Certificate(new ByteArrayInputStream(baos.toByteArray()));
+    }
+
+    public static Collection<? extends Certificate> toX509Certificate(byte[] x509) throws CertificateException {
+        return certificateFactory.generateCertificates(new ByteArrayInputStream(x509));
+    }
+
+    public static Collection<? extends Certificate> toX509Certificate(Trans trans, File file) throws CertificateException, FileNotFoundException {
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            try {
+                return toX509Certificate(fis);
+            } finally {
+                    fis.close();
+            }
+        } catch (IOException e) {
+            throw new CertificateException(e);
+        }
+    }
+
+    public static Collection<? extends Certificate> toX509Certificate(InputStream is) throws CertificateException {
+        return certificateFactory.generateCertificates(is);
+    }
+
+    public static String toString(Trans trans, Certificate cert) throws IOException, CertException {
+        if(trans.debug().isLoggable()) {
+            StringBuilder sb = new StringBuilder("Certificate to String");
+            if(cert instanceof X509Certificate) {
+                sb.append(" - ");
+                sb.append(((X509Certificate)cert).getSubjectDN());
+            }
+            trans.debug().log(sb);
+        }
+        try {
+            if(cert==null) {
+                throw new CertException("Certificate not built");
+            }
+            return textBuilder("CERTIFICATE",cert.getEncoded());
+        } catch (CertificateEncodingException e) {
+            throw new CertException(e);
+        }
+    }
+
+    public static Cipher pkCipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
+        return Cipher.getInstance(KEY_ALGO); 
+    }
+
+    public static Cipher pkCipher(Key key, boolean encrypt) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
+        Cipher cipher = Cipher.getInstance(KEY_ALGO);
+        cipher.init(encrypt?Cipher.ENCRYPT_MODE:Cipher.DECRYPT_MODE,key);
+        return cipher;
+    }
+
+    public static byte[] strip(Reader rdr) throws IOException {
+        return strip(rdr,null);
+    }
+    
+    public static byte[] strip(Reader rdr, Holder<String> hs) throws IOException {
+        BufferedReader br = new BufferedReader(rdr);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String line;
+        boolean notStarted = true;
+        while((line=br.readLine())!=null) {
+            if(notStarted) {
+                if(line.startsWith("-----")) {
+                    notStarted = false;
+                    if(hs!=null) {
+                        hs.set(line);
+                    }
+                } else {
+                    continue;
+                }
+            }
+            if(line.length()>0 &&
+               !line.startsWith("-----") &&
+               line.indexOf(':')<0) {  // Header elements
+                baos.write(line.getBytes());
+            }
+        }
+        return baos.toByteArray();
+    }
+
+    public static class StripperInputStream extends InputStream {
+        private Reader created;
+        private BufferedReader br;
+        private int idx;
+        private String line;
+
+        public StripperInputStream(Reader rdr) {
+            if(rdr instanceof BufferedReader) {
+                br = (BufferedReader)rdr;
+            } else {
+                br = new BufferedReader(rdr);
+            }
+            created = null;
+        }
+        
+        public StripperInputStream(File file) throws FileNotFoundException {
+            this(new FileReader(file));
+            created = br;
+        }
+
+        public StripperInputStream(InputStream is) throws FileNotFoundException {
+            this(new InputStreamReader(is));
+            created = br;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if(line==null || idx>=line.length()) {
+                while((line=br.readLine())!=null) {
+                    if(line.length()>0 &&
+                       !line.startsWith("-----") &&
+                       line.indexOf(':')<0) {  // Header elements
+                        break;
+                    }
+                }
+
+                if(line==null) {
+                    return -1;
+                }
+                idx = 0;
+            }
+            return line.charAt(idx++);
+        }
+
+        /* (non-Javadoc)
+         * @see java.io.InputStream#close()
+         */
+        @Override
+        public void close() throws IOException {
+            if(created!=null) {
+                created.close();
+            }
+        }
+    }
+
+    public static class Base64InputStream extends InputStream {
+        private InputStream created;
+        private InputStream is;
+        private byte trio[];
+        private byte duo[];
+        private int idx;
+
+        
+        public Base64InputStream(File file) throws FileNotFoundException {
+            this(new FileInputStream(file));
+            created = is;
+        }
+
+        public Base64InputStream(InputStream is) throws FileNotFoundException {
+            this.is = is;
+            trio = new byte[3];
+            idx = 4;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if(duo==null || idx>=duo.length) {
+                int read = is.read(trio);
+                if(read==-1) {
+                    return -1;
+                }
+                duo = Symm.base64.decode(trio);
+                if(duo==null || duo.length==0) {
+                    return -1;
+                }
+                idx=0;
+            }
+            
+            return duo[idx++];
+        }
+
+        /* (non-Javadoc)
+         * @see java.io.InputStream#close()
+         */
+        @Override
+        public void close() throws IOException {
+            if(created!=null) {
+                created.close();
+            }
+        }
+    }
+
+    public static byte[] decode(byte[] bytes) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Symm.base64.decode(bais, baos);
+        return baos.toByteArray();
+    }
+    
+    public static byte[] decode(File f, Holder<String> hs) throws IOException {
+        FileReader fr = new FileReader(f);
+        try {
+            return Factory.decode(fr,hs);
+        } finally {
+            fr.close();
+        }
+    }
 
 
-	public static byte[] binary(File file) throws IOException {
-		DataInputStream dis = new DataInputStream(new FileInputStream(file));
-		try {
-			byte[] bytes = new byte[(int)file.length()];
-			dis.readFully(bytes);
-			return bytes;
-		} finally {
-			dis.close();
-		}
-	}
+    public static byte[] decode(Reader rdr,Holder<String> hs) throws IOException {
+        return decode(strip(rdr,hs));
+    }
 
 
-	public static byte[] sign(Trans trans, byte[] bytes, PrivateKey pk) throws IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
-		TimeTaken tt = trans.start("Sign Data", Env.SUB);
-		try {
-			Signature sig = Signature.getInstance(SIG_ALGO);
-			sig.initSign(pk, random);
-			sig.update(bytes);
-			return sig.sign();
-		} finally {
-			tt.done();
-		}
-	}
+    public static byte[] binary(File file) throws IOException {
+        DataInputStream dis = new DataInputStream(new FileInputStream(file));
+        try {
+            byte[] bytes = new byte[(int)file.length()];
+            dis.readFully(bytes);
+            return bytes;
+        } finally {
+            dis.close();
+        }
+    }
 
-	public static String toSignatureString(byte[] signed) throws IOException {
-		return textBuilder("SIGNATURE", signed);
-	}
 
-	public static boolean verify(Trans trans, byte[] bytes, byte[] signature, PublicKey pk) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-		TimeTaken tt = trans.start("Verify Data", Env.SUB);
-		try {
-			Signature sig = Signature.getInstance(SIG_ALGO);
-			sig.initVerify(pk);
-			sig.update(bytes);
-			return sig.verify(signature);
-		} finally {
-			tt.done();
-		}	
-	}
+    public static byte[] sign(Trans trans, byte[] bytes, PrivateKey pk) throws IOException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+        TimeTaken tt = trans.start("Sign Data", Env.SUB);
+        try {
+            Signature sig = Signature.getInstance(SIG_ALGO);
+            sig.initSign(pk, random);
+            sig.update(bytes);
+            return sig.sign();
+        } finally {
+            tt.done();
+        }
+    }
 
-	/**
-	 * Get the Security Provider, or, if not exists yet, attempt to load
-	 * 
-	 * @param providerType
-	 * @param params
-	 * @return
-	 * @throws CertException
-	 */
-	public static synchronized Provider getSecurityProvider(String providerType, String[][] params) throws CertException {
-		Provider p = Security.getProvider(providerType);
-		if(p!=null) {
-			switch(providerType) {
-				case "PKCS12":
-					
-					break;
-				case "PKCS11": // PKCS11 only known to be supported by Sun
-					try {
-						Class<?> clsSunPKCS11 = Class.forName("sun.security.pkcs11.SunPKCS11");
-						Constructor<?> cnst = clsSunPKCS11.getConstructor(String.class);
-						Object sunPKCS11 = cnst.newInstance(params[0][0]);
-						if (sunPKCS11==null) {
-							throw new CertException("SunPKCS11 Provider cannot be constructed for " + params[0][0]);
-						}
-						Security.addProvider((Provider)sunPKCS11);
-					} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						throw new CertException(e);
-					}
-					break;
-				default:
-					throw new CertException(providerType + " is not a known Security Provider for your JDK.");
-			}
-		}
-		return p;
-	}
+    public static String toSignatureString(byte[] signed) throws IOException {
+        return textBuilder("SIGNATURE", signed);
+    }
+
+    public static boolean verify(Trans trans, byte[] bytes, byte[] signature, PublicKey pk) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        TimeTaken tt = trans.start("Verify Data", Env.SUB);
+        try {
+            Signature sig = Signature.getInstance(SIG_ALGO);
+            sig.initVerify(pk);
+            sig.update(bytes);
+            return sig.verify(signature);
+        } finally {
+            tt.done();
+        }    
+    }
+
+    /**
+     * Get the Security Provider, or, if not exists yet, attempt to load
+     * 
+     * @param providerType
+     * @param params
+     * @return
+     * @throws CertException
+     */
+    public static synchronized Provider getSecurityProvider(String providerType, String[][] params) throws CertException {
+        Provider p = Security.getProvider(providerType);
+        if(p!=null) {
+            switch(providerType) {
+                case "PKCS12":
+                    
+                    break;
+                case "PKCS11": // PKCS11 only known to be supported by Sun
+                    try {
+                        Class<?> clsSunPKCS11 = Class.forName("sun.security.pkcs11.SunPKCS11");
+                        Constructor<?> cnst = clsSunPKCS11.getConstructor(String.class);
+                        Object sunPKCS11 = cnst.newInstance(params[0][0]);
+                        if (sunPKCS11==null) {
+                            throw new CertException("SunPKCS11 Provider cannot be constructed for " + params[0][0]);
+                        }
+                        Security.addProvider((Provider)sunPKCS11);
+                    } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                        throw new CertException(e);
+                    }
+                    break;
+                default:
+                    throw new CertException(providerType + " is not a known Security Provider for your JDK.");
+            }
+        }
+        return p;
+    }
 }

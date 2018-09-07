@@ -27,29 +27,29 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.taf.AbsTafResp;
 
 public class DenialOfServiceTafResp extends AbsTafResp  {
-	private static final String tafName = DenialOfServiceTaf.class.getSimpleName();
+    private static final String tafName = DenialOfServiceTaf.class.getSimpleName();
 
-	private RESP ect;  // Homage to Arethra Franklin
+    private RESP ect;  // Homage to Arethra Franklin
 
-	public DenialOfServiceTafResp(Access access, RESP resp, String description ) {
-		super(access, tafName, null, description);
-		ect = resp;
-	}
+    public DenialOfServiceTafResp(Access access, RESP resp, String description ) {
+        super(access, tafName, null, description);
+        ect = resp;
+    }
 
-	// Override base behavior of checking Principal and trying another TAF
-	@Override
-	public RESP isAuthenticated() {
-		return ect;
-	}
-	
+    // Override base behavior of checking Principal and trying another TAF
+    @Override
+    public RESP isAuthenticated() {
+        return ect;
+    }
+    
 
-	public RESP authenticate() throws IOException {
-		return ect;
-	}
-	
-	@Override
-	public String taf() {
-		return "DOS";
-	}
+    public RESP authenticate() throws IOException {
+        return ect;
+    }
+    
+    @Override
+    public String taf() {
+        return "DOS";
+    }
 
 }

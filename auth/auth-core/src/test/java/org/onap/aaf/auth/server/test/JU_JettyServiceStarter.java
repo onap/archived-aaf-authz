@@ -49,47 +49,47 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 public class JU_JettyServiceStarter {
-	private PropAccess propAccess = new PropAccess();
-	private JettyServiceStarter<AuthzEnv,AuthzTrans> jss;
-	class TestService extends AbsService<AuthzEnv,AuthzTrans>{
+    private PropAccess propAccess = new PropAccess();
+    private JettyServiceStarter<AuthzEnv,AuthzTrans> jss;
+    class TestService extends AbsService<AuthzEnv,AuthzTrans>{
 
-		public TestService(Access access, AuthzEnv env) throws CadiException {
-			super(access, env);
-			// TODO Auto-generated constructor stub
-		}
+        public TestService(Access access, AuthzEnv env) throws CadiException {
+            super(access, env);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public Registrant<AuthzEnv>[] registrants(int port) throws CadiException, LocatorException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Registrant<AuthzEnv>[] registrants(int port) throws CadiException, LocatorException {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-	}
-	@SuppressWarnings("unchecked")
-	@Before
-	public void setUp() throws OrganizationException, CadiException {
-		Access access = mock(Access.class);
-		
-		BasicEnv bEnv = mock(BasicEnv.class);
-		Trans trans = mock(Trans.class);  //TODO: Fix this once Gabe has services running to see correct output without mock
-		//TestService testService = new TestService(access, bEnv);
-		//jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(testService);
-	}
-	
-//	@Test
-//	public void netYetTested() {
-//		fail("Tests not yet implemented");
-//	}
-	
-	@Test
-	public void testPropertyAdjustment() {
-		//jss._propertyAdjustment();
-	}
+    }
+    @SuppressWarnings("unchecked")
+    @Before
+    public void setUp() throws OrganizationException, CadiException {
+        Access access = mock(Access.class);
+        
+        BasicEnv bEnv = mock(BasicEnv.class);
+        Trans trans = mock(Trans.class);  //TODO: Fix this once Gabe has services running to see correct output without mock
+        //TestService testService = new TestService(access, bEnv);
+        //jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(testService);
+    }
+    
+//    @Test
+//    public void netYetTested() {
+//        fail("Tests not yet implemented");
+//    }
+    
+    @Test
+    public void testPropertyAdjustment() {
+        //jss._propertyAdjustment();
+    }
 
 }

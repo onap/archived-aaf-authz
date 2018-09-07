@@ -22,5 +22,5 @@
 package org.onap.aaf.cadi;
 
 public interface Connector {
-	public Lur newLur() throws CadiException;
+    public Lur newLur() throws CadiException;
 }

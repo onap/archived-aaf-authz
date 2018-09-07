@@ -27,7 +27,7 @@ import org.onap.aaf.auth.dao.cass.NsDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 
 public class CachedNSDAO extends CachedDAO<AuthzTrans, NsDAO, NsDAO.Data> {
-	public CachedNSDAO(NsDAO dao, CIDAO<AuthzTrans> info, long expiresIn) {
-		super(dao, info, NsDAO.CACHE_SEG, expiresIn);
-	}
+    public CachedNSDAO(NsDAO dao, CIDAO<AuthzTrans> info, long expiresIn) {
+        super(dao, info, NsDAO.CACHE_SEG, expiresIn);
+    }
 }

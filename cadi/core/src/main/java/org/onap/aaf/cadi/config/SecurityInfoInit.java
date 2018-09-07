@@ -24,5 +24,5 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.SecuritySetter;
 
 public interface SecurityInfoInit<CLIENT> {
-	public SecuritySetter<CLIENT> bestDefault(SecurityInfoC<CLIENT> si) throws CadiException;
+    public SecuritySetter<CLIENT> bestDefault(SecurityInfoC<CLIENT> si) throws CadiException;
 }

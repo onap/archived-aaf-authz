@@ -38,19 +38,19 @@ import org.onap.aaf.misc.env.APIException;
  */
 public class HSecurityInfoInit implements SecurityInfoInit<HttpURLConnection> {
 
-	@Override
-	public SecuritySetter<HttpURLConnection> bestDefault(SecurityInfoC<HttpURLConnection> si) throws CadiException {
-		try {
-			if(si.defaultAlias!=null) {
-				si.set(new HX509SS(si));
-			} else if(si.access.getProperty(Config.AAF_APPID, null)!=null &&
-					  si.access.getProperty(Config.AAF_APPPASS, null)!=null) {
-				si.set(new HBasicAuthSS(si));
-			}
-		} catch (APIException | IOException e) {
-			throw new CadiException(e);
-		}
-		return si.defSS;
-	}
+    @Override
+    public SecuritySetter<HttpURLConnection> bestDefault(SecurityInfoC<HttpURLConnection> si) throws CadiException {
+        try {
+            if(si.defaultAlias!=null) {
+                si.set(new HX509SS(si));
+            } else if(si.access.getProperty(Config.AAF_APPID, null)!=null &&
+                      si.access.getProperty(Config.AAF_APPPASS, null)!=null) {
+                si.set(new HBasicAuthSS(si));
+            }
+        } catch (APIException | IOException e) {
+            throw new CadiException(e);
+        }
+        return si.defSS;
+    }
 
 }

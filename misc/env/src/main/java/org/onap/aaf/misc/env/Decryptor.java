@@ -23,12 +23,12 @@ package org.onap.aaf.misc.env;
 
 
 public interface Decryptor {
-	public String decrypt(String tag);
-	
-	public static final Decryptor NULL = new Decryptor() {
-		@Override
-		public String decrypt(String tag) {
-			return tag;
-		}
-	};
+    public String decrypt(String tag);
+    
+    public static final Decryptor NULL = new Decryptor() {
+        @Override
+        public String decrypt(String tag) {
+            return tag;
+        }
+    };
 }

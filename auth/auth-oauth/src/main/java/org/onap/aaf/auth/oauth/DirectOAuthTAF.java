@@ -62,163 +62,163 @@ import org.onap.aaf.misc.env.APIException;
 import aafoauth.v2_0.Introspect;
 
 public class DirectOAuthTAF implements HttpTaf {
-	private PropAccess access;
-	private DirectIntrospect<Introspect> oaFacade;
-	private TokenMgr tkMgr;
-	private final DirectAAFUserPass directUserPass;
-	private TokenClient altIntrospectClient;
+    private PropAccess access;
+    private DirectIntrospect<Introspect> oaFacade;
+    private TokenMgr tkMgr;
+    private final DirectAAFUserPass directUserPass;
+    private TokenClient altIntrospectClient;
 
-	public DirectOAuthTAF(AuthzEnv env, Question q,  DirectIntrospect<Introspect> facade) throws APIException, CadiException {
-		access = env.access();
-		oaFacade = facade;
-		tkMgr = TokenMgr.getInstance(access,"dbToken","dbIntrospect");
-		String alt_url = access.getProperty(Config.AAF_ALT_OAUTH2_INTROSPECT_URL,null);
-		TokenClientFactory tcf;
-		if(alt_url!=null) {
-			try {
-				tcf = TokenClientFactory.instance(access);
-				String[] split = Split.split(',', alt_url);
-				int timeout = split.length>1?Integer.parseInt(split[1]):3000;
-				altIntrospectClient = tcf.newClient(split[0], timeout);
-				altIntrospectClient.client_creds(access.getProperty(Config.AAF_ALT_CLIENT_ID,null), 
-										   access.getProperty(Config.AAF_ALT_CLIENT_SECRET,null));
-			} catch (GeneralSecurityException | IOException | LocatorException e) {
-				throw new CadiException(e);
-			}
-		}
+    public DirectOAuthTAF(AuthzEnv env, Question q,  DirectIntrospect<Introspect> facade) throws APIException, CadiException {
+        access = env.access();
+        oaFacade = facade;
+        tkMgr = TokenMgr.getInstance(access,"dbToken","dbIntrospect");
+        String alt_url = access.getProperty(Config.AAF_ALT_OAUTH2_INTROSPECT_URL,null);
+        TokenClientFactory tcf;
+        if(alt_url!=null) {
+            try {
+                tcf = TokenClientFactory.instance(access);
+                String[] split = Split.split(',', alt_url);
+                int timeout = split.length>1?Integer.parseInt(split[1]):3000;
+                altIntrospectClient = tcf.newClient(split[0], timeout);
+                altIntrospectClient.client_creds(access.getProperty(Config.AAF_ALT_CLIENT_ID,null), 
+                                           access.getProperty(Config.AAF_ALT_CLIENT_SECRET,null));
+            } catch (GeneralSecurityException | IOException | LocatorException e) {
+                throw new CadiException(e);
+            }
+        }
 
-		directUserPass = new DirectAAFUserPass(env,q);
-	}
+        directUserPass = new DirectAAFUserPass(env,q);
+    }
 
-	@Override
-	public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
-		String value;
-		String token;
-		if((value=req.getHeader("Authorization"))!=null && value.startsWith("Bearer ")) {
-			token = value.substring(7);
-		} else {
-			token = null;
-		}
+    @Override
+    public TafResp validate(LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
+        String value;
+        String token;
+        if((value=req.getHeader("Authorization"))!=null && value.startsWith("Bearer ")) {
+            token = value.substring(7);
+        } else {
+            token = null;
+        }
 
-		if("application/x-www-form-urlencoded".equals(req.getContentType())) {
-			Map<String, String[]> map = req.getParameterMap();
-			String client_id=null,client_secret=null,username=null,password=null;
-			for(Map.Entry<String, String[]> es : map.entrySet()) {
-				switch(es.getKey()) {
-					case "client_id":
-						for(String s : es.getValue()) {
-							client_id=s;
-						}
-						break;
-					case "client_secret":
-						for(String s : es.getValue()) {
-							client_secret=s;
-						}
-						break;
-					case "username":
-						for(String s : es.getValue()) {
-							username=s;
-						}
-						break;
-					case "password":
-						for(String s : es.getValue()) {
-							password=s;
-						}
-						break;
-					case "token": 
-						if(token!=null) { // Defined as both Bearer and Form Encoded - Error
-							return new OAuth2HttpTafResp(access, null, "Token Info found as both Bearer Token and Form Info", RESP.FAIL, resp, true);
-						}
-						for(String s : es.getValue()) {
-							token=s;
-						}
-						break;
-					// Ignore others
-				}
-			}
-			
-			if(client_id==null || client_secret==null) {
-				return new OAuth2HttpTafResp(access, null, "client_id and client_secret required", RESP.TRY_ANOTHER_TAF, resp, false);
-			}
-			
-			if(token==null) { // No Token to work with, use only Client_ID and Client_Secret 
-				AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
+        if("application/x-www-form-urlencoded".equals(req.getContentType())) {
+            Map<String, String[]> map = req.getParameterMap();
+            String client_id=null,client_secret=null,username=null,password=null;
+            for(Map.Entry<String, String[]> es : map.entrySet()) {
+                switch(es.getKey()) {
+                    case "client_id":
+                        for(String s : es.getValue()) {
+                            client_id=s;
+                        }
+                        break;
+                    case "client_secret":
+                        for(String s : es.getValue()) {
+                            client_secret=s;
+                        }
+                        break;
+                    case "username":
+                        for(String s : es.getValue()) {
+                            username=s;
+                        }
+                        break;
+                    case "password":
+                        for(String s : es.getValue()) {
+                            password=s;
+                        }
+                        break;
+                    case "token": 
+                        if(token!=null) { // Defined as both Bearer and Form Encoded - Error
+                            return new OAuth2HttpTafResp(access, null, "Token Info found as both Bearer Token and Form Info", RESP.FAIL, resp, true);
+                        }
+                        for(String s : es.getValue()) {
+                            token=s;
+                        }
+                        break;
+                    // Ignore others
+                }
+            }
+            
+            if(client_id==null || client_secret==null) {
+                return new OAuth2HttpTafResp(access, null, "client_id and client_secret required", RESP.TRY_ANOTHER_TAF, resp, false);
+            }
+            
+            if(token==null) { // No Token to work with, use only Client_ID and Client_Secret 
+                AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
 
-				if(directUserPass.validate(client_id, Type.PASSWORD, client_secret.getBytes(), trans)) {
-					// Client_ID is valid
-					if(username==null) { // Validating just the Client_ID
-						return new OAuth2FormHttpTafResp(access,new OAuth2FormPrincipal(client_id,client_id),"OAuth client_id authenticated",RESP.IS_AUTHENTICATED,resp,false);
-					} else {
-						//TODO - Does a clientID need specific Authorization to pair authentication with user name?  At the moment, no.
-						// username is ok.
-						if(password!=null) {
-							if(directUserPass.validate(username, Type.PASSWORD, password.getBytes(), trans)) {
-								return new OAuth2FormHttpTafResp(access,new OAuth2FormPrincipal(client_id, username),"OAuth username authenticated",RESP.IS_AUTHENTICATED,resp,false);
-							} else {
-								return new OAuth2HttpTafResp(access,null,"OAuth username " + username + " not authenticated ",RESP.FAIL,resp,true);
-							}
-						} else { // no Password
-							//TODO Check for Trust Permission, which requires looking up Perms?
-							return new OAuth2HttpTafResp(access,null,"OAuth username " + username + " not authenticated ",RESP.FAIL,resp,true);
-						}
-					}
-				} else {
-					return new OAuth2HttpTafResp(access,null,"OAuth client_id " + client_id + " not authenticated ",RESP.FAIL,resp,true);
-				}
-			}
-		} 
-		
-		// OK, have only a Token to validate
-		if(token!=null) {
-			AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
+                if(directUserPass.validate(client_id, Type.PASSWORD, client_secret.getBytes(), trans)) {
+                    // Client_ID is valid
+                    if(username==null) { // Validating just the Client_ID
+                        return new OAuth2FormHttpTafResp(access,new OAuth2FormPrincipal(client_id,client_id),"OAuth client_id authenticated",RESP.IS_AUTHENTICATED,resp,false);
+                    } else {
+                        //TODO - Does a clientID need specific Authorization to pair authentication with user name?  At the moment, no.
+                        // username is ok.
+                        if(password!=null) {
+                            if(directUserPass.validate(username, Type.PASSWORD, password.getBytes(), trans)) {
+                                return new OAuth2FormHttpTafResp(access,new OAuth2FormPrincipal(client_id, username),"OAuth username authenticated",RESP.IS_AUTHENTICATED,resp,false);
+                            } else {
+                                return new OAuth2HttpTafResp(access,null,"OAuth username " + username + " not authenticated ",RESP.FAIL,resp,true);
+                            }
+                        } else { // no Password
+                            //TODO Check for Trust Permission, which requires looking up Perms?
+                            return new OAuth2HttpTafResp(access,null,"OAuth username " + username + " not authenticated ",RESP.FAIL,resp,true);
+                        }
+                    }
+                } else {
+                    return new OAuth2HttpTafResp(access,null,"OAuth client_id " + client_id + " not authenticated ",RESP.FAIL,resp,true);
+                }
+            }
+        } 
+        
+        // OK, have only a Token to validate
+        if(token!=null) {
+            AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
 
-			try {
-				Result<Introspect> ri = oaFacade.mappedIntrospect(trans, token);
-				if(ri.isOK()) {
-					TokenPerm tp = tkMgr.putIntrospect(ri.value, Hash.hashSHA256(token.getBytes()));
-					if(tp==null) {
-						return new OAuth2HttpTafResp(access, null, "TokenPerm persistence failure", RESP.FAIL, resp, false);
-					} else {
-						return new OAuth2HttpTafResp(access,new OAuth2Principal(tp,Hash.hashSHA256(token.getBytes())),"Token Authenticated",RESP.IS_AUTHENTICATED,resp,false);
-					}
-				} else {
-					return new OAuth2HttpTafResp(access, null, ri.errorString(), RESP.FAIL, resp, false);
-				}
-			} catch (APIException e) {
-				trans.error().log(e,"Error getting token");
-				return new OAuth2HttpTafResp(access, null, "Error getting token: " + e.getMessage(), RESP.TRY_ANOTHER_TAF, resp, false);
-			} catch (NoSuchAlgorithmException e) {
-				return new OAuth2HttpTafResp(access, null, "Error in security algorithm: " + e.getMessage(), RESP.TRY_ANOTHER_TAF, resp, false);
-			}
-		}
-		return new OAuth2HttpTafResp(access, null, "No OAuth2 Credentials in OAuthForm", RESP.TRY_ANOTHER_TAF, resp, false);
-	}
+            try {
+                Result<Introspect> ri = oaFacade.mappedIntrospect(trans, token);
+                if(ri.isOK()) {
+                    TokenPerm tp = tkMgr.putIntrospect(ri.value, Hash.hashSHA256(token.getBytes()));
+                    if(tp==null) {
+                        return new OAuth2HttpTafResp(access, null, "TokenPerm persistence failure", RESP.FAIL, resp, false);
+                    } else {
+                        return new OAuth2HttpTafResp(access,new OAuth2Principal(tp,Hash.hashSHA256(token.getBytes())),"Token Authenticated",RESP.IS_AUTHENTICATED,resp,false);
+                    }
+                } else {
+                    return new OAuth2HttpTafResp(access, null, ri.errorString(), RESP.FAIL, resp, false);
+                }
+            } catch (APIException e) {
+                trans.error().log(e,"Error getting token");
+                return new OAuth2HttpTafResp(access, null, "Error getting token: " + e.getMessage(), RESP.TRY_ANOTHER_TAF, resp, false);
+            } catch (NoSuchAlgorithmException e) {
+                return new OAuth2HttpTafResp(access, null, "Error in security algorithm: " + e.getMessage(), RESP.TRY_ANOTHER_TAF, resp, false);
+            }
+        }
+        return new OAuth2HttpTafResp(access, null, "No OAuth2 Credentials in OAuthForm", RESP.TRY_ANOTHER_TAF, resp, false);
+    }
 
-	@Override
-	public Resp revalidate(CachedPrincipal prin, Object state) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Resp revalidate(CachedPrincipal prin, Object state) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	class ServiceTPL implements TokenPermLoader {
-		private final AuthzTrans trans;
-		public ServiceTPL(AuthzTrans atrans) {
-			trans = atrans;
-		}
-		
-		@Override
-		public org.onap.aaf.cadi.client.Result<TokenPerm> load(String accessToken, byte[] cred) throws APIException, CadiException, LocatorException {
-			Result<Introspect> ri = oaFacade.mappedIntrospect(trans, accessToken);
-			if(ri.notOK()) {
-				//TODO what should the status mapping be?
-				return org.onap.aaf.cadi.client.Result.err(ri.status,ri.errorString());
-			}
-			return org.onap.aaf.cadi.client.Result.ok(200,tkMgr.putIntrospect(ri.value, cred));
-		}
-	}
+    class ServiceTPL implements TokenPermLoader {
+        private final AuthzTrans trans;
+        public ServiceTPL(AuthzTrans atrans) {
+            trans = atrans;
+        }
+        
+        @Override
+        public org.onap.aaf.cadi.client.Result<TokenPerm> load(String accessToken, byte[] cred) throws APIException, CadiException, LocatorException {
+            Result<Introspect> ri = oaFacade.mappedIntrospect(trans, accessToken);
+            if(ri.notOK()) {
+                //TODO what should the status mapping be?
+                return org.onap.aaf.cadi.client.Result.err(ri.status,ri.errorString());
+            }
+            return org.onap.aaf.cadi.client.Result.ok(200,tkMgr.putIntrospect(ri.value, cred));
+        }
+    }
 
-	public DirectAAFUserPass directUserPass() {
-		return directUserPass;
-	}
+    public DirectAAFUserPass directUserPass() {
+        return directUserPass;
+    }
 }
 

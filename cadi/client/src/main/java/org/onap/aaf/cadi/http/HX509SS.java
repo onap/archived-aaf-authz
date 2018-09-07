@@ -45,108 +45,108 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 
 public class HX509SS implements SecuritySetter<HttpURLConnection> {
-	private static final byte[] X509 = "x509 ".getBytes();
-	private PrivateKey priv;
-	private byte[] pub;
-	private String cert;
-	private SecurityInfoC<HttpURLConnection> securityInfo;
-	private String algo;
-	private String alias;
-	private static int count = new SecureRandom().nextInt();
+    private static final byte[] X509 = "x509 ".getBytes();
+    private PrivateKey priv;
+    private byte[] pub;
+    private String cert;
+    private SecurityInfoC<HttpURLConnection> securityInfo;
+    private String algo;
+    private String alias;
+    private static int count = new SecureRandom().nextInt();
 
-	public HX509SS(SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
-		this(null,si,false);
-	}
-	
-	public HX509SS(SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
-		this(null,si,asDefault);
-	}
-	
-	public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
-		this(sendAlias, si, false);
-	}
+    public HX509SS(SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
+        this(null,si,false);
+    }
+    
+    public HX509SS(SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
+        this(null,si,asDefault);
+    }
+    
+    public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
+        this(sendAlias, si, false);
+    }
 
-	public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
-		securityInfo = si;
-		if((alias=sendAlias) == null) {
-			if(si.defaultAlias == null) {
-				throw new APIException("JKS Alias is required to use X509SS Security.  Use " + Config.CADI_ALIAS +" to set default alias");
-			} else {
-				alias = si.defaultAlias;
-			}
-		}
-		
-		priv=null;
-		X509KeyManager[] xkms = si.getKeyManagers();
-		if(xkms==null || xkms.length==0) {
-			throw new APIException("There are no valid keys available in given Keystores.  Wrong Keypass?  Expired?");
-		}
-		for(int i=0;priv==null&&i<xkms.length;++i) {
-			priv = xkms[i].getPrivateKey(alias);
-		}
-		try {
-			for(int i=0;cert==null&&i<xkms.length;++i) {
-				X509Certificate[] chain = xkms[i].getCertificateChain(alias);
-				if(chain!=null&&chain.length>0) {
-					algo = chain[0].getSigAlgName(); 
-					pub = chain[0].getEncoded();
-					ByteArrayOutputStream baos = new ByteArrayOutputStream(pub.length*2); 
-					ByteArrayInputStream bais = new ByteArrayInputStream(pub);
-					Symm.base64noSplit.encode(bais,baos,X509);
-					cert = baos.toString();
-				}
-			}
-		} catch (CertificateEncodingException | IOException e) {
-			throw new CadiException(e);
-		}
-		if(algo==null) {
-			throw new APIException("X509 Security Setter not configured");
-		}
-	}
+    public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
+        securityInfo = si;
+        if((alias=sendAlias) == null) {
+            if(si.defaultAlias == null) {
+                throw new APIException("JKS Alias is required to use X509SS Security.  Use " + Config.CADI_ALIAS +" to set default alias");
+            } else {
+                alias = si.defaultAlias;
+            }
+        }
+        
+        priv=null;
+        X509KeyManager[] xkms = si.getKeyManagers();
+        if(xkms==null || xkms.length==0) {
+            throw new APIException("There are no valid keys available in given Keystores.  Wrong Keypass?  Expired?");
+        }
+        for(int i=0;priv==null&&i<xkms.length;++i) {
+            priv = xkms[i].getPrivateKey(alias);
+        }
+        try {
+            for(int i=0;cert==null&&i<xkms.length;++i) {
+                X509Certificate[] chain = xkms[i].getCertificateChain(alias);
+                if(chain!=null&&chain.length>0) {
+                    algo = chain[0].getSigAlgName(); 
+                    pub = chain[0].getEncoded();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream(pub.length*2); 
+                    ByteArrayInputStream bais = new ByteArrayInputStream(pub);
+                    Symm.base64noSplit.encode(bais,baos,X509);
+                    cert = baos.toString();
+                }
+            }
+        } catch (CertificateEncodingException | IOException e) {
+            throw new CadiException(e);
+        }
+        if(algo==null) {
+            throw new APIException("X509 Security Setter not configured");
+        }
+    }
 
-	@Override
-	public void setSecurity(HttpURLConnection huc) throws CadiException {
-		if(huc instanceof HttpsURLConnection) {
-			securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
-		}
-		if(alias==null) { // must be a one-way
-			huc.setRequestProperty(AbsAuthentication.AUTHORIZATION, cert);
-			
-			// Test Signed content
-			try {
-				String data = "SignedContent["+ inc() + ']' + Chrono.dateTime();
-				huc.setRequestProperty("Data", data);
-				
-				Signature sig = Signature.getInstance(algo);
-				sig.initSign(priv);
-				sig.update(data.getBytes());
-				byte[] signature = sig.sign();
-				
-				ByteArrayOutputStream baos = new ByteArrayOutputStream((int)(signature.length*1.3));
-				ByteArrayInputStream bais = new ByteArrayInputStream(signature);
-				Symm.base64noSplit.encode(bais, baos);
-				huc.setRequestProperty("Signature", new String(baos.toByteArray()));
-				
-			} catch (Exception e) {
-				throw new CadiException(e);
-			}
-		}
-	}
-	
-	private synchronized int inc() {
-		return ++count;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.SecuritySetter#getID()
-	 */
-	@Override
-	public String getID() {
-		return alias;
-	}
-	
-	@Override
-	public int setLastResponse(int respCode) {
-		return 0;
-	}
+    @Override
+    public void setSecurity(HttpURLConnection huc) throws CadiException {
+        if(huc instanceof HttpsURLConnection) {
+            securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
+        }
+        if(alias==null) { // must be a one-way
+            huc.setRequestProperty(AbsAuthentication.AUTHORIZATION, cert);
+            
+            // Test Signed content
+            try {
+                String data = "SignedContent["+ inc() + ']' + Chrono.dateTime();
+                huc.setRequestProperty("Data", data);
+                
+                Signature sig = Signature.getInstance(algo);
+                sig.initSign(priv);
+                sig.update(data.getBytes());
+                byte[] signature = sig.sign();
+                
+                ByteArrayOutputStream baos = new ByteArrayOutputStream((int)(signature.length*1.3));
+                ByteArrayInputStream bais = new ByteArrayInputStream(signature);
+                Symm.base64noSplit.encode(bais, baos);
+                huc.setRequestProperty("Signature", new String(baos.toByteArray()));
+                
+            } catch (Exception e) {
+                throw new CadiException(e);
+            }
+        }
+    }
+    
+    private synchronized int inc() {
+        return ++count;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.SecuritySetter#getID()
+     */
+    @Override
+    public String getID() {
+        return alias;
+    }
+    
+    @Override
+    public int setLastResponse(int respCode) {
+        return 0;
+    }
 }

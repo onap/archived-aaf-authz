@@ -38,35 +38,35 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 public class JU_Creator {
-	
-	CreatorStub creatorStub;
+    
+    CreatorStub creatorStub;
 
-	private class CreatorStub extends Creator{
+    private class CreatorStub extends Creator{
 
-		@Override
-		public Object create(Row row) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Object create(Row row) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public String select() {
-			// TODO Auto-generated method stub
-			return "Select";					//Changed from null to Select
-		}
-		
-	}
-	
-	@Before
-	public void setUp() {
-		creatorStub = new CreatorStub();
-	}
-	
-	@Test
-	public void testQuery() {
-		creatorStub.select();
-		Assert.assertEquals("Select WHERE test;", creatorStub.query("test"));
-		Assert.assertEquals("Select;", creatorStub.query(null));
-	}
+        @Override
+        public String select() {
+            // TODO Auto-generated method stub
+            return "Select";                    //Changed from null to Select
+        }
+        
+    }
+    
+    @Before
+    public void setUp() {
+        creatorStub = new CreatorStub();
+    }
+    
+    @Test
+    public void testQuery() {
+        creatorStub.select();
+        Assert.assertEquals("Select WHERE test;", creatorStub.query("test"));
+        Assert.assertEquals("Select;", creatorStub.query(null));
+    }
 
 }

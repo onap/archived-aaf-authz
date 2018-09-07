@@ -61,97 +61,97 @@ import org.onap.aaf.misc.env.util.Split;
  *
  */
 public abstract class TransFilter<TRANS extends TransStore> implements Filter {
-	public static final String TRANS_TAG = "__TRANS__";
-	
-	private CadiHTTPManip cadi;
+    public static final String TRANS_TAG = "__TRANS__";
+    
+    private CadiHTTPManip cadi;
 
-	private final String[] no_authn;
-	
-	public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
-		cadi = new CadiHTTPManip(access, con, tc, additionalTafLurs);
-		String no = access.getProperty(Config.CADI_NOAUTHN, null);
-		if(no!=null) {
-			no_authn = Split.split(':', no);
-		} else {
-			no_authn=null;
-		}
-	}
+    private final String[] no_authn;
+    
+    public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
+        cadi = new CadiHTTPManip(access, con, tc, additionalTafLurs);
+        String no = access.getProperty(Config.CADI_NOAUTHN, null);
+        if(no!=null) {
+            no_authn = Split.split(':', no);
+        } else {
+            no_authn=null;
+        }
+    }
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-	}
-	
-	protected Lur getLur() {
-		return cadi.getLur();
-	}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
+    
+    protected Lur getLur() {
+        return cadi.getLur();
+    }
 
-	protected abstract TRANS newTrans(HttpServletRequest request);
-	protected abstract TimeTaken start(TRANS trans, ServletRequest request);
-	protected abstract void authenticated(TRANS trans, Principal p);
-	protected abstract void tallyHo(TRANS trans);
-	
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest)request;
-		HttpServletResponse res = (HttpServletResponse)response;
-		
-		TRANS trans = newTrans(req);
-		
-		TimeTaken overall = start(trans,request);
-		try {
-			request.setAttribute(TRANS_TAG, trans);
-			
-			if(no_authn!=null) {
-				for(String prefix : no_authn) {
-					if(req.getPathInfo().startsWith(prefix)) {
-						chain.doFilter(request, response);
-						return;
-					}
-				}
-			}
+    protected abstract TRANS newTrans(HttpServletRequest request);
+    protected abstract TimeTaken start(TRANS trans, ServletRequest request);
+    protected abstract void authenticated(TRANS trans, Principal p);
+    protected abstract void tallyHo(TRANS trans);
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest)request;
+        HttpServletResponse res = (HttpServletResponse)response;
+        
+        TRANS trans = newTrans(req);
+        
+        TimeTaken overall = start(trans,request);
+        try {
+            request.setAttribute(TRANS_TAG, trans);
+            
+            if(no_authn!=null) {
+                for(String prefix : no_authn) {
+                    if(req.getPathInfo().startsWith(prefix)) {
+                        chain.doFilter(request, response);
+                        return;
+                    }
+                }
+            }
 
-			TimeTaken security = trans.start("CADI Security", Env.SUB);
-			TafResp resp;
-			RESP r;
-			CadiWrap cw = null;
-			try {
-				resp = cadi.validate(req,res,trans);
-				switch(r=resp.isAuthenticated()) {
-					case IS_AUTHENTICATED:
-						cw = new CadiWrap(req,resp,cadi.getLur());
-						authenticated(trans, cw.getUserPrincipal());
-						break;
-					default:
-						break;
-				}
-			} finally {
-				security.done();
-			}
-			
-			if(r==RESP.IS_AUTHENTICATED) {
-				trans.checkpoint(resp.desc());
-				if(cadi.notCadi(cw, res)) {
-					chain.doFilter(cw, response);
-				}
-			} else {
-				//TODO this is a good place to check if too many checks recently
-				// Would need Cached Counter objects that are cleaned up on 
-				// use
-				trans.checkpoint(resp.desc(),Env.ALWAYS);
-				if(resp.isFailedAttempt())
-						trans.audit().log(resp.desc());
-			}
-		} catch(Exception e) {
-			trans.error().log(e);
-			trans.checkpoint("Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
-			throw new ServletException(e);
-		} finally {
-			overall.done();
-			tallyHo(trans);
-		}
-	}
+            TimeTaken security = trans.start("CADI Security", Env.SUB);
+            TafResp resp;
+            RESP r;
+            CadiWrap cw = null;
+            try {
+                resp = cadi.validate(req,res,trans);
+                switch(r=resp.isAuthenticated()) {
+                    case IS_AUTHENTICATED:
+                        cw = new CadiWrap(req,resp,cadi.getLur());
+                        authenticated(trans, cw.getUserPrincipal());
+                        break;
+                    default:
+                        break;
+                }
+            } finally {
+                security.done();
+            }
+            
+            if(r==RESP.IS_AUTHENTICATED) {
+                trans.checkpoint(resp.desc());
+                if(cadi.notCadi(cw, res)) {
+                    chain.doFilter(cw, response);
+                }
+            } else {
+                //TODO this is a good place to check if too many checks recently
+                // Would need Cached Counter objects that are cleaned up on 
+                // use
+                trans.checkpoint(resp.desc(),Env.ALWAYS);
+                if(resp.isFailedAttempt())
+                        trans.audit().log(resp.desc());
+            }
+        } catch(Exception e) {
+            trans.error().log(e);
+            trans.checkpoint("Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            throw new ServletException(e);
+        } finally {
+            overall.done();
+            tallyHo(trans);
+        }
+    }
 
-	@Override
-	public void destroy() {
-	};
+    @Override
+    public void destroy() {
+    };
 }

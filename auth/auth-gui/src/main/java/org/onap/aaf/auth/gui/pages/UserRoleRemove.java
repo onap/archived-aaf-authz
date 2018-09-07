@@ -42,56 +42,56 @@ import org.onap.aaf.misc.xgen.DynamicCode;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class UserRoleRemove extends Page {
-	public static final String HREF = "/gui/urRemove";
-	static final String NAME = "Remove User Role";
-	static final String fields[] = {"user","role"};
+    public static final String HREF = "/gui/urRemove";
+    static final String NAME = "Remove User Role";
+    static final String fields[] = {"user","role"};
 
-	public UserRoleRemove(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-		super(gui.env,NAME, HREF, fields,
-				new BreadCrumbs(breadcrumbs),
-				new NamedCode(true, "content") {
-			@Override
-			public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-				final Slot sUser = gui.env.slot(NAME+".user");
-				final Slot sRole = gui.env.slot(NAME+".role");
-				
-				
-				cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
-					@Override
-					public void code(final AAF_GUI gui, final AuthzTrans trans,	final Cache<HTMLGen> cache, final HTMLGen hgen)	throws APIException, IOException {						
-						final String user = trans.get(sUser, "");
-						final String role = trans.get(sRole, "");
+    public UserRoleRemove(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
+        super(gui.env,NAME, HREF, fields,
+                new BreadCrumbs(breadcrumbs),
+                new NamedCode(true, "content") {
+            @Override
+            public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+                final Slot sUser = gui.env.slot(NAME+".user");
+                final Slot sRole = gui.env.slot(NAME+".role");
+                
+                
+                cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
+                    @Override
+                    public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {                        
+                        final String user = trans.get(sUser, "");
+                        final String role = trans.get(sRole, "");
 
-						TimeTaken tt = trans.start("Request a user role delete",Env.REMOTE);
-						try {
-							gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
-								@Override
-								public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-									Future<Void> fv = client.delete(
-												"/authz/userRole/"+user+"/"+role+"?request=true",Void.class);
-									
-									if(fv.get(5000)) {
-										// not sure if we'll ever hit this
-										hgen.p("User ["+ user+"] Removed from Role [" +role+"]");
-									} else {
-										if (fv.code() == 202 ) {
-											hgen.p("User ["+ user+"] Removal from Role [" +role+"] sent for Approval");
-										} else {
-											gui.writeError(trans, fv, hgen, 0);
-										}
-									}
-									return null;
-								}
-							});
-						} catch (Exception e) {
-							e.printStackTrace();
-						} finally {
-							tt.done();
-						}
-					}
-				});
-			}
-			
-		});
-	}
+                        TimeTaken tt = trans.start("Request a user role delete",Env.REMOTE);
+                        try {
+                            gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
+                                @Override
+                                public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+                                    Future<Void> fv = client.delete(
+                                                "/authz/userRole/"+user+"/"+role+"?request=true",Void.class);
+                                    
+                                    if(fv.get(5000)) {
+                                        // not sure if we'll ever hit this
+                                        hgen.p("User ["+ user+"] Removed from Role [" +role+"]");
+                                    } else {
+                                        if (fv.code() == 202 ) {
+                                            hgen.p("User ["+ user+"] Removal from Role [" +role+"] sent for Approval");
+                                        } else {
+                                            gui.writeError(trans, fv, hgen, 0);
+                                        }
+                                    }
+                                    return null;
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            tt.done();
+                        }
+                    }
+                });
+            }
+            
+        });
+    }
 }

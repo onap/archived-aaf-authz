@@ -42,64 +42,64 @@ import java.io.IOException;
 import org.junit.Test;
 
 public class JU_MonthData {
-	
-	File f;
-	MonthData mData;
-	Row row;
-	BufferedWriter bw = null;
-	FileWriter fw = null;
-	
-	@Before
-	public void setUp() throws IOException {
-		mData = new MonthData("env");
-		row = new Row("target", 10,2,1);
-		f = new File("Monthlyenv.dat");
-		f.createNewFile();
-		bw = new BufferedWriter(new FileWriter(f));
-		bw.write("#test"+ "\n");
-		bw.write("long,tester"+ "\n");
-		bw.write("1,2,3,4,5"+ "\n");
-		bw.close();
-		
-		mData = new MonthData("env");
-	}
+    
+    File f;
+    MonthData mData;
+    Row row;
+    BufferedWriter bw = null;
+    FileWriter fw = null;
+    
+    @Before
+    public void setUp() throws IOException {
+        mData = new MonthData("env");
+        row = new Row("target", 10,2,1);
+        f = new File("Monthlyenv.dat");
+        f.createNewFile();
+        bw = new BufferedWriter(new FileWriter(f));
+        bw.write("#test"+ "\n");
+        bw.write("long,tester"+ "\n");
+        bw.write("1,2,3,4,5"+ "\n");
+        bw.close();
+        
+        mData = new MonthData("env");
+    }
 
-	@Test
-	public void testAdd() {
-		mData.add(2, "target", 10, 1, 1);
-	}
-	
-	@Test
-	public void testNotExists() {
-		mData.notExists(2);
-	}
-	
-	@Test
-	public void testWrite() throws IOException {
-		mData.write();
-	}
-	
-	@Test
-	public void testCompareTo() {
-		Row testrow = new Row("testtar",1,1,1);
-		Assert.assertEquals(-4, row.compareTo(testrow));
-		Assert.assertEquals(0, row.compareTo(row));
-	}
-	
-	@Test
-	public void testToString() {
-		Assert.assertEquals("target|10|1|2", row.toString());
-	}
-	
-	@After
-	public void cleanUp() {
-		File g = new File("Monthlyenv.dat.bak");
-		if(f.exists()) {
-			f.delete();
-		}
-		if(g.exists()) {
-			g.delete();
-		}
-	}
+    @Test
+    public void testAdd() {
+        mData.add(2, "target", 10, 1, 1);
+    }
+    
+    @Test
+    public void testNotExists() {
+        mData.notExists(2);
+    }
+    
+    @Test
+    public void testWrite() throws IOException {
+        mData.write();
+    }
+    
+    @Test
+    public void testCompareTo() {
+        Row testrow = new Row("testtar",1,1,1);
+        Assert.assertEquals(-4, row.compareTo(testrow));
+        Assert.assertEquals(0, row.compareTo(row));
+    }
+    
+    @Test
+    public void testToString() {
+        Assert.assertEquals("target|10|1|2", row.toString());
+    }
+    
+    @After
+    public void cleanUp() {
+        File g = new File("Monthlyenv.dat.bak");
+        if(f.exists()) {
+            f.delete();
+        }
+        if(g.exists()) {
+            g.delete();
+        }
+    }
 
 }

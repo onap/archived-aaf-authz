@@ -34,37 +34,37 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class JU_Version {
-	Version version;
-	Version versionTest;
+    Version version;
+    Version versionTest;
 
-	
-	@Before
-	public void setUp(){
-		version = new Version("first\\.123");
-		versionTest = new Version("first\\.124");
-	}
+    
+    @Before
+    public void setUp(){
+        version = new Version("first\\.123");
+        versionTest = new Version("first\\.124");
+    }
 
-	@Test
-	public void testEquals(){		
-		version.equals(versionTest);
-		versionTest.equals(version);
-		versionTest = new Version("fail\\.124");
-		version.equals(versionTest);
-		version.equals("This is not an object of version");
-		versionTest = new Version("NoVersion\\.number");
-		version.equals(versionTest);
-		
-		
-	}
-	
-	@Test
-	public void testToString(){
-		String strVal = version.toString();
-		assertNotNull(strVal);
-	}
-	
-	@Test
-	public void testHashCode() {
-		Assert.assertNotNull(version.hashCode());
-	}
+    @Test
+    public void testEquals(){        
+        version.equals(versionTest);
+        versionTest.equals(version);
+        versionTest = new Version("fail\\.124");
+        version.equals(versionTest);
+        version.equals("This is not an object of version");
+        versionTest = new Version("NoVersion\\.number");
+        version.equals(versionTest);
+        
+        
+    }
+    
+    @Test
+    public void testToString(){
+        String strVal = version.toString();
+        assertNotNull(strVal);
+    }
+    
+    @Test
+    public void testHashCode() {
+        Assert.assertNotNull(version.hashCode());
+    }
 }

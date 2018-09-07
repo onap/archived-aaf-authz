@@ -39,103 +39,103 @@ import locate.v1_0.MgmtEndpoints;
  *
  */
 public class LocateValidator extends Validator {
-	private LocateValidator endpoint_key(Endpoint e) {
-		if(e==null) {
-			msg("Endpoint Data is null.");
-		} else {
-			nullOrBlank("Endpoint Name", e.getName());
-			if(e.getName()!=null) {
-				int idx = e.getName().indexOf('.');
-				if(idx<=0) {
-					msg("Endpoint Name must prefixed by Namespace");
-				}
-			}
-			nullOrBlank("Endpoint Hostname", e.getHostname());
-			intRange("Endpoint Port",e.getPort(),0,1000000);
-		}
-		return this;
-	}
+    private LocateValidator endpoint_key(Endpoint e) {
+        if(e==null) {
+            msg("Endpoint Data is null.");
+        } else {
+            nullOrBlank("Endpoint Name", e.getName());
+            if(e.getName()!=null) {
+                int idx = e.getName().indexOf('.');
+                if(idx<=0) {
+                    msg("Endpoint Name must prefixed by Namespace");
+                }
+            }
+            nullOrBlank("Endpoint Hostname", e.getHostname());
+            intRange("Endpoint Port",e.getPort(),0,1000000);
+        }
+        return this;
+    }
 
 
-	public LocateValidator endpoint(Endpoint e) {
-		endpoint_key(e);
-		if(e!=null) {
-			intRange("Endpoint Major Version",e.getMajor(),0,2000);
-			intRange("Endpoint Minor Version",e.getMinor(),0,2000);
-			intRange("Endpoint Patch Version",e.getPatch(),0,2000);
-			intRange("Endpoint Pkg Version",e.getPkg(),0,2000);
-			floatRange("Endpoint Latitude",e.getLatitude(),-90f,90f);
-			floatRange("Endpoint Longitude",e.getLongitude(),-180f,180f);
-			nullOrBlank("Endpoint Protocol", e.getProtocol());
-			for(String s : e.getSubprotocol()) {
-				nullOrBlank("Endpoint Subprotocol", s);
-			}
-		}
-		return this;
-	}
-	
-	public LocateValidator endpoints(Endpoints e, boolean emptyNotOK) {
-		if(e==null) {
-			msg("Endpoints Data is null.");
-		} else {
-			if(emptyNotOK && e.getEndpoint().size()==0) {
-				msg("Endpoints contains no endpoints");
-			} else {
-				for(Endpoint ep : e.getEndpoint()) {
-					endpoint(ep);
-				}
-			}
-		}
-		return this;
-	}
+    public LocateValidator endpoint(Endpoint e) {
+        endpoint_key(e);
+        if(e!=null) {
+            intRange("Endpoint Major Version",e.getMajor(),0,2000);
+            intRange("Endpoint Minor Version",e.getMinor(),0,2000);
+            intRange("Endpoint Patch Version",e.getPatch(),0,2000);
+            intRange("Endpoint Pkg Version",e.getPkg(),0,2000);
+            floatRange("Endpoint Latitude",e.getLatitude(),-90f,90f);
+            floatRange("Endpoint Longitude",e.getLongitude(),-180f,180f);
+            nullOrBlank("Endpoint Protocol", e.getProtocol());
+            for(String s : e.getSubprotocol()) {
+                nullOrBlank("Endpoint Subprotocol", s);
+            }
+        }
+        return this;
+    }
+    
+    public LocateValidator endpoints(Endpoints e, boolean emptyNotOK) {
+        if(e==null) {
+            msg("Endpoints Data is null.");
+        } else {
+            if(emptyNotOK && e.getEndpoint().size()==0) {
+                msg("Endpoints contains no endpoints");
+            } else {
+                for(Endpoint ep : e.getEndpoint()) {
+                    endpoint(ep);
+                }
+            }
+        }
+        return this;
+    }
 
-	public LocateValidator mgmt_endpoint_key(MgmtEndpoints meps) {
-		if(meps==null) {
-			msg("MgmtEndpoints Data is null.");
-		} else {
-			for(MgmtEndpoint ep : meps.getMgmtEndpoint()) {
-				endpoint_key(ep);
-			}
-		}
-		return this;
-	}
+    public LocateValidator mgmt_endpoint_key(MgmtEndpoints meps) {
+        if(meps==null) {
+            msg("MgmtEndpoints Data is null.");
+        } else {
+            for(MgmtEndpoint ep : meps.getMgmtEndpoint()) {
+                endpoint_key(ep);
+            }
+        }
+        return this;
+    }
 
-	public LocateValidator mgmt_endpoints(MgmtEndpoints me, boolean emptyOK) {
-		if(me==null) {
-			msg("MgmtEndpoints Data is null.");
-		} else {
-			if(!emptyOK && me.getMgmtEndpoint().size()==0) {
-				msg("MgmtEndpoints contains no data");
-			} else {
-				for(MgmtEndpoint ep : me.getMgmtEndpoint()) {
-					mgmt_endpoint(ep);
-				}
-			}
-		}
-		return this;
-	}
+    public LocateValidator mgmt_endpoints(MgmtEndpoints me, boolean emptyOK) {
+        if(me==null) {
+            msg("MgmtEndpoints Data is null.");
+        } else {
+            if(!emptyOK && me.getMgmtEndpoint().size()==0) {
+                msg("MgmtEndpoints contains no data");
+            } else {
+                for(MgmtEndpoint ep : me.getMgmtEndpoint()) {
+                    mgmt_endpoint(ep);
+                }
+            }
+        }
+        return this;
+    }
 
-	private LocateValidator mgmt_endpoint(MgmtEndpoint ep) {
-		endpoint(ep);
-		for(SpecialPorts sp : ep.getSpecialPorts()) {
-			specialPorts(sp);
-		}
-		return this;
-	}
+    private LocateValidator mgmt_endpoint(MgmtEndpoint ep) {
+        endpoint(ep);
+        for(SpecialPorts sp : ep.getSpecialPorts()) {
+            specialPorts(sp);
+        }
+        return this;
+    }
 
-	private LocateValidator specialPorts(SpecialPorts sp) {
-		if(sp==null) {
-			msg("Special Ports is null.");
-		} else {
-			nullOrBlank("Special Port Name",sp.getName());
-			nullOrBlank("Special Port Protocol",sp.getProtocol());
-			intRange("Special Port",sp.getPort(),0,1000000);
-			
-			for(String s : sp.getProtocolVersions()) {
-				nullOrBlank("Special Port Protocol Version", s);
-			}
-		}
-		return this;
-	}
+    private LocateValidator specialPorts(SpecialPorts sp) {
+        if(sp==null) {
+            msg("Special Ports is null.");
+        } else {
+            nullOrBlank("Special Port Name",sp.getName());
+            nullOrBlank("Special Port Protocol",sp.getProtocol());
+            intRange("Special Port",sp.getPort(),0,1000000);
+            
+            for(String s : sp.getProtocolVersions()) {
+                nullOrBlank("Special Port Protocol Version", s);
+            }
+        }
+        return this;
+    }
 
 }

@@ -34,101 +34,101 @@ import org.onap.aaf.misc.env.util.Pool;
 import org.onap.aaf.misc.env.util.Pool.Creator;
 
 public abstract class AbsOTafLur {
-	protected static final String ERROR_GETTING_TOKEN_CLIENT = "Error getting TokenClient";
-	protected static final String REQUIRED_FOR_OAUTH2 = " is required for OAuth Access";
+    protected static final String ERROR_GETTING_TOKEN_CLIENT = "Error getting TokenClient";
+    protected static final String REQUIRED_FOR_OAUTH2 = " is required for OAuth Access";
 
-	protected final TokenMgr tkMgr;
-	protected final PropAccess access;
-	protected final String client_id;
-	protected static Pool<TokenClient> tokenClientPool;
-	
-	protected AbsOTafLur(final PropAccess access, final String token_url, final String introspect_url) throws CadiException {
-		this.access = access;
-		String ci;
-		if((ci = access.getProperty(Config.AAF_APPID,null))==null) {
-			if((ci = access.getProperty(Config.CADI_ALIAS,null))==null) {
-				throw new CadiException(Config.AAF_APPID + REQUIRED_FOR_OAUTH2);
-			}
-		}
-		client_id = ci;
+    protected final TokenMgr tkMgr;
+    protected final PropAccess access;
+    protected final String client_id;
+    protected static Pool<TokenClient> tokenClientPool;
+    
+    protected AbsOTafLur(final PropAccess access, final String token_url, final String introspect_url) throws CadiException {
+        this.access = access;
+        String ci;
+        if((ci = access.getProperty(Config.AAF_APPID,null))==null) {
+            if((ci = access.getProperty(Config.CADI_ALIAS,null))==null) {
+                throw new CadiException(Config.AAF_APPID + REQUIRED_FOR_OAUTH2);
+            }
+        }
+        client_id = ci;
 
-		synchronized(access) {
-			if(tokenClientPool==null) {
-				tokenClientPool = new Pool<TokenClient>(new TCCreator(access));
-			}
-			try {
-				tkMgr = TokenMgr.getInstance(access, token_url, introspect_url);
-			} catch (APIException e) {
-				throw new CadiException("Unable to create TokenManager",e);
-			}
-		}
-	}
+        synchronized(access) {
+            if(tokenClientPool==null) {
+                tokenClientPool = new Pool<TokenClient>(new TCCreator(access));
+            }
+            try {
+                tkMgr = TokenMgr.getInstance(access, token_url, introspect_url);
+            } catch (APIException e) {
+                throw new CadiException("Unable to create TokenManager",e);
+            }
+        }
+    }
 
-	private class TCCreator implements Creator<TokenClient> {
-		private TokenClientFactory tcf;
-		private final int timeout;
-		private final String url,enc_secret;
-		
-		public TCCreator(PropAccess access) throws CadiException { 
-			try {
-				tcf = TokenClientFactory.instance(access);
-			} catch (APIException | GeneralSecurityException | IOException e1) {
-				throw new CadiException(e1);
-			}
-			
-			if((url = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null))==null) {
-				throw new CadiException(Config.AAF_OAUTH2_TOKEN_URL + REQUIRED_FOR_OAUTH2);
-			}
-			
-			try {
-				timeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-			} catch (NumberFormatException e) {
-				throw new CadiException("Bad format for " + Config.AAF_CONN_TIMEOUT, e);
-			}
-			if((enc_secret= access.getProperty(Config.AAF_APPPASS,null))==null) {
-				throw new CadiException(Config.AAF_APPPASS + REQUIRED_FOR_OAUTH2);
-			}
-		}
-		
-		@Override
-		public TokenClient create() throws APIException {
-			try {
-				TokenClient tc = tcf.newClient(url, timeout);
-				tc.client_creds(client_id, access.decrypt(enc_secret, true));
-				return tc;
-			} catch (CadiException | LocatorException | IOException e) {
-				throw new APIException(e);
-			}
-		}
+    private class TCCreator implements Creator<TokenClient> {
+        private TokenClientFactory tcf;
+        private final int timeout;
+        private final String url,enc_secret;
+        
+        public TCCreator(PropAccess access) throws CadiException { 
+            try {
+                tcf = TokenClientFactory.instance(access);
+            } catch (APIException | GeneralSecurityException | IOException e1) {
+                throw new CadiException(e1);
+            }
+            
+            if((url = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null))==null) {
+                throw new CadiException(Config.AAF_OAUTH2_TOKEN_URL + REQUIRED_FOR_OAUTH2);
+            }
+            
+            try {
+                timeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
+            } catch (NumberFormatException e) {
+                throw new CadiException("Bad format for " + Config.AAF_CONN_TIMEOUT, e);
+            }
+            if((enc_secret= access.getProperty(Config.AAF_APPPASS,null))==null) {
+                throw new CadiException(Config.AAF_APPPASS + REQUIRED_FOR_OAUTH2);
+            }
+        }
+        
+        @Override
+        public TokenClient create() throws APIException {
+            try {
+                TokenClient tc = tcf.newClient(url, timeout);
+                tc.client_creds(client_id, access.decrypt(enc_secret, true));
+                return tc;
+            } catch (CadiException | LocatorException | IOException e) {
+                throw new APIException(e);
+            }
+        }
 
-		@Override
-		public void destroy(TokenClient t) {
-		}
+        @Override
+        public void destroy(TokenClient t) {
+        }
 
-		@Override
-		public boolean isValid(TokenClient t) {
-			return t!=null && t.client_id()!=null;
-		}
+        @Override
+        public boolean isValid(TokenClient t) {
+            return t!=null && t.client_id()!=null;
+        }
 
-		@Override
-		public void reuse(TokenClient t) {
-		}
-	};
+        @Override
+        public void reuse(TokenClient t) {
+        }
+    };
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.Lur#destroy()
-	 */
-	public void destroy() {
-		tkMgr.close();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.Lur#clear(java.security.Principal, java.lang.StringBuilder)
-	 */
-	public void clear(Principal p, StringBuilder report) {
-		tkMgr.clear(p, report);
-	}
-	
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.Lur#destroy()
+     */
+    public void destroy() {
+        tkMgr.close();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.Lur#clear(java.security.Principal, java.lang.StringBuilder)
+     */
+    public void clear(Principal p, StringBuilder report) {
+        tkMgr.clear(p, report);
+    }
+    
 
-	
+    
 }

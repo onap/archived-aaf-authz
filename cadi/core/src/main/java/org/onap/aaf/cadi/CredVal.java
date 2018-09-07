@@ -31,12 +31,12 @@ package org.onap.aaf.cadi;
  * @author Jonathan
  */
 public interface CredVal {
-	public enum Type{PASSWORD};
-	/**
-	 *  Validate if the User/Password combination matches records 
-	 * @param user
-	 * @param pass
-	 * @return
-	 */
-	public boolean validate(String user, Type type, byte[] cred, Object state);
+    public enum Type{PASSWORD};
+    /**
+     *  Validate if the User/Password combination matches records 
+     * @param user
+     * @param pass
+     * @return
+     */
+    public boolean validate(String user, Type type, byte[] cred, Object state);
 }

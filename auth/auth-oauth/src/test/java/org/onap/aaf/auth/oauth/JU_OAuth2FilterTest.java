@@ -38,51 +38,51 @@ import org.onap.aaf.cadi.principal.BearerPrincipal;
 
 public class JU_OAuth2FilterTest {
 
-	@Mock
-	private HttpServletRequest request;
-	@Mock
-	private FilterChain chain;
-	@Mock
-	private BearerPrincipal principal;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private FilterChain chain;
+    @Mock
+    private BearerPrincipal principal;
 
-	@Before
-	public void setup() {
-		initMocks(this);
-	}
+    @Before
+    public void setup() {
+        initMocks(this);
+    }
 
-	@Test
-	public void testDoFilterWithContentType() throws IOException, ServletException {
-		when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
+    @Test
+    public void testDoFilterWithContentType() throws IOException, ServletException {
+        when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
 
-		OAuth2Filter filter = new OAuth2Filter();
-		filter.doFilter(request, null, chain);
+        OAuth2Filter filter = new OAuth2Filter();
+        filter.doFilter(request, null, chain);
 
-		verify(chain, only()).doFilter(request, null);
-	}
+        verify(chain, only()).doFilter(request, null);
+    }
 
-	@Test
-	public void testDoFilter() throws IOException, ServletException {
-		when(request.getContentType()).thenReturn("somethingElse");
-		when(request.getUserPrincipal()).thenReturn(principal);
-		when(request.getHeader("Authorization")).thenReturn("Bearer 1;Bearer2");
+    @Test
+    public void testDoFilter() throws IOException, ServletException {
+        when(request.getContentType()).thenReturn("somethingElse");
+        when(request.getUserPrincipal()).thenReturn(principal);
+        when(request.getHeader("Authorization")).thenReturn("Bearer 1;Bearer2");
 
-		OAuth2Filter filter = new OAuth2Filter();
-		filter.init(null);
-		filter.destroy();
-		filter.doFilter(request, null, chain);
+        OAuth2Filter filter = new OAuth2Filter();
+        filter.init(null);
+        filter.destroy();
+        filter.doFilter(request, null, chain);
 
-		verify(chain, only()).doFilter(request, null);
-		verify(principal, only()).setBearer("1");
-	}
+        verify(chain, only()).doFilter(request, null);
+        verify(principal, only()).setBearer("1");
+    }
 
-	@Test
-	public void testDoFilterWithoutBearerPrincipal() throws IOException, ServletException {
-		when(request.getContentType()).thenReturn("somethingElse");
-		when(request.getHeader("Authorization")).thenReturn("Bearer 1;Bearer2");
+    @Test
+    public void testDoFilterWithoutBearerPrincipal() throws IOException, ServletException {
+        when(request.getContentType()).thenReturn("somethingElse");
+        when(request.getHeader("Authorization")).thenReturn("Bearer 1;Bearer2");
 
-		OAuth2Filter filter = new OAuth2Filter();
-		filter.doFilter(request, null, chain);
+        OAuth2Filter filter = new OAuth2Filter();
+        filter.doFilter(request, null, chain);
 
-		verify(chain, only()).doFilter(request, null);
-	}
+        verify(chain, only()).doFilter(request, null);
+    }
 }

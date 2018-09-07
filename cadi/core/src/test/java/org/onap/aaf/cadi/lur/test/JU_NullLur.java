@@ -36,45 +36,45 @@ import org.onap.aaf.cadi.lur.NullLur;
 
 public class JU_NullLur {
 
-	@Mock
-	Principal p;
+    @Mock
+    Principal p;
 
-	@Mock
-	Permission perm;
+    @Mock
+    Permission perm;
 
-	@Mock
-	List<Permission> perms;
+    @Mock
+    List<Permission> perms;
 
-	private NullLur nullLur;
+    private NullLur nullLur;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
 
-		nullLur = new NullLur();
-	}
+        nullLur = new NullLur();
+    }
 
-	@Test
-	public void coverageTests() throws Exception {
+    @Test
+    public void coverageTests() throws Exception {
 
-		Field nullClass = NullLur.class.getDeclaredField("NULL");
-		nullClass.setAccessible(true);
-		assertThat(((Permission) nullClass.get(NullLur.class)).permType(), is(""));
-		assertThat(((Permission) nullClass.get(NullLur.class)).getKey(), is(""));
-		assertFalse(((Permission) nullClass.get(NullLur.class)).match(perm));
+        Field nullClass = NullLur.class.getDeclaredField("NULL");
+        nullClass.setAccessible(true);
+        assertThat(((Permission) nullClass.get(NullLur.class)).permType(), is(""));
+        assertThat(((Permission) nullClass.get(NullLur.class)).getKey(), is(""));
+        assertFalse(((Permission) nullClass.get(NullLur.class)).match(perm));
 
-		nullLur.fishAll(p, perms);
-		nullLur.destroy();
+        nullLur.fishAll(p, perms);
+        nullLur.destroy();
 
-		assertFalse(nullLur.fish(p, perm));
-		assertFalse(nullLur.handlesExclusively(perm));
-		assertFalse(nullLur.handles(p));
-		assertThat(nullLur.createPerm(""), is(nullClass.get(NullLur.class)));
+        assertFalse(nullLur.fish(p, perm));
+        assertFalse(nullLur.handlesExclusively(perm));
+        assertFalse(nullLur.handles(p));
+        assertThat(nullLur.createPerm(""), is(nullClass.get(NullLur.class)));
 
-		StringBuilder sb = new StringBuilder();
-		nullLur.clear(p, sb);
-		assertThat(sb.toString(), is("NullLur\n"));
-		assertThat(nullLur.toString(), is("NullLur\n"));
-	}
+        StringBuilder sb = new StringBuilder();
+        nullLur.clear(p, sb);
+        assertThat(sb.toString(), is("NullLur\n"));
+        assertThat(nullLur.toString(), is("NullLur\n"));
+    }
 
 }

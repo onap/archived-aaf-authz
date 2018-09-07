@@ -36,35 +36,35 @@ import org.onap.aaf.misc.env.util.Chrono;
 import com.datastax.driver.core.Cluster;
 
 public class URPunt extends ActionPuntDAO<UserRole,Void,String> {
-	public URPunt(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws APIException, IOException {
-		super(trans,cluster, months, range,dryRun);
-	}
+    public URPunt(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws APIException, IOException {
+        super(trans,cluster, months, range,dryRun);
+    }
 
-	public URPunt(AuthzTrans trans, ActionDAO<?,?,?> adao, int months, int range) {
-		super(trans, adao, months, range);
-	}
+    public URPunt(AuthzTrans trans, ActionDAO<?,?,?> adao, int months, int range) {
+        super(trans, adao, months, range);
+    }
 
-	public Result<Void> exec(AuthzTrans trans, UserRole ur, String text) {
-		if(dryRun) {
-			trans.info().log("Would Update User",ur.user(),"and Role", ur.role(), text);
-			return Result.ok();
-		} else {
-			Result<List<Data>> read = q.userRoleDAO.read(trans, ur.user(), ur.role());
-			if(read.isOK()) {
-				for(UserRoleDAO.Data data : read.value) {
-					Date from = data.expires;
-					data.expires = puntDate(from);
-					if(data.expires.compareTo(from)<=0) {
-						trans.debug().printf("Error: %s is same or before %s", Chrono.dateOnlyStamp(data.expires), Chrono.dateOnlyStamp(from));
-					} else {
-						trans.info().log("Updating User",ur.user(),"and Role", ur.role(), "from",Chrono.dateOnlyStamp(from),"to",Chrono.dateOnlyStamp(data.expires), text);
-						q.userRoleDAO.update(trans, data);
-					}
-				}
-				return Result.ok();
-			} else {
-				return Result.err(read);
-			}
-		}
-	}
+    public Result<Void> exec(AuthzTrans trans, UserRole ur, String text) {
+        if(dryRun) {
+            trans.info().log("Would Update User",ur.user(),"and Role", ur.role(), text);
+            return Result.ok();
+        } else {
+            Result<List<Data>> read = q.userRoleDAO.read(trans, ur.user(), ur.role());
+            if(read.isOK()) {
+                for(UserRoleDAO.Data data : read.value) {
+                    Date from = data.expires;
+                    data.expires = puntDate(from);
+                    if(data.expires.compareTo(from)<=0) {
+                        trans.debug().printf("Error: %s is same or before %s", Chrono.dateOnlyStamp(data.expires), Chrono.dateOnlyStamp(from));
+                    } else {
+                        trans.info().log("Updating User",ur.user(),"and Role", ur.role(), "from",Chrono.dateOnlyStamp(from),"to",Chrono.dateOnlyStamp(data.expires), text);
+                        q.userRoleDAO.update(trans, data);
+                    }
+                }
+                return Result.ok();
+            } else {
+                return Result.err(read);
+            }
+        }
+    }
 }

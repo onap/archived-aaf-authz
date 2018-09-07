@@ -34,68 +34,68 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 public class Deny extends BaseCmd<Mgmt> {
-	private final static String[] options = {"add","del"};
+    private final static String[] options = {"add","del"};
 
-	public Deny(Mgmt mgmt) throws APIException {
-		super(mgmt, "deny");
-		cmds.add(new DenySomething(this,"ip","ipv4or6[,ipv4or6]*"));
-		cmds.add(new DenySomething(this,"id","identity[,identity]*"));
-	}
-	
-	public class DenySomething extends Cmd {
+    public Deny(Mgmt mgmt) throws APIException {
+        super(mgmt, "deny");
+        cmds.add(new DenySomething(this,"ip","ipv4or6[,ipv4or6]*"));
+        cmds.add(new DenySomething(this,"id","identity[,identity]*"));
+    }
+    
+    public class DenySomething extends Cmd {
 
-		private boolean isID;
+        private boolean isID;
 
-		public DenySomething(Deny deny, String type, String repeatable) {
-			super(deny, type,
-				new Param(optionsToString(options),true),
-				new Param(repeatable,true));
-			isID = "id".equals(type);
-		}
+        public DenySomething(Deny deny, String type, String repeatable) {
+            super(deny, type,
+                new Param(optionsToString(options),true),
+                new Param(repeatable,true));
+            isID = "id".equals(type);
+        }
 
-		@Override
-		protected int _exec(int _idx, String... args) throws CadiException, APIException, LocatorException {
-		        int idx = _idx;
-			String action = args[idx++];
-			final int option = whichOption(options, action);
-			int rv=409;
-			for(final String name : args[idx++].split(COMMA)) {
-				final String append;
-				if(isID && name.indexOf("@")<0) {
-					append='@'+ access.getProperty(Config.AAF_DEFAULT_REALM,null);
-				} else {
-					append = "";
-				}
-				final String path = "/mgmt/deny/"+getName() + '/'+ name + append;
-				rv = all(new Retryable<Integer>() {
-					@Override
-					public Integer code(Rcli<?> client) throws APIException, CadiException  {
-						int rv = 409;
-						Future<Void> fp;
-						String resp;
-						switch(option) {
-							case 0: 
-								fp = client.create(path, Void.class);
-								resp = " added";
-								break;
-							default: 
-								fp = client.delete(path, Void.class);
-								resp = " deleted";
-						}
-						if(fp.get(AAFcli.timeout())) {
-							pw().println(name + append + resp + " on " + client);
-							rv=fp.code();
-						} else {
-							if(rv==409)rv = fp.code();
-							error(fp);
-						}
-						return rv;
-					}
-				});
-			}
-			return rv;
-		}
+        @Override
+        protected int _exec(int _idx, String... args) throws CadiException, APIException, LocatorException {
+                int idx = _idx;
+            String action = args[idx++];
+            final int option = whichOption(options, action);
+            int rv=409;
+            for(final String name : args[idx++].split(COMMA)) {
+                final String append;
+                if(isID && name.indexOf("@")<0) {
+                    append='@'+ access.getProperty(Config.AAF_DEFAULT_REALM,null);
+                } else {
+                    append = "";
+                }
+                final String path = "/mgmt/deny/"+getName() + '/'+ name + append;
+                rv = all(new Retryable<Integer>() {
+                    @Override
+                    public Integer code(Rcli<?> client) throws APIException, CadiException  {
+                        int rv = 409;
+                        Future<Void> fp;
+                        String resp;
+                        switch(option) {
+                            case 0: 
+                                fp = client.create(path, Void.class);
+                                resp = " added";
+                                break;
+                            default: 
+                                fp = client.delete(path, Void.class);
+                                resp = " deleted";
+                        }
+                        if(fp.get(AAFcli.timeout())) {
+                            pw().println(name + append + resp + " on " + client);
+                            rv=fp.code();
+                        } else {
+                            if(rv==409)rv = fp.code();
+                            error(fp);
+                        }
+                        return rv;
+                    }
+                });
+            }
+            return rv;
+        }
 
-	}
+    }
 
 }

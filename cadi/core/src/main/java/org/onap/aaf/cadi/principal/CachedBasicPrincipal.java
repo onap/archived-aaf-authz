@@ -34,32 +34,32 @@ import org.onap.aaf.cadi.taf.HttpTaf;
  *
  */
 public class CachedBasicPrincipal extends BasicPrincipal implements CachedPrincipal {
-	private final HttpTaf creator;
-	private long timeToLive;
-	private long expires;
+    private final HttpTaf creator;
+    private long timeToLive;
+    private long expires;
 
-	public CachedBasicPrincipal(HttpTaf creator, BasicCred bc, String domain, long timeToLive) {
-		super(bc, domain);
-		this.creator = creator;
-		this.timeToLive = timeToLive;
-		expires = System.currentTimeMillis()+timeToLive;
-	}
-	
-	public CachedBasicPrincipal(HttpTaf creator, String content, String domain, long timeToLive) throws IOException {
-		super(content, domain);
-		this.creator = creator;
-		this.timeToLive = timeToLive;
-		expires = System.currentTimeMillis()+timeToLive;
-	}
+    public CachedBasicPrincipal(HttpTaf creator, BasicCred bc, String domain, long timeToLive) {
+        super(bc, domain);
+        this.creator = creator;
+        this.timeToLive = timeToLive;
+        expires = System.currentTimeMillis()+timeToLive;
+    }
+    
+    public CachedBasicPrincipal(HttpTaf creator, String content, String domain, long timeToLive) throws IOException {
+        super(content, domain);
+        this.creator = creator;
+        this.timeToLive = timeToLive;
+        expires = System.currentTimeMillis()+timeToLive;
+    }
 
-	public CachedPrincipal.Resp revalidate(Object state) {
-		Resp resp = creator.revalidate(this, state);
-		if(resp.equals(Resp.REVALIDATED))expires = System.currentTimeMillis()+timeToLive;
-		return resp;
-	}
+    public CachedPrincipal.Resp revalidate(Object state) {
+        Resp resp = creator.revalidate(this, state);
+        if(resp.equals(Resp.REVALIDATED))expires = System.currentTimeMillis()+timeToLive;
+        return resp;
+    }
 
-	public long expires() {
-		return expires;
-	}
+    public long expires() {
+        return expires;
+    }
 
 }

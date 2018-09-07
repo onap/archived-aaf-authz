@@ -52,29 +52,29 @@ import org.junit.Test;
 
 public class JU_ListUsers {
 
-	AAFcli cli;
-	NS ns;
-	List list;
-	ListUsers lUsers;
-	
-	@Before
-	public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
-		cli = JU_AAFCli.getAAfCli();
-		ns = new NS(cli);
-		list = new List(ns);
-		lUsers = new ListUsers(list);
-	}
-	
-	@Test
-	public void testReports() throws DatatypeConfigurationException {
-		Users.User user = new Users.User();
-		GregorianCalendar gcal = new GregorianCalendar();
-	    XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-		user.setExpires(xgcal);
-		
-		lUsers.report("header", "ns");
-		lUsers.report("subHead");
-		lUsers.report("prefix", user);
-	}
+    AAFcli cli;
+    NS ns;
+    List list;
+    ListUsers lUsers;
+    
+    @Before
+    public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
+        cli = JU_AAFCli.getAAfCli();
+        ns = new NS(cli);
+        list = new List(ns);
+        lUsers = new ListUsers(list);
+    }
+    
+    @Test
+    public void testReports() throws DatatypeConfigurationException {
+        Users.User user = new Users.User();
+        GregorianCalendar gcal = new GregorianCalendar();
+        XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+        user.setExpires(xgcal);
+        
+        lUsers.report("header", "ns");
+        lUsers.report("subHead");
+        lUsers.report("prefix", user);
+    }
 
 }

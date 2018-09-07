@@ -30,12 +30,12 @@ import org.onap.aaf.cadi.principal.UnAuthPrincipal;
 
 public class JU_UnAuthPrincipal {
 
-	private final String name = "name";
+    private final String name = "name";
 
-	@Test
-	public void accessorsTest() {
-		UnAuthPrincipal up = new UnAuthPrincipal(name);
-		assertThat(up.getName(), is(name));
-	}
+    @Test
+    public void accessorsTest() {
+        UnAuthPrincipal up = new UnAuthPrincipal(name);
+        assertThat(up.getName(), is(name));
+    }
 
 }

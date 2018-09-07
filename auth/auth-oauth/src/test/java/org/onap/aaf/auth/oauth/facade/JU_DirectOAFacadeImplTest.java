@@ -27,10 +27,10 @@ import org.junit.Test;
 
 public class JU_DirectOAFacadeImplTest {
 
-	@Test
-	public void test() {
-		DirectOAFacadeImpl oAFacade = new DirectOAFacadeImpl();
-		assertNotNull(oAFacade);
-	}
+    @Test
+    public void test() {
+        DirectOAFacadeImpl oAFacade = new DirectOAFacadeImpl();
+        assertNotNull(oAFacade);
+    }
 
 }

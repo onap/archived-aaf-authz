@@ -36,90 +36,90 @@ import org.onap.aaf.cadi.util.SubStandardConsole;
 
 public class JU_SubStandardConsole {
 
-	private String inputString = "An input string";
-	private ByteArrayOutputStream outStream;
-	private ByteArrayOutputStream errStream;
-	private String lineSeparator = System.lineSeparator();
+    private String inputString = "An input string";
+    private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream errStream;
+    private String lineSeparator = System.lineSeparator();
 
-	@Before
-	public void setup() {
-		outStream = new ByteArrayOutputStream();
-		errStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-		System.setErr(new PrintStream(errStream));
-	}
+    @Before
+    public void setup() {
+        outStream = new ByteArrayOutputStream();
+        errStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+        System.setErr(new PrintStream(errStream));
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
-		System.setErr(System.err);
-	}
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
+        System.setErr(System.err);
+    }
 
-	@Test
-	public void readLineTest() {
-		byte[] input = inputString.getBytes();
-		System.setIn(new ByteArrayInputStream(input));
-		SubStandardConsole ssc = new SubStandardConsole();
-		String output = ssc.readLine("%s" + lineSeparator, ">>> ");
-		assertThat(output, is(inputString));
-		assertThat(outStream.toString(), is(">>> " + lineSeparator));
-	}
+    @Test
+    public void readLineTest() {
+        byte[] input = inputString.getBytes();
+        System.setIn(new ByteArrayInputStream(input));
+        SubStandardConsole ssc = new SubStandardConsole();
+        String output = ssc.readLine("%s" + lineSeparator, ">>> ");
+        assertThat(output, is(inputString));
+        assertThat(outStream.toString(), is(">>> " + lineSeparator));
+    }
 
-	@Test
-	public void readLineTest2() {
-		byte[] input = inputString.getBytes();
-		System.setIn(new ByteArrayInputStream(input));
-		SubStandardConsole ssc = new SubStandardConsole();
-		String output = ssc.readLine("%s %s"  + lineSeparator, ">>> ", "Another argument for coverage");
-		assertThat(output, is(inputString));
-	}
+    @Test
+    public void readLineTest2() {
+        byte[] input = inputString.getBytes();
+        System.setIn(new ByteArrayInputStream(input));
+        SubStandardConsole ssc = new SubStandardConsole();
+        String output = ssc.readLine("%s %s"  + lineSeparator, ">>> ", "Another argument for coverage");
+        assertThat(output, is(inputString));
+    }
 
-	@Test
-	public void readLineTest3() {
-		byte[] input = "\n".getBytes();
-		System.setIn(new ByteArrayInputStream(input));
-		SubStandardConsole ssc = new SubStandardConsole();
-		String output = ssc.readLine("%s" + lineSeparator, ">>> ");
-		assertThat(output, is(">>> "));
-		assertThat(outStream.toString(), is(">>> " + lineSeparator));
-	}
+    @Test
+    public void readLineTest3() {
+        byte[] input = "\n".getBytes();
+        System.setIn(new ByteArrayInputStream(input));
+        SubStandardConsole ssc = new SubStandardConsole();
+        String output = ssc.readLine("%s" + lineSeparator, ">>> ");
+        assertThat(output, is(">>> "));
+        assertThat(outStream.toString(), is(">>> " + lineSeparator));
+    }
 
-	@Test
-	public void readPasswordTest() {
-		byte[] input = inputString.getBytes();
-		System.setIn(new ByteArrayInputStream(input));
-		SubStandardConsole ssc = new SubStandardConsole();
-		char[] output = ssc.readPassword("%s" + lineSeparator, ">>> ");
-		System.out.println(output);
-		assertThat(output, is(inputString.toCharArray()));
-		assertThat(outStream.toString(), is(">>> " + lineSeparator + "An input string"  + lineSeparator));
-	}
+    @Test
+    public void readPasswordTest() {
+        byte[] input = inputString.getBytes();
+        System.setIn(new ByteArrayInputStream(input));
+        SubStandardConsole ssc = new SubStandardConsole();
+        char[] output = ssc.readPassword("%s" + lineSeparator, ">>> ");
+        System.out.println(output);
+        assertThat(output, is(inputString.toCharArray()));
+        assertThat(outStream.toString(), is(">>> " + lineSeparator + "An input string"  + lineSeparator));
+    }
 
-	@Test
-	public void printfTest() {
-		byte[] input = inputString.getBytes();
-		System.setIn(new ByteArrayInputStream(input));
-		SubStandardConsole ssc = new SubStandardConsole();
-		ssc.printf("%s", "A format specifier");
-		assertThat(outStream.toString(), is("A format specifier"));
-	}
+    @Test
+    public void printfTest() {
+        byte[] input = inputString.getBytes();
+        System.setIn(new ByteArrayInputStream(input));
+        SubStandardConsole ssc = new SubStandardConsole();
+        ssc.printf("%s", "A format specifier");
+        assertThat(outStream.toString(), is("A format specifier"));
+    }
 
-	@Test
-	public void throwsTest() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		BufferedReader brMock = mock(BufferedReader.class);
-		when(brMock.readLine()).thenThrow(new IOException());
+    @Test
+    public void throwsTest() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        BufferedReader brMock = mock(BufferedReader.class);
+        when(brMock.readLine()).thenThrow(new IOException());
 
-		SubStandardConsole ssc = new SubStandardConsole();
+        SubStandardConsole ssc = new SubStandardConsole();
 
-		Field brField = SubStandardConsole.class.getDeclaredField("br");
-		brField.setAccessible(true);
-		brField.set(ssc, brMock);
+        Field brField = SubStandardConsole.class.getDeclaredField("br");
+        brField.setAccessible(true);
+        brField.set(ssc, brMock);
 
-		assertThat(ssc.readLine(""), is(""));
-		assertThat(errStream.toString(), is("uh oh..." + lineSeparator));
+        assertThat(ssc.readLine(""), is(""));
+        assertThat(errStream.toString(), is("uh oh..." + lineSeparator));
         errStream.reset();
-		assertThat(ssc.readPassword("").length, is(0));
-		assertThat(errStream.toString(), is("uh oh..." + lineSeparator));
-	}
+        assertThat(ssc.readPassword("").length, is(0));
+        assertThat(errStream.toString(), is("uh oh..." + lineSeparator));
+    }
 
 }

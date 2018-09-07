@@ -33,24 +33,24 @@ import org.onap.aaf.cadi.oauth.TokenClientFactory;
 import org.onap.aaf.misc.env.APIException;
 
 public class ClientFactory {
-	private final TokenClientFactory tcf;
-	public ClientFactory(final PropAccess access) throws APIException, CadiException {
-		try {
-			tcf = TokenClientFactory.instance(access);
-		} catch (GeneralSecurityException | IOException e) {
-			throw new CadiException(e);
-		}
-	}
-	
-	public ClientFactory(String[] args) throws APIException, CadiException {
-		this(new PropAccess(args));
-	}
+    private final TokenClientFactory tcf;
+    public ClientFactory(final PropAccess access) throws APIException, CadiException {
+        try {
+            tcf = TokenClientFactory.instance(access);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new CadiException(e);
+        }
+    }
+    
+    public ClientFactory(String[] args) throws APIException, CadiException {
+        this(new PropAccess(args));
+    }
 
-	public SimpleRESTClient simpleRESTClient(final String endpoint, final String ... scopes) throws URISyntaxException, LocatorException, CadiException, APIException {
-		return new SimpleRESTClient(tcf, Config.AAF_OAUTH2_TOKEN_URL, endpoint, scopes);
-	}
+    public SimpleRESTClient simpleRESTClient(final String endpoint, final String ... scopes) throws URISyntaxException, LocatorException, CadiException, APIException {
+        return new SimpleRESTClient(tcf, Config.AAF_OAUTH2_TOKEN_URL, endpoint, scopes);
+    }
 
-	public Access getAccess() {
-		return tcf.access;
-	}
+    public Access getAccess() {
+        return tcf.access;
+    }
 }

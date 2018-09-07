@@ -27,33 +27,33 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
 
 public class DirectLocatorCreator implements AbsAAFLocator.LocatorCreator {
-	private final AuthzEnv env;
-	private final LocateDAO locateDAO;
-	private String myhostname;
-	private int myport;
-	
-	public DirectLocatorCreator(AuthzEnv env, LocateDAO locateDAO) {
-		this.env = env;
-		this.locateDAO = locateDAO;
-	}
-	
-	@Override
-	public AbsAAFLocator<?> create(String key, String version) throws LocatorException {
-		DirectAAFLocator dal = new DirectAAFLocator(env,locateDAO,key,version);
-		if(myhostname!=null) {
-			dal.setSelf(myhostname, myport);
-		}
-		return dal;
-	}
-	
-	/**
-	 * Make sure DirectAAFLocator created does not include self.
-	 * @param hostname
-	 * @param port
-	 */
-	public void setSelf(String hostname, int port) {
-		myhostname = hostname;
-		myport = port;
-	}
+    private final AuthzEnv env;
+    private final LocateDAO locateDAO;
+    private String myhostname;
+    private int myport;
+    
+    public DirectLocatorCreator(AuthzEnv env, LocateDAO locateDAO) {
+        this.env = env;
+        this.locateDAO = locateDAO;
+    }
+    
+    @Override
+    public AbsAAFLocator<?> create(String key, String version) throws LocatorException {
+        DirectAAFLocator dal = new DirectAAFLocator(env,locateDAO,key,version);
+        if(myhostname!=null) {
+            dal.setSelf(myhostname, myport);
+        }
+        return dal;
+    }
+    
+    /**
+     * Make sure DirectAAFLocator created does not include self.
+     * @param hostname
+     * @param port
+     */
+    public void setSelf(String hostname, int port) {
+        myhostname = hostname;
+        myport = port;
+    }
 
 }

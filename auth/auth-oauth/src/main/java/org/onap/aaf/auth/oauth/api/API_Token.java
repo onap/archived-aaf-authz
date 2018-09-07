@@ -40,43 +40,43 @@ import aafoauth.v2_0.Introspect;
  *
  */
 public class API_Token {
-	// Hide Public Constructor
-	private API_Token() {}
-	
-	/**
-	 * Normal Init level APIs
-	 * 
-	 * @param authzAPI
-	 * @param facade
-	 * @throws Exception
-	 */
-	public static void init(final AAF_OAuth authzAPI, OAFacade<Introspect> facade) throws Exception {
-		////////
-		// Overall APIs
-		///////
-		authzAPI.route(HttpMethods.POST,"/token",API.TOKEN,new OACode(facade,"OAuth Token", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.createBearerToken(trans,req, resp);
-				if(r.isOK()) {
-					resp.setStatus(201/*HttpStatus.CREATED_201*/);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
-		
-		authzAPI.route(HttpMethods.POST,"/introspect",API.INTROSPECT,new OACode(facade,"AAF Token Information", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.introspect(trans,req, resp);
-				if(r.isOK()) {
-					resp.setStatus(200 /*HttpStatus.OK_200*/);
-				} else {
-					context.error(trans,resp,r);
-				}
-			}
-		});
+    // Hide Public Constructor
+    private API_Token() {}
+    
+    /**
+     * Normal Init level APIs
+     * 
+     * @param authzAPI
+     * @param facade
+     * @throws Exception
+     */
+    public static void init(final AAF_OAuth authzAPI, OAFacade<Introspect> facade) throws Exception {
+        ////////
+        // Overall APIs
+        ///////
+        authzAPI.route(HttpMethods.POST,"/token",API.TOKEN,new OACode(facade,"OAuth Token", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.createBearerToken(trans,req, resp);
+                if(r.isOK()) {
+                    resp.setStatus(201/*HttpStatus.CREATED_201*/);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
+        
+        authzAPI.route(HttpMethods.POST,"/introspect",API.INTROSPECT,new OACode(facade,"AAF Token Information", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.introspect(trans,req, resp);
+                if(r.isOK()) {
+                    resp.setStatus(200 /*HttpStatus.OK_200*/);
+                } else {
+                    context.error(trans,resp,r);
+                }
+            }
+        });
 
-	}
+    }
 }

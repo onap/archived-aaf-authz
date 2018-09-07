@@ -36,72 +36,72 @@ import org.onap.aaf.cadi.config.GetAccess;
 
 public class JU_GetAccess {
 
-	private String defaultVal = "some default value";
+    private String defaultVal = "some default value";
 
-	private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream outStream;
 
-	private PropAccess access;
-	private Get.AccessGet accessGet;
-	private File file;
-	private String filePath;
+    private PropAccess access;
+    private Get.AccessGet accessGet;
+    private File file;
+    private String filePath;
 
-	@Before
-	public void setup() throws IOException {
-		outStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
+    @Before
+    public void setup() throws IOException {
+        outStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
 
-		file = File.createTempFile("GetAccess_test", "");
-		filePath = file.getAbsolutePath();
+        file = File.createTempFile("GetAccess_test", "");
+        filePath = file.getAbsolutePath();
 
-		access = new PropAccess();
+        access = new PropAccess();
         access.setProperty("cadi_prop_files", filePath);
-		accessGet = new Get.AccessGet(access);
+        accessGet = new Get.AccessGet(access);
 
-	}
+    }
 
-	@After
-	public void tearDown() {
-		System.setOut(System.out);
+    @After
+    public void tearDown() {
+        System.setOut(System.out);
 
-		file.delete();
-	}
+        file.delete();
+    }
 
     @Test
     public void constructorTest() {
         String output;
 
         @SuppressWarnings("unused")
-		GetAccess getAccess = new GetAccess(accessGet);
-		String[] lines = outStream.toString().split(System.lineSeparator());
-		assertThat(lines.length, is(2));
+        GetAccess getAccess = new GetAccess(accessGet);
+        String[] lines = outStream.toString().split(System.lineSeparator());
+        assertThat(lines.length, is(2));
         output = lines[0].split(" ", 2)[1];
         assertThat(output, is("INIT [cadi] cadi_prop_files is set to " + filePath));
-		output = lines[1].split(" ", 2)[1];
+        output = lines[1].split(" ", 2)[1];
         assertThat(output, is("INIT [cadi] Loading CADI Properties from " + filePath));
-	}
+    }
 
     @Test
     public void getPropertyTest1() {
         GetAccess getAccess = new GetAccess(accessGet);
 
-		getAccess.setProperty("tag", "value");
-		assertThat(getAccess.getProperty("tag", defaultVal), is("value"));
-		assertThat(getAccess.getProperty("not_a_tag", defaultVal), is(defaultVal));
-	}
+        getAccess.setProperty("tag", "value");
+        assertThat(getAccess.getProperty("tag", defaultVal), is("value"));
+        assertThat(getAccess.getProperty("not_a_tag", defaultVal), is(defaultVal));
+    }
 
     @Test
     public void getPropertyTest2() {
         GetAccess getAccess = new GetAccess(accessGet);
 
-		getAccess.setProperty("tag", "value");
-		assertThat(getAccess.getProperty("tag"), is("value"));
-		assertThat(getAccess.getProperty("not_a_tag"), is(nullValue()));
-	}
+        getAccess.setProperty("tag", "value");
+        assertThat(getAccess.getProperty("tag"), is("value"));
+        assertThat(getAccess.getProperty("not_a_tag"), is(nullValue()));
+    }
 
-	@Test
-	public void getTest() {
+    @Test
+    public void getTest() {
         GetAccess getAccess = new GetAccess(accessGet);
-		assertThat((Get.AccessGet)getAccess.get(), is(accessGet));
-	}
+        assertThat((Get.AccessGet)getAccess.get(), is(accessGet));
+    }
 
 }

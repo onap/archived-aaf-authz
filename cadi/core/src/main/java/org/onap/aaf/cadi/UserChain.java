@@ -38,6 +38,6 @@ package org.onap.aaf.cadi;
  *
  */
 public interface UserChain  {
-	public enum Protocol {BasicAuth,Cookie,Cert,OAuth};
-	public String userChain();
+    public enum Protocol {BasicAuth,Cookie,Cert,OAuth};
+    public String userChain();
 }

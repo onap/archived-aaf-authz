@@ -59,119 +59,119 @@ import aaf.v2_0.Users.User;
 
 public class JU_AAFListedCertIdentity {
 
-	@Mock private AAFCon<?> conMock;
-	@Mock private Rcli<Object> rcliMock;
-	@Mock private RosettaDF<Users> userDFMock;
-	@Mock private RosettaDF<Certs> certDFMock;
-	@Mock private Future<Users> futureUsersMock;
-	@Mock private Future<Certs> futureCertsMock;
+    @Mock private AAFCon<?> conMock;
+    @Mock private Rcli<Object> rcliMock;
+    @Mock private RosettaDF<Users> userDFMock;
+    @Mock private RosettaDF<Certs> certDFMock;
+    @Mock private Future<Users> futureUsersMock;
+    @Mock private Future<Certs> futureCertsMock;
 
-	@Mock private Users usersMock;
-	@Mock private User userMock1;
-	@Mock private User userMock2;
-	@Mock private User userMock3;
+    @Mock private Users usersMock;
+    @Mock private User userMock1;
+    @Mock private User userMock2;
+    @Mock private User userMock3;
 
-	@Mock private Certs certsMock;
-	@Mock private Cert certMock1;
-	@Mock private Cert certMock2;
-	@Mock private Cert certMock3;
+    @Mock private Certs certsMock;
+    @Mock private Cert certMock1;
+    @Mock private Cert certMock2;
+    @Mock private Cert certMock3;
 
-	@Mock private HttpServletRequest reqMock;
-	@Mock private X509Certificate x509Mock;
+    @Mock private HttpServletRequest reqMock;
+    @Mock private X509Certificate x509Mock;
 
-	private List<User> usersList;
-	private List<Cert> certsList;
+    private List<User> usersList;
+    private List<Cert> certsList;
 
-	private PropAccess access;
+    private PropAccess access;
 
-	private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream outStream;
 
-	private static final String USERS = "user1,user2,user3";
-	private static final String ID = "id";
-	private static final String FINGERPRINT = "fingerprint";
+    private static final String USERS = "user1,user2,user3";
+    private static final String ID = "id";
+    private static final String FINGERPRINT = "fingerprint";
 
-	private static final byte[] certBytes = "certificate".getBytes();
+    private static final byte[] certBytes = "certificate".getBytes();
 
-	@Before
-	public void setup() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        MockitoAnnotations.initMocks(this);
 
-		certsList = new ArrayList<>();
-		certsList.add(certMock1);
-		certsList.add(certMock2);
-		certsList.add(certMock3);
+        certsList = new ArrayList<>();
+        certsList.add(certMock1);
+        certsList.add(certMock2);
+        certsList.add(certMock3);
 
-		usersList = new ArrayList<>();
-		usersList.add(userMock1);
-		usersList.add(userMock2);
-		usersList.add(userMock3);
+        usersList = new ArrayList<>();
+        usersList.add(userMock1);
+        usersList.add(userMock2);
+        usersList.add(userMock3);
 
-		outStream = new ByteArrayOutputStream();
-		access = new PropAccess(new PrintStream(outStream), new String[0]);
-		outStream.reset();
-		access.setProperty(Config.AAF_CERT_IDS, USERS);
-		setFinal(conMock, conMock.getClass().getField("usersDF"), userDFMock);
-		setFinal(conMock, conMock.getClass().getField("certsDF"), certDFMock);
-		setFinal(conMock, conMock.getClass().getField("access"), access);
-	}
+        outStream = new ByteArrayOutputStream();
+        access = new PropAccess(new PrintStream(outStream), new String[0]);
+        outStream.reset();
+        access.setProperty(Config.AAF_CERT_IDS, USERS);
+        setFinal(conMock, conMock.getClass().getField("usersDF"), userDFMock);
+        setFinal(conMock, conMock.getClass().getField("certsDF"), certDFMock);
+        setFinal(conMock, conMock.getClass().getField("access"), access);
+    }
 
-	@Test
-	public void test() throws APIException, CadiException, CertificateException {
-		doReturn(rcliMock).when(conMock).client(Config.AAF_DEFAULT_VERSION);
-		when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/tguard/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
-		when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/basicAuth/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
-		when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/csp/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
+    @Test
+    public void test() throws APIException, CadiException, CertificateException {
+        doReturn(rcliMock).when(conMock).client(Config.AAF_DEFAULT_VERSION);
+        when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/tguard/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
+        when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/basicAuth/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
+        when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/csp/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
 
-		when(futureUsersMock.get(5000)).thenReturn(true);
-		futureUsersMock.value = usersMock;
-		when(usersMock.getUser()).thenReturn(usersList);
+        when(futureUsersMock.get(5000)).thenReturn(true);
+        futureUsersMock.value = usersMock;
+        when(usersMock.getUser()).thenReturn(usersList);
 
-		when(rcliMock.read("/authn/cert/id/user1", Certs.class, conMock.certsDF)).thenReturn(futureCertsMock);
-		when(rcliMock.read("/authn/cert/id/user2", Certs.class, conMock.certsDF)).thenReturn(futureCertsMock);
-		when(rcliMock.read("/authn/cert/id/user3", Certs.class, conMock.certsDF)).thenReturn(futureCertsMock);
+        when(rcliMock.read("/authn/cert/id/user1", Certs.class, conMock.certsDF)).thenReturn(futureCertsMock);
+        when(rcliMock.read("/authn/cert/id/user2", Certs.class, conMock.certsDF)).thenReturn(futureCertsMock);
+        when(rcliMock.read("/authn/cert/id/user3", Certs.class, conMock.certsDF)).thenReturn(futureCertsMock);
 
-		when(futureCertsMock.get(5000)).thenReturn(true);
-		futureCertsMock.value = certsMock;
-		when(certsMock.getCert()).thenReturn(certsList);
+        when(futureCertsMock.get(5000)).thenReturn(true);
+        futureCertsMock.value = certsMock;
+        when(certsMock.getCert()).thenReturn(certsList);
 
-		when(userMock1.getId()).thenReturn("user1");
-		when(userMock2.getId()).thenReturn("user2");
-		when(userMock3.getId()).thenReturn("user3");
+        when(userMock1.getId()).thenReturn("user1");
+        when(userMock2.getId()).thenReturn("user2");
+        when(userMock3.getId()).thenReturn("user3");
 
-		prepareCert(certMock1);
-		prepareCert(certMock2);
-		prepareCert(certMock3);
+        prepareCert(certMock1);
+        prepareCert(certMock2);
+        prepareCert(certMock3);
 
-		AAFListedCertIdentity certID = new AAFListedCertIdentity(access, conMock);
+        AAFListedCertIdentity certID = new AAFListedCertIdentity(access, conMock);
 
-		when(x509Mock.getEncoded()).thenReturn(certBytes);
-		certID.identity(reqMock, null, null);
-		certID.identity(reqMock, null, certBytes);
-		certID.identity(reqMock, x509Mock, null);
-		certID.identity(reqMock, x509Mock, certBytes);
+        when(x509Mock.getEncoded()).thenReturn(certBytes);
+        certID.identity(reqMock, null, null);
+        certID.identity(reqMock, null, certBytes);
+        certID.identity(reqMock, x509Mock, null);
+        certID.identity(reqMock, x509Mock, certBytes);
 
-		Set<String> hashSetOfUsers = AAFListedCertIdentity.trusted("basicAuth");
-		assertThat(hashSetOfUsers.contains("user1"), is(true));
-		assertThat(hashSetOfUsers.contains("user2"), is(true));
-		assertThat(hashSetOfUsers.contains("user3"), is(true));
+        Set<String> hashSetOfUsers = AAFListedCertIdentity.trusted("basicAuth");
+        assertThat(hashSetOfUsers.contains("user1"), is(true));
+        assertThat(hashSetOfUsers.contains("user2"), is(true));
+        assertThat(hashSetOfUsers.contains("user3"), is(true));
 
-	}
+    }
 
-	private void setFinal(Object object, Field field, Object newValue) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
-		field.setAccessible(true);
+    private void setFinal(Object object, Field field, Object newValue) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        field.setAccessible(true);
 
-		Field modifiersField = Field.class.getDeclaredField("modifiers");
-		modifiersField.setAccessible(true);
-		modifiersField.setInt(field, field.getModifiers() & Modifier.FINAL);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & Modifier.FINAL);
 
-		field.set(object, newValue);
-	}
+        field.set(object, newValue);
+    }
 
-	private void prepareCert(Cert cert) {
-		Date date = new Date();
-		when(cert.getExpires()).thenReturn(Chrono.timeStamp(new Date(date.getTime() + (60 * 60 * 24))));
-		when(cert.getId()).thenReturn(ID);
-		when(cert.getFingerprint()).thenReturn(FINGERPRINT.getBytes());
-	}
+    private void prepareCert(Cert cert) {
+        Date date = new Date();
+        when(cert.getExpires()).thenReturn(Chrono.timeStamp(new Date(date.getTime() + (60 * 60 * 24))));
+        when(cert.getId()).thenReturn(ID);
+        when(cert.getFingerprint()).thenReturn(FINGERPRINT.getBytes());
+    }
 
 }

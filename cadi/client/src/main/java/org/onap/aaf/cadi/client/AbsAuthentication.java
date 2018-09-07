@@ -41,90 +41,90 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
  * @param <CLIENT>
  */
 public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT> {
-	// HTTP Header for Authentication is "Authorization".  This was from an early stage of internet where 
-	// Access by Credential "Authorized" you for everything on the site.  Since those early days, it became
-	// clear that "full access" wasn't appropriate, so the split between Authentication and Authorization
-	// came into being... But the Header remains.
-	public static final String AUTHORIZATION = "Authorization";
-	private static final Symm symm;
+    // HTTP Header for Authentication is "Authorization".  This was from an early stage of internet where 
+    // Access by Credential "Authorized" you for everything on the site.  Since those early days, it became
+    // clear that "full access" wasn't appropriate, so the split between Authentication and Authorization
+    // came into being... But the Header remains.
+    public static final String AUTHORIZATION = "Authorization";
+    private static final Symm symm;
 
-	protected static final String REPEAT_OFFENDER = "This call is aborted because of repeated usage of invalid Passwords";
-	private static final int MAX_TEMP_COUNT = 10;
-	private static final int MAX_SPAM_COUNT = 10000;
-	private static final long WAIT_TIME = 1000*60*4L;
-	private final byte[] headValue;
-	private String user;
-	protected final SecurityInfoC<CLIENT> securityInfo;
-	protected long lastMiss;
-	protected int count;
-	
-	static {
-		try {
-			symm = Symm.encrypt.obtain();
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot create critical internal encryption key",e);
-		}
-		
-	}
+    protected static final String REPEAT_OFFENDER = "This call is aborted because of repeated usage of invalid Passwords";
+    private static final int MAX_TEMP_COUNT = 10;
+    private static final int MAX_SPAM_COUNT = 10000;
+    private static final long WAIT_TIME = 1000*60*4L;
+    private final byte[] headValue;
+    private String user;
+    protected final SecurityInfoC<CLIENT> securityInfo;
+    protected long lastMiss;
+    protected int count;
+    
+    static {
+        try {
+            symm = Symm.encrypt.obtain();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create critical internal encryption key",e);
+        }
+        
+    }
 
-	public AbsAuthentication(final SecurityInfoC<CLIENT> securityInfo, final String user, final byte[] headValue) throws IOException {
-		this.headValue = headValue==null?null:symm.encode(headValue);
-		this.user = user;
-		this.securityInfo = securityInfo;
-		lastMiss=0L;
-		count=0;
-	}
+    public AbsAuthentication(final SecurityInfoC<CLIENT> securityInfo, final String user, final byte[] headValue) throws IOException {
+        this.headValue = headValue==null?null:symm.encode(headValue);
+        this.user = user;
+        this.securityInfo = securityInfo;
+        lastMiss=0L;
+        count=0;
+    }
 
-	protected String headValue() throws IOException {
-		if(headValue==null) {
-			return "";
-		} else {
-			return new String(symm.decode(headValue));
-		}
-	}
-	
-	protected void setUser(String id) {
-		user = id;
-	}
-	
-	@Override
-	public String getID() {
-		return user;
-	}
+    protected String headValue() throws IOException {
+        if(headValue==null) {
+            return "";
+        } else {
+            return new String(symm.decode(headValue));
+        }
+    }
+    
+    protected void setUser(String id) {
+        user = id;
+    }
+    
+    @Override
+    public String getID() {
+        return user;
+    }
 
-	public boolean isDenied() {
-		if(lastMiss>0 && lastMiss>System.currentTimeMillis()) {
-			return true;
-		} else {
-			lastMiss=0L;
-			return false;
-		}
-	}
+    public boolean isDenied() {
+        if(lastMiss>0 && lastMiss>System.currentTimeMillis()) {
+            return true;
+        } else {
+            lastMiss=0L;
+            return false;
+        }
+    }
 
-	public synchronized int setLastResponse(int httpcode) {
-		if(httpcode == 401) {
-			++count;
-			if(lastMiss==0L && count>MAX_TEMP_COUNT) {
-				lastMiss=System.currentTimeMillis()+WAIT_TIME;
-			}
-			//				if(count>MAX_SPAM_COUNT) {
-			//					System.err.printf("Your service has %d consecutive bad service logins to AAF. \nIt will now exit\n",
-			//							count);
-			//					System.exit(401);
-			//				}
-			if(count%1000==0) {
-				System.err.printf("Your service has %d consecutive bad service logins to AAF. AAF Access will be disabled after %d\n",
-						count,MAX_SPAM_COUNT);
-			}
+    public synchronized int setLastResponse(int httpcode) {
+        if(httpcode == 401) {
+            ++count;
+            if(lastMiss==0L && count>MAX_TEMP_COUNT) {
+                lastMiss=System.currentTimeMillis()+WAIT_TIME;
+            }
+            //                if(count>MAX_SPAM_COUNT) {
+            //                    System.err.printf("Your service has %d consecutive bad service logins to AAF. \nIt will now exit\n",
+            //                            count);
+            //                    System.exit(401);
+            //                }
+            if(count%1000==0) {
+                System.err.printf("Your service has %d consecutive bad service logins to AAF. AAF Access will be disabled after %d\n",
+                        count,MAX_SPAM_COUNT);
+            }
 
-		} else {
-			lastMiss=0;
-		}
-		return count;
-	}
+        } else {
+            lastMiss=0;
+        }
+        return count;
+    }
 
-	public int count() {
-		return count;
-	}
+    public int count() {
+        return count;
+    }
 
 }

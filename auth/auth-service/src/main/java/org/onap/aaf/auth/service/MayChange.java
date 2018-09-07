@@ -29,5 +29,5 @@ import org.onap.aaf.auth.layer.Result;
  *
  */
 public interface MayChange {
-	public Result<?> mayChange();
+    public Result<?> mayChange();
 }

@@ -28,67 +28,67 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.cadi.util.Timing;
 
 public class TrustNotTafResp implements TafResp {
-	private final TafResp delegate;
-	private final String desc;
-	private float timing;
-	
-	public TrustNotTafResp(final TafResp delegate, final String desc) {
-		this.delegate = delegate;
-		this.desc = desc;
-	}
-	
-	@Override
-	public boolean isValid() {
-		return false;
-	}
+    private final TafResp delegate;
+    private final String desc;
+    private float timing;
+    
+    public TrustNotTafResp(final TafResp delegate, final String desc) {
+        this.delegate = delegate;
+        this.desc = desc;
+    }
+    
+    @Override
+    public boolean isValid() {
+        return false;
+    }
 
-	@Override
-	public String desc() {
-		return desc;
-	}
+    @Override
+    public String desc() {
+        return desc;
+    }
 
-	@Override
-	public RESP isAuthenticated() {
-		return RESP.NO_FURTHER_PROCESSING;
-	}
+    @Override
+    public RESP isAuthenticated() {
+        return RESP.NO_FURTHER_PROCESSING;
+    }
 
-	@Override
-	public RESP authenticate() throws IOException {
-		return RESP.NO_FURTHER_PROCESSING;
-	}
+    @Override
+    public RESP authenticate() throws IOException {
+        return RESP.NO_FURTHER_PROCESSING;
+    }
 
-	@Override
-	public TaggedPrincipal getPrincipal() {
-		return delegate.getPrincipal();
-	}
+    @Override
+    public TaggedPrincipal getPrincipal() {
+        return delegate.getPrincipal();
+    }
 
-	@Override
-	public Access getAccess() {
-		return delegate.getAccess();
-	}
+    @Override
+    public Access getAccess() {
+        return delegate.getAccess();
+    }
 
-	@Override
-	public boolean isFailedAttempt() {
-		return true;
-	}
-	@Override
-	public float timing() {
-		return timing;
-	}
+    @Override
+    public boolean isFailedAttempt() {
+        return true;
+    }
+    @Override
+    public float timing() {
+        return timing;
+    }
 
-	@Override
-	public void timing(long start) {
-		timing = Timing.millis(start);
-	}
-	
-	@Override
-	public String toString() {
-		return desc();
-	}
-	
-	@Override
-	public String taf() {
-		return "TrustNot";
-	}
+    @Override
+    public void timing(long start) {
+        timing = Timing.millis(start);
+    }
+    
+    @Override
+    public String toString() {
+        return desc();
+    }
+    
+    @Override
+    public String taf() {
+        return "TrustNot";
+    }
 
 }

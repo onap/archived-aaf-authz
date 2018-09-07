@@ -30,18 +30,18 @@ import java.security.Principal;
  *
  */
 public interface CachedPrincipal extends Principal {
-	public enum Resp {NOT_MINE,UNVALIDATED,REVALIDATED,INACCESSIBLE,DENIED};
-	
-	/**
-	 * Re-validate with Creator
-	 * 
-	 * @return
-	 */
-	public abstract Resp revalidate(Object state);
-	
-	/**
-	 * Store when last updated.
-	 * @return
-	 */
-	public abstract long expires();
+    public enum Resp {NOT_MINE,UNVALIDATED,REVALIDATED,INACCESSIBLE,DENIED};
+    
+    /**
+     * Re-validate with Creator
+     * 
+     * @return
+     */
+    public abstract Resp revalidate(Object state);
+    
+    /**
+     * Store when last updated.
+     * @return
+     */
+    public abstract long expires();
 }

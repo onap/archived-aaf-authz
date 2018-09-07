@@ -32,14 +32,14 @@ package org.onap.aaf.cadi.filter;
  */
 public class NullPermConverter implements PermConverter {
 
-	private static final NullPermConverter singleton = new NullPermConverter();
+    private static final NullPermConverter singleton = new NullPermConverter();
 
-	private NullPermConverter() {}
+    private NullPermConverter() {}
 
-	public static NullPermConverter singleton() { return singleton; }
+    public static NullPermConverter singleton() { return singleton; }
 
-	public String convert(String minimal) {
-		return minimal;
-	}
+    public String convert(String minimal) {
+        return minimal;
+    }
 
 }

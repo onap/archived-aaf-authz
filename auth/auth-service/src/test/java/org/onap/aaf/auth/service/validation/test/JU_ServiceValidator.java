@@ -37,78 +37,78 @@ import org.onap.aaf.auth.validation.Validator;
 
 public class JU_ServiceValidator {
 
-	ServiceValidator validator;
+    ServiceValidator validator;
 
-	@Before
-	public void setUp() {
-		validator = new ServiceValidator();
-	}
+    @Before
+    public void setUp() {
+        validator = new ServiceValidator();
+    }
 
-	@Test
-	public void permNotOk() {
+    @Test
+    public void permNotOk() {
 
-		Result<PermDAO.Data> rpd = Result.err(1, "ERR_Security");
+        Result<PermDAO.Data> rpd = Result.err(1, "ERR_Security");
 
-		validator.perm(rpd);
-		assertTrue(validator.errs().equals("ERR_Security\n"));
+        validator.perm(rpd);
+        assertTrue(validator.errs().equals("ERR_Security\n"));
 
-	}
-	
-	@Test
-	public void permInstance() {
-		assertFalse(validator.permInstance("hello").err());
-		assertFalse(validator.permInstance("hello32").err());
-		assertFalse(validator.permInstance("hello-32").err());
-		assertFalse(validator.permInstance(":asdf:*:sdf*:sdk").err());
-		assertFalse(validator.permInstance(":asdf:*:sdf*:sdk*").err());
-		// Perms may not end in ":"
-		assertTrue(validator.permInstance(":").err());
-		assertTrue(validator.permInstance(":hello:").err());
-	}
+    }
+    
+    @Test
+    public void permInstance() {
+        assertFalse(validator.permInstance("hello").err());
+        assertFalse(validator.permInstance("hello32").err());
+        assertFalse(validator.permInstance("hello-32").err());
+        assertFalse(validator.permInstance(":asdf:*:sdf*:sdk").err());
+        assertFalse(validator.permInstance(":asdf:*:sdf*:sdk*").err());
+        // Perms may not end in ":"
+        assertTrue(validator.permInstance(":").err());
+        assertTrue(validator.permInstance(":hello:").err());
+    }
 
-	@Test
-	public void permOkNull() {
+    @Test
+    public void permOkNull() {
 
-		Result rpd = Result.ok();
+        Result rpd = Result.ok();
 
-		validator.perm(rpd);
-		assertTrue(validator.errs().equals("Perm Data is null.\n"));
+        validator.perm(rpd);
+        assertTrue(validator.errs().equals("Perm Data is null.\n"));
 
-	}
+    }
 
-	@Test
-	public void roleOkNull() {
+    @Test
+    public void roleOkNull() {
 
-		Result rrd = Result.ok();
+        Result rrd = Result.ok();
 
-		validator.role(rrd);
-		assertTrue(validator.errs().equals("Role Data is null.\n"));
-	}
+        validator.role(rrd);
+        assertTrue(validator.errs().equals("Role Data is null.\n"));
+    }
 
-	@Test
-	public void roleOk() {
-		RoleDAO.Data to = new RoleDAO.Data();
-		to.ns = "namespace";
-		to.name = "name";
-		to.description = "description";
-		Set<String> permissions = new HashSet<>();
-		permissions.add("perm1");
-		to.perms = permissions;
+    @Test
+    public void roleOk() {
+        RoleDAO.Data to = new RoleDAO.Data();
+        to.ns = "namespace";
+        to.name = "name";
+        to.description = "description";
+        Set<String> permissions = new HashSet<>();
+        permissions.add("perm1");
+        to.perms = permissions;
 
-		Result<RoleDAO.Data> rrd = Result.ok(to);
+        Result<RoleDAO.Data> rrd = Result.ok(to);
 
-		validator.role(rrd);
-		assertTrue(
-				validator.errs().equals("Perm [perm1] in Role [namespace.name] is not correctly separated with '|'\n"));
-	}
+        validator.role(rrd);
+        assertTrue(
+                validator.errs().equals("Perm [perm1] in Role [namespace.name] is not correctly separated with '|'\n"));
+    }
 
-	@Test
-	public void roleNotOk() {
+    @Test
+    public void roleNotOk() {
 
-		Result rrd = Result.err(1, "ERR_Security");
+        Result rrd = Result.err(1, "ERR_Security");
 
-		validator.role(rrd);
-		assertTrue(validator.errs().equals("ERR_Security\n"));
-	}
+        validator.role(rrd);
+        assertTrue(validator.errs().equals("ERR_Security\n"));
+    }
 
 }

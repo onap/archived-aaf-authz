@@ -21,5 +21,5 @@
 package org.onap.aaf.cadi;
 
 public interface CredValDomain extends CredVal {
-	public String domain();
+    public String domain();
 }

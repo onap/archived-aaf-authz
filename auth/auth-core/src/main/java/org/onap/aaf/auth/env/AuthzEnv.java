@@ -47,245 +47,245 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
  *
  */
 public class AuthzEnv extends RosettaEnv implements Access {
-	private long[] times = new long[20];
-	private int idx = 0;
-	private PropAccess access;
+    private long[] times = new long[20];
+    private int idx = 0;
+    private PropAccess access;
 
-	public AuthzEnv() {
-		super();
-		_init(new PropAccess());
-	}
+    public AuthzEnv() {
+        super();
+        _init(new PropAccess());
+    }
 
-	public AuthzEnv(String ... args) {
-		super();
-		_init(new PropAccess(args));
-	}
+    public AuthzEnv(String ... args) {
+        super();
+        _init(new PropAccess(args));
+    }
 
-	public AuthzEnv(Properties props) {
-		super();
-		_init(new PropAccess(props));
-	}
-	
+    public AuthzEnv(Properties props) {
+        super();
+        _init(new PropAccess(props));
+    }
+    
 
-	public AuthzEnv(PropAccess pa) {
-		super();
-		_init(pa);
-	}
-	
-	private final void _init(PropAccess pa) { 
-		access = pa;
-		times = new long[20];
-		idx = 0;
-		fatal = new AccessLogTarget(access, Level.ERROR);
-		error = fatal;
-		audit = new AccessLogTarget(access, Level.AUDIT);
-		init = new AccessLogTarget(access, Level.INIT);
-		warn = new AccessLogTarget(access, Level.WARN);
-		info = new AccessLogTarget(access, Level.INFO);
-		debug = new AccessLogTarget(access, Level.DEBUG);
-		trace = new AccessLogTarget(access, Level.TRACE);
-	}
-	
-	private class AccessLogTarget implements LogTarget {
-		private final Level level;
-		private final Access access;
-		
-		public AccessLogTarget(final Access access, final Level level) {
-			this.level = level;
-			this.access = access;
-		}
-		
-		@Override
-		public void log(Object... msgs) {
-			access.log(level, msgs);
-		}
+    public AuthzEnv(PropAccess pa) {
+        super();
+        _init(pa);
+    }
+    
+    private final void _init(PropAccess pa) { 
+        access = pa;
+        times = new long[20];
+        idx = 0;
+        fatal = new AccessLogTarget(access, Level.ERROR);
+        error = fatal;
+        audit = new AccessLogTarget(access, Level.AUDIT);
+        init = new AccessLogTarget(access, Level.INIT);
+        warn = new AccessLogTarget(access, Level.WARN);
+        info = new AccessLogTarget(access, Level.INFO);
+        debug = new AccessLogTarget(access, Level.DEBUG);
+        trace = new AccessLogTarget(access, Level.TRACE);
+    }
+    
+    private class AccessLogTarget implements LogTarget {
+        private final Level level;
+        private final Access access;
+        
+        public AccessLogTarget(final Access access, final Level level) {
+            this.level = level;
+            this.access = access;
+        }
+        
+        @Override
+        public void log(Object... msgs) {
+            access.log(level, msgs);
+        }
 
-		@Override
-		public void log(Throwable e, Object... msgs) {
-			access.log(Level.ERROR, msgs);
-		}
+        @Override
+        public void log(Throwable e, Object... msgs) {
+            access.log(Level.ERROR, msgs);
+        }
 
-		@Override
-		public boolean isLoggable() {
-			return access.willLog(level);
-		}
+        @Override
+        public boolean isLoggable() {
+            return access.willLog(level);
+        }
 
-		@Override
-		public void printf(String fmt, Object... vars) {
-			access.printf(level, fmt, vars);
-		}
-		
-	}
-	@Override
-	public AuthzTransImpl newTrans() {
-		synchronized(this) {
-			times[idx]=System.currentTimeMillis();
-			if(++idx>=times.length)idx=0;
-		}
-		return new AuthzTransImpl(this);
-	}
+        @Override
+        public void printf(String fmt, Object... vars) {
+            access.printf(level, fmt, vars);
+        }
+        
+    }
+    @Override
+    public AuthzTransImpl newTrans() {
+        synchronized(this) {
+            times[idx]=System.currentTimeMillis();
+            if(++idx>=times.length)idx=0;
+        }
+        return new AuthzTransImpl(this);
+    }
 
-	/**
-	 *  Create a Trans, but do not include in Weighted Average
-	 * @return
-	 */
-	public AuthzTrans newTransNoAvg() {
-		return new AuthzTransImpl(this);
-	}
+    /**
+     *  Create a Trans, but do not include in Weighted Average
+     * @return
+     */
+    public AuthzTrans newTransNoAvg() {
+        return new AuthzTransImpl(this);
+    }
 
-	public long transRate() {
-		int count = 0;
-		long pot = 0;
-		long prev = 0;
-		for(int i=idx;i<times.length;++i) {
-			if(times[i]>0) {
-				if(prev>0) {
-					++count;
-		pot += times[i]-prev;
-				}
-				prev = times[i]; 
-			}
-		}
-		for(int i=0;i<idx;++i) {
-			if(times[i]>0) {
-				if(prev>0) {
-					++count;
-					pot += times[i]-prev;
-				}
-				prev = times[i]; 
-			}
-		}
+    public long transRate() {
+        int count = 0;
+        long pot = 0;
+        long prev = 0;
+        for(int i=idx;i<times.length;++i) {
+            if(times[i]>0) {
+                if(prev>0) {
+                    ++count;
+        pot += times[i]-prev;
+                }
+                prev = times[i]; 
+            }
+        }
+        for(int i=0;i<idx;++i) {
+            if(times[i]>0) {
+                if(prev>0) {
+                    ++count;
+                    pot += times[i]-prev;
+                }
+                prev = times[i]; 
+            }
+        }
 
-		return count==0?300000L:pot/count; // Return Weighted Avg, or 5 mins, if none avail.
-	}
-	
-	@Override
-	public ClassLoader classLoader() {
-		return getClass().getClassLoader();
-	}
+        return count==0?300000L:pot/count; // Return Weighted Avg, or 5 mins, if none avail.
+    }
+    
+    @Override
+    public ClassLoader classLoader() {
+        return getClass().getClassLoader();
+    }
 
-	@Override
-	public void load(InputStream is) throws IOException {
-		access.load(is);
-	}
+    @Override
+    public void load(InputStream is) throws IOException {
+        access.load(is);
+    }
 
-	@Override
-	public void log(Level lvl, Object... msgs) {
-		access.log(lvl, msgs);
-	}
+    @Override
+    public void log(Level lvl, Object... msgs) {
+        access.log(lvl, msgs);
+    }
 
-	@Override
-	public void log(Exception e, Object... msgs) {
-		access.log(e,msgs);
-	}
+    @Override
+    public void log(Exception e, Object... msgs) {
+        access.log(e,msgs);
+    }
 
-	@Override
-	public void printf(Level level, String fmt, Object... elements) {
-		access.printf(level, fmt, elements);
-	}
+    @Override
+    public void printf(Level level, String fmt, Object... elements) {
+        access.printf(level, fmt, elements);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.Access#willLog(org.onap.aaf.cadi.Access.Level)
-	 */
-	@Override
-	public boolean willLog(Level level) {
-		return access.willLog(level);
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.Access#willLog(org.onap.aaf.cadi.Access.Level)
+     */
+    @Override
+    public boolean willLog(Level level) {
+        return access.willLog(level);
+    }
 
-	@Override
-	public void setLogLevel(Level level) {
-		access.setLogLevel(level);
-	}
-	
-	private static final byte[] ENC="enc:".getBytes();
-	public String decrypt(String encrypted, final boolean anytext) throws IOException {
-		if(encrypted==null) {
-			throw new IOException("Password to be decrypted is null");
-		}
-		if(anytext || encrypted.startsWith("enc:")) {
-			if(decryptor.equals(Decryptor.NULL) && getProperty(Config.CADI_KEYFILE)!=null) {
-				final Symm s;
-				try {
-					s = Symm.obtain(this);
-				} catch (CadiException e1) {
-					throw new IOException(e1);
-				}
-				decryptor = new Decryptor() {
-					private Symm symm = s;
-					@Override
-					public String decrypt(String encrypted) {
-						try {
-							return (encrypted!=null && (anytext || encrypted.startsWith(Symm.ENC)))
-									? symm.depass(encrypted)
-									: encrypted;
-						} catch (IOException e) {
-							return "";
-						}
-					}
-				};
-				encryptor = new Encryptor() {
-					@Override
-					public String encrypt(String data) {
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						try {
-							baos.write(ENC);
-							return "enc:"+s.enpass(data);
-						} catch (IOException e) {
-							return "";
-						}
-					}
-	
-				};
-			}
-			return decryptor.decrypt(encrypted);
-		} else {
-			return encrypted;
-		}
-	}
+    @Override
+    public void setLogLevel(Level level) {
+        access.setLogLevel(level);
+    }
+    
+    private static final byte[] ENC="enc:".getBytes();
+    public String decrypt(String encrypted, final boolean anytext) throws IOException {
+        if(encrypted==null) {
+            throw new IOException("Password to be decrypted is null");
+        }
+        if(anytext || encrypted.startsWith("enc:")) {
+            if(decryptor.equals(Decryptor.NULL) && getProperty(Config.CADI_KEYFILE)!=null) {
+                final Symm s;
+                try {
+                    s = Symm.obtain(this);
+                } catch (CadiException e1) {
+                    throw new IOException(e1);
+                }
+                decryptor = new Decryptor() {
+                    private Symm symm = s;
+                    @Override
+                    public String decrypt(String encrypted) {
+                        try {
+                            return (encrypted!=null && (anytext || encrypted.startsWith(Symm.ENC)))
+                                    ? symm.depass(encrypted)
+                                    : encrypted;
+                        } catch (IOException e) {
+                            return "";
+                        }
+                    }
+                };
+                encryptor = new Encryptor() {
+                    @Override
+                    public String encrypt(String data) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        try {
+                            baos.write(ENC);
+                            return "enc:"+s.enpass(data);
+                        } catch (IOException e) {
+                            return "";
+                        }
+                    }
+    
+                };
+            }
+            return decryptor.decrypt(encrypted);
+        } else {
+            return encrypted;
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.misc.env.impl.BasicEnv#getProperty(java.lang.String)
-	 */
-	@Override
-	public String getProperty(String key) {
-		return access.getProperty(key);
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.misc.env.impl.BasicEnv#getProperty(java.lang.String)
+     */
+    @Override
+    public String getProperty(String key) {
+        return access.getProperty(key);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.misc.env.impl.BasicEnv#getProperties(java.lang.String[])
-	 */
-	@Override
-	public Properties getProperties(String... filter) {
-		return access.getProperties();
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.misc.env.impl.BasicEnv#getProperties(java.lang.String[])
+     */
+    @Override
+    public Properties getProperties(String... filter) {
+        return access.getProperties();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.misc.env.impl.BasicEnv#getProperty(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String getProperty(String key, String defaultValue) {
-		return access.getProperty(key, defaultValue);
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.misc.env.impl.BasicEnv#getProperty(java.lang.String, java.lang.String)
+     */
+    @Override
+    public String getProperty(String key, String defaultValue) {
+        return access.getProperty(key, defaultValue);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.misc.env.impl.BasicEnv#setProperty(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String setProperty(String key, String value) {
-		access.setProperty(key, value);
-		return value;
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.misc.env.impl.BasicEnv#setProperty(java.lang.String, java.lang.String)
+     */
+    @Override
+    public String setProperty(String key, String value) {
+        access.setProperty(key, value);
+        return value;
+    }
 
-	public PropAccess access() {
-		return access;
-	}
+    public PropAccess access() {
+        return access;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.Access#getProperties()
-	 */
-	@Override
-	public Properties getProperties() {
-		return access.getProperties();
-	};
-	
+    /* (non-Javadoc)
+     * @see org.onap.aaf.cadi.Access#getProperties()
+     */
+    @Override
+    public Properties getProperties() {
+        return access.getProperties();
+    };
+    
 }

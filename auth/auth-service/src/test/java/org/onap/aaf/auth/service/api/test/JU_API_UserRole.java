@@ -35,26 +35,26 @@ import org.onap.aaf.auth.service.facade.AuthzFacade;
 import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_API_UserRole {
-	API_UserRole api_UserRole;
-	@Mock
-	AAF_Service authzAPI;
-	AuthzFacade facade;
+    API_UserRole api_UserRole;
+    @Mock
+    AAF_Service authzAPI;
+    AuthzFacade facade;
 
 
-	@SuppressWarnings("static-access")
-	@Test
-	public void testInit(){
-		try {
-			api_UserRole.init(authzAPI, facade);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    @SuppressWarnings("static-access")
+    @Test
+    public void testInit(){
+        try {
+            api_UserRole.init(authzAPI, facade);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-//	@Test
-//	public void notYetImplemented() {
-//		fail("Tests in this file should not be trusted");
-//	}
+//    @Test
+//    public void notYetImplemented() {
+//        fail("Tests in this file should not be trusted");
+//    }
 
 }

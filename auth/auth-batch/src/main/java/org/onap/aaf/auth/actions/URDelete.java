@@ -32,28 +32,28 @@ import org.onap.aaf.misc.env.util.Chrono;
 import com.datastax.driver.core.Cluster;
 
 public class URDelete extends ActionDAO<UserRole,Void,String> {
-	public URDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public URDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public URDelete(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public URDelete(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, UserRole ur,String text) {
-		if(dryRun) {
-			trans.info().log("Would Delete UserRole:",text,ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
-			return Result.ok();
-		} else {
-			Result<Void> rv = q.userRoleDAO.delete(trans,ur.urdd(), true); // need to read for undelete
-			if(rv.isOK()) {
-				trans.info().log("Deleted UserRole:",text,ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
-			} else {
-				trans.error().log("Error Deleting User Role -",rv.details,":",ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()) );
-			}
-		return rv;
-		}
-	}
-	
+    @Override
+    public Result<Void> exec(AuthzTrans trans, UserRole ur,String text) {
+        if(dryRun) {
+            trans.info().log("Would Delete UserRole:",text,ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
+            return Result.ok();
+        } else {
+            Result<Void> rv = q.userRoleDAO.delete(trans,ur.urdd(), true); // need to read for undelete
+            if(rv.isOK()) {
+                trans.info().log("Deleted UserRole:",text,ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()));
+            } else {
+                trans.error().log("Error Deleting User Role -",rv.details,":",ur.user(),ur.role(),"on",Chrono.dateOnlyStamp(ur.expires()) );
+            }
+        return rv;
+        }
+    }
+    
 }

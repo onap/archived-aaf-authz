@@ -31,42 +31,42 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public abstract class ActionPuntDAO<D, RV, T> extends ActionDAO<D, RV, T> {
-//	private static final SecureRandom random = new SecureRandom();
-	private int months;
-//	private int range;
-	protected static final Date now = new Date();
+//    private static final SecureRandom random = new SecureRandom();
+    private int months;
+//    private int range;
+    protected static final Date now = new Date();
 
-	public ActionPuntDAO(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-		this.months = months;
-//		this.range = range;
-	}
+    public ActionPuntDAO(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+        this.months = months;
+//        this.range = range;
+    }
 
-	public ActionPuntDAO(AuthzTrans trans, ActionDAO<?, ?,?> predecessor, int months, int range) {
-		super(trans, predecessor);
-		this.months = months;
-//		this.range = range;
-	}
-	
+    public ActionPuntDAO(AuthzTrans trans, ActionDAO<?, ?,?> predecessor, int months, int range) {
+        super(trans, predecessor);
+        this.months = months;
+//        this.range = range;
+    }
+    
 
-	protected Date puntDate(Date current) {
-		GregorianCalendar temp = new GregorianCalendar();
-		temp.setTime(current);
-		temp.add(GregorianCalendar.MONTH, months);
+    protected Date puntDate(Date current) {
+        GregorianCalendar temp = new GregorianCalendar();
+        temp.setTime(current);
+        temp.add(GregorianCalendar.MONTH, months);
 
-		/*
-		 *  This method Randomized date.  This is no longer needed.  Just add the Punt Months.
-		temp.setTime(now);
-		temp.add(GregorianCalendar.MONTH, months);
-		if(range>0) {
-			int forward = Math.abs(random.nextInt()%range);
-			if(forward>1) {
-				temp.add(GregorianCalendar.MONTH, forward);
-				temp.add(GregorianCalendar.DAY_OF_MONTH, (random.nextInt()%30)-15);
-			}
-		}
-		*/
-		return temp.getTime();
-	}
+        /*
+         *  This method Randomized date.  This is no longer needed.  Just add the Punt Months.
+        temp.setTime(now);
+        temp.add(GregorianCalendar.MONTH, months);
+        if(range>0) {
+            int forward = Math.abs(random.nextInt()%range);
+            if(forward>1) {
+                temp.add(GregorianCalendar.MONTH, forward);
+                temp.add(GregorianCalendar.DAY_OF_MONTH, (random.nextInt()%30)-15);
+            }
+        }
+        */
+        return temp.getTime();
+    }
 
 }

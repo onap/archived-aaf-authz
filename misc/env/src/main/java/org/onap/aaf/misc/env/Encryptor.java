@@ -23,12 +23,12 @@ package org.onap.aaf.misc.env;
 
 
 public interface Encryptor {
-	public String encrypt(String data);
+    public String encrypt(String data);
 
-	public static final Encryptor NULL = new Encryptor() {
-		@Override
-		public String encrypt(String data) {
-			return data;
-		}
-	};
+    public static final Encryptor NULL = new Encryptor() {
+        @Override
+        public String encrypt(String data) {
+            return data;
+        }
+    };
 }

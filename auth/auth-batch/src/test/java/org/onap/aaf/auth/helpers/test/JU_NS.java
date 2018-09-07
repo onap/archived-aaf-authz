@@ -36,44 +36,44 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 public class JU_NS {
-	
-	NS ns;
-	NSSplit nSSplit;
-	
-	@Before
-	public void setUp() {
-		ns = new NS("name", "description", "parent", 1, 1);
-		nSSplit = new NSSplit("string",1);
-	}
+    
+    NS ns;
+    NSSplit nSSplit;
+    
+    @Before
+    public void setUp() {
+        ns = new NS("name", "description", "parent", 1, 1);
+        nSSplit = new NSSplit("string",1);
+    }
 
-	@Test
-	public void testToString() {
-		Assert.assertEquals("name", ns.toString());
-	}
-	
-	@Test
-	public void testHashCode() {
-		Assert.assertEquals(3373707, ns.hashCode());
-	}
-	
-	@Test
-	public void testEquals() {
-		Assert.assertEquals(true, ns.equals("name"));
-		Assert.assertEquals(false, ns.equals("name1"));
-	}
-	
-	@Test
-	public void testCompareTo() {
-		NS nsValid = new NS("name", "description", "parent", 1, 1);
-		Assert.assertEquals(0, ns.compareTo(nsValid));
-		
-		NS nsInvalid = new NS("name1", "description", "parent", 1, 1);
-		Assert.assertEquals(-1, ns.compareTo(nsInvalid));
-	}
-	
-	@Test
-	public void testDeriveParent() {
-		ns.deriveParent("d.ot.te.d");
-	}
+    @Test
+    public void testToString() {
+        Assert.assertEquals("name", ns.toString());
+    }
+    
+    @Test
+    public void testHashCode() {
+        Assert.assertEquals(3373707, ns.hashCode());
+    }
+    
+    @Test
+    public void testEquals() {
+        Assert.assertEquals(true, ns.equals("name"));
+        Assert.assertEquals(false, ns.equals("name1"));
+    }
+    
+    @Test
+    public void testCompareTo() {
+        NS nsValid = new NS("name", "description", "parent", 1, 1);
+        Assert.assertEquals(0, ns.compareTo(nsValid));
+        
+        NS nsInvalid = new NS("name1", "description", "parent", 1, 1);
+        Assert.assertEquals(-1, ns.compareTo(nsInvalid));
+    }
+    
+    @Test
+    public void testDeriveParent() {
+        ns.deriveParent("d.ot.te.d");
+    }
 
 }

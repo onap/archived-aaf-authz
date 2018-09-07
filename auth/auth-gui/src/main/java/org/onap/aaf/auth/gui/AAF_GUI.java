@@ -95,175 +95,175 @@ import certman.v1_0.Artifacts;
 import certman.v1_0.CertInfo;
 
 public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<Env>{
-	private static final String AAF_GUI_THEME = "aaf_gui_theme";
-	public static final String AAF_GUI_COPYRIGHT = "aaf_gui_copyright";
-	public static final String HTTP_SERVLET_REQUEST = "HTTP_SERVLET_REQUEST";
-	public static final int TIMEOUT = 60000;
-	public static final String app = "AAF GUI";
-	
-	// AAF API
-	
-	// Certificate manager API
-	public RosettaDF<Artifacts> artifactsDF;
-	public RosettaDF<CertInfo>  certInfoDF;
+    private static final String AAF_GUI_THEME = "aaf_gui_theme";
+    public static final String AAF_GUI_COPYRIGHT = "aaf_gui_copyright";
+    public static final String HTTP_SERVLET_REQUEST = "HTTP_SERVLET_REQUEST";
+    public static final int TIMEOUT = 60000;
+    public static final String app = "AAF GUI";
+    
+    // AAF API
+    
+    // Certificate manager API
+    public RosettaDF<Artifacts> artifactsDF;
+    public RosettaDF<CertInfo>  certInfoDF;
 
-	private final AAFConHttp cmCon;
-	public final AAFConHttp aafCon;
-	public final AAFLurPerm lur;
-	
-	public final Slot slot_httpServletRequest;
-	protected final String deployedVersion;
-	private StaticSlot sTheme;
-	public final String theme;
+    private final AAFConHttp cmCon;
+    public final AAFConHttp aafCon;
+    public final AAFLurPerm lur;
+    
+    public final Slot slot_httpServletRequest;
+    protected final String deployedVersion;
+    private StaticSlot sTheme;
+    public final String theme;
 
 
-	public AAF_GUI(final AuthzEnv env) throws Exception {
-		super(env.access(), env);
-		sTheme = env.staticSlot(CachingFileAccess.CFA_WEB_PATH,access.getProperty(CachingFileAccess.CFA_WEB_PATH,null)==null?AAF_GUI_THEME:CachingFileAccess.CFA_WEB_PATH);
-		theme = env.getProperty(AAF_GUI_THEME);
+    public AAF_GUI(final AuthzEnv env) throws Exception {
+        super(env.access(), env);
+        sTheme = env.staticSlot(CachingFileAccess.CFA_WEB_PATH,access.getProperty(CachingFileAccess.CFA_WEB_PATH,null)==null?AAF_GUI_THEME:CachingFileAccess.CFA_WEB_PATH);
+        theme = env.getProperty(AAF_GUI_THEME);
 
-		slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
-		String[] component = Split.split(':', access.getProperty(Config.AAF_COMPONENT, "N/A:2.x"));
-		if(component.length>1) {
-			deployedVersion =component[1];
-		} else {
-			deployedVersion = "2.x";
-		}
+        slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
+        String[] component = Split.split(':', access.getProperty(Config.AAF_COMPONENT, "N/A:2.x"));
+        if(component.length>1) {
+            deployedVersion =component[1];
+        } else {
+            deployedVersion = "2.x";
+        }
 
-		// Certificate Manager
-		cmCon =  new AAFConHttp(env.access(),Config.CM_URL);
-		artifactsDF = env.newDataFactory(Artifacts.class);
-		certInfoDF  = env.newDataFactory(CertInfo.class);
-		
+        // Certificate Manager
+        cmCon =  new AAFConHttp(env.access(),Config.CM_URL);
+        artifactsDF = env.newDataFactory(Artifacts.class);
+        certInfoDF  = env.newDataFactory(CertInfo.class);
+        
 
-		/////////////////////////
-		// Screens
-		/////////////////////////
-		// Start Screen
-		final Page start = new Display(this, GET, new Home(this)).page();
+        /////////////////////////
+        // Screens
+        /////////////////////////
+        // Start Screen
+        final Page start = new Display(this, GET, new Home(this)).page();
 
-		// MyPerms Screens
-		final Page myPerms = new Display(this, GET, new PermsShow(this, start)).page();
-		Page permDetail = new Display(this, GET, new PermDetail(this, start, myPerms)).page();
-							new Display(this, GET, new PermHistory(this,start,myPerms,permDetail));
+        // MyPerms Screens
+        final Page myPerms = new Display(this, GET, new PermsShow(this, start)).page();
+        Page permDetail = new Display(this, GET, new PermDetail(this, start, myPerms)).page();
+                            new Display(this, GET, new PermHistory(this,start,myPerms,permDetail));
 
-		// MyRoles Screens
-		final Page myRoles = new Display(this, GET, new RolesShow(this, start)).page();
-		Page roleDetail = new Display(this, GET, new RoleDetail(this, start, myRoles)).page();
-						  new Display(this, POST, new RoleDetailAction(this,start,myRoles,roleDetail));
-						  new Display(this, GET, new RoleHistory(this,start,myRoles,roleDetail));
-							
-		// MyNameSpace
-		final Page myNamespaces = new Display(this, GET, new NssShow(this, start)).page();
-		Page nsDetail  = new Display(this, GET, new NsDetail(this, start, myNamespaces)).page();
-			   		  	 new Display(this, GET, new NsHistory(this, start,myNamespaces,nsDetail));
-		Page crdDetail = new Display(this, GET, new CredDetail(this, start, myNamespaces, nsDetail)).page();
-		Page artiShow  = new Display(this, GET, new CMArtifactShow(this, start, myNamespaces, nsDetail, crdDetail)).page();
-		Page artiCForm = new Display(this, GET, new CMArtiChangeForm(this, start, myNamespaces, nsDetail, crdDetail,artiShow)).page();
-						 new Display(this, POST, new CMArtiChangeAction(this, start,artiShow,artiCForm));
-							 
-		// Password Change Screens
-		final Page pwc = new Display(this, GET, new PassChangeForm(this, start,crdDetail)).page();
-						 new Display(this, POST, new PassChangeAction(this, start, pwc));
-						 
-		// Password Delete Screen
-						 new Display(this, GET, new PassDeleteAction(this, start,crdDetail));
+        // MyRoles Screens
+        final Page myRoles = new Display(this, GET, new RolesShow(this, start)).page();
+        Page roleDetail = new Display(this, GET, new RoleDetail(this, start, myRoles)).page();
+                          new Display(this, POST, new RoleDetailAction(this,start,myRoles,roleDetail));
+                          new Display(this, GET, new RoleHistory(this,start,myRoles,roleDetail));
+                            
+        // MyNameSpace
+        final Page myNamespaces = new Display(this, GET, new NssShow(this, start)).page();
+        Page nsDetail  = new Display(this, GET, new NsDetail(this, start, myNamespaces)).page();
+                              new Display(this, GET, new NsHistory(this, start,myNamespaces,nsDetail));
+        Page crdDetail = new Display(this, GET, new CredDetail(this, start, myNamespaces, nsDetail)).page();
+        Page artiShow  = new Display(this, GET, new CMArtifactShow(this, start, myNamespaces, nsDetail, crdDetail)).page();
+        Page artiCForm = new Display(this, GET, new CMArtiChangeForm(this, start, myNamespaces, nsDetail, crdDetail,artiShow)).page();
+                         new Display(this, POST, new CMArtiChangeAction(this, start,artiShow,artiCForm));
+                             
+        // Password Change Screens
+        final Page pwc = new Display(this, GET, new PassChangeForm(this, start,crdDetail)).page();
+                         new Display(this, POST, new PassChangeAction(this, start, pwc));
+                         
+        // Password Delete Screen
+                         new Display(this, GET, new PassDeleteAction(this, start,crdDetail));
 
-		// Validation Change Screens
-		final Page validate = new Display(this, GET, new ApprovalForm(this, start)).page();
-							  new Display(this, POST, new ApprovalAction(this, start, validate));
-							
-		// Onboard, Detailed Edit Screens
-		final Page onb = new Display(this, GET, new NsInfoForm(this, start)).page();
-						 new Display(this, POST, new NsInfoAction(this, start, onb));
+        // Validation Change Screens
+        final Page validate = new Display(this, GET, new ApprovalForm(this, start)).page();
+                              new Display(this, POST, new ApprovalAction(this, start, validate));
+                            
+        // Onboard, Detailed Edit Screens
+        final Page onb = new Display(this, GET, new NsInfoForm(this, start)).page();
+                         new Display(this, POST, new NsInfoAction(this, start, onb));
 
-		// Web Command Screens
-		/* final Page webCommand =*/ new Display(this, GET, new WebCommand(this, start)).page();
-		
-		// API Docs
-		final Page apidocs = new Display(this, GET, new ApiDocs(this, start)).page();
-							 new Display(this, GET, new ApiExample(this,start, apidocs)).page();
-		
-		// Permission Grant Page
-		final Page permGrant = 	new Display(this, GET, new PermGrantForm(this, start)).page();
-							 	new Display(this, POST, new PermGrantAction(this, start, permGrant)).page();
-							 	
-		// Login Landing if no credentials detected
-		final Page loginLanding = new Display(this, GET, new LoginLanding(this, start)).page();
-								  new Display(this, POST, new LoginLandingAction(this, start, loginLanding));
-								  
-		// User Role Request Extend and Remove
-		new Display(this, GET, new UserRoleExtend(this, start,myRoles)).page();
-		new Display(this, GET, new UserRoleRemove(this, start,myRoles)).page();
-		
-		// See my Pending Requests
-		final Page requestsShow = new Display(this, GET, new PendingRequestsShow(this, start)).page();
-								  new Display(this, GET, new RequestDetail(this, start, requestsShow));
-								  
-		// Command line Mechanism
-		route(env, PUT, "/gui/cui", new CUI(this),"text/plain;charset=utf-8","*/*");
-		
-		///////////////////////  
-		// WebContent Handler
-		///////////////////////
-		route(env,GET,"/"+env.get(sTheme)+"/:key", new CachingFileAccess<AuthzTrans>(env));
-		///////////////////////
-		aafCon = aafCon();
-		lur = aafCon.newLur();
-	}
-	
-	public<T> RosettaDF<T> getDF(Class<T> cls) throws APIException {
-		return Cmd.getDF(env,cls);
-	}
-	
-	public void writeError(AuthzTrans trans, Future<?> fp, HTMLGen hgen, int indent) {
-		if(hgen!=null) {
-			String msg = aafCon.readableErrMsg(fp);
-			hgen.incr(HTMLGen.P,"style=text-indent:"+indent*10+"px")
-				.text("<font color=\"red\"><i>Error</i>:</font> ")
-				.text(msg)
-				.end();
-			trans.checkpoint(msg);
-		}
-	}
+        // Web Command Screens
+        /* final Page webCommand =*/ new Display(this, GET, new WebCommand(this, start)).page();
+        
+        // API Docs
+        final Page apidocs = new Display(this, GET, new ApiDocs(this, start)).page();
+                             new Display(this, GET, new ApiExample(this,start, apidocs)).page();
+        
+        // Permission Grant Page
+        final Page permGrant =     new Display(this, GET, new PermGrantForm(this, start)).page();
+                                 new Display(this, POST, new PermGrantAction(this, start, permGrant)).page();
+                                 
+        // Login Landing if no credentials detected
+        final Page loginLanding = new Display(this, GET, new LoginLanding(this, start)).page();
+                                  new Display(this, POST, new LoginLandingAction(this, start, loginLanding));
+                                  
+        // User Role Request Extend and Remove
+        new Display(this, GET, new UserRoleExtend(this, start,myRoles)).page();
+        new Display(this, GET, new UserRoleRemove(this, start,myRoles)).page();
+        
+        // See my Pending Requests
+        final Page requestsShow = new Display(this, GET, new PendingRequestsShow(this, start)).page();
+                                  new Display(this, GET, new RequestDetail(this, start, requestsShow));
+                                  
+        // Command line Mechanism
+        route(env, PUT, "/gui/cui", new CUI(this),"text/plain;charset=utf-8","*/*");
+        
+        ///////////////////////  
+        // WebContent Handler
+        ///////////////////////
+        route(env,GET,"/"+env.get(sTheme)+"/:key", new CachingFileAccess<AuthzTrans>(env));
+        ///////////////////////
+        aafCon = aafCon();
+        lur = aafCon.newLur();
+    }
+    
+    public<T> RosettaDF<T> getDF(Class<T> cls) throws APIException {
+        return Cmd.getDF(env,cls);
+    }
+    
+    public void writeError(AuthzTrans trans, Future<?> fp, HTMLGen hgen, int indent) {
+        if(hgen!=null) {
+            String msg = aafCon.readableErrMsg(fp);
+            hgen.incr(HTMLGen.P,"style=text-indent:"+indent*10+"px")
+                .text("<font color=\"red\"><i>Error</i>:</font> ")
+                .text(msg)
+                .end();
+            trans.checkpoint(msg);
+        }
+    }
 
-	public<RET> RET cmClientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
-			return cmCon.hman().best(new HTransferSS(p,app, aafCon.securityInfo()), retryable);
-	}
-	
-	@Override
-	public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
-		try {
-			return new Filter[] {
-					new XFrameFilter(XFrameFilter.TYPE.none),
-					new AuthzTransFilter(env,aafCon(),
-		        			new AAFTrustChecker((Env)env),
-		        			additionalTafLurs),
-					new OrgLookupFilter()
-				};
-		} catch (NumberFormatException e) {
-			throw new CadiException("Invalid Property information", e);
-		}
-	}
+    public<RET> RET cmClientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
+            return cmCon.hman().best(new HTransferSS(p,app, aafCon.securityInfo()), retryable);
+    }
+    
+    @Override
+    public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
+        try {
+            return new Filter[] {
+                    new XFrameFilter(XFrameFilter.TYPE.none),
+                    new AuthzTransFilter(env,aafCon(),
+                            new AAFTrustChecker((Env)env),
+                            additionalTafLurs),
+                    new OrgLookupFilter()
+                };
+        } catch (NumberFormatException e) {
+            throw new CadiException("Invalid Property information", e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
-		return new Registrant[] {
-			new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
-		};
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
+        return new Registrant[] {
+            new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
+        };
+    }
 
-	public static void main(final String[] args) {
-		try {
-			Log4JLogIt logIt = new Log4JLogIt(args, "gui");
-			PropAccess propAccess = new PropAccess(logIt,args);
+    public static void main(final String[] args) {
+        try {
+            Log4JLogIt logIt = new Log4JLogIt(args, "gui");
+            PropAccess propAccess = new PropAccess(logIt,args);
 
-			AAF_GUI service = new AAF_GUI(new AuthzEnv(propAccess));
-			JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-			jss.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            AAF_GUI service = new AAF_GUI(new AuthzEnv(propAccess));
+            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
+            jss.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

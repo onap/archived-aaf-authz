@@ -27,8 +27,8 @@ import java.net.HttpURLConnection;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class HTokenSS extends HAuthorizationHeader {
-	public HTokenSS(final SecurityInfoC<HttpURLConnection> si, final String client_id, final String token) throws IOException {
-		super(si, client_id,"Bearer " + token);
-	}
+    public HTokenSS(final SecurityInfoC<HttpURLConnection> si, final String client_id, final String token) throws IOException {
+        super(si, client_id,"Bearer " + token);
+    }
 
 }

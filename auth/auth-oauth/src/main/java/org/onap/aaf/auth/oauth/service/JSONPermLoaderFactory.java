@@ -38,82 +38,82 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
 public class JSONPermLoaderFactory {
-	/**
-	 * Load JSON Perms from AAF Service (Remotely)
-	 * @param aafcon
-	 * @param timeout
-	 * @return
-	 */
-	public static JSONPermLoader remote(final AAFCon<?> aafcon, final int timeout) {
-		return new JSONPermLoader() {
-			public Result<String> loadJSONPerms(AuthzTrans trans, String user, Set<String> scopes) throws APIException, CadiException {
-				Rcli<?> c = aafcon.clientAs(Config.AAF_DEFAULT_VERSION,trans.getUserPrincipal());
-				StringBuilder pathinfo = new StringBuilder("/authz/perms/user/");
-				pathinfo.append(user);
-				pathinfo.append("?scopes=");
-				boolean first = true;
-				for(String s : scopes) {
-					if(first) {
-						first = false;
-					} else {
-						pathinfo.append(':');
-					}
-					pathinfo.append(s);
-				}
-				TimeTaken tt = trans.start("Call AAF Service", Env.REMOTE);
-				try {
-					Future<String> fs = c.read(pathinfo.toString(), "application/Perms+json;charset=utf-8;version=2.0");
-					if(fs.get(timeout)) {
-						return Result.ok(fs.body());
-					} else if(fs.code()==404) {
-						return Result.err(Result.ERR_NotFound,fs.body());
-					} else {
-						return Result.err(Result.ERR_Backend,"Error accessing AAF %s: %s",Integer.toString(fs.code()),fs.body());
-					}
-				} finally {
-					tt.done();
-				}
-			}
-		};
-	}
-	public static JSONPermLoader direct(final Question question) {
-		return new JSONPermLoader() {
-			public Result<String> loadJSONPerms(AuthzTrans trans, String user, Set<String> scopes) throws APIException, CadiException {
-				TimeTaken tt = trans.start("Cached DB Perm lookup", Env.SUB);
-				Result<List<PermDAO.Data>> pd;
-				try {
-					pd = question.getPermsByUser(trans, user, false);
-				} finally {
-					tt.done();
-				}
-				if(pd.notOK()) {
-					return Result.err(pd);
-				}
-				// Since we know it is 
-				StringBuilder sb = new StringBuilder("{\"perm\":[");
-				boolean first = true;
-				for(PermDAO.Data d : pd.value) {
-					if(scopes.contains(d.ns)) {
-						if(first) {
-							first = false;
-						} else {
-							sb.append(',');
-						}
-						sb.append("{\"ns\":\"");
-						sb.append(d.ns);
-						sb.append("\",\"type\":\"");
-						sb.append(d.type);
-						sb.append("\",\"instance\":\"");
-						sb.append(d.instance);
-						sb.append("\",\"action\":\"");
-						sb.append(d.action);
-						sb.append("\"}");
-					}
-				}
-				sb.append("]}");
-				return Result.ok(sb.toString());
-			}
-		};
-	}
+    /**
+     * Load JSON Perms from AAF Service (Remotely)
+     * @param aafcon
+     * @param timeout
+     * @return
+     */
+    public static JSONPermLoader remote(final AAFCon<?> aafcon, final int timeout) {
+        return new JSONPermLoader() {
+            public Result<String> loadJSONPerms(AuthzTrans trans, String user, Set<String> scopes) throws APIException, CadiException {
+                Rcli<?> c = aafcon.clientAs(Config.AAF_DEFAULT_VERSION,trans.getUserPrincipal());
+                StringBuilder pathinfo = new StringBuilder("/authz/perms/user/");
+                pathinfo.append(user);
+                pathinfo.append("?scopes=");
+                boolean first = true;
+                for(String s : scopes) {
+                    if(first) {
+                        first = false;
+                    } else {
+                        pathinfo.append(':');
+                    }
+                    pathinfo.append(s);
+                }
+                TimeTaken tt = trans.start("Call AAF Service", Env.REMOTE);
+                try {
+                    Future<String> fs = c.read(pathinfo.toString(), "application/Perms+json;charset=utf-8;version=2.0");
+                    if(fs.get(timeout)) {
+                        return Result.ok(fs.body());
+                    } else if(fs.code()==404) {
+                        return Result.err(Result.ERR_NotFound,fs.body());
+                    } else {
+                        return Result.err(Result.ERR_Backend,"Error accessing AAF %s: %s",Integer.toString(fs.code()),fs.body());
+                    }
+                } finally {
+                    tt.done();
+                }
+            }
+        };
+    }
+    public static JSONPermLoader direct(final Question question) {
+        return new JSONPermLoader() {
+            public Result<String> loadJSONPerms(AuthzTrans trans, String user, Set<String> scopes) throws APIException, CadiException {
+                TimeTaken tt = trans.start("Cached DB Perm lookup", Env.SUB);
+                Result<List<PermDAO.Data>> pd;
+                try {
+                    pd = question.getPermsByUser(trans, user, false);
+                } finally {
+                    tt.done();
+                }
+                if(pd.notOK()) {
+                    return Result.err(pd);
+                }
+                // Since we know it is 
+                StringBuilder sb = new StringBuilder("{\"perm\":[");
+                boolean first = true;
+                for(PermDAO.Data d : pd.value) {
+                    if(scopes.contains(d.ns)) {
+                        if(first) {
+                            first = false;
+                        } else {
+                            sb.append(',');
+                        }
+                        sb.append("{\"ns\":\"");
+                        sb.append(d.ns);
+                        sb.append("\",\"type\":\"");
+                        sb.append(d.type);
+                        sb.append("\",\"instance\":\"");
+                        sb.append(d.instance);
+                        sb.append("\",\"action\":\"");
+                        sb.append(d.action);
+                        sb.append("\"}");
+                    }
+                }
+                sb.append("]}");
+                return Result.ok(sb.toString());
+            }
+        };
+    }
 
 }

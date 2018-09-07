@@ -32,5 +32,5 @@ import javax.servlet.Servlet;
 @Target({TYPE})
 @Retention(RUNTIME)
 public @interface AUTHZ {
-	Class<? extends Servlet> value();
+    Class<? extends Servlet> value();
 }

@@ -51,9 +51,9 @@ import org.onap.aaf.misc.env.LifeCycle;
  *
  */
 public class NullLifeCycle implements LifeCycle {
-	public void servicePrestart(Env env) throws APIException {}
-	public void threadPrestart(Env env) throws APIException {}
-	public void refresh(Env env) throws APIException {}
-	public void threadDestroy(Env env) throws APIException {}
-	public void serviceDestroy(Env env) throws APIException {}
+    public void servicePrestart(Env env) throws APIException {}
+    public void threadPrestart(Env env) throws APIException {}
+    public void refresh(Env env) throws APIException {}
+    public void threadDestroy(Env env) throws APIException {}
+    public void serviceDestroy(Env env) throws APIException {}
 }

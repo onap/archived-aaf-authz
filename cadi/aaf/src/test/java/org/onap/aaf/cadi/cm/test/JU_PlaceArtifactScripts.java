@@ -38,55 +38,55 @@ import certman.v1_0.CertInfo;
 
 public class JU_PlaceArtifactScripts {
 
-	@Mock private Trans transMock;
-	@Mock private CertInfo certInfoMock;
-	@Mock private Artifact artiMock;
+    @Mock private Trans transMock;
+    @Mock private CertInfo certInfoMock;
+    @Mock private Artifact artiMock;
 
-	private static final String dirName = "src/test/resources/artifacts";
-	private static final String nsName = "org.onap.test";
-	private static final String luggagePassword = "12345";  // That's the stupidest combination I've ever heard in my life
-	private static final String notification = "A notification";
-	private static final String osUser = "user";  // That's the stupidest combination I've ever heard in my life
+    private static final String dirName = "src/test/resources/artifacts";
+    private static final String nsName = "org.onap.test";
+    private static final String luggagePassword = "12345";  // That's the stupidest combination I've ever heard in my life
+    private static final String notification = "A notification";
+    private static final String osUser = "user";  // That's the stupidest combination I've ever heard in my life
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
 
-		when(artiMock.getDir()).thenReturn(dirName);
-		when(artiMock.getNs()).thenReturn(nsName);
-		when(artiMock.getNotification()).thenReturn(notification);
-		when(artiMock.getOsUser()).thenReturn(osUser);
+        when(artiMock.getDir()).thenReturn(dirName);
+        when(artiMock.getNs()).thenReturn(nsName);
+        when(artiMock.getNotification()).thenReturn(notification);
+        when(artiMock.getOsUser()).thenReturn(osUser);
 
-		when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
-	}
+        when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
+    }
 
-	@AfterClass
-	public static void tearDownOnce() {
-		cleanup();
-		PlaceArtifactScripts.clear();
-	}
+    @AfterClass
+    public static void tearDownOnce() {
+        cleanup();
+        PlaceArtifactScripts.clear();
+    }
 
-	@Test
-	public void test() throws CadiException {
-		PlaceArtifactScripts placer = new PlaceArtifactScripts();
-		placer.place(transMock, certInfoMock, artiMock, "machine");
+    @Test
+    public void test() throws CadiException {
+        PlaceArtifactScripts placer = new PlaceArtifactScripts();
+        placer.place(transMock, certInfoMock, artiMock, "machine");
 
-		assertThat(new File(dirName + '/' + nsName + ".crontab.sh").exists(), is(true));
-		assertThat(new File(dirName + '/' + nsName + ".check.sh").exists(), is(true));
+        assertThat(new File(dirName + '/' + nsName + ".crontab.sh").exists(), is(true));
+        assertThat(new File(dirName + '/' + nsName + ".check.sh").exists(), is(true));
 
-		//coverage
-		when(artiMock.getNotification()).thenReturn("mailto: " + notification);
-		placer.place(transMock, certInfoMock, artiMock, "machine");
-	}
+        //coverage
+        when(artiMock.getNotification()).thenReturn("mailto: " + notification);
+        placer.place(transMock, certInfoMock, artiMock, "machine");
+    }
 
-	private static void cleanup() {
-		File dir = new File(dirName);
-		if (dir.exists()) {
-			for (File f : dir.listFiles()) {
-				f.delete();
-			}
-			dir.delete();
-		}
-	}
+    private static void cleanup() {
+        File dir = new File(dirName);
+        if (dir.exists()) {
+            for (File f : dir.listFiles()) {
+                f.delete();
+            }
+            dir.delete();
+        }
+    }
 
 }

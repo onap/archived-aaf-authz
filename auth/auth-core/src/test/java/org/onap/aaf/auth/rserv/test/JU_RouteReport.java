@@ -30,11 +30,11 @@ import org.junit.Test;
 
 public class JU_RouteReport {
 
-	@Test
-	public void test() {
-		RouteReport report;
-		report = new RouteReport();
-		Assert.assertNotNull(report);
-	}
+    @Test
+    public void test() {
+        RouteReport report;
+        report = new RouteReport();
+        Assert.assertNotNull(report);
+    }
 
 }

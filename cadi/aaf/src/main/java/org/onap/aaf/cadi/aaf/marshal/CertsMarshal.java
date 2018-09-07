@@ -31,14 +31,14 @@ import aaf.v2_0.Certs.Cert;
 
 public class CertsMarshal extends ObjMarshal<Certs> {
 
-	public CertsMarshal() {
-		add(new ObjArray<Certs,Cert>("cert",new CertMarshal()) {
-			@Override
-			protected List<Cert> data(Certs t) {
-				return t.getCert();
-			}
-		});	
-	}
+    public CertsMarshal() {
+        add(new ObjArray<Certs,Cert>("cert",new CertMarshal()) {
+            @Override
+            protected List<Cert> data(Certs t) {
+                return t.getCert();
+            }
+        });    
+    }
 
 
 }

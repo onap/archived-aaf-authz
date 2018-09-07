@@ -28,24 +28,24 @@ import org.junit.*;
 import org.onap.aaf.cadi.client.Result;
 
 public class JU_Result {
-	
-	private static final int OK = 200;
-	private static final int NOT_FOUND = 404;
+    
+    private static final int OK = 200;
+    private static final int NOT_FOUND = 404;
 
-	@Test
-	public void test() {
-		Result<Integer> result;
-		result = Result.ok(OK, 10);
-		assertThat(result.toString(), is("Code: 200"));
-		assertThat(result.isOK(), is(true));
-		
-		result = Result.err(NOT_FOUND, "File not found");
-		assertThat(result.toString(), is("Code: 404 = File not found"));
-		assertThat(result.isOK(), is(false));
+    @Test
+    public void test() {
+        Result<Integer> result;
+        result = Result.ok(OK, 10);
+        assertThat(result.toString(), is("Code: 200"));
+        assertThat(result.isOK(), is(true));
+        
+        result = Result.err(NOT_FOUND, "File not found");
+        assertThat(result.toString(), is("Code: 404 = File not found"));
+        assertThat(result.isOK(), is(false));
 
-		result = Result.err(result);
-		assertThat(result.toString(), is("Code: 404 = File not found"));
-		assertThat(result.isOK(), is(false));
-	}
-	
+        result = Result.err(result);
+        assertThat(result.toString(), is("Code: 404 = File not found"));
+        assertThat(result.isOK(), is(false));
+    }
+    
 }

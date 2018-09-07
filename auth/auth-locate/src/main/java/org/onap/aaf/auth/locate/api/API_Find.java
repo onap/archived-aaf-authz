@@ -44,89 +44,89 @@ import org.onap.aaf.misc.env.util.Split;
  *
  */
 public class API_Find {
-	/**
-	 * Normal Init level APIs
-	 * 
-	 * @param gwAPI
-	 * @param facade
-	 * @throws Exception
-	 */
-	public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
-		////////
-		// Overall APIs
-		///////
-		
-		final LocateCode locationInfo = new LocateCode(facade,"Location Information", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				String service = pathParam(req, ":service");
-				String version = pathParam(req, ":version");
-				String other = pathParam(req, ":other");
-				if(service.indexOf(':')>=0) {
-					String split[] = Split.split(':', service);
-					switch(split.length) {
-						case 3:
-							other=split[2];
-						case 2:
-							version = split[1];
-							service = split[0];
-					}
-				}
-				service=Define.varReplace(service);
-				Result<Void> r = context.getEndpoints(trans,resp,
-					req.getPathInfo(), // use as Key
-					service,version,other					
-				);
-				switch(r.status) {
-					case OK:
-						resp.setStatus(HttpStatus.OK_200);
-						break;
-					default:
-						context.error(trans,resp,r);
-				}
-			}
-		};
+    /**
+     * Normal Init level APIs
+     * 
+     * @param gwAPI
+     * @param facade
+     * @throws Exception
+     */
+    public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
+        ////////
+        // Overall APIs
+        ///////
+        
+        final LocateCode locationInfo = new LocateCode(facade,"Location Information", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                String service = pathParam(req, ":service");
+                String version = pathParam(req, ":version");
+                String other = pathParam(req, ":other");
+                if(service.indexOf(':')>=0) {
+                    String split[] = Split.split(':', service);
+                    switch(split.length) {
+                        case 3:
+                            other=split[2];
+                        case 2:
+                            version = split[1];
+                            service = split[0];
+                    }
+                }
+                service=Define.varReplace(service);
+                Result<Void> r = context.getEndpoints(trans,resp,
+                    req.getPathInfo(), // use as Key
+                    service,version,other                    
+                );
+                switch(r.status) {
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
+                        break;
+                    default:
+                        context.error(trans,resp,r);
+                }
+            }
+        };
 
-		gwAPI.route(HttpMethods.GET,"/locate/:service/:version",API.ENDPOINTS,locationInfo);
-		gwAPI.route(HttpMethods.GET,"/locate/:service/:version/:other",API.ENDPOINTS,locationInfo);
-		gwAPI.route(HttpMethods.GET,"/locate/:service",API.ENDPOINTS,locationInfo);
-		
-		
-		gwAPI.route(HttpMethods.GET,"/download/agent", API.VOID, new LocateCode(facade,"Redirect to latest Agent",false) {
-			@Override
-			public void handle(AuthzTrans arg0, HttpServletRequest arg1, HttpServletResponse arg2) throws Exception {
-			}
-		});
+        gwAPI.route(HttpMethods.GET,"/locate/:service/:version",API.ENDPOINTS,locationInfo);
+        gwAPI.route(HttpMethods.GET,"/locate/:service/:version/:other",API.ENDPOINTS,locationInfo);
+        gwAPI.route(HttpMethods.GET,"/locate/:service",API.ENDPOINTS,locationInfo);
+        
+        
+        gwAPI.route(HttpMethods.GET,"/download/agent", API.VOID, new LocateCode(facade,"Redirect to latest Agent",false) {
+            @Override
+            public void handle(AuthzTrans arg0, HttpServletRequest arg1, HttpServletResponse arg2) throws Exception {
+            }
+        });
 
-		gwAPI.route(HttpMethods.PUT,"/registration",API.MGMT_ENDPOINTS,new LocateCode(facade,"Put Location Information", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.putMgmtEndpoints(trans,req,resp);
-				switch(r.status) {
-					case OK:
-						resp.setStatus(HttpStatus.OK_200);
-						break;
-					default:
-						context.error(trans,resp,r);
-				}
+        gwAPI.route(HttpMethods.PUT,"/registration",API.MGMT_ENDPOINTS,new LocateCode(facade,"Put Location Information", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.putMgmtEndpoints(trans,req,resp);
+                switch(r.status) {
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
+                        break;
+                    default:
+                        context.error(trans,resp,r);
+                }
 
-			}
-		});
+            }
+        });
 
-		gwAPI.route(HttpMethods.DELETE,"/registration",API.MGMT_ENDPOINTS,new LocateCode(facade,"Remove Location Information", true) {
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				Result<Void> r = context.removeMgmtEndpoints(trans,req,resp);
-				switch(r.status) {
-					case OK:
-						resp.setStatus(HttpStatus.OK_200);
-						break;
-					default:
-						context.error(trans,resp,r);
-				}
+        gwAPI.route(HttpMethods.DELETE,"/registration",API.MGMT_ENDPOINTS,new LocateCode(facade,"Remove Location Information", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                Result<Void> r = context.removeMgmtEndpoints(trans,req,resp);
+                switch(r.status) {
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
+                        break;
+                    default:
+                        context.error(trans,resp,r);
+                }
 
-			}
-		});
+            }
+        });
 
-	}
+    }
 }

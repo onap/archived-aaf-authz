@@ -34,39 +34,39 @@ import junit.framework.Assert;
 
 public class JU_Mask {
 
-	@Test
-	public void test() throws Exception {
-//		InetAddress ia = InetAddress.getLocalHost();
-		InetAddress ia = InetAddress.getByName("192.168.0.0");
-		NetMask mask = new NetMask(ia.getAddress());
-		assertTrue(mask.isInNet(ia.getAddress()));
-		
-		mask = new NetMask("192.168.1/24");
-		assertTrue(mask.isInNet("192.168.1.20"));
-		assertTrue(mask.isInNet("192.168.1.255"));
-		assertFalse(mask.isInNet("192.168.2.20"));
-		
-		mask = new NetMask("192.168.1/31");
-		assertFalse(mask.isInNet("192.168.2.20"));
-		assertFalse(mask.isInNet("192.168.1.20"));
-		assertTrue(mask.isInNet("192.168.1.1"));
-		assertFalse(mask.isInNet("192.168.1.2"));
+    @Test
+    public void test() throws Exception {
+//        InetAddress ia = InetAddress.getLocalHost();
+        InetAddress ia = InetAddress.getByName("192.168.0.0");
+        NetMask mask = new NetMask(ia.getAddress());
+        assertTrue(mask.isInNet(ia.getAddress()));
+        
+        mask = new NetMask("192.168.1/24");
+        assertTrue(mask.isInNet("192.168.1.20"));
+        assertTrue(mask.isInNet("192.168.1.255"));
+        assertFalse(mask.isInNet("192.168.2.20"));
+        
+        mask = new NetMask("192.168.1/31");
+        assertFalse(mask.isInNet("192.168.2.20"));
+        assertFalse(mask.isInNet("192.168.1.20"));
+        assertTrue(mask.isInNet("192.168.1.1"));
+        assertFalse(mask.isInNet("192.168.1.2"));
 
-		mask = new NetMask("192/8");
-		assertTrue(mask.isInNet("192.168.1.1"));
-		assertTrue(mask.isInNet("192.1.1.1"));
-		assertFalse(mask.isInNet("193.168.1.1"));
-		
-		mask = new NetMask("/0");
-		assertTrue(mask.isInNet("193.168.1.1"));
-		
-		String msg = "Should throw " + MaskFormatException.class.getSimpleName();
-		try {
-			mask = new NetMask("256.256.256.256");
-			Assert.assertTrue(msg,false);
-		} catch (MaskFormatException e) {
-			Assert.assertTrue(msg,true);
-		}
-	}
+        mask = new NetMask("192/8");
+        assertTrue(mask.isInNet("192.168.1.1"));
+        assertTrue(mask.isInNet("192.1.1.1"));
+        assertFalse(mask.isInNet("193.168.1.1"));
+        
+        mask = new NetMask("/0");
+        assertTrue(mask.isInNet("193.168.1.1"));
+        
+        String msg = "Should throw " + MaskFormatException.class.getSimpleName();
+        try {
+            mask = new NetMask("256.256.256.256");
+            Assert.assertTrue(msg,false);
+        } catch (MaskFormatException e) {
+            Assert.assertTrue(msg,true);
+        }
+    }
 
 }

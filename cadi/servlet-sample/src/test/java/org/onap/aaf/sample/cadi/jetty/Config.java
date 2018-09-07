@@ -31,15 +31,15 @@ import org.onap.aaf.cadi.filter.CadiFilter;
 
 
 public class Config {
-	/**
-	 * Method to make jetty configurations (others?) with more complex function possible
-	 * 
-	 * @param sc
-	 */
-	public static final void addToContext(WebAppContext sc, String propFile) {
-		sc.addFilter(CadiFilter.class,"/*",EnumSet.of(DispatcherType.REQUEST));
-		sc.setInitParameter(org.onap.aaf.cadi.config.Config.CADI_PROP_FILES, propFile);
-	}
-	
+    /**
+     * Method to make jetty configurations (others?) with more complex function possible
+     * 
+     * @param sc
+     */
+    public static final void addToContext(WebAppContext sc, String propFile) {
+        sc.addFilter(CadiFilter.class,"/*",EnumSet.of(DispatcherType.REQUEST));
+        sc.setInitParameter(org.onap.aaf.cadi.config.Config.CADI_PROP_FILES, propFile);
+    }
+    
 
 }

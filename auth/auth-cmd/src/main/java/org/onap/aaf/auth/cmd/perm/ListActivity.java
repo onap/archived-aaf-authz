@@ -39,38 +39,38 @@ import aaf.v2_0.History;
  *
  */
 public class ListActivity extends Cmd {
-	private static final String HEADER = "List Activity of Permission";
-	
-	public ListActivity(List parent) {
-		super(parent,"activity", 
-				new Param("type",true));
-	}
+    private static final String HEADER = "List Activity of Permission";
+    
+    public ListActivity(List parent) {
+        super(parent,"activity", 
+                new Param("type",true));
+    }
 
-	@Override
-	public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
-		return same(new Retryable<Integer>() {
-			@Override
-			public Integer code(Rcli<?> client) throws CadiException, APIException {
-				int idx = index;
-				String type = args[idx++];
-				Future<History> fp = client.read(
-						"/authz/hist/perm/"+type, 
-						getDF(History.class)
-						);
-				if(fp.get(AAFcli.timeout())) {
-					activity(fp.value, HEADER + " [ " + type + " ]");
-				} else {
-					error(fp);
-				}
-				return fp.code();
-			}
-		});
-	}
+    @Override
+    public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
+        return same(new Retryable<Integer>() {
+            @Override
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
+                int idx = index;
+                String type = args[idx++];
+                Future<History> fp = client.read(
+                        "/authz/hist/perm/"+type, 
+                        getDF(History.class)
+                        );
+                if(fp.get(AAFcli.timeout())) {
+                    activity(fp.value, HEADER + " [ " + type + " ]");
+                } else {
+                    error(fp);
+                }
+                return fp.code();
+            }
+        });
+    }
 
-	@Override
-	public void detailedHelp(int indent, StringBuilder sb) {
-		detailLine(sb,indent,HEADER);
-		api(sb,indent,HttpMethods.GET,"authz/hist/perm/<type>",History.class,true);
-	}
+    @Override
+    public void detailedHelp(int indent, StringBuilder sb) {
+        detailLine(sb,indent,HEADER);
+        api(sb,indent,HttpMethods.GET,"authz/hist/perm/<type>",History.class,true);
+    }
 
 }

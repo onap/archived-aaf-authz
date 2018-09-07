@@ -42,67 +42,67 @@ import com.datastax.driver.core.Cluster;
 
 public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Future> {
 
-	public URFutureApproveExec(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans,cluster, dryRun);
-	}
-	
-	public URFutureApproveExec(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public URFutureApproveExec(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans,cluster, dryRun);
+    }
+    
+    public URFutureApproveExec(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<OP_STATUS> exec(AuthzTrans trans, List<Approval> app, Future future) {
-		if(dryRun) {
-			return Result.err(Result.ERR_ActionNotCompleted,"Not Executed");
-		} else {
-			// Save on Lookups
-			final List<ApprovalDAO.Data> apprs = new ArrayList<>();
-			final List<UserRoleDAO.Data> urs = new ArrayList<>();
-			for(Approval a : app) {
-				apprs.add(a.add);
-				UserRole ur = UserRole.get(a.add.user, future.role);
-				if(ur!=null) {
-					urs.add(ur.urdd());
-				}
-			}
-			Result<OP_STATUS> rv = f.performFutureOp(trans, FUTURE_OP.A, future.fdd,
-				new Lookup<List<ApprovalDAO.Data>>() {
-					@Override
-					public List<Data> get(AuthzTrans trans, Object ... noop) {
-						return apprs;
-					}
-				},
-				new Lookup<UserRoleDAO.Data>() {
-					@Override
-					public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
-						List<UserRole> lur = UserRole.getByUser().get(keys[0]);
-						if(lur!=null) {
-							for(UserRole ur : lur) {
-								if(ur.role().equals(keys[1])) {
-									return ur.urdd();
-								}
-							}
-						}
-						return null;
-					}
-				});
-			if(rv.isOK()) {
-				switch(rv.value) {
-					case D:
-						trans.info().printf("Denied %s on %s", future.memo(),future.fdd.target);
-						break;
-					case E:
-						trans.info().printf("Completed %s on %s", future.memo(),future.fdd.target);
-						break;
-					case L:
-						trans.info().printf("Future %s on %s has lapsed", future.memo(),future.fdd.target);
-						break;
-					default:
-				}
-			} else {
-				trans.error().log("Error completing",future.memo(),rv.errorString());
-			}
-			return rv;
-		}
-	}
+    @Override
+    public Result<OP_STATUS> exec(AuthzTrans trans, List<Approval> app, Future future) {
+        if(dryRun) {
+            return Result.err(Result.ERR_ActionNotCompleted,"Not Executed");
+        } else {
+            // Save on Lookups
+            final List<ApprovalDAO.Data> apprs = new ArrayList<>();
+            final List<UserRoleDAO.Data> urs = new ArrayList<>();
+            for(Approval a : app) {
+                apprs.add(a.add);
+                UserRole ur = UserRole.get(a.add.user, future.role);
+                if(ur!=null) {
+                    urs.add(ur.urdd());
+                }
+            }
+            Result<OP_STATUS> rv = f.performFutureOp(trans, FUTURE_OP.A, future.fdd,
+                new Lookup<List<ApprovalDAO.Data>>() {
+                    @Override
+                    public List<Data> get(AuthzTrans trans, Object ... noop) {
+                        return apprs;
+                    }
+                },
+                new Lookup<UserRoleDAO.Data>() {
+                    @Override
+                    public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
+                        List<UserRole> lur = UserRole.getByUser().get(keys[0]);
+                        if(lur!=null) {
+                            for(UserRole ur : lur) {
+                                if(ur.role().equals(keys[1])) {
+                                    return ur.urdd();
+                                }
+                            }
+                        }
+                        return null;
+                    }
+                });
+            if(rv.isOK()) {
+                switch(rv.value) {
+                    case D:
+                        trans.info().printf("Denied %s on %s", future.memo(),future.fdd.target);
+                        break;
+                    case E:
+                        trans.info().printf("Completed %s on %s", future.memo(),future.fdd.target);
+                        break;
+                    case L:
+                        trans.info().printf("Future %s on %s has lapsed", future.memo(),future.fdd.target);
+                        break;
+                    default:
+                }
+            } else {
+                trans.error().log("Error completing",future.memo(),rv.errorString());
+            }
+            return rv;
+        }
+    }
 }

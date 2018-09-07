@@ -56,60 +56,60 @@ import org.onap.aaf.misc.env.APIException;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Create {
 
-	@Mock private SecuritySetter<HttpURLConnection> ssMock;
-	@Mock private Locator<URI> locMock;
-	@Mock private Writer wrtMock;
-	@Mock private Rcli<HttpURLConnection> clientMock;
-	@Mock private Future<String> futureMock;
-		
-	private static Create create;
+    @Mock private SecuritySetter<HttpURLConnection> ssMock;
+    @Mock private Locator<URI> locMock;
+    @Mock private Writer wrtMock;
+    @Mock private Rcli<HttpURLConnection> clientMock;
+    @Mock private Future<String> futureMock;
+        
+    private static Create create;
 
-	private NS ns;
-	private PropAccess access;
-	private HMangrStub hman;	
-	private AuthzEnv aEnv;
-	private AAFcli aafcli;
-	
-	@Before
-	public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
-		MockitoAnnotations.initMocks(this);
-		
-		when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
-		when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
-		when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
+    private NS ns;
+    private PropAccess access;
+    private HMangrStub hman;    
+    private AuthzEnv aEnv;
+    private AAFcli aafcli;
+    
+    @Before
+    public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
+        MockitoAnnotations.initMocks(this);
+        
+        when(clientMock.create(any(), any(), any(String.class))).thenReturn(futureMock);
+        when(clientMock.delete(any(), any(), any(String.class))).thenReturn(futureMock);
+        when(clientMock.update(any(), any(), any(String.class))).thenReturn(futureMock);
 
-		hman = new HMangrStub(access, locMock, clientMock);
-		access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-		aEnv = new AuthzEnv();
-		aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
-		
-		ns = new NS(aafcli);
+        hman = new HMangrStub(access, locMock, clientMock);
+        access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
+        aEnv = new AuthzEnv();
+        aafcli = new AAFcli(access, aEnv, wrtMock, hman, null, ssMock);
+        
+        ns = new NS(aafcli);
 
-		create = new Create(ns);
-	}
-	
-	@Test
-	public void testError() throws APIException, LocatorException, CadiException, URISyntaxException {
-		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-		create._exec(4, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
-	
-	@Test
-	public void testSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(futureMock.code()).thenReturn(202);
-		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
+        create = new Create(ns);
+    }
+    
+    @Test
+    public void testError() throws APIException, LocatorException, CadiException, URISyntaxException {
+        create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+        create._exec(4, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+    }
+    
+    @Test
+    public void testSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
+        when(futureMock.code()).thenReturn(202);
+        create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+    }
 
-	@Test
-	public void testSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
-		when(futureMock.get(any(Integer.class))).thenReturn(true);
-		create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-	}
-	
-	@Test
-	public void testDetailedHelp() {
-		StringBuilder sb = new StringBuilder();
-		create.detailedHelp(0, sb);
-	}
-	
+    @Test
+    public void testSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
+        when(futureMock.get(any(Integer.class))).thenReturn(true);
+        create._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+    }
+    
+    @Test
+    public void testDetailedHelp() {
+        StringBuilder sb = new StringBuilder();
+        create.detailedHelp(0, sb);
+    }
+    
 }

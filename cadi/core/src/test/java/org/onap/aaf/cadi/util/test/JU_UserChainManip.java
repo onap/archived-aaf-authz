@@ -29,39 +29,39 @@ import org.onap.aaf.cadi.util.UserChainManip;
 
 public class JU_UserChainManip {
 
-	@Test
-	public void build(){
-		UserChain.Protocol baseAuth=UserChain.Protocol.BasicAuth;
-		StringBuilder sb = UserChainManip.build(new StringBuilder(""), "app", "id", baseAuth, true);
-		assertThat(sb.toString(), is("app:id:BasicAuth:AS"));
+    @Test
+    public void build(){
+        UserChain.Protocol baseAuth=UserChain.Protocol.BasicAuth;
+        StringBuilder sb = UserChainManip.build(new StringBuilder(""), "app", "id", baseAuth, true);
+        assertThat(sb.toString(), is("app:id:BasicAuth:AS"));
 
-		// for coverage
-		sb = UserChainManip.build(sb, "app", "id", baseAuth, true);
-		assertThat(sb.toString(), is("app:id:BasicAuth:AS,app:id:BasicAuth"));
+        // for coverage
+        sb = UserChainManip.build(sb, "app", "id", baseAuth, true);
+        assertThat(sb.toString(), is("app:id:BasicAuth:AS,app:id:BasicAuth"));
 
-		sb = UserChainManip.build(new StringBuilder(""), "app", "id", baseAuth, false);
-		assertThat(sb.toString(), is("app:id:BasicAuth"));
-	}
+        sb = UserChainManip.build(new StringBuilder(""), "app", "id", baseAuth, false);
+        assertThat(sb.toString(), is("app:id:BasicAuth"));
+    }
 
-	@Test
-	public void idToNSTEST() {
-		assertThat(UserChainManip.idToNS(null), is(""));
-		assertThat(UserChainManip.idToNS(""), is(""));
-		assertThat(UserChainManip.idToNS("something"), is(""));
-		assertThat(UserChainManip.idToNS("something@@"), is(""));
-		assertThat(UserChainManip.idToNS("something@@."), is(""));
-		assertThat(UserChainManip.idToNS("something@com"), is("com"));
-		assertThat(UserChainManip.idToNS("something@random.com"), is("com.random"));
-		assertThat(UserChainManip.idToNS("@random.com"), is("com.random"));
-		assertThat(UserChainManip.idToNS("something@random.com."), is("com.random"));
-		assertThat(UserChainManip.idToNS("something@..random...com..."), is("com.random"));
-		assertThat(UserChainManip.idToNS("something@this.random.com"), is("com.random.this"));
-	}
+    @Test
+    public void idToNSTEST() {
+        assertThat(UserChainManip.idToNS(null), is(""));
+        assertThat(UserChainManip.idToNS(""), is(""));
+        assertThat(UserChainManip.idToNS("something"), is(""));
+        assertThat(UserChainManip.idToNS("something@@"), is(""));
+        assertThat(UserChainManip.idToNS("something@@."), is(""));
+        assertThat(UserChainManip.idToNS("something@com"), is("com"));
+        assertThat(UserChainManip.idToNS("something@random.com"), is("com.random"));
+        assertThat(UserChainManip.idToNS("@random.com"), is("com.random"));
+        assertThat(UserChainManip.idToNS("something@random.com."), is("com.random"));
+        assertThat(UserChainManip.idToNS("something@..random...com..."), is("com.random"));
+        assertThat(UserChainManip.idToNS("something@this.random.com"), is("com.random.this"));
+    }
 
-	@Test
-	public void coverageTest() {
-		@SuppressWarnings("unused")
-		UserChainManip ucm = new UserChainManip();
-	}
+    @Test
+    public void coverageTest() {
+        @SuppressWarnings("unused")
+        UserChainManip ucm = new UserChainManip();
+    }
 
 }

@@ -31,28 +31,28 @@ import org.onap.aaf.misc.env.APIException;
 import com.datastax.driver.core.Cluster;
 
 public class NSACreate extends ActionDAO<NsAttrib,Void,String> {
-	public NSACreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-		super(trans, cluster,dryRun);
-	}
-	
-	public NSACreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
-		super(trans, adao);
-	}
+    public NSACreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+        super(trans, cluster,dryRun);
+    }
+    
+    public NSACreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+        super(trans, adao);
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, NsAttrib nsa, String text) {
-		if(dryRun) {
-			trans.info().printf("Would Create %s Attrib '%s=%s' in %s",text,nsa.key,nsa.value,nsa.ns);
-			return Result.ok();
-		} else {
-			Result<Void> rv = q.nsDAO.dao().attribAdd(trans, nsa.ns, nsa.key, nsa.value);
-			if(rv.isOK()) {
-				trans.info().printf("%s - Created Attrib '%s=%s' in %s",text,nsa.key,nsa.value,nsa.ns);
-			} else {
-				trans.error().printf("Error Creating Attrib '%s=%s' in %s - %s",nsa.key,nsa.value,nsa.ns,rv.details);
-			}
-			return rv;
-		}
-	}
-	
+    @Override
+    public Result<Void> exec(AuthzTrans trans, NsAttrib nsa, String text) {
+        if(dryRun) {
+            trans.info().printf("Would Create %s Attrib '%s=%s' in %s",text,nsa.key,nsa.value,nsa.ns);
+            return Result.ok();
+        } else {
+            Result<Void> rv = q.nsDAO.dao().attribAdd(trans, nsa.ns, nsa.key, nsa.value);
+            if(rv.isOK()) {
+                trans.info().printf("%s - Created Attrib '%s=%s' in %s",text,nsa.key,nsa.value,nsa.ns);
+            } else {
+                trans.error().printf("Error Creating Attrib '%s=%s' in %s - %s",nsa.key,nsa.value,nsa.ns,rv.details);
+            }
+            return rv;
+        }
+    }
+    
 }

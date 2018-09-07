@@ -25,39 +25,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CacheChange<T extends CacheChange.Data> {
-	private List<T> removed;
-	
-	public CacheChange() {
-		removed = new ArrayList<>();
-	}
-	
-	interface Data {
-		public abstract void expunge();
-	}
-	
-	public final void delayedDelete(T t) {
-		removed.add(t);
-	}
-	
-	public final List<T> getRemoved() {
-		return removed;
-	}
-	
-	public final void resetLocalData() {
-		if(removed==null || removed.isEmpty()) {
-			return;
-		}
-		for(T t : removed) {
-			t.expunge();
-		}
-		removed.clear();
-	}
+    private List<T> removed;
+    
+    public CacheChange() {
+        removed = new ArrayList<>();
+    }
+    
+    interface Data {
+        public abstract void expunge();
+    }
+    
+    public final void delayedDelete(T t) {
+        removed.add(t);
+    }
+    
+    public final List<T> getRemoved() {
+        return removed;
+    }
+    
+    public final void resetLocalData() {
+        if(removed==null || removed.isEmpty()) {
+            return;
+        }
+        for(T t : removed) {
+            t.expunge();
+        }
+        removed.clear();
+    }
 
-	public int cacheSize() {
-		return removed.size();
-	}
+    public int cacheSize() {
+        return removed.size();
+    }
 
-	public boolean contains(T t) {
-		return removed.contains(t);
-	}
+    public boolean contains(T t) {
+        return removed.contains(t);
+    }
 }

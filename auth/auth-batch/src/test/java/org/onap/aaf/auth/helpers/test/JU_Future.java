@@ -39,70 +39,70 @@ import java.util.UUID;
 import org.junit.Test;
 
 public class JU_Future {
-	
-	Future future;
-	Date start;
-	Date expires;
-	ByteBuffer bBuff;
-	
-	@Before
-	public void setUp() {
-		UUID id = new UUID(0, 0);
-		start = new Date();
-		expires = new Date();
-		future = new Future(id, "Re-Validate Ownership for AAF Namespace '\'test\'test","target",start, expires, bBuff);
-	}
+    
+    Future future;
+    Date start;
+    Date expires;
+    ByteBuffer bBuff;
+    
+    @Before
+    public void setUp() {
+        UUID id = new UUID(0, 0);
+        start = new Date();
+        expires = new Date();
+        future = new Future(id, "Re-Validate Ownership for AAF Namespace '\'test\'test","target",start, expires, bBuff);
+    }
 
-	@Test
-	public void testId() {
-		Assert.assertTrue(future.id() instanceof UUID);
-	}
-	
-	@Test
-	public void testMemo() {
-		Assert.assertEquals("Re-Validate Ownership for AAF Namespace '\'test\'test", future.memo());
-	}
-	
-	@Test
-	public void testStart() {
-		Assert.assertTrue(future.start() instanceof Date);
-	}
-	
-	@Test
-	public void testExpires() {
-		Assert.assertTrue(future.expires() instanceof Date);
-	}
-	
-	@Test
-	public void testTarget() {
-		Assert.assertEquals("target",future.target());
-	}
-	
-	@Test
-	public void testExpunge() {
-		future.expunge();
-	}
-	
-	@Test
-	public void testCompareTo() {
-		future.compareTo(null);
-		future.compareTo(future);
-	}
-	
-	@Test
-	public void testResetLocalData() {
-		future.resetLocalData();
-	}
-	
-	@Test
-	public void testSizeForDeletion() {
-		Assert.assertEquals(0, future.sizeForDeletion());
-	}
-	
-	@Test
-	public void testPendingDelete() {
-		Assert.assertEquals(false, future.pendingDelete(future));
-	}
-	
+    @Test
+    public void testId() {
+        Assert.assertTrue(future.id() instanceof UUID);
+    }
+    
+    @Test
+    public void testMemo() {
+        Assert.assertEquals("Re-Validate Ownership for AAF Namespace '\'test\'test", future.memo());
+    }
+    
+    @Test
+    public void testStart() {
+        Assert.assertTrue(future.start() instanceof Date);
+    }
+    
+    @Test
+    public void testExpires() {
+        Assert.assertTrue(future.expires() instanceof Date);
+    }
+    
+    @Test
+    public void testTarget() {
+        Assert.assertEquals("target",future.target());
+    }
+    
+    @Test
+    public void testExpunge() {
+        future.expunge();
+    }
+    
+    @Test
+    public void testCompareTo() {
+        future.compareTo(null);
+        future.compareTo(future);
+    }
+    
+    @Test
+    public void testResetLocalData() {
+        future.resetLocalData();
+    }
+    
+    @Test
+    public void testSizeForDeletion() {
+        Assert.assertEquals(0, future.sizeForDeletion());
+    }
+    
+    @Test
+    public void testPendingDelete() {
+        Assert.assertEquals(false, future.pendingDelete(future));
+    }
+    
 
 }

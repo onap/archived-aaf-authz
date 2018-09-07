@@ -36,31 +36,31 @@ import org.mockito.Mock;
 
 public class JU_XMLGenTest {
 
-	@Mock
-	private Writer writer;
+    @Mock
+    private Writer writer;
 
-	String XML_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
+    String XML_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
 
-	Map<Character, Integer> map = new TreeMap<>();
+    Map<Character, Integer> map = new TreeMap<>();
 
-	@Before
-	public void setUp() throws Exception {
-		writer = mock(Writer.class);
-	}
+    @Before
+    public void setUp() throws Exception {
+        writer = mock(Writer.class);
+    }
 
-	@Test
-	public void testXMLGenWriter() throws IOException {
-		XMLGen xmlGen = new XMLGen(writer);
+    @Test
+    public void testXMLGenWriter() throws IOException {
+        XMLGen xmlGen = new XMLGen(writer);
 
-		xmlGen.xml();
+        xmlGen.xml();
 
-		for (char ch : XML_TAG.toCharArray()) {
-			Integer times = map.get(ch);
-			map.put(ch, (times == null ? 0 : times) + 1);
-		}
+        for (char ch : XML_TAG.toCharArray()) {
+            Integer times = map.get(ch);
+            map.put(ch, (times == null ? 0 : times) + 1);
+        }
 
-		for (char ch : map.keySet()) {
-			verify(writer, times(map.get(ch))).write(ch);
-		}
-	}
+        for (char ch : map.keySet()) {
+            verify(writer, times(map.get(ch))).write(ch);
+        }
+    }
 }

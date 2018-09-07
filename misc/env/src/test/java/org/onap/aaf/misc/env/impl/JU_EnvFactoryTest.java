@@ -31,49 +31,49 @@ import org.onap.aaf.misc.env.TransJAXB;
 
 public class JU_EnvFactoryTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
+    @Before
+    public void setUp() throws Exception {
+    }
 
-	@Test
-	public void testSingleton() {
-		BasicEnv singleton = EnvFactory.singleton();
+    @Test
+    public void testSingleton() {
+        BasicEnv singleton = EnvFactory.singleton();
 
-		assertEquals(EnvFactory.singleton, singleton);
-	}
+        assertEquals(EnvFactory.singleton, singleton);
+    }
 
-	@Test
-	public void testSetSingleton() {
-		String[] str = { "argument1" };
-		BasicEnv env = new BasicEnv("tag", str);
-		EnvFactory.setSingleton(env);
+    @Test
+    public void testSetSingleton() {
+        String[] str = { "argument1" };
+        BasicEnv env = new BasicEnv("tag", str);
+        EnvFactory.setSingleton(env);
 
-		assertEquals(EnvFactory.singleton(), env);
-	}
+        assertEquals(EnvFactory.singleton(), env);
+    }
 
-	@Test
-	public void testNewTrans() {
-		TransJAXB newTrans = EnvFactory.newTrans();
+    @Test
+    public void testNewTrans() {
+        TransJAXB newTrans = EnvFactory.newTrans();
 
-		assertTrue(newTrans instanceof BasicTrans);
-	}
+        assertTrue(newTrans instanceof BasicTrans);
+    }
 
-	@Test
-	public void testNewTransEnvJAXB() {
-		EnvJAXB env = new BasicEnv("");
+    @Test
+    public void testNewTransEnvJAXB() {
+        EnvJAXB env = new BasicEnv("");
 
-		TransJAXB trans = EnvFactory.newTrans(env);
+        TransJAXB trans = EnvFactory.newTrans(env);
 
-		assertTrue(trans instanceof BasicTrans);
-	}
+        assertTrue(trans instanceof BasicTrans);
+    }
 
-	@Test
-	public void testTransCreator() {
-		TransCreate<TransJAXB> transCreator = EnvFactory.transCreator();
+    @Test
+    public void testTransCreator() {
+        TransCreate<TransJAXB> transCreator = EnvFactory.transCreator();
 
-		TransJAXB newTrans = transCreator.newTrans();
+        TransJAXB newTrans = transCreator.newTrans();
 
-		assertTrue(newTrans instanceof BasicTrans);
-	}
+        assertTrue(newTrans instanceof BasicTrans);
+    }
 
 }

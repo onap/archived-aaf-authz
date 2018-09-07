@@ -26,19 +26,19 @@ import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.service.facade.AuthzFacade;
 
 public abstract class Code extends HttpCode<AuthzTrans, AuthzFacade> implements Cloneable {
-	public boolean useJSON;
+    public boolean useJSON;
 
-	public Code(AuthzFacade facade, String description, boolean useJSON, String ... roles) {
-		super(facade, description, roles);
-		this.useJSON = useJSON;
-	}
-	
-	public <D extends Code> D clone(AuthzFacade facade, boolean useJSON) throws Exception {
-		@SuppressWarnings("unchecked")
-		D d = (D)clone();
-		d.useJSON = useJSON;
-		d.context = facade;
-		return d;
-	}
-	
+    public Code(AuthzFacade facade, String description, boolean useJSON, String ... roles) {
+        super(facade, description, roles);
+        this.useJSON = useJSON;
+    }
+    
+    public <D extends Code> D clone(AuthzFacade facade, boolean useJSON) throws Exception {
+        @SuppressWarnings("unchecked")
+        D d = (D)clone();
+        d.useJSON = useJSON;
+        d.context = facade;
+        return d;
+    }
+    
 }

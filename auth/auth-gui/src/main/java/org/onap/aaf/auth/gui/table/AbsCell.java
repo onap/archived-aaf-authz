@@ -24,25 +24,25 @@ package org.onap.aaf.auth.gui.table;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public abstract class AbsCell {
-	public static final AbsCell[] HLINE =    new AbsCell[0];
-	private static final String[] NONE =     new String[0];
-	protected static final String[] CENTER = new String[]{"class=center"};
-	protected static final String[] LEFT =   new String[]{"class=left"};
-	protected static final String[] RIGHT =  new String[]{"class=right"};
+    public static final AbsCell[] HLINE =    new AbsCell[0];
+    private static final String[] NONE =     new String[0];
+    protected static final String[] CENTER = new String[]{"class=center"};
+    protected static final String[] LEFT =   new String[]{"class=left"};
+    protected static final String[] RIGHT =  new String[]{"class=right"};
 
-	/**
-	 * Write Cell Data with HTMLGen generator
-	 * @param hgen
-	 */
-	public abstract void write(HTMLGen hgen);
-	
-	public final static AbsCell Null = new AbsCell() {
-		@Override
-		public void write(final HTMLGen hgen) {
-		}
-	};
-	
-	public String[] attrs() {
-		return NONE;
-	}
+    /**
+     * Write Cell Data with HTMLGen generator
+     * @param hgen
+     */
+    public abstract void write(HTMLGen hgen);
+    
+    public final static AbsCell Null = new AbsCell() {
+        @Override
+        public void write(final HTMLGen hgen) {
+        }
+    };
+    
+    public String[] attrs() {
+        return NONE;
+    }
 }

@@ -34,50 +34,50 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_DefaultOrgWarnings {
 
-	private DefaultOrgWarnings defaultOrgWarningsMock;
-	private DefaultOrgWarnings defaultOrgWarnings;
+    private DefaultOrgWarnings defaultOrgWarningsMock;
+    private DefaultOrgWarnings defaultOrgWarnings;
 
 
-	@Before
-	public void setUp(){
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setUp(){
+        MockitoAnnotations.initMocks(this);
 
-		defaultOrgWarningsMock = PowerMockito.mock(DefaultOrgWarnings.class);
+        defaultOrgWarningsMock = PowerMockito.mock(DefaultOrgWarnings.class);
 
-		defaultOrgWarnings = new DefaultOrgWarnings();
-	}
+        defaultOrgWarnings = new DefaultOrgWarnings();
+    }
 
 
-	@Test
-	public void testApprEmailInterval() {
+    @Test
+    public void testApprEmailInterval() {
 
-		assertEquals(259200000, defaultOrgWarnings.apprEmailInterval() );
-	}
+        assertEquals(259200000, defaultOrgWarnings.apprEmailInterval() );
+    }
 
-	@Test
-	public void testCredEmailInterval() {
-		assertEquals(604800000, defaultOrgWarnings.credEmailInterval());
+    @Test
+    public void testCredEmailInterval() {
+        assertEquals(604800000, defaultOrgWarnings.credEmailInterval());
 
-	}
+    }
 
-	@Test
-	public void testCredExpirationWarning() {
-		assertEquals(2592000000L, defaultOrgWarnings.credExpirationWarning());
-	}
+    @Test
+    public void testCredExpirationWarning() {
+        assertEquals(2592000000L, defaultOrgWarnings.credExpirationWarning());
+    }
 
-	@Test
-	public void testEmailUrgentWarning() {
-		assertEquals(1209600000L, defaultOrgWarnings.emailUrgentWarning());
-	}
+    @Test
+    public void testEmailUrgentWarning() {
+        assertEquals(1209600000L, defaultOrgWarnings.emailUrgentWarning());
+    }
 
-	@Test
-	public void testRoleEmailInterval() {
-		assertEquals(604800000L, defaultOrgWarnings.roleEmailInterval());
-	}
+    @Test
+    public void testRoleEmailInterval() {
+        assertEquals(604800000L, defaultOrgWarnings.roleEmailInterval());
+    }
 
-	@Test
-	public void testRoleExpirationWarning() {
-		assertEquals(2592000000L, defaultOrgWarnings.roleExpirationWarning());
-	}
+    @Test
+    public void testRoleExpirationWarning() {
+        assertEquals(2592000000L, defaultOrgWarnings.roleExpirationWarning());
+    }
 
 }

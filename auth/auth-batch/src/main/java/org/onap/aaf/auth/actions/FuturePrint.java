@@ -27,15 +27,15 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class FuturePrint implements Action<Future,Void,String> {
-	private String info;
+    private String info;
 
-	public FuturePrint(String text) {
-		this.info = text;
-	}
+    public FuturePrint(String text) {
+        this.info = text;
+    }
 
-	@Override
-	public Result<Void> exec(AuthzTrans trans, Future f, String text) {
-		trans.info().log(info,f.id(),f.memo(),"expiring on",Chrono.dateOnlyStamp(f.expires()));
-		return Result.ok();
-	}
+    @Override
+    public Result<Void> exec(AuthzTrans trans, Future f, String text) {
+        trans.info().log(info,f.id(),f.memo(),"expiring on",Chrono.dateOnlyStamp(f.expires()));
+        return Result.ok();
+    }
 }
