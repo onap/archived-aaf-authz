@@ -41,7 +41,8 @@ import org.onap.aaf.misc.env.util.Chrono;
 import com.datastax.driver.core.Cluster;
 
 public class URFutureApprove extends ActionDAO<UserRole, String,String> implements Action<UserRole,String,String>, Key<UserRole> {
-    private final Date start, expires;
+    private final Date start;
+    private final Date expires;
 
     public URFutureApprove(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
         super(trans,cluster, dryRun);
