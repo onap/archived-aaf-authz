@@ -37,7 +37,8 @@ public class CertResp {
     private KeyPair keyPair;
     private String challenge;
     
-    private String privateKey, certString;
+    private String privateKey;
+    private String certString;
     private String[] trustChain;
     private String[] notes;
     
@@ -61,7 +62,7 @@ public class CertResp {
         return certString;
     }
     
-    public String privateString() throws IOException {
+    public String privateString() {
         return privateKey;
     }
     
