@@ -34,9 +34,9 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 public class Deny extends BaseCmd<Mgmt> {
-    private final static String[] options = {"add","del"};
+    private static final String[] options = {"add","del"};
 
-    public Deny(Mgmt mgmt) throws APIException {
+    public Deny(Mgmt mgmt) {
         super(mgmt, "deny");
         cmds.add(new DenySomething(this,"ip","ipv4or6[,ipv4or6]*"));
         cmds.add(new DenySomething(this,"id","identity[,identity]*"));
@@ -54,8 +54,8 @@ public class Deny extends BaseCmd<Mgmt> {
         }
 
         @Override
-        protected int _exec(int _idx, String... args) throws CadiException, APIException, LocatorException {
-                int idx = _idx;
+        protected int _exec(int idxValue, String... args) throws CadiException, APIException, LocatorException {
+                int idx = idxValue;
             String action = args[idx++];
             final int option = whichOption(options, action);
             int rv=409;
@@ -73,20 +73,20 @@ public class Deny extends BaseCmd<Mgmt> {
                         int rv = 409;
                         Future<Void> fp;
                         String resp;
-                        switch(option) {
-                            case 0: 
-                                fp = client.create(path, Void.class);
-                                resp = " added";
-                                break;
-                            default: 
-                                fp = client.delete(path, Void.class);
-                                resp = " deleted";
+                        if(option == 0) {
+                        	fp = client.create(path, Void.class);
+                            resp = " added";
+                        } else {
+                        	fp = client.delete(path, Void.class);
+                            resp = " deleted";
                         }
                         if (fp.get(AAFcli.timeout())) {
                             pw().println(name + append + resp + " on " + client);
                             rv=fp.code();
                         } else {
-                            if (rv==409)rv = fp.code();
+                            if (rv==409) { 
+                            	rv = fp.code() 
+                            };
                             error(fp);
                         }
                         return rv;
