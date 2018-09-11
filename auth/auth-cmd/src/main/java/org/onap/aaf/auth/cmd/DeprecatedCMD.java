@@ -45,9 +45,9 @@ public class DeprecatedCMD<X extends Cmd> extends BaseCmd<X> {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
+    public int _exec(int idx, final String ... args) throws CadiException, APIException, LocatorException {
         pw().println(text);
-        return _idx;
+        return idx;
     }
 
 }
