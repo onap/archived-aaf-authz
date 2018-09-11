@@ -38,8 +38,8 @@ public class Help extends Cmd {
     }
 
     @Override
-    public int _exec( int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+    public int _exec( int idxValue, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = idxValue;
         boolean first = true;
         StringBuilder sb = new StringBuilder("AAF Command Line Tool");
         StringBuilder details;
@@ -75,7 +75,6 @@ public class Help extends Cmd {
                         c.build(sb,details);
                         if (details!=null) {
                             c.detailedHelp(4, sb);
-    //                    multiChar(sb,80,'-',2);
                         }
                     }
                 }
@@ -86,8 +85,8 @@ public class Help extends Cmd {
     }
     
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentValue, StringBuilder sb) {
+            int indent = indentValue;
         detailLine(sb,indent,"To print main help, enter \"aafcli\" or \"aafcli --help \"");
         detailLine(sb,indent,"To print narrow the help content, enter sub-entries after aafcli,");
         detailLine(sb,indent+2,"i.e. \"aafcli perm\"");
