@@ -46,7 +46,7 @@ public class SessClear extends Cmd {
 
     @Override
     public int _exec(int idx, String ... args) throws CadiException, APIException, LocatorException {
-        int rv=409;
+        int rv;
         String machine = args[idx++];
         rv = oneOf(new Retryable<Integer>() {
             @Override
@@ -60,7 +60,9 @@ public class SessClear extends Cmd {
                     pw().println("Cleared DBSession on " + client);
                     rv=200;
                 } else {
-                    if (rv==409)rv = fp.code();
+                    if (rv==409) { 
+                    	rv = fp.code();
+                    };
                     error(fp);
                 }
                 return rv;
@@ -70,8 +72,8 @@ public class SessClear extends Cmd {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentValue, StringBuilder sb) {
+            int indent = indentValue;
         detailLine(sb,indent,"Clear the cache for certain tables");
         indent+=2;
         detailLine(sb,indent,"name        - name of table or 'all'");
