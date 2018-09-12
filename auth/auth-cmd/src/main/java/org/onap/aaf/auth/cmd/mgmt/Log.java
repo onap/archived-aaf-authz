@@ -35,18 +35,18 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 public class Log extends BaseCmd<Mgmt> {
-    private final static String[] options = {"add","del"};
+    private static final String[] options = {"add","del"};
 
-    public Log(Mgmt mgmt) throws APIException {
+    public Log(Mgmt mgmt) {
         super(mgmt, "log",
                 new Param(optionsToString(options),true),
                 new Param("id[,id]*",true));
     }
     
     @Override
-    public int _exec(int _idx, String ... args) throws CadiException, APIException, LocatorException {
+    public int _exec(int idxValue, String ... args) throws CadiException, APIException, LocatorException {
         int rv=409;
-        int idx = _idx;
+        int idx = idxValue;
         final int option = whichOption(options, args[idx++]);
 
         for (String name : args[idx++].split(COMMA)) {
@@ -83,7 +83,9 @@ public class Log extends BaseCmd<Mgmt> {
                             pw().println(msg + " Special Log for " + fname + " on " + client);
                             rv=200;
                         } else {
-                            if (rv==409)rv = fp.code();
+                            if (rv==409) {
+                            	rv = fp.code();
+                            };
                             error(fp);
                         }
                         return rv;
@@ -96,8 +98,8 @@ public class Log extends BaseCmd<Mgmt> {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentValue, StringBuilder sb) {
+            int indent = indentValue;
         detailLine(sb,indent,"Clear the cache for certain tables");
         indent+=2;
         detailLine(sb,indent,"name        - name of table or 'all'");
