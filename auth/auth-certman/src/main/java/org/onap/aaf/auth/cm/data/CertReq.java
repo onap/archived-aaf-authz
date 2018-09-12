@@ -41,7 +41,8 @@ public class CertReq {
     
     // These may be null
     public String sponsor;
-    public XMLGregorianCalendar start, end;
+    public XMLGregorianCalendar start;
+    public XMLGregorianCalendar end;
     
     public CSRMeta getCSRMeta() throws CertException {
         return BCFactory.createCSRMeta(certAuthority, mechid, sponsor,fqdns);
