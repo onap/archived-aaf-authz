@@ -391,6 +391,14 @@ public class Question {
                 lookup = nsd.parent;
                 if (type.type == nsd.type) {
                     return Result.ok(nsd);
+                } else {
+                    int dot = str.lastIndexOf('.');
+	                
+	                if (dot < 0) {
+	                    return Result.err(Status.ERR_NsNotFound, "No Namespace for [%s]", str);
+	                } else {
+	                    return deriveFirstNsForType(trans, str.substring(0, dot),type);
+	                }
                 }
             } else {
                 return Result.err(Status.ERR_NsNotFound,"There is no valid Company Namespace for %s",str);
