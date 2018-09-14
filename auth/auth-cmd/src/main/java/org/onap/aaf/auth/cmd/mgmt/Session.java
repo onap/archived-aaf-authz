@@ -22,10 +22,9 @@
 package org.onap.aaf.auth.cmd.mgmt;
 
 import org.onap.aaf.auth.cmd.BaseCmd;
-import org.onap.aaf.misc.env.APIException;
 
 public class Session extends BaseCmd<Mgmt> {
-    public Session(Mgmt mgmt) throws APIException {
+    public Session(Mgmt mgmt) {
         super(mgmt, "dbsession");
         cmds.add(new SessClear(this));
     }
