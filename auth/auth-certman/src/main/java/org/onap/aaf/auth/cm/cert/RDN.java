@@ -35,22 +35,36 @@ public class RDN {
     public RDN(final String tagValue) throws CertException {
         String[] tv = Split.splitTrim('=',tagValue);
         switch(tv[0]) {
-            case "cn":case "CN":            aoi = BCStyle.CN; break;
-            case "c":case "C":            aoi = BCStyle.C;break;
-            case "st":case "ST":            aoi = BCStyle.ST;break;
-            case "l":case "L":              aoi = BCStyle.L;break;
-            case "o":case "O":            aoi = BCStyle.O;break;
-            case "ou":case "OU":            aoi = BCStyle.OU;break;
-            case "dc":case "DC":            aoi = BCStyle.DC;break;
-            case "gn":case "GN":            aoi = BCStyle.GIVENNAME; break;
-            case "sn":case "SN":            aoi = BCStyle.SN; break;  // surname
+            case "cn":case "CN":            aoi = BCStyle.CN; 
+            break;
+            case "c":case "C":            aoi = BCStyle.C;
+            break;
+            case "st":case "ST":            aoi = BCStyle.ST;
+            break;
+            case "l":case "L":              aoi = BCStyle.L;
+            break;
+            case "o":case "O":            aoi = BCStyle.O;
+            break;
+            case "ou":case "OU":            aoi = BCStyle.OU;
+            break;
+            case "dc":case "DC":            aoi = BCStyle.DC;
+            break;
+            case "gn":case "GN":            aoi = BCStyle.GIVENNAME; 
+            break;
+            case "sn":case "SN":            aoi = BCStyle.SN; 
+            break;  // surname
             case "email":case "EMAIL":
             case "emailaddress":
-            case "EMAILADDRESS":            aoi = BCStyle.EmailAddress;break; // should be SAN extension
-            case "initials":                aoi = BCStyle.INITIALS; break; 
-            case "pseudonym":            aoi = BCStyle.PSEUDONYM; break;
-            case "generationQualifier":    aoi = BCStyle.GENERATION; break;
-            case "serialNumber":            aoi = BCStyle.SERIALNUMBER; break;
+            case "EMAILADDRESS":            aoi = BCStyle.EmailAddress;
+            break; // should be SAN extension
+            case "initials":                aoi = BCStyle.INITIALS; 
+            break; 
+            case "pseudonym":            aoi = BCStyle.PSEUDONYM; 
+            break;
+            case "generationQualifier":    aoi = BCStyle.GENERATION; 
+            break;
+            case "serialNumber":            aoi = BCStyle.SERIALNUMBER; 
+            break;
             default:
                 throw new CertException("Unknown ASN1ObjectIdentifier for " + tv[0] + " in " + tagValue);
         }
