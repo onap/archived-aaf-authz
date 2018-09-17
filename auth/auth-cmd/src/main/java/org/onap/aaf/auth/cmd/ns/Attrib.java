@@ -34,8 +34,10 @@ import org.onap.aaf.misc.env.APIException;
 
 public class Attrib extends BaseCmd<NS> {
     private final static String[] options = {"add","upd","del"};
+    private String authzString = "/authz/ns/";
+    private String atrributeString = "/attrib/";
 
-    public Attrib(NS ns) throws APIException {
+    public Attrib(NS ns) {
         super(ns,"attrib",
                 new Param(optionsToString(options),true),
                 new Param("ns-name",true),
@@ -66,17 +68,17 @@ public class Attrib extends BaseCmd<NS> {
                 String message;
                 switch(option) {
                     case 0: 
-                        fp = client.create("/authz/ns/"+ns+"/attrib/"+key+'/'+value,Void.class);
+                        fp = client.create(authzString+ns+atrributeString+key+'/'+value,Void.class);
                         message = String.format("Add Attrib %s=%s to %s",
                                 key,value,ns);
                         break;
                     case 1: 
-                        fp = client.update("/authz/ns/"+ns+"/attrib/"+key+'/'+value);
+                        fp = client.update(authzString+ns+atrributeString+key+'/'+value);
                         message = String.format("Update Attrib %s=%s for %s",
                                 key,value,ns);
                         break;
                     case 2: 
-                        fp = client.delete("/authz/ns/"+ns+"/attrib/"+key,Void.class);
+                        fp = client.delete(authzString+ns+atrributeString+key,Void.class);
                         message = String.format("Attrib %s deleted from %s",
                                 key,ns);
                         break;
@@ -99,8 +101,8 @@ public class Attrib extends BaseCmd<NS> {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentValue, StringBuilder sb) {
+            int indent = indentValue;
         detailLine(sb,indent,"Add or Delete Administrator to/from Namespace");
         indent+=4;
         detailLine(sb,indent,"name - Name of Namespace");
