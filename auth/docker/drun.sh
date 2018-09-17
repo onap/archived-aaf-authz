@@ -5,8 +5,17 @@
 # Only need Cassandra Link Info when initializing the container.
 if [ ! -e ./cass.props ]; then
     cp cass.props.init cass.props
-    echo "Edit appropriate Cassandra Link Info into cass.props"
-    exit
+fi
+
+CASS_IS_SET="$(grep '<Cass IP>' cass.props)"
+if [ -n "$CASS_IS_SET" ]; then
+    CASS_IP="$(docker container inspect aaf_cass | grep \"IPAddress\": -m 1 | cut -d '"' -f 4)"
+    if [ -n "$CASS_IP" ]; then
+      sed -i -e "s/\(^.*:\).*/\1$CASS_IP/" cass.props
+    else
+      echo "Set CASSASNDRA IP in cass.props"
+      exit
+    fi
 fi
 
 . ./cass.props

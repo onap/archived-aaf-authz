@@ -43,7 +43,6 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
   echo "Creating /opt/app/cass_init dir on aaf_cass"
   $DOCKER exec aaf_cass mkdir -p /opt/app/cass_init
   echo "cp the following files to /opt/app/cass_init dir on aaf_cass"
-  ls ../src/main/cql
   $DOCKER cp "../src/main/cql/." aaf_cass:/opt/app/cass_init
   echo "The following files are on /opt/app/cass_init dir on aaf_cass"
   $DOCKER exec aaf_cass ls /opt/app/cass_init
@@ -55,8 +54,6 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     echo " cd /opt/app/cass_init"  
     echo " cqlsh -f keyspace.cql"
     echo " cqlsh -f init.cql"
-    echo " cqlsh -f osaaf.cql"
-    echo " cqlsh -f temp_identity.cql"
     echo ""
     echo "The following will give you a temporary identity with which to start working, or emergency"
     echo " cqlsh -f temp_identity.cql"
@@ -64,8 +61,41 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     $DOCKER exec aaf_cass bash /usr/bin/cqlsh -f /opt/app/cass_init/keyspace.cql
     $DOCKER exec aaf_cass bash /usr/bin/cqlsh -e 'describe keyspaces'
     $DOCKER exec aaf_cass bash /usr/bin/cqlsh -f /opt/app/cass_init/init.cql
-    $DOCKER exec aaf_cass bash /usr/bin/cqlsh -f /opt/app/cass_init/osaaf.cql
-    $DOCKER exec aaf_cass bash /usr/bin/cqlsh -f /opt/app/cass_init/temp_identity.cql
+    cd ../../sample/cass_data
+    ID_FILE=../data/identities.dat 
+    if [ -e $ID_FILE ]; then
+      DATE=$(date "+%Y-%m-%d %H:%M:%S.000+0000" -d "+6 months")
+      echo $DATE
+      CRED="cred.dat"
+      # Enter for People
+      echo "Default Passwords for People"
+      for ID in $(grep '|a|' $ID_FILE | sed -e "s/|.*//"); do
+	 if [ "$ID" = "aaf" ]; then
+	    DOMAIN="aaf.osaaf.org";
+	 else
+            DOMAIN="$ID.onap.org";
+	 fi
+	 echo "$ID@$DOMAIN|2|${DATE}|0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95|Initial ID|org.osaaf.people|53344|" >> $CRED
+      done
+    
+      for ID in $(grep '|e|' $ID_FILE | sed -e "s/|.*//"); do
+	 echo "$ID@people.osaaf.org|2|${DATE}|0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95|Initial ID|org.osaaf.people|53344|" >> $CRED
+      done
+    
+      mv user_role.dat tmp
+      sed "s/\(^.*|\)\(.*|\)\(.*|\)\(.*\)/\1${DATE}|\3\4/" tmp > user_role.dat 
+
+      for DAT in ns perm role ns_attrib user_role cred; do 
+          $DOCKER container cp $DAT.dat aaf_cass:/tmp/$DAT.dat
+          $DOCKER exec aaf_cass bash /usr/bin/cqlsh -k authz -e "COPY authz.$DAT FROM '/tmp/$DAT.dat' WITH DELIMITER='|'"
+          $DOCKER exec -t aaf_cass rm /tmp/$DAT.dat
+      done
+      rm $CRED
+      mv tmp user_role.dat
+    else
+        echo DInstall requires access to 'identities.dat'
+    fi
+    cd -
   fi
 else 
   $DOCKER start aaf_cass
