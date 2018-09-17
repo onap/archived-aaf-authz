@@ -75,7 +75,16 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
 	 else
             DOMAIN="$ID.onap.org";
 	 fi
-	 echo "$ID@$DOMAIN|2|${DATE}|0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95|Initial ID|$DOMAIN|53344|" >> $CRED
+	 unset FIRST
+	 for D in $(echo ${DOMAIN//\(.*\)\./\1 /}); do
+            if [ -z "$FIRST" ]; then
+	      NS="$D"
+	      FIRST="N"
+	    else
+              NS="$D.$NS"
+	    fi
+         done     
+	 echo "$ID@$DOMAIN|2|${DATE}|0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95|Initial ID|$NS|53344|" >> $CRED
       done
     
       for ID in $(grep '|e|' $ID_FILE | sed -e "s/|.*//"); do
