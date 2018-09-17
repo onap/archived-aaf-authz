@@ -29,4 +29,7 @@ docker container cp $BD/cbackup.sh aaf_cass:/opt/app/cass_backup/backup.sh
 # echo "login as Root, then run \nbash /opt/app/cass_backup/backup.sh"
 docker exec -t aaf_cass bash /opt/app/cass_backup/backup.sh
 docker container cp aaf_cass:/opt/app/cass_backup/. $BD/today
+for PRIV in cred x509; do
+	chmod 600 $BD/today/$PRIV.dat
+done
 date
