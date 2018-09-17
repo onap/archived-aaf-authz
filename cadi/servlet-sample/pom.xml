@@ -10,11 +10,6 @@
 	<name>CADI Servlet Sample (Test Only)</name>
 	<artifactId>aaf-cadi-servlet-sample</artifactId>
 	<packaging>jar</packaging>
-	<properties>
-		<!--  Jetty Version set by oParent -->
-		<tomcat.version>8.5.23</tomcat.version>
-	  </properties>
-
 	<dependencies>
 	 	<!-- needs to be first to avoid jar signer implications for servlet api  -->
 		<dependency>
@@ -22,39 +17,6 @@
 			<artifactId>jetty-webapp</artifactId>
 			<version>${project.jettyVersion}</version>
 		</dependency>
-
-	     <!-- Tomcat Embedded has security flaws.  not worth it for a sample
-  	     <dependency>
-	        <groupId>org.apache.tomcat.embed</groupId>
-	        <artifactId>tomcat-embed-jasper</artifactId>
-	        <version>${tomcat.version}</version>
-	     </dependency>
-             -->
-	     <dependency>
-	        <groupId>org.apache.tomcat.embed</groupId>
-	        <artifactId>tomcat-embed-core</artifactId>
-	        <version>${tomcat.version}</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.tomcat.embed</groupId>
-	        <artifactId>tomcat-embed-jasper</artifactId>
-	        <version>${tomcat.version}</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.tomcat</groupId>
-	        <artifactId>tomcat-jasper</artifactId>
-	        <version>${tomcat.version}</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.tomcat</groupId>
-	        <artifactId>tomcat-jasper-el</artifactId>
-	        <version>${tomcat.version}</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.tomcat</groupId>
-	        <artifactId>tomcat-jsp-api</artifactId>
-	        <version>${tomcat.version}</version>
-	    </dependency>
 
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
