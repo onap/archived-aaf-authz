@@ -23,11 +23,13 @@
 			<version>${project.jettyVersion}</version>
 		</dependency>
 
-		<dependency>
+	     <!-- Tomcat Embedded has security flaws.  not worth it for a sample
+  	     <dependency>
 	        <groupId>org.apache.tomcat.embed</groupId>
 	        <artifactId>tomcat-embed-jasper</artifactId>
 	        <version>${tomcat.version}</version>
-	    </dependency>
+	     </dependency>
+             -->
 	     <dependency>
 	        <groupId>org.apache.tomcat.embed</groupId>
 	        <artifactId>tomcat-embed-core</artifactId>
