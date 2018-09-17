@@ -45,12 +45,12 @@ public class X509andChain {
         trustChain = null;
     }
     
-    public X509andChain(X509Certificate cert, String[] tc) throws IOException, CertException {
+    public X509andChain(X509Certificate cert, String[] tc) {
         this.cert = cert;
         trustChain=tc;
     }
 
-    public X509andChain(X509Certificate cert, List<String> chain) throws IOException, CertException {
+    public X509andChain(X509Certificate cert, List<String> chain) {
         this.cert = cert;
         trustChain = new String[chain.size()+1];
         chain.toArray(trustChain);
