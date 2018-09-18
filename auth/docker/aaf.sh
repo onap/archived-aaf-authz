@@ -48,6 +48,9 @@ if [ "$(docker volume ls | grep aaf_config)" = "" ] && [ ${P12_LOAD} = "yes" ]; 
   docker container cp ${AAF_INITIAL_X509_P12} aaf_config_$USER:/opt/app/osaaf/local/org.osaaf.aaf.p12
   docker container cp ${AAF_SIGNER_P12} aaf_config_$USER:/opt/app/osaaf/local/org.osaaf.aaf.signer.p12
 
+  if [ -z "$CM_CA_LOCAL" ]; then
+    CM_CA_LOCAL="org.onap.aaf.auth.cm.ca.LocalCA,/opt/app/osaaf/local/org.osaaf.aaf.signer.p12;${AAF_SIGNER_ALIAS};enc:"
+  fi
   set_prop cm_ca.local "${CM_CA_LOCAL}" org.osaaf.aaf.cm.ca.props
   set_prop cadi_x509_issuers "${CADI_X509_ISSUERS}" org.osaaf.aaf.props
 
