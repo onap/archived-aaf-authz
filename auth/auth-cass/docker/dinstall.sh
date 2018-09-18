@@ -76,7 +76,7 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
             DOMAIN="$ID.onap.org";
 	 fi
 	 unset FIRST
-	 for D in $(echo ${DOMAIN//\(.*\)\./\1 /}); do
+	 for D in ${DOMAIN//./ }; do
             if [ -z "$FIRST" ]; then
 	      NS="$D"
 	      FIRST="N"
