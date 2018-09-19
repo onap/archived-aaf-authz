@@ -95,11 +95,24 @@
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
+			<!-- JNR Posix needs bumping up for licence for datastax 3.6.0, remove after this version-->
+			<exclusions>
+				<exclusion>
+					<groupId>com.github.jnr</groupId>
+					<artifactId>jnr-posix</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- JNR Posix needs bumping up for licence for datastax 3.6.0, remove after this version-->
+		<dependency>
+			<groupId>com.github.jnr</groupId>
+			<artifactId>jnr-posix</artifactId>
+			<version>3.0.45</version>
 		</dependency>
 
 		<dependency>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 		</dependency>
 
 		<!-- Cassandra prefers Snappy and LZ4 libs for performance -->

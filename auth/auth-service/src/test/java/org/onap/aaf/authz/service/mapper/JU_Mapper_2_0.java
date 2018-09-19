@@ -33,42 +33,24 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.onap.aaf.auth.layer.Result.ERR_BadData;
 import static org.onap.aaf.auth.layer.Result.ERR_General;
 
-import aaf.v2_0.NsRequest;
-import aaf.v2_0.Nss;
-import aaf.v2_0.Nss.Ns;
-import aaf.v2_0.Perm;
-import aaf.v2_0.PermKey;
-import aaf.v2_0.PermRequest;
-import aaf.v2_0.Perms;
-import aaf.v2_0.Pkey;
-import aaf.v2_0.Request;
-import aaf.v2_0.Role;
-import aaf.v2_0.RoleRequest;
-import aaf.v2_0.Roles;
-import aaf.v2_0.UserRole;
-import aaf.v2_0.UserRoleRequest;
-import aaf.v2_0.UserRoles;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -96,12 +78,25 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
-import org.onap.aaf.org.DefaultOrg;
+
+import aaf.v2_0.NsRequest;
+import aaf.v2_0.Nss;
+import aaf.v2_0.Nss.Ns;
+import aaf.v2_0.Perm;
+import aaf.v2_0.PermRequest;
+import aaf.v2_0.Perms;
+import aaf.v2_0.Pkey;
+import aaf.v2_0.Request;
+import aaf.v2_0.Role;
+import aaf.v2_0.RoleRequest;
+import aaf.v2_0.Roles;
+import aaf.v2_0.UserRole;
+import aaf.v2_0.UserRoleRequest;
+import aaf.v2_0.UserRoles;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Mapper_2_0 {
-
-  private static final String USER = "John";
+	private static final String USER = "John";
 
     private Mapper_2_0 mapper;
     @Mock
@@ -109,7 +104,7 @@ public class JU_Mapper_2_0 {
     @Mock
     private AuthzTrans transaction;
     @Mock
-  private TimeTaken tt;
+    private TimeTaken tt;
 
 
     @Before
@@ -649,4 +644,78 @@ public class JU_Mapper_2_0 {
         return userRole;
     }
 
+    /**
+     * Need to do without Google stuff
+     * @author Instrumental
+     *
+     */
+    public static class ImmutableMap {
+    	public static <T,U> Map<T,U> of(Object ... tag_value) {
+    		Map<T,U> rv = new HashMap<>();
+    		for(int i=0;i<tag_value.length-1;i+=2) {
+    			rv.put((T)tag_value[i],(U)tag_value[i+1]);
+    		}
+    		return rv;
+    	}
+
+    }
+
+    /**
+     * Need to do without Google stuff
+     * @author Instrumental
+     *
+     */
+    public static class Iterables {
+    	public static <T> T getOnlyElement(List<T> lt) {
+    		if(lt.isEmpty()) {
+    			return null;
+    		} else {
+    			return lt.get(0);
+    		}
+    	}
+    }
+
+    /**
+     * Need to do without Google stuff
+     * @author Instrumental
+     *
+     */
+    public static class Lists {
+    	@SuppressWarnings("unchecked")
+    	public static <T> List<T> newArrayList(Collection<T> ... init ) {
+    		List<T> rv = new ArrayList<>();
+    		for(Collection<T> o : init) {
+				for(T t : o) {
+					rv.add(t);
+				}
+    		}
+    		return rv;
+    	}
+
+    	@SuppressWarnings("unchecked")
+    	public static <T> List<T> newArrayList(Object ... init ) {
+    		List<T> rv = new ArrayList<>();
+    		for(Object o : init) {
+   				rv.add((T)o);
+    		}
+    		return rv;
+    	}
+
+    }
+
+    /**
+     * Need to do without Google stuff
+     * @author Instrumental
+     *
+     */
+    public static class Sets {
+    	@SuppressWarnings("unchecked")
+    	public static <T> Set<T> newHashSet(Object ... init ) {
+    		Set<T> rv = new HashSet<>();
+    		for(Object o : init) {
+    			rv.add((T)o);
+    		}
+    		return rv;
+    	}
+    }
 }

@@ -64,7 +64,7 @@
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-deforg</artifactId>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-cass</artifactId>

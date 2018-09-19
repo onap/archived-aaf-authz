@@ -105,7 +105,7 @@ public class Perm implements Comparable<Perm> {
             tt = trans.start("Load Perms", Env.SUB);
             try {
                 while (iter.hasNext()) {
-                    row = iter.next();
+                    row = iter.next();                    
                     Perm pk = new Perm(
                             row.getString(0),row.getString(1),row.getString(2),
                             row.getString(3), row.getString(4), row.getSet(5,String.class));
