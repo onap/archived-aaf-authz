@@ -61,7 +61,7 @@ public class SessClear extends Cmd {
                     rv=200;
                 } else {
                     if (rv==409) { 
-                    	rv = fp.code();
+                        rv = fp.code();
                     };
                     error(fp);
                 }

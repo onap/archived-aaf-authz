@@ -195,14 +195,14 @@ public class JU_PermEval {
         // CPFSF-431 Group needed help with Wild Card
         // They tried
         assertTrue(PermEval.evalInstance(
-                ":topic.com.att.ecomp_test.crm.pre*",
-                ":topic.com.att.ecomp_test.crm.predemo100"
+                ":topic.org.onap.sample_test.crm.pre*",
+                ":topic.org.onap.sample_test.crm.predemo100"
                 ));
 
         // Also can be
         assertTrue(PermEval.evalInstance(
-                ":!topic.com.att.ecomp_test.crm.pre.*",
-                ":topic.com.att.ecomp_test.crm.predemo100"
+                ":!topic.org.onap.sample_test.crm.pre.*",
+                ":topic.org.onap.sample_test.crm.predemo100"
                 ));
 
         // coverage

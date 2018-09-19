@@ -96,7 +96,7 @@ import aaf.v2_0.UserRoles;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Mapper_2_0 {
-	private static final String USER = "John";
+    private static final String USER = "John";
 
     private Mapper_2_0 mapper;
     @Mock
@@ -650,13 +650,13 @@ public class JU_Mapper_2_0 {
      *
      */
     public static class ImmutableMap {
-    	public static <T,U> Map<T,U> of(Object ... tag_value) {
-    		Map<T,U> rv = new HashMap<>();
-    		for(int i=0;i<tag_value.length-1;i+=2) {
-    			rv.put((T)tag_value[i],(U)tag_value[i+1]);
-    		}
-    		return rv;
-    	}
+        public static <T,U> Map<T,U> of(Object ... tag_value) {
+            Map<T,U> rv = new HashMap<>();
+            for(int i=0;i<tag_value.length-1;i+=2) {
+                rv.put((T)tag_value[i],(U)tag_value[i+1]);
+            }
+            return rv;
+        }
 
     }
 
@@ -666,13 +666,13 @@ public class JU_Mapper_2_0 {
      *
      */
     public static class Iterables {
-    	public static <T> T getOnlyElement(List<T> lt) {
-    		if(lt.isEmpty()) {
-    			return null;
-    		} else {
-    			return lt.get(0);
-    		}
-    	}
+        public static <T> T getOnlyElement(List<T> lt) {
+            if(lt.isEmpty()) {
+                return null;
+            } else {
+                return lt.get(0);
+            }
+        }
     }
 
     /**
@@ -681,25 +681,25 @@ public class JU_Mapper_2_0 {
      *
      */
     public static class Lists {
-    	@SuppressWarnings("unchecked")
-    	public static <T> List<T> newArrayList(Collection<T> ... init ) {
-    		List<T> rv = new ArrayList<>();
-    		for(Collection<T> o : init) {
-				for(T t : o) {
-					rv.add(t);
-				}
-    		}
-    		return rv;
-    	}
+        @SuppressWarnings("unchecked")
+        public static <T> List<T> newArrayList(Collection<T> ... init ) {
+            List<T> rv = new ArrayList<>();
+            for(Collection<T> o : init) {
+                for(T t : o) {
+                    rv.add(t);
+                }
+            }
+            return rv;
+        }
 
-    	@SuppressWarnings("unchecked")
-    	public static <T> List<T> newArrayList(Object ... init ) {
-    		List<T> rv = new ArrayList<>();
-    		for(Object o : init) {
-   				rv.add((T)o);
-    		}
-    		return rv;
-    	}
+        @SuppressWarnings("unchecked")
+        public static <T> List<T> newArrayList(Object ... init ) {
+            List<T> rv = new ArrayList<>();
+            for(Object o : init) {
+                   rv.add((T)o);
+            }
+            return rv;
+        }
 
     }
 
@@ -709,13 +709,13 @@ public class JU_Mapper_2_0 {
      *
      */
     public static class Sets {
-    	@SuppressWarnings("unchecked")
-    	public static <T> Set<T> newHashSet(Object ... init ) {
-    		Set<T> rv = new HashSet<>();
-    		for(Object o : init) {
-    			rv.add((T)o);
-    		}
-    		return rv;
-    	}
+        @SuppressWarnings("unchecked")
+        public static <T> Set<T> newHashSet(Object ... init ) {
+            Set<T> rv = new HashSet<>();
+            for(Object o : init) {
+                rv.add((T)o);
+            }
+            return rv;
+        }
     }
 }

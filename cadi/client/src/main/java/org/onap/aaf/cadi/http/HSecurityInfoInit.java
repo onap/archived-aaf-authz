@@ -33,7 +33,7 @@ import org.onap.aaf.misc.env.APIException;
 /**
  * This class will pick out the best default SS for Clients per Client type
  * 
- * @author jg1555
+ * @author Instrumental
  *
  */
 public class HSecurityInfoInit implements SecurityInfoInit<HttpURLConnection> {

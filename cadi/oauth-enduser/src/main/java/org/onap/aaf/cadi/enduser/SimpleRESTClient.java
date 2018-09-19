@@ -101,7 +101,7 @@ public class SimpleRESTClient {
     
     /**
      * Single Threaded Class for building up content
-     * @author jg1555
+     * @author Instrumental
      *
      */
     public static class Input {

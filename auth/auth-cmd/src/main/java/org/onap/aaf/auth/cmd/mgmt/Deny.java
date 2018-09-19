@@ -74,10 +74,10 @@ public class Deny extends BaseCmd<Mgmt> {
                         Future<Void> fp;
                         String resp;
                         if(option == 0) {
-                        	fp = client.create(path, Void.class);
+                            fp = client.create(path, Void.class);
                             resp = " added";
                         } else {
-                        	fp = client.delete(path, Void.class);
+                            fp = client.delete(path, Void.class);
                             resp = " deleted";
                         }
                         if (fp.get(AAFcli.timeout())) {
@@ -85,7 +85,7 @@ public class Deny extends BaseCmd<Mgmt> {
                             rv=fp.code();
                         } else {
                             if (rv==409) { 
-                            	rv = fp.code();
+                                rv = fp.code();
                             };
                             error(fp);
                         }

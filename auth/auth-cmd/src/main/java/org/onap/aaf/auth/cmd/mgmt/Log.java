@@ -84,7 +84,7 @@ public class Log extends BaseCmd<Mgmt> {
                             rv=200;
                         } else {
                             if (rv==409) {
-                            	rv = fp.code();
+                                rv = fp.code();
                             };
                             error(fp);
                         }
