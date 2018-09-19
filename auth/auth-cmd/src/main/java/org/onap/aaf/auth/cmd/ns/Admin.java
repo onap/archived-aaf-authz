@@ -33,9 +33,9 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 
 public class Admin extends BaseCmd<NS> {
-    private final static String[] options = {"add","del"};
+    private static final String[] options = {"add","del"};
 
-    public Admin(NS ns) throws APIException {
+    public Admin(NS ns) {
         super(ns,"admin",
                 new Param(optionsToString(options),true),
                 new Param("ns-name",true),
@@ -44,8 +44,8 @@ public class Admin extends BaseCmd<NS> {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+    public int _exec(int idxValue, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = idxValue;
         final int option = whichOption(options, args[idx++]);
         final String ns = args[idx++];
         final String ids[] = args[idx++].split(",");
@@ -87,8 +87,8 @@ public class Admin extends BaseCmd<NS> {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentValue, StringBuilder sb) {
+            int indent = indentValue;
         detailLine(sb,indent,"Add or Delete Administrator to/from Namespace");
         indent+=4;
         detailLine(sb,indent,"name - Name of Namespace");
