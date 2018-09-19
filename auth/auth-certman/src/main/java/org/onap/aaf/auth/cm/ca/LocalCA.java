@@ -82,7 +82,6 @@ public class LocalCA extends CA {
     
     private final PrivateKey caKey;
     private final X500Name issuer;
-    private final SecureRandom random = new SecureRandom();
     private BigInteger serial;
     private final X509ChainWithIssuer x509cwi; // "Cert" is CACert
     
@@ -90,7 +89,7 @@ public class LocalCA extends CA {
     public LocalCA(Access access, final String name, final String env, final String[][] params) throws IOException, CertException {
         super(access, name, env);
     
-        serial = new BigInteger(64,random);
+        serial = new BigInteger(64,new SecureRandom());
 
         if (params.length<1 || params[0].length<2) {
             throw new IOException("LocalCA expects cm_ca.<ca name>=org.onap.aaf.auth.cm.ca.LocalCA,<full path to key file>[;<Full Path to Trust Chain, ending with actual CA>]+");

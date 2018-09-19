@@ -23,11 +23,12 @@
 	<parent>
 		<groupId>org.onap.oparent</groupId>
 		<artifactId>oparent</artifactId>
-		<version>1.2.0</version>
+		<version>1.2.1-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<nexusproxy>https://nexus.onap.org</nexusproxy>
+		<onap.nexus.url>https://nexus.onap.org</onap.nexus.url>
 		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
 		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
 		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
@@ -49,7 +50,8 @@
 		<powermock.version>1.5.1</powermock.version>
 		<mockito.version>1.9.5</mockito.version>
 		<project.interfaceVersion>${project.version}</project.interfaceVersion>
-		<project.jettyVersion>9.4.11.v20180605</project.jettyVersion>
+		<project.jettyVersion>9.4.12.v20180830</project.jettyVersion>
+		<project.cassVersion>3.6.0</project.cassVersion>
 
 	</properties>
 	<build>
@@ -248,13 +250,22 @@
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
 				<version>3.0.1</version>
-			</dependency><dependency>
+			</dependency>
+			
+			<!-- JettyVersion is partly covered in "OParent" 
+			  dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-servlet</artifactId>
 				<version>${project.jettyVersion}</version>
 			</dependency><dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-http</artifactId>
 				<version>${project.jettyVersion}</version>
 			</dependency>
 
@@ -270,17 +281,13 @@
 				<version>${project.jettyVersion}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-http</artifactId>
-				<version>${project.jettyVersion}</version>
-			</dependency>
 
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-util</artifactId>
 				<version>${project.jettyVersion}</version>
 			</dependency>
+			 -->
 
 			<dependency>
 				<groupId>org.slf4j</groupId>

@@ -21,7 +21,6 @@
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-cadi-aaf</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 	</dependencies>
