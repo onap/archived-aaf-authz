@@ -20,7 +20,7 @@
  * *
  ******************************************************************************/
 
-package org.onap.aaf.authz.service.mapper;
+package org.onap.aaf.auth.service.mapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,12 +32,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.onap.aaf.auth.layer.Result.ERR_BadData;
 import static org.onap.aaf.auth.layer.Result.ERR_General;
 
+import aaf.v2_0.CredRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +59,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.dao.cass.Namespace;
 import org.onap.aaf.auth.dao.cass.NsDAO;
 import org.onap.aaf.auth.dao.cass.NsSplit;
@@ -73,7 +77,6 @@ import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.Organization.Expiration;
 import org.onap.aaf.auth.rserv.Pair;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
-import org.onap.aaf.auth.service.mapper.Mapper_2_0;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
@@ -105,12 +108,15 @@ public class JU_Mapper_2_0 {
     private AuthzTrans transaction;
     @Mock
     private TimeTaken tt;
+    @Mock
+    private Organization org;
 
 
     @Before
     public void setUp() throws APIException, IOException, CadiException {
       given(transaction.start(anyString(), eq(Env.SUB))).willReturn(tt);
       given(transaction.user()).willReturn(USER);
+      given(transaction.org()).willReturn(org);
         this.mapper = new Mapper_2_0(question);
     }
 
@@ -642,6 +648,67 @@ public class JU_Mapper_2_0 {
         userRole.ns = namespace;
         userRole.role = roleName;
         return userRole;
+    }
+
+    @Test
+    public void cred_shouldReturnError_whenGivenPasswordDoesNotFulfillPolicy() {
+        //given
+        String id = "aaf@aaf.osaaf.org";
+        String password = "invalid";
+        given(org.isValidPassword(transaction, id, password)).willReturn("Password does not match org.osaaf Password Standards");
+
+        //when
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, password), true);
+
+        //then
+        assertFalse(result.isOK());
+        assertEquals(ERR_BadData, result.status);
+    }
+
+    @Test
+    public void cred_shouldNotCheckPassword_andSetProperType_whenPasswordNotRequired() {
+        //given
+        String id = "aaf@aaf.osaaf.org";
+        GregorianCalendar expiration = new GregorianCalendar();
+        given(org.expiration(isA(GregorianCalendar.class), eq(Expiration.Password), eq(id))).willReturn(expiration);
+
+        //when
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, null), false);
+
+        //then
+        assertTrue(result.isOK());
+        verify(org, never()).isValidPassword(eq(transaction), eq(id), any());
+        assertEquals(Integer.valueOf(0), result.value.type);
+        assertNotNull(result.value.expires);
+    }
+
+    @Test
+    public void cred_shouldSetProperValues_whenPasswordRequired() {
+        //given
+        String ns = "org.osaaf.aaf";
+        String id = "aaf@aaf.osaaf.org";
+        String password = "SomeValidPassword123!";
+        GregorianCalendar expiration = new GregorianCalendar();
+        given(org.expiration(isA(GregorianCalendar.class), eq(Expiration.Password), eq(id))).willReturn(expiration);
+        given(org.isValidPassword(transaction, id, password)).willReturn("");
+
+        //when
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, password), true);
+
+        //then
+        assertTrue(result.isOK());
+        assertNotNull(result.value.cred);
+        assertEquals(id, result.value.id);
+        assertEquals(ns, result.value.ns);
+        assertEquals(Integer.valueOf(CredDAO.RAW), result.value.type);
+        assertNotNull(result.value.expires);
+    }
+
+    private CredRequest createCredRequest(String id, String password) {
+        CredRequest credRequest = new CredRequest();
+        credRequest.setId(id);
+        credRequest.setPassword(password);
+        return credRequest;
     }
 
     /**
