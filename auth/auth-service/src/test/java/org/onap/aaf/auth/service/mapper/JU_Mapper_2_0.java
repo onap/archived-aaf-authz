@@ -20,7 +20,7 @@
  * *
  ******************************************************************************/
 
-package org.onap.aaf.authz.service.mapper;
+package org.onap.aaf.auth.service.mapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,13 +32,20 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.onap.aaf.auth.layer.Result.ERR_BadData;
 import static org.onap.aaf.auth.layer.Result.ERR_General;
 
+import aaf.v2_0.Certs;
+import aaf.v2_0.Certs.Cert;
+import aaf.v2_0.Users;
+import aaf.v2_0.Users.User;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -51,11 +58,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaf.auth.dao.cass.CertDAO;
+import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.dao.cass.Namespace;
 import org.onap.aaf.auth.dao.cass.NsDAO;
 import org.onap.aaf.auth.dao.cass.NsSplit;
@@ -73,12 +83,12 @@ import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.Organization.Expiration;
 import org.onap.aaf.auth.rserv.Pair;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
-import org.onap.aaf.auth.service.mapper.Mapper_2_0;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
+import aaf.v2_0.CredRequest;
 import aaf.v2_0.NsRequest;
 import aaf.v2_0.Nss;
 import aaf.v2_0.Nss.Ns;
@@ -105,12 +115,15 @@ public class JU_Mapper_2_0 {
     private AuthzTrans transaction;
     @Mock
     private TimeTaken tt;
+    @Mock
+    private Organization org;
 
 
     @Before
     public void setUp() throws APIException, IOException, CadiException {
       given(transaction.start(anyString(), eq(Env.SUB))).willReturn(tt);
       given(transaction.user()).willReturn(USER);
+      given(transaction.org()).willReturn(org);
         this.mapper = new Mapper_2_0(question);
     }
 
@@ -644,6 +657,189 @@ public class JU_Mapper_2_0 {
         return userRole;
     }
 
+    @Test
+    public void cred_shouldReturnError_whenGivenPasswordDoesNotFulfillPolicy() {
+        //given
+        String id = "aaf@aaf.osaaf.org";
+        String password = "invalid";
+        given(org.isValidPassword(transaction, id, password)).willReturn("Password does not match org.osaaf Password Standards");
+
+        //when
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, password), true);
+
+        //then
+        assertFalse(result.isOK());
+        assertEquals(ERR_BadData, result.status);
+    }
+
+    @Test
+    public void cred_shouldNotCheckPassword_andSetProperType_whenPasswordNotRequired() {
+        //given
+        String id = "aaf@aaf.osaaf.org";
+        GregorianCalendar expiration = new GregorianCalendar();
+        given(org.expiration(isA(GregorianCalendar.class), eq(Expiration.Password), eq(id))).willReturn(expiration);
+
+        //when
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, null), false);
+
+        //then
+        assertTrue(result.isOK());
+        verify(org, never()).isValidPassword(eq(transaction), eq(id), any());
+        assertEquals(Integer.valueOf(0), result.value.type);
+        assertNotNull(result.value.expires);
+    }
+
+    @Test
+    public void cred_shouldSetProperValues_whenPasswordRequired() {
+        //given
+        String ns = "org.osaaf.aaf";
+        String id = "aaf@aaf.osaaf.org";
+        String password = "SomeValidPassword123!";
+        GregorianCalendar expiration = new GregorianCalendar();
+        given(org.expiration(isA(GregorianCalendar.class), eq(Expiration.Password), eq(id))).willReturn(expiration);
+        given(org.isValidPassword(transaction, id, password)).willReturn("");
+
+        //when
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, password), true);
+
+        //then
+        assertTrue(result.isOK());
+        assertNotNull(result.value.cred);
+        assertEquals(id, result.value.id);
+        assertEquals(ns, result.value.ns);
+        assertEquals(Integer.valueOf(CredDAO.RAW), result.value.type);
+        assertNotNull(result.value.expires);
+    }
+
+    private CredRequest createCredRequest(String id, String password) {
+        CredRequest credRequest = new CredRequest();
+        credRequest.setId(id);
+        credRequest.setPassword(password);
+        return credRequest;
+    }
+
+    @Test
+    public void cred_shouldConvertCredDAOtoUser_andAddItToInitialObject() {
+        //given
+        String id = "aaf@aaf.osaaf.org";
+        Integer type = 1;
+        Date expiration = Calendar.getInstance().getTime();
+        Users to = new Users();
+
+        //when
+        Result<Users> result = mapper.cred(Lists.newArrayList(createCredData(id, type, expiration)), to);
+
+        //then
+        assertTrue(result.isOK());
+        User user = Iterables.getOnlyElement(result.value.getUser());
+        assertEquals(id, user.getId());
+        assertNotNull(user.getExpires());
+        assertEquals(type, user.getType());
+    }
+
+    @Test
+    public void cred_shouldLeaveInitialUsers_whenAddingConvertedObject() {
+        //given
+        String id = "aaf@aaf.osaaf.org";
+        Integer type = 0;
+        Date expiration = Calendar.getInstance().getTime();
+        Users to = new Users();
+        to.getUser().add(new User());
+        assertEquals(1, to.getUser().size());
+
+        //when
+        Result<Users> result = mapper.cred(Lists.newArrayList(createCredData(id, type, expiration)), to);
+
+        //then
+        assertTrue(result.isOK());
+        assertEquals(2,result.value.getUser().size());
+    }
+
+    private CredDAO.Data createCredData(String id, int type, Date expires) {
+        CredDAO.Data credDao = new CredDAO.Data();
+        credDao.id = id;
+        credDao.type = type;
+        credDao.expires = expires;
+        return credDao;
+    }
+
+    @Test
+    public void cert_shouldConvertCertDAOtoUser_andAddItToInitialObject() {
+        //given
+        String x500 = provideTestCertificate();
+        String id = "aaf@aaf.osaaf.org";
+        BigInteger serial = new BigInteger("123456789987654321123456789987654321");
+        Certs to = new Certs();
+
+        //when
+        Result<Certs> result = mapper.cert(Lists.newArrayList(createCertData(id, x500, serial)), to);
+
+        //then
+        assertTrue(result.isOK());
+        Cert cert = Iterables.getOnlyElement(result.value.getCert());
+        assertEquals(id, cert.getId());
+        assertEquals(x500, cert.getX500());
+        assertNotNull(cert.getFingerprint());
+    }
+
+    @Test
+    public void cert_shouldLeaveInitialCerts_whenAddingConvertedObject() {
+        //given
+        Certs to = new Certs();
+        Cert initial = new Cert();
+        to.getCert().add(initial);
+        CertDAO.Data certDao = new CertDAO.Data();
+        certDao.serial =  new BigInteger("123456789");
+        assertEquals(1, to.getCert().size());
+
+        //when
+        Result<Certs> result = mapper.cert(Lists.newArrayList(certDao), to);
+
+        //then
+        assertTrue(result.isOK());
+        assertEquals(2,result.value.getCert().size());
+        assertTrue(result.value.getCert().contains(initial));
+    }
+
+    private CertDAO.Data createCertData(String id, String x500, BigInteger serial) {
+        CertDAO.Data certDao = new CertDAO.Data();
+        certDao.x500 =  x500;
+        certDao.id = id;
+        certDao.serial= serial;
+        return certDao;
+    }
+
+    private String provideTestCertificate() {
+        StringBuilder sb = new StringBuilder("-----BEGIN CERTIFICATE-----\n");
+        return sb.append("MIIEdTCCAl2gAwIBAgIBBTANBgkqhkiG9w0BAQsFADAsMQ4wDAYDVQQLDAVPU0FB\n")
+            .append("RjENMAsGA1UECgwET05BUDELMAkGA1UEBhMCVVMwHhcNMTgwNzAyMTEyNjMwWhcN\n")
+            .append("MjMwNzAyMTEyNjMwWjBHMQswCQYDVQQGEwJVUzENMAsGA1UECgwET05BUDEOMAwG\n")
+            .append("A1UECwwFT1NBQUYxGTAXBgNVBAMMEGludGVybWVkaWF0ZUNBXzcwggEiMA0GCSqG\n")
+            .append("SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDQAcZtvJ5j4wqaZHqU/NkG0CjflDRD3x9Y\n")
+            .append("4a+C63dxuTyWZ6EtQanoM9l6vwb6Gj4SOHeBfOaQbxwiJfX3WP9+SWV/Rciei0EY\n")
+            .append("w9C0ZOsDA8VVA5S4TK4OLXCLDSeTeMN8wrlydnwG5u/14m22yNTNxPX90bijc6WH\n")
+            .append("zo7+z+3WarveN0CBYcDQkKkyR8rKafkCWlq+GzqLYQh0K4atnuyIZQ7kr9Od48vT\n")
+            .append("KyVJzkyMS6HeH++3Ty0JmPREgzOUjUAoYvR2kI02LedFndr5ZdiBQGAXnLQsVuG6\n")
+            .append("mJHfsRjQ+zTZ2Q5Xs++Bc/clSNlWz7Kqqcxto2bp8YOWC3RaXzfNAgMBAAGjgYYw\n")
+            .append("gYMwHQYDVR0OBBYEFA8QFOfTZ/fEqwtuM4hlNYpwk0OTMB8GA1UdIwQYMBaAFFNV\n")
+            .append("M/JL69BRscF4msEoMXvv6u1JMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYDVR0PAQH/\n")
+            .append("BAQDAgGGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjANBgkqhkiG9w0B\n")
+            .append("AQsFAAOCAgEAsUvLinLLby1D+F+UKv/7jCqqrUYxlpNsdBm1dD8M3mIIpsjoTrlU\n")
+            .append("2yywL9EPp4BhCN7rI0YbPX+DWu2RnxtbsEKdhutEvbTE2Sfg6a1+9dH7txdaGp3F\n")
+            .append("qapojPqdZ7pjgtIhHVgepGJc08efsxSW6+Gv5easQXhn7XyaZf1MfZUobAPnEcaY\n")
+            .append("p5cOee2gjMy6usB8AiKzVXrmGn6MAQQ9w6u8XKnvIoivQW3PLlKTMbLFVB7B4YH8\n")
+            .append("90HQJnhnLJ9T5U+Gy1Mb5GpVKnI0ZIKURA9b/x8bVFixT83xugstbeVdxgS97Fcz\n")
+            .append("9wOjG6d6YhrwnE/kz8aiXWs8KsTsrgk//kv3AqL4ykpvn545WJUj7EhuAK+Kmh1B\n")
+            .append("LCC0wyny2RBZYVP92AMdLqgU7HEng2ZWsCGdf/QLKpXsawsR/0oM2uAT2KeDiSy4\n")
+            .append("0WTfe3qirhJ9AKtfkj1NukymIcpx9Ld1kb3rapfT63LJ5kGkQpztuYoEa1FCsQwU\n")
+            .append("z/UeknC00mqnH5X4ooGRMMkRyPp68+iWmTNlUaVfU2NUNwZiIsD9CbytR5y9rt2r\n")
+            .append("XJM2BkKy5QEEvmr4GGfbGAYYOfdVpUXB/VBUYNf5uwENqhQB6q7OmiU39Vb/37Zf\n")
+            .append("EWK8mju11Om2l1a4xYw6HH/SPIqqIDtS28XccDTMMiOVoR2HUAZMNdw=\n")
+            .append("-----END CERTIFICATE-----").toString();
+    }
+
+
+    //Why so? Is there any particular reason for removing guava dependency from the code, and even from the tests?
     /**
      * Need to do without Google stuff
      * @author Instrumental
