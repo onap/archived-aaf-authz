@@ -11,6 +11,11 @@ fi
 
 echo "Building Containers for aaf components, version $VERSION"
 
+# AAF_cass now needs a version...
+cd ../auth-cass/docker
+bash dbuild.sh
+cd -
+
 # Create the AAF Config (Security) Images
 cd ..
 cp ../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar sample/bin
