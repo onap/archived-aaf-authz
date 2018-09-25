@@ -13,8 +13,9 @@ echo "Building Containers for aaf components, version $VERSION"
 
 # AAF_cass now needs a version...
 cd ../auth-cass/docker
-bash dbuild.sh
+bash ./dbuild.sh
 cd -
+exit
 
 # Create the AAF Config (Security) Images
 cd ..

@@ -9,7 +9,7 @@ else
   . ../../docker/d.props.init
 fi
 
-echo "Building Container for aaf_cass:$VERSION"
+echo "Building aaf_cass Container for aaf_cass:$VERSION"
 
 DIR=$(pwd)
 cd ..
@@ -19,6 +19,8 @@ cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
 
 docker build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
+docker tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:${VERSION}
+
 cd -
 rm Dockerfile
 rm -Rf cass_data
