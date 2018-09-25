@@ -52,6 +52,7 @@ so|ONAP SO Application|SO|ONAP Application|||a|aaf_admin
 sdc|ONAP SDC Application|SDC|ONAP Application|||a|aaf_admin
 sdnc|ONAP SDNC Application|SDNC|ONAP Application|||a|aaf_admin
 vid|ONAP VID Application|VID|ONAP Application|||a|aaf_admin
+vfc|ONAP VFC Application|VNC|ONAP Application|||a|aaf_admin
 policy|ONAP Policy Application|POLICY|ONAP Application|||a|aaf_admin
 portal|ONAP Portal Application|PORTAL|ONAP Application|||a|aaf_admin
 

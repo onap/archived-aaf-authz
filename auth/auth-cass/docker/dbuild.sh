@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-# Build AAF Cass Docker Script
+# Build AAF Cass Docker Script locally
 #
 # Pull in AAF Env Variables from AAF install
 if [ -e ../../docker/d.props ]; then
