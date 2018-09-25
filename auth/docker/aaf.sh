@@ -6,6 +6,7 @@ function run_it() {
     --mount 'type=volume,src=aaf_config,dst='$CONF_ROOT_DIR',volume-driver=local' \
     --add-host="$HOSTNAME:$HOST_IP" \
     --add-host="aaf.osaaf.org:$HOST_IP" \
+    --env HOSTNAME=${HOSTNAME} \
     --env AAF_ENV=${AAF_ENV} \
     --env AAF_REGISTER_AS=${AAF_REGISTER_AS} \
     --env LATITUDE=${LATITUDE} \
