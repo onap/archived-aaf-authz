@@ -29,6 +29,7 @@ BOOTSTRAP_CSR=/tmp/$NAME.csr
 BOOTSTRAP_CRT=/tmp/$NAME.crt
 BOOTSTRAP_CHAIN=/tmp/$NAME.chain
 BOOTSTRAP_P12=$NAME.p12
+BOOTSTRAP_ISSUER=$NAME.issuer
 
 
 # If Signer doesn't exist, create Self-Signed CA
@@ -100,6 +101,16 @@ $PASSPHRASE
 $PASSPHRASE
 $PASSPHRASE
 EOF
+
+# Make Issuer name
+ISSUER=$(openssl x509 -subject -noout -in $SIGNER_CRT | cut -c 10-)
+for I in ${ISSUER//\// }; do
+  if [ -n "$CADI_X509_ISSUER" ]; then
+    CADI_X509_ISSUER=", $CADI_X509_ISSUER"
+  fi
+  CADI_X509_ISSUER="$I$CADI_X509_ISSUER"
+done
+echo $CADI_X509_ISSUER > $BOOTSTRAP_ISSUER
 
 # Cleanup
 rm -f $BOOTSTRAP_SAN $BOOTSTRAP_KEY $BOOTSTRAP_CSR $BOOTSTRAP_CRT $BOOTSTRAP_CHAIN $SIGNER_KEY $SIGNER_CRT 

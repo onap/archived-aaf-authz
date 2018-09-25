@@ -3,35 +3,101 @@
 #  It needs to cover the cases where the initial data doesn't exist, and when it has already been configured (don't overwrite)
 #
 JAVA=/usr/bin/java
+LOCAL=/opt/app/osaaf/local
+DATA=/opt/app/osaaf/data
+PUBLIC=/opt/app/osaaf/public
+CONFIG=/opt/app/aaf_config
+# Temp use for clarity of code
+FILE=
 
 # Only load Identities once
-if [ ! -e /opt/app/osaaf/data/identities.dat ]; then
-    mkdir -p /opt/app/osaaf/data
-    cp /opt/app/aaf_config/data/sample.identities.dat /opt/app/osaaf/data/identities.dat
+# echo "Check Identities"
+FILE="$DATA/identities.dat"
+if [ ! -e $FILE ]; then
+    mkdir -p $DATA
+    cp $CONFIG/data/sample.identities.dat $FILE
+fi
+
+# Load up Cert/X509 Artifacts
+# echo "Check Signer Keyfile"
+FILE="$LOCAL/org.osaaf.aaf.signer.p12"
+if [ ! -e $FILE ]; then
+    mkdir -p $LOCAL
+    mkdir -p $PUBLIC
+    if [ -e $CONFIG/cert/org.osaaf.aaf.signer.p12 ]; then
+        cp $CONFIG/cert/org.osaaf.aaf.signer.p12 $FILE
+    else
+        echo "Decode"
+        base64 -d $CONFIG/cert/demoONAPsigner.p12.b64 > $FILE
+	base64 -d $CONFIG/cert/truststoreONAP.p12.b64 > $PUBLIC/truststoreONAP.p12 
+	base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $PUBLIC/truststoreONAPall.jks
+	ln -s $PUBLIC/truststoreONAPall.jks $LOCAL
+	echo "cadi_keystore_password=something easy" >> $CONFIG/local/aaf.props        
+    fi
+fi
+
+# echo "Check keyfile"
+FILE="$LOCAL/org.osaaf.aaf.p12"
+if [ ! -e $FILE ]; then
+    if [ -e $CONFIG/cert/org.osaaf.aaf.p12 ]; then
+        cp $CONFIG/cert/org.osaaf.aaf.p12 $FILE
+    else
+        echo "Bootstrap Creation of Keystore from Signer"
+        cd $CONFIG/CA
+	
+        # Remove this after Casablanca
+	CADI_X509_ISSUERS="CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US"
+	bash bootstrap.sh $LOCAL/org.osaaf.aaf.signer.p12 'something easy'
+	cp aaf.bootstrap.p12 $FILE
+	if [ -n "$CADI_X509_ISSUERS" ]; then
+            CADI_X509_ISSUERS="$CADI_X509_ISSUERS:"
+        fi
+	BOOT_ISSUER="$(cat aaf.bootstrap.issuer)"
+	CADI_X509_ISSUERS="$CADI_X509_ISSUERS$BOOT_ISSUER"
+
+	I=${BOOT_ISSUER##CN=};I=${I%%,*}
+        CM_CA_PASS="something easy"
+        CM_CA_LOCAL="org.onap.aaf.auth.cm.ca.LocalCA,$LOCAL/org.osaaf.aaf.signer.p12;aaf_intermediate_9;enc:"
+    fi
 fi
 
 # Only initialize once, automatically...
-if [ ! -e /opt/app/osaaf/local/org.osaaf.aaf.props ]; then
-    rsync -avzh --exclude=.gitignore /opt/app/aaf_config/local/org.osaaf.aaf* /opt/app/osaaf/local
+if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
+    rsync -avzh --exclude=.gitignore $CONFIG/local/org.osaaf.aaf* $LOCAL
     for D in public etc logs; do
-        rsync -avzh --exclude=.gitignore /opt/app/aaf_config/$D/* /opt/app/osaaf/$D
+        rsync -avzh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
     done
 
     TMP=$(mktemp)
     echo aaf_env=${AAF_ENV} >> ${TMP}
     echo cadi_latitude=${LATITUDE} >> ${TMP}
     echo cadi_longitude=${LONGITUDE} >> ${TMP}
+    echo cadi_x509_issuers=${CADI_X509_ISSUERS} >> ${TMP}
     echo aaf_register_as=${AAF_REGISTER_AS} >> ${TMP}
     echo aaf_locate_url=https://${AAF_REGISTER_AS}:8095 >> ${TMP}
 
-    $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar config aaf@aaf.osaaf.org \
-        cadi_etc_dir=/opt/app/osaaf/local \
-        cadi_prop_files=/opt/app/aaf_config/local/initialConfig.props:/opt/app/aaf_config/local/aaf.props:${TMP}
+    cat $TMP
+
+    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar config aaf@aaf.osaaf.org \
+        cadi_etc_dir=$LOCAL \
+        cadi_prop_files=$CONFIG/local/initialConfig.props:$CONFIG/local/aaf.props:${TMP}
     rm ${TMP}
     # Default Password for Default Cass
-    CASS_PASS=$("$JAVA" -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar cadi digest "cassandra" /opt/app/osaaf/local/org.osaaf.aaf.keyfile)
-    sed -i.backup -e "s/\\(cassandra.clusters.password=enc:\\)/\\1$CASS_PASS/" /opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
+    CASS_PASS=$("$JAVA" -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi digest "cassandra" $LOCAL/org.osaaf.aaf.keyfile)
+    sed -i.backup -e "s/\\(cassandra.clusters.password=enc:\\)/\\1$CASS_PASS/" $LOCAL/org.osaaf.aaf.cassandra.props
+
+    if [ -n "$CM_CA_LOCAL" ]; then
+      if [ -n "$CM_CA_PASS" ]; then
+          CM_CA_LOCAL=$CM_CA_LOCAL$("$JAVA" -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi digest "$CM_CA_PASS" $LOCAL/org.osaaf.aaf.keyfile)	
+      fi
+      # Move and copy method, rather than sed, because of slashes in CM_CA_LOCAL makes too complex
+      FILE=$LOCAL/org.osaaf.aaf.cm.ca.props
+      mv $FILE $FILE.backup
+      grep -v "cm_ca.local=" $FILE.backup > $FILE
+      echo "cm_ca.local=$CM_CA_LOCAL" >> $FILE
+    fi
 fi
+
 
 # Now run a command
 CMD=$2
@@ -59,28 +125,31 @@ if [ ! "$CMD" = "" ]; then
         fi
         ;;
     update)
-        rsync -uh --exclude=.gitignore /opt/app/aaf_config/local/org.osaaf.aaf* /opt/app/osaaf/local
+        rsync -uh --exclude=.gitignore $CONFIG/local/org.osaaf.aaf* $LOCAL
         for D in public data etc logs; do
-            rsync -uh --exclude=.gitignore /opt/app/aaf_config/$D/* /opt/app/osaaf/$D
+            rsync -uh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
         done
         ;;
     validate)
         echo "## validate requested"
-        $JAVA -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar validate cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props
+        $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar validate cadi_prop_files=$LOCAL/org.osaaf.aaf.props
         ;;
+    onap)
+        echo Initializing ONAP configurations.
+	;;
     bash)
-        echo "alias agent='/bin/bash /opt/app/aaf_config/bin/agent.sh EMPTY \$*'" >>~/.bashrc
+        echo "alias agent='/bin/bash $CONFIG/bin/agent.sh EMPTY \$*'" >>~/.bashrc
         if [ ! "$(grep aaf_config ~/.bashrc)" = "" ]; then
-            echo "alias cadi='/bin/bash /opt/app/aaf_config/bin/agent.sh EMPTY cadi \$*'" >>~/.bashrc
-            echo "alias agent='/bin/bash /opt/app/aaf_config/bin/agent.sh EMPTY \$*'" >>~/.bashrc
+            echo "alias cadi='/bin/bash $CONFIG/bin/agent.sh EMPTY cadi \$*'" >>~/.bashrc
+            echo "alias agent='/bin/bash $CONFIG/bin/agent.sh EMPTY \$*'" >>~/.bashrc
             #. ~/.bashrc
         fi
         shift
-        cd /opt/app/osaaf/local || exit
+        cd $LOCAL || exit
         /bin/bash "$@"
         ;;
     setProp)
-        cd /opt/app/osaaf/local || exit
+        cd $LOCAL || exit
         FILES=$(grep -l "$1" ./*.props)
 	if [ "$FILES" = "" ]; then 
   	    FILES="$3"
@@ -98,11 +167,11 @@ if [ ! "$CMD" = "" ]; then
         done
         ;;
     encrypt)
-        cd /opt/app/osaaf/local || exit
+        cd $LOCAL || exit
 	echo $1
         FILES=$(grep -l "$1" ./*.props)
 	if [ "$FILES" = "" ]; then
-             FILES=/opt/app/osaaf/local/org.osaaf.aaf.cred.props
+             FILES=$LOCAL/org.osaaf.aaf.cred.props
 	     ADD=Y
         fi
         for F in $FILES; do
@@ -117,7 +186,7 @@ if [ ! "$CMD" = "" ]; then
             else
                 ORIG_PW="$2"
             fi
-            PWD=$("$JAVA" -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar cadi digest "$ORIG_PW" /opt/app/osaaf/local/org.osaaf.aaf.keyfile)
+            PWD=$("$JAVA" -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi digest "$ORIG_PW" $LOCAL/org.osaaf.aaf.keyfile)
             if [ "$ADD" = "Y" ]; then
                   echo "$1=enc:$PWD" >> $F
             else 
@@ -147,17 +216,17 @@ if [ ! "$CMD" = "" ]; then
             ;;
         cadi)
             echo "--- cadi Tool Comands ---"
-            $JAVA -Dcadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar cadi | tail -n +6
+            $JAVA -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi | tail -n +6
             ;;
         agent)
             echo "--- agent Tool Comands ---"
-            $JAVA -Dcadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar
+            $JAVA -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar
             ;;
         esac
         echo ""
         ;;
     *)
-        $JAVA -Dcadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props -jar /opt/app/aaf_config/bin/aaf-cadi-aaf-*-full.jar "$CMD" "$@"
+        $JAVA -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar "$CMD" "$@"
         ;;
     esac
 fi

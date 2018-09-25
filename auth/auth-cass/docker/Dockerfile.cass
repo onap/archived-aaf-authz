@@ -1,0 +1,17 @@
+FROM nexus3.onap.org:10001/cassandra:3.11
+MAINTAINER AAF Team, AT&T 2018
+ENV VERSION=${AAF_VERSION}
+
+LABEL description="aaf_cass"
+LABEL version=${AAF_VERSION}
+
+COPY cass_init/*.cql /opt/app/aaf/cass_init/
+COPY cass_init/*.sh /opt/app/aaf/cass_init/
+COPY cass_init/*.dat /opt/app/aaf/cass_init/
+COPY cass_data /opt/app/aaf/cass_init/dats/
+COPY sample.identities.dat /opt/app/aaf/cass_init/
+
+ENTRYPOINT ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh"]
+CMD ["start"]
+# Default is to start up like normal
+

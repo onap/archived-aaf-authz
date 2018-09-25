@@ -20,6 +20,8 @@ fi
 
 . ./cass.props
 
+bash aaf.sh onap
+
 if [ "$1" == "" ]; then
     AAF_COMPONENTS=$(cat components)
 else
