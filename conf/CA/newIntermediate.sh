@@ -4,7 +4,7 @@
   if [ -e intermediate.serial ]; then
     ((SERIAL=`cat intermediate.serial` + 1))
   else
-    SERIAL=1
+    SERIAL=$(date +%s)
   fi
   echo $SERIAL > intermediate.serial
 DIR=intermediate_$SERIAL

@@ -9,7 +9,7 @@ touch index.txt
 echo "unique_subject = no" > index.txt.attr
 
 if [ ! -e serial ]; then
-  echo '01' > serial
+   echo $(date +%s) > serial
 fi
 
 if [  "$1" == "" ]; then
