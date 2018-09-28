@@ -4,3 +4,4 @@
 /aaf_*
 /deploy.gz
 /createLocalDeploy.sh
+/helm

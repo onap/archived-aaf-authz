@@ -193,7 +193,7 @@ public class JU_AAFCli {
         Locator loc;
         loc = new PropertyLocator(aafUrl);
         TIMEOUT = Integer.parseInt(env.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-        HMangr hman = new HMangr(env, loc).readTimeout(TIMEOUT).apiVersion("2.0");
+        HMangr hman = new HMangr(env, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
 
         // TODO: Consider requiring a default in properties
         env.setProperty(Config.AAF_DEFAULT_REALM,

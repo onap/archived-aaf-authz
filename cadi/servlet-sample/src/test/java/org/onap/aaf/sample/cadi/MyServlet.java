@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 // Uncomment if you utilized the "MiniJASPIWrap" in the Servlet setup in "main()", and want to protect your service via Permission or mapped role
@@ -99,8 +100,8 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
                         };
                     }
                     // This call will be "as the user calling", but only if permission is set to trust.
-//                    Future<String> future = aafcon.clientAs("2.0",tp).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
-                    Future<String> future = aafcon.client("2.0").read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
+//                    Future<String> future = aafcon.clientAs(Config.AAF_DEFAULT_VERSION,tp).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
+                    Future<String> future = aafcon.client(Config.AAF_DEFAULT_VERSION).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
                     if (future.get(4000 /* timeout */)) {
                         res.getOutputStream().print(future.value);
                     } else {
