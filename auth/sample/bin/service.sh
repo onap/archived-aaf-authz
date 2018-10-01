@@ -10,6 +10,14 @@ CONFIG=/opt/app/aaf_config
 # Temp use for clarity of code
 FILE=
 
+# Setup Bash, first time only
+if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep aaf_config $HOME/.bash_aliases)" ]; then
+  echo "alias cadi='$CONFIG/bin/agent.sh EMPTY cadi \$*'" >>$HOME/.bash_aliases
+  echo "alias agent='$CONFIG/bin/agent.sh EMPTY \$*'" >>$HOME/.bash_aliases
+  chmod a+x $CONFIG/bin/agent.sh
+  . $HOME/.bash_aliases
+fi
+
 # Only load Identities once
 # echo "Check Identities"
 FILE="$DATA/identities.dat"
@@ -32,6 +40,8 @@ if [ ! -e $FILE ]; then
 	base64 -d $CONFIG/cert/truststoreONAP.p12.b64 > $PUBLIC/truststoreONAP.p12 
 	base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $PUBLIC/truststoreONAPall.jks
 	ln -s $PUBLIC/truststoreONAPall.jks $LOCAL
+	cp $CONFIG/cert/AAF_RootCA.cer $PUBLIC
+	CM_TRUST_CAS="$PUBLIC/AAF_RootCA.cer"
 	echo "cadi_keystore_password=something easy" >> $CONFIG/local/aaf.props        
     fi
 fi
@@ -58,6 +68,7 @@ if [ ! -e $FILE ]; then
 	I=${BOOT_ISSUER##CN=};I=${I%%,*}
         CM_CA_PASS="something easy"
         CM_CA_LOCAL="org.onap.aaf.auth.cm.ca.LocalCA,$LOCAL/org.osaaf.aaf.signer.p12;aaf_intermediate_9;enc:"
+	CM_TRUST_CAS="$PUBLIC/AAF_RootCA.cer"
     fi
 fi
 
@@ -95,6 +106,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
       mv $FILE $FILE.backup
       grep -v "cm_ca.local=" $FILE.backup > $FILE
       echo "cm_ca.local=$CM_CA_LOCAL" >> $FILE
+      echo "cm_trust_cas=$CM_TRUST_CAS" >> $FILE
     fi
 fi
 
@@ -138,12 +150,6 @@ if [ ! "$CMD" = "" ]; then
         echo Initializing ONAP configurations.
 	;;
     bash)
-        echo "alias agent='/bin/bash $CONFIG/bin/agent.sh EMPTY \$*'" >>~/.bashrc
-        if [ ! "$(grep aaf_config ~/.bashrc)" = "" ]; then
-            echo "alias cadi='/bin/bash $CONFIG/bin/agent.sh EMPTY cadi \$*'" >>~/.bashrc
-            echo "alias agent='/bin/bash $CONFIG/bin/agent.sh EMPTY \$*'" >>~/.bashrc
-            #. ~/.bashrc
-        fi
         shift
         cd $LOCAL || exit
         /bin/bash "$@"

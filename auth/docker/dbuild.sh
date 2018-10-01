@@ -35,6 +35,7 @@ docker tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${
 rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
 rm -Rf sample/CA
 cd -
+
 ########
 # Second, build a core Docker Image
 echo Building aaf_$AAF_COMPONENT...

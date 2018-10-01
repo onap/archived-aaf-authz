@@ -16,7 +16,7 @@ for V in VERSION DOCKER_REPOSITORY AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_
       case $V in
 	 DOCKER_REPOSITORY) 
 	        PROMPT="Docker Repo"
-	        DEF=nexus3.onap.org:10003
+	        DEF=""
 	        ;;
          AAF_FQDN)   PROMPT="AAF's FQDN";;
          DEPLOY_FQI) PROMPT="Deployer's FQI";;
@@ -58,6 +58,12 @@ if [ "$(docker volume ls | grep ${VOLUME})" = "" ]; then
   docker volume create -d ${DRIVER} ${VOLUME}
 fi
 
+if [ -n "$DOCKER_REPOSITORY" ]; then
+  PREFIX="$DOCKER_REPOSITORY/"
+else
+  PREFIX=""
+fi 
+
 docker run \
     -it \
     --rm \
@@ -71,5 +77,5 @@ docker run \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
     --name aaf_agent_$USER \
-    $DOCKER_REPOSITORY/onap/aaf/aaf_agent:$VERSION \
+    "$PREFIX"onap/aaf/aaf_agent:$VERSION \
     /bin/bash "$@"

@@ -8,7 +8,7 @@ LABEL version=${AAF_VERSION}
 COPY logs /opt/app/aaf_config/logs
 COPY bin/client.sh /opt/app/aaf_config/bin/agent.sh
 COPY bin/aaf-cadi*full.jar /opt/app/aaf_config/bin/
-COPY public/*all.jks /opt/app/aaf_config/public/
+COPY cert/*trust*.b64 /opt/app/aaf_config/cert/
 
 ENTRYPOINT ["/bin/bash","/opt/app/aaf_config/bin/agent.sh"]
 CMD []
