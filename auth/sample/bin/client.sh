@@ -36,7 +36,6 @@ function sso_encrypt() {
 
 if [ ! -e "$DOT_AAF/keyfile" ]; then
     mkdir -p $DOT_AAF
-    echo "WRITING $DOT_AAF Props ($SSO)"
     $JAVA -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar org.onap.aaf.cadi.CmdLine keygen $DOT_AAF/keyfile
     chmod 400 $DOT_AAF/keyfile
     echo cadi_latitude=${LATITUDE} > ${SSO}
