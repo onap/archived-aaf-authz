@@ -36,7 +36,7 @@ import aaf.v2_0.Nss;
 
 public class ListAdminResponsible extends Cmd {
     private static final String HEADER="List Namespaces with ";
-    private final static String[] options = {"admin","owner"};
+    private static final String[] options = {"admin","owner"};
     
     public ListAdminResponsible(List parent) {
         super(parent,null, 

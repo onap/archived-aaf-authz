@@ -49,8 +49,8 @@ public class ListChildren extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+    public int _exec(int idxValue, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = idxValue;
         final String ns=args[idx++];
         return same(new Retryable<Integer>() {
             @Override
