@@ -1,0 +1,296 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: {{ .Values.cadi.hostname }}
+  namespace: {{ .Values.global.common.namespace }}
+spec:
+  volumes:
+    - name: {{ .Chart.Name }}-config-vol
+      persistentVolumeClaim:
+      claimName: {{ .Chart.Name }}-config-pvc
+    - name: {{ .Chart.Name }}-logs-vol
+      persistentVolumeClaim:
+      claimName: {{ .Chart.Name }}-logs-pvc
+    - name: {{ .Chart.Name }}-cass-vol
+      persistentVolumeClaim:
+      claimName: {{ .Chart.Name }}-cass-pvc
+    # Use this Pod Sharing dir to declare various States of starting
+    - name: {{ .Chart.Name }}-pod-status
+      emptyDir: {}
+  hostAliases:
+    - ip: "127.0.0.1"
+      hostnames:
+      - "cass.{{ .Values.cadi.hostname }}"
+      - "service.{{ .Values.cadi.hostname }}"
+      - "locate.{{ .Values.cadi.hostname }}"
+      - "oauth.{{ .Values.cadi.hostname }}"
+      - "gui.{{ .Values.cadi.hostname }}"
+      - "cm.{{ .Values.cadi.hostname }}"
+      - "hello.{{ .Values.cadi.hostname }}"
+      - "fs.{{ .Values.cadi.hostname }}"
+###
+### DEFINE THE CONTAINERS
+###
+
+###
+### INIT Containers
+###
+  containers:
+  initContainers:
+    - name: {{ .Chart.Name }}-config-container
+      image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+      - mountPath: "/opt/app/osaaf"
+        name: {{ .Chart.Name }}-config-vol
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+###
+### Regular Containers
+###
+  containers:
+###
+### AAF-CASS
+###
+    - name: {{ .Chart.Name }}-cass
+      image: {{ .Values.image.repository }}onap/aaf/aaf_cass:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      # installing with cmd "onap" will not only initialize the DB, but add ONAP bootstrap data as well
+      command: ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh","onap"]
+      volumeMounts:
+        - mountPath: "/data"
+          name: {{ .Chart.Name }}-cass-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: storage
+        containerPort: 7000
+      - name: ssl-storage
+        containerPort: 7001
+      - name: native-trans
+        containerPort: 9042
+      - name: rpc
+        containerPort: 9160
+      env:
+      - name: CASSANDRA_CLUSTER_NAME
+        value: "osaaf"
+      - name: CASSANDRA_DC
+        value: "dc1"
+      - name: HEAP_NEWSIZE
+        value: "512M"
+      - name: MAX_HEAP_SIZE
+        value: "1024M"
+###
+### AAF-Service
+###
+    - name: {{ .Chart.Name }}-service
+      image: {{ .Values.image.repository }}onap/aaf/aaf_service:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_service","aaf_cass","/opt/app/aaf/bin/service"]
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: service
+        protocol: TCP
+        containerPort: 8100
+        hostPort: 8100
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+        - name: CASS_HOST
+          value: "cass.{{ .Values.cadi.hostname }}:127.0.0.1"
+###
+### AAF-Locate
+###
+    - name: {{ .Chart.Name }}-locate
+      image: {{ .Values.image.repository }}onap/aaf/aaf_locate:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_locate","aaf_service","/opt/app/aaf/bin/locate"]
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: locate
+        protocol: TCP
+        containerPort: 8095
+        hostPort: 443
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+        - name: CASS_HOST
+          value: "cass.{{ .Values.cadi.hostname }}:127.0.0.1"
+###
+### AAF-OAuth
+###
+    - name: {{ .Chart.Name }}-oauth
+      image: {{ .Values.image.repository }}onap/aaf/aaf_oauth:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_oauth","aaf_service","/opt/app/aaf/bin/oauth"]
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: oauth
+        protocol: TCP
+        containerPort: 8140
+        hostPort: 8140
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+        - name: CASS_HOST
+          value: "cass.{{ .Values.cadi.hostname }}:127.0.0.1"
+###
+### AAF-Gui
+###
+    - name: {{ .Chart.Name }}-gui
+      image: {{ .Values.image.repository }}onap/aaf/aaf_gui:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_gui","aaf_locate","/opt/app/aaf/bin/gui"]
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: gui
+        protocol: TCP
+        containerPort: 8200
+        hostPort: 8200
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+        - name: CASS_HOST
+          value: "cass.{{ .Values.cadi.hostname }}:127.0.0.1"
+###
+### AAF-Certman
+###
+    - name: {{ .Chart.Name }}-cm
+      image: {{ .Values.image.repository }}onap/aaf/aaf_cm:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_cm","aaf_locate","/opt/app/aaf/bin/cm"]
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: cm
+        protocol: TCP
+        containerPort: 8150
+        hostPort: 8150
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+        - name: CASS_HOST
+          value: "cass.{{ .Values.cadi.hostname }}:127.0.0.1"
+###
+### AAF-FS
+###
+    - name: {{ .Chart.Name }}-fs
+      image: {{ .Values.image.repository }}onap/aaf/aaf_fs:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+      ports:
+      - name: fs
+        protocol: TCP
+        containerPort: 8096
+        hostPort: 80
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+###
+### AAF-Hello
+###
+    - name: {{ .Chart.Name }}-hello
+      image: {{ .Values.image.repository }}onap/aaf/aaf_hello:{{ .Values.image.version }}
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_hello","aaf_locate","/opt/app/aaf/bin/hello"]
+      volumeMounts:
+        - mountPath: "/opt/app/osaaf"
+          name: {{ .Chart.Name }}-config-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-pod-status
+      ports:
+      - name: hello
+        protocol: TCP
+        containerPort: 8130
+        hostPort: 8130
+      env:
+        - name: HOSTNAME
+          value: "{{ .Values.cadi.hostname }}"
+        - name: AAF_ENV
+          value: "{{ .Values.cadi.aaf_env }}"
+        - name: AAF_REGISTER_AS
+          value: "{{ .Values.cadi.aaf_register_as }}"
+        - name: LATITUDE
+          value: "{{ .Values.cadi.cadi_latitude }}"
+        - name: LONGITUDE
+          value: "{{ .Values.cadi.cadi_longitude }}"
+        - name: CASS_HOST
+          value: "cass.{{ .Values.cadi.hostname }}:127.0.0.1"

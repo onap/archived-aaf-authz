@@ -1,0 +1,29 @@
+{{- if and .Values.global.persistence.enabled (not .Values.persistence.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-logs-pvc
+  namespace: {{ .Values.global.common.namespace }}
+  labels:
+    app: {{ .Chart.Name }}-logs
+{{- if .Values.persistence.annotations }}
+  annotations:
+{{ toYaml .Values.persistence.annotations | indent 4 }}
+{{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-logs
+  accessModes:
+    - {{ .Values.persistence.logs.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.logs.size }}
+{{- if .Values.persistence.logs.storageClass }}
+{{- if (eq "-" .Values.persistence.logs.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.logs.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

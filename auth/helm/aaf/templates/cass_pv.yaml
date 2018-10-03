@@ -1,0 +1,24 @@
+{{- if and .Values.global.persistence.enabled (not .Values.persistence.existingClaim) -}}
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name  }}-cass-pv
+  namespace: {{ .Values.global.common.namespace  }}
+  labels:
+    app: {{ .Chart.Name  }}-cass
+spec:
+  capacity:
+    storage: {{ .Values.persistence.cass.size}}
+  accessModes:
+    - {{ .Values.persistence.cass.accessMode }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.cass.volumeReclaimPolicy }}
+  hostPath:
+     path: {{ .Values.persistence.mountPath }}/{{ .Values.persistence.cass.mountSubPath }}
+{{- if .Values.persistence.cass.storageClass }}
+{{- if (eq "-" .Values.persistence.cass.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.cass.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

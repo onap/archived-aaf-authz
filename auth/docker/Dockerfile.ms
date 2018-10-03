@@ -5,6 +5,8 @@ ENV VERSION=${AAF_VERSION}
 LABEL description="aaf_${AAF_COMPONENT}"
 LABEL version=${AAF_VERSION}
 
+COPY pod/* /opt/app/aaf/pod/
+
 CMD ["/bin/bash","-c","/opt/app/aaf/bin/${AAF_COMPONENT}"]
 
 # For Debugging installation

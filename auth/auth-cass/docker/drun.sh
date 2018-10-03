@@ -31,7 +31,7 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     -e CASSANDRA_DC=dc1 \
     -e CASSANDRA_CLUSTER_NAME=osaaf \
     --mount 'type=volume,src=aaf_cass_data,dst=/var/lib/cassandra,volume-driver=local' \
-    -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} 
+    -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} "onap"
 else 
   $DOCKER start aaf_cass
 fi

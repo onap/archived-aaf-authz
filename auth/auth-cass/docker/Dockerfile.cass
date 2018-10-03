@@ -13,5 +13,5 @@ COPY sample.identities.dat /opt/app/aaf/cass_init/
 
 ENTRYPOINT ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh"]
 CMD ["start"]
-# Default is to start up like normal
+# Default is to start up with CQL setup only
 

@@ -81,7 +81,7 @@ echo Sign it
 openssl ca -batch -config openssl.conf -extensions server_cert \
 	-cert $SIGNER_CRT -keyfile $SIGNER_KEY \
 	-policy policy_loose \
-	-days 90 \
+	-days 365 \
 	-passin stdin \
 	-out $BOOTSTRAP_CRT \
 	-extfile $BOOTSTRAP_SAN \
@@ -94,8 +94,10 @@ EOF
 cat $BOOTSTRAP_CRT
 cp $BOOTSTRAP_CRT $BOOTSTRAP_CHAIN
 cat $SIGNER_CRT >> $BOOTSTRAP_CHAIN
+cat $BOOTSTRAP_CHAIN
 
 # Note: Openssl will pickup and load all Certs in the Chain file
+#openssl pkcs12 -name $FQI -export -in $BOOTSTRAP_CRT -inkey $BOOTSTRAP_KEY -CAfile $SIGNER_CRT -out $BOOTSTRAP_P12 -passin stdin -passout stdin << EOF
 openssl pkcs12 -name $FQI -export -in $BOOTSTRAP_CHAIN -inkey $BOOTSTRAP_KEY -out $BOOTSTRAP_P12 -passin stdin -passout stdin << EOF
 $PASSPHRASE
 $PASSPHRASE
@@ -113,4 +115,4 @@ done
 echo $CADI_X509_ISSUER > $BOOTSTRAP_ISSUER
 
 # Cleanup
-rm -f $BOOTSTRAP_SAN $BOOTSTRAP_KEY $BOOTSTRAP_CSR $BOOTSTRAP_CRT $BOOTSTRAP_CHAIN $SIGNER_KEY $SIGNER_CRT 
+rm -f $BOOTSTRAP_SAN $BOOTSTRAP_KEY $BOOTSTRAP_CSR $BOOTSTRAP_CRT $SIGNER_KEY $SIGNER_CRT $BOOTSTRAP_CHAIN

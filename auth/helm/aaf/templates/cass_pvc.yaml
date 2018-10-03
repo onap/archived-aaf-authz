@@ -1,0 +1,29 @@
+{{- if and .Values.global.persistence.enabled (not .Values.persistence.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-cass-pvc
+  namespace: {{ .Values.global.common.namespace }}
+  labels:
+    app: {{ .Chart.Name }}-cass
+{{- if .Values.persistence.annotations }}
+  annotations:
+{{ toYaml .Values.persistence.annotations | indent 4 }}
+{{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-cass
+  accessModes:
+    - {{ .Values.persistence.cass.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.cass.size }}
+{{- if .Values.persistence.cass.storageClass }}
+{{- if (eq "-" .Values.persistence.cass.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.cass.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

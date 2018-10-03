@@ -20,6 +20,7 @@ cp sample/data/sample.identities.dat auth-cass
 
 docker build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
 docker tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:${VERSION}
+docker tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:latest
 
 cd -
 rm Dockerfile

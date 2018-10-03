@@ -25,11 +25,13 @@ cp -Rf ../conf/CA sample
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.config > sample/Dockerfile
 docker build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
 docker tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
+docker tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/latest
 
 # AAF Agent Image (for Clients)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.client > sample/Dockerfile
 docker build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
 docker tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
+docker tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
 
 # Clean up 
 rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
@@ -44,6 +46,7 @@ sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT
 cd ..
 docker build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
 docker tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
+docker tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
 rm aaf_${VERSION}/Dockerfile
 cd -
 
@@ -53,12 +56,17 @@ else
     AAF_COMPONENTS=$1
 fi
 
+mkdir -p ../aaf_${VERSION}/pod
+cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/pod
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     echo Building aaf_$AAF_COMPONENT...
     sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.ms >../aaf_${VERSION}/Dockerfile
     cd ..
     docker build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
     docker tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
+    docker tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:latest
     rm aaf_${VERSION}/Dockerfile
     cd -
 done
+rm ../aaf_${VERSION}/pod/*
+rmdir ../aaf_${VERSION}/pod
