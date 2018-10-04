@@ -16,20 +16,36 @@ function status {
   fi
 }
 
-function install_cql {
-    status install 
+function wait_start {
     sleep 10
     status wait for cassandra to start
+    for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+      if [ -z "$(grep 'listening for CQL clients' /var/log/cassandra/system.log)" ]; then
+        echo "Waiting for Cassandra to start... Sleep 10"
+        sleep 10
+      else
+         break
+      fi
+    done
+}
+
+function wait_cql {
+   status wait for keyspace to be initialized
+   for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+     if [ "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" == "" ]; then
+	break
+     else
+        echo "Waiting for Keyspaces to be loaded... Sleep 10"
+        sleep 10
+      fi
+    done
+}
+
+function install_cql {
+    wait_start started   
     # Now, make sure data exists
     if [ "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)" = "" ]; then
-      for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-         if [ -z "$(grep 'listening for CQL clients' /var/log/cassandra/system.log)" ]; then
-            echo "Waiting for Cassandra to start... Sleep 10"
-            sleep 10
-         else
-            break
-         fi
-      done
+      status install 
       echo "Initializing Cassandra DB" 
       if [ "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" == "" ]; then
         echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
@@ -107,6 +123,14 @@ case "$1" in
     # Startup like normal
     echo "Cassandra Startup"
     /usr/local/bin/docker-entrypoint.sh 
+  ;;
+  wait)
+    # Wait for initialization.  This can be called from Docker only as a check to make sure it is ready
+    wait_start started 
+
+    # Make sure Keyspace is loaded
+    wait_cql 
+    status ready
   ;;
   onap)
     # start install_onap (which calls install_cql first) in background, waiting for process to start

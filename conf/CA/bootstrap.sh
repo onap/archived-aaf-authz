@@ -64,8 +64,19 @@ fi
 
 # SANS
 cp san.conf $BOOTSTRAP_SAN
+SANS=$FQDN
+if [ "$FQDN" -ne "$HOSTNAME" ]; then
+  SANS="$SANS $HOSTNAME"
+fi
+
+for ROOT in $(cat san_root.aaf); do
+   SANS="$SANS $ROOT"
+   for C in service locate oauth gui cm hello; do
+     SANS="$SANS $C.$ROOT"
+   done
+done
 NUM=1
-for D in $FQDN aaf.osaaf.org service.aaf.osaaf.org locate.aaf.osaaf.org oauth.aaf.osaaf.org gui.aaf.osaaf.org cm.aaf.osaaf.org hello.aaf.osaaf.org; do
+for D in $SANS; do
     echo "DNS.$NUM = $D" >> $BOOTSTRAP_SAN
     NUM=$((NUM+1))
 done

@@ -59,13 +59,29 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 
     echo Starting aaf_$AAF_COMPONENT...
 
+    if [ -n "$AAF_REGISTER_AS" ] && [ "$HOSTNAME" != "$AAF_REGISTER_AS" ]; then
+       AH_ROOT="$HOSTNAME $AAF_REGISTER_AS"
+    else
+       AH_ROOT="$HOSTNAME"
+    fi
+
+    for A in aaf.osaaf.org $AH_ROOT; do 
+       ADD_HOST="$ADD_HOST --add-host=$A:$HOST_IP"
+       for SA in service locate oauth gui fs cm hello; do
+         ADD_HOST="$ADD_HOST --add-host=$SA.$A:$HOST_IP"
+       done
+    done
+
     docker run \
         -d \
         --name aaf_$AAF_COMPONENT \
         --hostname="${AAF_COMPONENT}.aaf.osaaf.org" \
-        --add-host="$HOSTNAME:$HOST_IP" \
-        --add-host="aaf.osaaf.org:$HOST_IP" \
+	$ADD_HOST \
         ${LINKS} \
+        --env AAF_ENV=${AAF_ENV} \
+        --env AAF_REGISTER_AS=${AAF_REGISTER_AS} \
+        --env LATITUDE=${LATITUDE} \
+        --env LONGITUDE=${LONGITUDE} \
         --publish $PORTMAP \
         --mount 'type=volume,src=aaf_config,dst='$CONF_ROOT_DIR',volume-driver=local' \
         ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
