@@ -9,11 +9,14 @@ if [ ! -e /aaf_cmd ]; then
   chmod u+x /aaf_cmd
 fi
 
+# Always need startup status...
+if [ ! -e "$DIR" ]; then
+  mkdir -p "$DIR"
+fi
+
 function status {
-  if [ -d "$DIR" ]; then
      echo "$@"
      echo "$@" > $DIR/aaf_cass
-  fi
 }
 
 function wait_start {
@@ -29,6 +32,7 @@ function wait_start {
     done
 }
 
+
 function wait_cql {
    status wait for keyspace to be initialized
    for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
@@ -36,6 +40,19 @@ function wait_cql {
 	break
      else
         echo "Waiting for Keyspaces to be loaded... Sleep 10"
+        sleep 10
+      fi
+    done
+}
+
+function wait_ready {
+   status wait for cassandra to be fully ready
+   for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+       STATUS="$(cat $DIR/aaf_cass)"
+       if [ "$STATUS" = "ready" ]; then
+	break
+     else
+        echo "Waiting for Start, $STATUS... Sleep 10"
         sleep 10
       fi
     done
@@ -126,13 +143,8 @@ case "$1" in
   ;;
   wait)
     # Wait for initialization.  This can be called from Docker only as a check to make sure it is ready
-    wait_start started 
+    wait_ready 
 
-    # Make sure Keyspace is loaded
-    wait_cql 
-
-    # Wait for Data load?
-    status ready
   ;;
   onap)
     # start install_onap (which calls install_cql first) in background, waiting for process to start
