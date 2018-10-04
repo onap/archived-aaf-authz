@@ -32,7 +32,7 @@ function wait_start {
 function wait_cql {
    status wait for keyspace to be initialized
    for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-     if [ "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" == "" ]; then
+     if [ -n "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)"  ]; then
 	break
      else
         echo "Waiting for Keyspaces to be loaded... Sleep 10"
@@ -130,6 +130,8 @@ case "$1" in
 
     # Make sure Keyspace is loaded
     wait_cql 
+
+    # Wait for Data load?
     status ready
   ;;
   onap)

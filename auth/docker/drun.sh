@@ -67,9 +67,6 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 
     for A in aaf.osaaf.org $AH_ROOT; do 
        ADD_HOST="$ADD_HOST --add-host=$A:$HOST_IP"
-       for SA in service locate oauth gui fs cm hello; do
-         ADD_HOST="$ADD_HOST --add-host=$SA.$A:$HOST_IP"
-       done
     done
 
     docker run \
