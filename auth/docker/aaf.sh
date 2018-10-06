@@ -1,5 +1,8 @@
 #!/bin/bash
 . ./d.props
+if [ -e ./cass.props ]; then
+  . ./cass.props
+fi
 
 function run_it() {
   docker run $@ \
@@ -11,6 +14,11 @@ function run_it() {
     --env AAF_REGISTER_AS=${AAF_REGISTER_AS} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
+    --env CASS_HOST=${CASS_HOST} \
+    --env CASSANDRA_CLUSTER=${CASSANDRA_CLUSTER} \
+    --env CASSANDRA_USER=${CASSANDRA_USER} \
+    --env CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD} \
+    --env CASSANDRA_PORT=${CASSANDRA_PORT} \
     --name aaf_config_$USER \
     $PREFIX${ORG}/${PROJECT}/aaf_config:${VERSION} \
     /bin/bash $PARAMS
