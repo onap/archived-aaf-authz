@@ -46,7 +46,7 @@ public class JU_Symm {
     public void setup() throws Exception {
         defaultSymm = new Symm(
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
-                ,76, "Use default!" ,true);
+                ,76, "Use default!" ,true, "Junit 1");
         outStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outStream));
     }
@@ -59,7 +59,7 @@ public class JU_Symm {
     @Test
     public void constructorTest() throws Exception {
         Symm myCustomSymm = new Symm(
-            "ACEGIKMOQSUWYacegikmoqsuwy02468+/".toCharArray(), 76, "Default", true);
+            "ACEGIKMOQSUWYacegikmoqsuwy02468+/".toCharArray(), 76, "Default", true, "Junit 2");
         Field convert_field = Symm.class.getDeclaredField("convert");
         convert_field.setAccessible(true);
 

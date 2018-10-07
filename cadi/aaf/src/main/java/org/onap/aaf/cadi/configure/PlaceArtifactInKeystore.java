@@ -79,11 +79,14 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 
             // Properties, etc
             // Add CADI Keyfile Entry to Properties
-            addProperty(Config.CADI_KEYFILE,arti.getDir()+'/'+arti.getNs() + ".keyfile");
+            File keyfile = new File(arti.getDir()+'/'+arti.getNs() + ".keyfile");
+            PropHolder props = PropHolder.get(arti, "cred.props");
+            props.add(Config.CADI_KEYFILE,keyfile.getAbsolutePath());
+
             // Set Keystore Password
-            addProperty(Config.CADI_KEYSTORE,fks.getAbsolutePath());
+            props.add(Config.CADI_KEYSTORE,fks.getAbsolutePath());
             String keystorePass = Symm.randomGen(Agent.PASS_SIZE);
-            addEncProperty(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
+            props.addEnc(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
             char[] keystorePassArray = keystorePass.toCharArray();
             jks.load(null,keystorePassArray); // load in
             
@@ -95,8 +98,8 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             // dictates that you live with the default, meaning, they are the same
             String keyPass = keystorePass; //Symm.randomGen(CmAgent.PASS_SIZE);
             PrivateKey pk = Factory.toPrivateKey(trans, certInfo.getPrivatekey());
-            addEncProperty(Config.CADI_KEY_PASSWORD, keyPass);
-            addProperty(Config.CADI_ALIAS, arti.getMechid());
+            props.addEnc(Config.CADI_KEY_PASSWORD, keyPass);
+            props.add(Config.CADI_ALIAS, arti.getMechid());
 //            Set<Attribute> attribs = new HashSet<>();
 //            if (kst.equals("pkcs12")) {
 //                // Friendly Name
@@ -114,7 +117,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
                     pkEntry, protParam);
 
             // Write out
-            write(fks,Chmod.to400,jks,keystorePassArray);
+            write(fks,Chmod.to644,jks,keystorePassArray);
             
             // Change out to TrustStore
             // NOTE: PKCS12 does NOT support Trusted Entries.  Put in JKS Always
@@ -127,9 +130,9 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             jks = KeyStore.getInstance(Agent.JKS);
             
             // Set Truststore Password
-            addProperty(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());
+            props.add(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());
             String trustStorePass = Symm.randomGen(Agent.PASS_SIZE);
-            addEncProperty(Config.CADI_TRUSTSTORE_PASSWORD,trustStorePass);
+            props.addEnc(Config.CADI_TRUSTSTORE_PASSWORD,trustStorePass);
             char[] truststorePassArray = trustStorePass.toCharArray();
             jks.load(null,truststorePassArray); // load in
             
