@@ -134,7 +134,6 @@ public class JU_ArtifactDir {
     
     }
 
-    @Test(expected = CadiException.class)
     public void throwsTest() throws CadiException {
         ArtifactDirStud artiDir = new ArtifactDirStud();
         when(artiMock.getDir()).thenReturn(dirName);

@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import javax.crypto.CipherInputStream;
@@ -62,8 +63,7 @@ import org.onap.aaf.cadi.config.Config;
  * supporting functions such as 2048 keyfile generation (see keygen).  This keyfile should, of course, 
  * be set to "400" (Unix) and protected as any other mechanism requires. 
  * 
- * However, this algorithm has not been tested against hackers.  Until such a time, utilize more tested
- * packages to protect Data, especially sensitive data at rest (long term). 
+ * AES Encryption is also employed to include standards.
  * 
  * @author Jonathan
  *
@@ -82,6 +82,7 @@ public class Symm {
     private byte[] keyBytes = null;
     //Note: AES Encryption is not Thread Safe.  It is Synchronized
     //private AES aes = null;  // only initialized from File, and only if needed for Passwords
+	private String name;
     
     /**
      * This is the standard base64 Key Set.
@@ -89,11 +90,11 @@ public class Symm {
      */
     public static final Symm base64 = new Symm(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
-            ,76, Config.UTF_8,true);
+            ,76, Config.UTF_8,true, "Base64");
 
     public static final Symm base64noSplit = new Symm(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
-            ,Integer.MAX_VALUE, Config.UTF_8,true);
+            ,Integer.MAX_VALUE, Config.UTF_8,true, "Base64, no Split");
 
     /**
      * This is the standard base64 set suitable for URLs and Filenames
@@ -101,13 +102,13 @@ public class Symm {
      */
     public static final Symm base64url = new Symm(
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".toCharArray()
-            ,76, Config.UTF_8,true);
+            ,76, Config.UTF_8,true, "Base64 for URL");
 
     /**
      * A Password set, using US-ASCII
      * RFC 4648
      */
-    public static final Symm encrypt = new Symm(base64url.codeset,1024, "US-ASCII", false);
+    public static final Symm encrypt = new Symm(base64url.codeset,1024, "US-ASCII", false, "Base64, 1024 size");
     private static final byte[] EMPTY = new byte[0];
 
     /**
@@ -127,11 +128,12 @@ public class Symm {
      * @param codeset
      * @param split
      */
-    public Symm(char[] codeset, int split, String charset, boolean useEndEquals) {
+    public Symm(char[] codeset, int split, String charset, boolean useEndEquals, String name) {
         this.codeset = codeset;
         splitLinesAt = split;
         encoding = charset;
         endEquals = useEndEquals;
+        this.name = name;
         char prev = 0, curr=0, first = 0;
         int offset=Integer.SIZE; // something that's out of range for integer array
         
@@ -162,7 +164,7 @@ public class Symm {
     }
     
     public Symm copy(int lines) {
-        return new Symm(codeset,lines,encoding,endEquals);
+        return new Symm(codeset,lines,encoding,endEquals, "Copied " + lines);
     }
     
     // Only used by keygen, which is intentionally randomized. Therefore, always use unordered
@@ -589,7 +591,9 @@ public class Symm {
   public Symm obtain() throws IOException {
         byte inkey[] = new byte[0x800];
         new SecureRandom().nextBytes(inkey);
-        return obtain(inkey);
+        Symm s = obtain(inkey);
+        s.name = "from Random";
+        return s;
   }
   
   /**
@@ -600,7 +604,9 @@ public class Symm {
    * @throws IOException
    */
   public static Symm obtain(String key) throws IOException {
-      return obtain(new ByteArrayInputStream(key.getBytes()));
+      Symm s = obtain(new ByteArrayInputStream(key.getBytes()));
+      s.name = "from String";
+      return s;
   }
   
   /**
@@ -622,7 +628,9 @@ public class Symm {
       if (bkey.length<0x88) { // 2048 bit key
           throw new IOException("Invalid key");
       }
-      return baseCrypt().obtain(bkey);
+      Symm s = baseCrypt().obtain(bkey);
+      s.name = "from InputStream";
+      return s;
   }
 
   /**
@@ -635,7 +643,9 @@ public class Symm {
   public static Symm obtain(File f) throws IOException {
       FileInputStream fis = new FileInputStream(f);
       try {
-          return obtain(fis);
+          Symm s = obtain(fis);
+          s.name = "From " + f.getCanonicalPath() + " dated " + new Date(f.lastModified());
+          return s;
       } finally {
           fis.close();
       }
@@ -855,6 +865,7 @@ public class Symm {
           }
       }
       Symm newSymm = new Symm(seq,this);
+      newSymm.name = "from bytes";
       // Set the KeyBytes
       try {
           newSymm.keyBytes = new byte[AES.AES_KEY_SIZE/8];
@@ -885,5 +896,10 @@ public class Symm {
           }
       }
       return internalOnly;
+  }
+  
+  @Override
+  public String toString() {
+	  return name;
   }
 }

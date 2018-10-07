@@ -40,6 +40,7 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.configure.ArtifactDir;
 import org.onap.aaf.cadi.util.MyConsole;
 import org.onap.aaf.cadi.util.SubStandardConsole;
 import org.onap.aaf.cadi.util.TheConsole;
@@ -134,13 +135,8 @@ public class AAFSSO {
             //    Config.setDefaultRealm(access);
     
             if (!dot_aaf_kf.exists()) {
-                FileOutputStream fos = new FileOutputStream(dot_aaf_kf);
-                try {
-                    fos.write(Symm.keygen());
-                    setReadonly(dot_aaf_kf);
-                } finally {
-                    fos.close();
-                }
+            	// This will create, as required, or reuse
+                ArtifactDir.getSymm(dot_aaf_kf);
             }
 
             for (Entry<Object, Object> es : diskprops.entrySet()) {
@@ -242,7 +238,7 @@ public class AAFSSO {
                 use_X509 = true;
             } else {
                 use_X509 = false;
-                Symm decryptor = Symm.obtain(dot_aaf_kf);
+                Symm decryptor = ArtifactDir.getSymm(dot_aaf_kf);
                 if (user == null) {
                     if (sso.exists()) {
                         String cm_url = access.getProperty(Config.CM_URL); // SSO might overwrite...

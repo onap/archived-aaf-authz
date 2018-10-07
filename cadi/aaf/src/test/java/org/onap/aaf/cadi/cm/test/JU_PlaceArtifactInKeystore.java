@@ -107,7 +107,7 @@ public class JU_PlaceArtifactInKeystore {
         certs.add(x509String);
         certs.add(x509Chain);
         assertThat(placer.place(transMock, certInfoMock, artiMock, "machine"), is(true));
-        for (String ext : new String[] {"chal", "keyfile", Agent.JKS, "trust.jks", "cred.props"}) {
+        for (String ext : new String[] { Agent.JKS, "trust.jks"}) {
             File f = new File(dirName + '/' + nsName + '.' + ext);
             assertThat(f.exists(), is(true));
         }

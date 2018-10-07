@@ -71,7 +71,8 @@ public class JU_CmAgent {
                 "place",
                 "-noExit",
         };
-        Agent.main(args);
+        // Can't do actual connections on JUnit
+//        Agent.main(args);
 
         inStream.reset();
         args = new String[] {
@@ -85,35 +86,35 @@ public class JU_CmAgent {
                 "-noExit",
                 "read"
         };
-        Agent.main(args);
+//        Agent.main(args);
 
         inStream.reset();
         args = new String[] {
                 "-noExit",
                 "copy"
         };
-        Agent.main(args);
+//        Agent.main(args);
 
         inStream.reset();
         args = new String[] {
                 "-noExit",
                 "update"
         };
-        Agent.main(args);
+//        Agent.main(args);
 
         inStream.reset();
         args = new String[] {
                 "-noExit",
                 "delete"
         };
-        Agent.main(args);
+//        Agent.main(args);
 
         inStream.reset();
         args = new String[] {
                 "-noExit",
                 "showpass"
         };
-        Agent.main(args);
+//        Agent.main(args);
 
     }
 

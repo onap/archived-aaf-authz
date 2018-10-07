@@ -16,15 +16,24 @@ for (( i=( ${#FQIA_E[@]} -1 ); i>0; i-- )); do
 done
 NS=${NS}${FQIA_E[0]}
 CONFIG="/opt/app/aaf_config"
-LOCAL="/opt/app/osaaf/local"
+OSAAF="/opt/app/osaaf"
+LOCAL="$OSAAF/local"
 DOT_AAF="$HOME/.aaf"
 SSO="$DOT_AAF/sso.props"
  
+# Check for local dir
+if [ ! -d $LOCAL ]; then
+    mkdir -p $LOCAL
+    for D in bin logs; do
+        rsync -avzh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
+    done
+fi
+
 # Setup Bash, first time only
 if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep aaf_config $HOME/.bash_aliases)" ]; then
-  echo "alias cadi='$CONFIG/bin/agent.sh EMPTY cadi \$*'" >>$HOME/.bash_aliases
-  echo "alias agent='$CONFIG/bin/agent.sh EMPTY \$*'" >>$HOME/.bash_aliases
-  chmod a+x $CONFIG/bin/agent.sh
+  echo "alias cadi='$OSAAF/bin/agent.sh EMPTY cadi \$*'" >>$HOME/.bash_aliases
+  echo "alias agent='$OSAAF/bin/agent.sh EMPTY \$*'" >>$HOME/.bash_aliases
+  chmod a+x $OSAAF/bin/agent.sh
   . $HOME/.bash_aliases
 fi
 
@@ -34,6 +43,7 @@ function sso_encrypt() {
 }
 
 
+# Create Deployer Info, located at /root/.aaf
 if [ ! -e "$DOT_AAF/keyfile" ]; then
     mkdir -p $DOT_AAF
     $JAVA -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar org.onap.aaf.cadi.CmdLine keygen $DOT_AAF/keyfile
@@ -54,17 +64,21 @@ fi
 
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/${NS}.props ]; then
-    mkdir -p $LOCAL
-    for D in bin logs; do
-        rsync -avzh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
-    done
-
     # setup Configs
     $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar config $APP_FQI \
-        cadi_etc_dir=$LOCAL cadi_prop_files=$SSO
+	aaf_url=https://AAF_LOCATE_URL/AAF_NS.locate:${AAF_INTERFACE_VERSION} \
+        cadi_etc_dir=$LOCAL
+    cat $LOCAL/$NS.props
 
-    # Place Certificates
-    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar place ${APP_FQI} ${APP_FQDN}
+    # Read Certificate info (by deployer)
+    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar read ${APP_FQI} ${APP_FQDN} \
+        cadi_prop_files=${SSO} \
+        cadi_etc_dir=$LOCAL
+
+    # Place Certificates (by deployer)
+    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar place ${APP_FQI} ${APP_FQDN} \
+        cadi_prop_files=${SSO} \
+        cadi_etc_dir=$LOCAL
 
     # Validate
     $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar validate \

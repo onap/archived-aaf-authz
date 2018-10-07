@@ -55,56 +55,63 @@ public class JU_AAFSSO {
 
     @After
     public void tearDown() {
-        recursiveDelete(new File(aafDir));
+//        recursiveDelete(new File(aafDir));
     }
 
     @Test
-    public void test() throws IOException, CadiException {
-        AAFSSO sso;
-        String[] args;
+    public void test()  {
+    	
+    // Note  this is desctructive of personal dirs, and doesn't really test anything.  Needs redoing. 
+//        AAFSSO sso;
+//        String[] args;
+//
+//        args = new String[] {
+//                "-login",
+//                "-noexit",
+//        };
+//        try {
+//			sso = new AAFSSO(args);
+//        
+//        assertThat(new File(aafDir).exists(), is(true));
+//        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
+//        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(true));
+//        assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
+//        assertThat(sso.loginOnly(), is(true));
+//
+//// Not necessarily true
+////        assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(true));
+//        
+//        sso.setLogDefault();
+//        sso.setStdErrDefault();
+//
+//        inStream.reset();
+//        args = new String[] {
+//                "-logout",
+//                "\\*",
+//                "-noexit",
+//        };
+//        sso = new AAFSSO(args);
+//
+//        assertThat(new File(aafDir).exists(), is(true));
+//        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
+//        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(false));
+//        assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
+//        assertThat(sso.loginOnly(), is(false));
+//
+//        PropAccess access = sso.access();
+//        assertThat(sso.enc_pass(), is(access.getProperty(Config.AAF_APPPASS)));
+//        assertThat(sso.user(), is(access.getProperty(Config.AAF_APPID)));
+//
+//        sso.addProp("key", "value");
+//        assertThat(sso.err(), is(nullValue()));
+//        
+//        assertThat(sso.useX509(), is(false));
+////
+////        sso.close();
+//		} catch (IOException | CadiException e) {
+//			e.printStackTrace();
+//		}
 
-        args = new String[] {
-                "-login",
-                "-noexit",
-        };
-        sso = new AAFSSO(args);
-        
-        assertThat(new File(aafDir).exists(), is(true));
-        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
-        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(true));
-        assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
-        assertThat(sso.loginOnly(), is(true));
-
-// Not necessarily true
-//        assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(true));
-        
-        sso.setLogDefault();
-        sso.setStdErrDefault();
-
-        inStream.reset();
-        args = new String[] {
-                "-logout",
-                "\\*",
-                "-noexit",
-        };
-        sso = new AAFSSO(args);
-
-        assertThat(new File(aafDir).exists(), is(true));
-        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
-        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(false));
-        assertThat(new File(aafDir + "/.aaf/sso.out").exists(), is(true));
-        assertThat(sso.loginOnly(), is(false));
-
-        PropAccess access = sso.access();
-        assertThat(sso.enc_pass(), is(access.getProperty(Config.AAF_APPPASS)));
-        assertThat(sso.user(), is(access.getProperty(Config.AAF_APPID)));
-
-        sso.addProp("key", "value");
-        assertThat(sso.err(), is(nullValue()));
-        
-        assertThat(sso.useX509(), is(false));
-
-        sso.close();
     }
 
     private void recursiveDelete(File file) {
