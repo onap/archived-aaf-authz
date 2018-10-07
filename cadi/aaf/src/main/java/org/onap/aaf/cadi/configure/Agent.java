@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -36,7 +35,6 @@ import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Deque;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -45,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CmdLine;
@@ -108,6 +105,15 @@ public class Agent {
     
     private static boolean doExit;
     private static AAFCon<?> aafcon;
+    
+    private static List<String> CRED_TAGS = Arrays.asList(new String[] {
+            Config.CADI_KEYFILE,
+            Config.AAF_APPID, Config.AAF_APPPASS,
+            Config.CADI_KEYSTORE, Config.CADI_KEYSTORE_PASSWORD, Config.CADI_KEY_PASSWORD,
+            Config.CADI_TRUSTSTORE,Config.CADI_TRUSTSTORE_PASSWORD,
+            Config.CADI_ALIAS, Config.CADI_X509_ISSUERS
+            });
+
 
     public static void main(String[] args) {
         int exitCode = 0;
@@ -626,6 +632,7 @@ public class Agent {
                         }
                     }
                 }
+                PropHolder.writeAll();
             } else {
                 trans.error().log(errMsg.toMsg(acf));
             }
@@ -682,7 +689,7 @@ public class Agent {
                             
                             File f = new File(dir,a.getNs()+".keyfile");
                             if (f.exists()) {
-                                Symm symm = Symm.obtain(f);
+                                Symm symm = ArtifactDir.getSymm(f);
                                 
                                 for (Iterator<Entry<Object,Object>> iter = props.entrySet().iterator(); iter.hasNext();) {
                                     Entry<Object,Object> en = iter.next();
@@ -730,219 +737,123 @@ public class Agent {
     }
     
     private static void config(Trans trans, PropAccess pa, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-        final String fqi = fqi(cmds);
-        final String rootFile = FQI.reverseDomain(fqi);
-        final File dir = new File(pa.getProperty(Config.CADI_ETCDIR, "."));
-        if (dir.exists()) {
-            System.out.println("Writing to " + dir.getCanonicalFile());
-        } else if (dir.mkdirs()) {
-            System.out.println("Created directory " + dir.getCanonicalFile());
-        } else {
-            System.err.println("Unable to create or write to " + dir.getCanonicalPath());
-            return;
-        }
-        
+	        
         TimeTaken tt = trans.start("Get Configuration", Env.REMOTE);
         try {
-            boolean ok=false;
-            File fProps = File.createTempFile(rootFile, ".tmp",dir);
-            File fSecureTempProps = File.createTempFile(rootFile, ".cred.tmp",dir);
-            File fSecureProps = new File(dir,rootFile+".cred.props");
-            PrintStream psProps;
+	        final String fqi = fqi(cmds);
+	        Artifact arti = new Artifact();
+	        arti.setDir(pa.getProperty(Config.CADI_ETCDIR, "."));
+	        arti.setNs(FQI.reverseDomain(fqi));
+	        
+            PropHolder loc = PropHolder.get(arti, "location.props");
+            PropHolder cred = PropHolder.get(arti,"cred.props");
+            PropHolder app= PropHolder.get(arti,"props");
+            app.add(Config.CADI_PROP_FILES, loc.getPath()+':'+cred.getPath());
 
-            File fLocProps = new File(dir,rootFile + ".location.props");
-            if (!fLocProps.exists()) {
-                psProps = new PrintStream(new FileOutputStream(fLocProps));
-                try {
-                    psProps.println(HASHES);
-                    psProps.print("# Configuration File generated on ");
-                    psProps.println(new Date().toString());
-                    psProps.println(HASHES);
-                    for (String tag : LOC_TAGS) {
-                        psProps.print(tag);
-                        psProps.print('=');
-                        psProps.println(getProperty(pa, trans, false, tag, "%s: ",tag));
-                    }
-                } finally {
-                    psProps.close();
-                }
+            for (String tag : LOC_TAGS) {
+            	loc.add(tag, getProperty(pa, trans, false, tag, "%s: ",tag));
             }
+            
+            cred.add(Config.CADI_KEYFILE, cred.getKeyPath());
+            cred.addEnc(Config.AAF_APPPASS, pa, null);
+            
+            app.add(Config.AAF_LOCATE_URL, pa, null);
+            app.add(Config.AAF_APPID, pa, fqi);
+            app.add(Config.AAF_URL, pa, Defaults.AAF_URL);
 
-            psProps = new PrintStream(new FileOutputStream(fProps));
-            try {
-                PrintStream psCredProps = new PrintStream(new FileOutputStream(fSecureTempProps));
-                try {
-                    psCredProps.println(HASHES);
-                    psCredProps.print("# Configuration File generated on ");
-                    psCredProps.println(new Date().toString());
-                    psCredProps.println(HASHES);
-
-                    psProps.println(HASHES);
-                    psProps.print("# Configuration File generated on ");
-                    psProps.println(new Date().toString());
-                    psProps.println(HASHES);
-                    
-                    psProps.print(Config.CADI_PROP_FILES);
-                    psProps.print('=');
-                    psProps.print(fSecureProps.getCanonicalPath());
-                    psProps.print(File.pathSeparatorChar);
-                    psProps.println(fLocProps.getCanonicalPath());
-                    
-                    File fkf = new File(dir,rootFile+".keyfile");
-                    if (!fkf.exists()) {
-                        CmdLine.main(new String[] {"keygen",fkf.toString()});
-                    }
-                    Symm filesymm = Symm.obtain(fkf);
-                    Map<String,String> normal = new TreeMap<>();
-                    Map<String,String> creds = new TreeMap<>();
-
-                    directedPut(pa, filesymm, normal,creds, Config.CADI_KEYFILE, fkf.getCanonicalPath());
-                    directedPut(pa, filesymm, normal,creds, Config.AAF_APPID,fqi);
-                    directedPut(pa, filesymm, normal,creds, Config.AAF_APPPASS,null);
-                    directedPut(pa, filesymm, normal,creds, Config.AAF_URL, Defaults.AAF_URL);
-                    
-
-                    String cts = pa.getProperty(Config.CADI_TRUSTSTORE);
-                    if (cts!=null) {
-                        File origTruststore = new File(cts);
+            String cts = pa.getProperty(Config.CADI_TRUSTSTORE);
+            if (cts!=null) {
+                File origTruststore = new File(cts);
+                if (!origTruststore.exists()) {
+                    // Try same directory as cadi_prop_files
+                    String cpf = pa.getProperty(Config.CADI_PROP_FILES);
+                    if (cpf!=null) {
+                        for (String f : Split.split(File.pathSeparatorChar, cpf)) {
+                            File fcpf = new File(f);
+                            if (fcpf.exists()) {
+                                int lastSep = cts.lastIndexOf(File.pathSeparator);
+                                origTruststore = new File(fcpf.getParentFile(),lastSep>=0?cts.substring(lastSep):cts);
+                                if (origTruststore.exists()) { 
+                                    break;
+                                }
+                            }
+                        }
                         if (!origTruststore.exists()) {
-                            // Try same directory as cadi_prop_files
-                            String cpf = pa.getProperty(Config.CADI_PROP_FILES);
-                            if (cpf!=null) {
-                                for (String f : Split.split(File.pathSeparatorChar, cpf)) {
-                                    File fcpf = new File(f);
-                                    if (fcpf.exists()) {
-                                        int lastSep = cts.lastIndexOf(File.pathSeparator);
-                                        origTruststore = new File(fcpf.getParentFile(),lastSep>=0?cts.substring(lastSep):cts);
-                                        if (origTruststore.exists()) { 
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!origTruststore.exists()) {
-                                    throw new CadiException(cts + " does not exist");
-                                }
-                            }
-                            
+                            throw new CadiException(cts + " does not exist");
                         }
-                        File newTruststore = new File(dir,origTruststore.getName());
-                        if (!newTruststore.exists()) {
-                            Files.copy(origTruststore.toPath(), newTruststore.toPath());
-                        }
-                        
-                        directedPut(pa, filesymm, normal,creds, Config.CADI_TRUSTSTORE,newTruststore.getCanonicalPath());
-                        directedPut(pa, filesymm, normal,creds, Config.CADI_TRUSTSTORE_PASSWORD,null);
                     }
                     
-                    if (aafcon!=null) { // get Properties from Remote AAF
-                        final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
-
-                        Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
-                                .read("/configure/"+fqi+"/aaf", configDF);
-                        if (acf.get(TIMEOUT)) {
-                            for (Props props : acf.value.getProps()) {
-                                directedPut(pa, filesymm, normal,creds, props.getTag(),props.getValue());                    
-                            }
-                            ok = true;
-                        } else if (acf.code()==401){
-                            trans.error().log("Bad Password sent to AAF");
-                        } else {
-                            trans.error().log(errMsg.toMsg(acf));
-                        }
-                    } else {
-                        String cpf = pa.getProperty(Config.CADI_PROP_FILES);
-                        if (cpf!=null){
-                            for (String f : Split.split(File.pathSeparatorChar, cpf)) {
-                                System.out.format("Reading %s\n",f);
-                                FileInputStream fis = new FileInputStream(f); 
-                                try {
-                                    Properties props = new Properties();
-                                    props.load(fis);
-                                    for (Entry<Object, Object> prop : props.entrySet()) {
-                                        directedPut(pa, filesymm, normal,creds, prop.getKey().toString(),prop.getValue().toString());
-                                    }
-                                } finally {
-                                    fis.close();
-                                }
-                            }
-                        }
-                        ok = true;
-                    }
-                    if (ok) {
-                        for (Entry<String, String> es : normal.entrySet()) {
-                            psProps.print(es.getKey());
-                            psProps.print('=');
-                            psProps.println(es.getValue());
-                        }
-                        
-                        for (Entry<String, String> es : creds.entrySet()) {
-                            psCredProps.print(es.getKey());
-                            psCredProps.print('=');
-                            psCredProps.println(es.getValue());
-                        }
-                        
-                        File newFile = new File(dir,rootFile+".props");
-                        if (newFile.exists()) {
-                            File backup = new File(dir,rootFile+".props.backup");
-                            newFile.renameTo(backup);
-                            System.out.println("Backed up to " + backup.getCanonicalPath());
-                        }
-                        fProps.renameTo(newFile);
-                        System.out.println("Created " + newFile.getCanonicalPath());
-                        fProps = newFile;
-                        
-                        if (fSecureProps.exists()) {
-                            File backup = new File(dir,fSecureProps.getName()+".backup");
-                            fSecureProps.renameTo(backup);
-                            System.out.println("Backed up to " + backup.getCanonicalPath());
-                        }
-                        fSecureTempProps.renameTo(fSecureProps);
-                        System.out.println("Created " + fSecureProps.getCanonicalPath());
-                        fProps = newFile;
-                    } else {
-                        fProps.delete();
-                        fSecureTempProps.delete();
-                    }
-                } finally {
-                    psCredProps.close();
                 }
-            } finally {
-                psProps.close();
+                File newTruststore = new File(app.getDir(),origTruststore.getName());
+                if (!newTruststore.exists()) {
+                    Files.copy(origTruststore.toPath(), newTruststore.toPath());
+                }
+                
+                cred.add(Config.CADI_TRUSTSTORE, pa, newTruststore.getCanonicalPath());
+                cred.add(Config.CADI_TRUSTSTORE_PASSWORD, pa, "changeit" /* Java default */);
+                    
+                if (aafcon!=null) { // get Properties from Remote AAF
+                    final String locator = getProperty(pa,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
+
+                    Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
+                            .read("/configure/"+fqi+"/aaf", configDF);
+                    if (acf.get(TIMEOUT)) {
+                        for (Props props : acf.value.getProps()) {
+                        	PropHolder ph = CRED_TAGS.contains(props.getTag())?cred:app;
+                        	if(props.getTag().endsWith("_password")) {
+                        		ph.addEnc(props.getTag(), props.getValue());
+                        	} else {
+                        		ph.add(props.getTag(), props.getValue());
+                        	}
+                        }
+                    } else if (acf.code()==401){
+                        trans.error().log("Bad Password sent to AAF");
+                    } else {
+                        trans.error().log(errMsg.toMsg(acf));
+                    }
+                } else {
+                    String cpf = pa.getProperty(Config.CADI_PROP_FILES);
+                    if (cpf!=null){
+                        for (String f : Split.split(File.pathSeparatorChar, cpf)) {
+                            System.out.format("Reading %s\n",f);
+                            FileInputStream fis = new FileInputStream(f); 
+                            try {
+                                Properties props = new Properties();
+                                props.load(fis);
+                                for (Entry<Object, Object> prop : props.entrySet()) {
+                                	boolean lower = true;
+                                	String key = prop.getKey().toString();
+                                	for(int i=0;lower && i<key.length();++i) {
+                                		if(Character.isUpperCase(key.charAt(i))) {
+                                			lower = false;
+                                		}
+                                	}
+                                	if(lower) {
+	                                	PropHolder ph = CRED_TAGS.contains(key)?cred:app;
+	                                	if(key.endsWith("_password")) {
+	                                		ph.addEnc(key, prop.getValue().toString());
+	                                	} else {
+	                                		ph.add(key, prop.getValue().toString());
+	                                	}
+                                	}
+                                }
+                            } finally {
+                                fis.close();
+                            }
+                        }
+                    }
+                }
             }
+            
+            PropHolder.writeAll();
         } finally {
             tt.done();
         }
     }
 
-    private static List<String> CRED_TAGS = Arrays.asList(new String[] {
-            Config.CADI_KEYFILE,
-            Config.AAF_APPID, Config.AAF_APPPASS,
-            Config.CADI_KEYSTORE, Config.CADI_KEYSTORE_PASSWORD, Config.CADI_KEY_PASSWORD,
-            Config.CADI_TRUSTSTORE,Config.CADI_TRUSTSTORE_PASSWORD,
-            Config.CADI_ALIAS, Config.CADI_X509_ISSUERS
-            });
 
     private static List<String> LOC_TAGS = Arrays.asList(new String[] {Config.CADI_LATITUDE, Config.CADI_LONGITUDE});
     
-    private static void directedPut(final PropAccess orig, final Symm symm, final Map<String,String> main, final Map<String,String> secured, final String tag, final String value) throws IOException {
-        if (!LOC_TAGS.contains(tag)) { // Location already covered
-            String val = value==null?orig.getProperty(tag):value;
-            if (tag.endsWith("_password")) {
-                if (val.length()>4) {
-                    if (val.startsWith("enc:")) {
-                        val = orig.decrypt(val, true);
-                    }
-                    val = "enc:" + symm.enpass(val);
-                }
-            }
-            if (CRED_TAGS.contains(tag)) {
-                secured.put(tag, val);
-            } else {
-                main.put(tag, val);
-            }
-        }
-    }
-
     private static void validate(final PropAccess pa) throws LocatorException, CadiException, APIException {
         System.out.println("Validating Configuration...");
         final AAFCon<?> aafcon = new AAFConHttp(pa,Config.AAF_URL,new SecurityInfoC<HttpURLConnection>(pa));
@@ -1028,8 +939,9 @@ public class Agent {
                                     trans.error().printf("Properties %s and %s must exist to check Certificates for %s on %s",
                                             Config.CADI_KEYSTORE, Config.CADI_KEYSTORE_PASSWORD,a.getMechid(), a.getMachine());
                                 } else {
+                                    Symm symm = ArtifactDir.getSymm(f);
+
                                     KeyStore ks = KeyStore.getInstance("JKS");
-                                    Symm symm = Symm.obtain(f);
                                     
                                     fis = new FileInputStream(ksf);
                                     try {
