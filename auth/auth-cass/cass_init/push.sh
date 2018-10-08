@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Push data from Cassandra ".dat" files
+# Push data from Cassandra ".dat" files into Tables
 # These are obtained from "gzipped" files, or pre-placed (i.e. initialization) 
 #   in the "dats" directory
 #
@@ -17,7 +17,7 @@ fi
 cd dats
 for T in $(ls *.dat); do
   if [ -s $T ]; then
-    cqlsh -e "use authz; COPY ${T%.dat} FROM '$T' WITH DELIMITER='|';"
+    cqlsh -e "use authz; COPY $T FROM '$T.dat' WITH DELIMITER='|';"
   fi
 done
 cd $DIR
