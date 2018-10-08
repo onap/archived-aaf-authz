@@ -17,8 +17,9 @@ fi
 cd dats
 for T in $(ls *.dat); do
   if [ -s $T ]; then
-    cqlsh -e "use authz; COPY $T FROM '$T.dat' WITH DELIMITER='|';"
+    cqlsh -e "COPY authz.${T/.dat/} FROM '$T' WITH DELIMITER='|';"
   fi
 done
 cd $DIR
 #rm -Rf dats
+

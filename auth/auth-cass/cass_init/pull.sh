@@ -8,7 +8,7 @@ mkdir -p dats
 cd dats
 TABLES="$(cqlsh -e "use authz; describe tables")"
 for T in $TABLES ; do
-  cqlsh -e "use authz; COPY $T TO '$T.dat' WITH DELIMITER='|';"
+  cqlsh -e "COPY authz.$T TO '$T.dat' WITH DELIMITER='|';"
 done
 cd $DIR
 tar -cvzf dat.gz dats/*.dat
