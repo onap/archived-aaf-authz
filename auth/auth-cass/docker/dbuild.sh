@@ -5,9 +5,8 @@
 # Pull in AAF Env Variables from AAF install
 if [ -e ../../docker/d.props ]; then
   . ../../docker/d.props
-else
-  . ../../docker/d.props.init
 fi
+DOCKER=${DOCKER:-docker}
 
 echo "Building aaf_cass Container for aaf_cass:$VERSION"
 
@@ -18,9 +17,10 @@ cd ..
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
 
-docker build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
-docker tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:${VERSION}
-docker tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:latest
+echo $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
+$DOCKER tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:latest
 
 cd -
 rm Dockerfile

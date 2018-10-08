@@ -2,6 +2,7 @@
 # Pull in Properties
 . ./d.props
 
+DOCKER=${DOCKER:=docker}
 if [ "$1" == "" ]; then
     AAF_COMPONENTS=$(cat components)
 else
@@ -9,5 +10,5 @@ else
 fi
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-    docker stop aaf_$AAF_COMPONENT
+    $DOCKER stop aaf_$AAF_COMPONENT
 done

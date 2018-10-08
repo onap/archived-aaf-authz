@@ -6,10 +6,13 @@
 if [ ! -e ./cass.props ]; then
     cp cass.props.init cass.props
 fi
+. ./cass.props
+
+DOCKER=${DOCKER:=docker}
 
 CASS_IS_SET="$(grep '<Cass IP>' cass.props)"
 if [ -n "$CASS_IS_SET" ]; then
-    CASS_IP="$(docker container inspect aaf_cass | grep \"IPAddress\": -m 1 | cut -d '"' -f 4)"
+    CASS_IP="$($DOCKER container inspect aaf_cass | grep \"IPAddress\": -m 1 | cut -d '"' -f 4)"
     if [ -n "$CASS_IP" ]; then
       sed -i -e "s/\(^.*:\).*/\1$CASS_IP/" cass.props
     else
@@ -69,7 +72,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
        ADD_HOST="$ADD_HOST --add-host=$A:$HOST_IP"
     done
 
-    docker run \
+    $DOCKER run \
         -d \
         --name aaf_$AAF_COMPONENT \
         --hostname="${AAF_COMPONENT}.aaf.osaaf.org" \
@@ -80,6 +83,6 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         --env LATITUDE=${LATITUDE} \
         --env LONGITUDE=${LONGITUDE} \
         --publish $PORTMAP \
-        --mount 'type=volume,src=aaf_config,dst='$CONF_ROOT_DIR',volume-driver=local' \
+        -v "aaf_config:$CONF_ROOT_DIR" \
         ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
 done

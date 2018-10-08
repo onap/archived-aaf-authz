@@ -1,6 +1,5 @@
 #!/bin/bash
 
-CADI_VERSION=2.1.2-SNAPSHOT
 
 # Fill out "aaf.props" if not filled out already
 if [ ! -e aaf.props ]; then
@@ -9,6 +8,8 @@ fi
  
 . ./aaf.props
 
+DOCKER=${DOCKER:=docker}
+CADI_VERSION=${CADI_VERSION:=2.1.2-SNAPSHOT}
 
 for V in VERSION DOCKER_REPOSITORY AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
    if [ "$(grep $V ./aaf.props)" = "" ]; then
@@ -53,9 +54,9 @@ done
 . ./aaf.props
 
 # Make sure Container Volume exists
-if [ "$(docker volume ls | grep ${VOLUME})" = "" ]; then
+if [ "$($DOCKER volume ls | grep ${VOLUME})" = "" ]; then
   echo -n "Creating Volume: " 
-  docker volume create -d ${DRIVER} ${VOLUME}
+  $DOCKER volume create -d ${DRIVER} ${VOLUME}
 fi
 
 if [ -n "$DOCKER_REPOSITORY" ]; then
@@ -64,10 +65,10 @@ else
   PREFIX=""
 fi 
 
-docker run \
+$DOCKER run \
     -it \
     --rm \
-    --mount 'type=volume,src='${VOLUME}',dst=/opt/app/osaaf,volume-driver='${DRIVER} \
+    -v "${VOLUME}:/opt/app/osaaf" \
     --add-host="$AAF_FQDN:$AAF_FQDN_IP" \
     --env AAF_FQDN=${AAF_FQDN} \
     --env DEPLOY_FQI=${DEPLOY_FQI} \

@@ -4,9 +4,10 @@ if [ -e ./cass.props ]; then
   . ./cass.props
 fi
 
+DOCKER=${DOCKER:=docker}
 function run_it() {
-  docker run $@ \
-    --mount 'type=volume,src=aaf_config,dst='$CONF_ROOT_DIR',volume-driver=local' \
+  $DOCKER run $@ \
+    -v "aaf_config:$CONF_ROOT_DIR" \
     --add-host="$HOSTNAME:$HOST_IP" \
     --add-host="aaf.osaaf.org:$HOST_IP" \
     --env HOSTNAME=${HOSTNAME} \
@@ -25,15 +26,15 @@ function run_it() {
 }
 
 function set_prop() {
-docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2" "$3"
+  $DOCKER exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2" "$3"
 }
 
 function encrypt_it() {
-  docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
+  $DOCKER exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
 }
 
 function set_it() {
-  docker exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2"
+  $DOCKER exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2"
 }
 
 PARAMS="$@"

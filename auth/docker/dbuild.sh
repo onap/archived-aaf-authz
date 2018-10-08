@@ -9,6 +9,8 @@ fi
 
 . ./d.props
 
+DOCKER=${DOCKER:=docker}
+
 echo "Building Containers for aaf components, version $VERSION"
 
 # AAF_cass now needs a version...
@@ -23,15 +25,15 @@ cp -Rf ../conf/CA sample
 
 # AAF Config image (for AAF itself)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.config > sample/Dockerfile
-docker build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
-docker tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
-docker tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/latest
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
+$DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/latest
 
 # AAF Agent Image (for Clients)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.client > sample/Dockerfile
-docker build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
-docker tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
-docker tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
+$DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
 
 # Clean up 
 rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
@@ -44,9 +46,9 @@ echo Building aaf_$AAF_COMPONENT...
 # Apply currrent Properties to Docker file, and put in place.
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.core >../aaf_${VERSION}/Dockerfile
 cd ..
-docker build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
-docker tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
-docker tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
 rm aaf_${VERSION}/Dockerfile
 cd -
 
@@ -62,9 +64,9 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     echo Building aaf_$AAF_COMPONENT...
     sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.ms >../aaf_${VERSION}/Dockerfile
     cd ..
-    docker build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
-    docker tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
-    docker tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:latest
+    $DOCKER build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
+    $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
+    $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:latest
     rm aaf_${VERSION}/Dockerfile
     cd -
 done

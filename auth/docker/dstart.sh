@@ -2,6 +2,8 @@
 # Pull in Props
 . ./d.props
 
+DOCKER=${DOCKER:=docker}
+
 if [ "$1" == "" ]; then
     AAF_COMPONENTS=$(cat components)
 else
@@ -9,5 +11,5 @@ else
 fi
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-    docker start aaf_$AAF_COMPONENT
+    $DOCKER start aaf_$AAF_COMPONENT
 done

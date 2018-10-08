@@ -7,9 +7,7 @@ LABEL version=${AAF_VERSION}
 
 COPY cass_init/*.cql /opt/app/aaf/cass_init/
 COPY cass_init/*.sh /opt/app/aaf/cass_init/
-COPY cass_init/*.dat /opt/app/aaf/cass_init/
-COPY cass_data /opt/app/aaf/cass_init/dats/
-COPY sample.identities.dat /opt/app/aaf/cass_init/
+COPY cass_data/*.dat /opt/app/aaf/cass_init/dats/
 
 ENTRYPOINT ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh"]
 CMD ["start"]

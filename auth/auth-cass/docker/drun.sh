@@ -1,26 +1,18 @@
-#!/bin/bash 
+#!/bin/bash
 
 # Pull in AAF Env Variables from AAF install
 if [ -e ../../docker/d.props ]; then
   . ../../docker/d.props
-else
-  . ../../docker/d.props.init
 fi
-
-if [ -e /usr/bin/docker ]; then 
-  DOCKER=/usr/bin/docker
-elif [ -e /usr/local/bin/docker ]; then
-  DOCKER=/usr/local/bin/docker
-else
-  echo Docker not available in /usr/bin or /usr/local/bin
-  exit
-fi
+DOCKER=${DOCKER:-docker}
 
 if [ "$($DOCKER volume ls | grep aaf_cass_data)" = "" ]; then
   $DOCKER volume create aaf_cass_data
   echo "Created Cassandra Volume aaf_cass_data"
 fi
 
+# Optional mount instead of v
+#    --mount 'type=volume,src=aaf_cass_data,dst=/var/lib/cassandra,volume-driver=local' \
 if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
   echo "starting Cass from 'run'"
   # NOTE: These HEAP Sizes are minimal. Not set for full organizations.
@@ -30,7 +22,7 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     -e MAX_HEAP_SIZE=1024M \
     -e CASSANDRA_DC=dc1 \
     -e CASSANDRA_CLUSTER_NAME=osaaf \
-    --mount 'type=volume,src=aaf_cass_data,dst=/var/lib/cassandra,volume-driver=local' \
+    -v "aaf_cass_data:/var/lib/cassandra" \
     -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} "onap"
 else 
   $DOCKER start aaf_cass

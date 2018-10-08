@@ -1,5 +1,4 @@
 aaf|aaf_env|DEV
-aaf|aaf_locate_url|https://aaf-onap-test.osaaf.org:8095
 aaf|aaf_oauth2_introspect_url|https://AAF_LOCATE_URL/AAF_NS.introspect:2.1/introspect
 aaf|aaf_oauth2_token_url|https://AAF_LOCATE_URL/AAF_NS.token:2.1/token
 aaf|aaf_url|https://AAF_LOCATE_URL/AAF_NS.service:2.1
