@@ -40,6 +40,7 @@ ps0001|PS PORTAL|ps|PORTAL|||e|aaf_admin
 
 # AAF Defined Users
 aaf_admin|AAF Administrator|Mr AAF|AAF Admin|||e|mmanager
+aaf-client|AAF Client Sample|Mr AAF Client|AAF Sample|||e|mmanager
 deployer|Deployer|Deployer|Depoyer|||e|aaf_admin
 
 # Requested Users
