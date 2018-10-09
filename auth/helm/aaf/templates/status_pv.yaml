@@ -1,0 +1,24 @@
+{{- if and .Values.global.persistence.enabled (not .Values.persistence.existingClaim) -}}
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name  }}-status-pv
+  namespace: {{ .Values.global.common.namespace  }}
+  labels:
+    app: {{ .Chart.Name  }}-status
+spec:
+  capacity:
+    storage: {{ .Values.persistence.status.size}}
+  accessModes:
+    - {{ .Values.persistence.status.accessMode }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.status.volumeReclaimPolicy }}
+  hostPath:
+     path: {{ .Values.persistence.mountPath }}/{{ .Values.persistence.status.mountSubPath }}
+{{- if .Values.persistence.status.storageClass }}
+{{- if (eq "-" .Values.persistence.status.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .Values.persistence.status.storageClass }}"
+{{- end }}
+{{- end }}
+{{- end -}}

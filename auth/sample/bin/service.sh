@@ -99,7 +99,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     CASS_HOST=${CASS_HOST:="localhost:127.0.0.1"}
     CASS_PASS=$("$JAVA" -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi digest "${CASSANDRA_PASSWORD:-cassandra}" $LOCAL/org.osaaf.aaf.keyfile)
     CASS_NAME=${CASS_HOST/:*/}
-    sed -i.backup -e "s/\\(cassandra.clusters=\\).*/\\1${CASSANDRA_CLUSTERS:=$CASS_NAME}/" \
+    sed -i.backup -e "s/\\(cassandra.clusters=\\).*/\\1${CASSANDRA_CLUSTERS:=$CASS_HOST}/" \
                   -e "s/\\(cassandra.clusters.user=\\).*/\\1${CASSANDRA_USER:=cassandra}/" \
                   -e "s/\\(cassandra.clusters.password=enc:\\).*/\\1$CASS_PASS/" \
                   -e "s/\\(cassandra.clusters.port=\\).*/\\1${CASSANDRA_PORT:=9042}/" \
