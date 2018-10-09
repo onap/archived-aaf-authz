@@ -62,7 +62,7 @@ Query               Tag             Description
 =================== =============== ============
 CADI Version        VERSION         Defaults to CADI version of this
 AAF's FQDN          AAF_FQDN        PUBLIC Name for AAF. For ONAP Test, it is 'aaf-onap-test.osaaf.org'
-Deployer's FQI      DEPLOY_FQI      In a REAL system, this would be a person or process. For ONAP Testing, the id is deploy@people.osaaf.org, password (see Dynamic Properties) is 'demo123456!'
+Deployer's FQI      DEPLOY_FQI      In a REAL system, this would be a person or process. For ONAP Testing, the id is deployer@people.osaaf.org, password (see Dynamic Properties) is 'demo123456!'
 App's Root FQDN     APP_FQDN        This will show up in the Cert Subject, and should be the name given by Docker. i.e. clamp.onap
 App's FQI           APP_FQI         Fully Qualified ID given by Organization and with AAF NS/domain.  ex: clamp@clamp.onap.org 
 App's Volume        VOLUME          Volume to put the data, see above. ex: clamp_aaf
@@ -87,25 +87,36 @@ Deployer's Password DEPLOY_PASSWORD Password for the Deployer. Avoids storing, e
 IP of <AAF_FQDN>    AAF_FQDN_IP     IP for Name of AAF FQDN, if not available by normal lookup means
 =================== =============== ============
 
------------------------
-ONAP Entity Info in AAF
------------------------
+-------------------------------
+Typical ONAP Entity Info in AAF
+-------------------------------
+*This is not intended to be a comprehensive list, but a short list of main entities*
 
-============================= ===========================  =======================
-ONAP Namespaces               APP FQI                      APP FQDN
-============================= ===========================  =======================
-org.onap.aaf-sms              aaf-sms@aaf-sms.onap.org     aaf-sms
-org.onap.aai                  aai@aai.onap.org             aai
-org.onap.appc                 appc@appc.onap.org           appc
-org.onap.clamp                clamp@clamp.onap.org         clamp
-org.onap.dcae                 dcae@dcae.onap.org           dcae
-org.onap.dmaap-bc             dmaap-bc@dmaap-bc.onap.org   dmaap-bc
-org.onap.dmaap-mr             dmaap-mr@dmaap-mr.onap.org   dmaap-mr
-org.onap.oof                  oof@oof.onap.org             oof
-org.onap.sdnc                 sdnc@sdnc.onap.org           sdnc
-============================= ===========================  =======================
+============================= ===========================  ======================= ==============================================
+ONAP Namespaces               APP FQI                      APP FQDN OOM            APP FQDN HEAT
+============================= ===========================  ======================= ==============================================
+org.osaaf.aaf                 aaf@aaf.osaaf.org            aaf                     aaf.api.simpledemo.onap.org
+org.onap.aaf-sms              aaf-sms@aaf-sms.onap.org     aaf-sms                 aaf-sms.api.simpledemo.onap.org
+org.onap.aai                  aai@aai.onap.org             aai                     aai.api.simpledemo.onap.org
+org.onap.appc                 appc@appc.onap.org           appc                    appc.api.simpledemo.onap.org
+org.onap.clamp                clamp@clamp.onap.org         clamp                   clamp.api.simpledemo.onap.org
+org.onap.dcae                 dcae@dcae.onap.org           dcae                    dcae.api.simpledemo.onap.org
+org.onap.dmaap-bc             dmaap-bc@dmaap-bc.onap.org   dmaap-bc                dmaap-bc.api.simpledemo.onap.org
+org.onap.dmaap-mr             dmaap-mr@dmaap-mr.onap.org   dmaap-mr                dmaap-mr.api.simpledemo.onap.org
+org.onap.oof                  oof@oof.onap.org             oof                     oof.api.simpledemo.onap.org
+org.onap.policy               policy@policy.onap.org       policy                  policy.api.simpledemo.onap.org
+org.onap.pomba                pomba@pomba.onap.org         pomba                   pomba.api.simpledemo.onap.org
+org.onap.portal               portal@portal.onap.org       portal                  portal.api.simpledemo.onap.org
+org.onap.sdc                  sdc@sdc.onap.org             sdc                     sdc.api.simpledemo.onap.org
+org.onap.so                   so@so.onap.org               so                      so.api.simpledemo.onap.org
+org.onap.sdnc                 sdnc@sdnc.onap.org           sdnc                    sdnc.api.simpledemo.onap.org
+org.onap.vfc                  vfc@vfc.onap.org             vfc                     vfc.api.simpledemo.onap.org
+org.onap.vid                  vid@vid.onap.org             vid                     vid.api.simpledemo.onap.org
+============================= ===========================  ======================= ==============================================
 
-*Note: FQDNs are set in AAF's Credential Artifact data, accessible in "Cred Details" from Namespace Page*
+*Note 1: FQDNs are set in AAF's Credential Artifact data, accessible in "Cred Details" from Namespace Page*
+
+*Note 2: Also, AAF itself is different, as it is not an ONAP only component... It is also expected to be used outside of ONAP.*
 
 If something goes wrong, and Certificate is not created, you can adjust the data, remove the data from the Container's /opt/app/osaaf/local dir, and it will generate again. ::
 
@@ -131,6 +142,6 @@ It is expected in large organizations that Individual Employees are given the re
 In a large org, there are probably many Operations teams to support many different apps.
 
   In ONAP test, 
-     The **Deployer** is always set to "deploy@people.osaaf.org" for all Apps.
+     The **Deployer** is always set to "deployer@people.osaaf.org" for all Apps.
 
 
