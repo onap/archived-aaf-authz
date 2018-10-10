@@ -26,15 +26,15 @@ function run_it() {
 }
 
 function set_prop() {
-  $DOCKER exec -it aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2" "$3"
+  $DOCKER exec -i -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2" "$3"
 }
 
 function encrypt_it() {
-  $DOCKER exec -it aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
+  $DOCKER exec -i -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
 }
 
 function set_it() {
-  $DOCKER exec -it aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2"
+  $DOCKER exec -i -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2"
 }
 
 PARAMS="$@"
