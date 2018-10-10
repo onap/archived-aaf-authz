@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Use for assigning to /etc/hosts, when DNS doesn't have Cassandra FQDN
+CASS_HOST=cass.aaf.osaaf.org:<IP of running Cass>
+
+####
+# Detailed Cassandra Environmental Variables
+####
+# CASSANDRA_CLUSTER=<unsert means default, host from CASS_HOST above, or "localhost">
+# CASSANDRA_USER=<unset means default (cassandra)>
+# CASSANDRA_PASSWORD=<unset means default (cassandra)>
+# CASSANDRA_PORT=<unset means default (9042)>
