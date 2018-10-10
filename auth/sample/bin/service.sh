@@ -7,6 +7,10 @@ LOCAL=/opt/app/osaaf/local
 DATA=/opt/app/osaaf/data
 PUBLIC=/opt/app/osaaf/public
 CONFIG=/opt/app/aaf_config
+
+# If doesn't exist... still create
+mkdir -p /opt/app/osaaf
+
 # Temp use for clarity of code
 FILE=
 
@@ -85,7 +89,8 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     echo cadi_longitude=${LONGITUDE} >> ${TMP}
     echo cadi_x509_issuers=${CADI_X509_ISSUERS} >> ${TMP}
     echo aaf_register_as=${AAF_REGISTER_AS} >> ${TMP}
-    echo aaf_locate_url=https://${AAF_REGISTER_AS}:8095 >> ${TMP}
+    LOCATOR_AS=${LOCATOR:=AAF_REGISTER_AS}
+    echo aaf_locate_url=https://${AAF_LOCATOR_AS}:8095 >> ${TMP}
 
     cat $TMP
 

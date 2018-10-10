@@ -51,6 +51,7 @@ if [ "sleep" = "$OTHER" ]; then
   sleep $1
   shift
   status "ready"
+  echo "Done"
 else
   echo "App $APP is waiting to start until $OTHER is ready"
   status "waiting for $OTHER"

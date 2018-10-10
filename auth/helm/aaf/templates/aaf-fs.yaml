@@ -1,0 +1,72 @@
+###
+### AAF-FS
+###
+kind: Service
+apiVersion: v1
+metadata:
+  name: aaf-fs
+spec:
+  selector:
+    app: aaf-fs
+  type: NodePort
+  ports:
+    - name: aaf-fs
+      protocol: TCP
+      port: 8096
+      NodePort: 30085
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aaf-fs
+  labels:
+    app: aaf-fs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aaf-fs
+  template:
+    metadata:
+      labels:
+        app: aaf-fs
+    spec:
+      volumes:
+        # Use this Pod Sharing dir to declare various States of starting
+      - name: {{ .Chart.Name }}-config-vol
+        emptyDir: {}
+      initContainers:
+        - name: {{ .Chart.Name }}-config-container
+          image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: "/opt/app/osaaf"
+              name: {{ .Chart.Name }}-config-vol
+          env:
+            - name: AAF_ENV
+              value: "{{ .Values.cadi.aaf_env }}"
+            - name: AAF_REGISTER_AS
+              value: "aaf-fs"
+            - name: AAF_LOCATOR_AS
+              value: "aaf-locate"
+            - name: LATITUDE
+              value: "{{ .Values.cadi.cadi_latitude }}"
+            - name: LONGITUDE
+              value: "{{ .Values.cadi.cadi_longitude }}"
+            - name: CASS_HOST
+              value: "aaf-cass"
+      containers:
+###
+### AAF-FS
+###
+      - name: {{ .Chart.Name }}-fs
+        image: {{ .Values.image.repository }}onap/aaf/aaf_fs:{{ .Values.image.version }}
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_fs","sleep","50", "/opt/app/aaf/bin/fs"]
+        volumeMounts:
+          -  mountPath: "/opt/app/osaaf"
+             name: {{ .Chart.Name }}-config-vol
+        ports:
+        - name: aaf-fs
+          protocol: TCP
+          containerPort: 8096
