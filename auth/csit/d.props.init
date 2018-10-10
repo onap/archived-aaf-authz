@@ -1,0 +1,31 @@
+# Variables for building Docker entities
+ORG=onap
+PROJECT=aaf
+DOCKER_REPOSITORY=nexus3.onap.org:10003
+VERSION=2.1.2-SNAPSHOT
+CONF_ROOT_DIR=/opt/app/osaaf
+# For local builds, set PREFIX=   
+PREFIX="$DOCKER_REPOSITORY/"
+
+# Local Env info
+HOSTNAME=aaf.osaaf.org
+HOST_IP=
+
+# AAF Machine info
+AAF_ENV=DEV
+AAF_REGISTER_AS=$HOSTNAME
+LATITUDE=
+LONGITUDE=
+
+# Initial AAF Certificate (not Generated)
+CADI_X509_ISSUERS="CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US"
+AAF_INITIAL_X509_P12=
+AAF_INITIAL_X509_PASSWORD=
+CADI_X509_ISSUERS=
+
+# CA info (leave blank unless functioning as CA)
+CM_CA_LOCAL=
+AAF_SIGNER_P12=
+AAF_SIGNER_PASSWORD=
+AAF_SIGNER_ALIAS=
+
