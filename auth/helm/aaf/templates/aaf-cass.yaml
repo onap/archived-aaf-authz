@@ -1,0 +1,71 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: aaf-cass
+spec:
+  selector:
+    app: aaf-cass
+  ports:
+    - name: storage
+      protocol: TCP
+      port: 7000
+      containerPort: 7000
+    - name: ssl-storage
+      protocol: TCP
+      port: 7001
+      containerPort: 7001
+    - name: native-trans
+      protocol: TCP
+      port: 9042
+      containerPort: 9042
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aaf-cass
+  labels:
+    app: aaf-cass
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aaf-cass
+  template:
+    metadata:
+      labels:
+        app: aaf-cass
+    spec:
+      volumes:
+      - name: {{ .Chart.Name }}-cass-vol
+        persistentVolumeClaim:
+        claimName: {{ .Chart.Name }}-cass-pvc
+      containers:
+###
+### AAF-CASS
+###
+      - name: {{ .Chart.Name }}-cass
+        image: {{ .Values.image.repository }}onap/aaf/aaf_cass:{{ .Values.image.version }}
+        imagePullPolicy: IfNotPresent
+        # installing with cmd "onap" will not only initialize the DB, but add ONAP bootstrap data as well
+        command: ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh","onap"]
+        volumeMounts:
+          - mountPath: "/data"
+            name: {{ .Chart.Name }}-cass-vol
+        ports:
+        - name: storage
+          containerPort: 7000
+        - name: ssl-storage
+          containerPort: 7001
+        - name: native-trans
+          containerPort: 9042
+        - name: rpc
+          containerPort: 9160
+        env:
+        - name: CASSANDRA_CLUSTER_NAME
+          value: "osaaf"
+        - name: CASSANDRA_DC
+          value: "dc1"
+        - name: HEAP_NEWSIZE
+          value: "512M"
+        - name: MAX_HEAP_SIZE
+          value: "1024M"

@@ -2,10 +2,10 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Chart.Name }}-logs-pvc
+  name: {{ .Chart.Name }}-status-pvc
   namespace: {{ .Values.global.common.namespace }}
   labels:
-    app: {{ .Chart.Name }}-logs
+    app: {{ .Chart.Name }}-status
 {{- if .Values.persistence.annotations }}
   annotations:
 {{ toYaml .Values.persistence.annotations | indent 4 }}
@@ -13,17 +13,17 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-logs
+      app: {{ .Chart.Name }}-status
   accessModes:
-    - {{ .Values.persistence.logs.accessMode }}
+    - {{ .Values.persistence.status.accessMode }}
   resources:
     requests:
-      storage: {{ .Values.persistence.logs.size }}
-{{- if .Values.persistence.logs.storageClass }}
-{{- if (eq "-" .Values.persistence.logs.storageClass) }}
+      storage: {{ .Values.persistence.status.size }}
+{{- if .Values.persistence.status.storageClass }}
+{{- if (eq "-" .Values.persistence.status.storageClass) }}
   storageClassName: ""
 {{- else }}
-  storageClassName: "{{ .Values.persistence.logs.storageClass }}"
+  storageClassName: "{{ .Values.persistence.status.storageClass }}"
 {{- end }}
 {{- end }}
 {{- end -}}

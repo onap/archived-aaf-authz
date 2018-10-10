@@ -14,11 +14,11 @@ ingress:
   enabled: false
 
 cadi:
-  hostname: "aaf.osaaf.org"
+  hostname: "aaf.onap"
   cadi_latitude: "38.0"  
   cadi_longitude: "-72.0"  
   aaf_env: "DEV"
-  aaf_register_as: "aaf.osaaf.org"
+  aaf_register_as: "aaf.onap"
 
 persistence:
   mountPath: "/mnt/data/aaf"
@@ -28,11 +28,11 @@ persistence:
     size: 2Gi
     mountSubPath: "config"
     storageClass: "manual"
-  logs:
+  status:
     volumeReclaimPolicy: Retain
     accessMode: ReadWriteOnce
-    size: 2Gi
-    mountSubPath: "logs"
+    size: 10M
+    mountSubPath: "status"
     storageClass: "manual"
   cass:
     volumeReclaimPolicy: Retain
