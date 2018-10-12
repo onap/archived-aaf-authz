@@ -39,6 +39,6 @@ function set_it() {
 
 PARAMS="$@"
 if [ "$PARAMS" != "" ]; then
-  run_it -it --rm 
+  run_it -d --rm 
 fi
 
