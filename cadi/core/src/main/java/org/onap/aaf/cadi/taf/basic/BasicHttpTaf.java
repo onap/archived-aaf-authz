@@ -34,16 +34,20 @@ import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.BasicCred;
 import org.onap.aaf.cadi.CachedPrincipal;
 import org.onap.aaf.cadi.CachedPrincipal.Resp;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CredVal;
 import org.onap.aaf.cadi.CredVal.Type;
 import org.onap.aaf.cadi.CredValDomain;
 import org.onap.aaf.cadi.Taf;
+import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.filter.MapBathConverter;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 import org.onap.aaf.cadi.taf.HttpTaf;
 import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
 import org.onap.aaf.cadi.taf.dos.DenialOfServiceTaf;
+import org.onap.aaf.cadi.util.CSV;
 
 /**
  * BasicHttpTaf
@@ -66,6 +70,7 @@ public class BasicHttpTaf implements HttpTaf {
     private Map<String,CredVal> rbacs = new TreeMap<>();
     private boolean warn;
     private long timeToLive;
+	private MapBathConverter mapIds;
     
     public BasicHttpTaf(Access access, CredVal rbac, String realm, long timeToLive, boolean turnOnWarning) {
         this.access = access;
@@ -73,6 +78,16 @@ public class BasicHttpTaf implements HttpTaf {
         this.rbac = rbac;
         this.warn = turnOnWarning;
         this.timeToLive = timeToLive;
+        String csvFile = access.getProperty(Config.CADI_BATH_CONVERT, null);
+        if(csvFile==null) {
+        	mapIds=null;
+        } else {
+        	try {
+				mapIds = new MapBathConverter(access, new CSV(csvFile));
+			} catch (IOException | CadiException e) {
+				access.log(e,"Bath Map Conversion is not initialzed (non fatal)");
+			}
+        }
     }
 
     public void add(final CredValDomain cvd) {
@@ -115,6 +130,9 @@ public class BasicHttpTaf implements HttpTaf {
         if (authz != null && authz.startsWith("Basic ")) {
             if (warn&&!req.isSecure()) {
                 access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
+            }
+            if(mapIds != null) {
+            	authz = mapIds.convert(access, authz);
             }
             try {
                 CachedBasicPrincipal ba = new CachedBasicPrincipal(this,authz,realm,timeToLive);

@@ -103,6 +103,7 @@ public class Config {
     public static final String CADI_PROTOCOLS = "cadi_protocols";
     public static final String CADI_NOAUTHN = "cadi_noauthn";
     public static final String CADI_LOC_LIST = "cadi_loc_list";
+    public static final String CADI_BATH_CONVERT = "cadi_bath_convert";
     
     public static final String CADI_USER_CHAIN_TAG = "cadi_user_chain";
     public static final String CADI_USER_CHAIN = "USER_CHAIN";
