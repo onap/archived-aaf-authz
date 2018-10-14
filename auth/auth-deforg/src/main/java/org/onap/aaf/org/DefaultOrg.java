@@ -117,7 +117,7 @@ public class DefaultOrg implements Organization {
                 identities = new Identities(fIdentities);
             } else {
                 if (fIdentities==null) {
-                    throw new OrganizationException("No Identities");
+                    throw new OrganizationException("No Identities: set \"" + AAF_DATA_DIR + '"');
                 } else {
                     throw new OrganizationException(fIdentities.getCanonicalPath() + " does not exist.");
                 }

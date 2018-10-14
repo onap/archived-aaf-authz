@@ -23,8 +23,10 @@ package org.onap.aaf.cadi.aaf.v2_0;
 
 import java.io.IOException;
 import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CachedPrincipal;
@@ -42,28 +44,34 @@ import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.filter.MapBathConverter;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 import org.onap.aaf.cadi.taf.HttpTaf;
 import org.onap.aaf.cadi.taf.TafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
 import org.onap.aaf.cadi.taf.basic.BasicHttpTafResp;
+import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.APIException;
 
 public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpTaf {
     private AAFCon<CLIENT> aaf;
     private boolean warn;
-
+    private MapBathConverter mapIds;
+    
     public AAFTaf(AAFCon<CLIENT> con, boolean turnOnWarning) {
         super(con.access,con.cleanInterval,con.highCount, con.usageRefreshTriggerCount);
         aaf = con;
         warn = turnOnWarning;
+        initMapBathConverter();
     }
 
     public AAFTaf(AAFCon<CLIENT> con, boolean turnOnWarning, AbsUserCache<AAFPermission> other) {
         super(other);
         aaf = con;
         warn = turnOnWarning;
+        initMapBathConverter();
+
     }
     
     // Note: Needed for Creation of this Object with Generics
@@ -78,6 +86,19 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
         this((AAFCon<CLIENT>)mustBeAAFCon,turnOnWarning);
     }
 
+    private void initMapBathConverter() {
+        String csvFile = access.getProperty(Config.CADI_BATH_CONVERT, null);
+        if(csvFile==null) {
+        	mapIds=null;
+        } else {
+        	try {
+				mapIds = new MapBathConverter(access, new CSV(csvFile));
+			} catch (IOException | CadiException e) {
+				access.log(e,"Bath Map Conversion is not initialzed (non fatal)");
+			}
+        }
+
+    }
 
     public TafResp validate(final LifeForm reading, final HttpServletRequest req, final HttpServletResponse resp) {
         //TODO Do we allow just anybody to validate?
@@ -88,6 +109,10 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
             if (warn&&!req.isSecure()) {
                 aaf.access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
             }
+            if(mapIds != null) {
+            	authz = mapIds.convert(access, authz);
+            }
+
             try {
                 final CachedBasicPrincipal bp;
                 if (req.getUserPrincipal() instanceof CachedBasicPrincipal) {

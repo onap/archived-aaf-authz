@@ -139,6 +139,7 @@ public class MapBathConverter {
     public String convert(Access access, final String bath) {
     	String rv = map.get(bath);
 		String cred=null;
+		String tcred=null;
 		Holder<String> hpass=null;
 		try {
 			if(rv==null || !rv.startsWith(BASIC)) {
@@ -154,9 +155,8 @@ public class MapBathConverter {
     			// for SAFETY REASONS, we WILL NOT allow a non validated cred to 
 				// pass a password from file. Should be caught from Instation, but...
 	    		if(rv!=null) {
-					if(rv.startsWith(BASIC)) {
-						return bath;
-					} else {
+					if(!rv.startsWith(BASIC)) {
+						tcred = rv;
 						rv = BASIC + Symm.base64noSplit.encode(rv+':'+hpass.value);
 					}
 	    		}
@@ -164,7 +164,22 @@ public class MapBathConverter {
 		} catch (IOException | CadiException e) {
 			access.log(e,"Invalid Authorization");
 		}
-
-    	return rv;
+		
+		if(rv==null) {
+			rv=bath;
+		} else {
+			try {
+				if(cred==null) {
+					cred = idFromBasic(bath,null);
+				}
+				if(tcred==null) {
+					tcred = idFromBasic(rv,null);
+				}
+			} catch (IOException | CadiException e) {
+				access.log(Level.ERROR,"Invalid Basic Authentication for conversion");
+			}
+			access.printf(Level.AUDIT, "ID %s converted to %s",cred,tcred);
+		}
+    	return rv==null?bath:rv;
     }
 }
