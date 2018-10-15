@@ -75,6 +75,12 @@ for ROOT in $(cat san_root.aaf); do
      SANS="$SANS $C.$ROOT"
    done
 done
+
+for C in service locate oauth gui cm hello; do
+   SANS="$SANS aaf-$C"
+   SANS="$SANS aaf-$C.onap"
+done
+
 NUM=1
 for D in $SANS; do
     echo "DNS.$NUM = $D" >> $BOOTSTRAP_SAN
