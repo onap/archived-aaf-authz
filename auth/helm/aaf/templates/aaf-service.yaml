@@ -22,7 +22,7 @@ metadata:
   labels:
     app: aaf-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: aaf-service
@@ -32,9 +32,11 @@ spec:
         app: aaf-service
     spec:
       volumes:
-        # Use this Pod Sharing dir to declare various States of starting
       - name: {{ .Chart.Name }}-config-vol
-        emptyDir: {}
+        persistentVolumeClaim:
+        claimName: {{ .Chart.Name }}-config-pvc
+      #- name: {{ .Chart.Name }}-config-vol
+      #  emptyDir: {}
       initContainers:
         - name: {{ .Chart.Name }}-config-container
           image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
@@ -48,7 +50,7 @@ spec:
             - name: AAF_REGISTER_AS
               value: "aaf-service"
             - name: AAF_LOCATOR_AS
-              value: "aaf-locate"
+              value: "{{ .Values.cadi.aaf_locate_as }}"
             - name: LATITUDE
               value: "{{ .Values.cadi.cadi_latitude }}"
             - name: LONGITUDE

@@ -48,7 +48,7 @@ spec:
             - name: AAF_REGISTER_AS
               value: "aaf-fs"
             - name: AAF_LOCATOR_AS
-              value: "aaf-locate"
+              value: "{{ .Values.cadi.aaf_locate_as }}"
             - name: LATITUDE
               value: "{{ .Values.cadi.cadi_latitude }}"
             - name: LONGITUDE

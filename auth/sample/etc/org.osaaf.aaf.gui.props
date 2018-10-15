@@ -3,7 +3,7 @@
 ## AAF GUI Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props
-aaf_component=AAF_NS.gui:2.1.2
+aaf_component=AAF_NS.gui:2.1.4
 port=8200
 
 aaf_gui_title=AAF

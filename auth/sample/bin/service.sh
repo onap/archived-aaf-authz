@@ -89,7 +89,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     echo cadi_longitude=${LONGITUDE} >> ${TMP}
     echo cadi_x509_issuers=${CADI_X509_ISSUERS} >> ${TMP}
     echo aaf_register_as=${AAF_REGISTER_AS} >> ${TMP}
-    LOCATOR_AS=${LOCATOR:=AAF_REGISTER_AS}
+    AAF_LOCATOR_AS=${AAF_LOCATOR_AS:=$AAF_REGISTER_AS}
     echo aaf_locate_url=https://${AAF_LOCATOR_AS}:8095 >> ${TMP}
 
     cat $TMP
@@ -101,7 +101,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
 
     # Cassandra Config stuff
     # Default is expect a Cassandra on same Node
-    CASS_HOST=${CASS_HOST:="localhost:127.0.0.1"}
+    CASS_HOST=${CASS_HOST:="aaf_cass"}
     CASS_PASS=$("$JAVA" -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi digest "${CASSANDRA_PASSWORD:-cassandra}" $LOCAL/org.osaaf.aaf.keyfile)
     CASS_NAME=${CASS_HOST/:*/}
     sed -i.backup -e "s/\\(cassandra.clusters=\\).*/\\1${CASSANDRA_CLUSTERS:=$CASS_HOST}/" \

@@ -29,6 +29,7 @@ $DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/latest
 
+cp ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
 # AAF Agent Image (for Clients)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.client > sample/Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
@@ -36,7 +37,7 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/$
 $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
 
 # Clean up 
-rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar
+rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar sample/bin/aaf-cadi-servlet-sample-${VERSION}-sample.jar 
 rm -Rf sample/CA
 cd -
 
@@ -52,8 +53,11 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${
 rm aaf_${VERSION}/Dockerfile
 cd -
 
+#######
+# Do all the Containers related to AAF Services
+#######
 if ["$1" == ""]; then
-    AAF_COMPONENTS=$(ls ../aaf_*HOT/bin | grep -v '\.')
+    AAF_COMPONENTS=$(ls ../aaf_${VERSION}/bin | grep -v '\.')
 else
     AAF_COMPONENTS=$1
 fi
@@ -69,6 +73,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:latest
     rm aaf_${VERSION}/Dockerfile
     cd -
+
 done
 rm ../aaf_${VERSION}/pod/*
 rmdir ../aaf_${VERSION}/pod

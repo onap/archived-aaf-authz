@@ -208,6 +208,9 @@ if [ ! "$CMD" = "" ]; then
             echo "--- agent Tool Comands ---"
             $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar
             ;;
+        sample)
+            echo "--- run Sample Servlet App ---"
+            $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar:$CONFIG/bin/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
         esac
         echo ""
         ;;

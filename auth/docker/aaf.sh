@@ -13,6 +13,7 @@ function run_it() {
     --env HOSTNAME=${HOSTNAME} \
     --env AAF_ENV=${AAF_ENV} \
     --env AAF_REGISTER_AS=${AAF_REGISTER_AS} \
+    --env AAF_LOCATOR_AS=${AAF_LOCATOR_AS} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
     --env CASS_HOST=${CASS_HOST} \

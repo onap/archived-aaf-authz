@@ -19,6 +19,7 @@ cadi:
   cadi_longitude: "-72.0"  
   aaf_env: "DEV"
   aaf_register_as: "aaf.onap"
+  aaf_locate_as: "aaf-locate"
 
 persistence:
   mountPath: "/mnt/data/aaf"
@@ -47,7 +48,7 @@ image:
   # When using Docker Repo, add, and include trailing "/"
   # repository: nexus3.onap.org:10003/
   # repository: localhost:5000/
-  version: 2.1.3-SNAPSHOT
+  version: 2.1.4-SNAPSHOT
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

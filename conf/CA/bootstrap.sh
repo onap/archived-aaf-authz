@@ -9,7 +9,7 @@ chmod 755 certs newcerts
 touch index.txt
 echo "unique_subject = no" > index.txt.attr
 if [ ! -e ./serial ]; then
-  echo $(date +%s) > ./serial
+  echo $(date +%s)_$(shuf -i 0-1000000 -n 1)  > ./serial
 fi
 
 NAME=aaf.bootstrap
