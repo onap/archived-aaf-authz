@@ -3,6 +3,7 @@
 # Engage normal Cass Init, then check for data installation
 #
 DIR="/opt/app/aaf/status"
+INSTALLED_VERSION=/opt/app/aaf/cass_init/INSTALLED_VERSION
 
 if [ ! -e /aaf_cmd ]; then
   ln -s /opt/app/aaf/cass_init/cmd.sh /aaf_cmd
@@ -61,10 +62,12 @@ function wait_ready {
 function install_cql {
     wait_start started   
     # Now, make sure data exists
-    if [ "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)" = "" ]; then
-      status install 
-      echo "Initializing Cassandra DB" 
-      if [ "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" == "" ]; then
+    if [ ! -e $INSTALLED_VERSION ] && [ -n "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)" ]; then
+      /usr/bin/cqlsh -e 'DROP KEYSPACE authz' 
+    fi
+    if [ -z "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" ]; then
+        status install 
+        echo "Initializing Cassandra DB" 
         echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
         echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
         echo ""
@@ -79,16 +82,18 @@ function install_cql {
         echo ""
         echo "The following will give you a temporary identity with which to start working, or emergency"
         echo " cqlsh -f temp_identity.cql"
-      fi
+        echo "2.1.15"> $INSTALLED_VERSION
+    else 
+      echo "Cassandra DB already includes 'authz' keyspace"
     fi
     status $1
 }
 
 function install_onap {
     echo " cd /opt/app/aaf/cass_init"
-    cd /opt/app/aaf/cass_init
     install_cql initialized
     status prep data for bootstrapping
+    cd /opt/app/aaf/cass_init
     bash prep.sh
     status push data to cassandra
     bash push.sh
@@ -111,6 +116,7 @@ case "$1" in
 
   ;;
   onap)
+    cd /opt/app/aaf/cass_init
     # start install_onap (which calls install_cql first) in background, waiting for process to start
     install_onap &
 
