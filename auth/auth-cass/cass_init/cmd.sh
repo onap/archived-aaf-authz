@@ -3,7 +3,7 @@
 # Engage normal Cass Init, then check for data installation
 #
 DIR="/opt/app/aaf/status"
-INSTALLED_VERSION=/var/lib/cassandra/AAF_VERSION
+INSTALLED_VERSION=/etc/cassandra/AAF_VERSION
 
 if [ ! -e /aaf_cmd ]; then
   ln -s /opt/app/aaf/cass_init/cmd.sh /aaf_cmd
@@ -82,7 +82,7 @@ function install_cql {
         echo ""
         echo "The following will give you a temporary identity with which to start working, or emergency"
         echo " cqlsh -f temp_identity.cql"
-        echo "2.1.15"> $INSTALLED_VERSION
+        echo "casablanca" > $INSTALLED_VERSION
     else 
       echo "Cassandra DB already includes 'authz' keyspace"
     fi
