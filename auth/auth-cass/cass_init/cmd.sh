@@ -3,7 +3,7 @@
 # Engage normal Cass Init, then check for data installation
 #
 DIR="/opt/app/aaf/status"
-INSTALLED_VERSION=/opt/app/aaf/cass_init/INSTALLED_VERSION
+INSTALLED_VERSION=/var/lib/cassandra/AAF_VERSION
 
 if [ ! -e /aaf_cmd ]; then
   ln -s /opt/app/aaf/cass_init/cmd.sh /aaf_cmd
