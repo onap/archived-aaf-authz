@@ -3,7 +3,7 @@
 ## AAF Fileserver Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props
-aaf_component=AAF_NS.fs:2.1.4
+aaf_component=AAF_NS.fs:2.1
 port=8096
 
 aaf_public_dir=/opt/app/osaaf/public

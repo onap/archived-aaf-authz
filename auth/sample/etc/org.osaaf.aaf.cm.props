@@ -4,7 +4,7 @@
 ## Note: Link to CA Properties in "local" dir
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props:/opt/app/osaaf/local/org.osaaf.aaf.cm.ca.props
-aaf_component=AAF_NS.cm:2.1.4
+aaf_component=AAF_NS.cm:2.1
 port=8150
 
 #Certman

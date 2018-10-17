@@ -3,6 +3,6 @@
 ## AAF OAuth2 Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
-aaf_component=AAF_NS.oauth:2.1.4
+aaf_component=AAF_NS.oauth:2.1
 port=8140
 
