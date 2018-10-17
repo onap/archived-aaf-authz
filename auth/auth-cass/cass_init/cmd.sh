@@ -94,6 +94,7 @@ function install_onap {
     install_cql initialized
     status prep data for bootstrapping
     cd /opt/app/aaf/cass_init
+    status prep data 
     bash prep.sh
     status push data to cassandra
     bash push.sh

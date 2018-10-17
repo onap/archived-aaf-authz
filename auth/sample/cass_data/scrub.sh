@@ -16,16 +16,16 @@ ID_FILE=../data/sample.identities.dat
 
 if [ -e $ID_FILE ]; then
   if [ "$(uname -s)" = "Darwin" ]; then 
-    DATE=$(date "+%Y-%m-%d %H:%M:%S.000+0000" -v "+6m")
+    DATE=$(date -v "+6m" "+%Y-%m-%d %H:%M:%S.000+0000")
   else 
     DATE=$(date "+%Y-%m-%d %H:%M:%S.000+0000" -d "+6 months")
   fi
   echo $DATE
 
-
   #### CRED
   # Enter for People
   CRED="cred.dat"
+  rm cred.dat
   echo "Create default Passwords for all Identities in $CRED"
   for ID in $(grep '|a|' $ID_FILE | sed -e "s/|.*//"); do
      if [ "$ID" = "aaf" ]; then
@@ -49,16 +49,24 @@ if [ -e $ID_FILE ]; then
      echo "$ID@people.osaaf.org|2|${DATE}|0xd993c5617486296f1b99d04de31633332b8ba1a550038e23860f9dbf0b2fcf95|Initial ID|org.osaaf.people|53344|" >> $CRED
   done
 
-
   ##### USER_ROLE
   echo "Scrubbing user_roles not in $ID_FILE"
+
+  ## Covering for when scrubbing in cass_init versus a Backup
+  if [ -d "dats" ]; then
+    for D in ns ns_attrib perm role config artifact; do 
+      if [ -e "dats/$D.dat" ]; then
+         cp dats/$D.dat .
+      fi
+    done
+  else
+    mkdir -p dats
+    cp user_role.dat dats
+    REMOVE_DATS=true
+  fi  
   > user_role.dat
   for ID in $(grep -v "#" $ID_FILE | awk -F\| '{print $1}' | grep -v "^$"); do
       grep "$ID@" dats/user_role.dat >> user_role.dat
-  done
-
-  for D in ns ns_attrib perm role config artifact; do 
-      cp dats/$D.dat .
   done
 
   UR="$(mktemp)"
@@ -75,7 +83,9 @@ if [ -e $ID_FILE ]; then
   mv user_role.dat tmp
   sed "s/\(^.*|\)\(.*|\)\(.*|\)\(.*\)/\1${DATE}|\3\4/" tmp > user_role.dat 
   rm tmp
-
+  if [ -n "$REMOVE_DATS" ]; then
+     rm -Rf dats
+  fi
 else
     echo $0 requires access to $ID_FILE
 fi
