@@ -37,9 +37,11 @@ Choose the directory you wish to start in...
 If you don't want to clone all of AAF, just get the "agent.sh" from a Browser:
 
   https://gerrit.onap.org/r/gitweb?p=aaf/authz.git;a=blob_plain;f=auth/docker/agent.sh;hb=HEAD
+  
+  rename file "auth-docker-agent.sh" to "agent.sh" (named because of subdirectory in which it is found) 
 
-  Note: curl/wget get html, instead of text
-  | You might have to mv, and rename it to "agent.sh", but avoids full clone
+Note: curl/wget returns an  html, instead of text.  This cannot be used!
+  | You have to mv, and rename it to "agent.sh", but avoids full clone...
 
 -------------------------
 Run Script
@@ -95,23 +97,25 @@ Typical ONAP Entity Info in AAF
 ============================= ===========================  ======================= ==============================================
 ONAP Namespaces               APP FQI                      APP FQDN OOM            APP FQDN HEAT
 ============================= ===========================  ======================= ==============================================
-org.osaaf.aaf                 aaf@aaf.osaaf.org            aaf                     aaf.api.simpledemo.onap.org
-org.onap.aaf-sms              aaf-sms@aaf-sms.onap.org     aaf-sms                 aaf-sms.api.simpledemo.onap.org
-org.onap.aai                  aai@aai.onap.org             aai                     aai.api.simpledemo.onap.org
-org.onap.appc                 appc@appc.onap.org           appc                    appc.api.simpledemo.onap.org
-org.onap.clamp                clamp@clamp.onap.org         clamp                   clamp.api.simpledemo.onap.org
-org.onap.dcae                 dcae@dcae.onap.org           dcae                    dcae.api.simpledemo.onap.org
-org.onap.dmaap-bc             dmaap-bc@dmaap-bc.onap.org   dmaap-bc                dmaap-bc.api.simpledemo.onap.org
-org.onap.dmaap-mr             dmaap-mr@dmaap-mr.onap.org   dmaap-mr                dmaap-mr.api.simpledemo.onap.org
-org.onap.oof                  oof@oof.onap.org             oof                     oof.api.simpledemo.onap.org
-org.onap.policy               policy@policy.onap.org       policy                  policy.api.simpledemo.onap.org
-org.onap.pomba                pomba@pomba.onap.org         pomba                   pomba.api.simpledemo.onap.org
-org.onap.portal               portal@portal.onap.org       portal                  portal.api.simpledemo.onap.org
-org.onap.sdc                  sdc@sdc.onap.org             sdc                     sdc.api.simpledemo.onap.org
-org.onap.so                   so@so.onap.org               so                      so.api.simpledemo.onap.org
-org.onap.sdnc                 sdnc@sdnc.onap.org           sdnc                    sdnc.api.simpledemo.onap.org
-org.onap.vfc                  vfc@vfc.onap.org             vfc                     vfc.api.simpledemo.onap.org
-org.onap.vid                  vid@vid.onap.org             vid                     vid.api.simpledemo.onap.org
+org.osaaf.aaf                 aaf@aaf.osaaf.org            aaf.onap                aaf.api.simpledemo.onap.org
+org.onap.aaf-sms              aaf-sms@aaf-sms.onap.org     aaf-sms.onap            aaf-sms.api.simpledemo.onap.org
+org.onap.aai                  aai@aai.onap.org             aai.onap                aai.api.simpledemo.onap.org
+org.onap.appc                 appc@appc.onap.org           appc.onap               appc.api.simpledemo.onap.org
+org.onap.clamp                clamp@clamp.onap.org         clamp.onap              clamp.api.simpledemo.onap.org
+org.onap.dcae                 dcae@dcae.onap.org           dcae.onap               dcae.api.simpledemo.onap.org
+org.onap.dmaap                dmaap@dmaap.onap.org         dmaap.onap              dmaap.api.simpledemo.onap.org                                         
+org.onap.dmaap-bc             dmaap-bc@dmaap-bc.onap.org   dmaap-bc.onap           dmaap-bc.api.simpledemo.onap.org
+org.onap.dmaap-dr             dmaap-bc@dmaap-dr.onap.org   dmaap-dr.onap           dmaap-dr.api.simpledemo.onap.org                                           
+org.onap.dmaap-mr             dmaap-mr@dmaap-mr.onap.org   dmaap-mr.onap           dmaap-mr.api.simpledemo.onap.org
+org.onap.oof                  oof@oof.onap.org             oof.onap                oof.api.simpledemo.onap.org
+org.onap.policy               policy@policy.onap.org       policy.onap             policy.api.simpledemo.onap.org
+org.onap.pomba                pomba@pomba.onap.org         pomba.onap              pomba.api.simpledemo.onap.org
+org.onap.portal               portal@portal.onap.org       portal.onap             portal.api.simpledemo.onap.org
+org.onap.sdc                  sdc@sdc.onap.org             sdc.onap                sdc.api.simpledemo.onap.org
+org.onap.sdnc                 sdnc@sdnc.onap.org           sdnc.onap               sdnc.api.simpledemo.onap.org
+org.onap.so                   so@so.onap.org               so.onap                 so.api.simpledemo.onap.org
+org.onap.vfc                  vfc@vfc.onap.org             vfc.onap                vfc.api.simpledemo.onap.org
+org.onap.vid                  vid@vid.onap.org             vid.onap                vid.api.simpledemo.onap.org
 ============================= ===========================  ======================= ==============================================
 
 *Note 1: FQDNs are set in AAF's Credential Artifact data, accessible in "Cred Details" from Namespace Page*
