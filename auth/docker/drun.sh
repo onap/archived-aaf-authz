@@ -35,15 +35,15 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     case "$AAF_COMPONENT" in
     "service")
         PORTMAP="8100:8100"
-        LINKS="--link aaf_cass:cassandra --add-host=$CASS_HOST"
+        LINKS="--link aaf_cass:cassandra "
         ;;
     "locate")
         PORTMAP="8095:8095"
-        LINKS="--link aaf_cass:cassandra --add-host=$CASS_HOST"
+        LINKS="--link aaf_cass:cassandra "
         ;;
     "oauth")
         PORTMAP="8140:8140"
-        LINKS="--link aaf_cass:cassandra --add-host=$CASS_HOST"
+        LINKS="--link aaf_cass:cassandra "
         ;;
     "gui")
         PORTMAP="8200:8200"
@@ -51,7 +51,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     "cm")
         PORTMAP="8150:8150"
         LINKS="--link aaf_cass:cassandra "
-        LINKS="--link aaf_cass:cassandra --add-host=$CASS_HOST"
+        LINKS="--link aaf_cass:cassandra "
         ;;
     "hello")
         PORTMAP="8130:8130"

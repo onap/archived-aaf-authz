@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Use for assigning to /etc/hosts, when DNS doesn't have Cassandra FQDN
-CASS_HOST=cass.aaf.osaaf.org:<IP of running Cass>
+CASS_HOST=aaf_cass
 
 ####
 # Detailed Cassandra Environmental Variables
