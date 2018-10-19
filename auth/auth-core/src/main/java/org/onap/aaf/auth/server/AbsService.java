@@ -34,6 +34,7 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
@@ -69,6 +70,13 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             locator_deploy = null;
         } else {
             locator_deploy = Split.splitTrim(':', component);
+            if(locator_deploy.length>1 && "AAF_RELEASE".equals(locator_deploy[1])) {
+            	locator_deploy[1]=access.getProperty(Config.AAF_RELEASE, Defaults.AAF_VERSION);
+            	int snapshot = locator_deploy[1].indexOf("-SNAPSHOT");
+            	if(snapshot>0) {
+            		locator_deploy[1]=locator_deploy[1].substring(0, snapshot);
+            	}
+            }
         }
             
         if (component == null || locator_deploy==null || locator_deploy.length<2) {

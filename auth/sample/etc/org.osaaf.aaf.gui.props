@@ -3,7 +3,7 @@
 ## AAF GUI Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props
-aaf_component=AAF_NS.gui:2.1
+aaf_component=AAF_NS.gui:AAF_RELEASE
 port=8200
 
 aaf_gui_title=AAF
@@ -12,10 +12,6 @@ aaf_gui_theme=theme/onap
 cadi_loginpage_url=https://AAF_LOCATE_URL/AAF_NS.gui:2.0/login
 
 # GUI URLS and Help URLS
-cm_url=https://aaf.osaaf.org:8150
-gw_url=https://aaf.osaaf.org:8095
-fs_url=http://aaf.osaaf.org:8096
-
 aaf_url.gui_onboard=https://wiki.onap.org/display/DW/Client+Onboarding
 # aaf_url.cuigui=https://???/Using+the+Command+Prompt
 

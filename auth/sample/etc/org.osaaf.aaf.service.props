@@ -3,6 +3,6 @@
 ## AAF Service Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props
-aaf_component=AAF_NS.service:2.1
+aaf_component=AAF_NS.service:AAF_RELEASE
 port=8100
 

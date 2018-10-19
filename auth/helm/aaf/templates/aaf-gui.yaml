@@ -62,7 +62,7 @@ spec:
       - name: {{ .Chart.Name }}-gui
         image: {{ .Values.image.repository }}onap/aaf/aaf_gui:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_gui","sleep","50", "/opt/app/aaf/bin/gui"]
+        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_gui","sleep","50", "cd /opt/app/aaf;bin/gui"]
         volumeMounts:
           -  mountPath: "/opt/app/osaaf"
              name: {{ .Chart.Name }}-config-vol

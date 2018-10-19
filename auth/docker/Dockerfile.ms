@@ -7,7 +7,7 @@ LABEL version=${AAF_VERSION}
 
 COPY pod/* /opt/app/aaf/pod/
 
-CMD ["/bin/bash","-c","/opt/app/aaf/bin/${AAF_COMPONENT}"]
+CMD ["/bin/bash","-c","cd /opt/app/aaf;bin/${AAF_COMPONENT}"]
 
 # For Debugging installation
 # CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT};cat /etc/hosts;/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]

@@ -62,7 +62,7 @@ spec:
       - name: {{ .Chart.Name }}-hello
         image: {{ .Values.image.repository }}onap/aaf/aaf_hello:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_hello","sleep","50", "/opt/app/aaf/bin/hello"]
+        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_hello","sleep","50", "cd /opt/app/aaf;bin/hello"]
         volumeMounts:
           -  mountPath: "/opt/app/osaaf"
              name: {{ .Chart.Name }}-config-vol

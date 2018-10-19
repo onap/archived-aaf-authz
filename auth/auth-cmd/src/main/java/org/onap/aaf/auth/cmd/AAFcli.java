@@ -251,6 +251,41 @@ public class AAFcli {
                 } else if ("exit".equalsIgnoreCase(largs[idx])) {
                     pw.println("Exiting...");
                     return false;
+                } else if ("set".equalsIgnoreCase(largs[idx])) {
+                    while (largs.length > ++idx) {
+                        int equals = largs[idx].indexOf('=');
+                        String tag, value;
+                        if (equals < 0) {
+                            tag = largs[idx];
+                            value = access.getProperty(Config.AAF_APPPASS,null);
+                            if (value==null) {
+                                break;
+                            } else {
+                                value = access.decrypt(value, false);
+                                if (value==null) {
+                                    break;
+                                }
+                                access.getProperties().put(tag, value);
+                                pw.println("set " + tag + " <encrypted>");
+                            }
+                        } else {
+                            tag = largs[idx].substring(0, equals);
+                            value = largs[idx].substring(++equals);
+                            pw.println("set " + tag + ' ' + value);
+                        }
+                        boolean isTrue = "TRUE".equalsIgnoreCase(value);
+                        if ("FORCE".equalsIgnoreCase(tag)) {
+                            force = value;
+                        } else if ("REQUEST".equalsIgnoreCase(tag)) {
+                            request = isTrue;
+                        } else if ("DETAILS".equalsIgnoreCase(tag)) {
+                            showDetails = isTrue;
+                        } else {
+                            access.getProperties().put(tag, value);
+                        }
+                    }
+                    continue;
+                    // Allow Script to indicate if Failure is what is expected
                 }
 
             } 
@@ -264,41 +299,6 @@ public class AAFcli {
             } else if ("DETAILS".equalsIgnoreCase(largs[idx])) {
                 showDetails=true;
                 ++idx;
-            } else if ("set".equalsIgnoreCase(largs[idx])) {
-                while (largs.length > ++idx) {
-                    int equals = largs[idx].indexOf('=');
-                    String tag, value;
-                    if (equals < 0) {
-                        tag = largs[idx];
-                        value = access.getProperty(Config.AAF_APPPASS,null);
-                        if (value==null) {
-                            break;
-                        } else {
-                            value = access.decrypt(value, false);
-                            if (value==null) {
-                                break;
-                            }
-                            access.getProperties().put(tag, value);
-                            pw.println("set " + tag + " <encrypted>");
-                        }
-                    } else {
-                        tag = largs[idx].substring(0, equals);
-                        value = largs[idx].substring(++equals);
-                        pw.println("set " + tag + ' ' + value);
-                    }
-                    boolean isTrue = "TRUE".equalsIgnoreCase(value);
-                    if ("FORCE".equalsIgnoreCase(tag)) {
-                        force = value;
-                    } else if ("REQUEST".equalsIgnoreCase(tag)) {
-                        request = isTrue;
-                    } else if ("DETAILS".equalsIgnoreCase(tag)) {
-                        showDetails = isTrue;
-                    } else {
-                        access.getProperties().put(tag, value);
-                    }
-                }
-                continue;
-                // Allow Script to indicate if Failure is what is expected
             }
 
             int ret = 0;

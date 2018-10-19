@@ -1,4 +1,4 @@
-aaf_locate_url=https://meriadoc.mithril.sbc.com:8095
+aaf_locate_url=https://localhost:8095
 aaf_oauth2_introspect_url=https://AAF_LOCATE_URL/AAF_NS.introspect:2.1/introspect
 aaf_oauth2_token_url=https://AAF_LOCATE_URL/AAF_NS.token:2.1/token
 aaf_url=https://AAF_LOCATE_URL/AAF_NS.service:2.1

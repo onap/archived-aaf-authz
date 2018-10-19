@@ -85,6 +85,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
 
     TMP=$(mktemp)
     echo aaf_env=${AAF_ENV} >> ${TMP}
+    echo aaf_release=${VERSION} >> ${TMP}
     echo cadi_latitude=${LATITUDE} >> ${TMP}
     echo cadi_longitude=${LONGITUDE} >> ${TMP}
     echo cadi_x509_issuers=${CADI_X509_ISSUERS} >> ${TMP}

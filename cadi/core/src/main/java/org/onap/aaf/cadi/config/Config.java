@@ -185,6 +185,7 @@ public class Config {
     public static final String AAF_CERT_IDS = "aaf_cert_ids";
     public static final String AAF_DEBUG_IDS = "aaf_debug_ids"; // comma delimited
     public static final String AAF_DATA_DIR = "aaf_data_dir"; // AAF processes and Components only.
+    public static final String AAF_RELEASE = "aaf_release";
 
     public static final String GW_URL = "gw_url";
     public static final String CM_URL = "cm_url";

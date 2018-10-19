@@ -3,6 +3,6 @@
 ## AAF Hello Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props
-aaf_component=AAF_NS.hello:2.1
+aaf_component=AAF_NS.hello:AAF_RELEASE
 port=8130
 

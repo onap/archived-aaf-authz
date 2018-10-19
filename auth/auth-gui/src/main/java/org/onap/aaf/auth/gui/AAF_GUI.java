@@ -86,7 +86,6 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.StaticSlot;
-import org.onap.aaf.misc.env.util.Split;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 import org.onap.aaf.misc.xgen.html.State;
@@ -113,22 +112,20 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     
     public final Slot slot_httpServletRequest;
     protected final String deployedVersion;
-    private StaticSlot sTheme;
+    private StaticSlot sThemeWebPath;
     public final String theme;
 
 
     public AAF_GUI(final AuthzEnv env) throws Exception {
         super(env.access(), env);
-        sTheme = env.staticSlot(CachingFileAccess.CFA_WEB_PATH,access.getProperty(CachingFileAccess.CFA_WEB_PATH,null)==null?AAF_GUI_THEME:CachingFileAccess.CFA_WEB_PATH);
-        theme = env.getProperty(AAF_GUI_THEME);
+        theme = env.getProperty(AAF_GUI_THEME,"theme/onap");
+        sThemeWebPath = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
+        if(env.get(sThemeWebPath)==null) {
+        	env.put(sThemeWebPath,theme);
+        }
 
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
-        String[] component = Split.split(':', access.getProperty(Config.AAF_COMPONENT, "N/A:2.x"));
-        if (component.length>1) {
-            deployedVersion =component[1];
-        } else {
-            deployedVersion = "2.x";
-        }
+        deployedVersion = access.getProperty(Config.AAF_RELEASE, "N/A:2.x");
 
         // Certificate Manager
         cmCon =  new AAFConHttp(env.access(),Config.CM_URL);
@@ -206,7 +203,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         ///////////////////////  
         // WebContent Handler
         ///////////////////////
-        route(env,GET,"/"+env.get(sTheme)+"/:key", new CachingFileAccess<AuthzTrans>(env));
+        route(env,GET,"/"+env.get(sThemeWebPath)+"/:key", new CachingFileAccess<AuthzTrans>(env));
         ///////////////////////
         aafCon = aafCon();
         lur = aafCon.newLur();
