@@ -99,16 +99,26 @@ public class Examples {
             version = "v2_0";
         }
         
-        Class<?> cls;
-        try {
-            cls = Examples.class.getClassLoader().loadClass("aaf."+version+'.'+className);
-        } catch (ClassNotFoundException e) {
-            throw new APIException(e);
-        }
+        Class<?> cls=null;
+    	int minorIdx = version.indexOf('_');
+    	if(minorIdx<0) {
+    		throw new APIException("Invalid Interface Version " + version);
+    	}
+    	int minor = Integer.parseInt(version.substring(minorIdx+1));
+    	String vprefix=version.substring(0, minorIdx+1);
+    	while(cls==null && minor>=0) {
+    		try {
+    			cls = Examples.class.getClassLoader().loadClass("aaf."+vprefix+minor+'.'+className);
+            } catch (ClassNotFoundException e) {
+            	if(--minor<0) {
+            		throw new APIException("No Example for Version " + version + " found.");
+            	}
+            }
+    	}
         
         Method meth;
         try {
-            meth = Examples.class.getDeclaredMethod("new"+cls.getSimpleName()+version,boolean.class);
+            meth = Examples.class.getDeclaredMethod("new"+cls.getSimpleName()+vprefix+minor,boolean.class);
         } catch (Exception e) {
             throw new APIException("ERROR: " + cls.getName() + " does not have an Example in Code.  Request from AAF Developers");
         }
