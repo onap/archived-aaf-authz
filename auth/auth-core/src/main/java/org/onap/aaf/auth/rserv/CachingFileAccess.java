@@ -291,33 +291,6 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         return c;
     }
     
-    public Content loadOrDefault(Trans trans, String targetDir, String targetFileName, String sourcePath, String mediaType) throws IOException {
-        try {
-            return load(trans.info(),targetDir,targetFileName,mediaType,0);
-        } catch (FileNotFoundException e) {
-            String targetPath = targetDir + '/' + targetFileName;
-            TimeTaken tt = trans.start("File doesn't exist; copy " + sourcePath + " to " + targetPath, Env.SUB);
-            try {
-                FileInputStream sourceFIS = new FileInputStream(sourcePath);
-                FileChannel sourceFC = sourceFIS.getChannel();
-                File targetFile = new File(targetPath);
-                targetFile.getParentFile().mkdirs(); // ensure directory exists
-                FileOutputStream targetFOS = new FileOutputStream(targetFile);
-                try {
-                    ByteBuffer bb = ByteBuffer.allocate((int)sourceFC.size());
-                    sourceFC.read(bb);
-                    bb.flip();  // ready for reading
-                    targetFOS.getChannel().write(bb);
-                } finally {
-                    sourceFIS.close();
-                    targetFOS.close();
-                }
-            } finally {
-                tt.done();
-            }
-            return load(trans.info(),targetDir,targetFileName,mediaType,0);
-        }
-    }
 
     public void invalidate(String key) {
         content.remove(key);

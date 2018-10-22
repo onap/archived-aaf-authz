@@ -24,13 +24,11 @@ package org.onap.aaf.auth.rserv.test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
@@ -43,8 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.onap.aaf.auth.rserv.CachingFileAccess;
 import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.rserv.Match;
@@ -147,26 +143,6 @@ public class JU_CachingFileAccess {
         keyfile1.createNewFile();
         cachingFileAccess.load(null, filePath1, "-", "test", -1);
         keyfile1.delete();
-    }
-
-    @Test
-    public void testLoadOrDefault() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        String filePath = "test/output_key";
-        File keyfile = new File(filePath);
-        cachingFileAccess.loadOrDefault(trans, filePath, "-", null, null);
-        keyfile.delete();
-
-        Trans trans = mock(Trans.class);
-
-        String filePath1 = "test/output_key.txt";
-        //File keyfile1 = new File(filePath1);
-        doAnswer(new Answer<Void>() {
-            public Void answer(InvocationOnMock invocation) throws FileNotFoundException {
-               throw new FileNotFoundException();
-            }
-        }).when(trans).info();
-        //cachingFileAccess.loadOrDefault(trans, "bs", "also bs", "test", null);    //TODO: Needs more testing AAF-111
-        //keyfile1.delete();
     }
 
     @Test

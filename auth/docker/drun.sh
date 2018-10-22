@@ -51,7 +51,6 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     "cm")
         PORTMAP="8150:8150"
         LINKS="--link aaf_cass:cassandra "
-        LINKS="--link aaf_cass:cassandra "
         ;;
     "hello")
         PORTMAP="8130:8130"

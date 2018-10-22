@@ -22,6 +22,7 @@ package org.onap.aaf.cadi.config.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -90,7 +91,7 @@ public class JU_MapBathConverter {
 				
 				// Style 2
 				cw.row(exp(bath(OLD_ID,"OLD_PASS")), exp(bath(NEW_USER_SOMETHING_ORG,"NEW_PASS")),sdf.format(gc.getTime()));
-				
+
 			} finally {
 				cw.close();
 			}
@@ -107,7 +108,11 @@ public class JU_MapBathConverter {
 								Assert.assertEquals(exp.next(), s);
 								break;
 							case 2:
-								System.out.println(s);
+								try {
+									Date d = Date.valueOf(s);
+								} catch (Exception e) {
+									Assert.assertTrue("Last entry should be a date",false);
+								}
 								break;
 							default:
 								Assert.fail("There should only be 3 columns in this test case.");
@@ -138,6 +143,32 @@ public class JU_MapBathConverter {
 			old = exp1.next();
 			nw = exp1.next();
 			Assert.assertEquals(nw, mbc.convert(access,old));
+
+		} finally {
+			csv.delete();
+		}
+	}
+
+	@Test
+	public void testInsecureRole() throws IOException {
+		CSV.Writer cw = csv.writer();
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.add(GregorianCalendar.MONTH, 6);
+		try {
+			try {
+				// Invalid Scenario - Non Authenticated ID to authenticated User
+				cw.row(exp(OLD_ID), exp(bath(NEW_USER_SOMETHING_ORG,"NEW_PASS")),sdf.format(gc.getTime()));
+
+			} finally {
+				cw.close();
+			}
+			
+			try {
+				new MapBathConverter(access, csv);
+				Assert.fail("Invalid Data should throw Exception");
+			} catch (CadiException e) {
+				Assert.assertTrue("Invalid Data should throw Exception",true);
+			}
 
 		} finally {
 			csv.delete();

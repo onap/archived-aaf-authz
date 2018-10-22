@@ -115,6 +115,10 @@ public class Examples {
             	}
             }
     	}
+    	
+    	if(cls==null) {
+    		throw new APIException("ERROR: " + "aaf."+vprefix+"X not found.");
+    	}
         
         Method meth;
         try {

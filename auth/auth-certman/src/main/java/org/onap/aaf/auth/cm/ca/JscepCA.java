@@ -197,7 +197,7 @@ public class JscepCA extends CA {
                     trans.error().log(e,clients.info(item));
                     i=MAX_RETRY;  // can't go any further
                 }
-            } catch (InterruptedException|TransactionException|CertificateException|OperatorCreationException | CertStoreException e) {
+            } catch (Exception e) {
                 trans.error().log(e);
                 i=MAX_RETRY;
             } finally {
