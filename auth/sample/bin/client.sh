@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script is run when starting aaf_config Container.
+# This script is run when starting client Container.
 #  It needs to cover the cases where the initial data doesn't exist, and when it has already been configured (don't overwrite)
 #
 JAVA=/usr/bin/java
@@ -21,6 +21,11 @@ LOCAL="$OSAAF/local"
 DOT_AAF="$HOME/.aaf"
 SSO="$DOT_AAF/sso.props"
  
+JAVA_CADI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.CmdLine"
+JAVA_AGENT="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$SSO org.onap.aaf.cadi.configure.Agent"
+JAVA_AGENT_SELF="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/${NS}.props org.onap.aaf.cadi.configure.Agent"
+JAVA_AAFCLI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.auth.cmd.AAFcli"
+
 # Check for local dir
 if [ ! -d $LOCAL ]; then
     mkdir -p $LOCAL
@@ -30,23 +35,24 @@ if [ ! -d $LOCAL ]; then
 fi
 
 # Setup Bash, first time only
-if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep aaf_config $HOME/.bash_aliases)" ]; then
-  echo "alias cadi='$OSAAF/bin/agent.sh EMPTY cadi \$*'" >>$HOME/.bash_aliases
+if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep agent $HOME/.bash_aliases)" ]; then
+  echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bash_aliases
   echo "alias agent='$OSAAF/bin/agent.sh EMPTY \$*'" >>$HOME/.bash_aliases
+  echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bash_aliases
   chmod a+x $OSAAF/bin/agent.sh
   . $HOME/.bash_aliases
 fi
 
 # Setup SSO info for Deploy ID
 function sso_encrypt() {
- $JAVA -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar org.onap.aaf.cadi.CmdLine digest ${1} $DOT_AAF/keyfile
+   $JAVA_CADI digest ${1} $DOT_AAF/keyfile
 }
 
 
 # Create Deployer Info, located at /root/.aaf
 if [ ! -e "$DOT_AAF/keyfile" ]; then
     mkdir -p $DOT_AAF
-    $JAVA -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar org.onap.aaf.cadi.CmdLine keygen $DOT_AAF/keyfile
+    $JAVA_CADI keygen $DOT_AAF/keyfile
     chmod 400 $DOT_AAF/keyfile
     echo cadi_latitude=${LATITUDE} > ${SSO}
     echo cadi_longitude=${LONGITUDE} >> ${SSO}
@@ -64,30 +70,39 @@ fi
 
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/${NS}.props ]; then
-    # setup Configs
-    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar config $APP_FQI \
+    echo "#### Create Configuration files "
+    $JAVA_AGENT config $APP_FQI \
 	aaf_url=https://AAF_LOCATE_URL/AAF_NS.locate:${AAF_INTERFACE_VERSION} \
         cadi_etc_dir=$LOCAL
     cat $LOCAL/$NS.props
 
-    # Read Certificate info (by deployer)
-    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar read ${APP_FQI} ${APP_FQDN} \
+    echo
+    echo "#### Certificate Authorization Artifact"
+    TMP=$(mktemp)
+    $JAVA_AGENT read ${APP_FQI} ${APP_FQDN} \
         cadi_prop_files=${SSO} \
-        cadi_etc_dir=$LOCAL
-
-    # Place Certificates (by deployer)
-    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar place ${APP_FQI} ${APP_FQDN} \
-        cadi_prop_files=${SSO} \
-        cadi_etc_dir=$LOCAL
-
-    # Validate
-    $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar validate \
-        cadi_prop_files=$LOCAL/${NS}.props
+        cadi_etc_dir=$LOCAL > $TMP
+    cat $TMP
+    echo
+    if [ -n "$(grep 'Namespace:' $TMP)" ]; then
+        echo "#### Place Certificates (by deployer)"
+        $JAVA_AGENT place ${APP_FQI} ${APP_FQDN} \
+            cadi_prop_files=${SSO} \
+            cadi_etc_dir=$LOCAL
+    
+        echo "#### Validate Configuration and Certificate with live call"
+        $JAVA_AGENT_SELF validate 
+    else
+	echo "#### Certificate Authorization Artifact must be valid to continue"
+    fi
+    rm $TMP    
 fi
 
 # Now run a command
 CMD=$2
-if [ ! "$CMD" = "" ]; then
+if [ -z "$CMD" ]; then
+    $JAVA_AGENT 
+else 
     shift
     shift
     case "$CMD" in
@@ -117,20 +132,16 @@ if [ ! "$CMD" = "" ]; then
         ;;
     showpass)
         echo "## Show Passwords"
-        $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar showpass ${APP_FQI} ${APP_FQDN}
+        $JAVA_AGENT showpass ${APP_FQI} ${APP_FQDN}
         ;;
     check)
-        $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar check ${APP_FQI} ${APP_FQDN}
+        $JAVA_AGENT check ${APP_FQI} ${APP_FQDN}
         ;;
     validate)
         echo "## validate requested"
-        $JAVA -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar validate $LOCAL/${NS}.props
+        $JAVA_AGENT_SELF validate 
         ;;
     bash)
-        #if [ ! -e $HOME/bash_aliases ]; then
-        #    echo "alias cadi='$JAVA -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar org.onap.aaf.cadi.CmdLine \$*'" >$HOME/bash_aliases
-        #    echo "alias agent='/bin/bash $CONFIG/bin/agent.sh no-op \$*'" >>$HOME/bash_aliases
-        #fi
         shift
         cd $LOCAL || exit
         /bin/bash "$@"
@@ -138,15 +149,20 @@ if [ ! "$CMD" = "" ]; then
     setProp)
         cd $LOCAL || exit
         FILES=$(grep -l "$1" ./*.props)
-	if [ "$FILES" = "" ]; then 
-  	    FILES="$3"
+	if [ -z "$FILES" ]; then 
+  	    if [ -z "$3" ]; then
+               FILES=${NS}.props
+            else 
+               FILES="$3"
+            fi
 	    ADD=Y
 	fi
         for F in $FILES; do
-            echo "Changing $1 in $F"
 	    if [ "$ADD" = "Y" ]; then
-		echo $2 >> $F
+                echo "Changing $1 to $F"
+		echo "$1=$2" >> $F
 	    else 
+               echo "Changing $1 in $F"
                sed -i.backup -e "s/\\(${1}.*=\\).*/\\1${2}/" $F
 	    fi
             cat $F
@@ -172,7 +188,7 @@ if [ ! "$CMD" = "" ]; then
             else
                 ORIG_PW="$2"
             fi
-            PWD=$("$JAVA" -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi digest "$ORIG_PW" $LOCAL/${NS}.keyfile)
+            PWD=$($JAVA_CADI digest "$ORIG_PW" $LOCAL/${NS}.keyfile)
             if [ "$ADD" = "Y" ]; then
                   echo "$1=enc:$PWD" >> $F
             else 
@@ -202,20 +218,26 @@ if [ ! "$CMD" = "" ]; then
             ;;
         cadi)
             echo "--- cadi Tool Comands ---"
-            $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar cadi | tail -n +6
+            $JAVA_CADI
             ;;
         agent)
             echo "--- agent Tool Comands ---"
-            $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar
+            $JAVA_AGENT
             ;;
-        sample)
-            echo "--- run Sample Servlet App ---"
-            $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $CONFIG/bin/aaf-cadi-aaf-*-full.jar:$CONFIG/bin/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
+        aafcli)
+            echo "--- aafcli Tool Comands ---"
+            $JAVA_AAFCLI
+            ;;
         esac
         echo ""
         ;;
+    ### Possible Dublin
+    # sample)
+    #    echo "--- run Sample Servlet App ---"
+    #    $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar:$CONFIG/bin/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
+    #    ;;
     *)
-        $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -jar $CONFIG/bin/aaf-cadi-aaf-*-full.jar "$CMD" "$@"
+        $JAVA_AGENT "$CMD" "$@"
         ;;
     esac
 fi

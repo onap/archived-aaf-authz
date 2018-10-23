@@ -31,7 +31,6 @@ import java.util.TreeMap;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.util.Chmod;
 import org.onap.aaf.misc.env.util.Chrono;
 
@@ -93,27 +92,28 @@ public class PropHolder {
 		return keyfile.getAbsolutePath();
 	}
 
-	public void add(final String tag, final String value) {
-		if(value==null) {
-			props.put(tag,"");
-		} else {
-			props.put(tag, value);
-		}
+	public String add(final String tag, final String value) {
+		final String rv = value==null?"":value;
+		props.put(tag, rv);
+		return rv;
 	}
 
-	public void add(final String tag, Access orig, final String def) {
-		add(tag, orig.getProperty(tag, def));
+	public String add(final String tag, Access orig, final String def) {
+		return add(tag, orig.getProperty(tag, def));
 	}
 
-	public void addEnc(final String tag, final String value) throws IOException {
+	public String addEnc(final String tag, final String value) throws IOException {
+		String rv;
 		if(value==null) {
-			props.put(tag,"");
+			rv = "";
 		} else {
 			if(symm==null) { // Lazy Instantiations... on a few PropFiles have Security
 				symm = ArtifactDir.getSymm(keyfile);
 			}
-			props.put(tag, "enc:"+symm.enpass(value));
+			rv = "enc:"+symm.enpass(value);
 		}
+		props.put(tag, rv);
+		return rv;
 	}
 
 	public void addEnc(final String tag, Access orig, final String def) throws IOException {

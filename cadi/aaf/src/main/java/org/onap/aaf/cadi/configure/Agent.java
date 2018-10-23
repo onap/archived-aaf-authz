@@ -146,7 +146,7 @@ public class Agent {
                         public Properties process(String[] args, Properties props) {
                             if (args.length>1) {
                                 if (!args[0].equals("keypairgen")) {
-                                    props.put("aaf_id", args[1]);
+                                    props.put(Config.AAF_APPID, args[1]);
                                 }    
                             }
                             return props;
@@ -758,7 +758,7 @@ public class Agent {
             cred.addEnc(Config.AAF_APPPASS, pa, null);
             
             app.add(Config.AAF_LOCATE_URL, pa, null);
-            app.add(Config.AAF_APPID, pa, fqi);
+            app.add(Config.AAF_APPID, fqi);
             app.add(Config.AAF_URL, pa, Defaults.AAF_URL);
 
             String cts = pa.getProperty(Config.CADI_TRUSTSTORE);

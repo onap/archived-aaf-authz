@@ -26,18 +26,6 @@ function run_it() {
     /bin/bash $PARAMS
 }
 
-function set_prop() {
-  $DOCKER exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2" "$3"
-}
-
-function encrypt_it() {
-  $DOCKER exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP encrypt "$1" "$2"
-}
-
-function set_it() {
-  $DOCKER exec -t aaf_config_$USER /bin/bash /opt/app/aaf_config/bin/agent.sh NOOP setProp "$1" "$2"
-}
-
 PARAMS="$@"
 if [ "$PARAMS" != "" ]; then
   run_it -it --rm 

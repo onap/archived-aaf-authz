@@ -50,7 +50,8 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 
     @Override
     public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-        File fks = new File(dir,arti.getNs()+'.'+(kst==Agent.PKCS12?"p12":kst));
+    	final String ext = (kst==Agent.PKCS12?"p12":kst);
+        File fks = new File(dir,arti.getNs()+'.'+ext);
         try {
             KeyStore jks = KeyStore.getInstance(kst);
             if (fks.exists()) {
@@ -86,7 +87,11 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             // Set Keystore Password
             props.add(Config.CADI_KEYSTORE,fks.getAbsolutePath());
             String keystorePass = Symm.randomGen(Agent.PASS_SIZE);
-            props.addEnc(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
+            String encP = props.addEnc(Config.CADI_KEYSTORE_PASSWORD,keystorePass);
+            // Since there are now more than one Keystore type, the keystore password property might
+            // be overwritten, making the store useless without key. So we write it specifically
+            // as well.
+            props.add(Config.CADI_KEYSTORE_PASSWORD+'_'+ext,encP);
             char[] keystorePassArray = keystorePass.toCharArray();
             jks.load(null,keystorePassArray); // load in
             

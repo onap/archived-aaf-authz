@@ -20,7 +20,7 @@ cd -
 
 # Create the AAF Config (Security) Images
 cd ..
-cp ../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar sample/bin
+cp auth-cmd/target/aaf-auth-cmd-$VERSION-full.jar sample/bin
 cp -Rf ../conf/CA sample
 
 # AAF Config image (for AAF itself)
@@ -37,7 +37,7 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/$
 $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
 
 # Clean up 
-rm sample/Dockerfile sample/bin/aaf-cadi-aaf-${VERSION}-full.jar sample/bin/aaf-cadi-servlet-sample-${VERSION}-sample.jar 
+rm sample/Dockerfile sample/bin/aaf-auth-cmd-${VERSION}-full.jar sample/bin/aaf-cadi-servlet-sample-${VERSION}-sample.jar 
 rm -Rf sample/CA
 cd -
 
