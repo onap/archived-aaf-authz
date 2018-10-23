@@ -10,6 +10,22 @@ org.onap.sdnc|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'
 org.onap.sdnc|odl|odl-api|*||"{'org.onap.sdnc|admin', 'org.onap.sdnc|service'}"
 org.onap.dmaap-mr.test|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-mr.test|admin'}"
 org.onap.dmaap-mr.test|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-mr.test|owner'}"
+org.onap.dmaap-mr|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-mr|admin'}"
+org.onap.dmaap-mr|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-mr|owner'}"
+org.onap.dmaap-mr|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.onap.dmaap-mr|saitest|:topic.org.onap.dmaap-bc.mr.dglTest201810100535|pub||"{'org.onap.dmaap-mr|admin', 'org.onap.dmaap-mr|sai'}"
+org.onap.oof|access|*|*|AAF Namespace Write Access|"{'org.onap.oof|admin'}"
+org.onap.oof|access|*|read|AAF Namespace Read Access|"{'org.onap.oof|owner'}"
+org.onap.oof|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.onap.vid1|access|*|*|AAF Namespace Write Access|"{'org.onap.vid1|admin'}"
+org.onap.vid1|access|*|read|AAF Namespace Read Access|"{'org.onap.vid1|owner'}"
+org.onap.vid1|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.onap.dmaap-bc-mm-prov|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-bc-mm-prov|admin'}"
+org.onap.dmaap-bc-mm-prov|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-bc-mm-prov|owner'}"
+org.onap.dmaap-bc-mm-prov|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.onap.sdc|access|*|*|AAF Namespace Write Access|"{'org.onap.sdc|admin'}"
+org.onap.sdc|access|*|read|AAF Namespace Read Access|"{'org.onap.sdc|owner'}"
+org.onap.sdc|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
 org.onap.portal.test|aaaa|*|write||
 org.onap.portal.test|access|*|*|AAF Namespace Write Access|"{'org.onap.portal.test|admin'}"
 org.onap.portal.test|access|*|read|AAF Namespace Read Access|"{'org.onap.portal.test|owner'}"
@@ -17,19 +33,64 @@ org.onap.portal.test|access1|*|read||
 org.onap.portal.test|myaccess|*|read||
 org.onap.portal.test|user1.access|*|read||
 org.onap.portal.test|user1.myaccess|*|read||
-org.onap.oof|access|*|*|AAF Namespace Write Access|"{'org.onap.oof|admin'}"
-org.onap.oof|access|*|read|AAF Namespace Read Access|"{'org.onap.oof|owner'}"
-org.onap.oof|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org|access|*|*|Org Write Access|{'org.admin'}
+org|access|*|read|Org Read Access|{'org.owner'}
+org|access|*|read,approve|Org Read Access|{'org.owner'}
+org.onap.portal|access|*|*|Portal Write Access|{'org.onap.portal.admin'}
+org.onap.portal|access|*|read|Portal Read Access|
+org.onap.portal|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.onap.portal|menu|menu_acc_admin|*|Admin Account Menu|"{'org.onap.portal|Account_Administrator', 'org.onap.portal|System_Administrator'}"
+org.onap.portal|menu|menu_admin|*|Admin Menu|"{'org.onap.portal|System_Administrator', 'org.onap.portal|Usage_Analyst'}"
+org.onap.portal|menu|menu_ajax|*|Ajax Menu|
+org.onap.portal|menu|menu_customer|*|Customer Menu|
+org.onap.portal|menu|menu_customer_create|*|Customer Create|
+org.onap.portal|menu|menu_feedback|*|Feedback Menu|
+org.onap.portal|menu|menu_help|*|Help Menu|
+org.onap.portal|menu|menu_home|*|Home Menu|"{'org.onap.portal|Standard_User', 'org.onap.portal|System_Administrator'}"
+org.onap.portal|menu|menu_job|*|Job Menu|
+org.onap.portal|menu|menu_job_create|*|Job Create|
+org.onap.portal|menu|menu_job_designer|*|Process in Designer view|
+org.onap.portal|menu|menu_logout|*|Logout Menu|"{'org.onap.portal|Standard_User', 'org.onap.portal|System_Administrator'}"
+org.onap.portal|menu|menu_map|*|Map Menu|
+org.onap.portal|menu|menu_notes|*|Notes Menu|
+org.onap.portal|menu|menu_process|*|Process List|
+org.onap.portal|menu|menu_profile|*|Profile Menu|
+org.onap.portal|menu|menu_profile_create|*|Profile Create|
+org.onap.portal|menu|menu_profile_import|*|Profile Import|
+org.onap.portal|menu|menu_reports|*|Reports Menu|
+org.onap.portal|menu|menu_sample|*|Sample Pages Menu|
+org.onap.portal|menu|menu_tab|*|Sample Tab Menu|
+org.onap.portal|menu|menu_task|*|Task Menu|"{'org.onap.portal|Usage_Analyst'}"
+org.onap.portal|menu|menu_task_search|*|Task Search|"{'org.onap.portal|Usage_Analyst'}"
+org.onap.portal|menu|menu_web_analytics|*|Web Analytics|"{'org.onap.portal|Portal_Usage_Analyst', 'org.onap.portal|Usage_Analyst'}"
+org.onap.portal|url|addWebAnalyticsReport|*|Add Web Analytics Report|
+org.onap.portal|url|appsFullList|*|Apps Full List|
+org.onap.portal|url|centralizedApps|*|Centralized Apps|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|edit_notification|*|User Notification|"{'org.onap.portal|Portal_Notification_Admin'}"
+org.onap.portal|url|functionalMenu|*|Functional Menu|
+org.onap.portal|url|getAdminNotifications|*|Admin Notifications|"{'org.onap.portal|Account_Administrator', 'org.onap.portal|Portal_Notification_Admin'}"
+org.onap.portal|url|getAllWebAnalytics|*|Get All Web Analytics|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|getFunctionalMenuRole|*|Get Functional Menu Role|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|getNotificationAppRoles|*|Get Notification App Roles|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|getUserAppsWebAnalytics|*|Get User Apps Web Analytics|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|getUserJourneyAnalyticsReport|*|Get User Journey Report|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|get_role_functions%2f%2a|*|Get Role Functions|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|get_roles%2f%2a|*|getRolesOfApp|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|login|*|Login|"{'org.onap.portal|Standard_User', 'org.onap.portal|System_Administrator'}"
+org.onap.portal|url|notification_code|*|Notification Code|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|role_function_list%2fsaveRoleFunction%2f%2a|*|Save Role Function|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|saveNotification|*|publish notifications|"{'org.onap.portal|Portal_Notification_Admin'}"
+org.onap.portal|url|syncRoles|*|SyncRoles|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|url_role.htm|*|role page|
+org.onap.portal|url|url_welcome.htm|*|welcome page|
+org.onap.portal|url|userAppRoles|*|userAppRoles|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|userApps|*|User Apps|"{'org.onap.portal|Account_Administrator'}"
+org.onap.portal|url|view_reports|*|View Raptor reports|
+org.onap|access|*|*|Onap Write Access|{'org.onap.admin'}
+org.onap|access|*|read|Onap Read Access|{'org.onap.owner'}
 org.onap.dmaap-dr|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-dr|admin'}"
 org.onap.dmaap-dr|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-dr|owner'}"
 org.onap.dmaap-dr|certman|local|request,ignoreIPs,showpass||"{'org.onap.dmaap-dr|seeCerts', 'org.osaaf.aaf|deploy'}"
-org.onap.dmaap-mr|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-mr|admin'}"
-org.onap.dmaap-mr|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-mr|owner'}"
-org.onap.dmaap-mr|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
-org.onap.dmaap-mr|saitest|:topic.org.onap.dmaap-bc.mr.dglTest201810100535|pub||"{'org.onap.dmaap-mr|admin', 'org.onap.dmaap-mr|sai'}"
-org.onap.so|access|*|*|AAF Namespace Write Access|"{'org.onap.so|admin', 'org.onap.so|app'}"
-org.onap.so|access|*|read|AAF Namespace Read Access|"{'org.onap.so|owner'}"
-org.onap.so|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
 org.onap.dmaap.mr|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap.mr|admin'}"
 org.onap.dmaap.mr|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap.mr|owner', 'org.onap.dmaap.mr|service'}"
 org.onap.dmaap.mr|topic|*|view||"{'org.onap.dmaap.mr|view'}"
@@ -73,87 +134,24 @@ org.onap.dmaap.mr|topicFactory|:org.onap.dmaap.mr.topic:org.onap.dmaap.mr|create
 org.onap.dmaap.mr|topicFactory|:org.onap.dmaap.mr.topic:org.onap.dmaap.mr|destroy||"{'org.onap.dmaap-bc-topic-mgr|client', 'org.onap.dmaap.mr|destroy'}"
 org.onap.dmaap.mr|topictest|*|view||
 org.onap.dmaap.mr|viewtest|*|view||"{'org.onap.dmaap.mr|viewtest'}"
-org.onap.dmaap|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap|admin'}"
-org.onap.dmaap|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap|owner'}"
-org.onap.dmaap-bc-mm-prov|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-bc-mm-prov|admin'}"
-org.onap.dmaap-bc-mm-prov|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-bc-mm-prov|owner'}"
-org.onap.dmaap-bc-mm-prov|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
-org.onap.sdc|access|*|*|AAF Namespace Write Access|"{'org.onap.sdc|admin'}"
-org.onap.sdc|access|*|read|AAF Namespace Read Access|"{'org.onap.sdc|owner'}"
-org.onap.sdc|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
-org.onap.vid1|access|*|*|AAF Namespace Write Access|"{'org.onap.vid1|admin'}"
-org.onap.vid1|access|*|read|AAF Namespace Read Access|"{'org.onap.vid1|owner'}"
-org.onap.vid1|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
-org|access|*|*|Org Write Access|{'org.admin'}
-org|access|*|read|Org Read Access|{'org.owner'}
-org|access|*|read,approve|Org Read Access|{'org.owner'}
-org.onap.portal|access|*|*|Portal Write Access|{'org.onap.portal.admin'}
-org.onap.portal|access|*|read|Portal Read Access|
-org.onap.portal|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
-org.onap.portal|menu|menu_acc_admin|*|Admin Account Menu|"{'org.onap.portal|Account_Administrator', 'org.onap.portal|System_Administrator'}"
-org.onap.portal|menu|menu_admin|*|Admin Menu|"{'org.onap.portal|System_Administrator'}"
-org.onap.portal|menu|menu_ajax|*|Ajax Menu|
-org.onap.portal|menu|menu_customer|*|Customer Menu|
-org.onap.portal|menu|menu_customer_create|*|Customer Create|
-org.onap.portal|menu|menu_feedback|*|Feedback Menu|
-org.onap.portal|menu|menu_help|*|Help Menu|
-org.onap.portal|menu|menu_home|*|Home Menu|"{'org.onap.portal|Standard_User', 'org.onap.portal|System_Administrator'}"
-org.onap.portal|menu|menu_job|*|Job Menu|
-org.onap.portal|menu|menu_job_create|*|Job Create|
-org.onap.portal|menu|menu_job_designer|*|Process in Designer view|
-org.onap.portal|menu|menu_logout|*|Logout Menu|"{'org.onap.portal|Standard_User', 'org.onap.portal|System_Administrator'}"
-org.onap.portal|menu|menu_map|*|Map Menu|
-org.onap.portal|menu|menu_notes|*|Notes Menu|
-org.onap.portal|menu|menu_process|*|Process List|
-org.onap.portal|menu|menu_profile|*|Profile Menu|
-org.onap.portal|menu|menu_profile_create|*|Profile Create|
-org.onap.portal|menu|menu_profile_import|*|Profile Import|
-org.onap.portal|menu|menu_reports|*|Reports Menu|
-org.onap.portal|menu|menu_sample|*|Sample Pages Menu|
-org.onap.portal|menu|menu_tab|*|Sample Tab Menu|
-org.onap.portal|menu|menu_task|*|Task Menu|
-org.onap.portal|menu|menu_task_search|*|Task Search|
-org.onap.portal|menu|menu_web_analytics|*|Web Analytics|"{'org.onap.portal|Portal_Usage_Analyst', 'org.onap.portal|Usage_Analyst'}"
-org.onap.portal|url|addWebAnalyticsReport|*|Add Web Analytics Report|
-org.onap.portal|url|appsFullList|*|Apps Full List|
-org.onap.portal|url|centralizedApps|*|Centralized Apps|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|edit_notification|*|User Notification|"{'org.onap.portal|Portal_Notification_Admin'}"
-org.onap.portal|url|functionalMenu|*|Functional Menu|
-org.onap.portal|url|getAdminNotifications|*|Admin Notifications|"{'org.onap.portal|Account_Administrator', 'org.onap.portal|Portal_Notification_Admin'}"
-org.onap.portal|url|getAllWebAnalytics|*|Get All Web Analytics|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|getFunctionalMenuRole|*|Get Functional Menu Role|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|getNotificationAppRoles|*|Get Notification App Roles|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|getUserAppsWebAnalytics|*|Get User Apps Web Analytics|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|getUserJourneyAnalyticsReport|*|Get User Journey Report|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|get_role_functions%2f%2a|*|Get Role Functions|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|get_roles%2f%2a|*|getRolesOfApp|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|login|*|Login|"{'org.onap.portal|Standard_User', 'org.onap.portal|System_Administrator'}"
-org.onap.portal|url|notification_code|*|Notification Code|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|role_function_list%2fsaveRoleFunction%2f%2a|*|Save Role Function|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|saveNotification|*|publish notifications|"{'org.onap.portal|Portal_Notification_Admin'}"
-org.onap.portal|url|syncRoles|*|SyncRoles|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|url_role.htm|*|role page|
-org.onap.portal|url|url_welcome.htm|*|welcome page|
-org.onap.portal|url|userAppRoles|*|userAppRoles|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|userApps|*|User Apps|"{'org.onap.portal|Account_Administrator'}"
-org.onap.portal|url|view_reports|*|View Raptor reports|
 org.onap.clamptest|access|*|*|Onap Write Access|{'org.onap.clamptest.admin'}
 org.onap.clamptest|access|*|read|Onap Read Access|{'org.onap.clamptest.owner'}
-org.onap.dmaap.bc|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap.bc|admin', 'org.onap.dmaap.bc|service'}"
-org.onap.dmaap.bc|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap.bc|owner'}"
+org.onap.so|access|*|*|AAF Namespace Write Access|"{'org.onap.so|admin', 'org.onap.so|app'}"
+org.onap.so|access|*|read|AAF Namespace Read Access|"{'org.onap.so|owner'}"
+org.onap.so|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.osaaf.aaf|access|*|*|AAF Write Access|{'org.osaaf.aaf.admin'}
+org.osaaf.aaf|access|*|read,approve|AAF Read Access|{'org.osaaf.aaf.owner'}
+org.osaaf.aaf|cache|all|clear||"{'org.osaaf.aaf|admin'}"
+org.osaaf.aaf|password|*|create,reset||"{'org.osaaf.aaf|admin'}"
 org.osaaf.people|access|*|*|AAF Namespace Write Access|"{'org.osaaf.people|admin'}"
 org.osaaf.people|access|*|read|AAF Namespace Read Access|"{'org.osaaf.people|owner'}"
 org.onap.dcae|access|*|*|AAF Namespace Write Access|"{'org.onap.dcae|admin'}"
 org.onap.dcae|access|*|read|AAF Namespace Read Access|"{'org.onap.dcae|owner'}"
 org.onap.dcae|certman|local|request,ignoreIPs,showpass||"{'org.onap.dcae|seeCerts', 'org.osaaf.aaf|deploy'}"
-org.openecomp|access|*|*|OpenEcomp Write Access|{'org.openecomp.admin'}
-org.openecomp|access|*|read|OpenEcomp Read Access|{'org.openecomp.owner'}
-org.osaaf.aaf|access|*|*|AAF Write Access|{'org.osaaf.aaf.admin'}
-org.osaaf.aaf|access|*|read,approve|AAF Read Access|{'org.osaaf.aaf.owner'}
-org.osaaf.aaf|cache|all|clear||"{'org.osaaf.aaf|admin'}"
-org.osaaf.aaf|password|*|create,reset||"{'org.osaaf.aaf|admin'}"
-org.onap|access|*|*|Onap Write Access|{'org.onap.admin'}
-org.onap|access|*|read|Onap Read Access|{'org.onap.owner'}
+org.onap.dmaap.bc|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap.bc|admin', 'org.onap.dmaap.bc|service'}"
+org.onap.dmaap.bc|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap.bc|owner'}"
+org.onap.dmaap|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap|admin'}"
+org.onap.dmaap|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap|owner'}"
 org.onap.aai|access|*|*|AAF Namespace Write Access|"{'org.onap.aai|admin'}"
 org.onap.aai|access|*|read|AAF Namespace Read Access|"{'org.onap.aai|owner'}"
 org.onap.aai|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
@@ -164,6 +162,8 @@ org.onap.aai|resources|*|post||"{'org.onap.aai|resources_all'}"
 org.onap.aai|resources|*|put||"{'org.onap.aai|resources_all'}"
 org.onap.aai|traversal|*|advanced||"{'org.onap.aai|traversal_advanced'}"
 org.onap.aai|traversal|*|basic||"{'org.onap.aai|traversal_basic'}"
+org.openecomp|access|*|*|OpenEcomp Write Access|{'org.openecomp.admin'}
+org.openecomp|access|*|read|OpenEcomp Read Access|{'org.openecomp.owner'}
 org.onap.vid|access|*|*|AAF Namespace Write Access|"{'org.onap.vid|admin'}"
 org.onap.vid|access|*|read|AAF Namespace Read Access|"{'org.onap.vid|owner'}"
 org.onap.vid|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
@@ -202,6 +202,8 @@ org.onap.vid|url|doclib|*|Document Library|"{'org.onap.vid|System_Administrator'
 org.onap.vid|url|doclib_admin|*|Document Library Admin|"{'org.onap.vid|System_Administrator'}"
 org.onap.vid|url|login|*|Login|"{'org.onap.vid|Standard_User', 'org.onap.vid|System_Administrator'}"
 org.onap.vid|url|view_reports|*|View Raptor reports|
+org.onap.dmaapbc|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaapbc|admin'}"
+org.onap.dmaapbc|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaapbc|owner'}"
 org.onap.dmaap-bc.api|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-bc.api|admin', 'org.onap.dmaap-bc|admin'}"
 org.onap.dmaap-bc.api|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-bc.api|owner', 'org.onap.dmaap-bc|admin'}"
 org.onap.dmaap-bc.api|bridge|onapdemo|GET||"{'org.onap.dmaap-bc.api|Metrics'}"
@@ -258,8 +260,6 @@ org.onap.clamp|clds.template|dev|*||"{'org.onap.clamp|service'}"
 org.onap.clamp|clds.template|dev|read|Onap Clamp Dev Read Access|"{'org.onap.clamp.clds.designer.dev', 'org.onap.clamp|clds.admin.dev'}"
 org.onap.clamp|clds.template|dev|update|Onap Clamp Dev Update Access|"{'org.onap.clamp.clds.designer.dev', 'org.onap.clamp|clds.admin.dev'}"
 org.onap.clamp|clds.tosca|dev|*||"{'org.onap.clamp|service'}"
-org.onap.dmaapbc|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaapbc|admin'}"
-org.onap.dmaapbc|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaapbc|owner'}"
 org.openecomp.dmaapBC|access|*|*|DMaap Write Access|{'org.openecomp.dmaapBC.admin'}
 org.openecomp.dmaapBC|access|*|read|DMaap Read Access|{'org.openecomp.dmaapBC.owner'}
 org.onap.pomba|access|*|*|AAF Namespace Write Access|"{'org.onap.pomba|admin'}"
@@ -268,18 +268,18 @@ org.onap.pomba|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy
 org.onap.vid2|access|*|*|AAF Namespace Write Access|"{'org.onap.vid2|admin'}"
 org.onap.vid2|access|*|read|AAF Namespace Read Access|"{'org.onap.vid2|owner'}"
 org.onap.vid2|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
-org.onap.appc|access|*|*|AAF Namespace Write Access|"{'org.onap.appc|admin'}"
+org.osaaf|access|*|*|OSAAF Write Access|{'org.osaaf.admin'}
+org.osaaf|access|*|read,appove|OSAAF Read Access|{'org.osaaf.owner'}
+org.onap.dmaap-bc-topic-mgr|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-bc-topic-mgr|admin'}"
+org.onap.dmaap-bc-topic-mgr|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-bc-topic-mgr|owner'}"
+org.onap.dmaap-bc-topic-mgr|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
+org.onap.appc|access|*|*|AAF Namespace Write Access|"{'org.onap.appc|admin', 'org.onap.appc|service'}"
 org.onap.appc|access|*|read|AAF Namespace Read Access|"{'org.onap.appc|owner'}"
 org.onap.appc|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
 org.onap.appc|odl|odl-api|*|Appc ODL API Access|"{'org.onap.appc.odl', 'org.onap.appc|admin'}"
 org.onap.dmaap-mr.sunil|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-mr.sunil|admin'}"
 org.onap.dmaap-mr.sunil|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-mr.sunil|owner'}"
 org.onap.dmaap-mr.sunil|test|:topic.org.onap.dmaap-bc.mr.dglTest201810100535|pub||"{'org.onap.dmaap-mr.sunil|admin2'}"
-org.osaaf|access|*|*|OSAAF Write Access|{'org.osaaf.admin'}
-org.osaaf|access|*|read,appove|OSAAF Read Access|{'org.osaaf.owner'}
-org.onap.dmaap-bc-topic-mgr|access|*|*|AAF Namespace Write Access|"{'org.onap.dmaap-bc-topic-mgr|admin'}"
-org.onap.dmaap-bc-topic-mgr|access|*|read|AAF Namespace Read Access|"{'org.onap.dmaap-bc-topic-mgr|owner'}"
-org.onap.dmaap-bc-topic-mgr|certman|local|request,ignoreIPs,showpass||"{'org.osaaf.aaf|deploy'}"
 org.onap.clampdemo|access|*|*|ClampDemo Write Access|{'org.onap.clampdemo.admin'}
 org.onap.clampdemo|access|*|read|ClampDemo Read Access|{'org.onap.clampdemo.owner'}
 org.onap.policy|access|*|*|AAF Namespace Write Access|"{'org.onap.policy|admin', 'org.onap.policy|pdpd.admin'}"
@@ -312,16 +312,17 @@ org.onap.policy|menu|menu_tab|*|Sample Tab Menu|"{'org.onap.policy|Standard_User
 org.onap.policy|menu|menu_task|*|Task Menu|
 org.onap.policy|menu|menu_task_search|*|Task Search|
 org.onap.policy|menu|menu_test|*|Test Menu|"{'org.onap.policy|System_Administrator'}"
+org.onap.policy|pdpd.healthcheck|*|get||"{'org.onap.policy|pdpd.admin', 'org.onap.policy|pdpd.monitor'}"
+org.onap.policy|pdpd.healthcheck.configuration|*|get||"{'org.onap.policy|pdpd.admin'}"
 org.onap.policy|pdpd.telemetry|*|delete||"{'org.onap.policy|pdpd.admin'}"
 org.onap.policy|pdpd.telemetry|*|get||"{'org.onap.policy|pdpd.admin', 'org.onap.policy|pdpd.monitor'}"
 org.onap.policy|pdpd.telemetry|*|post||"{'org.onap.policy|pdpd.admin'}"
 org.onap.policy|pdpd.telemetry|*|put||"{'org.onap.policy|pdpd.admin'}"
-org.onap.policy|pdpd.telemetry|newton|get||"{'org.onap.policy|pdpd.admin'}"
 org.onap.policy|pdpx.config|*|*||"{'org.onap.policy|pdpx.admin'}"
 org.onap.policy|pdpx.createDictionary|*|*||"{'org.onap.policy|pdpx.admin'}"
 org.onap.policy|pdpx.createPolicy|*|*||"{'org.onap.policy|pdpx.admin'}"
 org.onap.policy|pdpx.decision|*|*||"{'org.onap.policy|pdpx.admin'}"
-org.onap.policy|pdpx.getConfig|*|*||"{'org.onap.policy|admin', 'org.onap.policy|pdpx.admin'}"
+org.onap.policy|pdpx.getConfig|*|*||"{'org.onap.policy|pdpx.admin'}"
 org.onap.policy|pdpx.getConfigByPolicyName|*|*||"{'org.onap.policy|pdpx.admin'}"
 org.onap.policy|pdpx.getDecision|*|*||"{'org.onap.policy|pdpx.admin'}"
 org.onap.policy|pdpx.getDictionary|*|*||"{'org.onap.policy|pdpx.admin'}"
