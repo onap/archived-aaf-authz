@@ -4,6 +4,10 @@
 
 AAF - Application Authorization Framework
 ==================================================
+.. image:: https://bestpractices.coreinfrastructure.org/projects/2303/badge 
+  :alt: CII Silver Badge 
+  :target: https://bestpractices.coreinfrastructure.org/projects/2303
+
 .. The purpose of AAF (Application Authorization Framework) is to organize software authorizations so that applications, tools and services can match the access needed to perform job functions.
 
 AAF is designed to cover Fine-Grained Authorization, meaning that the Authorizations provided are able to used an Application's detailed authorizations, such as whether a user may be on a particular page, or has access to a particular Pub-SUB topic controlled within the App.
