@@ -1,3 +1,0 @@
-#!/bin/bash
-
-CASS_HOST=cass.aaf.osaaf.org:<Cass IP>
