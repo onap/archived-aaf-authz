@@ -1,8 +1,5 @@
 #!/bin/bash
 . ./d.props
-if [ -e ./cass.props ]; then
-  . ./cass.props
-fi
 
 DOCKER=${DOCKER:=docker}
 function run_it() {

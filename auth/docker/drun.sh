@@ -2,26 +2,7 @@
 # Pull in Variables from d.props
 . ./d.props
 
-# Only need Cassandra Link Info when initializing the container.
-if [ ! -e ./cass.props ]; then
-    cp cass.props.init cass.props
-fi
-. ./cass.props
-
 DOCKER=${DOCKER:=docker}
-
-CASS_IS_SET="$(grep '<Cass IP>' cass.props)"
-if [ -n "$CASS_IS_SET" ]; then
-    CASS_IP="$($DOCKER container inspect aaf_cass | grep \"IPAddress\": -m 1 | cut -d '"' -f 4)"
-    if [ -n "$CASS_IP" ]; then
-      sed -i -e "s/\(^.*:\).*/\1$CASS_IP/" cass.props
-    else
-      echo "Set CASSASNDRA IP in cass.props"
-      exit
-    fi
-fi
-
-. ./cass.props
 
 bash aaf.sh onap
 
@@ -82,6 +63,11 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         --env AAF_REGISTER_AS=${AAF_REGISTER_AS} \
         --env LATITUDE=${LATITUDE} \
         --env LONGITUDE=${LONGITUDE} \
+        --env CASS_HOST=${CASS_HOST} \
+        --env CASSANDRA_CLUSTER=${CASSANDRA_CLUSTER} \
+        --env CASSANDRA_USER=${CASSANDRA_USER} \
+        --env CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD} \
+        --env CASSANDRA_PORT=${CASSANDRA_PORT} \
         --publish $PORTMAP \
         -v "aaf_config:$CONF_ROOT_DIR" \
         ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
