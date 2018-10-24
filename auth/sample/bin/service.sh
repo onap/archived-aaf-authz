@@ -35,6 +35,8 @@ FILE="$DATA/identities.dat"
 if [ ! -e $FILE ]; then
     mkdir -p $DATA
     cp $CONFIG/data/sample.identities.dat $FILE
+    echo "Set Identities"
+    INITIALIZED="true"
 fi
 
 # Load up Cert/X509 Artifacts
@@ -45,6 +47,8 @@ if [ ! -e $FILE ]; then
     mkdir -p $PUBLIC
     if [ -e $CONFIG/cert/org.osaaf.aaf.signer.p12 ]; then
         cp $CONFIG/cert/org.osaaf.aaf.signer.p12 $FILE
+        echo "Installed Signer P12"
+        INITIALIZED="true"
     else
         echo "Decode"
         base64 -d $CONFIG/cert/demoONAPsigner.p12.b64 > $FILE
@@ -54,6 +58,8 @@ if [ ! -e $FILE ]; then
 	cp $CONFIG/cert/AAF_RootCA.cer $PUBLIC
 	CM_TRUST_CAS="$PUBLIC/AAF_RootCA.cer"
 	echo "cadi_keystore_password=something easy" >> $CONFIG/local/aaf.props        
+        echo "Setup ONAP Test CAs and Signers"
+        INITIALIZED="true"
     fi
 fi
 
@@ -62,6 +68,8 @@ FILE="$LOCAL/org.osaaf.aaf.p12"
 if [ ! -e $FILE ]; then
     if [ -e $CONFIG/cert/org.osaaf.aaf.p12 ]; then
         cp $CONFIG/cert/org.osaaf.aaf.p12 $FILE
+        echo "Installed AAF P12"
+        INITIALIZED="true"
     else
         echo "Bootstrap Creation of Keystore from Signer"
         cd $CONFIG/CA
@@ -80,6 +88,8 @@ if [ ! -e $FILE ]; then
         CM_CA_PASS="something easy"
         CM_CA_LOCAL="org.onap.aaf.auth.cm.ca.LocalCA,$LOCAL/org.osaaf.aaf.signer.p12;aaf_intermediate_9;enc:"
 	CM_TRUST_CAS="$PUBLIC/AAF_RootCA.cer"
+        echo "Generated ONAP Test AAF certs"
+        INITIALIZED="true"
     fi
 fi
 
@@ -130,13 +140,19 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
       echo "cm_ca.local=$CM_CA_LOCAL" >> $FILE
       echo "cm_trust_cas=$CM_TRUST_CAS" >> $FILE
     fi
+    echo "Created AAF Initial Configurations"
+    INITIALIZED="true"
 fi
 
 
 # Now run a command
 CMD=$2
 if [ -z "$CMD"  ]; then
-    $JAVA_AGENT    
+    if [ -n "$INITIALIZED" ]; then
+        echo "Initialization Complete"
+    else
+        echo "No Additional Initialization required"
+    fi
 else
     shift
     shift
@@ -171,7 +187,7 @@ else
         $JAVA_AAFCLI perm list user aaf@aaf.osaaf.org
         ;;
     onap)
-        echo Initializing ONAP configurations.
+        #echo Initializing ONAP configurations.
 	;;
     bash)
         shift
