@@ -119,7 +119,7 @@ case "$1" in
   onap)
     cd /opt/app/aaf/cass_init
     # start install_onap (which calls install_cql first) in background, waiting for process to start
-    install_onap &
+    install_onap 
 
     # Startup like normal
     echo "Cassandra Startup"
