@@ -66,6 +66,8 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
     base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $DOT_AAF/truststoreONAPall.jks
     echo "cadi_truststore=$DOT_AAF/truststoreONAPall.jks" >> ${SSO}
     echo cadi_truststore_password=enc:$(sso_encrypt changeit) >> ${SSO}
+    echo "Caller Properties Initialized"
+    INITIALIZED="true"
 fi
 
 # Only initialize once, automatically...
@@ -92,6 +94,8 @@ if [ ! -e $LOCAL/${NS}.props ]; then
     
         echo "#### Validate Configuration and Certificate with live call"
         $JAVA_AGENT_SELF validate 
+        echo "Obtained Certificates"
+        INITIALIZED="true"
     else
 	echo "#### Certificate Authorization Artifact must be valid to continue"
     fi
@@ -101,7 +105,11 @@ fi
 # Now run a command
 CMD=$2
 if [ -z "$CMD" ]; then
-    $JAVA_AGENT 
+    if [ -n "$INITIALIZED" ]; then
+      echo "Initialization complete"
+    else
+      $JAVA_AGENT
+    fi
 else 
     shift
     shift
