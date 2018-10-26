@@ -21,137 +21,211 @@
 
 package org.onap.aaf.auth.helpers.test;
 
-import static org.junit.Assert.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.onap.aaf.auth.dao.cass.ApprovalDAO;
-import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.helpers.Approval;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import junit.framework.Assert;
-
-import static org.mockito.Mockito.*;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.onap.aaf.auth.dao.cass.ApprovalDAO;
+import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.helpers.Approval;
+import org.onap.aaf.auth.helpers.creators.RowCreator;
+import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.misc.env.LogTarget;
+
+import junit.framework.Assert;
 
 public class JU_Approval {
-    
-    Approval approval;
-    UUID id;
-    UUID ticket;
-    Date date;
-    
-    @Before
-    public void setUp() {
-        id = new UUID(0, 0);
-        ticket = new UUID(0, 0);
-        date = new Date();
-        
-        approval = new Approval(id, ticket, "approver", date, 
-                 "user", "memo", "operation", "status", "type", 100l);
-    }
 
-    @Test
-    public void testRoleFromMemo() {
-        Assert.assertNull(approval.roleFromMemo(null));
-        Assert.assertEquals(".admin", approval.roleFromMemo("Re-Validate as Administrator for AAF Namespace '\'test\'test"));
-        Assert.assertEquals(".owner", approval.roleFromMemo("Re-Validate Ownership for AAF Namespace '\'test\'test"));
-        Assert.assertEquals("", approval.roleFromMemo("Re-Approval in Role '\'test\'test"));
-    }
-    
-    @Test
-    public void testExpunge() {
-        approval.expunge();
-    }
-    
-    @Test
-    public void testGetLast_notified() {
-        Assert.assertTrue(approval.getLast_notified()instanceof Date);
-    }
-    
-    @Test
-    public void testSetLastNotified() {
-        approval.setLastNotified(date);
-    }
-    
-    @Test
-    public void testGetStatus() {
-        Assert.assertEquals("status", approval.getStatus());
-    }
-    
-    @Test
-    public void testSetStatus() {
-        approval.setStatus("status");
-    }
-    
-    @Test
-    public void testGetId() {
-        Assert.assertTrue(approval.getId() instanceof UUID);
-    }
-    
-    @Test
-    public void testGetTicket() {
-        Assert.assertTrue(approval.getTicket() instanceof UUID);
-    }
-    
-    @Test
-    public void testGetMemo() {
-        Assert.assertEquals("memo", approval.getMemo());
-    }
-    
-    @Test
-    public void testGetOperation() {
-        Assert.assertEquals("operation", approval.getOperation());
-    }
-    
-    @Test
-    public void testGetType() {
-        Assert.assertEquals("type", approval.getType());
-    }
-    
-    @Test
-    public void testLapsed() {
-        approval.lapsed();
-    }
-    
-    @Test
-    public void testGetRole() {
-        Assert.assertNull(approval.getRole());
-    }
-    
-    @Test
-    public void testToString() {
-        Assert.assertEquals("user memo", approval.toString());
-    }
-    
-    @Test
-    public void testResetLocalData() {
-        approval.resetLocalData();
-    }
-    
-    @Test
-    public void testSizeForDeletion() {
-        Assert.assertEquals(0, approval.sizeForDeletion());
-    }
-    
-    @Test
-    public void testPendingDelete() {
-        Assert.assertFalse(approval.pendingDelete(approval));
-    }
-    
-    @Test
-    public void testDelayDelete() {
-        AuthzTrans trans = mock(AuthzTrans.class);
-        ApprovalDAO dao = mock(ApprovalDAO.class);
-        List<Approval> list = null;
-        approval.delayDelete(trans, dao, true, list, "text");
-    }
+	Approval approval;
+	UUID id;
+	UUID ticket;
+	Date date;
+
+	@Before
+	public void setUp() {
+		id = new UUID(0, 0);
+		ticket = new UUID(0, 0);
+		date = new Date();
+
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+	}
+
+	@Test
+	public void testRoleFromMemo() {
+		Assert.assertNull(approval.roleFromMemo(null));
+		Assert.assertEquals(".admin",
+				approval.roleFromMemo("Re-Validate as Administrator for AAF Namespace '\'test\'test"));
+		Assert.assertEquals(".owner", approval.roleFromMemo("Re-Validate Ownership for AAF Namespace '\'test\'test"));
+		Assert.assertEquals("", approval.roleFromMemo("Re-Approval in Role '\'test\'test"));
+	}
+
+	@Test
+	public void testExpunge() {
+		approval.expunge();
+	}
+
+	@Test
+	public void testGetLast_notified() {
+		Assert.assertTrue(approval.getLast_notified() instanceof Date);
+	}
+
+	@Test
+	public void testSetLastNotified() {
+		approval.setLastNotified(date);
+	}
+
+	@Test
+	public void testGetStatus() {
+		Assert.assertEquals("status", approval.getStatus());
+	}
+
+	@Test
+	public void testSetStatus() {
+		approval.setStatus("status");
+	}
+
+	@Test
+	public void testGetId() {
+		Assert.assertTrue(approval.getId() instanceof UUID);
+	}
+
+	@Test
+	public void testGetTicket() {
+		Assert.assertTrue(approval.getTicket() instanceof UUID);
+	}
+
+	@Test
+	public void testGetMemo() {
+		Assert.assertEquals("memo", approval.getMemo());
+	}
+
+	@Test
+	public void testGetOperation() {
+		Assert.assertEquals("operation", approval.getOperation());
+	}
+
+	@Test
+	public void testGetType() {
+		Assert.assertEquals("type", approval.getType());
+	}
+
+	@Test
+	public void testLapsed() {
+		approval.lapsed();
+	}
+
+	@Test
+	public void testGetRole() {
+		Assert.assertNull(approval.getRole());
+	}
+
+	@Test
+	public void testToString() {
+		Assert.assertEquals("user memo", approval.toString());
+	}
+
+	@Test
+	public void testResetLocalData() {
+		approval.resetLocalData();
+	}
+
+	@Test
+	public void testSizeForDeletion() {
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		Assert.assertEquals(0, approval.sizeForDeletion());
+	}
+
+	@Test
+	public void testPendingDelete() {
+		Assert.assertFalse(approval.pendingDelete(approval));
+	}
+
+	@Test
+	public void testUpdateNonDryRun() {
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		AuthzTrans trans = mock(AuthzTrans.class);
+		ApprovalDAO dao = mock(ApprovalDAO.class);
+		LogTarget target = mock(LogTarget.class);
+
+		when(trans.info()).thenReturn(target);
+
+		approval.update(trans, dao, false);
+	}
+
+	@Test
+	public void testUpdateDryRun() {
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		AuthzTrans trans = mock(AuthzTrans.class);
+		ApprovalDAO dao = mock(ApprovalDAO.class);
+		LogTarget target = mock(LogTarget.class);
+
+		when(trans.info()).thenReturn(target);
+
+		approval.update(trans, dao, true);
+	}
+
+	@Test
+	public void testDelayDeleteDryRun() {
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		AuthzTrans trans = mock(AuthzTrans.class);
+		ApprovalDAO dao = mock(ApprovalDAO.class);
+		LogTarget target = mock(LogTarget.class);
+
+		when(trans.info()).thenReturn(target);
+
+		List<Approval> list = new ArrayList<Approval>();
+		list.add(approval);
+		Approval.delayDelete(trans, dao, true, list, "text");
+	}
+
+	@Test
+	public void testDelayDeleteNonDryRun() {
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		AuthzTrans trans = mock(AuthzTrans.class);
+		ApprovalDAO dao = mock(ApprovalDAO.class);
+		LogTarget target = mock(LogTarget.class);
+
+		when(trans.info()).thenReturn(target);
+		Result<Void> rv = Result.ok();
+		when(dao.delete(any(AuthzTrans.class), any(ApprovalDAO.Data.class), any(Boolean.class))).thenReturn(rv);
+
+		List<Approval> list = new ArrayList<Approval>();
+		list.add(approval);
+		Approval.delayDelete(trans, dao, false, list, "text");
+	}
+
+	@Test
+	public void testDelayDeleteResultNotOk() {
+		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		AuthzTrans trans = mock(AuthzTrans.class);
+		ApprovalDAO dao = mock(ApprovalDAO.class);
+		LogTarget target = mock(LogTarget.class);
+
+		when(trans.info()).thenReturn(target);
+		Result<Void> rv = Result.err(new Exception());
+		when(dao.delete(any(AuthzTrans.class), any(ApprovalDAO.Data.class), any(Boolean.class))).thenReturn(rv);
+
+		List<Approval> list = new ArrayList<Approval>();
+		list.add(approval);
+		Approval.delayDelete(trans, dao, false, list, "text");
+	}
+
+	@Test
+	public void testv2() {
+		Approval.v2_0_17.create(RowCreator.getRow());
+
+		assertEquals(
+				"select id,ticket,approver,last_notified,user,memo,operation,status,type,WRITETIME(status) from authz.approval",
+				Approval.v2_0_17.select());
+
+	}
 
 }

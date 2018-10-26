@@ -21,35 +21,31 @@
 
 package org.onap.aaf.auth.helpers.test;
 
-import static org.junit.Assert.*;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.onap.aaf.auth.helpers.Creator;
 import org.onap.aaf.auth.helpers.NsAttrib;
-import org.onap.aaf.misc.env.Trans;
-
-import com.datastax.driver.core.Session;
+import org.onap.aaf.auth.helpers.creators.RowCreator;
 
 import junit.framework.Assert;
 
-import static org.mockito.Mockito.*;
-import org.junit.Test;
-
 public class JU_NsAttrib {
-    
-    NsAttrib nsAttrib;
-    
-    @Before
-    public void setUp() {
-        nsAttrib = new NsAttrib("ns", "key", "value");
-    }
 
-    @Test
-    public void testToString() {
-        Assert.assertEquals("\"ns\",\"key\",\"value\"", nsAttrib.toString());
-    }
+	NsAttrib nsAttrib;
+
+	@Before
+	public void setUp() {
+		nsAttrib = new NsAttrib("ns", "key", "value");
+	}
+
+	@Test
+	public void testToString() {
+		Assert.assertEquals("\"ns\",\"key\",\"value\"", nsAttrib.toString());
+	}
+
+	@Test
+	public void testV2() {
+		NsAttrib.v2_0_11.create(RowCreator.getRow());
+		Assert.assertEquals("select ns,key,value from authz.ns_attrib", NsAttrib.v2_0_11.select());
+	}
 
 }
