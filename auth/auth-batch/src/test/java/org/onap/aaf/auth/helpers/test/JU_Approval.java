@@ -138,12 +138,6 @@ public class JU_Approval {
 	}
 
 	@Test
-	public void testSizeForDeletion() {
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
-		Assert.assertEquals(0, approval.sizeForDeletion());
-	}
-
-	@Test
 	public void testPendingDelete() {
 		Assert.assertFalse(approval.pendingDelete(approval));
 	}
