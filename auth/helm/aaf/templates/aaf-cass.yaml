@@ -38,7 +38,7 @@ spec:
       volumes:
       - name: {{ .Chart.Name }}-cass-vol
         persistentVolumeClaim:
-        claimName: {{ .Chart.Name }}-cass-pvc
+          claimName: {{ .Chart.Name }}-cass-pvc
       containers:
 ###
 ### AAF-CASS
@@ -49,7 +49,7 @@ spec:
         # installing with cmd "onap" will not only initialize the DB, but add ONAP bootstrap data as well
         command: ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh","onap"]
         volumeMounts:
-          - mountPath: "/data"
+          - mountPath: "/var/lib/cassandra"
             name: {{ .Chart.Name }}-cass-vol
         ports:
         - name: storage
