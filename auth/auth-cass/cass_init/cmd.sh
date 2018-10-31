@@ -3,7 +3,8 @@
 # Engage normal Cass Init, then check for data installation
 #
 DIR="/opt/app/aaf/status"
-INSTALLED_VERSION=/etc/cassandra/AAF_VERSION
+INSTALLED_VERSION=/var/lib/cassandra/AAF_VERSION
+AAF_INIT_DATA=/var/lib/cassandra/AAF_INIT_DATA
 
 if [ ! -e /aaf_cmd ]; then
   ln -s /opt/app/aaf/cass_init/cmd.sh /aaf_cmd
@@ -92,13 +93,18 @@ function install_cql {
 function install_onap {
     echo " cd /opt/app/aaf/cass_init"
     install_cql initialized
-    status prep data for bootstrapping
-    cd /opt/app/aaf/cass_init
-    status prep data 
-    bash prep.sh
-    status push data to cassandra
-    bash push.sh
-    cd -
+    if [ -e "$AAF_INIT_DATA" ]; then 
+       echo "AAF Data already initialized on this Cassandra"
+    else 
+      status prep data for bootstrapping
+      cd /opt/app/aaf/cass_init
+      status prep data 
+      bash prep.sh
+      status push data to cassandra
+      bash push.sh
+      cd -
+      echo $(date) > $AAF_INIT_DATA
+    fi
     status ready
 }
 
