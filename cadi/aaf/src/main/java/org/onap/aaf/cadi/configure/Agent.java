@@ -680,9 +680,12 @@ public class Agent {
                             FileInputStream fis = new FileInputStream(new File(dir,a.getNs()+".cred.props"));
                             try {
                                 props.load(fis);
-                                fis.close();
-                                fis = new FileInputStream(new File(dir,a.getNs()+".chal"));
-                                props.load(fis);
+                                File chalFile = new File(dir,a.getNs()+".chal");
+                                if(chalFile.exists()) {
+                                    fis.close();
+	                                fis = new FileInputStream(chalFile);
+	                                props.load(fis);
+                                }
                             } finally {
                                 fis.close();
                             }
