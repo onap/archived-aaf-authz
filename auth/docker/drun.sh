@@ -24,7 +24,8 @@ fi
 
 DOCKER=${DOCKER:=docker}
 
-bash aaf.sh onap
+# Running without params keeps from being TTY
+bash aaf.sh 
 
 if [ "$1" == "" ]; then
     AAF_COMPONENTS=$(cat components)
