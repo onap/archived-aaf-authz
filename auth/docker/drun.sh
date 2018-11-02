@@ -1,4 +1,24 @@
 #!/bin/bash
+# Validate for realtime Cassandra info
+
+# check if outside Cluster defined... otherwise, set CASS_HOST for using expected Docker based Cass
+if [ -z "$(grep -e '^CASS_CLUSTER=.*' d.props)" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    SED="sed -i .bak"
+  else
+    SED="sed -i"
+  fi
+
+  CASSANDRA_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' aaf_cass)
+  if [ -z "$(grep -e '^CASS_HOST.*' d.props)" ]; then
+    $SED "s/# CASS_HOST=.*/CASS_HOST=cass.aaf.osaaf.org:$CASSANDRA_IP/"  d.props
+  else 
+    $SED "s/CASS_HOST=.*/CASS_HOST=cass.aaf.osaaf.org:$CASSANDRA_IP/"  d.props
+  fi
+  echo "Updated d.props for CASSANDRA Name/IP"
+  grep -e '^CASS_HOST.*' d.props
+fi
+
 # Pull in Variables from d.props
 . ./d.props
 
@@ -53,6 +73,10 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
        ADD_HOST="$ADD_HOST --add-host=$A:$HOST_IP"
     done
 
+    if [[ "$CASS_HOST" =~ ":" ]]; then
+       echo "Adding Cassandra Host $CASS_HOST"
+       ADD_HOST="$ADD_HOST --add-host=$CASS_HOST"
+    fi
     $DOCKER run \
         -d \
         --name aaf_$AAF_COMPONENT \
