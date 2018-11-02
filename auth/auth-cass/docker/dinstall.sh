@@ -2,7 +2,7 @@
 #
 # This is only called from HEAT, as it needs a single check and wait for Cassandra to be ready
 #
-. drun.sh
+. drun.sh $@
 
 echo "Waiting for Cass to be initialized"
 for I in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do

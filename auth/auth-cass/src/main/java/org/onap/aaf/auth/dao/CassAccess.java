@@ -215,9 +215,9 @@ public class CassAccess {
         }
         for (Resettable re : resetExceptions) {
             if (re.matches(e)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

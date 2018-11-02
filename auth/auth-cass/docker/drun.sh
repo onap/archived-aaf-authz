@@ -6,6 +6,10 @@ if [ -e ../../docker/d.props ]; then
 fi
 DOCKER=${DOCKER:-docker}
 
+if [ "$1" = "publish" ]; then
+  PUBLISH='--publish 9042:9042 '
+fi
+
 if [ "$($DOCKER volume ls | grep aaf_cass_data)" = "" ]; then
   $DOCKER volume create aaf_cass_data
   echo "Created Cassandra Volume aaf_cass_data"
@@ -23,6 +27,7 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     -e CASSANDRA_DC=dc1 \
     -e CASSANDRA_CLUSTER_NAME=osaaf \
     -v "aaf_cass_data:/var/lib/cassandra" \
+    $PUBLISH \
     -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} "onap"
 else 
   $DOCKER start aaf_cass
