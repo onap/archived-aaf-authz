@@ -24,7 +24,9 @@ function run_it() {
 }
 
 PARAMS="$@"
-if [ "$PARAMS" != "" ]; then
+if [ -z "$PARAMS" ]; then
+  run_it --rm 
+else
   run_it -it --rm 
 fi
 
