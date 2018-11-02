@@ -1,40 +1,21 @@
-#
-# Edit the following in <your ONAP authz dir>/auth/sample/local
-# 
-aaf.props
-org.osaaf.aaf.cm.ca.props  (leave out Password)
 
-# cd to main docker dir
-cd ../../docker
+The CSIT functions are started by Jenkins, starting with the "setup.sh"
+in the csit/plans/aaf/aafapi directory (where 'csit' is an ONAP Project)
 
-# Start the container in bash mode, so it stays up
-sh agent.sh bash
+You can emulate the JENKINS build locally
 
-# in another shell, find out your Container name
-docker container ls | grep aaf_agent
+1) Start in the directory you put your ONAP source in
+  cd <root onap source dir>
+2) If not exist, create a "workspace" directory. 
+  mkdir -p workspace
+3) Create an empty common functions script
+  > workspace/common_functions.sh
+4) cd to the plans
+  cd csit/plans/aaf/aafapi
+5) Run setup with variables set to the Workspace you created
+WORKSPACE=/workspace; SCRIPTS=$WORKSPACE; export WORKSPACE SCRIPTS; bash setup.sh
 
-# CD to directory with CA info in it.
-# (example)
-cd /opt/app/osaaf/CA/intermediate_7
+6) To practice the Shutdown, do:
+WORKSPACE=/workspace; SCRIPTS=$WORKSPACE; export WORKSPACE SCRIPTS; bash teardown.sh
+  
 
-# copy keystore for this AAF Env 
-docker container cp -L org.osaaf.aaf.p12 aaf_agent_<Your ID>:/opt/app/osaaf/local
-# (in Agent Window)
-agent encrypt cadi_keystore_password
-
-# If you intend to use Certman to sign certs, it is a "local" CA
-# copy Signing Keystore into container
-docker container cp -L org.osaaf.aaf.signer.p12 aaf_agent_<Your ID>:/opt/app/osaaf/local
-# (in Agent Window)
-agent encrypt cm_ca.local 
-
-# Check to make sure all passwords are set
-grep "enc:" *.props
-
-
-# When good, run AAF
-bash drun.sh
-
-# watch logs in Agent Window
-cd ../logs
-sh taillog
