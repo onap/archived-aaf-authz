@@ -27,6 +27,22 @@ function check {
   fi
 }
 
+function wait {
+  n=0
+  while [ $n -lt 40  ]; do 
+     rv="$(check)"
+     echo "$rv"
+     if [ "$rv" = "ready" ]; then
+       echo "$OTHER is $rv"
+       n=10000
+     else 
+       (( ++n )) 
+       echo "Sleep 10 (iteration $n)"
+       sleep 10
+     fi
+  done
+}
+
 function start {
   n=0
   while [ $n -lt 40  ]; do 
@@ -45,18 +61,26 @@ function start {
   done
 }
 
-if [ "sleep" = "$OTHER" ]; then
-  echo "Sleeping $1"
-  status "Sleeping $1"
-  sleep $1
-  shift
-  status "ready"
-  echo "Done"
-else
-  echo "App $APP is waiting to start until $OTHER is ready"
-  status "waiting for $OTHER"
-
-  start
-fi  
+case "$OTHER" in
+  sleep)
+    echo "Sleeping $1"
+    status "Sleeping $1"
+    sleep $1
+    shift
+    status "ready"
+    echo "Done"
+    ;;
+  wait)
+    OTHER="$1"
+    shift    
+    wait
+    ;;
+  *)
+    echo "App $APP is waiting to start until $OTHER is ready"
+    status "waiting for $OTHER"
+  
+    start
+  ;;
+esac  
 
 eval "$@"

@@ -5,6 +5,7 @@ DOCKER=${DOCKER:=docker}
 function run_it() {
   $DOCKER run $@ \
     -v "aaf_config:$CONF_ROOT_DIR" \
+    -v "aaf_status:/opt/app/aaf/status" \
     --add-host="$HOSTNAME:$HOST_IP" \
     --add-host="aaf.osaaf.org:$HOST_IP" \
     --env HOSTNAME=${HOSTNAME} \
@@ -24,9 +25,17 @@ function run_it() {
 }
 
 PARAMS="$@"
-if [ -z "$PARAMS" ]; then
-  run_it --rm 
-else
-  run_it -it --rm 
-fi
+case "$1" in 
+  bash)
+    run_it -it --rm 
+    ;;
+  -it)
+    shift 
+    PARAMS="$@"
+    run_it -it --rm 
+    ;;
+  *)
+    run_it --rm 
+    ;;
+esac
 

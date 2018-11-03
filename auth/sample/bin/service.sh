@@ -248,6 +248,9 @@ else
     taillog) 
 	sh /opt/app/osaaf/logs/taillog
 	;;
+    wait)
+	bash $CONFIG/bin/pod_wait.sh wait $1
+        ;;
     --help | -?)
         case "$1" in
         "")
