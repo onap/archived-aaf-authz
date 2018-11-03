@@ -25,7 +25,7 @@ fi
 DOCKER=${DOCKER:=docker}
 
 # Running without params keeps from being TTY
-bash aaf.sh 
+bash ./aaf.sh 
 
 if [ "$1" == "" ]; then
     AAF_COMPONENTS=$(cat components)
@@ -34,31 +34,49 @@ else
 fi
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
+    LINKS=""
+    CMD_LINE=""
+    PORTMAP=""
     case "$AAF_COMPONENT" in
     "service")
         PORTMAP="8100:8100"
         LINKS="--link aaf_cass:cassandra "
+        # CASS_HOST is for Container based Cassadra
+        if [ -z "$CASS_HOST" ]; then
+	  CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_service sleep 0 cd /opt/app/aaf;bin/service"
+        else
+	  CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_service aaf_cass cd /opt/app/aaf;bin/service"
+        fi
         ;;
     "locate")
         PORTMAP="8095:8095"
         LINKS="--link aaf_cass:cassandra "
+	CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_locate aaf_service cd /opt/app/aaf;bin/locate"
         ;;
     "oauth")
         PORTMAP="8140:8140"
         LINKS="--link aaf_cass:cassandra "
+	CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_oauth aaf_service cd /opt/app/aaf;bin/oauth"
         ;;
     "gui")
         PORTMAP="8200:8200"
+        LINKS=""
+	CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_gui aaf_locate cd /opt/app/aaf;bin/gui"
         ;;
     "cm")
         PORTMAP="8150:8150"
         LINKS="--link aaf_cass:cassandra "
+	CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_cm aaf_locate cd /opt/app/aaf;bin/cm"
         ;;
     "hello")
         PORTMAP="8130:8130"
+        LINKS=""
+	CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_hello aaf_locate cd /opt/app/aaf;bin/hello"
         ;;
     "fs")
         PORTMAP="80:8096"
+        LINKS=""
+	CMD_LINE="/bin/bash /opt/app/aaf/pod/pod_wait.sh aaf_fs aaf_locate cd /opt/app/aaf;bin/fs"
         ;;
     esac
 
@@ -74,8 +92,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
        ADD_HOST="$ADD_HOST --add-host=$A:$HOST_IP"
     done
 
-    if [[ "$CASS_HOST" =~ ":" ]]; then
-       echo "Adding Cassandra Host $CASS_HOST"
+    if [ ! -z "$LINKS" ] && [[ "$CASS_HOST" =~ ":" ]]; then
        ADD_HOST="$ADD_HOST --add-host=$CASS_HOST"
     fi
     $DOCKER run \
@@ -95,5 +112,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         --env CASSANDRA_PORT=${CASSANDRA_PORT} \
         --publish $PORTMAP \
         -v "aaf_config:$CONF_ROOT_DIR" \
-        ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
+        -v "aaf_status:/opt/app/aaf/status" \
+        ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} \
+	$CMD_LINE
 done

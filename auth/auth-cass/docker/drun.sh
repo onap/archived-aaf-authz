@@ -27,6 +27,7 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     -e CASSANDRA_DC=dc1 \
     -e CASSANDRA_CLUSTER_NAME=osaaf \
     -v "aaf_cass_data:/var/lib/cassandra" \
+    -v "aaf_status:/opt/app/aaf/status" \
     $PUBLISH \
     -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} "onap"
 else 
