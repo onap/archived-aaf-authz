@@ -1,9 +1,0 @@
-############################################################
-# Initial File for Generating
-#   on 2016-10-26T06:56:19.905-0500
-# @copyright 2016, AT&T
-############################################################
-cm_url=https://<certificate manager host>:8150
-hostname=<your host>
-cadi_x509_issuers=CN=ATT CADI Issuing CA - Test 01, OU=CSO, O=ATT, C=US
-cadi_keyfile=../common/com.osaaf.keyfile
