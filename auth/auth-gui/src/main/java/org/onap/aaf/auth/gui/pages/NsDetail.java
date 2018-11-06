@@ -79,7 +79,7 @@ public class NsDetail extends Page {
         if (gw_url==null) {
             gw_url="";
         } else {
-            gw_url+="/aaf/"+Config.AAF_DEFAULT_VERSION;
+            gw_url+="/aaf/"+Config.AAF_DEFAULT_API_VERSION;
         }
     }
 

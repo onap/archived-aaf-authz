@@ -117,7 +117,7 @@ public class JU_AAFListedCertIdentity {
 
     @Test
     public void test() throws APIException, CadiException, CertificateException {
-        doReturn(rcliMock).when(conMock).client(Config.AAF_DEFAULT_VERSION);
+        doReturn(rcliMock).when(conMock).client();
         when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/tguard/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
         when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/basicAuth/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);
         when(rcliMock.read("/authz/users/perm/com.att.aaf.trust/csp/authenticate", Users.class, userDFMock)).thenReturn(futureUsersMock);

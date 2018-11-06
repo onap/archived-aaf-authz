@@ -62,7 +62,6 @@ import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Env;
-import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 import com.datastax.driver.core.Cluster;
 
@@ -187,7 +186,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     protected AAFConHttp _newAAFConHttp() throws CadiException {
         try {
             if (dal==null) {
-                dal = AbsAAFLocator.create(aaf_service_name,Config.AAF_DEFAULT_VERSION);
+                dal = AbsAAFLocator.create(aaf_service_name,Config.AAF_DEFAULT_API_VERSION);
             }
             // utilize pre-constructed DirectAAFLocator
             return new AAFConHttp(env.access(),dal);
@@ -198,7 +197,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
     public Locator<URI> getGUILocator() throws LocatorException {
         if (gui_locator==null) {
-            gui_locator = AbsAAFLocator.create(aaf_gui_name,Config.AAF_DEFAULT_VERSION);
+            gui_locator = AbsAAFLocator.create(aaf_gui_name,Config.AAF_DEFAULT_API_VERSION);
         }
         return gui_locator;
     }

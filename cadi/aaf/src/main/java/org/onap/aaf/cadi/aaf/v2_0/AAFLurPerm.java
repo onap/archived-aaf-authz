@@ -190,7 +190,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                 @Override
                 public Resp code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                     final long remoteStart = System.nanoTime();
-                    Future<Perms> fp = aaf.client(Config.AAF_DEFAULT_VERSION).read(
+                    Future<Perms> fp = aaf.client().read(
                             "/authz/perms/user/"+name,
                             aaf.permsDF
                             );

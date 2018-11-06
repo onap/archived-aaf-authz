@@ -140,15 +140,16 @@ public class Config {
     public static final String AAF_ROOT_COMPANY = "aaf_root_company";
     public static final String AAF_LOCATE_URL = "aaf_locate_url"; //URL for AAF locator
     private static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
-    public static final String AAF_DEFAULT_VERSION = "2.1";
+    public static final String AAF_DEFAULT_API_VERSION = "2.1";
+    public static final String AAF_API_VERSION = "aaf_api_version";
     public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration
-    public static final String AAF_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.service:" + AAF_DEFAULT_VERSION;
-    public static final String GUI_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.gui:" + AAF_DEFAULT_VERSION;
-    public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.cm:" + AAF_DEFAULT_VERSION;
-    public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.fs:" + AAF_DEFAULT_VERSION;
-    public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.hello:" + AAF_DEFAULT_VERSION;
-    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/AAF_NS.token:" + AAF_DEFAULT_VERSION;
-    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/AAF_NS.introspect:" + AAF_DEFAULT_VERSION;
+    public static final String AAF_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.service:" + AAF_DEFAULT_API_VERSION;
+    public static final String GUI_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.gui:" + AAF_DEFAULT_API_VERSION;
+    public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.cm:" + AAF_DEFAULT_API_VERSION;
+    public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.fs:" + AAF_DEFAULT_API_VERSION;
+    public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.hello:" + AAF_DEFAULT_API_VERSION;
+    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/AAF_NS.token:" + AAF_DEFAULT_API_VERSION;
+    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION;
 
     public static final String AAF_REGISTER_AS = "aaf_register_as";
     public static final String AAF_APPID = "aaf_id";

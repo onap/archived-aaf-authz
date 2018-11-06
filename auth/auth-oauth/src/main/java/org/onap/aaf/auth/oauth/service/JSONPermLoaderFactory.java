@@ -47,7 +47,7 @@ public class JSONPermLoaderFactory {
     public static JSONPermLoader remote(final AAFCon<?> aafcon, final int timeout) {
         return new JSONPermLoader() {
             public Result<String> loadJSONPerms(AuthzTrans trans, String user, Set<String> scopes) throws APIException, CadiException {
-                Rcli<?> c = aafcon.clientAs(Config.AAF_DEFAULT_VERSION,trans.getUserPrincipal());
+                Rcli<?> c = aafcon.clientAs(Config.AAF_DEFAULT_API_VERSION,trans.getUserPrincipal());
                 StringBuilder pathinfo = new StringBuilder("/authz/perms/user/");
                 pathinfo.append(user);
                 pathinfo.append("?scopes=");

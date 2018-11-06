@@ -37,7 +37,7 @@ public class Version extends Cmd {
     protected int _exec(int idx, String... args) throws CadiException, APIException, LocatorException {
         pw().println("AAF Command Line Tool");
         pw().print("Version: ");
-        pw().println(Config.AAF_DEFAULT_VERSION);
+        pw().println(Config.AAF_DEFAULT_API_VERSION);
         return 200 /*HttpStatus.OK_200;*/;
     }
 }

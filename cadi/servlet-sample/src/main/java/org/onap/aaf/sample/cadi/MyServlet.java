@@ -100,8 +100,8 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
                         };
                     }
                     // This call will be "as the user calling", but only if permission is set to trust.
-//                    Future<String> future = aafcon.clientAs(Config.AAF_DEFAULT_VERSION,tp).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
-                    Future<String> future = aafcon.client(Config.AAF_DEFAULT_VERSION).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
+//                    Future<String> future = aafcon.clientAs(Config.AAF_DEFAULT_API_VERSION,tp).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
+                    Future<String> future = aafcon.client(Config.AAF_DEFAULT_API_VERSION).read("/authz/perms/user/"+request.getUserPrincipal().getName(),"application/Perms+json");
                     if (future.get(4000 /* timeout */)) {
                         res.getOutputStream().print(future.value);
                     } else {

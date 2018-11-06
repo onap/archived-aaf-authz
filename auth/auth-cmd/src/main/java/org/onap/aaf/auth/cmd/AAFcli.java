@@ -500,7 +500,7 @@ public class AAFcli {
 //                        }
     
                         TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
-//                        HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_VERSION);
+//                        HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_API_VERSION);
                         
                         if (access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
                             access.setProperty(Config.AAF_DEFAULT_REALM, "people.osaaf.org");

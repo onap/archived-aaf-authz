@@ -158,11 +158,11 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     }
     
     public Rcli<?> client() throws CadiException {
-        return aafCon.client(Config.AAF_DEFAULT_VERSION);
+        return aafCon.client();
     }
 
     public Rcli<?> clientAsUser(TaggedPrincipal p) throws CadiException {
-        return aafCon.client(Config.AAF_DEFAULT_VERSION).forUser(
+        return aafCon.client().forUser(
                 new HTransferSS(p,app_name, aafCon.securityInfo()));
     }
 

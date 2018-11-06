@@ -125,7 +125,7 @@ public class AAFListedCertIdentity implements CertIdentity {
                     userLookup.add(s);
                 }
                 for (String authMech : authMechanisms) {
-                    Future<Users> fusr = aafcon.client(Config.AAF_DEFAULT_VERSION).read("/authz/users/perm/com.att.aaf.trust/"+authMech+"/authenticate", Users.class, aafcon.usersDF);
+                    Future<Users> fusr = aafcon.client().read("/authz/users/perm/com.att.aaf.trust/"+authMech+"/authenticate", Users.class, aafcon.usersDF);
                     if (fusr.get(5000)) {
                         List<User> users = fusr.value.getUser();
                         if (users.isEmpty()) {
@@ -146,7 +146,7 @@ public class AAFListedCertIdentity implements CertIdentity {
                 }
                 
                 for (String u : userLookup) {
-                    Future<Certs> fc = aafcon.client(Config.AAF_DEFAULT_VERSION).read("/authn/cert/id/"+u, Certs.class, aafcon.certsDF);
+                    Future<Certs> fc = aafcon.client().read("/authn/cert/id/"+u, Certs.class, aafcon.certsDF);
                     XMLGregorianCalendar now = Chrono.timeStamp();
                     if (fc.get(5000)) {
                         List<Cert> certs = fc.value.getCert();
