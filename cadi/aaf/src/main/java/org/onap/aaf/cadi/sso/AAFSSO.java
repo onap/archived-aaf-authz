@@ -308,8 +308,13 @@ public class AAFSSO {
                 addProp(Config.AAF_LOCATE_URL, locateUrl);
             }
             
-            access.setProperty(Config.AAF_URL, Defaults.AAF_URL);
-            access.setProperty(Config.CM_URL, Defaults.CM_URL);
+            final String apiVersion = access.getProperty(Config.AAF_API_VERSION);
+            if(access.getProperty(Config.AAF_URL)==null) {
+            	access.setProperty(Config.AAF_URL, apiVersion==null?Defaults.AAF_URL:Defaults.AAF_ROOT+".service:"+apiVersion);
+            }
+            if(access.getProperty(Config.CM_URL)==null) {
+            	access.setProperty(Config.CM_URL, apiVersion==null?Defaults.CM_URL:Defaults.AAF_ROOT+".cm:"+apiVersion);
+            }
             String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
             if (cadiLatitude==null) {
                 System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");

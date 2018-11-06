@@ -211,10 +211,10 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
     public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
         Class<?> respCls = facade.mapper().getClass(api); 
         if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
-        String application = applicationJSON(respCls, Config.AAF_DEFAULT_VERSION);
+        String application = applicationJSON(respCls, Config.AAF_DEFAULT_API_VERSION);
 
-        route(env,meth,path,code,application,"application/json;version="+Config.AAF_DEFAULT_VERSION,"*/*");
-        application = applicationXML(respCls, Config.AAF_DEFAULT_VERSION);
+        route(env,meth,path,code,application,"application/json;version="+Config.AAF_DEFAULT_API_VERSION,"*/*");
+        application = applicationXML(respCls, Config.AAF_DEFAULT_API_VERSION);
         route(env,meth,path,code.clone(facade_XML,false),application,"text/xml;version=Config.AAF_DEFAULT_VERSION");
     }
 

@@ -32,11 +32,10 @@ import java.util.NoSuchElementException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.config.Config;
-import org.onap.aaf.cadi.locator.PropertyLocator;
 import org.onap.aaf.cadi.routing.GreatCircle;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Split;
@@ -96,11 +95,11 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         }
         if (name.startsWith("http")) { // simple URL
             this.name = name;
-            this.version = Config.AAF_DEFAULT_VERSION;
+            this.version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
         } else {
             String[] split = Split.split(':', name);
             this.name = split[0];
-            this.version = (split.length > 1) ? split[1] : Config.AAF_DEFAULT_VERSION;
+            this.version = (split.length > 1) ? split[1] : access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
         }
         
     }
@@ -113,9 +112,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         locatorCreator = lc; 
     }
     
-    public static Locator<URI> create(String key) throws LocatorException {
+    /*public static Locator<URI> create(String key) throws LocatorException {
         String name = null;
-        String version = Config.AAF_DEFAULT_VERSION;
+        String version = Config.AAF_DEFAULT_API_VERSION;
         String pathInfo = null;
         int prev = key.indexOf("/locate");
         if (prev>0) {
@@ -156,6 +155,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         }
         return null;
     }
+    */
     
     public static Locator<URI> create(final String name, final String version) throws LocatorException {
         return locatorCreator.create(name, version);

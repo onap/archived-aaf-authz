@@ -209,7 +209,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
         if (prin instanceof BasicPrincipal) {
             Future<String> fp;
             try {
-                Rcli<CLIENT> userAAF = aaf.client(Config.AAF_DEFAULT_VERSION).forUser(aaf.transferSS((BasicPrincipal)prin));
+                Rcli<CLIENT> userAAF = aaf.client().forUser(aaf.transferSS((BasicPrincipal)prin));
                 fp = userAAF.read("/authn/basicAuth", "text/plain");
                 return fp.get(aaf.timeout)?Resp.REVALIDATED:Resp.UNVALIDATED;
             } catch (Exception e) {

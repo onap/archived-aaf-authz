@@ -74,40 +74,17 @@ public class JU_AbsAAFLocator {
         // Test with http
         loc = new AAFLocatorStub(access, "httpname");
         assertThat(loc.getName(), is("httpname"));
-        assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_VERSION));
+        assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_API_VERSION));
         assertThat(loc.toString(), is("AAFLocator for " + "httpname" + " on " + loc.getURI()));
 
         loc = new AAFLocatorStub(access, "name");
         assertThat(loc.getName(), is("name"));
-        assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_VERSION));
+        assertThat(loc.getVersion(), is(Config.AAF_DEFAULT_API_VERSION));
         loc = new AAFLocatorStub(access, "name:v2.0");
         assertThat(loc.getName(), is("name"));
         assertThat(loc.getVersion(), is("v2.0"));
     }
 
-    @Test
-    public void createTest() throws LocatorException {
-        AbsAAFLocator.setCreator(locatorCreatorMock);
-
-        assertThat(AbsAAFLocator.create("nonsense"), is(nullValue()));
-        assertThat(AbsAAFLocator.create("nonsense/locate"), is(nullValue()));
-        assertThat(AbsAAFLocator.create("nonsense/locate/"), is(nullValue()));
-        assertThat(AbsAAFLocator.create("nonsense/locate//"), is(nullValue()));
-        assertThat(AbsAAFLocator.create("nonsense/locate/name:v2.0"), is(nullValue()));
-
-        assertThat(AbsAAFLocator.create("http/locate/name:v2.0"), is(nullValue()));
-
-        doReturn(mock(AbsAAFLocator.class)).when(locatorCreatorMock).create(anyString(), anyString());
-        assertThat(AbsAAFLocator.create("http/locate/name:v2.0/path"), is(not(nullValue())));
-
-        AbsAAFLocator.setCreator(null);
-        assertThat(AbsAAFLocator.create("http/locate/name:v2.0"), is(nullValue()));
-
-        assertThat(AbsAAFLocator.create("http"), is(not(nullValue())));
-
-        AbsAAFLocator.setCreator(locatorCreatorMock);
-        assertThat(AbsAAFLocator.create("first", "second"), is(not(nullValue())));
-    }
 
     @Test
     public void nameFromLocatorURITest() throws LocatorException, URISyntaxException {

@@ -84,7 +84,7 @@ public class JU_JSONPermLoaderFactoryTest {
     @Test
     public void testRemoteWithTimeOut() throws APIException, CadiException {
         when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
-        when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
+        when(aafcon.clientAs(Config.AAF_DEFAULT_API_VERSION, trans.getUserPrincipal())).thenReturn(c);
         when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
                 "application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
         when(fs.get(0)).thenReturn(true);
@@ -105,7 +105,7 @@ public class JU_JSONPermLoaderFactoryTest {
     @Test
     public void testRemoteWith404() throws APIException, CadiException {
         when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
-        when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
+        when(aafcon.clientAs(Config.AAF_DEFAULT_API_VERSION, trans.getUserPrincipal())).thenReturn(c);
         when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
                 "application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
         when(fs.get(0)).thenReturn(false);
@@ -127,7 +127,7 @@ public class JU_JSONPermLoaderFactoryTest {
     @Test
     public void testRemote() throws APIException, CadiException {
         when(trans.start("Call AAF Service", Env.REMOTE)).thenReturn(tt);
-        when(aafcon.clientAs(Config.AAF_DEFAULT_VERSION, trans.getUserPrincipal())).thenReturn(c);
+        when(aafcon.clientAs(Config.AAF_DEFAULT_API_VERSION, trans.getUserPrincipal())).thenReturn(c);
         when(c.read("/authz/perms/user/null?scopes=APPLICATION:HANDLER",
                 "application/Perms+json;charset=utf-8;version=2.0")).thenReturn(fs);
         when(fs.get(0)).thenReturn(false);

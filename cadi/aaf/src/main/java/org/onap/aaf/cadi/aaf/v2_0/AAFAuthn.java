@@ -30,7 +30,6 @@ import org.onap.aaf.cadi.User;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
-import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.lur.ConfigPrincipal;
 
 public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
@@ -140,7 +139,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
             try {
                 Miss missed = missed(getName(),getCred());
                 if (missed==null || missed.mayContinue()) {
-                    Rcli<CLIENT> client = con.client(Config.AAF_DEFAULT_VERSION).forUser(con.basicAuth(getName(), new String(getCred())));
+                    Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
                     Future<String> fp = client.read(
                             "/authn/basicAuth",
                             "text/plain"
