@@ -401,7 +401,13 @@ public class Question {
                     }
                 }
             } else {
-                return Result.err(Status.ERR_NsNotFound,"There is no valid Company Namespace for %s",str);
+                int dot = str.lastIndexOf('.');
+                
+                if (dot < 0) {
+                    return Result.err(Status.ERR_NsNotFound,"There is no valid Company Namespace for %s",str);
+                } else {
+                    return deriveFirstNsForType(trans, str.substring(0, dot),type);
+                }
             }
         }
         return Result.err(Status.ERR_NotFound, str + " does not contain type " + type.name());

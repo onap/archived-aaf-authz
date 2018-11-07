@@ -153,8 +153,8 @@ public abstract class ArtifactDir implements PlaceArtifact {
     	if(symm==null) {
             if (!f.exists()) {
                 write(f,Chmod.to400,Symm.keygen());
-            } else {
-            	System.out.println("Encryptor using " + f.getCanonicalPath());
+//            } else {
+//            	System.out.println("Encryptor using " + f.getCanonicalPath());
             }
             symm = Symm.obtain(f); 
             symms.put(f.getCanonicalPath(),symm);

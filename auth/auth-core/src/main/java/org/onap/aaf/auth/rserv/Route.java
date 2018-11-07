@@ -40,13 +40,13 @@ public class Route<TRANS extends Trans> {
     private Match match;
     // package on purpose
     private final TypedCode<TRANS> content;
-    private final boolean isGet;
+    private final boolean isContentType;
     
     public Route(HttpMethods meth, String path) {
         this.path = path;
         auditText = meth.name() + ' ' + path;
         this.meth = meth; // Note: Using Spark def for now.
-        isGet = meth.compareTo(HttpMethods.GET) == 0;
+        isContentType = meth.compareTo(HttpMethods.GET) == 0 || meth.compareTo(HttpMethods.DELETE)==0;
         match = new Match(path);
         content = new TypedCode<TRANS>();
     }
@@ -56,18 +56,12 @@ public class Route<TRANS extends Trans> {
         content.add(code, others);
     }
     
-//    public void add(HttpCode<TRANS,?> code, Class<?> cls, String version, String ... others) {
-//        code.match = match;
-//        content.add(code, cls, version, others);
-//    }
-//
     public HttpCode<TRANS,?> getCode(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         // Type is associated with Accept for GET (since it is what is being returned
         // We associate the rest with ContentType.
         // FYI, thought about this a long time before implementing this way.
         String compare;
-//        String special[]; // todo, expose Charset (in special) to outside
-        if (isGet) {
+        if (isContentType) {
             compare = req.getHeader("Accept"); // Accept is used for read, as we want to agree on what caller is ready to handle
         } else {
             compare = req.getContentType(); // Content type used to declare what data is being created, updated or deleted (might be used for key)
@@ -77,7 +71,7 @@ public class Route<TRANS extends Trans> {
         if (hl==null) {
             resp.setStatus(406); // NOT_ACCEPTABLE
         } else {
-            if (isGet) { // Set Content Type to expected content
+            if (isContentType) { // Set Content Type to expected content
                 if ("*".equals(hl.x) || "*/*".equals(hl.x)) {// if wild-card, then choose first kind of type
                     resp.setContentType(content.first());
                 } else {

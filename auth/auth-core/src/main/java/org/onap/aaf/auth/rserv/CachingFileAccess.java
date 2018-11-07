@@ -24,15 +24,12 @@ package org.onap.aaf.auth.rserv;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,11 +49,9 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.EnvJAXB;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.Store;
-import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 /*
  * CachingFileAccess
