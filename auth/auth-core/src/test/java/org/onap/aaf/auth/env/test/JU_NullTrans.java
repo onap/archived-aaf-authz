@@ -22,7 +22,9 @@
 
 package org.onap.aaf.auth.env.test;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+
+import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,7 +36,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.env.NullTrans;
-import org.onap.aaf.auth.env.AuthzTrans.REQD_TYPE;
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.misc.env.Decryptor;
@@ -42,12 +43,6 @@ import org.onap.aaf.misc.env.Encryptor;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.TimeTaken;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.security.Principal;
-import java.util.Date;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_NullTrans {
@@ -261,13 +256,14 @@ public class JU_NullTrans {
         Assert.assertFalse(reqd);
         nullTrans.requested(null, true);
     }
-    
-    @Test
-    public void testNow() {
-        Date date = new Date();
-        Assert.assertEquals(date,nullTrans.now());
-        //when(nullTrans.now()).thenReturn(null);
-    }
+
+//  This is very inconsistent, and rather pointless
+//    @Test
+//    public void testNow() {
+//        Date date = new Date();
+//        Assert.assertEquals(date,nullTrans.now());
+//        //when(nullTrans.now()).thenReturn(null);
+//    }
     
     
     
