@@ -100,7 +100,7 @@ public class API_Creds {
                                 if (cv.validate(bp.getName(), Type.PASSWORD, bp.getCred(), null) ) {
                                     resp.setStatus(HttpStatus.OK_200);
                                 } else {
-                                    resp.setStatus(HttpStatus.FORBIDDEN_403);
+                                    resp.setStatus(HttpStatus.UNAUTHORIZED_401);
                                 }
                             }
                         } else {

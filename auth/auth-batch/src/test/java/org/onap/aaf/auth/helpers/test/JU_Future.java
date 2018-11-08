@@ -104,24 +104,25 @@ public class JU_Future {
 
 	@Test
 	public void testResetLocalData() {
-		future.resetLocalData();
+		Future.resetLocalData();
 	}
 
 	@Test
 	public void testSizeForDeletion() {
-		Assert.assertEquals(0, future.sizeForDeletion());
+		Assert.assertEquals(0, Future.sizeForDeletion());
 	}
 
 	@Test
 	public void testPendingDelete() {
-		Assert.assertEquals(false, future.pendingDelete(future));
+		Assert.assertEquals(false, Future.pendingDelete(future));
 	}
 
 	@Test
 	public void testLoad() {
 		Session session = mock(Session.class);
 		Trans trans = mock(Trans.class);
-		Creator<Future> creator = mock(Creator.class);
+		@SuppressWarnings("unchecked")
+		Creator<Future> creator = (Creator<Future>)mock(Creator.class);
 		LogTarget target = mock(LogTarget.class);
 		TimeTaken tt = mock(TimeTaken.class);
 		ResultSet results = mock(ResultSet.class);

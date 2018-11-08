@@ -23,7 +23,8 @@ package org.onap.aaf.cadi.aaf;
 public interface Defaults {
     public final static String AAF_VERSION = "2.1";
     public final static String AAF_NS = "AAF_NS";
-    public final static String AAF_ROOT =  "https://AAF_LOCATE_URL/" + AAF_NS;
+    public final static String AAF_LOCATE_CONST="https://AAF_LOCATE_URL";
+    public final static String AAF_ROOT =   AAF_LOCATE_CONST + '/' + AAF_NS;
     public final static String AAF_URL = AAF_ROOT + ".service:" + AAF_VERSION;
     public final static String GUI_URL = AAF_ROOT + ".gui:" + AAF_VERSION;
     public final static String CM_URL = AAF_ROOT + ".cm:" + AAF_VERSION;

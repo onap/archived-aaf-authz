@@ -179,11 +179,16 @@ public class AAFSSO {
                 appID=null;
             }
             
-            if (appID!=null && access.getProperty(Config.AAF_APPPASS)==null) {
-                char[] password = cons.readPassword("Password for %s: ", appID);
-                String app_pass = access.encrypt(new String(password));
-                access.setProperty(Config.AAF_APPPASS,app_pass);
-                diskprops.setProperty(Config.AAF_APPPASS, app_pass);
+            if (appID!=null) {
+             	diskprops.setProperty(Config.AAF_APPID,appID);
+            	if( access.getProperty(Config.AAF_APPPASS)==null) {
+	                char[] password = cons.readPassword("Password for %s: ", appID);
+	                if(password.length>0) {
+		                String app_pass = access.encrypt(new String(password));
+		               	access.setProperty(Config.AAF_APPPASS,app_pass);
+		               	diskprops.setProperty(Config.AAF_APPPASS,app_pass);
+	                }
+            	}
             }
             
             String keystore=access.getProperty(Config.CADI_KEYSTORE);
@@ -308,12 +313,20 @@ public class AAFSSO {
                 addProp(Config.AAF_LOCATE_URL, locateUrl);
             }
             
-            final String apiVersion = access.getProperty(Config.AAF_API_VERSION);
+            final String apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
+            final String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS);
+            String locateRoot;
+            if(aaf_root_ns==null) {
+            	locateRoot=Defaults.AAF_ROOT;
+            } else {
+            	locateRoot = Defaults.AAF_LOCATE_CONST + '/' + aaf_root_ns;
+            }
             if(access.getProperty(Config.AAF_URL)==null) {
-            	access.setProperty(Config.AAF_URL, apiVersion==null?Defaults.AAF_URL:Defaults.AAF_ROOT+".service:"+apiVersion);
+            	
+            	access.setProperty(Config.AAF_URL, locateRoot+".service:"+apiVersion);
             }
             if(access.getProperty(Config.CM_URL)==null) {
-            	access.setProperty(Config.CM_URL, apiVersion==null?Defaults.CM_URL:Defaults.AAF_ROOT+".cm:"+apiVersion);
+            	access.setProperty(Config.CM_URL, locateRoot+".cm:"+apiVersion);
             }
             String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
             if (cadiLatitude==null) {

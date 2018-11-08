@@ -398,4 +398,8 @@ public class PropAccess implements Access {
     public void set(LogIt logit) {
         logIt = logit;
     }
+    
+    public String toString() {
+    	return props.toString();
+    }
 }

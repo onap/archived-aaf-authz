@@ -774,7 +774,7 @@ public class Config {
                     Method meth = lcls.getMethod("create",String.class);
                     locator = (Locator<URI>)meth.invoke(null,url);
                 } catch (Exception e) {
-                    access.log(Level.INIT, e);
+                    access.log(Level.DEBUG, "(Not fatal) Cannot load by create(String)", e);
                 }
                 if (locator==null) {
                     URI locatorURI = new URI(url);

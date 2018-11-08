@@ -117,7 +117,13 @@ public class PropHolder {
 	}
 
 	public void addEnc(final String tag, Access orig, final String def) throws IOException {
-		addEnc(tag,orig.getProperty(tag, def));
+		String pwd = orig.getProperty(tag, def);
+		if(pwd==null) {
+			return;
+		} else if(pwd.startsWith("enc:")) {
+			pwd = orig.decrypt(pwd, true);
+		}
+		addEnc(tag,pwd);
 	}
 	
 	public void write() throws IOException {

@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,16 +80,16 @@ public class TestConnectivity {
                 List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
                 /////////
                 print(true,"Test Connections driven by AAFLocator");
-                URI serviceURI = new URI(Defaults.AAF_URL);
+                URI serviceURI = uri(access,"service");
 
                 for (URI uri : new URI[] {
                         serviceURI,
-                        new URI(Defaults.OAUTH2_TOKEN_URL),
-                        new URI(Defaults.OAUTH2_INTROSPECT_URL),
-                        new URI(Defaults.CM_URL),
-                        new URI(Defaults.GUI_URL),
-                        new URI(Defaults.FS_URL),
-                        new URI(Defaults.HELLO_URL)
+                        uri(access,"token"),
+                        uri(access,"introspect"),
+                        uri(access,"cm"),
+                        uri(access,"gui"),
+                        uri(access,"fs"),
+                        uri(access,"hello")
                 }) {
                     Locator<URI> locator = new AAFLocator(si, uri);
                     try {
@@ -108,10 +109,15 @@ public class TestConnectivity {
 
                 //////////
                 print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
+                boolean hasBath=false;
                 for (SecuritySetter<HttpURLConnection> ss : lss) {
                     if (ss instanceof HBasicAuthSS) {
+                    	hasBath=true;
                         basicAuthTest(new AAFLocator(si, serviceURI),ss);
                     }
+                }
+                if(!hasBath) {
+                	System.out.println("No User/Password to test");
                 }
                 
             } catch (Exception e) {
@@ -122,7 +128,17 @@ public class TestConnectivity {
         }
     }
     
-    private static List<SecuritySetter<HttpURLConnection>> loadSetters(PropAccess access, SecurityInfoC<HttpURLConnection> si)  {
+    private static URI uri(PropAccess access, String ms) throws URISyntaxException {
+		String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS,"AAF_NS");
+		String aaf_api_version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
+		String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL,Defaults.AAF_LOCATE_CONST);
+		if("cm".equals(ms) && "2.0".equals(aaf_api_version)) {
+			ms = "certman";
+		}
+		return new URI(aaf_locate_url + "/locate/" + aaf_root_ns + '.' + ms + ':' + aaf_api_version);
+	}
+
+	private static List<SecuritySetter<HttpURLConnection>> loadSetters(PropAccess access, SecurityInfoC<HttpURLConnection> si)  {
         print(true,"Load Security Setters from Configuration Information");
         String user = access.getProperty(Config.AAF_APPID);
 
@@ -253,9 +269,7 @@ public class TestConnectivity {
             HClient client = new HClient(ss, uri, 3000);
             client.setMethod("GET");
             String user = ss.getID();
-            if (user.indexOf('@')<0) {
-                user+="@isam.att.com";
-            }
+
             client.setPathInfo("/authz/perms/user/"+user);
             client.send();
             Future<String> future = client.futureReadString();

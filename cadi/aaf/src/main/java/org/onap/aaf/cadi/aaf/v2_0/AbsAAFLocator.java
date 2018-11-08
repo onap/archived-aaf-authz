@@ -168,8 +168,10 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
     protected static String nameFromLocatorURI(URI locatorURI) {
         String[] path = Split.split('/', locatorURI.getPath());
-        if (path.length>2 && "locate".equals(path[1])) {
-            return path[2];
+        if (path.length>1 && "locate".equals(path[1])) {
+           return path[2];
+        } else if(path.length>1) {
+     		return path[1];
         } else {
             return locatorURI.toString();
         }

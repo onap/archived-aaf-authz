@@ -152,7 +152,9 @@ public class SecurityInfo {
     
     protected void initializeKeyManager() throws CadiException, IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         String keyStore = access.getProperty(Config.CADI_KEYSTORE, null);
-        if (keyStore != null && !new File(keyStore).exists()) {
+        if(keyStore==null) {
+        	return;
+        } else if (!new File(keyStore).exists()) {
             throw new CadiException(keyStore + " does not exist");
         }
 
@@ -201,16 +203,14 @@ public class SecurityInfo {
 
     protected void initializeTrustManager() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException, CadiException {
         String trustStore = access.getProperty(Config.CADI_TRUSTSTORE, null);
-        if (trustStore != null && !new File(trustStore).exists()) {
+        if(trustStore==null) {
+        	return; 
+        } else if(!new File(trustStore).exists()) {
             throw new CadiException(trustStore + " does not exist");
         }
 
-        if (trustStore == null) {
-            return;
-        }
-
         String trustStorePasswd = access.getProperty(Config.CADI_TRUSTSTORE_PASSWORD, null);
-        trustStorePasswd = (trustStorePasswd == null) ? "changeit"/*defacto Java Trust Pass*/ : access.decrypt(trustStorePasswd, false);
+        trustStorePasswd = (trustStorePasswd == null ) ? "changeit"/*defacto Java Trust Pass*/ : access.decrypt(trustStorePasswd, false);
 
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(SSL_KEY_MANAGER_FACTORY_ALGORITHM);
         File file;

@@ -90,7 +90,7 @@ public class JU_AbsAAFLocator {
     public void nameFromLocatorURITest() throws LocatorException, URISyntaxException {
         AAFLocatorStub loc = new AAFLocatorStub(access, "name:v2.0");
         assertThat(loc.getNameFromURI(new URI("example.com")), is("example.com"));
-        assertThat(loc.getNameFromURI(new URI("example.com/extra/stuff")), is("example.com/extra/stuff"));
+        assertThat(loc.getNameFromURI(new URI("example.com/extra/stuff")), is("extra"));
         assertThat(loc.getNameFromURI(new URI("example.com/locate/stuff")), is("stuff")); // n' stuff
     }
 
