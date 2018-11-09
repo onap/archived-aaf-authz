@@ -74,6 +74,8 @@ public class JU_PermEval {
 
         // Accept matching empty keys
         assertThat(PermEval.evalInstance(":", ":"), is(true));
+        assertThat(PermEval.evalInstance("/", "/"), is(true));
+        assertThat(PermEval.evalInstance("/something/", "/something/"), is(true));
 
         // Reject non-matching empty keys
         assertThat(PermEval.evalInstance(":fred", ":"), is(false));

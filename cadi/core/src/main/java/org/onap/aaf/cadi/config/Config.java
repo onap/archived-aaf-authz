@@ -103,7 +103,10 @@ public class Config {
     public static final String CADI_PROTOCOLS = "cadi_protocols";
     public static final String CADI_NOAUTHN = "cadi_noauthn";
     public static final String CADI_LOC_LIST = "cadi_loc_list";
+    
+    // Special Behaviors
     public static final String CADI_BATH_CONVERT = "cadi_bath_convert";
+    public static final String CADI_API_ENFORCEMENT = "cadi_api_enforcement";
     
     public static final String CADI_USER_CHAIN_TAG = "cadi_user_chain";
     public static final String CADI_USER_CHAIN = "USER_CHAIN";
@@ -410,7 +413,7 @@ public class Config {
                     oadtClss = Class.forName(OAUTH_DIRECT_TAF);
                 } catch (ClassNotFoundException e1) {
                     oadtClss = null;
-                    access.log(Level.INIT, e1);
+                    access.log(Level.DEBUG, e1);
                 }
                 if (additionalTafLurs!=null && additionalTafLurs.length>0 && (oadtClss!=null && additionalTafLurs[0].getClass().isAssignableFrom(oadtClss))) {
                     htlist.add((HttpTaf)additionalTafLurs[0]);

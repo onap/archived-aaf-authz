@@ -71,7 +71,7 @@ public class CadiFilter implements Filter {
     private static List<Pair> mapPairs;
     private Access access;
     private Object[] additionalTafLurs;
-    private Filter oauthFilter;
+    private SideChain sideChain;
     private static int count=0;
     
     public Lur getLur() {
@@ -140,6 +140,7 @@ public class CadiFilter implements Filter {
 
     @SuppressWarnings("unchecked")
     private void init(Get getter) throws ServletException {
+       sideChain = new SideChain();
         // Start with the assumption of "Don't trust anyone".
        TrustChecker tc = TrustChecker.NOTRUST; // default position
        try {
@@ -158,22 +159,9 @@ public class CadiFilter implements Filter {
            Class<Filter> cf=null;
            try {
                cf= (Class<Filter>) Class.forName("org.onap.aaf.cadi.oauth.OAuthFilter");
-               oauthFilter = cf.newInstance();
+               sideChain.add(cf.newInstance());
            } catch (ClassNotFoundException e) {
-               oauthFilter = new Filter() { // Null Filter
-                    @Override
-                    public void destroy() {
-                    }
-    
-                    @Override
-                    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)throws IOException, ServletException {
-                        chain.doFilter(req, resp);
-                    }
-    
-                    @Override
-                    public void init(FilterConfig arg0) throws ServletException {
-                    }
-               };
+        	   access.log(Level.DEBUG, "OAuthFilter not enabled");
            }
        } catch (Exception e) {
            access.log(Level.INIT, "AAFTrustChecker cannot be loaded",e.getMessage());
@@ -238,6 +226,11 @@ public class CadiFilter implements Filter {
             }
         }
 
+        // Add API Enforcement Point
+        String enforce = getter.get(Config.CADI_API_ENFORCEMENT, null, true); 
+        if(enforce!=null && enforce.length()>0) {
+        	sideChain.add(new CadiApiEnforcementFilter(access,enforce));
+        }
         // Remove Getter
         getter = Get.NULL;
     }
@@ -287,7 +280,7 @@ public class CadiFilter implements Filter {
                     CadiWrap cw = new CadiWrap(hreq, tresp, httpChecker.getLur(),getConverter(hreq));
                     if (httpChecker.notCadi(cw, hresp)) {
                         startCode=System.nanoTime();
-                        oauthFilter.doFilter(cw,response,chain);
+                        sideChain.doFilter(cw,response,chain);
                         code = Timing.millis(startCode);
                     }
                 }

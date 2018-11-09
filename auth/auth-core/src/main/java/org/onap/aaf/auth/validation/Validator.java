@@ -155,7 +155,7 @@ public class Validator {
     }
 
     public final Validator permInstance(String instance) {
-        if (nob(instance,instChars)) {
+    	if(!"/".equals(instance) && nob(instance,instChars)) {
             msg("Perm Instance [" + instance + "] is invalid.");
         }
         return this;

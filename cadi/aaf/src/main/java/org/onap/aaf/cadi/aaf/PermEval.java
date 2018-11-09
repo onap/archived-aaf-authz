@@ -77,7 +77,7 @@ public class PermEval {
                                 if (pass=sItem.length()==0) {
                                     break;                                  // Both Empty, keep checking
                                 }
-                            } else if (sItem.charAt(0)==START_REGEX_CHAR) { // Check Server side when wildcarding like *
+                            } else if (sItem.length()>0 && sItem.charAt(0)==START_REGEX_CHAR) { // Check Server side when wildcarding like *
                                 if (pass=pkeys[i].matches(sItem.substring(1))) {
                                     break;                                  // Matches, keep checking
                                 }
