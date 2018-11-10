@@ -69,8 +69,12 @@ vid2|ONAP VID Application 2|VID 2|ONAP Application|||a|aaf_admin
 dmaap-bc|ONAP DMaap BC Application|DMaap BC|ONAP Application|||a|aaf_admin
 dmaap-bc-topic-mgr|ONAP DMaap BC Topic Manager|DMaap BC Topic Manager|DMaap BC|||a|aaf_admin
 dmaap-bc-mm-prov|ONAP DMaap BC Provisioning Manager|DMaap BC Provision Manager|DMaap BC|||a|aaf_admin
-dmaap-mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
 dmaap-dr|ONAP DMaap DR|Prov|DMaap DR|||a|aaf_admin
 dmaap-dr-prov|ONAP DMaap DR Prov|Prov|DMaap MR|||a|aaf_admin
 dmaap-dr-node|ONAP DMaap DR Node|Node|DMaap MR|||a|aaf_admin
+dmaap-mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
+
+#deprecate these in Dublin
+dmaapmr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
+dmaap.mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
 
