@@ -44,8 +44,8 @@ log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] %m %n
 log4j.rootLogger=WARN.SRVR
 log4j.logger.org.apache=WARN,SRVR
 log4j.logger.com.datastax=WARN,SRVR
-log4j.logger.init=INFO,INIT
-log4j.logger.service=${LOGGING_LEVEL},SRVR
+log4j.logger.init=INFO,INIT,stdout
+log4j.logger.service=${LOGGING_LEVEL},SRVR,stdout
 log4j.logger.audit=INFO,AUDIT
 # Additional configs, not cauth with Root Logger
 log4j.logger.io.netty=INFO,SRVR
