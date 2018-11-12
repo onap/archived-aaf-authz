@@ -81,7 +81,7 @@ public class MapBathConverter {
 			@Override
 			public void visit(List<String> row) throws CadiException {
 				if(row.size()<3) {
-					throw new CadiException("CSV file " + csv + " must have at least 2 Basic Auth columns and an Expiration Date(YYYYMMDD) in each row");
+					throw new CadiException("CSV file " + csv + " must have at least 2 Basic Auth columns and an Expiration Date(YYYY-MM-DD) in each row");
 				}
 				try {
 					Date date = sdf.parse(row.get(2));
