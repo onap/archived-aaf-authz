@@ -124,7 +124,7 @@
 						</includes>
 						<excludes>
 						</excludes>
-
+						<useSystemClassLoader>false</useSystemClassLoader>
 					</configuration>
 				</plugin>
 
