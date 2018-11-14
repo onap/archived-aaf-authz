@@ -59,7 +59,7 @@ New Features:
 
 
 Bug Fixes
-   - `AAF-290 <https://jira.onap.org/browse/AAF-290>`_ Fix aaf trusrstore
+   - `AAF-290 <https://jira.onap.org/browse/AAF-290>`_ Fix aaf truststore
    - `AAF-270 <https://jira.onap.org/browse/AAF-270>`_ AAF fails health check on HEAT deployment
    - `AAF-286 <https://jira.onap.org/browse/AAF-286>`_ SMS fails health check on OOM deployment
    - `AAF-273 <https://jira.onap.org/browse/AAF-273>`_ Cassandra pod running over 8G heap - or 10% of ONAP ram (for 135 other pods on 256G 4 node cluster)
