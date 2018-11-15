@@ -17,12 +17,14 @@ Properties are separated into
  * local
    * where there is Machine specific information (i.e. GEO Location (Latitude/Longitude)
    * where this is Machine specific Certificates (for running services)
-       * This is because the certificates used must match the Endpoint that the Container is running on
-       * Note Certificate Manager can Place all these components together in one place.
-           * For April, 2018, please write Jonathan.gathman@att.com for credentials until TEST Env with Certificate Manager is fully tested.  Include
-           1. AAF Namespace (you MUST be the owner for the request to be accepted)
-           2. Fully Qualified App ID (ID + Namespace)
-           3. Machine to be deployed on.
+
+     * This is because the certificates used must match the Endpoint that the Container is running on
+     * Note Certificate Manager can Place all these components together in one place.
+
+       * For April, 2018, please write Jonathan.gathman@att.com for credentials until TEST Env with Certificate Manager is fully tested.  Include
+         1. AAF Namespace (you MUST be the owner for the request to be accepted)
+         2. Fully Qualified App ID (ID + Namespace)
+         3. Machine to be deployed on.
 		   
 Client Credentials
 ------------------
@@ -211,3 +213,4 @@ Note the FULL class is available in the authz repo, cadi_aaf/org/onap/aaf/client
         }
     }
   }
+
