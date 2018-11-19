@@ -4,48 +4,9 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright © 2017 AT&T Intellectual Property. All rights reserved.
 
-Summary
-Essentials
-Technologies required to run AAF
+=======================================
 Optional Technologies for special cases
-Data Definitions
-AAF Data Definitions
-ILM (Identity Lifecycle Management)
-Initializing Default Implementation
-Extract Sample Configuration
-Certificate Authority
-Creating your own Certificate Authority (if desired)
-Create your Intermediate CAs
-Use the Intermediate CA for creating Service/Identity Certs (can be utilized by Certman with LocalCA)
-Copy initializations to Host Machine
-Load Data and/or Meta-Data into Cassandra
-Build Source
-Run Java
-
-Summary
--------
-
-AAF Components are all Java(tm) HTTP/S based RESTful services, with the following exceptions:
-
- - AAF GUI component is an HTTP/S HTML5 generating component.  It uses the same code base, but isn't strictly RESTful according to definition.
- - AAF FS component is a FileServer, and is HTTP only (not TLS), so it can deliver publicly accessible artifacts without Authentication.
-
-Essentials
-==========
-
-Technologies required to run AAF
---------------------------------
-
- - Java(tm).  Version 8.121+
-   - Oracle Java previous to Oracle Java SE 8 to version 8 Update 121 is vulnerable to "SWEET32" attack.
-
-     1369383 - CVE-2016-2183 SSL/TLS: Birthday attack against 64-bit block ciphers (SWEET32)
-
- - Cassandra, Version 2.1.14+
- - X509 Certificates (at minimum to support HTTP/S TLS transactions (TLS1.1 and TLS1.2 are default, but can be configured).
-
-Optional Technologies for special cases
----------------------------------------
+=======================================
 
  - Build your own Certificate Authority for Bootstrapping and/or Certificate Manager component.
    - openssl
@@ -244,8 +205,9 @@ Setting this initial Data can be done directly onto Cassadra using "cqlsh" using
 
 init<version>.cql (whatever is latest in the "zip" file)
 osaaf.cql
-      This file contains initial Authorization Structures, see AAF Data Structures. 
-            This is where you would modify your own initial Structures.
+| This file contains initial Authorization Structures, see AAF Data Structures. 
+| This is where you would modify your own initial Structures.
+
 Build Source
 (if not done already)
 
