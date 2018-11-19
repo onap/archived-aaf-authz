@@ -19,6 +19,19 @@ Where to Access Information
 ---------------------------
 AAF uses log4j framework to generate logs and all the logs are stored in a persistent volume.
 
+* For Standalone O/S, logs are placed on the machine. cd as follows
+* For any AAF Container or Kubernetes, get a bash prompt into that container. Then cd as follows.
+
+.. code:: bash
+
+  $ cd /opt/app/osaaf/logs
+
+For convenience, there is a tool to easily tail all component's transactions realtime, from this directory:
+
+.. code:: bash
+
+ $ bash taillog
+
 Error / Warning Messages
 ------------------------
 Following are the error codes
