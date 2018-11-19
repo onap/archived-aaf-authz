@@ -3,14 +3,14 @@
 .. Copyright © 2017 AT&T Intellectual Property. All rights reserved.
 
 ========================================
-Setting up Certs and CADI Configurations
+Automated Configuration and Certificates
 ========================================
 
 *Note: this document assumes UNIX Bash Shell.  Being Java, AAF works in Windows, but you will have to create your own script/instruction conversions.*
 
-------------------
+--------
 Strategy
-------------------
+--------
 
 ONAP is deployed in Docker Containers or Kubernetes managed Docker Containers.  Therefore, this instruction utilizes a Docker Container as a standalone Utility... (This means that this container will stop as soon as it is done with its work... it is not a long running daemon)
 
@@ -147,5 +147,15 @@ In a large org, there are probably many Operations teams to support many differe
 
   In ONAP test, 
      The **Deployer** is always set to "deployer@people.osaaf.org" for all Apps.
+
+
+
+
+
+
+
+
+
+
 
 
