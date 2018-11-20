@@ -33,6 +33,7 @@ import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.onap.aaf.cadi.AbsUserCache;
@@ -57,6 +58,7 @@ import org.onap.aaf.cadi.taf.HttpTaf;
 import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
 import org.onap.aaf.cadi.taf.cert.X509Taf;
 import org.onap.aaf.cadi.taf.dos.DenialOfServiceTaf;
+import org.onap.aaf.cadi.util.Split;
 
 /**
  * Create a Consistent Configuration mechanism, even when configuration styles are as vastly different as
@@ -107,6 +109,8 @@ public class Config {
     // Special Behaviors
     public static final String CADI_BATH_CONVERT = "cadi_bath_convert";
     public static final String CADI_API_ENFORCEMENT = "cadi_api_enforcement";
+    public static final String CADI_ADD_TAFS = "cadi_add_tafs";
+    public static final String CADI_ADD_LURS = "cadi_add_lurs";
     
     public static final String CADI_USER_CHAIN_TAG = "cadi_user_chain";
     public static final String CADI_USER_CHAIN = "USER_CHAIN";
@@ -271,14 +275,14 @@ public class Config {
         
         access.log(Level.INIT, "Hostname set to",hostname);
         // Get appropriate TAFs
-        ArrayList<HttpTaf> htlist = new ArrayList<>();
+        ArrayList<Priori<HttpTaf>> htlist = new ArrayList<>();
 
         /////////////////////////////////////////////////////
         // Add a Denial of Service TAF
         // Note: how IPs and IDs are added are up to service type.
         // They call "DenialOfServiceTaf.denyIP(String) or denyID(String)
         /////////////////////////////////////////////////////
-        htlist.add(new DenialOfServiceTaf(access));
+        htlist.add(new Priori<HttpTaf>(new DenialOfServiceTaf(access),0));
 
         /////////////////////////////////////////////////////
         // Configure Client Cert TAF
@@ -297,7 +301,7 @@ public class Config {
                 }
                 try {
                     x509TAF=new X509Taf(access,lur);
-                    htlist.add(x509TAF);
+                    htlist.add(new Priori<HttpTaf>(x509TAF,10));
                     access.log(Level.INIT,"Certificate Authorization enabled");
                 } catch (SecurityException | IllegalArgumentException e) {
                     access.log(Level.INIT,"AAFListedCertIdentity cannot be instantiated. Certificate Authorization is now disabled",e);
@@ -334,7 +338,7 @@ public class Config {
                                 access.log(Level.INIT,"Both tokenurl and introspecturl are required. Oauth Authorization is disabled.");
                             }
                             Constructor<HttpTaf> obasicConst = obasicCls.getConstructor(PropAccess.class,String.class, String.class, String.class);
-                            htlist.add(obasicConst.newInstance(access,basicRealm,tokenurl,introspecturl));
+                            htlist.add(new Priori<HttpTaf>(obasicConst.newInstance(access,basicRealm,tokenurl,introspecturl),20));
                             access.log(Level.INIT,"Oauth supported Basic Authorization is enabled");
                         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                             access.log(Level.INIT, e);
@@ -355,7 +359,7 @@ public class Config {
                         if (x509TAF!=null) {
                             x509TAF.add(bht);
                         }
-                        htlist.add(bht);
+                        htlist.add(new Priori<HttpTaf>(bht,20));
                         access.log(Level.INIT,"Basic Authorization is enabled");
                     }
                 } else {
@@ -416,7 +420,7 @@ public class Config {
                     access.log(Level.DEBUG, e1);
                 }
                 if (additionalTafLurs!=null && additionalTafLurs.length>0 && (oadtClss!=null && additionalTafLurs[0].getClass().isAssignableFrom(oadtClss))) {
-                    htlist.add((HttpTaf)additionalTafLurs[0]);
+                    htlist.add(new Priori<HttpTaf>((HttpTaf)additionalTafLurs[0],30));
                     String[] array= new String[additionalTafLurs.length-1];
                     if (array.length>0) {
                         System.arraycopy(htlist, 1, array, 0, array.length);
@@ -434,7 +438,7 @@ public class Config {
                                 Method oaTTmgrGI = oaTTmgrCls.getMethod("getInstance",PropAccess.class,String.class,String.class);
                                 Object oaTTmgr = oaTTmgrGI.invoke(null /*this is static method*/,access,oauthTokenUrl,oauthIntrospectUrl);
                                 Constructor<HttpTaf> oaTConst = oaTCls.getConstructor(Access.class,oaTTmgrCls);
-                                htlist.add(oaTConst.newInstance(access,oaTTmgr));
+                                htlist.add(new Priori<HttpTaf>(oaTConst.newInstance(access,oaTTmgr),30));
                                 access.log(Level.INIT,"OAuth2 TAF is enabled");
                             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
                                 access.log(Level.INIT,"OAuth2HttpTaf cannot be instantiated. OAuth2 is disabled",e);
@@ -451,14 +455,15 @@ public class Config {
             // Needs to be before Cert... see below
             /////////////////////////////////////////////////////
             if (aaftaf!=null) {
-                htlist.add(aaftaf);
+                htlist.add(new Priori<HttpTaf>(aaftaf,40));
             }
         }    
 
         /////////////////////////////////////////////////////
-        // Any Additional Lurs passed in Constructor
+        // Any Additional Tafs passed in Constructor
         /////////////////////////////////////////////////////
         if (additionalTafLurs!=null) {
+        	int i=0;
             for (Object additional : additionalTafLurs) {
                 if (additional instanceof BasicHttpTaf) {
                     BasicHttpTaf ht = (BasicHttpTaf)additional;
@@ -468,10 +473,10 @@ public class Config {
                             access.printf(Level.INIT,"%s Authentication is enabled",cv);
                         }
                     }
-                    htlist.add(ht);
+                    htlist.add(new Priori<HttpTaf>(ht,50+i++));
                 } else if (additional instanceof HttpTaf) {
                     HttpTaf ht = (HttpTaf)additional;
-                    htlist.add(ht);
+                    htlist.add(new Priori<HttpTaf>(ht,50+i++));
                     access.printf(Level.INIT,"%s Authentication is enabled",additional.getClass().getSimpleName());
                 } else if (hasOAuthDirectTAF) {
                     Class<?> daupCls;
@@ -482,7 +487,7 @@ public class Config {
                         access.log(Level.INIT, e);
                     }
                     if (daupCls != null && additional.getClass().isAssignableFrom(daupCls)) {
-                        htlist.add(new BasicHttpTaf(access, (CredVal)additional , basicRealm, userExp, basicWarn));
+                        htlist.add(new Priori<HttpTaf>(new BasicHttpTaf(access, (CredVal)additional , basicRealm, userExp, basicWarn),50+i++));
                         access.printf(Level.INIT,"Direct BasicAuth Authentication is enabled",additional.getClass().getSimpleName());
                     }
                 }
@@ -491,21 +496,39 @@ public class Config {
         
         // Add BasicAuth, if any, to x509Taf
         if (x509TAF!=null) {
-            for ( HttpTaf ht : htlist) {
-                if (ht instanceof BasicHttpTaf) {
-                    x509TAF.add((BasicHttpTaf)ht);
+            for ( Priori<HttpTaf> ht : htlist) {
+                if (ht.t instanceof BasicHttpTaf) {
+                    x509TAF.add((BasicHttpTaf)ht.t);
                 }
             }
         }
+        
+        /////////////////////////////////////////////////////
+        // Additional TAFs by Plugin
+        /////////////////////////////////////////////////////
+        Priori.add(access, CADI_ADD_TAFS, htlist);
+        
         /////////////////////////////////////////////////////
         // Create EpiTaf from configured TAFs
         /////////////////////////////////////////////////////
         if (htlist.size()==1) {
             // just return the one
-            taf = htlist.get(0);
+            taf = htlist.get(0).t;
         } else {
+        	Collections.sort(htlist);
             HttpTaf[] htarray = new HttpTaf[htlist.size()];
-            htlist.toArray(htarray);
+            int i=-1;
+            StringBuilder sb = new StringBuilder("Tafs processed in this order:\n");
+            for(Priori<HttpTaf> pht : htlist) {
+            	htarray[++i] = pht.t;
+            	sb.append("    ");
+            	sb.append(pht.t.getClass().getName());
+            	sb.append('(');
+            	sb.append(pht.priority);
+            	sb.append(")\n");
+            }
+            access.log(Level.INIT, sb);
+
             Locator<URI> locator = loadLocator(si, logProp(access, AAF_LOCATE_URL, null));
             
             taf = new HttpEpiTaf(access,locator, tc, htarray); // ok to pass locator == null
@@ -530,7 +553,7 @@ public class Config {
     
     public static Lur configLur(SecurityInfoC<HttpURLConnection> si, Connector con, Object ... additionalTafLurs) throws CadiException {
         Access access = si.access;
-        List<Lur> lurs = new ArrayList<>();
+        List<Priori<Lur>> lurs = new ArrayList<>();
         
         /////////////////////////////////////////////////////
         // Configure a Local Property Based RBAC/LUR
@@ -541,7 +564,7 @@ public class Config {
 
             if (groups!=null || users!=null) {
                 LocalLur ll = new LocalLur(access, users, groups);  // note b64==null is ok.. just means no encryption.
-                lurs.add(ll);
+                lurs.add(new Priori<Lur>(ll,10));
                 
                 String writeto = access.getProperty(WRITE_TO,null);
                 if (writeto!=null) {
@@ -566,7 +589,7 @@ public class Config {
                 if (olurCls!=null) {
                     Constructor<?> olurCnst = olurCls.getConstructor(PropAccess.class,String.class,String.class);
                     Lur olur = (Lur)olurCnst.newInstance(access,tokenUrl,introspectUrl);
-                    lurs.add(olur);
+                    lurs.add(new Priori<Lur>(olur,20));
                     access.log(Level.INIT, "OAuth2 LUR enabled");
                 } else {
                     access.log(Level.INIT,"AAF/OAuth LUR plugin is not available.");
@@ -583,7 +606,7 @@ public class Config {
         }
 
         if (con!=null) { // try to reutilize connector
-            lurs.add(con.newLur());
+            lurs.add(new Priori<Lur>(con.newLur(),30));
         } else { 
             /////////////////////////////////////////////////////
             // Configure the AAF Lur (if any)
@@ -625,7 +648,7 @@ public class Config {
                                         access.log(Level.INIT,"ERROR! AAF LUR Failed construction.  NOT Configured");
                                     } else {
                                         access.log(Level.INIT,"AAF LUR Configured to ",aafURL);
-                                        lurs.add((Lur)aaflur);
+                                        lurs.add(new Priori<Lur>((Lur)aaflur,40));
                                         String debugIDs = logProp(access,Config.AAF_DEBUG_IDS, null);
                                         if (debugIDs !=null && aaflur instanceof CachingLur) {
                                             ((CachingLur<?>)aaflur).setDebug(debugIDs);
@@ -645,13 +668,19 @@ public class Config {
         // Any Additional passed in Constructor
         /////////////////////////////////////////////////////
         if (additionalTafLurs!=null) {
+        	int i=0;
             for (Object additional : additionalTafLurs) {
                 if (additional instanceof Lur) {
-                    lurs.add((Lur)additional);
+                    lurs.add(new Priori<Lur>((Lur)additional,50+i++));
                     access.log(Level.INIT, additional);
                 }
             }
         }
+
+        /////////////////////////////////////////////////////
+        // Additional LURs by Plugin
+        /////////////////////////////////////////////////////
+        Priori.add(access, CADI_ADD_LURS, lurs);       
 
         /////////////////////////////////////////////////////
         // Return a Lur based on how many there are... 
@@ -662,11 +691,22 @@ public class Config {
                 // Return a NULL Lur that does nothing.
                 return new NullLur();
             case 1:
-                return lurs.get(0); // Only one, just return it, save processing
+                return lurs.get(0).t; // Only one, just return it, save processing
             default:
                 // Multiple Lurs, use EpiLUR to handle
+            	Collections.sort(lurs);
                 Lur[] la = new Lur[lurs.size()];
-                lurs.toArray(la);
+                int i=-1;
+                StringBuilder sb = new StringBuilder("Lurs processed in this order:\n");
+                for(Priori<Lur> pht : lurs) {
+                	la[++i] = pht.t;
+                	sb.append("    ");
+                	sb.append(pht.t.getClass().getName());
+                	sb.append('(');
+                	sb.append(pht.priority);
+                	sb.append(")\n");
+                }
+                access.log(Level.INIT, sb);
                 return new EpiLur(la);
         }
     }
@@ -807,5 +847,66 @@ public class Config {
         return defaultRealm;
     }
 
+    private static class Priori<T> implements Comparable<Priori<T>> {
+    	public final T t;
+    	public final int priority;
+    	
+    	public Priori(final T t, final int priority) {
+    		this.t = t;
+    		this.priority = priority;
+    	}
+
+		@Override
+		public int compareTo(Priori<T> o) {
+			if(priority==o.priority) {
+				return 0;
+			} else if(priority<o.priority) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+	    public static<T> void add(Access access, final String tag, List<Priori<T>> list) {
+		    String plugins = access.getProperty(tag, null);
+		    if(plugins!=null) {
+		    	for(String tafs : Split.splitTrim(';', plugins)) {
+		    		String[] pluginArray = Split.splitTrim(',', tafs);
+		    		String clssn = null;
+		    		int priority = 60;
+		    		switch(pluginArray.length) {
+		    			case 0:
+		    				break;
+		    			case 1:
+		    				clssn = tafs;
+		    				break;
+		    			default:
+		    				clssn = pluginArray[0];
+		    				try {
+		    					priority = Integer.parseInt(pluginArray[1]);
+		    				} catch (NumberFormatException nfe) {
+		    					access.printf(Level.ERROR, "%s format is <classname>,priority[;...]\n",CADI_ADD_TAFS);
+		    				}
+		    		}
+		    		
+		    		if(clssn!=null) {
+		    			Class<?> cls = loadClass(access, clssn);
+		    			if(cls!=null) {
+		    				try {
+								@SuppressWarnings("unchecked")
+								Constructor<T> cnst = (Constructor<T>)cls.getConstructor(Access.class);
+			            		try {
+									list.add(new Priori<T>(cnst.newInstance(access),priority));
+								} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+									access.printf(Level.ERROR, "%s cannot be constructed with Access.\n",clssn);
+								}
+							} catch (NoSuchMethodException | SecurityException e) {
+								access.printf(Level.ERROR, "%s needs a Constructor taking Access as sole param.\n",clssn);
+							}
+		    			}
+		    		}
+		    	}
+		    }
+		}
+   }
 }
 
