@@ -48,10 +48,14 @@ import com.datastax.driver.core.ResultSetFuture;
  */
 public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS, DATA> implements DAO<TRANS,DATA> {
     public static final String USER_NAME = "__USER_NAME__";
+    public static final String CASS_READ_CONSISTENCY="cassandra.readConsistency";
+    public static final String CASS_WRITE_CONSISTENCY="cassandra.writeConsistency";
     protected static final String CREATE_SP = "CREATE ";
     protected static final String UPDATE_SP = "UPDATE ";
     protected static final String DELETE_SP = "DELETE ";
     protected static final String SELECT_SP = "SELECT ";
+    private static final String WHERE = " WHERE ";
+    private static final String READ_IS_DISABLED = "Read is disabled for %s";
 
     protected final String C_TEXT = getClass().getSimpleName() + " CREATE";
     protected final String R_TEXT = getClass().getSimpleName() + " READ";
@@ -59,7 +63,14 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
     protected final String D_TEXT = getClass().getSimpleName() + " DELETE";
     private String table;
     
-    protected final ConsistencyLevel readConsistency,writeConsistency;
+    protected final ConsistencyLevel readConsistency;
+    protected final ConsistencyLevel writeConsistency;
+
+    protected PSInfo createPS;
+    protected PSInfo readPS;
+    protected PSInfo updatePS;
+    protected PSInfo deletePS;
+    protected boolean async=false;
     
     // Setteable only by CachedDAO
     protected Cached<?, ?> cache;
@@ -95,12 +106,6 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
         writeConsistency = write;
     }
 
-    protected PSInfo createPS;
-    protected PSInfo readPS;
-    protected PSInfo updatePS;
-    protected PSInfo deletePS;
-    protected boolean async=false;
-
     public void async(boolean bool) {
         async = bool;
     }
@@ -111,7 +116,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
     
     public final String[] setCRUD(TRANS trans, String table, Class<?> dc,Loader<DATA> loader, int max) {
                 Field[] fields = dc.getDeclaredFields();
-                int end = max>=0 & max<fields.length?max:fields.length;
+                int end = max>=0 && max<fields.length?max:fields.length;
                 // get keylimit from a non-null Loader
                 int keylimit = loader.keylimit();
             
@@ -146,16 +151,16 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
             
                     createPS = new PSInfo(trans, "INSERT INTO " + table + " ("+ sbfc +") VALUES ("+ sbq +");",loader,writeConsistency);
             
-                    readPS = new PSInfo(trans, "SELECT " + sbfc + " FROM " + table + " WHERE " + sbwc + ';',loader,readConsistency);
+                    readPS = new PSInfo(trans, SELECT_SP + sbfc + " FROM " + table + WHERE + sbwc + ';',loader,readConsistency);
             
                     // Note: UPDATES can't compile if there are no fields besides keys... Use "Insert"
                     if (sbup.length()==0) {
                         updatePS = createPS; // the same as an insert
                     } else {
-                        updatePS = new PSInfo(trans, "UPDATE " + table + " SET " + sbup + " WHERE " + sbwc + ';',loader,writeConsistency);
+                        updatePS = new PSInfo(trans, UPDATE_SP + table + " SET " + sbup + WHERE + sbwc + ';',loader,writeConsistency);
                     }
             
-                    deletePS = new PSInfo(trans, "DELETE FROM " + table + " WHERE " + sbwc + ';',loader,writeConsistency);
+                    deletePS = new PSInfo(trans, "DELETE FROM " + table + WHERE + sbwc + ';',loader,writeConsistency);
                 }
                 return new String[] {sbfc.toString(), sbq.toString(), sbup.toString(), sbwc.toString()};
             }
@@ -207,21 +212,21 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
      */
     public Result<List<DATA>> read(TRANS trans, DATA data) {
         if (readPS==null) {
-            return Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
+            return Result.err(Result.ERR_NotImplemented,READ_IS_DISABLED,getClass().getSimpleName());
         }
         return readPS.read(trans, R_TEXT, data);
     }
 
     public Result<List<DATA>> read(TRANS trans, Object ... key) {
         if (readPS==null) {
-            return Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
+            return Result.err(Result.ERR_NotImplemented,READ_IS_DISABLED,getClass().getSimpleName());
         }
         return readPS.read(trans, R_TEXT, key);
     }
     
     public Result<DATA> readPrimKey(TRANS trans, Object ... key) {
         if (readPS==null) {
-            return Result.err(Result.ERR_NotImplemented,"Read is disabled for %s",getClass().getSimpleName());
+            return Result.err(Result.ERR_NotImplemented,READ_IS_DISABLED,getClass().getSimpleName());
         }
         Result<List<DATA>> rld = readPS.read(trans, R_TEXT, key);
         if (rld.isOK()) {
@@ -312,9 +317,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
     public String table() {
         return table;
     }
-    
-    public static final String CASS_READ_CONSISTENCY="cassandra.readConsistency";
-    public static final String CASS_WRITE_CONSISTENCY="cassandra.writeConsistency";
+
     protected static ConsistencyLevel readConsistency(AuthzTrans trans, String table) {
         String prop = trans.getProperty(CASS_READ_CONSISTENCY+'.'+table);
         if (prop==null) {
