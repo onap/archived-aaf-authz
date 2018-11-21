@@ -16,25 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END====================================================
- *
  */
-package org.onap.aaf.auth.org;
 
-import java.util.List;
+package org.onap.aaf.auth.helpers;
 
-import org.onap.aaf.auth.env.AuthzTrans;
-
-public interface Mailer {
-    public int sendEmail(
-            AuthzTrans trans,
-            boolean testMode,
-            String mailFrom,
-            List<String> toList, 
-            List<String> ccList, 
-            String subject, 
-            String body,
-            Boolean urgent) throws OrganizationException;
-
-	public String mailFrom();
-
+public interface Visitor<T> {
+	void visit(T t);
 }

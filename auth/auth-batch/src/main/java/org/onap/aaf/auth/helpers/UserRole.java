@@ -33,6 +33,7 @@ import org.onap.aaf.auth.actions.URDelete;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -105,19 +106,19 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         return byRole;
     }
 
-    public static void load(Trans trans, Session session, Creator<UserRole> creator ) {
-        load(trans,session,creator,null);
+    public static void load(Trans trans, Session session, Creator<UserRole> creator, Visitor<UserRole> visitor ) {
+        load(trans,session,creator,null,visitor);
     }
 
-    public static void loadOneRole(Trans trans, Session session, Creator<UserRole> creator, String role) {
-        load(trans,session,creator,"role='" + role +"' ALLOW FILTERING;");
+    public static void loadOneRole(Trans trans, Session session, Creator<UserRole> creator, String role, Visitor<UserRole> visitor) {
+        load(trans,session,creator,"role='" + role +"' ALLOW FILTERING;",visitor);
     }
     
-    public static void loadOneUser(Trans trans, Session session, Creator<UserRole> creator, String user ) {
-        load(trans,session,creator,"role='"+ user +"';");
+    public static void loadOneUser(Trans trans, Session session, Creator<UserRole> creator, String user, Visitor<UserRole> visitor ) {
+        load(trans,session,creator,"role='"+ user +"';",visitor);
     }
 
-    private static void load(Trans trans, Session session, Creator<UserRole> creator, String where) {
+    private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
         String query = creator.query(where);
         trans.info().log( "query: " + query );
         TimeTaken tt = trans.start("Read UserRoles", Env.REMOTE);
@@ -132,7 +133,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         try {
             tt = trans.start("Load UserRole", Env.SUB);
             try {
-                        iterateResults(creator, results.iterator());
+                iterateResults(creator, results.iterator(), visitor);
             } finally {
                 tt.done();
             }
@@ -141,12 +142,19 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         }
     }
 
-    private static void iterateResults(Creator<UserRole> creator, Iterator<Row> iter ) {
+    private static void iterateResults(Creator<UserRole> creator, Iterator<Row> iter, Visitor<UserRole> visit ) {
         Row row;
         while (iter.hasNext()) {
             ++totalLoaded;
             row = iter.next();
             UserRole ur = creator.create(row);
+            visit.visit(ur);
+        }
+    }
+
+    public static class DataLoadVisitor implements Visitor<UserRole> {
+		@Override
+		public void visit(UserRole ur) {
             data.add(ur);
 
             List<UserRole> lur = byUser.get(ur.urdd.user);
@@ -162,9 +170,9 @@ public class UserRole implements Cloneable, CacheChange.Data  {
                 byRole.put(ur.urdd.role, lur);
             }
             lur.add(ur);
-        }
+		}
     }
-
+    
     public int totalLoaded() {
         return totalLoaded;
     }
@@ -295,5 +303,18 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         cache.getRemoved().clear();
         cache.resetLocalData();
     }
+
+    public void row(CSV.Writer csvw) {
+    	csvw.row("ur",user(),role(),Chrono.dateOnlyStamp(expires()));
+    }
+    
+    public static void row(StringBuilder sb, List<String> row) {
+    	sb.append("DELETE from authz.user_role WHERE user='");
+    	sb.append(row.get(1));
+    	sb.append("' AND role='");
+    	sb.append(row.get(2));
+    	sb.append("';\n");
+    }
+    
 
 }

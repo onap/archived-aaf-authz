@@ -66,7 +66,7 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 
-public class Expiring extends Batch {
+public class ExpiringOrig extends Batch {
     private CredPrint crPrint;
     private URFutureApprove urFutureApprove;
     private URFutureApproveExec urFutureApproveExec;
@@ -81,7 +81,7 @@ public class Expiring extends Batch {
     private Email email;
     private File deletesFile;
 
-    public Expiring(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+    public ExpiringOrig(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
         
@@ -124,7 +124,7 @@ public class Expiring extends Batch {
                 urDeleteF = new PrintStream(new FileOutputStream(deletesFile = new File(data_dir,"UserRoleDeletes.dat"),false)));
             UserRole.setRecoverStream(
                 urRecoverF = new PrintStream(new FileOutputStream(new File(data_dir,"UserRoleRecover.dat"),false)));
-            UserRole.load(trans, session, UserRole.v2_0_11);
+            UserRole.load(trans, session, UserRole.v2_0_11, new UserRole.DataLoadVisitor());
             
             Cred.load(trans, session);
             NS.load(trans, session,NS.v2_0_11);
@@ -492,7 +492,7 @@ public class Expiring extends Batch {
     
     @Override
     protected void _close(AuthzTrans trans) {
-        aspr.info("End " + this.getClass().getSimpleName() + " processing" );
+        trans.info().log("End",this.getClass().getSimpleName(),"processing" );
         for (Action<?,?,?> action : new Action<?,?,?>[] {crDelete}) {
             if (action instanceof ActionDAO) {
                 ((ActionDAO<?,?,?>)action).close(trans);

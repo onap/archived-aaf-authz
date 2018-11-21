@@ -45,8 +45,8 @@ public class CSV {
 		csv = file;
 	}
 	
-	public CSV(String csvOfProperties) {
-		csv = new File(csvOfProperties);
+	public CSV(String csvFilename) {
+		csv = new File(csvFilename);
 	}
 	
 
@@ -126,13 +126,17 @@ public class CSV {
 	}
 	
 	public Writer writer() throws FileNotFoundException {
-		return new Writer();
+		return new Writer(false);
 	}
-	
+
+	public Writer writer(boolean append) throws FileNotFoundException {
+		return new Writer(append);
+	}
+
 	public class Writer {
 		private PrintStream ps;
-		private Writer() throws FileNotFoundException {
-			ps = new PrintStream(new FileOutputStream(csv));
+		private Writer(final boolean append) throws FileNotFoundException {
+			ps = new PrintStream(new FileOutputStream(csv,append));
 		}
 		public void row(Object ... strings) {
 			if(strings.length>0) {
@@ -176,6 +180,10 @@ public class CSV {
 		
 		public void close() {
 			ps.close();
+		}
+		
+		public String toString() {
+			return csv.getAbsolutePath();
 		}
 	}
 

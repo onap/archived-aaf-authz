@@ -34,6 +34,7 @@ sed -e 's/${AAF_VERSION}/'${VERSION}'/g' $DIR/Dockerfile.cass > Dockerfile
 cd ..
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
+cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass
 
 echo $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
@@ -44,5 +45,6 @@ cd -
 rm Dockerfile
 rm -Rf cass_data
 rm sample.identities.dat
+rm aaf-auth-batch-$VERSION-full.jar
 cd $DIR
 

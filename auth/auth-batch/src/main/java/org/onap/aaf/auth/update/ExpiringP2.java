@@ -141,7 +141,7 @@ public class ExpiringP2 extends Batch {
     
     @Override
     protected void _close(AuthzTrans trans) {
-        aspr.info("End " + this.getClass().getSimpleName() + " processing" );
+        trans.info().log("End",this.getClass().getSimpleName(),"processing" );
         for (Action<?,?,?> action : new Action<?,?,?>[] {urDelete,cacheTouch}) {
                 if (action instanceof ActionDAO) {
                     ((ActionDAO<?,?,?>)action).close(trans);

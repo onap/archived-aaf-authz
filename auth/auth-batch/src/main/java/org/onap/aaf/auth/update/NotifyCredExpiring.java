@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.onap.aaf.auth.Batch;
 import org.onap.aaf.auth.BatchPrincipal;
@@ -43,20 +44,18 @@ import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.helpers.Cred;
 import org.onap.aaf.auth.helpers.Notification;
-import org.onap.aaf.auth.helpers.UserRole;
 import org.onap.aaf.auth.helpers.Notification.TYPE;
+import org.onap.aaf.auth.helpers.UserRole;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.EmailWarnings;
 import org.onap.aaf.auth.org.Organization;
+import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
-import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
-
-import java.util.TreeMap;
 
 
 public class NotifyCredExpiring extends Batch {
@@ -109,7 +108,7 @@ public class NotifyCredExpiring extends Batch {
 
         Cred.load(trans, session,CredDAO.BASIC_AUTH, CredDAO.BASIC_AUTH_SHA256);
         Notification.load(trans, session, Notification.v2_0_18);
-        UserRole.load(trans, session, UserRole.v2_0_11);
+        UserRole.load(trans, session, UserRole.v2_0_11, new UserRole.DataLoadVisitor());
         
         ps = new PrintStream(new FileOutputStream(logDir() + "/email"+Chrono.dateOnlyStamp()+".log",true));
         ps.printf("### Approval Notify %s for %s%s\n",Chrono.dateTime(),batchEnv,dryRun?", DryRun":"");

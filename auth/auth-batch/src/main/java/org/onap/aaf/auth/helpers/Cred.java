@@ -32,9 +32,12 @@ import java.util.TreeMap;
 
 import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.dao.hl.Question;
+import org.onap.aaf.auth.helpers.Cred.Instance;
+import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
+import org.onap.aaf.misc.env.util.Chrono;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -66,6 +69,10 @@ public class Cred  {
             this.expires = expires;
             this.other = other;
             this.written = new Date(written);
+        }
+        
+        public String toString() {
+        	return expires.toString() + type;
         }
     }
     
@@ -175,7 +182,7 @@ public class Cred  {
             trans.info().log("Found",count,"creds");
         }
     }
-    
+
     /** 
      * Count entries in Cred data.
      * Note, as opposed to other methods, need to load the whole cred table for the Types.
@@ -190,17 +197,6 @@ public class Cred  {
             }
         }
         return cc;
-//        String query = "select count(*) from authz.cred LIMIT 1000000;";
-//        trans.info().log( "query: " + query );
-//        TimeTaken tt = trans.start("Count Credentials", Env.REMOTE);
-//        ResultSet results;
-//        try {
-//            Statement stmt = new SimpleStatement(query).setReadTimeoutMillis(12000);
-//            results = session.execute(stmt);
-//            return results.one().getLong(0);
-//        } finally {
-//            tt.done();
-//        }
     }
 
     public static class CredCount {
@@ -273,7 +269,23 @@ public class Cred  {
 
     }
     
-    public String toString() {
+    public void row(CSV.Writer csvw, Instance inst) {
+    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),Long.toString(inst.expires.getTime()));
+    }
+
+
+    public static void row(StringBuilder sb, List<String> row) {
+    	sb.append("DELETE from authz.cred WHERE id='");
+    	sb.append(row.get(1));
+    	sb.append("' AND type=");
+    	sb.append(Integer.parseInt(row.get(3)));
+    	sb.append(" AND expires=dateof(maxtimeuuid(");
+    	sb.append(row.get(5));
+    	sb.append("));\n");
+	}
+
+
+	public String toString() {
         StringBuilder sb = new StringBuilder(id);
         sb.append('[');
         for (Instance i : instances) {

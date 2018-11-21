@@ -180,7 +180,7 @@ public class JU_UserRole {
 		list.add(RowCreator.getRow());
 		list.add(RowCreator.getRow());
 
-		UserRole.load(trans, session, creator);
+		UserRole.load(trans, session, creator, new UserRole.DataLoadVisitor());
 	}
 
 }

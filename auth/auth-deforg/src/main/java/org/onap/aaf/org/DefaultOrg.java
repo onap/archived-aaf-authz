@@ -42,13 +42,12 @@ import org.onap.aaf.misc.env.Env;
 
 public class DefaultOrg implements Organization {
     private static final String AAF_DATA_DIR = "aaf_data_dir";
-    private static final String PROPERTY_IS_REQUIRED = " property is Required";
     // Package on Purpose
     final String domain;
     final String atDomain;
     final String realm;
 
-    private final String NAME,mailHost,mailFrom;
+    private final String NAME;
     private final Set<String> supportedRealms;
 
 
@@ -59,31 +58,8 @@ public class DefaultOrg implements Organization {
         supportedRealms.add(realm);
         domain=FQI.reverseDomain(realm);
         atDomain = '@'+domain;
-        String s;
         NAME=env.getProperty(realm + ".name","Default Organization");
-        mailHost = env.getProperty(s=(realm + ".mailHost"), null);
-        if (mailHost==null) {
-            throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
-        }
-        mailFrom = env.getProperty(s=(realm + ".mailFrom"), null);
-        if (mailFrom==null) {
-            throw new OrganizationException(s + PROPERTY_IS_REQUIRED);
-        }
         
-        // Note: This code is to avoid including javax.mail into ONAP, because there are security/licence 
-        // exceptions
-        try {
-            Class.forName("javax.mail.Session"); // ensure package is loaded
-            @SuppressWarnings("unchecked")
-            Class<Mailer> minst = (Class<Mailer>)Class.forName("org.onap.aaf.org.JavaxMailer");
-            mailer = minst.newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
-            env.warn().log("JavaxMailer not loaded. Mailing disabled");
-        }
-
-        System.getProperties().setProperty("mail.smtp.host",mailHost);
-        System.getProperties().setProperty("mail.user", mailFrom);
-
         try {
             String defFile;
             String temp=env.getProperty(defFile = (getClass().getName()+".file"));
@@ -587,6 +563,7 @@ public class DefaultOrg implements Organization {
     public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList, String subject, String body,
             Boolean urgent) throws OrganizationException {
         if (mailer!=null) {
+        	String mailFrom = mailer.mailFrom();
             List<String> to = new ArrayList<>();
             for (String em : toList) {
                 if (em.indexOf('@')<0) {

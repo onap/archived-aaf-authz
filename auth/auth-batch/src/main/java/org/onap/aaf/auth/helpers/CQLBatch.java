@@ -16,25 +16,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END====================================================
- *
  */
-package org.onap.aaf.auth.org;
 
-import java.util.List;
+package org.onap.aaf.auth.helpers;
 
-import org.onap.aaf.auth.env.AuthzTrans;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
 
-public interface Mailer {
-    public int sendEmail(
-            AuthzTrans trans,
-            boolean testMode,
-            String mailFrom,
-            List<String> toList, 
-            List<String> ccList, 
-            String subject, 
-            String body,
-            Boolean urgent) throws OrganizationException;
+public class CQLBatch {
+	private Session session;
+	private StringBuilder sb;
+	private int hasAdded;
 
-	public String mailFrom();
-
+	public CQLBatch(Session session) {
+		this.session = session;
+		sb = new StringBuilder();
+		hasAdded = 0;
+	}
+	public StringBuilder begin() {
+		sb.setLength(0);
+		sb.append("BEGIN BATCH\n");
+		hasAdded = sb.length();
+		return sb;
+	}
+	
+	private boolean end() {
+		if(sb.length()==hasAdded) {
+			System.out.println("Nothing to Process");
+			return false;
+		} else {
+			sb.append("APPLY BATCH;\n");
+			System.out.println(sb);
+			return true;
+		}
+	}
+	
+	public ResultSet execute() {
+		if(end()) {
+			return session.execute(sb.toString());
+		} else {
+			return null;
+		}
+	}
+	
+	public ResultSet execute(boolean dryRun) {
+		if(dryRun) {
+			end();
+			return null;
+		} else {
+			return execute();
+		}
+		
+	}
 }

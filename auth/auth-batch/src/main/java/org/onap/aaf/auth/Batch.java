@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
 import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.dao.CassAccess;
 import org.onap.aaf.auth.dao.cass.RoleDAO;
@@ -53,12 +52,12 @@ import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.StaticSlot;
 import org.onap.aaf.misc.env.TimeTaken;
-import org.onap.aaf.misc.env.impl.Log4JLogTarget;
-import org.onap.aaf.misc.env.log4j.LogFileNamer;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
@@ -77,7 +76,6 @@ public abstract class Batch {
     protected final Cluster cluster; 
     protected static AuthzEnv env;
     protected static Session session;
-    protected static Logger aspr;
     protected static Set<String> specialNames;
     protected static boolean dryRun; 
     protected static String batchEnv;
@@ -166,14 +164,7 @@ public abstract class Batch {
             return (false);
         }
     }
-    
-    public boolean isMechID(String user) {
-        if (user.matches("m[0-9][0-9][0-9][0-9][0-9]")) {
-            return (true);
-        } else {
-            return (false);
-        }
-    }
+
 
     protected PrintStream fallout(PrintStream inFallout, String logType)
             throws IOException {
@@ -391,50 +382,51 @@ public abstract class Batch {
         try {
             Define.set(access);
             rootNs =Define.ROOT_NS();
-            
-            File f = new File("etc/authzBatch.props");
-            try {
-                if (f.exists()) {
-                    filename = f.getAbsolutePath();
-                    is = new FileInputStream(f);
-                    propLoc = f.getPath();
-                } else {
-                    URL rsrc = ClassLoader.getSystemResource("authBatch.props");
-                    filename = rsrc.toString();
-                    is = rsrc.openStream();
-                    propLoc = rsrc.getPath();
-                }
-                access.load(is);
-            } finally {
-                if (is == null) {
-                    System.err.println("authBatch.props must exist in etc dir, or in Classpath");
-                    System.exit(1);
-                }
-                is.close();
-            }
+            if(access.getProperty(Config.CADI_PROP_FILES)==null) {
+	            File f = new File("authBatch.props");
+	            try {
+	                if (f.exists()) {
+	                    filename = f.getAbsolutePath();
+	                    is = new FileInputStream(f);
+	                    propLoc = f.getPath();
+	                } else {
+	                    URL rsrc = ClassLoader.getSystemResource("authBatch.props");
+	                    filename = rsrc.toString();
+	                    is = rsrc.openStream();
+	                    propLoc = rsrc.getPath();
+	                }
+	                access.load(is);
+	            } finally {
+	                if (is == null) {
+	                    System.err.println("authBatch.props must exist in current dir, or in Classpath");
+	                    System.exit(1);
+	                }
+	                is.close();
+	            }
+	            if (filename != null) {
+	                access.log(Level.INFO,"Instantiated properties from", filename);
+	            }
 
+	            // Log where Config found
+	            access.log(Level.INFO,"Configuring from", propLoc);
+
+            }
             env = new AuthzEnv(access);
 
             transferVMProps(env, CASS_ENV, "DRY_RUN", "NS", "Organization");
 
             // Flow all Env Logs to Log4j, with ENV
 
-            LogFileNamer lfn;
-            lfn = new LogFileNamer(logDir(),"").noPID();
-            lfn.setAppender("authz-batch");
-            lfn.setAppender("aspr|ASPR");
-            lfn.setAppender("sync");
-            lfn.setAppender("jobchange");
-            lfn.setAppender("validateuser");
-            aspr = Logger.getLogger("aspr");
-            Log4JLogTarget.setLog4JEnv("authz-batch", env);
-            if (filename != null) {
-                env.init().log("Instantiated properties from", filename);
-            }
-
-            // Log where Config found
-            env.info().log("Configuring from", propLoc);
-            propLoc = null;
+//            LogFileNamer lfn;
+//            lfn = new LogFileNamer(logDir(),"").noPID();
+//            lfn.setAppender("authz-batch");
+//            lfn.setAppender("aspr|ASPR");
+//            lfn.setAppender("sync");
+//            lfn.setAppender("jobchange");
+//            lfn.setAppender("validateuser");
+//            aspr = Logger.getLogger("aspr");
+//            Log4JLogTarget.setLog4JEnv("authz-batch", env);
+//            propLoc = null;
 
             Batch batch = null;
             // setup ATTUser and Organization Slots before starting this:

@@ -120,9 +120,14 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.onap.aaf.authz</groupId>
+			<artifactId>aaf-auth-deforg</artifactId>
+		</dependency>
+
+		<!--dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
+		</dependency -->
 
 	</dependencies>
 
@@ -132,8 +137,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
@@ -215,6 +220,35 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<classifier>tests</classifier>
+					<archive>
+						<manifest>
+							<mainClass>org.onap.aaf.auth.Batch</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Sealed>true</Sealed>
+						</manifestEntries>
+					</archive>
+
+				</configuration>
+				<executions>
+					<execution>
+						<id>full</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assemble/auth-batch.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	
