@@ -8,11 +8,11 @@ Release Notes
 
 
 
-Version: 2.1.8 (casablanca, 3.0.0-ONAP)
+Version: 2.1.8 (Casablanca, 3.0.0-ONAP)
 ----------------------------------------
 
 
-:Release Date: 2018-11-27
+:Release Date: 2018-11-30
 
 **New Features**
 
@@ -49,20 +49,20 @@ Version: 2.1.8 (casablanca, 3.0.0-ONAP)
  - AAF has achieved clean scans for everything in authz.git repo
  - In the cadi.git (used for Adaptors), there is a Shiro adapter.  Shiro itself has security flags, *NOT* the adapter, so understand the security issues of Shiro before use.
 
- - AAF code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The AAF open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=28380057>`_.
+ - AAF code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The AAF open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43386201>`_.
 
 **Quick Links:**
  	- `AAF project page <https://wiki.onap.org/display/DW/Application+Authorization+Framework+Project>`_
  	- `CII Best Practices Silver Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=1>`_
  	- `CII Best Practices Passing Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=0>`_
- 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=43385140>`_
+ 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=43386201>`_
 
 **Upgrade Notes**
   NA
 
 **Deprecation Notes**
 
-Version: 2.1.1 (beijing, 2.0.0-ONAP)
+Version: 2.1.1 (Beijing, 2.0.0-ONAP)
 --------------------------------------
 
 :Release Date: 2017-06-05
