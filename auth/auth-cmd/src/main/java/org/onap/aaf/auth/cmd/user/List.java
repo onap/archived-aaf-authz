@@ -50,14 +50,11 @@ public class List extends BaseCmd<User> {
         reportHead(str);
         int idx = 0;
         java.util.List<aaf.v2_0.Users.User> sorted = users.getUser();
-        Collections.sort(sorted, new Comparator<aaf.v2_0.Users.User>() {
-            @Override
-            public int compare(aaf.v2_0.Users.User u1, aaf.v2_0.Users.User u2) {
-                if (u1==null || u2 == null) {
-                    return -1;
-                }
-                return u1.getId().compareTo(u2.getId());
+        Collections.sort(sorted, (Comparator<aaf.v2_0.Users.User>) (u1, u2) -> {
+            if (u1==null || u2 == null) {
+                return -1;
             }
+            return u1.getId().compareTo(u2.getId());
         });
         String format = reportColHead("%-40s %-10s %-30s\n","User","Type","Expires");
         String date = "XXXX-XX-XX";
@@ -77,13 +74,9 @@ public class List extends BaseCmd<User> {
         reportHead(title,id);
         String format = reportColHead("  %-20s %-20s %-11s %-6s %12s\n","User","Approver","Type","Status","Updated");
         java.util.List<Approval> lapp = approvals.getApprovals();
-        Collections.sort(lapp, new Comparator<Approval>() {
-            @Override
-            public int compare(Approval a1, Approval a2) {
-                return a1.getTicket().compareTo(a2.getTicket());
-            }
-        } );
-        String ticket = null, prev = null;
+        Collections.sort(lapp, (Comparator<Approval>) (a1, a2) -> a1.getTicket().compareTo(a2.getTicket()));
+        String ticket = null;
+        String prev = null;
         for (Approval app : lapp ) {
             ticket = app.getTicket();
             if (!ticket.equals(prev)) {
