@@ -26,22 +26,19 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bouncycastle.operator.OperatorCreationException;
+
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.client.Client;
 import org.jscep.client.ClientException;
 import org.jscep.client.EnrollmentResponse;
 import org.jscep.client.verification.CertificateVerifier;
-import org.jscep.transaction.TransactionException;
 import org.onap.aaf.auth.cm.cert.BCFactory;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
 import org.onap.aaf.cadi.Access;
