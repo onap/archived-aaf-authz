@@ -98,7 +98,11 @@ public class CadiApiEnforcementFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
 		HttpServletRequest hreq = (HttpServletRequest)req;
 		final String meth = hreq.getMethod();
-		final String path = hreq.getContextPath()+hreq.getPathInfo();
+		String path = hreq.getContextPath()+hreq.getPathInfo();
+		
+		if(path == null || path.isEmpty() || "null".equals(path))
+			path = hreq.getRequestURI().substring(hreq.getContextPath().length());
+		
 		List<String> list = publicPaths.get(meth);
 		if(list!=null) {
 			for( String p : publicPaths.get(meth)) {
