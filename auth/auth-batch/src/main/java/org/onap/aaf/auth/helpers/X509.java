@@ -21,7 +21,6 @@
 
 package org.onap.aaf.auth.helpers;
 
-import java.awt.HeadlessException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.cert.X509Certificate;
@@ -29,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.onap.aaf.cadi.Hash;
-import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;

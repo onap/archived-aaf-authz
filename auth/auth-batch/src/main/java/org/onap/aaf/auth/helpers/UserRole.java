@@ -304,8 +304,8 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         cache.resetLocalData();
     }
 
-    public void row(CSV.Writer csvw) {
-    	csvw.row("ur",user(),role(),Chrono.dateOnlyStamp(expires()));
+    public void row(final CSV.Writer csvw) {
+    	csvw.row("ur",user(),ns(),rname(),Chrono.dateOnlyStamp(expires()));
     }
     
     public static void row(StringBuilder sb, List<String> row) {
@@ -313,6 +313,8 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append(row.get(1));
     	sb.append("' AND role='");
     	sb.append(row.get(2));
+    	sb.append('.');
+    	sb.append(row.get(3));
     	sb.append("';\n");
     }
     

@@ -29,5 +29,4 @@ public interface EmailWarnings
     public long roleEmailInterval();
     public long apprEmailInterval();
     public long emailUrgentWarning();
-
 }

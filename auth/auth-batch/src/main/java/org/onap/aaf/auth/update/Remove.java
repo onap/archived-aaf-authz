@@ -52,7 +52,7 @@ public class Remove extends Batch {
         trans.info().log("Starting Connection Process");
         
         noAvg = env.newTransNoAvg();
-        noAvg.setUser(new BatchPrincipal("batch:ExpiringP2"));
+        noAvg.setUser(new BatchPrincipal("batch:RemoveExpired"));
 
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
@@ -77,7 +77,8 @@ public class Remove extends Batch {
 
         // Create Intermediate Output 
         File logDir = new File(logDir());
-        File expired = new File(logDir,"Expired"+Chrono.dateOnlyStamp()+".csv");
+        
+        File expired = new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv");
         CSV expiredCSV = new CSV(expired);
         try {
         	final StringBuilder sb = cqlBatch.begin();

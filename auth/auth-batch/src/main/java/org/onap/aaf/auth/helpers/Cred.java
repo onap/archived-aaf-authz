@@ -32,7 +32,6 @@ import java.util.TreeMap;
 
 import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.dao.hl.Question;
-import org.onap.aaf.auth.helpers.Cred.Instance;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -72,7 +71,7 @@ public class Cred  {
         }
         
         public String toString() {
-        	return expires.toString() + type;
+        	return expires.toString() + ": " + type;
         }
     }
     
@@ -132,20 +131,16 @@ public class Cred  {
         try {
             Iterator<Row> iter = results.iterator();
             Row row;
-            int type; // for filtering
-            String id;
             tt = trans.start("Load Credentials", Env.SUB);
             try {
                 while (iter.hasNext()) {
                     ++count;
                     row = iter.next();
-                    id = row.getString(0);
-                    type = row.getInt(1);
+                    int type = row.getInt(1);
                     if (types.length>0) { // filter by types, if requested
                         boolean quit = true;
                         for (int t : types) {
                             if (t==type) {
-                                quit=false;
                                 break;
                             }
                         }
@@ -153,27 +148,7 @@ public class Cred  {
                             continue;
                         }
                     }
-                    Cred cred = data.get(id);
-                    if (cred==null) {
-                        cred = new Cred(id);
-                        data.put(id, cred);
-                    }
-                    cred.instances.add(new Instance(type, row.getTimestamp(2), row.getInt(3), row.getLong(4)/1000));
-                    
-                    List<Cred> lscd = byNS.get(cred.ns);
-                    if (lscd==null) {
-                        byNS.put(cred.ns, (lscd=new ArrayList<>()));
-                    }
-                    boolean found = false;
-                    for (Cred c : lscd) {
-                        if (c.id.equals(cred.id)) {
-                            found=true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        lscd.add(cred);
-                    }
+                    add(row.getString(0), row.getInt(1),row.getTimestamp(2),row.getInt(3),row.getLong(4));
                 }
             } finally {
                 tt.done();
@@ -183,7 +158,38 @@ public class Cred  {
         }
     }
 
-    /** 
+    public static void add(
+    		final String id, 
+    		final int type,
+    		final Date timestamp,
+    		final int other,
+    		final long written
+    		) {
+        Cred cred = data.get(id);
+        if (cred==null) {
+            cred = new Cred(id);
+            data.put(id, cred);
+        }
+        cred.instances.add(new Instance(type, timestamp, other, written/1000));
+        
+        List<Cred> lscd = byNS.get(cred.ns);
+        if (lscd==null) {
+            byNS.put(cred.ns, (lscd=new ArrayList<>()));
+        }
+        boolean found = false;
+        for (Cred c : lscd) {
+            if (c.id.equals(cred.id)) {
+                found=true;
+                break;
+            }
+        }
+        if (!found) {
+            lscd.add(cred);
+        }
+	}
+
+
+	/** 
      * Count entries in Cred data.
      * Note, as opposed to other methods, need to load the whole cred table for the Types.
      * @param numbuckets 
@@ -269,8 +275,8 @@ public class Cred  {
 
     }
     
-    public void row(CSV.Writer csvw, Instance inst) {
-    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),Long.toString(inst.expires.getTime()));
+    public void row(final CSV.Writer csvw, final Instance inst) {
+    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),inst.expires.getTime());
     }
 
 
@@ -279,6 +285,7 @@ public class Cred  {
     	sb.append(row.get(1));
     	sb.append("' AND type=");
     	sb.append(Integer.parseInt(row.get(3)));
+    	// Note: We have to work with long, because Expires is part of Key... can't easily do date.
     	sb.append(" AND expires=dateof(maxtimeuuid(");
     	sb.append(row.get(5));
     	sb.append("));\n");

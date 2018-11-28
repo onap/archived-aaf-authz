@@ -27,9 +27,8 @@ import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +43,11 @@ import org.onap.aaf.auth.helpers.Cred.Instance;
 import org.onap.aaf.auth.helpers.UserRole;
 import org.onap.aaf.auth.helpers.Visitor;
 import org.onap.aaf.auth.helpers.X509;
+import org.onap.aaf.auth.org.ExpireRange;
+import org.onap.aaf.auth.org.ExpireRange.Range;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.cadi.util.CSV;
-import org.onap.aaf.cadi.util.CSV.Writer;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -56,18 +56,14 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class Expiring extends Batch {
     
-    private int minOwners;
-	private ArrayList<Writer> writerList;
+	private static final String CSV = ".csv";
+	private static final String INFO = "info";
+	private static final String EXPIRED_OWNERS = "ExpiredOwners";
+	private int minOwners;
+	private Map<String, CSV.Writer> writerList;
 	private File logDir;
-	private Date now;
-	private Date twoWeeksPast;
-	private Writer twoWeeksPastCSV;
-	private Date twoWeeksAway;
-	private Writer twoWeeksAwayCSV;
-	private Date oneMonthAway;
-	private Writer oneMonthAwayCSV;
-	private Date twoMonthsAway;
-	private Writer twoMonthsAwayCSV;
+	private ExpireRange expireRange;
+	private Date deleteDate;
 	
 	public Expiring(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -84,40 +80,32 @@ public class Expiring extends Batch {
             
             // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
             Cred.load(trans, session);
+            UserRole.load(trans, session, UserRole.v2_0_11, new UserRole.DataLoadVisitor());
 
             minOwners=1;
 
             // Create Intermediate Output 
-            writerList = new ArrayList<CSV.Writer>();
+            writerList = new HashMap<>();
             logDir = new File(logDir());
             logDir.mkdirs();
             
-            GregorianCalendar gc = new GregorianCalendar();
-            now = gc.getTime();
-            gc.add(GregorianCalendar.WEEK_OF_MONTH, -2);
-            twoWeeksPast = gc.getTime();
-            File file = new File(logDir,"Expired"+Chrono.dateOnlyStamp(now)+".csv");
-            twoWeeksPastCSV = new CSV(file).writer();
-            writerList.add(twoWeeksPastCSV);
+            expireRange = new ExpireRange(trans.env().access());
+            String sdate = Chrono.dateOnlyStamp(expireRange.now);
+            for( List<Range> lr : expireRange.ranges.values()) {
+            	for(Range r : lr ) {
+            		if(writerList.get(r.name())==null) {
+                    	File file = new File(logDir,r.name() + sdate +CSV);
+                    	CSV csv = new CSV(file);
+                    	CSV.Writer cw = csv.writer(false);
+                    	cw.row(INFO,r.name(),Chrono.dateOnlyStamp(expireRange.now),r.reportingLevel());
+                    	writerList.put(r.name(),cw);
+                    	if("Delete".equals(r.name())) {
+                    		deleteDate = r.getStart();
+                    	}
+            		}
+            	}
+            }
             
-            gc.add(GregorianCalendar.WEEK_OF_MONTH, 2+2);
-            twoWeeksAway = gc.getTime();
-            file = new File(logDir,"TwoWeeksAway"+Chrono.dateOnlyStamp(now)+".csv");
-            twoWeeksAwayCSV = new CSV(file).writer();
-            writerList.add(twoWeeksAwayCSV);
-
-            gc.add(GregorianCalendar.WEEK_OF_MONTH, -2);
-            gc.add(GregorianCalendar.MONTH, 1);
-            oneMonthAway = gc.getTime();
-            file = new File(logDir,"OneMonthAway"+Chrono.dateOnlyStamp(now)+".csv");
-            oneMonthAwayCSV = new CSV(file).writer();
-            writerList.add(oneMonthAwayCSV);
-            
-            gc.add(GregorianCalendar.MONTH, 1);
-            twoMonthsAway = gc.getTime();
-            file = new File(logDir,"TwoMonthsAway"+Chrono.dateOnlyStamp(now)+".csv");
-            twoMonthsAwayCSV = new CSV(file).writer();
-            writerList.add(twoMonthsAwayCSV);
         } finally {
             tt0.done();
         }
@@ -126,7 +114,7 @@ public class Expiring extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
 		try {
-			File file = new File(logDir, "AllOwnersExpired" + Chrono.dateOnlyStamp(now) + ".csv");
+			File file = new File(logDir, EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
 			final CSV ownerCSV = new CSV(file);
 
 			Map<String, Set<UserRole>> owners = new TreeMap<String, Set<UserRole>>();
@@ -143,7 +131,7 @@ public class Expiring extends Batch {
 						}
 						urs.add(ur);
 					} else {
-						writeAnalysis(ur);
+						writeAnalysis(trans,ur);
 					}
 				}
 			});
@@ -160,19 +148,20 @@ public class Expiring extends Batch {
 					for (Set<UserRole> sur : owners.values()) {
 						int goodOwners = 0;
 						for (UserRole ur : sur) {
-							if (ur.expires().after(now)) {
+							if (ur.expires().after(expireRange.now)) {
 								++goodOwners;
 							}
 						}
 
 						for (UserRole ur : sur) {
 							if (goodOwners >= minOwners) {
-								writeAnalysis(ur);
+								writeAnalysis(trans, ur);
 							} else {
 								if (expOwner == null) {
 									expOwner = ownerCSV.writer();
+									expOwner.row(INFO,EXPIRED_OWNERS,Chrono.dateOnlyStamp(expireRange.now),2);
 								}
-								expOwner.row(ur.role(), ur.user(), ur.expires());
+								expOwner.row("owner",ur.role(), ur.user(), Chrono.dateOnlyStamp(ur.expires()));
 							}
 						}
 					}
@@ -182,24 +171,26 @@ public class Expiring extends Batch {
 			}
 			
 			trans.info().log("Checking for Expired Credentials");
+			
 			for (Cred cred : Cred.data.values()) {
 		    	List<Instance> linst = cred.instances;
 		    	if(linst!=null) {
 			    	Instance lastBath = null;
 			    	for(Instance inst : linst) {
-			        	if(inst.expires.before(twoWeeksPast)) {
-			        		cred.row(twoWeeksPastCSV,inst);
-			    		} else if(inst.expires.after(now)){
-			    			if (inst.type == CredDAO.BASIC_AUTH || inst.type == CredDAO.BASIC_AUTH_SHA256) {
-			    				if(lastBath==null || lastBath.expires.before(inst.expires)) {
-			    					lastBath = inst;
-			    				}
-			    			} else if(inst.type==CredDAO.CERT_SHA256_RSA) {
-			    				writeAnalysis(cred, inst);
-			    			}
-			    		}
+			    		// Special Behavior: only eval the LAST Instance
+		    			if (inst.type == CredDAO.BASIC_AUTH || inst.type == CredDAO.BASIC_AUTH_SHA256) {
+				        	if(deleteDate!=null && inst.expires.before(deleteDate)) {
+				        		writeAnalysis(trans, cred, inst); // will go to Delete
+				    		} else if(lastBath==null || lastBath.expires.before(inst.expires)) {
+		    					lastBath = inst;
+		    				}
+		    			} else {
+		    				writeAnalysis(trans, cred, inst);
+		    			}
 			    	}
-			    	writeAnalysis(cred, lastBath);
+			    	if(lastBath!=null) {
+			    		writeAnalysis(trans, cred, lastBath);
+			    	}
 		    	}
 			}
 			
@@ -209,7 +200,7 @@ public class Expiring extends Batch {
 				public void visit(X509 x509) {
 					try {
 						for(Certificate cert : Factory.toX509Certificate(x509.x509)) {
-							writeAnalysis(x509, (X509Certificate)cert);
+							writeAnalysis(trans, x509, (X509Certificate)cert);
 						}
 					} catch (CertificateException | IOException e) {
 						trans.error().log(e, "Error Decrypting X509");
@@ -223,52 +214,84 @@ public class Expiring extends Batch {
 	}
     
  
-	protected void writeAnalysis(UserRole ur) {
-    	if(ur.expires().before(twoWeeksPast)) {
-    		ur.row(twoWeeksPastCSV);
-		} else {
-			if(ur.expires().after(now) && ur.expires().before(twoWeeksAway)) {
-	    		ur.row(twoWeeksAwayCSV);
-			} else {
-				if(ur.expires().before(oneMonthAway)) {
-		    		ur.row(oneMonthAwayCSV);
-				} else {
-					if(ur.expires().before(twoMonthsAway)) {
-			    		ur.row(twoMonthsAwayCSV);
-					}
-				}
+	private void writeAnalysis(AuthzTrans trans, UserRole ur) {
+		Range r = expireRange.getRange("ur", ur.expires());
+		if(r!=null) {
+			CSV.Writer cw = writerList.get(r.name());
+			if(cw!=null) {
+				ur.row(cw);
 			}
 		}
 	}
     
-    protected void writeAnalysis(Cred cred, Instance inst) {
-    	if(inst!=null) {
-			if(inst.expires.after(now) && inst.expires.before(twoWeeksAway)) {
-	    		cred.row(twoWeeksAwayCSV, inst);
-			} else {
-				if(inst.expires.before(oneMonthAway)) {
-		    		cred.row(oneMonthAwayCSV, inst);
-				} else {
-					if(inst.expires.before(twoMonthsAway)) {
-			    		cred.row(twoMonthsAwayCSV, inst);
-					}
+    private void writeAnalysis(AuthzTrans trans, Cred cred, Instance inst) {
+    	if(cred!=null && inst!=null) {
+			Range r = expireRange.getRange("cred", inst.expires);
+			if(r!=null) {
+				CSV.Writer cw = writerList.get(r.name());
+				if(cw!=null) {
+					cred.row(cw,inst);
 				}
-			}
-		}
-	}
-
-    protected void writeAnalysis(X509 x509, X509Certificate x509Cert) throws IOException {
-    	if(x509Cert!=null) {
-	    	if(twoWeeksPast.after(x509Cert.getNotAfter())) {
-				x509.row(twoWeeksPastCSV,x509Cert);
 			}
     	}
 	}
 
+    private void writeAnalysis(AuthzTrans trans, X509 x509, X509Certificate x509Cert) throws IOException {
+		Range r = expireRange.getRange("x509", x509Cert.getNotAfter());
+		if(r!=null) {
+			CSV.Writer cw = writerList.get(r.name());
+			if(cw!=null) {
+				x509.row(cw,x509Cert);
+			}
+		}
+	}
+
+    /*
+    private String[] contacts(final AuthzTrans trans, final String ns, final int levels) {
+    	List<UserRole> owners = UserRole.getByRole().get(ns+".owner");
+    	List<UserRole> current = new ArrayList<>();
+    	for(UserRole ur : owners) {
+    		if(expireRange.now.before(ur.expires())) {
+    			current.add(ur);
+    		}
+    	}
+    	if(current.isEmpty()) {
+    		trans.warn().log(ns,"has no current owners");
+    		current = owners;
+    	}
+    	
+    	List<String> email = new ArrayList<>();
+    	for(UserRole ur : current) {
+    		Identity id;
+    		int i=0;
+    		boolean go = true;
+    		try {
+    			id = org.getIdentity(trans, ur.user());
+        		do {
+	    			if(id!=null) {
+						email.add(id.email());
+						if(i<levels) {
+							id = id.responsibleTo();
+						} else {
+							go = false;
+						}
+	    			} else {
+	    				go = false;
+	    			}
+        		} while(go);
+			} catch (OrganizationException e) {
+				trans.error().log(e);
+			}
+    	}
+    	
+    	return email.toArray(new String[email.size()]);
+    }
+*/
+    
 	@Override
     protected void _close(AuthzTrans trans) {
         session.close();
-    	for(CSV.Writer cw : writerList) {
+    	for(CSV.Writer cw : writerList.values()) {
     		cw.close();
     	}
     }

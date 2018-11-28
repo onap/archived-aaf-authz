@@ -73,10 +73,17 @@ public class Upload extends Batch {
 
 				if(file.exists()) {
 					count=batchCnt=0;
+					boolean justOne = false;
 					try {
 						BufferedReader br = new BufferedReader(new FileReader(file));
 						try {
 							while((line=br.readLine())!=null) {
+								if(line.length()>5000) {
+									if(query.length()>0) {
+										applyBatch(query);
+										justOne=true;
+									}
+								}
 								if(query.length()==0) {
 									query.append("BEGIN BATCH\n");
 								}
@@ -104,11 +111,12 @@ public class Upload extends Batch {
 								addField(feed,fldcnt,array,sb);
 								query.append(build(feed, array));
 								
-								if((++count % BATCH_LENGTH)==0) {
+								if((++count % BATCH_LENGTH)==0 || justOne) {
 									applyBatch(query);
+									justOne=false;
 								}
 							}
-							if((count % BATCH_LENGTH)!=0) {
+							if(query.length()>0) {
 								applyBatch(query);
 							}
 							
@@ -279,17 +287,20 @@ public class Upload extends Batch {
 	}
 
 	private void applyBatch(StringBuilder query) {
-		query.append("APPLY BATCH;");
-		ResultSet rv = session.execute(query.toString());
-		if(rv.wasApplied()) {
-			System.out.print('.');
-			if((++batchCnt % 60)==0) {
-				System.out.println();
+		try {
+			query.append("APPLY BATCH;");
+			ResultSet rv = session.execute(query.toString());
+			if(rv.wasApplied()) {
+				System.out.print('.');
+				if((++batchCnt % 60)==0) {
+					System.out.println();
+				}
+			} else {
+				System.out.print("Data NOT APPLIED");
 			}
-		} else {
-			System.out.print("Data NOT APPLIED");
+		} finally {
+			query.setLength(0);
 		}
-		query.setLength(0);
 	}
 
 

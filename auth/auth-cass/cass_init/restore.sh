@@ -37,7 +37,11 @@ for T in $DATA; do
       # 2.1.14 still has NULL problems for COPY.  Fixed in 2.1.15+
       "approval"|"artifact"|"cred"|"ns"|"x509"|"role")
         $CQLSH -e  "truncate $T"
-        UPLOAD="$UPLOAD dats/"$T
+        UPLOAD="$UPLOAD "$T
+        ;;
+      "history")
+        $CQLSH -e "truncate $T"
+        DO_HISTORY=true
         ;;
       *)
         $CQLSH -e  "truncate $T; COPY authz.${T} FROM 'dats/${T}.dat' WITH DELIMITER='|'"
@@ -47,6 +51,12 @@ for T in $DATA; do
 done
 
 if [ ! "$UPLOAD" = "" ]; then
-  java -DCASS_ENV=$ENV -jar aaf-auth-batch-*-full.jar Upload $UPLOAD
+  cd dats
+  java -Dcadi_prop_files=../authBatch.props -DCASS_ENV=$ENV -jar ../aaf-auth-batch-*-full.jar Upload $UPLOAD
+  cd -
+fi
+
+if [ "$DO_HISTORY" = "true" ]; then
+  $CQLSH -e  "COPY authz.history FROM 'dats/history.dat' WITH DELIMITER='|'"
 fi
 echo `date`
