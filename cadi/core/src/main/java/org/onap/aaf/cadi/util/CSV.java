@@ -134,33 +134,41 @@ public class CSV {
 		private Writer() throws FileNotFoundException {
 			ps = new PrintStream(new FileOutputStream(csv));
 		}
-		public void row(Object ... strings) {
-			if(strings.length>0) {
+		public void row(Object ... objs) {
+			if(objs.length>0) {
 				boolean first = true;
-				boolean quote;
-				String s;
-				for(Object o : strings) {
+				for(Object o : objs) {
 					if(first) {
 						first = false;
 					} else {
 						ps.append(',');
 					}
-					s = o.toString();
-					quote = s.matches(".*[,|\"].*");
-					if(quote) {
-						ps.append('"');
-						ps.print(s.replace("\"", "\"\"")
-								  .replace("'", "''")
-								  .replace("\\", "\\\\"));
-						ps.append('"');
+					if(o instanceof String[]) {
+						for(String str : (String[])o) {
+							print(str);
+						}
 					} else {
-						ps.append(s);
+						print(o.toString());
 					}
 				}
 				ps.println();
 			}
 		}
 		
+		private void print(String s) {
+			boolean quote = s.matches(".*[,|\"].*");
+			if(quote) {
+				ps.append('"');
+				ps.print(s.replace("\"", "\"\"")
+						  .replace("'", "''")
+						  .replace("\\", "\\\\"));
+				ps.append('"');
+			} else {
+				ps.append(s);
+			}
+
+			
+		}
 		/**
 		 * Note: CSV files do not actually support Comments as a standard, but it is useful
 		 * @param comment

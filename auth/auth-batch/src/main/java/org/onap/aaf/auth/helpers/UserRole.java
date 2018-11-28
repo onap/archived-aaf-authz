@@ -296,4 +296,22 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         cache.resetLocalData();
     }
 
+<<<<<<< HEAD
+=======
+    public void row(final CSV.Writer csvw) {
+    	csvw.row("ur",user(),ns(),rname(),Chrono.dateOnlyStamp(expires()));
+    }
+    
+    public static void row(StringBuilder sb, List<String> row) {
+    	sb.append("DELETE from authz.user_role WHERE user='");
+    	sb.append(row.get(1));
+    	sb.append("' AND role='");
+    	sb.append(row.get(2));
+    	sb.append('.');
+    	sb.append(row.get(3));
+    	sb.append("';\n");
+    }
+    
+
+>>>>>>> a6baa197... Expire, Remove Batch, restore
 }
