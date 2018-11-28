@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ============================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +38,9 @@ import org.onap.aaf.cadi.http.HTransferSS;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CUI extends HttpCode<AuthzTrans, Void> {
     private final AAF_GUI gui;
@@ -82,6 +87,7 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
             } catch (Exception e) {
                 pw.flush();
                 pw.println(e.getMessage());
+                logger.error(EELFLoggerDelegate.errorLogger,e.getMessage());
             } finally {
                 aafcli.close();
             }
