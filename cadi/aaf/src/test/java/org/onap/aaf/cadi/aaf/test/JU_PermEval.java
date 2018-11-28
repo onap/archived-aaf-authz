@@ -211,5 +211,24 @@ public class JU_PermEval {
         @SuppressWarnings("unused")
         PermEval pe = new PermEval();
     }
+    
+    @Test
+    public void pathTest() {
+        assertTrue(PermEval.evalInstance("/","/"));
+        assertFalse(PermEval.evalInstance("/","/hello"));
+        assertTrue(PermEval.evalInstance("/","/"));
+        assertTrue(PermEval.evalInstance("/onap/so/infra/*/*/*","/onap/so/infra/a/b/c"));
+        assertFalse(PermEval.evalInstance("/onap/so/infra/*","/onap/so/infra"));
+        assertTrue(PermEval.evalInstance("/onap/so/infra/*","/onap/so/infra/a/b/c"));
+        assertTrue(PermEval.evalInstance("/onap/so/infra*","/onap/so/infra"));
+        assertFalse(PermEval.evalInstance("/onap/so/infra*/hello","/onap/so/infra"));
+        assertFalse(PermEval.evalInstance("/onap/so/infra*/hello","/onap/so/infra23"));
+        assertTrue(PermEval.evalInstance("/onap/so/infra*/hello","/onap/so/infra23/hello"));
+        assertFalse(PermEval.evalInstance("/onap/so/*/hello","/onap/so/infra23"));
+        assertFalse(PermEval.evalInstance("/onap/so/*/","/onap/so/infra23"));
+        assertTrue(PermEval.evalInstance("/onap/so/*/","/onap/so/infra23/"));
+    }
+
+
 
 }

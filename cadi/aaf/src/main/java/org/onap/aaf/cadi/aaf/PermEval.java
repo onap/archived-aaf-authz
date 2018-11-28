@@ -66,11 +66,22 @@ public class PermEval {
                 if (sInst.charAt(0)==startChar) {  // To compare key-to-key, both strings must be keys
                     String[] skeys=Split.split(startChar,sInst);
                     String[] pkeys=Split.split(startChar,pInst);
-                    if (skeys.length!=pkeys.length) return false;
+                    if (pkeys.length<skeys.length) {
+                    	return false;
+                    } else if(pkeys.length > skeys.length && 
+                    		 (skeys.length==0 || !ASTERIX.equals(skeys[skeys.length-1]))) {
+                       	return false;
+                    }
 
                     boolean pass = true;
                     for (int i=1;pass && i<skeys.length;++i) {                  // We start at 1, because the first one, being ":" is always ""
-                        if (ASTERIX.equals(skeys[i]))continue;               // Server data accepts all for this key spot
+                        if (ASTERIX.equals(skeys[i])) {
+                        	if(i==skeys.length-1) {
+                        		// accept all after
+                        		return true;
+                        	}
+                        	continue;               // Server data accepts all for this key spot
+                        }
                         pass = false;
                         for (String sItem : Split.split(LIST_SEP,skeys[i])) {        // allow for "," definition in Action
                             if (pkeys[i].length()==0) {
