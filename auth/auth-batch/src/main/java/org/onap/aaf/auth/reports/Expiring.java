@@ -166,7 +166,9 @@ public class Expiring extends Batch {
 						}
 					}
 				} finally {
-					expOwner.close();
+					if(expOwner!=null) {
+						expOwner.close();
+					}
 				}
 			}
 			
