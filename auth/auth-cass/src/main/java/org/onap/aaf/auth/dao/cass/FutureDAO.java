@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ==============================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,9 +48,9 @@ import com.datastax.driver.core.Row;
 public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
     private static final String TABLE = "future";
     private final HistoryDAO historyDAO;
-//    private static String createString;
     private PSInfo psByStartAndTarget;
-    
+    public static final int KEYLIMIT = 1;
+
     public FutureDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, FutureDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         historyDAO = new HistoryDAO(trans, this);
@@ -61,7 +63,7 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
         init(trans);
     }
 
-    public static final int KEYLIMIT = 1;
+
     public static class Data {
         public UUID         id;
         public String        target;
@@ -112,13 +114,6 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
         // Set up sub-DAOs
         String[] helpers = setCRUD(trans, TABLE, Data.class, new FLoader(KEYLIMIT));
 
-        // Uh, oh.  Can't use "now()" in Prepared Statements (at least at this level)
-//        createString = "INSERT INTO " + TABLE + " ("+helpers[FIELD_COMMAS] +") VALUES (now(),";
-//
-//        // Need a specialty Creator to handle the "now()"
-//        replace(CRUD.Create, new PSInfo(trans, "INSERT INTO future (" +  helpers[FIELD_COMMAS] +
-//                    ") VALUES(now(),?,?,?,?,?)",new FLoader(0)));
-        
         // Other SELECT style statements... match with a local Method
         psByStartAndTarget = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] +
                 " FROM future WHERE start <= ? and target = ? ALLOW FILTERING", new FLoader(2) {
@@ -134,7 +129,7 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
 
     }
 
-    public Result<List<Data>> readByStartAndTarget(AuthzTrans trans, Date start, String target) throws DAOException {
+    public Result<List<Data>> readByStartAndTarget(AuthzTrans trans, Date start, String target) {
         return psByStartAndTarget.read(trans, R_TEXT, new Object[]{start, target});
     }
 
