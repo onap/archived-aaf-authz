@@ -44,6 +44,7 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
 
     public static final String TABLE = "delegate";
     private PSInfo psByDelegate;
+    private static final int KEYLIMIT = 1;
     
     public DelegateDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, DelegateDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
@@ -55,11 +56,11 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
         init(trans);
     }
     
-    private static final int KEYLIMIT = 1;
+    ;
     public static class Data implements Bytification {
-        public String user;
-        public String delegate;
-        public Date expires;
+        public static String user;
+        public static String delegate;
+        public static Date expires;
 
         @Override
         public ByteBuffer bytify() throws IOException {
