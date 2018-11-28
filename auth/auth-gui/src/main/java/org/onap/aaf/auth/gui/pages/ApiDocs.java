@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,7 +66,7 @@ public class ApiDocs extends Page {
 //            + Symm.base64noSplit().encode("application/Error+xml") 
             + "\">XML</a> ";
 
-    
+
     public ApiDocs(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, fields,
             new BreadCrumbs(breadcrumbs),
@@ -74,15 +74,15 @@ public class ApiDocs extends Page {
             new Table<AAF_GUI,AuthzTrans>("AAF API Reference",gui.env.newTransNoAvg(),new Model(), "class=std")
             );
     }
-    
+
     private static class Preamble extends NamedCode {
 
         private static final String I = "i";
-        private final String fs_url;
+        private final String fsUrl;
 
         public Preamble(AAF_GUI gui) {
             super(false, "preamble");
-            fs_url = gui.access.getProperty("fs_url", "");
+            fsUrl = gui.access.getProperty("fs_url", "");
         }
 
         @Override
@@ -108,11 +108,11 @@ public class ApiDocs extends Page {
                                 + "+json after the type for JSON or +xml after the Type for XML").end()
                         .leaf(HTMLGen.LI).text("XSDs for Versions").end()
                         .incr(HTMLGen.UL)
-                            .leaf(HTMLGen.LI).leaf(HTMLGen.A,"href=" + fs_url + "/aaf_2_0.xsd").text("API 2.0").end().end()
+                            .leaf(HTMLGen.LI).leaf(HTMLGen.A,"href=" + fsUrl + "/aaf_2_0.xsd").text("API 2.0").end().end()
                         .end()
                         .leaf(HTMLGen.LI).text("AAF can support multiple Versions of the API.  Choose the ContentType/Accept that has "
                                 + "the appropriate version=?.?").end()
-                        .leaf(HTMLGen.LI).text("All Errors coming from AAF return AT&T Standard Error Message as a String: " + ERROR_LINK 
+                        .leaf(HTMLGen.LI).text("All Errors coming from AAF return AT&T Standard Error Message as a String: " + ERROR_LINK
                                 + " (does not apply to errors from Container)").end()
                     .end()
                     .leaf(HTMLGen.LI).text("Character Restrictions").end()
@@ -131,7 +131,7 @@ public class ApiDocs extends Page {
                     .end()
                 .end();
             /*
-            
+
             The Content is defined in the AAF XSD - TODO Add aaf.xsd”;
             Character Restrictions
 
@@ -141,24 +141,24 @@ public class ApiDocs extends Page {
             “/“ is used to separate fields
             */
         }
-        
+
     };
     /**
      * Implement the Table Content for Permissions by User
-     * 
+     *
      * @author Jonathan
      *
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         public static final String[] HEADERS = new String[] {"Entity","Method","Path Info","Description"};
         private static final TextCell BLANK = new TextCell("");
-    
+
         @Override
         public String[] headers() {
             return HEADERS;
         }
-        
-        
+
+
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final ArrayList<AbsCell[]> ns = new ArrayList<>();
@@ -167,8 +167,8 @@ public class ApiDocs extends Page {
             final ArrayList<AbsCell[]> user = new ArrayList<>();
             final ArrayList<AbsCell[]> aafOnly = new ArrayList<>();
             final ArrayList<AbsCell[]> rv = new ArrayList<>();
-            
-    
+
+
             final TimeTaken tt = trans.start("AAF APIs",Env.REMOTE);
             try {
                 gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
@@ -184,20 +184,20 @@ public class ApiDocs extends Page {
                                     String path = r.getPath();
                                     // Build info
                                     StringBuilder desc = new StringBuilder();
-            
+
                                     desc.append("<p class=double>");
                                     desc.append(r.getDesc());
-                                    
-                                    if (r.getComments().size()>0) {
+
+                                    if (!r.getComments().isEmpty()) {
                                         for (String ct : r.getComments()) {
                                             desc.append("</p><p class=api_comment>");
                                             desc.append(ct);
                                         }
                                     }
-            
-                                    if (r.getParam().size()>0) {
+
+                                    if (!r.getParam().isEmpty()) {
                                         desc.append("<hr><p class=api_label>Parameters</p>");
-                                        
+
                                         for (String params : r.getParam()) {
                                             String param[] = params.split("\\s*\\|\\s*");
                                             desc.append("</p><p class=api_contentType>");
@@ -209,14 +209,14 @@ public class ApiDocs extends Page {
                                             }
                                         }
                                     }
-            
-            
+
+
                                     if (r.getExpected()!=0) {
                                         desc.append("</p><p class=api_label>Expected HTTP Code</p><p class=api_comment>");
                                         desc.append(r.getExpected());
-                                    } 
-            
-                                    if (r.getExplicitErr().size()!=0) {
+                                    }
+
+                                    if (!r.getExplicitErr().isEmpty()) {
                                         desc.append("</p><p class=api_label>Explicit HTTP Error Codes</p><p class=api_comment>");
                                         boolean first = true;
                                         for (int ee : r.getExplicitErr()) {
@@ -228,7 +228,7 @@ public class ApiDocs extends Page {
                                             desc.append(ee);
                                         }
                                     }
-            
+
                                     desc.append("</p><p class=api_label>");
                                     desc.append("GET".equals(r.getMeth())?"Accept:":"ContentType:");
                                     Collections.sort(r.getContentType());
@@ -249,31 +249,31 @@ public class ApiDocs extends Page {
                                         }
                                     }
                                     desc.append("</p>");
-                                    
-                                    
+
+
                                     AbsCell[] sa = new AbsCell[] {
                                         null,
                                         new TextCell(r.getMeth(),"class=right"),
                                         new TextCell(r.getPath()),
                                         new TextCell(desc.toString()),
                                     };
-            
+
                                     if (path.startsWith("/authz/perm")) {
-                                        sa[0] = perms.size()==0?new TextCell("PERMISSION"):BLANK;
+                                        sa[0] = perms.isEmpty()?new TextCell("PERMISSION"):BLANK;
                                         perms.add(sa);
                                     } else if (path.startsWith("/authz/role") || path.startsWith("/authz/userRole")) {
-                                        sa[0] = roles.size()==0?new TextCell("ROLE"):BLANK;
+                                        sa[0] = roles.isEmpty()?new TextCell("ROLE"):BLANK;
                                         roles.add(sa);
                                     } else if (path.startsWith("/authz/ns")) {
-                                        sa[0] = ns.size()==0?new TextCell("NAMESPACE"):BLANK;
+                                        sa[0] = ns.isEmpty()?new TextCell("NAMESPACE"):BLANK;
                                         ns.add(sa);
-                                    } else if (path.startsWith("/authn/basicAuth") 
+                                    } else if (path.startsWith("/authn/basicAuth")
                                         || path.startsWith("/authn/validate")
                                         || path.startsWith("/authz/user")) {
-                                        sa[0] = user.size()==0?new TextCell("USER"):BLANK;
+                                        sa[0] = user.isEmpty()?new TextCell("USER"):BLANK;
                                         user.add(sa);
                                     } else {
-                                        sa[0] = aafOnly.size()==0?new TextCell("AAF ONLY"):BLANK;
+                                        sa[0] = aafOnly.isEmpty()?new TextCell("AAF ONLY"):BLANK;
                                         aafOnly.add(sa);
                                     }
                                 }
@@ -293,7 +293,7 @@ public class ApiDocs extends Page {
             } finally {
                 tt.done();
             }
-            
+
             return new Cells(rv,null);
         }
 
@@ -307,17 +307,14 @@ public class ApiDocs extends Page {
                     lead = row[0];
                     row[0]=BLANK;
                     al.get(0).clone()[0]=BLANK;
-                    Collections.sort(al, new Comparator<AbsCell[]>() {
-                        @Override
-                        public int compare(AbsCell[] ca1, AbsCell[] ca2) {
-                            int meth = ((TextCell)ca1[2]).name.compareTo(
-                                       ((TextCell)ca2[2]).name);
-                            if (meth == 0) {
-                                return (HttpMethods.valueOf(((TextCell)ca1[1]).name).compareTo(
-                                        HttpMethods.valueOf(((TextCell)ca2[1]).name)));
-                            } else { 
-                                return meth;
-                            }
+                    Collections.sort(al, (ca1, ca2) -> {
+                        int meth = ((TextCell)ca1[2]).name.compareTo(
+                            ((TextCell)ca2[2]).name);
+                        if (meth == 0) {
+                            return (HttpMethods.valueOf(((TextCell)ca1[1]).name).compareTo(
+                                HttpMethods.valueOf(((TextCell)ca2[1]).name)));
+                        } else {
+                            return meth;
                         }
                     });
                     // set new first row
