@@ -38,6 +38,11 @@ import aaf.v2_0.Users.User;
 
 public class List extends BaseCmd<NS> {
 
+    private static final String cformat = "        %-30s %-6s %-24s\n";
+    private static final String pformat = "        %-30s %-24s %-15s\n";
+    private static final String sformat = "        %-72s\n";
+    protected static final String kformat = "  %-72s\n";
+
     public List(NS parent) {
         super(parent,"list");
         cmds.add(new ListByName(this));
@@ -51,10 +56,6 @@ public class List extends BaseCmd<NS> {
         cmds.add(new ListChildren(this));
         cmds.add(new ListNsKeysByAttrib(this));
     }
-
-    private static final String sformat = "        %-72s\n";
-    protected static final String kformat = "  %-72s\n";
-
     
     public void report(Future<Nss> fp, String ... str) {
         reportHead(str);
@@ -69,19 +70,19 @@ public class List extends BaseCmd<NS> {
                     pw().println("    Description");
                     pw().format(sformat,ns.getDescription()==null?"":ns.getDescription());
                 }
-                if (ns.getAdmin().size()>0) {
+                if (!(ns.getAdmin().isEmpty())) {
                     pw().println("    Administrators");
                     for (String admin : ns.getAdmin()) {
                         pw().format(sformat,admin);
                     }
                 }
-                if (ns.getResponsible().size()>0) {
+                if (!(ns.getResponsible().isEmpty())) {
                     pw().println("    Owners (Responsible for Namespace)");
                     for (String responsible : ns.getResponsible()) {
                         pw().format(sformat,responsible);
                     }
                 }
-                if (ns.getAttrib().size()>0) {
+                if (!(ns.getAttrib().isEmpty())) {
                     pw().println("    Namespace Attributes");
                     for (  Ns.Attrib attr : ns.getAttrib()) {
                         StringBuilder sb = new StringBuilder(attr.getKey());
@@ -118,7 +119,7 @@ public class List extends BaseCmd<NS> {
     }
 
     public void reportRole(Future<Roles> fr) {
-        if (fr!=null && fr.value!=null && fr.value.getRole().size()>0) {
+        if (fr!=null && fr.value!=null && !(fr.value.getRole().isEmpty())) {
             pw().println("    Roles");
             for (aaf.v2_0.Role r : fr.value.getRole()) {
                 pw().format(sformat,r.getName());
@@ -126,9 +127,8 @@ public class List extends BaseCmd<NS> {
         }
     }
 
-    private static final String pformat = "        %-30s %-24s %-15s\n";
     public void reportPerm(Future<Perms> fp) {
-        if (fp!=null && fp.value!=null && fp.value.getPerm().size()>0) {
+        if (fp!=null && fp.value!=null && !(fp.value.getPerm().isEmpty())) {
             pw().println("    Permissions");
             for (aaf.v2_0.Perm p : fp.value.getPerm()) {
                 pw().format(pformat,p.getType(),p.getInstance(),p.getAction());
@@ -136,10 +136,9 @@ public class List extends BaseCmd<NS> {
         }
     }
     
-    
-    private static final String cformat = "        %-30s %-6s %-24s\n";
+
     public void reportCred(Future<Users> fc) {        
-        if (fc!=null && fc.value!=null && fc.value.getUser().size()>0) {
+        if (fc!=null && fc.value!=null && !(fc.value.getUser().isEmpty())) {
             pw().println("    Credentials");
             java.util.List<User> users = fc.value.getUser();
             Collections.sort(users, new Comparator<User>() {
