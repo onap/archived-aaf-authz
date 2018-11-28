@@ -2137,13 +2137,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         Result<FutureDAO.Data> fd = mapper.future(trans,RoleDAO.TABLE,from,role,false,
-                new Mapper.Memo() {
-                    @Override
-                    public String get() {
-                        return "Delete Role [" + role.fullName() + ']' 
-                                + " and all attached user roles";
-                    }
-                },
+            () -> "Delete Role [" + role.fullName() + ']'
+                    + " and all attached user roles",
             new MayChange() {
                 private Result<NsDAO.Data> nsd;
                 @Override
@@ -2753,12 +2748,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
     private String[] buildVariables(List<CredDAO.Data> value) {
         // ensure credentials are sorted so we can fully automate Cred regression test
-        Collections.sort(value, new Comparator<CredDAO.Data>() {
-            @Override
-            public int compare(CredDAO.Data cred1, CredDAO.Data cred2) {
-                return cred1.expires.compareTo(cred2.expires);
-            }            
-        });
+        Collections.sort(value, (cred1, cred2) -> cred1.expires.compareTo(cred2.expires));
         String [] vars = new String[value.size()+1];
         vars[0]="Choice";
         for (int i = 0; i < value.size(); i++) {
@@ -2864,15 +2854,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
         }
         
-        Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from,cred.value,false, 
-            new Mapper.Memo() {
-                @Override
-                public String get() {
-                    return "Delete Credential [" + 
-                        cred.value.id + 
-                        ']';
-                }
-            },
+        Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from,cred.value,false,
+            () -> "Delete Credential [" +
+                cred.value.id +
+                ']',
             mc);
     
         Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, cred.value.ns);
@@ -3033,14 +3018,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
              
             // Check if user can change first
             Result<FutureDAO.Data> fd = mapper.future(trans,UserRoleDAO.TABLE,from,urr.value,true, // may request Approvals
-                new Mapper.Memo() {
-                    @Override
-                    public String get() {
-                        return "Add User [" + userRole.user + "] to Role [" + 
-                                userRole.role + 
-                                ']';
-                    }
-                },
+                () -> "Add User [" + userRole.user + "] to Role [" +
+                        userRole.role +
+                        ']',
                 new MayChange() {
                     private Result<NsDAO.Data> nsd;
                     @Override
@@ -3837,27 +3817,21 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return rv;
         }
         
-        Result<FutureDAO.Data> fd = mapper.future(trans,DelegateDAO.TABLE,base, dd, false, 
-            new Mapper.Memo() {
-                @Override
-                public String get() {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(access.name());
-                    sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
-                    sb.append("Delegate ");
-                    sb.append(access==Access.create?"[":"to [");
-                    sb.append(rd.value.delegate);
-                    sb.append("] for [");
-                    sb.append(rd.value.user);
-                    sb.append(']');
-                    return sb.toString();
-                }
+        Result<FutureDAO.Data> fd = mapper.future(trans,DelegateDAO.TABLE,base, dd, false,
+            () -> {
+                StringBuilder sb = new StringBuilder();
+                sb.append(access.name());
+                sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
+                sb.append("Delegate ");
+                sb.append(access==Access.create?"[":"to [");
+                sb.append(rd.value.delegate);
+                sb.append("] for [");
+                sb.append(rd.value.user);
+                sb.append(']');
+                return sb.toString();
             },
-            new MayChange() {
-                @Override
-                public Result<?> mayChange() {
-                    return Result.ok(); // Validate in code above
-                }
+            () -> {
+                return Result.ok(); // Validate in code above
             });
         
         switch(fd.status) {
@@ -4009,12 +3983,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 curr = ques.approvalDAO.readByTicket(trans, updt.ticket);
                 if (curr.isOKhasData()) {
                     final List<ApprovalDAO.Data> add = curr.value;
-                    apprByTicket = new Lookup<List<ApprovalDAO.Data>>() { // Store a Pre-Lookup
-                        @Override
-                        public List<ApprovalDAO.Data> get(AuthzTrans trans, Object ... noop) {
-                            return add;
-                        }
-                    };
+                    // Store a Pre-Lookup
+                    apprByTicket = (trans1, noop) -> add;
                 }
             } else if (updt.id!=null) {
                 curr = ques.approvalDAO.read(trans, updt);
