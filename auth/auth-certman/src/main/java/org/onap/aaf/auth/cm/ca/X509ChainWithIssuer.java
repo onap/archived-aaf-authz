@@ -36,7 +36,7 @@ public class X509ChainWithIssuer extends X509andChain {
     private String issuerDN;
     public X509Certificate caX509;
 
-    public X509ChainWithIssuer(X509ChainWithIssuer orig, X509Certificate x509) throws IOException, CertException {
+    public X509ChainWithIssuer(X509ChainWithIssuer orig, X509Certificate x509) {
         super(x509,orig.trustChain);
         issuerDN=orig.issuerDN;        
     }
