@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ============================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +46,7 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
 
     public static final String TABLE = "delegate";
     private PSInfo psByDelegate;
+    private static final int KEYLIMIT = 1;
     
     public DelegateDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, DelegateDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
@@ -55,11 +58,11 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
         init(trans);
     }
     
-    private static final int KEYLIMIT = 1;
+    
     public static class Data implements Bytification {
-        public String user;
-        public String delegate;
-        public Date expires;
+        public static String user;
+        public static String delegate;
+        public static Date expires;
 
         @Override
         public ByteBuffer bytify() throws IOException {
