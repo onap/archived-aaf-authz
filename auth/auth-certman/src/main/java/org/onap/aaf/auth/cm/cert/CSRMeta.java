@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -64,6 +65,7 @@ public class CSRMeta {
     private KeyPair keyPair;
     private X500Name name = null;
     private SecureRandom random = new SecureRandom();
+    private static Logger logger = Logger.getLogger(CSRMeta.class.getName());
 
     public CSRMeta(List<RDN> rdns) {
         this.rdns = rdns;
@@ -145,13 +147,12 @@ public class CSRMeta {
                          } else if (names[k].getTagNo() == GeneralName.rfc822Name) {
                                  title = "email";
                          }
-
-                         System.out.println(title + ": "+ names[k].getName());
+                         logger.info(title + ": "+ names[k].getName());
                  }
          }
     }
     
-    public X509Certificate initialConversationCert(Trans trans) throws IOException, CertificateException, OperatorCreationException {
+    public X509Certificate initialConversationCert(Trans trans) throws CertificateException, OperatorCreationException {
         GregorianCalendar gc = new GregorianCalendar();
         Date start = gc.getTime();
         gc.add(GregorianCalendar.DAY_OF_MONTH,2);
