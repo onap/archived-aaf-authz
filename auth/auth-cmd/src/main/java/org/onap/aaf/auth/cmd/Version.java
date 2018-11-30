@@ -38,6 +38,6 @@ public class Version extends Cmd {
         pw().println("AAF Command Line Tool");
         pw().print("Version: ");
         pw().println(Config.AAF_DEFAULT_API_VERSION);
-        return 200 /*HttpStatus.OK_200;*/;
+        return 200;
     }
 }
