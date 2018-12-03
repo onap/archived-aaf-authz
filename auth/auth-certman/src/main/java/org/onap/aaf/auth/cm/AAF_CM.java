@@ -72,12 +72,12 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
     private static final String USER_PERMS = "userPerms";
     private static final Map<String,CA> certAuths = new TreeMap<>();
-    public Facade1_0 facade1_0; // this is the default Facade
-    public Facade1_0 facade1_0_XML; // this is the XML Facade
-    public Map<String, Dated> cacheUser;
-    public AAFAuthn<?> aafAuthn;
-    public AAFLurPerm aafLurPerm;
-    final public Cluster cluster;
+    public static  Facade1_0 facade1_0; // this is the default Facade
+    public static  Facade1_0 facade1_0_XML; // this is the XML Facade
+    public static  Map<String, Dated> cacheUser;
+    public static  AAFAuthn<?> aafAuthn;
+    public static  AAFLurPerm aafLurPerm;
+    public final  Cluster cluster;
     public final LocateDAO locateDAO;
 
 
@@ -96,8 +96,8 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         // Note: If you need both Authn and Authz construct the following:
         aafAuthn = aafCon().newAuthn(aafLurPerm);
 
-        String aaf_env = env.getProperty(Config.AAF_ENV);
-        if (aaf_env==null) {
+        String aafEnv = env.getProperty(Config.AAF_ENV);
+        if (aafEnv==null) {
             throw new APIException("aaf_env needs to be set");
         }
 
@@ -133,7 +133,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
                         Object pinst[] = new Object[4];
                         pinst[0]=env;
                         pinst[1]= key.substring(idx+1);
-                        pinst[2]= aaf_env;
+                        pinst[2]= aafEnv;
                         pinst[3] = multiParams; 
                         CA ca = cons.newInstance(pinst);
                         certAuths.put(ca.getName(),ca);
@@ -236,7 +236,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
             JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
             jss.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            trans.error().log(e);
         }
     }
 }
