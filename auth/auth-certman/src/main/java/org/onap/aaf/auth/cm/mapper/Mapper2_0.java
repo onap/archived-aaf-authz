@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,14 +165,17 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         try {
             in = (CertificateRequest)req;
         } catch (ClassCastException e) {
+            trans.error().log(e);
             return Result.err(Result.ERR_BadData,"Request is not a CertificateRequest");
         }
 
         CertReq out = new CertReq();
         CertmanValidator v = new CertmanValidator();
+        out.mechid=in.getMechid();
         v.isNull("CertRequest", req)
-            .nullOrBlank("MechID", out.mechid=in.getMechid());
-        v.nullBlankMin("FQDNs", out.fqdns=in.getFqdns(),1);
+            .nullOrBlank("MechID",out.mechid );
+        out.fqdns=in.getFqdns();
+        v.nullBlankMin("FQDNs", out.fqdns,1);
         if (v.err()) {
             return Result.err(Result.ERR_BadData, v.errs());
         }
