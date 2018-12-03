@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +50,8 @@ public class ListByPerm extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+    public int _exec(int idx0, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = idx0;
         final String type=args[idx];
         final String instance=args[++idx];
         final String action=args[++idx];
