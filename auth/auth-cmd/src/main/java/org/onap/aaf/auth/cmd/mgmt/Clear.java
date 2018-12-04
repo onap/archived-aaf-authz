@@ -45,8 +45,8 @@ public class Clear extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, String ... args) throws CadiException, APIException, LocatorException {
-        int idx = _idx;
+    public int _exec(int idxParam, String ... args) throws CadiException, APIException, LocatorException {
+        int idx = idxParam;
         int rv=409;
         for (final String name : args[idx++].split(COMMA)) {
             rv = all(new Retryable<Integer>() {
@@ -61,7 +61,9 @@ public class Clear extends Cmd {
                         pw().println("Cleared Cache for " + name + " on " + client);
                         rv=200;
                     } else {
-                        if (rv==409)rv = fp.code();
+                        if (rv==409) {
+                            rv = fp.code();
+                        }
                         error(fp);
                     }
                     return rv;
@@ -72,8 +74,8 @@ public class Clear extends Cmd {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentParam, StringBuilder sb) {
+            int indent = indentParam;
         detailLine(sb,indent,"Clear the cache for certain tables");
         indent+=2;
         detailLine(sb,indent,"name        - name of table or 'all'");
