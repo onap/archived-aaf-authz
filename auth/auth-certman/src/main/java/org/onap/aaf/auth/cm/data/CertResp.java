@@ -42,7 +42,7 @@ public class CertResp {
     private String[] trustChain;
     private String[] notes;
     
-    public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] notes) throws IOException, GeneralSecurityException, CertException {
+    public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] notes) throws IOException, CertException {
         keyPair = csrMeta.keypair(trans);
         privateKey = Factory.toString(trans, keyPair.getPrivate());
         certString = Factory.toString(trans,x509);
