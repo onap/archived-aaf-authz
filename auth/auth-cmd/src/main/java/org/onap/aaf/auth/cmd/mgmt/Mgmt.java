@@ -26,7 +26,7 @@ import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.misc.env.APIException;
 
 public class Mgmt extends BaseCmd<Mgmt> {
-    public Mgmt(AAFcli aafcli) throws APIException {
+    public Mgmt(AAFcli aafcli) {
         super(aafcli, "mgmt");
         cmds.add(new Cache(this));
         cmds.add(new Deny(this));
