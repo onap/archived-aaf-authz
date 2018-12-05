@@ -34,29 +34,7 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.Perms;
 
 public class List extends BaseCmd<Perm> {
-//    private static final String LIST_PERM_DETAILS = "list permission details";
-    
-    public List(Perm parent) {
-        super(parent,"list");
-
-        cmds.add(new ListByUser(this));
-        cmds.add(new ListByName(this));
-        cmds.add(new ListByNS(this));
-        cmds.add(new ListByRole(this));
-        cmds.add(new ListActivity(this));
-    }
-    // Package Level on purpose
-    abstract class ListPerms extends Retryable<Integer> {
-        protected int list(Future<Perms> fp,String header, String parentPerm) throws CadiException, APIException  {
-            if (fp.get(AAFcli.timeout())) {    
-                report(fp,header, parentPerm);
-            } else {
-                error(fp);
-            }
-            return fp.code();
-        }
-    }
-
+    private static final String permFormat = "%-30s %-30s %-10s\n";
     private static final Comparator<aaf.v2_0.Perm> permCompare = new Comparator<aaf.v2_0.Perm>() {
         @Override
         public int compare(aaf.v2_0.Perm a, aaf.v2_0.Perm b) {
@@ -70,8 +48,26 @@ public class List extends BaseCmd<Perm> {
             return a.getAction().compareTo(b.getAction());
         }
     };
-    
-    private static final String permFormat = "%-30s %-30s %-10s\n";
+    public List(Perm parent) {
+        super(parent,"list");
+
+        cmds.add(new ListByUser(this));
+        cmds.add(new ListByName(this));
+        cmds.add(new ListByNS(this));
+        cmds.add(new ListByRole(this));
+        cmds.add(new ListActivity(this));
+    }
+    // Package Level on purpose
+    abstract class ListPerms extends Retryable<Integer> {
+        protected int list(Future<Perms> fp,String header, String parentPerm) throws CadiException  {
+            if (fp.get(AAFcli.timeout())) {    
+                report(fp,header, parentPerm);
+            } else {
+                error(fp);
+            }
+            return fp.code();
+        }
+    }
     
     void report(Future<Perms> fp, String ... str) {
         reportHead(str);
