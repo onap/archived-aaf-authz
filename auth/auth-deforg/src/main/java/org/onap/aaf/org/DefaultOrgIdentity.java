@@ -151,9 +151,9 @@ public class DefaultOrgIdentity implements Identity {
     @Override
     public String mayOwn() {
         // Assume only Employees are responsible for Resources.
-        if (identity.status==null|| identity.status.length()==0) {
+        if (identity.responsibleTo==null|| identity.responsibleTo.length()==0) {
             return "Identity must have valid status";
-        } else if (EMPLOYEE.equals(identity.status)) {
+        } else if (EMPLOYEE.equals(identity.responsibleTo)) {
             return null; // This is "Yes, is Responsible"
         } else {
             return "Reponsible Party must be an Employee";
