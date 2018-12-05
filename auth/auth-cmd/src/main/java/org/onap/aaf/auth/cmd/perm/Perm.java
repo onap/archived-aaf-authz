@@ -28,7 +28,7 @@ import org.onap.aaf.misc.env.APIException;
 public class Perm extends BaseCmd<Perm> {
     Role role;
 
-    public Perm(Role role) throws APIException {
+    public Perm(Role role) {
         super(role.aafcli, "perm");
         this.role = role;
 
