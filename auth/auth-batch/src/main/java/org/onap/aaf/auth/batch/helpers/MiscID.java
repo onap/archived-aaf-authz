@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +48,10 @@ public class MiscID  {
     CREATE_DATE - Date when MiscID was created 
     LAST_RENEWAL_DATE - Date when MiscID Sponsorship was last renewed
     */
-    public String id,sponsor,created,renewal;
+    public final  String id;
+    public final  String sponsor;
+    public final  String created;
+    public final  String renewal;
 
     private static final String fieldString = "id,created,sponsor,renewal";
     
@@ -63,8 +67,10 @@ public class MiscID  {
      * @throws IllegalAccessException 
      * @throws IllegalArgumentException 
      */
-    public void set(String row []) throws BatchException {
-        if (row.length<4) {throw new BatchException("Row of MiscID_XRef is too short");}
+    public void set(String[] row ) throws BatchException {
+        if (row.length<4) {
+            throw new BatchException("Row of MiscID_XRef is too short");
+        }
         id      = row[0];
         sponsor = row[1];
         created = row[2];
