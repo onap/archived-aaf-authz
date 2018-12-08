@@ -171,6 +171,24 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
         // data.day_time = Integer.parseInt(dayTimeFormat.format(now));
         return data;        
     }
+    
+    public void createBatch(StringBuilder sb, Data data) {
+    	sb.append("INSERT INTO history (");
+    	sb.append(helpers[FIELD_COMMAS]);
+    	sb.append(") VALUES(now(),");
+    	sb.append(data.yr_mon);
+    	sb.append(",'");
+    	sb.append(data.user);
+    	sb.append("','");
+    	sb.append(data.action);
+    	sb.append("','");
+    	sb.append(data.target);
+    	sb.append("','");
+    	sb.append(data.subject);
+    	sb.append("','");
+    	sb.append(data.memo);
+    	sb.append("',null);\n");
+    }
 
     public Result<List<Data>> readByYYYYMM(AuthzTrans trans, int yyyymm) {
         Result<ResultSet> rs = readByYRMN.exec(trans, "yr_mon", yyyymm);

@@ -22,4 +22,19 @@ package org.onap.aaf.auth.batch.helpers;
 
 public interface Visitor<T> {
 	void visit(T t);
+	
+	public static class Multi<T> implements Visitor<T> {
+		private final Visitor<T>[] visitors;
+		@SafeVarargs
+		public Multi(Visitor<T> ... vs) {
+			visitors  = vs;
+		}
+		
+		@Override
+		public void visit(T t) {
+			for(Visitor<T> v : visitors) {
+				v.visit(t);
+			}
+		}
+	};
 }

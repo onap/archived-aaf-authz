@@ -66,6 +66,17 @@ public class CQLBatch {
 		} else {
 			return execute();
 		}
-		
+	}
+	
+	public void touch(String table, int begin, int end, boolean dryRun) {
+		StringBuilder sb = begin();
+		for(int i=begin;i<end;++i) {
+			sb.append("UPDATE cache SET touched=dateof(now()) WHERE name='");
+			sb.append(table);
+			sb.append("' AND seg=");
+			sb.append(i);
+			sb.append(";\n");
+		}
+		execute(dryRun);
 	}
 }

@@ -33,6 +33,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
@@ -51,8 +52,8 @@ import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
-import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
@@ -77,6 +78,7 @@ public abstract class Batch {
     protected static AuthzEnv env;
     protected static Session session;
     protected static Set<String> specialNames;
+    protected static List<String> specialDomains;
     protected static boolean dryRun; 
     protected static String batchEnv;
 
@@ -131,14 +133,18 @@ public abstract class Batch {
 
         // Special names to allow behaviors beyond normal rules
         specialNames = new HashSet<>();
+        specialDomains = new ArrayList<>();
         String names = env.getProperty( "SPECIAL_NAMES" );
         if ( names != null )
         {
             env.info().log("Loading SPECIAL_NAMES");
-            for (String s :names.split(",") )
-            {
+            for (String s :names.split(",") ) {
                 env.info().log("\tspecial: " + s );
-                specialNames.add( s.trim() );
+                if(s.indexOf('@')>0) {
+                	specialNames.add( s.trim() );
+                } else {
+                	specialDomains.add(s.trim());
+                }
             }
         }
     }
@@ -156,13 +162,23 @@ public abstract class Batch {
     }
     
     public boolean isSpecial(String user) {
+    	if(user==null) {
+    		return false;
+    	}
         if (specialNames != null && specialNames.contains(user)) {
             env.info().log("specialName: " + user);
-
             return (true);
         } else {
-            return (false);
+        	if(specialDomains!=null) {
+	        	for(String sd : specialDomains) {
+	        		if(user.endsWith(sd)) {
+	        			env.info().log("specialDomain: " + user + " matches " + sd);
+	        			return (true);
+	        		}
+	        	}
+        	}
         }
+        return (false);
     }
 
 
@@ -459,16 +475,16 @@ public abstract class Batch {
                     Class<?> cls;
                     String classifier = "";
                     try {
-                        cls = ClassLoader.getSystemClassLoader().loadClass("org.onap.aaf.auth.update." + toolName);
+                        cls = ClassLoader.getSystemClassLoader().loadClass("org.onap.aaf.auth.batch.update." + toolName);
                         classifier = "Update:";
                     } catch (ClassNotFoundException e) {
                         try {
-                            cls = ClassLoader.getSystemClassLoader().loadClass("org.onap.aaf.auth.reports." + toolName);
+                            cls = ClassLoader.getSystemClassLoader().loadClass("org.onap.aaf.auth.batch.reports." + toolName);
                             classifier = "Report:";
                         } catch (ClassNotFoundException e2) {
                             try {
                                 cls = ClassLoader.getSystemClassLoader()
-                                        .loadClass("org.onap.aaf.auth.temp." + toolName);
+                                        .loadClass("org.onap.aaf.auth.batch.temp." + toolName);
                                 classifier = "Temp Utility:";
                             } catch (ClassNotFoundException e3) {
                                 cls = null;
@@ -476,7 +492,7 @@ public abstract class Batch {
                         }
                     }
                     if (cls != null) {
-                        Constructor<?> cnst = cls.getConstructor(new Class[] { AuthzTrans.class });
+                        Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
                         batch = (Batch) cnst.newInstance(trans);
                         env.info().log("Begin", classifier, toolName);
                     }

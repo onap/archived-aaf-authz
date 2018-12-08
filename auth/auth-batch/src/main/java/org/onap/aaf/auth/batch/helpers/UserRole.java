@@ -321,6 +321,12 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append(row.get(3));
     	sb.append("';\n");
     }
-    
 
+	public static String histMemo(String fmt, List<String> row) {
+		return String.format(fmt, row.get(1),row.get(2)+'.'+row.get(3), row.get(4));
+	}
+
+	public static String histSubject(List<String> row) {
+		return row.get(1) + '|' + row.get(2)+'.'+row.get(3);	
+	}
 }
