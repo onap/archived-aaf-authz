@@ -64,6 +64,18 @@ public interface Organization {
         public boolean isPerson();                // Whether a Person or a Machine (App)
         public Organization org();                 // Organization of Identity
 
+
+    	public static String mixedCase(String in) {
+    		StringBuilder sb = new StringBuilder();
+    		for(int i=0;i<in.length();++i) {
+    			if(i==0) {
+    				sb.append(Character.toUpperCase(in.charAt(i)));
+    			} else {
+    				sb.append(Character.toLowerCase(in.charAt(i)));
+    			}
+    		}
+    		return sb.toString();
+    	}
     }
 
 
@@ -83,9 +95,7 @@ public interface Organization {
 
     public void addSupportedRealm(String r);
 
-
-
-    String getDomain();
+    public String getDomain();
 
     /**
      * Get Identity information based on userID
@@ -95,6 +105,20 @@ public interface Organization {
      */
     public Identity getIdentity(AuthzTrans trans, String id) throws OrganizationException;
     
+    /**
+     * May AutoDelete
+     * 
+     * Deletion of an Identity that has been removed from an Organization can be dangerous.  Mistakes may have been made 
+     * in the Organization side, a Feed might be corrupted, an API might not be quite right.  
+     * 
+     * The implementation of this method can use a double check of some sort, such as comparsion of missing ID in Organization
+     * feed with a "Deleted ID" feed.  
+     * 
+     * The failure to be in Organization will still be reported, if returned "false", but if true, it is taken as an 
+     * ok to proceed with deletion. 
+     */
+	public boolean mayAutoDelete(AuthzTrans trans, String id);
+
 
     /**
      * Does the ID pass Organization Standards
@@ -516,15 +540,22 @@ public interface Organization {
                 }
 
             };
+            
+
         }
 
         @Override
         public String[] getPasswordRules() {
             return nullStringArray; 
         }
+        
+    	@Override
+    	public boolean mayAutoDelete(AuthzTrans trans, String id) {
+    		// provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
+    		return false;
+    	}
 
     };
-
 }
 
 

@@ -4,3 +4,5 @@
 /aaf.props
 /cass.props
 /policy*
+/*.yaml
+/*.orig

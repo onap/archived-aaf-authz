@@ -33,6 +33,7 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
+import org.onap.aaf.misc.env.util.Split;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -59,7 +60,7 @@ public class X509 {
 
     private static void load(Trans trans, Session session, String query, Visitor<X509> visitor) {
         trans.info().log( "query: " + query );
-        TimeTaken tt = trans.start("Read Roles", Env.REMOTE);
+        TimeTaken tt = trans.start("Read X509", Env.REMOTE);
        
         ResultSet results;
         try {
@@ -114,6 +115,27 @@ public class X509 {
     	sb.append("' AND serial=");
     	sb.append(row.get(2));
     	sb.append(";\n");
+	}
+
+
+	public static String histSubject(List<String> row) {
+		return row.get(4);
+	}
+
+
+	public static String histMemo(String fmt, List<String> row) {
+		String id="n/a";
+		for(String s : Split.splitTrim(',', row.get(4))) {
+			if(s.startsWith("OU=") && s.indexOf('@')>=0) {
+				int colon = s.indexOf(':');
+				if(colon<0) {
+					colon=s.length();
+				}
+				id=s.substring(3,colon);
+				break;
+			}
+		}
+		return String.format(fmt, "Cert for " + id,"CA " + row.get(1),row.get(3));
 	}
 
 }

@@ -322,4 +322,14 @@ public class Cred  {
         return id.equals(obj);
     }
 
+
+	public static String histSubject(List<String> row) {
+		return row.get(1);
+	}
+
+
+	public static String histMemo(String fmt, String orgName, List<String> row) {
+		return String.format(fmt, row.get(1),orgName,row.get(4));
+	}
+
 }

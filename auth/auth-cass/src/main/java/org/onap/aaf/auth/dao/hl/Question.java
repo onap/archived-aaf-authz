@@ -953,27 +953,27 @@ public class Question {
             rv = cacheInfoDAO.touch(trans, NsDAO.TABLE, seg);
         }
         if (all || PermDAO.TABLE.equals(cname)) {
-            int seg[] = series(NsDAO.CACHE_SEG);
+            int seg[] = series(PermDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, PermDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, PermDAO.TABLE,seg);
         }
         if (all || RoleDAO.TABLE.equals(cname)) {
-            int seg[] = series(NsDAO.CACHE_SEG);
+            int seg[] = series(RoleDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, RoleDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, RoleDAO.TABLE,seg);
         }
         if (all || UserRoleDAO.TABLE.equals(cname)) {
-            int seg[] = series(NsDAO.CACHE_SEG);
+            int seg[] = series(UserRoleDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, UserRoleDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, UserRoleDAO.TABLE,seg);
         }
         if (all || CredDAO.TABLE.equals(cname)) {
-            int seg[] = series(NsDAO.CACHE_SEG);
+            int seg[] = series(CredDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, CredDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, CredDAO.TABLE,seg);
         }
         if (all || CertDAO.TABLE.equals(cname)) {
-            int seg[] = series(NsDAO.CACHE_SEG);
+            int seg[] = series(CertDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, CertDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, CertDAO.TABLE,seg);
         }

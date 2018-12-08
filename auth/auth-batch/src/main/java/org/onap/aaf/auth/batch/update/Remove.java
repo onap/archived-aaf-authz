@@ -23,15 +23,23 @@ package org.onap.aaf.auth.batch.update;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.BatchPrincipal;
-import org.onap.aaf.auth.batch.actions.CacheTouch;
 import org.onap.aaf.auth.batch.helpers.CQLBatch;
 import org.onap.aaf.auth.batch.helpers.Cred;
 import org.onap.aaf.auth.batch.helpers.UserRole;
 import org.onap.aaf.auth.batch.helpers.X509;
+import org.onap.aaf.auth.dao.CassAccess;
+import org.onap.aaf.auth.dao.cass.CertDAO;
+import org.onap.aaf.auth.dao.cass.CredDAO;
+import org.onap.aaf.auth.dao.cass.HistoryDAO;
+import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.CadiException;
@@ -44,7 +52,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class Remove extends Batch {
     private final AuthzTrans noAvg;
-	private CacheTouch cacheTouch;
+    private HistoryDAO historyDAO;
 	private CQLBatch cqlBatch;
 
     public Remove(AuthzTrans trans) throws APIException, IOException, OrganizationException {
@@ -52,14 +60,14 @@ public class Remove extends Batch {
         trans.info().log("Starting Connection Process");
         
         noAvg = env.newTransNoAvg();
-        noAvg.setUser(new BatchPrincipal("batch:RemoveExpired"));
+        noAvg.setUser(new BatchPrincipal("Remove"));
 
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
-        	cacheTouch = new CacheTouch(trans, cluster, dryRun);
+        	historyDAO = new HistoryDAO(trans, cluster, CassAccess.KEYSPACE);
             TimeTaken tt2 = trans.start("Connect to Cluster", Env.REMOTE);
             try {
-                session = cacheTouch.getSession(trans);
+                session = historyDAO.getSession(trans);
             } finally {
                 tt2.done();
             }
@@ -73,52 +81,123 @@ public class Remove extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
-        final int maxBatch = 50;
+        final int maxBatch = 25;
 
         // Create Intermediate Output 
         File logDir = new File(logDir());
         
-        File expired = new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv");
-        CSV expiredCSV = new CSV(expired);
-        try {
-        	final StringBuilder sb = cqlBatch.begin();
-            final Holder<Integer> hi = new Holder<Integer>(0);
-			expiredCSV.visit(new CSV.Visitor() {
-				@Override
-				public void visit(List<String> row) throws IOException, CadiException {
-					int i = hi.get();
-					if(i>=maxBatch) {
+        List<File> remove = new ArrayList<>();
+        if(args().length>0) {
+        	for(int i=0;i<args().length;++i) {
+        		remove.add(new File(logDir, args()[i]));
+        	}
+        } else {
+        	remove.add(new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv"));
+        }
+        
+        final Holder<Boolean> ur = new Holder<>(false);
+        final Holder<Boolean> cred = new Holder<>(false);
+        final Holder<Boolean> x509 = new Holder<>(false);
+        final Holder<String> memoFmt = new Holder<String>("");
+        final HistoryDAO.Data hdd = new HistoryDAO.Data();
+        final String orgName = trans.org().getName();
+        
+        hdd.action="delete";
+        hdd.reconstruct = ByteBuffer.allocate(0);
+        hdd.user = noAvg.user();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        hdd.yr_mon = Integer.parseInt(sdf.format(new Date()));
+        
+        try { 
+	        for(File f : remove) {
+	        	trans.info().log("Processing ",f.getAbsolutePath(),"for Deletions");
+	        	if(f.exists()) {
+			        CSV removeCSV = new CSV(f);
+		        		
+			        try {
+			        	final StringBuilder sb = cqlBatch.begin();
+			            final Holder<Integer> hi = new Holder<Integer>(0);
+						removeCSV.visit(new CSV.Visitor() {
+							@Override
+							public void visit(List<String> row) throws IOException, CadiException {
+								int i = hi.get();
+								if(i>=maxBatch) {
+									cqlBatch.execute(dryRun);
+									hi.set(0);
+									cqlBatch.begin();
+									i=0;
+								}
+								switch(row.get(0)) {
+									case "info":
+										switch(row.get(1)) {
+											case "Delete":
+												memoFmt.set("%s expired from %s on %s");
+												break;
+											case "NotInOrgDelete":
+												memoFmt.set("Identity %s was removed from %s on %s");
+												break;
+										}
+										break;
+									case "ur":
+										if(!ur.get()) {
+											ur.set(true);
+										}
+										hi.set(++i);
+										UserRole.row(sb,row);
+										hdd.target=UserRoleDAO.TABLE; 
+										hdd.subject=UserRole.histSubject(row);
+										hdd.memo=UserRole.histMemo(memoFmt.get(), row);
+										historyDAO.createBatch(sb, hdd);
+										break;
+									case "cred":
+										if(!cred.get()) {
+											cred.set(true);
+										}
+										hi.set(++i);
+										Cred.row(sb,row);
+										hdd.target=CredDAO.TABLE; 
+										hdd.subject=Cred.histSubject(row);
+										hdd.memo=Cred.histMemo(memoFmt.get(), orgName,row);
+										historyDAO.createBatch(sb, hdd);
+								    	break;
+									case "x509":
+										if(!x509.get()) {
+											x509.set(true);
+										}
+										hi.set(++i);
+										X509.row(sb,row);
+										hdd.target=CertDAO.TABLE; 
+										hdd.subject=X509.histSubject(row);
+										hdd.memo=X509.histMemo(memoFmt.get(),row);
+										historyDAO.createBatch(sb, hdd);
+										break;
+								}
+							}
+						});
 						cqlBatch.execute(dryRun);
-						hi.set(0);
-						cqlBatch.begin();
-						i=0;
+					} catch (IOException | CadiException e) {
+						e.printStackTrace();
 					}
-					switch(row.get(0)) {
-						case "ur":
-							hi.set(++i);
-							UserRole.row(sb,row);
-							break;
-						case "cred":
-							hi.set(++i);
-							Cred.row(sb,row);
-					    	break;
-						case "x509":
-							hi.set(++i);
-							X509.row(sb,row);
-							break;
-					}
-				}
-			});
-			cqlBatch.execute(dryRun);
-		} catch (IOException | CadiException e) {
-			e.printStackTrace();
-		}
+	        	} else {
+	        		trans.error().log("File",f.getAbsolutePath(),"does not exist.");
+	        	}
+	        }
+        } finally {
+        	if(ur.get()) {
+        		cqlBatch.touch(UserRoleDAO.TABLE, 0, UserRoleDAO.CACHE_SEG, dryRun);
+        	}
+        	if(cred.get()) {
+        		cqlBatch.touch(CredDAO.TABLE, 0, CredDAO.CACHE_SEG, dryRun);
+        	}
+        	if(x509.get()) {
+        		cqlBatch.touch(CertDAO.TABLE, 0, CertDAO.CACHE_SEG, dryRun);
+        	}
+        }
     }
     
     @Override
     protected void _close(AuthzTrans trans) {
         session.close();
-        cacheTouch.close(trans);
     }
 
 }
