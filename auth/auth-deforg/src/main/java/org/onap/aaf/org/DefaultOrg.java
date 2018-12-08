@@ -597,4 +597,10 @@ public class DefaultOrg implements Organization {
             return 0;
         }
     }
+
+	@Override
+	public boolean mayAutoDelete(AuthzTrans trans, String user) {
+		// provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
+		return false;
+	}
 }

@@ -80,7 +80,6 @@ public class Expiring extends Batch {
             
             // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
             Cred.load(trans, session);
-            UserRole.load(trans, session, UserRole.v2_0_11, new UserRole.DataLoadVisitor());
 
             minOwners=1;
 
@@ -100,7 +99,7 @@ public class Expiring extends Batch {
                     	cw.row(INFO,r.name(),Chrono.dateOnlyStamp(expireRange.now),r.reportingLevel());
                     	writerList.put(r.name(),cw);
                     	if("Delete".equals(r.name())) {
-                    		deleteDate = r.getStart();
+                    		deleteDate = r.getEnd();
                     	}
             		}
             	}

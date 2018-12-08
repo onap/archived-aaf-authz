@@ -45,6 +45,7 @@ public class CacheTouch extends ActionDAO<String,Void, String> {
             trans.info().printf("Would mark %s cache in DB for clearing: %s",table, text);
             return Result.ok();
         } else {
+        	
             Result<Void> rv = q.clearCache(trans, table);
             trans.info().printf("Set DB Cache %s for clearing: %s",table, text);
             return rv;
