@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +27,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.onap.aaf.auth.env.AuthzTrans;
+
 
 public class InputIterator implements Iterable<String> {
     private BufferedReader in;
     private final PrintStream out;
     private final String prompt, instructions;
+    private static AuthzTrans trans;
     
     public InputIterator(BufferedReader in, PrintStream out, String prompt, String instructions) {
         this.in = in;
@@ -50,6 +54,7 @@ public class InputIterator implements Iterable<String> {
                 try {
                     input = in.readLine();
                 } catch (IOException e) {
+                    trans.error().log("IO Exception",e.getMessage());
                     input = null;
                     return false;
                 }
