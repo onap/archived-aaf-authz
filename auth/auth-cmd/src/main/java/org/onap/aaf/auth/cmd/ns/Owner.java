@@ -33,9 +33,9 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 
 public class Owner extends BaseCmd<NS> {
-    private final static String[] options = {"add","del"};
+    private static final String[] options = {"add","del"};
 
-    public Owner(NS ns) throws APIException {
+    public Owner(NS ns) {
         super(ns,"owner",
                 new Param(optionsToString(options),true),
                 new Param("ns-name",true),
@@ -44,8 +44,8 @@ public class Owner extends BaseCmd<NS> {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+    public int _exec(int idxParam, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = idxParam;
 
         final int option = whichOption(options, args[idx++]);
         final String ns = args[idx++];
@@ -87,8 +87,8 @@ public class Owner extends BaseCmd<NS> {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentParam, StringBuilder sb) {
+            int indent = indentParam;
         detailLine(sb,indent,"Add or Delete Responsible person to/from Namespace");
         indent+=2;
         detailLine(sb,indent,"Namespace Owners are responsible to receive Notifications and ");
