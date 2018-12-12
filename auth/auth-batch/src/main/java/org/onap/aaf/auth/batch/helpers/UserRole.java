@@ -309,10 +309,10 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
 
     public void row(final CSV.Writer csvw) {
-    	csvw.row("ur",user(),ns(),rname(),Chrono.dateOnlyStamp(expires()));
+    	csvw.row("ur",user(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
     }
     
-    public static void row(StringBuilder sb, List<String> row) {
+    public static void batchDelete(StringBuilder sb, List<String> row) {
     	sb.append("DELETE from authz.user_role WHERE user='");
     	sb.append(row.get(1));
     	sb.append("' AND role='");
@@ -322,6 +322,18 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append("';\n");
     }
 
+    public static void batchExtend(StringBuilder sb, List<String> row, String newDate ) {
+    	sb.append("UPDATE authz.user_role SET expires='");
+    	sb.append(newDate);
+    	sb.append("' WHERE user='");
+    	sb.append(row.get(1));
+    	sb.append("' AND role='");
+    	sb.append(row.get(2));
+    	sb.append('.');
+    	sb.append(row.get(3));
+    	sb.append("';\n");
+    }
+    
 	public static String histMemo(String fmt, List<String> row) {
 		return String.format(fmt, row.get(1),row.get(2)+'.'+row.get(3), row.get(4));
 	}

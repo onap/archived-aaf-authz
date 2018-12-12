@@ -95,7 +95,7 @@ public class ExpiringOrig extends Batch {
             TimeTaken tt = trans.start("Connect to Cluster with DAOs", Env.REMOTE);
             try {
                 urFutureApprove = new URFutureApprove(trans, cluster,isDryRun());
-                checkOrganizationAcccess(trans, urFutureApprove.question());
+//                checkOrganizationAcccess(trans, urFutureApprove.question());
                 urFutureApproveExec = new URFutureApproveExec(trans, urFutureApprove);
                 urPrint = new URPrint("User Roles:");
                 crDelete = new CredDelete(trans, urFutureApprove);
@@ -142,8 +142,6 @@ public class ExpiringOrig extends Batch {
             }
             email.addTo(address);
     
-        } catch (OrganizationException e) {
-            throw new APIException("Error getting valid Organization",e);
         } finally {
             tt0.done();
         }

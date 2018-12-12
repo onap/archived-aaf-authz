@@ -280,7 +280,7 @@ public class Cred  {
     }
 
 
-    public static void row(StringBuilder sb, List<String> row) {
+    public static void batchDelete(StringBuilder sb, List<String> row) {
     	sb.append("DELETE from authz.cred WHERE id='");
     	sb.append(row.get(1));
     	sb.append("' AND type=");
@@ -290,7 +290,6 @@ public class Cred  {
     	sb.append(row.get(5));
     	sb.append("));\n");
 	}
-
 
 	public String toString() {
         StringBuilder sb = new StringBuilder(id);

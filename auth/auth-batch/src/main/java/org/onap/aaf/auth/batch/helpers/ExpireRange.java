@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.PropAccess;
 
 public class ExpireRange {
 	private static final String AAF_BATCH_RANGE = "aaf_batch_range.";

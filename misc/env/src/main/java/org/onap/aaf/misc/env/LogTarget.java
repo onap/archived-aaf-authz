@@ -63,10 +63,26 @@ public interface LogTarget {
     };
 
     // A Convenient LogTarget to write to the Console
-    public static final LogTarget SYSOUT = new LogTarget() {
+    public static final LogTarget SYSOUT = new StreamLogTarget(System.out,false);
+    
+    // A Convenient LogTarget to write to the Console
+    public static final LogTarget SYSERR = new StreamLogTarget(System.err,false);
+    
+    public static class StreamLogTarget implements LogTarget {
+    	private final PrintStream out;
+		private final boolean closeMe;
+
+    	public StreamLogTarget(PrintStream ps) {
+    		this(ps,true);
+    	}
+
+		/* Do NOT close SYSTEM ERR or OUT*/
+    	protected StreamLogTarget(PrintStream ps, boolean shouldClose) {
+    		out = ps;
+    		closeMe = shouldClose;
+    	}
         public void log(Object ... msgs) {
-            PrintStream out = System.out;
-            out.print(org.onap.aaf.misc.env.util.Chrono.dateFmt.format(new Date()));
+            out.print(Chrono.dateFmt.format(new Date()));
             out.print(": ");
             for (Object str : msgs) {
                 if (str!=null) {
@@ -80,7 +96,6 @@ public interface LogTarget {
         }
 
         public void log(Throwable t, Object ... msgs) {
-            PrintStream out = System.out;
             out.print(Chrono.dateFmt.format(new Date()));
             out.print(": ");
             for (Object str : msgs) {
@@ -100,43 +115,13 @@ public interface LogTarget {
         public void printf(String fmt, Object ... vars) {
             log(String.format(fmt,vars));
         }
-    };
-    
-    // A Convenient LogTarget to write to the Console
-    public static final LogTarget SYSERR = new LogTarget() {
-        public void log(Object ... msgs) {
-            PrintStream out = System.err;
-            out.print(Chrono.dateFmt.format(new Date()));
-            out.print(": ");
-            for (Object str : msgs) {
-                out.print(str.toString());
-                out.print(' ');
-            }
-            out.println();
-            out.flush();
+        
+        public void close() {
+        	if(closeMe) {
+        		out.close();
+        	}
         }
 
-        public void log(Throwable t, Object ... msgs) {
-            PrintStream out = System.err;
-            out.print(Chrono.dateFmt.format(new Date()));
-            out.print(": ");
-            for (Object str : msgs) {
-                out.print(str.toString());
-                out.print(' ');
-            }
-            out.println();
-            t.printStackTrace(out);
-        }
-
-        public boolean isLoggable() {
-            return true;
-        }
-        @Override
-        public void printf(String fmt, Object ... vars) {
-            log(String.format(fmt,vars));
-        }
-
-    };
-
+    }
 
 };
