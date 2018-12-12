@@ -4,12 +4,14 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ============================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.gui.AAF_GUI;
 import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
@@ -37,8 +40,11 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
+
 public class CUI extends HttpCode<AuthzTrans, Void> {
     private final AAF_GUI gui;
+
+
     public CUI(AAF_GUI gui) {
         super(null,"Command Line");
         this.gui = gui;
@@ -61,11 +67,11 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
             // Access needs to be set after overall construction.  Thus, the lazy create.
             AAFcli aafcli;
             AAFConHttp aafcon = gui.aafCon();
-            aafcli= new AAFcli(gui.access,gui.env, pw, 
-                    aafcon.hman(), 
-                    aafcon.securityInfo(), 
+            aafcli= new AAFcli(gui.access,gui.env, pw,
+                    aafcon.hman(),
+                    aafcon.securityInfo(),
                     new HTransferSS(p,AAF_GUI.app,
-                    aafcon.securityInfo()));
+                            aafcon.securityInfo()));
             aafcli.verbose(false);
             aafcli.gui(true);
 
@@ -81,13 +87,13 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
                 pw.flush();
             } catch (Exception e) {
                 pw.flush();
-                pw.println(e.getMessage());
+                trans.error().log("Error", e.getMessage());
             } finally {
                 aafcli.close();
             }
         } finally {
             tt.done();
         }
-        
+
     }
 }
