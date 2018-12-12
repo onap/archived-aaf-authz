@@ -76,7 +76,7 @@ public class OrganizationFactory {
         }
         Organization org = orgs.get(orgNS);
         if (org == null) {
-            env.debug().printf("Attempting to instantiate Organization %s\n",orgNS);
+            env.debug().printf("Attempting to instantiate Organization %s",orgNS);
 
             String orgClass = env.getProperty(ORGANIZATION_DOT+orgNS);
             if (orgClass == null) {
@@ -117,7 +117,7 @@ public class OrganizationFactory {
                 if ((isDefault="true".equalsIgnoreCase(env.getProperty(orgNS+".default")))) {
                     defaultOrg = org;
                 }
-                env.init().printf("Instantiated %s with %s%s\n",orgNS,orgClass,(isDefault?" as default":""));
+                env.init().printf("Instantiated %s with %s%s",orgNS,orgClass,(isDefault?" as default":""));
             }
             if (org==null) {
                 if (defaultOrg!=null) {

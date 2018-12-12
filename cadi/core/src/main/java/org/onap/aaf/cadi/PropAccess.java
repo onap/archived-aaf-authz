@@ -392,13 +392,16 @@ public class PropAccess implements Access {
             ps.println(buildMsg(level,elements));
             ps.flush();
         }
-        
     }
 
     public void set(LogIt logit) {
         logIt = logit;
     }
-    
+
+    public void setStreamLogIt(PrintStream ps) {
+        logIt = new StreamLogIt(ps);
+    }
+
     public String toString() {
     	return props.toString();
     }

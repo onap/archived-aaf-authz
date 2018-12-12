@@ -71,7 +71,7 @@ public class Remove extends Batch {
             } finally {
                 tt2.done();
             }
-            cqlBatch = new CQLBatch(session); 
+            cqlBatch = new CQLBatch(noAvg.info(),session); 
             
 
         } finally {
@@ -93,6 +93,10 @@ public class Remove extends Batch {
         	}
         } else {
         	remove.add(new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv"));
+        }
+        
+        for(File f : remove) {
+        	trans.init().log("Processing File:",f.getAbsolutePath());
         }
         
         final Holder<Boolean> ur = new Holder<>(false);
@@ -143,7 +147,7 @@ public class Remove extends Batch {
 											ur.set(true);
 										}
 										hi.set(++i);
-										UserRole.row(sb,row);
+										UserRole.batchDelete(sb,row);
 										hdd.target=UserRoleDAO.TABLE; 
 										hdd.subject=UserRole.histSubject(row);
 										hdd.memo=UserRole.histMemo(memoFmt.get(), row);
@@ -154,7 +158,7 @@ public class Remove extends Batch {
 											cred.set(true);
 										}
 										hi.set(++i);
-										Cred.row(sb,row);
+										Cred.batchDelete(sb,row);
 										hdd.target=CredDAO.TABLE; 
 										hdd.subject=Cred.histSubject(row);
 										hdd.memo=Cred.histMemo(memoFmt.get(), orgName,row);

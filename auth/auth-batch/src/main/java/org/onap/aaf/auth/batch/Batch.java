@@ -34,22 +34,20 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.log4j.Logger;
 import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.dao.CassAccess;
-import org.onap.aaf.auth.dao.cass.RoleDAO;
-import org.onap.aaf.auth.dao.cass.UserRoleDAO;
-import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.auth.log4j.Log4JAccessAppender;
 import org.onap.aaf.auth.org.Organization;
-import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.cadi.Access.Level;
@@ -59,6 +57,9 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.StaticSlot;
 import org.onap.aaf.misc.env.TimeTaken;
+import org.onap.aaf.misc.env.util.Chrono;
+import org.onap.aaf.misc.env.util.Split;
+import org.onap.aaf.misc.env.util.StringBuilderOutputStream;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
@@ -67,8 +68,6 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 
 public abstract class Batch {
-
-    private static String rootNs;
 
     private static StaticSlot ssargs;
 
@@ -84,22 +83,14 @@ public abstract class Batch {
 
     public static final String CASS_ENV = "CASS_ENV";
     public static final String LOG_DIR = "LOG_DIR";
-    protected static final String PUNT="punt";
     protected static final String MAX_EMAILS="MAX_EMAILS";
     protected static final String VERSION="VERSION";
     public static final String GUI_URL="GUI_URL";
     
     protected final Organization org;
-
-
     
     protected Batch(AuthzEnv env) throws APIException, IOException, OrganizationException {
-        // Be able to change Environments
-        // load extra properties, i.e.
-        // PERF.cassandra.clusters=....
-        batchEnv = env.getProperty(CASS_ENV);
         if (batchEnv != null) {
-            batchEnv = batchEnv.trim();
             env.info().log("Redirecting to ",batchEnv,"environment");
             String str;
             for (String key : new String[]{
@@ -107,7 +98,7 @@ public abstract class Batch {
                     CassAccess.CASSANDRA_CLUSTERS_PORT,
                     CassAccess.CASSANDRA_CLUSTERS_USER_NAME,
                     CassAccess.CASSANDRA_CLUSTERS_PASSWORD,
-                    VERSION,GUI_URL,PUNT,MAX_EMAILS,
+                    VERSION,GUI_URL,MAX_EMAILS,
                     LOG_DIR,
                     "SPECIAL_NAMES"
                     }) {
@@ -333,35 +324,6 @@ public abstract class Batch {
         }
     }
     
-    // IMPORTANT! VALIDATE Organization isUser method
-    protected void checkOrganizationAcccess(AuthzTrans trans, Question q) throws APIException, OrganizationException {
-            Set<String> testUsers = new HashSet<>();
-            Result<List<RoleDAO.Data>> rrd = q.roleDAO.readNS(trans, rootNs);
-            if (rrd.isOK()) {
-                for (RoleDAO.Data r : rrd.value) {
-                    Result<List<UserRoleDAO.Data>> rur = q.userRoleDAO.readByRole(trans, r.fullName());
-                    if (!rur.isOK()) {
-                        continue;
-                    }
-                    for (UserRoleDAO.Data udd : rur.value) {
-                        testUsers.add(udd.user);
-                    }
-                }
-                if (testUsers.size() < 2) {
-                    throw new APIException("Not enough Users in Roles for " + rootNs + " to Validate");
-                }
-
-                Identity iden;
-                for (String user : testUsers) {
-                    if ((iden = org.getIdentity(trans, user)) == null) {
-                        throw new APIException("Failed Organization Entity Validation Check: " + user);
-                    } else {
-                        trans.info().log("Organization Validation Check: " + iden.id());
-                    }
-                }
-            }
-        }
-    
     protected static String logDir() {
         String ld = env.getProperty(LOG_DIR);
         if (ld==null) {
@@ -391,13 +353,21 @@ public abstract class Batch {
     }
 
     public static void main(String[] args) {
-        PropAccess access = new PropAccess(args);
+    	// Use a StringBuilder to save off logs until a File can be setup
+    	StringBuilderOutputStream sbos = new StringBuilderOutputStream();
+        PropAccess access = new PropAccess(new PrintStream(sbos),args);
+        access.log(Level.INIT, "------- Starting Batch ------\n  Args: ");
+        for(String s: args) {
+        	sbos.getBuffer().append(s);
+        	sbos.getBuffer().append(' ');
+        }
+        
         InputStream is = null;
         String filename;
         String propLoc;
         try {
             Define.set(access);
-            rootNs =Define.ROOT_NS();
+            
             if(access.getProperty(Config.CADI_PROP_FILES)==null) {
 	            File f = new File("authBatch.props");
 	            try {
@@ -427,97 +397,118 @@ public abstract class Batch {
 	            access.log(Level.INFO,"Configuring from", propLoc);
 
             }
-            env = new AuthzEnv(access);
 
+            env = new AuthzEnv(access);
+            
             transferVMProps(env, CASS_ENV, "DRY_RUN", "NS", "Organization");
 
-            // Flow all Env Logs to Log4j, with ENV
-
-//            LogFileNamer lfn;
-//            lfn = new LogFileNamer(logDir(),"").noPID();
-//            lfn.setAppender("authz-batch");
-//            lfn.setAppender("aspr|ASPR");
-//            lfn.setAppender("sync");
-//            lfn.setAppender("jobchange");
-//            lfn.setAppender("validateuser");
-//            aspr = Logger.getLogger("aspr");
-//            Log4JLogTarget.setLog4JEnv("authz-batch", env);
-//            propLoc = null;
-
-            Batch batch = null;
-            // setup ATTUser and Organization Slots before starting this:
-            // TODO redo this
-            // env.slot(ATT.ATT_USERSLOT);
-            //
-            // OrganizationFactory.setDefaultOrg(env, ATT.class.getName());
-            AuthzTrans trans = env.newTrans();
-
-            TimeTaken tt = trans.start("Total Run", Env.SUB);
-            try {
-                int len = args.length;
-                if (len > 0) {
-                    String toolName = args[0];
-                    len -= 1;
-                    if (len < 0)
-                        len = 0;
-                    String nargs[] = new String[len];
-                    if (len > 0) {
-                        System.arraycopy(args, 1, nargs, 0, len);
-                    }
-
-                    env.put(ssargs = env.staticSlot("ARGS"), nargs);
-
-                    /*
-                     * Add New Batch Programs (inherit from Batch) here
-                     */
-
-                    // Might be a Report, Update or Temp Batch
-                    Class<?> cls;
-                    String classifier = "";
-                    try {
-                        cls = ClassLoader.getSystemClassLoader().loadClass("org.onap.aaf.auth.batch.update." + toolName);
-                        classifier = "Update:";
-                    } catch (ClassNotFoundException e) {
-                        try {
-                            cls = ClassLoader.getSystemClassLoader().loadClass("org.onap.aaf.auth.batch.reports." + toolName);
-                            classifier = "Report:";
-                        } catch (ClassNotFoundException e2) {
-                            try {
-                                cls = ClassLoader.getSystemClassLoader()
-                                        .loadClass("org.onap.aaf.auth.batch.temp." + toolName);
-                                classifier = "Temp Utility:";
-                            } catch (ClassNotFoundException e3) {
-                                cls = null;
-                            }
-                        }
-                    }
-                    if (cls != null) {
-                        Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
-                        batch = (Batch) cnst.newInstance(trans);
-                        env.info().log("Begin", classifier, toolName);
-                    }
-                
-
-                    if (batch == null) {
-                        trans.error().log("No Batch named", toolName, "found");
-                    }
-                    /*
-                     * End New Batch Programs (inherit from Batch) here
-                     */
-
-                }
-                if (batch != null) {
-                    batch.run(trans);
-                }
-            } finally {
-                tt.done();
-                if (batch != null) {
-                    batch.close(trans);
-                }
-                StringBuilder sb = new StringBuilder("Task Times\n");
-                trans.auditTrail(4, sb, AuthzTrans.SUB, AuthzTrans.REMOTE);
-                trans.info().log(sb);
+            // Be able to change Environments
+            // load extra properties, i.e.
+            // PERF.cassandra.clusters=....
+            batchEnv = env.getProperty(CASS_ENV);
+            if(batchEnv!=null) {
+            	batchEnv = batchEnv.trim();
             }
+
+            File logFile = new File(logDir() + "/batch" + Chrono.dateOnlyStamp(new Date()) + ".log" );
+            PrintStream batchLog = new PrintStream(new FileOutputStream(logFile,true));
+            try {
+	            access.setStreamLogIt(batchLog);
+	            sbos.flush();
+	            batchLog.print(sbos.getBuffer());
+	            sbos = null;
+	            Logger.getRootLogger().addAppender(new Log4JAccessAppender(access));
+
+	            Batch batch = null;
+	            AuthzTrans trans = env.newTrans();
+	
+	            TimeTaken tt = trans.start("Total Run", Env.SUB);
+	            try {
+	                int len = args.length;
+	                if (len > 0) {
+	                    String toolName = args[0];
+	                    len -= 1;
+	                    if (len < 0)
+	                        len = 0;
+	                    String nargs[] = new String[len];
+	                    if (len > 0) {
+	                        System.arraycopy(args, 1, nargs, 0, len);
+	                    }
+	
+	                    env.put(ssargs = env.staticSlot("ARGS"), nargs);
+	
+	                    /*
+	                     * Add New Batch Programs (inherit from Batch) here
+	                     */
+	
+	                    // Might be a Report, Update or Temp Batch
+	                    Class<?> cls = null;
+	                    String classifier = "";
+	
+	                    String[] pkgs = new String[] {
+	                    		"org.onap.aaf.auth.batch.update",
+	                    		"org.onap.aaf.auth.batch.reports",
+	                    		"org.onap.aaf.auth.batch.temp"
+	                    		};
+	                    		
+	                    String ebp = env.getProperty("EXTRA_BATCH_PKGS");
+	                    if(ebp!=null) {
+	                        String[] ebps = Split.splitTrim(':', ebp);
+	                    	String[] temp = new String[ebps.length + pkgs.length];
+	                    	System.arraycopy(pkgs,0, temp, 0, pkgs.length);
+	                    	System.arraycopy(ebps,0,temp,pkgs.length,ebps.length);
+	                    	pkgs = temp;
+	                    }
+	                    
+	                    for(String p : pkgs) {
+		                    try {
+		                        cls = ClassLoader.getSystemClassLoader().loadClass(p + '.' + toolName);
+		                        int lastDot = p.lastIndexOf('.');
+		                        if(p.length()>0 || p.length()!=lastDot) { 
+			                        StringBuilder sb = new StringBuilder();
+			                        sb.append(Character.toUpperCase(p.charAt(++lastDot)));
+			                        while(++lastDot<p.length()) {
+			                        	sb.append(p.charAt(lastDot));
+			                        }
+			                        sb.append(':');
+			                        classifier = sb.toString();
+			                        break;
+		                        }
+		                    } catch (ClassNotFoundException e) {
+		                    	cls = null;
+		                    }
+	                    }
+	                    if (cls != null) {
+	                        Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
+	                        batch = (Batch) cnst.newInstance(trans);
+	                        env.info().log("Begin", classifier, toolName);
+	                    }
+	                
+	
+	                    if (batch == null) {
+	                        trans.error().log("No Batch named", toolName, "found");
+	                    }
+	                    /*
+	                     * End New Batch Programs (inherit from Batch) here
+	                     */
+	
+	                }
+	                if (batch != null) {
+	                    batch.run(trans);
+	                }
+	            } finally {
+	                tt.done();
+	                if (batch != null) {
+	                    batch.close(trans);
+	                }
+	                StringBuilder sb = new StringBuilder("Task Times\n");
+	                trans.auditTrail(4, sb, AuthzTrans.SUB, AuthzTrans.REMOTE);
+	                trans.info().log(sb);
+	            }
+            } finally {
+            	batchLog.close();
+            }
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             // Exceptions thrown by DB aren't stopping the whole process.

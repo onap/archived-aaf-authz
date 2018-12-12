@@ -101,6 +101,7 @@ public class Expiring extends Batch {
                     	if("Delete".equals(r.name())) {
                     		deleteDate = r.getEnd();
                     	}
+                    	trans.init().log("Creating File:",file.getAbsolutePath());
             		}
             	}
             }

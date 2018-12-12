@@ -20,6 +20,8 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
+import org.onap.aaf.misc.env.LogTarget;
+
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
@@ -27,8 +29,10 @@ public class CQLBatch {
 	private Session session;
 	private StringBuilder sb;
 	private int hasAdded;
+	private LogTarget log;
 
-	public CQLBatch(Session session) {
+	public CQLBatch(LogTarget log, Session session) {
+		this.log = log;
 		this.session = session;
 		sb = new StringBuilder();
 		hasAdded = 0;
@@ -42,11 +46,10 @@ public class CQLBatch {
 	
 	private boolean end() {
 		if(sb.length()==hasAdded) {
-			System.out.println("Nothing to Process");
 			return false;
 		} else {
 			sb.append("APPLY BATCH;\n");
-			System.out.println(sb);
+			log.log(sb);
 			return true;
 		}
 	}
