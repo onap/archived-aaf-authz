@@ -19,16 +19,16 @@
  *
  */package org.onap.aaf.auth.batch.reports;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.onap.aaf.auth.batch.Batch;
@@ -67,22 +67,28 @@ public class Notify extends Batch {
 			throw new APIException("Unable to construct " + mailerCls,e);
 		}
 		
-		FileInputStream fis = new FileInputStream(header_html);
+		String line;
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(new FileReader(header_html));
 		try {
-			byte[] content = new byte[(int)fis.getChannel().size()];
-			fis.read(content);
-			header = new String(content);
+			while((line=br.readLine())!=null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+			header = sb.toString();
 		} finally {
-			fis.close();
+			br.close();
 		}
 		
-		fis = new FileInputStream(footer_html);
+		br = new BufferedReader(new FileReader(footer_html));
 		try {
-			byte[] content = new byte[(int)fis.getChannel().size()];
-			fis.read(content);
-			footer = new String(content);
+			while((line=br.readLine())!=null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+			footer = sb.toString();
 		} finally {
-			fis.close();
+			br.close();
 		}
 	
 		// Class Load possible data
