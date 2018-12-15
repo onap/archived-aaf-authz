@@ -53,7 +53,7 @@ public class Result<RV> {
     public final String details;
     public final String[] variables;
     
-    protected Result(RV value, int status, String details, String[] variables) {
+    public Result(RV value, int status, String details, String[] variables) {
         this.value = value;
         if (value==null) {
         specialCondition|=EMPTY_LIST;
