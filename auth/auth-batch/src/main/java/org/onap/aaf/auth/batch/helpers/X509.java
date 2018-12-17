@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +23,6 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
@@ -42,7 +43,10 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class X509 {
-    public final String ca,id,x500,x509;
+    public final String ca;
+    public final String id;
+    public final String x500;
+    public final String x509;
     public ByteBuffer serial;
     
     public X509(String ca, String id, String x500, String x509, ByteBuffer serial) {
@@ -104,12 +108,12 @@ public class X509 {
     }
     
 
-	public void row(CSV.Writer cw, X509Certificate x509Cert) throws IOException {
+	public void row(CSV.Writer cw, X509Certificate x509Cert) {
 		cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500);
 	}
 
 
-	public static void row(StringBuilder sb, List<String> row) throws IOException {
+	public static void row(StringBuilder sb, List<String> row) {
     	sb.append("DELETE from authz.x509 WHERE ca='");
     	sb.append(row.get(1));
     	sb.append("' AND serial=");
