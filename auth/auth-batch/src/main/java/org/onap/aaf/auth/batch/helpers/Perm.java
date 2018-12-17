@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,9 +44,24 @@ public class Perm implements Comparable<Perm> {
     public static final TreeMap<String,Perm> keys = new TreeMap<>();
     private static List<Perm> deletePerms = new ArrayList<>();
 
-    public final String ns, type, instance, action,description;
-    private String fullType = null, fullPerm = null, encode = null;
+    public final String ns;
+    public final String type;
+    public final String instance;
+    public final String action;
+    public final String description;
+    private String fullType = null;
+    private String fullPerm = null;
+    private String encode = null;
     public final Set<String> roles;
+
+    public Perm(String ns, String type, String instance, String action, String description, Set<String> roles) {
+        this.ns = ns;
+        this.type = type;
+        this.instance = instance;
+        this.action = action;
+        this.description = description;
+        this.roles = roles;
+    }
     
     public String encode() {
         if (encode == null) {
@@ -65,17 +82,6 @@ public class Perm implements Comparable<Perm> {
             fullPerm = ns + '.' + type  + '|' + instance + '|' + action;
         }
         return fullPerm;
-    }
-    
-    public Perm(String ns, String type, String instance, String action, String description, Set<String> roles) {
-        this.ns = ns;
-        this.type = type;
-        this.instance = instance;
-        this.action = action;
-        this.description = description;
-        // 2.0.11
-//        this.full = encode();//ns+'.'+type+'|'+instance+'|'+action;
-        this.roles = roles;
     }
 
     public static void load(Trans trans, Session session) {
