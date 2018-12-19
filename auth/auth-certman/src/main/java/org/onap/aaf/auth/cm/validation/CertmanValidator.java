@@ -78,22 +78,6 @@ public class CertmanValidator extends Validator{
         return this;
     }
 
-    public CertmanValidator artisKeys(List<ArtiDAO.Data> list, int min) {
-        if (list==null) {
-            msg(ARTIFACT_LIST_IS_NULL);
-        } else {
-            if (list.size()<min) {
-                msg(ARTIFACTS_MUST_HAVE_AT_LEAST + min + ENTR + (min==1?Y:IES));
-            } else {
-                for (ArtiDAO.Data a : list) {
-                    keys(a);
-                }
-            }
-        }
-        return this;
-    }
-
-
     public CertmanValidator keys(ArtiDAO.Data add) {
         if (add==null) {
             msg("Artifact is null.");
