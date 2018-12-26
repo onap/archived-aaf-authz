@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,10 +32,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.PropAccess;
+
 
 public class ExpireRange {
 	private static final String AAF_BATCH_RANGE = "aaf_batch_range.";
+	private static final String ONE_MONTH="OneMonth";
 	public Map<String,List<Range>> ranges;
 	public final Date now;
 	
@@ -55,12 +58,12 @@ public class ExpireRange {
 				
 				lcred.add(new Range("CredOneWeek",3,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
 				lcred.add(new Range("CredTwoWeek",2,1,GregorianCalendar.WEEK_OF_MONTH,1,GregorianCalendar.WEEK_OF_MONTH,2));
-				lcred.add(new Range("OneMonth",1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lcred.add(new Range(ONE_MONTH,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 				lcred.add(new Range("TwoMonth",1,0,GregorianCalendar.MONTH,1,GregorianCalendar.MONTH,2));
 				
-				lur.add(new Range("OneMonth",1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lur.add(new Range(ONE_MONTH,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 				
-				lx509.add(new Range("OneMonth",1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lx509.add(new Range(ONE_MONTH,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 			}
 		}
 	}
