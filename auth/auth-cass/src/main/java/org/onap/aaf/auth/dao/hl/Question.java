@@ -132,9 +132,9 @@ public class Question {
 
     public final HistoryDAO historyDAO;
     public final CachedNSDAO nsDAO;
-    public final CachedRoleDAO roleDAO;
+    public  CachedRoleDAO roleDAO;
     public final CachedPermDAO permDAO;
-    public final CachedUserRoleDAO userRoleDAO;
+    public CachedUserRoleDAO userRoleDAO;
     public final CachedCredDAO credDAO;
     public final CachedCertDAO certDAO;
     public final DelegateDAO delegateDAO;
@@ -145,6 +145,7 @@ public class Question {
 
     public Question(AuthzTrans trans, Cluster cluster, String keyspace, boolean startClean) throws APIException, IOException {
         PERMS = trans.slot("USER_PERMS");
+        System.out.println(trans.init());
         trans.init().log("Instantiating DAOs");
         long expiresIn = Long.parseLong(trans.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
         historyDAO = new HistoryDAO(trans, cluster, keyspace);

@@ -48,7 +48,7 @@ public class Result<RV> {
                             ERR_Backend                    = 9,
                             ERR_General                    = 20;
                             
-    public final RV value;
+    public RV value;
     public final int status;
     public final String details;
     public final String[] variables;
@@ -275,6 +275,8 @@ public class Result<RV> {
      * @return
      */
     public boolean isOKhasData() {
+    	System.out.println("specialCondition:"+specialCondition);
+    	System.out.println("specialCondition:"+(specialCondition & EMPTY_LIST));
         return status == OK && (specialCondition & EMPTY_LIST) != EMPTY_LIST;
     }
 

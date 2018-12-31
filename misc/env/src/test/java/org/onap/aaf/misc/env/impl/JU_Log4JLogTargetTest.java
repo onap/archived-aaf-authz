@@ -21,42 +21,88 @@
 
 package org.onap.aaf.misc.env.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.onap.aaf.misc.env.APIException;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Log4JLogTarget.class, Logger.class })
 public class JU_Log4JLogTargetTest {
 
+	@Mock
+	Level level;
+	 
     @Mock
     Logger log;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(Logger.class);
-        when(Logger.getLogger("Info")).thenReturn(log);
-        when(log.isEnabledFor (Level.DEBUG)).thenReturn(false);
+    	initMocks(this);
     }
 
     @Test
-    public void test() throws APIException {
-        Log4JLogTarget target = new Log4JLogTarget(null, Level.INFO);
-        Log4JLogTarget target1 = new Log4JLogTarget("Info", Level.DEBUG);
+    public void testLoggable() {
+    	Log4JLogTarget logObj = null;
+		try {
+			logObj = new Log4JLogTarget( "testLogger", Level.DEBUG);
+		} catch (APIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	boolean retVal = logObj.isLoggable();
+        assertTrue(retVal);
+    }
+    
+    @Test
+    public void testLog() {
+    	Log4JLogTarget logObj = null;
+		try {
+			logObj = new Log4JLogTarget( null, Level.DEBUG);
+		} catch (APIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	logObj.log(new Object[] {"test"});
+    }
+    
+    @Test
+    public void testLogThrowable() {
+    	Log4JLogTarget logObj = null;
+		try {
+			logObj = new Log4JLogTarget( null, Level.DEBUG);
+		} catch (APIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logObj.log(new Throwable("test exception"), new Object[] {"test","test2","",null});
+    }
+    
+    @Test
+    public void testPrintf() {
+    	Log4JLogTarget logObj = null;
+		try {
+			logObj = new Log4JLogTarget( "", level);
+		} catch (APIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	logObj.printf("test", new Object[] {"test","test2",""});
 
-        assertFalse(target1.isLoggable());
+    }
+    
+    @Test
+    public void testSetEnv() {
+		try {
+			Log4JLogTarget.setLog4JEnv("test", Mockito.mock(BasicEnv.class));
+		} catch (APIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 }
