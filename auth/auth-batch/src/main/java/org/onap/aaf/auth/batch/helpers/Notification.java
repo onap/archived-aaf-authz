@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,7 +79,7 @@ public class Notification {
     public final String user;
     public final TYPE type;
     public Date last;
-    public int checksum;
+    public int checkSum;
     public Message msg;
     private int current;
     public Organization org;
@@ -87,7 +89,7 @@ public class Notification {
         this.user = user;
         this.type = nt;
         this.last = last;
-        this.checksum = checksum;
+        this.checkSum = checksum;
         current = 0;
         count = 0;
     }
@@ -147,11 +149,11 @@ public class Notification {
         @Override
         public Notification create(Row row) {
             int idx =row.getInt(1);
-            TYPE type = TYPE.get(idx);
-            if (type==null) {
+            TYPE typeCreator = TYPE.get(idx);
+            if (typeCreator==null) {
                 return null;
             }
-            return new Notification(row.getString(0), type, row.getTimestamp(2), row.getInt(3));
+            return new Notification(row.getString(0), typeCreator, row.getTimestamp(2), row.getInt(3));
         }
 
         @Override
@@ -180,7 +182,7 @@ public class Notification {
     
     public boolean update(AuthzTrans trans, Session session, boolean dryRun) {
         checksum();
-        if (last==null || current==0 || current!=checksum) {
+        if (last==null || current==0 || current!=checkSum) {
             last = now;
             current = checksum();
             String update = "UPDATE authz.notify SET " +
@@ -204,6 +206,6 @@ public class Notification {
 
     public String toString() {
         return "\"" + user + "\",\"" + type.name() + "\",\"" 
-                + Chrono.dateTime(last)+ "\", "  + checksum;
+                + Chrono.dateTime(last)+ "\", "  + checkSum;
     }
 }
