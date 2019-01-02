@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (C) 2018 IBM.
+ * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,9 +49,12 @@ public class MiscID  {
     CREATE_DATE - Date when MiscID was created 
     LAST_RENEWAL_DATE - Date when MiscID Sponsorship was last renewed
     */
-    public String id,sponsor,created,renewal;
+    public String id;
+    public String sponsor;
+    public String created;
+    public String renewal;
 
-    private static final String fieldString = "id,created,sponsor,renewal";
+    private static final String FIELD_STRING = "id,created,sponsor,renewal";
     
     /**
      * Load a Row of Strings (from CSV file).
@@ -63,8 +68,10 @@ public class MiscID  {
      * @throws IllegalAccessException 
      * @throws IllegalArgumentException 
      */
-    public void set(String row []) throws BatchException {
-        if (row.length<4) {throw new BatchException("Row of MiscID_XRef is too short");}
+    public void set(String[] row ) throws BatchException {
+        if (row.length<4) {
+            throw new BatchException("Row of MiscID_XRef is too short");
+        }
         id      = row[0];
         sponsor = row[1];
         created = row[2];
@@ -80,15 +87,15 @@ public class MiscID  {
     
 
     public static void load(Trans trans, Session session ) {
-        load(trans, session,"SELECT " + fieldString + " FROM authz.miscid;",data);
+        load(trans, session,"SELECT " + FIELD_STRING + " FROM authz.miscid;",data);
     }
 
     public static void load(Trans trans, Session session, Map<String,MiscID> map ) {
-        load(trans, session,"SELECT " + fieldString + " FROM authz.miscid;",map);
+        load(trans, session,"SELECT " + FIELD_STRING + " FROM authz.miscid;",map);
     }
 
     public static void loadOne(Trans trans, Session session, String id ) {
-        load(trans, session,"SELECT " + fieldString + " FROM authz.miscid WHERE id ='" + id + "';", data);
+        load(trans, session,"SELECT " + FIELD_STRING + " FROM authz.miscid WHERE id ='" + id + "';", data);
     }
 
     public static void load(Trans trans, Session session, String query, Map<String,MiscID> map) {
@@ -141,7 +148,7 @@ public class MiscID  {
 
     public StringBuilder insertStmt() throws IllegalArgumentException, IllegalAccessException {
         StringBuilder sb = new StringBuilder("INSERT INTO authz.miscid (");
-        sb.append(fieldString);
+        sb.append(FIELD_STRING);
         sb.append(") VALUES ('");
         sb.append(id);
         sb.append("','");
