@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +46,9 @@ public class EmailPrint extends Email {
         boolean first = true;
         out.print("To: ");
         for (String s: toList) {
-            if (first) {first = false;}
+            if (first) {
+                first = false;
+            }
             else {out.print(',');}
             out.print(s);
         }
@@ -53,7 +57,9 @@ public class EmailPrint extends Email {
         first = true;
         out.print("CC: ");
         for (String s: ccList) {
-            if (first) {first = false;}
+            if (first) {
+                first = false;
+            }
             else {out.print(',');}
             out.print(s);
         }
