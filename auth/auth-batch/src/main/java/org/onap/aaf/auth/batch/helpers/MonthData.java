@@ -65,16 +65,17 @@ public class MonthData {
         }
     }
     
-    public void add(int yr_mon, String target, long total, long adds, long drops) {
-        Set<Row> row = data.get(yr_mon);
+    public void add(int yrMon, String target, long total, long adds, long drops) {
+        Set<Row> row = data.get(yrMon);
         if (row==null) {
-            data.put(yr_mon, (row=new HashSet<>()));
+            row=new HashSet<>();
+            data.put(yrMon, row);
         }
         row.add(new Row(target,total,adds,drops));
     }
     
-    public boolean notExists(int yr_mon) {
-        return data.get(yr_mon)==null;
+    public boolean notExists(int yrMon) {
+        return data.get(yrMon)==null;
     }
     
      public static class Row implements Comparable<Row> {
