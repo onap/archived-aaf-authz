@@ -3,13 +3,14 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -86,7 +87,7 @@ public class CMService {
     private final CertDAO certDAO;
     private final CredDAO credDAO;
     private final ArtiDAO artiDAO;
-    private AAF_CM certman;
+    private AAF_CM certManager;
 
     // @SuppressWarnings("unchecked")
     public CMService(final AuthzTrans trans, AAF_CM certman) throws APIException, IOException {
@@ -99,13 +100,13 @@ public class CMService {
         credDAO = new CredDAO(trans, hd, cid);
         artiDAO = new ArtiDAO(trans, hd, cid);
 
-        this.certman = certman;
-        
+        this.certManager = certman;
+
         root_read_permission=new AAFPermission(
-            trans.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF),
-            "access",
-            "*",
-            "read"
+                trans.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF),
+                ACCESS,
+                "*",
+                "read"
         );
     }
 
@@ -145,7 +146,7 @@ public class CMService {
                                     "Domain based Authorizations (" + fqdns.get(0) + ") requires Exception");
                         }
 
-                        // TODO check for Permission in Add Artifact?
+                        // check for Permission in Add Artifact?
                         String domain = fqdns.get(0).substring(1);
                         fqdns.remove(0);
                         if (fqdns.isEmpty()) {
@@ -178,6 +179,7 @@ public class CMService {
                                         }
                                     }
                                 } catch (UnknownHostException e1) {
+                                    trans.error().log(e1);
                                     return Result.err(Result.ERR_BadData, "There is no DNS lookup for %s", cn);
                                 }
                             }
@@ -286,8 +288,8 @@ public class CMService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                trans.error().log(e);
+
+                trans.error().log(e.getMessage());
                 return Result.err(Status.ERR_Denied,
                         "AppID Sponsorship cannot be determined at this time.  Try later.");
             }
@@ -457,7 +459,7 @@ public class CMService {
 
                 // Policy 6: Only do Domain by Exception
                 if (add.machine.startsWith("*")) { // Domain set
-                    CA ca = certman.getCA(add.ca);
+                    CA ca = certManager.getCA(add.ca);
 
                     if (!trans.fish(new AAFPermission(ca.getPermNS(),ca.getPermType(), add.ca, DOMAIN))) {
                         return Result.err(Result.ERR_Denied, "Domain Artifacts (%s) requires specific Permission",
@@ -473,7 +475,7 @@ public class CMService {
             }
             // Add to DB
             Result<ArtiDAO.Data> rv = artiDAO.create(trans, add);
-            // TODO come up with Partial Reporting Scheme, or allow only one at a time.
+            //  come up with Partial Reporting Scheme, or allow only one at a time.
             if (rv.notOK()) {
                 return Result.err(rv);
             }
@@ -491,18 +493,18 @@ public class CMService {
             return data;
         }
         add = data.value.get(0);
-        if (trans.user().equals(add.mechid) 
+        if (trans.user().equals(add.mechid)
                 || trans.fish(root_read_permission,
-                              new AAFPermission(add.ns,ACCESS, "*", "read"),
-                              new AAFPermission(add.ns,CERTMAN, add.ca, "read"),
-                              new AAFPermission(add.ns,CERTMAN, add.ca, "request"))
+                new AAFPermission(add.ns,ACCESS, "*", "read"),
+                new AAFPermission(add.ns,CERTMAN, add.ca, "read"),
+                new AAFPermission(add.ns,CERTMAN, add.ca, REQUEST))
                 || (trans.org().validate(trans, Organization.Policy.OWNS_MECHID, null, add.mechid)) == null) {
             return data;
         } else {
             return Result.err(Result.ERR_Denied,
                     "%s is not %s, is not the sponsor, and doesn't have delegated permission.", trans.user(),
                     add.mechid, add.ns + ".certman|" + add.ca + "|read or ...|request"); // note: reason is set by 2nd
-                                                                                            // case, if 1st case misses
+            // case, if 1st case misses
         }
 
     }
@@ -533,10 +535,9 @@ public class CMService {
             return Result.err(Result.ERR_BadData, v.errs());
         }
 
-        // TODO do some checks?
+        //  do some checks?
 
-        Result<List<ArtiDAO.Data>> rv = artiDAO.readByMachine(trans, machine);
-        return rv;
+        return artiDAO.readByMachine(trans, machine);
     }
 
     public Result<List<ArtiDAO.Data>> readArtifactsByNs(AuthzTrans trans, String ns) {
@@ -546,8 +547,7 @@ public class CMService {
             return Result.err(Result.ERR_BadData, v.errs());
         }
 
-        // TODO do some checks?
-
+        //  do some checks?
         return artiDAO.readByNs(trans, ns);
     }
 
@@ -559,7 +559,7 @@ public class CMService {
         }
 
         // Check if requesting User is Sponsor
-        // TODO - Shall we do one, or multiples?
+        //  Shall we do one, or multiples?
         for (ArtiDAO.Data add : list) {
             // Policy 1: MechID must exist in Org
             Identity muser = trans.org().getIdentity(trans, add.mechid);
@@ -592,7 +592,7 @@ public class CMService {
             }
             // Policy 6: Only do Domain by Exception
             if (add.machine.startsWith("*")) { // Domain set
-                CA ca = certman.getCA(add.ca);
+                CA ca = certManager.getCA(add.ca);
                 if (ca == null) {
                     return Result.err(Result.ERR_BadData, "CA is required in Artifact");
                 }
