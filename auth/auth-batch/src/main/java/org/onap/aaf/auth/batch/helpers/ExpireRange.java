@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright © 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,20 +32,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.PropAccess;
 
 public class ExpireRange {
 	private static final String AAF_BATCH_RANGE = "aaf_batch_range.";
 	public Map<String,List<Range>> ranges;
 	public final Date now;
+	public String rangeOneMonth = "OneMonth";
 	
 	public ExpireRange(final Access access) {
 		now = new Date();
 		ranges = new HashMap<>();
 		int i=0;
 		String prop = access.getProperty(AAF_BATCH_RANGE + i,null);
-		if(prop==null) {
-			if(i==0) {
+		if(prop==null && i==0) {
 				List<Range> lcred = getRangeList("cred");
 				List<Range> lur = getRangeList("ur");
 				List<Range> lx509 = getRangeList("x509");
@@ -55,14 +56,13 @@ public class ExpireRange {
 				
 				lcred.add(new Range("CredOneWeek",3,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
 				lcred.add(new Range("CredTwoWeek",2,1,GregorianCalendar.WEEK_OF_MONTH,1,GregorianCalendar.WEEK_OF_MONTH,2));
-				lcred.add(new Range("OneMonth",1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lcred.add(new Range(rangeOneMonth,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 				lcred.add(new Range("TwoMonth",1,0,GregorianCalendar.MONTH,1,GregorianCalendar.MONTH,2));
 				
-				lur.add(new Range("OneMonth",1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lur.add(new Range(rangeOneMonth,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 				
-				lx509.add(new Range("OneMonth",1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lx509.add(new Range(rangeOneMonth,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 			}
-		}
 	}
 	
 	public Set<String> names() {
