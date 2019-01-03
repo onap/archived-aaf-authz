@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +46,11 @@ public class Role implements Comparable<Role> {
     public static final TreeMap<String,Role> byName = new TreeMap<>();
     private static List<Role> deleteRoles = new ArrayList<>();
 
-    public final String ns, name, description;
-    private String full, encode;
+    public final String ns;
+    public final String name;
+    public final String description;
+    private String full;
+    private String encode;
     public final Set<String> perms;
     
     public Role(String full) {
