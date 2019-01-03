@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +37,26 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
-public class NS implements Comparable<NS> {
-    public final static Map<String,NS> data = new TreeMap<>();
+public class    NS implements Comparable<NS> {
+    public static final Map<String,NS> data = new TreeMap<>();
 
-    public final String name, description, parent;
-    public final int scope,type;
+    public final String name;
+    public final String description;
+    public final String parent;
+    public final int scope;
+    public final int type;
+
+    public static Creator<NS> v2_0_11 = new Creator<NS> () {
+        @Override
+        public NS create(Row row) {
+            return new NS(row.getString(0),row.getString(1), row.getString(2),row.getInt(3),row.getInt(4));
+        }
+
+        @Override
+        public String select() {
+            return "SELECT name, description, parent, type, scope FROM authz.ns ";
+        }
+    };
 
     public NS(String name, String description, String parent, int type, int scope) {
         this.name = name;
@@ -143,7 +160,9 @@ public class NS implements Comparable<NS> {
         }
     }
     public static NSSplit deriveParent(String dotted) {
-        if (dotted==null)return null;
+        if (dotted==null) {
+            return null;
+        }
         for (int idx = dotted.lastIndexOf('.');idx>=0; idx=dotted.lastIndexOf('.',idx-1)) {
             if (data.get(dotted.substring(0, idx))!=null) {
                 return new NSSplit(dotted,idx);
@@ -151,18 +170,6 @@ public class NS implements Comparable<NS> {
         }
         return null;
     }
-    
-    public static Creator<NS> v2_0_11 = new Creator<NS> () {
-        @Override
-        public NS create(Row row) {
-            return new NS(row.getString(0),row.getString(1), row.getString(2),row.getInt(3),row.getInt(4));
-        }
-        
-        @Override
-        public String select() {
-            return "SELECT name, description, parent, type, scope FROM authz.ns ";
-        }
-    };
 
         
 }
