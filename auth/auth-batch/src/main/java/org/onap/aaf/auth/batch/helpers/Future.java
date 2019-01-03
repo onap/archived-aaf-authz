@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +52,45 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     public final FutureDAO.Data fdd;
     public final String role; // derived
     private static final CacheChange<Future> cache = new CacheChange<>();
-    
+
+    public static Creator<Future> v2_0_17 = new Creator<Future>() {
+        @Override
+        public Future create(Row row) {
+            return new Future(row.getUUID(0),row.getString(1),row.getString(2),
+                    row.getTimestamp(3),row.getTimestamp(4), null);
+        }
+
+        @Override
+        public String select() {
+            return "select id,memo,target,start,expires from authz.future";
+        }
+    };
+
+    public static Creator<Future> withConstruct = new Creator<Future>() {
+        @Override
+        public String select() {
+            return "select id,memo,target,start,expires,construct from authz.future";
+        }
+
+        @Override
+        public Future create(Row row) {
+            return new Future(row.getUUID(0),row.getString(1),row.getString(2),
+                    row.getTimestamp(3),row.getTimestamp(4), row.getBytes(5));
+        }
+
+    };
+
+
+    public Future(UUID id, String memo, String target, Date start, Date expires, ByteBuffer construct) {
+        fdd = new FutureDAO.Data();
+        fdd.id = id;
+        fdd.memo = memo;
+        fdd.target = target;
+        fdd.start = start;
+        fdd.expires = expires;
+        fdd.construct = construct;
+        role = Approval.roleFromMemo(memo);
+    }
     
     public final UUID id() {
         return fdd.id;
@@ -70,18 +110,6 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     
     public final Date expires() {
         return fdd.expires;
-    }
-
-    
-    public Future(UUID id, String memo, String target, Date start, Date expires, ByteBuffer construct) {
-        fdd = new FutureDAO.Data();
-        fdd.id = id;
-        fdd.memo = memo;
-        fdd.target = target;
-        fdd.start = start;
-        fdd.expires = expires;
-        fdd.construct = construct;
-        role = Approval.roleFromMemo(memo);
     }
 
     public static void load(Trans trans, Session session, Creator<Future> creator) {
@@ -118,33 +146,6 @@ public class Future implements CacheChange.Data, Comparable<Future> {
             trans.info().log("Found",count,"Futures");
         }
     }
-    
-    public static Creator<Future> v2_0_17 = new Creator<Future>() {
-        @Override
-        public Future create(Row row) {
-            return new Future(row.getUUID(0),row.getString(1),row.getString(2),
-                    row.getTimestamp(3),row.getTimestamp(4), null);
-        }
-
-        @Override
-        public String select() {
-            return "select id,memo,target,start,expires from authz.future";
-        }
-    };
-
-    public static Creator<Future> withConstruct = new Creator<Future>() {
-        @Override
-        public String select() {
-            return "select id,memo,target,start,expires,construct from authz.future";
-        }
-        
-        @Override
-        public Future create(Row row) {
-            return new Future(row.getUUID(0),row.getString(1),row.getString(2),
-                    row.getTimestamp(3),row.getTimestamp(4), row.getBytes(5));
-        }
-
-    };
 
     public Result<Void> delayedDelete(AuthzTrans trans, FutureDAO fd, boolean dryRun, String text) {
         Result<Void> rv;
