@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +27,13 @@ import java.util.List;
 
 public abstract class AbsCredBody extends NotifyBody {
 
-	public AbsCredBody(final String name) throws IOException {
+	public AbsCredBody(final String name) {
 		super("cred",name);
 	}
 
 	@Override
 	public String user(List<String> row) {
-		if(row.size()>0) {
+		if( (row != null) && !row.isEmpty()) {
 			return row.get(1);
 		}
 		return null;
