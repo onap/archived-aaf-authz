@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +25,11 @@ package org.onap.aaf.auth.cmd.perm;
 
 import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.auth.cmd.role.Role;
-import org.onap.aaf.misc.env.APIException;
 
 public class Perm extends BaseCmd<Perm> {
     Role role;
 
-    public Perm(Role role) throws APIException {
+    public Perm(Role role) {
         super(role.aafcli, "perm");
         this.role = role;
 
