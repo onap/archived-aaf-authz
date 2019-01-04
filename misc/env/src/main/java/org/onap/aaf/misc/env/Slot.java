@@ -59,7 +59,7 @@ public final class Slot {
      * @param name
      *             The name of the Slot's key.
      */
-    Slot(int index, String name) {
+    public Slot(int index, String name) {
         slot = index;
         key = name;
     }
