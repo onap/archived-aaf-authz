@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +39,59 @@ import org.onap.aaf.misc.env.TimeTaken;
 import com.datastax.driver.core.ResultSet;
 
 public class Upload extends Batch {
+
+	private static final int BATCH_LENGTH = 100;
+
+	int count;
+	int batchCnt;
+
+	// APPROVALS
+	private static final String APPR_INS_FMT="  INSERT INTO authz.approval "
+			+ "(id,approver,last_notified,memo,operation,status,ticket,type,user) "
+			+ "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);\n";
+	private static final Boolean[] APPR_QUOTES = new Boolean[]{false,true,true,true,true,true,false,true,true};
+
+	// ARTIFACTS
+	private static final String ARTI_INS_FMT="  INSERT INTO authz.artifact "
+			+ "(mechid,machine,ca,dir,expires,notify,ns,os_user,renewdays,sans,sponsor,type) "
+			+ "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);\n";
+	private static final Boolean[] ARTI_QUOTES = new Boolean[]
+			{true,true,true,true,true,true,true,true,false,false,true,false};
+
+	// CREDS
+	private static final String CRED_INS_FMT="  INSERT INTO authz.cred "
+			+ "(id,type,expires,cred,notes,ns,other,prev) "
+			+ "VALUES (%s,%s,%s,%s,%s,%s,%s,%s);\n";
+	private static final Boolean[] CRED_QUOTES = new Boolean[]
+			{true,false,true,false,true,true,false,false};
+
+	// NS
+	private static final String NS_INS_FMT="  INSERT INTO authz.ns "
+			+ "(name,description,parent,scope,type) "
+			+ "VALUES (%s,%s,%s,%s,%s);\n";
+	private static final Boolean[] NS_QUOTES = new Boolean[]
+			{true,true,true,false,false};
+
+	// x509
+	private static final String X509_INS_FMT="  INSERT INTO authz.x509 "
+			+ "(ca,serial,id,x500,x509) "
+			+ "VALUES (%s,%s,%s,%s,%s);\n";
+	private static final Boolean[] X509_QUOTES = new Boolean[]
+			{true,false,true,true,true};
+
+	// ROLE
+	private static final String ROLE_INS_FMT="  INSERT INTO authz.role "
+			+ "(ns,name,description,perms) "
+			+ "VALUES (%s,%s,%s,%s);\n";
+	private static final Boolean[] ROLE_QUOTES = new Boolean[]
+			{true,true,true,false};
+	// ROLE
+	private static final String PERM_INS_FMT="  INSERT INTO authz.perm "
+			+ "(ns,type,instance,action,description,roles) "
+			+ "VALUES (%s,%s,%s,%s,%s,%s);\n";
+	private static final Boolean[] PERM_QUOTES = new Boolean[]
+			{true,true,true,true,true,false};
+
 	public Upload(AuthzTrans trans) throws APIException, IOException, OrganizationException {
 		super(trans.env());
 	    trans.info().log("Starting Connection Process");
@@ -54,10 +109,6 @@ public class Upload extends Batch {
 	    	tt0.done();
 	    }
 	}
-
-	private static final int BATCH_LENGTH = 100;
-
-	int count,batchCnt;
 
 	@Override
 	protected void run(AuthzTrans trans) {
@@ -143,53 +194,6 @@ public class Upload extends Batch {
 		}
 
 	}
-
-	// APPROVALS
-	private static final String APPR_INS_FMT="  INSERT INTO authz.approval "
-			+ "(id,approver,last_notified,memo,operation,status,ticket,type,user) "
-			+ "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);\n";
-	private static final Boolean[] APPR_QUOTES = new Boolean[]{false,true,true,true,true,true,false,true,true};
-
-	// ARTIFACTS
-	private static final String ARTI_INS_FMT="  INSERT INTO authz.artifact "
-			+ "(mechid,machine,ca,dir,expires,notify,ns,os_user,renewdays,sans,sponsor,type) "
-			+ "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);\n";
-	private static final Boolean[] ARTI_QUOTES = new Boolean[]
-			{true,true,true,true,true,true,true,true,false,false,true,false};
-	
-	// CREDS
-	private static final String CRED_INS_FMT="  INSERT INTO authz.cred "
-			+ "(id,type,expires,cred,notes,ns,other,prev) "
-			+ "VALUES (%s,%s,%s,%s,%s,%s,%s,%s);\n";
-	private static final Boolean[] CRED_QUOTES = new Boolean[]
-			{true,false,true,false,true,true,false,false};
-	
-	// NS
-	private static final String NS_INS_FMT="  INSERT INTO authz.ns "
-			+ "(name,description,parent,scope,type) "
-			+ "VALUES (%s,%s,%s,%s,%s);\n";
-	private static final Boolean[] NS_QUOTES = new Boolean[]
-			{true,true,true,false,false};
-
-	// x509
-	private static final String X509_INS_FMT="  INSERT INTO authz.x509 "
-			+ "(ca,serial,id,x500,x509) "
-			+ "VALUES (%s,%s,%s,%s,%s);\n";
-	private static final Boolean[] X509_QUOTES = new Boolean[]
-			{true,false,true,true,true};
-
-	// ROLE
-	private static final String ROLE_INS_FMT="  INSERT INTO authz.role "
-			+ "(ns,name,description,perms) "
-			+ "VALUES (%s,%s,%s,%s);\n";
-	private static final Boolean[] ROLE_QUOTES = new Boolean[]
-			{true,true,true,false};
-	// ROLE
-	private static final String PERM_INS_FMT="  INSERT INTO authz.perm "
-			+ "(ns,type,instance,action,description,roles) "
-			+ "VALUES (%s,%s,%s,%s,%s,%s);\n";
-	private static final Boolean[] PERM_QUOTES = new Boolean[]
-			{true,true,true,true,true,false};
 
 
 	private String build(String feed, List<String> array) {
