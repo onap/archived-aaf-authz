@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +29,9 @@ import org.onap.aaf.auth.cmd.DeprecatedCMD;
 import org.onap.aaf.misc.env.APIException;
 
 public class NS extends BaseCmd<NS> {
-//    final Role role;
 
-    public NS(AAFcli aafcli) throws APIException {
+    public NS(AAFcli aafcli) {
         super(aafcli, "ns");
-//        this.role = role;
     
         cmds.add(new Create(this));
         cmds.add(new Delete(this));
