@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +43,7 @@ import aaf.v2_0.DelgRequest;
 
 public class Delg extends BaseCmd<User> {
     static final String AUTHZ_DELG = "/authz/delegate";
-    private final static String[] options = {"add","upd","del"};
+    private static final String[] options = {"add","upd","del"};
 
     public Delg(User user) throws APIException {
         super(user,"delegate",
@@ -112,8 +114,8 @@ public class Delg extends BaseCmd<User> {
     }
 
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentParam, StringBuilder sb) {
+            int indent = indentParam;
         detailLine(sb,indent,"Add, Update or Delete Delegate");
         indent+=2;
         detailLine(sb,indent,"A Delegate is a person who will temporarily cover the Approval and");
