@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,20 +121,17 @@ public class Expiring extends Batch {
 
 			Map<String, Set<UserRole>> owners = new TreeMap<String, Set<UserRole>>();
 			trans.info().log("Process UserRoles");
-			UserRole.load(trans, session, UserRole.v2_0_11, new Visitor<UserRole>() {
-				@Override
-				public void visit(UserRole ur) {
-					// Cannot just delete owners, unless there is at least one left. Process later
-					if ("owner".equals(ur.rname())) {
-						Set<UserRole> urs = owners.get(ur.role());
-						if (urs == null) {
-							urs = new HashSet<UserRole>();
-							owners.put(ur.role(), urs);
-						}
-						urs.add(ur);
-					} else {
-						writeAnalysis(trans,ur);
+			UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
+				// Cannot just delete owners, unless there is at least one left. Process later
+				if ("owner".equals(ur.rname())) {
+					Set<UserRole> urs = owners.get(ur.role());
+					if (urs == null) {
+						urs = new HashSet<UserRole>();
+						owners.put(ur.role(), urs);
 					}
+					urs.add(ur);
+				} else {
+					writeAnalysis(trans,ur);
 				}
 			});
 
