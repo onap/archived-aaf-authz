@@ -26,7 +26,6 @@ package org.onap.aaf.auth.cmd.ns;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.auth.cmd.DeprecatedCMD;
-import org.onap.aaf.misc.env.APIException;
 
 public class NS extends BaseCmd<NS> {
 
