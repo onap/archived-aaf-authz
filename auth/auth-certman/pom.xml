@@ -49,6 +49,12 @@
 	</properties>
 
 	<dependencies>
+         <dependency>
+          <groupId>org.powermock</groupId>
+          <artifactId>powermock-module-junit4-rule-agent</artifactId>
+          <version>1.6.4</version>
+          <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.onap.aaf.authz</groupId>
 			<artifactId>aaf-auth-core</artifactId>
