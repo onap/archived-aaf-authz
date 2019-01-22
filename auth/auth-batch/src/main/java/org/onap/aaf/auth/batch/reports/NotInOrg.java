@@ -52,7 +52,6 @@ public class NotInOrg extends Batch {
 	private static final String INFO = "info";
 	private Map<String, CSV.Writer> writerList;
 	private Map<String, CSV.Writer> whichWriter; 
-	private File logDir;
 	private Date now;
 	private Writer notInOrgW;
 	private Writer notInOrgDeleteW;
@@ -76,12 +75,10 @@ public class NotInOrg extends Batch {
             // Create Intermediate Output 
             writerList = new HashMap<>();
             whichWriter = new TreeMap<>();
-            logDir = new File(logDir());
-            logDir.mkdirs();
 
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
-           	File file = new File(logDir,NOT_IN_ORG + sdate +CSV);
+           	File file = new File(logDir(),NOT_IN_ORG + sdate +CSV);
             CSV csv = new CSV(file);
             notInOrgW = csv.writer(false);
             notInOrgW.row(INFO,NOT_IN_ORG,Chrono.dateOnlyStamp(now),0);
@@ -89,7 +86,7 @@ public class NotInOrg extends Batch {
             
             // These will have been double-checked by the Organization, and can be deleted immediately.
             String fn = NOT_IN_ORG+"Delete";
-            file = new File(logDir,fn + sdate +CSV);
+            file = new File(logDir(),fn + sdate +CSV);
             CSV csvDelete = new CSV(file);
             notInOrgDeleteW = csvDelete.writer(false);
             notInOrgDeleteW.row(INFO,fn,Chrono.dateOnlyStamp(now),0);

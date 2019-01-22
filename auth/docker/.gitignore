@@ -6,3 +6,5 @@
 /policy*
 /*.yaml
 /*.orig
+/.curl_auth
+/test.sh

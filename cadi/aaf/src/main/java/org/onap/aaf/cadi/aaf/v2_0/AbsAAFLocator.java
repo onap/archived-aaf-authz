@@ -87,12 +87,14 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             latitude = Double.parseDouble(lat);
             longitude = Double.parseDouble(lng);
         }
+
         if (name.startsWith(Defaults.AAF_NS)) {
             String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
-            if (root_ns!=null) {
-                name=name.replace(Defaults.AAF_NS, root_ns);
+            if(root_ns!=null) {
+            	name=name.replace(Defaults.AAF_NS, root_ns);
             }
         }
+
         if (name.startsWith("http")) { // simple URL
             this.name = name;
             this.version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
@@ -111,52 +113,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     public static void setCreator(LocatorCreator lc) {
         locatorCreator = lc; 
     }
-    
-    /*public static Locator<URI> create(String key) throws LocatorException {
-        String name = null;
-        String version = Config.AAF_DEFAULT_API_VERSION;
-        String pathInfo = null;
-        int prev = key.indexOf("/locate");
-        if (prev>0) {
-            prev = key.indexOf('/',prev+6);
-            if (prev>0) {
-                int next = key.indexOf('/',++prev);
-                if (next>0) {
-                    name = key.substring(prev, next);
-                    pathInfo=key.substring(next);
-                } else {
-                    name = key.substring(prev);
-                }
-                String[] split = Split.split(':', name);
-                switch(split.length) {
-                    case 3:
-                    case 2:
-                        version = split[1];
-                        name = split[0];
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        if (key.startsWith("http")) {
-            if (name!=null) {
-                if (locatorCreator != null) {
-                    AbsAAFLocator<?> aal = locatorCreator.create(name, version);
-                    if (pathInfo!=null) {
-                        aal.setPathInfo(pathInfo);
-                    }
-                    return aal;
-                }
-            } else {
-                return new PropertyLocator(key);
-            }
-        }
-        return null;
-    }
-    */
-    
+        
     public static Locator<URI> create(final String name, final String version) throws LocatorException {
         return locatorCreator.create(name, version);
     }

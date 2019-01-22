@@ -19,10 +19,10 @@
  *
  */
 
-package org.onap.aaf.misc.env.impl;
+package org.onap.aaf.misc.env;
 
 import org.junit.Test;
-import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.impl.NullLifeCycle;
 
 public class JU_NullLifeCycle {
 

@@ -28,14 +28,18 @@ fi
 . ./aaf.props
 
 DOCKER=${DOCKER:=docker}
-CADI_VERSION=${CADI_VERSION:=2.1.9-SNAPSHOT}
+CADI_VERSION=${CADI_VERSION:=2.1.10-SNAPSHOT}
 
-for V in VERSION DOCKER_REPOSITORY AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
+for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
    if [ "$(grep $V ./aaf.props)" = "" ]; then
       unset DEF
       case $V in
 	 DOCKER_REPOSITORY) 
 	        PROMPT="Docker Repo"
+	        DEF=""
+	        ;;
+	 HOSTNAME) 
+	        PROMPT="HOSTNAME (blank for Default)"
 	        DEF=""
 	        ;;
          AAF_FQDN)   PROMPT="AAF's FQDN";;
@@ -61,8 +65,10 @@ for V in VERSION DOCKER_REPOSITORY AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_
       read -p "$PROMPT" VAR 
       if [ "$VAR" = "" ]; then
          if [ "$DEF" = "" ]; then
-            echo "agent.sh needs each value queried.  Please start again."
-            exit
+            if [ "$V" != "HOSTNAME" ]; then
+              echo "agent.sh needs each value queried.  Please start again."
+              exit
+            fi
          else
             VAR=$DEF
          fi

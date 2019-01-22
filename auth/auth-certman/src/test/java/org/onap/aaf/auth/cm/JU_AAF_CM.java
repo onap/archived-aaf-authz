@@ -86,7 +86,7 @@ public class JU_AAF_CM {
 			Properties props=new Properties();
 			Mockito.doReturn(props).when(access).getProperties();
 			props.setProperty("cm_ca.props", "test");
-			Mockito.doReturn("test:2.1").when(access).getProperty(Config.AAF_COMPONENT, null);
+			Mockito.doReturn("test:2.1").when(access).getProperty(Config.AAF_LOCATOR_NAMES, null);
 			Mockito.doReturn("test").when(access).getProperty("https.protocols","TLSv1.1,TLSv1.2");
 			Mockito.doReturn("test").when(env).getProperty("cm_ca.props.perm_type",null);
 			Mockito.doReturn("test").when(env).getProperty("cm_ca.props.baseSubject",null);

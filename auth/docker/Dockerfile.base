@@ -1,4 +1,3 @@
-#!/bin/bash
 #########
 #  ============LICENSE_START====================================================
 #  org.onap.aaf
@@ -18,40 +17,10 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
+FROM nexus3.onap.org:10001/openjdk:8-jre-alpine
+MAINTAINER AAF Team, AT&T 2018
 
-. ./d.props
-
-DOCKER=${DOCKER:=docker}
-function run_it() {
-  $DOCKER run $@ \
-    -v "aaf_config:$CONF_ROOT_DIR" \
-    -v "aaf_status:/opt/app/aaf/status" \
-    --env aaf_locator_container=docker \
-    --env aaf_locator_fqdn=${HOSTNAME} \
-    --env aaf_locate_url=https://aaf-locate:8095 \
-    --env AAF_ENV=${AAF_ENV} \
-    --env LATITUDE=${LATITUDE} \
-    --env LONGITUDE=${LONGITUDE} \
-    --env CASSANDRA_CLUSTER=${CASSANDRA_CLUSTER} \
-    --env CASSANDRA_USER=${CASSANDRA_USER} \
-    --env CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD} \
-    --env CASSANDRA_PORT=${CASSANDRA_PORT} \
-    --name aaf_config_$USER \
-    $PREFIX${ORG}/${PROJECT}/aaf_config:${VERSION} \
-    bash -c "bash /opt/app/aaf_config/bin/agent.sh $PARAMS"
-}
-
-PARAMS=$@
-case "$1" in 
-  bash)
-    PARAMS="&& cd /opt/app/osaaf/local && exec bash"
-    run_it -it --rm  
-    ;;
-  taillog)
-    run_it -it --rm 
-    ;;
-  *)
-    run_it --rm 
-    ;;
-esac
+LABEL description="aaf_base"
+RUN apk add --no-cache bash
+RUN apk add --no-cache openssl
 

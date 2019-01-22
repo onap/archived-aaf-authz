@@ -275,8 +275,6 @@ public class Result<RV> {
      * @return
      */
     public boolean isOKhasData() {
-    	System.out.println("specialCondition:"+specialCondition);
-    	System.out.println("specialCondition:"+(specialCondition & EMPTY_LIST));
         return status == OK && (specialCondition & EMPTY_LIST) != EMPTY_LIST;
     }
 

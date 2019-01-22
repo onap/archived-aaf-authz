@@ -35,6 +35,12 @@ cadi_truststore=/opt/app/osaaf/public/truststoreONAPall.jks
 cadi_truststore_password=changeit
 cadi_x509_issuers=
 
+# Locator info
+aaf_locator_ns=AAF_NS
+aaf_locator_fqdn.docker=aaf-%N
+aaf_locator_fqdn.oom=%CNS.aaf-%N
+aaf_locator_fqdn.helm=%CNS.aaf-%N
+
 # Other
 aaf_data_dir=/opt/app/osaaf/data
 cadi_token_dir=/opt/app/osaaf/tokens

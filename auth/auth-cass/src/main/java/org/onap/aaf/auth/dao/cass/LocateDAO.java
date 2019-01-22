@@ -99,6 +99,24 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
         public void reconstitute(ByteBuffer bb) throws IOException {
             LocateLoader.deflt.unmarshal(this, toDIS(bb));
         }
+
+		public Data copy() {
+			Data out = new Data();
+            out.name = name;
+            out.hostname = hostname;
+            out.port = port;
+            out.major = major;
+            out.minor = minor;
+            out.patch = patch;
+            out.pkg = pkg;
+            out.latitude = latitude;
+            out.longitude = longitude;
+            out.protocol = protocol;
+            out.subprotocol = new HashSet<>();
+            out.subprotocol.addAll(subprotocol);
+            out.port_key = port_key;
+			return out;
+		}
     }
 
     private static class LocateLoader extends Loader<Data> implements Streamer<Data>{

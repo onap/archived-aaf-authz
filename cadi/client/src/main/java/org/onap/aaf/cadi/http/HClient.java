@@ -40,6 +40,7 @@ import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.EClient;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Data.TYPE;
@@ -109,24 +110,23 @@ public class HClient implements EClient<HttpURLConnection> {
 
     @Override
     public void send() throws APIException {
+        // Build URL from given URI plus current Settings
+        if (uri.getPath()==null) {
+            throw new APIException("Invalid URL entered for HClient");
+        }
+        StringBuilder pi=null;
+        if (pathinfo!=null) { // additional pathinfo
+            pi = new StringBuilder(uri.getPath());
+            if (!pathinfo.startsWith("/")) {
+                pi.append('/');
+            }
+            pi.append(pathinfo);
+        }
+       	URI sendURI = null;
         try {
-            // Build URL from given URI plus current Settings
-            if (uri.getPath()==null) {
-                throw new APIException("Invalid URL entered for HClient");
-            }
-            StringBuilder pi=null;
-            if (pathinfo!=null) { // additional pathinfo
-                pi = new StringBuilder(uri.getPath());
-                if (!pathinfo.startsWith("/")) {
-                    pi.append('/');
-                }
-                pi.append(pathinfo);
-            }
-            URI sendURI = new URI(
+            sendURI = new URI(
                     uri.getScheme(),
-                    uri.getUserInfo(),
-                    uri.getHost(),
-                    uri.getPort(),
+                    uri.getAuthority(),
                     pi==null?uri.getPath():pi.toString(),
                     query==null?uri.getQuery():query,
                     fragment==null?uri.getFragment():fragment
@@ -149,8 +149,14 @@ public class HClient implements EClient<HttpURLConnection> {
                 transfer.transfer(huc.getOutputStream());
             }
             // TODO other settings? There's a bunch here.
+        } catch (APIException e) {
+        	throw e;
         } catch (Exception e) {
-            throw new APIException(e);
+        	if(sendURI==null) {
+        		throw new APIException("Cannot connect to Root URI: " + uri.toString(),e);
+        	} else {
+        		throw new APIException("Cannot connect to " + sendURI.toString() + "(Root URI: " + uri.toString() +')',e);
+        	}
         } finally { // ensure all these are reset after sends
             meth=pathinfo=null;
             if (headers!=null) {
@@ -171,9 +177,7 @@ public class HClient implements EClient<HttpURLConnection> {
     protected HttpURLConnection getConnection(URI uri, StringBuilder pi) throws IOException, URISyntaxException {
         URL url = new URI(
                 uri.getScheme(), 
-                uri.getUserInfo(),
-                uri.getHost(), 
-                uri.getPort(), 
+                uri.getAuthority(),
                 pi==null?uri.getPath():pi.toString(), 
                 query,
                 fragment).toURL();

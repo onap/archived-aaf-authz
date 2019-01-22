@@ -32,7 +32,7 @@ import org.onap.aaf.cadi.config.Get;
  * A private method to query the Filter config and if not exists, return the default.  This
  * cleans up the initialization code.
  */
-class FCGet implements Get {
+public class FCGet implements Get {
     /**
      * 
      */

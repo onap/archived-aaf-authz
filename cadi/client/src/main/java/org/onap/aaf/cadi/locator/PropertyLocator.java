@@ -36,6 +36,7 @@ import java.util.TimerTask;
 
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.util.Split;
 
 public class PropertyLocator implements Locator<URI> {
@@ -181,7 +182,8 @@ public class PropertyLocator implements Locator<URI> {
             String realname;
             for (int i = 0; i < orig.length ; ++i) {
                 try {
-                    InetAddress ia[] = InetAddress.getAllByName(orig[i].getHost());
+                	FixURIinfo fui = new FixURIinfo(orig[i]);
+                    InetAddress ia[] = InetAddress.getAllByName(fui.getHost());
 
                     URI o,n;
                     for (int j=0;j<ia.length;++j) {

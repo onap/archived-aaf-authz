@@ -102,7 +102,10 @@ public class AuthzEnv extends RosettaEnv implements Access {
 
         @Override
         public void log(Throwable e, Object... msgs) {
-            access.log(Level.ERROR, msgs);
+        	Object[] nm = new Object[msgs.length+1];
+        	System.arraycopy(msgs, 0, nm, 1, msgs.length);
+        	nm[0]=e;
+            access.log(Level.ERROR, nm);
         }
 
         @Override

@@ -22,8 +22,10 @@
 ## AAF GUI Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props
-aaf_component=AAF_NS.gui:AAF_RELEASE
+aaf_locator_names=gui
 port=8200
+aaf_locator_port.helm=30083
+#aaf_locator_port.oom=
 
 aaf_gui_title=AAF
 aaf_gui_copyright=(c) 2018 AT&T Intellectual Property. All rights reserved.

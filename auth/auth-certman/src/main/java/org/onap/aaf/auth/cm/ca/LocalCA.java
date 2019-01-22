@@ -150,7 +150,7 @@ public class LocalCA extends CA {
 
                     try {
                         String pass = access.decrypt(params[0][2]/*encrypted passcode*/, true);
-                        if (pass==null) {
+                        if (pass==null || pass.isEmpty()) {
                             throw new CertException("Passcode for " + fileName + " cannot be decrypted.");
                         }
                         char[] ksPass = pass.toCharArray();
@@ -159,8 +159,9 @@ public class LocalCA extends CA {
 
                         keyStore.load(fis,ksPass);
                     } finally {
-                        if (fis != null)
+                        if (fis != null) {
                             fis.close();
+                        }
                     }
                     Entry entry;
                     if (fileName.endsWith(".pkcs11")) {

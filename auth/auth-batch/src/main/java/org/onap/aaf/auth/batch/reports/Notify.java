@@ -95,7 +95,7 @@ public class Notify extends Batch {
 		NotifyBody.load(env.access());
 		
         // Create Intermediate Output 
-        File logDir = new File(logDir());
+        File logDir = logDir();
         notifyFile = new ArrayList<>();
         if(args().length>0) {
         	for(int i=0;i<args().length;++i) {

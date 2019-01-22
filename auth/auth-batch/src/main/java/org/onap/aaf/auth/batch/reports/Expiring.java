@@ -63,7 +63,6 @@ public class Expiring extends Batch {
 	private static final String EXPIRED_OWNERS = "ExpiredOwners";
 	private int minOwners;
 	private Map<String, CSV.Writer> writerList;
-	private File logDir;
 	private ExpireRange expireRange;
 	private Date deleteDate;
 	
@@ -87,15 +86,13 @@ public class Expiring extends Batch {
 
             // Create Intermediate Output 
             writerList = new HashMap<>();
-            logDir = new File(logDir());
-            logDir.mkdirs();
             
             expireRange = new ExpireRange(trans.env().access());
             String sdate = Chrono.dateOnlyStamp(expireRange.now);
             for( List<Range> lr : expireRange.ranges.values()) {
             	for(Range r : lr ) {
             		if(writerList.get(r.name())==null) {
-                    	File file = new File(logDir,r.name() + sdate +CSV);
+                    	File file = new File(logDir(),r.name() + sdate +CSV);
                     	CSV csv = new CSV(file);
                     	CSV.Writer cw = csv.writer(false);
                     	cw.row(INFO,r.name(),Chrono.dateOnlyStamp(expireRange.now),r.reportingLevel());
@@ -116,7 +113,7 @@ public class Expiring extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
 		try {
-			File file = new File(logDir, EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
+			File file = new File(logDir(), EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
 			final CSV ownerCSV = new CSV(file);
 
 			Map<String, Set<UserRole>> owners = new TreeMap<String, Set<UserRole>>();

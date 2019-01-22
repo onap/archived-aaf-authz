@@ -59,7 +59,7 @@ public final class StaticSlot {
      * @param name
      *             The name of the StaticSlot's key.
      */
-    StaticSlot(int index, String name) {
+    public StaticSlot(int index, String name) {
         slot = index;
         key = name;
     }

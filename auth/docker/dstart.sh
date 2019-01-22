@@ -30,5 +30,5 @@ else
 fi
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-    $DOCKER start aaf_$AAF_COMPONENT
+    $DOCKER start aaf-$AAF_COMPONENT
 done

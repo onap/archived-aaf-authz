@@ -16,11 +16,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END====================================================
+ */
+
+package org.onap.aaf.cadi.util;
+
+import java.net.URI;
+
+/**
+ * URI and URL, if the host does not have "dots", will interpret Host:port as Authority
+ * 
+ * This is very problematic for Containers, which like single name entries.
+ * @author Instrumental(Jonathan)
  *
  */
-package org.onap.aaf.auth.server;
+public class FixURIinfo {
+	private String auth;
+	private String host;
+	private int port;
+	
+	public FixURIinfo(URI uri) {
+		auth = uri.getAuthority();
+		host = uri.getHost();
+		if(host==null) {
+			if(auth!=null) {
+				int colon = auth.indexOf(':');
+				if(colon >= 0 ) {
+					host = auth.substring(0, colon);
+					port = Integer.parseInt(auth.substring(colon+1));
+				} else {
+					host = auth;
+					port = uri.getPort();
+				}
+				auth=null;
+			}
+		}
+	}
+	
+	public String getHost() {
+		return host;
+	}
+	
+	public int getPort() {
+		return port;
+	}
 
-public interface ServiceStarter extends Runnable {
-    public void start() throws Exception;
-    public void shutdown();
+	public String getUserInfo() {
+		return auth;
+	}
 }

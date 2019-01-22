@@ -54,42 +54,30 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
 
     public final String app_name;
     public final String app_version;
-    public final String app_interface_version;
     public final String ROOT_NS;
-
+    
     public AbsService(final Access access, final ENV env) throws CadiException {
-            Define.set(access);
-            ROOT_NS = Define.ROOT_NS();
+        Define.set(access);
+        ROOT_NS = Define.ROOT_NS();
         this.access = access;
         this.env = env;
 
-        String component = access.getProperty(Config.AAF_COMPONENT, null);
-        final String[] locator_deploy;
-        
-        if (component == null) {
-            locator_deploy = null;
+        String str = access.getProperty(Config.AAF_LOCATOR_NAMES, null);
+        String[] scomp = Split.splitTrim(',', str);
+        if(scomp.length==0) {
+        	throw new CadiException(Config.AAF_LOCATOR_NAMES + " must be defined.");
         } else {
-            locator_deploy = Split.splitTrim(':', component);
-            if(locator_deploy.length>1 && "AAF_RELEASE".equals(locator_deploy[1])) {
-            	locator_deploy[1]=access.getProperty(Config.AAF_RELEASE, Defaults.AAF_VERSION);
-            	int snapshot = locator_deploy[1].indexOf("-SNAPSHOT");
-            	if(snapshot>0) {
-            		locator_deploy[1]=locator_deploy[1].substring(0, snapshot);
-            	}
-            }
+        	str = ROOT_NS + '.' + scomp[0];
         }
-            
-        if (component == null || locator_deploy==null || locator_deploy.length<2) {
-            throw new CadiException("AAF Component must include the " + Config.AAF_COMPONENT + " property, <fully qualified service name>:<full deployed version (i.e. 2.1.3.13)");
+        app_name = str;
+        
+        str = access.getProperty(Config.AAF_LOCATOR_VERSION, null);
+        if(str==null) {
+        	str = Defaults.AAF_VERSION;
+        	env.setProperty(Config.AAF_LOCATOR_VERSION, str);
         }
-        final String[] version = Split.splitTrim('.', locator_deploy[1]);
-        if (version==null || version.length<2) {
-            throw new CadiException("AAF Component Version must have at least Major.Minor version");
-        }
-            app_name = Define.varReplace(locator_deploy[0]);
-            app_version = locator_deploy[1];
-            app_interface_version = version[0]+'.'+version[1];
-            
+        app_version = str;
+        
         // Print Cipher Suites Available
         if (access.willLog(Level.DEBUG)) {
             SSLContext context;
@@ -111,7 +99,15 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             access.log(Level.DEBUG,sb);
         }
     }
+    
+    public void setProtocol(String proto) {
+    	env.setProperty(Config.AAF_LOCATOR_PROTOCOL, proto);
+    }
 
+    public void setSubprotocol(String subproto) {
+    	env.setProperty(Config.AAF_LOCATOR_SUBPROTOCOL, subproto);
+    }
+    
     protected abstract Filter[] _filters(Object ... additionalTafLurs) throws CadiException,  LocatorException;
     
     /**
@@ -125,7 +121,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         return _filters();
     }
 
-    public abstract Registrant<ENV>[] registrants(final int port) throws CadiException, LocatorException;
+    public abstract Registrant<ENV>[] registrants(final int actualPort) throws CadiException, LocatorException;
 
     // Lazy Instantiation
     public synchronized AAFConHttp aafCon() throws CadiException, LocatorException {

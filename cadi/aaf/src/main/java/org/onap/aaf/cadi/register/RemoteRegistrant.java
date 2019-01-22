@@ -22,10 +22,8 @@
 package org.onap.aaf.cadi.register;
 
 import java.net.HttpURLConnection;
-import java.net.Inet4Address;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
@@ -39,16 +37,13 @@ import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.locator.PropertyLocator;
 import org.onap.aaf.cadi.locator.SingleEndpointLocator;
-import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
-import locate.v1_0.MgmtEndpoint;
 import locate.v1_0.MgmtEndpoints;
 
 public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
-    private final MgmtEndpoint mep;
     private final MgmtEndpoints meps;
     private final AAFCon<HttpURLConnection> aafcon;
     private final RosettaDF<MgmtEndpoints> mgmtEndpointsDF;
@@ -56,8 +51,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
     private final Access access;
     private final int timeout;
 
-    @SafeVarargs
-    public RemoteRegistrant(AAFCon<HttpURLConnection> aafcon, String name, String version, int port, RemoteRegistrant<ENV> ... others) throws CadiException, LocatorException {
+    public RemoteRegistrant(AAFCon<HttpURLConnection> aafcon, int port) throws CadiException, LocatorException {
         this.aafcon = aafcon;
         access = aafcon.access;
         try {
@@ -82,60 +76,13 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
             }
         }
         
-        mep = new MgmtEndpoint();
-        mep.setName(name);
-        mep.setPort(port);
-
-        try {
-            String hostnameToRegister = access.getProperty(Config.AAF_REGISTER_AS, null);
-            if (hostnameToRegister==null) {
-                hostnameToRegister = access.getProperty(Config.HOSTNAME, null);
-            }
-            if (hostnameToRegister==null) {
-                hostnameToRegister = Inet4Address.getLocalHost().getHostName();
-            }
-            mep.setHostname(hostnameToRegister);
-            
-            String latitude = access.getProperty(Config.CADI_LATITUDE, null);
-            if (latitude==null) {
-                latitude = access.getProperty("AFT_LATITUDE", null);
-            }
-            String longitude = access.getProperty(Config.CADI_LONGITUDE, null);
-            if (longitude==null) {
-                longitude = access.getProperty("AFT_LONGITUDE", null);
-            }
-            if (latitude==null || longitude==null) {
-                throw new CadiException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " is required");
-            } else {
-                mep.setLatitude(Float.parseFloat(latitude));
-                mep.setLongitude(Float.parseFloat(longitude));
-            }
-            String split[] = Split.split('.', version);
-            mep.setPkg(split.length>3?Integer.parseInt(split[3]):0);
-            mep.setPatch(split.length>2?Integer.parseInt(split[2]):0);
-            mep.setMinor(split.length>1?Integer.parseInt(split[1]):0);
-            mep.setMajor(split.length>0?Integer.parseInt(split[0]):0);
-            
-            String subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
-            if (subprotocols==null) {
-                mep.setProtocol("http");
-            } else {
-                mep.setProtocol("https");
-                for (String s : Split.split(',', subprotocols)) {
-                    mep.getSubprotocol().add(s);
-                }
-            }
-        } catch (NumberFormatException | UnknownHostException e) {
-            throw new CadiException("Error extracting Data from Properties for Registrar",e);
-        }
-        meps = new MgmtEndpoints();
-        meps.getMgmtEndpoint().add(mep);
-        for (RemoteRegistrant<ENV> rr : others) {
-            meps.getMgmtEndpoint().add(rr.mep);
-        }
+        RegistrationCreator rcreator = new RegistrationCreator(access);
+        meps = rcreator.create(port);
     }
     
-    @Override
+
+
+	@Override
     public Result<Void> update(ENV env) {
         try {
             Rcli<?> client = aafcon.client(locator);

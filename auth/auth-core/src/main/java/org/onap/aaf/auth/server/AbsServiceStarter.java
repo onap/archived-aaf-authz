@@ -19,10 +19,17 @@
  *
  */
 package org.onap.aaf.auth.server;
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.auth.rserv.RServlet;
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.cadi.register.Registrar;
 import org.onap.aaf.misc.env.Trans;
@@ -61,14 +68,30 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 
     @Override
     public final void start() throws Exception {
-        _start(service);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                shutdown();
-            }
-        });
+    	ExecutorService es = Executors.newSingleThreadExecutor();
+    	Future<?> app = es.submit(this);
+        final AbsServiceStarter<?,?> absSS = this;
+    	Runtime.getRuntime().addShutdownHook(new Thread() {
+	      @Override
+          public void run() {
+	    	  absSS.access().printf(Level.INIT, "Shutting down %s:%s\n",absSS.service.app_name, absSS.service.app_version);
+	    	  absSS.shutdown();
+	    	  app.cancel(true);
+	      }
+    	});
+		if(System.getProperty("ECLIPSE", null)!=null) {
+			Thread.sleep(2000);
+	        System.out.println("Service Started in Eclipse: ");
+	        System.out.print("  Hit <enter> to end:");
+	        try {
+				System.in.read();
+				System.exit(0);
+			} catch (IOException e) {
+			}
+		}
+
     }
+    
 
     @SafeVarargs
     public final synchronized void register(final Registrant<ENV> ... registrants) {
@@ -83,6 +106,15 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     }
 
     @Override
+	public void run() {
+        try {
+			_start(service);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
     public void shutdown() {
         if (registrar!=null) {
             registrar.close(env());

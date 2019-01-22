@@ -37,7 +37,7 @@ fi
 
 function status {
      echo "$@"
-     echo "$@" > $DIR/aaf_cass
+     echo "$@" > $DIR/aaf-cass
 }
 
 function wait_start {
@@ -69,7 +69,7 @@ function wait_cql {
 function wait_ready {
    status wait for cassandra to be fully ready
    for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-       STATUS="$(cat $DIR/aaf_cass)"
+       STATUS="$(cat $DIR/aaf-cass)"
        if [ "$STATUS" = "ready" ]; then
 	break
      else
@@ -88,7 +88,7 @@ function install_cql {
     if [ -z "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" ]; then
         status install 
         echo "Initializing Cassandra DB" 
-        echo "Docker Installed Basic Cassandra on aaf_cass.  Executing the following "
+        echo "Docker Installed Basic Cassandra on aaf.cass.  Executing the following "
         echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
         echo ""
         echo " cd /opt/app/aaf/cass_init"

@@ -247,7 +247,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     @Override
     public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
         return new Registrant[] {
-            new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
+            new RemoteRegistrant<AuthzEnv>(aafCon(),port)
         };
     }
 

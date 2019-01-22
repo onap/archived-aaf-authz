@@ -1,7 +1,7 @@
 service
 locate
 oauth
-gui
-fs
 cm
+gui
 hello
+fs
