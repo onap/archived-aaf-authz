@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018-19 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,21 +45,21 @@ import com.datastax.driver.core.Row;
  * Date: 6/25/18
  */
 public class ConfigDAO extends CassDAOImpl<AuthzTrans,ConfigDAO.Data> {
-    public static final String TABLE = "config";
+    public static final String TABLE_NAME = "config";
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
+    public static final int KEYLIMIT = 2;
     private PSInfo psName;
     
     public ConfigDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
-        super(trans, ConfigDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
+        super(trans, ConfigDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE_NAME, readConsistency(trans,TABLE_NAME), writeConsistency(trans,TABLE_NAME));
         init(trans);
     }
 
     public ConfigDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) throws APIException, IOException {
-        super(trans, ConfigDAO.class.getSimpleName(),aDao, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
+        super(trans, ConfigDAO.class.getSimpleName(),aDao, Data.class,TABLE_NAME, readConsistency(trans,TABLE_NAME), writeConsistency(trans,TABLE_NAME));
         init(trans);
     }
-    
-    public static final int KEYLIMIT = 2;
+
     public static class Data  {
         public String                    name;
         public String                    tag;
@@ -113,9 +115,9 @@ public class ConfigDAO extends CassDAOImpl<AuthzTrans,ConfigDAO.Data> {
     }
     
     private void init(AuthzTrans trans) throws APIException, IOException {
-        String[] helpers = setCRUD(trans, TABLE, Data.class, ConfigLoader.deflt);
+        String[] helpers = setCRUD(trans, TABLE_NAME, Data.class, ConfigLoader.deflt);
 
-        psName = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
+        psName = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE_NAME +
                 " WHERE name = ?", ConfigLoader.deflt,readConsistency);
     }
     

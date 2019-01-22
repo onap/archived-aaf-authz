@@ -20,7 +20,7 @@
  */
 package org.onap.aaf.auth.server;
 
-public interface ServiceStarter {
+public interface ServiceStarter extends Runnable {
     public void start() throws Exception;
     public void shutdown();
 }

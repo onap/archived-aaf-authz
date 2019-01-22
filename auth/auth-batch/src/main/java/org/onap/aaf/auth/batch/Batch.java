@@ -81,6 +81,8 @@ public abstract class Batch {
     protected static boolean dryRun; 
     protected static String batchEnv;
 
+	private static File logdir;
+
     public static final String CASS_ENV = "CASS_ENV";
     public static final String LOG_DIR = "LOG_DIR";
     protected static final String MAX_EMAILS="MAX_EMAILS";
@@ -324,16 +326,22 @@ public abstract class Batch {
         }
     }
     
-    protected static String logDir() {
-        String ld = env.getProperty(LOG_DIR);
-        if (ld==null) {
-            if (batchEnv==null) { // Deployed Batch doesn't use different ENVs, and a common logdir
-                ld = "logs/";
-            } else {
-                ld = "logs/"+batchEnv;
-            }
-        }
-        return ld;
+    protected static File logDir() {
+        if(logdir == null) {
+	        String ld = env.getProperty(LOG_DIR);
+	        if (ld==null) {
+	            if (batchEnv==null) { // Deployed Batch doesn't use different ENVs, and a common logdir
+	                ld = "logs/";
+	            } else {
+	                ld = "logs/"+batchEnv;
+	            }
+	        }
+	        logdir = new File(ld);
+	        if(!logdir.exists()) {
+	        	logdir.mkdirs();
+	        }
+        } 
+        return logdir;
     }
     protected int count(String str, char c) {
         if (str==null || str.isEmpty()) {

@@ -21,77 +21,74 @@
 
 package org.onap.aaf.auth.direct;
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.onap.aaf.auth.dao.cass.LocateDAO;
-import org.onap.aaf.auth.dao.cass.LocateDAO.Data;
 import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.client.Result;
-import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.register.Registrant;
-import org.onap.aaf.cadi.util.Split;
+import org.onap.aaf.cadi.register.RegistrationCreator;
+
+import locate.v1_0.MgmtEndpoint;
+import locate.v1_0.MgmtEndpoints;
 
 public class DirectRegistrar implements Registrant<AuthzEnv> {
-    private Data locate;
+
     private LocateDAO ldao;
-    public DirectRegistrar(Access access, LocateDAO ldao, String name, String version, int port) throws CadiException {
-        this.ldao = ldao;
-        locate = new LocateDAO.Data();
-        locate.name = name;
-        locate.port = port;
-        
-        try {
-            String latitude = access.getProperty(Config.CADI_LATITUDE, null);
-            if (latitude==null) {
-                latitude = access.getProperty("AFT_LATITUDE", null);
-            }
-            String longitude = access.getProperty(Config.CADI_LONGITUDE, null);
-            if (longitude==null) {
-                longitude = access.getProperty("AFT_LONGITUDE", null);
-            }
-            if (latitude==null || longitude==null) {
-                throw new CadiException(Config.CADI_LATITUDE + " and " + Config.CADI_LONGITUDE + " is required");
-            } else {
-                locate.latitude = Float.parseFloat(latitude);
-                locate.longitude = Float.parseFloat(longitude);
-            }
-            String split[] = Split.splitTrim('.', version);
-            locate.pkg = split.length>3?Integer.parseInt(split[3]):0;
-            locate.patch = split.length>2?Integer.parseInt(split[2]):0;
-            locate.minor = split.length>1?Integer.parseInt(split[1]):0;
-            locate.major = split.length>0?Integer.parseInt(split[0]):0;
-            locate.hostname = access.getProperty(Config.AAF_REGISTER_AS, null);
-            if (locate.hostname==null) {
-                locate.hostname = access.getProperty(Config.HOSTNAME, null);
-            }
-            if (locate.hostname==null) {
-                locate.hostname = Inet4Address.getLocalHost().getHostName();
-            }
-            String subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
-            if (subprotocols==null) {
-                locate.protocol="http";
-            } else {
-                locate.protocol="https";
-                for (String s : Split.split(',', subprotocols)) {
-                    locate.subprotocol(true).add(s);
-                }
-            }
-        } catch (NumberFormatException | UnknownHostException e) {
-            throw new CadiException("Error extracting Data from Properties for Registrar",e);
+    private List<LocateDAO.Data> ldd; 
+    public DirectRegistrar(Access access, LocateDAO ldao, int port) throws CadiException {
+    	this.ldao = ldao;
+        ldd = new ArrayList<>();
+        RegistrationCreator rc = new RegistrationCreator(access);
+        MgmtEndpoints mes = rc.create(port);
+        for(MgmtEndpoint me : mes.getMgmtEndpoint()) {
+        	ldd.add(convert(me));
         }
     }
     
-    @Override
+    private LocateDAO.Data convert(MgmtEndpoint me) {
+    	LocateDAO.Data out = new LocateDAO.Data();
+    	out.name=me.getName();
+		out.hostname=me.getHostname();
+		out.latitude=me.getLatitude();
+		out.longitude=me.getLongitude();
+		out.major=me.getMajor();
+		out.minor=me.getMinor();
+		out.pkg=me.getPkg();
+		out.patch=me.getPatch();
+		out.port=me.getPort();
+		out.protocol=me.getProtocol();
+		out.subprotocol(true).addAll(me.getSubprotocol());
+//		out.port_key = UUID.randomUUID();
+		return out;
+	}
+
+	@Override
+
     public Result<Void> update(AuthzEnv env) {
-        org.onap.aaf.auth.layer.Result<Void> dr = ldao.update(env.newTransNoAvg(), locate);
-        if (dr.isOK()) {
-            return Result.ok(200, null);
-        } else {
-            return Result.err(503, dr.errorString());
-        }
+    	AuthzTrans trans = env.newTransNoAvg(); 
+    	StringBuilder sb = null;
+    	for(LocateDAO.Data ld : ldd) {
+	        org.onap.aaf.auth.layer.Result<Void> dr = ldao.update(trans, ld);
+	        if (dr.notOK()) {
+	        	if(sb == null) {
+	        		sb = new StringBuilder(dr.errorString());
+	        	} else {
+	        		sb.append(';');
+		        	sb.append(dr.errorString());
+	        	}
+	        }
+    	}
+    	
+    	if(sb==null) {
+    		return Result.ok(200, null);
+    	} else {
+    		return Result.err(503, sb.toString());
+    	}
     }
 
     /* (non-Javadoc)
@@ -99,13 +96,25 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
      */
     @Override
     public Result<Void> cancel(AuthzEnv env) {
-        org.onap.aaf.auth.layer.Result<Void> dr = ldao.delete(env.newTransNoAvg(), locate, false);
-        if (dr.isOK()) {
-            return Result.ok(200, null);
-        } else {
-            return Result.err(503, dr.errorString());
-        }
-
+    	AuthzTrans trans = env.newTransNoAvg(); 
+    	StringBuilder sb = null;
+    	for(LocateDAO.Data ld : ldd) {
+            org.onap.aaf.auth.layer.Result<Void> dr = ldao.delete(trans, ld, false);
+	        if (dr.notOK()) {
+	        	if(sb == null) {
+	        		sb = new StringBuilder(dr.errorString());
+	        	} else {
+	        		sb.append(';');
+		        	sb.append(dr.errorString());
+	        	}
+	        }
+    	}
+    	
+    	if(sb==null) {
+    		return Result.ok(200, null);
+    	} else {
+    		return Result.err(503, sb.toString());
+    	}
     }
 
 }

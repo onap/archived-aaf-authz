@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +35,7 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 
 public class Attrib extends BaseCmd<NS> {
-    private final static String[] options = {"add","upd","del"};
+    private static final String[] options = {"add","upd","del"};
     private String authzString = "/authz/ns/";
     private String atrributeString = "/attrib/";
 

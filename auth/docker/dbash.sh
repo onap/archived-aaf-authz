@@ -20,4 +20,4 @@
 #
 
 . ./d.props
-${DOCKER:=docker} exec -it aaf_$1 bash
+${DOCKER:=docker} exec -it aaf-$1 bash

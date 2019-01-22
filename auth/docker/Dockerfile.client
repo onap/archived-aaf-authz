@@ -17,7 +17,8 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-FROM nexus3.onap.org:10001/onap/aaf/aaf-base-xenial:latest
+FROM ${DOCKER_REPOSITORY}/onap/aaf/aaf_base:${AAF_VERSION}
+#FROM nexus3.onap.org:10001/onap/aaf/aaf-base-xenial:latest
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
@@ -30,6 +31,4 @@ COPY bin/aaf-auth-cmd-${AAF_VERSION}-full.jar /opt/app/aaf_config/bin/
 COPY bin/aaf-cadi-servlet-sample-*-sample.jar /opt/app/aaf_config/bin/
 COPY cert/*trust*.b64 /opt/app/aaf_config/cert/
 
-ENTRYPOINT ["/bin/bash","/opt/app/aaf_config/bin/agent.sh"]
-CMD []
-
+CMD ["/bin/bash","-c","/opt/app/aaf_config/bin/agent.sh"]

@@ -35,11 +35,11 @@ fi
 
 # Optional mount instead of v
 #    --mount 'type=volume,src=aaf_cass_data,dst=/var/lib/cassandra,volume-driver=local' \
-if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
+if [ "`$DOCKER ps -a | grep aaf-cass`" == "" ]; then
   echo "starting Cass from 'run'"
   # NOTE: These HEAP Sizes are minimal. Not set for full organizations.
   $DOCKER run \
-    --name aaf_cass \
+    --name aaf-cass \
     -e HEAP_NEWSIZE=512M \
     -e MAX_HEAP_SIZE=1024M \
     -e CASSANDRA_DC=dc1 \
@@ -49,5 +49,5 @@ if [ "`$DOCKER ps -a | grep aaf_cass`" == "" ]; then
     $PUBLISH \
     -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} "onap"
 else 
-  $DOCKER start aaf_cass
+  $DOCKER start aaf-cass
 fi

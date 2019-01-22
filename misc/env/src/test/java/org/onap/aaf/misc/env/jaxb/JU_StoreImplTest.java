@@ -18,15 +18,13 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.misc.env;
+package org.onap.aaf.misc.env.jaxb;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,6 +36,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onap.aaf.misc.env.Env;
+import org.onap.aaf.misc.env.LogTarget;
+import org.onap.aaf.misc.env.Slot;
+import org.onap.aaf.misc.env.StaticSlot;
+import org.onap.aaf.misc.env.StoreImpl;
+import org.onap.aaf.misc.env.TimeTaken;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class JU_StoreImplTest {

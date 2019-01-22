@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +43,7 @@ import aaf.v2_0.RoleRequest;
  */
 public class CreateDelete extends Cmd {
     private static final String ROLE_PATH = "/authz/role";
-    private final static String[] options = {"create","delete"};
+    private static final String[] options = {"create","delete"};
     public CreateDelete(Role parent) {
         super(parent,null, 
                 new Param(optionsToString(options),true),

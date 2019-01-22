@@ -22,7 +22,9 @@
 ## AAF Fileserver Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props
-aaf_component=AAF_NS.fs:AAF_RELEASE
+aaf_locator_names=fs
 port=8096
+aaf_locator_port.helm=30085
+# aaf_locator_port.oom=
 
 aaf_public_dir=/opt/app/osaaf/public

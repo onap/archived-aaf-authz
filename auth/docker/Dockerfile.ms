@@ -17,7 +17,7 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-FROM onap/aaf/aaf_core:${AAF_VERSION}
+FROM ${DOCKER_REPOSITORY}/onap/aaf/aaf_core:${AAF_VERSION}
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
@@ -26,7 +26,8 @@ LABEL version=${AAF_VERSION}
 
 COPY pod/* /opt/app/aaf/pod/
 
-CMD ["/bin/bash","-c","cd /opt/app/aaf;bin/${AAF_COMPONENT}"]
+#CMD ["bash","-c","cd /opt/app/aaf;bin/${AAF_COMPONENT}"]
+CMD []
 
 # For Debugging installation
 # CMD ["/bin/bash","-c","pwd;cd /opt/app/osaaf;find /opt/app/osaaf -depth;df -k; cat /opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT};cat /etc/hosts;/opt/app/aaf/${AAF_COMPONENT}/bin/${AAF_COMPONENT}"]

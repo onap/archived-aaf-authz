@@ -139,7 +139,7 @@ public class CadiFilter implements Filter {
     
 
     @SuppressWarnings("unchecked")
-    private void init(Get getter) throws ServletException {
+    protected void init(Get getter) throws ServletException {
        sideChain = new SideChain();
         // Start with the assumption of "Don't trust anyone".
        TrustChecker tc = TrustChecker.NOTRUST; // default position

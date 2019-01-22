@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.misc.env.impl;
+package org.onap.aaf.misc.env;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.onap.aaf.misc.env.impl.JavaUtilLogTarget;
 
 public class JU_JavaUtilLogTarget {
 

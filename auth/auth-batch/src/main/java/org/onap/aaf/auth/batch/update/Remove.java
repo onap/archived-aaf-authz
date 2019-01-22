@@ -84,7 +84,7 @@ public class Remove extends Batch {
         final int maxBatch = 25;
 
         // Create Intermediate Output 
-        File logDir = new File(logDir());
+        File logDir = logDir();
         
         List<File> remove = new ArrayList<>();
         if(args().length>0) {

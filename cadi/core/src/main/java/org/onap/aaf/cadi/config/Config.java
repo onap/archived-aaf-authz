@@ -58,6 +58,7 @@ import org.onap.aaf.cadi.taf.HttpTaf;
 import org.onap.aaf.cadi.taf.basic.BasicHttpTaf;
 import org.onap.aaf.cadi.taf.cert.X509Taf;
 import org.onap.aaf.cadi.taf.dos.DenialOfServiceTaf;
+import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.cadi.util.Split;
 
 /**
@@ -158,13 +159,31 @@ public class Config {
     public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/AAF_NS.token:" + AAF_DEFAULT_API_VERSION;
     public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION;
 
-    public static final String AAF_REGISTER_AS = "aaf_register_as";
+    public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
+    // AAF Locator Entries are ADDITIONAL entries, which also gives the Property ability
+    // to set these entries manually
+    // example: adding a K8S name like "oom"
+    // this will allow Registrations to pick up 
+    // locator_ns.oom for onap's "OOM" based k8s entries, etc.
+    public static final String AAF_LOCATOR_CONTAINER="aaf_locator_container";
+    // An ID for another Container, to be used to avoid picking up the wrong internal info 
+    // for another container.
+    public static final String AAF_LOCATOR_CONTAINER_ID = "aaf_locator_container_id";
+    public static final String AAF_LOCATOR_CONTAINER_NS = "aaf_locator_container_ns";
+    public static final String AAF_LOCATOR_VERSION = "aaf_locator_version";
+    public static final String AAF_LOCATOR_PROTOCOL = "aaf_locator_protocol";
+    public static final String AAF_LOCATOR_SUBPROTOCOL = "aaf_locator_subprotocol";
+    public static final String AAF_LOCATOR_NS = "aaf_locator_ns";
+    public static final String AAF_LOCATOR_NAMES = "aaf_locator_names";
+    public static final String AAF_LOCATOR_FQDN = "aaf_locator_fqdn";
+    public static final String AAF_LOCATOR_PUBLIC_PORT = "aaf_locator_public_port";
+    public static final String AAF_LOCATOR_PUBLIC_HOSTNAME = "aaf_locator_public_hostname";
+
     public static final String AAF_APPID = "aaf_id";
     public static final String AAF_APPPASS = "aaf_password";
     public static final String AAF_LUR_CLASS = "aaf_lur_class";
     public static final String AAF_TAF_CLASS = "aaf_taf_class";
     public static final String AAF_CONNECTOR_CLASS = "aaf_connector_class";
-    public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
     public static final String AAF_CONN_TIMEOUT = "aaf_conn_timeout";
     public static final String AAF_CONN_TIMEOUT_DEF = "3000";
     public static final String AAF_CONN_IDLE_TIMEOUT = "aaf_conn_idle_timeout"; // only for Direct Jetty Access.
@@ -189,7 +208,7 @@ public class Config {
     public static final String AAF_HIGH_COUNT = "aaf_high_count";
     public static final String AAF_HIGH_COUNT_DEF = "1000"; // Default is 1000 entries
     public static final String AAF_PERM_MAP = "aaf_perm_map";
-    public static final String AAF_COMPONENT = "aaf_component";
+//    public static final String AAF_COMPONENT = "aaf_component";
     public static final String AAF_CERT_IDS = "aaf_cert_ids";
     public static final String AAF_DEBUG_IDS = "aaf_debug_ids"; // comma delimited
     public static final String AAF_DATA_DIR = "aaf_data_dir"; // AAF processes and Components only.
@@ -795,18 +814,39 @@ public class Config {
         if (_url==null) {
             access.log(Level.INIT,"No URL passed to 'loadLocator'. Disabled");
         } else {
-            String url = _url;
+            String url = _url.replace("/AAF_NS.", "/%C%CID%AAF_NS.");
+            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
+            if(url.indexOf('%')>=0) {
+	            String str = access.getProperty(Config.AAF_LOCATOR_CONTAINER_ID, null);
+	            if(str==null) {
+	            	url = url.replace("%CID","");
+	            } else {
+	            	url = url.replace("%CID",str+'.');
+	            }
+	            str = access.getProperty(Config.AAF_LOCATOR_CONTAINER, null);
+	            if(str==null) {
+	            	url = url.replace("%C","");
+	            } else {
+	            	url = url.replace("%C",str+'.');
+	            }
+	
+	            if (root_ns==null) {
+	            	url = url.replace("%AAF_NS","");
+	            } else {
+	            	url = url.replace("%AAF_NS",root_ns);
+	            }
+            }
             String replacement;
             int idxAAFLocateUrl;
-            if ((idxAAFLocateUrl=_url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
+            if ((idxAAFLocateUrl=url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
                 StringBuilder sb = new StringBuilder(replacement);
                 if (!replacement.endsWith("/locate")) {
                     sb.append("/locate");
                 } 
-                sb.append(_url,idxAAFLocateUrl+AAF_LOCATE_URL_TAG.length(),_url.length());
+                sb.append(url,idxAAFLocateUrl+AAF_LOCATE_URL_TAG.length(),url.length());
                 url = sb.toString();
             }
-    
+            
             try {
                 Class<?> lcls = loadClass(access,AAF_LOCATOR_CLASS_DEF);
                 if (lcls==null) {
@@ -821,12 +861,13 @@ public class Config {
                 }
                 if (locator==null) {
                     URI locatorURI = new URI(url);
+                    FixURIinfo fui = new FixURIinfo(locatorURI);
                     Constructor<?> cnst = lcls.getConstructor(SecurityInfoC.class,URI.class);
                     locator = (Locator<URI>)cnst.newInstance(new Object[] {si,locatorURI});
-                    int port = locatorURI.getPort();
-                    String portS = port<0?"":(":"+locatorURI.getPort());
+                    int port = fui.getPort();
+                    String portS = port<0?"":(":"+port);
                     
-                    access.log(Level.INFO, "AAFLocator enabled using " + locatorURI.getScheme() +"://"+locatorURI.getHost() + portS);
+                    access.log(Level.INFO, "AAFLocator enabled using " + locatorURI.getScheme() +"://"+fui.getHost() + portS);
                 } else {
                     access.log(Level.INFO, "AAFLocator enabled using preloaded " + locator.getClass().getSimpleName());
                 }

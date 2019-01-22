@@ -23,6 +23,7 @@
 package org.onap.aaf.auth.cm;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -80,7 +81,12 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     public final  Cluster cluster;
     public final LocateDAO locateDAO;
     public static AuthzEnv envLog;
+    CMService service;
 
+    //Added for junits
+    public CMService getService() {
+    	return null;
+    }
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
      * 
@@ -117,7 +123,6 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
             if (key.startsWith(CA.CM_CA_PREFIX)) {
                 int idx = key.indexOf('.');
                 if (idx==key.lastIndexOf('.')) { // else it's a regular property 
-    
                     env.log(Level.INIT, "Loading Certificate Authority Module: " + key.substring(idx+1));
                     String[] segs = Split.split(',', env.getProperty(key));
                     if (segs.length>0) {
@@ -135,8 +140,12 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
                         pinst[1]= key.substring(idx+1);
                         pinst[2]= aafEnv;
                         pinst[3] = multiParams; 
-                        CA ca = cons.newInstance(pinst);
-                        certAuths.put(ca.getName(),ca);
+                        try {
+                        	CA ca = cons.newInstance(pinst);
+                            certAuths.put(ca.getName(),ca);
+                        } catch (InvocationTargetException e) {
+                    		access.log(e, "Loading", segs[0]);
+                        }
                     }
                 }
             }
@@ -145,7 +154,10 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
             throw new APIException("No Certificate Authorities have been configured in CertMan");
         }
 
-        CMService service = new CMService(trans, this);
+        service = getService();
+        if(service == null) {
+        	service = new CMService(trans, this);
+        }
         // note: Service knows how to shutdown Cluster on Shutdown, etc.  See Constructor
         facade1_0 = FacadeFactory.v1_0(this,trans, service,Data.TYPE.JSON);   // Default Facade
         facade1_0_XML = FacadeFactory.v1_0(this,trans,service,Data.TYPE.XML); 
@@ -172,6 +184,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     public CA getCA(String key) {
         return certAuths.get(key);
     }
+    
 
     /**
      * Setup XML and JSON implementations for each supported Version type
@@ -217,7 +230,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     @Override
     public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
         return new Registrant[] {
-            new DirectRegistrar(access,locateDAO,app_name,app_version,port)
+            new DirectRegistrar(access,locateDAO,port)
         };
     }
 
@@ -228,16 +241,19 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     }
 
     public static void main(final String[] args) {
-      
         try {
             Log4JLogIt logIt = new Log4JLogIt(args, "cm");
             PropAccess propAccess = new PropAccess(logIt,args);
 
-             AAF_CM service = new AAF_CM(new AuthzEnv(propAccess));
-            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-            jss.start();
-        } catch (Exception e) {
-            envLog.error().log(e);
+            try {
+	            AAF_CM service = new AAF_CM(new AuthzEnv(propAccess));
+	            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
+	            jss.start();
+	        } catch (Exception e) {
+	            propAccess.log(e);
+	        }
+        } catch (APIException e) {
+        	e.printStackTrace(System.err);
         }
     }
 }

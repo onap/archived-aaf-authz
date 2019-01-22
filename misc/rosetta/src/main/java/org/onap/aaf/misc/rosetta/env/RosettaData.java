@@ -57,6 +57,11 @@ public class RosettaData<T> implements Data<T>{
         inType = df.getInType();
         outType = df.getOutType(); // take defaults
     }
+    
+    //Added for junits
+    void setSaved(Saved saved) {
+    	this.saved = saved;
+    }
 
 //    // @Override
     public RosettaData<T> in(TYPE rosettaType) {

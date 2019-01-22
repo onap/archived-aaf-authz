@@ -30,14 +30,15 @@ import java.net.URISyntaxException;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
+import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
+import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.APIException;
 
 public class HMangr {
@@ -174,7 +175,8 @@ public class HMangr {
         loc.refresh();
         for (Item li=loc.first();li!=null;li=loc.next(li)) {
             URI uri=loc.get(li);
-            if (host!=null && !host.equals(uri.getHost())) {
+            FixURIinfo fui = new FixURIinfo(uri);
+            if (host!=null && !host.equals(fui.getHost())) {
                 break;
             }
             try {

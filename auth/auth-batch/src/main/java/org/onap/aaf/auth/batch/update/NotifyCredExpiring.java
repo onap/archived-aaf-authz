@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +29,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -42,21 +40,10 @@ import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.BatchPrincipal;
 import org.onap.aaf.auth.batch.actions.Email;
 import org.onap.aaf.auth.batch.actions.EmailPrint;
-import org.onap.aaf.auth.batch.actions.Message;
-import org.onap.aaf.auth.batch.helpers.Cred;
-import org.onap.aaf.auth.batch.helpers.NS;
 import org.onap.aaf.auth.batch.helpers.Notification;
 import org.onap.aaf.auth.batch.helpers.UserRole;
-import org.onap.aaf.auth.batch.helpers.Notification.TYPE;
-import org.onap.aaf.auth.dao.cass.CredDAO;
-import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.layer.Result;
-import org.onap.aaf.auth.org.EmailWarnings;
-import org.onap.aaf.auth.org.Organization;
-import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
-import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.APIException;

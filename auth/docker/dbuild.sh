@@ -32,24 +32,39 @@ DOCKER=${DOCKER:=docker}
 echo "Building Containers for aaf components, version $VERSION"
 
 # AAF_cass now needs a version...
-cd ../auth-cass/docker
-bash ./dbuild.sh
-cd -
+#cd ../auth-cass/docker
+#bash ./dbuild.sh
+#cd -
+
+# AAF Base version - set the core image, etc
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    Dockerfile.base > Dockerfile
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_base:${VERSION} .
+$DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:latest
+rm Dockerfile
 
 # Create the AAF Config (Security) Images
 cd ..
 cp auth-cmd/target/aaf-auth-cmd-$VERSION-full.jar sample/bin
 cp -Rf ../conf/CA sample
 
+
 # AAF Config image (for AAF itself)
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.config > sample/Dockerfile
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    docker/Dockerfile.config > sample/Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/latest
 
 cp ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
 # AAF Agent Image (for Clients)
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' docker/Dockerfile.client > sample/Dockerfile
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    docker/Dockerfile.client > sample/Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
@@ -63,7 +78,10 @@ cd -
 # Second, build a core Docker Image
 echo Building aaf_$AAF_COMPONENT...
 # Apply currrent Properties to Docker file, and put in place.
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.core >../aaf_${VERSION}/Dockerfile
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    Dockerfile.core >../aaf_${VERSION}/Dockerfile
 cd ..
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
@@ -80,11 +98,13 @@ else
     AAF_COMPONENTS=$1
 fi
 
-mkdir -p ../aaf_${VERSION}/pod
-cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/pod
+cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     echo Building aaf_$AAF_COMPONENT...
-    sed -e 's/${AAF_VERSION}/'${VERSION}'/g' -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' Dockerfile.ms >../aaf_${VERSION}/Dockerfile
+    sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+        -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+        -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+        Dockerfile.ms >../aaf_${VERSION}/Dockerfile
     cd ..
     $DOCKER build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
     $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
@@ -93,5 +113,4 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     cd -
 
 done
-rm ../aaf_${VERSION}/pod/*
-rmdir ../aaf_${VERSION}/pod
+rm ../aaf_${VERSION}/bin/pod_wait.sh

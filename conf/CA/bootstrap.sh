@@ -90,12 +90,12 @@ fi
 
 for ROOT in $(cat san_root.aaf); do
    SANS="$SANS $ROOT"
-   for C in service locate oauth gui cm hello; do
+   for C in service locate oauth token introspect gui cm hello; do
      SANS="$SANS $C.$ROOT"
    done
 done
 
-for C in service locate oauth gui cm hello; do
+for C in service locate oauth token introspect gui cm hello; do
    SANS="$SANS aaf-$C"
    SANS="$SANS aaf-$C.onap"
 done

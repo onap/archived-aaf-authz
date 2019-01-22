@@ -56,7 +56,6 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 
 public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> extends AbsServiceStarter<ENV,TRANS> {
-
     private boolean secure;
 
     public JettyServiceStarter(final AbsService<ENV,TRANS> service) throws OrganizationException {
@@ -73,24 +72,6 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         return this;
     }
 
-//    @Override
-//    public void _propertyAdjustment() {
-//        Properties props = access().getProperties();
-//        Object temp = null;
-//        // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
-//        if ((temp=props.get(Config.CADI_PROTOCOLS))==null) {
-//            if ((temp=props.get(Config.HTTPS_PROTOCOLS))==null) {
-//                props.put(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);
-//            } else {
-//                props.put(Config.CADI_PROTOCOLS, temp);
-//            }
-//        }
-//    
-//        if ("1.7".equals(System.getProperty("java.specification.version"))) {
-//            System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
-//        }
-//        System.setProperty(Config.HTTPS_CIPHER_SUITES, temp.toString());
-//    }
 
     @Override
     public void _propertyAdjustment() {
@@ -129,6 +110,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             protocol = "http";
         } else {
             protocol = "https";
+            
 
             String keystorePassword = access().getProperty(Config.CADI_KEYSTORE_PASSWORD, null);
             if (keystorePassword==null) {
@@ -151,7 +133,9 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                 sslContextFactory.setTrustStorePassword(access().decrypt(truststorePassword, true)); 
             }
             // Be able to accept only certain protocols, i.e. TLSv1.1+
-            final String[] protocols = Split.splitTrim(',', access().getProperty(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT));
+            String subprotocols = access().getProperty(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);
+            service.setSubprotocol(subprotocols);
+            final String[] protocols = Split.splitTrim(',', subprotocols);
             sslContextFactory.setIncludeProtocols(protocols);
             
             // Want to use Client Certificates, if they exist.
@@ -178,6 +162,8 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                     new HttpConnectionFactory(httpConfig)
                 );
         }
+        service.setProtocol(protocol);
+
         
         // Setup JMX 
         // TODO trying to figure out how to set up/log ports
@@ -220,7 +206,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             server.start();
             access().log(Level.INIT,server.dump());
         } catch (Exception e) {
-            access().log(e,"Error starting " + service.app_name);
+            access().log(e,"Error starting " + hostname + ':' + port + ' ' + InetAddress.getLocalHost().getHostAddress());
             String doExit = access().getProperty("cadi_exitOnFailure", "true");
             if (doExit == "true") {
                 System.exit(1);
@@ -231,7 +217,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         try {
             register(service.registrants(port));
             access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
-            server.join();
+            //server.join();
         } catch (Exception e) {
             access().log(e,"Error registering " + service.app_name);
             String doExit = access().getProperty("cadi_exitOnFailure", "true");

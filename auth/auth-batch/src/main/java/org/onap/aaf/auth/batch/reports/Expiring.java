@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +63,6 @@ public class Expiring extends Batch {
 	private static final String EXPIRED_OWNERS = "ExpiredOwners";
 	private int minOwners;
 	private Map<String, CSV.Writer> writerList;
-	private File logDir;
 	private ExpireRange expireRange;
 	private Date deleteDate;
 	
@@ -85,15 +86,13 @@ public class Expiring extends Batch {
 
             // Create Intermediate Output 
             writerList = new HashMap<>();
-            logDir = new File(logDir());
-            logDir.mkdirs();
             
             expireRange = new ExpireRange(trans.env().access());
             String sdate = Chrono.dateOnlyStamp(expireRange.now);
             for( List<Range> lr : expireRange.ranges.values()) {
             	for(Range r : lr ) {
             		if(writerList.get(r.name())==null) {
-                    	File file = new File(logDir,r.name() + sdate +CSV);
+                    	File file = new File(logDir(),r.name() + sdate +CSV);
                     	CSV csv = new CSV(file);
                     	CSV.Writer cw = csv.writer(false);
                     	cw.row(INFO,r.name(),Chrono.dateOnlyStamp(expireRange.now),r.reportingLevel());
@@ -114,25 +113,22 @@ public class Expiring extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
 		try {
-			File file = new File(logDir, EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
+			File file = new File(logDir(), EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
 			final CSV ownerCSV = new CSV(file);
 
 			Map<String, Set<UserRole>> owners = new TreeMap<String, Set<UserRole>>();
 			trans.info().log("Process UserRoles");
-			UserRole.load(trans, session, UserRole.v2_0_11, new Visitor<UserRole>() {
-				@Override
-				public void visit(UserRole ur) {
-					// Cannot just delete owners, unless there is at least one left. Process later
-					if ("owner".equals(ur.rname())) {
-						Set<UserRole> urs = owners.get(ur.role());
-						if (urs == null) {
-							urs = new HashSet<UserRole>();
-							owners.put(ur.role(), urs);
-						}
-						urs.add(ur);
-					} else {
-						writeAnalysis(trans,ur);
+			UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
+				// Cannot just delete owners, unless there is at least one left. Process later
+				if ("owner".equals(ur.rname())) {
+					Set<UserRole> urs = owners.get(ur.role());
+					if (urs == null) {
+						urs = new HashSet<UserRole>();
+						owners.put(ur.role(), urs);
 					}
+					urs.add(ur);
+				} else {
+					writeAnalysis(trans,ur);
 				}
 			});
 

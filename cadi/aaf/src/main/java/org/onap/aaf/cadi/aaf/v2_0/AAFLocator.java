@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.SecuritySetter;
@@ -35,6 +36,7 @@ import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HClient;
+import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data.TYPE;
@@ -61,21 +63,9 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
         int connectTimeout = Integer.parseInt(si.access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
         try {
             String[] path = Split.split('/',locatorURI.getPath());
-            String host = locatorURI.getHost();
-            if (host==null) {
-                host = locatorURI.getAuthority(); // this happens when no port
-            }
-            if ("AAF_LOCATE_URL".equals(host)) {
-                URI uri = new URI(
-                        locatorURI.getScheme(),
-                        locatorURI.getUserInfo(),
-                        aaf_locator_uri.getHost(),
-                        aaf_locator_uri.getPort(),
-                        "/locate"+locatorURI.getPath(),
-                        null,
-                        null
-                        );
-                client = createClient(si.defSS, uri, connectTimeout);
+            FixURIinfo fui = new FixURIinfo(locatorURI);
+            if ("AAF_LOCATE_URL".equals(fui.getHost())) {
+                client = createClient(si.defSS, locatorURI, connectTimeout);
             } else if (path.length>1 && "locate".equals(path[1])) {
                 StringBuilder sb = new StringBuilder();
                 for (int i=3;i<path.length;++i) {
@@ -83,22 +73,25 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
                     sb.append(path[i]);
                 }
                 setPathInfo(sb.toString());
-                URI uri = new URI(
-                            locatorURI.getScheme(),
-                            locatorURI.getUserInfo(),
-                            locatorURI.getHost(),
-                            locatorURI.getPort(),
-                            "/locate/"+name + ':' + version,
-                            null,
-                            null
-                            );
-                client = createClient(si.defSS, uri, connectTimeout);
+//                URI uri = new URI(
+//                            locatorURI.getScheme(),
+//                            locatorURI.getAuthority(),
+//                            locatorURI.getPath(),
+//                            null,
+//                            null
+//                            );
+                client = createClient(si.defSS, locatorURI, connectTimeout);
             } else {
                 client = new HClient(si.defSS, locatorURI, connectTimeout);
             }
             epsDF = env.newDataFactory(Endpoints.class);
-        } catch (APIException | URISyntaxException e) {
+            
+        } catch (APIException /*| URISyntaxException*/ e) {
             throw new LocatorException(e);
+        }
+        
+        if(si.access.willLog(Access.Level.DEBUG)) {
+        	si.access.log(Access.Level.DEBUG, "Root URI:",client.getURI());
         }
     }
 

@@ -773,6 +773,13 @@ public class Agent {
             }
             
             app.add(Config.AAF_LOCATE_URL, propAccess, null);
+            for(Entry<Object, Object> aaf_loc_prop : propAccess.getProperties().entrySet()) {
+            	String key = aaf_loc_prop.getKey().toString();
+            	if(key.startsWith("aaf_locator")) {
+            		app.add(key, aaf_loc_prop.getValue().toString());
+            	}
+            }
+            
             app.add(Config.AAF_APPID, fqi);
             app.add(Config.AAF_URL, propAccess, Defaults.AAF_URL);
 

@@ -113,7 +113,7 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
     @Override
     public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException, LocatorException {
         return new Registrant[] {
-            new RemoteRegistrant<AuthzEnv>(aafCon(),app_name,app_version,port)
+            new RemoteRegistrant<AuthzEnv>(aafCon(),port)
         };
     }
 

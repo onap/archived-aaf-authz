@@ -102,4 +102,4 @@ case "$OTHER" in
   ;;
 esac  
 
-eval "$@"
+eval  "$@"

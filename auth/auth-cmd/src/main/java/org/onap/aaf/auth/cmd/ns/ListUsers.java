@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +33,7 @@ import aaf.v2_0.Nss;
 import aaf.v2_0.Users.User;
 
 public class ListUsers extends BaseCmd<List> {
-    
-    public ListUsers(List parent) {
-        super(parent,"user");
-        cmds.add(new ListUsersWithPerm(this));
-        cmds.add(new ListUsersInRole(this));
-    }
+
     private static final Future<Nss> dummy = new Future<Nss>(){
 
         @Override
@@ -59,6 +56,15 @@ public class ListUsers extends BaseCmd<List> {
             return null;
         }
     };
+
+    private static final String uformat = "%s%-50s expires:%02d/%02d/%04d\n";
+    
+    public ListUsers(List parent) {
+        super(parent,"user");
+        cmds.add(new ListUsersWithPerm(this));
+        cmds.add(new ListUsersInRole(this));
+    }
+
     public void report(String header, String ns) {
         ((List)parent).report(dummy, header,ns);
     }
@@ -67,7 +73,6 @@ public class ListUsers extends BaseCmd<List> {
         pw().println(subHead);
     }
 
-    private static final String uformat = "%s%-50s expires:%02d/%02d/%04d\n";
     public void report(String prefix, User u) {
         XMLGregorianCalendar xgc = u.getExpires();
         pw().format(uformat,prefix,u.getId(),xgc.getMonth()+1,xgc.getDay(),xgc.getYear());

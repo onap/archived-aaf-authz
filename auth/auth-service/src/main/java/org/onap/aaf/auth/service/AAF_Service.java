@@ -185,9 +185,9 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
+    public Registrant<AuthzEnv>[] registrants(final int actualPort) throws CadiException {
         return new Registrant[] {
-            new DirectRegistrar(access,question.locateDAO,app_name,app_interface_version,port)
+            new DirectRegistrar(access,question.locateDAO, actualPort)
         };
     }
 
@@ -226,7 +226,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
             Log4JLogIt logIt = new Log4JLogIt(args, "authz");
             PropAccess propAccess = new PropAccess(logIt,args);
             
-             AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
+            AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
             JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
             jss.start();
         } catch (Exception e) {

@@ -131,7 +131,8 @@ public class JU_AbsServiceStarter {
         BasicEnv bEnv = new BasicEnv();
         PropAccess prop = new PropAccess();
         
-        prop.setProperty(Config.AAF_COMPONENT, "te.st:te.st");
+        prop.setProperty(Config.AAF_LOCATOR_NAMES, "te.st");
+        prop.setProperty(Config.AAF_LOCATOR_VERSION, "te.st");
         prop.setLogLevel(Level.DEBUG);
         absServiceStub = new AbsServiceStub(prop, bEnv);
         

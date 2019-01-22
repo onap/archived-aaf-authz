@@ -220,7 +220,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     @Override
     public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
         return new Registrant[] {
-            new DirectRegistrar(access,locateDAO,app_name,app_version,port)
+            new DirectRegistrar(access,locateDAO,port)
         };
     }
 

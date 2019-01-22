@@ -73,7 +73,8 @@ public class JU_AAF_FS {
 		aEnv = new AuthzEnv();
 		aEnv.staticSlot("test");
 		aEnv.access().setProperty("aaf_public_dir", "test");
-		aEnv.access().setProperty(Config.AAF_COMPONENT, "aaf_com:1.1");
+		aEnv.access().setProperty(Config.AAF_LOCATOR_NAMES, "aaf_com");
+        aEnv.access().setProperty(Config.AAF_LOCATOR_VERSION, "1.1");
 		Server serverMock = mock(Server.class);
 		JettyServiceStarter<AuthzEnv, AuthzTrans> jssMock = mock(JettyServiceStarter.class);
 		aafFs = new AAF_FS(aEnv);

@@ -26,32 +26,28 @@ function run_it() {
   $DOCKER run $@ \
     -v "aaf_config:$CONF_ROOT_DIR" \
     -v "aaf_status:/opt/app/aaf/status" \
-    --add-host="$HOSTNAME:$HOST_IP" \
-    --add-host="aaf.osaaf.org:$HOST_IP" \
-    --env HOSTNAME=${HOSTNAME} \
+    --env aaf_locator_container=docker \
+    --env aaf_locator_fqdn=${HOSTNAME} \
+    --env aaf_locate_url=https://aaf-locate:8095 \
     --env AAF_ENV=${AAF_ENV} \
-    --env AAF_REGISTER_AS=${AAF_REGISTER_AS} \
-    --env AAF_LOCATOR_AS=${AAF_LOCATOR_AS} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
-    --env CASS_HOST=${CASS_HOST} \
     --env CASSANDRA_CLUSTER=${CASSANDRA_CLUSTER} \
     --env CASSANDRA_USER=${CASSANDRA_USER} \
     --env CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD} \
     --env CASSANDRA_PORT=${CASSANDRA_PORT} \
     --name aaf_config_$USER \
     $PREFIX${ORG}/${PROJECT}/aaf_config:${VERSION} \
-    /bin/bash $PARAMS
+    bash -c "bash /opt/app/aaf_config/bin/agent.sh $PARAMS"
 }
 
-PARAMS="$@"
+PARAMS=$@
 case "$1" in 
   bash)
-    run_it -it --rm 
+    PARAMS="&& cd /opt/app/osaaf/local && exec bash"
+    run_it -it --rm  
     ;;
-  -it)
-    shift 
-    PARAMS="$@"
+  taillog)
     run_it -it --rm 
     ;;
   *)

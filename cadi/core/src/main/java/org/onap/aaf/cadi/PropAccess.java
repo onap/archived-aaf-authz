@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,7 +108,7 @@ public class PropAccess implements Access {
         // First, load related System Properties
         for (Entry<Object,Object> es : System.getProperties().entrySet()) {
             String key = es.getKey().toString();
-            for (String start : new String[] {"cadi_","aaf_","cm_"}) {
+            for (String start : new String[] {"HOSTNAME","cadi_","aaf_","cm_"}) {
                 if (key.startsWith(start)) {
                     props.put(key, es.getValue());
                 }
@@ -274,41 +276,53 @@ public class PropAccess implements Access {
             sb.append("] ");
         } else {
             int idx = 0;
-            if (elements[idx] instanceof Integer) {
+            if(elements[idx]!=null  && 
+            	elements[idx] instanceof Integer) {
                 sb.append('-');
                 sb.append(elements[idx]);
                 ++idx;
             }
             sb.append("] ");
-            String s;
-            boolean first = true;
-            for (Object o : elements) {
-                if (o!=null) {
-                    s=o.toString();
-                    if (first) {
-                        first = false;
-                    } else {
-                        int l = s.length();
-                        if (l>0)    {
-                            switch(s.charAt(l-1)) {
-                                case ' ':
-                                    break;
-                                default:
-                                    sb.append(' ');
-                            }
-                        }
-                    }
-                    sb.append(s);
-                }
-            }
+            write(true,sb,elements);
         }
         return sb;
+    }
+    
+    private static boolean write(boolean first, StringBuilder sb, Object[] elements) {
+    	String s;
+        for (Object o : elements) {
+            if (o!=null) {
+            	if(o.getClass().isArray()) {
+            		first = write(first,sb,(Object[])o);
+            	} else {
+	                s=o.toString();
+	                if (first) {
+	                    first = false;
+	                } else {
+	                    int l = s.length();
+	                    if (l>0)    {
+	                        switch(s.charAt(l-1)) {
+	                            case ' ':
+	                                break;
+	                            default:
+	                                sb.append(' ');
+	                        }
+	                    }
+	                }
+	                sb.append(s);
+            	}
+            }
+        }
+        return first;
     }
 
     @Override
     public void log(Exception e, Object... elements) {
-        log(Level.ERROR,e.getMessage(),elements);
-        e.printStackTrace(System.err);
+    	StringWriter sw = new StringWriter();
+    	PrintWriter pw = new PrintWriter(sw);
+    	pw.println();
+    	e.printStackTrace(pw);
+        log(Level.ERROR,elements,sw.toString());
     }
 
     @Override

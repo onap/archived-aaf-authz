@@ -102,9 +102,9 @@ public class CassAccess {
             }
     
             str = env.getProperty(Config.CADI_LATITUDE);
-            Double lat = str!=null?Double.parseDouble(str):null;
+            Double lat = str!=null && !str.isEmpty()?Double.parseDouble(str):null;
             str = env.getProperty(Config.CADI_LONGITUDE);
-            Double lon = str!=null?Double.parseDouble(str):null;
+            Double lon = str!=null && !str.isEmpty()?Double.parseDouble(str):null;
             if (lat == null || lon == null) {
                 throw new APIException(Config.CADI_LATITUDE + " and/or " + Config.CADI_LONGITUDE + " are not set");
             }

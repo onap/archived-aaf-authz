@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +43,7 @@ import aaf.v2_0.RolePermRequest;
  *
  */
 public class Grant extends Cmd {
-    private final static String[] options = {"grant","ungrant","setTo"};
+    private static final String[] options = {"grant","ungrant","setTo"};
 
     public Grant(Perm parent) {
         super(parent,null,
@@ -74,7 +76,8 @@ public class Grant extends Cmd {
         
                 if (option != 2) {
                     String[] roles = args[idx++].split(",");
-                    String strA,strB;
+                    String strA;
+                    String strB;
                     for (String role : roles) {
                         rpr.setRole(role);
                         if (option==0) {

@@ -49,7 +49,8 @@ JAVA_AAFCLI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LO
 if [ ! -d $LOCAL ]; then
     mkdir -p $LOCAL
     for D in bin logs; do
-        rsync -avzh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
+        mkdir -p $OSAAF/$D
+        cp $CONFIG/$D/*.* $OSAAF/$D
     done
 fi
 
@@ -152,11 +153,6 @@ else
             fi
         fi
         ;;
-    update)
-        for D in bin logs; do
-            rsync -uh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
-        done
-        ;;
     showpass)
         echo "## Show Passwords"
         $JAVA_AGENT showpass ${APP_FQI} ${APP_FQDN}
@@ -171,7 +167,7 @@ else
     bash)
         shift
         cd $LOCAL || exit
-        /bin/bash "$@"
+        exec bash "$@"
         ;;
     setProp)
         cd $LOCAL || exit

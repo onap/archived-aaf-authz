@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +45,60 @@ public class History  {
     public final String subject;
     public final String target;
     public final String user;
-    public final int yr_mon;
+    public final int yrMon;
+
+    public static Creator<History> sansConstruct = new Creator<History> () {
+        @Override
+        public History create(Row row) {
+            return new History(
+                    row.getUUID(0),
+                    row.getString(1),
+                    row.getString(2),
+                    row.getString(3),
+                    row.getString(4),
+                    row.getString(5),
+                    row.getInt(6));
+        }
+
+        @Override
+        public String select() {
+            return "SELECT id, action, memo, subject, target, user, yr_mon from authz.history LIMIT 10000000 ";
+        }
+    };
+
+    public static Creator<History> avecConstruct = new Creator<History> () {
+        private final StringBuilder sb = new StringBuilder();
+
+        @Override
+        public History create(Row row) {
+            ByteBuffer bb = row.getBytes(3);
+            sb.setLength(0);
+
+            if (bb!=null && bb.hasRemaining()) {
+                sb.append("0x");
+                while (bb.hasRemaining()) {
+                    sb.append(String.format("%02x",bb.get()));
+                }
+                bb.flip();
+            }
+            return new History(
+                    row.getUUID(0),
+                    row.getString(1),
+                    row.getString(2),
+                    sb.toString(),
+                    row.getString(4),
+                    row.getString(5),
+                    row.getString(6),
+                    row.getInt(7));
+        }
+
+        @Override
+        public String select() {
+            return "SELECT id, action, memo, reconstruct, subject, target, user, yr_mon from authz.history LIMIT 10000000 ";
+        }
+    };
     
-    public History(UUID id, String action, String memo, String subject, String target, String user, int yr_mon) {
+    public History(UUID id, String action, String memo, String subject, String target, String user, int yrMon) {
         this.id = id;
         this.action = action;
         this.memo = memo;
@@ -53,10 +106,10 @@ public class History  {
         this.subject = subject;
         this.target = target;
         this.user = user;
-        this.yr_mon = yr_mon;
+        this.yrMon = yrMon;
     }
     
-    public History(UUID id, String action, String memo, String reconstruct, String subject, String target, String user, int yr_mon) {
+    public History(UUID id, String action, String memo, String reconstruct, String subject, String target, String user, int yrMon) {
         this.id = id;
         this.action = action;
         this.memo = memo;
@@ -64,7 +117,7 @@ public class History  {
         this.subject = subject;
         this.target = target;
         this.user = user;
-        this.yr_mon = yr_mon;
+        this.yrMon = yrMon;
     }
 
     public static void load(Trans trans, Session session, Creator<History> creator, Loader<History> loader) {
@@ -100,7 +153,7 @@ public class History  {
     public String toString() {
         return String.format("%s %d %s, %s, %s, %s, %s", 
                 id.toString(),
-                yr_mon,
+                yrMon,
                 user,
                 target,
                 action,
@@ -123,56 +176,4 @@ public class History  {
     public boolean equals(Object obj) {
         return id.equals(obj);
     }
-    
-    public static Creator<History> sansConstruct = new Creator<History> () {
-        @Override
-        public History create(Row row) {
-            return new History(
-                    row.getUUID(0),
-                    row.getString(1),
-                    row.getString(2),
-                    row.getString(3),
-                    row.getString(4),
-                    row.getString(5),
-                    row.getInt(6));
-        }
-
-        @Override
-        public String select() {
-            return "SELECT id, action, memo, subject, target, user, yr_mon from authz.history LIMIT 10000000 ";
-        }
-    };
-
-    public static Creator<History> avecConstruct = new Creator<History> () {
-        private final StringBuilder sb = new StringBuilder();
-        
-        @Override
-        public History create(Row row) {
-            ByteBuffer bb = row.getBytes(3);
-            sb.setLength(0);
-            
-            if (bb!=null && bb.hasRemaining()) {
-                sb.append("0x");
-                while (bb.hasRemaining()) {
-                    sb.append(String.format("%02x",bb.get()));
-                }
-                bb.flip();
-            }
-            return new History(
-                    row.getUUID(0),
-                    row.getString(1),
-                    row.getString(2),
-                    sb.toString(),
-                    row.getString(4),
-                    row.getString(5),
-                    row.getString(6),
-                    row.getInt(7));
-        }
-
-        @Override
-        public String select() {
-            return "SELECT id, action, memo, reconstruct, subject, target, user, yr_mon from authz.history LIMIT 10000000 ";
-        }
-    };
-
 }

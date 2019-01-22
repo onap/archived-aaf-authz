@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +31,6 @@ import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Retryable;
-import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.Perms;
 

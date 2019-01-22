@@ -165,10 +165,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
     @Override
     public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
         return new Registrant[] {
-                new DirectRegistrar(access,question.locateDAO,app_name,app_version,port),
-                new DirectRegistrar(access,question.locateDAO,app_name.replace(DOT_OAUTH, ".token"),app_version,port),
-                new DirectRegistrar(access,question.locateDAO,app_name.replace(DOT_OAUTH, ".introspect"),app_version,port)
-
+            new DirectRegistrar(access,question.locateDAO,port)
         };
     }
 

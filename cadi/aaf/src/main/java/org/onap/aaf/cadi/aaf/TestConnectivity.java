@@ -47,6 +47,7 @@ import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.http.HClient;
 import org.onap.aaf.cadi.http.HX509SS;
 import org.onap.aaf.cadi.oauth.HRenewingTokenSS;
+import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.APIException;
 
 public class TestConnectivity {
@@ -234,11 +235,12 @@ public class TestConnectivity {
             } else {
                 socket = new Socket();
                 try {
+                	FixURIinfo fui = new FixURIinfo(uri);
                     try {
-                        socket.connect(new InetSocketAddress(uri.getHost(),  uri.getPort()),3000);
-                        System.out.printf("Can Connect a Socket to %s %d\n",uri.getHost(),uri.getPort());
+                        socket.connect(new InetSocketAddress(fui.getHost(),  fui.getPort()),3000);
+                        System.out.printf("Can Connect a Socket to %s %d\n",fui.getHost(),fui.getPort());
                     } catch (IOException e) {
-                        System.out.printf("Cannot Connect a Socket to  %s %d: %s\n",uri.getHost(),uri.getPort(),e.getMessage());
+                        System.out.printf("Cannot Connect a Socket to  %s %d: %s\n",fui.getHost(),fui.getPort(),e.getMessage());
                     }
                 } finally {
                     try {

@@ -18,10 +18,12 @@
 #  ============LICENSE_END====================================================
 #
 ##
-## org.osaaf.aaf.oauth
 ## AAF OAuth2 Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
-aaf_component=AAF_NS.oauth:AAF_RELEASE
+aaf_locator_names=oauth,token,introspect
 port=8140
+aaf_locator_public_port.helm=30082
+#aaf_locator_public_port.oom=
+
 

@@ -34,7 +34,7 @@ JAVA_AGENT="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOC
 JAVA_AAFCLI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.auth.cmd.AAFcli" 
 
 # If doesn't exist... still create
-mkdir -p /opt/app/osaaf
+mkdir -p $OSAAF
 
 # Temp use for clarity of code
 FILE=
@@ -42,7 +42,7 @@ FILE=
 # Setup Bash, first time only
 if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep cadi $HOME/.bash_aliases)" ]; then
   echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bash_aliases
-  echo "alias agent='$CONFIG/bin/agent.sh EMPTY \$*'" >>$HOME/.bash_aliases
+  echo "alias agent='$CONFIG/bin/agent.sh \$*'" >>$HOME/.bash_aliases
   echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bash_aliases
   chmod a+x $CONFIG/bin/agent.sh
   . $HOME/.bash_aliases
@@ -114,9 +114,10 @@ fi
 
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
-    rsync -avzh --exclude=.gitignore $CONFIG/local/org.osaaf.aaf* $LOCAL
+    cp  $CONFIG/local/org.osaaf.aaf* $LOCAL
     for D in public etc logs; do
-        rsync -avzh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
+        mkdir -p $OSAAF/$D
+        cp $CONFIG/$D/* $OSAAF/$D
     done
 
     TMP=$(mktemp)
@@ -125,9 +126,16 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     echo cadi_latitude=${LATITUDE} >> ${TMP}
     echo cadi_longitude=${LONGITUDE} >> ${TMP}
     echo cadi_x509_issuers=${CADI_X509_ISSUERS} >> ${TMP}
-    echo aaf_register_as=${AAF_REGISTER_AS} >> ${TMP}
-    AAF_LOCATOR_AS=${AAF_LOCATOR_AS:=$AAF_REGISTER_AS}
-    echo aaf_locate_url=https://${AAF_LOCATOR_AS}:8095 >> ${TMP}
+    AAF_LOCATE_URL=${aaf_locate_url:="https://${HOSTNAME}:8095"}
+    echo aaf_locate_url=${AAF_LOCATE_URL} >> ${TMP}
+    for P in `env`; do
+      if [[ "$P" == aaf_locator* ]]; then
+	echo "$P" >> ${TMP}
+        if [[ "$P" == aaf_locator_container=* ]]; then
+	    echo aaf_locator_container.hostname=${HOSTNAME} >> ${TMP}
+	fi
+      fi
+    done
 
     cat $TMP
 
@@ -139,7 +147,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
 
     # Cassandra Config stuff
     # Default is expect a Cassandra on same Node
-    CASS_HOST=${CASS_HOST:="aaf_cass"}
+    CASS_HOST=${CASS_HOST:="aaf-cass"}
     CASS_PASS=$($JAVA_CADI digest "${CASSANDRA_PASSWORD:-cassandra}" $LOCAL/org.osaaf.aaf.keyfile)
     CASS_NAME=${CASS_HOST/:*/}
     sed -i.backup -e "s/\\(cassandra.clusters=\\).*/\\1${CASSANDRA_CLUSTERS:=$CASS_HOST}/" \
@@ -165,7 +173,7 @@ fi
 
 
 # Now run a command
-CMD=$2
+CMD=$1
 if [ -z "$CMD"  ]; then
     if [ -n "$INITIALIZED" ]; then
         echo "Initialization Complete"
@@ -174,11 +182,10 @@ if [ -z "$CMD"  ]; then
     fi
 else
     shift
-    shift
     case "$CMD" in
     ls)
         echo ls requested
-        find /opt/app/osaaf -depth
+        find $OSAAF -depth
         ;;
     cat)
         if [ "$1" = "" ]; then
@@ -195,12 +202,6 @@ else
             fi
         fi
         ;;
-    update)
-        rsync -uh --exclude=.gitignore $CONFIG/local/org.osaaf.aaf* $LOCAL
-        for D in public data etc logs; do
-            rsync -uh --exclude=.gitignore $CONFIG/$D/* /opt/app/osaaf/$D
-        done
-        ;;
     validate)
         echo "## validate requested"
         $JAVA_AAFCLI perm list user aaf@aaf.osaaf.org
@@ -211,7 +212,7 @@ else
     bash)
         shift
         cd $LOCAL || exit
-        /bin/bash "$@"
+        exec /bin/bash -c "$@"
         ;;
     setProp)
         cd $LOCAL || exit
@@ -226,11 +227,11 @@ else
 	fi
         for F in $FILES; do
 	    if [ "$ADD" = "Y" ]; then
-                echo "Changing $1 to $F"
+                echo "Changing $1 for $F"
 		echo "$1=$2" >> $F
 	    else 
                echo "Changing $1 in $F"
-               sed -i.backup -e "s/\\(${1}.*=\\).*/\\1${2}/" $F
+               sed -i.backup -e "s/\\(${1}=\\).*/\\1${2}/" $F
 	    fi
             cat $F
         done
@@ -265,7 +266,7 @@ else
         done
         ;;
     taillog) 
-	sh /opt/app/osaaf/logs/taillog
+	sh $OSAAF/logs/taillog
 	;;
     wait)
 	bash $CONFIG/bin/pod_wait.sh wait $1
