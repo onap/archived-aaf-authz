@@ -66,43 +66,46 @@ public class JU_API_Cert {
     @Rule
     public ExpectedException thrown= ExpectedException.none();
     
-    @Test
-    public void init_bothValued() {
-        try {
-            api.init(certManApi);
-        } catch (Exception e) {
-            //thrown.expect(NullPointerException.class);
-            e.printStackTrace();
-        }
-    }
-    
-    @Test
-    public void init_Null_() {
-        try {
-            api.init(null);
-        } catch (Exception e) {
-            //thrown.expect(Exception.class);
-            e.printStackTrace();
-        }
-    }
-    
-    @Test
-    public void init_NMC_Null() {
-        try {
-            api_1.init(null);
-        } catch (Exception e) {
-            //thrown.expect(NullPointerException.class);
-            e.printStackTrace();
-        }
-    }
-    
-    @Test
-    public void init_NMC() {
-        try {
-            api_1.init(noMockAPI);
-        } catch (Exception e) {
-            //thrown.expect(NullPointerException.class);
-            e.printStackTrace();
-        }
-    }
+//  These don't seem to be doing anything but causing Null pointers because
+//  Nor properties are setup whatsoever.  Is there any valid testing on this?
+//    
+//    @Test
+//    public void init_bothValued() {
+//        try {
+//            api.init(certManApi);
+//        } catch (Exception e) {
+//            //thrown.expect(NullPointerException.class);
+//            e.printStackTrace();
+//        }
+//    }
+//    
+//    @Test
+//    public void init_Null_() {
+//        try {
+//            api.init(null);
+//        } catch (Exception e) {
+//            //thrown.expect(Exception.class);
+//            e.printStackTrace();
+//        }
+//    }
+//    
+//    @Test
+//    public void init_NMC_Null() {
+//        try {
+//            api_1.init(null);
+//        } catch (Exception e) {
+//            //thrown.expect(NullPointerException.class);
+//            e.printStackTrace();
+//        }
+//    }
+//    
+//    @Test
+//    public void init_NMC() {
+//        try {
+//            api_1.init(noMockAPI);
+//        } catch (Exception e) {
+//            //thrown.expect(NullPointerException.class);
+//            e.printStackTrace();
+//        }
+//    }
 }
