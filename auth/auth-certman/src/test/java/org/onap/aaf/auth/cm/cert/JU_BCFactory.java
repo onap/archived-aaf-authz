@@ -97,7 +97,6 @@ public class JU_BCFactory {
             assertNotNull(bcFactory.toCSR(trans, new File("/random/path")));
             thrown.expect(FileNotFoundException.class);
         } catch (IOException e) {
-            
             e.printStackTrace();
         }
     }
