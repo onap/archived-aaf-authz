@@ -81,7 +81,7 @@ spec:
       - name: {{ .Chart.Name }}-oauth
         image: {{ .Values.image.repository }}onap/aaf/aaf_oauth:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_oauth","sleep","50", "cd /opt/app/aaf;bin/oauth"]
+        command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-oauth aaf-service && exec bin/oauth"]
         volumeMounts:
           -  mountPath: "/opt/app/osaaf"
              name: {{ .Chart.Name }}-config-vol
