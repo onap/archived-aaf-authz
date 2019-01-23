@@ -24,13 +24,13 @@
 . ./d.props
 DOCKER=${DOCKER:=docker}
 
-AAF_COMPONENTS="config agent core cass $(cat components) "
+AAF_COMPONENTS="config agent base core cass $(cat components) "
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-        # docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:${OLD_VERSION}
-        $DOCKER push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:${VERSION}
-        docker tag ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:${VERSION}-latest
-        docker tag ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:latest
-		$DOCKER push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:${VERSION}-latest
-		$DOCKER push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf-${AAF_COMPONENT}:latest
+        # docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:${OLD_VERSION}
+        $DOCKER push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:${VERSION}
+        docker tag ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:${VERSION}-latest
+        docker tag ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:latest
+		$DOCKER push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:${VERSION}-latest
+		$DOCKER push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_AAF_COMPONENT}:latest
 done

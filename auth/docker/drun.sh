@@ -42,9 +42,9 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     "service")
         PUBLISH="--publish 8100:8100"
         if [ -z "$CASSANDRA_DOCKER" ]; then
-	  CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-service && exec bin/service"
+	  CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-service && exec bin/service"
         else
-	  CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-service aaf-cass && exec bin/service"
+	  CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-service aaf-cass && exec bin/service"
           LINKS="--link $CASSANDRA_DOCKER"
 	  echo $CASSANDRA_CLUSTER
         fi
@@ -52,32 +52,32 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     "locate")
         PUBLISH="--publish 8095:8095"
         LINKS="--link aaf-cass --link aaf-service"
-	CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-locate aaf-service && exec bin/locate"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-locate aaf-service && exec bin/locate"
         ;;
     "oauth")
         PUBLISH="--publish 8140:8140"
         LINKS="--link aaf-cass --link aaf-service --link aaf-locate"
-	CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-oauth aaf-service && exec bin/oauth"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-oauth aaf-service && exec bin/oauth"
         ;;
     "cm")
         PUBLISH="--publish 8150:8150"
         LINKS="--link aaf-cass --link aaf-service --link aaf-locate"
-	CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-cm aaf-locate && exec bin/cm"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-cm aaf-locate && exec bin/cm"
         ;;
     "gui")
         PUBLISH="--publish 8200:8200"
         LINKS="--link aaf-service --link aaf-locate --link aaf-oauth --link aaf-cm"
-	CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-gui aaf-locate && exec bin/gui"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-gui aaf-locate && exec bin/gui"
         ;;
     "fs")
         PUBLISH="--publish 80:8096"
         LINKS=""
-	CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-fs aaf-locate && exec bin/fs"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-fs aaf-locate && exec bin/fs"
         ;;
     "hello")
         PUBLISH="--publish 8130:8130"
         LINKS="--link aaf-service --link aaf-locate --link aaf-oauth --link aaf-cm"
-	CMD_LINE="cd /opt/app/aaf && /bin/bash pod/pod_wait.sh aaf-hello aaf-locate && exec bin/hello"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-hello aaf-locate && exec bin/hello"
         ;;
     esac
 
