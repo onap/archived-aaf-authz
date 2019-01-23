@@ -4,7 +4,7 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
- * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,9 +64,7 @@ public class MiscID  {
      * 2) DB "suits.cql"
      * 3) Alter existing Tables
      * @param row
-     * @throws BatchException 
-     * @throws IllegalAccessException 
-     * @throws IllegalArgumentException 
+     * @throws BatchException
      */
     public void set(String[] row ) throws BatchException {
         if (row.length<4) {
@@ -140,13 +138,13 @@ public class MiscID  {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj!=null && obj instanceof MiscID) {
+        if (null!=obj && obj instanceof MiscID) {
             return id.equals(((MiscID)obj).id);
         }
         return false;
     }
 
-    public StringBuilder insertStmt() throws IllegalArgumentException, IllegalAccessException {
+    public StringBuilder insertStmt() {
         StringBuilder sb = new StringBuilder("INSERT INTO authz.miscid (");
         sb.append(FIELD_STRING);
         sb.append(") VALUES ('");
