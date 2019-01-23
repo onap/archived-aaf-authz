@@ -22,7 +22,6 @@
  */
 package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.io.IOException;
 import java.util.List;
 
 public abstract class AbsCredBody extends NotifyBody {
@@ -33,7 +32,7 @@ public abstract class AbsCredBody extends NotifyBody {
 
 	@Override
 	public String user(List<String> row) {
-		if( (row != null) && !row.isEmpty()) {
+		if( (row != null) && row.size()>1) {
 			return row.get(1);
 		}
 		return null;
