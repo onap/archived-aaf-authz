@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_697fdf15",
+        "filename": "INFO.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-01-24T02:03:45Z",
+      "side": 1,
+      "message": "this is not a valid LFID..:(\n\nCan we please correct it?",
+      "range": {
+        "startLine": 39,
+        "startChar": 13,
+        "endLine": 39,
+        "endChar": 24
+      },
+      "revId": "749bff255e3d7fd29d8cebaeb83eface0e587e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
