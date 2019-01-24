@@ -36,11 +36,11 @@ import com.datastax.driver.core.Cluster;
 public class CredPunt extends ActionPuntDAO<CredDAO.Data,Void,String> {
     
     public CredPunt(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws IOException, APIException {
-        super(trans,cluster,months,range,dryRun);
+        super(trans,cluster,months, dryRun);
     }
 
     public CredPunt(AuthzTrans trans, ActionDAO<?,?,?> adao, int months, int range) throws IOException {
-        super(trans, adao, months,range);
+        super(trans, adao, months);
     }
 
     public Result<Void> exec(AuthzTrans trans, CredDAO.Data cdd,String text) {
