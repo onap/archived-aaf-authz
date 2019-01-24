@@ -66,15 +66,8 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
                 }
             }
             Result<OP_STATUS> rv = f.performFutureOp(trans, FUTURE_OP.A, future.fdd,
-                new Lookup<List<ApprovalDAO.Data>>() {
-                    @Override
-                    public List<Data> get(AuthzTrans trans, Object ... noop) {
-                        return apprs;
-                    }
-                },
-                new Lookup<UserRoleDAO.Data>() {
-                    @Override
-                    public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
+                    (trans1, noop) -> apprs,
+                    (trans12, keys) -> {
                         List<UserRole> lur = UserRole.getByUser().get(keys[0]);
                         if (lur!=null) {
                             for (UserRole ur : lur) {
@@ -84,8 +77,7 @@ public class URFutureApproveExec extends ActionDAO<List<Approval>, OP_STATUS, Fu
                             }
                         }
                         return null;
-                    }
-                });
+                    });
             if (rv.isOK()) {
                 switch(rv.value) {
                     case D:

@@ -193,18 +193,15 @@ public class Expiring extends Batch {
 			}
 			
 			trans.info().log("Checking for Expired X509s");
-			X509.load(trans, session, new Visitor<X509>() {
-				@Override
-				public void visit(X509 x509) {
-					try {
-						for(Certificate cert : Factory.toX509Certificate(x509.x509)) {
-							writeAnalysis(trans, x509, (X509Certificate)cert);
-						}
-					} catch (CertificateException | IOException e) {
-						trans.error().log(e, "Error Decrypting X509");
+			X509.load(trans, session, x509 -> {
+				try {
+					for(Certificate cert : Factory.toX509Certificate(x509.x509)) {
+						writeAnalysis(trans, x509, (X509Certificate)cert);
 					}
-					
+				} catch (CertificateException | IOException e) {
+					trans.error().log(e, "Error Decrypting X509");
 				}
+
 			});
 		} catch (FileNotFoundException e) {
 			trans.info().log(e);

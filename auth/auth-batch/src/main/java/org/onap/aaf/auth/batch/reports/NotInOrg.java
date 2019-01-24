@@ -105,16 +105,13 @@ public class NotInOrg extends Batch {
 			trans.info().log("User Roles");
 			
 			final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
-			UserRole.load(trans, session, UserRole.v2_0_11, new Visitor<UserRole>() {
-				@Override
-				public void visit(UserRole ur) {
-					try {
-						if(!check(transNoAvg, checked, ur.user())) {
-							ur.row(whichWriter(transNoAvg,ur.user()));
-						}
-					} catch (OrganizationException e) {
-						trans.error().log(e, "Error Decrypting X509");
+			UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
+				try {
+					if(!check(transNoAvg, checked, ur.user())) {
+						ur.row(whichWriter(transNoAvg,ur.user()));
 					}
+				} catch (OrganizationException e) {
+					trans.error().log(e, "Error Decrypting X509");
 				}
 			});
 			
