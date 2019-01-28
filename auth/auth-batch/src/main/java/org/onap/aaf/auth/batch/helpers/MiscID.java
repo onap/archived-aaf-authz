@@ -53,6 +53,7 @@ public class MiscID  {
     public String sponsor;
     public String created;
     public String renewal;
+    public static String SELECT_QUERY = "SELECT ";
 
     private static final String FIELD_STRING = "id,created,sponsor,renewal";
     
@@ -85,15 +86,15 @@ public class MiscID  {
     
 
     public static void load(Trans trans, Session session ) {
-        load(trans, session,"SELECT " + FIELD_STRING + " FROM authz.miscid;",data);
+        load(trans, session,SELECT_QUERY + FIELD_STRING + " FROM authz.miscid;",data);
     }
 
     public static void load(Trans trans, Session session, Map<String,MiscID> map ) {
-        load(trans, session,"SELECT " + FIELD_STRING + " FROM authz.miscid;",map);
+        load(trans, session,SELECT_QUERY + FIELD_STRING + " FROM authz.miscid;",map);
     }
 
     public static void loadOne(Trans trans, Session session, String id ) {
-        load(trans, session,"SELECT " + FIELD_STRING + " FROM authz.miscid WHERE id ='" + id + "';", data);
+        load(trans, session,SELECT_QUERY + FIELD_STRING + " FROM authz.miscid WHERE id ='" + id + "';", data);
     }
 
     public static void load(Trans trans, Session session, String query, Map<String,MiscID> map) {
