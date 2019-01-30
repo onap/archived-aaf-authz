@@ -358,12 +358,7 @@ public abstract class Cmd {
     
             // Save Server time by Sorting locally
             List<Item> items = history.getItem();
-            java.util.Collections.sort(items, new Comparator<Item>() {
-                @Override
-                public int compare(Item o1, Item o2) {
-                    return o2.getTimestamp().compare(o1.getTimestamp());
-                }
-            });
+            java.util.Collections.sort(items, (Comparator<Item>) (o1, o2) -> o2.getTimestamp().compare(o1.getTimestamp()));
             
             for (History.Item item : items) {
                 GregorianCalendar gc = item.getTimestamp().toGregorianCalendar();

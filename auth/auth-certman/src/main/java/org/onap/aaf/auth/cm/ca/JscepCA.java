@@ -225,14 +225,11 @@ public class JscepCA extends CA {
         protected Client _newClient(String urlinfo) throws LocatorException {
             try {
                 String[] info = Split.split('/', urlinfo);
-                Client c = new Client(new URL(JscepCA.CA_PREFIX + info[0] + JscepCA.CA_POSTFIX), 
-                        new CertificateVerifier() {
-                        @Override
-                        public boolean verify(X509Certificate cert) {
+                Client c = new Client(new URL(JscepCA.CA_PREFIX + info[0] + JscepCA.CA_POSTFIX),
+                        cert -> {
                             //TODO checkIssuer
                             return true;
                         }
-                    }
                 );
                 // Map URL to Client, because Client doesn't expose Connection
                 mxcwiC.put(c, mxcwiS.get(urlinfo));

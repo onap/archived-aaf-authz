@@ -86,24 +86,21 @@ public class NsRoleUserReport extends Batch {
 			trans.info().log("Create Report on Roles by NS");
 			
 			final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
-			UserRole.load(transNoAvg, session, UserRole.v2_0_11, new Visitor<UserRole>() {
-				@Override
-				public void visit(UserRole ur) {
-					if(ur.expires().after(now)) {
-						Map<String, Integer> roleCount = theMap.get(ur.ns());
-						Integer count;
-						if(roleCount==null) {
-							roleCount = new TreeMap<>();
-							theMap.put(ur.ns(),roleCount);
+			UserRole.load(transNoAvg, session, UserRole.v2_0_11, ur -> {
+				if(ur.expires().after(now)) {
+					Map<String, Integer> roleCount = theMap.get(ur.ns());
+					Integer count;
+					if(roleCount==null) {
+						roleCount = new TreeMap<>();
+						theMap.put(ur.ns(),roleCount);
+						count = 0;
+					} else {
+						count = roleCount.get(ur.rname());
+						if(count == null) {
 							count = 0;
-						} else {
-							count = roleCount.get(ur.rname());
-							if(count == null) {
-								count = 0;
-							}
 						}
-						roleCount.put(ur.rname(), count+1);
 					}
+					roleCount.put(ur.rname(), count+1);
 				}
 			});
 			
