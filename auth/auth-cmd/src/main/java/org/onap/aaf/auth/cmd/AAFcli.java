@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,17 +88,13 @@ public class AAFcli {
     private static boolean showDetails = false;
     private static boolean ignoreDelay = false;
     private static int globalDelay=0;
-    
-    public static int timeout() {
-        return TIMEOUT;
-    }
 
     // Create when only have Access
     public AAFcli(Access access, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
         this(access,new AuthzEnv(access.getProperties()),wtr,hman, si,ss);
     }
 
-    public AAFcli(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
+    public AAFcli(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
         this.env = env;
         this.access = access;
         this.ss = ss;
@@ -123,6 +121,10 @@ public class AAFcli {
         cmds.add(new User(this));
         cmds.add(new NS(this));
         cmds.add(new Mgmt(this));
+    }
+
+    public static int timeout() {
+        return TIMEOUT;
     }
 
     public void verbose(boolean v) {
