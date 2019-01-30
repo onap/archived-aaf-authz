@@ -34,12 +34,12 @@ public abstract class ActionPuntDAO<D, RV, T> extends ActionDAO<D, RV, T> {
     private int months;
     protected static final Date now = new Date();
 
-    public ActionPuntDAO(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws APIException, IOException {
+    public ActionPuntDAO(AuthzTrans trans, Cluster cluster, int months, boolean dryRun) throws APIException, IOException {
         super(trans, cluster,dryRun);
         this.months = months;
     }
 
-    public ActionPuntDAO(AuthzTrans trans, ActionDAO<?, ?,?> predecessor, int months, int range) {
+    public ActionPuntDAO(AuthzTrans trans, ActionDAO<?, ?, ?> predecessor, int months) {
         super(trans, predecessor);
         this.months = months;
     }
@@ -49,18 +49,6 @@ public abstract class ActionPuntDAO<D, RV, T> extends ActionDAO<D, RV, T> {
         GregorianCalendar temp = new GregorianCalendar();
         temp.setTime(current);
         temp.add(GregorianCalendar.MONTH, months);
-
-        /*
-         *  This method Randomized date.  This is no longer needed.  Just add the Punt Months.
-        temp.add(GregorianCalendar.MONTH, months);
-        if (range>0) {
-            int forward = Math.abs(random.nextInt()%range);
-            if (forward>1) {
-                temp.add(GregorianCalendar.MONTH, forward);
-                temp.add(GregorianCalendar.DAY_OF_MONTH, (random.nextInt()%30)-15);
-            }
-        }
-        */
         return temp.getTime();
     }
 

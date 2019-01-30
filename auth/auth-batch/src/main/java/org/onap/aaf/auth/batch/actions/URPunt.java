@@ -37,11 +37,11 @@ import com.datastax.driver.core.Cluster;
 
 public class URPunt extends ActionPuntDAO<UserRole,Void,String> {
     public URPunt(AuthzTrans trans, Cluster cluster, int months, int range, boolean dryRun) throws APIException, IOException {
-        super(trans,cluster, months, range,dryRun);
+        super(trans,cluster, months, dryRun);
     }
 
     public URPunt(AuthzTrans trans, ActionDAO<?,?,?> adao, int months, int range) {
-        super(trans, adao, months, range);
+        super(trans, adao, months);
     }
 
     public Result<Void> exec(AuthzTrans trans, UserRole ur, String text) {
