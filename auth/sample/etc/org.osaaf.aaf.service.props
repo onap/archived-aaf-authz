@@ -22,7 +22,7 @@
 ## AAF Service Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props
-aaf_locator_names=service
+aaf_locator_entries=service
 port=8100
 aaf_locator_public_port.helm=30080
 #aaf_locator_public_port.oom=

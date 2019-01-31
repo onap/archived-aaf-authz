@@ -112,7 +112,7 @@ public class CassAccess {
             env.init().printf("Service Latitude,Longitude = %f,%f",lat,lon);
             
             str = env.getProperty(pre+CASSANDRA_CLUSTERS,env.getProperty(CASSANDRA_CLUSTERS,"localhost"));
-            env.init().log("Cass Clusters = ",str );
+            env.init().printf("Cass Clusters = '%s'\n",str );
             String[] machs = Split.split(',', str);
             String[] cpoints = new String[machs.length];
             String bestDC = null;

@@ -23,7 +23,7 @@
 ## Note: Link to CA Properties in "local" dir
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props:/opt/app/osaaf/etc/org.osaaf.aaf.orgs.props:/opt/app/osaaf/local/org.osaaf.aaf.cm.ca.props
-aaf_locator_names=cm
+aaf_locator_entries=cm
 port=8100
 aaf_locator_public_port.helm=30084
 # aaf_locator_public_port.oom=

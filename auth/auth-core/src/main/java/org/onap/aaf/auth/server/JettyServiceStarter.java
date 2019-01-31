@@ -130,7 +130,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                     throw new CadiException("No Truststore Password configured for " + truststore);
                 }
                 sslContextFactory.setTrustStorePath(truststore);
-                sslContextFactory.setTrustStorePassword(access().decrypt(truststorePassword, true)); 
+                sslContextFactory.setTrustStorePassword(access().decrypt(truststorePassword, false)); 
             }
             // Be able to accept only certain protocols, i.e. TLSv1.1+
             String subprotocols = access().getProperty(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);

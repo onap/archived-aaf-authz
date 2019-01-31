@@ -18,7 +18,7 @@
  * ============LICENSE_END====================================================
  */
 
-package org.onap.aaf.auth.server;
+package org.onap.aaf.auth.util.test;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
