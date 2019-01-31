@@ -37,7 +37,7 @@ public class FixURIinfo {
 	public FixURIinfo(URI uri) {
 		auth = uri.getAuthority();
 		host = uri.getHost();
-		if(host==null) {
+		if(host==null || (auth!=null && auth.startsWith(host))) {
 			if(auth!=null) {
 				int colon = auth.indexOf(':');
 				if(colon >= 0 ) {

@@ -22,6 +22,8 @@ kind: Service
 apiVersion: v1
 metadata:
   name: aaf-cass
+  labels:
+    app: aaf-cass
 spec:
   selector:
     app: aaf-cass
@@ -59,6 +61,9 @@ spec:
       - name: {{ .Chart.Name }}-cass-vol
         persistentVolumeClaim:
           claimName: {{ .Chart.Name }}-cass-pvc
+      - name: {{ .Chart.Name }}-status-vol
+        persistentVolumeClaim:
+          claimName: {{ .Chart.Name }}-status-pvc
       containers:
 ###
 ### AAF-CASS
@@ -69,8 +74,10 @@ spec:
         # installing with cmd "onap" will not only initialize the DB, but add ONAP bootstrap data as well
         command: ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh","onap"]
         volumeMounts:
-          - mountPath: "/var/lib/cassandra"
-            name: {{ .Chart.Name }}-cass-vol
+        - mountPath: "/var/lib/cassandra"
+          name: {{ .Chart.Name }}-cass-vol
+        - mountPath: "/opt/app/aaf/status"
+          name: {{ .Chart.Name }}-status-vol
         ports:
         - name: storage
           containerPort: 7000
@@ -89,3 +96,15 @@ spec:
           value: "512M"
         - name: MAX_HEAP_SIZE
           value: "1024M"
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP

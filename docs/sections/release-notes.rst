@@ -8,8 +8,10 @@ Release Notes
 
 
 
-Version: 2.1.8 (Casablanca, 3.0.0-ONAP)
+Version: 2.1.8 (Casablanca, 3.0.0-ONAP, Casablanca Maintenance Release)
 ----------------------------------------
+
+Note: AAF did not create new artifacts for Casablanca Maintenance Release.
 
 
 :Release Date: 2018-11-30

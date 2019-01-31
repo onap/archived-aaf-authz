@@ -36,6 +36,9 @@ JAVA_AAFCLI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LO
 # If doesn't exist... still create
 mkdir -p $OSAAF
 
+# If not created by separate PV, create
+mkdir -p /opt/app/aaf/status
+
 # Temp use for clarity of code
 FILE=
 

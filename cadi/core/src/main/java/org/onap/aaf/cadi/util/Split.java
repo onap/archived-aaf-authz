@@ -76,7 +76,7 @@ public class Split {
 		if (count==1) {
 			rv[0]=value.substring(start,end).trim();
 		} else {
-			int last=0;
+			int last=start;
 			count=-1;
 			for (idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,idx)) {
 				rv[++count]=value.substring(last,idx).trim();

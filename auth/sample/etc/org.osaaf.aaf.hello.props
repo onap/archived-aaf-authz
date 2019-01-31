@@ -22,7 +22,7 @@
 ## AAF Hello Properties
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props
-aaf_locator_names=hello
+aaf_locator_entries=hello
 port=8130
 aaf_locator_public_port.helm=30086
 #aaf_locator_public_port.oom=

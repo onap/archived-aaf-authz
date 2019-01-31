@@ -71,7 +71,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         ;;
     "fs")
         PUBLISH="--publish 80:8096"
-        LINKS=""
+        LINKS="--link aaf-locate"
 	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-fs aaf-locate && exec bin/fs"
         ;;
     "hello")

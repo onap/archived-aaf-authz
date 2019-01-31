@@ -32,7 +32,7 @@ spec:
     - name: aaf-gui
       protocol: TCP
       port: 8200
-      NodePort: 30083
+      nodePort: 30083
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -53,27 +53,44 @@ spec:
       volumes:
         # Use this Pod Sharing dir to declare various States of starting
       - name: {{ .Chart.Name }}-config-vol
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: {{ .Chart.Name }}-config-pvc
+      - name: {{ .Chart.Name }}-status-vol
+        persistentVolumeClaim:
+          claimName: {{ .Chart.Name }}-status-pvc
       initContainers:
         - name: {{ .Chart.Name }}-config-container
           image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
           imagePullPolicy: IfNotPresent
+          command: ["bash","/opt/app/aaf_config/bin/agent.sh"]
           volumeMounts:
             - mountPath: "/opt/app/osaaf"
               name: {{ .Chart.Name }}-config-vol
           env:
             - name: AAF_ENV
               value: "{{ .Values.cadi.aaf_env }}"
-            - name: AAF_REGISTER_AS
-              value: "aaf-gui"
-            - name: AAF_LOCATOR_AS
-              value: "{{ .Values.cadi.aaf_locate_as }}"
             - name: LATITUDE
               value: "{{ .Values.cadi.cadi_latitude }}"
             - name: LONGITUDE
               value: "{{ .Values.cadi.cadi_longitude }}"
-            - name: CASS_HOST
+            - name: aaf_locator_container
+              value: "helm"
+            - name: aaf_locator_container_ns
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: aaf_locate_url
+              value: "https://aaf-locate.onap:8095"
+            - name: aaf_locator_public_hostname
+              value: "aaf.osaaf.org"
+            - name: CASSANDRA_CLUSTER
               value: "aaf-cass"
+#            - name: CASSANDRA_USER
+#              value: ""
+#            - name: CASSANDRA_PASSWORD
+#              value: ""
+#           - name: CASSANDRA_PORT
+#              value: ""
       containers:
 ###
 ### AAF-GUI
@@ -81,11 +98,15 @@ spec:
       - name: {{ .Chart.Name }}-gui
         image: {{ .Values.image.repository }}onap/aaf/aaf_gui:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","/opt/app/aaf/pod/pod_wait.sh","aaf_gui","sleep","50", "cd /opt/app/aaf;bin/gui"]
+        command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-gui aaf-locate && exec bin/gui"]
         volumeMounts:
-          -  mountPath: "/opt/app/osaaf"
-             name: {{ .Chart.Name }}-config-vol
+        -  mountPath: "/opt/app/osaaf"
+           name: {{ .Chart.Name }}-config-vol
+        -  mountPath: "/opt/app/aaf/status"
+           name: {{ .Chart.Name }}-status-vol
         ports:
         - name: aaf-gui
           protocol: TCP
           containerPort: 8200
+
+

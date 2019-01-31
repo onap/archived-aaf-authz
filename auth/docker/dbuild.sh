@@ -32,9 +32,9 @@ DOCKER=${DOCKER:=docker}
 echo "Building Containers for aaf components, version $VERSION"
 
 # AAF_cass now needs a version...
-#cd ../auth-cass/docker
-#bash ./dbuild.sh
-#cd -
+cd ../auth-cass/docker
+bash ./dbuild.sh
+cd -
 
 # AAF Base version - set the core image, etc
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
@@ -57,7 +57,7 @@ sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     docker/Dockerfile.config > sample/Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
-$DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/latest
+$DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:latest
 
 cp ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
 # AAF Agent Image (for Clients)
