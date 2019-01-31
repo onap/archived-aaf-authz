@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,7 +232,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             default:
                 return Result.err(Result.ERR_BadData,"Invalid Perm String");
         }
-        if (certman.aafLurPerm.fish(trans.getUserPrincipal(), ap)) {
+        if (AAF_CM.aafLurPerm.fish(trans.getUserPrincipal(), ap)) {
             resp.setContentType(voidResp);
             resp.getOutputStream().write(0);
             return Result.ok();
@@ -263,18 +264,15 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 return Result.err(rcr);
             }
             
-//            CA certAuth = trans.get(sCertAuth,null);
             Result<CERT> rc = mapper.toCert(trans, rcr, withTrust);
-            switch(rc.status) {
-                case OK: 
-                    RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
-                    data.to(resp.getOutputStream());
-    
-                    setContentType(resp,certDF.getOutType());
-                    return Result.ok();
-                default:
-                    return Result.err(rc);
+            if (rc.status == OK) {
+                RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
+                data.to(resp.getOutputStream());
+
+                setContentType(resp, certDF.getOutType());
+                return Result.ok();
             }
+            return Result.err(rc);
 
         } catch (Exception e) {
             trans.error().log(e,IN,REQUEST_CERT);
@@ -289,99 +287,8 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
      */
     @Override
     public Result<Void> requestPersonalCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca) {
-        return Result.err(Result.ERR_NotImplemented,"not implemented yet");
-//        Result<CertResp> rcr = service.requestPersonalCert(trans,ca);
-//        if (rcr.notOK()) {
-//            return Result.err(rcr);
-//        } else {
-//            try {
-//                resp.setContentType("application/zip, application/octet-stream");
-//                ZipOutputStream zos = new ZipOutputStream(resp.getOutputStream());
-//                PrintStream ps = new PrintStream(zos);
-//                ZipEntry ze = new ZipEntry(trans.user()+".key");
-//                zos.putNextEntry(ze);
-//                ps.print(rcr.value.privateString());
-//                zos.closeEntry();
-//
-//                zos.putNextEntry(new ZipEntry(trans.user()+".crt"));
-//                ps.print(rcr.value.asCertString());
-//                zos.closeEntry();
-//                
-//                String wt;
-//                if ((wt=req.getParameter("withTrust"))!=null || TRUE.equalsIgnoreCase(wt)) {
-//                    zos.putNextEntry(new ZipEntry(trans.user()+".trustCrts"));
-//                    for (String s : ca.getTrustChain()) {
-//                        ps.println(s);
-//                    }
-//                    zos.closeEntry();
-//                }
-//                
-//                boolean withJKS = (wt=req.getParameter("withJKS"))!=null || TRUE.equalsIgnoreCase(wt);
-//                if (withJKS) {
-//                    if (trans.getUserPrincipal() instanceof BasicPrincipal) {
-//                        char[] cap = new String(((BasicPrincipal)trans.getUserPrincipal()).getCred()).toCharArray();
-//                        KeyStore ks = keystore(trans, rcr.value, ca.getTrustChain(), trans.user(), cap);
-//                        zos.putNextEntry(new ZipEntry(trans.user()+".jks"));
-//                        ks.store(zos, cap);
-//                        zos.closeEntry();
-//                    }
-//                }
-//                
-//                zos.putNextEntry(new ZipEntry("cert_deploy.sh"));
-//                ps.println("# Deploy Certificate to ~/.aaf");
-//                ps.println("if [ \"$1\" = \"\" ]; then echo \"sh deploy.sh <zipfile>\";exit; else chmod 700 $HOME/.aaf; fi");
-//                ps.println("chmod 600 $1");
-//                ps.println("if [ ! -e $HOME/.aaf ]; then mkdir -m 700 $HOME/.aaf; fi");
-//                ps.println("THE_PWD=`pwd`");
-//                ps.println("cd $HOME/.aaf");
-//                ps.println("echo \"Deploying to `pwd`\"");
-//                ps.println("jar -xvf $THE_PWD/$1 " + trans.user());
-//                ps.println("chmod 600 " + trans.user() + ".key");
-//                if (withJKS) {
-//                    ps.println("chmod 600 " + trans.user() + ".jks");
-//                }
-//                ps.println("cd $THE_PWD");
-//                ps.println("rm cert_deploy.sh");
-//                zos.closeEntry();
-//                
-//
-//                zos.close();
-//                
-//            } catch (IOException | KeyStoreException | CertificateException | APIException | CertException | NoSuchAlgorithmException e) {
-//                return Result.err(e);
-//            }
-//        }
-//
-//        return Result.ok();
+        return Result.err(Result.ERR_NotImplemented, "not implemented yet");
     }
-
-//    private KeyStore keystore(AuthzTrans trans, CertResp cr, String[] trustChain, String name, char[] cap) throws KeyStoreException, CertificateException, APIException, IOException, CertException, NoSuchAlgorithmException {
-//        KeyStore jks = KeyStore.getInstance("jks");
-//        jks.load(null, cap);
-//        
-//        // Get the Cert(s)... Might include Trust store
-//        List<String> lcerts = new ArrayList<>();
-//        lcerts.add(cr.asCertString());
-//        for (String s : trustChain) {
-//            lcerts.add(s);
-//        }
-//        
-//        Collection<? extends Certificate> certColl = Factory.toX509Certificate(lcerts);
-//        X509Certificate[] certs = new X509Certificate[certColl.size()];
-//        certColl.toArray(certs);
-//        KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(cap);
-//        
-//        PrivateKey pk = Factory.toPrivateKey(trans, cr.privateString());
-//        KeyStore.PrivateKeyEntry pkEntry = 
-//                new KeyStore.PrivateKeyEntry(pk, new Certificate[] {certs[0]});
-//        jks.setEntry(name, pkEntry, protParam);
-//        
-//        int i=0;
-//        for (X509Certificate x509 : certs) {
-//            jks.setCertificateEntry("cert_"+ ++i, x509);
-//        }
-//        return jks;
-//    }
 
     @Override
     public Result<Void> renewCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, boolean withTrust) {
@@ -396,20 +303,17 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
             
-//            String certAuth = trans.get(sCertAuth,null);
             Result<CertResp> rcr = service.renewCert(trans,mapper.toRenew(trans,request));
             Result<CERT> rc = mapper.toCert(trans, rcr, withTrust);
 
-            switch(rc.status) {
-                case OK: 
-                    RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
-                    data.to(resp.getOutputStream());
+            if (rc.status == OK) {
+                RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
+                data.to(resp.getOutputStream());
 
-                    setContentType(resp,certDF.getOutType());
-                    return Result.ok();
-                default:
-                    return Result.err(rc);
+                setContentType(resp, certDF.getOutType());
+                return Result.ok();
             }
+            return Result.err(rc);
         } catch (Exception e) {
             trans.error().log(e,IN,RENEW_CERT);
             return Result.err(e);
@@ -433,13 +337,11 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             }
             
             Result<Void> rv = service.dropCert(trans,mapper.toDrop(trans, request));
-            switch(rv.status) {
-                case OK: 
-                    setContentType(resp,certRequestDF.getOutType());
-                    return Result.ok();
-                default:
-                    return Result.err(rv);
+            if (rv.status == OK) {
+                setContentType(resp, certRequestDF.getOutType());
+                return Result.ok();
             }
+            return Result.err(rv);
         } catch (Exception e) {
             trans.error().log(e,IN,DROP_CERT);
             return Result.err(e);
@@ -456,16 +358,14 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
         TimeTaken tt = trans.start(READ_CERTS_MECHID, Env.SUB|Env.ALWAYS);
         try {
             Result<CERT> rc = mapper.toCert(trans, service.readCertsByMechID(trans,mechID));
-            switch(rc.status) {
-                case OK: 
-                    RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
-                    data.to(resp.getOutputStream());
-    
-                    setContentType(resp,certDF.getOutType());
-                    return Result.ok();
-                default:
-                    return Result.err(rc);
+            if (rc.status == OK) {
+                RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
+                data.to(resp.getOutputStream());
+
+                setContentType(resp, certDF.getOutType());
+                return Result.ok();
             }
+            return Result.err(rc);
         } catch (Exception e) {
             trans.error().log(e,IN,READ_CERTS_MECHID);
             return Result.err(e);
@@ -603,10 +503,9 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             }
             
             Result<Void> rv = service.deleteArtifact(trans,mapper.toArtifact(trans,arti));
-            switch(rv.status) {
-                case OK: 
-                    setContentType(resp,artiDF.getOutType());
-            } 
+            if (rv.status == OK) {
+                setContentType(resp, artiDF.getOutType());
+            }
             return rv;
         } catch (Exception e) {
             trans.error().log(e,IN,DELETE_ARTIFACTS);
@@ -621,10 +520,9 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
         TimeTaken tt = trans.start(DELETE_ARTIFACTS, Env.SUB);
         try {
             Result<Void> rv = service.deleteArtifact(trans, mechid, machine);
-            switch(rv.status) {
-                case OK: 
-                    setContentType(resp,artiDF.getOutType());
-            } 
+            if (rv.status == OK) {
+                setContentType(resp, artiDF.getOutType());
+            }
             return rv;
         } catch (Exception e) {
             trans.error().log(e,IN,DELETE_ARTIFACTS);
