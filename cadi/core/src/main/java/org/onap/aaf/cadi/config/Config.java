@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.Registration;
+
 import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
@@ -147,7 +149,7 @@ public class Config {
     public static final String AAF_ROOT_NS_DEF = "org.osaaf.aaf";
     public static final String AAF_ROOT_COMPANY = "aaf_root_company";
     public static final String AAF_LOCATE_URL = "aaf_locate_url"; //URL for AAF locator
-    private static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
+    public static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
     public static final String AAF_DEFAULT_API_VERSION = "2.1";
     public static final String AAF_API_VERSION = "aaf_api_version";
     public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration
@@ -174,8 +176,9 @@ public class Config {
     public static final String AAF_LOCATOR_PROTOCOL = "aaf_locator_protocol";
     public static final String AAF_LOCATOR_SUBPROTOCOL = "aaf_locator_subprotocol";
     public static final String AAF_LOCATOR_NS = "aaf_locator_ns";
-    public static final String AAF_LOCATOR_NAMES = "aaf_locator_names";
+    public static final String AAF_LOCATOR_ENTRIES = "aaf_locator_entries";
     public static final String AAF_LOCATOR_FQDN = "aaf_locator_fqdn";
+    public static final String AAF_LOCATOR_NAME = "aaf_locator_name";
     public static final String AAF_LOCATOR_PUBLIC_PORT = "aaf_locator_public_port";
     public static final String AAF_LOCATOR_PUBLIC_HOSTNAME = "aaf_locator_public_hostname";
 
@@ -814,28 +817,37 @@ public class Config {
         if (_url==null) {
             access.log(Level.INIT,"No URL passed to 'loadLocator'. Disabled");
         } else {
-            String url = _url.replace("/AAF_NS.", "/%C%CID%AAF_NS.");
-            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
-            if(url.indexOf('%')>=0) {
-	            String str = access.getProperty(Config.AAF_LOCATOR_CONTAINER_ID, null);
-	            if(str==null) {
-	            	url = url.replace("%CID","");
-	            } else {
-	            	url = url.replace("%CID",str+'.');
-	            }
-	            str = access.getProperty(Config.AAF_LOCATOR_CONTAINER, null);
-	            if(str==null) {
-	            	url = url.replace("%C","");
-	            } else {
-	            	url = url.replace("%C",str+'.');
-	            }
-	
-	            if (root_ns==null) {
-	            	url = url.replace("%AAF_NS","");
-	            } else {
-	            	url = url.replace("%AAF_NS",root_ns);
-	            }
-            }
+//            String url = _url.replace("/AAF_NS.", "/%C%CID%AAF_NS.");
+//            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
+        	String url;
+            RegistrationPropHolder rph;
+            try {
+    			 rph = new RegistrationPropHolder(access, 0);
+    			 url = rph.replacements(_url, null, null);
+    		} catch (UnknownHostException | CadiException e1) {
+    			throw new LocatorException(e1);
+    		}
+            
+//            if(url.indexOf('%')>=0) {
+//	            String str = access.getProperty(Config.AAF_LOCATOR_CONTAINER_ID, null);
+//	            if(str==null) {
+//	            	url = url.replace("%CID","");
+//	            } else {
+//	            	url = url.replace("%CID",str+'.');
+//	            }
+//	            str = access.getProperty(Config.AAF_LOCATOR_CONTAINER, null);
+//	            if(str==null) {
+//	            	url = url.replace("%C","");
+//	            } else {
+//	            	url = url.replace("%C",str+'.');
+//	            }
+//	
+//	            if (root_ns==null) {
+//	            	url = url.replace("%AAF_NS","");
+//	            } else {
+//	            	url = url.replace("%AAF_NS",root_ns);
+//	            }
+//            }
             String replacement;
             int idxAAFLocateUrl;
             if ((idxAAFLocateUrl=url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {

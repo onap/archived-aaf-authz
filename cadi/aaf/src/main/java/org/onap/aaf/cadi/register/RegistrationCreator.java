@@ -20,7 +20,6 @@
 
 package org.onap.aaf.cadi.register;
 
-import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -28,13 +27,13 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.cadi.util.Split;
 
 import locate.v1_0.MgmtEndpoint;
 import locate.v1_0.MgmtEndpoints;
 
 public class RegistrationCreator {
-    private static final String MUST_BE_DEFINED = " must be defined\n";
 	private Access access;
     
     public RegistrationCreator(Access access) {
@@ -47,171 +46,41 @@ public class RegistrationCreator {
     	MgmtEndpoint defData = null;
     	MgmtEndpoint locate = null;
 
-
-    	StringBuilder errs = new StringBuilder();
     	try {
-    		String hostname = access.getProperty(Config.HOSTNAME, null);
-    		if (hostname==null) {
-    			hostname = Inet4Address.getLocalHost().getHostName();
-    		}
-    		if (hostname==null) {
-    			errs.append(Config.HOSTNAME);
-    			errs.append(MUST_BE_DEFINED);
-    		}
-
-    		Float latitude=null;
-    		String slatitude = access.getProperty(Config.CADI_LATITUDE, null);
-    		if(slatitude == null) {
-    			errs.append(Config.CADI_LATITUDE);
-    			errs.append(MUST_BE_DEFINED);
-    		} else {
-    			latitude = Float.parseFloat(slatitude);
-    		}
-
-    		Float longitude=null;
-    		String slongitude = access.getProperty(Config.CADI_LONGITUDE, null);
-    		if(slongitude == null) {
-    			errs.append(Config.CADI_LONGITUDE);
-    			errs.append(MUST_BE_DEFINED);
-    		} else {
-    			longitude = Float.parseFloat(slongitude);
-    		}
-
-    		if(errs.length()>0) {
-    			throw new CadiException(errs.toString());
-    		}
-
     		String dot_le;
-    		String ns;
     		String version=null;
-    		String lentries = access.getProperty(Config.AAF_LOCATOR_CONTAINER, null);
-    		if(lentries==null) {
-    			lentries="";
-    		} else {
-    			lentries=',' + lentries; // "" makes a blank default Public Entry
-    		}
-
-    		String defaultName = null;
-    		String str;
-    		int public_port = port;
-    		// Note: only one of the ports can be public...  Therefore, only the la
-    		for(String le : Split.splitTrim(',', lentries)) {
-    			dot_le = le.isEmpty()?"":"."+le;
-				str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_PORT+dot_le, null);
-				if(str!=null) { // Get Public Port
-					public_port = Integer.decode(str);
-				}
-    		}
     		
-    		String public_hostname = hostname;
-    		for(String le : Split.splitTrim(',', lentries)) {
-    			dot_le = le.isEmpty()?"":"."+le;
-				String ph = access.getProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME+dot_le,null);
-				if( ph != null) {
-					public_hostname=ph;
-				}
-    		}
+    		RegistrationPropHolder ph = new RegistrationPropHolder(access, port);
     		
-    		String default_fqdn = access.getProperty(Config.AAF_LOCATOR_FQDN, public_hostname);
-    		
-
     		// Now, loop through by Container
-    		for(String le : Split.splitTrim(',', lentries)) {
-    			// Add variable entries
-    			String names;
-    			if(le.length()>0) {
-    				dot_le = '.' + le;
-    				names = access.getProperty(Config.AAF_LOCATOR_NAMES+dot_le,null);
-    				if(names==null) {
-    					// Go for Default
-    					names = access.getProperty(Config.AAF_LOCATOR_NAMES,"");
-    				}
+    		for(String le : Split.splitTrim(',', ph.lcontainer)) {
+    			if(le.isEmpty()) {
+    				dot_le = le;
     			} else {
-    				dot_le = "";
-    				names=access.getProperty(Config.AAF_LOCATOR_NAMES,dot_le);
+    				dot_le = "."+le;
     			}
-    			
-    			for(String name : Split.splitTrim(',', names)) {
+
+    			for(String entry : Split.splitTrim(',', ph.lentries)) {
     				if(defData==null) {
     					defData = locate = new MgmtEndpoint();
 
-    					defaultName = name;
     					version = access.getProperty(Config.AAF_LOCATOR_VERSION, Defaults.AAF_VERSION);
     					locate.setProtocol(access.getProperty(Config.AAF_LOCATOR_PROTOCOL,null));
     					List<String> ls = locate.getSubprotocol();
     					for(String sp : Split.splitTrim(',', access.getProperty(Config.AAF_LOCATOR_SUBPROTOCOL,""))) {
     						ls.add(sp);	
     					}
-    					locate.setLatitude(latitude);
-    					locate.setLongitude(longitude);
+    					locate.setLatitude(ph.latitude);
+    					locate.setLongitude(ph.longitude);
 
     				} else {
     					locate = copy(defData);
     				}
     				
-    				str = access.getProperty(Config.HOSTNAME+dot_le, null);
-    				if(str==null) {
-    					str = access.getProperty(Config.HOSTNAME, hostname);
-    				}
-    				locate.setHostname(hostname);
+    				locate.setName(ph.getEntryName(entry,dot_le));
+    				locate.setHostname(ph.getEntryFQDN(entry,dot_le));
+    				locate.setPort(ph.getEntryPort(dot_le));
     				
-    				ns = access.getProperty(Config.AAF_LOCATOR_NS+dot_le,null);
-    				if(ns==null) {
-    					ns = access.getProperty(Config.AAF_LOCATOR_NS,"");
-    				}
-    				switch(ns) {
-	    				case Defaults.AAF_NS:
-	    					ns = access.getProperty(Config.AAF_ROOT_NS, "");
-	    					// Fallthrough on purpose.
-    				}
-
-    				String ns_dot;
-    				if(ns.isEmpty()) {
-    					ns_dot = ns;
-    				} else {
-    					ns_dot = ns + '.';
-    				}
-
-    				String container_id = access.getProperty(Config.AAF_LOCATOR_CONTAINER_ID+dot_le, "");
-    				if(!container_id.isEmpty()) {
-    					ns_dot = container_id + '.' + ns_dot;
-    				}
-
-    				if(!le.isEmpty()) {
-    					ns_dot = le + '.' + ns_dot;
-    				}
-
-    				if(name.isEmpty()) {
-   						locate.setName(ns_dot + defaultName);
-    				} else {
-    					locate.setName(ns_dot + name);
-    				}
-
-    				if(dot_le.isEmpty()) {
-    					locate.setHostname(access.getProperty(Config.AAF_LOCATOR_FQDN, default_fqdn));
-    				} else {
-	    				str =  access.getProperty(Config.AAF_LOCATOR_FQDN+dot_le, null);
-	    				if(str==null) {
-	    					locate.setHostname(default_fqdn);
-	    				} else {
-	        				String container_ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS+dot_le, "");
-	    					str = str.replace("%CNS", container_ns);
-	        				String container = access.getProperty(Config.AAF_LOCATOR_CONTAINER+dot_le, "");
-    						str = str.replace("%C", container);
-	    					str = str.replace("%NS", ns);
-	    					str = str.replace("%N", name);
-	    					str = str.replace("%DF", default_fqdn);
-	    					str = str.replace("%PH", public_hostname);
-	    					locate.setHostname(str);
-	    				}
-    				}
-    				
-    				if(le.isEmpty()) {
-    					locate.setPort(public_port);
-    				} else {
-    					locate.setPort(port);
-    				}
-
     				String specificVersion = access.getProperty(Config.AAF_LOCATOR_VERSION + dot_le,null);
     				if(specificVersion == null && locate == defData) {
     					specificVersion = version;

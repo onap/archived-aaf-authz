@@ -62,10 +62,10 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         this.access = access;
         this.env = env;
 
-        String str = access.getProperty(Config.AAF_LOCATOR_NAMES, null);
+        String str = access.getProperty(Config.AAF_LOCATOR_ENTRIES, null);
         String[] scomp = Split.splitTrim(',', str);
         if(scomp.length==0) {
-        	throw new CadiException(Config.AAF_LOCATOR_NAMES + " must be defined.");
+        	throw new CadiException(Config.AAF_LOCATOR_ENTRIES + " must be defined.");
         } else {
         	str = ROOT_NS + '.' + scomp[0];
         }

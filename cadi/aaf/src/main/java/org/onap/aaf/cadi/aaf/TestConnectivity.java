@@ -46,6 +46,7 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.http.HClient;
 import org.onap.aaf.cadi.http.HX509SS;
+import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.oauth.HRenewingTokenSS;
 import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.APIException;
@@ -80,45 +81,56 @@ public class TestConnectivity {
                 
                 List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
                 /////////
-                print(true,"Test Connections driven by AAFLocator");
-                URI serviceURI = uri(access,"service");
-
-                for (URI uri : new URI[] {
-                        serviceURI,
-                        uri(access,"token"),
-                        uri(access,"introspect"),
-                        uri(access,"cm"),
-                        uri(access,"gui"),
-                        uri(access,"fs"),
-                        uri(access,"hello")
-                }) {
-                    Locator<URI> locator = new AAFLocator(si, uri);
-                    try {
-                        connectTest(locator, uri);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.err.flush();
-                    }
-                }
-
-                /////////
-                print(true,"Test Service for Perms driven by AAFLocator");
-                Locator<URI> locator = new AAFLocator(si,serviceURI);
-                for (SecuritySetter<HttpURLConnection> ss : lss) {
+                String directAAFURL = access.getProperty(Config.AAF_URL,null);
+                if(directAAFURL!=null && !directAAFURL.contains("AAF_LOCATE")) {
+                    print(true,"Test Connections by non-located aaf_url");
+                    Locator<URI> locator = new SingleEndpointLocator(directAAFURL);
+                    connectTest(locator,new URI(directAAFURL));
+                    
+                    SecuritySetter<HttpURLConnection> ss = si.defSS;
                     permTest(locator,ss);
-                }
+                } else {
+	                /////////
+	                print(true,"Test Connections driven by AAFLocator");
+	                URI serviceURI = uri(access,"service");
+	
+	                for (URI uri : new URI[] {
+	                        serviceURI,
+	                        uri(access,"token"),
+	                        uri(access,"introspect"),
+	                        uri(access,"cm"),
+	                        uri(access,"gui"),
+	                        uri(access,"fs"),
+	                        uri(access,"hello")
+	                }) {
+	                    Locator<URI> locator = new AAFLocator(si, uri);
+	                    try {
+	                        connectTest(locator, uri);
+	                    } catch (Exception e) {
+	                        e.printStackTrace();
+	                        System.err.flush();
+	                    }
+	                }
 
-                //////////
-                print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
-                boolean hasBath=false;
-                for (SecuritySetter<HttpURLConnection> ss : lss) {
-                    if (ss instanceof HBasicAuthSS) {
-                    	hasBath=true;
-                        basicAuthTest(new AAFLocator(si, serviceURI),ss);
-                    }
-                }
-                if(!hasBath) {
-                	System.out.println("No User/Password to test");
+	                /////////
+	                print(true,"Test Service for Perms driven by AAFLocator");
+	                Locator<URI> locator = new AAFLocator(si,serviceURI);
+	                for (SecuritySetter<HttpURLConnection> ss : lss) {
+	                    permTest(locator,ss);
+	                }
+
+	                //////////
+	                print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
+	                boolean hasBath=false;
+	                for (SecuritySetter<HttpURLConnection> ss : lss) {
+	                    if (ss instanceof HBasicAuthSS) {
+	                    	hasBath=true;
+	                        basicAuthTest(new AAFLocator(si, serviceURI),ss);
+	                    }
+	                }
+	                if(!hasBath) {
+	                	System.out.println("No User/Password to test");
+	                }
                 }
                 
             } catch (Exception e) {
@@ -266,13 +278,16 @@ public class TestConnectivity {
             if (ss instanceof HRenewingTokenSS) {
                 System.out.println(" " + ((HRenewingTokenSS)ss).tokenURL());
             } else {
-                System.out.println();
+            	System.out.println();
             }
             HClient client = new HClient(ss, uri, 3000);
             client.setMethod("GET");
             String user = ss.getID();
 
-            client.setPathInfo("/authz/perms/user/"+user);
+            String pathInfo = "/authz/perms/user/"+user;
+            client.setPathInfo(pathInfo);
+            System.out.println(pathInfo);
+            
             client.send();
             Future<String> future = client.futureReadString();
             if (future.get(7000)) {

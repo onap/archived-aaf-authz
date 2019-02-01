@@ -103,7 +103,7 @@ public class JU_AbsService {
         BasicEnv bEnv = new BasicEnv();
         PropAccess prop = new PropAccess();
         
-        prop.setProperty(Config.AAF_LOCATOR_NAMES, "te.st");
+        prop.setProperty(Config.AAF_LOCATOR_ENTRIES, "te.st");
         prop.setProperty(Config.AAF_LOCATOR_VERSION, "te.st");
         prop.setLogLevel(Level.DEBUG);
         AbsServiceStub absServiceStub = new AbsServiceStub(prop, bEnv);    //Testing other branches requires "fails" due to exception handling, will leave that off for now.

@@ -23,7 +23,7 @@
 
 DOCKER=${DOCKER:=docker}
 if [ "$1" == "" ]; then
-    AAF_COMPONENTS=$(cat components)
+    AAF_COMPONENTS=$(tail -r components)
 else
     AAF_COMPONENTS="$@"
 fi

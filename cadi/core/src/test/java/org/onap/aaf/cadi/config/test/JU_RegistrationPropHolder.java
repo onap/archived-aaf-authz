@@ -1,0 +1,155 @@
+/**
+ * ============LICENSE_START====================================================
+ * org.onap.aaf
+ * ===========================================================================
+ * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * ===========================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END====================================================
+ */
+
+package org.onap.aaf.cadi.config.test;
+
+import static org.junit.Assert.assertEquals;
+
+import java.net.UnknownHostException;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.PropAccess;
+import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
+
+public class JU_RegistrationPropHolder {
+
+	@Test
+	public void testBlank() {
+		PropAccess pa = new PropAccess();
+		RegistrationPropHolder rph;
+		int ju_port = 20;
+		try {
+			////////////////
+			// Check Required Properties
+			////////////////
+			try {
+				rph = new RegistrationPropHolder(pa,20);
+			} catch (CadiException e) {
+				Assert.assertEquals(
+						"\ncadi_latitude must be defined." + 
+						"\ncadi_longitude must be defined.",e.getMessage());
+			}
+			
+			try {
+				pa.setProperty(Config.CADI_LATITUDE, "32.7");
+				rph = new RegistrationPropHolder(pa,20);
+			} catch (CadiException e) {
+				Assert.assertEquals(
+						"\ncadi_longitude must be defined.",e.getMessage());
+			}
+			
+			pa.setProperty(Config.CADI_LONGITUDE, "-72.0");
+			rph = new RegistrationPropHolder(pa,ju_port);
+			
+			////////////////
+			// Validate Default Properties
+			////////////////
+			for(String dot_le : new String[] {"",".helm"}) {
+				assertEquals(rph.hostname,rph.default_fqdn);
+				assertEquals("",rph.lcontainer);
+				assertEquals(rph.hostname,rph.public_hostname);
+				assertEquals(ju_port,rph.getEntryPort(dot_le));
+				assertEquals(rph.hostname,rph.getEntryFQDN("",dot_le));
+			}
+
+			String ns = "myns";
+			pa.setProperty(Config.AAF_LOCATOR_NS, ns);
+			for(String dot_le : new String[] {"",".helm"}) {
+				assertEquals(rph.hostname,rph.default_fqdn);
+				assertEquals("",rph.lcontainer);
+				assertEquals(rph.hostname,rph.public_hostname);
+				assertEquals(ju_port,rph.getEntryPort(dot_le));
+				assertEquals(rph.hostname,rph.getEntryFQDN("",dot_le));
+			}
+
+			String ns2 = "onap";
+			pa.setProperty(Config.AAF_LOCATOR_NS+".helm", ns2);
+			for(String dot_le : new String[] {"",".helm"}) {
+				String pns;
+				if(dot_le.isEmpty()) {
+					pns = ns;
+				} else {
+					pns = ns2;
+				}
+				assertEquals(rph.hostname,rph.default_fqdn);
+				assertEquals("",rph.lcontainer);
+				assertEquals(rph.hostname,rph.public_hostname);
+				assertEquals(ju_port,rph.getEntryPort(dot_le));
+				assertEquals(rph.hostname,rph.getEntryFQDN("",dot_le));
+			}
+
+			////////////////
+			// Validate Public Host and Port settings
+			////////////////
+			String public_hostname = "com.public.hostname";
+			int public_port = 999;
+			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME, public_hostname);
+			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_PORT,Integer.toString(public_port));
+			RegistrationPropHolder pubRPH = new RegistrationPropHolder(pa,ju_port);
+			assertEquals(public_hostname,pubRPH.public_hostname);
+			assertEquals(public_port,pubRPH.getEntryPort(""));
+
+
+			final String url = "https://aaf.osaaf.org:8095/org.osaaf.aaf.service:2.1";
+			String name="theName";
+			assertEquals(url,rph.replacements(url, name, ""));
+			
+			String alu = "aaf.osaaf.org:8095";
+			String curl = url.replace(alu, Config.AAF_LOCATE_URL_TAG);
+			pa.setProperty(Config.AAF_LOCATE_URL,"https://"+alu);
+			assertEquals(url.replace("8095","8095/locate"),rph.replacements(curl, name, ""));
+			
+			String root_ns = "org.osaaf.aaf";
+			curl = url.replace(root_ns, "AAF_NS");
+			pa.setProperty(Config.AAF_ROOT_NS,root_ns);
+			assertEquals(url,rph.replacements(curl, name, ""));
+			
+			curl = url.replace(root_ns, "%AAF_NS");
+			pa.setProperty(Config.AAF_ROOT_NS,root_ns);
+			assertEquals(url,rph.replacements(curl, name, ""));
+			
+			final String fqdn = "%C.%CNS.%NS.%N";
+			String target = "myns.theName";
+			assertEquals(target,rph.replacements(fqdn, name, ""));
+
+			pa.setProperty(Config.AAF_LOCATOR_CONTAINER_NS+".hello", "mycontns");
+			target = "mycontns.org.osaaf.aaf.theName";
+			assertEquals(target,rph.replacements(fqdn, name, ".hello"));
+			
+			pa.setProperty(Config.AAF_LOCATOR_CONTAINER+".hello","hello");
+			target = "hello.mycontns.org.osaaf.aaf.theName";
+			assertEquals(target,rph.replacements(fqdn, name, ".hello"));
+			
+			pa.setProperty(Config.AAF_LOCATOR_CONTAINER_NS,"c_ns");
+			target = "c_ns.myns.theName";
+			assertEquals(target,rph.replacements(fqdn, name, ""));
+
+
+		} catch (UnknownHostException | CadiException e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+	
+
+}
