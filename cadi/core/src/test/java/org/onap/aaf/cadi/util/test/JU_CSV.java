@@ -34,7 +34,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.cadi.util.CSV.Visitor;
 import org.onap.aaf.cadi.util.CSV.Writer;
@@ -65,7 +67,8 @@ public class JU_CSV {
 	
 	@Test
 	public void test() throws IOException, CadiException {
-		CSV csv = new CSV(file);
+		Access access = new PropAccess();
+		CSV csv = new CSV(access,file);
 		// Can't visit for file that doesn't exist
 		try {
 			csv.visit(new Visitor() {

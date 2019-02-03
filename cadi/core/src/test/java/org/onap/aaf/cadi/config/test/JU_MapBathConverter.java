@@ -62,7 +62,7 @@ public class JU_MapBathConverter {
 	public static void createFile() throws IOException {
 		// Note, you cate a "MapBathConverter" by access to a File.
 		// We will create that file now.  Local is fine.
-		csv = new CSV("JU_MapBathConverter.csv"); 
+		csv = new CSV(access,"JU_MapBathConverter.csv"); 
 	}
 	
 	@BeforeClass
@@ -109,7 +109,7 @@ public class JU_MapBathConverter {
 								break;
 							case 2:
 								try {
-									Date d = Date.valueOf(s);
+									Date.valueOf(s);
 								} catch (Exception e) {
 									Assert.assertTrue("Last entry should be a date",false);
 								}
@@ -199,7 +199,7 @@ public class JU_MapBathConverter {
 	@Test
 	public void testNoFile() {
 		try {
-			new MapBathConverter(access, new CSV("Bogus"));
+			new MapBathConverter(access, new CSV(access,"Bogus"));
 			Assert.fail("Non Existent File should throw exception");
 		} catch(CadiException | IOException e) {
 			Assert.assertTrue("Correctly thrown Exception",true);

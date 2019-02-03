@@ -79,7 +79,7 @@ public class NotInOrg extends Batch {
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
            	File file = new File(logDir(),NOT_IN_ORG + sdate +CSV);
-            CSV csv = new CSV(file);
+            CSV csv = new CSV(env.access(),file);
             notInOrgW = csv.writer(false);
             notInOrgW.row(INFO,NOT_IN_ORG,Chrono.dateOnlyStamp(now),0);
             writerList.put(NOT_IN_ORG,notInOrgW);
@@ -87,7 +87,7 @@ public class NotInOrg extends Batch {
             // These will have been double-checked by the Organization, and can be deleted immediately.
             String fn = NOT_IN_ORG+"Delete";
             file = new File(logDir(),fn + sdate +CSV);
-            CSV csvDelete = new CSV(file);
+            CSV csvDelete = new CSV(env.access(),file);
             notInOrgDeleteW = csvDelete.writer(false);
             notInOrgDeleteW.row(INFO,fn,Chrono.dateOnlyStamp(now),0);
             writerList.put(NOT_IN_ORG,notInOrgW);

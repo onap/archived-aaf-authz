@@ -34,6 +34,7 @@ import java.util.UUID;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -111,8 +112,27 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     public final Date expires() {
         return fdd.expires;
     }
-
+    
     public static void load(Trans trans, Session session, Creator<Future> creator) {
+    	load(trans,session,creator, new Visitor<Future>() {
+			@Override
+			public void visit(Future f) {
+			    data.put(f.fdd.id,f);
+			    if (f.role==null) {
+			        return;
+			    }
+			    List<Future> lf = byRole.get(f.role);
+			    if (lf==null) {
+			        lf = new ArrayList<>();
+			        byRole.put(f.role,lf);
+			    }
+			    lf.add(f);
+			}
+		});
+    }
+
+
+    public static void load(Trans trans, Session session, Creator<Future> creator, Visitor<Future> visitor) {
         trans.info().log( "query: " + creator.select() );
         ResultSet results;
         TimeTaken tt = trans.start("Load Futures", Env.REMOTE);
@@ -127,19 +147,8 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         tt = trans.start("Process Futures", Env.SUB);
         try {
             for (Row row : results.all()) {
-                ++count;
-                Future f = creator.create(row);
-                data.put(f.fdd.id,f);
-                if (f.role==null) {
-                    continue;
-                }
-                List<Future> lf = byRole.get(f.role);
-                if (lf==null) {
-                    lf = new ArrayList<>();
-                    byRole.put(f.role,lf);
-                }
-                lf.add(f);
-
+        	    ++count;
+            	visitor.visit(creator.create(row));
             }
         } finally {
             tt.done();
@@ -199,6 +208,16 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     public static boolean pendingDelete(Future f) {
         return cache.contains(f);
     }
+    
+	public static void row(CSV.Writer cw, Future f) {
+		cw.row("future",f.fdd.id,f.fdd.target,f.fdd.expires,f.role,f.fdd.memo);
+	}
 
+
+	public static void deleteByIDBatch(StringBuilder sb, String id) {
+		sb.append("DELETE from authz.future where id=");
+		sb.append(id);
+		sb.append(";\n");
+	}
 
 }

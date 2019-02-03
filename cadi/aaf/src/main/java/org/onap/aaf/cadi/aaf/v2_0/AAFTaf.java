@@ -92,7 +92,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
         	mapIds=null;
         } else {
         	try {
-				mapIds = new MapBathConverter(access, new CSV(csvFile));
+				mapIds = new MapBathConverter(access, new CSV(access,csvFile));
 				access.log(Level.INIT,"Basic Auth Conversion using",csvFile,"enabled" );
 			} catch (IOException | CadiException e) {
 				access.log(e,"Bath Map Conversion is not initialized (non fatal)");

@@ -68,7 +68,7 @@ public class NsRoleUserReport extends Batch {
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
            	File file = new File(logDir(),REPORT + sdate +CSV);
-            CSV csv = new CSV(file);
+            CSV csv = new CSV(env.access(),file);
             report = csv.writer(false);
             
             theMap = new TreeMap<>();

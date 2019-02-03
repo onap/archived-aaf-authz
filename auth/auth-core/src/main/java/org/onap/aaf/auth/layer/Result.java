@@ -34,7 +34,7 @@ import java.util.Set;
  */
 public class Result<RV> {
     private static final String SUCCESS = "Success";
-    public static final String[] EMPTY_VARS = new String[0];
+    public static final Object[] EMPTY_VARS = new Object[0];
 
     public final static int OK=0,
                             ERR_Security                 = 1,
@@ -51,9 +51,9 @@ public class Result<RV> {
     public RV value;
     public final int status;
     public final String details;
-    public final String[] variables;
+    public final Object[] variables;
     
-    public Result(RV value, int status, String details, String[] variables) {
+    public Result(RV value, int status, String details, Object ... variables) {
         this.value = value;
         if (value==null) {
         specialCondition|=EMPTY_LIST;
@@ -77,7 +77,7 @@ public class Result<RV> {
      * @return
      */
     public static<R> Result<R> ok(R value) {
-        return new Result<R>(value,OK,SUCCESS,null);
+        return new Result<R>(value,OK,SUCCESS,EMPTY_VARS);
     }
 
     /**
@@ -86,7 +86,7 @@ public class Result<RV> {
      * @return
      */
     public static<R> Result<R[]> ok(R value[]) {
-        return new Result<R[]>(value,OK,SUCCESS,null).emptyList(value.length==0);
+        return new Result<R[]>(value,OK,SUCCESS,EMPTY_VARS).emptyList(value.length==0);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Result<RV> {
      * @return
      */
     public static<R> Result<Set<R>> ok(Set<R> value) {
-        return new Result<Set<R>>(value,OK,SUCCESS,null).emptyList(value.size()==0);
+        return new Result<Set<R>>(value,OK,SUCCESS,EMPTY_VARS).emptyList(value.size()==0);
     }
 
     /**
@@ -104,7 +104,7 @@ public class Result<RV> {
      * @return
      */
     public static<R> Result<List<R>> ok(List<R> value) {
-        return new Result<List<R>>(value,OK,SUCCESS,null).emptyList(value.size()==0);
+        return new Result<List<R>>(value,OK,SUCCESS,EMPTY_VARS).emptyList(value.size()==0);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Result<RV> {
      * @return
      */
     public static<R> Result<Collection<R>> ok(Collection<R> value) {
-        return new Result<Collection<R>>(value,OK,SUCCESS,null).emptyList(value.size()==0);
+        return new Result<Collection<R>>(value,OK,SUCCESS,EMPTY_VARS).emptyList(value.size()==0);
     }
 
 
@@ -122,7 +122,7 @@ public class Result<RV> {
      * @return
      */
     public static Result<Void> ok() {
-        return new Result<Void>(null,OK,SUCCESS,null);
+        return new Result<Void>(null,OK,SUCCESS,EMPTY_VARS);
     }
 
     /**
@@ -143,7 +143,7 @@ public class Result<RV> {
      * @param variables
      * @return
      */
-    public static<R> Result<R> err(int status, String details, String ... variables) {
+    public static<R> Result<R> err(int status, String details, Object ... variables) {
         return new Result<R>(null,status,details,variables);
     }
 
@@ -172,7 +172,7 @@ public class Result<RV> {
      * @param details
      * @return
      */
-    public static<R> Result<R> create(R value, int status, String details, String ... vars) {
+    public static<R> Result<R> create(R value, int status, String details, Object ... vars) {
         return new Result<R>(value,status,details,vars);
     }
 
@@ -322,7 +322,7 @@ public class Result<RV> {
             default: sb.append("Error");
         }
         sb.append(" - ");
-        sb.append(String.format(details, (Object[])variables));
+        sb.append(String.format(details, variables));
         return sb.toString();
     }
 }

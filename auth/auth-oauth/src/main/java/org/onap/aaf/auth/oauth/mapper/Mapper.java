@@ -37,7 +37,7 @@ public interface Mapper<TOKEN_REQ,TOKEN,INTROSPECT,ERROR> extends MapperIntrospe
     public Class<?> getClass(API api);
     public<A> A newInstance(API api);
 
-    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
+    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, Object ... detail);
     public TOKEN_REQ tokenReqFromParams(HttpServletRequest req);
     public OCreds credsFromReq(TOKEN_REQ tokReq);
     

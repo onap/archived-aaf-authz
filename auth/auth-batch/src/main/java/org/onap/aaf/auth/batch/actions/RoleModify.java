@@ -47,7 +47,7 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
 
     @Override
     public Result<RoleDAO.Data> exec(final AuthzTrans trans, final Role r,final RoleModify.Modify modify) {
-        Result<List<Data>> rr = q.roleDAO.read(trans, r.ns,r.name);
+        Result<List<Data>> rr = q.roleDAO.read(trans, r.rdd.ns,r.rdd.name);
         if (dryRun) {
             if (rr.isOKhasData()) {
                 return Result.ok(rr.value.get(0));
@@ -59,18 +59,18 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
             if (rr.isOKhasData()) {
                 for (final Data d : rr.value) {
                     modify.change(d);
-                    if (d.ns.equals(r.ns) && d.name.equals(r.name)) {
+                    if (d.ns.equals(r.rdd.ns) && d.name.equals(r.rdd.name)) {
                         // update for fields
                         // In either case, adjust Roles
                         for (String p : d.perms) {
-                            if (!r.perms.contains(p)) {
+                            if (!r.rdd.perms.contains(p)) {
                                 Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans, q, p);
                                 if (rpdd.isOKhasData()) {
                                     q.roleDAO.dao().addPerm(trans, d, rpdd.value);
                                 }
                             }
                         }
-                        for (String p : r.perms) {
+                        for (String p : r.rdd.perms) {
                             if (!d.perms.contains(p)) {
                                 Result<PermDAO.Data> rpdd = PermDAO.Data.decode(trans, q, p);
                                 if (rpdd.isOKhasData()) {
@@ -113,11 +113,8 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
                             rv = q.roleDAO.create(trans, d);
                         }
                         if (rv.isOK()) {
-                            trans.info().printf("Updating %s|%s to %s|%s", r.ns, r.name, d.ns, d.name);
-                            RoleDAO.Data rmme = new RoleDAO.Data();
-                            rmme.ns=r.ns;
-                            rmme.name=r.name;
-                            q.roleDAO.delete(trans, rmme, false);
+                            trans.info().printf("Updating %s|%s to %s|%s", r.rdd.ns, r.rdd.name, d.ns, d.name);
+                            q.roleDAO.delete(trans, r.rdd, false);
                             
                         } else {
                             trans.info().log(rv.errorString());
@@ -143,10 +140,7 @@ public class RoleModify extends ActionDAO<Role,RoleDAO.Data,RoleModify.Modify> {
         if (dryRun) {
             return Result.ok();
         } else {
-            RoleDAO.Data data = new RoleDAO.Data();
-            data.ns=r.ns;
-            data.name = r.name;
-            return q.roleDAO.delete(trans,data,false);
+            return q.roleDAO.delete(trans,r.rdd,false);
         }
     }
 }

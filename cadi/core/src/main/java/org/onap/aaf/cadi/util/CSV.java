@@ -30,7 +30,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Access.Level;
 
 /**
  * Read CSV file for various purposes
@@ -40,17 +42,26 @@ import org.onap.aaf.cadi.CadiException;
  */
 public class CSV {
 	private File csv;
+	private Access access;
+	private boolean processAll;
 	
-	public CSV(File file) {
+	public CSV(Access access, File file) {
+		this.access = access;
 		csv = file;
+		processAll = false;
 	}
 	
-	public CSV(String csvFilename) {
+	public CSV(Access access, String csvFilename) {
+		this.access = access;
 		csv = new File(csvFilename);
+		processAll = false;
 	}
 	
-
-	/**
+	public CSV processAll() {
+		processAll = true;
+		return this;
+	}
+	/*
 	 * Create your code to accept the List<String> row.
 	 * 
 	 * Your code may keep the List... CSV does not hold onto it.
@@ -117,7 +128,15 @@ public class CSV {
 						row.add(sb.toString());
 						sb.setLength(0);
 					}
-					visitor.visit(row);
+					try {
+						visitor.visit(row);
+					} catch (CadiException e) {
+						if(processAll) {
+							access.log(Level.ERROR,e);
+						} else {
+							throw e;
+						}
+					}
 				}
 			}
 		} finally {
@@ -147,7 +166,8 @@ public class CSV {
 					} else {
 						ps.append(',');
 					}
-					if(o instanceof String[]) {
+					if(o == null) {
+					} else if(o instanceof String[]) {
 						for(String str : (String[])o) {
 							print(str);
 						}

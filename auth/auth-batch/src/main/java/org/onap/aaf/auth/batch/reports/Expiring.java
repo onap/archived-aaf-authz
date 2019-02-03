@@ -36,15 +36,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.onap.aaf.auth.batch.Batch;
+import org.onap.aaf.auth.batch.helpers.Approval;
 import org.onap.aaf.auth.batch.helpers.Cred;
-import org.onap.aaf.auth.batch.helpers.ExpireRange;
-import org.onap.aaf.auth.batch.helpers.UserRole;
-import org.onap.aaf.auth.batch.helpers.Visitor;
-import org.onap.aaf.auth.batch.helpers.X509;
 import org.onap.aaf.auth.batch.helpers.Cred.Instance;
+import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.auth.batch.helpers.ExpireRange.Range;
+import org.onap.aaf.auth.batch.helpers.Future;
+import org.onap.aaf.auth.batch.helpers.UserRole;
+import org.onap.aaf.auth.batch.helpers.X509;
 import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.OrganizationException;
@@ -65,6 +67,7 @@ public class Expiring extends Batch {
 	private Map<String, CSV.Writer> writerList;
 	private ExpireRange expireRange;
 	private Date deleteDate;
+	private CSV.Writer deleteCW;
 	
 	public Expiring(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -93,18 +96,19 @@ public class Expiring extends Batch {
             	for(Range r : lr ) {
             		if(writerList.get(r.name())==null) {
                     	File file = new File(logDir(),r.name() + sdate +CSV);
-                    	CSV csv = new CSV(file);
+                    	CSV csv = new CSV(env.access(),file);
                     	CSV.Writer cw = csv.writer(false);
                     	cw.row(INFO,r.name(),Chrono.dateOnlyStamp(expireRange.now),r.reportingLevel());
                     	writerList.put(r.name(),cw);
                     	if("Delete".equals(r.name())) {
                     		deleteDate = r.getEnd();
+                    		deleteCW = cw;
                     	}
                     	trans.init().log("Creating File:",file.getAbsolutePath());
             		}
             	}
             }
-            
+            Approval.load(trans, session, Approval.v2_0_17);
         } finally {
             tt0.done();
         }
@@ -112,12 +116,33 @@ public class Expiring extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
+    	
+		////////////////////
+		trans.info().log("Checking for Expired Futures");
+		Future.load(trans, session, Future.v2_0_17, fut -> {
+			if(fut.expires().before(expireRange.now)) {
+				Future.row(deleteCW,fut);
+				List<Approval> appls = Approval.byTicket.get(fut.id());
+				if(appls!=null) {
+					for(Approval a : appls) {
+						Approval.row(deleteCW, a);
+					}
+				}
+			}
+		});
+		
 		try {
 			File file = new File(logDir(), EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
-			final CSV ownerCSV = new CSV(file);
+			final CSV ownerCSV = new CSV(env.access(),file);
 
 			Map<String, Set<UserRole>> owners = new TreeMap<String, Set<UserRole>>();
 			trans.info().log("Process UserRoles");
+			
+			/**
+			   Run through User Roles.  
+			   Owners are treated specially in next section.
+			   Regular roles are checked against Date Ranges.  If match Date Range, write out to appropriate file.
+			*/
 			UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
 				// Cannot just delete owners, unless there is at least one left. Process later
 				if ("owner".equals(ur.rname())) {
@@ -132,11 +157,12 @@ public class Expiring extends Batch {
 				}
 			});
 
-			// Now Process Owners, one owner Role at a time, ensuring one is left,
-			// preferably
-			// a good one. If so, process the others as normal. Otherwise, write
-			// ExpiredOwners
-			// report
+			/**
+			  Now Process Owners, one owner Role at a time, ensuring one is left,
+			  preferably a good one. If so, process the others as normal. 
+			  
+			  Otherwise, write to ExpiredOwners Report
+			*/
 			if (!owners.values().isEmpty()) {
 				// Lazy Create file
 				CSV.Writer expOwner = null;
@@ -168,8 +194,12 @@ public class Expiring extends Batch {
 				}
 			}
 			
-			trans.info().log("Checking for Expired Credentials");
-			
+			/**
+			 * Check for Expired Credentials
+			 * 
+			 * 
+			 */
+			trans.info().log("Checking for Expired Credentials");			
 			for (Cred cred : Cred.data.values()) {
 		    	List<Instance> linst = cred.instances;
 		    	if(linst!=null) {
@@ -191,7 +221,8 @@ public class Expiring extends Batch {
 			    	}
 		    	}
 			}
-			
+
+			////////////////////
 			trans.info().log("Checking for Expired X509s");
 			X509.load(trans, session, x509 -> {
 				try {
@@ -203,9 +234,21 @@ public class Expiring extends Batch {
 				}
 
 			});
+
 		} catch (FileNotFoundException e) {
 			trans.info().log(e);
 		}
+		
+		////////////////////
+		trans.info().log("Checking for Orphaned Approvals");
+		Approval.load(trans, session, Approval.v2_0_17, appr -> {
+			UUID ticket = appr.add.ticket;
+			if(ticket==null) {
+				Approval.row(deleteCW,appr);
+			}
+		});
+		
+
 	}
     
  

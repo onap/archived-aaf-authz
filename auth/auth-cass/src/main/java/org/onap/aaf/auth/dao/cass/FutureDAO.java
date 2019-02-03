@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.onap.aaf.auth.dao.CassDAOImpl;
-import org.onap.aaf.auth.dao.DAOException;
 import org.onap.aaf.auth.dao.Loader;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -125,8 +124,6 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
                 obj[++idx]=data.target;
             }
         },readConsistency);
-        
-
     }
 
     public Result<List<Data>> readByStartAndTarget(AuthzTrans trans, Date start, String target) {
@@ -136,7 +133,7 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
     /**
      * Override create to add secondary ID to Subject in History, and create Data.ID, if it is null
      */
-    public Result<FutureDAO.Data> create(AuthzTrans trans,    FutureDAO.Data data, String id) {
+    public Result<FutureDAO.Data> create(AuthzTrans trans, FutureDAO.Data data, String id) {
         // If ID is not set (typical), create one.
         if (data.id==null) {
             StringBuilder sb = new StringBuilder(trans.user());

@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.onap.aaf.auth.dao.cass.NsDAO;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -40,11 +41,7 @@ import com.datastax.driver.core.Statement;
 public class    NS implements Comparable<NS> {
     public static final Map<String,NS> data = new TreeMap<>();
 
-    public final String name;
-    public final String description;
-    public final String parent;
-    public final int scope;
-    public final int type;
+    public NsDAO.Data ndd;
 
     public static Creator<NS> v2_0_11 = new Creator<NS> () {
         @Override
@@ -59,11 +56,12 @@ public class    NS implements Comparable<NS> {
     };
 
     public NS(String name, String description, String parent, int type, int scope) {
-        this.name = name;
-        this.description = description;
-        this.parent = parent;
-        this.scope = scope;
-        this.type = type;
+    	ndd = new NsDAO.Data();
+        ndd.name = name;
+        ndd.description = description;
+        ndd.parent = parent;
+        ndd.type = type;
+        // ndd.attrib = 
     }
     
     public static void load(Trans trans, Session session, Creator<NS> creator) {
@@ -101,7 +99,7 @@ public class    NS implements Comparable<NS> {
                 while (iter.hasNext()) {
                     row = iter.next();
                     NS ns = creator.create(row);
-                    data.put(ns.name,ns);
+                    data.put(ns.ndd.name,ns);
                 }
             } finally {
                 tt.done();
@@ -127,7 +125,7 @@ public class    NS implements Comparable<NS> {
     }
         
     public String toString() {
-        return name;
+        return ndd.name;
     }
 
     /* (non-Javadoc)
@@ -135,7 +133,7 @@ public class    NS implements Comparable<NS> {
      */
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return ndd.name.hashCode();
     }
 
     /* (non-Javadoc)
@@ -143,12 +141,12 @@ public class    NS implements Comparable<NS> {
      */
     @Override
     public boolean equals(Object obj) {
-        return name.equals(obj);
+        return ndd.name.equals(obj);
     }
 
     @Override
     public int compareTo(NS o) {
-        return name.compareTo(o.name);
+        return ndd.name.compareTo(o.ndd.name);
     }
     
     public static class NSSplit {
@@ -171,5 +169,4 @@ public class    NS implements Comparable<NS> {
         return null;
     }
 
-        
 }

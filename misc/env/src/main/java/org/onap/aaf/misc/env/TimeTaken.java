@@ -39,6 +39,7 @@ public abstract class TimeTaken {
     protected long end, size;
     public final int flag;
     public final String name;
+    public final Object[] values;
     
     /**
      * The name is as it will appear when written to output (abstract method)
@@ -47,11 +48,13 @@ public abstract class TimeTaken {
      * 
      * @param name
      * @param flag
+     * @param values 
      */
-    public TimeTaken(String name, int flag) {
+    public TimeTaken(String name, int flag, Object ... values) {
         start = System.nanoTime();
         this.flag = flag;
         this.name = name;
+        this.values = values;
         size = -1;
     }
 

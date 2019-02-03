@@ -237,11 +237,11 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
     public void error(AuthzTrans trans, HttpServletResponse response, Result<?> result) {
         error(trans, response, result.status,
                 result.details==null?"":result.details.trim(),
-                result.variables==null?new String[0]:result.variables);
+                result.variables==null?Result.EMPTY_VARS:result.variables);
     }
         
     @Override
-    public void error(AuthzTrans trans, HttpServletResponse response, int status, final String _msg, final String ... _detail) {
+    public void error(AuthzTrans trans, HttpServletResponse response, int status, final String _msg, final Object ... _detail) {
         String msgId;
         String prefix;
         boolean hidemsg=false;

@@ -201,7 +201,7 @@ public class JU_AAF_CM {
 		}
 
 		@Override
-		protected TimeTaken newTimeTaken(String name, int flag) {
+		protected TimeTaken newTimeTaken(String name, int flag, Object ... values) {
 			// TODO Auto-generated method stub
 			TimeTaken tt= new TimeTaken("nameTest", Env.XML) {
 				

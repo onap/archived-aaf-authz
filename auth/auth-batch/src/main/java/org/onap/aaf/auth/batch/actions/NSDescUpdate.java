@@ -45,7 +45,7 @@ public class NSDescUpdate extends ActionDAO<NS,Void,String> {
             trans.info().printf("Would Update '%s' Description to '%s'",ns,desc);
             return Result.ok();
         } else {
-            Result<Void> rv = q.nsDAO.dao().addDescription(trans, ns.name, desc);
+            Result<Void> rv = q.nsDAO.dao().addDescription(trans, ns.ndd.name, desc);
             if (rv.isOK()) {
                 trans.info().printf("Updated '%s' Description to '%s'",ns,desc);
             } else {

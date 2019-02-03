@@ -24,7 +24,6 @@ package org.onap.aaf.auth.batch.actions;
 import java.io.IOException;
 
 import org.onap.aaf.auth.batch.helpers.Role;
-import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.APIException;
@@ -46,10 +45,7 @@ public class RoleDelete extends ActionDAO<Role,Void,String> {
             trans.info().log("Would Delete Role:",text,r.fullName());
             return Result.ok();
         } else {
-            RoleDAO.Data rdd = new RoleDAO.Data();
-            rdd.ns = r.ns;
-            rdd.name = r.name;
-            Result<Void> rv = q.roleDAO.delete(trans, rdd, true); // need to read for undelete
+            Result<Void> rv = q.roleDAO.delete(trans, r.rdd, true); // need to read for undelete
             if (rv.isOK()) {
                 trans.info().log("Deleted Role:",text,r.fullName());
             } else {

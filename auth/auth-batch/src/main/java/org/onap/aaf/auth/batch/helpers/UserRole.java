@@ -312,7 +312,17 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	csvw.row("ur",user(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
     }
     
-    public static void batchDelete(StringBuilder sb, List<String> row) {
+    public static Data row(List<String> row) {
+		Data data = new Data();
+		data.user = row.get(1);
+		data.ns = row.get(2);
+		data.rname = row.get(3);
+		data.role = data.ns + '.' + data.rname;
+		data.expires = new Date(Long.parseLong(row.get(5)));
+		return data;
+	}
+
+	public static void batchDelete(StringBuilder sb, List<String> row) {
     	sb.append("DELETE from authz.user_role WHERE user='");
     	sb.append(row.get(1));
     	sb.append("' AND role='");

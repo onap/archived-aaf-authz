@@ -85,12 +85,6 @@ public class JU_RegistrationPropHolder {
 			String ns2 = "onap";
 			pa.setProperty(Config.AAF_LOCATOR_NS+".helm", ns2);
 			for(String dot_le : new String[] {"",".helm"}) {
-				String pns;
-				if(dot_le.isEmpty()) {
-					pns = ns;
-				} else {
-					pns = ns2;
-				}
 				assertEquals(rph.hostname,rph.default_fqdn);
 				assertEquals("",rph.lcontainer);
 				assertEquals(rph.hostname,rph.public_hostname);

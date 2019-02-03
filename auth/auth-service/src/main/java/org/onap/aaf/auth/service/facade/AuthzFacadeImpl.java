@@ -280,7 +280,10 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 break;
             case ERR_ChoiceNeeded:
                 msgId = "SVC1300";
-                detail = result.variables;
+                detail = new String[result.variables.length];
+                for(int i=0; i<result.variables.length;++i) {
+                	detail[i]=result.variables.toString();
+                }
                 response.setStatus(/*httpstatus=*/300);
                 break;
             case ERR_Backend: 

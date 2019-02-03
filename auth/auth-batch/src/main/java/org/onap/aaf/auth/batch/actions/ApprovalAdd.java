@@ -23,35 +23,35 @@ package org.onap.aaf.auth.batch.actions;
 
 import java.io.IOException;
 
-import org.onap.aaf.auth.batch.helpers.Role;
-import org.onap.aaf.auth.dao.cass.RoleDAO.Data;
+import org.onap.aaf.auth.batch.helpers.Approval;
+import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.APIException;
 
 import com.datastax.driver.core.Cluster;
 
-public class RoleCreate extends ActionDAO<Role,Data,String> {
-    public RoleCreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+public class ApprovalAdd extends ActionDAO<Approval,ApprovalDAO.Data,String> {
+    public ApprovalAdd(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
         super(trans, cluster,dryRun);
     }
     
-    public RoleCreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+    public ApprovalAdd(AuthzTrans trans, ActionDAO<?,?,?> adao) {
         super(trans, adao);
     }
 
     @Override
-    public Result<Data> exec(AuthzTrans trans, Role r,String text) {
-        if (dryRun) {
-            trans.info().log("Would Create Role:",text,r.fullName());
-            return Result.ok(r.rdd);
+    public Result<ApprovalDAO.Data> exec(AuthzTrans trans, Approval app, String text) {
+    	return exec(trans,app.add,text);
+    }
+
+    public Result<ApprovalDAO.Data> exec(AuthzTrans trans, ApprovalDAO.Data add, String text) {
+    	if (dryRun) {
+            trans.info().log("Would Add:",text,add.approver,add.memo);
+            return Result.ok(add);
         } else {
-            Result<Data> rv = q.roleDAO.create(trans, r.rdd); // need to read for undelete
-            if (rv.isOK()) {
-                trans.info().log("Created Role:",text,r.fullName());
-            } else {
-                trans.error().log("Error Creating Role -",rv.details,":",r.fullName());
-            }
+            Result<ApprovalDAO.Data> rv = q.approvalDAO.create(trans, add);
+            trans.info().log("Added:",text,add.approver,add.memo);
             return rv;
         }
     }

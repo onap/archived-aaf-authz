@@ -50,7 +50,7 @@ public interface OAFacade<INTROSPECT> {
      * @param response
      * @param status
      */
-    public void error(AuthzTrans trans, HttpServletResponse response, int status,    String msg, String ... detail);
+    public void error(AuthzTrans trans, HttpServletResponse response, int status, String msg, Object ... detail);
 
     public Result<Void> createBearerToken(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 

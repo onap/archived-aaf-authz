@@ -149,9 +149,9 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
         return trace;
     }
 
-    // @Override
-    public TimeTaken start(String name, int flag) {
-        return new TimeTaken(name, flag) {
+    @Override
+    public TimeTaken start(String name, int flag, Object ... values) {
+        return new TimeTaken(name, flag, values) {
             /**
              * Format to be printed when called upon
              */
@@ -163,7 +163,7 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
                     case Env.JSON: sb.append("JSON "); break;
                     case Env.REMOTE: sb.append("REMOTE "); break;
                 }
-                sb.append(name);
+                sb.append(String.format(name, values));
                 if (flag != Env.CHECKPOINT) {
                     sb.append(' ');
                     sb.append((end-start)/1000000f);

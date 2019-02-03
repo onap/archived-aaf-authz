@@ -53,7 +53,7 @@ public interface Facade<REQ,CERT,ARTIFACTS,ERROR> {
      * @param response
      * @param status
      */
-    void error(AuthzTrans trans, HttpServletResponse response, int status,    String msg, String ... detail);
+    void error(AuthzTrans trans, HttpServletResponse response, int status,    String msg, Object ... detail);
 
     /**
      * Permission checker

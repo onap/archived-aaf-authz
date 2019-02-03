@@ -35,7 +35,6 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.StaticSlot;
-import org.onap.aaf.misc.env.StoreImpl;
 import org.onap.aaf.misc.env.TimeTaken;
 
 public class JU_AbsTrans {
@@ -109,7 +108,7 @@ public class JU_AbsTrans {
 		}
 
 		@Override
-		protected TimeTaken newTimeTaken(String name, int flag) {
+		protected TimeTaken newTimeTaken(String name, int flag, Object ... values) {
 			// TODO Auto-generated method stub
 			return new TimeTaken("nameTest", Env.XML) {
 				

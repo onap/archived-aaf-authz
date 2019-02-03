@@ -83,7 +83,7 @@ public class BasicHttpTaf implements HttpTaf {
         	mapIds=null;
         } else {
         	try {
-				mapIds = new MapBathConverter(access, new CSV(csvFile));
+				mapIds = new MapBathConverter(access, new CSV(access,csvFile));
 			} catch (IOException | CadiException e) {
 				access.log(e,"Bath Map Conversion is not initialzed (non fatal)");
 			}

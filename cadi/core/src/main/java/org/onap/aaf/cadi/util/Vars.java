@@ -31,8 +31,8 @@ public class Vars {
      * @return
      */
     public static String convert(final String text, final List<String> vars) {
-        String[] array = new String[vars.size()];
         StringBuilder sb = new StringBuilder();
+        Object[] array = new Object[vars.size()];
         convert(sb,text,vars.toArray(array));
         return sb.toString();
     }
@@ -44,7 +44,7 @@ public class Vars {
      * @param vars
      * @return
      */
-    public static String convert(final StringBuilder holder, final String text, final String ... vars) {
+    public static String convert(final StringBuilder holder, final String text, final Object ... vars) {
         StringBuilder sb = null;
         int idx,index=0,prev = 0;
         

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -46,38 +47,39 @@ public class Role implements Comparable<Role> {
     public static final TreeMap<String,Role> byName = new TreeMap<>();
     private static List<Role> deleteRoles = new ArrayList<>();
 
-    public final String ns;
-    public final String name;
-    public final String description;
+    public RoleDAO.Data rdd;
     private String full;
     private String encode;
-    public final Set<String> perms;
     
     public Role(String full) {
-        ns = name = description = "";
+    	rdd = new RoleDAO.Data();
+        rdd.ns = "";
+        rdd.name = "";
+        rdd.description = "";
+        rdd.perms = new HashSet<>();
         this.full = full;
-        perms = new HashSet<>();
     }
     
     public Role(String ns, String name, String description,Set<String> perms) {
-        this.ns = ns;
-        this.name = name;
-        this.description = description;
+   		rdd = new RoleDAO.Data();
+        rdd.ns = ns;
+        rdd.name = name;
+        rdd.description = description;
+        rdd.perms = perms;
         this.full = null;
         this.encode = null;
-        this.perms = perms;
     }
     
     public String encode() {
         if (encode==null) {
-            encode = ns + '|' + name;
+            encode = rdd.ns + '|' + rdd.name;
         } 
         return encode;
     }
 
     public String fullName() {
         if (full==null) {
-            full = ns + '.' + name;
+            full = rdd.ns + '.' + rdd.name;
         } 
         return full;
     }
@@ -111,7 +113,7 @@ public class Role implements Comparable<Role> {
                     row = iter.next();
                     Role rk =new Role(row.getString(0),row.getString(1), row.getString(2),row.getSet(3,String.class));
                     keys.put(rk.encode(), rk);
-                    data.put(rk,rk.perms);
+                    data.put(rk,rk.rdd.perms);
                     byName.put(rk.fullName(), rk);
                 }
             } finally {

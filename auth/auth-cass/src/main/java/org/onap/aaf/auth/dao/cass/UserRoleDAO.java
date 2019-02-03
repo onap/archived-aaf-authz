@@ -140,8 +140,6 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
         public String toString() {
             return user + '|' + ns + '|' +  rname + '|' + Chrono.dateStamp(expires);
         }
-
-
     }
     
     private static class URLoader extends Loader<Data> implements Streamer<Data> {

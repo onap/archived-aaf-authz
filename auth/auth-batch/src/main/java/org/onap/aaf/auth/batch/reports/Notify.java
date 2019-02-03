@@ -120,7 +120,7 @@ public class Notify extends Batch {
 		
 		try {
 			for(File f : notifyFile) {
-				CSV csv = new CSV(f);
+				CSV csv = new CSV(env.access(),f);
 				try {
 					csv.visit(new CSV.Visitor() {
 						@Override

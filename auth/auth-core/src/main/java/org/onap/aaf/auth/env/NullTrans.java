@@ -93,10 +93,11 @@ public class NullTrans implements AuthzTrans {
         return LogTarget.NULL;
     }
 
-    public TimeTaken start(String name, int flag) {
-        return new TimeTaken(name,flag) {
+    @Override
+    public TimeTaken start(String name, int flag, Object ... values) {
+        return new TimeTaken(name,flag, values) {
             public void output(StringBuilder sb) {
-                sb.append(name);
+                sb.append(String.format(name,values));
                 sb.append(' ');
                 sb.append(millis());
                 sb.append("ms");

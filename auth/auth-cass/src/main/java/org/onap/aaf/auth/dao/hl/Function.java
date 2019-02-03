@@ -136,11 +136,8 @@ public class Function {
                     sb = new StringBuilder();
                     ao = new ArrayList<>();
                 }
-                sb.append(result.details);
+                sb.append(String.format(result.details,result.variables));
                 sb.append('\n');
-                for (String s : result.variables) {
-                    ao.add(s);
-                }
             }
         }
 

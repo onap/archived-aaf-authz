@@ -92,22 +92,23 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
      * @param flag
      * @return
      */
-    protected abstract TimeTaken newTimeTaken(String name, int flag);
+    protected abstract TimeTaken newTimeTaken(String name, int flag, Object ... values);
     
-//    @Override
-    public final TimeTaken start(String name, int flag) {
-        TimeTaken tt = newTimeTaken(name,flag);
+    @Override
+    public final TimeTaken start(String name, int flag, Object ... values) {
+        TimeTaken tt = newTimeTaken(name,flag, values);
         trail.add(tt);
         return tt;
     }
     
-//    @Override
+    @Override
     public final void checkpoint(String name) {
         TimeTaken tt = newTimeTaken(name,CHECKPOINT);
         tt.done();
         trail.add(tt);
     }
 
+    @Override
     public final void checkpoint(String name, int additionalFlag) {
         TimeTaken tt = newTimeTaken(name,CHECKPOINT|additionalFlag);
         trail.add(tt);

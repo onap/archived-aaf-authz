@@ -36,11 +36,11 @@ public class BasicTrans extends AbsTransJAXB {
     }
 
     @Override
-    protected TimeTaken newTimeTaken(String name, int flag) {
+    protected TimeTaken newTimeTaken(String name, int flag, Object ... values) {
         /**
          * Note: could have created a different format for Time Taken, but using BasicEnv's instead
          */
-        return delegate.start(name, flag);
+        return delegate.start(name, flag, values);
     }
     
     public Slot slot(String name) {

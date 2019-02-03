@@ -73,13 +73,13 @@ public class Mapper1_0 extends MapperIntrospect1_0 implements Mapper<TokenReques
 
     //////////////  Mapping Functions /////////////
     @Override
-    public Error errorFromMessage(StringBuilder holder, String msgID, String text, String... var) {
+    public Error errorFromMessage(StringBuilder holder, String msgID, String text, Object ... var) {
         Error err = new Error();
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
         err.setText(Vars.convert(holder, text, var));
-        for (String s : var) {
-            err.getVariables().add(s);
+        for (Object s : var) {
+            err.getVariables().add(s.toString());
         }
         return err;
     }

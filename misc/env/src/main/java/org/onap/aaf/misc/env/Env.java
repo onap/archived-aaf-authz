@@ -115,7 +115,7 @@ public interface Env {
      * @param flag
      * @return
      */
-    public TimeTaken start(String name, int flag);
+    public TimeTaken start(String name, int flag, Object ... values);
     
     public String setProperty(String tag, String value);
     public String getProperty(String tag);

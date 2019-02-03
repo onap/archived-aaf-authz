@@ -23,6 +23,7 @@ package org.onap.aaf.auth.batch.helpers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import java.util.UUID;
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -89,6 +91,41 @@ public class Approval implements CacheChange.Data  {
         }
         return null;
     }
+
+    public static void load(Trans trans, Session session, Creator<Approval> creator, Visitor<Approval> visitor) {
+        trans.info().log( "query: " + creator.select() );
+        TimeTaken tt = trans.start("Read Approval", Env.REMOTE);
+       
+        ResultSet results;
+        try {
+            Statement stmt = new SimpleStatement( creator.select() );
+            results = session.execute(stmt);
+        } finally {
+            tt.done();
+        }
+
+        int count = 0;
+        try {
+            Iterator<Row> iter = results.iterator();
+            Row row;
+            tt = trans.start("Load X509s", Env.SUB);
+            try {
+                while (iter.hasNext()) {
+                	++count;
+                    row = iter.next();
+                    visitor.visit(creator.create(row));
+                }
+            } finally {
+                tt.done();
+            }
+        } finally {
+            trans.info().log("Found",count,"X509 Certificates");
+        }
+    }
+    
+	public static void row(CSV.Writer cw, Approval app) {
+		cw.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
+	}
 
     public static void load(Trans trans, Session session, Creator<Approval> creator ) {
         trans.info().log( "query: " + creator.select() );
@@ -305,5 +342,11 @@ public class Approval implements CacheChange.Data  {
     public static boolean pendingDelete(Approval a) {
         return cache.contains(a);
     }
+
+	public static void deleteByIDBatch(StringBuilder sb, String id) {
+		sb.append("DELETE from authz.approval where id=");
+		sb.append(id);
+		sb.append(";\n");
+	}
 
 }

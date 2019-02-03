@@ -40,7 +40,7 @@ public interface Mapper<REQ,CERT,ARTIFACTS,ERROR>
     public Class<?> getClass(API api);
     public<A> A newInstance(API api);
 
-    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
+    public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, Object ... detail);
     
     public Result<CERT> toCert(AuthzTrans trans, Result<CertResp> in, boolean withTrustChain) throws IOException;
     public Result<CERT> toCert(AuthzTrans trans, Result<List<CertDAO.Data>> in);

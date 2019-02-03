@@ -38,6 +38,7 @@ public class ExpireRange {
 	public Map<String,List<Range>> ranges;
 	public final Date now;
 	public String rangeOneMonth = "OneMonth";
+	private Range delRange;
 	
 	public ExpireRange(final Access access) {
 		now = new Date();
@@ -49,10 +50,10 @@ public class ExpireRange {
 				List<Range> lur = getRangeList("ur");
 				List<Range> lx509 = getRangeList("x509");
 				
-				Range del = new Range("Delete",0,0,-1,0,GregorianCalendar.WEEK_OF_MONTH,-2);
-				lur.add(del);
-				lcred.add(del);
-				lx509.add(del);
+				delRange = new Range("Delete",0,0,-1,0,GregorianCalendar.WEEK_OF_MONTH,-2);
+				lur.add(delRange);
+				lcred.add(delRange);
+				lx509.add(delRange);
 				
 				lcred.add(new Range("CredOneWeek",3,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
 				lcred.add(new Range("CredTwoWeek",2,1,GregorianCalendar.WEEK_OF_MONTH,1,GregorianCalendar.WEEK_OF_MONTH,2));

@@ -31,8 +31,10 @@ import java.util.List;
 
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.BatchPrincipal;
+import org.onap.aaf.auth.batch.helpers.Approval;
 import org.onap.aaf.auth.batch.helpers.CQLBatch;
 import org.onap.aaf.auth.batch.helpers.Cred;
+import org.onap.aaf.auth.batch.helpers.Future;
 import org.onap.aaf.auth.batch.helpers.UserRole;
 import org.onap.aaf.auth.batch.helpers.X509;
 import org.onap.aaf.auth.dao.CassAccess;
@@ -116,7 +118,7 @@ public class Remove extends Batch {
 	        for(File f : remove) {
 	        	trans.info().log("Processing ",f.getAbsolutePath(),"for Deletions");
 	        	if(f.exists()) {
-			        CSV removeCSV = new CSV(f);
+			        CSV removeCSV = new CSV(env.access(),f);
 		        		
 			        try {
 			        	final StringBuilder sb = cqlBatch.begin();
@@ -140,6 +142,7 @@ public class Remove extends Batch {
 											case "NotInOrgDelete":
 												memoFmt.set("Identity %s was removed from %s on %s");
 												break;
+
 										}
 										break;
 									case "ur":
@@ -174,6 +177,16 @@ public class Remove extends Batch {
 										hdd.subject=X509.histSubject(row);
 										hdd.memo=X509.histMemo(memoFmt.get(),row);
 										historyDAO.createBatch(sb, hdd);
+										break;
+									case "future":
+										// Not cached
+										hi.set(++i);
+										Future.deleteByIDBatch(sb,row.get(1));
+										break;
+									case "approval":
+										// Not cached
+										hi.set(++i);
+										Approval.deleteByIDBatch(sb,row.get(1));
 										break;
 								}
 							}

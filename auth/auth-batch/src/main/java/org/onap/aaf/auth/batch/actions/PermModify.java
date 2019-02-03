@@ -76,7 +76,7 @@ public class PermModify extends ActionDAO<Perm,PermDAO.Data,PermModify.Modify> {
                     } else {
                         for (String r : d.roles) {
                             Role role = Role.keys.get(r);
-                            if (role.perms.contains(p.encode())) {
+                            if (role.rdd.perms.contains(p.encode())) {
                                 modify.roleModify().exec(trans, role, new RoleModify.Modify() {
                                     @Override
                                     public PermModify permModify() {

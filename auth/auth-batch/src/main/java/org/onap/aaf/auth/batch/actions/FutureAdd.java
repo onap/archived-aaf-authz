@@ -23,35 +23,35 @@ package org.onap.aaf.auth.batch.actions;
 
 import java.io.IOException;
 
-import org.onap.aaf.auth.batch.helpers.Role;
-import org.onap.aaf.auth.dao.cass.RoleDAO.Data;
+import org.onap.aaf.auth.batch.helpers.Future;
+import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.misc.env.APIException;
 
 import com.datastax.driver.core.Cluster;
 
-public class RoleCreate extends ActionDAO<Role,Data,String> {
-    public RoleCreate(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
+public class FutureAdd extends ActionDAO<Future,FutureDAO.Data,String> {
+    public FutureAdd(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
         super(trans, cluster,dryRun);
     }
     
-    public RoleCreate(AuthzTrans trans, ActionDAO<?,?,?> adao) {
+    public FutureAdd(AuthzTrans trans, ActionDAO<?,?,?> adao) {
         super(trans, adao);
     }
 
     @Override
-    public Result<Data> exec(AuthzTrans trans, Role r,String text) {
+    public Result<FutureDAO.Data> exec(AuthzTrans trans, Future f, String text) {
+    	return exec(trans,f.fdd,text);
+    }
+    	
+    public Result<FutureDAO.Data> exec(AuthzTrans trans, FutureDAO.Data fdd, String text) {
         if (dryRun) {
-            trans.info().log("Would Create Role:",text,r.fullName());
-            return Result.ok(r.rdd);
+            trans.info().log("Would Add:",text,fdd.id, fdd.memo);
+            return Result.ok(fdd);
         } else {
-            Result<Data> rv = q.roleDAO.create(trans, r.rdd); // need to read for undelete
-            if (rv.isOK()) {
-                trans.info().log("Created Role:",text,r.fullName());
-            } else {
-                trans.error().log("Error Creating Role -",rv.details,":",r.fullName());
-            }
+            Result<FutureDAO.Data> rv = q.futureDAO.create(trans, fdd);
+            trans.info().log("Added:",text,fdd.id, fdd.memo);
             return rv;
         }
     }

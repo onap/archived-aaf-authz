@@ -70,7 +70,7 @@ public class NotifyCredExpiring extends Batch {
 	private CSV csv;
 	private CSVInfo csvInfo;
 
-    public NotifyCredExpiring(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+    public NotifyCredExpiring(AuthzTrans trans) throws APIException, IOException, OrganizationException, CadiException {
         super(trans.env());
         TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
         try {
@@ -106,7 +106,7 @@ public class NotifyCredExpiring extends Batch {
         } else {
         	File f = new File(logDir(),args()[0]);
         	System.out.println("Reading " + f.getCanonicalPath());
-        	csv = new CSV(f);
+        	csv = new CSV(env.access(),f);
         }
         
         if(args().length<2) {
@@ -118,11 +118,7 @@ public class NotifyCredExpiring extends Batch {
         }
         
         csvInfo = new CSVInfo(System.err);
-        try {
-			csv.visit(csvInfo);
-		} catch (CadiException e) {
-			throw new APIException(e);
-		}
+		csv.visit(csvInfo);
         
         Notification.load(trans, session, Notification.v2_0_18);
         

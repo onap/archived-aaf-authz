@@ -25,7 +25,6 @@ import java.net.URISyntaxException;
 
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.misc.env.impl.BasicTrans;
 
 /**
  * This Locator good for using Inside Docker or K8s, where there is no real lookup, 
