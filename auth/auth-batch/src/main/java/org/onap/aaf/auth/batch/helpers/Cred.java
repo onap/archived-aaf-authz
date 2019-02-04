@@ -138,13 +138,14 @@ public class Cred  {
                     row = iter.next();
                     int type = row.getInt(1);
                     if (types.length>0) { // filter by types, if requested
-                        boolean quit = true;
+                        boolean hastype = false;
                         for (int t : types) {
                             if (t==type) {
+                            	hastype=true;
                                 break;
                             }
                         }
-                        if (quit) {
+                        if (!hastype) {
                             continue;
                         }
                     }
