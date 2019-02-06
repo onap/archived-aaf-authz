@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.Registration;
-
 import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
