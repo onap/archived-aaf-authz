@@ -28,7 +28,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.util.Split;
 
 public class RegistrationPropHolder {
-
+	private final String PUBLIC_NAME="%NS.%N";
 	private final Access access;
 	public String hostname;
 	private int port;
@@ -38,6 +38,7 @@ public class RegistrationPropHolder {
 	public Float longitude;
 	public final String default_fqdn;
 	public final String default_container_ns;
+	public final String default_name;
 	public final String lentries;
 	public final String lcontainer;
 
@@ -74,6 +75,8 @@ public class RegistrationPropHolder {
 
 		public_hostname = access.getProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME, hostname);
 				
+		default_name = access.getProperty(Config.AAF_LOCATOR_NAME, "%CNS.%NS.%N");
+		
 		latitude=null;
 		String slatitude = access.getProperty(Config.CADI_LATITUDE, null);
 		if(slatitude == null) {
@@ -100,7 +103,7 @@ public class RegistrationPropHolder {
 			}
 		}
 		
-		default_fqdn = access.getProperty(Config.AAF_LOCATOR_FQDN, public_hostname);
+		default_fqdn = access.getProperty(Config.AAF_LOCATOR_FQDN, hostname);
 		default_container_ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
 		
 		if(errs.length()>0) {
@@ -120,17 +123,18 @@ public class RegistrationPropHolder {
 		if(public_hostname!=null && dot_le.isEmpty()) {
 			str = public_hostname;
 		} else {
-			str = access.getProperty(Config.AAF_LOCATOR_FQDN+dot_le, null);
-			if(str==null) {
-				str = access.getProperty(Config.AAF_LOCATOR_FQDN, hostname);
-			}
+			str = access.getProperty(Config.AAF_LOCATOR_FQDN+dot_le, default_fqdn);
 		}
 		return replacements(str,entry,dot_le);
 	}
 	
 	public String getEntryName(final String entry, final String dot_le) {
 		String str;
-		str = access.getProperty(Config.AAF_LOCATOR_NAME+dot_le, "%NS.%N");
+		if(dot_le.isEmpty()) {
+			str = PUBLIC_NAME;
+		} else {
+			str = access.getProperty(Config.AAF_LOCATOR_NAME+dot_le, default_name);
+		}
 		return replacements(str,entry,dot_le);
 	}
 	

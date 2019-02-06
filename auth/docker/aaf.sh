@@ -29,6 +29,7 @@ function run_it() {
     --env aaf_locator_container=docker \
     --env aaf_locator_fqdn=${HOSTNAME} \
     --env aaf_locate_url=https://aaf-locate:8095 \
+    --env aaf_locator_public_hostname=$HOSTNAME \
     --env AAF_ENV=${AAF_ENV} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \

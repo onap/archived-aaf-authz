@@ -105,15 +105,7 @@ public class JU_Future {
 	@Test
 	public void testResetLocalData() {
 		Future.resetLocalData();
-	}
-
-	@Test
-	public void testSizeForDeletion() {
 		Assert.assertEquals(0, Future.sizeForDeletion());
-	}
-
-	@Test
-	public void testPendingDelete() {
 		Assert.assertEquals(false, Future.pendingDelete(future));
 	}
 
