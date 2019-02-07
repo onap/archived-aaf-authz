@@ -32,6 +32,7 @@ CONFIG=/opt/app/aaf_config
 JAVA_CADI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.CmdLine" 
 JAVA_AGENT="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.cadi.configure.Agent" 
 JAVA_AAFCLI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.auth.cmd.AAFcli" 
+JAVA_AAFBATCH="$JAVA -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.batch.props -jar $CONFIG/bin/aaf-auth-batch-*-full.jar"
 
 # If doesn't exist... still create
 mkdir -p $OSAAF
@@ -43,12 +44,13 @@ mkdir -p /opt/app/aaf/status
 FILE=
 
 # Setup Bash, first time only
-if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep cadi $HOME/.bash_aliases)" ]; then
-  echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bash_aliases
-  echo "alias agent='$CONFIG/bin/agent.sh \$*'" >>$HOME/.bash_aliases
-  echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bash_aliases
+if [ ! -e "$HOME/.bashrc" ] || [ -z "$(grep cadi $HOME/.bashrc)" ]; then
+  echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bashrc
+  echo "alias agent='$CONFIG/bin/agent.sh \$*'" >>$HOME/.bashrc
+  echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bashrc
+  echo "alias batch='$JAVA_AAFBATCH \$*'" >>$HOME/.bashrc
   chmod a+x $CONFIG/bin/agent.sh
-  . $HOME/.bash_aliases
+  . $HOME/.bashrc
 fi
 
 # Only load Identities once

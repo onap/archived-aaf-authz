@@ -226,7 +226,7 @@
 					<classifier>tests</classifier>
 					<archive>
 						<manifest>
-							<mainClass>org.onap.aaf.auth.Batch</mainClass>
+							<mainClass>org.onap.aaf.auth.batch.Batch</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Sealed>true</Sealed>

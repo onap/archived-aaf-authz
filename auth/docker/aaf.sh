@@ -22,10 +22,15 @@
 . ./d.props
 
 DOCKER=${DOCKER:=docker}
+# if something, may not want CASS attached all the tim
+LINKS="--link $CASSANDRA_DOCKER"
+
 function run_it() {
   $DOCKER run $@ \
+    --user aaf \
     -v "aaf_config:$CONF_ROOT_DIR" \
     -v "aaf_status:/opt/app/aaf/status" \
+    $LINKS \
     --env aaf_locator_container=docker \
     --env aaf_locator_fqdn=${HOSTNAME} \
     --env aaf_locate_url=https://aaf-locate:8095 \

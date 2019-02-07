@@ -25,6 +25,7 @@ LABEL description="aaf_${AAF_COMPONENT}"
 LABEL version=${AAF_VERSION}
  
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
+RUN mkdir /opt/app/osaaf && chown aaf:aaf /opt/app/osaaf && chown -R aaf:aaf /opt/app/aaf/bin
 
 #CMD ["bash","-c","cd /opt/app/aaf;bin/${AAF_COMPONENT}"]
 CMD []

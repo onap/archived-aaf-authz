@@ -57,3 +57,9 @@ bash drun.sh
 # watch logs in Agent Window
 cd ../logs
 sh taillog
+
+
+#Running as ROOT
+# docker gets the non-root user in its config during kubernetes 
+# install https://git.onap.org/logging-analytics/tree/deploy/rancher/oom_rancher_setup.sh#n90 
+# sudo usermod -aG docker $USERNAME where $USERNAME can be ubuntu

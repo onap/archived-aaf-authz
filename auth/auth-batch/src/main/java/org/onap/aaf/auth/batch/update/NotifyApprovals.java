@@ -43,9 +43,12 @@ import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.dao.cass.HistoryDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.Organization;
+import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
-import org.onap.aaf.auth.org.Organization.Identity;
+import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.util.Chrono;
 
@@ -59,9 +62,11 @@ public class NotifyApprovals extends Batch {
     private final PrintStream ps;
     private final AuthzTrans noAvg;
 
-    public NotifyApprovals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+    public NotifyApprovals(AuthzTrans trans) throws APIException, IOException, OrganizationException, CadiException {
         super(trans.env());
-        
+        Access access = trans.env().access();
+        RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
+        String guiURL = rph.replacements(access.getProperty(GUI_URL,"https://%P/gui"),"","");
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("batch:NotifyApprovals"));
 
@@ -77,13 +82,11 @@ public class NotifyApprovals extends Batch {
             maxEmails = Integer.parseInt(trans.getProperty("MAX_EMAILS","3"));
         }
         email.subject("AAF Approval Notification (ENV: %s)",batchEnv);
-        email.preamble("AAF (MOTS 22830) is the AT&T Authorization System used by many AT&T Tools and Applications." +
+        email.preamble("AAF is the ONAP Authorization System." +
                 "\n  Your approval is required, which you may enter on the following page:"
                 + "\n\n\t%s/approve\n\n"
-                ,env.getProperty(GUI_URL));
-        email.signature("Sincerely,\nAAF Team (Our MOTS# 22830)\n"
-                + "https://wiki.web.att.com/display/aaf/Contact+Us\n"
-                + "(Use 'Other Misc Requests (TOPS)')");
+                ,guiURL);
+        email.signature("Sincerely,\nAAF Team\n");
 
         Approval.load(trans, session, Approval.v2_0_17);
         Future.load(trans, session, Future.v2_0_17); // Skip the Construct Data

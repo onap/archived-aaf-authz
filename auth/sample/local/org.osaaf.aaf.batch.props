@@ -17,11 +17,22 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-FROM nexus3.onap.org:10001/openjdk:8-jre-alpine
-MAINTAINER AAF Team, AT&T 2018
+# Container based Batch Properties
+#
+# Common Properties, including Cassandra, RootNS and GPS coords
+cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/local/org.osaaf.aaf.location.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
 
-LABEL description="aaf_base"
-RUN apk add --no-cache bash
-RUN apk add --no-cache openssl
-RUN addgroup aaf && adduser aaf -G aaf -D -s /bin/bash
+DRY_RUN=false
+
+LOG_DIR=/opt/app/osaaf/logs/batch
+SPECIAL_NAMES=aaf@aaf.osaaf.org
+GUI_URL=https://$PH/gui
+# MAX_EMAILS=3
+# Put any IDs that are critical to the system, and/or might in any way be removed by 
+# Organization rules
+# Example: The AAF ID, any special Test IDs that aren't in the Organization
+# ID Set.
+
+ALERT_TO_ADDRESS=DL-aaf-support@att.com
+
 

@@ -41,13 +41,15 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     protected AbsService<ENV,TRANS> service;
 
 
-    public AbsServiceStarter(final AbsService<ENV,TRANS> service) {
+    public AbsServiceStarter(final AbsService<ENV,TRANS> service, boolean noexit) {
         this.service = service;
         try {
             OrganizationFactory.init(service.env);
         } catch (OrganizationException e) {
-            service.access.log(e, "Missing defined Organzation Plugins");
-            System.exit(3);
+            service.access.log(e, "Missing defined Organization Plugins");
+            if(!noexit) {
+            	System.exit(3);
+            }
         }
         // do_register - this is used for specialty Debug Situations.  Developer can create an Instance for a remote system
         // for Debugging purposes without fear that real clients will start to call your debug instance

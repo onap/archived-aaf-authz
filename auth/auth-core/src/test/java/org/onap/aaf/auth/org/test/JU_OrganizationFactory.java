@@ -22,19 +22,21 @@
 
 package org.onap.aaf.auth.org.test;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
-import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import junit.framework.Assert;
 
 @RunWith(PowerMockRunner.class)
 public class JU_OrganizationFactory {
@@ -53,8 +55,13 @@ public class JU_OrganizationFactory {
 
     @SuppressWarnings("static-access")
     @Test
-    public void testInit() throws OrganizationException {
-        organizationFactory.init(bEnv);
+    public void testInit() {
+    	try { 
+    		organizationFactory.init(bEnv);
+    		Assert.fail("Expect an exception");
+    	} catch (OrganizationException e) {
+    		Assert.assertEquals("At least one Organization must be defined", e.getMessage());
+    	}
     }
 
     @SuppressWarnings("static-access")                //TODO:Fix this once real input is available AAF-111

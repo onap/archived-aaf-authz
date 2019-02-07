@@ -94,6 +94,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     #	$ADD_HOST \
     $DOCKER run  \
         -d \
+        --user aaf \
         --name aaf-$AAF_COMPONENT \
         ${LINKS} \
         --env AAF_ENV=${AAF_ENV} \

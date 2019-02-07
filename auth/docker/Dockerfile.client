@@ -31,4 +31,6 @@ COPY bin/aaf-auth-cmd-${AAF_VERSION}-full.jar /opt/app/aaf_config/bin/
 COPY bin/aaf-cadi-servlet-sample-*-sample.jar /opt/app/aaf_config/bin/
 COPY cert/*trust*.b64 /opt/app/aaf_config/cert/
 
+RUN chown -R aaf:aaf /opt/app/aaf_config
+
 CMD ["/bin/bash","-c","/opt/app/aaf_config/bin/agent.sh"]

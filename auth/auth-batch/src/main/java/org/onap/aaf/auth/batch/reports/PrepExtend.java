@@ -82,7 +82,7 @@ public class PrepExtend extends Batch {
 		Date now = gc.getTime();
 		
 		int ifrom = 0;
-		int ito = 0;
+		int ito = 4;
 		
 		for(int i=0; i< args().length;++i) {
 			switch(args()[i]) {

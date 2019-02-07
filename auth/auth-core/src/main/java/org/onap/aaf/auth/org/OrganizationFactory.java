@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.misc.env.Env;
@@ -61,6 +62,17 @@ public class OrganizationFactory {
                     firstOrg = org;
                 }
             }
+        }
+        if(firstOrg==null) { // attempt to load DefaultOrg
+        	try {
+				Class<?> cls = Class.forName("org.onap.aaf.org.DefaultOrg");
+				@SuppressWarnings("unchecked")
+				Constructor<Organization> cnst = (Constructor<Organization>)cls.getConstructor(Env.class,String.class);
+				String realm = env.getProperty(Config.AAF_DEFAULT_REALM,"people.osaaf.org");
+				defaultOrg = cnst.newInstance(env,realm);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+	        	throw new OrganizationException("At least one Organization must be defined",e);
+			}
         }
         if (defaultOrg == null) {
             defaultOrg = firstOrg;

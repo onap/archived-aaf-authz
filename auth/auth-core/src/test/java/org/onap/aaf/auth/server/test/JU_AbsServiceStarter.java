@@ -76,7 +76,7 @@ public class JU_AbsServiceStarter {
     private class AbsServiceStarterStub extends AbsServiceStarter {
 
         public AbsServiceStarterStub(AbsService service) {
-            super(service);
+            super(service, true);
             // TODO Auto-generated constructor stub
         }
 
