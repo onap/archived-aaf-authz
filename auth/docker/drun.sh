@@ -91,6 +91,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
        #ADD_HOST="$ADD_HOST --add-host=$CASS_HOST"
     #fi
     #--hostname="${AAF_COMPONENT}.${NAMESPACE}" \
+    #    --env aaf_locate_url=https://aaf-locate:8095 \
     #	$ADD_HOST \
     $DOCKER run  \
         -d \
@@ -99,7 +100,9 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         ${LINKS} \
         --env AAF_ENV=${AAF_ENV} \
         --env aaf_locator_container=docker \
-        --env aaf_locator_fqdn=$HOSTNAME \
+        --env aaf_locator_container_ns=${NAMESPACE} \
+        --env aaf_locator_fqdn=${HOSTNAME} \
+        --env aaf_locator_public_hostname=${HOSTNAME} \
         --env LATITUDE=${LATITUDE} \
         --env LONGITUDE=${LONGITUDE} \
         --env CASSANDRA_CLUSTER=${CASSANDRA_CLUSTER} \

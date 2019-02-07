@@ -33,6 +33,7 @@ fi
 # Always need startup status...
 if [ ! -e "$DIR" ]; then
   mkdir -p "$DIR"
+  chmod 777 $DIR
 fi
 
 function status {
@@ -134,7 +135,7 @@ case "$1" in
 
     # Startup like normal
     echo "Cassandra Startup"
-    /usr/local/bin/docker-entrypoint.sh 
+    exec /usr/local/bin/docker-entrypoint.sh 
   ;;
   wait)
     # Wait for initialization.  This can be called from Docker only as a check to make sure it is ready
@@ -148,7 +149,7 @@ case "$1" in
 
     # Startup like normal
     echo "Cassandra Startup"
-    /usr/local/bin/docker-entrypoint.sh 
+    exec /usr/local/bin/docker-entrypoint.sh 
   ;;
 esac
 

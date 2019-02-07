@@ -32,7 +32,8 @@ if [ ! -e ./serial ]; then
 fi
 
 NAME=aaf.bootstrap
-FQDN="${HOSTNAME:=$(hostname -f)}"
+HOSTNAME="${HOSTNAME:=$(hostname -)}"
+FQDN="${aaf_locator_fqdn:=$HOSTNAME}"
 FQI=aaf@aaf.osaaf.org
 SUBJECT="/CN=$FQDN/OU=$FQI`cat subject.aaf`"
 SIGNER_P12=$1

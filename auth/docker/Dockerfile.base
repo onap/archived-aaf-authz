@@ -23,5 +23,5 @@ MAINTAINER AAF Team, AT&T 2018
 LABEL description="aaf_base"
 RUN apk add --no-cache bash
 RUN apk add --no-cache openssl
-RUN addgroup aaf && adduser aaf -G aaf -D -s /bin/bash
+RUN addgroup ${USER} && adduser ${USER} -G ${USER} -D -s /bin/bash
 

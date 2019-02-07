@@ -30,7 +30,9 @@ echo "Building aaf_cass Container for aaf_cass:$VERSION"
 
 DIR=$(pwd)
 cd ..
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' $DIR/Dockerfile.cass > Dockerfile
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${USER}/'${USER}'/g' \
+    $DIR/Dockerfile.cass > Dockerfile
 cd ..
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass

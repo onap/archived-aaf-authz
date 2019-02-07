@@ -38,6 +38,7 @@ cd -
 
 # AAF Base version - set the core image, etc
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${USER}/'${USER}'/g' \
     Dockerfile.base > Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_base:${VERSION} .
 $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:${VERSION}
@@ -55,6 +56,7 @@ cp -Rf ../conf/CA sample
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    -e 's/${USER}/'${USER}'/g' \
     docker/Dockerfile.config > sample/Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
@@ -65,6 +67,7 @@ cp ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar s
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    -e 's/${USER}/'${USER}'/g' \
     docker/Dockerfile.client > sample/Dockerfile
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
@@ -82,6 +85,7 @@ echo Building aaf_$AAF_COMPONENT...
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    -e 's/${USER}/'${USER}'/g' \
     Dockerfile.core >../aaf_${VERSION}/Dockerfile
 cd ..
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
@@ -105,6 +109,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
         -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
         -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+        -e 's/${USER}/'${USER}'/g' \
         Dockerfile.ms >../aaf_${VERSION}/Dockerfile
     cd ..
     $DOCKER build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}

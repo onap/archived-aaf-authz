@@ -136,9 +136,6 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     for P in `env`; do
       if [[ "$P" == aaf_locator* ]]; then
 	echo "$P" >> ${TMP}
-        if [[ "$P" == aaf_locator_container=* ]]; then
-	    echo aaf_locator_container.hostname=${HOSTNAME} >> ${TMP}
-	fi
       fi
     done
 

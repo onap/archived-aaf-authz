@@ -38,6 +38,7 @@ fi
 if [ "`$DOCKER ps -a | grep aaf-cass`" == "" ]; then
   echo "starting Cass from 'run'"
   # NOTE: These HEAP Sizes are minimal. Not set for full organizations.
+  #  --user ${USER} \
   $DOCKER run \
     --name aaf-cass \
     -e HEAP_NEWSIZE=512M \
