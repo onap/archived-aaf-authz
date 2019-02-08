@@ -60,9 +60,9 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
     
     
     public static class Data implements Bytification {
-        public static String user;
-        public static String delegate;
-        public static Date expires;
+        public String user;
+        public String delegate;
+        public Date expires;
 
         @Override
         public ByteBuffer bytify() throws IOException {

@@ -59,7 +59,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
     private boolean secure;
 
     public JettyServiceStarter(final AbsService<ENV,TRANS> service) throws OrganizationException {
-        super(service,false);
+        super(service);
         secure = true;
     }
     

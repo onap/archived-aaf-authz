@@ -55,13 +55,8 @@ public class JU_OrganizationFactory {
 
     @SuppressWarnings("static-access")
     @Test
-    public void testInit() {
-    	try { 
-    		organizationFactory.init(bEnv);
-    		Assert.fail("Expect an exception");
-    	} catch (OrganizationException e) {
-    		Assert.assertEquals("At least one Organization must be defined", e.getMessage());
-    	}
+    public void testInit() throws OrganizationException {
+  		Assert.assertEquals(null, organizationFactory.init(bEnv));
     }
 
     @SuppressWarnings("static-access")                //TODO:Fix this once real input is available AAF-111

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -2665,7 +2664,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             String inputOption = cr.getEntry();
             if (inputOption == null) {
                 String message = selectCredFromList(lcd, false);
-                String[] variables = buildVariables(lcd);
+                Object[] variables = buildVariables(lcd);
                 return Result.err(Status.ERR_ChoiceNeeded, message, variables);
             } else {
                 entry = Integer.parseInt(inputOption) - 1;
@@ -2823,7 +2822,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 String inputOption = cr.getEntry();
                 if (inputOption == null) {
                     String message = selectCredFromList(rlcd.value, true);
-                    String[] variables = buildVariables(rlcd.value);
+                    Object[] variables = buildVariables(rlcd.value);
                     return Result.err(Status.ERR_ChoiceNeeded, message, variables);
                 } else {
                     try {

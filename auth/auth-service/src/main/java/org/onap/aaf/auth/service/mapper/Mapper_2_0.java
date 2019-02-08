@@ -672,7 +672,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         Error err = new Error();
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
-        err.setText(Vars.convert(holder, text, var));
+        err.setText(Vars.convert(holder, text, (Object[])var));
         for (String s : var) {
             err.getVariables().add(s);
         }

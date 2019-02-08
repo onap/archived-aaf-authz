@@ -122,6 +122,9 @@ public abstract class Batch {
         }
 
         org = OrganizationFactory.init(env);
+        if(org==null) {
+        	throw new OrganizationException("Organization MUST be defined for Batch");
+        }
         org.setTestMode(dryRun);
 
         // Special names to allow behaviors beyond normal rules

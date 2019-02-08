@@ -26,6 +26,7 @@ CONF_ROOT_DIR=/opt/app/osaaf
 # For local builds, set PREFIX=   
 PREFIX="$DOCKER_REPOSITORY/"
 NAMESPACE=onap
+USER=aaf
 
 # HOSTNAME=aaf.osaaf.org
 

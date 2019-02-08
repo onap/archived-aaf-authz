@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.org.OrganizationFactory;
@@ -41,15 +40,13 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     protected AbsService<ENV,TRANS> service;
 
 
-    public AbsServiceStarter(final AbsService<ENV,TRANS> service, boolean noexit) {
+    public AbsServiceStarter(final AbsService<ENV,TRANS> service) {
         this.service = service;
         try {
             OrganizationFactory.init(service.env);
         } catch (OrganizationException e) {
             service.access.log(e, "Missing defined Organization Plugins");
-            if(!noexit) {
-            	System.exit(3);
-            }
+           	System.exit(3);
         }
         // do_register - this is used for specialty Debug Situations.  Developer can create an Instance for a remote system
         // for Debugging purposes without fear that real clients will start to call your debug instance
