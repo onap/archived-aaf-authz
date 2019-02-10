@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.misc.env.APIException;
 
 public abstract class NotifyBody {
+	private static final String DUPL = "<td style=\"text-indent: 4em;\">''</td>";
 	private static final Map<String,NotifyBody> bodyMap = new HashMap<>();
 
 	protected Map<String,List<List<String>>> rows;
@@ -105,7 +107,7 @@ public abstract class NotifyBody {
 	 * @param row
 	 * @return
 	 */
-	public abstract String body(AuthzTrans trans, Notify n, String id);
+	public abstract boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id);
 	
 	/**
 	 * Return "null" if user not found in row... Code will handle.
@@ -127,7 +129,11 @@ public abstract class NotifyBody {
 	 * 
 	 */
 	public static Collection<NotifyBody> getAll() {
-		return bodyMap.values();
+		// Note: The same Notify Body is entered several times with different keys.
+		// Therefore, need a Set of Values, not all the Values.
+		Set<NotifyBody> set = new HashSet<>();
+		set.addAll(bodyMap.values());
+		return set;
 	}
 	
 	/**
@@ -140,14 +146,10 @@ public abstract class NotifyBody {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		Package pkg = NotifyBody.class.getPackage();
 		String path = pkg.getName().replace('.', '/');
-//		Enumeration<URL> urls = cl.getResources(path);
-//		while(urls.hasMoreElements()) {
-//			URL url = urls.nextElement();
 		URL url = cl.getResource(path);
 		if(url == null) {
 			throw new APIException("Cannot load resources from " + path);
 		}
-		System.out.println(url);
 		File dir;
 		try {
 			dir = new File(url.toURI());
@@ -180,6 +182,25 @@ public abstract class NotifyBody {
 				}
 			}
 		}
-//		}
 	}
+	
+
+	protected void println(StringBuilder sb, int indent, Object ... objs) {
+		for(int i=0;i<indent;++i) {
+			sb.append(' ');
+		}
+		for(Object o : objs) {
+			sb.append(o.toString());
+		}
+		sb.append('\n');
+	}
+	
+	protected void printCell(StringBuilder sb, int indent, String current, String prev) {
+		if(current.equals(prev)) {
+			println(sb,indent,DUPL);
+		} else {
+			println(sb,indent,"<td>",current,"</td>");
+		}
+	}
+
 }

@@ -27,10 +27,11 @@ import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
 
-public class NotifyCredBody extends AbsCredBody {
+public abstract class NotifyCredBody extends NotifyBody {
+
 	private final String explanation;
 	public NotifyCredBody(Access access, String name) throws IOException {
-		super(name);
+		super("cred",name);
 		
 		// Default
 		explanation = "The following Credentials are expiring on the dates shown. "
@@ -38,17 +39,70 @@ public class NotifyCredBody extends AbsCredBody {
 	}
 
 	@Override
-	public String body(AuthzTrans trans, Notify n, String id) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(explanation);
-		sb.append("<br>");
-		sb.append("<tr>\n" + 
-				"<th>Role</th>\n" + 
-				"<th>Expires</th>\n" + 
-				"</tr>\n");
+	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
+		println(sb,indent,explanation);
+		println(sb,indent,"<br><br>");
+		println(sb,indent,"<table>");
+		indent+=2;
+		println(sb,indent,"<tr>");
+		indent+=2;
+		println(sb,indent,"<th>Fully Qualified ID</th>");
+		println(sb,indent,"<th>Type</th>");
+		println(sb,indent,"<th>Details</th>");
+		println(sb,indent,"<th>Expires</th>");
+		println(sb,indent,"<th>Cred Detail Page</th>");
+		indent-=2;
+		println(sb,indent,"</tr>");
+		String theid, type, info, gui, expires, notes;
+		String p_theid=null, p_type=null, p_gui=null, p_expires=null;
 		for(List<String> row : rows.get(id)) {
+			theid=row.get(1);
+			switch(row.get(3)) {
+				case "1":
+				case "2":
+					type = "Password";
+				case "200":
+					type = "x509 (Certificate)";
+					break;
+				default:
+					type = "Unknown, see AAF GUI";
+					break;
+			}
+			gui = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+row.get(2)+"</a>";
+			expires = row.get(4);
+			info = row.get(6);
+			notes = row.get(8);
+			if(notes!=null && !notes.isEmpty()) {
+				info += "<br>" + notes; 
+			}
 			
+			println(sb,indent,"<tr>");
+			indent+=2;
+			printCell(sb,indent,theid,p_theid);
+			printCell(sb,indent,type,p_type);
+			printCell(sb,indent,info,null);
+			printCell(sb,indent,expires,p_expires);
+			printCell(sb,indent,gui,p_gui);
+			indent-=2;
+			println(sb,indent,"</tr>");
+			p_theid=theid;
+			p_type=type;
+			p_gui=gui;
+			p_expires=expires;
 		}
-		return sb.toString();
+		indent-=2;
+		println(sb,indent,"</table>");
+		
+		return true;
 	}
+
+	@Override
+	public String user(List<String> row) {
+		if( (row != null) && row.size()>1) {
+			return row.get(1);
+		}
+		return null;
+	}
+
+
 }

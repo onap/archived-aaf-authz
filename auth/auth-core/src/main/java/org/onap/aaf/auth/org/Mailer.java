@@ -25,10 +25,9 @@ import java.util.List;
 import org.onap.aaf.auth.env.AuthzTrans;
 
 public interface Mailer {
-    public int sendEmail(
+    public boolean sendEmail(
             AuthzTrans trans,
             boolean testMode,
-            String mailFrom,
             List<String> toList, 
             List<String> ccList, 
             String subject, 
@@ -36,5 +35,7 @@ public interface Mailer {
             Boolean urgent) throws OrganizationException;
 
 	public String mailFrom();
+
+	public int count();
 
 }

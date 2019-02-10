@@ -55,7 +55,7 @@ public class URApprovalSet extends ApprovalSet {
 		}
 		Result<NsDAO.Data> n = dv.ns(trans, urdd.ns);
 		if(n.notOKorIsEmpty()) {
-			throw new CadiException(String.format("Namespace '%s' does not exist: %s", urdd.ns));
+			throw new CadiException(String.format("Namespace '%s' does not exist: %s", urdd.ns,r.details));
 		}
 		UserRoleDAO.Data found = null;
 		Result<List<Data>> lur = dv.ursByRole(trans, urdd.role);
@@ -68,7 +68,7 @@ public class URApprovalSet extends ApprovalSet {
 			}
 		}
 		if(found==null) {
-			throw new CadiException(String.format("User '%s' in Role '%s' does not exist: %s", urdd.user,urdd.role));
+			throw new CadiException(String.format("User '%s' in Role '%s' does not exist: %s", urdd.user,urdd.role,r.details));
 		}
 		
 		// Primarily, Owners are responsible, unless it's owned by self

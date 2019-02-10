@@ -79,7 +79,7 @@ public class JU_Cred {
         prop.setProperty(Config.AAF_ROOT_COMPANY,"test");
         define.set(prop);
         
-        instance = new Instance(12, date, integer, 125642678910L);
+        instance = new Instance(12, date, integer, 125642678910L,"234",1,"");
         cred = new Cred("myid1234@aaf.att.com");
     }
     

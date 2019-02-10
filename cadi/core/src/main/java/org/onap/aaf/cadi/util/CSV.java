@@ -85,7 +85,7 @@ public class CSV {
 					List<String> row = new ArrayList<>();
 					boolean quotes=false;
 					boolean escape=false;
-					char c;
+					char c = 0;
 					for(int i=0;i<line.length();++i) {
 						switch(c=line.charAt(i)) {
 							case '"':
@@ -124,7 +124,7 @@ public class CSV {
 								sb.append(c);
 						}
 					}
-					if(sb.length()>0) {
+					if(sb.length()>0 || c==',') {
 						row.add(sb.toString());
 						sb.setLength(0);
 					}

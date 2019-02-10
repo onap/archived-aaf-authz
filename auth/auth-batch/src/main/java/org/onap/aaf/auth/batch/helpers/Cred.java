@@ -62,16 +62,23 @@ public class Cred  {
         public final int type;
         public final Date expires,written;
         public final Integer other;
+        public final String tag;
+        public final Integer attn;
+        public final String notes;
+
         
-        public Instance(int type, Date expires, Integer other, long written) {
+        public Instance(int type, Date expires, Integer other, long written, String tag, int attn, String notes) {
             this.type = type;
             this.expires = expires;
             this.other = other;
             this.written = new Date(written);
+            this.tag = tag;
+            this.attn = attn;
+            this.notes = notes;
         }
         
         public String toString() {
-        	return expires.toString() + ": " + type;
+        	return expires.toString() + ": " + type + ' ' + notes;
         }
     }
     
@@ -107,12 +114,12 @@ public class Cred  {
     }
 
     public static void load(Trans trans, Session session, int ... types ) {
-        load(trans, session,"select id, type, expires, other, writetime(cred) from authz.cred;",types);
+        load(trans, session,"select id, type, expires, other, writetime(cred), tag, attn, notes from authz.cred;",types);
         
     }
 
     public static void loadOneNS(Trans trans, Session session, String ns,int ... types ) {
-        load(trans, session,"select id, type, expires, other, writetime(cred) from authz.cred WHERE ns='" + ns + "';");
+        load(trans, session,"select id, type, expires, other, writetime(cred), tag, attn, notes from authz.cred WHERE ns='" + ns + "';");
     }
 
     private static void load(Trans trans, Session session, String query, int ...types) {
@@ -149,7 +156,8 @@ public class Cred  {
                             continue;
                         }
                     }
-                    add(row.getString(0), row.getInt(1),row.getTimestamp(2),row.getInt(3),row.getLong(4));
+                    add(row.getString(0), row.getInt(1),row.getTimestamp(2),row.getInt(3),row.getLong(4),
+                    		row.getString(5),row.getInt(6),row.getString(7));
                 }
             } finally {
                 tt.done();
@@ -164,14 +172,17 @@ public class Cred  {
     		final int type,
     		final Date timestamp,
     		final int other,
-    		final long written
+    		final long written,
+    		final String tag,
+    		final int attn,
+    		final String notes
     		) {
         Cred cred = data.get(id);
         if (cred==null) {
             cred = new Cred(id);
             data.put(id, cred);
         }
-        cred.instances.add(new Instance(type, timestamp, other, written/1000));
+        cred.instances.add(new Instance(type, timestamp, other, written/1000,tag,attn,notes));
         
         List<Cred> lscd = byNS.get(cred.ns);
         if (lscd==null) {
@@ -277,7 +288,8 @@ public class Cred  {
     }
     
     public void row(final CSV.Writer csvw, final Instance inst) {
-    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),inst.expires.getTime());
+    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
+    			inst.expires.getTime(),inst.tag,inst.attn,inst.notes);
     }
 
 

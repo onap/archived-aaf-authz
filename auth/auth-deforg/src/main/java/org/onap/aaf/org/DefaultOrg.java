@@ -592,7 +592,7 @@ public class DefaultOrg implements Organization {
                 }
             }
 
-            return mailer.sendEmail(trans,dryRun,mailFrom,to,cc,subject,body,urgent);
+            return mailer.sendEmail(trans,dryRun,to,cc,subject,body,urgent)?0:1;
         } else {
             return 0;
         }
