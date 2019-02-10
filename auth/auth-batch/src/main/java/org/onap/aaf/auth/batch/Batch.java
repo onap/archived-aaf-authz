@@ -90,6 +90,7 @@ public abstract class Batch {
     public static final String GUI_URL="GUI_URL";
     
     protected final Organization org;
+	protected String version;
     
     protected Batch(AuthzEnv env) throws APIException, IOException, OrganizationException {
         if (batchEnv != null) {
@@ -143,6 +144,8 @@ public abstract class Batch {
                 }
             }
         }
+        
+        version = env.getProperty(VERSION,Config.AAF_DEFAULT_API_VERSION);
     }
 
     protected abstract void run(AuthzTrans trans);

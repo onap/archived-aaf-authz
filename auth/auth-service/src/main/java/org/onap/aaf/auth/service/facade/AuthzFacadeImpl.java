@@ -282,7 +282,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 msgId = "SVC1300";
                 detail = new String[result.variables.length];
                 for(int i=0; i<result.variables.length;++i) {
-                	detail[i]=result.variables.toString();
+                	detail[i]=result.variables[i].toString();
                 }
                 response.setStatus(/*httpstatus=*/300);
                 break;
