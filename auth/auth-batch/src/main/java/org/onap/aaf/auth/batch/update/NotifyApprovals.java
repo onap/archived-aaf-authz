@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,14 +109,16 @@ public class NotifyApprovals extends Batch {
         Message msg = new Message();
         int emailCount = 0;
         List<Approval> pending = new ArrayList<>();
-        boolean isOwner,isSupervisor;
+        boolean isOwner;
+        boolean isSupervisor;
         for (Entry<String, List<Approval>> es : Approval.byApprover.entrySet()) {
             isOwner = isSupervisor = false;
             String approver = es.getKey();
             if (approver.indexOf('@')<0) {
                 approver += org.getRealm();
             }
-            Date latestNotify=null, soonestExpire=null;
+            Date latestNotify=null;
+            Date soonestExpire=null;
             GregorianCalendar latest=new GregorianCalendar();
             GregorianCalendar soonest=new GregorianCalendar();
             pending.clear();
@@ -165,8 +169,7 @@ public class NotifyApprovals extends Batch {
                         }
                     }
                 }
-                if (go) {
-                    if (maxEmails>emailCount++) {
+                if (go && (maxEmails>emailCount++)) {
                         try {
                             Organization org = OrganizationFactory.obtain(env, approver);
                             Identity user = org.getIdentity(noAvg, approver);
@@ -222,7 +225,6 @@ public class NotifyApprovals extends Batch {
                         } catch (OrganizationException e) {
                             trans.info().log(e);
                         }
-                    }
                 }
             }
         }
