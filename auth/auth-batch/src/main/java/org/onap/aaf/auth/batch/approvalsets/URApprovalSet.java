@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +56,7 @@ public class URApprovalSet extends ApprovalSet {
 		}
 		Result<NsDAO.Data> n = dv.ns(trans, urdd.ns);
 		if(n.notOKorIsEmpty()) {
-			throw new CadiException(String.format("Namespace '%s' does not exist: %s", urdd.ns));
+			throw new CadiException(String.format("Namespace '%s' does not exist", urdd.ns));
 		}
 		UserRoleDAO.Data found = null;
 		Result<List<Data>> lur = dv.ursByRole(trans, urdd.role);
@@ -68,7 +69,7 @@ public class URApprovalSet extends ApprovalSet {
 			}
 		}
 		if(found==null) {
-			throw new CadiException(String.format("User '%s' in Role '%s' does not exist: %s", urdd.user,urdd.role));
+			throw new CadiException(String.format("User '%s' in Role '%s' does not exist", urdd.user,urdd.role));
 		}
 		
 		// Primarily, Owners are responsible, unless it's owned by self
@@ -109,7 +110,7 @@ public class URApprovalSet extends ApprovalSet {
 		}
 	}
 
-	private ApprovalDAO.Data newApproval(Data urdd) throws CadiException {
+	private ApprovalDAO.Data newApproval(Data urdd) {
 		ApprovalDAO.Data add = new ApprovalDAO.Data();
 		add.id = Chrono.dateToUUID(System.currentTimeMillis());
 		add.ticket = fdd.id;
