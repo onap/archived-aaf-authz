@@ -28,6 +28,7 @@ Sections
    sections/installation/index
    sections/configuration/index
    sections/development/index
+   sections/AAF_in_a_Nutshell
    sections/logging
    sections/release-notes
 
