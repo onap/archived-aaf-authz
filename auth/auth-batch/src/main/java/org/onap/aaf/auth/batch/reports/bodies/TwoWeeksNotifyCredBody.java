@@ -22,10 +22,11 @@ package org.onap.aaf.auth.batch.reports.bodies;
 
 import java.io.IOException;
 
+import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class TwoWeeksNotifyCredBody extends NotifyCredBody {
 	public TwoWeeksNotifyCredBody(Access access) throws IOException {
-		super(access, "CredTwoWeek");
+		super(access, ExpireRange.TWO_WEEK);
 	}
 }

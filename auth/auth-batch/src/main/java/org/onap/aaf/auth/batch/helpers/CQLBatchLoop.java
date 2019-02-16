@@ -16,26 +16,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END====================================================
- *
  */
-package org.onap.aaf.auth.org;
 
-import java.util.List;
+package org.onap.aaf.auth.batch.helpers;
 
-import org.onap.aaf.auth.env.AuthzTrans;
+public class CQLBatchLoop {
+	
+	private final CQLBatch cqlBatch;
+	private final int maxBatch;
+	private final StringBuilder sb;
+	private final boolean dryRun;
+	private int i;
+	
+	public CQLBatchLoop(CQLBatch cb, int max, boolean dryRun) {
+		cqlBatch = cb;
+		i=0;
+		maxBatch = max;
+		sb = cqlBatch.begin();
+		this.dryRun = dryRun;
+	}
 
-public interface Mailer {
-    public boolean sendEmail(
-            AuthzTrans trans,
-            String test,
-            List<String> toList, 
-            List<String> ccList, 
-            String subject, 
-            String body,
-            Boolean urgent) throws OrganizationException;
-
-	public String mailFrom();
-
-	public int count();
-
+	/**
+	 * Put at the first part of your Loop Logic... It checks if you have enough lines to
+	 * push a batch.
+	 */
+	public void preLoop() {
+		if(i<0) {
+			cqlBatch.begin();
+		} else if(i>=maxBatch) {
+			cqlBatch.execute(dryRun);
+			cqlBatch.begin();
+			i=0;
+		}
+	}
+	
+	/**
+	 * Assume this is another line in the Batch
+	 * @return
+	 */
+	public StringBuilder inc() {
+		++i;
+		return sb;
+	}
+	
+	/**
+	 * Close up when done.  However, can go back to "preLoop" safely.
+	 */
+	public void flush() {
+		cqlBatch.execute(dryRun);
+		i=-1;
+	}
 }

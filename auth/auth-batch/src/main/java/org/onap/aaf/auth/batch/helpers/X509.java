@@ -112,6 +112,10 @@ public class X509 {
 		cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500);
 	}
 
+	public void row(CSV.Writer cw, X509Certificate x509Cert,String reason) {
+		cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500,reason);
+	}
+
 
 	public static void row(StringBuilder sb, List<String> row) {
     	sb.append("DELETE from authz.x509 WHERE ca='");

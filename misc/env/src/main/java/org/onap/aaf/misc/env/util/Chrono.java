@@ -38,7 +38,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class Chrono {
     private static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
 
-    public final static DateFormat dateFmt, dateOnlyFmt, niceDateFmt, utcFmt,iso8601Fmt;
+    public final static DateFormat dateFmt, dateOnlyFmt, niceDateFmt, utcFmt, niceUTCDateFmt, iso8601Fmt;
     // Give general access to XML DataType Factory, since it's pretty common
     public static final DatatypeFactory xmlDatatypeFactory;
     
@@ -52,8 +52,10 @@ public class Chrono {
         niceDateFmt = new SimpleDateFormat("yyyy/MM/dd HH:mm zzz");
         dateFmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         utcFmt =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        iso8601Fmt =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
         utcFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        niceUTCDateFmt = new SimpleDateFormat("yyyy/MM/dd HH:mm zzz");
+        niceUTCDateFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+        iso8601Fmt =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
     }
     
 
@@ -119,6 +121,25 @@ public class Chrono {
     public static String utcStamp(XMLGregorianCalendar xgc) {
         if (xgc==null)return "";
         return utcFmt.format(xgc.toGregorianCalendar().getTime());
+    }
+    
+    public static String niceUTCStamp() {
+        return niceUTCDateFmt.format(new Date());
+    }
+
+    public static String niceUTCStamp(Date date) {
+        if (date==null)return "";
+        return niceUTCDateFmt.format(date);
+    }
+
+    public static String niceUTCStamp(GregorianCalendar gc) {
+        if (gc==null)return "";
+        return niceUTCDateFmt.format(gc.getTime());
+    }
+
+    public static String niceUTCStamp(XMLGregorianCalendar xgc) {
+        if (xgc==null)return "";
+        return niceUTCDateFmt.format(xgc.toGregorianCalendar().getTime());
     }
 
     public static String dateStamp() {

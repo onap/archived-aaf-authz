@@ -36,7 +36,7 @@ public class JU_ExpireRange {
 		
 		Set<String> names=expRange.names();
 		assertTrue(names.contains("OneMonth"));
-		assertTrue(names.contains("CredOneWeek"));
+		assertTrue(names.contains("OneWeek"));
 		assertTrue(names.contains("Delete"));
 		assertFalse(names.contains(null));
 		assertFalse(names.contains("bogus"));

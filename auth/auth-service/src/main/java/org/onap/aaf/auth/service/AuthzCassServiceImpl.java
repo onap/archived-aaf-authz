@@ -2395,6 +2395,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         } catch (Exception e) {
                             trans.error().log(e, "While setting expiration to TempPassword");
                         }
+                        
                         Result<?>udr = ques.credDAO.create(trans, rcred.value);
                         if (udr.isOK()) {
                             return Result.ok();
@@ -2632,8 +2633,6 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         } else {
                             rcred.value.expires = org.expiration(null,exp).getTime();
                         }
-                        // Copy in other fields 10/21/2016
-                        rcred.value.notes=current.notes;
 
                         udr = ques.credDAO.create(trans, rcred.value);
                         if (udr.isOK()) {
@@ -2731,9 +2730,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             cd.cred = found.cred;
             cd.other = found.other;
             cd.type = found.type;
-            cd.notes = found.notes;
             cd.ns = found.ns;
             cd.expires = org.expiration(null, Expiration.ExtendPassword,days).getTime();
+            cd.tag = found.tag;
             
             cred = ques.credDAO.create(trans, cd);
             if (cred.isOK()) {

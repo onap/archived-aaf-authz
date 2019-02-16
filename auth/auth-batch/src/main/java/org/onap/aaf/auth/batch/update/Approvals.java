@@ -23,17 +23,19 @@ package org.onap.aaf.auth.batch.update;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.BatchPrincipal;
 import org.onap.aaf.auth.batch.approvalsets.ApprovalSet;
+import org.onap.aaf.auth.batch.approvalsets.Pending;
 import org.onap.aaf.auth.batch.approvalsets.URApprovalSet;
-import org.onap.aaf.auth.batch.helpers.Approval;
 import org.onap.aaf.auth.batch.helpers.BatchDataView;
-import org.onap.aaf.auth.batch.helpers.Future;
 import org.onap.aaf.auth.batch.helpers.NS;
 import org.onap.aaf.auth.batch.helpers.Role;
 import org.onap.aaf.auth.batch.helpers.UserRole;
@@ -42,159 +44,135 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.TimeTaken;
+import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class Approvals extends Batch {
     private final AuthzTrans noAvg;
 	private BatchDataView dataview;
+	private List<CSV> csvList;
+	private GregorianCalendar now;
 
     public Approvals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("batch:Approvals"));
-
-        dataview = new BatchDataView(noAvg,cluster,dryRun);
-        
-        session = dataview.getSession(trans);
-        
-        Approval.load(trans, session, Approval.v2_0_17);
-        Future.load(trans, session, Future.v2_0_17);
-        Role.load(trans, session);
+        session = cluster.connect();
+        dataview = new BatchDataView(noAvg,session,dryRun);
         NS.load(trans, session, NS.v2_0_11);
+        Role.load(trans, session);
         UserRole.load(trans, session, UserRole.v2_0_11);
+
+        now = new GregorianCalendar();
+        
+        csvList = new ArrayList<>();
+        File f;
+        if(args().length>0) {
+        	for(int i=0;i<args().length;++i) {
+        		f = new File(logDir(), args()[i]);
+        		if(f.exists()) {
+	        		csvList.add(new CSV(env.access(),f).processAll());
+        		} else {
+	            	trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
+        		}
+        	}
+        } else {
+        	f = new File(logDir(), "Approvals"+Chrono.dateOnlyStamp()+".csv");
+        	if(f.exists()) {
+        		csvList.add(new CSV(env.access(),f).processAll());
+			} else {
+	        	trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
+			}
+        }
+        
+        
     }
 
     @Override
     protected void run(AuthzTrans trans) {
-        // Create Intermediate Output 
-        final GregorianCalendar now = new GregorianCalendar();
-        
-        List<File> approveFiles = new ArrayList<>();
-        if(args().length>0) {
-        	for(int i=0;i<args().length;++i) {
-        		approveFiles.add(new File(logDir(), args()[i]));
-        	}
-        } else {
-        	approveFiles.add(new File(logDir(),"OneMonth"+Chrono.dateOnlyStamp()+".csv"));
-        }
-        
-        for(File f : approveFiles) {
-        	trans.init().log("Processing File:",f.getAbsolutePath());
-        }
-        
-//        GregorianCalendar gc = new GregorianCalendar();
-//        Date now = gc.getTime();
-//        String today = Chrono.dateOnlyStamp(now);
-        for(File f : approveFiles) {
-        	trans.info().log("Processing ",f.getAbsolutePath(),"for Approvals");
-        	if(f.exists()) {
-		        CSV approveCSV = new CSV(env.access(),f).processAll();
-		        try {
-					approveCSV.visit(row -> {
-						switch(row.get(0)) {
-							case "ur":
-								UserRoleDAO.Data urdd = UserRole.row(row);
-								List<Approval> apvs = Approval.byUser.get(urdd.user);
-								
-								System.out.println(row);
-								if(apvs==null) {
-									// Create an Approval
-									ApprovalSet uras = new URApprovalSet(noAvg, now, dataview, () -> {
-										return urdd;
-									});
-									Result<Void> rw = uras.write(noAvg);
-									if(rw.notOK()) {
-										System.out.println(rw.errorString());
-									}
+    	Map<String,Pending> mpending = new TreeMap<>();
+		Holder<Integer> count = new Holder<>(0);
+        for(CSV approveCSV : csvList) {
+        	TimeTaken tt = trans.start("Load Analyzed Reminders",Trans.SUB,approveCSV.name());
+        	try {
+				approveCSV.visit(row -> {
+					switch(row.get(0)) {
+						case Pending.REMIND:
+							try {
+								Pending p = new Pending(row);
+								Pending mp = mpending.get(row.get(1));
+								if(mp==null) {
+									mpending.put(row.get(1), p);
 								} else {
-									// Check that Existing Approval is still valid
-									for(Approval a : apvs) {
-										Future ticket = Future.data.get(a.add.ticket);
-										if(ticket==null) {
-											// Orphaned Approval - delete
-										} else {
-											
-										}
-									}
+									mp.inc(p); // FYI, unlikely
 								}
-								break;
-							default:
-								System.out.println(row);
-								//noAvg.debug().printf("Ignoring %s",type);
-						}
-					});
-				} catch (IOException | CadiException e) {
-					e.printStackTrace();
-					// .... but continue with next row
-				}
-		        
-		        /*
-        List<Approval> pending = new ArrayList<>();
-        boolean isOwner,isSupervisor;
-        for (Entry<String, List<Approval>> es : Approval.byApprover.entrySet()) {
-            isOwner = isSupervisor = false;
-            String approver = es.getKey();
-            if (approver.indexOf('@')<0) {
-                approver += org.getRealm();
-            }
-            Date latestNotify=null, soonestExpire=null;
-            GregorianCalendar latest=new GregorianCalendar();
-            GregorianCalendar soonest=new GregorianCalendar();
-            pending.clear();
-            
-            for (Approval app : es.getValue()) {
-                Future f = app.getTicket()==null?null:Future.data.get(app.getTicket());
-                if (f==null) { // only Ticketed Approvals are valid.. the others are records.
-                    // Approvals without Tickets are no longer valid. 
-                    if ("pending".equals(app.getStatus())) {
-                        app.setStatus("lapsed");
-                        app.update(noAvg,apprDAO,dryRun); // obeys dryRun
-                    }
-                } else {
-                    if ((soonestExpire==null && f.expires()!=null) || (soonestExpire!=null && f.expires()!=null && soonestExpire.before(f.expires()))) {
-                        soonestExpire=f.expires();
-                    }
-
-                    if ("pending".equals(app.getStatus())) {
-                        if (!isOwner) {
-                            isOwner = "owner".equals(app.getType());
-                        }
-                        if (!isSupervisor) {
-                            isSupervisor = "supervisor".equals(app.getType());
-                        }
-
-                        if ((latestNotify==null && app.getLast_notified()!=null) ||(latestNotify!=null && app.getLast_notified()!=null && latestNotify.before(app.getLast_notified()))) {
-                            latestNotify=app.getLast_notified();
-                        }
-                        pending.add(app);
-                    }
-                }
-            }
-
-            if (!pending.isEmpty()) {
-                boolean go = false;
-                if (latestNotify==null) { // never notified... make it so
-                    go=true;
-                } else {
-                    if (!today.equals(Chrono.dateOnlyStamp(latest))) { // already notified today
-                        latest.setTime(latestNotify);
-                        soonest.setTime(soonestExpire);
-                        int year;
-                        int days = soonest.get(GregorianCalendar.DAY_OF_YEAR)-latest.get(GregorianCalendar.DAY_OF_YEAR);
-                        days+=((year=soonest.get(GregorianCalendar.YEAR))-latest.get(GregorianCalendar.YEAR))*365 + 
-                                (soonest.isLeapYear(year)?1:0);
-                        if (days<7) { // If Expirations get within a Week (or expired), notify everytime.
-                            go = true;
-                        }
-                    }
-                }
-            }
-          */
+								count.set(count.get()+1);
+							} catch (ParseException e) {
+								trans.error().log(e);
+							} 
+						break;
+					}
+				});
+			} catch (IOException | CadiException e) {
+				e.printStackTrace();
+				// .... but continue with next row
+        	} finally {
+        		tt.done();
         	}
         }
+        trans.info().printf("Processed %d Reminder Rows", count.get());
+
+        count.set(0);
+        for(CSV approveCSV : csvList) {
+        	TimeTaken tt = trans.start("Processing %s's UserRoles",Trans.SUB,approveCSV.name());
+        	try {
+				approveCSV.visit(row -> {
+					switch(row.get(0)) {
+						case UserRole.APPROVE_UR:
+							UserRoleDAO.Data urdd = UserRole.row(row);
+							// Create an Approval
+							ApprovalSet uras = new URApprovalSet(noAvg, now, dataview, () -> {
+								return urdd;
+							});
+							Result<Void> rw = uras.write(noAvg);
+							if(rw.isOK()) {
+								Pending p = new Pending();
+								Pending mp = mpending.get(urdd.user);
+								if(mp==null) {
+									mpending.put(urdd.user, p);
+								} else {
+									mp.inc(p);
+								}
+								count.set(count.get()+1);
+							} else {
+								trans.error().log(rw.errorString());
+							}
+							break;
+					}
+				});
+				dataview.flush();
+			} catch (IOException | CadiException e) {
+				e.printStackTrace();
+				// .... but continue with next row
+	    	} finally {
+	    		tt.done();
+	    	}
+            trans.info().printf("Processed %d UserRoles", count.get());
+
+            count.set(0);
+        	tt = trans.start("Notify for Pending", Trans.SUB);
+        	try {
+        		
+        	} finally {
+        		tt.done();
+        	}
+            trans.info().printf("Created %d Notifications", count.get());
+	    }
     }
     
     @Override

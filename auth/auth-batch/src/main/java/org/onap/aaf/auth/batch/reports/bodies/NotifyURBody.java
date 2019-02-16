@@ -21,77 +21,68 @@
 package org.onap.aaf.auth.batch.reports.bodies;
 
 import java.io.IOException;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.org.Organization.Identity;
+import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.misc.env.util.Chrono;
 
-public abstract class NotifyCredBody extends NotifyBody {
+public abstract class NotifyURBody extends NotifyBody {
 
 	private final String explanation;
-	public NotifyCredBody(Access access, String name) throws IOException {
-		super("cred",name);
+	public NotifyURBody(Access access, String name) throws IOException {
+		super("ur",name);
 		
 		// Default
-		explanation = "The following Credentials are expiring on the dates shown. "
-				+ "Failure to act before the expiration date will cause your App's "
-				+ "Authentications to fail."
-				+ "<h3>Instructions for 'Password':</h3><ul>" 
-				+ "<li>Click on the Fully Qualified ID to ADD a new Password</li>"
-				+ "<li><b>REMEMBER!</b> You are not finished until you <ol>"
-				+ "<li><b>CHANGE <i>ALL</i></b> the configurations on <b><i>ALL</i></b> your processes!!</li>"
-				+ "<li><b>BOUNCE</b> them</li></ol>"
-				+ "<li>IF there is a WARNING, click the link for more information</li>"
-				+ "</ul>";
+		explanation = "The Roles for the IDs listed will expire on the dates shown. If "
+				+ "allowed to expire, the ID will no longer have access to the Permissions "
+				+ "associated with that Role.";
 	}
 
 	@Override
 	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
+		String fullname = "n/a";
+		String kind = "Name";
+		try {
+			Identity identity = trans.org().getIdentity(trans, id);
+			if(identity==null) {
+				trans.warn().printf("Cannot find %s in Organization",id);
+			} else {
+				fullname = identity.fullName();
+				if(!identity.isPerson()) {
+					if((identity = identity.responsibleTo())!=null) {
+						kind = "AppID Sponsor";
+						fullname = identity.fullName();
+					}
+				}
+			}
+		} catch (OrganizationException e) {
+			trans.error().log(e);
+			fullname = "n/a";
+		}
 		println(sb,indent,explanation);
 		println(sb,indent,"<table>");
 		indent+=2;
 		println(sb,indent,"<tr>");
 		indent+=2;
+		println(sb,indent,"<th>"+kind+"</th>");
 		println(sb,indent,"<th>Fully Qualified ID</th>");
-		println(sb,indent,"<th>Unique ID</th>");
-		println(sb,indent,"<th>Type</th>");
+		println(sb,indent,"<th>Role</th>");
 		println(sb,indent,"<th>Expires</th>");
-		println(sb,indent,"<th>Warnings</th>");
 		indent-=2;
 		println(sb,indent,"</tr>");
-		String theid, type, info, expires, warnings;
-		GregorianCalendar gc = new GregorianCalendar();
+
+		String name = null;
+		String fqi = null;
 		for(List<String> row : rows.get(id)) {
-			theid=row.get(1);
-			switch(row.get(3)) {
-				case "1":
-				case "2":
-					type = "Password";
-					break;
-				case "200":
-					type = "x509 (Certificate)";
-					break;
-				default:
-					type = "Unknown, see AAF GUI";
-					break;
-			}
-			theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
-			gc.setTimeInMillis(Long.parseLong(row.get(5)));
-			expires = Chrono.niceUTCStamp(gc);
-			info = row.get(6);
-			//TODO get Warnings 
-			warnings = "";
-			
 			println(sb,indent,"<tr>");
 			indent+=2;
-			printCell(sb,indent,theid);
-			printCell(sb,indent,info);
-			printCell(sb,indent,type);
-			printCell(sb,indent,expires);
-			printCell(sb,indent,warnings);
+			name = printCell(sb,indent,fullname,name);
+			fqi = printCell(sb,indent,row.get(1),fqi);
+			printCell(sb,indent,row.get(2)+'.'+row.get(3));
+			printCell(sb,indent,row.get(4));
 			indent-=2;
 			println(sb,indent,"</tr>");
 		}

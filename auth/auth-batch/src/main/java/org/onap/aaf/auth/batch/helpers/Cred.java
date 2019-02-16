@@ -63,25 +63,46 @@ public class Cred  {
         public final Date expires,written;
         public final Integer other;
         public final String tag;
-        public final Integer attn;
-        public final String notes;
+        public List<Note> notes;
 
         
-        public Instance(int type, Date expires, Integer other, long written, String tag, int attn, String notes) {
+        public Instance(int type, Date expires, Integer other, long written, String tag) {
             this.type = type;
             this.expires = expires;
             this.other = other;
             this.written = new Date(written);
             this.tag = tag;
-            this.attn = attn;
-            this.notes = notes;
+        }
+        
+        /**
+         * Usually returns Null...
+         * @return
+         */
+        public List<Note> notes() {
+        	return notes;
+        }
+        
+        public void addNote(int level, String note) {
+        	if(notes==null) {
+        		notes=new ArrayList<>();
+        	} 
+        	notes.add(new Note(level,note));
         }
         
         public String toString() {
-        	return expires.toString() + ": " + type + ' ' + notes;
+        	return expires.toString() + ": " + type + ' ' + tag;
         }
     }
     
+    public static class Note {
+    	public final int level;
+    	public final String note;
+    	
+    	public Note(int level, String note) {
+    		this.level = level;
+    		this.note = note;
+    	}
+    }
     public Date last(final int ... types) {
         Date last = null;
         for (Instance i : instances) {
@@ -114,12 +135,12 @@ public class Cred  {
     }
 
     public static void load(Trans trans, Session session, int ... types ) {
-        load(trans, session,"select id, type, expires, other, writetime(cred), tag, attn, notes from authz.cred;",types);
+        load(trans, session,"select id, type, expires, other, writetime(cred), tag from authz.cred;",types);
         
     }
 
     public static void loadOneNS(Trans trans, Session session, String ns,int ... types ) {
-        load(trans, session,"select id, type, expires, other, writetime(cred), tag, attn, notes from authz.cred WHERE ns='" + ns + "';");
+        load(trans, session,"select id, type, expires, other, writetime(cred), tag from authz.cred WHERE ns='" + ns + "';");
     }
 
     private static void load(Trans trans, Session session, String query, int ...types) {
@@ -157,7 +178,7 @@ public class Cred  {
                         }
                     }
                     add(row.getString(0), row.getInt(1),row.getTimestamp(2),row.getInt(3),row.getLong(4),
-                    		row.getString(5),row.getInt(6),row.getString(7));
+                    		row.getString(5));
                 }
             } finally {
                 tt.done();
@@ -173,16 +194,14 @@ public class Cred  {
     		final Date timestamp,
     		final int other,
     		final long written,
-    		final String tag,
-    		final int attn,
-    		final String notes
+    		final String tag
     		) {
         Cred cred = data.get(id);
         if (cred==null) {
             cred = new Cred(id);
             data.put(id, cred);
         }
-        cred.instances.add(new Instance(type, timestamp, other, written/1000,tag,attn,notes));
+        cred.instances.add(new Instance(type, timestamp, other, written/1000,tag));
         
         List<Cred> lscd = byNS.get(cred.ns);
         if (lscd==null) {
@@ -289,7 +308,12 @@ public class Cred  {
     
     public void row(final CSV.Writer csvw, final Instance inst) {
     	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
-    			inst.expires.getTime(),inst.tag,inst.attn,inst.notes);
+    			inst.expires.getTime(),inst.tag);
+    }
+
+    public void row(final CSV.Writer csvw, final Instance inst, final String reason) {
+    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
+    			inst.expires.getTime(),inst.tag,reason);
     }
 
 
@@ -341,7 +365,12 @@ public class Cred  {
 
 
 	public static String histMemo(String fmt, String orgName, List<String> row) {
-		return String.format(fmt, row.get(1),orgName,row.get(4));
+		String reason;
+		if(row.size()>5) { // Reason included
+			reason = row.get(5);
+		} else {
+			reason = String.format(fmt, row.get(1),orgName,row.get(4));
+		}
+		return reason;
 	}
-
 }

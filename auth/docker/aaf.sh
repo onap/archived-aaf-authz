@@ -26,8 +26,11 @@ DOCKER=${DOCKER:=docker}
 LINKS="--link $CASSANDRA_DOCKER"
 
 function run_it() {
+  if [ -n "${DUSER}" ]; then
+    USER_LINE="--user ${DUSER}"
+  fi
   $DOCKER run $@ \
-    --user aaf \
+    $USER_LINE \
     -v "aaf_config:$CONF_ROOT_DIR" \
     -v "aaf_status:/opt/app/aaf/status" \
     $LINKS \

@@ -92,7 +92,7 @@ public class OrganizationFactory {
 
             String orgClass = env.getProperty(ORGANIZATION_DOT+orgNS);
             if (orgClass == null) {
-                env.warn().log("There is no Organization." + orgNS + " property");
+                env.warn().printf("There is no Organization.%s property",orgNS);
             } else {
                 try {
                     Class<?> orgCls = Class.forName(orgClass);

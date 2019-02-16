@@ -24,6 +24,7 @@ package org.onap.aaf.auth.batch.helpers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -50,6 +51,7 @@ public class Approval implements CacheChange.Data  {
     public static TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
     public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
     public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
+    public static List<Approval> list = new LinkedList<>();
     private final static CacheChange<Approval> cache = new CacheChange<>(); 
     
     public final ApprovalDAO.Data add;
@@ -127,6 +129,7 @@ public class Approval implements CacheChange.Data  {
 		cw.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
 	}
 
+
     public static void load(Trans trans, Session session, Creator<Approval> creator ) {
         trans.info().log( "query: " + creator.select() );
         TimeTaken tt = trans.start("Load Notify", Env.REMOTE);
@@ -147,6 +150,8 @@ public class Approval implements CacheChange.Data  {
                     ++count;
                     try {
                             Approval app = creator.create(row);
+                            list.add(app);
+                            
                             String person = app.getApprover();
                             if (person!=null) {
                             ln = byApprover.get(person);

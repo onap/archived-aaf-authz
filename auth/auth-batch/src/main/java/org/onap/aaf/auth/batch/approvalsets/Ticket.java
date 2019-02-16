@@ -18,24 +18,20 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.auth.org;
+package org.onap.aaf.auth.batch.approvalsets;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.batch.helpers.Approval;
+import org.onap.aaf.auth.batch.helpers.Future;
 
-public interface Mailer {
-    public boolean sendEmail(
-            AuthzTrans trans,
-            String test,
-            List<String> toList, 
-            List<String> ccList, 
-            String subject, 
-            String body,
-            Boolean urgent) throws OrganizationException;
-
-	public String mailFrom();
-
-	public int count();
-
+public class Ticket {
+	public final Future f;
+	public final Set<Approval> approvals;
+	
+	public Ticket(Future future) {
+		this.f = future;
+		approvals = new HashSet<>();
+	}
 }

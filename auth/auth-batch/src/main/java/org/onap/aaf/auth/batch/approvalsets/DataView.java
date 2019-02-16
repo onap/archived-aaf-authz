@@ -60,9 +60,14 @@ public interface DataView {
 	public Result<List<UserRoleDAO.Data>> ursByRole(final AuthzTrans trans, final String role);
 	public Result<List<UserRoleDAO.Data>> ursByUser(final AuthzTrans trans, final String user);
 
-	// Writes
-	public Result<ApprovalDAO.Data> write(final AuthzTrans trans, final ApprovalDAO.Data add);
-	public Result<FutureDAO.Data> write(final AuthzTrans trans, final FutureDAO.Data add);
+	// Inserts
+	public Result<ApprovalDAO.Data> insert(final AuthzTrans trans, final ApprovalDAO.Data add);
+	public Result<FutureDAO.Data> insert(final AuthzTrans trans, final FutureDAO.Data add);
 	
 	// Deletes
+	public Result<ApprovalDAO.Data> delete(final AuthzTrans trans, final ApprovalDAO.Data add);
+	public Result<FutureDAO.Data> delete(final AuthzTrans trans, final FutureDAO.Data add);
+	
+	// Clear any buffers
+	public void flush();
 }

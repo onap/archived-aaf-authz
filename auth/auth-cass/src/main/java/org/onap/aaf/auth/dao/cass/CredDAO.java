@@ -26,6 +26,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     public static final int BASIC_AUTH = 1;
     public static final int BASIC_AUTH_SHA256 = 2;
     public static final int CERT_SHA256_RSA =200;
+    public static final SecureRandom srand = new SecureRandom();
     
     private HistoryDAO historyDAO;
     private CIDAO<AuthzTrans> infoDAO;
@@ -78,11 +80,11 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         
         public String                   id;
         public Integer                  type;
-        public Date                      expires;
-        public Integer                    other;
-        public String                    ns;
-        public String                    notes;
-        public ByteBuffer                cred;  //   this is a blob in cassandra
+        public Date                     expires;
+        public Integer                  other;
+        public String                   ns;
+        public String					tag;
+        public ByteBuffer               cred;  //   this is a blob in cassandra
 
 
         @Override
@@ -111,7 +113,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
 
     private static class CredLoader extends Loader<Data> implements Streamer<Data>{
         public static final int MAGIC=153323443;
-        public static final int VERSION=1;
+        public static final int VERSION=2;
         public static final int BUFF_SIZE=48; // Note: 
 
         public static final CredLoader deflt = new CredLoader(KEYLIMIT);
@@ -126,14 +128,14 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             data.expires = row.getTimestamp(2);
             data.other = row.getInt(3);
             data.ns = row.getString(4);     
-            data.notes = row.getString(5);
+            data.tag = row.getString(5);
             data.cred = row.getBytesUnsafe(6);            
             return data;
         }
 
         @Override
         protected void key(Data data, int _idx, Object[] obj) {
-        int idx = _idx;
+        	int idx = _idx;
 
             obj[idx] = data.id;
             obj[++idx] = data.type;
@@ -145,7 +147,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             int i;
             obj[i=idx] = data.other;
             obj[++i] = data.ns;
-            obj[++i] = data.notes;
+            obj[++i] = data.tag;
             obj[++i] = data.cred;
         }
 
@@ -157,7 +159,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             os.writeLong(data.expires==null?-1:data.expires.getTime());
             os.writeInt(data.other==null?0:data.other);
             writeString(os, data.ns);
-            writeString(os, data.notes);
+            writeString(os, data.tag);
             if (data.cred==null) {
                 os.writeInt(-1);
             } else {
@@ -179,7 +181,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             data.expires = l<0?null:new Date(l);
             data.other = is.readInt();
             data.ns = readString(is,buff);
-            data.notes = readString(is,buff);
+            data.tag = readString(is,buff);
             
             int i = is.readInt();
             data.cred=null;
@@ -212,7 +214,19 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
                 " WHERE id = ?", CredLoader.deflt,readConsistency);
     }
     
-    public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
+	/* (non-Javadoc)
+	 * @see org.onap.aaf.auth.dao.CassDAOImpl#create(org.onap.aaf.misc.env.TransStore, java.lang.Object)
+	 */
+	@Override
+	public Result<Data> create(AuthzTrans trans, Data data) {
+		if(data.tag == null) {
+			long l = srand.nextLong();
+			data.tag = Long.toHexString(l);
+		}
+		return super.create(trans, data);
+	}
+
+	public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
         return psNS.read(trans, R_TEXT, new Object[]{ns});
     }
     

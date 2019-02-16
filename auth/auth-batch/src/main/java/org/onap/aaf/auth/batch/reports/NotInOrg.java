@@ -32,7 +32,6 @@ import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.helpers.Cred;
 import org.onap.aaf.auth.batch.helpers.Cred.Instance;
 import org.onap.aaf.auth.batch.helpers.UserRole;
-import org.onap.aaf.auth.batch.helpers.Visitor;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.Organization.Identity;
@@ -108,7 +107,7 @@ public class NotInOrg extends Batch {
 			UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
 				try {
 					if(!check(transNoAvg, checked, ur.user())) {
-						ur.row(whichWriter(transNoAvg,ur.user()));
+						ur.row(whichWriter(transNoAvg,ur.user()),UserRole.UR);
 					}
 				} catch (OrganizationException e) {
 					trans.error().log(e, "Error Decrypting X509");

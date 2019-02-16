@@ -18,24 +18,15 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.auth.org;
+package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.util.List;
+import java.io.IOException;
 
-import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.batch.helpers.ExpireRange;
+import org.onap.aaf.cadi.Access;
 
-public interface Mailer {
-    public boolean sendEmail(
-            AuthzTrans trans,
-            String test,
-            List<String> toList, 
-            List<String> ccList, 
-            String subject, 
-            String body,
-            Boolean urgent) throws OrganizationException;
-
-	public String mailFrom();
-
-	public int count();
-
+public class OneMonthNotifyURBody extends NotifyURBody {
+	public OneMonthNotifyURBody(Access access) throws IOException {
+		super(access, ExpireRange.ONE_MONTH);
+	}
 }
