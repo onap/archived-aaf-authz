@@ -74,13 +74,13 @@ public class ApprovalSet {
 	
 	public Result<Void> write(AuthzTrans trans) {
 		StringBuilder errs = null;
-		Result<FutureDAO.Data> rf = dataview.write(trans, fdd);
+		Result<FutureDAO.Data> rf = dataview.insert(trans, fdd);
 		if(rf.notOK()) {
 			errs = new StringBuilder();
 			errs.append(rf.errorString());
 		} else {
 			for(ApprovalDAO.Data add : ladd) {
-				Result<ApprovalDAO.Data> af = dataview.write(trans, add);
+				Result<ApprovalDAO.Data> af = dataview.insert(trans, add);
 				if(af.notOK()) {
 					if(errs==null) {
 						errs = new StringBuilder();

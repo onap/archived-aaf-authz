@@ -133,7 +133,7 @@ public class PrepExtend extends Batch {
 				*/
 				UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
 					if(from.before(ur.expires()) && to.after(ur.expires())) {
-						ur.row(cw);
+						ur.row(cw,UserRole.UR);
 					}
 				});
 				

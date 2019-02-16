@@ -27,7 +27,7 @@ import org.onap.aaf.auth.env.AuthzTrans;
 public interface Mailer {
     public boolean sendEmail(
             AuthzTrans trans,
-            boolean testMode,
+            String test,
             List<String> toList, 
             List<String> ccList, 
             String subject, 

@@ -34,10 +34,14 @@ import java.util.Set;
 import org.onap.aaf.cadi.Access;
 
 public class ExpireRange {
+	public static final String ONE_MONTH = "OneMonth";
+	public static final String TWO_MONTH = "TwoMonth";
+	public static final String TWO_WEEK = "TwoWeek";
+	public static final String ONE_WEEK = "OneWeek";
 	private static final String AAF_BATCH_RANGE = "aaf_batch_range.";
 	public Map<String,List<Range>> ranges;
 	public final Date now;
-	public String rangeOneMonth = "OneMonth";
+
 	private Range delRange;
 	
 	public ExpireRange(final Access access) {
@@ -55,14 +59,14 @@ public class ExpireRange {
 				lcred.add(delRange);
 				lx509.add(delRange);
 				
-				lcred.add(new Range("CredOneWeek",3,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
-				lcred.add(new Range("CredTwoWeek",2,1,GregorianCalendar.WEEK_OF_MONTH,1,GregorianCalendar.WEEK_OF_MONTH,2));
-				lcred.add(new Range(rangeOneMonth,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
-				lcred.add(new Range("TwoMonth",1,0,GregorianCalendar.MONTH,1,GregorianCalendar.MONTH,2));
+				lcred.add(new Range(ONE_WEEK,3,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
+				lcred.add(new Range(TWO_WEEK,2,1,GregorianCalendar.WEEK_OF_MONTH,1,GregorianCalendar.WEEK_OF_MONTH,2));
+				lcred.add(new Range(ONE_MONTH,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lcred.add(new Range(TWO_MONTH,1,0,GregorianCalendar.MONTH,1,GregorianCalendar.MONTH,2));
 				
-				lur.add(new Range(rangeOneMonth,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lur.add(new Range(ONE_MONTH,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 				
-				lx509.add(new Range(rangeOneMonth,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+				lx509.add(new Range(ONE_MONTH,1,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
 			}
 	}
 	

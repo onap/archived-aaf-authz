@@ -47,7 +47,10 @@ import com.datastax.driver.core.Statement;
 
 public class UserRole implements Cloneable, CacheChange.Data  {
 
-    private static final String SEPARATOR = "\",\"";
+    public static final String UR = "ur";
+    public static final String APPROVE_UR = "ur";
+
+	private static final String SEPARATOR = "\",\"";
 
     // CACHE Calling
     private static final String LOG_FMT = "%s UserRole - %s: %s-%s (%s, %s) expiring %s";
@@ -308,17 +311,21 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         cache.resetLocalData();
     }
 
-    public void row(final CSV.Writer csvw) {
-    	csvw.row("ur",user(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
+    public void row(final CSV.Writer csvw, String tag) {
+    	csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
+    }
+
+    public void row(final CSV.Writer csvw, String tag, String reason) {
+    	csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime(),reason);
     }
     
     public static Data row(List<String> row) {
 		Data data = new Data();
 		data.user = row.get(1);
-		data.ns = row.get(2);
-		data.rname = row.get(3);
-		data.role = data.ns + '.' + data.rname;
-		data.expires = new Date(Long.parseLong(row.get(5)));
+		data.role = row.get(2);
+		data.ns = row.get(3);
+		data.rname = row.get(4);
+		data.expires = new Date(Long.parseLong(row.get(6)));
 		return data;
 	}
 
@@ -327,8 +334,6 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append(row.get(1));
     	sb.append("' AND role='");
     	sb.append(row.get(2));
-    	sb.append('.');
-    	sb.append(row.get(3));
     	sb.append("';\n");
     }
 
@@ -339,16 +344,21 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append(row.get(1));
     	sb.append("' AND role='");
     	sb.append(row.get(2));
-    	sb.append('.');
-    	sb.append(row.get(3));
     	sb.append("';\n");
     }
     
 	public static String histMemo(String fmt, List<String> row) {
-		return String.format(fmt, row.get(1),row.get(2)+'.'+row.get(3), row.get(4));
+		String reason;
+		if(row.size()>7) { // Reason included
+			reason = String.format("%s removed from %s because %s", 
+					row.get(1),row.get(2),row.get(7));
+		} else {
+			reason = String.format(fmt, row.get(1),row.get(2), row.get(5));
+		}
+		return reason;
 	}
 
 	public static String histSubject(List<String> row) {
-		return row.get(1) + '|' + row.get(2)+'.'+row.get(3);	
+		return row.get(1) + '|' + row.get(2);	
 	}
 }

@@ -318,6 +318,7 @@ public class CMService {
                 crdd.id = req.value.mechid;
                 crdd.ns = Question.domain2ns(crdd.id);
                 crdd.type = CredDAO.CERT_SHA256_RSA;
+                crdd.tag = cdd.serial.toString(16);
                 credDAO.create(trans, crdd);
 
                 CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), compileNotes(notes));

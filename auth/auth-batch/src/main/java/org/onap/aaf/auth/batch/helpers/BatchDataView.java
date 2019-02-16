@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onap.aaf.auth.batch.actions.ApprovalAdd;
-import org.onap.aaf.auth.batch.actions.FutureAdd;
 import org.onap.aaf.auth.batch.approvalsets.DataView;
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
@@ -35,29 +33,29 @@ import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
+import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
+import org.onap.aaf.misc.env.util.Chrono;
 
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 public class BatchDataView implements DataView {
-	private FutureAdd futureAdd;
-	private ApprovalAdd approvalAdd;
+	private static final String QUOTE_PAREN_SEMI = "');\n";
+	private static final String QUOTE_COMMA = "',";
+	private static final String QUOTE_COMMA_QUOTE = "','";
+	private static final String COMMA_QUOTE = ",'";
+	private final CQLBatchLoop cqlBatch;
+	private final Session session;
 
-	public BatchDataView(final AuthzTrans trans, final Cluster cluster, final boolean dryRun ) throws APIException, IOException {
-		futureAdd = new FutureAdd(trans, cluster, dryRun);
-		approvalAdd = new ApprovalAdd(trans, futureAdd);
+	public BatchDataView(final AuthzTrans trans, final Session session, final boolean dryRun ) throws APIException, IOException {
+		this.session = session;
+		cqlBatch = new CQLBatchLoop(new CQLBatch(trans.info(),session),50,dryRun);
 	}
 
 	public Session getSession(AuthzTrans trans) throws APIException, IOException {
-		TimeTaken tt = trans.start("Get Session", Trans.SUB);
-		try {
-			return futureAdd.getSession(trans);
-		} finally {
-			tt.done();
-		}
+		return session;
 	}
 	
 	public Result<NsDAO.Data> ns(AuthzTrans trans, String id) {
@@ -114,13 +112,73 @@ public class BatchDataView implements DataView {
 	}
 
 	@Override
-	public Result<FutureDAO.Data> write(AuthzTrans trans, FutureDAO.Data fdd) {
-		return futureAdd.exec(trans, fdd, null);
+	public Result<FutureDAO.Data> delete(AuthzTrans trans, FutureDAO.Data fdd) {
+		cqlBatch.preLoop();
+		StringBuilder sb = cqlBatch.inc();
+		sb.append("DELETE from authz.future WHERE id = ");
+		sb.append(fdd.id.toString());
+		return Result.ok(fdd);		
+	}
+	
+	@Override
+	public Result<ApprovalDAO.Data> delete(AuthzTrans trans, ApprovalDAO.Data add) {
+		cqlBatch.preLoop();
+		StringBuilder sb = cqlBatch.inc();
+		sb.append("DELETE from authz.approval WHERE id = ");
+		sb.append(add.id.toString());
+		return Result.ok(add);		
+	}
+
+
+	@Override
+	public Result<ApprovalDAO.Data> insert(AuthzTrans trans, ApprovalDAO.Data add) {
+		cqlBatch.preLoop();
+		StringBuilder sb = cqlBatch.inc();
+		sb.append("INSERT INTO authz.approval (id,approver,last_notified,memo,operation,status,ticket,type,user) VALUES ("); 
+		sb.append(add.id.toString());
+		sb.append(COMMA_QUOTE);
+		sb.append(add.approver);
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(Chrono.utcStamp(add.last_notified));
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(add.memo.replace("'", "''"));
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(add.operation);
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(add.status);
+		sb.append(QUOTE_COMMA);
+		sb.append(add.ticket.toString());
+		sb.append(COMMA_QUOTE);
+		sb.append(add.type);
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(add.user);
+		sb.append(QUOTE_PAREN_SEMI);
+		return Result.ok(add);
 	}
 
 	@Override
-	public Result<ApprovalDAO.Data> write(AuthzTrans trans, ApprovalDAO.Data add) {
-		return approvalAdd.exec(trans, add, null);
+	public Result<FutureDAO.Data> insert(AuthzTrans trans, FutureDAO.Data fdd) {
+		cqlBatch.preLoop();
+		StringBuilder sb = cqlBatch.inc();
+		sb.append("INSERT INTO authz.future (id,construct,expires,memo,start,target) VALUES ("); 
+		sb.append(fdd.id.toString());
+		sb.append(',');
+		fdd.construct.hasArray();
+		sb.append(Hash.toHex(fdd.construct.array()));
+		sb.append(COMMA_QUOTE);
+		sb.append(Chrono.utcStamp(fdd.expires));
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(fdd.memo.replace("'", "''"));
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(Chrono.utcStamp(fdd.expires));
+		sb.append(QUOTE_COMMA_QUOTE);
+		sb.append(fdd.target);
+		sb.append(QUOTE_PAREN_SEMI);
+		return Result.ok(fdd);
 	}
-
+	
+	@Override
+	public void flush() {
+		cqlBatch.flush();
+	}
 }

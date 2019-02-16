@@ -21,11 +21,13 @@
 package org.onap.aaf.auth.batch.reports.bodies;
 
 import java.io.IOException;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.misc.env.util.Chrono;
 
 public abstract class NotifyCredBody extends NotifyBody {
 
@@ -35,32 +37,40 @@ public abstract class NotifyCredBody extends NotifyBody {
 		
 		// Default
 		explanation = "The following Credentials are expiring on the dates shown. "
-				+ "Failure to act before the expiration date will cause your App's Authentications to fail.";
+				+ "Failure to act before the expiration date will cause your App's "
+				+ "Authentications to fail."
+				+ "<h3>Instructions for 'Password':</h3><ul>" 
+				+ "<li>Click on the Fully Qualified ID to ADD a new Password</li>"
+				+ "<li><b>REMEMBER!</b> You are not finished until you <ol>"
+				+ "<li><b>CHANGE <i>ALL</i></b> the configurations on <b><i>ALL</i></b> your processes!!</li>"
+				+ "<li><b>BOUNCE</b> them</li></ol>"
+				+ "<li>IF there is a WARNING, click the link for more information</li>"
+				+ "</ul>";
 	}
 
 	@Override
 	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
 		println(sb,indent,explanation);
-		println(sb,indent,"<br><br>");
 		println(sb,indent,"<table>");
 		indent+=2;
 		println(sb,indent,"<tr>");
 		indent+=2;
 		println(sb,indent,"<th>Fully Qualified ID</th>");
+		println(sb,indent,"<th>Unique ID</th>");
 		println(sb,indent,"<th>Type</th>");
-		println(sb,indent,"<th>Details</th>");
 		println(sb,indent,"<th>Expires</th>");
-		println(sb,indent,"<th>Cred Detail Page</th>");
+		println(sb,indent,"<th>Warnings</th>");
 		indent-=2;
 		println(sb,indent,"</tr>");
-		String theid, type, info, gui, expires, notes;
-		String p_theid=null, p_type=null, p_gui=null, p_expires=null;
+		String theid, type, info, expires, warnings;
+		GregorianCalendar gc = new GregorianCalendar();
 		for(List<String> row : rows.get(id)) {
 			theid=row.get(1);
 			switch(row.get(3)) {
 				case "1":
 				case "2":
 					type = "Password";
+					break;
 				case "200":
 					type = "x509 (Certificate)";
 					break;
@@ -68,27 +78,22 @@ public abstract class NotifyCredBody extends NotifyBody {
 					type = "Unknown, see AAF GUI";
 					break;
 			}
-			gui = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+row.get(2)+"</a>";
-			expires = row.get(4);
+			theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
+			gc.setTimeInMillis(Long.parseLong(row.get(5)));
+			expires = Chrono.niceUTCStamp(gc);
 			info = row.get(6);
-			notes = row.get(8);
-			if(notes!=null && !notes.isEmpty()) {
-				info += "<br>" + notes; 
-			}
+			//TODO get Warnings 
+			warnings = "";
 			
 			println(sb,indent,"<tr>");
 			indent+=2;
-			printCell(sb,indent,theid,p_theid);
-			printCell(sb,indent,type,p_type);
-			printCell(sb,indent,info,null);
-			printCell(sb,indent,expires,p_expires);
-			printCell(sb,indent,gui,p_gui);
+			printCell(sb,indent,theid);
+			printCell(sb,indent,info);
+			printCell(sb,indent,type);
+			printCell(sb,indent,expires);
+			printCell(sb,indent,warnings);
 			indent-=2;
 			println(sb,indent,"</tr>");
-			p_theid=theid;
-			p_type=type;
-			p_gui=gui;
-			p_expires=expires;
 		}
 		indent-=2;
 		println(sb,indent,"</table>");

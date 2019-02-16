@@ -57,6 +57,10 @@ public class CSV {
 		processAll = false;
 	}
 	
+	public String name() {
+		return csv.getName();
+	}
+
 	public CSV processAll() {
 		processAll = true;
 		return this;
@@ -197,9 +201,10 @@ public class CSV {
 		 * Note: CSV files do not actually support Comments as a standard, but it is useful
 		 * @param comment
 		 */
-		public void comment(String comment) {
+		public void comment(String comment, Object ... objs) {
 			ps.print("# ");
-			ps.println(comment);
+			ps.printf(comment,objs);
+			ps.println();
 		}
 		
 		public void flush() {

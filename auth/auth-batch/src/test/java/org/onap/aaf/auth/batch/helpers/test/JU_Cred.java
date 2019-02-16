@@ -77,9 +77,9 @@ public class JU_Cred {
         prop = new PropAccess();
         prop.setProperty(Config.AAF_ROOT_NS, "org.onap.aaf");
         prop.setProperty(Config.AAF_ROOT_COMPANY,"test");
-        define.set(prop);
+        Define.set(prop);
         
-        instance = new Instance(12, date, integer, 125642678910L,"234",1,"");
+        instance = new Instance(12, date, integer, 125642678910L,"234");
         cred = new Cred("myid1234@aaf.att.com");
     }
     

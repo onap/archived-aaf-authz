@@ -25,9 +25,11 @@ LABEL description="aaf_${AAF_COMPONENT}"
 LABEL version=${AAF_VERSION}
  
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
-RUN mkdir -p /opt/app/osaaf && chown ${USER}:${USER} /opt/app/osaaf 
-RUN mkdir -p /opt/app/aaf/status && chown ${USER}:${USER} /opt/app/aaf/status 
-RUN chown -R ${USER}:${USER} /opt/app/aaf
+RUN mkdir -p /opt/app/osaaf 
+RUN mkdir -p /opt/app/aaf/status
+RUN if [ -n "${DUSER}" ]; then  chown ${DUSER}:${DUSER} /opt/app/aaf/status \
+    && chown ${DUSER}:${DUSER} /opt/app/osaaf \
+    && chown -R ${DUSER}:${DUSER} /opt/app/aaf; fi
 
 #CMD ["bash","-c","cd /opt/app/aaf;bin/${AAF_COMPONENT}"]
 CMD []

@@ -151,13 +151,13 @@ public class Config {
     public static final String AAF_DEFAULT_API_VERSION = "2.1";
     public static final String AAF_API_VERSION = "aaf_api_version";
     public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration
-    public static final String AAF_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.service:" + AAF_DEFAULT_API_VERSION;
-    public static final String GUI_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.gui:" + AAF_DEFAULT_API_VERSION;
-    public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.cm:" + AAF_DEFAULT_API_VERSION;
-    public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.fs:" + AAF_DEFAULT_API_VERSION;
-    public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/AAF_NS.hello:" + AAF_DEFAULT_API_VERSION;
-    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/AAF_NS.token:" + AAF_DEFAULT_API_VERSION;
-    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION;
+    public static final String AAF_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.service:" + AAF_DEFAULT_API_VERSION;
+    public static final String GUI_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.gui:" + AAF_DEFAULT_API_VERSION;
+    public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.cm:" + AAF_DEFAULT_API_VERSION;
+    public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.fs:" + AAF_DEFAULT_API_VERSION;
+    public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.hello:" + AAF_DEFAULT_API_VERSION;
+    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.token:" + AAF_DEFAULT_API_VERSION;
+    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION;
 
     public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
     // AAF Locator Entries are ADDITIONAL entries, which also gives the Property ability

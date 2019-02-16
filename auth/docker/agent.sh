@@ -90,11 +90,16 @@ else
   PREFIX=""
 fi 
 
-$DOCKER run \
-    -it \
-    --rm \
+function run_it() {
+  LINKS="--link aaf-locate"
+  if [ -n "${DUSER}" ]; then
+    USER_LINE="--user ${DUSER}"
+  fi
+  $DOCKER run  -it  --rm \
+    ${USER_LINE} \
     -v "${VOLUME}:/opt/app/osaaf" \
     --add-host="$AAF_FQDN:$AAF_FQDN_IP" \
+    $LINKS \
     --env AAF_FQDN=${AAF_FQDN} \
     --env DEPLOY_FQI=${DEPLOY_FQI} \
     --env DEPLOY_PASSWORD=${DEPLOY_PASSWORD} \
@@ -102,6 +107,19 @@ $DOCKER run \
     --env APP_FQDN=${APP_FQDN} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
-    --name aaf_agent_$USER \
+    --name aaf-agent-$USER \
     "$PREFIX"onap/aaf/aaf_agent:$VERSION \
-    /bin/bash "$@"
+    bash -c "bash /opt/app/aaf_config/bin/agent.sh $PARAMS"
+}
+
+PARAMS=$@
+case "$1" in 
+  bash)
+    PARAMS="&& cd /opt/app/osaaf/local && exec bash"
+    run_it -it --rm  
+    ;;
+  *)
+    run_it --rm 
+    ;;
+esac
+

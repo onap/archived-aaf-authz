@@ -50,6 +50,7 @@ public abstract class NotifyBody {
 	private final String type;
 	private String date;
 	private int escalation;
+	private int count;
 	
 	public NotifyBody(final String type, final String name) {
 		rows = new TreeMap<>();
@@ -57,6 +58,7 @@ public abstract class NotifyBody {
 		this.type = type;
 		date="";
 		escalation = 1;
+		count = 0;
 	}
 	
 	public void store(List<String> row) {
@@ -85,6 +87,10 @@ public abstract class NotifyBody {
 
 	public String name() {
 		return name;
+	}
+	
+	public String type() {
+		return type;
 	}
 	
 	public String date() {
@@ -183,7 +189,6 @@ public abstract class NotifyBody {
 			}
 		}
 	}
-	
 
 	protected void println(StringBuilder sb, int indent, Object ... objs) {
 		for(int i=0;i<indent;++i) {
@@ -195,12 +200,24 @@ public abstract class NotifyBody {
 		sb.append('\n');
 	}
 	
-	protected void printCell(StringBuilder sb, int indent, String current, String prev) {
+	protected String printCell(StringBuilder sb, int indent, String current, String prev) {
 		if(current.equals(prev)) {
 			println(sb,indent,DUPL);
 		} else {
-			println(sb,indent,"<td>",current,"</td>");
+			printCell(sb,indent,current);
 		}
+		return current; // use to set prev...
 	}
-
+	
+	protected void printCell(StringBuilder sb, int indent, String current) {
+		println(sb,indent,"<td>",current,"</td>");
+	}
+	
+	public synchronized void inc() {
+		++count;
+	}
+	
+	public int count() {
+		return count;
+	}
 }

@@ -55,12 +55,12 @@ if [ ! -d $LOCAL ]; then
 fi
 
 # Setup Bash, first time only
-if [ ! -e "$HOME/.bash_aliases" ] || [ -z "$(grep agent $HOME/.bash_aliases)" ]; then
-  echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bash_aliases
-  echo "alias agent='$OSAAF/bin/agent.sh EMPTY \$*'" >>$HOME/.bash_aliases
-  echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bash_aliases
-  chmod a+x $OSAAF/bin/agent.sh
-  . $HOME/.bash_aliases
+if [ ! -e "$HOME/.bashrc" ] || [ -z "$(grep cadi $HOME/.bashrc)" ]; then
+  echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bashrc
+  echo "alias agent='$CONFIG/bin/agent.sh agent \$*'" >>$HOME/.bashrc
+  echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bashrc
+  chmod a+x $CONFIG/bin/agent.sh
+  . $HOME/.bashrc
 fi
 
 # Setup SSO info for Deploy ID

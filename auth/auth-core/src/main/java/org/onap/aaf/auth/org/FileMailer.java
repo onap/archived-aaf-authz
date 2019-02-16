@@ -67,7 +67,7 @@ public class FileMailer implements Mailer {
 	}
 
 	@Override
-	public boolean sendEmail(AuthzTrans trans, boolean testMode, List<String> toList, List<String> ccList,
+	public boolean sendEmail(AuthzTrans trans, String test, List<String> toList, List<String> ccList,
 			String subject, String body, Boolean urgent) throws OrganizationException {
 		boolean status = false;
 		try {
@@ -75,7 +75,7 @@ public class FileMailer implements Mailer {
 			if(testName==null) {
 				path = Files.createTempFile(dir, "email", ".hdr");
 			} else {
-				path = Paths.get(dir.toString(), "emailTEST.hdr");
+				path = Paths.get(dir.toString(), "emailTEST"+test+".hdr");
 			}
 			BufferedWriter bw = Files.newBufferedWriter(path);
 			try {

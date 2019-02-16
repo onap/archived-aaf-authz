@@ -37,6 +37,7 @@ import org.onap.aaf.auth.org.Executor;
 import org.onap.aaf.auth.org.Mailer;
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.OrganizationException;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.Env;
 
@@ -46,9 +47,12 @@ public class DefaultOrg implements Organization {
     final String domain;
     final String atDomain;
     final String realm;
+	
+    private final String root_ns;
 
     private final String NAME;
     private final Set<String> supportedRealms;
+
 
 
     public DefaultOrg(Env env, String realm) throws OrganizationException {
@@ -59,6 +63,7 @@ public class DefaultOrg implements Organization {
         domain=FQI.reverseDomain(realm);
         atDomain = '@'+domain;
         NAME=env.getProperty(realm + ".name","Default Organization");
+        root_ns = env.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF);
         
         try {
             String defFile;
@@ -492,6 +497,7 @@ public class DefaultOrg implements Organization {
 
     @Override
     public String validate(AuthzTrans trans, Policy policy, Executor executor, String... vars) throws OrganizationException {
+    	String user;
         switch(policy) {
             case OWNS_MECHID:
             case CREATE_MECHID:
@@ -516,6 +522,12 @@ public class DefaultOrg implements Organization {
 
             case CREATE_MECHID_BY_PERM_ONLY:
                 return getName() + " only allows sponsors to create MechIDs";
+
+			case MAY_EXTEND_CRED_EXPIRES:
+				// If parm, use it, otherwise, trans
+				user = vars.length>1?vars[1]:trans.user();
+				return executor.hasPermission(user, root_ns,"password", root_ns , "extend")
+						?null:user + " does not have permission to extend passwords at " + getName();
 
             default:
                 return policy.name() + " is unsupported at " + getName();
@@ -592,7 +604,7 @@ public class DefaultOrg implements Organization {
                 }
             }
 
-            return mailer.sendEmail(trans,dryRun,to,cc,subject,body,urgent)?0:1;
+            return mailer.sendEmail(trans,dryRun?"DefaultOrg":null,to,cc,subject,body,urgent)?0:1;
         } else {
             return 0;
         }

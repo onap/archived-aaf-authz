@@ -39,23 +39,24 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class URApprovalSet extends ApprovalSet {
-	public static final String EXTEND_STRING = "Extend access of User [%s] to Role [%s] - Expires %s";
 	
+	private boolean ownerSuperApprove;
+
 	public URApprovalSet(final AuthzTrans trans, final GregorianCalendar start, final DataView dv, final Loader<UserRoleDAO.Data> lurdd) throws IOException, CadiException {
 		super(start, "user_role", dv);
 		Organization org = trans.org();
 		UserRoleDAO.Data urdd = lurdd.load();
 		setConstruct(urdd.bytify());
-		setMemo(String.format(EXTEND_STRING,urdd.user,urdd.role,Chrono.dateOnlyStamp(urdd.expires)));
+		setMemo(getMemo(urdd));
 		setExpires(org.expiration(null, Organization.Expiration.UserInRole));
 		
 		Result<RoleDAO.Data> r = dv.roleByName(trans, urdd.role);
 		if(r.notOKorIsEmpty()) {
-			throw new CadiException(String.format("Role '%s' does not exist: %s", urdd.role, r.details));
+			throw new CadiException(r.errorString());
 		}
 		Result<NsDAO.Data> n = dv.ns(trans, urdd.ns);
 		if(n.notOKorIsEmpty()) {
-			throw new CadiException(String.format("Namespace '%s' does not exist: %s", urdd.ns,r.details));
+			throw new CadiException(n.errorString());
 		}
 		UserRoleDAO.Data found = null;
 		Result<List<Data>> lur = dv.ursByRole(trans, urdd.role);
@@ -68,7 +69,7 @@ public class URApprovalSet extends ApprovalSet {
 			}
 		}
 		if(found==null) {
-			throw new CadiException(String.format("User '%s' in Role '%s' does not exist: %s", urdd.user,urdd.role,r.details));
+			throw new CadiException(String.format("User '%s' in Role '%s' does not exist", urdd.user,urdd.role));
 		}
 		
 		// Primarily, Owners are responsible, unless it's owned by self
@@ -87,7 +88,7 @@ public class URApprovalSet extends ApprovalSet {
 			}
 		}
 
-		if(isOwner) {
+		if(isOwner && ownerSuperApprove) {
 			try {
 				List<Identity> apprs = org.getApprovers(trans, urdd.user);
 				if(apprs!=null) {
@@ -108,18 +109,38 @@ public class URApprovalSet extends ApprovalSet {
 			}
 		}
 	}
+	
+	public void ownerSuperApprove() {
+		ownerSuperApprove = true;
+	}
 
-	private ApprovalDAO.Data newApproval(Data urdd) throws CadiException {
+	private ApprovalDAO.Data newApproval(UserRoleDAO.Data urdd) throws CadiException {
 		ApprovalDAO.Data add = new ApprovalDAO.Data();
 		add.id = Chrono.dateToUUID(System.currentTimeMillis());
 		add.ticket = fdd.id;
 		add.user = urdd.user;
 		add.operation = FUTURE_OP.A.name();
 		add.status = ApprovalDAO.PENDING;
-		add.memo = String.format("Re-Validate as Owner for AAF Namespace '%s' - expiring %s', ",
-				   urdd.ns,
-				   Chrono.dateOnlyStamp(urdd.expires));
+		add.memo = getMemo(urdd);
 		return add;
+	}
+
+	private String getMemo(Data urdd) {
+		switch(urdd.rname) {
+		case "owner":
+			return String.format("Revalidate as Owner of AAF Namespace [%s] - Expires %s",
+					   urdd.ns,
+					   Chrono.dateOnlyStamp(urdd.expires));
+		case "admin":
+			return String.format("Revalidate as Admin of AAF Namespace [%s] - Expires %s",
+					   urdd.ns,
+					   Chrono.dateOnlyStamp(urdd.expires));
+		default:
+			return String.format("Extend access of User [%s] to Role [%s] - Expires %s",
+					   urdd.user,
+					   urdd.role,
+					   Chrono.dateOnlyStamp(urdd.expires));
+		}
 	}
 
 }
