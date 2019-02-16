@@ -18,4 +18,4 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-docker cp identities.dat aaf_service:/opt/app/osaaf/data
+docker cp identities.dat aaf-service:/opt/app/osaaf/data

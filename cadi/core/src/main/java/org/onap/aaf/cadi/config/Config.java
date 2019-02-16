@@ -156,8 +156,8 @@ public class Config {
     public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.cm:" + AAF_DEFAULT_API_VERSION;
     public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.fs:" + AAF_DEFAULT_API_VERSION;
     public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.hello:" + AAF_DEFAULT_API_VERSION;
-    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.token:" + AAF_DEFAULT_API_VERSION;
-    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION;
+    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.token:" + AAF_DEFAULT_API_VERSION +"/token";
+    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION +"/introspect";;
 
     public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
     // AAF Locator Entries are ADDITIONAL entries, which also gives the Property ability

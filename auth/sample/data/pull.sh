@@ -19,4 +19,4 @@
 #  ============LICENSE_END====================================================
 #
 
-docker cp aaf_service:/opt/app/osaaf/data/identities.dat .
+docker cp aaf-service:/opt/app/osaaf/data/identities.dat .
