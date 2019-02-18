@@ -32,9 +32,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.onap.aaf.auth.batch.actions.ActionDAO;
+import org.onap.aaf.auth.batch.actions.CacheTouch;
 import org.onap.aaf.auth.common.Define;
-import org.onap.aaf.auth.dao.hl.Function;
-import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.CadiException;
@@ -50,7 +49,7 @@ import com.datastax.driver.core.PreparedId;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 
-public class JU_ActionDAO {
+public class JU_CacheTouch {
     
 	@Mock
     AuthzTrans trans;
@@ -60,27 +59,8 @@ public class JU_ActionDAO {
 	PropAccess access;
 	
 	@Mock
-	ActionDAO actionObj;
+	CacheTouch actionObj;
 
-    private class ActionDAOStub extends ActionDAO {
-
-        public ActionDAOStub(AuthzTrans trans, ActionDAO predecessor) {
-            super(trans, predecessor);
-            // TODO Auto-generated constructor stub
-        }
-
-        public ActionDAOStub(AuthzTrans trans, Cluster cluster, boolean dryRun) throws APIException, IOException {
-            super(trans, cluster, dryRun);
-            // TODO Auto-generated constructor stub
-        }
-
-        @Override
-        public Result exec(AuthzTrans trans, Object data, Object t) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
-    }
     
     @Before
     public void setUp() throws APIException, IOException {
@@ -91,6 +71,7 @@ public class JU_ActionDAO {
 			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).init();
 			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).warn();
 			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).debug();
+			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).info();
 			Mockito.doReturn("10").when(trans).getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF);
 			Mockito.doReturn(Mockito.mock(TimeTaken.class)).when(trans).start(Mockito.anyString(),Mockito.anyInt());
 			Mockito.doReturn(sessionObj).when(cluster).connect("authz");
@@ -101,7 +82,7 @@ public class JU_ActionDAO {
 			Mockito.doReturn(Mockito.mock(Properties.class)).when(access).getProperties();
 			Mockito.doReturn("test.test").when(access).getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
 			Define.set(access);
-			actionObj = new ActionDAOStub(trans, cluster, true);
+			actionObj = new CacheTouch(trans, cluster, true);
 		} catch (APIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -112,60 +93,32 @@ public class JU_ActionDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//        Cluster.Initializer cInit = mock(Cluster.Initializer.class);
-//        Cluster.Builder cBuild = new Cluster.Builder();
-//        cBuild.addContactPoint("test");
-//        cBuild.build();
-//        cluster.buildFrom(cBuild);
-//        cluster.builder();
-//        cluster.init();
-//        cluster.builder().getContactPoints();
-        
-
-        
-//        aTrans = mock(AuthzTrans.class);
-//        cluster = mock(Cluster.class);
-//        actionDAOStub = new ActionDAOStub(aTrans,cluster,true);
-//        actionDAOStub1 = new ActionDAOStub(aTrans, actionDAOStub);
     }
     
     @Test
-	public void testGetSession() {
-    	try {
-    		Session session = actionObj.getSession(trans);
-    		assertTrue(session.toString().contains("Mock for Session"));
-		} catch (APIException e) {
+	public void testExec() {
+    		Result<Void> session = actionObj.exec(trans,"test","test");
+    		assertTrue(session.toString().contains("Success"));
+		
+	}
+    @Test
+	public void testExecElse() {
+		try {
+			actionObj = new CacheTouch(trans,  cluster, false);
+		} catch (APIException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		}
+    		Result<Void> session = actionObj.exec(trans,"test","test");
+    		assertTrue(session.toString().contains("No Cache Data named test"));
+		
 	}
     
     @Test
-	public void testQuestion() {
-    		Question retVal = actionObj.question();
-    		assertTrue(retVal.toString().contains("org.onap.aaf.auth.dao.hl.Question"));
+	public void test2Argonstructor() {
+			actionObj = new CacheTouch(trans, Mockito.mock(ActionDAO.class));
+	
+		
 	}
-    
-    @Test
-	public void testFunction() {
-    	Function retVal = actionObj.function();
-   		assertTrue(retVal.toString().contains("org.onap.aaf.auth.dao.hl.Function"));
-	}
-    
-    @Test
-	public void testClose() {
-    		actionObj.close(trans);
-//    		assertTrue(session.toString().contains("Mock for Session"));
-	}
-    
-    @Test
-   	public void testCloseFalse() {
-    	actionObj = new ActionDAOStub(trans, Mockito.mock(ActionDAO.class));
-       		actionObj.close(trans);
-//       		assertTrue(session.toString().contains("Mock for Session"));
-   	}
-
+   
 }
