@@ -24,12 +24,6 @@ public interface Defaults {
     public final static String AAF_VERSION = "2.1";
     public final static String AAF_NS = "AAF_NS";
     public final static String AAF_LOCATE_CONST="https://AAF_LOCATE_URL";
-    public final static String AAF_ROOT =   AAF_LOCATE_CONST + '/' + AAF_NS;
-    public final static String AAF_URL = AAF_ROOT + ".service:" + AAF_VERSION;
-    public final static String GUI_URL = AAF_ROOT + ".gui:" + AAF_VERSION;
-    public final static String CM_URL = AAF_ROOT + ".cm:" + AAF_VERSION;
-    public final static String FS_URL = AAF_ROOT + ".fs:" + AAF_VERSION;
-    public final static String HELLO_URL = AAF_ROOT + ".hello:" + AAF_VERSION;
-    public final static String OAUTH2_TOKEN_URL = AAF_ROOT  + ".token:" + AAF_VERSION;
-    public final static String OAUTH2_INTROSPECT_URL = AAF_ROOT + ".introspect:" + AAF_VERSION;
+    public final static String AAF_ROOT =   AAF_LOCATE_CONST + "/%CNS.%" + AAF_NS;
+
 }

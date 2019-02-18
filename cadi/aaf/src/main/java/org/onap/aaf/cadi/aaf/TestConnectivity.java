@@ -185,7 +185,7 @@ public class TestConnectivity {
         String tokenURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL);
         String locateURL=access.getProperty(Config.AAF_LOCATE_URL);
         if (tokenURL==null || (tokenURL.contains("/locate/") && locateURL!=null)) {
-            tokenURL=Defaults.OAUTH2_TOKEN_URL+"/token";
+            tokenURL=Config.OAUTH2_TOKEN_URL_DEF;
         }
 
         try {

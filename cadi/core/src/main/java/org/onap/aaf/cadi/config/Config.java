@@ -156,8 +156,8 @@ public class Config {
     public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.cm:" + AAF_DEFAULT_API_VERSION;
     public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.fs:" + AAF_DEFAULT_API_VERSION;
     public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.hello:" + AAF_DEFAULT_API_VERSION;
-    public static final String OAUTH2_TOKEN_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.token:" + AAF_DEFAULT_API_VERSION +"/token";
-    public static final String OAUTH2_INTROSPECT_URL = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION +"/introspect";;
+    public static final String OAUTH2_TOKEN_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.token:" + AAF_DEFAULT_API_VERSION +"/token";
+    public static final String OAUTH2_INTROSPECT_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION +"/introspect";;
 
     public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
     // AAF Locator Entries are ADDITIONAL entries, which also gives the Property ability
@@ -826,26 +826,6 @@ public class Config {
     			throw new LocatorException(e1);
     		}
             
-//            if(url.indexOf('%')>=0) {
-//	            String str = access.getProperty(Config.AAF_LOCATOR_CONTAINER_ID, null);
-//	            if(str==null) {
-//	            	url = url.replace("%CID","");
-//	            } else {
-//	            	url = url.replace("%CID",str+'.');
-//	            }
-//	            str = access.getProperty(Config.AAF_LOCATOR_CONTAINER, null);
-//	            if(str==null) {
-//	            	url = url.replace("%C","");
-//	            } else {
-//	            	url = url.replace("%C",str+'.');
-//	            }
-//	
-//	            if (root_ns==null) {
-//	            	url = url.replace("%AAF_NS","");
-//	            } else {
-//	            	url = url.replace("%AAF_NS",root_ns);
-//	            }
-//            }
             String replacement;
             int idxAAFLocateUrl;
             if ((idxAAFLocateUrl=url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {

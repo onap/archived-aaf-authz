@@ -158,11 +158,16 @@ else
         $JAVA_AGENT showpass ${APP_FQI} ${APP_FQDN}
         ;;
     check)
+        echo "## Check Certificate"
         $JAVA_AGENT check ${APP_FQI} ${APP_FQDN}
         ;;
     validate)
         echo "## validate requested"
         $JAVA_AGENT_SELF validate 
+        ;;
+    renew)
+        echo "## Renew Certificate"
+        $JAVA_AGENT place ${APP_FQI} ${APP_FQDN}
         ;;
     bash)
         shift

@@ -319,7 +319,7 @@ public class AAFSSO {
             if(aaf_root_ns==null) {
             	locateRoot=Defaults.AAF_ROOT;
             } else {
-            	locateRoot = Defaults.AAF_LOCATE_CONST + '/' + aaf_root_ns;
+            	locateRoot = Defaults.AAF_LOCATE_CONST + "/%CNS.%" + aaf_root_ns;
             }
             if(access.getProperty(Config.AAF_URL)==null) {
             	
@@ -425,7 +425,6 @@ public class AAFSSO {
                     diskprops.store(fos, "AAF Single Signon");
                 } finally {
                     fos.close();
-                    setReadonly(sso);
                 }
             }
             if (sso != null) {

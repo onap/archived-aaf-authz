@@ -30,7 +30,7 @@ aaf_locator_port.helm=30083
 aaf_gui_title=AAF
 aaf_gui_copyright=(c) 2018 AT&T Intellectual Property. All rights reserved.
 aaf_gui_theme=theme/onap
-cadi_loginpage_url=https://AAF_LOCATE_URL/AAF_NS.gui:2.0/login
+cadi_loginpage_url=https://AAF_LOCATE_URL/%CNS.%AAF_NS.gui:2.0/login
 
 # GUI URLS and Help URLS
 aaf_url.gui_onboard=https://wiki.onap.org/display/DW/Client+Onboarding

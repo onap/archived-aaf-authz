@@ -104,7 +104,7 @@ public class OnapClientExample {
                 // Use this Token in your client calls with "Tokenized Client" (TzClient)
                 // These should NOT be used cross thread.
                 // Get Hello Service URL... roll your own in your own world.
-                final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Defaults.HELLO_URL);
+                final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Config.HELLO_URL_DEF);
 
 
                 TzClient helloClient = tcf.newTzClient(endServicesURL);

@@ -170,27 +170,6 @@ public class RegistrationPropHolder {
 			}
 		}
 
-		if(source.indexOf("%NS")>=0) {
-			str = getNS(dot_le);
-			if(str==null || str.isEmpty()) {
-				source = source.replace("%NS"+'.', str);
-			}
-			source = source.replace("%NS", str);
-		}
-
-		// aaf_root_ns
-		if(source.indexOf("AAF_NS")>=0) {
-			str = access.getProperty(Config.AAF_ROOT_NS, null);
-			if(str!=null) {
-				String temp = source.replace("%AAF_NS", str);
-				if(temp == source) { // intended
-					source = source.replace("AAF_NS", str); // Backward Compatibility
-				} else {
-					source = temp;
-				}
-			}
-		}
-
 		int atC = source.indexOf("%C"); 
 		if(atC>=0) {
 			// aaf_locator_container_ns
@@ -207,11 +186,37 @@ public class RegistrationPropHolder {
 			source = source.replace("%C", str);
 		}
 		
+		if(source.indexOf("%NS")>=0) {
+			str = getNS(dot_le);
+			if(str==null || str.isEmpty()) {
+				source = source.replace("%NS"+'.', str);
+			}
+			source = source.replace("%NS", str);
+		}
+
+		// aaf_root_ns
+		if(source.indexOf("AAF_NS")>=0) {
+			str = access.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF);
+			String temp = source.replace("%AAF_NS", str);
+			if(temp.equals(source)) { // intended
+				source = source.replace("AAF_NS", str); // Backward Compatibility
+			} else {
+				source = temp;
+			}
+		}
+
+		
 		if(source.indexOf('%')>=0) {
-			// These shouldn't be expected to have dot elements
-			source = source.replace("%N", name);
-			source = source.replace("%DF", default_fqdn);
-			source = source.replace("%PH", public_hostname);
+            // These shouldn't be expected to have dot elements
+            if(name!=null) {
+              source = source.replace("%N", name);
+            }
+            if(default_fqdn!=null) {
+              source = source.replace("%DF", default_fqdn);
+            }
+            if(public_hostname!=null) {
+              source = source.replace("%PH", public_hostname);
+            }
 		}
 		return source;
 	}

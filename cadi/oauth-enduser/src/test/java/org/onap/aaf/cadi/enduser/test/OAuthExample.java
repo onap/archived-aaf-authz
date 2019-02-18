@@ -73,10 +73,10 @@ public class OAuthExample {
         
         
         // Obtain Endpoints for OAuth2 from Properties.  Expected is "cadi.properties" file, pointed to by "cadi_prop_files"
-        String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,Defaults.OAUTH2_TOKEN_URL); // Default to AAF
-        String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,Defaults.OAUTH2_INTROSPECT_URL); // Default to AAF);
+        String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,Config.OAUTH2_TOKEN_URL_DEF); // Default to AAF
+        String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,Config.OAUTH2_INTROSPECT_URL_DEF); // Default to AAF);
         // Get Hello Service
-        final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Defaults.HELLO_URL);
+        final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Config.HELLO_URL_DEF);
 
         final int CALL_TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
         

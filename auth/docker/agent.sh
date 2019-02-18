@@ -48,15 +48,21 @@ for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_
 		# Need AAF_FQDN's IP, because not might not be available in mini-container
 		PROMPT="AAF FQDN IP"
 		LOOKUP=$(host "${AAF_FQDN}" | grep "has address")
-		if [ -z ${LOOKUP} ]; then
-                    DEF= 
-                else 
+		if [ -n "${LOOKUP}" ]; then
   		    DEF=$(echo ${LOOKUP} | tail -1 | cut -f 4 -d ' ')
                 fi
                 ;;
-         APP_FQI)    PROMPT="App's FQI";; 
-         APP_FQDN)   PROMPT="App's Root FQDN";; 
-         VOLUME)     PROMPT="APP's AAF Configuration Volume";;
+         APP_FQDN)   PROMPT="App's Root FQDN";;
+         APP_FQI)    PROMPT="App's FQI"
+		     if [[ "${APP_FQDN}" != *"."* ]]; then
+	 	       DEF="${APP_FQDN}@${APP_FQDN}.onap.org"
+                     fi
+		     ;; 
+         VOLUME)     PROMPT="APP's AAF Configuration Volume"
+		     if [[ "${APP_FQDN}" != *"."* ]]; then
+		       DEF="${APP_FQDN}_config"
+		     fi
+		 ;;
          DRIVER)     PROMPT=$V;DEF=local;;
 	 VERSION)    PROMPT="CADI Version";DEF=$CADI_VERSION;;
          LATITUDE|LONGITUDE) PROMPT="$V of Node";;

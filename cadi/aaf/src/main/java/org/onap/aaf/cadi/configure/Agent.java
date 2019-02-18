@@ -229,7 +229,7 @@ public class Agent {
                             aafsso.setStdErrDefault();
                             
                             // if CM_URL can be obtained, add to sso.props, if written
-                            String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL+": ");
+                            String cm_url = getProperty(access,env,false, Config.CM_URL,Config.CM_URL_DEF);
                             if (cm_url!=null) {
                                 aafsso.addProp(Config.CM_URL, cm_url);
                             }
@@ -781,7 +781,7 @@ public class Agent {
             }
             
             app.add(Config.AAF_APPID, fqi);
-            app.add(Config.AAF_URL, propAccess, Defaults.AAF_URL);
+            app.add(Config.AAF_URL, propAccess, Config.AAF_URL_DEF);
 
             String cts = propAccess.getProperty(Config.CADI_TRUSTSTORE);
             if (cts!=null) {
