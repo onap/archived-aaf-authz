@@ -36,7 +36,7 @@ for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_
       case $V in
 	 DOCKER_REPOSITORY) 
 	        PROMPT="Docker Repo"
-	        DEF=""
+	        DEF="nexus3.onap.org:10003"
 	        ;;
 	 HOSTNAME) 
 	        PROMPT="HOSTNAME (blank for Default)"
@@ -47,7 +47,12 @@ for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_
          AAF_FQDN_IP)
 		# Need AAF_FQDN's IP, because not might not be available in mini-container
 		PROMPT="AAF FQDN IP"
-  		DEF=$(host $AAF_FQDN | grep "has address" | tail -1 | cut -f 4 -d ' ')
+		LOOKUP=$(host "${AAF_FQDN}" | grep "has address")
+		if [ -z ${LOOKUP} ]; then
+                    DEF= 
+                else 
+  		    DEF=$(echo ${LOOKUP} | tail -1 | cut -f 4 -d ' ')
+                fi
                 ;;
          APP_FQI)    PROMPT="App's FQI";; 
          APP_FQDN)   PROMPT="App's Root FQDN";; 
@@ -74,6 +79,7 @@ for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_
          fi
       fi
       echo "$V=$VAR" >> ./aaf.props
+      declare "$V"="$VAR"
    fi
 done
 . ./aaf.props
@@ -91,7 +97,6 @@ else
 fi 
 
 function run_it() {
-  LINKS="--link aaf-locate"
   if [ -n "${DUSER}" ]; then
     USER_LINE="--user ${DUSER}"
   fi
@@ -99,7 +104,6 @@ function run_it() {
     ${USER_LINE} \
     -v "${VOLUME}:/opt/app/osaaf" \
     --add-host="$AAF_FQDN:$AAF_FQDN_IP" \
-    $LINKS \
     --env AAF_FQDN=${AAF_FQDN} \
     --env DEPLOY_FQI=${DEPLOY_FQI} \
     --env DEPLOY_PASSWORD=${DEPLOY_PASSWORD} \
@@ -117,6 +121,9 @@ case "$1" in
   bash)
     PARAMS="&& cd /opt/app/osaaf/local && exec bash"
     run_it -it --rm  
+    ;;
+  taillog)
+    run_it -it --rm 
     ;;
   *)
     run_it --rm 

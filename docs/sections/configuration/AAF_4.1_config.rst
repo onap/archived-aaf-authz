@@ -59,35 +59,22 @@ This file is available to reuse for multiple calls. More importantly, you should
 'aaf.prop' Properties
 ---------------------
 
-=================== =============== ============
-Query               Tag             Description
-=================== =============== ============
-CADI Version        VERSION         Defaults to CADI version of this
-AAF's FQDN          AAF_FQDN        PUBLIC Name for AAF. For ONAP Test, it is 'aaf-onap-test.osaaf.org'
-Deployer's FQI      DEPLOY_FQI      In a REAL system, this would be a person or process. For ONAP Testing, the id is deployer@people.osaaf.org, password (see Dynamic Properties) is 'demo123456!'
-App's Root FQDN     APP_FQDN        This will show up in the Cert Subject, and should be the name given by Docker. i.e. clamp.onap
-App's FQI           APP_FQI         Fully Qualified ID given by Organization and with AAF NS/domain.  ex: clamp@clamp.onap.org 
-App's Volume        VOLUME          Volume to put the data, see above. ex: clamp_aaf
-DRIVER              DRIVER          Docker Volume type... See Docker Volume documentation
-LATITUDE of Node    LATITUDE        Global latitude coordinate of Node (best guess in Kubernetes)
-LONGITUDE of Node   LONGITUDE       Global longitude coordinate of Node (best guess in Kubernetes)
-=================== =============== ============
-
----------------------
-Dynamic Properties
----------------------
-
-These Properties do not automatically save in 'aaf.props', because...
-
-  | Passwords should not be stored clear text, with the possible exception of constant Environment Recreation, where it is impractical.
-  | The IP of the AAF's FQDN is looked up, if possible.  It can be set, however, when lookup isn't available.
-
-=================== =============== ============
-Query               Tag             Description
-=================== =============== ============
-Deployer's Password DEPLOY_PASSWORD Password for the Deployer. Avoids storing, except where impossible otherwise. 
-IP of <AAF_FQDN>    AAF_FQDN_IP     IP for Name of AAF FQDN, if not available by normal lookup means
-=================== =============== ============
+==================== ================= ============
+Query                Tag               Description
+==================== ================= ============
+DOCKER REPOSITORY    DOCKER_REPOSITORY Defaults to current ONAP Repository
+CADI Version         VERSION           Defaults to current CADI (AAF) version
+AAF's FQDN           AAF_FQDN          PUBLIC Name for AAF. For ONAP Test, it is 'aaf-onap-test.osaaf.org'
+AAF FQDN IP          AAF_FQDN_IP       If FQDN isn't actually found with DNS, you will have to enter the IP.  For 'aaf-onap-test.osaaf.org', it is '10.12.6.214'
+Deployer's FQI       DEPLOY_FQI        In a REAL system, this would be a person or process. For ONAP Testing, the id is 'deployer@people.osaaf.org'
+Deployer's PASSWORD  DEPLOY_PASSWORD   OPTIONAL!! REAL systems should not store passwords in clear text. For ONAP Testing, the password is 'demo123456!'
+App's Root FQDN      APP_FQDN          This will show up in the Cert Subject, make it the App Acronym. i.e 'clamp'
+App's FQI            APP_FQI           Fully Qualified ID given by Organization and with AAF NS/domain.  ex: 'clamp@clamp.onap.org'
+App's Volume         VOLUME            Volume to put the data, see above. ex: 'clamp_config'
+DRIVER               DRIVER            Docker Volume type... See Docker Volume documentation. Default is 'local'
+LATITUDE of Node     LATITUDE          Global latitude coordinate of Node (best guess in Kubernetes)
+LONGITUDE of Node    LONGITUDE         Global longitude coordinate of Node (best guess in Kubernetes)
+==================== ================= ============
 
 -------------------------------
 Typical ONAP Entity Info in AAF

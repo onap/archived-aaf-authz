@@ -50,7 +50,7 @@ if [ ! -d $LOCAL ]; then
     mkdir -p $LOCAL
     for D in bin logs; do
         mkdir -p $OSAAF/$D
-        cp $CONFIG/$D/*.* $OSAAF/$D
+        cp $CONFIG/$D/* $OSAAF/$D
     done
 fi
 

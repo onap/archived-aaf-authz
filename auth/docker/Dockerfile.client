@@ -25,10 +25,10 @@ ENV VERSION=${AAF_VERSION}
 LABEL description="aaf_agent"
 LABEL version=${AAF_VERSION}
 
-COPY logs /opt/app/aaf_config/logs
 COPY bin/client.sh /opt/app/aaf_config/bin/agent.sh
 COPY bin/aaf-auth-cmd-${AAF_VERSION}-full.jar /opt/app/aaf_config/bin/
 COPY bin/aaf-cadi-servlet-sample-*-sample.jar /opt/app/aaf_config/bin/
+COPY logs /opt/app/aaf_config/logs
 COPY cert/*trust*.b64 /opt/app/aaf_config/cert/
 
 RUN if [ -n "${DUSER}" ]; then chown -R ${DUSER}:${DUSER} /opt/app/aaf_config; fi
