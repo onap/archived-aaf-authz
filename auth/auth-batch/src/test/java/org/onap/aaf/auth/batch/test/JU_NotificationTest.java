@@ -68,7 +68,7 @@ public class JU_NotificationTest {
 		Notification notification = Notification.create("user", TYPE.CN);
 		assertEquals(notification.checksum(), 0);
 		notification.set(msg);
-		assertEquals(notification.checksum(), 10);
+		assertEquals(notification.checksum(), 23);
 		assertNull(Notification.get("user", TYPE.CN));
 		assertTrue(notification.update(trans, null, true));
 		assertTrue(notification.toString().contains("\"user\",\"CN\","));
