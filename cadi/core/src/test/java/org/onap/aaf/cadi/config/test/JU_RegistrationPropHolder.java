@@ -130,8 +130,8 @@ public class JU_RegistrationPropHolder {
 			target = "mycontns.org.osaaf.aaf.theName";
 			assertEquals(target,rph.replacements(fqdn, name, ".hello"));
 			
-			pa.setProperty(Config.AAF_LOCATOR_CONTAINER+".hello","hello");
-			target = "hello.mycontns.org.osaaf.aaf.theName";
+			pa.setProperty(Config.AAF_LOCATOR_CONTAINER+".hello","helloC");
+			target = "helloC.mycontns.org.osaaf.aaf.theName";
 			assertEquals(target,rph.replacements(fqdn, name, ".hello"));
 			
 			pa.setProperty(Config.AAF_LOCATOR_CONTAINER_NS,"c_ns");

@@ -41,6 +41,7 @@ public class RegistrationPropHolder {
 	public final String default_name;
 	public final String lentries;
 	public final String lcontainer;
+	public final String default_container;
 
 	public RegistrationPropHolder(final Access access, final int port) throws UnknownHostException, CadiException {
 		this.access = access;
@@ -50,15 +51,15 @@ public class RegistrationPropHolder {
 
 		lentries=access.getProperty(Config.AAF_LOCATOR_ENTRIES,"");
 		
-		str = access.getProperty(Config.AAF_LOCATOR_CONTAINER, "");
-		if(!str.isEmpty()) {
-			lcontainer=',' + str; // "" makes a blank default Public Entry
-			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_PORT+'.'+str, null);
+		default_container = access.getProperty(Config.AAF_LOCATOR_CONTAINER, "");
+		if(!default_container.isEmpty()) {
+			lcontainer=',' + default_container; // "" makes a blank default Public Entry
+			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_PORT+'.'+default_container, null);
 			if(str==null) {
 				str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_PORT, null);
 			}
 		} else {
-			lcontainer=str;
+			lcontainer=default_container;
 			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_PORT, null);
 		}
 		if(str!=null) {
@@ -149,26 +150,42 @@ public class RegistrationPropHolder {
 	}
 
 	
-	public String replacements(String source, final String name, final String dot_le) {
+	public String replacements(String source, final String name, final String _dot_le) {
 		if(source == null) {
 			return "";
 		} else if(source.isEmpty()) {
 			return source;
 		}
-		String str;
-		// aaf_locate_url
-		if(source.indexOf(Config.AAF_LOCATE_URL_TAG)>=0) {
-			str = access.getProperty(Config.AAF_LOCATE_URL, null);
-			if(str!=null) {
-				if(!str.endsWith("/")) {
-					str+='/';
-				}
-				if(!str.endsWith("/locate/")) {
-					str+="locate/";
-				}
-				source = source.replace("https://AAF_LOCATE_URL/", str);
-			}
+		
+		String dot_le;
+		if(_dot_le==null) {
+			dot_le = default_container.isEmpty()?"":'.'+default_container;
+		} else {
+			dot_le = _dot_le;
 		}
+
+        String aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL+dot_le,null);
+        if(aaf_locator_host==null) {
+        	aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL,null);
+        }
+
+        String str;
+        if(aaf_locator_host!=null) {
+			if("https://AAF_LOCATE_URL".equals(source)) {
+				source = aaf_locator_host;
+			} else {
+		        str = aaf_locator_host;
+				if(source.indexOf(Config.AAF_LOCATE_URL_TAG)>=0) {
+					if(!str.endsWith("/")) {
+						str+='/';
+					}
+					if(!str.endsWith("/locate/")) {
+						str+="locate/";
+					}
+					source = source.replace("https://AAF_LOCATE_URL/", str);
+				}
+			}
+        }
 
 		int atC = source.indexOf("%C"); 
 		if(atC>=0) {
@@ -179,7 +196,7 @@ public class RegistrationPropHolder {
 			}
 			source = source.replace("%CNS", str);
 			
-			str = access.getProperty(Config.AAF_LOCATOR_CONTAINER+dot_le, "");
+			str = access.getProperty(Config.AAF_LOCATOR_CONTAINER+dot_le,default_container);
 			if(str.isEmpty()) {
 				source = source.replace("%C"+'.', str);
 			}
@@ -225,5 +242,9 @@ public class RegistrationPropHolder {
 		return public_port!=null && dot_le.isEmpty()?
 				public_port:
 				port;
+	}
+
+	public Access access() {
+		return access;
 	}
 }

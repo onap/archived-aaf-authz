@@ -142,14 +142,15 @@ $PASSPHRASE
 EOF
 
 # Make Issuer name
-ISSUER=$(openssl x509 -subject -noout -in $SIGNER_CRT | cut -c 10-)
-for I in ${ISSUER//\// }; do
-  if [ -n "$CADI_X509_ISSUER" ]; then
-    CADI_X509_ISSUER=", $CADI_X509_ISSUER"
+ISSUER=$(openssl x509 -subject -noout -in $SIGNER_CRT | cut -c 9- | sed -e 's/ = /=/g')
+for I in $ISSUER; do
+  if [ -z "$REVERSE" ]; then
+    REVERSE="${I%,}"
+  else
+    REVERSE="${I%,}, ${REVERSE}"
   fi
-  CADI_X509_ISSUER="$I$CADI_X509_ISSUER"
 done
-echo $CADI_X509_ISSUER > $BOOTSTRAP_ISSUER
+echo "$REVERSE" > $BOOTSTRAP_ISSUER
 
 # Cleanup
 rm -f $BOOTSTRAP_SAN $BOOTSTRAP_KEY $BOOTSTRAP_CSR $BOOTSTRAP_CRT $SIGNER_KEY $SIGNER_CRT $BOOTSTRAP_CHAIN

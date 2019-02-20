@@ -23,6 +23,7 @@ package org.onap.aaf.auth.direct;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +35,10 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.misc.env.util.Split;
 
 import locate.v1_0.Endpoint;
@@ -70,8 +73,12 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
         }
         
         try {
-            uri = new URI(access.getProperty(Config.AAF_LOCATE_URL, "localhost")+"/locate/"+name+':'+version);
-        } catch (URISyntaxException e) {
+        	RegistrationPropHolder rph = new RegistrationPropHolder(access,0);
+        	String aaf_url = rph.replacements("https://"+Config.AAF_LOCATE_URL_TAG+"/%CNS."+name, null,null);
+        	//access.getProperty("/locate/"+name+':'+version;
+        	access.printf(Level.INIT,"Creating DirectAAFLocator to %s",aaf_url);
+            uri = new URI(aaf_url);
+        } catch (URISyntaxException | UnknownHostException | CadiException e) {
             throw new LocatorException(e);
         }
         myhostname=null;

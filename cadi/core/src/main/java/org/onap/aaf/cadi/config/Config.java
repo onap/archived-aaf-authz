@@ -258,6 +258,12 @@ public class Config {
 
     public static HttpTaf configHttpTaf(Connector con, SecurityInfoC<HttpURLConnection> si, TrustChecker tc, CredVal up, Lur lur, Object ... additionalTafLurs) throws CadiException, LocatorException {
         Access access = si.access;
+        RegistrationPropHolder rph;
+        try {
+			rph = new RegistrationPropHolder(access, 0);
+		} catch (UnknownHostException e2) {
+			throw new CadiException(e2);
+		}
         /////////////////////////////////////////////////////
         // Setup AAFCon for any following
         /////////////////////////////////////////////////////
@@ -277,7 +283,7 @@ public class Config {
 
         boolean hasDirectAAF = hasDirect("DirectAAFLur",additionalTafLurs);
         // IMPORTANT!  Don't attempt to load AAF Connector if there is no AAF URL
-        String aafURL = access.getProperty(AAF_URL,null);
+        String aafURL = logProp(rph, AAF_URL,null);
         if (!hasDirectAAF && aafcon==null && aafURL!=null) {
             aafcon = loadAAFConnector(si, aafURL);    
         }
@@ -352,8 +358,8 @@ public class Config {
                     Class<HttpTaf> obasicCls = (Class<HttpTaf>)loadClass(access,CADI_OBASIC_HTTP_TAF_DEF);
                     if (obasicCls!=null) {
                         try {
-                            String tokenurl = logProp(access,Config.AAF_OAUTH2_TOKEN_URL, null);
-                            String introspecturl = logProp(access,Config.AAF_OAUTH2_INTROSPECT_URL, null);
+                            String tokenurl = logProp(rph,Config.AAF_OAUTH2_TOKEN_URL, null);
+                            String introspecturl = logProp(rph,Config.AAF_OAUTH2_INTROSPECT_URL, null);
                             if (tokenurl==null || introspecturl==null) {
                                 access.log(Level.INIT,"Both tokenurl and introspecturl are required. Oauth Authorization is disabled.");
                             }
@@ -431,7 +437,7 @@ public class Config {
             // Configure OAuth TAF
             /////////////////////////////////////////////////////
             if (!hasOAuthDirectTAF) {
-                String oauthTokenUrl = logProp(access,Config.AAF_OAUTH2_TOKEN_URL,null);
+                String oauthTokenUrl = logProp(rph,Config.AAF_OAUTH2_TOKEN_URL,null);
                 Class<?> oadtClss;
                 try {
                     oadtClss = Class.forName(OAUTH_DIRECT_TAF);
@@ -448,7 +454,7 @@ public class Config {
                     additionalTafLurs = array;
                     access.log(Level.INIT,"OAuth2 Direct is enabled");
                 } else if (oauthTokenUrl!=null) {
-                    String oauthIntrospectUrl = logProp(access,Config.AAF_OAUTH2_INTROSPECT_URL,null);
+                    String oauthIntrospectUrl = logProp(rph,Config.AAF_OAUTH2_INTROSPECT_URL,null);
                     @SuppressWarnings("unchecked")
                     Class<HttpTaf> oaTCls = (Class<HttpTaf>)loadClass(access,OAUTH_HTTP_TAF);
                     if (oaTCls!=null) {
@@ -549,7 +555,7 @@ public class Config {
             }
             access.log(Level.INIT, sb);
 
-            Locator<URI> locator = loadLocator(si, logProp(access, AAF_LOCATE_URL, null));
+            Locator<URI> locator = loadLocator(si, logProp(rph, AAF_LOCATE_URL, null));
             
             taf = new HttpEpiTaf(access,locator, tc, htarray); // ok to pass locator == null
             String level = logProp(access, CADI_LOGLEVEL, null);
@@ -559,6 +565,18 @@ public class Config {
         }
         
         return taf;
+    }
+    
+    public static String logProp(RegistrationPropHolder rph, String tag, String def) {
+        String rv = rph.access().getProperty(tag, def);
+        if (rv == null) {
+        	rph.access().log(Level.INIT,tag,"is not explicitly set");
+        } else {
+        	rv = rph.replacements(rv, null, null);
+        	rph.access().log(Level.INIT,tag,"is set to",rv);
+        }
+        return rv;
+    	
     }
     
     public static String logProp(Access access,String tag, String def) {
@@ -573,6 +591,13 @@ public class Config {
     
     public static Lur configLur(SecurityInfoC<HttpURLConnection> si, Connector con, Object ... additionalTafLurs) throws CadiException {
         Access access = si.access;
+        RegistrationPropHolder rph;
+        try {
+			rph = new RegistrationPropHolder(access, 0);
+		} catch (UnknownHostException e2) {
+			throw new CadiException(e2);
+		}
+
         List<Priori<Lur>> lurs = new ArrayList<>();
         
         /////////////////////////////////////////////////////
@@ -601,8 +626,8 @@ public class Config {
         /////////////////////////////////////////////////////
         // Configure the OAuth Lur (if any)
         /////////////////////////////////////////////////////
-        String tokenUrl = logProp(access,AAF_OAUTH2_TOKEN_URL, null);
-        String introspectUrl = logProp(access,AAF_OAUTH2_INTROSPECT_URL, null);
+        String tokenUrl = logProp(rph,AAF_OAUTH2_TOKEN_URL, null);
+        String introspectUrl = logProp(rph,AAF_OAUTH2_INTROSPECT_URL, null);
         if (tokenUrl!=null && introspectUrl !=null) {
             try {
                 Class<?> olurCls = loadClass(access, CADI_OLUR_CLASS_DEF);
@@ -631,7 +656,7 @@ public class Config {
             /////////////////////////////////////////////////////
             // Configure the AAF Lur (if any)
             /////////////////////////////////////////////////////
-            String aafURL = logProp(access,AAF_URL,null); // Trigger Property
+            String aafURL = logProp(rph,AAF_URL,null); // Trigger Property
             String aafEnv = access.getProperty(AAF_ENV,null);
             if (aafEnv == null && aafURL!=null && access instanceof PropAccess) { // set AAF_ENV from AAF_URL
                 int ec = aafURL.indexOf("envContext=");
@@ -822,20 +847,10 @@ public class Config {
             try {
     			 rph = new RegistrationPropHolder(access, 0);
     			 url = rph.replacements(_url, null, null);
+    			 access.printf(Level.INFO, "loadLocator URL is %s",url);
     		} catch (UnknownHostException | CadiException e1) {
     			throw new LocatorException(e1);
     		}
-            
-            String replacement;
-            int idxAAFLocateUrl;
-            if ((idxAAFLocateUrl=url.indexOf(AAF_LOCATE_URL_TAG))>0 && ((replacement=access.getProperty(AAF_LOCATE_URL, null))!=null)) {
-                StringBuilder sb = new StringBuilder(replacement);
-                if (!replacement.endsWith("/locate")) {
-                    sb.append("/locate");
-                } 
-                sb.append(url,idxAAFLocateUrl+AAF_LOCATE_URL_TAG.length(),url.length());
-                url = sb.toString();
-            }
             
             try {
                 Class<?> lcls = loadClass(access,AAF_LOCATOR_CLASS_DEF);

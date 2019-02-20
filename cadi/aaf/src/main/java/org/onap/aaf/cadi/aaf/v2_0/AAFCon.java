@@ -22,6 +22,7 @@
 package org.onap.aaf.cadi.aaf.v2_0;
 
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,12 +36,14 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.aaf.marshal.CertsMarshal;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.lur.EpiLur;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
@@ -106,6 +109,13 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	                throw new CadiException("A URL or " + tag + " property is required.");
 	            }
 	        }
+        	try {
+				RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
+				str = rph.replacements(str, null,null);
+			} catch (UnknownHostException e) {
+				throw new CadiException(e);
+			}
+	        access.printf(Level.INFO, "AAFCon has URL of %s",str);
 	        setInitURI(str);
 	    }
 	    try {

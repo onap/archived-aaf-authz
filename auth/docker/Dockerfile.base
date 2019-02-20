@@ -23,5 +23,6 @@ MAINTAINER AAF Team, AT&T 2018
 LABEL description="aaf_base"
 RUN apk add --no-cache bash
 RUN apk add --no-cache openssl
+RUN apk add --no-cache curl
 RUN if [ -n "${DUSER}" ]; then addgroup ${DUSER} && adduser ${DUSER} -G ${DUSER} -D -s /bin/bash; fi
 

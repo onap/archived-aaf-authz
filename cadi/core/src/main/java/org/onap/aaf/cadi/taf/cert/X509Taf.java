@@ -134,7 +134,7 @@ public class X509Taf implements HttpTaf {
                 // Note: If the Issuer is not in the TrustStore, it's not added to the Cert list
                 String issuer = certarr[0].getIssuerDN().toString();
                 String subject = certarr[0].getSubjectDN().getName();
-                access.printf(Level.DEBUG,"Client Certificate found\n  Subject %s\n  Issuer  %s",subject,issuer);
+                access.printf(Level.DEBUG,"Client Certificate found\n  Subject '%s'\n  Issuer  '%s'",subject,issuer);
                 if (cadiIssuers.contains(issuer)) {
                     // avoiding extra object creation, since this is validated EVERY transaction with a Cert
                 	int start = 0;

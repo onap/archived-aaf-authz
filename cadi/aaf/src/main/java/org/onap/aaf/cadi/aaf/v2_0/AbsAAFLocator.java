@@ -23,6 +23,7 @@ package org.onap.aaf.cadi.aaf.v2_0;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,10 +33,11 @@ import java.util.NoSuchElementException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.cadi.routing.GreatCircle;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Split;
@@ -64,16 +66,22 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
 
     public AbsAAFLocator(Access access, String name, final long refreshMin) throws LocatorException {
-        aaf_locator_host = access.getProperty(Config.AAF_LOCATE_URL, null);
-        if (aaf_locator_host==null) {
-            aaf_locator_uri = null;
-        } else {
-            try {
-                aaf_locator_uri = new URI(aaf_locator_host);
-            } catch (URISyntaxException e) {
-                throw new LocatorException(e);
-            }
+    	RegistrationPropHolder rph;
+		try {
+			rph = new RegistrationPropHolder(access, 0);
+		} catch (UnknownHostException | CadiException e1) {
+			throw new LocatorException(e1);
+		}
+        try {
+        	aaf_locator_host = rph.replacements("https://"+Config.AAF_LOCATE_URL_TAG,null,null);
+            aaf_locator_uri = new URI(aaf_locator_host);
+            access.printf(Level.INFO, "AbsAAFLocator AAF URI is %s",aaf_locator_uri);
+        } catch (URISyntaxException e) {
+            throw new LocatorException(e);
         }
+
+        name = rph.replacements(name, null,null);
+        access.printf(Level.INFO, "AbsAAFLocator name is %s",aaf_locator_uri);
 
         epList = new LinkedList<>();
         refreshWait = refreshMin;
@@ -88,12 +96,6 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             longitude = Double.parseDouble(lng);
         }
 
-        if (name.startsWith(Defaults.AAF_NS)) {
-            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
-            if(root_ns!=null) {
-            	name=name.replace(Defaults.AAF_NS, root_ns);
-            }
-        }
 
         if (name.startsWith("http")) { // simple URL
             this.name = name;

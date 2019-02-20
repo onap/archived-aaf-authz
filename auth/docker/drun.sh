@@ -93,9 +93,12 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     #--hostname="${AAF_COMPONENT}.${NAMESPACE}" \
     #    --env aaf_locate_url=https://aaf-locate:8095 \
     #	$ADD_HOST \
+    if [ -n "${DUSER}" ]; then
+       THE_USER="--user $DUSER"
+    fi
     $DOCKER run  \
         -d \
-        --user aaf \
+        ${THE_USER} \
         --name aaf-$AAF_COMPONENT \
         ${LINKS} \
         --env AAF_ENV=${AAF_ENV} \

@@ -28,7 +28,7 @@ mv user_role.dat $TEMP
 cat $TEMP | awk -F '|' '{print $1"|"$2"|"ENVIRON["DATE"]"|"$4"|"$5}' > user_role.dat
 
 mv cred.dat $TEMP
-cat $TEMP | awk -F '|' '{print $1"|"$2"|"ENVIRON["DATE"]"|"$4"|"$5"|"$6"|"$7"|"$8}' > cred.dat
+cat $TEMP | awk -F '|' '{print $1"|"$2"|"ENVIRON["DATE"]"|"$4"|"$5"|"$6"|"$7"|"$8"|"$9}' > cred.dat
 
 rm $TEMP
 

@@ -23,7 +23,9 @@
 
 DOCKER=${DOCKER:=docker}
 if [ "$1" == "" ]; then
-    AAF_COMPONENTS=$(tail -r components)
+    for C in $(cat components); do 
+      AAF_COMPONENTS="$C $AAF_COMPONENTS"
+   done
 else
     AAF_COMPONENTS="$@"
 fi

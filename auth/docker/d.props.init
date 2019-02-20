@@ -26,7 +26,7 @@ CONF_ROOT_DIR=/opt/app/osaaf
 # For local builds, set PREFIX=   
 PREFIX="$DOCKER_REPOSITORY/"
 NAMESPACE=onap
-USER=aaf
+DUSER=aaf
 
 # HOSTNAME=aaf.osaaf.org
 
@@ -39,7 +39,6 @@ LONGITUDE=
 CADI_X509_ISSUERS="CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US"
 AAF_INITIAL_X509_P12=
 AAF_INITIAL_X509_PASSWORD=
-CADI_X509_ISSUERS=
 
 # CA info (leave blank unless functioning as CA)
 CM_CA_LOCAL=

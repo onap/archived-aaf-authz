@@ -73,6 +73,7 @@ CREATE TABLE cred (
     notes varchar,
     cred  blob,
     prev  blob,
+    tag   varchar,
     PRIMARY KEY (id,type,expires)
   );
 CREATE INDEX cred_ns ON cred(ns);

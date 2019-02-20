@@ -30,7 +30,7 @@ fi
 DOCKER=${DOCKER:=docker}
 CADI_VERSION=${CADI_VERSION:=2.1.10-SNAPSHOT}
 
-for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
+for V in VERSION DOCKER_REPOSITORY HOSTNAME CONTAINER_NS AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_FQDN APP_FQI VOLUME DRIVER LATITUDE LONGITUDE; do
    if [ "$(grep $V ./aaf.props)" = "" ]; then
       unset DEF
       case $V in
@@ -64,6 +64,8 @@ for V in VERSION DOCKER_REPOSITORY HOSTNAME AAF_FQDN AAF_FQDN_IP DEPLOY_FQI APP_
 		     fi
 		 ;;
          DRIVER)     PROMPT=$V;DEF=local;;
+         CONTAINER_NS)     
+                     PROMPT=$V;DEF=onap;;
 	 VERSION)    PROMPT="CADI Version";DEF=$CADI_VERSION;;
          LATITUDE|LONGITUDE) PROMPT="$V of Node";;
          *)          PROMPT=$V;;
@@ -117,6 +119,7 @@ function run_it() {
     --env APP_FQDN=${APP_FQDN} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \
+    --env aaf_locator_container_ns=${CONTAINER_NS} \
     --name aaf-agent-$USER \
     "$PREFIX"onap/aaf/aaf_agent:$VERSION \
     bash -c "bash /opt/app/aaf_config/bin/agent.sh $PARAMS"
