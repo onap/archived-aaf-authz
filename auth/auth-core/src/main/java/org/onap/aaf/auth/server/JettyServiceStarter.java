@@ -202,7 +202,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         );
         
         try {
-            access().printf(Level.INIT, "Starting service on %s:%d (%s)",hostname,port,InetAddress.getLocalHost().getHostAddress());
+            access().printf(Level.INIT, "Starting service on %s:%d (%s)",hostname,port,InetAddress.getByName(hostname).getHostAddress());
             server.start();
             access().log(Level.INIT,server.dump());
         } catch (Exception e) {

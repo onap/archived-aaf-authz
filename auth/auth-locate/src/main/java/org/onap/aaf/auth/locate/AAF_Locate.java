@@ -66,8 +66,6 @@ import org.onap.aaf.misc.env.Env;
 import com.datastax.driver.core.Cluster;
 
 public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
-    private static final String DOT_LOCATOR = ".locator";
-
     private static final String USER_PERMS = "userPerms";
     private LocateFacade_1_1 facade; // this is the default Facade
     private LocateFacade_1_1 facade_1_1_XML;
@@ -80,8 +78,6 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     public final LocateDAO locateDAO;
     public final ConfigDAO configDAO;
     private Locator<URI> dal;
-    private final String aaf_service_name;
-    private final String aaf_gui_name;
 
     
     /**
@@ -95,8 +91,6 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
      */
     public AAF_Locate(final AuthzEnv env) throws Exception {
         super(env.access(), env);
-        aaf_service_name = app_name.replace(DOT_LOCATOR, ".service");
-        aaf_gui_name = app_name.replace(DOT_LOCATOR, ".gui");
         
         expireIn = Long.parseLong(env.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
 
@@ -186,7 +180,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     protected AAFConHttp _newAAFConHttp() throws CadiException {
         try {
             if (dal==null) {
-                dal = AbsAAFLocator.create(aaf_service_name,Config.AAF_DEFAULT_API_VERSION);
+                dal = AbsAAFLocator.create("%CNS.%AAF_NS.service",Config.AAF_DEFAULT_API_VERSION);
             }
             // utilize pre-constructed DirectAAFLocator
             return new AAFConHttp(env.access(),dal);
@@ -197,7 +191,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
     public Locator<URI> getGUILocator() throws LocatorException {
         if (gui_locator==null) {
-            gui_locator = AbsAAFLocator.create(aaf_gui_name,Config.AAF_DEFAULT_API_VERSION);
+            gui_locator = AbsAAFLocator.create("AAF_NS.gui",Config.AAF_DEFAULT_API_VERSION);
         }
         return gui_locator;
     }

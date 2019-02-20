@@ -93,10 +93,20 @@ public class PropAccess implements Access {
         int eq;
         for (String arg : args) {
             if ((eq=arg.indexOf('='))>0) {
-                nprops.setProperty(arg.substring(0, eq),arg.substring(eq+1));
+            	String key = arg.substring(0, eq);
+                if(Config.CADI_PROP_FILES.equals(key)) {
+                	nprops.setProperty(key,arg.substring(eq+1));
+                }
             }
         }
         init(nprops);
+        
+        // Re-overlay Args
+        for (String arg : args) {
+            if ((eq=arg.indexOf('='))>0) {
+                props.setProperty(arg.substring(0, eq),arg.substring(eq+1));
+            }
+        }
     }
     
     protected void init(Properties p) {
@@ -105,7 +115,25 @@ public class PropAccess implements Access {
         level=DEFAULT.maskOf();
         
         props = new Properties();
-        // First, load related System Properties
+        
+        // Find the "cadi_prop_files"
+        //  First in VM Args
+        for (Entry<Object,Object> es : System.getProperties().entrySet()) {
+            String key = es.getKey().toString();
+            if(Config.CADI_PROP_FILES.equals(key)) {
+            	props.put(key,es.getValue().toString());
+            }
+        }
+        
+        // Second, overlay or fill in with Passed in Props
+        if (p!=null) {
+            props.putAll(p);
+        }
+        
+        // Third, load any Chained Property Files
+        load(props.getProperty(Config.CADI_PROP_FILES));
+        
+        // Fourth, System.getProperties takes precedence over Files
         for (Entry<Object,Object> es : System.getProperties().entrySet()) {
             String key = es.getKey().toString();
             for (String start : new String[] {"HOSTNAME","cadi_","aaf_","cm_"}) {
@@ -114,13 +142,6 @@ public class PropAccess implements Access {
                 }
             }            
         }
-        // Second, overlay or fill in with Passed in Props
-        if (p!=null) {
-            props.putAll(p);
-        }
-        
-        // Third, load any Chained Property Files
-        load(props.getProperty(Config.CADI_PROP_FILES));
         
         String sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
         if (sLevel!=null) {
