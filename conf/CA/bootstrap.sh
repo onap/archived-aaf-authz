@@ -142,7 +142,7 @@ $PASSPHRASE
 EOF
 
 # Make Issuer name
-ISSUER=$(openssl x509 -subject -noout -in $SIGNER_CRT | cut -c 9- | sed -e 's/ = /=/g')
+ISSUER=$(openssl x509 -subject -noout -in $SIGNER_CRT | cut -c 9- | sed -e 's/ = /=/g' -e 's/\//, /g')
 for I in $ISSUER; do
   if [ -z "$REVERSE" ]; then
     REVERSE="${I%,}"
