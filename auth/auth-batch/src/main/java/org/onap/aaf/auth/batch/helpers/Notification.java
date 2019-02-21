@@ -84,6 +84,23 @@ public class Notification {
     private int current;
     public Organization org;
     public int count;
+
+    public static Creator<Notification> v2_0_18 = new Creator<Notification>() {
+        @Override
+        public Notification create(Row row) {
+            int idx =row.getInt(1);
+            TYPE typeCreator = TYPE.get(idx);
+            if (typeCreator==null) {
+                return null;
+            }
+            return new Notification(row.getString(0), typeCreator, row.getTimestamp(2), row.getInt(3));
+        }
+
+        @Override
+        public String select() {
+            return "SELECT user,type,last,checksum FROM authz.notify LIMIT 100000";
+        }
+    };
     
     private Notification(String user, TYPE nt, Date last, int checksum) {
         this.user = user;
@@ -144,23 +161,6 @@ public class Notification {
     public static Notification create(String user, TYPE type) {
         return new Notification(user,type,null,0);
     }
-    
-    public static Creator<Notification> v2_0_18 = new Creator<Notification>() {
-        @Override
-        public Notification create(Row row) {
-            int idx =row.getInt(1);
-            TYPE typeCreator = TYPE.get(idx);
-            if (typeCreator==null) {
-                return null;
-            }
-            return new Notification(row.getString(0), typeCreator, row.getTimestamp(2), row.getInt(3));
-        }
-
-        @Override
-        public String select() {
-            return "SELECT user,type,last,checksum FROM authz.notify LIMIT 100000";
-        }
-    };
 
     
     public void set(Message msg) {
