@@ -17,12 +17,14 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-FROM nexus3.onap.org:10001/openjdk:8-jre-alpine
+#FROM nexus3.onap.org:10001/openjdk:8-jre-alpine
+# use public, multi-platform base image
+FROM openjdk:8-jre-alpine
 MAINTAINER AAF Team, AT&T 2018
 
 LABEL description="aaf_base"
+
+# AAF specific stuff
 RUN apk add --no-cache bash
 RUN apk add --no-cache openssl
-RUN apk add --no-cache curl
-RUN if [ -n "${DUSER}" ]; then addgroup ${DUSER} && adduser ${DUSER} -G ${DUSER} -D -s /bin/bash; fi
 
