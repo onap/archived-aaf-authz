@@ -33,7 +33,8 @@ import org.onap.aaf.auth.env.AuthzTrans;
 public class InputIterator implements Iterable<String> {
     private BufferedReader in;
     private final PrintStream out;
-    private final String prompt, instructions;
+    private final String prompt;
+    private final String instructions;
     private static AuthzTrans trans;
     
     public InputIterator(BufferedReader in, PrintStream out, String prompt, String instructions) {
@@ -71,6 +72,7 @@ public class InputIterator implements Iterable<String> {
 
             @Override
             public void remove() {
+                // To Do
             }
         };
     }
