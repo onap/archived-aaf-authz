@@ -27,14 +27,18 @@ You can emulate the JENKINS build locally
   cd <root onap source dir>
 2) If not exist, create a "workspace" directory. 
   mkdir -p workspace
-3) Create an empty common functions script
-  > workspace/common_functions.sh
-4) cd to the plans
-  cd csit/plans/aaf/aafapi
-5) Run setup with variables set to the Workspace you created
-WORKSPACE=/workspace; SCRIPTS=$WORKSPACE; export WORKSPACE SCRIPTS; bash setup.sh
+3) cd to workspace
+4) export WORKSPACE="${PWD}"
+5) Create an empty common functions script
+  > common_functions.sh
+6) cd to the plans
+  cd ../csit/plans/aaf/aafapi
+7) Run setup with variables set to the Workspace you created
+SCRIPTS=$WORKSPACE; export WORKSPACE SCRIPTS; bash setup.sh
 
-6) To practice the Shutdown, do:
-WORKSPACE=/workspace; SCRIPTS=$WORKSPACE; export WORKSPACE SCRIPTS; bash teardown.sh
+8) To practice the Shutdown, do:
+SCRIPTS=$WORKSPACE; export WORKSPACE SCRIPTS; bash teardown.sh
   
+OTHER) If nexus isn't working (and you have the latest images to test with), you can 
+   export SKIP_PULL=true
 

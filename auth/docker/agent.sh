@@ -125,6 +125,28 @@ function run_it() {
     bash -c "bash /opt/app/aaf_config/bin/agent.sh $PARAMS"
 }
 
+function sso {
+  if [ -n "$2" ]; then
+    echo "$1=$2" >> ~/.aaf/sso.props
+  fi
+}
+
+function reset_sso {
+    mkdir -p ~/.aaf
+    > ~/.aaf/sso.props
+    sso aaf_locate_url "https://$AAF_FQDN:8095"
+    sso cadi_latitude "$LATITUDE"
+    sso cadi_longitude "$LONGITUDE"
+    sso cadi_loglevel "DEBUG"
+    TRUSTSTORE="$(ls truststore*.jks | tail -1)"
+    if [ -z "$TRUSTSTORE" ]; then
+      echo "Place a truststore*.jar which has YOUR CA in it here"
+      exit
+    fi
+    sso cadi_truststore "${PWD}/${TRUSTSTORE}"
+    sso cadi_truststore_password changeit
+}
+
 PARAMS=$@
 case "$1" in 
   bash)
@@ -133,6 +155,42 @@ case "$1" in
     ;;
   taillog)
     run_it -it --rm 
+    ;;
+  aafcli) 
+    shift
+    reset_sso
+    if [ -f aaf-auth-cmd-$VERSION*-full.jar ]; then
+      java -Dcadi_prop_files="~\/.aaf\/sso.props" -jar aaf-auth-cmd-$VERSION*-full.jar $@
+    else 
+      echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION*-full.jar' (or newer)"
+    fi
+    ;;
+  local) 
+    shift
+    CMD="$1"
+    if [ -z "$2" ]; then 
+	CMD="$CMD $APP_FQI $APP_FQDN"
+    else 
+      if [ "-" = "$2" ]; then
+         CMD="$CMD $APP_FQI"
+      else
+         CMD="$CMD $2"
+      fi
+      if [ "-" = "$3" ]; then
+         CMD="$CMD $APP_FQDN"
+      else
+         CMD="$CMD $3"
+      fi
+    fi
+    reset_sso
+    sso aaf_id "$DEPLOY_FQI"
+    sso aaf_password "$DEPLOY_PASSWORD"
+    if [ -f aaf-auth-cmd-$VERSION*-full.jar ]; then
+      mkdir -p $APP_FQDN
+      java -Dcadi_prop_files="~\/.aaf\/sso.props" -cp aaf-auth-cmd-$VERSION*-full.jar org.onap.aaf.cadi.configure.Agent $CMD 
+    else 
+      echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION*-full.jar' (or newer)"
+    fi
     ;;
   *)
     run_it --rm 
