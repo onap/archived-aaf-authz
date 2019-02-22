@@ -8,9 +8,9 @@ Automated Configuration and Certificates
 
 *Note: this document assumes UNIX Bash Shell.  Being Java, AAF works in Windows, but you will have to create your own script/instruction conversions.*
 
---------
-Strategy
---------
+=================
+Optimal Strategy
+=================
 
 ONAP is deployed in Docker Containers or Kubernetes managed Docker Containers.  Therefore, this instruction utilizes a Docker Container as a standalone Utility... (This means that this container will stop as soon as it is done with its work... it is not a long running daemon)
 
@@ -18,16 +18,38 @@ Given that all ONAP entities are also in Docker Containers, they all can access 
 
 This tool creates all the Configurations, including Certificates, onto a declared Volume on the directories starting with "/opt/app/osaaf"
 
-------------------
+==================
 Prerequisites
-------------------
-  * Docker
-    * Note: it does NOT have to be the SAME Docker that AAF is deployed on...
-    | but it DOES have be accessible to the AAF Instance.  
-  * For ONAP, this means
-    
-    * Windriver VPN
-    * include "10.12.6.214 aaf-onap-test.osaaf.org" in your /etc/hosts or DNS
+==================
+  * Access to a RUNNING AAF System
+
+    * For ONAP TEST, this means
+
+      * Windriver VPN
+      * include "10.12.6.214 aaf-onap-test.osaaf.org" in your /etc/hosts or DNS
+  * For Writing to Volumes for Docker or K8s
+
+    * Docker
+
+      * Note: it does NOT have to be the SAME Docker that AAF is deployed on...
+
+         * but it DOES have be accessible to the AAF Instance.  
+
+  * For creating Configurations on Local Disk
+
+    * For Development purposes
+    * For running AAF on Bare Metal (or VM)
+    * A Truststore that includes your CA
+
+      * for ONAP TEST, you can obtain truststoreONAPall.jks from the `AAF FileServer`_.
+
+        * (You can also get the ONAP TEST Root CA there)
+
+    * the latest aaf-auth-cmd-<VERSION>-full.jar from `ONAP Nexus`_.
+    * you can still use the same "agent.sh" script below
+
+.. _AAF FileServer: http://aaf-onap-test.osaaf.org/-
+.. _ONAP Nexus: https://nexus.onap.org/#nexus-search;quick~aaf-auth-cmd
 
 -----------------------
 Obtain the Agent Script
@@ -43,10 +65,12 @@ If you don't want to clone all of AAF, just get the "agent.sh" from a Browser:
 Note: curl/wget returns an  html, instead of text.  This cannot be used!
   | You have to mv, and rename it to "agent.sh", but avoids full clone...
 
--------------------------
+=============
 Run Script
--------------------------
-
+=============
+----------------
+For Docker/K8s
+----------------
 In your chosen directory ::
  
   $ bash agent.sh
@@ -55,9 +79,20 @@ The Agent will look for "aaf.props", and if it doesn't exist, or is missing info
 
 This file is available to reuse for multiple calls. More importantly, you should use it as a template for auto-configuration.  (In ONAP, these are HEAT templates and OOM Helm Charts)
 
----------------------
+--------------------------
+For Local/BareMetal (VM)
+--------------------------
+In your chosen directory ::
+ 
+  $ bash agent.sh local <instructions>
+
+The Agent will look for "aaf.props", and if it doesn't exist, or is missing information, it will ask for it.
+
+=======================
 'aaf.prop' Properties
----------------------
+=======================
+
+These properties will be created when you run "agent.sh".  Many of the values will be defaulted, or allow you to change.  It will be placed into an "aaf.props" file for you to save, edit or otherwise modify/utilize.
 
 ==================== ================= ============
 Query                Tag               Description
@@ -74,11 +109,14 @@ App's Volume         VOLUME            Volume to put the data, see above. ex: 'c
 DRIVER               DRIVER            Docker Volume type... See Docker Volume documentation. Default is 'local'
 LATITUDE of Node     LATITUDE          Global latitude coordinate of Node (best guess in Kubernetes)
 LONGITUDE of Node    LONGITUDE         Global longitude coordinate of Node (best guess in Kubernetes)
+HOSTNAME             HOSTNAME          Defaults to SYSTEM provided "hostname". Use when System doesn't report what is actually needed, such as vanity urls, multi-NIC cards, short names, i.e. htydb77 reported instead of htydb77.some.company.org, etc.
+Docker User          DUSER             User needed inside the Docker Container.  Without, this will be root
+Container NS         CONTAINER_NS      The Namespace for the container.  Provided for Multi-NS support, this would be "onap" for Test OOM, etc.
 ==================== ================= ============
 
--------------------------------
+=================================
 Typical ONAP Entity Info in AAF
--------------------------------
+=================================
 *This is not intended to be a comprehensive list, but a short list of main entities*
 
 ============================= ===========================  ======================= ==============================================
@@ -115,9 +153,9 @@ If something goes wrong, and Certificate is not created, you can adjust the data
   root@77777:/opt/app/osaaf/local# exit
   $ bash agent.sh bash
 
--------------
+===============
 Informational
--------------
+===============
 
 There are two sets of Credentials at play here.  The ability to create the Certificate belongs to one of
   

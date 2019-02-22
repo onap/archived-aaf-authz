@@ -127,13 +127,13 @@ function run_it() {
 
 function sso {
   if [ -n "$2" ]; then
-    echo "$1=$2" >> ~/.aaf/sso.props
+    echo "$1=$2" >> $HOME/.aaf/sso.props
   fi
 }
 
 function reset_sso {
     mkdir -p ~/.aaf
-    > ~/.aaf/sso.props
+    > $HOME/.aaf/sso.props
     sso aaf_locate_url "https://$AAF_FQDN:8095"
     sso cadi_latitude "$LATITUDE"
     sso cadi_longitude "$LONGITUDE"
@@ -160,9 +160,9 @@ case "$1" in
     shift
     reset_sso
     if [ -f aaf-auth-cmd-$VERSION*-full.jar ]; then
-      java -Dcadi_prop_files="~\/.aaf\/sso.props" -jar aaf-auth-cmd-$VERSION*-full.jar $@
+      java -Dcadi_prop_files="$HOME/.aaf/sso.props" -jar aaf-auth-cmd-$VERSION*-full.jar $@
     else 
-      echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION*-full.jar' (or newer)"
+      echo "For local use, you need to have 'aaf-auth-cmd-$VERSION*-full.jar' (or newer)"
     fi
     ;;
   local) 
@@ -186,8 +186,7 @@ case "$1" in
     sso aaf_id "$DEPLOY_FQI"
     sso aaf_password "$DEPLOY_PASSWORD"
     if [ -f aaf-auth-cmd-$VERSION*-full.jar ]; then
-      mkdir -p $APP_FQDN
-      java -Dcadi_prop_files="~\/.aaf\/sso.props" -cp aaf-auth-cmd-$VERSION*-full.jar org.onap.aaf.cadi.configure.Agent $CMD 
+      java -Dcadi_prop_files="$HOME/.aaf/sso.props" -cp aaf-auth-cmd-$VERSION*-full.jar org.onap.aaf.cadi.configure.Agent $CMD 
     else 
       echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION*-full.jar' (or newer)"
     fi

@@ -17,7 +17,9 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
+# public, multi-platform base image
 FROM nexus3.onap.org:10001/cassandra:3.11
+# FROM cassandra:3.11
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 

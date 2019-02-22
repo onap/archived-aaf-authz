@@ -200,30 +200,34 @@
 								 if(!identity.isPerson()) {
 									 identity = identity.responsibleTo();
 								 }
-								 for(int i=1;i<nb.escalation();++i) {
-									 if(identity != null) {
-										 if(i==1) {
-											 toList.add(identity.email());
-										 } else {
-											 identity=identity.responsibleTo();
-											 ccList.add(identity.email());
+								 if(identity==null) {
+									 trans.warn().printf("Responsible Identity %s is invalid for this Organization. Skipping notification.",id);
+								 } else {
+									 for(int i=1;i<nb.escalation();++i) {
+										 if(identity != null) {
+											 if(i==1) {
+												 toList.add(identity.email());
+											 } else {
+												 identity=identity.responsibleTo();
+												 ccList.add(identity.email());
+											 }
 										 }
 									 }
-								 }
-
-								 StringBuilder content = new StringBuilder();
-								 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
-
-								 nb.body(noAvg, content, indent, notify, id);
-								 content.append(footer);
-
-								 if(mailer.sendEmail(noAvg, test, toList, ccList, subject,content.toString(), urgent)) {
-									 nb.inc();
-								 } else {
-									 trans.error().log("Mailer failed to send Mail");
-								 }
-								 if(maxEmails>0 && nb.count()>=maxEmails) {
-									 break ONE_EMAIL;
+	
+									 StringBuilder content = new StringBuilder();
+									 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
+	
+									 nb.body(noAvg, content, indent, notify, id);
+									 content.append(footer);
+	
+									 if(mailer.sendEmail(noAvg, test, toList, ccList, subject,content.toString(), urgent)) {
+										 nb.inc();
+									 } else {
+										 trans.error().log("Mailer failed to send Mail");
+									 }
+									 if(maxEmails>0 && nb.count()>=maxEmails) {
+										 break ONE_EMAIL;
+									 }
 								 }
 							 }
 						 } catch (OrganizationException e) {
