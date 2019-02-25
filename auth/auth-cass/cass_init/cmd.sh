@@ -92,13 +92,18 @@ function install_cql {
         echo "Docker Installed Basic Cassandra on aaf.cass.  Executing the following "
         echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
         echo ""
+        until /usr/bin/cqlsh -e 'describe keyspaces';
+        do
+          echo "Cassandra DB is not up Yet!! Trying in 10 seconds"
+          sleep 10
+        done
         echo " cd /opt/app/aaf/cass_init"
         cd /opt/app/aaf/cass_init
         echo " cqlsh -f keyspace.cql"
-        /usr/bin/cqlsh -f keyspace.cql
+        /usr/bin/cqlsh --request-timeout=60 -f keyspace.cql
 	status keyspace installed
         echo " cqlsh -f init.cql"
-        /usr/bin/cqlsh -f init.cql
+        /usr/bin/cqlsh --request-timeout=60 -f init.cql
 	status data initialized
         echo ""
         echo "The following will give you a temporary identity with which to start working, or emergency"
@@ -149,6 +154,9 @@ case "$1" in
 
     # Startup like normal
     echo "Cassandra Startup"
+    if ! cat /etc/cassandra/cassandra.yaml | grep "write_request_timeout_in_ms: 20000"; then
+      sed -i 's/write_request_timeout_in_ms: 2000/write_request_timeout_in_ms: 20000/' /etc/cassandra/cassandra.yaml
+    fi
     exec /usr/local/bin/docker-entrypoint.sh 
   ;;
 esac
