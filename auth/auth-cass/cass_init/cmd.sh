@@ -49,9 +49,22 @@ function wait_start {
         echo "Waiting for Cassandra to start... Sleep 10"
         sleep 10
       else
+         status cassandra started
          break
       fi
     done
+    # Logs state Cassandra is up.  Now use cqlsh to ensure responsive
+    echo "Cassandra started, wait until it is responsive"
+    for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+      if  [ -z "$(cqlsh -e 'describe keyspaces')" ]; then
+        echo "Waiting for Cassandra to be responsive... Sleep 10"
+        sleep 10
+      else
+        echo "Cassandra responded"
+        status cassandra responsive
+	break
+      fi
+    done 
 }
 
 
@@ -81,29 +94,25 @@ function wait_ready {
 }
 
 function install_cql {
-    wait_start started   
+    wait_start cassandra responsive   
     # Now, make sure data exists
     if [ ! -e $INSTALLED_VERSION ] && [ -n "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)" ]; then
-      /usr/bin/cqlsh -e 'DROP KEYSPACE authz' 
+      /usr/bin/cqlsh --timeout 60 -e 'DROP KEYSPACE authz' 
     fi
-    if [ -z "`/usr/bin/cqlsh -e 'describe keyspaces' | grep authz`" ]; then
+
+    if [ -z "`/usr/bin/cqlsh --timeout 60 -e 'describe keyspaces' | grep authz`" ]; then
         status install 
         echo "Initializing Cassandra DB" 
         echo "Docker Installed Basic Cassandra on aaf.cass.  Executing the following "
         echo "NOTE: This creator provided is only a Single Instance. For more complex Cassandra, create independently"
         echo ""
-        until /usr/bin/cqlsh -e 'describe keyspaces';
-        do
-          echo "Cassandra DB is not up Yet!! Trying in 10 seconds"
-          sleep 10
-        done
         echo " cd /opt/app/aaf/cass_init"
         cd /opt/app/aaf/cass_init
         echo " cqlsh -f keyspace.cql"
-        /usr/bin/cqlsh --request-timeout=60 -f keyspace.cql
+        /usr/bin/cqlsh --request-timeout=100 -f keyspace.cql
 	status keyspace installed
         echo " cqlsh -f init.cql"
-        /usr/bin/cqlsh --request-timeout=60 -f init.cql
+        /usr/bin/cqlsh --request-timeout=100 -f init.cql
 	status data initialized
         echo ""
         echo "The following will give you a temporary identity with which to start working, or emergency"
