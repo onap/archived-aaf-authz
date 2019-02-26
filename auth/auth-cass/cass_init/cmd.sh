@@ -97,10 +97,10 @@ function install_cql {
     wait_start cassandra responsive   
     # Now, make sure data exists
     if [ ! -e $INSTALLED_VERSION ] && [ -n "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)" ]; then
-      /usr/bin/cqlsh --timeout 60 -e 'DROP KEYSPACE authz' 
+      /usr/bin/cqlsh --request-timeout=60 -e 'DROP KEYSPACE authz' 
     fi
 
-    if [ -z "`/usr/bin/cqlsh --timeout 60 -e 'describe keyspaces' | grep authz`" ]; then
+    if [ -z "`/usr/bin/cqlsh --request-timeout 60 -e 'describe keyspaces' | grep authz`" ]; then
         status install 
         echo "Initializing Cassandra DB" 
         echo "Docker Installed Basic Cassandra on aaf.cass.  Executing the following "

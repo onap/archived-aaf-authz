@@ -35,11 +35,7 @@ fi
 cd dats
 for T in $(ls *.dat); do
   if [ -s $T ]; then
-    until cqlsh --request-timeout=60 -e "COPY authz.${T/.dat/} FROM '$T' WITH DELIMITER='|';";
-    do
-      echo "Unexpected failure...sleep for 10 seconds and try again"
-      sleep 10
-    done
+    cqlsh --request-timeout=100 -e "COPY authz.${T/.dat/} FROM '$T' WITH DELIMITER='|';";
   fi
 done
 cd $DIR
