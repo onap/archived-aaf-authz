@@ -136,7 +136,6 @@ public class Cred  {
 
     public static void load(Trans trans, Session session, int ... types ) {
         load(trans, session,"select id, type, expires, other, writetime(cred), tag from authz.cred;",types);
-        
     }
 
     public static void loadOneNS(Trans trans, Session session, String ns,int ... types ) {

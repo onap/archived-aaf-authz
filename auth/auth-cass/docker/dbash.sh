@@ -24,5 +24,5 @@ if [ -e ../../docker/d.props ]; then
 fi
 DOCKER=${DOCKER:-docker}
 
-$DOCKER exec -it aaf_cass bash
+$DOCKER exec -it aaf-cass bash
 

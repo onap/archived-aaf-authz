@@ -27,10 +27,13 @@ public class CQLBatchLoop {
 	private final StringBuilder sb;
 	private final boolean dryRun;
 	private int i;
+	private int count;
+	private int batches;
 	
 	public CQLBatchLoop(CQLBatch cb, int max, boolean dryRun) {
 		cqlBatch = cb;
 		i=0;
+		count = 0;
 		maxBatch = max;
 		sb = cqlBatch.begin();
 		this.dryRun = dryRun;
@@ -43,10 +46,11 @@ public class CQLBatchLoop {
 	public void preLoop() {
 		if(i<0) {
 			cqlBatch.begin();
-		} else if(i>=maxBatch) {
+		} else if(i>=maxBatch || sb.length()>24000) {
 			cqlBatch.execute(dryRun);
 			cqlBatch.begin();
 			i=0;
+			++batches;
 		}
 	}
 	
@@ -56,6 +60,7 @@ public class CQLBatchLoop {
 	 */
 	public StringBuilder inc() {
 		++i;
+		++count;
 		return sb;
 	}
 	
@@ -63,7 +68,18 @@ public class CQLBatchLoop {
 	 * Close up when done.  However, can go back to "preLoop" safely.
 	 */
 	public void flush() {
-		cqlBatch.execute(dryRun);
+		if(i>0) {
+			cqlBatch.execute(dryRun);
+			++batches;
+		}
 		i=-1;
+	}
+
+	public int total() {
+		return count;
+	}
+	
+	public int batches() {
+		return batches;
 	}
 }

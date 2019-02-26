@@ -63,12 +63,14 @@ public class CQLBatch {
 	}
 	
 	public ResultSet execute(boolean dryRun) {
+		ResultSet rv = null;
 		if(dryRun) {
 			end();
-			return null;
 		} else {
-			return execute();
+			rv = execute();
 		}
+		sb.setLength(0);
+		return rv;
 	}
 	
 	public void touch(String table, int begin, int end, boolean dryRun) {

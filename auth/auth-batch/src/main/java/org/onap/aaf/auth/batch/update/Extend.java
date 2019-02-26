@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.BatchPrincipal;
@@ -78,12 +80,14 @@ public class Extend extends Batch {
         gcType = GregorianCalendar.WEEK_OF_YEAR;
         int weeks = 4;
 		
+        Set<String> cmd = new HashSet<>();
 		for(int i=0; i< args().length;++i) {
 			if("-weeks".equals(args()[i])) {
 				if(args().length>i+1) {
-					weeks = Integer.parseInt(args()[i +1]);
-					break;
+					weeks = Integer.parseInt(args()[++i]);
 				}
+			} else {
+				cmd.add(args()[i]);
 			}
 		}
 		
@@ -95,12 +99,12 @@ public class Extend extends Batch {
         // Create Intermediate Output 
         File logDir = logDir();
         extFiles = new ArrayList<>();
-        if(args().length>0) {
-        	for(int i=0;i<args().length;++i) {
-        		extFiles.add(new File(logDir, args()[i]));
-        	}
-        } else {
+        if(cmd.isEmpty()) {
         	extFiles.add(new File(logDir,PrepExtend.PREP_EXTEND+Chrono.dateOnlyStamp()+".csv"));
+        } else {
+        	for(String fn : cmd) {
+        		extFiles.add(new File(logDir, fn));
+        	}
         }
         
         // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
@@ -142,7 +146,7 @@ public class Extend extends Batch {
 							case "ur":
 								hi.set(++i);
 								gc = hgc.get();
-								gc.setTime(new Date(Long.parseLong(row.get(5))));
+								gc.setTime(new Date(Long.parseLong(row.get(6))));
 								if(gc.before(now)) {
 									gc.setTime(now.getTime());
 								}
