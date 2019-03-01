@@ -82,4 +82,10 @@ public class CQLBatchLoop {
 	public int batches() {
 		return batches;
 	}
+
+	public void reset() {
+		count = 0;
+		batches = 0;
+		i = -1;
+	}
 }

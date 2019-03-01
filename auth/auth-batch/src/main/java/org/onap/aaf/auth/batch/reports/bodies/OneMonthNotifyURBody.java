@@ -29,4 +29,9 @@ public class OneMonthNotifyURBody extends NotifyURBody {
 	public OneMonthNotifyURBody(Access access) throws IOException {
 		super(access, ExpireRange.ONE_MONTH);
 	}
+	
+	@Override
+	public String subject() {
+		return String.format("AAF One Month UserRole Notification (ENV: %s)",env);
+	}
 }
