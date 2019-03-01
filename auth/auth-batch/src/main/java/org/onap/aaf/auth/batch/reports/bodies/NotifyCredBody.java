@@ -33,14 +33,14 @@ public abstract class NotifyCredBody extends NotifyBody {
 
 	private final String explanation;
 	public NotifyCredBody(Access access, String name) throws IOException {
-		super("cred",name);
+		super(access,"cred",name);
 		
 		// Default
 		explanation = "The following Credentials are expiring on the dates shown. "
 				+ "Failure to act before the expiration date will cause your App's "
 				+ "Authentications to fail."
 				+ "<h3>Instructions for 'Password':</h3><ul>" 
-				+ "<li>Click on the Fully Qualified ID to ADD a new Password</li>"
+				+ "<li><b><i>Click</i></b> on the Fully Qualified ID to ADD a new Password</li>"
 				+ "<li><b>REMEMBER!</b> You are not finished until you <ol>"
 				+ "<li><b>CHANGE <i>ALL</i></b> the configurations on <b><i>ALL</i></b> your processes!!</li>"
 				+ "<li><b>BOUNCE</b> them</li></ol>"

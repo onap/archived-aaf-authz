@@ -25,9 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.onap.aaf.auth.batch.Batch;
@@ -37,8 +39,10 @@ import org.onap.aaf.auth.batch.approvalsets.Pending;
 import org.onap.aaf.auth.batch.approvalsets.URApprovalSet;
 import org.onap.aaf.auth.batch.helpers.BatchDataView;
 import org.onap.aaf.auth.batch.helpers.NS;
+import org.onap.aaf.auth.batch.helpers.Notification;
 import org.onap.aaf.auth.batch.helpers.Role;
 import org.onap.aaf.auth.batch.helpers.UserRole;
+import org.onap.aaf.auth.batch.reports.bodies.NotifyPendingApprBody;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -56,6 +60,7 @@ public class Approvals extends Batch {
 	private BatchDataView dataview;
 	private List<CSV> csvList;
 	private GregorianCalendar now;
+	
 
     public Approvals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -90,7 +95,6 @@ public class Approvals extends Batch {
 			}
         }
         
-        
     }
 
     @Override
@@ -104,10 +108,11 @@ public class Approvals extends Batch {
 					switch(row.get(0)) {
 						case Pending.REMIND:
 							try {
+								String user = row.get(1);
 								Pending p = new Pending(row);
-								Pending mp = mpending.get(row.get(1));
+								Pending mp = mpending.get(user);
 								if(mp==null) {
-									mpending.put(row.get(1), p);
+									mpending.put(user, p);
 								} else {
 									mp.inc(p); // FYI, unlikely
 								}
@@ -165,9 +170,21 @@ public class Approvals extends Batch {
             trans.info().printf("Processed %d UserRoles", count.get());
 
             count.set(0);
+        	NotifyPendingApprBody npab;
+        	GregorianCalendar gc = new GregorianCalendar();
+        	gc.add(GregorianCalendar.DAY_OF_MONTH, 7);
+        	Date oneWeek = gc.getTime();
+        	
+        	Pending p;
         	tt = trans.start("Notify for Pending", Trans.SUB);
         	try {
-        		
+        		for(Entry<String, Pending> es : mpending.entrySet()) {
+        			p = es.getValue();
+        			Date earliest = p.earliest();
+        			if(p.newApprovals() || earliest==null || earliest.before(oneWeek) ) {
+        				System.out.println("update");
+        			}
+        		}
         	} finally {
         		tt.done();
         	}

@@ -29,4 +29,9 @@ public class OneMonthNotifyCredBody extends NotifyCredBody {
 	public OneMonthNotifyCredBody(Access access) throws IOException {
 		super(access, ExpireRange.ONE_MONTH);
 	}
+	
+	@Override
+	public String subject() {
+		return String.format("AAF One Month Credential Notification (ENV: %s)",env);
+	}
 }

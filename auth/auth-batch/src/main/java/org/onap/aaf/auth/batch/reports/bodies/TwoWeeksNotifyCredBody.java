@@ -29,4 +29,9 @@ public class TwoWeeksNotifyCredBody extends NotifyCredBody {
 	public TwoWeeksNotifyCredBody(Access access) throws IOException {
 		super(access, ExpireRange.TWO_WEEK);
 	}
+
+	@Override
+	public String subject() {
+		return String.format("AAF Two Week Credential Notification (ENV: %s)",env);
+	}
 }
