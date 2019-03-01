@@ -203,13 +203,24 @@
 								 if(identity==null) {
 									 trans.warn().printf("Responsible Identity %s is invalid for this Organization. Skipping notification.",id);
 								 } else {
-									 for(int i=1;i<nb.escalation();++i) {
+									 for(int i=1;i<=nb.escalation();++i) {
 										 if(identity != null) {
 											 if(i==1) {
 												 toList.add(identity.email());
+												 List<String> dels = identity.delegate();
+												 if(dels!=null) {
+													 for(String d : dels) {
+														 toList.add(d);
+													 }
+												 }
 											 } else {
-												 identity=identity.responsibleTo();
-												 ccList.add(identity.email());
+												 Identity s = identity.responsibleTo();
+												 if(s==null) {
+													 trans.error().printf("Identity %s has no %s", identity.fullID(),
+															 identity.isPerson()?"supervisor":"sponsor");
+												 } else {
+													 ccList.add(s.email());
+												 }
 											 }
 										 }
 									 }
@@ -220,7 +231,7 @@
 									 nb.body(noAvg, content, indent, notify, id);
 									 content.append(footer);
 	
-									 if(mailer.sendEmail(noAvg, test, toList, ccList, subject,content.toString(), urgent)) {
+									 if(mailer.sendEmail(noAvg, test, toList, ccList, nb.subject(),content.toString(), urgent)) {
 										 nb.inc();
 									 } else {
 										 trans.error().log("Mailer failed to send Mail");

@@ -20,79 +20,70 @@
  */
 package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.org.Organization.Identity;
-import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.misc.env.util.Chrono;
 
-public abstract class NotifyURBody extends NotifyBody {
-
+public class NotifyPendingApprBody extends NotifyBody {
 	private final String explanation;
-	public NotifyURBody(Access access, String name) throws IOException {
-		super(access,"ur",name);
-		
-		// Default
-		explanation = "The Roles for the IDs listed will expire on the dates shown. If "
-				+ "allowed to expire, the ID will no longer authorized in that role.<br><br>"
-				+ "If the ID is for a current <b><i>Application</i></b>, this <b><i>WILL</i></b> cause an outage.";
+
+	public NotifyPendingApprBody(Access access) {
+		super(access,"appr","PendingApproval");
+		explanation = "The following Approvals are awaiting your action. ";
 	}
 
 	@Override
 	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
-		String fullname = "n/a";
-		String kind = "Name";
-		try {
-			Identity identity = trans.org().getIdentity(trans, id);
-			if(identity==null) {
-				trans.warn().printf("Cannot find %s in Organization",id);
-			} else {
-				fullname = identity.fullName();
-				if(!identity.isPerson()) {
-					if((identity = identity.responsibleTo())!=null) {
-						kind = "AppID Sponsor";
-						fullname = identity.fullName();
-					}
-				}
-			}
-		} catch (OrganizationException e) {
-			trans.error().log(e);
-			fullname = "n/a";
-		}
 		println(sb,indent,explanation);
-		println(sb,indent,"<br><br>");
-		println(sb,indent,"<table>");
+/*		println(sb,indent,"<table>");
 		indent+=2;
 		println(sb,indent,"<tr>");
 		indent+=2;
-		println(sb,indent,"<th>"+kind+"</th>");
 		println(sb,indent,"<th>Fully Qualified ID</th>");
-		println(sb,indent,"<th>Role</th>");
+		println(sb,indent,"<th>Unique ID</th>");
+		println(sb,indent,"<th>Type</th>");
 		println(sb,indent,"<th>Expires</th>");
+		println(sb,indent,"<th>Warnings</th>");
 		indent-=2;
 		println(sb,indent,"</tr>");
-
-		String name = null;
-		String fqi = null;
+		String theid, type, info, expires, warnings;
+		GregorianCalendar gc = new GregorianCalendar();
 		for(List<String> row : rows.get(id)) {
+			theid=row.get(1);
+			switch(row.get(3)) {
+				case "1":
+				case "2":
+					type = "Password";
+					break;
+				case "200":
+					type = "x509 (Certificate)";
+					break;
+				default:
+					type = "Unknown, see AAF GUI";
+					break;
+			}
+			theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
+			gc.setTimeInMillis(Long.parseLong(row.get(5)));
+			expires = Chrono.niceUTCStamp(gc);
+			info = row.get(6);
+			//TODO get Warnings 
+			warnings = "";
+			
 			println(sb,indent,"<tr>");
 			indent+=2;
-			name = printCell(sb,indent,fullname,name);
-			fqi = printCell(sb,indent,row.get(1),fqi);
-			printCell(sb,indent,row.get(2)+'.'+row.get(3));
-			Date expires = new Date(Long.parseLong(row.get(6)));
-			printCell(sb,indent,Chrono.niceUTCStamp(expires));
+			printCell(sb,indent,theid);
+			printCell(sb,indent,info);
+			printCell(sb,indent,type);
+			printCell(sb,indent,expires);
+			printCell(sb,indent,warnings);
 			indent-=2;
 			println(sb,indent,"</tr>");
 		}
 		indent-=2;
 		println(sb,indent,"</table>");
-		
+		*/
 		return true;
 	}
 
@@ -104,5 +95,9 @@ public abstract class NotifyURBody extends NotifyBody {
 		return null;
 	}
 
+	@Override
+	public String subject() {
+		return String.format("AAF Pending Approval Notification (ENV: %s)",env);
+	}
 
 }

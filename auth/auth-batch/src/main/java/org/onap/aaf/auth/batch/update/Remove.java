@@ -158,8 +158,8 @@ public class Remove extends Batch {
 									if(!x509.get()) {
 										x509.set(true);
 									}
-									X509.row(cbl.inc(),row);
-									hdd.target=CertDAO.TABLE; 
+									X509.batchDelete(cbl.inc(),row);
+									hdd.target="x509"; 
 									hdd.subject=X509.histSubject(row);
 									hdd.memo=X509.histMemo(memoFmt.get(),row);
 									historyDAO.createBatch(cbl.inc(), hdd);

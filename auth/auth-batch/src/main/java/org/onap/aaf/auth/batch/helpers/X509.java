@@ -125,7 +125,13 @@ public class X509 {
     	sb.append(";\n");
 	}
 
-
+    public static void batchDelete(StringBuilder sb, List<String> row) {
+    	sb.append("DELETE from authz.x509 WHERE ca='");
+    	sb.append(row.get(1));
+    	sb.append("' AND serial=");
+    	sb.append(row.get(2));
+    	sb.append(";\n");
+	}
 	public static String histSubject(List<String> row) {
 		return row.get(4);
 	}
