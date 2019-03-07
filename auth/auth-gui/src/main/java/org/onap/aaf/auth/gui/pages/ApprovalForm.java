@@ -67,7 +67,7 @@ public class ApprovalForm extends Page {
     // Package on purpose
     static final String NAME="Approvals";
     static final String HREF = "/gui/approve";
-    static final String[] FIELDS = new String[] {"line[]","user"};
+    static final String[] FIELDS = new String[] {"line[]","user","delegate_of"};
     
     
     public ApprovalForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
@@ -106,7 +106,6 @@ public class ApprovalForm extends Page {
                     hgen.end(jsStart);
                 }
             });
-        
     }
     
     /**
@@ -118,13 +117,15 @@ public class ApprovalForm extends Page {
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         //TODO come up with a generic way to do ILM Info (people page)
         private static final String TODO_ILM_INFO = "TODO: ILM Info";
-        private static final String DOMAIN_OF_USER = "@DOMAIN";
+        
         
         private static final String[] headers = new String[] {"Identity","Request","Approve","Deny"};
         private Slot sUser;
+        private Slot sAsDelegate;
         
         public Model(AuthzEnv env) {
             sUser = env.slot(NAME+".user");
+            sAsDelegate = env.slot(NAME+".delegate_of");
         }
         
         @Override
@@ -135,6 +136,7 @@ public class ApprovalForm extends Page {
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String userParam = trans.get(sUser, null);
+            final String asDelegate = trans.get(sAsDelegate, trans.user());
             ArrayList<AbsCell[]> rv = new ArrayList<>();
             String msg = null;
             TimeTaken tt = trans.start("AAF Get Approvals for Approver",Env.REMOTE);
@@ -144,7 +146,7 @@ public class ApprovalForm extends Page {
                 int numLeft = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Integer>() {
                     @Override
                     public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-                        Future<Approvals> fa = client.read("/authz/approval/approver/"+trans.user(),gui.getDF(Approvals.class));
+                        Future<Approvals> fa = client.read("/authz/approval/approver/"+asDelegate,gui.getDF(Approvals.class));
                         int numLeft = 0;
                         if (fa.get(AAF_GUI.TIMEOUT)) {
                             
@@ -194,98 +196,114 @@ public class ApprovalForm extends Page {
                     int endIndex = (beginIndicesPerApprover.isEmpty()?pendingApprovals.size():beginIndicesPerApprover.get(0));
                     List<Approval> currApproverList = pendingApprovals.subList(beginIndex, endIndex);
                     
-                    String currApproverFull = currApproverList.get(0).getApprover();
-                    String currApproverShort = currApproverFull.substring(0,currApproverFull.indexOf('@'));
-                    String currApprover = (trans.user().indexOf('@')<0?currApproverShort:currApproverFull);
-                    if (!currApprover.equals(trans.user())) {
-                        AbsCell[] approverHeader;
-                        if (currApproverFull.substring(currApproverFull.indexOf('@')).equals(DOMAIN_OF_USER)) {
-                            approverHeader = new AbsCell[] { 
-                                    new TextAndRefCell("Approvals Delegated to Me by ", currApprover,
-                                            TODO_ILM_INFO + currApproverShort, 
-                                            true,
-                                            new String[] {"colspan=4", "class=head"})
-                            };
-                        } else {
-                            approverHeader = new AbsCell[] { 
-                                    new TextCell("Approvals Delegated to Me by " + currApprover,
-                                            new String[] {"colspan=4", "class=head"})
-                            };
-                        }
-                        rv.add(approverHeader);
-                    }
-                    
-                    // Sort by User Requesting
-                    Collections.sort(currApproverList, new Comparator<Approval>() {
-                        @Override
-                        public int compare(Approval a1, Approval a2) {
-                            return a1.getUser().compareTo(a2.getUser());
-                        }
-                    });
-                    
-                    String prevUser = null;
-                    boolean userOK=true;
-
-                    for (Approval appr : currApproverList) {
-                        if (++line<MAX_LINE) { // limit number displayed at one time.
-                            AbsCell userCell;
-                            String user = appr.getUser();
-                            if (user.equals(prevUser)) {
-                                userCell = AbsCell.Null; 
-                            } else if (user.endsWith(DOMAIN_OF_USER)){
-                                userOK=true;
-                                String title;
-                                Organization org = OrganizationFactory.obtain(trans.env(), user);
-                                if (org==null) {
-                                    title="";
-                                } else {
-                                    Identity au = org.getIdentity(trans, user);
-                                    if (au!=null) {
-                                        if ("MECHID".equals(au.type())) {
-                                            Identity managedBy = au.responsibleTo();
-                                            if (managedBy==null) {
-                                                title ="title=" + au.type();
-                                            } else {
-                                                title="title=Sponsor is " + managedBy.fullName();                                                
-                                            }
-                                        } else {
-                                            title="title=" + au.fullName();
-                                        }
-                                    } else {
-                                        userOK=false;
-                                        title="title=Not a User at " + org.getName();
-                                    }
-                                }
-                                prevUser=user;
-                                userCell = new RefCell(prevUser,
-                                    TODO_ILM_INFO+user.substring(0, user.length()-DOMAIN_OF_USER.length()),
-                                    true,
-                                    title);
-                            } else {
-                                userCell = new TextCell(prevUser);
-                            }
-                            AbsCell[] sa = new AbsCell[] {
-                                userCell,
-                                new TextCell(appr.getMemo()),
-                                userOK?new RadioCell("line."+ line,"approve", "approved|"+appr.getTicket()):new TextCell(""),
-                                new RadioCell("line."+ line,"deny", "denied|"+appr.getTicket())
-                            };
-                            rv.add(sa);
-                        } else {
-                            ++numLeft;
-                        }
-                    }
-                }
-                if (numLeft>0) {
-                    msg = "After these, there will be " + numLeft + " approvals left to process";
-                }
-                if (rv.isEmpty()) {
-                    if (numLeft>0) {
-                        msg = "No Approvals to process at this time for user " + userParam +". You have " 
-                            + numLeft + " other approvals to process.";
+                    Identity iapprover = trans.org().getIdentity(trans,currApproverList.get(0).getApprover());
+                    if(iapprover==null) {
+                    	rv.add(new AbsCell[] {
+                    			new TextCell(currApproverList.get(0).getApprover() + " is not part of Organization",
+                                        new String[] {"colspan=4", "class=head"})
+                    	});
                     } else {
-                        msg = "No Approvals to process at this time";
-                    }
+                    	if (!iapprover.fullID().equals(trans.user())) {
+	                    
+	                        AbsCell[] approverHeader;
+	//                        if (domainOfUser.equals(domainOfApprover)) {
+	//                            approverHeader = new AbsCell[] { 
+	//                                    new TextAndRefCell("Approvals Delegated to Me by ", currApproverFull,
+	//                                            TODO_ILM_INFO + currApproverShort, 
+	//                                            true,
+	//                                            new String[] {"colspan=4", "class=head"})
+	//                            };
+	//                        } else {
+	                            approverHeader = new AbsCell[] { 
+	                                    new TextCell("Approvals Delegated to Me by " + iapprover.fullName() 
+	                                       + '(' + iapprover.id() +')',
+	                                            new String[] {"colspan=4", "class=head"})
+	                            };
+	//                        }
+	                        rv.add(approverHeader);
+	                    }
+	                    
+	                    // Sort by User Requesting
+	                    Collections.sort(currApproverList, new Comparator<Approval>() {
+	                        @Override
+	                        public int compare(Approval a1, Approval a2) {
+	                            return a1.getUser().compareTo(a2.getUser());
+	                        }
+	                    });
+	                    
+	                    String prevUser = null;
+	                    boolean userOK=true;
+	                    for (Approval appr : currApproverList) {
+	                        if (++line<MAX_LINE) { // limit number displayed at one time.
+	                            AbsCell userCell;
+	                            String user = appr.getUser();
+	                            
+	                            if (user.equals(prevUser)) {
+	                                userCell = AbsCell.Null; 
+	                            } else if (user.endsWith(trans.org().getRealm())){
+	                                userOK=true;
+//	                                String title;
+	                                Organization org = OrganizationFactory.obtain(trans.env(), user);
+	                                if (org==null) {
+//	                                    title="";
+		                                userCell = new TextCell(user);
+	                                } else {
+	                                    Identity au = org.getIdentity(trans, user);
+	                                    if (au!=null) {
+	                                    	if(au.isPerson()) {
+	                                    		userCell = new TextCell(au.fullName() + "\n(" + au.id() + ')');
+	                                    	} else {
+	                                    		userCell = new TextCell(au.fullID());
+	                                    	}
+//	                                    	
+//	                                        if ("MECHID".equals(au.type())) {
+//	                                            Identity managedBy = au.responsibleTo();
+//	                                            if (managedBy==null) {
+//	                                                title ="title=" + au.type();
+//	                                            } else {
+//	                                                title="title=Sponsor is " + managedBy.fullName();                                                
+//	                                            }
+//	                                        } else {
+//	                                            title="title=" + au.fullName();
+//	                                        }
+	                                    } else {
+	                                        userOK=false;
+//	                                        title="title=Not a User at " + org.getName();
+			                                userCell = new TextCell(user);
+	                                    }
+	                                }
+	                                prevUser=user;
+	//                                userCell = new RefCell(prevUser,
+	//                                    TODO_ILM_INFO+user.substring(0, user.length()-domainOfApprover.length()),
+	//                                    true,
+	//                                    title);
+	                                
+	                            } else {
+	                                userCell = new TextCell(prevUser==null?user:prevUser);
+	                            }
+	                            AbsCell[] sa = new AbsCell[] {
+	                                userCell,
+	                                new TextCell(appr.getMemo()),
+	                                userOK?new RadioCell("line."+ line,"approve", "approved|"+appr.getTicket()):new TextCell(""),
+	                                new RadioCell("line."+ line,"deny", "denied|"+appr.getTicket())
+	                            };
+	                            rv.add(sa);
+	                        } else {
+	                            ++numLeft;
+	                        }
+	                    }
+	                }
+	                if (numLeft>0) {
+	                    msg = "After these, there will be " + numLeft + " approvals left to process";
+	                }
+	                if (rv.isEmpty()) {
+	                    if (numLeft>0) {
+	                        msg = "No Approvals to process at this time for user " + userParam +". You have " 
+	                            + numLeft + " other approvals to process.";
+	                    } else {
+	                        msg = "No Approvals to process at this time";
+	                    }
+	                }
                 }
             } catch (Exception e) {
                 trans.error().log(e);

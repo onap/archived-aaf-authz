@@ -56,12 +56,6 @@ public class JU_PropAccess {
     }
 
     @Test
-    public void noLogItConstructionTest() throws Exception {
-        // Test for coverage
-        PropAccess prop = new PropAccess((LogIt)null, new String[]{"Invalid argument"});
-    }
-
-    @Test
     public void propertiesConstructionTest() throws Exception {
         // Coverage tests
         PropAccess prop = new PropAccess(System.getProperties());

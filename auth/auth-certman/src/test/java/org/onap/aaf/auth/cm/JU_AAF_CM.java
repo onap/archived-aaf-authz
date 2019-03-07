@@ -164,7 +164,7 @@ public class JU_AAF_CM {
 		} catch (CadiException | LocatorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			assertTrue(e.getMessage().contains("NoSuchAlgorithmException"));
+			assertTrue(e.getMessage().contains("Error initializing Context: TLS"));
 		}
 //		assertTrue(obj instanceof CA);
 	}

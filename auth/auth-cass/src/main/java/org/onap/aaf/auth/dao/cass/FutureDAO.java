@@ -65,11 +65,13 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
 
     public static class Data {
         public UUID         id;
-        public String        target;
-        public String        memo;
-        public Date           start;
-        public Date           expires;
-        public ByteBuffer     construct;  //   this is a blob in cassandra
+        public String       target;
+        public String       memo;
+        public Date         start;
+        public Date         expires;
+        public String	    target_key;
+        public Date			target_date;
+        public ByteBuffer   construct;  //   this is a blob in cassandra
     }
 
     private static class FLoader extends Loader<Data> {
@@ -83,12 +85,14 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
 
         @Override
     public Data load(Data data, Row row) {
-            data.id         = row.getUUID(0);
-            data.target        = row.getString(1);
-            data.memo       = row.getString(2);
-            data.start         = row.getTimestamp(3);
-            data.expires     = row.getTimestamp(4);
-            data.construct     = row.getBytes(5);
+            data.id           = row.getUUID(0);
+            data.target       = row.getString(1);
+            data.memo         = row.getString(2);
+            data.start        = row.getTimestamp(3);
+            data.expires      = row.getTimestamp(4);
+            data.construct    = row.getBytes(5);
+            data.target_key   = row.getString(6);
+            data.target_date  = row.getTimestamp(7);
             return data;
         }
 
@@ -106,6 +110,8 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
             obj[++idx] = data.start;
             obj[++idx] = data.expires;
             obj[++idx] = data.construct;
+            obj[++idx] = data.target_key;
+            obj[++idx] = data.target_date;
         }
     }
 

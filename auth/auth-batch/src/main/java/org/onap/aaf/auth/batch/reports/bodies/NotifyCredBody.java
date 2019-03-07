@@ -36,7 +36,8 @@ public abstract class NotifyCredBody extends NotifyBody {
 		super(access,"cred",name);
 		
 		// Default
-		explanation = "The following Credentials are expiring on the dates shown. "
+		explanation = "The following Credentials that you are responsible for "
+				+ "are expiring on the dates shown. "
 				+ "Failure to act before the expiration date will cause your App's "
 				+ "Authentications to fail."
 				+ "<h3>Instructions for 'Password':</h3><ul>" 

@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.aaf.auth.batch.helpers.Creator;
 import org.onap.aaf.auth.batch.helpers.Future;
-import org.onap.aaf.auth.batch.helpers.creators.RowCreator;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -109,40 +108,6 @@ public class JU_Future {
 		Assert.assertEquals(false, Future.pendingDelete(future));
 	}
 
-	@Test
-	public void testLoad() {
-		Session session = mock(Session.class);
-		Trans trans = mock(Trans.class);
-		@SuppressWarnings("unchecked")
-		Creator<Future> creator = (Creator<Future>)mock(Creator.class);
-		LogTarget target = mock(LogTarget.class);
-		TimeTaken tt = mock(TimeTaken.class);
-		ResultSet results = mock(ResultSet.class);
-		ArrayList<Row> rows = new ArrayList<Row>();
-		Row row = RowCreator.getRow();
-		rows.add(row);
-
-		when(results.all()).thenReturn(rows);
-		when(trans.info()).thenReturn(target);
-		when(trans.start("Load Futures", Env.REMOTE)).thenReturn(tt);
-		when(trans.start("Process Futures", Env.SUB)).thenReturn(tt);
-		when(session.execute(any(SimpleStatement.class))).thenReturn(results);
-		when(creator.create(row)).thenReturn(future);
-
-		Future.load(trans, session, creator);
-	}
-
-	@Test
-	public void testV2() {
-		Future.v2_0_17.create(RowCreator.getRow());
-		assertEquals(Future.v2_0_17.select(), "select id,memo,target,start,expires from authz.future");
-	}
-
-	@Test
-	public void testWithConstruct() {
-		Future.withConstruct.create(RowCreator.getRow());
-		assertEquals(Future.withConstruct.select(), "select id,memo,target,start,expires,construct from authz.future");
-	}
 
 	@Test
 	public void testDelayedDeleteWithDryRun() {

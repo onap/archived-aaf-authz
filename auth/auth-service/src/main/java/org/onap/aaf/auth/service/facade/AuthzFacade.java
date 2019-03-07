@@ -53,7 +53,7 @@ public interface AuthzFacade {
      */
     public abstract Result<Void> requestNS(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, NsType type);
     
-    public abstract Result<Void> getNSsByName(AuthzTrans trans, HttpServletResponse resp, String ns);
+    public abstract Result<Void> getNSsByName(AuthzTrans trans, HttpServletResponse resp, String ns, boolean full);
     
     public abstract Result<Void> getNSsByAdmin(AuthzTrans trans, HttpServletResponse resp, String user, boolean full);
     

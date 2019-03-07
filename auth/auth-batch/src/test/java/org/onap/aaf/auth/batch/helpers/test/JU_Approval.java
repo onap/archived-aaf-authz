@@ -27,14 +27,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aaf.auth.batch.helpers.Approval;
-import org.onap.aaf.auth.batch.helpers.creators.RowCreator;
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -47,15 +45,14 @@ public class JU_Approval {
 	Approval approval;
 	UUID id;
 	UUID ticket;
-	Date date;
+
 
 	@Before
 	public void setUp() {
 		id = new UUID(0, 0);
 		ticket = new UUID(0, 0);
-		date = new Date();
 
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		approval = new Approval(id, ticket, "approver","user", "memo", "operation", "status", "type", 100l);
 	}
 
 	@Test
@@ -72,15 +69,15 @@ public class JU_Approval {
 		approval.expunge();
 	}
 
-	@Test
-	public void testGetLast_notified() {
-		Assert.assertTrue(approval.getLast_notified() instanceof Date);
-	}
-
-	@Test
-	public void testSetLastNotified() {
-		approval.setLastNotified(date);
-	}
+//	@Test
+//	public void testGetLast_notified() {
+//		Assert.assertTrue(approval.getLast_notified() instanceof Date);
+//	}
+//
+//	@Test
+//	public void testSetLastNotified() {
+//		approval.setLastNotified(date);
+//	}
 
 	@Test
 	public void testGetStatus() {
@@ -144,31 +141,31 @@ public class JU_Approval {
 
 	@Test
 	public void testUpdateNonDryRun() {
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		approval = new Approval(id, ticket, "approver", "user", "memo", "operation", "status", "type", 100l);
 		AuthzTrans trans = mock(AuthzTrans.class);
 		ApprovalDAO dao = mock(ApprovalDAO.class);
 		LogTarget target = mock(LogTarget.class);
 
 		when(trans.info()).thenReturn(target);
 
-		approval.update(trans, dao, false);
+//		approval.update(trans, dao, false);
 	}
 
 	@Test
 	public void testUpdateDryRun() {
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		approval = new Approval(id, ticket, "approver", "user", "memo", "operation", "status", "type", 100l);
 		AuthzTrans trans = mock(AuthzTrans.class);
 		ApprovalDAO dao = mock(ApprovalDAO.class);
 		LogTarget target = mock(LogTarget.class);
 
 		when(trans.info()).thenReturn(target);
 
-		approval.update(trans, dao, true);
+//		approval.update(trans, dao, true);
 	}
 
 	@Test
 	public void testDelayDeleteDryRun() {
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		approval = new Approval(id, ticket, "approver", "user", "memo", "operation", "status", "type", 100l);
 		AuthzTrans trans = mock(AuthzTrans.class);
 		ApprovalDAO dao = mock(ApprovalDAO.class);
 		LogTarget target = mock(LogTarget.class);
@@ -182,7 +179,7 @@ public class JU_Approval {
 
 	@Test
 	public void testDelayDeleteNonDryRun() {
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		approval = new Approval(id, ticket, "approver", "user", "memo", "operation", "status", "type", 100l);
 		AuthzTrans trans = mock(AuthzTrans.class);
 		ApprovalDAO dao = mock(ApprovalDAO.class);
 		LogTarget target = mock(LogTarget.class);
@@ -198,7 +195,7 @@ public class JU_Approval {
 
 	@Test
 	public void testDelayDeleteResultNotOk() {
-		approval = new Approval(id, ticket, "approver", date, "user", "memo", "operation", "status", "type", 100l);
+		approval = new Approval(id, ticket, "approver",  "user", "memo", "operation", "status", "type", 100l);
 		AuthzTrans trans = mock(AuthzTrans.class);
 		ApprovalDAO dao = mock(ApprovalDAO.class);
 		LogTarget target = mock(LogTarget.class);
@@ -212,14 +209,5 @@ public class JU_Approval {
 		Approval.delayDelete(trans, dao, false, list, "text");
 	}
 
-	@Test
-	public void testv2() {
-		Approval.v2_0_17.create(RowCreator.getRow());
-
-		assertEquals(
-				"select id,ticket,approver,last_notified,user,memo,operation,status,type,WRITETIME(status) from authz.approval",
-				Approval.v2_0_17.select());
-
-	}
 
 }

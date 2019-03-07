@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CadiException;
 
 /**
  * Read CSV file for various purposes
@@ -156,11 +156,44 @@ public class CSV {
 		return new Writer(append);
 	}
 
-	public class Writer {
+	public interface RowSetter {
+		public void row(Object ... objs);
+	}
+	
+	public static class Saver implements RowSetter {
+		List<String> ls= new ArrayList<>();
+		
+		@Override
+		public void row(Object ... objs) {
+			if(objs.length>0) {
+				for(Object o : objs) {
+					if(o != null) {
+						if(o instanceof String[]) {
+							for(String str : (String[])o) {
+								ls.add(str);
+							}
+						} else {
+							ls.add(o.toString());
+						}
+					}
+				}
+			}
+		}
+		
+		public List<String> asList() {
+			List<String> rv = ls;
+			ls = new ArrayList<>();
+			return rv;
+		}
+	}
+
+	public class Writer implements RowSetter {
 		private PrintStream ps;
 		private Writer(final boolean append) throws FileNotFoundException {
 			ps = new PrintStream(new FileOutputStream(csv,append));
 		}
+		
+		@Override
 		public void row(Object ... objs) {
 			if(objs.length>0) {
 				boolean first = true;

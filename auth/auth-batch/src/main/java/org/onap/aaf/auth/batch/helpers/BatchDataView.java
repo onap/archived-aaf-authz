@@ -134,12 +134,12 @@ public class BatchDataView implements DataView {
 	public Result<ApprovalDAO.Data> insert(AuthzTrans trans, ApprovalDAO.Data add) {
 		cqlBatch.preLoop();
 		StringBuilder sb = cqlBatch.inc();
-		sb.append("INSERT INTO authz.approval (id,approver,last_notified,memo,operation,status,ticket,type,user) VALUES ("); 
+		sb.append("INSERT INTO authz.approval (id,approver,memo,operation,status,ticket,type,user) VALUES ("); 
 		sb.append(add.id.toString());
 		sb.append(COMMA_QUOTE);
 		sb.append(add.approver);
-		sb.append(QUOTE_COMMA_QUOTE);
-		sb.append(Chrono.utcStamp(add.last_notified));
+//		sb.append(QUOTE_COMMA_QUOTE);
+//		sb.append(Chrono.utcStamp(add.last_notified));
 		sb.append(QUOTE_COMMA_QUOTE);
 		sb.append(add.memo.replace("'", "''"));
 		sb.append(QUOTE_COMMA_QUOTE);
@@ -160,7 +160,7 @@ public class BatchDataView implements DataView {
 	public Result<FutureDAO.Data> insert(AuthzTrans trans, FutureDAO.Data fdd) {
 		cqlBatch.preLoop();
 		StringBuilder sb = cqlBatch.inc();
-		sb.append("INSERT INTO authz.future (id,construct,expires,memo,start,target) VALUES ("); 
+		sb.append("INSERT INTO authz.future (id,construct,expires,memo,start,target,target_key,target_date) VALUES ("); 
 		sb.append(fdd.id.toString());
 		sb.append(',');
 		fdd.construct.hasArray();
@@ -173,6 +173,14 @@ public class BatchDataView implements DataView {
 		sb.append(Chrono.utcStamp(fdd.expires));
 		sb.append(QUOTE_COMMA_QUOTE);
 		sb.append(fdd.target);
+		if(fdd.target_key==null) {
+			sb.append("',,'");
+		} else {
+			sb.append(QUOTE_COMMA_QUOTE);
+			sb.append(fdd.target_key==null?"":fdd.target_key);
+			sb.append(QUOTE_COMMA_QUOTE);
+		}
+		sb.append(Chrono.utcStamp(fdd.target_date));
 		sb.append(QUOTE_PAREN_SEMI);
 		return Result.ok(fdd);
 	}

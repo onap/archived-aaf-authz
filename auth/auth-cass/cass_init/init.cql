@@ -168,6 +168,8 @@ CREATE TABLE future (
   memo	    varchar,    	// Description
   start     timestamp, 		// When it should take effect
   expires   timestamp, 		// When not longer valid
+  target_key varchar,           // Item Key (or 2nd key, assuming user is first)
+  target_date timestamp,        // Item's relevant date/stamp
   construct blob, 		// How to construct this object (like History)
   PRIMARY KEY(id)
 );

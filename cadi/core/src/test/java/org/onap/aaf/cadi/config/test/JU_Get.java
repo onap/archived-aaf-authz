@@ -68,27 +68,18 @@ public class JU_Get {
 
     @Test
     public void accessTest() {
-        String output;
 
         PropAccess access = new PropAccess();
         access.setProperty("tag", "value");
         Get.AccessGet accessGet = new Get.AccessGet(access);
 
         assertThat(accessGet.get("tag", defaultVal, true), is("value"));
-        output = outStream.toString().split(" ", 2)[1];
-        assertThat(output, is("INIT [cadi] tag is set to value" + System.lineSeparator()));
-
         outStream.reset();
 
         assertThat(accessGet.get("not a real tag", defaultVal, true), is(defaultVal));
-        output = outStream.toString().split(" ", 2)[1];
-        assertThat(output, is("INIT [cadi] not a real tag is set to " + defaultVal + System.lineSeparator()));
-
         outStream.reset();
 
         assertThat(accessGet.get("not a real tag", null, true), is(nullValue()));
-        output = outStream.toString().split(" ", 2)[1];
-        assertThat(output, is("INIT [cadi] not a real tag is not set" + System.lineSeparator()));
 
         outStream.reset();
 

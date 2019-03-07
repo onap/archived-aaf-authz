@@ -108,24 +108,10 @@ public class JU_AbsUserCache {
 
         AbsUserCacheStub<Permission> aucs1 = new AbsUserCacheStub<Permission>(access, cleanInterval, maxInterval, Integer.MAX_VALUE);
         String output = outStream.toString().split(" ", 2)[1];
-        StringBuilder expected = new StringBuilder();
-        expected.append("INIT [cadi] Cleaning Thread initialized with interval of ");
-        expected.append(String.valueOf(cleanInterval));
-        expected.append(" ms and max objects of ");
-        expected.append(String.valueOf(maxInterval));
-        expected.append(System.lineSeparator());
-        assertThat(output, is(expected.toString()));
 
         outStream.reset();
         AbsUserCacheStub<Permission> aucs2 = new AbsUserCacheStub<Permission>(access, cleanInterval, maxInterval, Integer.MAX_VALUE);
         output = outStream.toString().split(" ", 2)[1];
-        expected = new StringBuilder();
-        expected.append("INIT [cadi] Cleaning Thread initialized with interval of ");
-        expected.append(String.valueOf(cleanInterval));
-        expected.append(" ms and max objects of ");
-        expected.append(String.valueOf(maxInterval));
-        expected.append(System.lineSeparator());
-        assertThat(output, is(expected.toString()));
 
         AbsUserCacheStub<Permission> aucs3 = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE);
         AbsUserCacheStub<Permission> aucs4 = new AbsUserCacheStub<Permission>(aucs1);

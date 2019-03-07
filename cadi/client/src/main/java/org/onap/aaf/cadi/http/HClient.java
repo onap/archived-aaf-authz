@@ -40,7 +40,6 @@ import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.EClient;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
-import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Data.TYPE;
@@ -153,9 +152,9 @@ public class HClient implements EClient<HttpURLConnection> {
         	throw e;
         } catch (Exception e) {
         	if(sendURI==null) {
-        		throw new APIException("Cannot connect to Root URI: " + uri.toString(),e);
+        		throw new APIException("Cannot connect to Root URI: '" + uri.toString() + '\'',e);
         	} else {
-        		throw new APIException("Cannot connect to " + sendURI.toString() + "(Root URI: " + uri.toString() +')',e);
+        		throw new APIException("Cannot connect to '" + sendURI.toString() + "' (Root URI: '" + uri.toString() + "')",e);
         	}
         } finally { // ensure all these are reset after sends
             meth=pathinfo=null;

@@ -470,7 +470,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
             )
     @Override
-    public Result<NSS> getNSbyName(AuthzTrans trans, String ns) {
+    public Result<NSS> getNSbyName(AuthzTrans trans, String ns, boolean includeExpired) {
         final Validator v = new ServiceValidator();
         if (v.nullOrBlank("NS", ns).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
@@ -488,11 +488,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             
             
             Namespace namespace = new Namespace(rnd.value);
-            Result<List<String>> rd = func.getOwners(trans, namespace.name, false);
+            Result<List<String>> rd = func.getOwners(trans, namespace.name, includeExpired);
             if (rd.isOK()) {
                 namespace.owner = rd.value;
             }
-            rd = func.getAdmins(trans, namespace.name, false);
+            rd = func.getAdmins(trans, namespace.name, includeExpired);
             if (rd.isOK()) {
                 namespace.admin = rd.value;
             }
@@ -2731,6 +2731,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             cd.other = found.other;
             cd.type = found.type;
             cd.ns = found.ns;
+            cd.notes = "Extended";
             cd.expires = org.expiration(null, Expiration.ExtendPassword,days).getTime();
             cd.tag = found.tag;
             
@@ -4017,9 +4018,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                 cd.memo = ch.changed(cd.memo,updt.memo);
                                 cd.operation = ch.changed(cd.operation,updt.operation);
                                 cd.updated = ch.changed(cd.updated,updt.updated==null?new Date():updt.updated);
-                                if (updt.status.equals("denied")) {
-                                    cd.last_notified = null;
-                                }
+//                                if (updt.status.equals("denied")) {
+//                                    cd.last_notified = null;
+//                                }
                                 if (cd.ticket!=null) {
                                     FutureDAO.Data fdd = futureCache.get(cd.ticket);
                                     if (fdd==null) { // haven't processed ticket yet

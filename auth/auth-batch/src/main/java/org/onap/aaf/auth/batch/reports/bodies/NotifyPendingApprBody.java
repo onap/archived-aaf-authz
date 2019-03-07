@@ -27,64 +27,27 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
 
 public class NotifyPendingApprBody extends NotifyBody {
-	private final String explanation;
 
 	public NotifyPendingApprBody(Access access) {
 		super(access,"appr","PendingApproval");
-		explanation = "The following Approvals are awaiting your action. ";
 	}
 
 	@Override
 	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
-		println(sb,indent,explanation);
-/*		println(sb,indent,"<table>");
-		indent+=2;
-		println(sb,indent,"<tr>");
-		indent+=2;
-		println(sb,indent,"<th>Fully Qualified ID</th>");
-		println(sb,indent,"<th>Unique ID</th>");
-		println(sb,indent,"<th>Type</th>");
-		println(sb,indent,"<th>Expires</th>");
-		println(sb,indent,"<th>Warnings</th>");
-		indent-=2;
-		println(sb,indent,"</tr>");
-		String theid, type, info, expires, warnings;
-		GregorianCalendar gc = new GregorianCalendar();
+		boolean rv = false;
 		for(List<String> row : rows.get(id)) {
-			theid=row.get(1);
-			switch(row.get(3)) {
-				case "1":
-				case "2":
-					type = "Password";
-					break;
-				case "200":
-					type = "x509 (Certificate)";
-					break;
-				default:
-					type = "Unknown, see AAF GUI";
-					break;
+			String qty = row.get(2);
+			if("1".equals(qty)) {
+				printf(sb,indent,"You have an Approval in the AAF %s Environment awaiting your decision.\n",row.get(3));
+			} else {
+				printf(sb,indent,"You have %s Approvals in the AAF %s Environment awaiting your decision.\n",qty,row.get(3));
 			}
-			theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
-			gc.setTimeInMillis(Long.parseLong(row.get(5)));
-			expires = Chrono.niceUTCStamp(gc);
-			info = row.get(6);
-			//TODO get Warnings 
-			warnings = "";
-			
-			println(sb,indent,"<tr>");
-			indent+=2;
-			printCell(sb,indent,theid);
-			printCell(sb,indent,info);
-			printCell(sb,indent,type);
-			printCell(sb,indent,expires);
-			printCell(sb,indent,warnings);
-			indent-=2;
-			println(sb,indent,"</tr>");
+			printf(sb,indent,"<br><br><b>ACTION:</b> <i>Click on</i> <a href=\"%s/approve\">AAF Approval Page</a>",n.guiURL);
+			rv = true;
+			break; // only one
 		}
-		indent-=2;
-		println(sb,indent,"</table>");
-		*/
-		return true;
+		
+		return rv;
 	}
 
 	@Override
@@ -98,6 +61,16 @@ public class NotifyPendingApprBody extends NotifyBody {
 	@Override
 	public String subject() {
 		return String.format("AAF Pending Approval Notification (ENV: %s)",env);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyBody#store(java.util.List)
+	 */
+	@Override
+	public void store(List<String> row) {
+		// Notify Pending is setup for 1 Notification at a time
+		super.rows.clear();
+		super.store(row);
 	}
 
 }

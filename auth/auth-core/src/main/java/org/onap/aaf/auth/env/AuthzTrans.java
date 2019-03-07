@@ -33,7 +33,7 @@ import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TransStore;
 
 public interface AuthzTrans extends TransStore {
-    public enum REQD_TYPE {future(1),force(2),move(4),ns(8);
+    public enum REQD_TYPE {future(1),force(2),move(4),ns(8),detail(16);
         public final int bit;
 
         REQD_TYPE(int bit) {

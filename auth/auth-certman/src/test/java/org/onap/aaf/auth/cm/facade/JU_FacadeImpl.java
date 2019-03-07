@@ -83,7 +83,7 @@ public class JU_FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> {
             @Override
             public void log(Throwable e, Object... msgs) {
                 e.getMessage();
-                e.printStackTrace();
+                //e.printStackTrace();
                 msgs.toString();
                 
             }

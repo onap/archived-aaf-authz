@@ -138,6 +138,8 @@ public class Remove extends Batch {
 									if(!ur.get()) {
 										ur.set(true);
 									}
+									//TODO If deleted because Role is no longer there, double check...
+									
 									UserRole.batchDelete(cbl.inc(),row);
 									hdd.target=UserRoleDAO.TABLE; 
 									hdd.subject=UserRole.histSubject(row);

@@ -105,4 +105,5 @@ public class Pending {
 	public boolean newApprovals() {
 		return hasNew;
 	}
+
 }
