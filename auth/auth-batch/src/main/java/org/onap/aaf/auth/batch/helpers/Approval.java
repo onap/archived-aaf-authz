@@ -57,13 +57,13 @@ public class Approval implements CacheChange.Data  {
     public final ApprovalDAO.Data add;
     private String role;
     
-    public Approval(UUID id, UUID ticket, String approver, Date last_notified, 
+    public Approval(UUID id, UUID ticket, String approver,// Date last_notified, 
             String user, String memo, String operation, String status, String type, long updated) {
         add = new ApprovalDAO.Data();
         add.id = id;
         add.ticket = ticket;
         add.approver = approver;
-        add.last_notified = last_notified;
+//        add.last_notified = last_notified;
         add.user = user;
         add.memo = memo;
         add.operation = operation;
@@ -125,8 +125,8 @@ public class Approval implements CacheChange.Data  {
         }
     }
     
-	public static void row(CSV.Writer cw, Approval app) {
-		cw.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
+	public static void row(CSV.RowSetter crs, Approval app) {
+		crs.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
 	}
 
 
@@ -211,41 +211,41 @@ public class Approval implements CacheChange.Data  {
         }
     }
 
-    public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
-        if (dryRun) {
-            trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-        } else {
-            trans.info().printf("Update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-            apprDAO.update(trans, add);
-        }
-    }
+//    public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
+//        if (dryRun) {
+//            trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
+//        } else {
+//            trans.info().printf("Update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
+//            apprDAO.update(trans, add);
+//        }
+//    }
 
     public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
         @Override
         public Approval create(Row row) {
-            return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2), row.getTimestamp(3),
-                    row.getString(4),row.getString(5),row.getString(6),row.getString(7),row.getString(8)
-                    ,row.getLong(9)/1000);
+            return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2),
+                    row.getString(3),row.getString(4),row.getString(5),row.getString(6),row.getString(7),
+                    row.getLong(8)/1000);
         }
 
         @Override
         public String select() {
-            return "select id,ticket,approver,last_notified,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
+            return "select id,ticket,approver,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
         }
     };
 
-    /**
-     * @return the lastNotified
-     */
-    public Date getLast_notified() {
-        return add.last_notified;
-    }
-    /**
-     * @param lastNotified the lastNotified to set
-     */
-    public void setLastNotified(Date last_notified) {
-        add.last_notified = last_notified;
-    }
+//    /**
+//     * @return the lastNotified
+//     */
+//    public Date getLast_notified() {
+//        return add.last_notified;
+//    }
+//    /**
+//     * @param lastNotified the lastNotified to set
+//     */
+//    public void setLastNotified(Date last_notified) {
+//        add.last_notified = last_notified;
+//    }
     /**
      * @return the status
      */

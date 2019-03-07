@@ -84,6 +84,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         public Integer                  other;
         public String                   ns;
         public String					tag;
+        public String					notes;
         public ByteBuffer               cred;  //   this is a blob in cassandra
 
 
@@ -129,7 +130,8 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             data.other = row.getInt(3);
             data.ns = row.getString(4);     
             data.tag = row.getString(5);
-            data.cred = row.getBytesUnsafe(6);            
+            data.notes = row.getString(6);
+            data.cred = row.getBytesUnsafe(7);            
             return data;
         }
 
@@ -148,6 +150,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             obj[i=idx] = data.other;
             obj[++i] = data.ns;
             obj[++i] = data.tag;
+            obj[++i] = data.notes;
             obj[++i] = data.cred;
         }
 
@@ -160,6 +163,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             os.writeInt(data.other==null?0:data.other);
             writeString(os, data.ns);
             writeString(os, data.tag);
+            writeString(os, data.notes);
             if (data.cred==null) {
                 os.writeInt(-1);
             } else {
@@ -182,6 +186,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             data.other = is.readInt();
             data.ns = readString(is,buff);
             data.tag = readString(is,buff);
+            data.notes = readString(is,buff);
             
             int i = is.readInt();
             data.cred=null;

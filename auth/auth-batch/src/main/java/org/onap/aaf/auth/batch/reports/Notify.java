@@ -20,38 +20,38 @@
  */package org.onap.aaf.auth.batch.reports;
 
  import java.io.BufferedReader;
- import java.io.File;
- import java.io.FileReader;
- import java.io.IOException;
- import java.lang.reflect.Constructor;
- import java.lang.reflect.InvocationTargetException;
- import java.util.ArrayList;
- import java.util.HashSet;
- import java.util.List;
- import java.util.Set;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
- import org.onap.aaf.auth.batch.Batch;
- import org.onap.aaf.auth.batch.reports.bodies.NotifyBody;
- import org.onap.aaf.auth.env.AuthzTrans;
- import org.onap.aaf.auth.org.Mailer;
- import org.onap.aaf.auth.org.Organization.Identity;
- import org.onap.aaf.auth.org.OrganizationException;
- import org.onap.aaf.cadi.Access;
- import org.onap.aaf.cadi.CadiException;
- import org.onap.aaf.cadi.client.Holder;
- import org.onap.aaf.cadi.util.CSV;
- import org.onap.aaf.misc.env.APIException;
- import org.onap.aaf.misc.env.util.Chrono;
+import org.onap.aaf.auth.batch.Batch;
+import org.onap.aaf.auth.batch.reports.bodies.NotifyBody;
+import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.org.Mailer;
+import org.onap.aaf.auth.org.Organization.Identity;
+import org.onap.aaf.auth.org.OrganizationException;
+import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.CSV;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.util.Chrono;
 
  public class Notify extends Batch {
 	 private static final String HTML_CSS = "HTML_CSS";
 	 private final Mailer mailer;
 	 private final String header;
 	 private final String footer;
-	 private Set<File> notifyFile;
+	 private final int maxEmails;
+	 private final int indent;
+	 private final boolean urgent;
 	 public final String guiURL;
-	 private int maxEmails;
-	 private int indent;
 
 	 public Notify(AuthzTrans trans) throws APIException, IOException, OrganizationException {
 		 super(trans.env());
@@ -59,9 +59,9 @@
 		 String mailFrom = env.getProperty("MAIL_FROM");
 		 String header_html = env.getProperty("HEADER_HTML");
 		 String footer_html = env.getProperty("FOOTER_HTML");
-		 String maxEmails = env.getProperty("MAX_EMAIL");
+		 String str = env.getProperty("MAX_EMAIL");
 		 guiURL = env.getProperty("GUI_URL");
-		 this.maxEmails = maxEmails==null?1:Integer.parseInt(maxEmails);
+		 maxEmails = str==null||str.isEmpty()?Integer.MAX_VALUE:Integer.parseInt(str);
 		 if(mailerCls==null || mailFrom==null || guiURL==null || header_html==null || footer_html==null) {
 			 throw new APIException("Notify requires MAILER, MAILER_FROM, GUI_URL, HEADER_HTML and FOOTER_HTML properties");
 		 }
@@ -101,9 +101,12 @@
 			 } else {
 				 indent = 6; //arbitrary
 			 }
+		 } else {
+			 indent = 6;
 		 }
 
-
+		 urgent = false;
+		 
 		 sb.setLength(0);
 		 br = new BufferedReader(new FileReader(footer_html));
 		 try {
@@ -116,46 +119,45 @@
 			 br.close();
 		 }
 
-		 // Class Load possible data
-		 NotifyBody.load(env.access());
-
-		 // Create Intermediate Output 
-		 File logDir = logDir();
-		 notifyFile = new HashSet<>();
-		 if(args().length>0) {
-			 for(int i=0;i<args().length;++i) {
-				 notifyFile.add(new File(logDir, args()[i]));
-			 }
-		 } else {
-			 String fmt = "%s"+Chrono.dateOnlyStamp()+".csv";
-			 File file;
-			 for(NotifyBody nb : NotifyBody.getAll()) {
-				 file = new File(logDir,String.format(fmt, nb.name()));
-				 if(file.exists()) {
-					 trans.info().printf("Processing '%s' in %s",nb.type(),file.getCanonicalPath());
-					 notifyFile.add(file);
-				 } else {
-					 trans.info().printf("No Files found for %s",nb.name());
-				 }
-			 }
-		 }
 	 }
 
+	 /*
+	  * Note: We try to put things related to Notify as Main Class in Run, where we might have put in 
+	  * Constructor, so that we can have other Classes call just the "notify" method.
+	  */
 	 @Override
 	 protected void run(AuthzTrans trans) {
-		 List<String> toList = new ArrayList<>();
-		 List<String> ccList = new ArrayList<>();
 		 AuthzTrans noAvg = trans.env().newTransNoAvg();
-		 String subject = "Test Notify";
-		 boolean urgent = false;
 
-
-
-		 final Notify notify = this;
 		 final Holder<List<String>> info = new Holder<>(null);
 		 final Set<String> errorSet = new HashSet<>();
 
 		 try {
+			 // Class Load possible data
+			 NotifyBody.load(env.access());
+
+
+			 // Create Intermediate Output 
+			 File logDir = logDir();
+			 Set<File> notifyFile = new HashSet<>();
+			 if(args().length>0) {
+				 for(int i=0;i<args().length;++i) {
+					 notifyFile.add(new File(logDir, args()[i]));
+				 }
+			 } else {
+				 String fmt = "%s"+Chrono.dateOnlyStamp()+".csv";
+				 File file;
+				 for(NotifyBody nb : NotifyBody.getAll()) {
+					 file = new File(logDir,String.format(fmt, nb.name()));
+					 if(file.exists()) {
+						 trans.info().printf("Processing '%s' in %s",nb.type(),file.getCanonicalPath());
+						 notifyFile.add(file);
+					 } else {
+						 trans.info().printf("No Files found for %s",nb.name());
+					 }
+				 }
+			 }
+
 			 for(File f : notifyFile) {
 				 CSV csv = new CSV(env.access(),f);
 				 try {
@@ -167,8 +169,7 @@
 							 }
 							 if(info.get()==null) {
 								 throw new CadiException("First line of Feed MUST contain 'info' record");
-							 }
-							 String key = row.get(0)+'|'+info.get().get(1);
+							 }							 String key = row.get(0)+'|'+info.get().get(1);
 							 NotifyBody body = NotifyBody.get(key);
 							 if(body==null) {
 								 errorSet.add("No NotifyBody defined for " + key);
@@ -185,78 +186,93 @@
 
 			 // now create Notification
 			 for(NotifyBody nb : NotifyBody.getAll()) {
-				 String run = nb.type()+nb.name();
-				 String test = dryRun?run:null;
-				 ONE_EMAIL:
-					 for(String id : nb.users()) {
-
-						 toList.clear();
-						 ccList.clear();
-						 try {
-							 Identity identity = trans.org().getIdentity(noAvg, id);
-							 if(identity==null) {
-								 trans.warn().printf("%s is invalid for this Organization. Skipping notification.",id);
-							 } else {
-								 if(!identity.isPerson()) {
-									 identity = identity.responsibleTo();
-								 }
-								 if(identity==null) {
-									 trans.warn().printf("Responsible Identity %s is invalid for this Organization. Skipping notification.",id);
-								 } else {
-									 for(int i=1;i<=nb.escalation();++i) {
-										 if(identity != null) {
-											 if(i==1) {
-												 toList.add(identity.email());
-												 List<String> dels = identity.delegate();
-												 if(dels!=null) {
-													 for(String d : dels) {
-														 toList.add(d);
-													 }
-												 }
-											 } else {
-												 Identity s = identity.responsibleTo();
-												 if(s==null) {
-													 trans.error().printf("Identity %s has no %s", identity.fullID(),
-															 identity.isPerson()?"supervisor":"sponsor");
-												 } else {
-													 ccList.add(s.email());
-												 }
-											 }
-										 }
-									 }
-	
-									 StringBuilder content = new StringBuilder();
-									 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
-	
-									 nb.body(noAvg, content, indent, notify, id);
-									 content.append(footer);
-	
-									 if(mailer.sendEmail(noAvg, test, toList, ccList, nb.subject(),content.toString(), urgent)) {
-										 nb.inc();
-									 } else {
-										 trans.error().log("Mailer failed to send Mail");
-									 }
-									 if(maxEmails>0 && nb.count()>=maxEmails) {
-										 break ONE_EMAIL;
-									 }
-								 }
-							 }
-						 } catch (OrganizationException e) {
-							 trans.error().log(e);
-						 }
-					 }
-				 trans.info().printf("Emailed %d for %s",nb.count(),run);
+				 notify(noAvg, nb);
 			 }
 
-
-		 } finally {
+		} catch (APIException | IOException e1) {
+			trans.error().log(e1);
+		} finally {
 			 for(String s : errorSet) {
 				 trans.audit().log(s);
 			 }
 		 }
 	 }
 
-	 @Override
+	 public int notify(AuthzTrans trans, NotifyBody nb) {
+		 List<String> toList = new ArrayList<>();
+		 List<String> ccList = new ArrayList<>();
+
+		 String run = nb.type()+nb.name();
+		 String test = dryRun?run:null;
+		 String last = null;
+		 
+		 ONE_EMAIL:
+		 for(String id : nb.users()) {
+			 last = id;
+			 toList.clear();
+			 ccList.clear();
+			 try {
+				 Identity identity = trans.org().getIdentity(trans, id);
+				 if(identity==null) {
+					 trans.warn().printf("%s is invalid for this Organization. Skipping notification.",id);
+				 } else {
+					 if(!identity.isPerson()) {
+						 identity = identity.responsibleTo();
+					 }
+					 if(identity==null) {
+						 trans.warn().printf("Responsible Identity %s is invalid for this Organization. Skipping notification.",id);
+					 } else {
+						 for(int i=1;i<=nb.escalation();++i) {
+							 if(identity != null) {
+								 if(i==1) { // self and Delegates
+									 toList.add(identity.email());
+									 List<String> dels = identity.delegate();
+									 if(dels!=null) {
+										 for(String d : dels) {
+											 toList.add(d);
+										 }
+									 }
+								 } else {
+									 Identity s = identity.responsibleTo();
+									 if(s==null) {
+										 trans.error().printf("Identity %s has no %s", identity.fullID(),
+												 identity.isPerson()?"supervisor":"sponsor");
+									 } else {
+										 ccList.add(s.email());
+									 }
+								 }
+							 }
+						 }
+
+						 StringBuilder content = new StringBuilder();
+						 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
+
+						 nb.body(trans, content, indent, this, id);
+						 content.append(footer);
+
+						 if(mailer.sendEmail(trans, test, toList, ccList, nb.subject(),content.toString(), urgent)) {
+							 nb.inc();
+						 } else {
+							 trans.error().log("Mailer failed to send Mail");
+						 }
+						 if(maxEmails>0 && nb.count()>=maxEmails) {
+							 break ONE_EMAIL;
+						 }
+					 }
+				 }
+			 } catch (OrganizationException e) {
+				 trans.error().log(e);
+			 }
+		 }
+		 if(nb.count()<=1) {
+			 trans.info().printf("Notified %s for %s",last,run);
+		 } else {
+			 trans.info().printf("Emailed %d for %s",nb.count(),run);
+		 }
+		 return nb.count();
+	 }
+
+	@Override
 	 protected void _close(AuthzTrans trans) {
 	 }
 

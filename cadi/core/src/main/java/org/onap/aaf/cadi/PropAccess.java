@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfo;
+import org.onap.aaf.cadi.util.Split;
 
 public class PropAccess implements Access {
     // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
@@ -119,12 +120,20 @@ public class PropAccess implements Access {
             props.putAll(p);
         }
         
-        // Third, load any Chained Property Files
-        load(props.getProperty(Config.CADI_PROP_FILES));
-        
+        // Preset LogLevel
         String sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
         if (sLevel!=null) {
             level=Level.valueOf(sLevel).maskOf(); 
+        }
+        
+        // Third, load any Chained Property Files
+        load(props.getProperty(Config.CADI_PROP_FILES));
+        
+        if(sLevel==null) { // if LogLev wasn't set before, check again after Chained Load
+	        sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
+	        if (sLevel!=null) {
+	            level=Level.valueOf(sLevel).maskOf(); 
+	        }
         }
         // Setup local Symmetrical key encryption
         if (symm==null) {
@@ -139,52 +148,41 @@ public class PropAccess implements Access {
         
         name = props.getProperty(Config.CADI_LOGNAME, name);
         
-        specialConversions();
+        SecurityInfo.setHTTPProtocols(this);
     }
     
    
-    private void specialConversions() {
-        // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
-        if (props.get(Config.CADI_PROTOCOLS)==null) {
-            props.setProperty(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);
-        }
-        
-        Object temp;
-        temp=props.get(Config.CADI_PROTOCOLS);
-        if (props.get(Config.HTTPS_PROTOCOLS)==null && temp!=null) {
-            props.put(Config.HTTPS_PROTOCOLS, temp);
-        }
-        
-        if (temp!=null) {
-            if ("1.7".equals(System.getProperty("java.specification.version")) 
-                    && (temp==null || (temp instanceof String && ((String)temp).contains("TLSv1.2")))) {
-                System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
-            }
-        }
-    }
-
     private void load(String cadi_prop_files) {
         if (cadi_prop_files==null) {
             return;
         }
         String prevKeyFile = props.getProperty(Config.CADI_KEYFILE);
-        int prev = 0, end = cadi_prop_files.length();
-        int idx;
-        String filename;
-        while (prev<end) {
-            idx = cadi_prop_files.indexOf(File.pathSeparatorChar,prev);
-            if (idx<0) {
-                idx = end;
-            }
-            File file = new File(filename=cadi_prop_files.substring(prev,idx));
+
+        
+        for(String filename : Split.splitTrim(File.pathSeparatorChar, cadi_prop_files)) {
+            Properties fileProps = new Properties();
+            File file = new File(filename);
             if (file.exists()) {
                 printf(Level.INIT,"Loading CADI Properties from %s",file.getAbsolutePath());
                 try {
                     FileInputStream fis = new FileInputStream(file);
                     try {
-                        props.load(fis);
+                        fileProps.load(fis);
+                        // Only load props from recursion which are not already in props
+                        // meaning top Property file takes precedence
+                        for(Entry<Object, Object> es : fileProps.entrySet()) {
+                        	if(props.get(es.getKey())==null) {
+                        		String key = es.getKey().toString();
+                        		String value = es.getValue().toString();
+                        		props.put(key, value);
+                        		if(key.contains("pass")) {
+                        			value = "XXXXXXX";
+                        		}
+                        		printf(Level.DEBUG,"  %s=%s",key,value);
+                        	}
+                        }
                         // Recursively Load
-                        String chainProp = props.getProperty(Config.CADI_PROP_FILES);
+                        String chainProp = fileProps.getProperty(Config.CADI_PROP_FILES);
                         if (chainProp!=null) {
                             if (recursionProtection==null) {
                                 recursionProtection = new ArrayList<>();
@@ -204,7 +202,6 @@ public class PropAccess implements Access {
             } else {
                 printf(Level.WARN,"Warning: recursive CADI Property %s does not exist",file.getAbsolutePath());
             }
-            prev = idx+1;
         }
         
         // Trim 
@@ -244,8 +241,6 @@ public class PropAccess implements Access {
                 printf(Level.ERROR,"%s=%s is an Invalid Log Level",Config.CADI_LOGLEVEL,loglevel);
             }
         }
-        
-        specialConversions();
     }
     
     @Override

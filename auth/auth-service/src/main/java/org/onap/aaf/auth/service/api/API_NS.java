@@ -181,7 +181,7 @@ public class API_NS {
                 AuthzTrans trans, 
                 HttpServletRequest req, 
                 HttpServletResponse resp) throws Exception {
-                    Result<Void> r = context.getNSsByName(trans, resp, pathParam(req,":id"));
+                    Result<Void> r = context.getNSsByName(trans, resp, pathParam(req,":id"),TRUE.equals(req.getParameter(FULL)));
                     switch(r.status) {
                         case OK:
                             resp.setStatus(HttpStatus.OK_200); 

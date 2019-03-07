@@ -45,11 +45,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.auth.rserv.RServlet;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.config.Config;
-import org.onap.aaf.cadi.config.SecurityInfo;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Split;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
@@ -81,7 +80,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
         if ((httpproto=props.get(Config.CADI_PROTOCOLS))==null) {
             if ((httpproto=props.get(Config.HTTPS_PROTOCOLS))==null) {
-                props.put(Config.CADI_PROTOCOLS, (httpproto=SecurityInfo.HTTPS_PROTOCOLS_DEFAULT));
+                props.put(Config.CADI_PROTOCOLS, (httpproto=Config.HTTPS_PROTOCOLS_DEFAULT));
             } else {
                 props.put(Config.CADI_PROTOCOLS, httpproto);
             }
@@ -133,7 +132,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                 sslContextFactory.setTrustStorePassword(access().decrypt(truststorePassword, false)); 
             }
             // Be able to accept only certain protocols, i.e. TLSv1.1+
-            String subprotocols = access().getProperty(Config.CADI_PROTOCOLS, SecurityInfo.HTTPS_PROTOCOLS_DEFAULT);
+            String subprotocols = access().getProperty(Config.CADI_PROTOCOLS, Config.HTTPS_PROTOCOLS_DEFAULT);
             service.setSubprotocol(subprotocols);
             final String[] protocols = Split.splitTrim(',', subprotocols);
             sslContextFactory.setIncludeProtocols(protocols);
@@ -215,7 +214,12 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             }
         }
         try {
-            register(service.registrants(port));
+        	String no_register = env().getProperty("aaf_no_register",null);
+        	if(no_register==null) {
+        		register(service.registrants(port));
+        	} else {
+        		access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.app_name);
+        	}
             access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
             //server.join();
         } catch (Exception e) {

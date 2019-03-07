@@ -71,10 +71,6 @@ public class JU_ServletContextAccess {
         when(filter_mock.getInitParameterNames()).thenReturn(enumeration);
     }
     
-    @Test
-    public void ConstructorTest() throws Exception {
-        ServletContextAccess sca = new ServletContextAccess(filter_mock);
-    }
 
     @Test
     public void logTest() throws Exception {

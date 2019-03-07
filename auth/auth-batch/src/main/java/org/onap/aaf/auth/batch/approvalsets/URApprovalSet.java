@@ -21,6 +21,7 @@
 package org.onap.aaf.auth.batch.approvalsets;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -40,7 +41,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class URApprovalSet extends ApprovalSet {
 	
-	private boolean ownerSuperApprove;
+	private boolean ownerSuperApprove = true;
 
 	public URApprovalSet(final AuthzTrans trans, final GregorianCalendar start, final DataView dv, final Loader<UserRoleDAO.Data> lurdd) throws IOException, CadiException {
 		super(start, "user_role", dv);
@@ -49,6 +50,8 @@ public class URApprovalSet extends ApprovalSet {
 		setConstruct(urdd.bytify());
 		setMemo(getMemo(urdd));
 		setExpires(org.expiration(null, Organization.Expiration.UserInRole));
+		setTargetKey(urdd.role);
+		setTargetDate(urdd.expires);
 		
 		Result<RoleDAO.Data> r = dv.roleByName(trans, urdd.role);
 		if(r.notOKorIsEmpty()) {
@@ -88,18 +91,13 @@ public class URApprovalSet extends ApprovalSet {
 			}
 		}
 
-		if(isOwner && ownerSuperApprove) {
+		if(isOwner) {
 			try {
 				List<Identity> apprs = org.getApprovers(trans, urdd.user);
 				if(apprs!=null) {
 					for(Identity i : apprs) {
 						ApprovalDAO.Data add = newApproval(urdd);
-						Identity reportsTo = i.responsibleTo();
-						if(reportsTo!=null) {
-							add.approver = reportsTo.fullID();
-						} else {
-							throw new CadiException("No Supervisor for '" + urdd.user + '\'');
-						}
+						add.approver = i.fullID();
 						add.type = org.getApproverType();
 						ladd.add(add);
 					}
@@ -110,8 +108,16 @@ public class URApprovalSet extends ApprovalSet {
 		}
 	}
 	
-	public void ownerSuperApprove() {
-		ownerSuperApprove = true;
+	private void setTargetDate(Date expires) {
+		fdd.target_date = expires;
+	}
+
+	private void setTargetKey(String key) {
+		fdd.target_key = key;
+	}
+
+	public void ownerSuperApprove(boolean set) {
+		ownerSuperApprove = set;
 	}
 
 	private ApprovalDAO.Data newApproval(UserRoleDAO.Data urdd) throws CadiException {

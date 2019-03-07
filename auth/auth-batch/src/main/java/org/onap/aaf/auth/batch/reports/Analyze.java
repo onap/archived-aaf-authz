@@ -231,7 +231,7 @@ public class Analyze extends Batch {
 									++state[type][pending];
 									Pending n = pendingTemp.get(appr.getApprover());
 									if(n==null) {
-										pendingTemp.put(appr.getApprover(),new Pending(appr.getLast_notified()));
+										pendingTemp.put(appr.getApprover(),new Pending());
 									} else {
 										n.inc();
 									}
@@ -288,7 +288,7 @@ public class Analyze extends Batch {
 			
 			for(Entry<String, Pending> es : pendingApprs.entrySet()) {
 				Pending p = es.getValue();
-				if(p.earliest() == null || p.earliest().after(remind)) {
+				if(p.newApprovals() || p.earliest() == null || p.earliest().after(remind)) {
 					p.row(approveCW,es.getKey());
 				}
 			}

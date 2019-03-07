@@ -195,16 +195,24 @@ public abstract class NotifyBody {
 		}
 	}
 
-	protected void println(StringBuilder sb, int indent, Object ... objs) {
+	protected void print(StringBuilder sb, int indent, Object ... objs) {
 		for(int i=0;i<indent;++i) {
 			sb.append(' ');
 		}
 		for(Object o : objs) {
 			sb.append(o.toString());
 		}
+	}
+			
+	protected void println(StringBuilder sb, int indent, Object ... objs) {
+		print(sb,indent,objs);
 		sb.append('\n');
 	}
-	
+
+	protected void printf(StringBuilder sb, int indent, String fmt, Object ... objs) {
+		print(sb,indent,String.format(fmt, objs));
+	}
+
 	protected String printCell(StringBuilder sb, int indent, String current, String prev) {
 		if(current.equals(prev)) {
 			println(sb,indent,DUPL);

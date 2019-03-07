@@ -33,7 +33,6 @@ import org.onap.aaf.auth.batch.actions.Message;
 import org.onap.aaf.auth.batch.helpers.Creator;
 import org.onap.aaf.auth.batch.helpers.Notification;
 import org.onap.aaf.auth.batch.helpers.Notification.TYPE;
-import org.onap.aaf.auth.batch.helpers.creators.RowCreator;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.LogTarget;
@@ -73,8 +72,6 @@ public class JU_NotificationTest {
 		assertTrue(notification.update(trans, null, true));
 		assertTrue(notification.toString().contains("\"user\",\"CN\","));
 
-		Notification.v2_0_18.create(RowCreator.getRow());
-		assertEquals(Notification.v2_0_18.select(), "SELECT user,type,last,checksum FROM authz.notify LIMIT 100000");
 
 	}
 }

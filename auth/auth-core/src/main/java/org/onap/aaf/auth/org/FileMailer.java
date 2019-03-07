@@ -58,7 +58,8 @@ public class FileMailer implements Mailer {
 		}
 		
 		boolean dryrun = Boolean.parseBoolean(access.getProperty("DRY_RUN","false"));
-		int maxEmail = Integer.parseInt(access.getProperty("MAX_EMAIL", "-1"));
+		String str = access.getProperty("MAX_EMAIL", null);
+		int maxEmail = str==null || str.isEmpty()?Integer.MAX_VALUE:Integer.parseInt(str);
 		if(dryrun && maxEmail==1) {
 			testName = "email_test";
 		} else {

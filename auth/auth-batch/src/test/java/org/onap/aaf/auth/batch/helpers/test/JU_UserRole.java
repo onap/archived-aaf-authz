@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.onap.aaf.auth.batch.actions.URDelete;
 import org.onap.aaf.auth.batch.helpers.Creator;
 import org.onap.aaf.auth.batch.helpers.UserRole;
-import org.onap.aaf.auth.batch.helpers.creators.RowCreator;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.misc.env.Env;
@@ -153,11 +152,6 @@ public class JU_UserRole {
 		userRole.actuateDeletionNow(trans, urd);
 	}
 
-	@Test
-	public void testV2() {
-		UserRole.v2_0_11.create(RowCreator.getRow());
-		assertEquals("select user,role,ns,rname,expires from authz.user_role", UserRole.v2_0_11.select());
-	}
 
 	@Test
 	public void testLoad() {
@@ -176,11 +170,6 @@ public class JU_UserRole {
 		when(session.execute(any(SimpleStatement.class))).thenReturn(results);
 		when(results.iterator()).thenReturn(rows.iterator());
 
-		List<Row> list = new ArrayList<Row>();
-		list.add(RowCreator.getRow());
-		list.add(RowCreator.getRow());
-
-		UserRole.load(trans, session, creator, new UserRole.DataLoadVisitor());
 	}
 
 }

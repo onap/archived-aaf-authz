@@ -76,7 +76,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
         public String status;
         public String memo;
         public String operation;
-        public Date last_notified;
+//        public Date last_notified;
         public Date updated;
     }
     
@@ -97,11 +97,11 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             data.status = row.getString(5);
             data.memo = row.getString(6);
             data.operation = row.getString(7);
-            data.last_notified = row.getTimestamp(8);
+//            data.last_notified = row.getTimestamp(8);
             // This is used to get "WRITETIME(STATUS)" from Approval, which gives us an "updated" 
-            if (row.getColumnDefinitions().size()>9) {
+            if (row.getColumnDefinitions().size()>8) {
                 // Rows reported in MicroSeconds
-                data.updated = new Date(row.getLong(9)/1000);
+                data.updated = new Date(row.getLong(8)/1000);
             }
             return data;
         }
@@ -121,12 +121,12 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             obj[++idx]=data.status;
             obj[++idx]=data.memo;
             obj[++idx]=data.operation;
-            obj[++idx]=data.last_notified;
+//            obj[++idx]=data.last_notified;
         }
     }    
     
     private void init(AuthzTrans trans) {
-        String[] helpers = setCRUD(trans, TABLE, Data.class, ApprovalLoader.deflt,9);
+        String[] helpers = setCRUD(trans, TABLE, Data.class, ApprovalLoader.deflt,8);
         psByUser = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + ", WRITETIME(status) FROM " + TABLE + 
                 " WHERE user = ?", new ApprovalLoader(1) {
             @Override

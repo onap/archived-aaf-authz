@@ -127,7 +127,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @param ns
      * @return
      */
-    public Result<NSS> getNSbyName(AuthzTrans trans, String ns);
+    public Result<NSS> getNSbyName(AuthzTrans trans, String ns, boolean full);
     
     /**
      * 
@@ -763,6 +763,8 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @param trans
      */
     public void dbReset(AuthzTrans trans);
+
+
 
 
 }

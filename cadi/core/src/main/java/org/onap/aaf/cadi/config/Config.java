@@ -92,6 +92,7 @@ public class Config {
     public static final String CADI_KEYSTORE = "cadi_keystore";
     public static final String CADI_KEYSTORE_PASSWORD = "cadi_keystore_password";
     public static final String CADI_ALIAS = "cadi_alias";
+    public static final String CADI_CLIENT_ALIAS = "cadi_client_alias";
     public static final String CADI_LOGINPAGE_URL = "cadi_loginpage_url";
     public static final String CADI_LATITUDE = "cadi_latitude";
     public static final String CADI_LONGITUDE = "cadi_longitude";
@@ -120,8 +121,9 @@ public class Config {
     public static final String CADI_TOKEN_DIR = "cadi_token_dir";
 
     public static final String HTTPS_PROTOCOLS = "https.protocols";
-    public static final String HTTPS_CIPHER_SUITES = "https.cipherSuites";
     public static final String HTTPS_CLIENT_PROTOCOLS="jdk.tls.client.protocols";
+    public static final String HTTPS_PROTOCOLS_DEFAULT = "TLSv1.1,TLSv1.2";
+    public static final String HTTPS_CIPHER_SUITES = "https.cipherSuites";
     public static final String HTTPS_CIPHER_SUITES_DEFAULT="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,"
             + "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA,"
             + "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_DSS_WITH_AES_128_CBC_SHA,"

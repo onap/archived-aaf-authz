@@ -131,7 +131,7 @@ public class JU_URFutureApproveExec {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       	Approval approval = new Approval(null, null, "", new Date(), "test", "", "", "", "", 0L);
+       	Approval approval = new Approval(null, null, "", "test", "", "", "", "", 0L);
        	List<Approval> approvalAL = new ArrayList<>();
        	
        	Future futureObj = new Future(null, "", "", new Date(), new Date(), null);
@@ -151,7 +151,7 @@ public class JU_URFutureApproveExec {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       	Approval approval = new Approval(null, null, "", new Date(), "test", "", "", "", "", 0L);
+       	Approval approval = new Approval(null, null, "", "test", "", "", "", "", 0L);
        	List<Approval> approvalAL = new ArrayList<>();
        	
        	Future futureObj = new Future(null, "", "", new Date(), new Date(), null);
@@ -171,7 +171,7 @@ public class JU_URFutureApproveExec {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       	Approval approval = new Approval(null, null, "", new Date(), "test", "", "", "", "", 0L);
+       	Approval approval = new Approval(null, null, "", "test", "", "", "", "", 0L);
        	List<Approval> approvalAL = new ArrayList<>();
        	
        	Future futureObj = new Future(null, "", "", new Date(), new Date(), null);
@@ -191,7 +191,7 @@ public class JU_URFutureApproveExec {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       	Approval approval = new Approval(null, null, "", new Date(), "test", "", "", "", "", 0L);
+       	Approval approval = new Approval(null, null, "",  "test", "", "", "", "", 0L);
        	List<Approval> approvalAL = new ArrayList<>();
        	
        	Future futureObj = new Future(null, "", "", new Date(), new Date(), null);
@@ -211,7 +211,7 @@ public class JU_URFutureApproveExec {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-       	Approval approval = new Approval(null, null, "", new Date(), "test", "", "", "", "", 0L);
+       	Approval approval = new Approval(null, null, "", "test", "", "", "", "", 0L);
        	List<Approval> approvalAL = new ArrayList<>();
        	
        	Future futureObj = new Future(null, "", "", new Date(), new Date(), null);

@@ -472,10 +472,10 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
      * @see com.att.authz.facade.AuthzFacade#getNSsByName(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, java.lang.String)
      */
     @Override
-    public Result<Void> getNSsByName(AuthzTrans trans, HttpServletResponse resp, String ns) {
+    public Result<Void> getNSsByName(AuthzTrans trans, HttpServletResponse resp, String ns, boolean full) {
         TimeTaken tt = trans.start(GET_NS_BY_NAME + ' ' + ns, Env.SUB|Env.ALWAYS);
         try {
-            Result<NSS> rp = service.getNSbyName(trans, ns);
+            Result<NSS> rp = service.getNSbyName(trans, ns, full );
             switch(rp.status) {
                 case OK: 
                     RosettaData<NSS> data = nssDF.newData(trans).load(rp.value);

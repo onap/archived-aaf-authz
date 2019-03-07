@@ -65,8 +65,8 @@ public class JU_HClientHotPeerLocator {
         assertThat(loc.hasItems(), is(true));
 
         String[] messages = outStream.toString().split(System.lineSeparator());
-        String preffered = messages[0].split(" ", 4)[3];
-        String alternate = messages[1].split(" ", 4)[3];
+        String preffered = messages[2].split(" ", 4)[3];
+        String alternate = messages[3].split(" ", 4)[3];
         assertThat(preffered, is("Preferred Client is " + goodURL1));
         assertThat(alternate, is("Alternate Client is " + goodURL2));
 
@@ -98,9 +98,9 @@ public class JU_HClientHotPeerLocator {
         String urlStr = goodURL1 + ',' + goodURL2 + ',' + badURL;
         loc = new HClientHotPeerLocator(access, urlStr, 1000000, "38.627", "-90.199", ssMock);
         String[] messages = outStream.toString().split(System.lineSeparator());
-        String preffered = messages[0].split(" ", 4)[3];
-        String alternate1 = messages[1].split(" ", 4)[3];
-        String alternate2 = messages[2].split(" ", 4)[3];
+        String preffered = messages[2].split(" ", 4)[3];
+        String alternate1 = messages[3].split(" ", 4)[3];
+        String alternate2 = messages[4].split(" ", 4)[3];
         assertThat(preffered, is("Preferred Client is " + badURL));
         assertThat(alternate1, is("Alternate Client is " + goodURL1));
         assertThat(alternate2, is("Alternate Client is " + goodURL2));

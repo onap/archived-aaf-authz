@@ -53,20 +53,23 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.util.MaskFormatException;
 import org.onap.aaf.cadi.util.NetMask;
+import org.onap.aaf.cadi.util.Split;
 
 public class SecurityInfo {
-    private static final String SECURITY_ALGO = "RSA";
+	private static final String SECURITY_ALGO = "RSA";
     private static final String HTTPS_PROTOCOLS = "https.protocols";
     private static final String JDK_TLS_CLIENT_PROTOCOLS = "jdk.tls.client.protocols";
+    private static final String INITIALIZING_ERR_FMT = "Error initializing %s: %s";
+	private static final String LOADED_FROM_CADI_PROPERTIES = "%s loaded from CADI Properties";
+	private static final String LOADED_FROM_SYSTEM_PROPERTIES = "%s loaded from System Properties";
 
-    public static final String HTTPS_PROTOCOLS_DEFAULT = "TLSv1.1,TLSv1.2";
-    public static final String REGEX_COMMA = "\\s*,\\s*";
     public static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM;
     
     private SSLSocketFactory socketFactory;
     private X509KeyManager[] x509KeyManager;
     private X509TrustManager[] x509TrustManager;
     public final String defaultAlias;
+    public final String defaultClientAlias;
     private NetMask[] trustMasks;
     private SSLContext context;
     private HostnameVerifier maskHV;
@@ -83,37 +86,81 @@ public class SecurityInfo {
     
 
     public SecurityInfo(final Access access) throws CadiException {
+    	String msgHelp = "";
         try {
             this.access = access;
             // reuse DME2 Properties for convenience if specific Properties don't exist
             
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"Keystore", access.getProperty(Config.CADI_KEYSTORE, ""));
             initializeKeyManager();
             
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"Truststore", access.getProperty(Config.CADI_TRUSTSTORE, ""));
             initializeTrustManager();
             
-            defaultAlias = access.getProperty(Config.CADI_ALIAS, null);
+            String str = access.getProperty(Config.CADI_ALIAS, null);
+            if(str==null || str.isEmpty()) {
+            	defaultAlias = null;
+            } else {
+            	defaultAlias = str;
+            }
             
+            str = access.getProperty(Config.CADI_CLIENT_ALIAS, null);
+            if(str==null) {
+            	defaultClientAlias = defaultAlias;
+            } else if(str.isEmpty()) {
+            	// intentionally off, i.e. cadi_client_alias=
+            	defaultClientAlias = null;
+            } else {
+            	defaultClientAlias = str;
+            }
+            
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"Trustmasks", access.getProperty(Config.CADI_TRUST_MASKS, ""));
             initializeTrustMasks();
 
-            String httpsProtocols = Config.logProp(access, Config.CADI_PROTOCOLS,
-                        access.getProperty(HTTPS_PROTOCOLS, HTTPS_PROTOCOLS_DEFAULT)
-                        );
-            System.setProperty(HTTPS_PROTOCOLS, httpsProtocols);
-            System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, httpsProtocols);
-            if ("1.7".equals(System.getProperty("java.specification.version")) && httpsProtocols.contains("TLSv1.2")) {
-                System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
-            }            
-
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"HTTP Protocols", "access properties");
+            setHTTPProtocols(access);
+            
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"Context", "TLS");
             context = SSLContext.getInstance("TLS");
             context.init(x509KeyManager, x509TrustManager, null);
             SSLContext.setDefault(context);
             socketFactory = context.getSocketFactory();
         } catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException | CertificateException | UnrecoverableKeyException | IOException e) {
-            throw new CadiException(e);
+            throw new CadiException(msgHelp,e);
         }
     }
 
-    /**
+    public static void setHTTPProtocols(Access access) {
+        String httpsProtocols = System.getProperty(Config.HTTPS_PROTOCOLS);
+        if(httpsProtocols!=null) {
+        	access.printf(Level.INIT, LOADED_FROM_SYSTEM_PROPERTIES, HTTPS_PROTOCOLS);
+        } else {
+        	httpsProtocols = access.getProperty(Config.HTTPS_PROTOCOLS,null);
+        	if(httpsProtocols!=null) {
+        		access.printf(Level.INIT, LOADED_FROM_CADI_PROPERTIES, HTTPS_PROTOCOLS);
+        	} else {
+        		httpsProtocols = access.getProperty(HTTPS_PROTOCOLS, Config.HTTPS_PROTOCOLS_DEFAULT);
+        		access.printf(Level.INIT, "%s set by %s in CADI Properties",Config.HTTPS_PROTOCOLS,Config.CADI_PROTOCOLS);
+        	}
+        	// This needs to be set when people do  not.
+            System.setProperty(HTTPS_PROTOCOLS, httpsProtocols);
+        }
+        String httpsClientProtocols = System.getProperty(JDK_TLS_CLIENT_PROTOCOLS,null); 
+        if(httpsClientProtocols!=null) {
+        	access.printf(Level.INIT, LOADED_FROM_SYSTEM_PROPERTIES, JDK_TLS_CLIENT_PROTOCOLS);
+        } else {
+        	httpsClientProtocols = access.getProperty(Config.HTTPS_CLIENT_PROTOCOLS, null);
+        	if(httpsClientProtocols!=null) {
+        		access.printf(Level.INIT, LOADED_FROM_CADI_PROPERTIES, Config.HTTPS_CLIENT_PROTOCOLS);
+        	} else {
+        		httpsClientProtocols = Config.HTTPS_PROTOCOLS_DEFAULT;
+        		access.printf(Level.INIT, "%s set from %s",Config.HTTPS_CLIENT_PROTOCOLS, "Default Protocols");
+        	}
+        	System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, httpsClientProtocols);
+        }
+	}
+
+	/**
      * @return the scf
      */
     public SSLSocketFactory getSSLSocketFactory() {
@@ -172,7 +219,7 @@ public class SecurityInfo {
 
         ArrayList<X509KeyManager> keyManagers = new ArrayList<>();
         File file;
-        for (String ksname : keyStore.split(REGEX_COMMA)) {
+        for (String ksname : Split.splitTrim(',', keyStore)) {
             String keystoreFormat;
             if (ksname.endsWith(".p12") || ksname.endsWith(".pkcs12")) {
                 keystoreFormat = "PKCS12";
@@ -214,7 +261,7 @@ public class SecurityInfo {
 
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(SSL_KEY_MANAGER_FACTORY_ALGORITHM);
         File file;
-        for (String trustStoreName : trustStore.split(REGEX_COMMA)) {
+        for (String trustStoreName : Split.splitTrim(',',trustStore)) {
             file = new File(trustStoreName);
             if (file.exists()) {
                 FileInputStream fis = new FileInputStream(file);
@@ -250,7 +297,7 @@ public class SecurityInfo {
         }
 
         access.log(Level.INIT, "Explicitly accepting valid X509s from", tips);
-        String[] ipsplit = tips.split(REGEX_COMMA);
+        String[] ipsplit = Split.splitTrim(',', tips);
         trustMasks = new NetMask[ipsplit.length];
         for (int i = 0; i < ipsplit.length; ++i) {
             try {
