@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,12 +116,8 @@ public abstract class Batch {
         cluster = CassAccess.cluster(env,batchEnv);
         env.info().log("cluster name - ",cluster.getClusterName());
         String dryRunStr = env.getProperty( "DRY_RUN" );
-        if ( dryRunStr == null || "false".equals(dryRunStr.trim()) ) {
-            dryRun = false;
-        } else {
-            dryRun = true;
-            env.info().log("dryRun set to TRUE");
-        }
+
+        dryRun = dryRunStr != null && !"false".equals(dryRunStr.trim());
 
         org = OrganizationFactory.init(env);
         if(org==null) {
@@ -398,7 +395,7 @@ public abstract class Batch {
 	                access.load(is);
 	            } finally {
 	                if (is == null) {
-	                    System.err.println("authBatch.props must exist in current dir, or in Classpath");
+	                    env.error().log("authBatch.props must exist in current dir, or in Classpath");
 	                    System.exit(1);
 	                }
 	                is.close();
@@ -444,7 +441,7 @@ public abstract class Batch {
 	                    len -= 1;
 	                    if (len < 0)
 	                        len = 0;
-	                    String nargs[] = new String[len];
+	                    String[] nargs = new String[len];
 	                    if (len > 0) {
 	                        System.arraycopy(args, 1, nargs, 0, len);
 	                    }
