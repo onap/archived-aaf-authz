@@ -15,25 +15,25 @@ roles contain permissions and users
   #.	a role is where users and permissions meet; permissions are not granted directly to users, rather a perm is granted to a role and users are added to the role
   #.	a role contains 0 or more permissions
   #.	a role contains 0 or more users or APPID identities
-  #.	note that role memberships have an expiration date. 
+  #.	note that role memberships have an expiration date.
 
      -  The owner of the namespace must re-approve all role memberships periodically.
-     -  All approval requests, role renewal reviews, credential expiration, etc, emails will go to the namespace owner. 
-     -  If the namespace owner doesn't act upon these emails, users/appid’s will lose their permissions. Applications will break. 
+     -  All approval requests, role renewal reviews, credential expiration, etc, emails will go to the namespace owner.
+     -  If the namespace owner doesn't act upon these emails, users/appid’s will lose their permissions. Applications will break.
      -  Restoring lost permissions is the responsibility of the namespace admins, not any AAF support tier.
 
 Namespaces contain 1 or more permissions
   #.	other than the access permissions discussed below, AAF does not care about permissions
-  #.	AAF does not interpret application-specific permissions; in other words, it's up to the applications developers to create a permission scheme.  
+  #.	AAF does not interpret application-specific permissions; in other words, it's up to the applications developers to create a permission scheme.
 
     -	the general usage pattern is that an application will ask for all permissions associated with a user
     -	locally, the application interprets what the presence or absence of a permissions means
 
 By default, every namespace has 2 "access" permissions: 
-    #.	a read/write permission, for instance "org.onap.test.access \* \*" 
-    #.	a read only permission, for instance "org.onap.test.access \* read" 
+    #.	a read/write permission, for instance "org.onap.test.access \* \*"
+    #.	a read only permission, for instance "org.onap.test.access \* read"
 
-By default, every namespace has an admin role, for instance "org.onap.test.admin" 
+By default, every namespace has an admin role, for instance "org.onap.test.admin"
     #.	the admin role contains the read/write permission for the namespace
 
        -  if you delete the admin role, or the read/write permission from the role, your admins will have no access to your namespace. This is bad.
@@ -64,21 +64,21 @@ Here are some scenarios to illustrate some points about  AAF's credentials:
 Scenario 1: an application already running in an Instance needs to do their yearly AppID password update
 
  - The AppID identity already has a credential, but it is expiring soon
- - The application's support team can create a new credential at any time 
-     -  must enter an existing password to create a new one; store your passwords in a secure, manor.
+ - The application's support team can create a new credential at any time
+     - must enter an existing password to create a new one; store your passwords in a secure manner.
      - this new record will have an expiration date 1 year out
  - the password in the record will be a different password; this means the application's config files need to change
  - With a new password in place, there is no tight coordination required when the application's config files are updated. The old password continues to work until its expiration date. The new password is in place and will work as soon as the configuration is changed. 
 
 Scenario 2:An AAF command to "extend" the current password. NOTE: extending a password is a temporary workaround; a new credential must be created as soon as possible. 
  - this does not modiify the existing credential record
- - this creates a new credential record with an expiration date 5 days in the future 
- - an admin of the namespace must now: 
+ - this creates a new credential record with an expiration date 5 days in the future
+ - an admin of the namespace must now:
  - using the appropriate GUI link for the environment, go to the Password Management tab and create a new credential
  - if using cadi, digest the new password to get an encrypted password string 
  - update cadi.properties
  - bounce application processes
- - if not using cadi,  
+ - if not using cadi,
  - update whatever config file is used to store the AppID identity's password
  - bounce application processes, if required to re-read config
  - to re-iterate: AAF never modifies an existing credential; AAF creates new credential records
