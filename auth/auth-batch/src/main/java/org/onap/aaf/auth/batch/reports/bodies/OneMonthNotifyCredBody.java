@@ -34,4 +34,12 @@ public class OneMonthNotifyCredBody extends NotifyCredBody {
 	public String subject() {
 		return String.format("AAF One Month Credential Notification (ENV: %s)",env);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
+	 */
+	@Override
+	protected String dynamic() {
+		return "This is your <b>one month</b> notification. " + super.dynamic();
+	}
 }

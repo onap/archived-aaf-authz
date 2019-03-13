@@ -40,13 +40,12 @@ import org.onap.aaf.auth.gui.Table.Cells;
 import org.onap.aaf.auth.gui.table.AbsCell;
 import org.onap.aaf.auth.gui.table.ButtonCell;
 import org.onap.aaf.auth.gui.table.RadioCell;
-import org.onap.aaf.auth.gui.table.RefCell;
 import org.onap.aaf.auth.gui.table.TableData;
-import org.onap.aaf.auth.gui.table.TextAndRefCell;
 import org.onap.aaf.auth.gui.table.TextCell;
+import org.onap.aaf.auth.gui.table.TextToolTipCell;
 import org.onap.aaf.auth.org.Organization;
-import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.auth.org.Organization.Identity;
+import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
@@ -91,7 +90,7 @@ public class ApprovalForm extends Page {
                 }
             },
             new Form(true,new Table<AAF_GUI,AuthzTrans>("Approval Requests", gui.env.newTransNoAvg(),new Model(gui.env),"class=stdform"))
-                .preamble("The following requires your Approval to proceed in the AAF System.</p><p class=subtext>Hover on Identity for Name; click for WebPhone; If Deny is the only option, User is no longer valid."),
+                .preamble("The following requires your Approval to proceed in the AAF System.</p><p class=subtext>Hover on Name for Identity; If Deny is the only option, User is no longer valid."),
             new NamedCode(false, "selectAlljs") {
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
@@ -116,7 +115,7 @@ public class ApprovalForm extends Page {
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         //TODO come up with a generic way to do ILM Info (people page)
-        private static final String TODO_ILM_INFO = "TODO: ILM Info";
+//        private static final String TODO_ILM_INFO = "TODO: ILM Info";
         
         
         private static final String[] headers = new String[] {"Identity","Request","Approve","Deny"};
@@ -216,7 +215,7 @@ public class ApprovalForm extends Page {
 	//                        } else {
 	                            approverHeader = new AbsCell[] { 
 	                                    new TextCell("Approvals Delegated to Me by " + iapprover.fullName() 
-	                                       + '(' + iapprover.id() +')',
+	                                        + '(' + iapprover.id() + ')',
 	                                            new String[] {"colspan=4", "class=head"})
 	                            };
 	//                        }
@@ -242,34 +241,29 @@ public class ApprovalForm extends Page {
 	                                userCell = AbsCell.Null; 
 	                            } else if (user.endsWith(trans.org().getRealm())){
 	                                userOK=true;
-//	                                String title;
+	                                String title;
 	                                Organization org = OrganizationFactory.obtain(trans.env(), user);
 	                                if (org==null) {
-//	                                    title="";
+	                                    title="";
 		                                userCell = new TextCell(user);
 	                                } else {
 	                                    Identity au = org.getIdentity(trans, user);
 	                                    if (au!=null) {
 	                                    	if(au.isPerson()) {
-	                                    		userCell = new TextCell(au.fullName() + "\n(" + au.id() + ')');
+	                                    		userCell = new TextToolTipCell(au.fullName(),"Identity: " + au.id());
 	                                    	} else {
-	                                    		userCell = new TextCell(au.fullID());
+	                                            Identity managedBy = au.responsibleTo();
+	                                            if (managedBy==null) {
+	                                                title ="Identity: " + au.type();
+	                                            } else {
+	                                                title="Sponsor: " + managedBy.fullName();                                                
+	                                            }
+	                                    		userCell = new TextToolTipCell(au.fullID(),title);
 	                                    	}
-//	                                    	
-//	                                        if ("MECHID".equals(au.type())) {
-//	                                            Identity managedBy = au.responsibleTo();
-//	                                            if (managedBy==null) {
-//	                                                title ="title=" + au.type();
-//	                                            } else {
-//	                                                title="title=Sponsor is " + managedBy.fullName();                                                
-//	                                            }
-//	                                        } else {
-//	                                            title="title=" + au.fullName();
-//	                                        }
 	                                    } else {
 	                                        userOK=false;
-//	                                        title="title=Not a User at " + org.getName();
-			                                userCell = new TextCell(user);
+	                                        title="Not a User at " + org.getName();
+			                                userCell = new TextToolTipCell(user,title);
 	                                    }
 	                                }
 	                                prevUser=user;

@@ -149,7 +149,7 @@ public abstract class Batch {
     }
 
     protected abstract void run(AuthzTrans trans);
-    protected abstract void _close(AuthzTrans trans);
+    protected void _close(AuthzTrans trans) {}
     
     public String[] args() {
         return env.get(ssargs);
@@ -363,7 +363,12 @@ public abstract class Batch {
 
     public final void close(AuthzTrans trans) {
         _close(trans);
-        cluster.close();
+        if(session!=null) {
+        	session.close();
+        }
+        if(cluster!=null) {
+            cluster.close();
+        }
     }
 
     public static void main(String[] args) {

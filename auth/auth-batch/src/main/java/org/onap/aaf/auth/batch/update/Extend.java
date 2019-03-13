@@ -151,7 +151,7 @@ public class Extend extends Batch {
 									gc.setTime(now.getTime());
 								}
 								gc.add(gcType, extendBy);
-								UserRole.batchExtend(sb,row,Chrono.dateTime(gc));
+								UserRole.batchExtend(sb,row,gc.getTime());
 								break;
 							case "cred":
 								int ctype = Integer.parseInt(row.get(3));

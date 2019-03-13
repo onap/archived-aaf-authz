@@ -32,15 +32,17 @@ import org.onap.aaf.misc.env.util.Chrono;
 public abstract class NotifyCredBody extends NotifyBody {
 
 	private final String explanation;
+	private final String instruction;
+	 
 	public NotifyCredBody(Access access, String name) throws IOException {
 		super(access,"cred",name);
 		
 		// Default
 		explanation = "The following Credentials that you are responsible for "
-				+ "are expiring on the dates shown. "
-				+ "Failure to act before the expiration date will cause your App's "
-				+ "Authentications to fail."
-				+ "<h3>Instructions for 'Password':</h3><ul>" 
+				+ "are expiring on the dates shown. <br><br>"
+				;
+				
+        instruction = "<br><h3>Instructions for 'Password':</h3><ul>" 
 				+ "<li><b><i>Click</i></b> on the Fully Qualified ID to ADD a new Password</li>"
 				+ "<li><b>REMEMBER!</b> You are not finished until you <ol>"
 				+ "<li><b>CHANGE <i>ALL</i></b> the configurations on <b><i>ALL</i></b> your processes!!</li>"
@@ -48,10 +50,20 @@ public abstract class NotifyCredBody extends NotifyBody {
 				+ "<li>IF there is a WARNING, click the link for more information</li>"
 				+ "</ul>";
 	}
+	
+	/**
+	 * Default Dynamic Text.  Override is expected
+	 * @return
+	 */
+	protected String dynamic() {
+		return "Failure to act before the expiration date will cause your App's Authentications to fail.";
+	}
 
 	@Override
 	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
-		println(sb,indent,explanation);
+		print(sb,indent,explanation);
+		print(sb,indent,dynamic());
+		println(sb,indent,instruction);
 		println(sb,indent,"<table>");
 		indent+=2;
 		println(sb,indent,"<tr>");

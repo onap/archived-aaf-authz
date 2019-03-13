@@ -84,4 +84,8 @@ public class CQLBatch {
 		}
 		execute(dryRun);
 	}
+	
+	public String toString() {
+		return sb.toString();
+	}
 }

@@ -44,6 +44,7 @@ public class CSV {
 	private File csv;
 	private Access access;
 	private boolean processAll;
+	private char delimiter = ',';
 	
 	public CSV(Access access, File file) {
 		this.access = access;
@@ -55,6 +56,11 @@ public class CSV {
 		this.access = access;
 		csv = new File(csvFilename);
 		processAll = false;
+	}
+	
+	public CSV setDelimiter(char delimiter) {
+		this.delimiter = delimiter;
+		return this;
 	}
 	
 	public String name() {
@@ -116,16 +122,17 @@ public class CSV {
 									escape = true;
 								}
 								break;
-							case ',':
-								if(quotes) {
-									sb.append(c);
-								} else {
-									row.add(sb.toString());
-									sb.setLength(0);
-								}
-								break;
 							default:
-								sb.append(c);
+								if(delimiter==c) {
+									if(quotes) {
+										sb.append(c);
+									} else {
+										row.add(sb.toString());
+										sb.setLength(0);
+									}
+								} else {
+									sb.append(c);
+								}
 						}
 					}
 					if(sb.length()>0 || c==',') {

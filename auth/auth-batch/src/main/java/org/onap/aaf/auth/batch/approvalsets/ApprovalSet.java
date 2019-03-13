@@ -25,7 +25,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
@@ -92,5 +94,17 @@ public class ApprovalSet {
 			}
 		}
 		return errs==null?Result.ok():Result.err(Result.ERR_Backend,errs.toString());
+	}
+
+	public boolean hasApprovals() {
+		return !ladd.isEmpty();
+	}
+	
+	public Set<String> approvers() {
+		Set<String> rv = new HashSet<>();
+		for(ApprovalDAO.Data app : ladd) {
+			rv.add(app.approver);
+		}
+		return rv;
 	}
 }

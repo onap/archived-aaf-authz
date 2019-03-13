@@ -25,22 +25,36 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.onap.aaf.auth.batch.Batch;
+import org.onap.aaf.auth.batch.approvalsets.Pending;
+import org.onap.aaf.auth.batch.helpers.CQLBatch;
+import org.onap.aaf.auth.batch.helpers.CQLBatchLoop;
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.reports.bodies.NotifyBody;
+import org.onap.aaf.auth.batch.reports.bodies.NotifyPendingApprBody;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.Mailer;
 import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.TimeTaken;
+import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
 
  public class Notify extends Batch {
@@ -52,9 +66,15 @@ import org.onap.aaf.misc.env.util.Chrono;
 	 private final int indent;
 	 private final boolean urgent;
 	 public final String guiURL;
+	 private PropAccess access;
+	 private AuthzTrans noAvg;
+	 private CQLBatch cqlBatch;
 
 	 public Notify(AuthzTrans trans) throws APIException, IOException, OrganizationException {
 		 super(trans.env());
+		 access = env.access();
+		 session = super.cluster.connect();
+
 		 String mailerCls = env.getProperty("MAILER");
 		 String mailFrom = env.getProperty("MAIL_FROM");
 		 String header_html = env.getProperty("HEADER_HTML");
@@ -82,12 +102,14 @@ import org.onap.aaf.misc.env.util.Chrono;
 				 sb.append('\n');
 			 }
 			 String html_css = env.getProperty(HTML_CSS);
+			 String temp;
 			 int hc = sb.indexOf(HTML_CSS);
 			 if(hc!=0 && html_css!=null) {
-				 header = sb.replace(hc,hc+HTML_CSS.length(), html_css).toString();
+				 temp = sb.replace(hc,hc+HTML_CSS.length(), html_css).toString();
 			 } else {
-				 header = sb.toString();
+				 temp = sb.toString();
 			 }
+			 header = temp.replace("AAF:ENV", batchEnv);
 		 } finally {
 			 br.close();
 		 }
@@ -119,6 +141,8 @@ import org.onap.aaf.misc.env.util.Chrono;
 			 br.close();
 		 }
 
+		 noAvg = trans.env().newTransNoAvg();
+		 cqlBatch = new CQLBatch(noAvg.info(),session); 
 	 }
 
 	 /*
@@ -127,10 +151,10 @@ import org.onap.aaf.misc.env.util.Chrono;
 	  */
 	 @Override
 	 protected void run(AuthzTrans trans) {
-		 AuthzTrans noAvg = trans.env().newTransNoAvg();
 
 		 final Holder<List<String>> info = new Holder<>(null);
 		 final Set<String> errorSet = new HashSet<>();
+		 String fmt = "%s"+Chrono.dateOnlyStamp()+".csv";
 
 		 try {
 			 // Class Load possible data
@@ -145,7 +169,6 @@ import org.onap.aaf.misc.env.util.Chrono;
 					 notifyFile.add(new File(logDir, args()[i]));
 				 }
 			 } else {
-				 String fmt = "%s"+Chrono.dateOnlyStamp()+".csv";
 				 File file;
 				 for(NotifyBody nb : NotifyBody.getAll()) {
 					 file = new File(logDir,String.format(fmt, nb.name()));
@@ -188,6 +211,100 @@ import org.onap.aaf.misc.env.util.Chrono;
 			 for(NotifyBody nb : NotifyBody.getAll()) {
 				 notify(noAvg, nb);
 			 }
+			 
+			 //
+			 // Do Pending Approval Notifies. We do this separately, because we are consolidating
+			 // all the new entries, etc.
+			 //
+			 List<CSV> csvList = new ArrayList<>();
+			 for(String s : new String[] {"Approvals","ApprovalsNew"}) {
+				 File f = new File(logDir(),String.format(fmt, s));
+				 if(f.exists()) {
+					 csvList.add(new CSV(access,f));
+				 }
+			 }
+			 
+			 Map<String,Pending> mpending = new TreeMap<>();
+			 Holder<Integer> count = new Holder<>(0);
+			 for(CSV approveCSV : csvList) {
+	        	TimeTaken tt = trans.start("Load Analyzed Reminders",Trans.SUB,approveCSV.name());
+	        	try {
+					approveCSV.visit(row -> {
+						switch(row.get(0)) {
+//							case "info":
+//								break;
+							case Pending.REMIND:
+								try {
+									String user = row.get(1);
+									Pending p = new Pending(row);
+									Pending mp = mpending.get(user);
+									if(mp==null) {
+										mpending.put(user, p);
+									} else {
+										mp.inc(p); // FYI, unlikely
+									}
+									count.set(count.get()+1);
+								} catch (ParseException e) {
+									trans.error().log(e);
+								} 
+							break;
+						}
+					});
+				} catch (IOException | CadiException e) {
+					e.printStackTrace();
+					// .... but continue with next row
+	        	} finally {
+	        		tt.done();
+	        	}
+	        }
+	        trans.info().printf("Read %d Reminder Rows", count.get());
+	        
+        	NotifyPendingApprBody npab = new NotifyPendingApprBody(access);
+
+        	GregorianCalendar gc = new GregorianCalendar();
+        	gc.add(GregorianCalendar.DAY_OF_MONTH, 7); // Get from INFO?
+        	Date oneWeek = gc.getTime();
+        	CSV.Saver rs = new CSV.Saver();
+        	
+        	TimeTaken tt = trans.start("Obtain Last Notifications for Approvers", Trans.SUB);
+        	LastNotified lastN;
+        	try {
+        		lastN = new LastNotified(session);
+        		lastN.add(mpending.keySet());
+        	} finally {
+        		tt.done();
+        	}
+        	
+        	Pending p;
+    		final CQLBatchLoop cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
+        	tt = trans.start("Notify for Pending", Trans.SUB);
+        	try {
+        		for(Entry<String, Pending> es : mpending.entrySet()) {
+        			p = es.getValue();
+        			boolean nap = p.newApprovals();
+        			if(!nap) {
+            			Date dateLastNotified = lastN.lastNotified(es.getKey(),"pending","");
+            			if(dateLastNotified==null || dateLastNotified.after(oneWeek) ) {
+            				nap=true;
+            			}
+        			}
+        			if(nap) {
+        				rs.row("appr", es.getKey(),p.qty(),batchEnv);
+        				npab.store(rs.asList());
+        				if(notify(noAvg, npab)>0) {
+        					// Update
+        					cbl.preLoop();
+        					lastN.update(cbl.inc(),es.getKey(),"pending","");
+        				}
+        			}
+        		}
+        	} finally {
+        		cbl.flush();
+        		tt.done();
+        	}
+            trans.info().printf("Created %d Notifications", count.get());
+
+
 
 		} catch (APIException | IOException e1) {
 			trans.error().log(e1);
@@ -270,10 +387,6 @@ import org.onap.aaf.misc.env.util.Chrono;
 			 trans.info().printf("Emailed %d for %s",nb.count(),run);
 		 }
 		 return nb.count();
-	 }
-
-	@Override
-	 protected void _close(AuthzTrans trans) {
 	 }
 
  }

@@ -40,12 +40,11 @@ public class ExpireRange {
 	public static final String ONE_WEEK = "OneWeek";
 	private static final String AAF_BATCH_RANGE = "aaf_batch_range.";
 	public Map<String,List<Range>> ranges;
-	public final Date now;
+	public static final Date now = new Date();
 
 	private Range delRange;
 	
 	public ExpireRange(final Access access) {
-		now = new Date();
 		ranges = new HashMap<>();
 		int i=0;
 		String prop = access.getProperty(AAF_BATCH_RANGE + i,null);
@@ -70,6 +69,10 @@ public class ExpireRange {
 			}
 	}
 	
+	public static Range newFutureRange() {
+		return new Range("Approval",1,1,0,0,GregorianCalendar.MONTH,1);
+	}
+	
 	public Set<String> names() {
 		Set<String> names = new HashSet<>();
         for(List<Range> lr : ranges.values()) {
@@ -90,7 +93,7 @@ public class ExpireRange {
 		return rv;
 	}
 	
-	public class Range {
+	public static class Range {
 		private final String name;
 		private final int reportingLevel;
 		private final int interval; // in Days
@@ -138,7 +141,7 @@ public class ExpireRange {
 			return end;
 		}
 		
-		private boolean inRange(final Date date) {
+		public boolean inRange(final Date date) {
 			if(date==null) {
 				return false;
 			} else {

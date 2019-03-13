@@ -23,6 +23,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.onap.aaf.auth.dao.cass.FutureDAO;
+import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.util.CSV;
@@ -90,7 +92,21 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         fdd.start = start;
         fdd.expires = expires;
         fdd.construct = construct;
-        role = Approval.roleFromMemo(memo);
+        String role = null;
+        switch(target) {
+        	case "user_role":
+    			UserRoleDAO.Data urdd = new UserRoleDAO.Data();
+    			try {
+    				urdd.reconstitute(construct);
+    				fdd.target_key = urdd.user + '|' + urdd.role;
+    				fdd.target_date=urdd.expires;
+    				role=urdd.role;
+    			} catch (IOException e) {
+    				e.printStackTrace(System.err);
+    			}
+    			break;
+        }
+    	this.role = role;
     }
     
     public final UUID id() {
