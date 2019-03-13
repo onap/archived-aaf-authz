@@ -122,12 +122,12 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
     
     public static void loadOneUser(Trans trans, Session session, Creator<UserRole> creator, String user, Visitor<UserRole> visitor ) {
-        load(trans,session,creator,"role='"+ user +"';",visitor);
+        load(trans,session,creator,"user='"+ user +'\'',visitor);
     }
 
     private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
         String query = creator.query(where);
-        trans.info().log( "query: " + query );
+        trans.debug().log( "query: " + query );
         TimeTaken tt = trans.start("Read UserRoles", Env.REMOTE);
 
         ResultSet results;
@@ -145,7 +145,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
                 tt.done();
             }
         } finally {
-            trans.info().log("Loaded",totalLoaded,"UserRoles");
+            trans.debug().log("Loaded",totalLoaded,"UserRoles");
         }
     }
 
@@ -337,16 +337,26 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append("';\n");
     }
 
-    public static void batchExtend(StringBuilder sb, List<String> row, String newDate ) {
+    public static void batchExtend(StringBuilder sb, List<String> row, Date newDate ) {
     	sb.append("UPDATE authz.user_role SET expires='");
-    	sb.append(newDate);
+    	sb.append(Chrono.dateTime(newDate));
     	sb.append("' WHERE user='");
     	sb.append(row.get(1));
     	sb.append("' AND role='");
     	sb.append(row.get(2));
     	sb.append("';\n");
     }
-    
+
+    public void batchUpdateExpires(StringBuilder sb) {
+    	sb.append("UPDATE authz.user_role SET expires='");
+    	sb.append(Chrono.dateTime(expires()));
+    	sb.append("' WHERE user='");
+    	sb.append(user());
+    	sb.append("' AND role='");
+    	sb.append(role());
+    	sb.append("';\n");
+    }
+
 	public static String histMemo(String fmt, List<String> row) {
 		String reason;
 		if(row.size()>7) { // Reason included

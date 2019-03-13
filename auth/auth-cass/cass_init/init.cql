@@ -90,12 +90,12 @@ CREATE TABLE cert (
 CREATE INDEX cert_id ON cert(id);
 CREATE INDEX cert_x500 ON cert(x500);
 
-CREATE TABLE notify (
+CREATE TABLE notified (
   user 		text,
-  type 		int,
+  target        text,
+  key		text,
   last 		timestamp,
-  checksum 	int,
-  PRIMARY KEY (user,type)
+  PRIMARY KEY (user,target,key)
 );
 
 CREATE TABLE x509 (
@@ -175,6 +175,7 @@ CREATE TABLE future (
 );
 CREATE INDEX future_idx ON future(target);
 CREATE INDEX future_start_idx ON future(start);
+CREATE INDEX future_target_key ON authz.future (target_key);
 
 
 CREATE TABLE approval (

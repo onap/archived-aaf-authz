@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.onap.aaf.auth.batch.Batch;
@@ -49,6 +50,7 @@ import org.onap.aaf.auth.batch.helpers.Cred.Instance;
 import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.auth.batch.helpers.ExpireRange.Range;
 import org.onap.aaf.auth.batch.helpers.Future;
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.helpers.Role;
 import org.onap.aaf.auth.batch.helpers.UserRole;
 import org.onap.aaf.auth.batch.helpers.X509;
@@ -87,6 +89,8 @@ public class Analyze extends Batch {
 	private CSV.Writer deleteCW;
 	private CSV.Writer approveCW;
 	private CSV.Writer extendCW;
+	private Range futureRange;
+	private final String sdate;
 	
 	public Analyze(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -110,14 +114,14 @@ public class Analyze extends Batch {
             writerList = new HashMap<>();
             
             expireRange = new ExpireRange(trans.env().access());
-            String sdate = Chrono.dateOnlyStamp(expireRange.now);
+            sdate = Chrono.dateOnlyStamp(ExpireRange.now);
             for( List<Range> lr : expireRange.ranges.values()) {
             	for(Range r : lr ) {
             		if(writerList.get(r.name())==null) {
                     	File file = new File(logDir(),r.name() + sdate +CSV);
                     	CSV csv = new CSV(env.access(),file);
                     	CSV.Writer cw = csv.writer(false);
-                    	cw.row(INFO,r.name(),Chrono.dateOnlyStamp(expireRange.now),r.reportingLevel());
+                    	cw.row(INFO,r.name(),sdate,r.reportingLevel());
                     	writerList.put(r.name(),cw);
                     	if("Delete".equals(r.name())) {
                     		deleteDate = r.getEnd();
@@ -129,17 +133,18 @@ public class Analyze extends Batch {
             }
             
             // Setup New Approvals file
+            futureRange = ExpireRange.newFutureRange();
             File file = new File(logDir(),APPROVALS + sdate +CSV);
             CSV approveCSV = new CSV(env.access(),file);
             approveCW = approveCSV.writer();
-            approveCW.row(INFO,APPROVALS,Chrono.dateOnlyStamp(expireRange.now),1);
+            approveCW.row(INFO,APPROVALS,sdate,1);
             writerList.put(APPROVALS,approveCW);
             
             // Setup Extend Approvals file
             file = new File(logDir(),EXTEND + sdate +CSV);
             CSV extendCSV = new CSV(env.access(),file);
             extendCW = extendCSV.writer();
-            extendCW.row(INFO,EXTEND,Chrono.dateOnlyStamp(expireRange.now),1);
+            extendCW.row(INFO,EXTEND,sdate,1);
             writerList.put(EXTEND,extendCW);
             
             // Load full data of the following
@@ -160,7 +165,7 @@ public class Analyze extends Batch {
     	try {
 			Future.load(noAvg, session, Future.withConstruct, fut -> {
 				List<Approval> appls = Approval.byTicket.get(fut.id());
-				if(fut.expires().before(expireRange.now)) {
+				if(!futureRange.inRange(fut.expires())) {
 					deleteCW.comment("Future %s expired", fut.id());
 					Future.row(deleteCW,fut);
 					if(appls!=null) {
@@ -179,6 +184,7 @@ public class Analyze extends Batch {
     		tt.done();
     	}
 		
+    	Set<String> approvers = new TreeSet<>();
     	tt = trans.start("Connect Approvals with Futures",Trans.SUB);
     	try {
 			for(Approval appr : Approval.list) {
@@ -192,6 +198,7 @@ public class Analyze extends Batch {
 					Approval.row(deleteCW, appr);
 				} else {
 					ticket.approvals.add(appr); // add to found Ticket
+					approvers.add(appr.getApprover());
 				}
 			}
     	} finally {
@@ -205,78 +212,98 @@ public class Analyze extends Batch {
 		Map<String,Pending> pendingApprs = new HashMap<>();
 		Map<String,Pending> pendingTemp = new HashMap<>();
 
+		// Convert Good Tickets to keyed User/Role for UserRole Step
+		Map<String,Ticket> mur = new TreeMap<>();
+		LastNotified ln = new LastNotified(session);
+		ln.add(approvers);
+		String approver;
+		
 		tt = trans.start("Analyze Good Tickets",Trans.SUB);
 		try {
 			for(Ticket ticket : goodTickets.values()) {
-				pendingTemp.clear();
-				switch(ticket.f.target()) {
-					case "user_role":
-						int state[][] = new int[3][3];
-						int type;
-								
-						for(Approval appr : ticket.approvals) {
-							switch(appr.getType()) {
-								case "owner":
-									type=owner;
-									break;
-								case "supervisor":
-									type=supervisor;
-									break;
-								default:
-									type=0;
+				try {
+					pendingTemp.clear();
+					switch(ticket.f.target()) {
+						case "user_role":
+							int state[][] = new int[3][3];
+							int type;
+									
+							for(Approval appr : ticket.approvals) {
+								switch(appr.getType()) {
+									case "owner":
+										type=owner;
+										break;
+									case "supervisor":
+										type=supervisor;
+										break;
+									default:
+										type=0;
+								}
+								++state[type][total]; // count per type
+								switch(appr.getStatus()) {
+									case "pending":
+										++state[type][pending];
+										approver = appr.getApprover();
+										Pending n = pendingTemp.get(approver);
+										if(n==null) {
+											Date lastNotified = ln.lastNotified(approver,"ur",ticket.f.fdd.target_key);
+											pendingTemp.put(approver,new Pending(lastNotified));
+										} else {
+											n.inc();
+										}
+										break;
+									case "approved":
+										++state[type][approved];
+										break;
+									default:
+										++state[type][unknown];
+								}
 							}
-							++state[type][total]; // count per type
-							switch(appr.getStatus()) {
-								case "pending":
-									++state[type][pending];
-									Pending n = pendingTemp.get(appr.getApprover());
-									if(n==null) {
-										pendingTemp.put(appr.getApprover(),new Pending());
+							
+							// To Approve:
+							// Always must have at least 1 owner
+							if((state[owner][total]>0 && state[owner][approved]>0) &&
+								// If there are no Supervisors, that's ok
+							    (state[supervisor][total]==0 || 
+							    // But if there is a Supervisor, they must have approved 
+							    (state[supervisor][approved]>0))) {
+									UserRoleDAO.Data urdd = new UserRoleDAO.Data();
+									try {
+										urdd.reconstitute(ticket.f.fdd.construct);
+										if(urdd.expires.before(ticket.f.expires())) {
+											extendCW.row("extend_ur",urdd.user,urdd.role,ticket.f.expires());
+										}
+									} catch (IOException e) {
+										trans.error().log("Could not reconstitute UserRole");
+									}
+							} else { // Load all the Pending.
+								for(Entry<String, Pending> es : pendingTemp.entrySet()) {
+									Pending p = pendingApprs.get(es.getKey());
+									if(p==null) {
+										pendingApprs.put(es.getKey(), es.getValue());
 									} else {
-										n.inc();
+										p.inc(es.getValue());
 									}
-									break;
-								case "approved":
-									++state[type][approved];
-									break;
-								default:
-									++state[type][unknown];
-							}
-						}
-						
-						// To Approve:
-						// Always must have at least 1 owner
-						if((state[owner][total]>0 && state[owner][approved]>0) &&
-							// If there are no Supervisors, that's ok
-						    (state[supervisor][total]==0 || 
-						    // But if there is a Supervisor, they must have approved 
-						    (state[supervisor][approved]>0))) {
-								UserRoleDAO.Data urdd = new UserRoleDAO.Data();
-								try {
-									urdd.reconstitute(ticket.f.fdd.construct);
-									if(urdd.expires.before(ticket.f.expires())) {
-										extendCW.row("extend_ur",urdd.user,urdd.role,ticket.f.expires());
-									}
-								} catch (IOException e) {
-									trans.error().log("Could not reconstitute UserRole");
-								}
-						} else { // Load all the Pending.
-							for(Entry<String, Pending> es : pendingTemp.entrySet()) {
-								Pending p = pendingApprs.get(es.getKey());
-								if(p==null) {
-									pendingApprs.put(es.getKey(), es.getValue());
-								} else {
-									p.inc(es.getValue());
 								}
 							}
+							break;
+					}
+				} finally {
+					if("user_role".equals(ticket.f.fdd.target)) {
+						String key = ticket.f.fdd.target_key; 
+						if(key!=null) {
+							mur.put(key, ticket);
 						}
-						break;
+					}
 				}
 			}
 		} finally {
 			tt.done();
 		}
-		
+
+		// Good Tickets no longer needed
+		goodTickets.clear();
+
 		/**
 		 * Decide to Notify about Approvals, based on activity/last Notified
 		 */
@@ -288,7 +315,9 @@ public class Analyze extends Batch {
 			
 			for(Entry<String, Pending> es : pendingApprs.entrySet()) {
 				Pending p = es.getValue();
-				if(p.newApprovals() || p.earliest() == null || p.earliest().after(remind)) {
+				if(p.newApprovals() 
+						|| p.earliest() == null 
+						|| p.earliest().after(remind)) {
 					p.row(approveCW,es.getKey());
 				}
 			}
@@ -297,7 +326,6 @@ public class Analyze extends Batch {
 		}
 		
 		// clear out Approval Intermediates
-		goodTickets.clear();
 		pendingTemp = null;
 		pendingApprs = null;
 		
@@ -309,7 +337,7 @@ public class Analyze extends Batch {
 		try {
 			tt = trans.start("Analyze UserRoles, storing Owners",Trans.SUB);
 			Set<String> specialCommented = new HashSet<>();
-			Map<String, Set<UserRole>> owners = new TreeMap<String, Set<UserRole>>();
+			Map<String, Set<UserRole>> owners = new TreeMap<>();
  			try {
 				UserRole.load(noAvg, session, UserRole.v2_0_11, ur -> {
 					Identity identity;
@@ -340,20 +368,25 @@ public class Analyze extends Batch {
 							ur.row(deleteCW, UserRole.UR,String.format("Role %s does not exist", ur.role()));
 							return;
 						}
-						// Cannot just delete owners, unless there is at least one left. Process later
-						if ("owner".equals(ur.rname())) {
-							Set<UserRole> urs = owners.get(ur.role());
-							if (urs == null) {
-								urs = new HashSet<UserRole>();
-								owners.put(ur.role(), urs);
-							}
-							urs.add(ur);
-						} else {
-							Range r = writeAnalysis(noAvg,ur);
-							if(r!=null) {
-								Approval existing = findApproval(ur);
-								if(existing==null) {
-									ur.row(approveCW,UserRole.APPROVE_UR);
+						// Just let expired UserRoles sit until deleted
+						if(futureRange.inRange(ur.expires())) {
+							if(!mur.containsKey(ur.user() + '|' + ur.role())) {
+								// Cannot just delete owners, unless there is at least one left. Process later
+								if ("owner".equals(ur.rname())) {
+									Set<UserRole> urs = owners.get(ur.role());
+									if (urs == null) {
+										urs = new HashSet<UserRole>();
+										owners.put(ur.role(), urs);
+									}
+									urs.add(ur);
+								} else {
+									Range r = writeAnalysis(noAvg,ur);
+									if(r!=null) {
+										Approval existing = findApproval(ur);
+										if(existing==null) {
+											ur.row(approveCW,UserRole.APPROVE_UR);
+										}
+									}
 								}
 							}
 						}
@@ -374,16 +407,16 @@ public class Analyze extends Batch {
  			tt = trans.start("Analyze Owners Separately",Trans.SUB);
  			try {
 				if (!owners.values().isEmpty()) {
-					File file = new File(logDir(), EXPIRED_OWNERS + Chrono.dateOnlyStamp(expireRange.now) + CSV);
+					File file = new File(logDir(), EXPIRED_OWNERS + sdate + CSV);
 					final CSV ownerCSV = new CSV(env.access(),file);
 					CSV.Writer expOwner = ownerCSV.writer();
-					expOwner.row(INFO,EXPIRED_OWNERS,Chrono.dateOnlyStamp(expireRange.now),2);
+					expOwner.row(INFO,EXPIRED_OWNERS,sdate,2);
 
 					try {
 						for (Set<UserRole> sur : owners.values()) {
 							int goodOwners = 0;
 							for (UserRole ur : sur) {
-								if (ur.expires().after(expireRange.now)) {
+								if (ur.expires().after(ExpireRange.now)) {
 									++goodOwners;
 								}
 							}
@@ -462,7 +495,6 @@ public class Analyze extends Batch {
 					} catch (CertificateException | IOException e) {
 						noAvg.error().log(e, "Error Decrypting X509");
 					}
-	
 				});
 			} finally {
 				tt.done();

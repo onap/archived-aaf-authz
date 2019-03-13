@@ -203,7 +203,7 @@ public class LocalCA extends CA {
     public X509andChain sign(Trans trans, CSRMeta csrmeta) throws IOException, CertException {
         GregorianCalendar gc = new GregorianCalendar();
         Date start = gc.getTime();
-        gc.add(GregorianCalendar.MONTH, 6);
+        gc.add(GregorianCalendar.MONTH, 12);
         Date end = gc.getTime();
         X509Certificate x509;
         TimeTaken tt = trans.start("Create/Sign Cert",Env.SUB);

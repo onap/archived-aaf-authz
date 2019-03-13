@@ -49,8 +49,12 @@ public class URApprovalSet extends ApprovalSet {
 		UserRoleDAO.Data urdd = lurdd.load();
 		setConstruct(urdd.bytify());
 		setMemo(getMemo(urdd));
-		setExpires(org.expiration(null, Organization.Expiration.UserInRole));
-		setTargetKey(urdd.role);
+		GregorianCalendar expires = org.expiration(null, Organization.Expiration.UserInRole);
+		if(urdd.expires.before(expires.getTime())) {
+			expires.setTime(urdd.expires);
+		}
+		setExpires(expires);
+		setTargetKey(urdd.user+'|'+urdd.role);
 		setTargetDate(urdd.expires);
 		
 		Result<RoleDAO.Data> r = dv.roleByName(trans, urdd.role);

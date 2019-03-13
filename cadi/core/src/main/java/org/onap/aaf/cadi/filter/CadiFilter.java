@@ -303,7 +303,14 @@ public class CadiFilter implements Filter {
     private boolean noAuthn(HttpServletRequest hreq) {
         if (pathExceptions!=null) {
             String pi = hreq.getPathInfo();
-            if (pi==null) return false; // JBoss sometimes leaves null
+            if (pi==null) {
+            	// Attempt to get from URI only  (Daniel Rose)
+                pi = hreq.getRequestURI().substring(hreq.getContextPath().length());
+                if(pi==null) {
+                	// Nothing works.
+                	return false; // JBoss sometimes leaves null
+                }
+            }
             for (String pe : pathExceptions) {
                 if (pi.startsWith(pe))return true;
             }

@@ -35,15 +35,6 @@ public class Pending {
 	Date earliest;
 	
 	/**
-	 * Use this Constructor when there is no Last Notified Date
-	 */
-	public Pending() {
-		qty = 1;
-		hasNew = true;
-		earliest = null;
-	}
-
-	/**
 	 * Use this constructor to indicate when last Notified
 	 * @param last_notified
 	 */
@@ -84,6 +75,11 @@ public class Pending {
 	
 	public void inc(Pending value) {
 		qty+=value.qty;
+		if(earliest==null) {
+			earliest = value.earliest;
+		} else if(value.earliest!=null && value.earliest.before(earliest)) {
+			earliest = value.earliest;
+		}
 	}
 
 	public void earliest(Date lastnotified) {
@@ -104,6 +100,10 @@ public class Pending {
 	
 	public boolean newApprovals() {
 		return hasNew;
+	}
+
+	public static Pending create() {
+		return new Pending((Date)null);
 	}
 
 }

@@ -18,28 +18,34 @@
  * ============LICENSE_END====================================================
  *
  */
-package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.io.IOException;
+package org.onap.aaf.auth.gui.table;
 
-import org.onap.aaf.auth.batch.helpers.ExpireRange;
-import org.onap.aaf.cadi.Access;
+import org.onap.aaf.misc.xgen.html.HTMLGen;
 
-public class TwoWeeksNotifyCredBody extends NotifyCredBody {
-	public TwoWeeksNotifyCredBody(Access access) throws IOException {
-		super(access, ExpireRange.TWO_WEEK);
-	}
-
-	@Override
-	public String subject() {
-		return String.format("AAF Two Week Credential Notification (ENV: %s)",env);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
-	 */
-	@Override
-	protected String dynamic() {
-		return "You have now reached critical stage. This email is escalated to your superiors. " + super.dynamic();
-	}
+/**
+ * Write Simple Text into a Cell
+ * @author Jonathan
+ *
+ */
+public class TextToolTipCell extends AbsCell {
+    public final String name;
+    private final String[] attrs;
+	private final String tooltip;
+    
+    public TextToolTipCell(String name, String tooltip, String... attributes) {
+        attrs = attributes;
+        this.name = name;
+        this.tooltip = "<abbr title=\"" + tooltip + "\">";
+    }
+    
+    @Override
+    public void write(HTMLGen hgen) {
+        hgen.text(tooltip + name + "</abbr>");
+    }
+    
+    @Override
+    public String[] attrs() {
+        return attrs;
+    }
 }
