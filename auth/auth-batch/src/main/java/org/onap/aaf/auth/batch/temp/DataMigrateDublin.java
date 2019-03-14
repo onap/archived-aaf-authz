@@ -163,7 +163,7 @@ public class DataMigrateDublin extends Batch {
         	trans.info().printf("Processed %d x509 records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
         	count = 0;
         } catch (Exception e) {
-			e.printStackTrace();
+			trans.error().log(e);
         }
 	}
 	

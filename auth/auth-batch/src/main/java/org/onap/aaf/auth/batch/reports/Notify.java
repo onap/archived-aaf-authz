@@ -251,8 +251,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 						}
 					});
 				} catch (IOException | CadiException e) {
-					e.printStackTrace();
-					// .... but continue with next row
+					trans.error().log(e);
 	        	} finally {
 	        		tt.done();
 	        	}

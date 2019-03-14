@@ -22,6 +22,7 @@ package org.onap.aaf.auth.batch.helpers.test;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ public class JU_ExpireRange {
 	@Test
 	public void test() {
 		ExpireRange expRange = new ExpireRange(new PropAccess());
+		Date now = expRange.now();
 		
 		Set<String> names=expRange.names();
 		assertTrue(names.contains("OneMonth"));
@@ -46,7 +48,7 @@ public class JU_ExpireRange {
 		String[] all = new String[] {"ur","cred"};
 		
 		// Test 3 weeks prior
-		gc.setTime(expRange.now);
+		gc.setTime(now);
 		gc.add(GregorianCalendar.WEEK_OF_MONTH,-3);
 		for(String rs : all) {
 			r = expRange.getRange(rs, gc.getTime());
@@ -56,7 +58,7 @@ public class JU_ExpireRange {
 		}
 		
 		// Test 1 week prior
-		gc.setTime(expRange.now);
+		gc.setTime(now);
 		gc.add(GregorianCalendar.WEEK_OF_MONTH,-1);
 		for(String rs : all) {
 			r = expRange.getRange(rs, gc.getTime());
@@ -64,7 +66,7 @@ public class JU_ExpireRange {
 		}
 		
 		// Test Today
-		r = expRange.getRange("cred", expRange.now);
+		r = expRange.getRange("cred", now);
 		assertNotNull(r);
 	}
 

@@ -58,13 +58,15 @@ public class Approvals extends Batch {
 	private BatchDataView dataview;
 	private List<CSV> csvList;
 	private Writer napproveCW;
-	private static final GregorianCalendar now = new GregorianCalendar();
-	private static final String sdate = Chrono.dateOnlyStamp(now);
+	private final GregorianCalendar now;
+	private final String sdate;
 	private static final String CSV = ".csv";
 	private static final String APPROVALS_NEW = "ApprovalsNew";
 	
     public Approvals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
+    	now = new GregorianCalendar();
+    	sdate = Chrono.dateOnlyStamp(now);
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("batch:Approvals"));
         session = cluster.connect();
