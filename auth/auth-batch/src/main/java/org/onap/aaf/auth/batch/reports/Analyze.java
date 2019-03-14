@@ -114,7 +114,7 @@ public class Analyze extends Batch {
             writerList = new HashMap<>();
             
             expireRange = new ExpireRange(trans.env().access());
-            sdate = Chrono.dateOnlyStamp(ExpireRange.now);
+            sdate = Chrono.dateOnlyStamp(now);
             for( List<Range> lr : expireRange.ranges.values()) {
             	for(Range r : lr ) {
             		if(writerList.get(r.name())==null) {
@@ -416,7 +416,7 @@ public class Analyze extends Batch {
 						for (Set<UserRole> sur : owners.values()) {
 							int goodOwners = 0;
 							for (UserRole ur : sur) {
-								if (ur.expires().after(ExpireRange.now)) {
+								if (ur.expires().after(now)) {
 									++goodOwners;
 								}
 							}

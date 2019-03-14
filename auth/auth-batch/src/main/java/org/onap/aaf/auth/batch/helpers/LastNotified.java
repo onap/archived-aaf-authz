@@ -37,7 +37,7 @@ import com.datastax.driver.core.Session;
 public class LastNotified {
 	private Map<String,Date> lastNotified = new TreeMap<>();
 	private Session session;
-	public static final Date never = new Date(0);
+	private static final Date never = new Date(0);
 	
 	public LastNotified(Session session) {
 		this.session = session;

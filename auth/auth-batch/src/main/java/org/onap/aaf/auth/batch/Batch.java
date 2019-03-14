@@ -91,7 +91,9 @@ public abstract class Batch {
     
     protected final Organization org;
 	protected String version;
-    
+	protected static final Date now = new Date();
+	protected static final Date never = new Date(0);
+	
     protected Batch(AuthzEnv env) throws APIException, IOException, OrganizationException {
         if (batchEnv != null) {
             env.info().log("Redirecting to ",batchEnv,"environment");

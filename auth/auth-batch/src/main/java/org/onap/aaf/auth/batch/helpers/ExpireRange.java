@@ -40,7 +40,7 @@ public class ExpireRange {
 	public static final String ONE_WEEK = "OneWeek";
 	private static final String AAF_BATCH_RANGE = "aaf_batch_range.";
 	public Map<String,List<Range>> ranges;
-	public static final Date now = new Date();
+	private static final Date now = new Date();
 
 	private Range delRange;
 	
