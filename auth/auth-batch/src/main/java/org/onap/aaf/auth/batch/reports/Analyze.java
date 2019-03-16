@@ -77,7 +77,7 @@ public class Analyze extends Batch {
     private static final int approved=2;
     
     
-	private static final String APPROVALS = "Approvals";
+	public static final String NEED_APPROVALS = "NeedApprovals";
 	private static final String EXTEND = "Extend";
 	private static final String EXPIRED_OWNERS = "ExpiredOwners";
 	private static final String CSV = ".csv";
@@ -87,7 +87,7 @@ public class Analyze extends Batch {
 	private ExpireRange expireRange;
 	private Date deleteDate;
 	private CSV.Writer deleteCW;
-	private CSV.Writer approveCW;
+	private CSV.Writer needApproveCW;
 	private CSV.Writer extendCW;
 	private Range futureRange;
 	private final String sdate;
@@ -134,11 +134,11 @@ public class Analyze extends Batch {
             
             // Setup New Approvals file
             futureRange = ExpireRange.newFutureRange();
-            File file = new File(logDir(),APPROVALS + sdate +CSV);
+            File file = new File(logDir(),NEED_APPROVALS + sdate +CSV);
             CSV approveCSV = new CSV(env.access(),file);
-            approveCW = approveCSV.writer();
-            approveCW.row(INFO,APPROVALS,sdate,1);
-            writerList.put(APPROVALS,approveCW);
+            needApproveCW = approveCSV.writer();
+            needApproveCW.row(INFO,NEED_APPROVALS,sdate,1);
+            writerList.put(NEED_APPROVALS,needApproveCW);
             
             // Setup Extend Approvals file
             file = new File(logDir(),EXTEND + sdate +CSV);
@@ -318,7 +318,7 @@ public class Analyze extends Batch {
 				if(p.newApprovals() 
 						|| p.earliest() == null 
 						|| p.earliest().after(remind)) {
-					p.row(approveCW,es.getKey());
+					p.row(needApproveCW,es.getKey());
 				}
 			}
 		} finally {
@@ -384,7 +384,7 @@ public class Analyze extends Batch {
 									if(r!=null) {
 										Approval existing = findApproval(ur);
 										if(existing==null) {
-											ur.row(approveCW,UserRole.APPROVE_UR);
+											ur.row(needApproveCW,UserRole.APPROVE_UR);
 										}
 									}
 								}
@@ -427,14 +427,14 @@ public class Analyze extends Batch {
 									if(r!=null) {
 										Approval existing = findApproval(ur);
 										if(existing==null) {
-											ur.row(approveCW,UserRole.APPROVE_UR);
+											ur.row(needApproveCW,UserRole.APPROVE_UR);
 										}
 									}
 								} else {
 									expOwner.row("owner",ur.role(), ur.user(), Chrono.dateOnlyStamp(ur.expires()));
 									Approval existing = findApproval(ur);
 									if(existing==null) {
-										ur.row(approveCW,UserRole.APPROVE_UR);
+										ur.row(needApproveCW,UserRole.APPROVE_UR);
 									}
 								}
 							}

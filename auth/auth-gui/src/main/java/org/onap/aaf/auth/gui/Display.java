@@ -26,10 +26,12 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.misc.env.Slot;
+import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class Display {
     private final Page get;
@@ -98,7 +100,9 @@ public class Display {
                         for (int i=0; i<slots.length;++i) {
                             int idx = fields[i].indexOf("[]");
                             if (idx<0) { // single value
-                                trans.put(slots[i], req.getParameter(fields[i]));
+                            	if(asUser(trans, req,fields[i])) {
+                            		trans.put(slots[i], req.getParameter(fields[i]));
+                            	}
                             } else { // multi value
                                 String[] array = new String[30];
                                 String field=fields[i].substring(0, idx);
@@ -125,7 +129,17 @@ public class Display {
                         page.replay(context,trans,resp.getOutputStream(),"general");
                     }
                     
-                    @Override
+                    /**
+                     * When the field is "as_user", make sure permission is granted
+                     */
+                    private boolean asUser(AuthzTrans trans, HttpServletRequest req, String field) {
+                    	if("as_user".equals(field)) {
+                    		return req.isUserInRole(Define.ROOT_NS()+"|access|*|*");
+                    	}
+						return true;
+					}
+
+					@Override
                     public boolean no_cache() {
                         return no_cache;
                     }

@@ -38,9 +38,10 @@ public abstract class NotifyURBody extends NotifyBody {
 		super(access,"ur",name);
 		
 		// Default
-		explanation = "The Roles for the IDs listed will expire on the dates shown. If "
-				+ "allowed to expire, the ID will no longer authorized in that role.<br><br>"
-				+ "If the ID is for a current <b><i>Application</i></b>, this <b><i>WILL</i></b> cause an outage.";
+		explanation = "The Roles for the IDs associated with you will expire on the dates shown. If "
+				+ "allowed to expire, the ID will no longer authorized in that role on that date.<br><br>"
+		        + "It is the responsibility of the Designated Approvers to approve, but you can monitor "
+		        + "their progress by clicking the ID Link.";	
 	}
 
 	@Override
@@ -83,8 +84,10 @@ public abstract class NotifyURBody extends NotifyBody {
 			println(sb,indent,"<tr>");
 			indent+=2;
 			name = printCell(sb,indent,fullname,name);
-			fqi = printCell(sb,indent,row.get(1),fqi);
-			printCell(sb,indent,row.get(2)+'.'+row.get(3));
+			String rid = row.get(1);
+			String fqiCell = "<a href=\"" + gui_url + "/myrequests\">" + rid + "</a>";
+			fqi = printCell(sb,indent,fqiCell,fqi);
+			printCell(sb,indent,row.get(2));
 			Date expires = new Date(Long.parseLong(row.get(6)));
 			printCell(sb,indent,Chrono.niceUTCStamp(expires));
 			indent-=2;

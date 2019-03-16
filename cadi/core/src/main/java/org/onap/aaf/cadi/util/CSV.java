@@ -252,6 +252,7 @@ public class CSV {
 		}
 		
 		public void close() {
+			flush();
 			ps.close();
 		}
 		

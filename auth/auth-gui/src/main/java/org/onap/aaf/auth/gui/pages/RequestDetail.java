@@ -28,6 +28,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.gui.AAF_GUI;
@@ -94,9 +97,18 @@ public class RequestDetail extends Page {
                                     );
                                 
                                 if (fa.get(AAF_GUI.TIMEOUT)) {
-                                    if (!trans.user().equals(fa.value.getApprovals().get(0).getUser())) {
-                                        return Cells.EMPTY;
-                                    }
+                                	Approval app = fa.value.getApprovals().get(0);
+                                	if(app==null) {
+                                		return Cells.EMPTY;
+                                	} else {
+	                                    if (!(trans.user().equals(app.getUser()) ||
+	                                    	  trans.user().equals(app.getApprover()))) {
+	                                    	HttpServletRequest req = trans.get(gui.slot_httpServletRequest,null);
+	                                    	if(req==null || !req.isUserInRole(Define.ROOT_NS()+"|access|*|*")) {
+	                                    		return Cells.EMPTY;
+	                                    	}
+	                                    }
+                                	}
                                     tt.done();
                                     tt = trans.start("Load Data", Env.SUB);
                                     boolean first = true;

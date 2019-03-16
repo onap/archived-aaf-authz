@@ -76,20 +76,25 @@ public class ApprovalSet {
 	
 	public Result<Void> write(AuthzTrans trans) {
 		StringBuilder errs = null;
-		Result<FutureDAO.Data> rf = dataview.insert(trans, fdd);
-		if(rf.notOK()) {
-			errs = new StringBuilder();
-			errs.append(rf.errorString());
+		if(ladd == null || ladd.isEmpty()) {
+			errs = new StringBuilder("No Approvers for ");
+			errs .append(fdd.memo);
 		} else {
-			for(ApprovalDAO.Data add : ladd) {
-				Result<ApprovalDAO.Data> af = dataview.insert(trans, add);
-				if(af.notOK()) {
-					if(errs==null) {
-						errs = new StringBuilder();
-					} else {
-						errs.append('\n');
+			Result<FutureDAO.Data> rf = dataview.insert(trans, fdd);
+			if(rf.notOK()) {
+				errs = new StringBuilder();
+				errs.append(rf.errorString());
+			} else {
+				for(ApprovalDAO.Data add : ladd) {
+					Result<ApprovalDAO.Data> af = dataview.insert(trans, add);
+					if(af.notOK()) {
+						if(errs==null) {
+							errs = new StringBuilder();
+						} else {
+							errs.append('\n');
+						}
+						errs.append(af.errorString());
 					}
-					errs.append(af.errorString());
 				}
 			}
 		}

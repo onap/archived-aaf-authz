@@ -66,7 +66,7 @@ public class ApprovalForm extends Page {
     // Package on purpose
     static final String NAME="Approvals";
     static final String HREF = "/gui/approve";
-    static final String[] FIELDS = new String[] {"line[]","user","delegate_of"};
+    static final String[] FIELDS = new String[] {"line[]","user","delegate_of","as_user"};
     
     
     public ApprovalForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
@@ -121,10 +121,12 @@ public class ApprovalForm extends Page {
         private static final String[] headers = new String[] {"Identity","Request","Approve","Deny"};
         private Slot sUser;
         private Slot sAsDelegate;
+		private Slot sAsUser;
         
         public Model(AuthzEnv env) {
             sUser = env.slot(NAME+".user");
             sAsDelegate = env.slot(NAME+".delegate_of");
+            sAsUser = env.slot(NAME + ".as_user");
         }
         
         @Override
@@ -135,7 +137,15 @@ public class ApprovalForm extends Page {
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String userParam = trans.get(sUser, null);
-            final String asDelegate = trans.get(sAsDelegate, trans.user());
+            
+            final String asDelegate = trans.get(sAsDelegate, null);
+            final String approver;
+            if(asDelegate==null) {
+            	approver = trans.get(sAsUser,trans.user());
+            } else {
+            	approver = asDelegate;
+            }
+             
             ArrayList<AbsCell[]> rv = new ArrayList<>();
             String msg = null;
             TimeTaken tt = trans.start("AAF Get Approvals for Approver",Env.REMOTE);
@@ -145,7 +155,7 @@ public class ApprovalForm extends Page {
                 int numLeft = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Integer>() {
                     @Override
                     public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
-                        Future<Approvals> fa = client.read("/authz/approval/approver/"+asDelegate,gui.getDF(Approvals.class));
+                        Future<Approvals> fa = client.read("/authz/approval/approver/"+approver,gui.getDF(Approvals.class));
                         int numLeft = 0;
                         if (fa.get(AAF_GUI.TIMEOUT)) {
                             
@@ -266,7 +276,6 @@ public class ApprovalForm extends Page {
 			                                userCell = new TextToolTipCell(user,title);
 	                                    }
 	                                }
-	                                prevUser=user;
 	//                                userCell = new RefCell(prevUser,
 	//                                    TODO_ILM_INFO+user.substring(0, user.length()-domainOfApprover.length()),
 	//                                    true,
@@ -275,6 +284,7 @@ public class ApprovalForm extends Page {
 	                            } else {
 	                                userCell = new TextCell(prevUser==null?user:prevUser);
 	                            }
+                                prevUser=user;
 	                            AbsCell[] sa = new AbsCell[] {
 	                                userCell,
 	                                new TextCell(appr.getMemo()),

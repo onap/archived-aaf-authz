@@ -40,6 +40,7 @@ import org.onap.aaf.auth.batch.helpers.BatchDataView;
 import org.onap.aaf.auth.batch.helpers.NS;
 import org.onap.aaf.auth.batch.helpers.Role;
 import org.onap.aaf.auth.batch.helpers.UserRole;
+import org.onap.aaf.auth.batch.reports.Analyze;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -87,7 +88,7 @@ public class Approvals extends Batch {
         		}
         	}
         } else {
-        	f = new File(logDir(), "Approvals"+Chrono.dateOnlyStamp()+".csv");
+        	f = new File(logDir(), Analyze.NEED_APPROVALS+Chrono.dateOnlyStamp()+".csv");
         	if(f.exists()) {
         		csvList.add(new CSV(env.access(),f).processAll());
 			} else {
@@ -109,10 +110,10 @@ public class Approvals extends Batch {
 		Pending p = Pending.create();
 
 		Holder<Integer> count = new Holder<>(0);
-        for(CSV approveCSV : csvList) {
-        	TimeTaken tt = trans.start("Processing %s's UserRoles",Trans.SUB,approveCSV.name());
+        for(CSV neeedApproveCSV : csvList) {
+        	TimeTaken tt = trans.start("Processing %s's UserRoles",Trans.SUB,neeedApproveCSV.name());
         	try {
-				approveCSV.visit(row -> {
+				neeedApproveCSV.visit(row -> {
 					switch(row.get(0)) {
 						case UserRole.APPROVE_UR:
 							UserRoleDAO.Data urdd = UserRole.row(row);
@@ -151,7 +152,7 @@ public class Approvals extends Batch {
 	    	}
             trans.info().printf("Processed %d UserRoles", count.get());
 
-        	tt = trans.start("Processing %s's UserRoles",Trans.SUB,approveCSV.name());
+        	tt = trans.start("Writing Approvals to %s",Trans.SUB,neeedApproveCSV.name());
         	int cnt = 0;
         	try {
 	            for(Entry<String, Pending> es : mpending.entrySet()) {

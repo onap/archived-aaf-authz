@@ -209,7 +209,8 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 			 // now create Notification
 			 for(NotifyBody nb : NotifyBody.getAll()) {
-				 notify(noAvg, nb);
+				 int count = notify(noAvg, nb);
+				 trans.info().printf("Emailed %d for %s",count,nb.name());
 			 }
 			 
 			 //
@@ -294,16 +295,15 @@ import org.onap.aaf.misc.env.util.Chrono;
         					// Update
         					cbl.preLoop();
         					lastN.update(cbl.inc(),es.getKey(),"pending","");
+        					npab.inc();
         				}
         			}
         		}
         	} finally {
         		cbl.flush();
         		tt.done();
+                trans.info().printf("Notified %d persons of Pending Approvals", npab.count());
         	}
-            trans.info().printf("Created %d Notifications", count.get());
-
-
 
 		} catch (APIException | IOException e1) {
 			trans.error().log(e1);
@@ -314,17 +314,15 @@ import org.onap.aaf.misc.env.util.Chrono;
 		 }
 	 }
 
-	 public int notify(AuthzTrans trans, NotifyBody nb) {
+	 private int notify(AuthzTrans trans, NotifyBody nb) {
 		 List<String> toList = new ArrayList<>();
 		 List<String> ccList = new ArrayList<>();
 
 		 String run = nb.type()+nb.name();
 		 String test = dryRun?run:null;
-		 String last = null;
 		 
 		 ONE_EMAIL:
 		 for(String id : nb.users()) {
-			 last = id;
 			 toList.clear();
 			 ccList.clear();
 			 try {
@@ -379,11 +377,6 @@ import org.onap.aaf.misc.env.util.Chrono;
 			 } catch (OrganizationException e) {
 				 trans.error().log(e);
 			 }
-		 }
-		 if(nb.count()<=1) {
-			 trans.info().printf("Notified %s for %s",last,run);
-		 } else {
-			 trans.info().printf("Emailed %d for %s",nb.count(),run);
 		 }
 		 return nb.count();
 	 }

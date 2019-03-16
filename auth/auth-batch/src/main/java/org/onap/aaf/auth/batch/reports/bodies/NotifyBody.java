@@ -39,7 +39,6 @@ import java.util.TreeMap;
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 public abstract class NotifyBody {
@@ -47,9 +46,11 @@ public abstract class NotifyBody {
 	private static final Map<String,NotifyBody> bodyMap = new HashMap<>();
 
 	protected Map<String,List<List<String>>> rows;
+	protected final String env;
+	protected final String gui_url;
+	
 	private final String name;
 	private final String type;
-	protected final String env;
 	private String date;
 	private int escalation;
 	private int count;
@@ -61,7 +62,8 @@ public abstract class NotifyBody {
 		date="";
 		escalation = 1;
 		count = 0;
-		env = access.getProperty(Config.AAF_ENV,"DEVL");
+		env = access.getProperty("CASS_ENV","DEVL");
+		gui_url = access.getProperty("GUI_URL", "");
 	}
 	
 	public void store(List<String> row) {
