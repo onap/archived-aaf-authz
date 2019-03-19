@@ -41,8 +41,6 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class URApprovalSet extends ApprovalSet {
 	
-	private boolean ownerSuperApprove = true;
-
 	public URApprovalSet(final AuthzTrans trans, final GregorianCalendar start, final DataView dv, final Loader<UserRoleDAO.Data> lurdd) throws IOException, CadiException {
 		super(start, "user_role", dv);
 		Organization org = trans.org();
@@ -118,10 +116,6 @@ public class URApprovalSet extends ApprovalSet {
 
 	private void setTargetKey(String key) {
 		fdd.target_key = key;
-	}
-
-	public void ownerSuperApprove(boolean set) {
-		ownerSuperApprove = set;
 	}
 
 	private ApprovalDAO.Data newApproval(UserRoleDAO.Data urdd) throws CadiException {

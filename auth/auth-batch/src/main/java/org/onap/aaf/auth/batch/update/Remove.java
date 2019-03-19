@@ -51,6 +51,7 @@ import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
+import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class Remove extends Batch {
@@ -74,7 +75,7 @@ public class Remove extends Batch {
 			} finally {
 				tt2.done();
 			}
-			cqlBatch = new CQLBatch(noAvg.info(),session); 
+			cqlBatch = new CQLBatch(noAvg.debug(),session); 
 
 
 		} finally {
@@ -185,14 +186,19 @@ public class Remove extends Batch {
 				}
 			}
 		} finally {
-			if(ur.get()) {
-				cqlBatch.touch(UserRoleDAO.TABLE, 0, UserRoleDAO.CACHE_SEG, dryRun);
-			}
-			if(cred.get()) {
-				cqlBatch.touch(CredDAO.TABLE, 0, CredDAO.CACHE_SEG, dryRun);
-			}
-			if(x509.get()) {
-				cqlBatch.touch(CertDAO.TABLE, 0, CertDAO.CACHE_SEG, dryRun);
+			TimeTaken tt = trans.start("Touch UR,Cred and Cert Caches",Trans.REMOTE);
+			try {
+				if(ur.get()) {
+					cqlBatch.touch(UserRoleDAO.TABLE, 0, UserRoleDAO.CACHE_SEG, dryRun);
+				}
+				if(cred.get()) {
+					cqlBatch.touch(CredDAO.TABLE, 0, CredDAO.CACHE_SEG, dryRun);
+				}
+				if(x509.get()) {
+					cqlBatch.touch(CertDAO.TABLE, 0, CertDAO.CACHE_SEG, dryRun);
+				}
+			} finally {
+				tt.done();
 			}
 		}
 	}

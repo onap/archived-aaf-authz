@@ -73,7 +73,7 @@ public abstract class Batch {
 
     protected static final String STARS = "*****";
 
-    protected final Cluster cluster; 
+    protected static Cluster cluster; 
     protected static AuthzEnv env;
     protected static Session session;
     protected static Set<String> specialNames;
@@ -105,7 +105,8 @@ public abstract class Batch {
                     CassAccess.CASSANDRA_CLUSTERS_PASSWORD,
                     VERSION,GUI_URL,MAX_EMAILS,
                     LOG_DIR,
-                    "SPECIAL_NAMES"
+                    "SPECIAL_NAMES",
+                    "MAIL_TEST_TO"
                     }) {
                 if ((str = env.getProperty(batchEnv+'.'+key))!=null) {
                     env.setProperty(key, str);
@@ -114,7 +115,9 @@ public abstract class Batch {
         }
 
         // Setup for Dry Run
-        cluster = CassAccess.cluster(env,batchEnv);
+        if(cluster==null) {
+        	cluster = CassAccess.cluster(env,batchEnv);
+        }
         env.info().log("cluster name - ",cluster.getClusterName());
         String dryRunStr = env.getProperty( "DRY_RUN" );
         if ( dryRunStr == null || "false".equals(dryRunStr.trim()) ) {
@@ -367,8 +370,9 @@ public abstract class Batch {
         _close(trans);
         if(session!=null) {
         	session.close();
+        	session = null;
         }
-        if(cluster!=null) {
+        if(cluster!=null && !cluster.isClosed()) {
             cluster.close();
         }
     }
@@ -515,7 +519,14 @@ public abstract class Batch {
 	
 	                }
 	                if (batch != null) {
-	                    batch.run(trans);
+	                	try {
+	                		batch.run(trans);
+	                    } catch (Exception e) {
+	                    	if(cluster!=null && !cluster.isClosed()) {
+	                    		cluster.close();
+	                    	}
+	                        trans.error().log(e);
+	                    }
 	                }
 	            } finally {
 	                tt.done();
@@ -531,9 +542,10 @@ public abstract class Batch {
             }
 
         } catch (Exception e) {
+        	if(cluster!=null && !cluster.isClosed()) {
+        		cluster.close();
+        	}
             e.printStackTrace(System.err);
-            // Exceptions thrown by DB aren't stopping the whole process.
-            System.exit(1);
         }
     }
 

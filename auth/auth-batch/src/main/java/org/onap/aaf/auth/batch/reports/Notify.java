@@ -73,7 +73,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 	 public Notify(AuthzTrans trans) throws APIException, IOException, OrganizationException {
 		 super(trans.env());
 		 access = env.access();
-		 session = super.cluster.connect();
+		 session = cluster.connect();
 
 		 String mailerCls = env.getProperty("MAILER");
 		 String mailFrom = env.getProperty("MAIL_FROM");
@@ -95,7 +95,11 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 		 String line;
 		 StringBuilder sb = new StringBuilder();
-		 BufferedReader br = new BufferedReader(new FileReader(header_html));
+		 File fhh = new File(header_html);
+		 if(!fhh.exists()) {
+			 throw new APIException(header_html + " does not exist");
+		 }
+		 BufferedReader br = new BufferedReader(new FileReader(fhh));
 		 try {
 			 while((line=br.readLine())!=null) {
 				 sb.append(line);
@@ -130,7 +134,12 @@ import org.onap.aaf.misc.env.util.Chrono;
 		 urgent = false;
 		 
 		 sb.setLength(0);
-		 br = new BufferedReader(new FileReader(footer_html));
+		 fhh = new File(footer_html);
+		 if(!fhh.exists()) {
+			 throw new APIException(footer_html + " does not exist");
+		 }
+
+		 br = new BufferedReader(new FileReader(fhh));
 		 try {
 			 while((line=br.readLine())!=null) {
 				 sb.append(line);
@@ -142,7 +151,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 		 }
 
 		 noAvg = trans.env().newTransNoAvg();
-		 cqlBatch = new CQLBatch(noAvg.info(),session); 
+		 cqlBatch = new CQLBatch(noAvg.debug(),session); 
 	 }
 
 	 /*

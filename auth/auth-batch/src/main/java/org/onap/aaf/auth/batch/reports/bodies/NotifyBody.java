@@ -29,12 +29,15 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -160,39 +163,45 @@ public abstract class NotifyBody {
 		Package pkg = NotifyBody.class.getPackage();
 		String path = pkg.getName().replace('.', '/');
 		URL url = cl.getResource(path);
-		if(url == null) {
-			throw new APIException("Cannot load resources from " + path);
+		List<String> classNames = new ArrayList<>();
+		String urlString = url.toString();
+		if(urlString.startsWith("jar:file:")) {
+			int exclam = urlString.lastIndexOf('!');
+			JarFile jf = new JarFile(urlString.substring(9,exclam));
+			try {
+				Enumeration<JarEntry> jfe = jf.entries();
+				while(jfe.hasMoreElements()) {
+					String name = jfe.nextElement().getName();
+					if(name.startsWith(path) && name.endsWith(".class")) {
+						classNames.add(name.substring(0,name.length()-6).replace('/', '.'));
+					}
+				}
+			} finally {
+				jf.close();
+			}
+		} else {
+			File dir = new File(url.getFile());
+			for( String f : dir.list()) {
+				if(f.endsWith(".class")) {
+					classNames.add(pkg.getName()+'.'+f.substring(0,f.length()-6));
+				}
+			}
 		}
-		File dir;
-		try {
-			dir = new File(url.toURI());
-		} catch (URISyntaxException e) {
-			throw new APIException(e);
-		}
-		if(dir.exists()) {
-			String[] files = dir.list();
-			if(files!=null) {
-				for(String sf : files) {
-					int dot = sf.indexOf('.');
-					if(dot>=0) {
-						String cls = pkg.getName()+'.'+sf.substring(0,dot);
-						try {
-							Class<?> c = cl.loadClass(cls);
-							if(c!=null) {
-								if(!Modifier.isAbstract(c.getModifiers())) {
-									Constructor<?> cst = c.getConstructor(Access.class);
-									NotifyBody nb = (NotifyBody)cst.newInstance(access);
-									if(nb!=null) {
-										bodyMap.put("info|"+nb.name, nb);
-										bodyMap.put(nb.type+'|'+nb.name, nb);
-									}
-								}
-							}
-						} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							e.printStackTrace();
+		for(String cls : classNames) {
+			try {
+				Class<?> c = cl.loadClass(cls);
+				if(c!=null) {
+					if(!Modifier.isAbstract(c.getModifiers())) {
+						Constructor<?> cst = c.getConstructor(Access.class);
+						NotifyBody nb = (NotifyBody)cst.newInstance(access);
+						if(nb!=null) {
+							bodyMap.put("info|"+nb.name, nb);
+							bodyMap.put(nb.type+'|'+nb.name, nb);
 						}
 					}
 				}
+			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
 			}
 		}
 	}
