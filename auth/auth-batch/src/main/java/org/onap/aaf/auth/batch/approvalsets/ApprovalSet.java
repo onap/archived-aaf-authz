@@ -21,14 +21,11 @@
 package org.onap.aaf.auth.batch.approvalsets;
 
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
@@ -45,23 +42,12 @@ public class ApprovalSet {
 	public ApprovalSet(final GregorianCalendar start, final String target, final DataView dv) throws CadiException {
 		dataview = dv;
 		fdd = new FutureDAO.Data();
-        try {
-			fdd.id = newID(target);
-		} catch (NoSuchAlgorithmException e) {
-			throw new CadiException(e);
-		} 
+		fdd.id = Chrono.dateToUUID(System.currentTimeMillis());
 		fdd.target = target;
 		fdd.start = start.getTime();
 		ladd = new ArrayList<>();
 	}
 	
-	protected UUID newID(String target) throws NoSuchAlgorithmException {
-		StringBuilder sb = new StringBuilder(new String(SecureRandom.getInstanceStrong().generateSeed(10)));
-        sb.append(target);
-        sb.append(System.currentTimeMillis());
-        return Chrono.dateToUUID(System.currentTimeMillis());
-	}
-
 	protected void setConstruct(final ByteBuffer bytes) {
 		fdd.construct = bytes;
 	}

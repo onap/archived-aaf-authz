@@ -47,7 +47,10 @@ public class FileMailer implements Mailer {
 			throw new APIException("MAIL_FROM property is required for Email Notifications");
 		}
 		String env = access.getProperty("CASS_ENV", "UNKNOWN");
-		String logdir = access.getProperty(env+".LOG_DIR", "logs/"+env);
+		String logdir = access.getProperty("LOG_DIR",null);
+		if(logdir==null) {
+			logdir=access.getProperty(env+".LOG_DIR", "logs/"+env);
+		}
 		dir = Paths.get(logdir+"/email/"+Chrono.dateOnlyStamp());
 		if(!Files.exists(dir)) {
 			try {

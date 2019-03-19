@@ -118,7 +118,7 @@ public class LastNotified {
 		query.append(target);
 		query.append("' AND key='");
 		query.append(key);
-		query.append("';");
+		query.append("';\n");
 	}
 
 	public static String newKey(UserRoleDAO.Data urdd) {
