@@ -17,9 +17,8 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-# public, multi-platform base image
-FROM nexus3.onap.org:10001/cassandra:3.11
-# FROM cassandra:3.11
+# Use dbuild.sh input parameter to set registry
+FROM ${REGISTRY}cassandra:3.11
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
@@ -33,8 +32,8 @@ COPY aaf-auth-batch-${AAF_VERSION}-full.jar /opt/app/aaf/cass_init/
 COPY cass_data/*.dat /opt/app/aaf/cass_init/dats/
 
 RUN mkdir -p /opt/app/aaf/status && chmod 777 /opt/app/aaf/status
-#RUN addgroup ${USER} && adduser --no-create-home --ingroup ${USER} --disabled-password --gecos "" --shell /bin/bash ${USER}
-#RUN chown -R ${USER}:${USER} /opt/app/aaf/cass_init
+RUN addgroup ${USER} && adduser --no-create-home --ingroup ${USER} --disabled-password --gecos "" --shell /bin/bash ${USER}
+RUN chown -R ${USER}:${USER} /opt/app/aaf/cass_init
 
 
 ENTRYPOINT ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh"]
