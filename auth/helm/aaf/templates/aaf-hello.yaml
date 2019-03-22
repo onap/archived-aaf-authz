@@ -41,7 +41,7 @@ metadata:
   labels:
     app: aaf-hello
 spec:
-  replicas: 0
+  replicas: {{ .Values.replicas.hello }}
   selector:
     matchLabels:
       app: aaf-hello

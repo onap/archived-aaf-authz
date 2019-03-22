@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
@@ -112,6 +113,16 @@ public abstract class NotifyCredBody extends NotifyBody {
 		println(sb,indent,"</table>");
 		
 		return true;
+	}
+	
+	@Override
+	public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln) {
+		for(List<String> row : rows.get(id)) {
+			for(String n : notified) {
+				// Need to match LastNotified Key ... cred.id + '|' + inst.type + '|' + inst.tag;
+				ln.update(query, n, row.get(0), row.get(1)+'|'+row.get(3)+'|'+row.get(6));
+			}
+		}
 	}
 
 	@Override

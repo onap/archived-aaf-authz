@@ -42,7 +42,7 @@ metadata:
   labels:
     app: aaf-service
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.service }}
   selector:
     matchLabels:
       app: aaf-service

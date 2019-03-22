@@ -69,6 +69,8 @@ import org.onap.aaf.misc.env.util.Chrono;
 	 private PropAccess access;
 	 private AuthzTrans noAvg;
 	 private CQLBatch cqlBatch;
+	private LastNotified  lastN;
+	private CQLBatchLoop cbl;
 
 	 public Notify(AuthzTrans trans) throws APIException, IOException, OrganizationException {
 		 super(trans.env());
@@ -152,6 +154,9 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 		 noAvg = trans.env().newTransNoAvg();
 		 cqlBatch = new CQLBatch(noAvg.debug(),session); 
+ 		 cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
+		 
+ 		 lastN = new LastNotified(session);
 	 }
 
 	 /*
@@ -276,34 +281,38 @@ import org.onap.aaf.misc.env.util.Chrono;
         	CSV.Saver rs = new CSV.Saver();
         	
         	TimeTaken tt = trans.start("Obtain Last Notifications for Approvers", Trans.SUB);
-        	LastNotified lastN;
         	try {
-        		lastN = new LastNotified(session);
         		lastN.add(mpending.keySet());
         	} finally {
         		tt.done();
         	}
         	
         	Pending p;
-    		final CQLBatchLoop cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
+    		
         	tt = trans.start("Notify for Pending", Trans.SUB);
+        	List<String> idList = new ArrayList<String>();
+        	String id;
         	try {
         		for(Entry<String, Pending> es : mpending.entrySet()) {
+        			id = es.getKey();
+        			idList.clear();
+        			idList.add(id);
         			p = es.getValue();
         			boolean nap = p.newApprovals();
         			if(!nap) {
-            			Date dateLastNotified = lastN.lastNotified(es.getKey(),"pending","");
+            			Date dateLastNotified = lastN.lastNotified(id,"pending","");
             			if(dateLastNotified==null || dateLastNotified.after(oneWeek) ) {
             				nap=true;
             			}
         			}
         			if(nap) {
-        				rs.row("appr", es.getKey(),p.qty(),batchEnv);
+        				rs.row("appr", id,p.qty(),batchEnv);
         				npab.store(rs.asList());
         				if(notify(noAvg, npab)>0) {
         					// Update
         					cbl.preLoop();
-        					lastN.update(cbl.inc(),es.getKey(),"pending","");
+//        					lastN.update(cbl.inc(),key,"pending","");
+    						npab.record(trans,cbl.inc(), id, idList, lastN);
         					npab.inc();
         				}
         			}
@@ -326,6 +335,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 	 private int notify(AuthzTrans trans, NotifyBody nb) {
 		 List<String> toList = new ArrayList<>();
 		 List<String> ccList = new ArrayList<>();
+		 List<String> idList = new ArrayList<>();
 
 		 String run = nb.type()+nb.name();
 		 String test = dryRun?run:null;
@@ -334,60 +344,53 @@ import org.onap.aaf.misc.env.util.Chrono;
 		 for(String id : nb.users()) {
 			 toList.clear();
 			 ccList.clear();
+			 idList.clear();
 			 try {
-				 Identity identity = trans.org().getIdentity(trans, id);
-				 if(identity==null) {
+				 List<Identity> identities = trans.org().getIDs(trans, id, nb.escalation());
+				 if(identities.isEmpty()) {
 					 trans.warn().printf("%s is invalid for this Organization. Skipping notification.",id);
 				 } else {
-					 if(!identity.isPerson()) {
-						 identity = identity.responsibleTo();
-					 }
-					 if(identity==null) {
-						 trans.warn().printf("Responsible Identity %s is invalid for this Organization. Skipping notification.",id);
-					 } else {
-						 for(int i=1;i<=nb.escalation();++i) {
-							 if(identity != null) {
-								 if(i==1) { // self and Delegates
-									 toList.add(identity.email());
-									 List<String> dels = identity.delegate();
-									 if(dels!=null) {
-										 for(String d : dels) {
-											 toList.add(d);
-										 }
-									 }
-								 } else {
-									 Identity s = identity.responsibleTo();
-									 if(s==null) {
-										 trans.error().printf("Identity %s has no %s", identity.fullID(),
-												 identity.isPerson()?"supervisor":"sponsor");
-									 } else {
-										 ccList.add(s.email());
-									 }
-								 }
-							 }
-						 }
-
-						 StringBuilder content = new StringBuilder();
-						 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
-
-						 nb.body(trans, content, indent, this, id);
-						 content.append(footer);
-
-						 if(mailer.sendEmail(trans, test, toList, ccList, nb.subject(),content.toString(), urgent)) {
-							 nb.inc();
+					 Identity identity = null;
+					 for(Identity ident : identities) {
+						 if(identity==null) {
+							 identity = ident;
+							 toList.add(ident.email());
 						 } else {
-							 trans.error().log("Mailer failed to send Mail");
+							 ccList.add(ident.email());
 						 }
-						 if(maxEmails>0 && nb.count()>=maxEmails) {
-							 break ONE_EMAIL;
-						 }
+						 idList.add(ident.fullID());
+					 }
+					 StringBuilder content = new StringBuilder();
+					 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
+
+					 nb.body(trans, content, indent, this, id);
+					 content.append(footer);
+
+					 if(mailer.sendEmail(trans, test, toList, ccList, nb.subject(),content.toString(), urgent)) {
+						cbl.preLoop();
+						nb.record(trans,cbl.inc(), id, idList, lastN);
+						nb.inc();
+					 } else {
+						 trans.error().log("Mailer failed to send Mail");
+					 }
+					 if(maxEmails>0 && nb.count()>=maxEmails) {
+						 break ONE_EMAIL;
 					 }
 				 }
 			 } catch (OrganizationException e) {
 				 trans.error().log(e);
 			 }
 		 }
+		 cbl.flush();
 		 return nb.count();
 	 }
+
+	/* (non-Javadoc)
+	 * @see org.onap.aaf.auth.batch.Batch#_close(org.onap.aaf.auth.env.AuthzTrans)
+	 */
+	@Override
+	protected void _close(AuthzTrans trans) {
+		cbl.flush();
+	}
 
  }

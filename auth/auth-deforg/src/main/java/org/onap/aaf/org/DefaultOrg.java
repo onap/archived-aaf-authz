@@ -147,7 +147,30 @@ public class DefaultOrg implements Organization {
         return new DefaultOrgIdentity(trans,at<0?id:id.substring(0, at),this);
     }
 
-    // Note: Return a null if found; return a String Message explaining why not found.
+    /* (non-Javadoc)
+	 * @see org.onap.aaf.auth.org.Organization#getEsclaations(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, int)
+	 */
+	@Override
+	public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
+		List<Identity> rv = new ArrayList<>();
+		int end = Math.min(3,Math.abs(escalate));
+		Identity id = null;
+		for(int i=0;i<end;++i) {
+			if(id==null) {
+				id = getIdentity(trans,user);
+			} else {
+				id = id.responsibleTo();
+			}
+			if(id==null) {
+				break;
+			} else {
+				rv.add(id);
+			}
+		}
+		return rv;
+	}
+
+	// Note: Return a null if found; return a String Message explaining why not found.
     @Override
     public String isValidID(final AuthzTrans trans, final String id) {
         try {

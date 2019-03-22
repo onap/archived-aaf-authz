@@ -91,6 +91,7 @@ public class Analyze extends Batch {
 	private CSV.Writer extendCW;
 	private Range futureRange;
 	private final String sdate;
+	private LastNotified ln;
 	
 	public Analyze(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -133,7 +134,7 @@ public class Analyze extends Batch {
             }
             
             // Setup New Approvals file
-            futureRange = ExpireRange.newFutureRange();
+            futureRange = expireRange.newFutureRange();
             File file = new File(logDir(),NEED_APPROVALS + sdate +CSV);
             CSV approveCSV = new CSV(env.access(),file);
             needApproveCW = approveCSV.writer();
@@ -150,6 +151,8 @@ public class Analyze extends Batch {
             // Load full data of the following
             Approval.load(trans, session, Approval.v2_0_17);
             Role.load(trans, session);
+            ln = new LastNotified(session);
+
         } finally {
             tt0.done();
         }
@@ -158,6 +161,10 @@ public class Analyze extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
     	AuthzTrans noAvg = trans.env().newTransNoAvg();
+    	
+    	////////////////////
+    	// Load all Notifieds, and either add to local Data, or mark for Deletion.
+    	ln.loadAll(noAvg,expireRange.approveDelete,deleteCW);
     	
 		////////////////////
 		final Map<UUID,Ticket> goodTickets = new TreeMap<>();
@@ -214,8 +221,6 @@ public class Analyze extends Batch {
 
 		// Convert Good Tickets to keyed User/Role for UserRole Step
 		Map<String,Ticket> mur = new TreeMap<>();
-		LastNotified ln = new LastNotified(session);
-		ln.add(approvers);
 		String approver;
 		
 		tt = trans.start("Analyze Good Tickets",Trans.SUB);
@@ -521,9 +526,19 @@ public class Analyze extends Batch {
 	private Range writeAnalysis(AuthzTrans trans, UserRole ur) {
 		Range r = expireRange.getRange("ur", ur.expires());
 		if(r!=null) {
-			CSV.Writer cw = writerList.get(r.name());
-			if(cw!=null) {
-				ur.row(cw,UserRole.UR);
+			Date lnd = ln.lastNotified(LastNotified.newKey(ur));
+			// Note: lnd is NEVER null
+			Identity i;
+			try {
+				i = org.getIdentity(trans, ur.user());
+			} catch (OrganizationException e) {
+				i=null;
+			}
+			if(r.needsContact(lnd,i)) {				
+				CSV.Writer cw = writerList.get(r.name());
+				if(cw!=null) {
+					ur.row(cw,UserRole.UR);
+				}
 			}
 		}
 		return r;
@@ -533,9 +548,19 @@ public class Analyze extends Batch {
     	if(cred!=null && inst!=null) {
 			Range r = expireRange.getRange("cred", inst.expires);
 			if(r!=null) {
-				CSV.Writer cw = writerList.get(r.name());
-				if(cw!=null) {
-					cred.row(cw,inst);
+				Date lnd = ln.lastNotified(LastNotified.newKey(cred,inst));
+				// Note: lnd is NEVER null
+				Identity i;
+				try {
+					i = org.getIdentity(trans, cred.id);
+				} catch (OrganizationException e) {
+					i=null;
+				}
+				if(r.needsContact(lnd,i)) {				
+					CSV.Writer cw = writerList.get(r.name());
+					if(cw!=null) {
+						cred.row(cw,inst);
+					}
 				}
 			}
     	}
@@ -544,9 +569,19 @@ public class Analyze extends Batch {
     private void writeAnalysis(AuthzTrans trans, X509 x509, X509Certificate x509Cert) throws IOException {
 		Range r = expireRange.getRange("x509", x509Cert.getNotAfter());
 		if(r!=null) {
-			CSV.Writer cw = writerList.get(r.name());
-			if(cw!=null) {
-				x509.row(cw,x509Cert);
+			Date lnd = ln.lastNotified(LastNotified.newKey(x509,x509Cert));
+			// Note: lnd is NEVER null
+			Identity i;
+			try {
+				i = org.getIdentity(trans, x509.id);
+			} catch (OrganizationException e) {
+				i=null;
+			}
+			if(r.needsContact(lnd,i)) {
+				CSV.Writer cw = writerList.get(r.name());
+				if(cw!=null) {
+					x509.row(cw,x509Cert);
+				}
 			}
 		}
 	}

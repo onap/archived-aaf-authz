@@ -36,6 +36,7 @@ import org.onap.aaf.auth.batch.helpers.CQLBatch;
 import org.onap.aaf.auth.batch.helpers.CQLBatchLoop;
 import org.onap.aaf.auth.batch.helpers.Cred;
 import org.onap.aaf.auth.batch.helpers.Future;
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.helpers.UserRole;
 import org.onap.aaf.auth.batch.helpers.X509;
 import org.onap.aaf.auth.dao.CassAccess;
@@ -174,6 +175,9 @@ public class Remove extends Batch {
 								case "approval":
 									// Not cached
 									Approval.deleteByIDBatch(cbl.inc(),row.get(1));
+									break;
+								case "notified":
+									LastNotified.delete(cbl.inc(),row);
 									break;
 							}
 						});

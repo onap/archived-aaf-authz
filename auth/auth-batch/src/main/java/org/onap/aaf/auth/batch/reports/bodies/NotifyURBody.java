@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.Organization.Identity;
@@ -38,8 +39,9 @@ public abstract class NotifyURBody extends NotifyBody {
 		super(access,"ur",name);
 		
 		// Default
-		explanation = "The Roles for the IDs associated with you will expire on the dates shown. If "
-				+ "allowed to expire, the ID will no longer authorized in that role on that date.<br><br>"
+		explanation = "The Roles for the IDs associated with you will expire on the dates shown. "
+				+ "If the role membership is allowed to expire, "
+				+ "the ID will no longer have the permissions associated with that role.<br><br>"
 		        + "It is the responsibility of the Designated Approvers to approve, but you can monitor "
 		        + "their progress by clicking the ID Link.";	
 	}
@@ -97,6 +99,17 @@ public abstract class NotifyURBody extends NotifyBody {
 		println(sb,indent,"</table>");
 		
 		return true;
+	}
+	
+	
+	@Override
+	public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln) {
+		for(List<String> row : rows.get(id)) {
+			for(String n : notified) {
+				// Need to match LastNotified Key ... ur.user() + '|'+ur.role();
+				ln.update(query, n, row.get(0), row.get(1)+'|'+row.get(2));
+			}
+		}
 	}
 
 	@Override

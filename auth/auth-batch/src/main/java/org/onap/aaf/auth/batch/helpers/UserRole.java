@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.onap.aaf.auth.batch.actions.URDelete;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -295,22 +294,6 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         cache.resetLocalData();
     }
     
-    public static int sizeForDeletion() {
-        return cache.cacheSize();
-    }
-
-    public static boolean pendingDelete(UserRole ur) {
-        return cache.contains(ur);
-    }
-
-    public static void actuateDeletionNow(AuthzTrans trans, URDelete directDel) {
-        for (UserRole ur : cache.getRemoved()) {
-            directDel.exec(trans, ur, "Actuating UserRole Deletion");
-        }
-        cache.getRemoved().clear();
-        cache.resetLocalData();
-    }
-
     public void row(final CSV.Writer csvw, String tag) {
     	csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
     }

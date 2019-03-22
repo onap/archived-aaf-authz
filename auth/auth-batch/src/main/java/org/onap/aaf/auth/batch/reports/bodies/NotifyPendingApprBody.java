@@ -22,6 +22,7 @@ package org.onap.aaf.auth.batch.reports.bodies;
 
 import java.util.List;
 
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
@@ -63,6 +64,15 @@ public class NotifyPendingApprBody extends NotifyBody {
 		return String.format("AAF Pending Approval Notification (ENV: %s)",env);
 	}
 
+	
+	@Override
+	public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified lastN) {
+		for(String n : notified) {
+			// No special key for Pending Requests.
+			lastN.update(query,n,"pending","");
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyBody#store(java.util.List)
 	 */

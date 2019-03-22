@@ -41,7 +41,7 @@ metadata:
   labels:
     app: aaf-cm
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.cm }}
   selector:
     matchLabels:
       app: aaf-cm

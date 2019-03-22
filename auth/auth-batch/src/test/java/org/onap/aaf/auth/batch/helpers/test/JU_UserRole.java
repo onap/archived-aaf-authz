@@ -21,7 +21,6 @@
 
 package org.onap.aaf.auth.batch.helpers.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,11 +32,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.aaf.auth.batch.actions.URDelete;
 import org.onap.aaf.auth.batch.helpers.Creator;
 import org.onap.aaf.auth.batch.helpers.UserRole;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
-import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -134,24 +131,6 @@ public class JU_UserRole {
 	public void testResetLocalData() {
 		userRole.resetLocalData();
 	}
-
-	@Test
-	public void testSizeForDeletion() {
-		Assert.assertEquals(0, userRole.sizeForDeletion());
-	}
-
-	@Test
-	public void testPendingDelete() {
-		Assert.assertFalse(userRole.pendingDelete(userRole));
-	}
-
-	@Test
-	public void testActuateDeletionNow() {
-		AuthzTrans trans = mock(AuthzTrans.class);
-		URDelete urd = mock(URDelete.class);
-		userRole.actuateDeletionNow(trans, urd);
-	}
-
 
 	@Test
 	public void testLoad() {

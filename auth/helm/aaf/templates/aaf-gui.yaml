@@ -41,7 +41,7 @@ metadata:
   labels:
     app: aaf-gui
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.gui }}
   selector:
     matchLabels:
       app: aaf-gui

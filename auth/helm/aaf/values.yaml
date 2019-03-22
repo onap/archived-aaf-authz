@@ -22,13 +22,20 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
 global:
   persistence:
     enabled: true
   common:
     namespace: "onap"
+
+replicas:
+  cass: 1
+  service: 0
+  locator: 0
+  oauth: 0
+  cm: 0
+  gui: 0
+  hello: 0
 
 ingress:
   enabled: false

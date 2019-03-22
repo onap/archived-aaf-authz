@@ -24,6 +24,6 @@ if [ -e ../../docker/d.props ]; then
 fi
 DOCKER=${DOCKER:-docker}
 
-$DOCKER container exec -it aaf_cass bash -e '/opt/app/aaf/cass_init/pull.sh'
-$DOCKER container cp aaf_cass:/opt/app/aaf/cass_init/dat.gz "dat$(date +%Y%m%d).gz"
+$DOCKER container exec -it aaf-cass bash -e '/opt/app/aaf/cass_init/pull.sh'
+$DOCKER container cp aaf-cass:/opt/app/aaf/cass_init/dat.gz "dat$(date +%Y%m%d).gz"
 

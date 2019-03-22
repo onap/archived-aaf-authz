@@ -54,7 +54,6 @@ public class JU_ExpireRange {
 			r = expRange.getRange(rs, gc.getTime());
 			assertNotNull(r);
 			assertEquals("Delete",r.name());
-			assertFalse(r.shouldContact(null));
 		}
 		
 		// Test 1 week prior

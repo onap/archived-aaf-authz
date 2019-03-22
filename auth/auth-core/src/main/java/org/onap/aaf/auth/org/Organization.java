@@ -290,7 +290,19 @@ public interface Organization {
      * @return
      */
     public List<Identity> getApprovers(AuthzTrans trans, String user) throws OrganizationException ;
+
+    /**
+     * Get Identities for Escalation Level
+     * 1 = self
+     * 2 = expects both self and immediate responsible party
+     * 3 = expects self, immediate report and any higher that the Organization wants to escalate to in the
+     *     hierarchy.
+     *     
+     * Note: this is used to notify of imminent danger of Application's Cred or Role expirations.
+     */
+    public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException ;
     
+
     /*
      * 
      * @param user
@@ -554,6 +566,12 @@ public interface Organization {
     		// provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
     		return false;
     	}
+
+		@Override
+		public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
     };
 }

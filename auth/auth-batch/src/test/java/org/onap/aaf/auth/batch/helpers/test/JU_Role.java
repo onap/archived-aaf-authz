@@ -21,23 +21,14 @@
 
 package org.onap.aaf.auth.batch.helpers.test;
 
-import static org.junit.Assert.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.onap.aaf.auth.batch.helpers.Perm;
-import org.onap.aaf.auth.batch.helpers.Role;
-
-import junit.framework.Assert;
-
-import static org.mockito.Mockito.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.onap.aaf.auth.batch.helpers.Role;
+
+import junit.framework.Assert;
 
 public class JU_Role {
     

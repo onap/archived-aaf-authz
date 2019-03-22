@@ -39,6 +39,7 @@ import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.onap.aaf.auth.batch.helpers.LastNotified;
 import org.onap.aaf.auth.batch.reports.Notify;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
@@ -130,8 +131,22 @@ public abstract class NotifyBody {
 	 */
 	protected abstract String user(List<String> row);
 	
+	/**
+	 * Provide a context-sensitive Subject, which includes ENV as well as details
+	 * 
+	 * @return
+	 */
 	public abstract String subject();
 
+	/**
+	 * Record the fact that a particular Notification was marked as "sent" by Emailer.
+	 * 
+	 * @param trans
+	 * @param approver
+	 * @param ln
+	 */
+	public abstract void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln);
+	
 	/**
 	 * Get Notify Body based on key of
 	 * type|name

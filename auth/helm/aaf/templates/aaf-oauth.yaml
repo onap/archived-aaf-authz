@@ -41,7 +41,7 @@ metadata:
   labels:
     app: aaf-oauth
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.oauth }}
   selector:
     matchLabels:
       app: aaf-oauth
