@@ -360,6 +360,9 @@ import org.onap.aaf.misc.env.util.Chrono;
 						 }
 						 idList.add(ident.fullID());
 					 }
+					 if(identity==null) { // Actually, identity can't be null here, because
+						 break;           // if(identities.isEmpty() {..} else {... <here>
+					 }                    // So this is here to avoid Sonar false positive only
 					 StringBuilder content = new StringBuilder();
 					 content.append(String.format(header,version,Identity.mixedCase(identity.firstName())));
 
