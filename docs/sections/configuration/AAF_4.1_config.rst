@@ -26,7 +26,10 @@ Prerequisites
     * For ONAP TEST, this means
 
       * Windriver VPN
-      * include "10.12.6.214 aaf-onap-test.osaaf.org" in your /etc/hosts or DNS
+      * include lastest IP of aaf-onap-test.osaaf.org" in your /etc/hosts or DNS
+
+        * As of Mar 20, 2019, this is 10.12.5.145. 
+
   * For Writing to Volumes for Docker or K8s
 
     * Docker
@@ -88,6 +91,66 @@ In your chosen directory ::
 
 The Agent will look for "aaf.props", and if it doesn't exist, or is missing information, it will ask for it.
 
+IMPORTANT: When you are doing "LOCAL", you are creating a CERTIFICATE for your local Machine.  Therefore, you need to AUTHORIZE this creation 
+by creating an "Artifact" as the OWNER of the Namespace (In ONAP Test, all the NSs are owned by "aaf_admin@people.osaaf.org")
+
+  1) Copy the out-of-the-box Artifact from the Credentials of your Namespace
+ 
+    * In ONAP Test, as "aaf_admin", click https://aaf-onap-test.osaaf.org:8200/gui/ns
+    * Select the NS you are need a Certificate for (i.e. org.onap.aai)
+    * Select the Green "Cred Details" button in Credentials area
+    * Select "View All" on credential line
+    * Select the ONAP default FQDN line's "Details" button
+    * Select "Copy Artifact" Radio Button at Bottom, and enter YOUR MACHINE'S FQDN in the entry box that appears.
+    * Click "Copy" button
+    * Click "Artifacts Show" Breadcrumb. You should see your new entry.
+
+  2) Edit the new Artifact to match your Local Machine
+
+    * Check the SANS.  If it does not include the original FQDN, then add it.  (Example, add "aai").  This is so this Certificate can be used by aai
+      inside of containers as well.  
+    * Change the "Directory" to be the Local Directory you want to put your Local Certs in. 
+    * Change the "O/S User" to be the O/S user that needs to access the Certificate (yours)
+    * Click on the Artifact types you want.  "file" means PEM format private key and cert.  "script" has ready-made O/S crontab and validation scripts 
+      for auto-renewal of O/S based Services.  We will do something different for containers.
+    * click "Update"
+
+  3) Be sure to validate this information with a "read" command on your target machine.
+
+<**Instructions**> - Commands you can do with agent.sh local:
+
+Note: There are some command line defaults, relating to ID from aaf.props and FQDN, if your local machine (uname -n) REPORTS the same name as your FQDN.  
+If it does not, you will need to explicitly set the command.  Examples will use "aai" and local machine "mymachine.myco.com"
+
+  read 
+    Prints the Artifact information from Certificate Manager related to command.  Generally, it's a good idea to Read to make sure things are setup
+    Example: ``$ bash agent.sh local read aai@aai.onap.org mymachine.myco.com``
+
+  place 
+    Actually creates the Certificate Artifacts requested on disk, in the directory requested with the O/S User requested, etc.
+    Depending on what you asked for in the Artifact, you should see:
+    Example: ``$ bash agent.sh local place aai@aai.onap.org mymachine.myco.com``
+
+      | Writing to /private/tmp/onap
+      | Writing file /private/tmp/onap/org.onap.aai.keyfile
+      | Writing file /private/tmp/onap/org.onap.aai.crt
+      | Writing file /private/tmp/onap/org.onap.aai.key
+      | Writing file /private/tmp/onap/org.onap.aai.p12
+      | Writing file /private/tmp/onap/org.onap.aai.trust.jks
+      | Writing file /private/tmp/onap/org.onap.aai.check.sh
+      | Writing file /private/tmp/onap/org.onap.aai.crontab.sh
+      | Creating new /private/tmp/onap/org.onap.aai.cred.props
+      | 2019-03-25T09:14:29.174-0500: Trans Info
+      |   REMOTE Place Artifact 2743.9736ms
+      |   Reconstitute Private Key 0.212454ms
+      |
+
+    Focus on "Reconstitute Private Key"... if that isn't there, it didn't create
+
+  showpass 
+    Shows the passwords generated and used for the various artifacts that need them.  Example org.onap.aai. will be generated with a password.
+    Example: ``$ bash agent.sh local showpass aai@aai.onap.org mymachine.myco.com``
+
 =======================
 'aaf.prop' Properties
 =======================
@@ -100,7 +163,7 @@ Query                Tag               Description
 DOCKER REPOSITORY    DOCKER_REPOSITORY Defaults to current ONAP Repository
 CADI Version         VERSION           Defaults to current CADI (AAF) version
 AAF's FQDN           AAF_FQDN          PUBLIC Name for AAF. For ONAP Test, it is 'aaf-onap-test.osaaf.org'
-AAF FQDN IP          AAF_FQDN_IP       If FQDN isn't actually found with DNS, you will have to enter the IP.  For 'aaf-onap-test.osaaf.org', it is '10.12.6.214'
+AAF FQDN IP          AAF_FQDN_IP       If FQDN isn't actually found with DNS, you will have to enter the IP.  For 'aaf-onap-test.osaaf.org', as of March 20, 2019, it is '10.12.5.145'
 Deployer's FQI       DEPLOY_FQI        In a REAL system, this would be a person or process. For ONAP Testing, the id is 'deployer@people.osaaf.org'
 Deployer's PASSWORD  DEPLOY_PASSWORD   OPTIONAL!! REAL systems should not store passwords in clear text. For ONAP Testing, the password is 'demo123456!'
 App's Root FQDN      APP_FQDN          This will show up in the Cert Subject, make it the App Acronym. i.e 'clamp'
