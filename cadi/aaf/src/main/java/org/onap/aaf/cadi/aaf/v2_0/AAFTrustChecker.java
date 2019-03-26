@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest ;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.TrustChecker;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.principal.TrustPrincipal;
@@ -100,6 +101,8 @@ public class AAFTrustChecker implements TrustChecker {
         if (user_info == null) {
             return tresp;
         }
+        
+        tresp.getAccess().log(Level.DEBUG, user_info);
 
         String[] info = Split.split(',', user_info);
         String[] flds = Split.splitTrim(':', info[0]);

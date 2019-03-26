@@ -35,6 +35,7 @@ import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.aaf.v2_0.AAFTrustChecker;
@@ -92,6 +93,7 @@ public class JU_AAFTrustChecker {
         assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
 
         when(reqMock.getHeader(null)).thenReturn("comma,comma,comma");
+        when(trespMock.getAccess()).thenReturn(Access.NULL);
         assertThat(trustChecker.mayTrust(trespMock, reqMock), is(trespMock));
 
         when(reqMock.getHeader(null)).thenReturn("colon:colon:colon:colon,comma,comma");

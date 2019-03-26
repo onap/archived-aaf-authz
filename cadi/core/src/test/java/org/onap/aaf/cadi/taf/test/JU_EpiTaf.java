@@ -22,22 +22,21 @@
 
 package org.onap.aaf.cadi.taf.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import org.junit.Test;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Taf;
-import org.onap.aaf.cadi.taf.TafResp;
-import org.onap.aaf.cadi.taf.TafResp.RESP;
-
-import org.onap.aaf.cadi.taf.EpiTaf;
-import org.onap.aaf.cadi.taf.NullTaf;
 import org.onap.aaf.cadi.Taf.LifeForm;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
+import org.onap.aaf.cadi.taf.EpiTaf;
+import org.onap.aaf.cadi.taf.NullTaf;
+import org.onap.aaf.cadi.taf.TafResp;
+import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_EpiTaf {
 
@@ -76,7 +75,7 @@ public class JU_EpiTaf {
         @Override public RESP isAuthenticated() { return RESP.TRY_ANOTHER_TAF; } 
         @Override public RESP authenticate() throws IOException { return null; } 
         @Override public TaggedPrincipal getPrincipal() { return null; } 
-        @Override public Access getAccess() { return null; } 
+        @Override public Access getAccess() { return Access.NULL; } 
         @Override public boolean isFailedAttempt() { return false; }
         @Override public float timing() { return 0; }
         @Override public void timing(long start) {} 
@@ -93,7 +92,7 @@ public class JU_EpiTaf {
         @Override public RESP isAuthenticated() { return RESP.TRY_AUTHENTICATING; } 
         @Override public RESP authenticate() throws IOException { return null; } 
         @Override public TaggedPrincipal getPrincipal() { return null; } 
-        @Override public Access getAccess() { return null; } 
+        @Override public Access getAccess() { return Access.NULL; } 
         @Override public boolean isFailedAttempt() { return false; } 
         @Override public float timing() { return 0; }
         @Override public void timing(long start) {} 

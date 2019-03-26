@@ -76,7 +76,7 @@ public class Remove extends Batch {
 			} finally {
 				tt2.done();
 			}
-			cqlBatch = new CQLBatch(noAvg.debug(),session); 
+			cqlBatch = new CQLBatch(noAvg.info(),session); 
 
 
 		} finally {
