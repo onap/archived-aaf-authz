@@ -60,6 +60,7 @@ vfc|ONAP VFC Application|VNC|ONAP Application|||a|aaf_admin
 policy|ONAP Policy Application|POLICY|ONAP Application|||a|aaf_admin
 pomba|ONAP Pomba Application|POMBA|ONAP Application|||a|aaf_admin
 holmes|ONAP Holmes Application|HOLMES|ONAP Application|||a|aaf_admin
+nbi|ONAP NBI Application|NBI|ONAP Application|||a|aaf_admin
 
 # VID Identities
 vid|ONAP VID Application|VID|ONAP Application|||a|aaf_admin
