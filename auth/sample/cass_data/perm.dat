@@ -123,6 +123,7 @@ org.onap.dmaap.mr|topic|:topic.org.onap.dmaap.mr.test1|pub||"{'org.onap.dmaap.mr
 org.onap.dmaap.mr|topicFactory|:org.onap.dmaap.mr.topic:org.onap.dmaap.mr|create||"{'org.onap.dmaap-bc-topic-mgr|client', 'org.onap.dmaap.mr|create'}"
 org.onap.dmaap.mr|topicFactory|:org.onap.dmaap.mr.topic:org.onap.dmaap.mr|destroy||"{'org.onap.dmaap-bc-topic-mgr|client', 'org.onap.dmaap.mr|destroy'}"
 org.onap.dmaap.mr|topictest|*|view||
+org.onap.dmaap.mr|topic|*|*||
 org.onap.dmaap.mr|viewtest|*|view||"{'org.onap.dmaap.mr|viewtest'}"
 org.onap.so|access|*|*|AAF Namespace Write Access|"{'org.onap.so|admin', 'org.onap.so|app'}"
 org.onap.so|access|*|read|AAF Namespace Read Access|"{'org.onap.so|owner'}"

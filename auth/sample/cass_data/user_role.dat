@@ -214,6 +214,7 @@ vid1@people.osaaf.org|org.onap.vid.System_Administrator|2019-08-16 11:37:50.000+
 vid2@people.osaaf.org|org.onap.vid.Standard_User|2019-08-16 11:37:50.000+0000|org.onap.vid|Standard_User
 vid2@people.osaaf.org|org.onap.vid.System_Administrator|2019-08-16 11:37:50.000+0000|org.onap.vid|System_Administrator
 dmaap-bc@dmaap-bc.onap.org|org.onap.dmaap-bc.seeCerts|2019-08-16 11:37:50.000+0000|org.onap.dmaap-bc|seeCerts
+dmaap-bc@dmaap-bc.onap.org|org.onap.dmaap.mr.topic|2019-08-16 11:37:50.000+0000|org.onap.dmaap.mr|topic
 dmaap-bc@bc.dmaap.onap.org|org.onap.dmaap.bc.service|2019-08-16 11:37:50.000+0000|org.onap.dmaap.bc|service
 dmaap-bc-topic-mgr@dmaap-bc-topic-mgr.onap.org|org.onap.dmaap-bc-topic-mgr.client|2019-08-16 11:37:50.000+0000|org.onap.dmaap-bc-topic-mgr|client
 dmaap-bc-topic-mgr@dmaap-bc-topic-mgr.onap.org|org.onap.dmaap.mr.IdentityTopic-12345.admin|2019-08-16 11:37:50.000+0000|org.onap.dmaap.mr.IdentityTopic-12345|admin
