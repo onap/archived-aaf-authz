@@ -17,9 +17,8 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-# Use Public Image
-FROM nexus3.onap.org:10001/openjdk:8-jre-alpine
-#FROM openjdk:8-jre-alpine
+# Use dbuild.sh input parameter to set registry
+FROM ${REGISTRY}openjdk:8-jre-alpine
 MAINTAINER AAF Team, AT&T 2018
 
 LABEL description="aaf_base"

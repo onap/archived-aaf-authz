@@ -26,19 +26,28 @@ if [ -e ../../docker/d.props ]; then
 fi
 DOCKER=${DOCKER:-docker}
 
-echo "Building aaf_cass Container for aaf_cass:$VERSION"
+echo "$0: Building aaf_cass Container for aaf_cass:$VERSION"
+
+# default nexus repo only contains Amd64 images, use docker.io for multi-platform builds
+if [[ $1 && $1 == "docker.io" ]]; then
+    DOCKER_PULL_REGISTRY=''
+else 
+    DOCKER_PULL_REGISTRY='nexus3.onap.org:10001\/'
+fi
+echo "$0: DOCKER_PULL_REGISTRY=${DOCKER_REGISTRY}"
 
 DIR=$(pwd)
 cd ..
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${USER}/'${USER}'/g' \
+    -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
     $DIR/Dockerfile.cass > Dockerfile
 cd ..
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
 cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass
 
-echo $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
+echo "$0: $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass"
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
 $DOCKER tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_cass:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_cass:latest
