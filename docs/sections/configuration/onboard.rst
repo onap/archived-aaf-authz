@@ -27,7 +27,8 @@ Create "As Cert Artifact"
 (show web page)
 
 From GUI
-role create org.onap.ngi.service ngi@ngi.onap.org
-perm grant org.onap.ngi.access|*|* org.onap.ngi.service
+  role create org.onap.ngi.service ngi@ngi.onap.org
 
-<Link to Certificates>
+  perm grant org.onap.ngi.access|*|* org.onap.ngi.service
+
+See Certificate Documentation for adding Certificate Artifacts.
