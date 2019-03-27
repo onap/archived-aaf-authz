@@ -25,16 +25,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
