@@ -48,11 +48,11 @@ Prerequisites
 
         * (You can also get the ONAP TEST Root CA there)
 
-    * the latest aaf-auth-cmd-<VERSION>-full.jar from `ONAP Nexus`_.
+    * the latest aaf-cadi-aaf-<VERSION>-full.jar from `ONAP Nexus`_.
     * you can still use the same "agent.sh" script below
 
 .. _AAF FileServer: http://aaf-onap-test.osaaf.org/-
-.. _ONAP Nexus: https://nexus.onap.org/#nexus-search;quick~aaf-auth-cmd
+.. _ONAP Nexus: https://nexus.onap.org/#nexus-search;gav~~aaf-cadi-aaf~~~
 
 -----------------------
 Obtain the Agent Script

@@ -29,10 +29,10 @@ DOCKER=${DOCKER:-docker}
 echo "$0: Building aaf_cass Container for aaf_cass:$VERSION"
 
 # default nexus repo only contains Amd64 images, use docker.io for multi-platform builds
-if [[ $1 && $1 == "docker.io" ]]; then
-    DOCKER_PULL_REGISTRY=''
-else 
-    DOCKER_PULL_REGISTRY='nexus3.onap.org:10001\/'
+if [ $# -gt 0 ]; then
+    if [ "$1" == "-r" ]; then
+      DOCKER_PULL_REGISTRY=$2
+    fi
 fi
 echo "$0: DOCKER_PULL_REGISTRY=${DOCKER_REGISTRY}"
 

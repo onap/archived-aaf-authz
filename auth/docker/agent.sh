@@ -159,10 +159,10 @@ case "$1" in
   aafcli) 
     shift
     reset_sso
-    if [ -f aaf-auth-cmd-$VERSION*-full.jar ]; then
-      java -Dcadi_prop_files="$HOME/.aaf/sso.props" -jar aaf-auth-cmd-$VERSION*-full.jar $@
+    if [ -f aaf-cadi-aaf-$VERSION-full.jar ]; then
+      java -Dcadi_prop_files="$HOME/.aaf/sso.props" -jar aaf-cadi-aaf-$VERSION-full.jar $@
     else 
-      echo "For local use, you need to have 'aaf-auth-cmd-$VERSION*-full.jar' (or newer)"
+      echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION-full.jar' (or newer)"
     fi
     ;;
   local) 
@@ -185,10 +185,10 @@ case "$1" in
     reset_sso
     sso aaf_id "$DEPLOY_FQI"
     sso aaf_password "$DEPLOY_PASSWORD"
-    if [ -f aaf-auth-cmd-$VERSION*-full.jar ]; then
-      java -Dcadi_prop_files="$HOME/.aaf/sso.props" -cp aaf-auth-cmd-$VERSION*-full.jar org.onap.aaf.cadi.configure.Agent $CMD 
+    if [ -f aaf-cadi-aaf-$VERSION-full.jar ]; then
+      java -Dcadi_prop_files="$HOME/.aaf/sso.props" -cp aaf-cadi-aaf-$VERSION-full.jar org.onap.aaf.cadi.configure.Agent $CMD 
     else 
-      echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION*-full.jar' (or newer)"
+      echo "For local use, you need to have 'aaf-cadi-aaf-$VERSION-full.jar' (or newer)"
     fi
     ;;
   *)

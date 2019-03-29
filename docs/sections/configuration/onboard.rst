@@ -8,6 +8,7 @@ In running AAF
 cd /opt/app/osaaf/data
 vi identities.dat
 insert like the following
+
   ngi|ONAP NGI Application|NGI|ONAP Application|||a|aaf_admin
 
 Save (:wq)

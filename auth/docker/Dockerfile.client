@@ -18,7 +18,6 @@
 #  ============LICENSE_END====================================================
 #
 FROM ${DOCKER_REPOSITORY}/onap/aaf/aaf_base:${AAF_VERSION}
-#FROM nexus3.onap.org:10001/onap/aaf/aaf-base-xenial:latest
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 

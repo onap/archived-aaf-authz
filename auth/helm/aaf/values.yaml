@@ -30,11 +30,11 @@ global:
 
 replicas:
   cass: 1
-  service: 0
-  locator: 0
-  oauth: 0
-  cm: 0
-  gui: 0
+  service: 1
+  locator: 1
+  oauth: 1
+  cm: 1
+  gui: 1
   hello: 0
 
 ingress:
@@ -56,7 +56,7 @@ persistence:
     mountSubPath: "config"
     storageClass: "manual"
   status:
-    volumeReclaimPolicy: Retain
+    volumeReclaimPolicy: Delete
     accessMode: ReadWriteOnce
     size: 10M
     mountSubPath: "status"

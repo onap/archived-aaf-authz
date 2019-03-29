@@ -19,7 +19,10 @@
  *
  */
 package org.onap.aaf.auth.server;
+import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -29,6 +32,7 @@ import org.onap.aaf.auth.org.OrganizationFactory;
 import org.onap.aaf.auth.rserv.RServlet;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.cadi.register.Registrar;
 import org.onap.aaf.misc.env.Trans;
@@ -38,6 +42,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     private Registrar<ENV> registrar;
     private boolean do_register;
     protected AbsService<ENV,TRANS> service;
+	protected String hostname;
 
 
     public AbsServiceStarter(final AbsService<ENV,TRANS> service) {
@@ -52,6 +57,14 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         // for Debugging purposes without fear that real clients will start to call your debug instance
         do_register = !"TRUE".equalsIgnoreCase(access().getProperty("aaf_locate_no_register",null));
         _propertyAdjustment();
+        hostname = access().getProperty(Config.HOSTNAME, null);
+        if (hostname==null) {
+            try {
+				hostname = Inet4Address.getLocalHost().getHostName();
+			} catch (UnknownHostException e) {
+				hostname= "cannotBeDetermined";
+			}
+        }
     }
     
     public abstract void _start(RServlet<TRANS> rserv) throws Exception;
@@ -70,6 +83,8 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     	ExecutorService es = Executors.newSingleThreadExecutor();
     	Future<?> app = es.submit(this);
         final AbsServiceStarter<?,?> absSS = this;
+        // Docker/K8 may separately create startup Status in this dir for startup 
+        // sequencing.  If so, delete ON EXIT 
     	Runtime.getRuntime().addShutdownHook(new Thread() {
 	      @Override
           public void run() {
@@ -120,7 +135,28 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
             registrar=null;
         } 
         if (service!=null) {
-            service.destroy();
+            File status = new File("/opt/app/aaf/status/");
+            boolean deleted = false;
+    		if(status.exists()) {
+    			int lastdot = service.app_name.lastIndexOf("aaf.");
+    			String fname;
+    			if(lastdot<0) {
+    				fname = service.app_name + '-' + hostname;
+    			} else {
+    				fname = service.app_name.substring(lastdot).replace('.', '-') 
+    						+ '-' + hostname;
+    			}
+    			status = new File(status, fname);
+    			if(status.exists()) {
+    				status.delete();
+    			}
+    		}
+    		if(deleted) {
+    			service.access.log(Level.INIT, "Deleted Status",status.getAbsolutePath());
+    		} else {
+    			service.access.log(Level.INIT, "Status not deleted: ",status.getAbsolutePath());
+    		}
+        	service.destroy();
         }
     }
 }

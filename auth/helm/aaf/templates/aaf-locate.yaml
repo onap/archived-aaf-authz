@@ -41,7 +41,7 @@ metadata:
   labels:
     app: aaf-locate
 spec:
-  replicas: 0
+  replicas: {{ .Values.replicas.locate }}
   selector:
     matchLabels:
       app: aaf-locate
