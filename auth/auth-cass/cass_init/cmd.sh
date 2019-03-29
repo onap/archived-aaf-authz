@@ -149,7 +149,7 @@ case "$1" in
 
     # Startup like normal
     echo "Cassandra Startup"
-    exec /usr/local/bin/docker-entrypoint.sh 
+    exec -c "/usr/local/bin/docker-entrypoint.sh"
   ;;
   wait)
     # Wait for initialization.  This can be called from Docker only as a check to make sure it is ready

@@ -29,17 +29,17 @@ shift
 
 function status {
   if [ -d "$DIR" ]; then
-     echo "$@" > $DIR/$APP
+     echo "$@" > $DIR/$APP-$HOSTNAME
   fi
 }
 
 
 function check {
   if [ -d "$DIR" ]; then
-    if [ -e "$DIR/$OTHER" ]; then
-      echo "$(cat $DIR/$OTHER)"
-    else 
+    if [ -z "$(ls $DIR/$OTHER* 2> /dev/null)" ]; then
       echo "$DIR/$OTHER does not exist"
+    else 
+      echo "$(cat $DIR/$OTHER*)"
     fi
   else 
     echo "$DIR does not exist"
@@ -51,13 +51,13 @@ function wait {
   while [ $n -lt 40  ]; do 
      rv="$(check)"
      echo "$rv"
-     if [ "$rv" = "ready" ]; then
-       echo "$OTHER is $rv"
-       n=10000
-     else 
+     if [ -z "$(echo $rv | grep "ready")" ]; then
        (( ++n )) 
        echo "Sleep 10 (iteration $n)"
        sleep 10
+     else 
+       echo "$OTHER is $rv"
+       n=10000
      fi
   done
 }
@@ -67,15 +67,15 @@ function start {
   while [ $n -lt 40  ]; do 
      rv="$(check)"
      echo "$OTHER is $rv"
-     if [ "$rv" = "ready" ]; then
+     if [ -z "$(echo $rv | grep "ready")" ]; then
+       (( ++n )) 
+       echo "Sleep 10 (iteration $n)"
+       sleep 10
+     else 
        # This is critical.  Until status is literally "ready" in the status directory, no processes will start
        status ready
        echo "Starting $@"
        n=10000
-     else 
-       (( ++n )) 
-       echo "Sleep 10 (iteration $n)"
-       sleep 10
      fi
   done
 }
@@ -88,6 +88,10 @@ case "$OTHER" in
     shift
     status "ready"
     echo "Done"
+    ;;
+  stop) 
+    echo "Removing $DIR/$APP-$HOSTNAME"
+    rm $DIR/$APP-$HOSTNAME
     ;;
   wait)
     OTHER="$1"
@@ -102,4 +106,4 @@ case "$OTHER" in
   ;;
 esac  
 
-eval  "$@"
+eval "$@"

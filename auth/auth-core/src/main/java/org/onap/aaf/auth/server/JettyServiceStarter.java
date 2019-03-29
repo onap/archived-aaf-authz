@@ -21,7 +21,6 @@
 package org.onap.aaf.auth.server;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.Properties;
 
@@ -93,10 +92,6 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
 
     @Override
     public void _start(RServlet<TRANS> rserv) throws Exception {
-        String hostname = access().getProperty(Config.HOSTNAME, null);
-        if (hostname==null) {
-            hostname = Inet4Address.getLocalHost().getHostName();
-        }
         final int port = Integer.parseInt(access().getProperty("port","0"));
         final String keystore = access().getProperty(Config.CADI_KEYSTORE, null);
         final int IDLE_TIMEOUT = Integer.parseInt(access().getProperty(Config.AAF_CONN_IDLE_TIMEOUT, Config.AAF_CONN_IDLE_TIMEOUT_DEF));

@@ -18,7 +18,7 @@
 #  ============LICENSE_END====================================================
 #
 # Use dbuild.sh input parameter to set registry
-FROM ${REGISTRY}cassandra:3.11
+FROM ${REGISTRY}/cassandra:3.11
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
