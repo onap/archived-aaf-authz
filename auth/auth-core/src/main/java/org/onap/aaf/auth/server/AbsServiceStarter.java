@@ -148,7 +148,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     			}
     			status = new File(status, fname);
     			if(status.exists()) {
-    				status.delete();
+    				deleted=status.delete();
     			}
     		}
     		if(deleted) {

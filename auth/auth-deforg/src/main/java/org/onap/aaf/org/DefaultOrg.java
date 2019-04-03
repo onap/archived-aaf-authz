@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.local.AbsData.Reuse;
 import org.onap.aaf.auth.org.EmailWarnings;
 import org.onap.aaf.auth.org.Executor;
 import org.onap.aaf.auth.org.Mailer;
@@ -83,6 +84,7 @@ public class DefaultOrg implements Organization {
                         }
                         fIdentities.createNewFile();
                     }
+                    
                 }
             } else {
                 fIdentities = new File(temp);
@@ -103,6 +105,24 @@ public class DefaultOrg implements Organization {
                     throw new OrganizationException(fIdentities.getCanonicalPath() + " does not exist.");
                 }
             }
+
+            File fRevoked=null;
+            temp=env.getProperty(getClass().getName()+".file.revoked");
+            if(temp==null) {
+                temp = env.getProperty(AAF_DATA_DIR);
+                if (temp!=null) {
+                    File dir = new File(temp);
+                	fRevoked=new File(dir,"revoked.dat");
+                }
+            } else {
+            	fRevoked = new File(temp);
+            }
+            if (fRevoked!=null && fRevoked.exists()) {
+                revoked = new Identities(fRevoked);
+            } else {
+            	revoked = null;
+            }
+            
         } catch (IOException e) {
             throw new OrganizationException(e);
         }
@@ -112,6 +132,7 @@ public class DefaultOrg implements Organization {
     static final List<String> NULL_DELEGATES = new ArrayList<>();
 
     public Identities identities;
+    public Identities revoked;
     private boolean dryRun;
     private Mailer mailer;
     public enum Types {Employee, Contractor, Application, NotActive};
@@ -147,7 +168,35 @@ public class DefaultOrg implements Organization {
         return new DefaultOrgIdentity(trans,at<0?id:id.substring(0, at),this);
     }
 
-    /* (non-Javadoc)
+    /**
+     * If the ID isn't in the revoked file, if it exists, it is revoked.
+     */
+    @Override
+	public boolean isRevoked(AuthzTrans trans, String key) {
+    	if(revoked!=null) {
+            try {
+            	revoked.open(trans, DefaultOrgIdentity.TIMEOUT);
+            	try {
+	                Reuse r = revoked.reuse();
+	                int at = key.indexOf(domain);
+	                String search;
+	                if (at>=0) {
+	                    search = key.substring(0,at);
+	                } else {
+	                    search = key;
+	                }
+	                return revoked.find(search, r)!=null;
+                } finally {
+                    revoked.close(trans);
+                }
+			} catch (IOException e) {
+				trans.error().log(e);
+            }
+    	}
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.onap.aaf.auth.org.Organization#getEsclaations(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, int)
 	 */
 	@Override
@@ -632,10 +681,4 @@ public class DefaultOrg implements Organization {
             return 0;
         }
     }
-
-	@Override
-	public boolean mayAutoDelete(AuthzTrans trans, String user) {
-		// provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
-		return false;
-	}
 }

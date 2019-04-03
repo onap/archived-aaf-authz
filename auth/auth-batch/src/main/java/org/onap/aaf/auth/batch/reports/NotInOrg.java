@@ -125,27 +125,6 @@ public class NotInOrg extends Batch {
 				}
 			}
 			
-			/* 
-			 * Do we delete now?  Or work on Revocation semantics 
-			 * 
-			trans.info().log("Checking for X509s without IDs");
-			X509.load(trans, session, new Visitor<X509>() {
-				@Override
-				public void visit(X509 x509) {
-					try {
-						for(Certificate cert : Factory.toX509Certificate(x509.x509)) {
-							X509Certificate xc = (X509Certificate)cert;
-							xc.getSubjectDN();
-							if(!check(transNoAvg,checked, (X))) {
-								x509.row(notInOrgW,);
-							}
-						}
-					} catch (CertificateException | IOException e) {
-						trans.error().log(e, "Error Decrypting X509");
-					}					
-				}
-			});
-			 */
 		} catch (OrganizationException e) {
 			trans.info().log(e);
 		}
@@ -155,7 +134,7 @@ public class NotInOrg extends Batch {
 	private Writer whichWriter(AuthzTrans transNoAvg, String id) {
 		Writer w = whichWriter.get(id);
 		if(w==null) {
-			w = org.mayAutoDelete(transNoAvg, id)?
+			w = org.isRevoked(transNoAvg, id)?
 					notInOrgDeleteW:
 					notInOrgW;
 			whichWriter.put(id,w);

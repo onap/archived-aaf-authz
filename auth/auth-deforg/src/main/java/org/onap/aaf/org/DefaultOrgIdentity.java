@@ -45,7 +45,7 @@ public class DefaultOrgIdentity implements Identity {
     private static final String APPLICATION = "a";
     private static final String NON_ACTIVE = "n";
 
-    private final static int TIMEOUT = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
+    final static int TIMEOUT = Integer.parseInt(Config.AAF_CONN_TIMEOUT_DEF);
 
     private DefaultOrg org;
     //package on purpose
