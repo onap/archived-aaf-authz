@@ -207,8 +207,19 @@ public class Analyze extends Batch {
 						deleteCW.comment("Approval is Orphaned");
 						Approval.row(deleteCW, appr);
 					} else {
-						ticket.approvals.add(appr); // add to found Ticket
-						approvers.add(appr.getApprover());
+						// for users and approvers still valid
+						String user = appr.getUser();
+						
+						if(org.isRevoked(trans, appr.getApprover())) {
+							deleteCW.comment("Approver ID is revoked");
+							Approval.row(deleteCW, appr);
+						} else if(user!=null && !user.isEmpty() && org.isRevoked(trans, user)) {
+							deleteCW.comment("USER ID is revoked");
+							Approval.row(deleteCW, appr);
+						} else {
+							ticket.approvals.add(appr); // add to found Ticket
+							approvers.add(appr.getApprover());
+						}
 					}
 				}
 	    	} finally {

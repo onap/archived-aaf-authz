@@ -106,18 +106,16 @@ public interface Organization {
     public Identity getIdentity(AuthzTrans trans, String id) throws OrganizationException;
     
     /**
-     * May AutoDelete
+     * Is Revoked
      * 
      * Deletion of an Identity that has been removed from an Organization can be dangerous.  Mistakes may have been made 
      * in the Organization side, a Feed might be corrupted, an API might not be quite right.  
      * 
-     * The implementation of this method can use a double check of some sort, such as comparsion of missing ID in Organization
+     * The implementation of this method can use a double check of some sort, such as comparison of missing ID in Organization
      * feed with a "Deleted ID" feed.  
      * 
-     * The failure to be in Organization will still be reported, if returned "false", but if true, it is taken as an 
-     * ok to proceed with deletion. 
      */
-	public boolean mayAutoDelete(AuthzTrans trans, String id);
+	public boolean isRevoked(AuthzTrans trans, String id);
 
 
     /**
@@ -562,7 +560,7 @@ public interface Organization {
         }
         
     	@Override
-    	public boolean mayAutoDelete(AuthzTrans trans, String id) {
+    	public boolean isRevoked(AuthzTrans trans, String id) {
     		// provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
     		return false;
     	}
