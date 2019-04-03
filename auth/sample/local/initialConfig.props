@@ -28,7 +28,7 @@ cadi_protocols=TLSv1.1,TLSv1.2
 #   3) Helm (Kubernetes and Helm)
 #   4) OOM (Kubernetes with OOM)
 ################################
-aaf_locator_ns=AAF_NS
+aaf_locator_app_ns=%AAF_NS
 aaf_locator_name=%NS.%N
 aaf_locator_name.docker=%CNS.%NS.%N
 aaf_locator_name.helm=%CNS.%NS.%N

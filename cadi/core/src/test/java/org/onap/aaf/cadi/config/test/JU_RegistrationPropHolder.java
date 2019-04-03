@@ -73,7 +73,7 @@ public class JU_RegistrationPropHolder {
 			}
 
 			String ns = "myns";
-			pa.setProperty(Config.AAF_LOCATOR_NS, ns);
+			pa.setProperty(Config.AAF_LOCATOR_APP_NS, ns);
 			for(String dot_le : new String[] {"",".helm"}) {
 				assertEquals(rph.hostname,rph.default_fqdn);
 				assertEquals("",rph.lcontainer);
@@ -83,7 +83,7 @@ public class JU_RegistrationPropHolder {
 			}
 
 			String ns2 = "onap";
-			pa.setProperty(Config.AAF_LOCATOR_NS+".helm", ns2);
+			pa.setProperty(Config.AAF_LOCATOR_APP_NS+".helm", ns2);
 			for(String dot_le : new String[] {"",".helm"}) {
 				assertEquals(rph.hostname,rph.default_fqdn);
 				assertEquals("",rph.lcontainer);
@@ -106,37 +106,37 @@ public class JU_RegistrationPropHolder {
 
 			final String url = "https://aaf.osaaf.org:8095/org.osaaf.aaf.service:2.1";
 			String name="theName";
-			assertEquals(url,rph.replacements(url, name, ""));
+			assertEquals(url,rph.replacements(getClass().getSimpleName(),url, name, ""));
 			
 			String alu = "aaf.osaaf.org:8095";
 			String curl = url.replace(alu, Config.AAF_LOCATE_URL_TAG);
 			pa.setProperty(Config.AAF_LOCATE_URL,"https://"+alu);
-			assertEquals(url.replace("8095","8095/locate"),rph.replacements(curl, name, ""));
+			assertEquals(url.replace("8095","8095/locate"),rph.replacements(getClass().getSimpleName(),curl, name, ""));
 			
 			String root_ns = "org.osaaf.aaf";
 			curl = url.replace(root_ns, "AAF_NS");
 			pa.setProperty(Config.AAF_ROOT_NS,root_ns);
-			assertEquals(url,rph.replacements(curl, name, ""));
+			assertEquals(url,rph.replacements(getClass().getSimpleName(),curl, name, ""));
 			
 			curl = url.replace(root_ns, "%AAF_NS");
 			pa.setProperty(Config.AAF_ROOT_NS,root_ns);
-			assertEquals(url,rph.replacements(curl, name, ""));
+			assertEquals(url,rph.replacements(getClass().getSimpleName(),curl, name, ""));
 			
 			final String fqdn = "%C.%CNS.%NS.%N";
 			String target = "myns.theName";
-			assertEquals(target,rph.replacements(fqdn, name, ""));
+			assertEquals(target,rph.replacements(getClass().getSimpleName(),fqdn, name, ""));
 
 			pa.setProperty(Config.AAF_LOCATOR_CONTAINER_NS+".hello", "mycontns");
-			target = "mycontns.org.osaaf.aaf.theName";
-			assertEquals(target,rph.replacements(fqdn, name, ".hello"));
+			target = "mycontns.myns.theName";
+			assertEquals(target,rph.replacements(getClass().getSimpleName(),fqdn, name, ".hello"));
 			
 			pa.setProperty(Config.AAF_LOCATOR_CONTAINER+".hello","helloC");
-			target = "helloC.mycontns.org.osaaf.aaf.theName";
-			assertEquals(target,rph.replacements(fqdn, name, ".hello"));
+			target = "helloC.mycontns.myns.theName";
+			assertEquals(target,rph.replacements(getClass().getSimpleName(),fqdn, name, ".hello"));
 			
 			pa.setProperty(Config.AAF_LOCATOR_CONTAINER_NS,"c_ns");
 			target = "c_ns.myns.theName";
-			assertEquals(target,rph.replacements(fqdn, name, ""));
+			assertEquals(target,rph.replacements(getClass().getSimpleName(),fqdn, name, ""));
 
 
 		} catch (UnknownHostException | CadiException e) {

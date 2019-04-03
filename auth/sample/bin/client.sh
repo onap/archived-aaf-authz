@@ -80,6 +80,12 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
     if [ ! "${DEPLOY_PASSWORD}" = "" ]; then
        echo aaf_password=enc:$(sso_encrypt ${DEPLOY_PASSWORD}) >> ${SSO}
     fi
+    if [ ! -z "${CONTAINER_NS}" ]; then
+       echo "aaf_locator_container_ns=${CONTAINER_NS}" >> ${SSO}
+    fi
+    if [ ! -z "${AAF_ENV}" ]; then
+       echo "aaf_env=${AAF_ENV}" >> ${SSO}
+    fi
     echo aaf_locate_url=https://${AAF_FQDN}:8095 >> ${SSO}
     echo aaf_url=https://AAF_LOCATE_URL/AAF_NS.service:${AAF_INTERFACE_VERSION} >> ${SSO}
 
@@ -227,6 +233,10 @@ else
         ;;
     taillog) 
 	sh /opt/app/osaaf/logs/taillog
+	;;
+    testConnectivity|testconnectivity)
+        echo "--- Test Connectivity ---"
+        $JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/org.osaaf.aaf.props 
 	;;
     --help | -?)
         case "$1" in

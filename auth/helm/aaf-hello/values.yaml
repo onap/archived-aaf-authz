@@ -29,12 +29,7 @@ global:
     namespace: "onap"
 
 replicas:
-  cass: 1
-  service: 1
-  locator: 1
-  oauth: 1
-  cm: 1
-  gui: 1
+  hello: 1
 
 ingress:
   enabled: false
@@ -48,24 +43,6 @@ cadi:
 persistence:
   # Note: Minikube will persist to /data on your host machine
   mountPath: "/data/aaf"
-  cass:
-    volumeReclaimPolicy: Retain
-    accessMode: ReadWriteOnce
-    size: 10Gi
-    mountSubPath: "cass"
-    storageClass: "manual"
-  status:
-    volumeReclaimPolicy: Delete
-    accessMode: ReadWriteOnce
-    size: 10M
-    mountSubPath: "status"
-    storageClass: "manual"
-  config:
-    volumeReclaimPolicy: Retain
-    accessMode: ReadWriteOnce
-    size: 2Gi
-    mountSubPath: "config"
-    storageClass: "manual"
   hello:
     volumeReclaimPolicy: Retain
     accessMode: ReadWriteOnce

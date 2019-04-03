@@ -25,10 +25,12 @@ import java.net.UnknownHostException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.util.Split;
 
 public class RegistrationPropHolder {
 	private final String PUBLIC_NAME="%NS.%N";
+	private final String REGI="RegistrationProperty: %s='%s'";
 	private final Access access;
 	public String hostname;
 	private int port;
@@ -42,6 +44,7 @@ public class RegistrationPropHolder {
 	public final String lentries;
 	public final String lcontainer;
 	public final String default_container;
+	private static boolean firstlog = true;
 
 	public RegistrationPropHolder(final Access access, final int port) throws UnknownHostException, CadiException {
 		this.access = access;
@@ -50,8 +53,10 @@ public class RegistrationPropHolder {
 		this.port = port;
 
 		lentries=access.getProperty(Config.AAF_LOCATOR_ENTRIES,"");
-		
 		default_container = access.getProperty(Config.AAF_LOCATOR_CONTAINER, "");
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"default_container",default_container);
+		}
 		if(!default_container.isEmpty()) {
 			lcontainer=',' + default_container; // "" makes a blank default Public Entry
 			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_PORT+'.'+default_container, null);
@@ -65,7 +70,10 @@ public class RegistrationPropHolder {
 		if(str!=null) {
 			public_port=Integer.decode(str);
 		}
-		
+		if(firstlog) {
+			access.printf(Level.INIT, "RegistrationProperty: public_port='%d'",public_port);
+		}
+
 		hostname = access.getProperty(Config.HOSTNAME, null);
 		if (hostname==null) {
 			hostname = Inet4Address.getLocalHost().getHostName();
@@ -73,10 +81,19 @@ public class RegistrationPropHolder {
 		if (hostname==null) {
 			mustBeDefined(errs,Config.HOSTNAME);
 		}
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"hostname",hostname);
+		}
 
 		public_hostname = access.getProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME, hostname);
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"public_hostname",public_hostname);
+		}
 				
-		default_name = access.getProperty(Config.AAF_LOCATOR_NAME, "%CNS.%NS.%N");
+		default_name = access.getProperty(Config.AAF_LOCATOR_NAME, PUBLIC_NAME);
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"default_name",default_name);
+		}
 		
 		latitude=null;
 		String slatitude = access.getProperty(Config.CADI_LATITUDE, null);
@@ -84,6 +101,9 @@ public class RegistrationPropHolder {
 			mustBeDefined(errs,Config.CADI_LATITUDE);
 		} else {
 			latitude = Float.parseFloat(slatitude);
+		}
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"latitude",slatitude);
 		}
 
 		longitude=null;
@@ -93,23 +113,35 @@ public class RegistrationPropHolder {
 		} else {
 			longitude = Float.parseFloat(slongitude);
 		}
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"longitude",slongitude);
+		}
 
 		String dot_le;
 		// Note: only one of the ports can be public...  Therefore, only the last
 		for(String le : Split.splitTrim(',', lcontainer)) {
-			dot_le = le.isEmpty()?"":"."+le;
+			dot_le = le.isEmpty()?le :"."+le;
 			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME+dot_le,null);
-			if( str != null) {
+			if( str != null && !str.isEmpty()) {
 				public_hostname=str;
+				if(firstlog) {
+					access.printf(Level.INIT, "RegistrationProperty: public_hostname(overloaded by %s)='%s'",dot_le,public_hostname);
+				}
 			}
 		}
 		
 		default_fqdn = access.getProperty(Config.AAF_LOCATOR_FQDN, hostname);
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"default_fqdn",default_fqdn);
+		}
 		default_container_ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
-		
+		if(firstlog) {
+			access.printf(Level.INIT, REGI,"default_container_ns",default_container_ns);
+		}
 		if(errs.length()>0) {
 			throw new CadiException(errs.toString());
 		}
+		firstlog = false;
 	}
 
 	private void mustBeDefined(StringBuilder errs, String propname) {
@@ -126,7 +158,7 @@ public class RegistrationPropHolder {
 		} else {
 			str = access.getProperty(Config.AAF_LOCATOR_FQDN+dot_le, default_fqdn);
 		}
-		return replacements(str,entry,dot_le);
+		return replacements("RegistrationPropHolder.getEntryFQDN",str,entry,dot_le);
 	}
 	
 	public String getEntryName(final String entry, final String dot_le) {
@@ -136,27 +168,27 @@ public class RegistrationPropHolder {
 		} else {
 			str = access.getProperty(Config.AAF_LOCATOR_NAME+dot_le, default_name);
 		}
-		return replacements(str,entry,dot_le);
+		return replacements("RegistrationPropHolder.getEntryName",str,entry,dot_le);
 	}
 	
 	
 	private String getNS(String dot_le) {
 		String ns;
-		ns = access.getProperty(Config.AAF_LOCATOR_NS+dot_le,null);
+		ns = access.getProperty(Config.AAF_LOCATOR_APP_NS+dot_le,null);
 		if(ns==null) {
-			ns = access.getProperty(Config.AAF_ROOT_NS, "");
+			ns = access.getProperty(Config.AAF_LOCATOR_APP_NS, "");
 		}
 		return ns;
 	}
 
 	
-	public String replacements(String source, final String name, final String _dot_le) {
+	public String replacements(final String fromCode, final String source, final String name, final String _dot_le) {
 		if(source == null) {
 			return "";
 		} else if(source.isEmpty()) {
 			return source;
 		}
-		
+		String value = source;
 		String dot_le;
 		if(_dot_le==null) {
 			dot_le = default_container.isEmpty()?"":'.'+default_container;
@@ -171,71 +203,75 @@ public class RegistrationPropHolder {
 
         String str;
         if(aaf_locator_host!=null) {
-			if("https://AAF_LOCATE_URL".equals(source)) {
-				source = aaf_locator_host;
+			if("https://AAF_LOCATE_URL".equals(value)) {
+				value = aaf_locator_host;
 			} else {
 		        str = aaf_locator_host;
-				if(source.indexOf(Config.AAF_LOCATE_URL_TAG)>=0) {
+				if(value.indexOf(Config.AAF_LOCATE_URL_TAG)>=0) {
 					if(!str.endsWith("/")) {
 						str+='/';
 					}
 					if(!str.endsWith("/locate/")) {
 						str+="locate/";
 					}
-					source = source.replace("https://AAF_LOCATE_URL/", str);
+					value = value.replace("https://AAF_LOCATE_URL/", str);
 				}
 			}
         }
 
-		int atC = source.indexOf("%C"); 
+		int atC = value.indexOf("%C"); 
 		if(atC>=0) {
 			// aaf_locator_container_ns
 			str = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS+dot_le, default_container_ns);
 			if(str.isEmpty()) {
-				source = source.replace("%CNS"+'.', str);
+				value = value.replace("%CNS"+'.', str);
 			}
-			source = source.replace("%CNS", str);
+			value = value.replace("%CNS", str);
 			
 			str = access.getProperty(Config.AAF_LOCATOR_CONTAINER+dot_le,default_container);
 			if(str.isEmpty()) {
-				source = source.replace("%C"+'.', str);
+				value = value.replace("%C"+'.', str);
 			}
-			source = source.replace("%C", str);
+			value = value.replace("%C", str);
 		}
 		
-		if(source.indexOf("%NS")>=0) {
+		if(value.indexOf("%NS")>=0) {
 			str = getNS(dot_le);
 			if(str==null || str.isEmpty()) {
-				source = source.replace("%NS"+'.', str);
+				value = value.replace("%NS"+'.', str);
 			}
-			source = source.replace("%NS", str);
+			value = value.replace("%NS", str);
 		}
 
 		// aaf_root_ns
-		if(source.indexOf("AAF_NS")>=0) {
+		if(value.indexOf("AAF_NS")>=0) {
 			str = access.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF);
-			String temp = source.replace("%AAF_NS", str);
-			if(temp.equals(source)) { // intended
-				source = source.replace("AAF_NS", str); // Backward Compatibility
+			String temp = value.replace("%AAF_NS", str);
+			if(temp.equals(value)) { // intended
+				value = value.replace("AAF_NS", str); // Backward Compatibility
 			} else {
-				source = temp;
+				value = temp;
 			}
 		}
 
 		
-		if(source.indexOf('%')>=0) {
+		if(value.indexOf('%')>=0) {
             // These shouldn't be expected to have dot elements
             if(name!=null) {
-              source = source.replace("%N", name);
+              value = value.replace("%N", name);
             }
             if(default_fqdn!=null) {
-              source = source.replace("%DF", default_fqdn);
+              value = value.replace("%DF", default_fqdn);
             }
             if(public_hostname!=null) {
-              source = source.replace("%PH", public_hostname);
+              value = value.replace("%PH", public_hostname);
             }
 		}
-		return source;
+		access.printf(Level.DEBUG, 
+				"RegistrationReplacement from %s, source: %s, dot_le: %s, value: %s",
+				fromCode,source,dot_le,value);
+
+		return value;
 	}
 	
 	public int getEntryPort(final String dot_le) {

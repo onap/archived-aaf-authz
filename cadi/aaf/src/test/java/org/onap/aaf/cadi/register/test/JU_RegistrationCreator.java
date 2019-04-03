@@ -27,6 +27,7 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
 import org.junit.Test;
+import org.mockito.internal.configuration.DefaultInjectionEngine;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
@@ -142,6 +143,7 @@ public class JU_RegistrationCreator {
 			
 			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME,k8s_public_hostname);
 			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_PORT+DOT_OOM,Integer.toString(public_port));
+			pa.setProperty(Config.AAF_LOCATOR_APP_NS, Config.AAF_ROOT_NS_DEF);
 			rc = new RegistrationCreator(pa);
 			for(MgmtEndpoint me : rc.create(port).getMgmtEndpoint()) {
 				switch(me.getName()) {

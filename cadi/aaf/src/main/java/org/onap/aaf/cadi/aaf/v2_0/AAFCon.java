@@ -111,7 +111,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	        }
         	try {
 				RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
-				str = rph.replacements(str, null,null);
+				str = rph.replacements("AAFCon",str, null,null);
 			} catch (UnknownHostException e) {
 				throw new CadiException(e);
 			}

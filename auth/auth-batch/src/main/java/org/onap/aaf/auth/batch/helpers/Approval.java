@@ -211,6 +211,13 @@ public class Approval implements CacheChange.Data  {
         }
     }
 
+    public static void clear() {
+    	byApprover.clear();
+    	byUser.clear();
+    	byTicket.clear();
+    	list.clear();
+    	cache.resetLocalData();
+    }
 //    public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
 //        if (dryRun) {
 //            trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);

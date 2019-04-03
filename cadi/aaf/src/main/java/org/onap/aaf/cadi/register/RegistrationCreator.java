@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.config.Config;
@@ -31,6 +32,7 @@ import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.cadi.util.Split;
 
 import locate.v1_0.MgmtEndpoint;
+import locate.v1_0.MgmtEndpoint.SpecialPorts;
 import locate.v1_0.MgmtEndpoints;
 
 public class RegistrationCreator {
@@ -110,10 +112,75 @@ public class RegistrationCreator {
     	} catch (NumberFormatException | UnknownHostException e) {
     		throw new CadiException("Error extracting Data from Properties for Registrar",e);
     	}
-
+    	
+    	if(access.willLog(Level.INFO)) {
+    		access.log(Level.INFO, print(new StringBuilder(),me.getMgmtEndpoint()));
+    	}
     	return me;
     }
 	
+    private StringBuilder print(StringBuilder sb, List<MgmtEndpoint> lme) {
+    	int cnt = 0;
+		for(MgmtEndpoint m : lme) {
+			print(sb,cnt++,m);
+		}
+		return sb;
+	}
+
+	private void print(StringBuilder out, int cnt, MgmtEndpoint mep) {
+		out.append("\nManagement Endpoint - ");
+		out.append(cnt);
+		out.append("\n\tName:       ");
+		out.append(mep.getName());
+		out.append("\n\tHostname:   ");
+		out.append(mep.getHostname());
+		out.append("\n\tLatitude:   ");
+		out.append(mep.getLatitude());
+		out.append("\n\tLongitude:  ");
+		out.append(mep.getLongitude());
+		out.append("\n\tVersion:    ");
+		out.append(mep.getMajor());
+		out.append('.');
+		out.append(mep.getMinor());
+		out.append('.');
+		out.append(mep.getPkg());
+		out.append('.');
+		out.append(mep.getPatch());
+		out.append("\n\tPort:       ");
+		out.append(mep.getPort());
+		out.append("\n\tProtocol:   ");
+		out.append(mep.getProtocol());
+		out.append("\n\tSpecial Ports:");
+		for( SpecialPorts sp : mep.getSpecialPorts()) {
+			out.append("\n\t\tName:       ");
+			out.append(sp.getName());
+			out.append("\n\t\tPort:       ");
+			out.append(sp.getPort());
+			out.append("\n\t\tProtocol:   ");
+			out.append(sp.getProtocol());
+			out.append("\n\t\t  Versions: ");
+			boolean first = true;
+			for(String s : sp.getProtocolVersions()) {
+				if(first) {
+					first = false;
+				} else {
+					out.append(',');
+				}
+				out.append(s);
+			}
+		}
+		boolean first = true;
+		out.append("\n\tSubProtocol: ");
+		for(String s : mep.getSubprotocol()) {
+			if(first) {
+				first = false;
+			} else {
+				out.append(',');
+			}
+			out.append(s);
+		}
+	}
+    
     private MgmtEndpoint copy(MgmtEndpoint mep) {
 		MgmtEndpoint out = new MgmtEndpoint();
 		out.setName(mep.getName());

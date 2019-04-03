@@ -354,4 +354,12 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 	public static String histSubject(List<String> row) {
 		return row.get(1) + '|' + row.get(2);	
 	}
+
+	public static void clear() {
+		data.clear();
+		byUser.clear();
+		byRole.clear();
+		cache.resetLocalData();
+		
+	}
 }
