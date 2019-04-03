@@ -31,8 +31,9 @@ spec:
   ports:
     - name: aaf-gui
       protocol: TCP
-      port: 8200
       nodePort: 30083
+      port: 8200
+      targetPort: 8200
 ---
 apiVersion: apps/v1
 kind: Deployment

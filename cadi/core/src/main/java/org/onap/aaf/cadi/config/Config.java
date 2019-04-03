@@ -175,7 +175,7 @@ public class Config {
     public static final String AAF_LOCATOR_VERSION = "aaf_locator_version";
     public static final String AAF_LOCATOR_PROTOCOL = "aaf_locator_protocol";
     public static final String AAF_LOCATOR_SUBPROTOCOL = "aaf_locator_subprotocol";
-    public static final String AAF_LOCATOR_NS = "aaf_locator_ns";
+    public static final String AAF_LOCATOR_APP_NS = "aaf_locator_app_ns";
     public static final String AAF_LOCATOR_ENTRIES = "aaf_locator_entries";
     public static final String AAF_LOCATOR_FQDN = "aaf_locator_fqdn";
     public static final String AAF_LOCATOR_NAME = "aaf_locator_name";
@@ -574,7 +574,7 @@ public class Config {
         if (rv == null) {
         	rph.access().log(Level.INIT,tag,"is not explicitly set");
         } else {
-        	rv = rph.replacements(rv, null, null);
+        	rv = rph.replacements("Config.logProp",rv, null, null);
         	rph.access().log(Level.INIT,tag,"is set to",rv);
         }
         return rv;
@@ -848,7 +848,7 @@ public class Config {
             RegistrationPropHolder rph;
             try {
     			 rph = new RegistrationPropHolder(access, 0);
-    			 url = rph.replacements(_url, null, null);
+    			 url = rph.replacements("Config.loadLocator",_url, null, null);
     			 access.printf(Level.INFO, "loadLocator URL is %s",url);
     		} catch (UnknownHostException | CadiException e1) {
     			throw new LocatorException(e1);

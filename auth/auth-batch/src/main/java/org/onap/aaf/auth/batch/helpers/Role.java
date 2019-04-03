@@ -179,4 +179,11 @@ public class Role implements Comparable<Role> {
         deleteRoles.clear();
     }
 
+	public static void clear() {
+		data.clear();
+		keys.clear();
+		byName.clear();
+		deleteRoles.clear();
+	}
+
 }

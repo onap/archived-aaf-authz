@@ -22,8 +22,10 @@
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props:/opt/app/osaaf/local/org.osaaf.aaf.cassandra.props
 aaf_locator_entries=oauth,token,introspect
+aaf_locator_fqdn.helm=%CNS.aaf-oauth
+aaf_locator_fqdn.oom=%CNS.aaf-oauth
 port=8140
 aaf_locator_public_port.helm=30082
-#aaf_locator_public_port.oom=
+aaf_locator_public_port.oom=31112
 
 

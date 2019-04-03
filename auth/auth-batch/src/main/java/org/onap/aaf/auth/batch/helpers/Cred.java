@@ -372,4 +372,10 @@ public class Cred  {
 		}
 		return reason;
 	}
+
+
+	public static void clear() {
+		data.clear();
+		byNS.clear();
+	}
 }
