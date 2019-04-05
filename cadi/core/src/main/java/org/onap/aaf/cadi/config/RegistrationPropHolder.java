@@ -34,7 +34,7 @@ public class RegistrationPropHolder {
 	private final Access access;
 	public String hostname;
 	private int port;
-	public String public_hostname;
+	public String public_fqdn;
 	private Integer public_port;
 	public Float latitude;
 	public Float longitude;
@@ -85,9 +85,9 @@ public class RegistrationPropHolder {
 			access.printf(Level.INIT, REGI,"hostname",hostname);
 		}
 
-		public_hostname = access.getProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME, hostname);
+		public_fqdn = access.getProperty(Config.AAF_LOCATOR_PUBLIC_FQDN, hostname);
 		if(firstlog) {
-			access.printf(Level.INIT, REGI,"public_hostname",public_hostname);
+			access.printf(Level.INIT, REGI,"public_fqdn",public_fqdn);
 		}
 				
 		default_name = access.getProperty(Config.AAF_LOCATOR_NAME, PUBLIC_NAME);
@@ -121,11 +121,11 @@ public class RegistrationPropHolder {
 		// Note: only one of the ports can be public...  Therefore, only the last
 		for(String le : Split.splitTrim(',', lcontainer)) {
 			dot_le = le.isEmpty()?le :"."+le;
-			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME+dot_le,null);
+			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_FQDN+dot_le,null);
 			if( str != null && !str.isEmpty()) {
-				public_hostname=str;
+				public_fqdn=str;
 				if(firstlog) {
-					access.printf(Level.INIT, "RegistrationProperty: public_hostname(overloaded by %s)='%s'",dot_le,public_hostname);
+					access.printf(Level.INIT, "RegistrationProperty: public_hostname(overloaded by %s)='%s'",dot_le,public_fqdn);
 				}
 			}
 		}
@@ -153,8 +153,8 @@ public class RegistrationPropHolder {
 
 	public String getEntryFQDN(final String entry, final String dot_le) {
 		String str;
-		if(public_hostname!=null && dot_le.isEmpty()) {
-			str = public_hostname;
+		if(public_fqdn!=null && dot_le.isEmpty()) {
+			str = public_fqdn;
 		} else {
 			str = access.getProperty(Config.AAF_LOCATOR_FQDN+dot_le, default_fqdn);
 		}
@@ -164,7 +164,7 @@ public class RegistrationPropHolder {
 	public String getEntryName(final String entry, final String dot_le) {
 		String str;
 		if(dot_le.isEmpty()) {
-			str = PUBLIC_NAME;
+			str = default_name;
 		} else {
 			str = access.getProperty(Config.AAF_LOCATOR_NAME+dot_le, default_name);
 		}
@@ -245,10 +245,10 @@ public class RegistrationPropHolder {
 
 		// aaf_root_ns
 		if(value.indexOf("AAF_NS")>=0) {
-			str = access.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF);
-			String temp = value.replace("%AAF_NS", str);
+			str = access.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF) + '.';
+			String temp = value.replace("%AAF_NS.", str);
 			if(temp.equals(value)) { // intended
-				value = value.replace("AAF_NS", str); // Backward Compatibility
+				value = value.replace("AAF_NS.", str); // Backward Compatibility
 			} else {
 				value = temp;
 			}
@@ -263,8 +263,8 @@ public class RegistrationPropHolder {
             if(default_fqdn!=null) {
               value = value.replace("%DF", default_fqdn);
             }
-            if(public_hostname!=null) {
-              value = value.replace("%PH", public_hostname);
+            if(public_fqdn!=null) {
+              value = value.replace("%PH", public_fqdn);
             }
 		}
 		access.printf(Level.DEBUG, 

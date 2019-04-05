@@ -47,7 +47,7 @@ public class LocateValidator extends Validator {
             if (e.getName()!=null) {
                 int idx = e.getName().indexOf('.');
                 if (idx<=0) {
-                    msg("Endpoint Name must prefixed by Namespace");
+                    msg("Endpoint Name must prefixed by Namespace",);
                 }
             }
             nullOrBlank("Endpoint Hostname", e.getHostname());

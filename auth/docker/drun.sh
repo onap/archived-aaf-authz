@@ -105,7 +105,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         --env aaf_locator_container=docker \
         --env aaf_locator_container_ns=${NAMESPACE} \
         --env aaf_locator_fqdn=${HOSTNAME} \
-        --env aaf_locator_public_hostname=${HOSTNAME} \
+        --env aaf_locator_public_fqdn=${HOSTNAME} \
         --env LATITUDE=${LATITUDE} \
         --env LONGITUDE=${LONGITUDE} \
         --env CASSANDRA_CLUSTER=${CASSANDRA_CLUSTER} \
