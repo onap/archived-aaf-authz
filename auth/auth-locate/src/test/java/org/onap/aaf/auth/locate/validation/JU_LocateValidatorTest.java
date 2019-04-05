@@ -76,7 +76,7 @@ public class JU_LocateValidatorTest {
 
         validator.endpoint(endpoint);
 
-        assertEquals("Endpoint Name must prefixed by Namespace\n", validator.errs());
+        assertEquals("Endpoint Name (Endpoint1) must prefixed by Namespace\n", validator.errs());
     }
 
     @Test

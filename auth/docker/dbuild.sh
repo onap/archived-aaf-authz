@@ -28,8 +28,6 @@ fi
 
 . ./d.props
 
-AAF_COMPONENTS=ALL
-
 # process input. originally, an optional positional parameter is used to designate a component.
 # A flagged parameter has been added to optionally indicate docker pull registry. Ideally, options
 # would be flagged but we're avoiding ripple effect of changing original usage
@@ -124,9 +122,7 @@ cd -
 #######
 # Do all the Containers related to AAF Services
 #######
-if [ $AAF_COMPONENTS == "ALL" ]; then
-    AAF_COMPONENTS=$(cat components)
-fi
+AAF_COMPONENTS=$(cat components)
 
 cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do

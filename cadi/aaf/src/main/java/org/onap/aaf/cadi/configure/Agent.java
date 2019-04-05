@@ -50,7 +50,6 @@ import org.onap.aaf.cadi.CmdLine;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.aaf.client.ErrMessage;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;

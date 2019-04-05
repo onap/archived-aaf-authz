@@ -152,7 +152,7 @@ public class PropHolder {
             pw.println(System.getProperty("user.name"));
             pw.print("#   on ");
             pw.println(Chrono.dateStamp());
-            pw.println("# @copyright 2016, AT&T");
+            pw.println("# @copyright 2019, AT&T");
             for (int i=0;i<60;++i) {
                 pw.print('#');
             }
@@ -160,16 +160,9 @@ public class PropHolder {
             
              for (Map.Entry<String,String> me : props.entrySet()) {
             	String key = me.getKey();
-                //if (    key.startsWith("cm_") 
-//                    || key.startsWith(Config.HOSTNAME)
-//                    || key.startsWith("aaf")
-//                    || key.startsWith("cadi")
-//                    || key.startsWith("Challenge")
-//                    ) {
                     pw.print(key);
                     pw.print('=');
                     pw.println(me.getValue());
-//                }
             }
         } finally {
             pw.close();

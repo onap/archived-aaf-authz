@@ -31,8 +31,8 @@ spec:
   ports:
     - name: aaf-hello
       protocol: TCP
-      port: 8130
-      nodePort: 30086
+      port: {{.Values.cadi.port}}
+      nodePort: {{ .Values.cadi.public_port}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,37 +52,49 @@ spec:
     spec:
       volumes:
         # Use this Pod Sharing dir to declare various States of starting
-      - name: hello-config-vol
+      - name: aaf-hello-vol
         emptyDir: {}
       initContainers:
-        - name: hello-config-container
+        - name: aaf-hello-config
           image: {{ .Values.image.repository }}onap/aaf/aaf_agent:{{ .Values.image.version }}
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: "/opt/app/osaaf/local"
-              name: hello-config-vol
-          command: ["bash","-c","cd /opt/app/osaaf/local && /opt/app/aaf_config/bin/agent.sh place aaf@aaf.osaaf.org aaf"]
+              name: aaf-hello-vol
+          command: ["bash","-c","cd /opt/app/osaaf/local && /opt/app/aaf_config/bin/agent.sh place aaf@aaf.osaaf.org aaf-hello "]
           env:
             - name: "AAF_ENV"
-              value: "DEV"
+              value: "{{ .Values.cadi.aaf_env }}"
             - name: "AAF_FQDN"
-              value: "aaf-locate.onap"
+              value: "aaf-locate.{{ .Release.Namespace }}"
             - name: "APP_FQDN"
-              value: "aaf"
+              value: "{{ .Values.cadi.fqdn }}"
             - name: "APP_FQI"
-              value: "aaf@aaf.osaaf.org"
-            - name: LATITUDE
+              value: "{{ .Values.cadi.fqi }}"
+            - name: "LATITUDE"
               value: "{{ .Values.cadi.cadi_latitude }}"
-            - name: LONGITUDE
+            - name: "LONGITUDE"
               value: "{{ .Values.cadi.cadi_longitude }}"
-            - name: "CONTAINER_NS"
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
             - name: "DEPLOY_FQI"
               value: "deployer@people.osaaf.org"
             - name: "DEPLOY_PASSWORD"
               value: "demo123456!"
+            - name: "aaf_locator_container"
+              value: "helm"
+            - name: "aaf_locator_port"
+              value: "{{ .Values.cadi.port }}"
+            - name: "aaf_locator_fqdn.helm"
+              value: "{{ .Values.cadi.fqdn }}.{{.Release.Namespace}}"
+            - name: "aaf_locator_public_hostname"
+              value: "{{ .Values.cadi.public_fqdn }}"
+            - name: "aaf_locator_public_port"
+              value: "{{ .Values.cadi.public_port }}"
+            - name: "aaf_locator_container_ns"
+              value: "{{ .Release.Namespace }}"
+            - name: "aaf_locator_name"
+              value: "{{.Values.cadi.app_ns}}.hello"
+            - name: "aaf_locator_name.helm"
+              value: "{{ .Release.Namespace}}.{{.Values.cadi.app_ns}}.hello"
 
 ###
 ### AAF-HELLO
@@ -94,9 +106,8 @@ spec:
         command: ["/bin/bash","-c","cd /opt/app/aaf && exec bin/hello"]
         volumeMounts:
         -  mountPath: "/opt/app/osaaf/local"
-           name: hello-config-vol
+           name: aaf-hello-vol
         ports:
         - name: aaf-hello
           protocol: TCP
           containerPort: 8130
-

@@ -180,7 +180,7 @@ public class Config {
     public static final String AAF_LOCATOR_FQDN = "aaf_locator_fqdn";
     public static final String AAF_LOCATOR_NAME = "aaf_locator_name";
     public static final String AAF_LOCATOR_PUBLIC_PORT = "aaf_locator_public_port";
-    public static final String AAF_LOCATOR_PUBLIC_HOSTNAME = "aaf_locator_public_hostname";
+    public static final String AAF_LOCATOR_PUBLIC_FQDN = "aaf_locator_public_fqdn";
 
     public static final String AAF_APPID = "aaf_id";
     public static final String AAF_APPPASS = "aaf_password";
