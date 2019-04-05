@@ -67,7 +67,7 @@ public class JU_RegistrationPropHolder {
 			for(String dot_le : new String[] {"",".helm"}) {
 				assertEquals(rph.hostname,rph.default_fqdn);
 				assertEquals("",rph.lcontainer);
-				assertEquals(rph.hostname,rph.public_hostname);
+				assertEquals(rph.hostname,rph.public_fqdn);
 				assertEquals(ju_port,rph.getEntryPort(dot_le));
 				assertEquals(rph.hostname,rph.getEntryFQDN("",dot_le));
 			}
@@ -77,7 +77,7 @@ public class JU_RegistrationPropHolder {
 			for(String dot_le : new String[] {"",".helm"}) {
 				assertEquals(rph.hostname,rph.default_fqdn);
 				assertEquals("",rph.lcontainer);
-				assertEquals(rph.hostname,rph.public_hostname);
+				assertEquals(rph.hostname,rph.public_fqdn);
 				assertEquals(ju_port,rph.getEntryPort(dot_le));
 				assertEquals(rph.hostname,rph.getEntryFQDN("",dot_le));
 			}
@@ -87,7 +87,7 @@ public class JU_RegistrationPropHolder {
 			for(String dot_le : new String[] {"",".helm"}) {
 				assertEquals(rph.hostname,rph.default_fqdn);
 				assertEquals("",rph.lcontainer);
-				assertEquals(rph.hostname,rph.public_hostname);
+				assertEquals(rph.hostname,rph.public_fqdn);
 				assertEquals(ju_port,rph.getEntryPort(dot_le));
 				assertEquals(rph.hostname,rph.getEntryFQDN("",dot_le));
 			}
@@ -97,10 +97,10 @@ public class JU_RegistrationPropHolder {
 			////////////////
 			String public_hostname = "com.public.hostname";
 			int public_port = 999;
-			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME, public_hostname);
+			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_FQDN, public_hostname);
 			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_PORT,Integer.toString(public_port));
 			RegistrationPropHolder pubRPH = new RegistrationPropHolder(pa,ju_port);
-			assertEquals(public_hostname,pubRPH.public_hostname);
+			assertEquals(public_hostname,pubRPH.public_fqdn);
 			assertEquals(public_port,pubRPH.getEntryPort(""));
 
 

@@ -23,32 +23,24 @@
 # Declare variables to be passed into your templates.
 
 global:
-  persistence:
-    enabled: true
   common:
     namespace: "onap"
 
 replicas:
   hello: 1
 
-ingress:
-  enabled: false
-
 cadi:
-  hostname: "aaf.onap"
+  fqdn: "aaf-hello"
+  port: 8130
+  public_fqdn: "aaf.osaaf.org"
+  public_port: 30086
+  fqi: "aaf@aaf.osaaf.org"
+  app_ns: "org.osaaf.aaf"
   cadi_latitude: "38.0"  
   cadi_longitude: "-72.0"  
   aaf_env: "DEV"
 
-persistence:
-  # Note: Minikube will persist to /data on your host machine
-  mountPath: "/data/aaf"
-  hello:
-    volumeReclaimPolicy: Retain
-    accessMode: ReadWriteOnce
-    size: 1Gi
-    mountSubPath: "config"
-    storageClass: "manual"
+persistence: {}
 
 image:
   # When using locally built Docker Container, set Repository to ""

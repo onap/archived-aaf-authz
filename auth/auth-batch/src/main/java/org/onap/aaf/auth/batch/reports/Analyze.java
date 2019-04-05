@@ -210,10 +210,10 @@ public class Analyze extends Batch {
 						// for users and approvers still valid
 						String user = appr.getUser();
 						
-						if(org.isRevoked(trans, appr.getApprover())) {
+						if(org.isRevoked(noAvg, appr.getApprover())) {
 							deleteCW.comment("Approver ID is revoked");
 							Approval.row(deleteCW, appr);
-						} else if(user!=null && !user.isEmpty() && org.isRevoked(trans, user)) {
+						} else if(user!=null && !user.isEmpty() && org.isRevoked(noAvg, user)) {
 							deleteCW.comment("USER ID is revoked");
 							Approval.row(deleteCW, appr);
 						} else {
@@ -491,10 +491,6 @@ public class Analyze extends Batch {
 				    	if(linst!=null) {
 					    	Instance lastBath = null;
 					    	for(Instance inst : linst) {
-		//			    		if(inst.attn>0) {
-		//			    			writeAnalysis(trans, cred, inst);
-		//				    		// Special Behavior: only eval the LAST Instance
-		//			    		} else 
 					    		// All Creds go through Life Cycle
 					    		if(deleteDate!=null && inst.expires.before(deleteDate)) {
 					        		writeAnalysis(noAvg, cred, inst); // will go to Delete
@@ -551,14 +547,14 @@ public class Analyze extends Batch {
 		return existing;
 	}
 
-	private Range writeAnalysis(AuthzTrans trans, UserRole ur) {
+	private Range writeAnalysis(AuthzTrans noAvg, UserRole ur) {
 		Range r = expireRange.getRange("ur", ur.expires());
 		if(r!=null) {
 			Date lnd = ln.lastNotified(LastNotified.newKey(ur));
 			// Note: lnd is NEVER null
 			Identity i;
 			try {
-				i = org.getIdentity(trans, ur.user());
+				i = org.getIdentity(noAvg, ur.user());
 			} catch (OrganizationException e) {
 				i=null;
 			}
@@ -572,7 +568,7 @@ public class Analyze extends Batch {
 		return r;
 	}
     
-    private void writeAnalysis(AuthzTrans trans, Cred cred, Instance inst) {
+    private void writeAnalysis(AuthzTrans noAvg, Cred cred, Instance inst) {
     	if(cred!=null && inst!=null) {
 			Range r = expireRange.getRange("cred", inst.expires);
 			if(r!=null) {
@@ -580,7 +576,7 @@ public class Analyze extends Batch {
 				// Note: lnd is NEVER null
 				Identity i;
 				try {
-					i = org.getIdentity(trans, cred.id);
+					i = org.getIdentity(noAvg, cred.id);
 				} catch (OrganizationException e) {
 					i=null;
 				}
@@ -594,14 +590,14 @@ public class Analyze extends Batch {
     	}
 	}
 
-    private void writeAnalysis(AuthzTrans trans, X509 x509, X509Certificate x509Cert) throws IOException {
+    private void writeAnalysis(AuthzTrans noAvg, X509 x509, X509Certificate x509Cert) throws IOException {
 		Range r = expireRange.getRange("x509", x509Cert.getNotAfter());
 		if(r!=null) {
 			Date lnd = ln.lastNotified(LastNotified.newKey(x509,x509Cert));
 			// Note: lnd is NEVER null
 			Identity i;
 			try {
-				i = org.getIdentity(trans, x509.id);
+				i = org.getIdentity(noAvg, x509.id);
 			} catch (OrganizationException e) {
 				i=null;
 			}

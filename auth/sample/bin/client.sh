@@ -39,11 +39,19 @@ OSAAF="/opt/app/osaaf"
 LOCAL="$OSAAF/local"
 DOT_AAF="$HOME/.aaf"
 SSO="$DOT_AAF/sso.props"
- 
-JAVA_CADI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.CmdLine"
-JAVA_AGENT="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$SSO org.onap.aaf.cadi.configure.Agent"
-JAVA_AGENT_SELF="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/${NS}.props org.onap.aaf.cadi.configure.Agent"
-JAVA_AAFCLI="$JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.auth.cmd.AAFcli"
+
+if [ -e "$CONFIG" ]; then
+  CONFIG_BIN="$CONFIG/bin" 
+else 
+  CONFIG_BIN="."
+fi
+
+CLPATH="$CONFIG_BIN/aaf-auth-cmd-*-full.jar"
+
+JAVA_CADI="$JAVA -cp $CLPATH org.onap.aaf.cadi.CmdLine"
+JAVA_AGENT="$JAVA -cp $CLPATH -Dcadi_prop_files=$SSO org.onap.aaf.cadi.configure.Agent"
+JAVA_AGENT_SELF="$JAVA -cp $CLPATH -Dcadi_prop_files=$LOCAL/${NS}.props org.onap.aaf.cadi.configure.Agent"
+JAVA_AAFCLI="$JAVA -cp $CLPATH -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.auth.cmd.AAFcli"
 
 # Check for local dir
 if [ ! -d $LOCAL ]; then
@@ -57,9 +65,9 @@ fi
 # Setup Bash, first time only
 if [ ! -e "$HOME/.bashrc" ] || [ -z "$(grep cadi $HOME/.bashrc)" ]; then
   echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bashrc
-  echo "alias agent='$CONFIG/bin/agent.sh agent \$*'" >>$HOME/.bashrc
+  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" >>$HOME/.bashrc
   echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bashrc
-  chmod a+x $CONFIG/bin/agent.sh
+  chmod a+x $CONFIG_BIN/agent.sh
   . $HOME/.bashrc
 fi
 
@@ -80,14 +88,22 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
     if [ ! "${DEPLOY_PASSWORD}" = "" ]; then
        echo aaf_password=enc:$(sso_encrypt ${DEPLOY_PASSWORD}) >> ${SSO}
     fi
-    if [ ! -z "${CONTAINER_NS}" ]; then
-       echo "aaf_locator_container_ns=${CONTAINER_NS}" >> ${SSO}
+    
+    if [ ! -z "${aaf_locator_container}" ]; then
+         echo "aaf_locator_container=${aaf_locator_container}" >> ${SSO}
+    fi
+    if [ -z "${aaf_locator_container_ns}" ]; then
+      if [ !-z "${CONTAINER_NS}" ]; then
+         echo "aaf_locator_container_ns=${CONTAINER_NS}" >> ${SSO}
+      fi
+    else 
+         echo "aaf_locator_container_ns=${aaf_locator_container_ns}" >> ${SSO}
     fi
     if [ ! -z "${AAF_ENV}" ]; then
        echo "aaf_env=${AAF_ENV}" >> ${SSO}
     fi
     echo aaf_locate_url=https://${AAF_FQDN}:8095 >> ${SSO}
-    echo aaf_url=https://AAF_LOCATE_URL/AAF_NS.service:${AAF_INTERFACE_VERSION} >> ${SSO}
+    echo aaf_url=https://AAF_LOCATE_URL/%CNS.%AAF_NS.service:${AAF_INTERFACE_VERSION} >> ${SSO}
 
     base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $DOT_AAF/truststoreONAPall.jks
     echo "cadi_truststore=$DOT_AAF/truststoreONAPall.jks" >> ${SSO}
@@ -98,10 +114,37 @@ fi
 
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/${NS}.props ]; then
+    if [ -e '/opt/app/aaf_config/bin' ]; then
+      cp /opt/app/aaf_config/bin/*.jar $LOCAL
+      echo "#!/bin/bash" > agent
+      echo 'case "$1" in' >> agent
+      echo '  ""|-?|--help)CMD="";FQI="";FQDN="";;' >> agent
+      echo '  validate)CMD="$1";FQI="";FQDN="${2:-'"$NS.props"'}";;' >> agent
+      echo '    *)CMD="$1";FQI="${2:-'"$APP_FQI"'}";FQDN="${3:-'"$APP_FQDN"'}";;' >> agent
+      echo 'esac' >> agent
+      echo 'java -cp '$(ls aaf-auth-cmd-*-full.jar)' -Dcadi_prop_files='"$NS"'.props org.onap.aaf.cadi.configure.Agent $CMD $FQI $FQDN' >> agent
+
+      echo "#!/bin/bash" > cadi
+      echo "java -cp $(ls aaf-auth-cmd-*-full.jar) -Dcadi_prop_files=$NS.props org.onap.aaf.cadi.CmdLine " '$*' >> cadi
+      # echo "#!/bin/bash" > aafcli
+      # echo "java -cp $(ls aaf-auth-cmd-*-full.jar) -Dcadi_prop_files=$NS.props org.onap.aaf.auth.cmd.AAFcli " '$*' >> aafcli
+
+      echo "#!/bin/bash" > testConnectivity
+      echo "java -cp $(ls aaf-auth-cmd-*-full.jar) org.onap.aaf.cadi.aaf.TestConnectivity $NS.props" >> testConnectivity
+      chmod ug+x agent cadi testConnectivity
+    fi
     echo "#### Create Configuration files "
     $JAVA_AGENT config $APP_FQI \
 	aaf_url=https://AAF_LOCATE_URL/AAF_NS.locate:${AAF_INTERFACE_VERSION} \
         cadi_etc_dir=$LOCAL
+# Grab all properties passed in that start with "aaf_" or "cadi_"
+    for E in $(env); do 
+       if [[ $E == aaf_* ]] || [[ $E == cadi_* ]]; then
+         if [ -z "$(grep $E $LOCAL/$NS.props)" ]; then
+           echo "${E}" >> $LOCAL/$NS.props
+         fi
+       fi
+    done
     cat $LOCAL/$NS.props
 
     echo
@@ -119,7 +162,6 @@ if [ ! -e $LOCAL/${NS}.props ]; then
             cadi_etc_dir=$LOCAL
     
         echo "#### Validate Configuration and Certificate with live call"
-        $JAVA_AGENT_SELF validate 
         echo "Obtained Certificates"
         INITIALIZED="true"
     else
@@ -236,7 +278,7 @@ else
 	;;
     testConnectivity|testconnectivity)
         echo "--- Test Connectivity ---"
-        $JAVA -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/org.osaaf.aaf.props 
+        $JAVA -cp $CONFIG_BIN/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/org.osaaf.aaf.props 
 	;;
     --help | -?)
         case "$1" in
@@ -272,7 +314,7 @@ else
     ### Possible Dublin
     # sample)
     #    echo "--- run Sample Servlet App ---"
-    #    $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $CONFIG/bin/aaf-auth-cmd-*-full.jar:$CONFIG/bin/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
+    #    $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $CONFIG_BIN/aaf-auth-cmd-*-full.jar:$CONFIG_BIN/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
     #    ;;
     *)
         $JAVA_AGENT "$CMD" "$@"
