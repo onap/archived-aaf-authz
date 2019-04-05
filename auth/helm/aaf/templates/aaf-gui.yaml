@@ -82,7 +82,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: aaf_locate_url
               value: "https://aaf-locate.onap:8095"
-            - name: aaf_locator_public_hostname
+            - name: aaf_locator_public_fqdn
               value: "aaf.osaaf.org"
             - name: CASSANDRA_CLUSTER
               value: "aaf-cass"

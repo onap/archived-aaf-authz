@@ -40,7 +40,7 @@ ingress:
   enabled: false
 
 cadi:
-  hostname: "aaf.onap"
+  public_fqdn: "aaf.osaaf.org"
   cadi_latitude: "38.0"  
   cadi_longitude: "-72.0"  
   aaf_env: "DEV"

@@ -141,7 +141,7 @@ public class JU_RegistrationCreator {
 			String k8s_public_hostname="k8s.public.com";
 			int public_port = 30001;
 			
-			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_HOSTNAME,k8s_public_hostname);
+			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_FQDN,k8s_public_hostname);
 			pa.setProperty(Config.AAF_LOCATOR_PUBLIC_PORT+DOT_OOM,Integer.toString(public_port));
 			pa.setProperty(Config.AAF_LOCATOR_APP_NS, Config.AAF_ROOT_NS_DEF);
 			rc = new RegistrationCreator(pa);

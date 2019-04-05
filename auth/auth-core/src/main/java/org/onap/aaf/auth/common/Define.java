@@ -35,6 +35,7 @@ public class Define {
 
     private final static String MSG = ".set(Access access) must be called before use";
     public static final CharSequence ROOT_NS_TAG = "AAF_NS"; // use for certain Replacements in Location
+    private static final int ROOT_NS_TAG_LEN=ROOT_NS_TAG.length();
     private static final String ROOT_NS_TAG_DOT = ROOT_NS_TAG +".";
 
     public static String ROOT_NS() {
@@ -74,10 +75,15 @@ public class Define {
     }
 
     public static String varReplace(final String potential) {
-        if (potential.startsWith(ROOT_NS_TAG_DOT)) {
-            return ROOT_NS + potential.substring(6);
+    	int idx = potential.indexOf(ROOT_NS_TAG_DOT);
+    	if(idx<0) {
+    		return potential;
+    	} else if(idx==0) {
+    		return ROOT_NS + potential.substring(ROOT_NS_TAG_LEN);
+        } else if('.'==potential.charAt(idx)) {
+            return potential.replace(ROOT_NS_TAG, ROOT_NS);
         } else {
-            return potential;
+    		return potential;
         }
     }
 

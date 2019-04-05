@@ -142,9 +142,19 @@ public class TestConnectivity {
     }
     
     private static URI uri(PropAccess access, String ms) throws URISyntaxException {
-		String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS,"AAF_NS");
+		String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF);
 		String aaf_api_version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
 		String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL,Defaults.AAF_LOCATE_CONST);
+		String aaf_container = access.getProperty(Config.AAF_LOCATOR_CONTAINER,null);
+		if(aaf_container!=null) {
+			String ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS+'.'+aaf_container,null);
+			if(ns==null) {
+				ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS,null);
+			}
+			if(ns!=null) {
+				aaf_root_ns=ns + '.' + aaf_root_ns;
+			}
+		}
 		if("cm".equals(ms) && "2.0".equals(aaf_api_version)) {
 			ms = "certman";
 		}
@@ -187,6 +197,7 @@ public class TestConnectivity {
         if (tokenURL==null || (tokenURL.contains("/locate/") && locateURL!=null)) {
             tokenURL=Config.OAUTH2_TOKEN_URL_DEF;
         }
+        
 
         try {
             HRenewingTokenSS hrtss = new HRenewingTokenSS(access, tokenURL);
