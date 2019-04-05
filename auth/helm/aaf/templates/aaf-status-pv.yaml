@@ -23,7 +23,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: {{ .Chart.Name  }}-status-pv
-  namespace: {{ .Values.global.common.namespace  }}
+  namespace: {{ .Values.services.namespace  }}
   labels:
     app: {{ .Chart.Name  }}-status
 spec:

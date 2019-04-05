@@ -30,16 +30,16 @@ spec:
   ports:
     - name: storage
       protocol: TCP
-      port: 7000
-      containerPort: 7000
+      port: {{.Values.services.cass.storage_port}}
+      containerPort: {{.Values.services.cass.storage_port}}
     - name: ssl-storage
       protocol: TCP
-      port: 7001
-      containerPort: 7001
+      port: {{.Values.services.cass.ssl_storage_port}}
+      containerPort: {{.Values.services.cass.ssl_storage_port}}
     - name: native-trans
       protocol: TCP
-      port: 9042
-      containerPort: 9042
+      port: {{.Values.services.cass.native_trans_port}}
+      containerPort: {{.Values.services.cass.native_trans_port}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -48,7 +48,7 @@ metadata:
   labels:
     app: aaf-cass
 spec:
-  replicas: {{ .Values.replicas.cass }}
+  replicas: {{ .Values.services.cass.replicas }}
   selector:
     matchLabels:
       app: aaf-cass
@@ -58,44 +58,48 @@ spec:
         app: aaf-cass
     spec:
       volumes:
-      - name: {{ .Chart.Name }}-cass-vol
+      - name: aaf-cass-vol
         persistentVolumeClaim:
-          claimName: {{ .Chart.Name }}-cass-pvc
-      - name: {{ .Chart.Name }}-status-vol
+          claimName: aaf-cass-pvc
+      - name: aaf-status-vol
         persistentVolumeClaim:
-          claimName: {{ .Chart.Name }}-status-pvc
+          claimName: aaf-status-pvc
       containers:
 ###
 ### AAF-CASS
 ###
-      - name: {{ .Chart.Name }}-cass
+      - name: aaf-cass
         image: {{ .Values.image.repository }}onap/aaf/aaf_cass:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
         # installing with cmd "onap" will not only initialize the DB, but add ONAP bootstrap data as well
         command: ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh","onap"]
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh","-c","rm /opt/app/aaf/status/aaf-cass"]
         volumeMounts:
         - mountPath: "/var/lib/cassandra"
-          name: {{ .Chart.Name }}-cass-vol
+          name: aaf-cass-vol
         - mountPath: "/opt/app/aaf/status"
-          name: {{ .Chart.Name }}-status-vol
+          name: aaf-status-vol
         ports:
         - name: storage
-          containerPort: 7000
+          containerPort: {{.Values.services.cass.storage_port}}
         - name: ssl-storage
-          containerPort: 7001
+          containerPort: {{.Values.services.cass.storage_port}}
         - name: native-trans
-          containerPort: 9042
+          containerPort: {{.Values.services.cass.native_trans_port}}
         - name: rpc
-          containerPort: 9160
+          containerPort: {{.Values.services.cass.rpc_port}}
         env:
         - name: CASSANDRA_CLUSTER_NAME
-          value: "osaaf"
+          value: {{.Values.services.cass.cluster_name}}
         - name: CASSANDRA_DC
-          value: "dc1"
+          value: {{.Values.services.cass.dc}}
         - name: HEAP_NEWSIZE
-          value: "512M"
+          value: {{.Values.services.cass.heap_new_size}}
         - name: MAX_HEAP_SIZE
-          value: "1024M"
+          value: {{.Values.services.cass.max_heap_size}}
         - name: MY_POD_NAME
           valueFrom:
             fieldRef:

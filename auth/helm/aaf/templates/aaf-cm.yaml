@@ -41,7 +41,7 @@ metadata:
   labels:
     app: aaf-cm
 spec:
-  replicas: {{ .Values.replicas.cm }}
+  replicas: {{ .Values.services.cm.replicas }}
   selector:
     matchLabels:
       app: aaf-cm
@@ -52,27 +52,27 @@ spec:
     spec:
       volumes:
         # Use this Pod Sharing dir to declare various States of starting
-      - name: {{ .Chart.Name }}-config-vol
+      - name: aaf-config-vol
         persistentVolumeClaim:
-          claimName: {{ .Chart.Name }}-config-pvc
-      - name: {{ .Chart.Name }}-status-vol
+          claimName: aaf-config-pvc
+      - name: aaf-status-vol
         persistentVolumeClaim:
-          claimName: {{ .Chart.Name }}-status-pvc
+          claimName: aaf-status-pvc
       initContainers:
-        - name: {{ .Chart.Name }}-config-container
+        - name: aaf-config-container
           image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
           imagePullPolicy: IfNotPresent
           command: ["bash","/opt/app/aaf_config/bin/agent.sh"]
           volumeMounts:
             - mountPath: "/opt/app/osaaf"
-              name: {{ .Chart.Name }}-config-vol
+              name: aaf-config-vol
           env:
             - name: AAF_ENV
-              value: "{{ .Values.cadi.aaf_env }}"
+              value: "{{ .Values.services.aaf_env }}"
             - name: LATITUDE
-              value: "{{ .Values.cadi.cadi_latitude }}"
+              value: "{{ .Values.services.cadi_latitude }}"
             - name: LONGITUDE
-              value: "{{ .Values.cadi.cadi_longitude }}"
+              value: "{{ .Values.services.cadi_longitude }}"
             - name: aaf_locator_container
               value: "helm"
             - name: aaf_locator_container_ns
@@ -80,11 +80,11 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: aaf_locate_url
-              value: "https://aaf-locate.onap:8095"
+              value: "https://{{.Values.services.locate.fqdn}}.{{.Values.services.ns}}:{{.Values.services.locate.internal_port}}"
             - name: aaf_locator_public_fqdn
-              value: "aaf.osaaf.org"
+              value: "{{.Values.services.public_fqdn}}"
             - name: CASSANDRA_CLUSTER
-              value: "aaf-cass"
+              value: "{{.Values.services.cass.fqdn}}.{{.Values.services.ns}}"
 #            - name: CASSANDRA_USER
 #              value: ""
 #            - name: CASSANDRA_PASSWORD
@@ -95,15 +95,15 @@ spec:
 ###
 ### AAF-CERTMAN
 ###
-      - name: {{ .Chart.Name }}-cm
+      - name: aaf-cm
         image: {{ .Values.image.repository }}onap/aaf/aaf_cm:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-cm aaf-locate && exec bin/cm"]
         volumeMounts:
         -  mountPath: "/opt/app/osaaf"
-           name: {{ .Chart.Name }}-config-vol
+           name: aaf-config-vol
         -  mountPath: "/opt/app/aaf/status"
-           name: {{ .Chart.Name }}-status-vol
+           name: aaf-status-vol
         ports:
         - name: aaf-cm
           protocol: TCP

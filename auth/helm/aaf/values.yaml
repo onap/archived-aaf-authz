@@ -25,26 +25,54 @@
 global:
   persistence:
     enabled: true
-  common:
-    namespace: "onap"
 
-replicas:
-  cass: 1
-  service: 1
-  locator: 1
-  oauth: 1
-  cm: 1
-  gui: 1
-
-ingress:
-  enabled: false
-
-cadi:
+services:
+  ns: "onap"
+  aaf_env: "DEV"
   public_fqdn: "aaf.osaaf.org"
   cadi_latitude: "38.0"  
   cadi_longitude: "-72.0"  
-  aaf_env: "DEV"
-
+  cass:
+    replicas: 1
+    cluster_name: "osaaf"
+    heap_new_size: "512M"
+    max_heap_size: "1024M"
+    storage_port: 7000
+    ssl_storage_port: 7001
+    native_trans_port: 9042
+    rpc_port: 9160
+    dc: "dc1"
+  service:
+    replicas: 1
+    fqdn: "aaf-service"
+    internal_port: 8100
+    public_port: 30080
+  locate:
+    replicas: 1
+    fqdn: "aaf-locate"
+    internal_port: 8095
+    public_port: 30081
+  oauth:
+    replicas: 1
+    fqdn: "aaf-oauth"
+    internal_port: 8140
+    public_port: 30082
+  cm:
+    replicas: 1
+    fqdn: "aaf-cm"
+    internal_port: 8150
+    public_port: 30084
+  gui:
+    replicas: 1
+    fqdn: "aaf-gui"
+    internal_port: 8200
+    public_port: 30083
+  fs:
+    replicas: 1
+    fqdn: "aaf-fs"
+    internal_port: 8096
+    public_port: 30085
+    
 persistence:
   # Note: Minikube will persist to /data on your host machine
   mountPath: "/data/aaf"
