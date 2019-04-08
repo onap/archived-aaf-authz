@@ -93,18 +93,16 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         fdd.expires = expires;
         fdd.construct = construct;
         String role = null;
-        switch(target) {
-        	case "user_role":
-    			UserRoleDAO.Data urdd = new UserRoleDAO.Data();
-    			try {
-    				urdd.reconstitute(construct);
-    				fdd.target_key = urdd.user + '|' + urdd.role;
-    				fdd.target_date=urdd.expires;
-    				role=urdd.role;
-    			} catch (IOException e) {
-    				e.printStackTrace(System.err);
-    			}
-    			break;
+        if ("user_role".equals(target)) {
+            UserRoleDAO.Data urdd = new UserRoleDAO.Data();
+            try {
+                urdd.reconstitute(construct);
+                fdd.target_key = urdd.user + '|' + urdd.role;
+                fdd.target_date = urdd.expires;
+                role = urdd.role;
+            } catch (IOException e) {
+                e.printStackTrace(System.err);
+            }
         }
     	this.role = role;
     }
@@ -130,21 +128,14 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     }
     
     public static void load(Trans trans, Session session, Creator<Future> creator) {
-    	load(trans,session,creator, new Visitor<Future>() {
-			@Override
-			public void visit(Future f) {
-			    data.put(f.fdd.id,f);
-			    if (f.role==null) {
-			        return;
-			    }
-			    List<Future> lf = byRole.get(f.role);
-			    if (lf==null) {
-			        lf = new ArrayList<>();
-			        byRole.put(f.role,lf);
-			    }
-			    lf.add(f);
-			}
-		});
+    	load(trans,session,creator, f -> {
+            data.put(f.fdd.id,f);
+            if (f.role==null) {
+                return;
+            }
+            List<Future> lf = byRole.computeIfAbsent(f.role, k -> new ArrayList<>());
+            lf.add(f);
+        });
     }
 
 
