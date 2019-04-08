@@ -178,11 +178,6 @@ public class Function {
      */
     public Result<Void> createNS(AuthzTrans trans, Namespace namespace, boolean fromApproval) {
         Result<?> rq;
-//        if (namespace.name.endsWith(Question.DOT_ADMIN)
-//                || namespace.name.endsWith(Question.DOT_OWNER)) {
-//            return Result.err(Status.ERR_BadData,
-//                    "'admin' and 'owner' are reserved names in AAF");
-//        }
 
         try {
             for (String u : namespace.owner) {
@@ -264,9 +259,6 @@ public class Function {
             // or helpful for Operations folks..
             // Admins can be empty, because they can be changed by lower level
             // NSs
-            // if (ns.admin(false).isEmpty()) {
-            // ns.admin(true).add(user);
-            // }
             if (namespace.admin != null) {
                 for (String u : namespace.admin) {
                     if ((r = checkValidID(trans, now, u)).notOK()) {
@@ -413,10 +405,8 @@ public class Function {
                         pdd.type = delP2;
                         if ((rq = q.permDAO.delete(trans, pdd, false)).notOK()) {
                             eb.log(rq);
-                            // } else {
                             // Need to invalidate directly, because we're
                             // switching places in NS, not normal cache behavior
-                            // q.permDAO.invalidate(trans,pdd);
                         }
                     } else {
                         eb.log(rq);
@@ -951,7 +941,7 @@ public class Function {
                 return Result.err(rnsd);
             }
         } else {
-            rnsd = q.deriveNs(trans, perm.ns);
+            q.deriveNs(trans, perm.ns);
         }
 
         // Does Child exist?
@@ -1365,12 +1355,10 @@ public class Function {
         
         
         Result<UserRoleDAO.Data> udr = q.userRoleDAO.create(trans, urData);
-        switch (udr.status) {
-        case OK:
+        if (udr.status == OK) {
             return Result.ok();
-        default:
-            return Result.err(udr);
         }
+        return Result.err(udr);
     }
 
     public Result<Void> addUserRole(AuthzTrans trans, String user, String ns, String rname) {
@@ -1497,7 +1485,7 @@ public class Function {
                 // User Future ID as ticket for Approvals
                 final UUID ticket = fr.value.id;
                 sb.append(", Approvals: ");
-                Boolean first[] = new Boolean[]{true};
+                Boolean[] first = new Boolean[]{true};
                 if (op!=FUTURE_OP.A) {
                     for (Identity u : approvers) {
                         Result<ApprovalDAO.Data> r = addIdentity(trans,sb,first,user,data.memo,op,u,ticket,org.getApproverType());
@@ -1597,15 +1585,13 @@ public class Function {
                 case "denied":
                     aDenial=true;
                     break;
+                default:
+                    break;
             }
         }
         
         Result<OP_STATUS> ros=null;
         if (aDenial) {
-            // Note: Denial will be Audit-logged.
-//            for (ApprovalDAO.Data ad : allApprovalsForTicket.value) {
-//                q.approvalDAO.delete(trans, ad, false);
-//            }
             ros = OP_STATUS.RD;
             if (q.futureDAO.delete(trans, curr, false).notOK()) {
                 trans.info().printf("Future %s could not be deleted", curr.id.toString());
@@ -1699,11 +1685,8 @@ public class Function {
                 } else if (FOP_NS.equalsIgnoreCase(curr.target)) {
                     Namespace namespace = new Namespace();
                     namespace.reconstitute(curr.construct);
-                    switch(fop) {
-                        case C:
-                            ros = set(OP_STATUS.RE,createNS(trans, namespace, true));
-                            break;
-                        default:
+                    if (fop == FUTURE_OP.C) {
+                        ros = set(OP_STATUS.RE, createNS(trans, namespace, true));
                     }
                 } else if (FOP_DELEGATE.equalsIgnoreCase(curr.target)) {
                     DelegateDAO.Data data = new DelegateDAO.Data();
@@ -1720,11 +1703,8 @@ public class Function {
                 } else if (FOP_CRED.equalsIgnoreCase(curr.target)) {
                     CredDAO.Data data = new CredDAO.Data();
                     data.reconstitute(curr.construct);
-                    switch(fop) {
-                        case C:
-                            ros = set(OP_STATUS.RE,q.credDAO.dao().create(trans, data));
-                            break;
-                        default:
+                    if (fop == FUTURE_OP.C) {
+                        ros = set(OP_STATUS.RE, q.credDAO.dao().create(trans, data));
                     }
                 }                
             } catch (Exception e) {
