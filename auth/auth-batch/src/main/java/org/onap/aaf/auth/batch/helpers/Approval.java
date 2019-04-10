@@ -21,13 +21,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -48,10 +42,10 @@ public class Approval implements CacheChange.Data  {
     public static final String RE_VALIDATE_ADMIN = "Re-Validate as Administrator for AAF Namespace '";
     public static final String RE_VALIDATE_OWNER = "Re-Validate Ownership for AAF Namespace '";
 
-    public static TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
-    public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
-    public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
-    public static List<Approval> list = new LinkedList<>();
+    public static final SortedMap<String,List<Approval>> byApprover = new TreeMap<>();
+    public static final SortedMap<String,List<Approval>> byUser = new TreeMap<>();
+    public static final SortedMap<UUID,List<Approval>> byTicket = new TreeMap<>();
+    public static final List<Approval> list = new LinkedList<>();
     private final static CacheChange<Approval> cache = new CacheChange<>(); 
     
     public final ApprovalDAO.Data add;
@@ -63,7 +57,6 @@ public class Approval implements CacheChange.Data  {
         add.id = id;
         add.ticket = ticket;
         add.approver = approver;
-//        add.last_notified = last_notified;
         add.user = user;
         add.memo = memo;
         add.operation = operation;
@@ -218,14 +211,6 @@ public class Approval implements CacheChange.Data  {
     	list.clear();
     	cache.resetLocalData();
     }
-//    public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
-//        if (dryRun) {
-//            trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-//        } else {
-//            trans.info().printf("Update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-//            apprDAO.update(trans, add);
-//        }
-//    }
 
     public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
         @Override
@@ -241,18 +226,6 @@ public class Approval implements CacheChange.Data  {
         }
     };
 
-//    /**
-//     * @return the lastNotified
-//     */
-//    public Date getLast_notified() {
-//        return add.last_notified;
-//    }
-//    /**
-//     * @param lastNotified the lastNotified to set
-//     */
-//    public void setLastNotified(Date last_notified) {
-//        add.last_notified = last_notified;
-//    }
     /**
      * @return the status
      */
