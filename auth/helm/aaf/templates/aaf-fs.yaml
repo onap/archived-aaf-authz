@@ -117,4 +117,8 @@ spec:
               value: "https://aaf-locate.onap:8095"
             - name: aaf_locator_public_fqdn
               value: "{{.Values.services.public_fqdn}}"
+            - name: aaf_locator_name
+              value: "{{.Values.services.aaf_locator_name}}"
+            - name: aaf_locator_name_helm
+              value: "{{.Values.services.aaf_locator_name_helm}}"
 

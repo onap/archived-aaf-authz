@@ -33,11 +33,17 @@ cadi:
   fqdn: "aaf-hello"
   port: 8130
   public_fqdn: "aaf.osaaf.org"
+# DUBLIN ONLY - for M4 compatibility with Casablanca
+  aaf_locator_name: "public.%NS.%N"
+  aaf_locator_name_helm: "%NS.%N"
+# EL ALTO and Beyond
+#  aaf_locator_name: "%NS.%N"
+#  aaf_locator_name_helm: "%CNS.%NS.%N"
   public_port: 30086
   fqi: "aaf@aaf.osaaf.org"
   app_ns: "org.osaaf.aaf"
-  cadi_latitude: "38.0"  
-  cadi_longitude: "-72.0"  
+  cadi_latitude: 38.0
+  cadi_longitude: -72.0
   aaf_env: "DEV"
 
 persistence: {}

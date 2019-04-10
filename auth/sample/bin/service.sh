@@ -135,7 +135,9 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     echo aaf_locate_url=${AAF_LOCATE_URL} >> ${TMP}
     for P in `env`; do
       if [[ "$P" == aaf_locator* ]]; then
-	echo "$P" >> ${TMP}
+        S="${P/_helm/.helm}"
+        S="${S/_oom/.oom}"
+	echo "$S" >> ${TMP}
       fi
     done
 

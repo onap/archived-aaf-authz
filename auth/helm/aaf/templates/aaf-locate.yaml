@@ -83,6 +83,10 @@ spec:
               value: "https://{{.Values.services.locate.fqdn}}.{{.Values.services.ns}}:{{.Values.services.locate.internal_port}}"
             - name: aaf_locator_public_fqdn
               value: "{{.Values.services.public_fqdn}}"
+            - name: aaf_locator_name
+              value: "{{.Values.services.aaf_locator_name}}"
+            - name: aaf_locator_name_helm
+              value: "{{.Values.services.aaf_locator_name_helm}}"
             - name: CASSANDRA_CLUSTER
               value: "{{.Values.services.cass.fqdn}}.{{.Values.services.ns}}"
 #            - name: CASSANDRA_USER

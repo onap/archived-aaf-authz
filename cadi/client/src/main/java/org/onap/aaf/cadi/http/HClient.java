@@ -168,6 +168,10 @@ public class HClient implements EClient<HttpURLConnection> {
     public URI getURI() {
         return uri;
     }
+    
+    public void setURI(URI uri) {
+    	this.uri = uri;
+    }
 
     public int timeout() {
         return connectTimeout;

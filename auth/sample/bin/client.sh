@@ -76,41 +76,45 @@ function sso_encrypt() {
    $JAVA_CADI digest ${1} $DOT_AAF/keyfile
 }
 
+if [ ! -e "$DOT_AAF/truststoreONAPall.jks" ]; then
+    mkdir -p $DOT_AAF
+    base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $DOT_AAF/truststoreONAPall.jks
+fi
 
 # Create Deployer Info, located at /root/.aaf
 if [ ! -e "$DOT_AAF/keyfile" ]; then
-    mkdir -p $DOT_AAF
     $JAVA_CADI keygen $DOT_AAF/keyfile
     chmod 400 $DOT_AAF/keyfile
-    echo cadi_latitude=${LATITUDE} > ${SSO}
-    echo cadi_longitude=${LONGITUDE} >> ${SSO}
-    echo aaf_id=${DEPLOY_FQI} >> ${SSO}
+
+    # Add Deployer Creds to Root's SSO
+    DEPLOY_FQI="${DEPLOY_FQI:=$app_id}"
+    echo "aaf_id=${DEPLOY_FQI}" > ${SSO}
     if [ ! "${DEPLOY_PASSWORD}" = "" ]; then
        echo aaf_password=enc:$(sso_encrypt ${DEPLOY_PASSWORD}) >> ${SSO}
     fi
     
-    if [ ! -z "${aaf_locator_container}" ]; then
-         echo "aaf_locator_container=${aaf_locator_container}" >> ${SSO}
-    fi
-    if [ -z "${aaf_locator_container_ns}" ]; then
-      if [ !-z "${CONTAINER_NS}" ]; then
-         echo "aaf_locator_container_ns=${CONTAINER_NS}" >> ${SSO}
-      fi
-    else 
-         echo "aaf_locator_container_ns=${aaf_locator_container_ns}" >> ${SSO}
-    fi
-    if [ ! -z "${AAF_ENV}" ]; then
-       echo "aaf_env=${AAF_ENV}" >> ${SSO}
-    fi
-    echo aaf_locate_url=https://${AAF_FQDN}:8095 >> ${SSO}
-    echo aaf_url=https://AAF_LOCATE_URL/%CNS.%AAF_NS.service:${AAF_INTERFACE_VERSION} >> ${SSO}
+    # Cover case where using app.props
+    aaf_locater_container_ns=${aaf_locator_container_ns:=$CONTAINER_NS} 
 
-    base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $DOT_AAF/truststoreONAPall.jks
+    for E in $(env); do
+        if [ "${E:0:4}" = "aaf_" ] || [ "${E:0:5}" = "cadi_" ]; then
+           # Use Deployer ID in ${SSO}
+           if [ "app_id" != "${E%=*}" ]; then
+              S="${E/_helm/.helm}"
+              S="${S/_oom/.oom}"
+             echo "$S" >> ${SSO}
+           fi
+        fi
+    done
+
     echo "cadi_truststore=$DOT_AAF/truststoreONAPall.jks" >> ${SSO}
     echo cadi_truststore_password=enc:$(sso_encrypt changeit) >> ${SSO}
     echo "Caller Properties Initialized"
     INITIALIZED="true"
 fi
+echo "cat SSO"
+cat ${SSO}
+echo "dog"
 
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/${NS}.props ]; then
@@ -133,28 +137,22 @@ if [ ! -e $LOCAL/${NS}.props ]; then
       echo "java -cp $(ls aaf-auth-cmd-*-full.jar) org.onap.aaf.cadi.aaf.TestConnectivity $NS.props" >> testConnectivity
       chmod ug+x agent cadi testConnectivity
     fi
+
     echo "#### Create Configuration files "
     $JAVA_AGENT config $APP_FQI \
-	aaf_url=https://AAF_LOCATE_URL/AAF_NS.locate:${AAF_INTERFACE_VERSION} \
-        cadi_etc_dir=$LOCAL
-# Grab all properties passed in that start with "aaf_" or "cadi_"
-    for E in $(env); do 
-       if [[ $E == aaf_* ]] || [[ $E == cadi_* ]]; then
-         if [ -z "$(grep $E $LOCAL/$NS.props)" ]; then
-           echo "${E}" >> $LOCAL/$NS.props
-         fi
-       fi
-    done
+        cadi_etc_dir=$LOCAL \
+        cadi_prop_files=$SSO
+	#aaf_url=https://AAF_LOCATE_URL/AAF_NS.locate:${AAF_INTERFACE_VERSION} 
     cat $LOCAL/$NS.props
 
     echo
     echo "#### Certificate Authorization Artifact"
-    TMP=$(mktemp)
+    # TMP=$(mktemp)
+    TMP=$LOCAL/agent.log
     $JAVA_AGENT read ${APP_FQI} ${APP_FQDN} \
         cadi_prop_files=${SSO} \
-        cadi_etc_dir=$LOCAL > $TMP
-    cat $TMP
-    echo
+        cadi_etc_dir=$LOCAL | tee $TMP
+
     if [ -n "$(grep 'Namespace:' $TMP)" ]; then
         echo "#### Place Certificates (by deployer)"
         $JAVA_AGENT place ${APP_FQI} ${APP_FQDN} \

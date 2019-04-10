@@ -26,17 +26,18 @@ import java.net.ConnectException;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.configure.Agent;
 import org.onap.aaf.cadi.oauth.TimedToken;
 import org.onap.aaf.cadi.oauth.TokenClient;
 import org.onap.aaf.cadi.oauth.TokenClientFactory;
@@ -59,12 +60,13 @@ public class OnapClientExample {
         // Property Access
         // This method will allow you to set "cadi_prop_files" (or any other property) on Command line 
         access = new PropAccess(args);
-        
-        // access = PropAccess();
         // Note: This style will load "cadi_prop_files" from VM Args
-        
-        // Token aware Client Factory
+        // access = PropAccess();
         try {
+	        Map<String, String> aaf_urls = Agent.loadURLs(access);
+	        Agent.fillMissing(access, aaf_urls);
+        
+	        // Token aware Client Factory
             tcf = TokenClientFactory.instance(access);
         } catch (APIException | GeneralSecurityException | IOException | CadiException e1) {
             access.log(e1, "Unable to setup OAuth Client Factory, Fail Fast");
@@ -104,7 +106,7 @@ public class OnapClientExample {
                 // Use this Token in your client calls with "Tokenized Client" (TzClient)
                 // These should NOT be used cross thread.
                 // Get Hello Service URL... roll your own in your own world.
-                final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Config.HELLO_URL_DEF);
+                final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL);
 
 
                 TzClient helloClient = tcf.newTzClient(endServicesURL);

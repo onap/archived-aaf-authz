@@ -246,7 +246,7 @@ public class AAFSSO {
                 Symm decryptor = ArtifactDir.getSymm(dot_aaf_kf);
                 if (user == null) {
                     if (sso.exists()) {
-                        String cm_url = access.getProperty(Config.CM_URL); // SSO might overwrite...
+                        String cm_url = access.getProperty(Config.AAF_URL_CM); // SSO might overwrite...
                         FileInputStream fos = new FileInputStream(sso);
                         try {
                             access.load(fos);
@@ -256,7 +256,7 @@ public class AAFSSO {
                             access.setProperty(Config.AAF_APPPASS,
                                     access.encrypt(decryptor.depass(encrypted_pass)));
                             if (cm_url != null) { //Command line CM_URL Overwrites ssofile.
-                                access.setProperty(Config.CM_URL, cm_url);
+                                access.setProperty(Config.AAF_URL_CM, cm_url);
                             }
                         } finally {
                             fos.close();
@@ -325,8 +325,8 @@ public class AAFSSO {
             	
             	access.setProperty(Config.AAF_URL, locateRoot+".service:"+apiVersion);
             }
-            if(access.getProperty(Config.CM_URL)==null) {
-            	access.setProperty(Config.CM_URL, locateRoot+".cm:"+apiVersion);
+            if(access.getProperty(Config.AAF_URL_CM)==null) {
+            	access.setProperty(Config.AAF_URL_CM, locateRoot+".cm:"+apiVersion);
             }
             String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
             if (cadiLatitude==null) {

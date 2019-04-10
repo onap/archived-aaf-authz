@@ -23,6 +23,7 @@
 package org.onap.aaf.auth.locate;
 
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -58,6 +59,7 @@ import org.onap.aaf.cadi.aaf.v2_0.AAFLurPerm;
 import org.onap.aaf.cadi.aaf.v2_0.AAFTrustChecker;
 import org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
@@ -180,7 +182,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     protected AAFConHttp _newAAFConHttp() throws CadiException {
         try {
             if (dal==null) {
-                dal = AbsAAFLocator.create("%CNS.%AAF_NS.service",Config.AAF_DEFAULT_API_VERSION);
+                dal = AbsAAFLocator.create("%AAF_NS.service",Config.AAF_DEFAULT_API_VERSION);
             }
             // utilize pre-constructed DirectAAFLocator
             return new AAFConHttp(env.access(),dal);
@@ -191,7 +193,14 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
     public Locator<URI> getGUILocator() throws LocatorException {
         if (gui_locator==null) {
-            gui_locator = AbsAAFLocator.create("AAF_NS.gui",Config.AAF_DEFAULT_API_VERSION);
+        	RegistrationPropHolder rph;
+        	try {
+				 rph = new RegistrationPropHolder(access, 0);
+			} catch (UnknownHostException | CadiException e) {
+				throw new LocatorException(e);
+			}
+            gui_locator = AbsAAFLocator.create(rph.getPublicEntryName("gui", rph.default_container),
+            	Config.AAF_DEFAULT_API_VERSION);
         }
         return gui_locator;
     }

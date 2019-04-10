@@ -65,7 +65,7 @@ public class NsDetail extends Page {
     private static final String BLANK = "";
     private static Slot keySlot;
     private static Model model;
-    private static String gw_url;
+    private static String locate_url;
 
 
     public NsDetail(final AAF_GUI gui, Page ... breadcrumbs) throws APIException, IOException {
@@ -75,11 +75,11 @@ public class NsDetail extends Page {
                 );
         model.set(this);
         keySlot = gui.env.slot(NAME+".ns");
-        gw_url = gui.env.getProperty(Config.GW_URL);
-        if (gw_url==null) {
-            gw_url="";
+        locate_url = gui.env.getProperty(Config.AAF_LOCATE_URL);
+        if (locate_url==null) {
+            locate_url="";
         } else {
-            gw_url+="/aaf/"+Config.AAF_DEFAULT_API_VERSION;
+            locate_url+="/aaf/"+Config.AAF_DEFAULT_API_VERSION;
         }
     }
 
@@ -217,7 +217,7 @@ public class NsDetail extends Page {
                         AbsCell label = (i==0?new TextCell(sentenceCase(field)+":","style=width:20%"):AbsCell.Null);
                         String perm = values.get(i);
                         String[] fields = perm.split("\\|");
-                        String grantLink = gw_url  
+                        String grantLink = locate_url  
                                 + PermGrantForm.HREF
                                 + "?type=" + fields[0].trim()
                                 + "&amp;instance=" + fields[1].trim()

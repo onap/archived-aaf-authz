@@ -152,15 +152,7 @@ public class Config {
     public static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
     public static final String AAF_DEFAULT_API_VERSION = "2.1";
     public static final String AAF_API_VERSION = "aaf_api_version";
-    public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration
-    public static final String AAF_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.service:" + AAF_DEFAULT_API_VERSION;
-    public static final String GUI_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.gui:" + AAF_DEFAULT_API_VERSION;
-    public static final String CM_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.cm:" + AAF_DEFAULT_API_VERSION;
-    public static final String FS_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.fs:" + AAF_DEFAULT_API_VERSION;
-    public static final String HELLO_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.hello:" + AAF_DEFAULT_API_VERSION;
-    public static final String OAUTH2_TOKEN_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.token:" + AAF_DEFAULT_API_VERSION +"/token";
-    public static final String OAUTH2_INTROSPECT_URL_DEF = "https://AAF_LOCATE_URL/%CNS.%AAF_NS.introspect:" + AAF_DEFAULT_API_VERSION +"/introspect";;
-
+    public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration   
     public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
     // AAF Locator Entries are ADDITIONAL entries, which also gives the Property ability
     // to set these entries manually
@@ -181,6 +173,7 @@ public class Config {
     public static final String AAF_LOCATOR_NAME = "aaf_locator_name";
     public static final String AAF_LOCATOR_PUBLIC_PORT = "aaf_locator_public_port";
     public static final String AAF_LOCATOR_PUBLIC_FQDN = "aaf_locator_public_fqdn";
+    public static final String AAF_LOCATOR_PUBLIC_NAME = "aaf_locator_public_name";
 
     public static final String AAF_APPID = "aaf_id";
     public static final String AAF_APPPASS = "aaf_password";
@@ -217,8 +210,10 @@ public class Config {
     public static final String AAF_DATA_DIR = "aaf_data_dir"; // AAF processes and Components only.
     public static final String AAF_RELEASE = "aaf_release";
 
-    public static final String GW_URL = "gw_url";
-    public static final String CM_URL = "cm_url";
+    public static final String AAF_URL_GUI="aaf_url_gui";
+    public static final String AAF_URL_FS="aaf_url_fs";
+    public static final String AAF_URL_CM = "aaf_url_cm";
+    public static final String AAF_URL_HELLO = "aaf_url_hello";
     public static final String CM_TRUSTED_CAS = "cm_trusted_cas";
 
     public static final String PATHFILTER_URLPATTERN = "pathfilter_urlpattern";

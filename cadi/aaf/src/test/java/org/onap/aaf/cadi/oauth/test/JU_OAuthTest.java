@@ -67,6 +67,8 @@ public class JU_OAuthTest {
         System.setOut(new PrintStream(outStream));
 
         access = new PropAccess();
+        access.setProperty(Config.CADI_LATITUDE, "38");
+        access.setProperty(Config.CADI_LONGITUDE, "-72");
         try {
             tcf = TokenClientFactory.instance(access);
         } catch (Exception e) {

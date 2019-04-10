@@ -60,7 +60,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     protected String myhostname;
     protected int myport;
     protected final String aaf_locator_host;
-    protected final URI aaf_locator_uri;
+    protected URI aaf_locator_uri;
     private long earliest;
     private final long refreshWait;
 
@@ -460,6 +460,11 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             }
         }
         return rv;
+    }
+
+    protected void clear() {
+    	epList.clear();
+    	earliest=0L;
     }
 
 

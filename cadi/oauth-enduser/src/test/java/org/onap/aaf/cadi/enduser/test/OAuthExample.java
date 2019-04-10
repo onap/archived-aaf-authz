@@ -26,17 +26,18 @@ import java.net.ConnectException;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.configure.Agent;
 import org.onap.aaf.cadi.oauth.TimedToken;
 import org.onap.aaf.cadi.oauth.TokenClient;
 import org.onap.aaf.cadi.oauth.TokenClientFactory;
@@ -73,14 +74,16 @@ public class OAuthExample {
         
         
         // Obtain Endpoints for OAuth2 from Properties.  Expected is "cadi.properties" file, pointed to by "cadi_prop_files"
-        String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,Config.OAUTH2_TOKEN_URL_DEF); // Default to AAF
-        String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,Config.OAUTH2_INTROSPECT_URL_DEF); // Default to AAF);
-        // Get Hello Service
-        final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL,Config.HELLO_URL_DEF);
-
-        final int CALL_TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
-        
         try {
+	        Map<String, String> aaf_urls = Agent.loadURLs(access);
+	        Agent.fillMissing(access, aaf_urls);
+	        String tokenServiceURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL); // Default to AAF
+	        String tokenIntrospectURL = access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL); // Default to AAF);
+	        // Get Hello Service
+	        final String endServicesURL = access.getProperty(Config.AAF_OAUTH2_HELLO_URL);
+	
+	        final int CALL_TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
+        
             //////////////////////////////////////////////////////////////////////
             // Scenario 1:
             // Get and use an OAuth Client, which understands Token Management

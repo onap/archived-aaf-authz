@@ -45,6 +45,7 @@ public class JU_RegistrationCreator {
 		PropAccess pa = new PropAccess();
 		pa.setProperty(Config.CADI_LATITUDE, "32.7");
 		pa.setProperty(Config.CADI_LONGITUDE, "-72.0");
+		pa.setProperty(Config.AAF_LOCATOR_NAME, "");
 		
 		try {
 			String hostname = Inet4Address.getLocalHost().getHostName();

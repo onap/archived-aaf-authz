@@ -27,10 +27,10 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
@@ -43,6 +43,7 @@ import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
+import org.onap.aaf.cadi.configure.Agent;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.http.HClient;
 import org.onap.aaf.cadi.http.HX509SS;
@@ -53,7 +54,10 @@ import org.onap.aaf.misc.env.APIException;
 
 public class TestConnectivity {
     
-    public static void main(String[] args) {
+    private static Map<String, String> aaf_urls;
+
+
+	public static void main(String[] args) {
         if (args.length<1) {
             System.out.println("Usage: ConnectivityTester <cadi_prop_files> [<AAF FQDN (i.e. aaf.dev.att.com)>]");
         } else {
@@ -65,24 +69,14 @@ public class TestConnectivity {
             }
 
             PropAccess access = new PropAccess(args);
-            String aaflocate;
-            if (args.length>1) {
-                aaflocate = "https://" + args[1];
-                access.setProperty(Config.AAF_LOCATE_URL, "https://" + args[1]);
-            } else {
-                aaflocate = access.getProperty(Config.AAF_LOCATE_URL);
-                if (aaflocate==null) {
-                    print(true,"Properties must contain ",Config.AAF_LOCATE_URL);
-                }
-            }
-            
             try {
                 SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
+                aaf_urls = Agent.loadURLs(access);
                 
                 List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
                 /////////
-                String directAAFURL = access.getProperty(Config.AAF_URL,null);
-                if(directAAFURL!=null && !directAAFURL.contains("AAF_LOCATE")) {
+                String directAAFURL = aaf_urls.get(Config.AAF_URL);
+                if(directAAFURL!=null && !directAAFURL.contains("/locate/")) {
                     print(true,"Test Connections by non-located aaf_url");
                     Locator<URI> locator = new SingleEndpointLocator(directAAFURL);
                     connectTest(locator,new URI(directAAFURL));
@@ -92,17 +86,18 @@ public class TestConnectivity {
                 } else {
 	                /////////
 	                print(true,"Test Connections driven by AAFLocator");
-	                URI serviceURI = uri(access,"service");
+	                String serviceURI = aaf_urls.get(Config.AAF_URL);
 	
-	                for (URI uri : new URI[] {
+	                for (String url : new String[] {
 	                        serviceURI,
-	                        uri(access,"token"),
-	                        uri(access,"introspect"),
-	                        uri(access,"cm"),
-	                        uri(access,"gui"),
-	                        uri(access,"fs"),
-	                        uri(access,"hello")
+	                        aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL),
+	                        aaf_urls.get(Config.AAF_OAUTH2_INTROSPECT_URL),
+	                        aaf_urls.get(Config.AAF_URL_CM),
+	                        aaf_urls.get(Config.AAF_URL_GUI),
+	                        aaf_urls.get(Config.AAF_URL_FS),
+	                        aaf_urls.get(Config.AAF_URL_HELLO)
 	                }) {
+	                	URI uri = new URI(url);
 	                    Locator<URI> locator = new AAFLocator(si, uri);
 	                    try {
 	                        connectTest(locator, uri);
@@ -114,7 +109,7 @@ public class TestConnectivity {
 
 	                /////////
 	                print(true,"Test Service for Perms driven by AAFLocator");
-	                Locator<URI> locator = new AAFLocator(si,serviceURI);
+	                Locator<URI> locator = new AAFLocator(si,new URI(serviceURI));
 	                for (SecuritySetter<HttpURLConnection> ss : lss) {
 	                    permTest(locator,ss);
 	                }
@@ -125,7 +120,7 @@ public class TestConnectivity {
 	                for (SecuritySetter<HttpURLConnection> ss : lss) {
 	                    if (ss instanceof HBasicAuthSS) {
 	                    	hasBath=true;
-	                        basicAuthTest(new AAFLocator(si, serviceURI),ss);
+	                        basicAuthTest(new AAFLocator(si, new URI(serviceURI)),ss);
 	                    }
 	                }
 	                if(!hasBath) {
@@ -141,25 +136,6 @@ public class TestConnectivity {
         }
     }
     
-    private static URI uri(PropAccess access, String ms) throws URISyntaxException {
-		String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF);
-		String aaf_api_version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
-		String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL,Defaults.AAF_LOCATE_CONST);
-		String aaf_container = access.getProperty(Config.AAF_LOCATOR_CONTAINER,null);
-		if(aaf_container!=null) {
-			String ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS+'.'+aaf_container,null);
-			if(ns==null) {
-				ns = access.getProperty(Config.AAF_LOCATOR_CONTAINER_NS,null);
-			}
-			if(ns!=null) {
-				aaf_root_ns=ns + '.' + aaf_root_ns;
-			}
-		}
-		if("cm".equals(ms) && "2.0".equals(aaf_api_version)) {
-			ms = "certman";
-		}
-		return new URI(aaf_locate_url + "/locate/" + aaf_root_ns + '.' + ms + ':' + aaf_api_version);
-	}
 
 	private static List<SecuritySetter<HttpURLConnection>> loadSetters(PropAccess access, SecurityInfoC<HttpURLConnection> si)  {
         print(true,"Load Security Setters from Configuration Information");
@@ -192,12 +168,7 @@ public class TestConnectivity {
             access.log(Level.INFO, "X509 (Client certificate) Security Setter constructor threw exception: \"",e.getMessage(),"\". X509 tests will not be performed");
         }
 
-        String tokenURL = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL);
-        String locateURL=access.getProperty(Config.AAF_LOCATE_URL);
-        if (tokenURL==null || (tokenURL.contains("/locate/") && locateURL!=null)) {
-            tokenURL=Config.OAUTH2_TOKEN_URL_DEF;
-        }
-        
+        String tokenURL = aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL);
 
         try {
             HRenewingTokenSS hrtss = new HRenewingTokenSS(access, tokenURL);
@@ -256,6 +227,7 @@ public class TestConnectivity {
             if ((uri = dl.get(li)) == null) {
                 System.out.println("Locator Item empty");
             } else {
+            	System.out.printf("Located %s using %s\n",uri.toString(), locatorURI.toString());
                 socket = new Socket();
                 try {
                 	FixURIinfo fui = new FixURIinfo(uri);

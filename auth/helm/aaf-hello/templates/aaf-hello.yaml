@@ -63,38 +63,37 @@ spec:
               name: aaf-hello-vol
           command: ["bash","-c","cd /opt/app/osaaf/local && /opt/app/aaf_config/bin/agent.sh place aaf@aaf.osaaf.org aaf-hello "]
           env:
-            - name: "AAF_ENV"
+            - name: aaf_env
               value: "{{ .Values.cadi.aaf_env }}"
-            - name: "AAF_FQDN"
-              value: "aaf-locate.{{ .Release.Namespace }}"
+            - name: cadi_latitude
+              value: "{{ .Values.cadi.cadi_latitude }}"
+            - name: cadi_longitude
+              value: "{{ .Values.cadi.cadi_longitude }}"
+            - name: aaf_locator_container
+              value: "helm"
+            - name: aaf_locator_container_ns
+              value: "{{ .Release.Namespace }}"
+            - name: aaf_locate_url
+              value: "https://aaf-locate.{{ .Release.Namespace }}:8095"
+            - name: aaf_locator_app_ns
+              value: "org.osaaf.aaf"
             - name: "APP_FQDN"
               value: "{{ .Values.cadi.fqdn }}"
             - name: "APP_FQI"
               value: "{{ .Values.cadi.fqi }}"
-            - name: "LATITUDE"
-              value: "{{ .Values.cadi.cadi_latitude }}"
-            - name: "LONGITUDE"
-              value: "{{ .Values.cadi.cadi_longitude }}"
             - name: "DEPLOY_FQI"
               value: "deployer@people.osaaf.org"
             - name: "DEPLOY_PASSWORD"
               value: "demo123456!"
-            - name: "aaf_locator_container"
-              value: "helm"
-            - name: "aaf_locator_port"
-              value: "{{ .Values.cadi.port }}"
-            - name: "aaf_locator_fqdn.helm"
-              value: "{{ .Values.cadi.fqdn }}.{{.Release.Namespace}}"
-            - name: "aaf_locator_public_hostname"
-              value: "{{ .Values.cadi.public_fqdn }}"
-            - name: "aaf_locator_public_port"
-              value: "{{ .Values.cadi.public_port }}"
-            - name: "aaf_locator_container_ns"
-              value: "{{ .Release.Namespace }}"
-            - name: "aaf_locator_name"
-              value: "{{.Values.cadi.app_ns}}.hello"
-            - name: "aaf_locator_name.helm"
-              value: "{{ .Release.Namespace}}.{{.Values.cadi.app_ns}}.hello"
+# Hello specific.  Clients don't necessarily need this
+            - name: aaf_locator_public_fqdn
+              value: "{{.Values.cadi.public_fqdn}}"
+            - name: aaf_locator_name
+              value: "{{.Values.cadi.aaf_locator_name}}"
+            - name: aaf_locator_name_helm
+              value: "{{.Values.cadi.aaf_locator_name_helm}}"
+            - name: aaf_locator_fqdn_helm
+              value: "%N.%CNS"
 
 ###
 ### AAF-HELLO

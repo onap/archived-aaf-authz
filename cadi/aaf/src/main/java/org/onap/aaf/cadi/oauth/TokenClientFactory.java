@@ -38,11 +38,11 @@ import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.aaf.v2_0.AAFLocator;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
+import org.onap.aaf.cadi.configure.Agent;
 import org.onap.aaf.cadi.locator.PropertyLocator;
 import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.oauth.TokenClient.AUTHN_METHOD;
@@ -62,12 +62,12 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 
     private TokenClientFactory(Access pa) throws APIException, GeneralSecurityException, IOException, CadiException {
         super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
-        
+        Map<String, String> aaf_urls = Agent.loadURLs(pa);
         if (access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
-            access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, Config.OAUTH2_TOKEN_URL_DEF); // Default to AAF
+            access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL)); // Default to AAF
         }
         if (access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
-            access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, Config.OAUTH2_INTROSPECT_URL_DEF); // Default to AAF);
+            access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, aaf_urls.get(Config.AAF_OAUTH2_INTROSPECT_URL)); // Default to AAF);
         }
 
         symm = Symm.encrypt.obtain();

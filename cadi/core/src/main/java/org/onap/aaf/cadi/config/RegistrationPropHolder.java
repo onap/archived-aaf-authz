@@ -24,8 +24,8 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.util.Split;
 
 public class RegistrationPropHolder {
@@ -89,8 +89,17 @@ public class RegistrationPropHolder {
 		if(firstlog) {
 			access.printf(Level.INIT, REGI,"public_fqdn",public_fqdn);
 		}
-				
-		default_name = access.getProperty(Config.AAF_LOCATOR_NAME, PUBLIC_NAME);
+
+		// Allow Container to reset the standard name for public
+		String container_public_name = access.getProperty(Config.AAF_LOCATOR_PUBLIC_NAME+'.'+default_container, null);
+		if(container_public_name==null) {
+			container_public_name = access.getProperty(Config.AAF_LOCATOR_PUBLIC_NAME, null);
+			if(container_public_name==null) {
+				container_public_name = access.getProperty(Config.AAF_LOCATOR_NAME, PUBLIC_NAME);
+			}
+		}
+		default_name = container_public_name;
+		
 		if(firstlog) {
 			access.printf(Level.INIT, REGI,"default_name",default_name);
 		}
@@ -171,12 +180,23 @@ public class RegistrationPropHolder {
 		return replacements("RegistrationPropHolder.getEntryName",str,entry,dot_le);
 	}
 	
+	public String getPublicEntryName(final String entry, final String dot_le) {
+		String str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_NAME+dot_le, null);
+		if(str==null) {
+			str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_NAME,null);
+		}
+		if(str==null) {
+			str = default_name;
+		}
+		return replacements("RegistrationPropHolder.getEntryName",str,entry,dot_le);
+	}
+	
 	
 	private String getNS(String dot_le) {
 		String ns;
 		ns = access.getProperty(Config.AAF_LOCATOR_APP_NS+dot_le,null);
 		if(ns==null) {
-			ns = access.getProperty(Config.AAF_LOCATOR_APP_NS, "");
+			ns = access.getProperty(Config.AAF_LOCATOR_APP_NS, "AAF_NS");
 		}
 		return ns;
 	}
@@ -214,7 +234,12 @@ public class RegistrationPropHolder {
 					if(!str.endsWith("/locate/")) {
 						str+="locate/";
 					}
-					value = value.replace("https://AAF_LOCATE_URL/", str);
+					if(value.startsWith("http:")) {
+						value = value.replace("http://AAF_LOCATE_URL/", str);
+					} else {
+						value = value.replace("https://AAF_LOCATE_URL/", str);
+						
+					}
 				}
 			}
         }

@@ -130,4 +130,5 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
         return new HClient(ss, uri, connectTimeout);
     }
+    
 }

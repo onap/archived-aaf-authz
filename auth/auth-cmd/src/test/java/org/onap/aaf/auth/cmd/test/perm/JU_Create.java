@@ -25,10 +25,6 @@ package org.onap.aaf.auth.cmd.test.perm;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-
-import org.onap.aaf.auth.cmd.test.HMangrStub;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -36,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -44,6 +41,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.ns.Create;
 import org.onap.aaf.auth.cmd.ns.NS;
+import org.onap.aaf.auth.cmd.test.HMangrStub;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
