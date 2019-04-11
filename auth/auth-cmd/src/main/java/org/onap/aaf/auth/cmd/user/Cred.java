@@ -38,7 +38,6 @@ public class Cred extends Cmd {
     public static final String ATTEMPT_FAILED_SPECIFICS_WITHELD = "Attempt Failed.  Specifics witheld.";
     private static final String CRED_PATH = "/authn/cred";
     private static final String[] options = {"add","del","reset","extend"/*,"clean"*/};
-//        private Clean clean;
     public Cred(User parent) {
         super(parent,"cred",
                 new Param(optionsToString(options),true),
@@ -46,7 +45,6 @@ public class Cred extends Cmd {
                 new Param("password (! D|E)",false),
                 new Param("entry# (if multi)",false)
         );
-//            clean = new Clean(this);
     }
 
     @Override
@@ -62,11 +60,10 @@ public class Cred extends Cmd {
             cr.setPassword(args[idx++]);
         }
         if (args.length>idx)
-            cr.setEntry(args[idx++]);
+            cr.setEntry(args[idx]);
         
         // Set Start/End commands
         setStartEnd(cr);
-//            final int cleanIDX = _idx+1;
         Integer ret = same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
@@ -82,7 +79,6 @@ public class Cred extends Cmd {
                         verb = "Added Credential [";
                         break;
                     case 1:
-//                            if (aafcli.addForce())cr.setForce("TRUE");
                         setQueryParamsOn(client);
                         fp = client.delete(CRED_PATH,
                             getDF(CredRequest.class),
@@ -106,8 +102,8 @@ public class Cred extends Cmd {
                             );
                         verb = "Extended Credential [";
                         break;
-//                        case 4:
-//                            return clean.exec(cleanIDX, args);
+                    default:
+                        break;
                 }
                 if (fp==null) {
                     return null; // get by Sonar check.
