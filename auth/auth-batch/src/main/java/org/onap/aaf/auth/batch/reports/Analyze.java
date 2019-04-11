@@ -240,70 +240,68 @@ public class Analyze extends Batch {
 				for(Ticket ticket : goodTickets.values()) {
 					try {
 						pendingTemp.clear();
-						switch(ticket.f.target()) {
-							case "user_role":
-								int state[][] = new int[3][3];
-								int type;
-										
-								for(Approval appr : ticket.approvals) {
-									switch(appr.getType()) {
-										case "owner":
-											type=owner;
-											break;
-										case "supervisor":
-											type=supervisor;
-											break;
-										default:
-											type=0;
-									}
-									++state[type][total]; // count per type
-									switch(appr.getStatus()) {
-										case "pending":
-											++state[type][pending];
-											approver = appr.getApprover();
-											Pending n = pendingTemp.get(approver);
-											if(n==null) {
-												Date lastNotified = ln.lastNotified(approver,"ur",ticket.f.fdd.target_key);
-												pendingTemp.put(approver,new Pending(lastNotified));
-											} else {
-												n.inc();
-											}
-											break;
-										case "approved":
-											++state[type][approved];
-											break;
-										default:
-											++state[type][unknown];
-									}
+						if ("user_role".equals(ticket.f.target())) {
+							int[][] state = new int[3][3];
+							int type;
+
+							for (Approval appr : ticket.approvals) {
+								switch (appr.getType()) {
+									case "owner":
+										type = owner;
+										break;
+									case "supervisor":
+										type = supervisor;
+										break;
+									default:
+										type = 0;
 								}
-								
-								// To Approve:
-								// Always must have at least 1 owner
-								if((state[owner][total]>0 && state[owner][approved]>0) &&
-									// If there are no Supervisors, that's ok
-								    (state[supervisor][total]==0 || 
-								    // But if there is a Supervisor, they must have approved 
-								    (state[supervisor][approved]>0))) {
-										UserRoleDAO.Data urdd = new UserRoleDAO.Data();
-										try {
-											urdd.reconstitute(ticket.f.fdd.construct);
-											if(urdd.expires.before(ticket.f.expires())) {
-												extendCW.row("extend_ur",urdd.user,urdd.role,ticket.f.expires());
-											}
-										} catch (IOException e) {
-											trans.error().log("Could not reconstitute UserRole");
-										}
-								} else { // Load all the Pending.
-									for(Entry<String, Pending> es : pendingTemp.entrySet()) {
-										Pending p = pendingApprs.get(es.getKey());
-										if(p==null) {
-											pendingApprs.put(es.getKey(), es.getValue());
+								++state[type][total]; // count per type
+								switch (appr.getStatus()) {
+									case "pending":
+										++state[type][pending];
+										approver = appr.getApprover();
+										Pending n = pendingTemp.get(approver);
+										if (n == null) {
+											Date lastNotified = ln.lastNotified(approver, "ur", ticket.f.fdd.target_key);
+											pendingTemp.put(approver, new Pending(lastNotified));
 										} else {
-											p.inc(es.getValue());
+											n.inc();
 										}
+										break;
+									case "approved":
+										++state[type][approved];
+										break;
+									default:
+										++state[type][unknown];
+								}
+							}
+
+							// To Approve:
+							// Always must have at least 1 owner
+							if ((state[owner][total] > 0 && state[owner][approved] > 0) &&
+									// If there are no Supervisors, that's ok
+									(state[supervisor][total] == 0 ||
+											// But if there is a Supervisor, they must have approved
+											(state[supervisor][approved] > 0))) {
+								UserRoleDAO.Data urdd = new UserRoleDAO.Data();
+								try {
+									urdd.reconstitute(ticket.f.fdd.construct);
+									if (urdd.expires.before(ticket.f.expires())) {
+										extendCW.row("extend_ur", urdd.user, urdd.role, ticket.f.expires());
+									}
+								} catch (IOException e) {
+									trans.error().log("Could not reconstitute UserRole");
+								}
+							} else { // Load all the Pending.
+								for (Entry<String, Pending> es : pendingTemp.entrySet()) {
+									Pending p = pendingApprs.get(es.getKey());
+									if (p == null) {
+										pendingApprs.put(es.getKey(), es.getValue());
+									} else {
+										p.inc(es.getValue());
 									}
 								}
-								break;
+							}
 						}
 					} finally {
 						if("user_role".equals(ticket.f.fdd.target)) {
@@ -392,23 +390,21 @@ public class Analyze extends Batch {
 								return;
 							}
 							// Just let expired UserRoles sit until deleted
-							if(futureRange.inRange(ur.expires())) {
-								if(!mur.containsKey(ur.user() + '|' + ur.role())) {
-									// Cannot just delete owners, unless there is at least one left. Process later
-									if ("owner".equals(ur.rname())) {
-										Set<UserRole> urs = owners.get(ur.role());
-										if (urs == null) {
-											urs = new HashSet<UserRole>();
-											owners.put(ur.role(), urs);
-										}
-										urs.add(ur);
-									} else {
-										Range r = writeAnalysis(noAvg,ur);
-										if(r!=null) {
-											Approval existing = findApproval(ur);
-											if(existing==null) {
-												ur.row(needApproveCW,UserRole.APPROVE_UR);
-											}
+							if (futureRange.inRange(ur.expires()) && !mur.containsKey(ur.user() + '|' + ur.role())) {
+								// Cannot just delete owners, unless there is at least one left. Process later
+								if ("owner".equals(ur.rname())) {
+									Set<UserRole> urs = owners.get(ur.role());
+									if (urs == null) {
+										urs = new HashSet<>();
+										owners.put(ur.role(), urs);
+									}
+									urs.add(ur);
+								} else {
+									Range r = writeAnalysis(noAvg, ur);
+									if (r != null) {
+										Approval existing = findApproval(ur);
+										if (existing == null) {
+											ur.row(needApproveCW, UserRole.APPROVE_UR);
 										}
 									}
 								}
@@ -495,11 +491,9 @@ public class Analyze extends Batch {
 					    		if(deleteDate!=null && inst.expires.before(deleteDate)) {
 					        		writeAnalysis(noAvg, cred, inst); // will go to Delete
 					        	// Basic Auth has Pre-EOL notifications IF there is no Newer Credential
-					    		} else if (inst.type == CredDAO.BASIC_AUTH || inst.type == CredDAO.BASIC_AUTH_SHA256) {
-						    		if(lastBath==null || lastBath.expires.before(inst.expires)) {
-				    					lastBath = inst;
-				    				}
-				    			}
+					    		} else if ((inst.type == CredDAO.BASIC_AUTH || inst.type == CredDAO.BASIC_AUTH_SHA256) && (lastBath == null || lastBath.expires.before(inst.expires))) {
+									lastBath = inst;
+								}
 					    	}
 					    	if(lastBath!=null) {
 					    		writeAnalysis(noAvg, cred, lastBath);
