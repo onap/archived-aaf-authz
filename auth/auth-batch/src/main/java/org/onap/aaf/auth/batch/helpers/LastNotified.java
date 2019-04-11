@@ -4,7 +4,7 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
- * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,21 +84,16 @@ public class LastNotified {
 	 * 
 	 * @param user
 	 * @param target
-	 * @param target_key
+	 * @param targetkey
 	 * @return
 	 */
-	public Date lastNotified(String user, String target, String target_key) {
-		String key = user + '|' + target + '|' + target_key;
+	public Date lastNotified(String user, String target, String targetkey) {
+		String key = user + '|' + target + '|' + targetkey;
 		return lastNotified(key);
 	}
 	
 	public Date lastNotified(String key) {
-		Date rv = lastNotified.get(key);
-		if(rv==null) {
-			rv = never;
-			lastNotified.put(key, rv);
-		}
-		return rv;
+		return lastNotified.computeIfAbsent(key, k -> never);
 	}
 	
 	private Date add(ResultSet result, Map<String, Date> lastNotified, MarkDelete md) {
@@ -124,8 +119,8 @@ public class LastNotified {
 	}
 	
 	private interface MarkDelete {
-		public boolean process(String fullKey, Date last);
-	};
+		boolean process(String fullKey, Date last);
+	}
 
 	private void startQuery(StringBuilder query) {
 		query.append(SELECT + " WHERE user in (");
