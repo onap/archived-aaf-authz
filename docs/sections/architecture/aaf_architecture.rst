@@ -40,7 +40,7 @@ Thus, the key element is that the Organization itself, delegated by the ultimate
 Computer Identity
 -----------------
 
-Whether or not you follow Science Fiction stories about Robots, are facinated by Isaac Azimov's Three Laws of Robotics, or think those who do are hopelessly socially inept, you will need to wrestle a bit with how much in common a human created machine with a human being.  Without moral or religious implications, Identity can be discussed without stepping on the minefields that Science Fiction typically explores.
+Whether or not you follow Science Fiction stories about Robots, are fascinated by Isaac Azimov's Three Laws of Robotics, or think those who do are hopelessly socially inept, you will need to wrestle a bit with how much in common a human created machine has with a human being.  Without moral or religious implications, Identity can be discussed without stepping on the minefields that Science Fiction typically explores.
 
 An Application still must be named, and the name must be controlled within the Context of the Organization defining the name.  Where the Application can affect Organzation Resources (i.e. Data), it must have the Authorization to do what it is doing, the question of being sentiently driven need not come up.  (sorry sci-fi fans).
 
@@ -49,16 +49,15 @@ Therefore, from an Organization Context, the very same Authentication and Author
 Sum of Parts
 ------------
 
-For a human, it is pretty clear, of our purposes, that it is the mind that focuses into Identity.  Any given Employee might lose an arm or leg during the period of employment, and, as long as they can type or vocalize a voice-print, there is no discernable difference 
-n whether the person is still the person.
+For a human, it is pretty clear, of our purposes, that it is the mind that focuses into Identity.  Any given Employee might lose an arm or leg during the period of employment, and, as long as they can type or vocalize a voice-print, there is usually no doubt that the person is still the person.
 
-Computer Applications may be different.  Typically, an Application is built of separate parts, and with the advent of MicroServices as a goal, the question whether each part needs a separate identity or not is actually a valid question.  When a Programmer is writing his App, and making the parts, do they need to stand on their own as an Identity or not.
+Computer Applications may be different.  Typically, an Application is built of separate parts, and with the advent of MicroServices as a goal, the question whether each part needs a separate identity or not is actually a valid question.  When a Programmer is writing his App, and making the parts, he/she must decide if these parts need to stand on their own as an Identity or not.
 
 The trick is, as an Architect, is to determine whether these individual components really are separate, or can be considered as a part of the whole.
 
-As a rule of thumb, look at you App.  If you follow a Model-View-Controller method, it is hard to argue for a need to separate identities... They are clearly three parts to the whole. On the other hand, if you want to consider each Component as a separate Robot, where one may NOT do just anything that the others do, then you should create separate Identities for each.  
+As a rule of thumb, look at your App.  If you follow a Model-View-Controller method, it is hard to argue for a need to separate identities... They are clearly three parts to the whole. On the other hand, if you want to consider each Component as a separate Robot, where one may NOT do just anything that the others do, then you should create separate Identities for each.  
 
-A clue to this kind of model is if you consider having different groups creating an managing the apps, with a view towards more separateness.   If you believe your components are more separate, and the grouping is more by topic (i.e. a group of robots tasked with collectively doing something), the separate Identities may be more appropriate.
+A clue to this kind of model is if you consider having different groups creating an managing the apps, with a view towards more separateness. If you believe your components are more separate, and the grouping is more by topic (i.e. a group of robots tasked with collectively doing something), the separate Identities may be more appropriate.
 
 Enjoy stretching your mind
 --------------------------
@@ -74,7 +73,7 @@ Every secure transaction requires 1) Encryption 2) Authentication 3) Authorizati
 
  - HTTP/S provides the core Encryption whenever used, so all of AAF Components require HTTP/S to the current protocol standards (current is TLS 1.1+ as of Nov 2016)
  - HTTP/S requires X.509 certificates at least on the Server at minimum. (in this mode, 1 way, a client Certificate is generated)
- - Certificate Manager can generate certificates signed by the AT&T Internal Certificate Authority, which is secure and cost effective if external access are not needed
+ - Certificate Manager can generate certificates signed by the AT&T Internal Certificate Authority, which is secure and cost effective if external access is not needed
  - These same certificates can be used for identifying the Application during the HTTP/S transaction, making a separate UserID/Password unnecessary for Authentication.
  - Authentication - In order to tie generated certificates to a specific Application Identity, AAF Certificate Manager embeds a ILM AppID in the Subject.  These are created by AT&T specific Internal Certificate Authority, which only generates certificates for AAF Certman.  Since AAF Certman validates the Sponsorship of the AppID with requests (automatically), the end user can depend on the AppID embedded in the Subject to be valid without resorting to external calls or passwords.
 
