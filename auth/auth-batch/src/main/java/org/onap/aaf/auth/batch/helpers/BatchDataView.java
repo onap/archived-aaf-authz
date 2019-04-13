@@ -113,7 +113,6 @@ public class BatchDataView implements DataView {
 
 	@Override
 	public Result<FutureDAO.Data> delete(AuthzTrans trans, FutureDAO.Data fdd) {
-		cqlBatch.preLoop();
 		StringBuilder sb = cqlBatch.inc();
 		sb.append("DELETE from authz.future WHERE id = ");
 		sb.append(fdd.id.toString());
@@ -122,7 +121,6 @@ public class BatchDataView implements DataView {
 	
 	@Override
 	public Result<ApprovalDAO.Data> delete(AuthzTrans trans, ApprovalDAO.Data add) {
-		cqlBatch.preLoop();
 		StringBuilder sb = cqlBatch.inc();
 		sb.append("DELETE from authz.approval WHERE id = ");
 		sb.append(add.id.toString());
@@ -132,7 +130,6 @@ public class BatchDataView implements DataView {
 
 	@Override
 	public Result<ApprovalDAO.Data> insert(AuthzTrans trans, ApprovalDAO.Data add) {
-		cqlBatch.preLoop();
 		StringBuilder sb = cqlBatch.inc();
 		sb.append("INSERT INTO authz.approval (id,approver,memo,operation,status,ticket,type,user) VALUES ("); 
 		sb.append(add.id.toString());
@@ -158,7 +155,6 @@ public class BatchDataView implements DataView {
 
 	@Override
 	public Result<FutureDAO.Data> insert(AuthzTrans trans, FutureDAO.Data fdd) {
-		cqlBatch.preLoop();
 		StringBuilder sb = cqlBatch.inc();
 		sb.append("INSERT INTO authz.future (id,construct,expires,memo,start,target,target_key,target_date) VALUES ("); 
 		sb.append(fdd.id.toString());

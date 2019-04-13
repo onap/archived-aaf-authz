@@ -122,6 +122,14 @@ public class CSV {
 									escape = true;
 								}
 								break;
+							case 'n':
+								if(escape) {
+									sb.append("\\n");
+									escape=false;
+								} else {
+									sb.append(c);
+								}
+								break;
 							default:
 								if(delimiter==c) {
 									if(quotes) {

@@ -263,7 +263,7 @@ public class Analyze extends Batch {
 											approver = appr.getApprover();
 											Pending n = pendingTemp.get(approver);
 											if(n==null) {
-												Date lastNotified = ln.lastNotified(approver,"ur",ticket.f.fdd.target_key);
+												Date lastNotified = ln.lastNotified(approver,"pending",null);
 												pendingTemp.put(approver,new Pending(lastNotified));
 											} else {
 												n.inc();
@@ -332,7 +332,7 @@ public class Analyze extends Batch {
 				for(Entry<String, Pending> es : pendingApprs.entrySet()) {
 					Pending p = es.getValue();
 					if(p.newApprovals() 
-							|| p.earliest() == null 
+							|| p.earliest() == LastNotified.NEVER // yes, equals. 
 							|| p.earliest().after(remind)) {
 						p.row(needApproveCW,es.getKey());
 					}
