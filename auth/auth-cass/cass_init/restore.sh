@@ -35,7 +35,7 @@ for T in $DATA; do
     echo $T
     case "$T" in
       # 2.1.14 still has NULL problems for COPY.  Fixed in 2.1.15+
-      "approval"|"artifact"|"cred"|"ns"|"x509"|"role")
+      "approval"|"artifact"|"cred"|"ns"|"x509"|"role"|"notified")
         $CQLSH -e  "truncate $T"
         UPLOAD="$UPLOAD "$T
         ;;

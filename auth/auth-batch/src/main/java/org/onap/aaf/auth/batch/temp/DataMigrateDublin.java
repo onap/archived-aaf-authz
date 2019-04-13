@@ -110,7 +110,6 @@ public class DataMigrateDublin extends Batch {
             			}
             			
             			if(!btag.equals(tag)) {
-	            			cbl.preLoop();
 	            			update(cbl,row,btag);
             			}
     					break;
@@ -150,7 +149,6 @@ public class DataMigrateDublin extends Batch {
 		        			X509Certificate xc = (X509Certificate)c;
 		        			for(CredInfo ci : list) {
 			        			if(xc.getNotAfter().equals(ci.expires)) {
-			        				cbl.preLoop();
 			        				ci.update(cbl, ca + '|' + xc.getSerialNumber());
 			        				break;
 			        			}

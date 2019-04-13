@@ -124,7 +124,6 @@ public class Remove extends Batch {
 					CSV removeCSV = new CSV(env.access(),f);
 					try {
 						removeCSV.visit( row -> {
-							cbl.preLoop();
 							switch(row.get(0)) {
 								case "info":
 									switch(row.get(1)) {

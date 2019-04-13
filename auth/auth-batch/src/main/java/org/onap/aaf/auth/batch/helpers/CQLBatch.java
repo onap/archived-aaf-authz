@@ -73,6 +73,14 @@ public class CQLBatch {
 		return rv;
 	}
 	
+	public ResultSet singleExec(StringBuilder query, boolean dryRun) {
+		if(dryRun) {
+			return null;
+		} else {
+			return session.execute(query.toString());
+		}
+	}
+	
 	public void touch(String table, int begin, int end, boolean dryRun) {
 		StringBuilder sb = begin();
 		for(int i=begin;i<end;++i) {
