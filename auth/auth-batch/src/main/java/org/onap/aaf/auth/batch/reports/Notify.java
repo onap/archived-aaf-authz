@@ -310,7 +310,6 @@ import org.onap.aaf.misc.env.util.Chrono;
         				npab.store(rs.asList());
         				if(notify(noAvg, npab)>0) {
         					// Update
-        					cbl.preLoop();
 //        					lastN.update(cbl.inc(),key,"pending","");
     						npab.record(trans,cbl.inc(), id, idList, lastN);
         					npab.inc();
@@ -370,7 +369,6 @@ import org.onap.aaf.misc.env.util.Chrono;
 					 content.append(footer);
 
 					 if(mailer.sendEmail(trans, test, toList, ccList, nb.subject(),content.toString(), urgent)) {
-						cbl.preLoop();
 						nb.record(trans,cbl.inc(), id, idList, lastN);
 						nb.inc();
 					 } else {

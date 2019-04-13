@@ -47,7 +47,7 @@ import com.datastax.driver.core.Statement;
 public class LastNotified {
 	private Map<String,Date> lastNotified = new TreeMap<>();
 	private Session session;
-	private static final Date never = new Date(0);
+	public static final Date NEVER = new Date(0);
 	private static final String SELECT = "SELECT user,target,key,last FROM authz.notified";
 	
 	public LastNotified(Session session) {
@@ -93,7 +93,8 @@ public class LastNotified {
 	}
 	
 	public Date lastNotified(String key) {
-		return lastNotified.computeIfAbsent(key, k -> never);
+		Date d = lastNotified.get(key);
+		return d==null?NEVER:d;
 	}
 	
 	private Date add(ResultSet result, Map<String, Date> lastNotified, MarkDelete md) {

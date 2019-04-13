@@ -27,7 +27,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -89,7 +88,7 @@ import com.datastax.driver.core.Cluster;
 public class Question {
 
     // DON'T CHANGE FROM lower Case!!!
-    public static enum Type {
+    public enum Type {
         ns, role, perm, cred
     };
 
@@ -101,7 +100,7 @@ public class Question {
 
     static final String ASTERIX = "*";
 
-    public static enum Access {
+    public enum Access {
         read, write, create
     };
 
@@ -755,7 +754,7 @@ public class Question {
                     trans.audit().log("Special DEBUG:", user, " does not exist in DB");
                 }
             } else {
-                Date now = new Date();//long now = System.currentTimeMillis();
+                Date now = new Date();
                 // Bug noticed 6/22. Sorting on the result can cause Concurrency Issues.     
                 List<CredDAO.Data> cddl;
                 if (result.value.size() > 1) {
@@ -766,13 +765,7 @@ public class Question {
                         }
                     }
                     if (cddl.size()>1) {
-                        Collections.sort(cddl,new Comparator<CredDAO.Data>() {
-                            @Override
-                            public int compare(org.onap.aaf.auth.dao.cass.CredDAO.Data a,
-                                               org.onap.aaf.auth.dao.cass.CredDAO.Data b) {
-                                return b.expires.compareTo(a.expires);
-                            }
-                        });
+                    	Collections.sort(cddl, (a, b) -> b.expires.compareTo(a.expires));
                     }
                 } else {
                     cddl = result.value;
@@ -949,32 +942,32 @@ public class Question {
         Result<Void> rv = null;
 
         if (all || NsDAO.TABLE.equals(cname)) {
-            int seg[] = series(NsDAO.CACHE_SEG);
+            int[] seg = series(NsDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, NsDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, NsDAO.TABLE, seg);
         }
         if (all || PermDAO.TABLE.equals(cname)) {
-            int seg[] = series(PermDAO.CACHE_SEG);
+            int[] seg = series(PermDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, PermDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, PermDAO.TABLE,seg);
         }
         if (all || RoleDAO.TABLE.equals(cname)) {
-            int seg[] = series(RoleDAO.CACHE_SEG);
+            int[] seg = series(RoleDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, RoleDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, RoleDAO.TABLE,seg);
         }
         if (all || UserRoleDAO.TABLE.equals(cname)) {
-            int seg[] = series(UserRoleDAO.CACHE_SEG);
+            int[] seg = series(UserRoleDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, UserRoleDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, UserRoleDAO.TABLE,seg);
         }
         if (all || CredDAO.TABLE.equals(cname)) {
-            int seg[] = series(CredDAO.CACHE_SEG);
+            int[] seg = series(CredDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, CredDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, CredDAO.TABLE,seg);
         }
         if (all || CertDAO.TABLE.equals(cname)) {
-            int seg[] = series(CertDAO.CACHE_SEG);
+            int[] seg = series(CertDAO.CACHE_SEG);
             for (int i: seg) {cacheClear(trans, CertDAO.TABLE,i);}
             rv = cacheInfoDAO.touch(trans, CertDAO.TABLE,seg);
         }
@@ -1101,11 +1094,13 @@ public class Question {
     public boolean isAdmin(AuthzTrans trans, String user, String ns) {
         Date now = new Date();
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_ADMIN);
-        if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
-            if (urdd.expires.after(now)) {
-                return true;
-            }
-        }};
+        if (rur.isOKhasData()) {
+        	for (UserRoleDAO.Data urdd : rur.value){
+	            if (urdd.expires.after(now)) {
+	                return true;
+	            }
+	        }
+        };
         return false;
     }
     

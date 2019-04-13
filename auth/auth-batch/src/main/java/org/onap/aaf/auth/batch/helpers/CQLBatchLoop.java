@@ -21,62 +21,95 @@
 package org.onap.aaf.auth.batch.helpers;
 
 public class CQLBatchLoop {
+	private static final int MAX_CHARS = (50 * 1024)/2;
 	
 	private final CQLBatch cqlBatch;
 	private final int maxBatch;
 	private final StringBuilder sb;
 	private final boolean dryRun;
 	private int i;
-	private int count;
+	private int total;
 	private int batches;
+	private final StringBuilder current;
+	private boolean showProgress;
 	
 	public CQLBatchLoop(CQLBatch cb, int max, boolean dryRun) {
 		cqlBatch = cb;
 		i=0;
-		count = 0;
+		total = 0;
 		maxBatch = max;
 		sb = cqlBatch.begin();
+		current = new StringBuilder();
 		this.dryRun = dryRun;
+		showProgress = false;
 	}
 
-	/**
-	 * Put at the first part of your Loop Logic... It checks if you have enough lines to
-	 * push a batch.
-	 */
-	public void preLoop() {
-		if(i<0) {
-			cqlBatch.begin();
-		} else if(i>=maxBatch || sb.length()>24000) {
-			cqlBatch.execute(dryRun);
-			cqlBatch.begin();
-			i=0;
-			++batches;
-		}
+	public CQLBatchLoop showProgress() {
+		showProgress = true;
+		return this;
 	}
-	
 	/**
 	 * Assume this is another line in the Batch
 	 * @return
 	 */
 	public StringBuilder inc() {
+		if(i>=maxBatch || current.length()+sb.length()>MAX_CHARS) {
+			if(i>0) {
+				cqlBatch.execute(dryRun);
+				i = -1;
+				incBatch();
+			}
+		}
+		if(i<0) {
+			cqlBatch.begin();
+			i=0;
+		}
+		if(current.length() > MAX_CHARS) {
+			cqlBatch.singleExec(current, dryRun);
+		} else {
+			sb.append(current);
+		}
+		current.setLength(0);
 		++i;
-		++count;
-		return sb;
+		++total;
+		return current;
 	}
 	
 	/**
 	 * Close up when done.  However, can go back to "preLoop" safely.
 	 */
 	public void flush() {
-		if(i>0) {
+		if(current.length()+sb.length()>MAX_CHARS) {
+			if(i>0) {
+				cqlBatch.execute(dryRun);
+				incBatch();
+			}
+			if(current.length()>0) {
+				cqlBatch.singleExec(current, dryRun);
+				current.setLength(0);
+				++batches;
+			}
+		} else {
+			sb.append(current);
+			current.setLength(0);
 			cqlBatch.execute(dryRun);
 			++batches;
 		}
 		i=-1;
 	}
 
+	private void incBatch() {
+		++batches;
+		if(showProgress) {
+			System.out.print('.');
+			if(batches%70==0) {
+				System.out.println();
+			} 
+		}
+	}
+
 	public int total() {
-		return count;
+		return total;
 	}
 	
 	public int batches() {
@@ -84,8 +117,12 @@ public class CQLBatchLoop {
 	}
 
 	public void reset() {
-		count = 0;
+		total = 0;
 		batches = 0;
 		i = -1;
+	}
+	
+	public String toString() {
+		return cqlBatch.toString();
 	}
 }
