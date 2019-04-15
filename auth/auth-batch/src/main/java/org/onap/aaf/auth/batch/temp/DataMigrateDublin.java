@@ -88,7 +88,7 @@ public class DataMigrateDublin extends Batch {
         	int count = 0;
         	byte[] babytes = new byte[6];
         	Map<String, List<CredInfo>> mlci = new TreeMap<>();
-        	Map<String, String> ba_tag = new TreeMap<>();
+        	Map<String, String> baTag = new TreeMap<>();
         	while(iter.hasNext()) {
         		++count;
         		row = iter.next();
@@ -98,7 +98,7 @@ public class DataMigrateDublin extends Batch {
     				case CredDAO.BASIC_AUTH:
     				case CredDAO.BASIC_AUTH_SHA256:
             			String key = row.getString(0) + '|' + type + '|' + Hash.toHex(row.getBytesUnsafe(3).array()); 
-            			String btag = ba_tag.get(key);
+            			String btag = baTag.get(key);
             			if(btag == null) {
             				if(tag==null || tag.isEmpty()) {
             					sr.nextBytes(babytes);
@@ -106,7 +106,7 @@ public class DataMigrateDublin extends Batch {
             				} else {
             					btag = tag;
             				}
-            				ba_tag.put(key, btag);
+            				baTag.put(key, btag);
             			}
             			
             			if(!btag.equals(tag)) {
@@ -125,7 +125,9 @@ public class DataMigrateDublin extends Batch {
 	   						ld.add(new CredInfo(id,row.getInt(1),row.getTimestamp(2)));
         				}
    					 	break;
-        		}
+					default:
+						break;
+				}
         	}
         	cbl.flush();
         	trans.info().printf("Processes %d cred records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
@@ -161,8 +163,7 @@ public class DataMigrateDublin extends Batch {
         	}
     		cbl.flush();
         	trans.info().printf("Processed %d x509 records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
-        	count = 0;
-        } catch (Exception e) {
+		} catch (Exception e) {
 			trans.error().log(e);
         }
 	}
