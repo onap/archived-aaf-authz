@@ -5,6 +5,7 @@
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  *
  * Modifications Copyright (C) 2019 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +175,7 @@ public class Analyze extends Batch {
 	    	tt = trans.start("Analyze Expired Futures",Trans.SUB);
 	    	try {
 				Future.load(noAvg, session, Future.withConstruct, fut -> {
-					List<Approval> appls = Approval.byTicket.get(fut.id());
+					List<Approval> appls = Approval.getByTicket().get(fut.id());
 					if(!futureRange.inRange(fut.expires())) {
 						deleteCW.comment("Future %s expired", fut.id());
 						Future.row(deleteCW,fut);
@@ -197,7 +198,7 @@ public class Analyze extends Batch {
 	    	Set<String> approvers = new TreeSet<>();
 	    	tt = trans.start("Connect Approvals with Futures",Trans.SUB);
 	    	try {
-				for(Approval appr : Approval.list) {
+				for(Approval appr : Approval.getList()) {
 					Ticket ticket=null;
 					UUID ticketID = appr.getTicket();
 					if(ticketID!=null) {
@@ -535,7 +536,7 @@ public class Analyze extends Batch {
  
 	private Approval findApproval(UserRole ur) {
 		Approval existing = null;
-		List<Approval> apprs = Approval.byUser.get(ur.user());
+		List<Approval> apprs = Approval.getByUser().get(ur.user());
 		if(apprs!=null) {
 			for(Approval appr : apprs) {
 				if(ur.role().equals(appr.getRole()) &&
