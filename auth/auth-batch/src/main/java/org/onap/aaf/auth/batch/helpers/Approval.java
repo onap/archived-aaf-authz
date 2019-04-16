@@ -50,10 +50,10 @@ public class Approval implements CacheChange.Data  {
     public static final String RE_VALIDATE_ADMIN = "Re-Validate as Administrator for AAF Namespace '";
     public static final String RE_VALIDATE_OWNER = "Re-Validate Ownership for AAF Namespace '";
 
-    protected static final TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
-    protected static final TreeMap<String,List<Approval>> byUser = new TreeMap<>();
-    protected static final TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
-    protected static final List<Approval> list = new LinkedList<>();
+    private static final TreeMap<String, List<Approval>> byApprover = new TreeMap<>();
+    private static final TreeMap<String, List<Approval>> byUser = new TreeMap<>();
+    private static final TreeMap<UUID, List<Approval>> byTicket = new TreeMap<>();
+    private static final List<Approval> list = new LinkedList<>();
     private static final CacheChange<Approval> cache = new CacheChange<>();
     
     public final ApprovalDAO.Data add;
@@ -129,7 +129,6 @@ public class Approval implements CacheChange.Data  {
 	public static void row(CSV.RowSetter crs, Approval app) {
 		crs.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
 	}
-
 
     public static void load(Trans trans, Session session, Creator<Approval> creator ) {
         trans.info().log( "query: " + creator.select() );
@@ -329,6 +328,18 @@ public class Approval implements CacheChange.Data  {
                 a.delayDelete(noAvg, apprDAO, dryRun,text);
             }
         }
+    }
+
+    public static TreeMap<String, List<Approval>> getByUser() {
+        return byUser;
+    }
+
+    public static TreeMap<UUID, List<Approval>> getByTicket() {
+        return byTicket;
+    }
+
+    public static List<Approval> getList() {
+        return list;
     }
 
     public static boolean pendingDelete(Approval a) {

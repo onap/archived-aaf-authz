@@ -76,8 +76,7 @@ public class Analyze extends Batch {
     private static final int pending=1;
     private static final int approved=2;
     
-    
-	public static final String NEED_APPROVALS = "NeedApprovals";
+    public static final String NEED_APPROVALS = "NeedApprovals";
 	private static final String EXTEND = "Extend";
 	private static final String EXPIRED_OWNERS = "ExpiredOwners";
 	private static final String CSV = ".csv";
@@ -105,7 +104,6 @@ public class Analyze extends Batch {
             } finally {
                 tt.done();
             }
-            
 
             minOwners=1;
 
@@ -174,7 +172,7 @@ public class Analyze extends Batch {
 	    	tt = trans.start("Analyze Expired Futures",Trans.SUB);
 	    	try {
 				Future.load(noAvg, session, Future.withConstruct, fut -> {
-					List<Approval> appls = Approval.byTicket.get(fut.id());
+					List<Approval> appls = Approval.getByTicket().get(fut.id());
 					if(!futureRange.inRange(fut.expires())) {
 						deleteCW.comment("Future %s expired", fut.id());
 						Future.row(deleteCW,fut);
@@ -197,7 +195,7 @@ public class Analyze extends Batch {
 	    	Set<String> approvers = new TreeSet<>();
 	    	tt = trans.start("Connect Approvals with Futures",Trans.SUB);
 	    	try {
-				for(Approval appr : Approval.list) {
+				for(Approval appr : Approval.getList()) {
 					Ticket ticket=null;
 					UUID ticketID = appr.getTicket();
 					if(ticketID!=null) {
@@ -535,7 +533,7 @@ public class Analyze extends Batch {
  
 	private Approval findApproval(UserRole ur) {
 		Approval existing = null;
-		List<Approval> apprs = Approval.byUser.get(ur.user());
+		List<Approval> apprs = Approval.getByUser().get(ur.user());
 		if(apprs!=null) {
 			for(Approval appr : apprs) {
 				if(ur.role().equals(appr.getRole()) &&
@@ -617,5 +615,4 @@ public class Analyze extends Batch {
     		cw.close();
     	}
     }
-
 }
