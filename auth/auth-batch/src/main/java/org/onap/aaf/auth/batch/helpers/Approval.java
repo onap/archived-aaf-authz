@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,11 +50,11 @@ public class Approval implements CacheChange.Data  {
     public static final String RE_VALIDATE_ADMIN = "Re-Validate as Administrator for AAF Namespace '";
     public static final String RE_VALIDATE_OWNER = "Re-Validate Ownership for AAF Namespace '";
 
-    public static TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
-    public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
-    public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
-    public static List<Approval> list = new LinkedList<>();
-    private final static CacheChange<Approval> cache = new CacheChange<>(); 
+    protected static final TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
+    protected static final TreeMap<String,List<Approval>> byUser = new TreeMap<>();
+    protected static final TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
+    protected static final List<Approval> list = new LinkedList<>();
+    private static final CacheChange<Approval> cache = new CacheChange<>();
     
     public final ApprovalDAO.Data add;
     private String role;
@@ -63,7 +65,6 @@ public class Approval implements CacheChange.Data  {
         add.id = id;
         add.ticket = ticket;
         add.approver = approver;
-//        add.last_notified = last_notified;
         add.user = user;
         add.memo = memo;
         add.operation = operation;
@@ -218,14 +219,6 @@ public class Approval implements CacheChange.Data  {
     	list.clear();
     	cache.resetLocalData();
     }
-//    public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
-//        if (dryRun) {
-//            trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-//        } else {
-//            trans.info().printf("Update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-//            apprDAO.update(trans, add);
-//        }
-//    }
 
     public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
         @Override
@@ -241,18 +234,6 @@ public class Approval implements CacheChange.Data  {
         }
     };
 
-//    /**
-//     * @return the lastNotified
-//     */
-//    public Date getLast_notified() {
-//        return add.last_notified;
-//    }
-//    /**
-//     * @param lastNotified the lastNotified to set
-//     */
-//    public void setLastNotified(Date last_notified) {
-//        add.last_notified = last_notified;
-//    }
     /**
      * @return the status
      */
@@ -333,7 +314,6 @@ public class Approval implements CacheChange.Data  {
             }
         }
     }
-    
 
     public static void resetLocalData() {
         cache.resetLocalData();
@@ -360,5 +340,4 @@ public class Approval implements CacheChange.Data  {
 		sb.append(id);
 		sb.append(";\n");
 	}
-
 }
