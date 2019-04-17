@@ -50,7 +50,6 @@ import org.onap.aaf.cadi.CmdLine;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.client.ErrMessage;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
@@ -808,7 +807,7 @@ public class Agent {
             
             cred.add(Config.CADI_KEYFILE, cred.getKeyPath());
             final String ssoAppID = propAccess.getProperty(Config.AAF_APPID);
-            if(fqi.equals(ssoAppID)) {
+            if(fqi!=null && fqi.equals(ssoAppID)) {
             	cred.addEnc(Config.AAF_APPPASS, propAccess, null);
             // only Ask for Password when starting scratch
             } else if(propAccess.getProperty(Config.CADI_PROP_FILES)==null) {
@@ -825,9 +824,14 @@ public class Agent {
             }
             
             app.add(Config.AAF_LOCATE_URL, propAccess, null);
+            app.add(Config.AAF_ENV,propAccess, "DEV");
+            String release = propAccess.getProperty(Config.AAF_RELEASE);
+            if(release!=null) {
+            	app.add(Config.AAF_RELEASE, release);
+            }
             for(Entry<Object, Object> aaf_loc_prop : propAccess.getProperties().entrySet()) {
             	String key = aaf_loc_prop.getKey().toString();
-            	if("aaf_env".equals(key) || key.startsWith("aaf_locator")) {
+            	if(key.startsWith("aaf_locator")) {
             		app.add(key, aaf_loc_prop.getValue().toString());
             	}
             }

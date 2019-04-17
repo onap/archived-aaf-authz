@@ -66,6 +66,8 @@ spec:
           volumeMounts:
             - mountPath: "/opt/app/osaaf"
               name: aaf-config-vol
+            - mountPath: "/opt/app/aaf/status"
+              name: aaf-status-vol
           env:
             - name: AAF_ENV
               value: "{{ .Values.services.aaf_env }}"
@@ -80,7 +82,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: aaf_locate_url
-              value: "https://{{.Values.services.locate.fqdn}}.{{.Values.services.ns}}:{{.Values.services.locate.internal_port}}"
+              value: "https://aaf-locate.{{.Release.Namespace }}:{{.Values.services.locate.internal_port}}"
             - name: aaf_locator_public_fqdn
               value: "{{.Values.services.public_fqdn}}"
             - name: aaf_locator_name
@@ -88,7 +90,7 @@ spec:
             - name: aaf_locator_name_helm
               value: "{{.Values.services.aaf_locator_name_helm}}"
             - name: CASSANDRA_CLUSTER
-              value: "{{.Values.services.cass.fqdn}}.{{.Values.services.ns}}"
+              value: "{{.Values.services.cass.fqdn}}.{{.Release.Namespace}}"
 #            - name: CASSANDRA_USER
 #              value: ""
 #            - name: CASSANDRA_PASSWORD
@@ -102,7 +104,7 @@ spec:
       - name: aaf-locate
         image: {{ .Values.image.repository }}onap/aaf/aaf_locate:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-locate aaf-service && exec bin/locate"]
+        command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-locate nc aaf-cass.{{ .Release.Namespace }} {{ .Values.services.cass.native_trans_port }} aaf-service && exec bin/locate"]
         volumeMounts:
         - mountPath: "/opt/app/osaaf"
           name: aaf-config-vol

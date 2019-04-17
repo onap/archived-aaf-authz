@@ -81,7 +81,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: aaf_locate_url
-              value: "https://{{.Values.services.locate.fqdn}}.{{.Values.services.ns}}:{{.Values.services.locate.internal_port}}"
+              value: "https://aaf-locate.{{.Release.Namespace }}:{{.Values.services.locate.internal_port}}"
             - name: aaf_locator_public_fqdn
               value: "{{.Values.services.public_fqdn}}"
             - name: aaf_locator_name

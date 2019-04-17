@@ -40,6 +40,10 @@ spec:
       protocol: TCP
       port: {{.Values.services.cass.native_trans_port}}
       containerPort: {{.Values.services.cass.native_trans_port}}
+    - name: rpc
+      protocol: TCP
+      port: {{.Values.services.cass.rpc_port}}
+      containerPort: {{.Values.services.cass.rpc_port}}
 ---
 apiVersion: apps/v1
 kind: Deployment

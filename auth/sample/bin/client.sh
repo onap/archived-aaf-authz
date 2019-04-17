@@ -174,7 +174,7 @@ if [ -z "$CMD" ]; then
     if [ -n "$INITIALIZED" ]; then
       echo "Initialization complete"
     else
-      $JAVA_AGENT
+        $JAVA_AGENT_SELF validate $FQI $FQDN
     fi
 else 
     shift
@@ -209,7 +209,7 @@ else
         ;;
     validate)
         echo "## validate requested"
-        $JAVA_AGENT_SELF validate 
+        $JAVA_AGENT_SELF validate $FQI $FQDN
         ;;
     renew)
         echo "## Renew Certificate"
