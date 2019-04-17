@@ -33,7 +33,8 @@ fi
 
 NAME=aaf.bootstrap
 HOSTNAME="${HOSTNAME:=$(hostname -)}"
-FQDN="${aaf_locator_fqdn:=$HOSTNAME}"
+PUBLIC_FQDN="${aaf_locator_public_fqdn:=$HOSTNAME}"
+FQDN="${aaf_locator_fqdn:=$PUBLIC_FQDN}"
 FQI=aaf@aaf.osaaf.org
 SUBJECT="/CN=$FQDN/OU=$FQI`cat subject.aaf`"
 SIGNER_P12=$1

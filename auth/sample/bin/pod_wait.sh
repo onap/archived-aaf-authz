@@ -24,8 +24,6 @@
 DIR="/opt/app/aaf/status"
 APP=$1
 shift
-OTHER=$1
-shift
 
 function status {
   if [ -d "$DIR" ]; then
@@ -62,6 +60,25 @@ function wait {
   done
 }
 
+function wait_nc {
+  n=0
+  while [ $n -lt 40  ]; do 
+     echo "Waiting for Network Access to $@"
+     status "Waiting for Network Access to $1 $2"
+     rv="$(nc -zvw 5 $1 $2 2>&1 | grep -e "[open|succeed]")"
+     echo $rv
+
+     if [[ "$rv" == *open* ]] || [[ "$rv" == *succeeded* ]]; then
+       status "Network Connectable to $1 $2"
+       n=10000
+     else
+       (( ++n )) 
+       echo "Sleep 10 (iteration $n)"
+       sleep 10
+     fi
+  done
+}
+
 function start {
   n=0
   while [ $n -lt 40  ]; do 
@@ -80,30 +97,47 @@ function start {
   done
 }
 
-case "$OTHER" in
-  sleep)
-    echo "Sleeping $1"
-    status "Sleeping $1"
-    sleep $1
-    shift
-    status "ready"
-    echo "Done"
+while [ ! -z "$1" ]; do
+  OTHER=$1
+  shift
+  case "$OTHER" in
+    nc) 
+      H=$1
+      shift
+      P=$1
+      shift
+      wait_nc "$H" "$P"
+      if [ -z "$@" ]; then
+        echo "ready"
+        status "ready"
+      fi
+      ;;
+    sleep)
+      echo "Sleeping $1"
+      status "Sleeping $1"
+      sleep $1
+      shift
+      if [ -z "$@" ]; then
+        echo "ready"
+        status "ready"
+      fi
+      echo "Done"
+      ;;
+    remove) 
+      echo "Removing $DIR/$APP-$HOSTNAME"
+      rm -f $DIR/$APP-$HOSTNAME
+      ;;
+    wait)
+      OTHER="$1"
+      shift    
+      wait
+      ;;
+    *)
+      echo "App $APP is waiting to start until $OTHER is ready"
+      status "waiting for $OTHER"
+    
+      start
+      break
     ;;
-  stop) 
-    echo "Removing $DIR/$APP-$HOSTNAME"
-    rm $DIR/$APP-$HOSTNAME
-    ;;
-  wait)
-    OTHER="$1"
-    shift    
-    wait
-    ;;
-  *)
-    echo "App $APP is waiting to start until $OTHER is ready"
-    status "waiting for $OTHER"
-  
-    start
-  ;;
-esac  
-
-eval "$@"
+  esac  
+done  

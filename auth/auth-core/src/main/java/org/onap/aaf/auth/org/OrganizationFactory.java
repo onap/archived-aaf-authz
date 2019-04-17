@@ -71,7 +71,7 @@ public class OrganizationFactory {
 				String realm = env.getProperty(Config.AAF_DEFAULT_REALM,"people.osaaf.org");
 				defaultOrg = cnst.newInstance(env,realm);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-	        	env.warn().log("Not Organization Moduled linked in",e);
+	        	env.warn().log("Default Organization Module not linked in",e);
 			}
         }
         if (defaultOrg == null) {

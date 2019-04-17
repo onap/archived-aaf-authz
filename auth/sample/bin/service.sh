@@ -21,6 +21,24 @@
 # This script is run when starting aaf_config Container.
 #  It needs to cover the cases where the initial data doesn't exist, and when it has already been configured (don't overwrite)
 #
+
+echo "# Properties passed in"
+    for P in `env`; do
+      if [[ "$P" == cadi* ]] || [[ "$P" == aaf* ]] || [[ "$P" == HOSTNAME* ]]; then
+        S="${P/_helm/.helm}"
+        S="${S/_oom/.oom}"
+	echo "$S" 
+      fi
+    done
+
+# Set from CAP Based PROPS, if necessary
+aaf_env=${aaf_env:-"${AAF_ENV}"}
+aaf_release=${aaf_release:-"${VERSION}"}
+cadi_latitude=${cadi_latitude:-"${LATITUDE}"}
+cadi_longitude=${cadi_longitude:-"${LONGITUDE}"}
+cadi_x509_issuers=${cadi_x509_issuers:-"${CADI_X509_ISSUERS}"}
+aaf_locate_url=${aaf_locate_url:-"https://${HOSTNAME}:8095"}
+
 JAVA=/usr/bin/java
 
 OSAAF=/opt/app/osaaf
@@ -126,15 +144,8 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     done
 
     TMP=$(mktemp)
-    echo aaf_env=${AAF_ENV} >> ${TMP}
-    echo aaf_release=${VERSION} >> ${TMP}
-    echo cadi_latitude=${LATITUDE} >> ${TMP}
-    echo cadi_longitude=${LONGITUDE} >> ${TMP}
-    echo cadi_x509_issuers=${CADI_X509_ISSUERS} >> ${TMP}
-    AAF_LOCATE_URL=${aaf_locate_url:="https://${HOSTNAME}:8095"}
-    echo aaf_locate_url=${AAF_LOCATE_URL} >> ${TMP}
     for P in `env`; do
-      if [[ "$P" == aaf_locator* ]]; then
+      if [[ "$P" == aaf_* ]] || [[ "$P" == cadi_* ]]; then
         S="${P/_helm/.helm}"
         S="${S/_oom/.oom}"
 	echo "$S" >> ${TMP}
@@ -154,7 +165,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     CASS_HOST=${CASS_HOST:="aaf-cass"}
     CASS_PASS=$($JAVA_CADI digest "${CASSANDRA_PASSWORD:-cassandra}" $LOCAL/org.osaaf.aaf.keyfile)
     CASS_NAME=${CASS_HOST/:*/}
-    sed -i.backup -e "s/\\(cassandra.clusters=\\).*/\\1${CASSANDRA_CLUSTERS:=$CASS_HOST}/" \
+    sed -i.backup -e "s/\\(cassandra.clusters=\\).*/\\1${CASSANDRA_CLUSTER:=$CASS_HOST}/" \
                   -e "s/\\(cassandra.clusters.user=\\).*/\\1${CASSANDRA_USER:=cassandra}/" \
                   -e "s/\\(cassandra.clusters.password=enc:\\).*/\\1$CASS_PASS/" \
                   -e "s/\\(cassandra.clusters.port=\\).*/\\1${CASSANDRA_PORT:=9042}/" \

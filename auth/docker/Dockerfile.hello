@@ -26,9 +26,10 @@ LABEL version=${AAF_VERSION}
  
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
 COPY etc /opt/app/osaaf/etc
-RUN mkdir -p /opt/app/aaf/status
-RUN if [ -n "${DUSER}" ]; then  chown ${DUSER}:${DUSER} /opt/app/aaf/status \
-    && chown ${DUSER}:${DUSER} /opt/app/osaaf \
-    && chown -R ${DUSER}:${DUSER} /opt/app/aaf; fi
+RUN mkdir -p /opt/app/aaf/status && chmod 755 /opt/app/aaf/bin/* &&\
+    if [ -n "${DUSER}" ]; then \
+       chown ${DUSER}:${DUSER} /opt/app/aaf/status &&\
+       chown ${DUSER}:${DUSER} /opt/app/osaaf &&\
+       chown -R ${DUSER}:${DUSER} /opt/app/aaf; fi
 
 CMD []

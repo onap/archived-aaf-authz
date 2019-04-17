@@ -80,7 +80,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: aaf_locate_url
-              value: "https://{{.Values.services.locate.fqdn}}.{{.Values.services.ns}}:{{.Values.services.locate.internal_port}}"
+              value: "https://aaf-locate.{{.Release.Namespace }}:{{.Values.services.locate.internal_port}}"
             - name: aaf_locator_public_fqdn
               value: "{{.Values.services.public_fqdn}}"
             - name: aaf_locator_name
@@ -102,7 +102,7 @@ spec:
       - name: aaf-oauth
         image: {{ .Values.image.repository }}onap/aaf/aaf_oauth:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-oauth aaf-service && exec bin/oauth"]
+        command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-oauth nc aaf-cass.{{ .Release.Namespace }} {{ .Values.services.cass.native_trans_port }} aaf-service && exec bin/oauth"]
         volumeMounts:
         - mountPath: "/opt/app/osaaf"
           name: aaf-config-vol
