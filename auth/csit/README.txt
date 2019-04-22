@@ -22,6 +22,7 @@ The CSIT functions are started by Jenkins, starting with the "setup.sh"
 in the csit/plans/aaf/aafapi directory (where 'csit' is an ONAP Project)
 
 You can emulate the JENKINS build locally
+PRELIMINARY) Make sure authz/auth/docker/d.props.csit is the right version
 
 1) Start in the directory you put your ONAP source in
   cd <root onap source dir>
