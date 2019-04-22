@@ -18,29 +18,36 @@
 #  ============LICENSE_END====================================================
 #
 # Variables for building Docker entities
+#
+# NOTE: THIS FILE SHOULD MATCH THE normal "d.props" file in "authz/auth/docker", but hold the 
+# CURRENT version needed for CSIT from Nexus Repos, which isn't necessarily the same during 
+# version deployments.
+#
+
 ORG=onap
 PROJECT=aaf
-# Note: Override can happen on dbuild.sh Commandline, -r <registry>
 DOCKER_PULL_REGISTRY=nexus3.onap.org:10001
 DOCKER_REPOSITORY=nexus3.onap.org:10003
-VERSION=2.1.11-SNAPSHOT
+VERSION=2.1.11
 CONF_ROOT_DIR=/opt/app/osaaf
 # For local builds, set PREFIX=   
 PREFIX="$DOCKER_REPOSITORY/"
 NAMESPACE=onap
 DUSER=aaf
 
-# HOSTNAME=aaf.osaaf.org
+HOSTNAME=aaf.osaaf.org
 
 # AAF Machine info
 AAF_ENV=DEV
-LATITUDE=
-LONGITUDE=
+LATITUDE=38
+LONGITUDE=-72
 
 # Initial AAF Certificate (not Generated)
 CADI_X509_ISSUERS="CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US"
 AAF_INITIAL_X509_P12=
 AAF_INITIAL_X509_PASSWORD=
+CADI_X509_ISSUERS=
+
 
 # CA info (leave blank unless functioning as CA)
 CM_CA_LOCAL=
