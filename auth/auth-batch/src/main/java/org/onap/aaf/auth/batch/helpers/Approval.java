@@ -23,9 +23,9 @@ package org.onap.aaf.auth.batch.helpers;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -33,7 +33,6 @@ import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.util.CSV;
-import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
@@ -44,9 +43,10 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Approval implements CacheChange.Data  {
-    public static final String RE_APPROVAL_IN_ROLE = "Re-Approval in Role '";
-    public static final String RE_VALIDATE_ADMIN = "Re-Validate as Administrator for AAF Namespace '";
-    public static final String RE_VALIDATE_OWNER = "Re-Validate Ownership for AAF Namespace '";
+	public static final String ADD_USER_TO_ROLE = "Add User [";
+    public static final String RE_APPROVAL_IN_ROLE = "Extend access of User [";
+    public static final String RE_VALIDATE_ADMIN = "Revalidate as Admin of AAF Namespace [";
+    public static final String RE_VALIDATE_OWNER = "Revalidate as Owner of AAF Namespace [";
 
     public static TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
     public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
@@ -77,117 +77,78 @@ public class Approval implements CacheChange.Data  {
         if (memo==null) {
             return null;
         }
-        int first = memo.indexOf('\'');
+        int first = memo.indexOf('[');
         if (first>=0) {
-            int second = memo.indexOf('\'', ++first);
+            int second = memo.indexOf(']', ++first);
             if (second>=0) {
                 String role = memo.substring(first, second);
                 if (memo.startsWith(RE_VALIDATE_ADMIN)) {
                     return role + ".admin";
                 } else if (memo.startsWith(RE_VALIDATE_OWNER)) {
                     return role + ".owner";
-                } else if (memo.startsWith(RE_APPROVAL_IN_ROLE)) {
-                    return role;
+                } else {
+                	first = memo.indexOf('[',second);
+                	if(first>=0) {
+                		second = memo.indexOf(']', ++first);
+                		if(second>=0) {
+                			if(memo.startsWith(RE_APPROVAL_IN_ROLE) ||
+                			   memo.startsWith(ADD_USER_TO_ROLE)) {
+                				return  memo.substring(first, second);
+                			}
+                		}
+                	}
                 }
             }
         }
         return null;
     }
 
-    public static void load(Trans trans, Session session, Creator<Approval> creator, Visitor<Approval> visitor) {
-        trans.info().log( "query: " + creator.select() );
-        TimeTaken tt = trans.start("Read Approval", Env.REMOTE);
-       
-        ResultSet results;
-        try {
-            Statement stmt = new SimpleStatement( creator.select() );
-            results = session.execute(stmt);
+    public static int load(Trans trans, Session session, Creator<Approval> creator, Visitor<Approval> visitor) {
+    	int count = 0;
+    	try {
+	    	count+=call(trans,session,creator.query(null), creator, visitor);
         } finally {
-            tt.done();
+            trans.info().log("Found",count,"Approval Records");
         }
-
-        int count = 0;
-        try {
-            Iterator<Row> iter = results.iterator();
-            Row row;
-            tt = trans.start("Load X509s", Env.SUB);
-            try {
-                while (iter.hasNext()) {
-                	++count;
-                    row = iter.next();
-                    visitor.visit(creator.create(row));
-                }
-            } finally {
-                tt.done();
-            }
-        } finally {
-            trans.info().log("Found",count,"X509 Certificates");
-        }
+    	return count;
     }
     
-	public static void row(CSV.RowSetter crs, Approval app) {
+	public static int load(Trans trans, Session session, Creator<Approval> creator ) {
+    	int count = 0;
+    	try {
+	    	count+=call(trans,session,creator.query(null), creator, FullLoad);
+        } finally {
+            trans.info().log("Found",count,"Approval Records");
+        }
+    	return count;
+    }
+    
+    public static int loadUsers(Trans trans, Session session, Set<String> users, Visitor<Approval> visitor) {
+		int total = 0;
+    	for(String user : users) {
+			total+=call(trans,session,String.format("%s WHERE user='%s';",v2_0_17.select(), user),v2_0_17,visitor);
+    	}
+    	return total;
+    }
+    
+    public static void row(CSV.RowSetter crs, Approval app) {
 		crs.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
 	}
 
-
-    public static void load(Trans trans, Session session, Creator<Approval> creator ) {
-        trans.info().log( "query: " + creator.select() );
-        TimeTaken tt = trans.start("Load Notify", Env.REMOTE);
-       
+	private static int call(Trans trans, Session session, String query, Creator<Approval> creator, Visitor<Approval> visitor) {
+    	TimeTaken tt = trans.start("DB Query", Trans.REMOTE);
         ResultSet results;
         try {
-            Statement stmt = new SimpleStatement(creator.select());
+            Statement stmt = new SimpleStatement( query );
             results = session.execute(stmt);
+            int count = 0;
+            for (Row row : results.all()) {
+            	++count;
+            	visitor.visit(creator.create(row));
+            }
+            return count;
         } finally {
             tt.done();
-        }
-        int count = 0;
-        tt = trans.start("Process Notify", Env.SUB);
-
-        try {
-                List<Approval> ln;
-                for (Row row : results.all()) {
-                    ++count;
-                    try {
-                            Approval app = creator.create(row);
-                            list.add(app);
-                            
-                            String person = app.getApprover();
-                            if (person!=null) {
-                            ln = byApprover.get(person);
-                                if (ln==null) {
-                                    ln = new ArrayList<>();
-                                    byApprover.put(app.getApprover(), ln);
-                                }
-                                ln.add(app);
-                            }
-                            
-                            
-                        person = app.getUser();
-                            if (person!=null) {
-                                ln = byUser.get(person);
-                                if (ln==null) {
-                                    ln = new ArrayList<>();
-                                    byUser.put(app.getUser(), ln);
-                                }
-                                ln.add(app);
-                            }
-                            UUID ticket = app.getTicket();
-                            if (ticket!=null) {
-                                ln = byTicket.get(ticket);
-                                if (ln==null) {
-                                    ln = new ArrayList<>();
-                                    byTicket.put(app.getTicket(), ln);
-                                }
-                            ln.add(app);
-                            }
-                    } finally {
-                        tt.done();
-                    }
-                }
-        } finally {
-            tt.done();
-            trans.info().log("Found",count,"Approval Records");
         }
     }
     
@@ -218,14 +179,6 @@ public class Approval implements CacheChange.Data  {
     	list.clear();
     	cache.resetLocalData();
     }
-//    public void update(AuthzTrans trans, ApprovalDAO apprDAO, boolean dryRun) {
-//        if (dryRun) {
-//            trans.info().printf("Would update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-//        } else {
-//            trans.info().printf("Update Approval %s, %s, last_notified %s",add.id,add.status,add.last_notified);
-//            apprDAO.update(trans, add);
-//        }
-//    }
 
     public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
         @Override
@@ -239,6 +192,43 @@ public class Approval implements CacheChange.Data  {
         public String select() {
             return "select id,ticket,approver,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
         }
+    };
+    
+    public static Visitor<Approval> FullLoad = new Visitor<Approval>() {
+		@Override
+		public void visit(Approval app) {
+	        List<Approval> ln;
+	        list.add(app);
+	        
+	        String person = app.getApprover();
+	        if (person!=null) {
+	        ln = byApprover.get(person);
+	            if (ln==null) {
+	                ln = new ArrayList<>();
+	                byApprover.put(app.getApprover(), ln);
+	            }
+	            ln.add(app);
+	        }
+	        
+	        person = app.getUser();
+	        if (person!=null) {
+	            ln = byUser.get(person);
+	            if (ln==null) {
+	                ln = new ArrayList<>();
+	                byUser.put(app.getUser(), ln);
+	            }
+	            ln.add(app);
+	        }
+	        UUID ticket = app.getTicket();
+	        if (ticket!=null) {
+	            ln = byTicket.get(ticket);
+	            if (ln==null) {
+	                ln = new ArrayList<>();
+	                byTicket.put(app.getTicket(), ln);
+	            }
+	            ln.add(app);
+	        }
+		}
     };
 
 //    /**

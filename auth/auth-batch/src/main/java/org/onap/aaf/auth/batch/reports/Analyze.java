@@ -345,7 +345,6 @@ public class Analyze extends Batch {
 			pendingTemp = null;
 			pendingApprs = null;
     	} finally {
-    		Approval.clear();
     	}
 			
 		/**

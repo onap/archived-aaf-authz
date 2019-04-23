@@ -57,11 +57,12 @@ public class JU_Approval {
 
 	@Test
 	public void testRoleFromMemo() {
-		Assert.assertNull(approval.roleFromMemo(null));
-		Assert.assertEquals(".admin",
-				approval.roleFromMemo("Re-Validate as Administrator for AAF Namespace '\'test\'test"));
-		Assert.assertEquals(".owner", approval.roleFromMemo("Re-Validate Ownership for AAF Namespace '\'test\'test"));
-		Assert.assertEquals("", approval.roleFromMemo("Re-Approval in Role '\'test\'test"));
+		Assert.assertNull(Approval.roleFromMemo(null));
+		Assert.assertEquals("org.onap.ns.admin",
+				Approval.roleFromMemo(Approval.RE_VALIDATE_ADMIN + "org.onap.ns]"));
+		Assert.assertEquals("org.onap.ns.owner", Approval.roleFromMemo(Approval.RE_VALIDATE_OWNER + "org.onap.ns]"));
+		Assert.assertEquals("org.onap.ns.member", Approval.roleFromMemo(Approval.RE_APPROVAL_IN_ROLE 
+				+ "bob] + [org.onap.ns.member] - Expires 2018-12-25"));
 	}
 
 	@Test

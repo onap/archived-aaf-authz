@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.onap.aaf.auth.batch.helpers.Approval;
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.NsDAO;
 import org.onap.aaf.auth.dao.cass.RoleDAO;
@@ -40,7 +41,11 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class URApprovalSet extends ApprovalSet {
-	
+	private static final String FMT_SUFFIX = "%s] - Expires %s";
+	private static final String EXTEND_ACCESS_FMT = Approval.RE_APPROVAL_IN_ROLE + "%s] to Role [" + FMT_SUFFIX;
+	private static final String REVALIDATE_AS_ADMIN_FMT = Approval.RE_VALIDATE_ADMIN + FMT_SUFFIX;
+	private static final String REVALIDATE_AS_OWNER_FMT = Approval.RE_VALIDATE_OWNER + FMT_SUFFIX;
+
 	public URApprovalSet(final AuthzTrans trans, final GregorianCalendar start, final DataView dv, final Loader<UserRoleDAO.Data> lurdd) throws IOException, CadiException {
 		super(start, "user_role", dv);
 		Organization org = trans.org();
@@ -132,15 +137,11 @@ public class URApprovalSet extends ApprovalSet {
 	private String getMemo(Data urdd) {
 		switch(urdd.rname) {
 		case "owner":
-			return String.format("Revalidate as Owner of AAF Namespace [%s] - Expires %s",
-					   urdd.ns,
-					   Chrono.dateOnlyStamp(urdd.expires));
+			return String.format(REVALIDATE_AS_OWNER_FMT,urdd.ns,Chrono.dateOnlyStamp(urdd.expires));
 		case "admin":
-			return String.format("Revalidate as Admin of AAF Namespace [%s] - Expires %s",
-					   urdd.ns,
-					   Chrono.dateOnlyStamp(urdd.expires));
+			return String.format(REVALIDATE_AS_ADMIN_FMT,urdd.ns,Chrono.dateOnlyStamp(urdd.expires));
 		default:
-			return String.format("Extend access of User [%s] to Role [%s] - Expires %s",
+			return String.format(EXTEND_ACCESS_FMT,
 					   urdd.user,
 					   urdd.role,
 					   Chrono.dateOnlyStamp(urdd.expires));
