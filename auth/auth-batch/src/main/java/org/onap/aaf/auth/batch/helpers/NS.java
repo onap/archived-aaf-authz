@@ -28,9 +28,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.onap.aaf.auth.dao.cass.NsDAO;
+import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
+import org.onap.aaf.misc.env.util.Chrono;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -67,17 +69,29 @@ public class    NS implements Comparable<NS> {
     public static void load(Trans trans, Session session, Creator<NS> creator) {
         load(trans,session,
                 "select name, description, parent, type, scope from authz.ns;"
-                ,creator);
+                ,creator
+                , v -> data.put(v.ndd.name,v)
+        		);
     }
     
     public static void loadOne(Trans trans, Session session, Creator<NS> creator, String ns) {
         load(trans,session,
                 ("select name, description, parent, type, scope from authz.ns WHERE name='"+ns+"';")
                 ,creator
+                , v -> data.put(v.ndd.name,v)
                 );
     }
 
-    private static void load(Trans trans, Session session, String query, Creator<NS> creator) {
+    public static void load(Trans trans, Session session, Creator<NS> creator, Visitor<NS> visitor) {
+    	 load(trans,session,creator.query(null),creator, visitor);
+    }
+    
+    public void row(final CSV.Writer csvw, String tag) {
+    	csvw.row(tag,ndd.name,ndd.type,ndd.parent);
+    }
+
+
+    private static void load(Trans trans, Session session, String query, Creator<NS> creator, Visitor<NS> visitor) {
         trans.info().log( "query: " + query );
         ResultSet results;
         TimeTaken tt;
@@ -99,7 +113,7 @@ public class    NS implements Comparable<NS> {
                 while (iter.hasNext()) {
                     row = iter.next();
                     NS ns = creator.create(row);
-                    data.put(ns.ndd.name,ns);
+                    visitor.visit(ns);
                 }
             } finally {
                 tt.done();

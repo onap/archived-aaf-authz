@@ -23,7 +23,7 @@
 
 DOCKER=${DOCKER:=docker}
 # if something, may not want CASS attached all the tim
-LINKS="--link $CASSANDRA_DOCKER"
+#LINKS="--link $CASSANDRA_DOCKER"
 
 function run_it() {
   if [ -n "${DUSER}" ]; then

@@ -105,7 +105,13 @@ if [ ! -e $FILE ]; then
     fi
 fi
 
-# echo "Check keyfile"
+# Should we clean up?
+if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION)" ]; then
+  echo "Clean up directory ${LOCAL}"
+  rm -Rf ${LOCAL}/*
+fi
+echo "${VERSION}" > $LOCAL/VERSION
+
 FILE="$LOCAL/org.osaaf.aaf.p12"
 if [ ! -e $FILE ]; then
     if [ -e $CONFIG/cert/org.osaaf.aaf.p12 ]; then
@@ -157,6 +163,8 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     $JAVA_AGENT config \
 	aaf@aaf.osaaf.org \
         cadi_etc_dir=$LOCAL \
+        cadi_latitude=${cadi_latitude} \
+        cadi_longitude=${cadi_longitude} \
         cadi_prop_files=$CONFIG/local/initialConfig.props:$CONFIG/local/aaf.props:${TMP}
     rm ${TMP}
 

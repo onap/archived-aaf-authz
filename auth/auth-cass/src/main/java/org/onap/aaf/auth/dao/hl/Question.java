@@ -144,7 +144,6 @@ public class Question {
 
     public Question(AuthzTrans trans, Cluster cluster, String keyspace, boolean startClean) throws APIException, IOException {
         PERMS = trans.slot("USER_PERMS");
-        System.out.println(trans.init());
         trans.init().log("Instantiating DAOs");
         long expiresIn = Long.parseLong(trans.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
         historyDAO = new HistoryDAO(trans, cluster, keyspace);
