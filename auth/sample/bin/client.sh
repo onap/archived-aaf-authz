@@ -114,7 +114,13 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
 fi
 echo "cat SSO"
 cat ${SSO}
-echo "dog"
+
+# Should we clean up?
+if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION)" ]; then
+  echo "Clean up directory ${LOCAL}"
+  rm -Rf ${LOCAL}/*
+fi
+echo "${VERSION}" > $LOCAL/VERSION
 
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/${NS}.props ]; then

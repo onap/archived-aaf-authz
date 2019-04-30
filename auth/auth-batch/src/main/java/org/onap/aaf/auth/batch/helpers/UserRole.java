@@ -21,6 +21,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import java.util.TreeMap;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -124,6 +126,14 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         load(trans,session,creator,"user='"+ user +'\'',visitor);
     }
 
+    public static void load(Trans trans, CSV csv, Creator<UserRole> creator, Visitor<UserRole> visitor) throws IOException, CadiException {
+//	    public UserRole(String user, String role, String ns, String rname, Date expires) {
+    	csv.visit( row -> {
+    		visitor.visit(new UserRole(row.get(1),row.get(2),row.get(3),row.get(4),
+    			new Date(Long.parseLong(row.get(6)))));
+    	});
+    }
+    
     private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
         String query = creator.query(where);
         trans.debug().log( "query: " + query );
@@ -330,6 +340,16 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     	sb.append("';\n");
     }
 
+    public void batchExtend(StringBuilder sb, Date newDate) {
+    	sb.append("UPDATE authz.user_role SET expires='");
+    	sb.append(Chrono.dateTime(newDate));
+    	sb.append("' WHERE user='");
+    	sb.append(user());
+    	sb.append("' AND role='");
+    	sb.append(role());
+    	sb.append("';\n");
+    }
+    
     public void batchUpdateExpires(StringBuilder sb) {
     	sb.append("UPDATE authz.user_role SET expires='");
     	sb.append(Chrono.dateTime(expires()));
