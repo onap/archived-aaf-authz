@@ -216,7 +216,7 @@ public class CSV {
 					if(first) {
 						first = false;
 					} else {
-						ps.append(',');
+						ps.append(delimiter);
 					}
 					if(o == null) {
 					} else if(o instanceof String[]) {

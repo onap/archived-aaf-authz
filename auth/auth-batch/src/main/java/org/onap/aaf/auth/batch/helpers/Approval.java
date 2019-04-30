@@ -231,18 +231,6 @@ public class Approval implements CacheChange.Data  {
 		}
     };
 
-//    /**
-//     * @return the lastNotified
-//     */
-//    public Date getLast_notified() {
-//        return add.last_notified;
-//    }
-//    /**
-//     * @param lastNotified the lastNotified to set
-//     */
-//    public void setLastNotified(Date last_notified) {
-//        add.last_notified = last_notified;
-//    }
     /**
      * @return the status
      */
