@@ -63,10 +63,12 @@ spec:
         - name: aaf-config-container
           image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
           imagePullPolicy: IfNotPresent
-          command: ["bash","/opt/app/aaf_config/bin/agent.sh"]
+          command: ["bash","-c","cd /opt/app/aaf_config && bin/pod_wait.sh config aaf-service rm && bin/agent.sh"]
           volumeMounts:
             - mountPath: "/opt/app/osaaf"
               name: aaf-config-vol
+            - mountPath: "/opt/app/aaf/status"
+              name: aaf-status-vol
           env:
             - name: AAF_ENV
               value: "{{ .Values.services.aaf_env }}"

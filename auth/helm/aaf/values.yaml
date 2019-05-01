@@ -114,7 +114,7 @@ image:
   # When using Docker Repo, add, and include trailing "/"
   # repository: nexus3.onap.org:10003/
   # repository: localhost:5000/
-  version: 2.1.11-SNAPSHOT
+  version: 2.1.12-SNAPSHOT
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

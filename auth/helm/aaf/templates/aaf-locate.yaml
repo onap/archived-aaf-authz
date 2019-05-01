@@ -62,7 +62,7 @@ spec:
         - name: aaf-config-container
           image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
           imagePullPolicy: IfNotPresent
-          command: ["bash","/opt/app/aaf_config/bin/agent.sh"]
+          command: ["bash","-c","cd /opt/app/aaf_config && bin/pod_wait.sh config aaf-service rm && bin/agent.sh"]
           volumeMounts:
             - mountPath: "/opt/app/osaaf"
               name: aaf-config-vol
@@ -114,9 +114,3 @@ spec:
         - name: {{.Values.services.locate.fqdn}}
           protocol: TCP
           containerPort: {{.Values.services.locate.internal_port}}
-        env:
-        - name: aaf_locator_ns
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-

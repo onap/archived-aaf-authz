@@ -65,6 +65,8 @@ spec:
           volumeMounts:
             - mountPath: "/opt/app/osaaf"
               name: aaf-config-vol
+            - mountPath: "/opt/app/aaf/status"
+              name: aaf-status-vol
           env:
             - name: aaf_env
               value: "{{ .Values.services.aaf_env }}"

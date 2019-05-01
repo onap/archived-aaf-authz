@@ -81,6 +81,14 @@ if [ ! -e $FILE ]; then
     INITIALIZED="true"
 fi
 
+# Should we clean up?
+if [ ! -e "${LOCAL}/VERSION" ] || [ "${VERSION}" != "$(cat ${LOCAL}/VERSION)" ]; then
+  echo "Clean up directory ${LOCAL}"
+  rm -Rf ${LOCAL}/org.osaaf.aaf.*props ${LOCAL}/org.osaaf.aaf.p12
+  ls ${LOCAL}
+fi
+echo "${VERSION}" > $LOCAL/VERSION
+
 # Load up Cert/X509 Artifacts
 # echo "Check Signer Keyfile"
 FILE="$LOCAL/org.osaaf.aaf.signer.p12"
@@ -99,18 +107,10 @@ if [ ! -e $FILE ]; then
 	ln -s $PUBLIC/truststoreONAPall.jks $LOCAL
 	cp $CONFIG/cert/AAF_RootCA.cer $PUBLIC
 	CM_TRUST_CAS="$PUBLIC/AAF_RootCA.cer"
-	echo "cadi_keystore_password=something easy" >> $CONFIG/local/aaf.props        
         echo "Setup ONAP Test CAs and Signers"
         INITIALIZED="true"
     fi
 fi
-
-# Should we clean up?
-if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION)" ]; then
-  echo "Clean up directory ${LOCAL}"
-  rm -Rf ${LOCAL}/*
-fi
-echo "${VERSION}" > $LOCAL/VERSION
 
 FILE="$LOCAL/org.osaaf.aaf.p12"
 if [ ! -e $FILE ]; then
@@ -122,8 +122,9 @@ if [ ! -e $FILE ]; then
         echo "Bootstrap Creation of Keystore from Signer"
         cd $CONFIG/CA
 	
-        # Remove this after Casablanca
-	CADI_X509_ISSUERS="CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US"
+        # Redo all of this after Dublin
+	export cadi_x509_issuers="CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US:CN=intermediateCA_7, OU=OSAAF, O=ONAP, C=US"
+        export signer_subj="/CN=intermediateCA_9/OU=OSAAF/O=ONAP/C=US"
 	bash bootstrap.sh $LOCAL/org.osaaf.aaf.signer.p12 'something easy'
 	cp aaf.bootstrap.p12 $FILE
 	if [ -n "$CADI_X509_ISSUERS" ]; then
