@@ -38,31 +38,33 @@ Docker Mode
 
 After you have successfully run maven, you will need a Cassandra.  If you don't have one, here are instructions for a Docker Standalone Cassandra.  For a *serious* endeavor, you need a multi-node Cassandra.
 
-From "authz"::
+-----------------------------
+Existing Cassandra Instance
+-----------------------------
 
-  $ cd auth/auth-cass/src/main/cql
-  $ vi config.dat
+When AAF modifies or adds a Cassandra Table, it is entered in two places:
+	- COMPLETE Table Schemes for Startup:  authz/auth/auth-cass/cass_init/init.cql
+	- INCREMENTAL Table Schemes for Existing AAF Setups:  authz/auth/auth-cass/cass_init/init<Interface Version>.cql
 
-------------------
-Existing Cassandra
-------------------
-
-AAF Casablanca has added a table.  If you have an existing AAF Cassandra, do the following *ONCE* :
-
-### If Container Cassandra, add these steps, otherwise, skip
-$ docker container cp init2_1.cql aaf_cass:/tmp
+### As an example, Assume interface change of "2_10" AND you have an existing Cassandra, add these steps, otherwise, skip
+$ docker container cp init2_10.cql aaf_cass:/tmp
 $ docker exec -it aaf_cass bash
 (docker) $ cd /tmp
 ###
-$ cqlsh -f 'init2_1.cql'
+$ cqlsh -f 'init2_10.cql'
 
 --------------------
 New Docker Cassandra
 --------------------
 
 Assuming you are in your src/authz directory::
-$ cd auth/auth-cass/docker
-$ bash dinstall.sh
+| $ cd auth/auth-cass/docker
+| $ bash dinstall.sh
+
+FOR DEVELOPMENT:
+Normally, Cassandra in Containers are NOT published external to Docker for security exposure reasons.  HOWEVER, you can do the above as follows and then be able to access the DB while coding, debugging, etc::
+
+| $ bash dinstall.sh publish
 
 ---------------------
 AAF Itself
@@ -74,21 +76,13 @@ Assuming you are in your src/authz directory::
 | ### If you have not done so before (don't overwrite your work!)
 | $ cp d.props.init d.props
 
-You will need to edit and fill out the information in your d.props file.  Here is info to help
+Adjust for ACTUAL AAF version if required.
 
-**Local Env info** - These are used to load the /etc/hosts file in the Containers, so AAF is available internally and externally
+There are two special scripts created.
+	- "aaf.sh" - The script that creates and accesses AAF's Configuration information.  It uses "d.props"
+	- "agent.sh" - A script for use by MSs OTHER than AAF (i.e. aai) for creating AAF Configuration. It uses "aaf.props".  (note, need to have AAF running to generate Certificates)
 
-  =============== =============
-  Variable        Explanation
-  =============== =============
-  HOSTNAME        This must be the EXTERNAL FQDN of your host.  Must be in DNS or /etc/hosts
-  HOST_IP         This must be the EXTERNAL IP of your host. Must be accessible from "anywhere"
-  CASS_HOST       If Docker Cass, this is the INTERNAL FQDN/IP.  If external Cass, then DNS|/etc/hosts entry
-  aaf_env         This shows up in GUI and certs, to differentiate environments
-  aaf_register_as As pre-set, it is the same external hostname.
-  cadi_latitude   Use "https://bing.com/maps", if needed, to locate your current Global Coords
-  cadi_longitude  ditto
-  =============== =============
+In BOTH cases, the scripts will ask for Properties required that are not in the current d.props or 
 
 ------------------------------
 "Bleeding Edge" Source install
@@ -99,4 +93,17 @@ AAF can be built, and local Docker Images built with the following::
   $ bash dbuild.sh
 
 Otherwise, just let it pull from Nexus
+
+------------------------------
+Other Scripts
+------------------------------
+The following will act on ALL possible AAF instances if there are no Params.  You can apply to only ONE MS by adding short name i.e. "service" instead of "aaf_service"
+  - drun.sh - starts up Docker FRESH instances of AAF locally (not K8s)
+  - dstop.sh - stops Docker instances of AAF locally
+  - dclean.sh - cleans up containers in Docker so you can do "dbuild.sh" (above) and start fresh
+  - dstart.sh - starts Docker containers that were previously stopped... Doesn't refresh actual container.
+  - dbounce.sh - stops and starts in one method
+
+
+
 

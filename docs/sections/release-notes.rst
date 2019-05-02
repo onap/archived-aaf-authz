@@ -6,10 +6,40 @@
 Release Notes
 =============
 
+Version: 2.1.13 (Dublin, 3.1.0-ONAP)
+---------------------------------------
 
+:Release Date: 2019-06-06
+
+**New Features**
+
+Note: In general, Infrastructure must be accomplished in the release PRIOR to general usage.  This is the case for most of the features included here.
+
+	- AAF has built the required features to automatically generate all Certificates and Configurations real-time.  This will be utilized by ONAP MSs in El Alto
+	- AAF has the ability to publish both Public and Internal Private K8s Service information (Locator)
+	- Greatly Reduced size of Docker Images
+	- Greatly enhanced startup procedures in K8s, to more cleanly start, with Certificate, Property Generation every time
+	- Ability to run internally as non-root (fully setup K8s in El Alto)
+	- Removal of unused classes in Batch
+	- Large improvement in Batch and methodology, to be used in El Alto
+
+**Bug Fixes**
+	- `AAF-797 <https://jira.onap.org/browse/AAF-797>`_ Update IP address for aaf-onap-test.osaaf.org
+	- `AAF-794 <https://jira.onap.org/browse/AAF-794>`_ Misleading error message in agent.sh
+	- `AAF-773 <https://jira.onap.org/browse/AAF-773>`_ aaf-cass timing issues
+	- `AAF-769 <https://jira.onap.org/browse/AAF-769>`_ AAF CSIT not working
+	- `AAF-727 <https://jira.onap.org/browse/AAF-727>`_ Cert Subject Check confused by Email
+	- `AAF-722 <https://jira.onap.org/browse/AAF-722>`_ aaf continues to be available to aai-resources even though aaf database appears to be down
+	- `AAF-720 <https://jira.onap.org/browse/AAF-720>`_ Docker Images not passing Signal -1
+	- `AAF-645 <https://jira.onap.org/browse/AAF-645>`_ Fix "Null" string for fetching path inside CADI API enforcement filter
+	- `AAF-522 <https://jira.onap.org/browse/AAF-522>`_ rsa 4096 signing fails with TPM
+	- `AAF-813 <https://jira.onap.org/browse/AAF-813>`_ Missing Role for dmaap-bc Identity
+	- `AAF-514 <https://jira.onap.org/browse/AAF-514>`_ TPM Plugin: Remove global structure used for storing session data
+	- `AAF-785 <https://jira.onap.org/browse/AAF-785>`_ non STAGING version on master
+	- `AAF-822 <https://jira.onap.org/browse/AAF-822>`_ Startup issues with K8S, Certs
 
 Version: 2.1.8 (Casablanca, 3.0.0-ONAP, Casablanca Maintenance Release)
-----------------------------------------
+--------------------------------------------------------------------------
 
 Note: AAF did not create new artifacts for Casablanca Maintenance Release.
 
