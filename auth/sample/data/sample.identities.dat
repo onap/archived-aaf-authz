@@ -76,7 +76,7 @@ dmaap-dr-prov|ONAP DMaap DR Prov|Prov|DMaap MR|||a|aaf_admin
 dmaap-dr-node|ONAP DMaap DR Node|Node|DMaap MR|||a|aaf_admin
 dmaap-mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
 
-#deprecate these in Dublin
+#deprecate these in El Alto
 dmaapmr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
 #dmaap.mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
 
