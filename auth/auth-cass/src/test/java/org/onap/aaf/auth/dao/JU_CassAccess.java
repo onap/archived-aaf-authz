@@ -64,11 +64,11 @@ public class JU_CassAccess {
         cassAccess = new CassAccess();
     }
 
-
-    @Test(expected=APIException.class)
-    public void testCluster() throws APIException, IOException {
-        cassAccess.cluster(envMock, prefix);
-        
-    }
+//
+//    @Test(expected=APIException.class)
+//    public void testCluster() throws APIException, IOException {
+////        cassAccess.cluster(envMock, prefix);
+//        
+//    }
 
 }
