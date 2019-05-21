@@ -226,6 +226,7 @@ public class JU_CertDAOTest {
 		Mockito.doReturn(tt).when(trans).start("New Cassandra Session", Env.SUB);
 		Mockito.doReturn(tt).when(trans).start("Preparing PSInfo CREATE on CertDAO", Env.SUB);
 		Mockito.doReturn(tt).when(trans).start("DELETE APPROVAL",Env.REMOTE);
+		Mockito.doReturn(tt).when(trans).start("CertDAOImpl READ",Env.REMOTE);
 		Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
 		Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
 		Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
@@ -242,9 +243,9 @@ public class JU_CertDAOTest {
 		CacheInfoDAO cacheInfoDAO = Mockito.mock(CacheInfoDAO.class);
 		Mockito.doReturn(rs1).when(cacheInfoDAO).touch(trans, CertDAO.TABLE, new int[1]);
 		
-		CertDAO daoObj = null;
+		CertDAOImpl daoObj = null;
 		try {
-			daoObj = new CertDAO(trans, historyDAO, cacheInfoDAO);
+			daoObj = new CertDAOImpl(trans, historyDAO, cacheInfoDAO, createPS);
 		} catch (APIException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -328,8 +329,8 @@ class CertDAOImpl extends CertDAO{
 //		setSession(this, Mockito.mock(Session.class));
 	}
 	
-	public CertDAOImpl(AuthzTrans trans, Cluster cluster, String keyspace,PSInfo readPS  ) throws APIException, IOException {
-		super(trans, cluster, keyspace);
+	public CertDAOImpl(AuthzTrans trans, HistoryDAO historyDAO, CacheInfoDAO cacheInfoDAO,PSInfo readPS  ) throws APIException, IOException {
+		super(trans, historyDAO, cacheInfoDAO);
 		this.readPS = readPS;
 	}
 	

@@ -23,11 +23,6 @@ package org.onap.aaf.auth.dao.cass;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -36,7 +31,6 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -115,8 +109,15 @@ public class JU_DelegateDAO {
 
 	@Test
 	public void testDelegateLoader(){
+		Class<?> innerClass = null;
+		Class<?>[] innerClassArr = DelegateDAO.class.getDeclaredClasses();
+		for(Class indCls:innerClassArr) {
+			if(indCls.getName().contains("DelegateLoader")) {
+				innerClass = indCls;
+				break;
+			}
+		}
 		
-		Class<?> innerClass = DelegateDAO.class.getDeclaredClasses()[1];
         Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
         try {
