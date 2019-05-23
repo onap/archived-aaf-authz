@@ -269,13 +269,12 @@ public class JU_CacheInfoDAO {
 		CacheInfoDAOImpl daoObj=null;
 		try {
 			daoObj = new CacheInfoDAOImpl(trans, cluster, "test",data, createPS);
+			Date retVal = daoObj.get(trans, "test", 1011);
+//			assertTrue(retVal.status == 0);
+			retVal = daoObj.get(trans, "test1", 1011);
 		} catch (APIException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Date retVal = daoObj.get(trans, "test", 1011);
-//		assertTrue(retVal.status == 0);
-		retVal = daoObj.get(trans, "test1", 1011);
 	}
 	
 	@Test

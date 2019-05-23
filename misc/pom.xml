@@ -25,7 +25,7 @@
 	<parent>
        <groupId>org.onap.aaf.authz</groupId>
        <artifactId>parent</artifactId>
-       <version>2.1.13-SNAPSHOT</version>
+       <version>2.1.14-SNAPSHOT</version>
     </parent>
 	<artifactId>miscparent</artifactId>
 	<name>AAF Misc Parent</name>
