@@ -58,7 +58,7 @@ public class Status<RV> extends Result<RV> {
      * @param status
      */
     private Status(RV value, int status, String details, String[] variables ) {
-        super(value,status,details,variables);
+        super(value,status,details,(Object[])variables);
     }
 
     public static String name(int status) {

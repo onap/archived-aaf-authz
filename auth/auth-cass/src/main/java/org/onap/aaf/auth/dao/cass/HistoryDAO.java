@@ -85,7 +85,7 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
         public ByteBuffer reconstruct;
     }
     
-    private static class HistLoader extends Loader<Data> {
+    public static class HistLoader extends Loader<Data> {
         public HistLoader(int keylimit) {
             super(keylimit);
         }

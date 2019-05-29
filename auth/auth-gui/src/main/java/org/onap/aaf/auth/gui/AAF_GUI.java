@@ -94,7 +94,7 @@ import certman.v1_0.Artifacts;
 import certman.v1_0.CertInfo;
 
 public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<Env>{
-    private static final String AAF_GUI_THEME = "aaf_gui_theme";
+    public static final String AAF_GUI_THEME = "aaf_gui_theme";
     public static final String AAF_GUI_COPYRIGHT = "aaf_gui_copyright";
     public static final String HTTP_SERVLET_REQUEST = "HTTP_SERVLET_REQUEST";
     public static final int TIMEOUT = 60000;
@@ -113,15 +113,18 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     public final Slot slot_httpServletRequest;
     protected final String deployedVersion;
     private StaticSlot sThemeWebPath;
-    public final String theme;
+    private StaticSlot sDefaultTheme;
+//  public final String theme;
 
 
     public AAF_GUI(final AuthzEnv env) throws Exception {
         super(env.access(), env);
-        theme = env.getProperty(AAF_GUI_THEME,"theme/onap");
+        sDefaultTheme = env.staticSlot(AAF_GUI_THEME);
+        env.put(sDefaultTheme, env.getProperty(AAF_GUI_THEME,"onap"));
+        
         sThemeWebPath = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
         if(env.get(sThemeWebPath)==null) {
-        	env.put(sThemeWebPath,theme);
+        	env.put(sThemeWebPath,"theme");
         }
 
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
@@ -203,7 +206,9 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         ///////////////////////  
         // WebContent Handler
         ///////////////////////
-        route(env,GET,"/"+env.get(sThemeWebPath)+"/:key", new CachingFileAccess<AuthzTrans>(env));
+        CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
+        //route(env,GET,"/"+env.get(sThemeWebPath)+"/:key*", cfa);
+        route(env,GET,"/theme/:key*", cfa);
         ///////////////////////
         aafCon = aafCon();
         lur = aafCon.newLur();

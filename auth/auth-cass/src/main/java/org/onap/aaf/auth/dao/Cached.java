@@ -118,7 +118,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         Date dbStamp = info.get(trans, name,cacheIdx);
         
         // Check for cache Entry and whether it is still good (a good Cache Entry is same or after DBEntry, so we use "before" syntax)
-        if (cached!=null && dbStamp.before(cached.timestamp)) {
+        if (cached!=null && dbStamp!=null && dbStamp.before(cached.timestamp)) {
             ld = (List<DATA>)cached.data;
             rld = Result.ok(ld);
         } else {

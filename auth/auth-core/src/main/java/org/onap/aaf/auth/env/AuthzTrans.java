@@ -43,6 +43,8 @@ public interface AuthzTrans extends TransStore {
     
     public abstract AuthzTrans set(HttpServletRequest req);
 
+	public abstract HttpServletRequest hreq();
+
     public abstract String user();
 
     public abstract void setUser(TaggedPrincipal p);

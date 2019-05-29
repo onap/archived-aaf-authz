@@ -35,18 +35,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.jscep.client.Client;
 import org.jscep.client.ClientException;
 import org.jscep.client.EnrollmentResponse;
-import org.jscep.client.verification.CertificateVerifier;
 import org.onap.aaf.auth.cm.cert.BCFactory;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.Locator.Item;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.cadi.locator.HotPeerLocator;
 import org.onap.aaf.misc.env.Env;

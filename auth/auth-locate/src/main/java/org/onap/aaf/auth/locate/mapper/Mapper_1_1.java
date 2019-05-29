@@ -74,7 +74,7 @@ public class Mapper_1_1 implements Mapper<InRequest,Out,Endpoints,MgmtEndpoints,
         Error err = new Error();
         err.setMessageId(msgID);
         // AT&T Restful Error Format requires numbers "%" placements
-        err.setText(Vars.convert(holder, text, var));
+        err.setText(Vars.convert(holder, text, (Object[])var));
         for (String s : var) {
             err.getVariables().add(s);
         }

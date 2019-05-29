@@ -24,6 +24,7 @@ package org.onap.aaf.auth.cm.mapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.onap.aaf.auth.cm.data.CertDrop;
 import org.onap.aaf.auth.cm.data.CertRenew;
@@ -35,7 +36,6 @@ import org.onap.aaf.auth.dao.cass.ArtiDAO.Data;
 import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
-import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.cadi.util.Vars;
 
 import aaf.v2_0.Error;
@@ -208,39 +208,46 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         List<ArtiDAO.Data> ladd = new ArrayList<>();
         for (Artifact arti : artifacts.getArtifact()) {
             ArtiDAO.Data data = new ArtiDAO.Data();
-            data.mechid = arti.getMechid();
-            data.machine = arti.getMachine();
+            data.mechid = trim(arti.getMechid());
+            data.machine = trim(arti.getMachine());
+            Set<String> ss = data.type(true);
+            if(arti.getType()!=null) {
+	            for(String t : arti.getType()) {
+	            	ss.add(t.trim());
+	            }
+            }
             data.type(true).addAll(arti.getType());
-            data.ca = arti.getCa();
-            data.dir = arti.getDir();
-            data.os_user = arti.getOsUser();
+            data.ca = trim(arti.getCa());
+            data.dir = trim(arti.getDir());
+            data.os_user = trim(arti.getOsUser());
             // Optional (on way in)
-            data.ns = arti.getNs();
+            data.ns = trim(arti.getNs());
             data.renewDays = arti.getRenewDays();
-            data.notify = arti.getNotification();
+            data.notify = trim(arti.getNotification());
             
             // Ignored on way in for create/update
-            data.sponsor = arti.getSponsor();
+            data.sponsor = trim(arti.getSponsor());
             data.expires = null;
-            
-            // Derive Optional Data from Machine (Domain) if exists
-            if (data.machine!=null) {
-                if (data.ca==null) {
-                    if (data.machine.endsWith(".att.com")) {
-                        data.ca = "aaf"; // default
-                    }
-                }
-                if (data.ns==null ) {
-                    data.ns=FQI.reverseDomain(data.machine);
-                }
+            ss = data.sans(true);
+            if(arti.getSans()!=null) {
+              for(String s : arti.getSans()) {
+            	  ss.add(s.trim());
+              }
             }
-            data.sans(true).addAll(arti.getSans());
             ladd.add(data);
         }
         return ladd;
     }
 
-    /* (non-Javadoc)
+    private String trim(String s) {
+    	if(s==null) {
+    		return s;
+    	} else {
+    		return s.trim();
+    	}
+	}
+
+	/* (non-Javadoc)
      * @see org.onap.aaf.auth.cm.mapper.Mapper#fromArtifacts(org.onap.aaf.auth.layer.test.Result)
      */
     @Override

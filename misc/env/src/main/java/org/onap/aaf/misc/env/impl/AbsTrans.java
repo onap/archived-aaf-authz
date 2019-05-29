@@ -112,7 +112,6 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
     public final void checkpoint(String name, int additionalFlag) {
         TimeTaken tt = newTimeTaken(name,CHECKPOINT|additionalFlag);
         trail.add(tt);
-        tt.done();
     }
 
     @Override
@@ -130,8 +129,13 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
             // If first entry is sub, then it's actually the last "end" as well
             // otherwise, check end
             //long end = (first.flag&SUB)==SUB?first.end():trail.get(last).end();
-            long end = trail.get(last).end();
+            long end = 0L;
+            for(int i=last;end==0L && i>=0;--i) {
+            	end= trail.get(i).end();
+            }
             metric.total = (end - first.start) / 1000000f;
+        } else {
+        	metric.total=0L;
         }
         
         if (sb==null) {
@@ -165,6 +169,18 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
                 for (int i=0;i<indent;++i) {
                     sb.append("  ");
                 }
+                if((tt.flag & CHECKPOINT)==CHECKPOINT) {
+                	// Checkpoint
+                	sb.append("  ");
+                } else {
+                	float ms=tt.millis();
+                    // Add time values to Metric
+                    for (int i=0;i<flags.length;++i) {
+                        if ((tt.flag & flags[i]) == flags[i]) {
+                        	metric.buckets[i]+=ms;
+                        }
+                    }
+                }
                 tt.output(sb);
                 sb.append('\n');
                 if ((tt.flag&SUB)==SUB) {
@@ -172,11 +188,6 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
                     ++indent;
                 }
                 
-                // Add time values to Metric
-                float ms = tt.millis();
-                for (int i=0;i<flags.length;++i) {
-                    if (tt.flag == flags[i]) metric.buckets[i]+=ms;
-                }
             }
         }
         return metric;

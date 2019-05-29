@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,6 +150,7 @@ public class PropAccess implements Access {
         name = props.getProperty(Config.CADI_LOGNAME, name);
         
         SecurityInfo.setHTTPProtocols(this);
+        
     }
     
    
@@ -260,27 +262,34 @@ public class PropAccess implements Access {
         return buildMsg(name,iso8601,level,elements);
     }
 
-    public static StringBuilder buildMsg(final String name, final SimpleDateFormat sdf, Level level, Object[] elements) { 
-        StringBuilder sb = new StringBuilder(sdf.format(new Date()));
-        sb.append(' ');
-        sb.append(level.name());
-        sb.append(" [");
-        sb.append(name);
-        
+    public static StringBuilder buildMsg(final String name, final DateFormat sdf, Level level, Object[] elements) {
+    	final StringBuilder sb;
         int end = elements.length;
-        if (end<=0) {
-            sb.append("] ");
-        } else {
-            int idx = 0;
-            if(elements[idx]!=null  && 
-            	elements[idx] instanceof Integer) {
-                sb.append('-');
-                sb.append(elements[idx]);
-                ++idx;
-            }
-            sb.append("] ");
-            write(true,sb,elements);
-        }
+    	if(sdf==null) {
+    		sb = new StringBuilder();
+    		write(true,sb,elements);
+    	} else {
+    		sb = new StringBuilder(
+    				sdf.format(new Date())
+    				);
+            sb.append(' ');
+            sb.append(level.name());
+            sb.append(" [");
+            sb.append(name);
+	        if (end<=0) {
+	            sb.append("] ");
+	        } else {
+	            int idx = 0;
+	            if(elements[idx]!=null  && 
+	            	elements[idx] instanceof Integer) {
+	                sb.append('-');
+	                sb.append(elements[idx]);
+	                ++idx;
+	            }
+	            sb.append("] ");
+	            write(true,sb,elements);
+	        }
+    	}
         return sb;
     }
     

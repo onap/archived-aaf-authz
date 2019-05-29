@@ -138,8 +138,9 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 // Would need Cached Counter objects that are cleaned up on 
                 // use
                 trans.checkpoint(resp.desc(),Env.ALWAYS);
-                if (resp.isFailedAttempt())
+                if (resp.isFailedAttempt()) {
                         trans.audit().log(resp.desc());
+                }
             }
         } catch (Exception e) {
             trans.error().log(e);

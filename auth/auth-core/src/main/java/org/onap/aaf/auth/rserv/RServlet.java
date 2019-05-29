@@ -32,6 +32,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -120,6 +123,15 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
     @Override
     public String getServletInfo() {
         return "RServlet for Jetty";
+    }
+
+	/**
+     * Allow Service to instantiate certain actions after service starts up
+	 * @throws LocatorException 
+	 * @throws CadiException 
+	 * @throws APIException 
+     */
+    public void postStartup(String hostname, int port) throws APIException {
     }
 
     @Override

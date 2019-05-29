@@ -24,71 +24,69 @@ package org.onap.aaf.misc.env.log4j;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class JU_LogFileNamerTest {
     private File dir = new File(".");
 
-    private String ending = new SimpleDateFormat("YYYYMMdd").format(new Date());
-
     @Before
     public void setUp() throws Exception {
     }
 
+    private void cleanup(String name) {
+//    	System.out.println("XXXX" + dir.getAbsolutePath());
+    	for(File f : dir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.contains(name) && name.endsWith(".log");
+			}
+		})) {
+//    		System.out.println("Deleting " + f.getAbsolutePath());
+    		f.delete();
+    	};
+    }
+
+
     @Test
     public void test() throws IOException {
-        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
-        assertEquals(logFileNamer, logFileNamer.noPID());
-
-        logFileNamer.setAppender("Append");
-        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-            dir.getCanonicalFile() + File.separator + "log-Append" + ending + "_0.log");
-
-        logFileNamer.setAppender("Append");
-        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-            dir.getCanonicalFile() + File.separator + "log-Append" + ending + "_1.log");
+    	String name = "Append";
+    	try {
+	        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
+	        assertEquals(logFileNamer, logFileNamer.noPID());
+	
+	        logFileNamer.setAppender(name);
+	        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+	            dir.getCanonicalFile() + File.separator + "log-" + name + ".log");
+	
+	        logFileNamer.setAppender(name);
+	        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+	            dir.getCanonicalFile() + File.separator + "log-" + name + ".0.log");
+    	} finally {
+    		cleanup("log-" + name);
+    	}
     }
 
     @Test
     public void testBlankRoot() throws IOException {
-        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
-        assertEquals(logFileNamer, logFileNamer.noPID());
-
-        logFileNamer.setAppender("Append");
-        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-            dir.getCanonicalPath() + File.separator + "Append" + ending + "_0.log");
-
-        logFileNamer.setAppender("Append");
-        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-            dir.getCanonicalPath() + File.separator + "Append" + ending + "_1.log");
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        File file = new File("./log-Append" + ending + "_0.log");
-        if (file.exists()) {
-            Files.delete(Paths.get(file.getAbsolutePath()));
-        }
-        file = new File("./log-Append" + ending + "_1.log");
-        if (file.exists()) {
-            Files.delete(Paths.get(file.getAbsolutePath()));
-        }
-        file = new File("./Append" + ending + "_0.log");
-        if (file.exists()) {
-            Files.delete(Paths.get(file.getAbsolutePath()));
-        }
-        file = new File("./Append" + ending + "_1.log");
-        if (file.exists()) {
-            Files.delete(Paths.get(file.getAbsolutePath()));
-        }
+    	String name = "Different";
+    	try {
+	        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
+	        assertEquals(logFileNamer, logFileNamer.noPID());
+	
+	        logFileNamer.setAppender(name);
+	        assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
+	            dir.getCanonicalPath() + File.separator + name + ".log");
+	
+	        logFileNamer.setAppender(name);
+	        assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
+	            dir.getCanonicalPath() + File.separator + name + ".0.log");
+    	} finally {
+    		cleanup(name);
+    	}
     }
 
 }

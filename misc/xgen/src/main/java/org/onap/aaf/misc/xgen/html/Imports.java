@@ -31,7 +31,6 @@ public class Imports implements Thematic{
     private String theme;
     
     public Imports(int backdots) {
-        
         css = new ArrayList<>();
         js = new ArrayList<>();
         this.backdots = backdots;

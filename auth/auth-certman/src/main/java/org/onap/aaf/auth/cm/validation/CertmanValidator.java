@@ -72,6 +72,9 @@ public class CertmanValidator extends Validator{
             } else {
                 for (ArtiDAO.Data a : list) {
                     allRequired(a);
+                    if(a.dir!=null && a.dir.startsWith("/tmp")) {
+                    	msg("Certificates may not be deployed into /tmp directory (they will be removed at a random time by O/S)");
+                    }
                 }
             }
         }

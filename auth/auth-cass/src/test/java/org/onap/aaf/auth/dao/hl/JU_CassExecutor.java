@@ -48,6 +48,8 @@ public class JU_CassExecutor {
 
 	
 	
+	private static final Object NO_PARAM = new Object[0];
+
 	@Mock
 	AuthzTransImpl trans;
 	
@@ -87,7 +89,7 @@ public class JU_CassExecutor {
 	public void testInRole() {
 		
 		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Result<NsSplit> retVal1 = new Result<NsSplit>(null,1,"",new String[0]);
+		Result<NsSplit> retVal1 = new Result<NsSplit>(null,1,"",NO_PARAM);
 		Mockito.doReturn(retVal1).when(q).deriveNsSplit(trans, "test");
 		
 		boolean retVal = cassExecutorObj.inRole("test");
@@ -99,7 +101,7 @@ public class JU_CassExecutor {
 	public void testNamespace() {
 		f =new Function(trans, q);
 		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Result<Data> retVal1 = new Result<Data>(null,1,"",new String[0]);
+		Result<Data> retVal1 = new Result<Data>(null,1,"",NO_PARAM);
 		Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
 		
 		String retVal="";
@@ -123,7 +125,7 @@ public class JU_CassExecutor {
 	
 	@Test
 	public void testNamespaceSuccess() {
-		Mockito.doAnswer(new Answer() {
+		Mockito.doAnswer(new Answer<Object>() {
 		    private int count = 0;
 
 		    public Object answer(InvocationOnMock invocation) {
@@ -135,13 +137,13 @@ public class JU_CassExecutor {
 		}).when(trans).user();
 		f =new Function(trans, q);
 		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Result<Data> retVal1 = new Result<Data>(null,0,"",new String[0]);
+		Result<Data> retVal1 = new Result<Data>(null,0,"",NO_PARAM);
 		Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
 		
 		
-		String retVal="";
+//		String retVal="";
 		try {
-			retVal = cassExecutorObj.namespace();
+			/*retVal =*/ cassExecutorObj.namespace();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());

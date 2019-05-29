@@ -23,12 +23,9 @@ package org.onap.aaf.misc.env.log4j;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class LogFileNamer {
     private final String root;
-    private final String ending;
     private final String dir;
 
     public LogFileNamer(final String dir, final String root) {
@@ -38,14 +35,14 @@ public class LogFileNamer {
         } else {
             this.root = root + "-";
         }
-        ending = new SimpleDateFormat("YYYYMMdd").format(new Date());
     }
 
     public LogFileNamer noPID() {
         return this;
     }
 
-    private static final String FILE_FORMAT_STR = "%s/%s%s%s_%d.log";
+    private static final String FIRST_FILE_FORMAT_STR = "%s/%s%s.log";
+    private static final String FILE_FORMAT_STR = "%s/%s%s.%d.log";
 
     /**
      * Accepts a String. If Separated by "|" then first part is the Appender name,
@@ -59,13 +56,19 @@ public class LogFileNamer {
      * @throws IOException
      */
     public String setAppender(String appender) throws IOException {
-        int i = 0;
-        File f;
-        while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, ending, i))).exists()) {
-            ++i;
-        }
+    	File f = new File(String.format(FIRST_FILE_FORMAT_STR, dir, root, appender));
+    	if(f.exists()) {
+	        int i = 0;
+	        while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, i))).exists()) {
+	            ++i;
+	        }
+    	}
         
-        f.createNewFile();
+        try {
+        	f.createNewFile();
+        } catch (IOException e) {
+        	throw new IOException("Cannot create file '" + f.getCanonicalPath() + '\'', e);
+        }
         System.setProperty("LOG4J_FILENAME_" + appender, f.getCanonicalPath());
         return appender;
     }

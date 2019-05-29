@@ -25,6 +25,7 @@ import javax.servlet.Filter;
 
 import org.onap.aaf.auth.cache.Cache;
 import org.onap.aaf.auth.dao.CassAccess;
+import org.onap.aaf.auth.dao.cass.CacheInfoDAO;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.direct.DirectAAFLur;
 import org.onap.aaf.auth.direct.DirectAAFUserPass;
@@ -97,7 +98,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         // Need Question for Security purposes (direct User/Authz Query in Filter)
         // Start Background Processing
         question = new Question(trans, cluster, CassAccess.KEYSPACE, true);
-        DirectCertIdentity.set(question.certDAO);
+        DirectCertIdentity.set(question.certDAO());
 
         // Have AAFLocator object Create DirectLocators for Location needs
         AbsAAFLocator.setCreator(new DirectLocatorCreator(env, question.locateDAO));
@@ -190,10 +191,20 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
             new DirectRegistrar(access,question.locateDAO, actualPort)
         };
     }
+    
+    @Override 
+    public void postStartup(final String hostname, final int port) throws APIException {
+    	try {
+			CacheInfoDAO.startUpdate(env, aafCon().hman(), aafCon().securityInfo().defSS,hostname,port);
+		} catch (CadiException | LocatorException e) {
+			throw new APIException(e);
+		}
+    }
 
     @Override
     public void destroy() {
         Cache.stopTimer();
+        CacheInfoDAO.stopUpdate();
         if (cluster!=null) {
             cluster.close();
         }
