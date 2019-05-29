@@ -40,7 +40,7 @@ public class Home extends Page {
     /*
      *      Relative path, Menu Name, Full Path
      */
-    public static String[][] MENU_ITEMS = new String[][] {
+    public static final String[][] MENU_ITEMS = new String[][] {
     		{"myperms","My Permissions","/gui/myperms"},
     		{"myroles","My Roles","/gui/myroles"},
     		{"ns","My Namespaces","/gui/ns"},
@@ -52,7 +52,8 @@ public class Home extends Page {
     		{"cui","Command Prompt","/gui/cui"},
     		{"api","AAF API","/gui/api"}
     };
-    public Home(final AAF_GUI gui) throws APIException, IOException {
+    
+	public Home(final AAF_GUI gui) throws APIException, IOException {
         super(gui.env,"Home",HREF, NO_FIELDS, new NamedCode(false,"content") {
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen htmlGen) throws APIException, IOException {
