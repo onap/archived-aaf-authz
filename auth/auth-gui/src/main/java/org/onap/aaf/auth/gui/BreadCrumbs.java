@@ -37,7 +37,7 @@ import org.onap.aaf.misc.xgen.Mark;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class BreadCrumbs extends NamedCode {
-    private Page[] breadcrumbs;
+    Page[] breadcrumbs;
 
     public BreadCrumbs(Page ... pages) {
         super(false,"breadcrumbs");

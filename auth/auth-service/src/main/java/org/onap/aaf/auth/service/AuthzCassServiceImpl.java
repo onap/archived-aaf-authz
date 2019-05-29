@@ -168,6 +168,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(parentNs);
         }
         
+        // Note: Data validate occurs in func.createNS
         if (namespace.name.lastIndexOf('.')<0) { // Root Namespace... Function will check if allowed
             return func.createNS(trans, namespace, false);
         }
@@ -299,7 +300,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
 
             // Check if exists already
-            Result<List<Data>> rlnsd = ques.nsDAO.read(trans, ns);
+            Result<List<Data>> rlnsd = ques.nsDAO().read(trans, ns);
             if (rlnsd.notOKorIsEmpty()) {
                 return Result.err(rlnsd);
             }
@@ -318,7 +319,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
             // Add Attrib
             nsd.attrib.put(key, value);
-            ques.nsDAO.dao().attribAdd(trans,ns,key,value);
+            ques.nsDAO().dao().attribAdd(trans,ns,key,value);
+            ques.nsDAO().invalidate(trans, nsd);
             return Result.ok();
         } finally {
             tt.done();
@@ -349,7 +351,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_Denied,"%s may not read NS by Attrib '%s'",trans.user(),key);
         }
 
-        Result<Set<String>> rsd = ques.nsDAO.dao().readNsByAttrib(trans, key);
+        Result<Set<String>> rsd = ques.nsDAO().dao().readNsByAttrib(trans, key);
         if (rsd.notOK()) {
             return Result.err(rsd);
         }
@@ -382,7 +384,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
 
             // Check if exists already (NS must exist)
-            Result<List<Data>> rlnsd = ques.nsDAO.read(trans, ns);
+            Result<List<Data>> rlnsd = ques.nsDAO().read(trans, ns);
             if (rlnsd.notOKorIsEmpty()) {
                 return Result.err(rlnsd);
             }
@@ -401,8 +403,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
             // Add Attrib
             nsd.attrib.put(key, value);
-
-            return ques.nsDAO.update(trans,nsd);
+            ques.nsDAO().invalidate(trans, nsd);
+            return ques.nsDAO().update(trans,nsd);
  
         } finally {
             tt.done();
@@ -433,7 +435,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
 
             // Check if exists already
-            Result<List<Data>> rlnsd = ques.nsDAO.read(trans, ns);
+            Result<List<Data>> rlnsd = ques.nsDAO().read(trans, ns);
             if (rlnsd.notOKorIsEmpty()) {
                 return Result.err(rlnsd);
             }
@@ -451,7 +453,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
             // Add Attrib
             nsd.attrib.remove(key);
-            ques.nsDAO.dao().attribRemove(trans,ns,key);
+            ques.nsDAO().dao().attribRemove(trans,ns,key);
+            ques.nsDAO().invalidate(trans, nsd);
             return Result.ok();
         } finally {
             tt.done();
@@ -465,8 +468,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             expectedCode = 200,
             errorCodes = { 404,406 }, 
             text = {     
-                "Lists the Admin(s), Responsible Party(s), Role(s), Permission(s)",
-                "Credential(s) and Expiration of Credential(s) in Namespace :id",
+                "Lists the Owner(s), Admin(s), Description, and Attributes of Namespace :id",
             }
             )
     @Override
@@ -476,7 +478,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
         
-        Result<List<NsDAO.Data>> rlnd = ques.nsDAO.read(trans, ns);
+        Result<List<NsDAO.Data>> rlnd = ques.nsDAO().read(trans, ns);
         if (rlnd.isOK()) {
             if (rlnd.isEmpty()) {
                 return Result.err(Status.ERR_NotFound, "No data found for %s",ns);
@@ -563,7 +565,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     private Result<Collection<Namespace>> loadNamepace(AuthzTrans trans, String user, String endsWith, boolean full) {
-        Result<List<UserRoleDAO.Data>> urd = ques.userRoleDAO.readByUser(trans, user);
+        Result<List<UserRoleDAO.Data>> urd = ques.userRoleDAO().readByUser(trans, user);
         if (urd.notOKorIsEmpty()) {
             return Result.err(urd);
         }
@@ -679,7 +681,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         Set<Namespace> lm = new HashSet<>();
-        Result<List<NsDAO.Data>> rlnd = ques.nsDAO.dao().getChildren(trans, parent);
+        Result<List<NsDAO.Data>> rlnd = ques.nsDAO().dao().getChildren(trans, parent);
         if (rlnd.isOK()) {
             if (rlnd.isEmpty()) {
                 return Result.err(Status.ERR_NotFound, "No data found for %s",parent);
@@ -727,7 +729,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         Namespace namespace = nsd.value;
-        Result<List<NsDAO.Data>> rlnd = ques.nsDAO.read(trans, namespace.name);
+        Result<List<NsDAO.Data>> rlnd = ques.nsDAO().read(trans, namespace.name);
         
         if (rlnd.notOKorIsEmpty()) {
             return Result.err(Status.ERR_NotFound, "Namespace [%s] does not exist",namespace.name);
@@ -737,7 +739,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_Denied, "You do not have approval to change %s",namespace.name);
         }
 
-        Result<Void> rdr = ques.nsDAO.dao().addDescription(trans, namespace.name, namespace.description);
+        Result<Void> rdr = ques.nsDAO().dao().addDescription(trans, namespace.name, namespace.description);
         if (rdr.isOK()) {
             return Result.ok();
         } else {
@@ -797,6 +799,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<Void> createPerm(final AuthzTrans trans,REQUEST rreq) {        
         final Result<PermDAO.Data> newPd = mapper.perm(trans, rreq);
+        // Does Perm Type exist as a Namespace?
+        if(newPd.value.type.isEmpty() || ques.nsDAO().read(trans, newPd.value.fullType()).isOKhasData()) {
+            return Result.err(Status.ERR_ConflictAlreadyExists,
+                    "Permission Type exists as a Namespace");
+        }
+        
         final ServiceValidator v = new ServiceValidator();
         if (v.perm(newPd).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
@@ -822,7 +830,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return nsd;
                 }
             });
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, newPd.value.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, newPd.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
@@ -1138,7 +1146,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(rnd);     
         }
         
-        Result<List<PermDAO.Data>> rlpd = ques.permDAO.readNS(trans, ns);
+        Result<List<PermDAO.Data>> rlpd = ques.permDAO().readNS(trans, ns);
         if (rlpd.notOK()) {
             return Result.err(rlpd);
         }
@@ -1176,7 +1184,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         
         Result<NsSplit> nss = ques.deriveNsSplit(trans, origType);
-        Result<List<PermDAO.Data>> origRlpd = ques.permDAO.read(trans, nss.value.ns, nss.value.name, origInstance, origAction); 
+        Result<List<PermDAO.Data>> origRlpd = ques.permDAO().read(trans, nss.value.ns, nss.value.name, origInstance, origAction); 
         
         if (origRlpd.notOKorIsEmpty()) {
             return Result.err(Status.ERR_PermissionNotFound, 
@@ -1235,7 +1243,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
         final PermDAO.Data perm = pd.value;
-        if (ques.permDAO.read(trans, perm.ns, perm.type, perm.instance,perm.action).notOKorIsEmpty()) {
+        if (ques.permDAO().read(trans, perm.ns, perm.type, perm.instance,perm.action).notOKorIsEmpty()) {
             return Result.err(Status.ERR_NotFound, "Permission [%s.%s|%s|%s] does not exist",
                 perm.ns,perm.type,perm.instance,perm.action);
         }
@@ -1245,12 +1253,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     perm.ns,perm.type,perm.instance,perm.action);
         }
 
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, pd.value.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, pd.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
 
-        Result<Void> rdr = ques.permDAO.addDescription(trans, perm.ns, perm.type, perm.instance,
+        Result<Void> rdr = ques.permDAO().addDescription(trans, perm.ns, perm.type, perm.instance,
                 perm.action, perm.description);
         if (rdr.isOK()) {
             return Result.ok();
@@ -1287,7 +1295,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         // Read full set to get CURRENT values
-        Result<List<PermDAO.Data>> rcurr = ques.permDAO.read(trans, 
+        Result<List<PermDAO.Data>> rcurr = ques.permDAO().read(trans, 
                 updt.value.ns, 
                 updt.value.type, 
                 updt.value.instance, 
@@ -1321,7 +1329,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if (!currRoles.contains(role)) {
                     Result<RoleDAO.Data> key = RoleDAO.Data.decode(trans, ques, role);
                     if (key.isOKhasData()) {
-                        Result<List<RoleDAO.Data>> rrd = ques.roleDAO.read(trans, key.value);
+                        Result<List<RoleDAO.Data>> rrd = ques.roleDAO().read(trans, key.value);
                         if (rrd.isOKhasData()) {
                             for (RoleDAO.Data r : rrd.value) {
                                 rv = func.addPermToRole(trans, r, curr, false);
@@ -1341,7 +1349,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if (!updtRoles.contains(role)) {
                     Result<RoleDAO.Data> key = RoleDAO.Data.decode(trans, ques, role);
                     if (key.isOKhasData()) {
-                        Result<List<RoleDAO.Data>> rdd = ques.roleDAO.read(trans, key.value);
+                        Result<List<RoleDAO.Data>> rdd = ques.roleDAO().read(trans, key.value);
                         if (rdd.isOKhasData()) {
                             for (RoleDAO.Data r : rdd.value) {
                                 rv = func.delPermFromRole(trans, r, curr, true);
@@ -1380,7 +1388,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
         final PermDAO.Data perm = pd.value;
-        if (ques.permDAO.read(trans, perm).notOKorIsEmpty()) {
+        if (ques.permDAO().read(trans, perm).notOKorIsEmpty()) {
             return Result.err(Status.ERR_PermissionNotFound, "Permission [%s.%s|%s|%s] does not exist",
                     perm.ns,perm.type,perm.instance,perm.action    );
         }
@@ -1405,7 +1413,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         
         switch(fd.status) {
         case OK:
-            Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, perm.ns);
+            Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, perm.ns);
             if (nsr.notOKorIsEmpty()) {
                 return Result.err(nsr);
             }
@@ -1483,12 +1491,17 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<Void> createRole(final AuthzTrans trans, REQUEST from) {
         final Result<RoleDAO.Data> rd = mapper.role(trans, from);
+        // Does Perm Type exist as a Namespace?
+        if(rd.value.name.isEmpty() || ques.nsDAO().read(trans, rd.value.fullName()).isOKhasData()) {
+            return Result.err(Status.ERR_ConflictAlreadyExists,
+                    "Role exists as a Namespace");
+        }
         final ServiceValidator v = new ServiceValidator();
         if (v.role(rd).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
         final RoleDAO.Data role = rd.value;
-        if (ques.roleDAO.read(trans, role.ns, role.name).isOKhasData()) {
+        if (ques.roleDAO().read(trans, role.ns, role.name).isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists, "Role [" + role.fullName() + "] already exists");
         }
 
@@ -1512,7 +1525,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
             });
         
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, rd.value.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rd.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
@@ -1529,7 +1542,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(rfc);
                 }
             case Status.ACC_Now:
-                Result<RoleDAO.Data> rdr = ques.roleDAO.create(trans, role);
+                Result<RoleDAO.Data> rdr = ques.roleDAO().create(trans, role);
                 if (rdr.isOK()) {
                     return Result.ok();
                 } else {
@@ -1608,10 +1621,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         ROLES roles = mapper.newInstance(API.ROLES);
         // Get list of roles per user, then add to Roles as we go
         Result<List<RoleDAO.Data>> rlrd;
-        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByUser(trans, user);
+        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, user);
         if (rlurd.isOKhasData()) {
             for (UserRoleDAO.Data urd : rlurd.value ) {
-                rlrd = ques.roleDAO.read(trans, urd.ns,urd.rname);
+                rlrd = ques.roleDAO().read(trans, urd.ns,urd.rname);
                 // Note: Mapper will restrict what can be viewed
                 //   if user is the same as that which is looked up, no filtering is required
                 if (rlrd.isOKhasData()) {
@@ -1658,7 +1671,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         try {
             ROLES roles = mapper.newInstance(API.ROLES);
             // Get list of roles per user, then add to Roles as we go
-            Result<List<RoleDAO.Data>> rlrd = ques.roleDAO.readNS(trans, ns);
+            Result<List<RoleDAO.Data>> rlrd = ques.roleDAO().readNS(trans, ns);
             if (rlrd.isOK()) {
                 if (!rlrd.isEmpty()) {
                     // Note: Mapper doesn't need to restrict what can be viewed, because we did it already.
@@ -1700,7 +1713,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         try {
             ROLES roles = mapper.newInstance(API.ROLES);
             // Get list of roles per user, then add to Roles as we go
-            Result<List<RoleDAO.Data>> rlrd = ques.roleDAO.readName(trans, name);
+            Result<List<RoleDAO.Data>> rlrd = ques.roleDAO().readName(trans, name);
             if (rlrd.isOK()) {
                 if (!rlrd.isEmpty()) {
                     // Note: Mapper will restrict what can be viewed
@@ -1757,13 +1770,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(res);
                 }
                 
-                Result<List<PermDAO.Data>> pdlr = ques.permDAO.read(trans, pdd);
+                Result<List<PermDAO.Data>> pdlr = ques.permDAO().read(trans, pdd);
                 if (pdlr.isOK())for (PermDAO.Data pd : pdlr.value) {
                     Result<List<RoleDAO.Data>> rlrd;
                     for (String r : pd.roles) {
                         Result<String[]> rs = RoleDAO.Data.decodeToArray(trans, ques, r);
                         if (rs.isOK()) {
-                            rlrd = ques.roleDAO.read(trans, rs.value[0],rs.value[1]);
+                            rlrd = ques.roleDAO().read(trans, rs.value[0],rs.value[1]);
                             // Note: Mapper will restrict what can be viewed
                             if (rlrd.isOKhasData()) {
                                 mapper.roles(trans,rlrd.value,roles,true);
@@ -1799,7 +1812,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         }
         final RoleDAO.Data role = rd.value;
-        if (ques.roleDAO.read(trans, role.ns, role.name).notOKorIsEmpty()) {
+        if (ques.roleDAO().read(trans, role.ns, role.name).notOKorIsEmpty()) {
             return Result.err(Status.ERR_NotFound, "Role [" + role.fullName() + "] does not exist");
         }
 
@@ -1807,12 +1820,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_Denied, "You do not have approval to change " + role.fullName());
         }
 
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, rd.value.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rd.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
 
-        Result<Void> rdr = ques.roleDAO.addDescription(trans, role.ns, role.name, role.description);
+        Result<Void> rdr = ques.roleDAO().addDescription(trans, role.ns, role.name, role.description);
         if (rdr.isOK()) {
             return Result.ok();
         } else {
@@ -1861,13 +1874,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
-        Result<List<RoleDAO.Data>> rlrd = ques.roleDAO.read(trans, rrd.value.ns, rrd.value.name);
+        Result<List<RoleDAO.Data>> rlrd = ques.roleDAO().read(trans, rrd.value.ns, rrd.value.name);
         if (rlrd.notOKorIsEmpty()) {
             return Result.err(Status.ERR_RoleNotFound, "Role [%s] does not exist", rrd.value.fullName());
         }
         
         // Check Status of Data in DB (does it exist)
-        Result<List<PermDAO.Data>> rlpd = ques.permDAO.read(trans, rpd.value.ns, 
+        Result<List<PermDAO.Data>> rlpd = ques.permDAO().read(trans, rpd.value.ns, 
                 rpd.value.type, rpd.value.instance, rpd.value.action);
         PermDAO.Data createPerm = null; // if not null, create first
         if (rlpd.notOKorIsEmpty()) { // Permission doesn't exist
@@ -1908,7 +1921,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         return nsd;
                     }
                 });
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, rpd.value.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rpd.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
@@ -1980,7 +1993,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
         
     private Result<Void> delPermFromRole(final AuthzTrans trans, PermDAO.Data pdd, RoleDAO.Data rdd, REQUEST rreq) {        
-        Result<List<PermDAO.Data>> rlpd = ques.permDAO.read(trans, pdd.ns, pdd.type, 
+        Result<List<PermDAO.Data>> rlpd = ques.permDAO().read(trans, pdd.ns, pdd.type, 
                 pdd.instance, pdd.action);
         
         if (rlpd.notOKorIsEmpty()) {
@@ -2007,7 +2020,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         return nsd;
                     }
                 });
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, pdd.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, pdd.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
@@ -2070,12 +2083,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 return Result.err(rrns);
             }
             
-        final Result<List<RoleDAO.Data>> rrd = ques.roleDAO.read(trans, rrns.value.parent, rrns.value.name);
+        final Result<List<RoleDAO.Data>> rrd = ques.roleDAO().read(trans, rrns.value.parent, rrns.value.name);
         if (rrd.notOKorIsEmpty()) {
             return Result.err(rrd);
         }
         
-        final Result<List<PermDAO.Data>> rpd = ques.permDAO.read(trans, rpns.value.parent, rpns.value.name, instance, action);
+        final Result<List<PermDAO.Data>> rpd = ques.permDAO().read(trans, rpns.value.parent, rpns.value.name, instance, action);
         if (rpd.notOKorIsEmpty()) {
             return Result.err(rpd);
         }
@@ -2131,7 +2144,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
         final RoleDAO.Data role = rd.value;
-        if (ques.roleDAO.read(trans, role).notOKorIsEmpty() && !trans.requested(force)) {
+        if (ques.roleDAO().read(trans, role).notOKorIsEmpty() && !trans.requested(force)) {
             return Result.err(Status.ERR_RoleNotFound, "Role [" + role.fullName() + "] does not exist");
         }
 
@@ -2151,7 +2164,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         
         switch(fd.status) {
         case OK:
-            Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, rd.value.ns);
+            Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rd.value.ns);
             if (nsr.notOKorIsEmpty()) {
                 return Result.err(nsr);
             }
@@ -2299,7 +2312,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(Status.ERR_Policy,"MechIDs must be registered with %s before provisioning in AAF",org.getName());
                 }
 
-                Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, rcred.value.ns);
+                Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rcred.value.ns);
                 if (nsr.notOKorIsEmpty()) {
                     return Result.err(Status.ERR_NsNotFound,"Cannot provision %s on non-existent Namespace %s",mechID.id(),rcred.value.ns);
                 }
@@ -2309,7 +2322,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 MayChange mc;
                 
                 CassExecutor exec = new CassExecutor(trans, func);
-                Result<List<CredDAO.Data>> rlcd = ques.credDAO.readID(trans, rcred.value.id);
+                Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, rcred.value.id);
                 if (rlcd.isOKhasData()) {
                     if (!org.canHaveMultipleCreds(rcred.value.id)) {
                         return Result.err(Status.ERR_ConflictAlreadyExists, "Credential exists");
@@ -2335,7 +2348,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         String theMechID = rcred.value.id;
                         Boolean otherMechIDs = false;
                         // find out if this is the only mechID.  other MechIDs mean special handling (not automated)
-                        for (CredDAO.Data cd : ques.credDAO.readNS(trans,nsr.value.get(0).name).value) {
+                        for (CredDAO.Data cd : ques.credDAO().readNS(trans,nsr.value.get(0).name).value) {
                             if (!cd.id.equals(theMechID)) {
                                 otherMechIDs = true;
                                 break;
@@ -2396,7 +2409,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                             trans.error().log(e, "While setting expiration to TempPassword");
                         }
                         
-                        Result<?>udr = ques.credDAO.create(trans, rcred.value);
+                        Result<?>udr = ques.credDAO().create(trans, rcred.value);
                         if (udr.isOK()) {
                             return Result.ok();
                         }
@@ -2442,7 +2455,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start("MAP Creds by NS to Creds", Env.SUB);
         try {            
             USERS users = mapper.newInstance(API.USERS);
-            Result<List<CredDAO.Data>> rlcd = ques.credDAO.readNS(trans, ns);
+            Result<List<CredDAO.Data>> rlcd = ques.credDAO().readNS(trans, ns);
                     
             if (rlcd.isOK()) {
                 if (!rlcd.isEmpty()) {
@@ -2489,7 +2502,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start("MAP Creds by ID to Creds", Env.SUB);
         try {            
             USERS users = mapper.newInstance(API.USERS);
-            Result<List<CredDAO.Data>> rlcd = ques.credDAO.readID(trans, id);
+            Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, id);
                     
             if (rlcd.isOK()) {
                 if (!rlcd.isEmpty()) {
@@ -2519,7 +2532,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         TimeTaken tt = trans.start("Get Cert Info by ID", Env.SUB);
         try {            
             CERTS certs = mapper.newInstance(API.CERTS);
-            Result<List<CertDAO.Data>> rlcd = ques.certDAO.readID(trans, id);
+            Result<List<CertDAO.Data>> rlcd = ques.certDAO().readID(trans, id);
                     
             if (rlcd.isOK()) {
                 if (!rlcd.isEmpty()) {
@@ -2560,7 +2573,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if (v.cred(trans, trans.org(),rcred,false).err()) {// Note: Creates have stricter Validations 
                     return Result.err(Status.ERR_BadData,v.errs());
                 }
-                Result<List<CredDAO.Data>> rlcd = ques.credDAO.readID(trans, rcred.value.id);
+                Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, rcred.value.id);
                 if (rlcd.notOKorIsEmpty()) {
                     return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
                 } 
@@ -2592,7 +2605,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 },
                 mc);
                 
-                Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, rcred.value.ns);
+                Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rcred.value.ns);
                 if (nsr.notOKorIsEmpty()) {
                     return Result.err(nsr);
                 }
@@ -2634,9 +2647,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                             rcred.value.expires = org.expiration(null,exp).getTime();
                         }
 
-                        udr = ques.credDAO.create(trans, rcred.value);
+                        udr = ques.credDAO().create(trans, rcred.value);
                         if (udr.isOK()) {
-                            udr = ques.credDAO.delete(trans, rlcd.value.get(entry),false);
+                            udr = ques.credDAO().delete(trans, rlcd.value.get(entry),false);
                         }
                         if (udr.isOK()) {
                             return Result.ok();
@@ -2712,7 +2725,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
     
             // Get the list of Cred Entries
-            Result<List<CredDAO.Data>> rlcd = ques.credDAO.readID(trans, cred.value.id);
+            Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
             if (rlcd.notOKorIsEmpty()) {
                 return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
             }
@@ -2735,7 +2748,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             cd.expires = org.expiration(null, Expiration.ExtendPassword,days).getTime();
             cd.tag = found.tag;
             
-            cred = ques.credDAO.create(trans, cd);
+            cred = ques.credDAO().create(trans, cd);
             if (cred.isOK()) {
                 return Result.ok();
             }
@@ -2796,13 +2809,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
     
-        Result<List<CredDAO.Data>> rlcd = ques.credDAO.readID(trans, cred.value.id);
+        Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
         if (rlcd.notOKorIsEmpty()) {
             // Empty Creds should have no user_roles.
-            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByUser(trans, cred.value.id);
+            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
             if (rlurd.isOK()) {
                 for (UserRoleDAO.Data data : rlurd.value) {
-                    ques.userRoleDAO.delete(trans, data, false);
+                    ques.userRoleDAO().delete(trans, data, false);
                 }
             }
             return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
@@ -2859,7 +2872,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 ']',
             mc);
     
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO.read(trans, cred.value.ns);
+        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, cred.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
@@ -2880,20 +2893,20 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     if (entry<0 || entry >= rlcd.value.size()) {
                         return Result.err(Status.ERR_BadData,"Invalid Choice [" + entry + "] chosen for Delete [%s] is saved for future processing",cred.value.id);
                     }
-                    udr = ques.credDAO.delete(trans, rlcd.value.get(entry),false);
+                    udr = ques.credDAO().delete(trans, rlcd.value.get(entry),false);
                 } else {
                     for (CredDAO.Data curr : rlcd.value) {
-                        udr = ques.credDAO.delete(trans, curr, false);
+                        udr = ques.credDAO().delete(trans, curr, false);
                         if (udr.notOK()) {
                             return Result.err(udr);
                         }
                     }
                 }
                 if (isLastCred) {
-                    Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByUser(trans, cred.value.id);
+                    Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
                     if (rlurd.isOK()) {
                         for (UserRoleDAO.Data data : rlurd.value) {
-                            ques.userRoleDAO.delete(trans, data, false);
+                            ques.userRoleDAO().delete(trans, data, false);
                         }
                     }
                 }
@@ -3094,7 +3107,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             
             // Get list of roles per user, then add to Roles as we go
             HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
-            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, role);
+            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByRole(trans, role);
             if (rlurd.isOK()) {
                 for (UserRoleDAO.Data data : rlurd.value) {
                     userSet.add(data);
@@ -3127,7 +3140,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
             
             // Get list of roles per user, then add to Roles as we go
-            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByUser(trans, user);
+            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, user);
             if (rlurd.notOK()) { 
                 return Result.err(rlurd);
             }
@@ -3188,172 +3201,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         
-    @ApiDoc( 
-            method = PUT,  
-            path = "/authz/userRole/user",
-            params = {},
-            expectedCode = 200,
-            errorCodes = {403,404,406}, 
-            text = { "Set a User's roles to the roles specified in the UserRoleRequest object.",
-                        "WARNING: Roles supplied will be the ONLY roles attached to this user",
-                        "If no roles are supplied, user's roles are reset."
-                   }
-            )
-    @Override
-    public Result<Void> resetRolesForUser(AuthzTrans trans, REQUEST rreq) {
-        Result<UserRoleDAO.Data> rurdd = mapper.userRole(trans, rreq);
-        final ServiceValidator v = new ServiceValidator();
-        if (rurdd.notOKorIsEmpty()) {
-            return Result.err(rurdd);
-        }
-        if (v.user(trans.org(), rurdd.value.user).err()) {
-            return Result.err(Status.ERR_BadData,v.errs());
-        }
-
-        Set<String> currRoles = new HashSet<>();
-        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByUser(trans, rurdd.value.user);
-        if (rlurd.isOK()) {
-            for (UserRoleDAO.Data data : rlurd.value) {
-                currRoles.add(data.role);
-            }
-        }
-        
-        Result<Void> rv = null;
-        String[] roles;
-        if (rurdd.value.role==null) {
-            roles = new String[0];
-        } else {
-            roles = rurdd.value.role.split(",");
-        }
-        
-        for (String role : roles) {            
-            if (v.role(role).err()) {
-                return Result.err(Status.ERR_BadData,v.errs());
-            }
-            Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, ques, role);
-            if (rrdd.notOK()) {
-                return Result.err(rrdd);
-            }
-            
-            rurdd.value.role(rrdd.value);
-            
-            Result<NsDAO.Data> nsd = ques.mayUser(trans, trans.user(), rrdd.value,Access.write);
-            if (nsd.notOK()) {
-                return Result.err(nsd);
-            }
-            Result<NsDAO.Data> nsr = ques.deriveNs(trans, role);
-            if (nsr.notOKorIsEmpty()) {
-                return Result.err(nsr);    
-            }
-            
-            if (currRoles.contains(role)) {
-                currRoles.remove(role);
-            } else {
-                rv = func.addUserRole(trans, rurdd.value);
-                if (rv.notOK()) {
-                    return rv;
-                }
-            }
-        }
-        
-        for (String role : currRoles) {
-            rurdd.value.role(trans,ques,role);
-            rv = ques.userRoleDAO.delete(trans, rurdd.value, false);
-            if (rv.notOK()) {
-                trans.info().log(rurdd.value.user,"/",rurdd.value.role, "expected to be deleted, but does not exist");
-                // return rv; // if it doesn't exist, don't error out
-            }
-
-        }
+ 
     
-        return Result.ok();        
-        
-    }
-    
-    @ApiDoc( 
-            method = PUT,  
-            path = "/authz/userRole/role",
-            params = {},
-            expectedCode = 200,
-            errorCodes = {403,404,406}, 
-            text = { "Set a Role's users to the users specified in the UserRoleRequest object.",
-                    "WARNING: Users supplied will be the ONLY users attached to this role",
-                    "If no users are supplied, role's users are reset."
-               }
-            )
-    @Override
-    public Result<Void> resetUsersForRole(AuthzTrans trans, REQUEST rreq) {
-        Result<UserRoleDAO.Data> rurdd = mapper.userRole(trans, rreq);
-        if (rurdd.notOKorIsEmpty()) {
-            return Result.err(rurdd);
-        }
-        final ServiceValidator v = new ServiceValidator();
-        if (v.user_role(rurdd.value).err()) {
-            return Result.err(Status.ERR_BadData,v.errs());
-        }
-
-        RoleDAO.Data rd = RoleDAO.Data.decode(rurdd.value);
-
-        Result<NsDAO.Data> nsd = ques.mayUser(trans, trans.user(), rd, Access.write);
-        if (nsd.notOK()) {
-            return Result.err(nsd);
-        }
-
-        Result<NsDAO.Data> nsr = ques.deriveNs(trans, rurdd.value.role);
-        if (nsr.notOKorIsEmpty()) {
-            return Result.err(nsr);    
-        }
-
-        Set<String> currUsers = new HashSet<>();
-        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, rurdd.value.role);
-        if (rlurd.isOK()) { 
-            for (UserRoleDAO.Data data : rlurd.value) {
-                currUsers.add(data.user);
-            }
-        }
-    
-        // found when connected remotely to DEVL, can't replicate locally
-        // inconsistent errors with cmd: role user setTo [nothing]
-        // deleteUserRole --> read --> get --> cacheIdx(?)
-        // sometimes returns idx for last added user instead of user passed in
-        // cache bug? 
-        
-        
-        Result<Void> rv = null;
-        String[] users = {};
-        if (rurdd.value.user != null) {
-            users = rurdd.value.user.split(",");
-        }
-        
-        for (String user : users) {            
-            if (v.user(trans.org(), user).err()) {
-                return Result.err(Status.ERR_BadData,v.errs());
-            }
-            rurdd.value.user = user;
-
-            if (currUsers.contains(user)) {
-                currUsers.remove(user);
-            } else {
-                rv = func.addUserRole(trans, rurdd.value);
-                if (rv.notOK()) { 
-                    return rv;
-                }
-            }
-        }
-        
-        for (String user : currUsers) {
-            rurdd.value.user = user; 
-            rv = ques.userRoleDAO.delete(trans, rurdd.value, false);
-            if (rv.notOK()) {
-                trans.info().log(rurdd.value, "expected to be deleted, but not exists");
-                return rv;
-            }
-        }    
-        
-        return Result.ok();            
-    }
-    
-    @ApiDoc(
+     @ApiDoc(
             method = GET,
             path = "/authz/userRole/extend/:user/:role",
             params = {    "user|string|true",
@@ -3386,7 +3236,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(rcr);
         }
         
-        Result<List<UserRoleDAO.Data>> rr = ques.userRoleDAO.read(trans, user,role);
+        Result<List<UserRoleDAO.Data>> rr = ques.userRoleDAO().read(trans, user,role);
         if (rr.notOK()) {
             return Result.err(rr);
         }
@@ -3461,7 +3311,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         Result<List<UserRoleDAO.Data>> rulr;
-        if ((rulr=ques.userRoleDAO.read(trans, usr, role)).notOKorIsEmpty()) {
+        if ((rulr=ques.userRoleDAO().read(trans, usr, role)).notOKorIsEmpty()) {
             return Result.err(Status.ERR_UserRoleNotFound, "User [ "+usr+" ] is not "
                     + "Assigned to the Role [ " + role + " ]");
         }
@@ -3485,7 +3335,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 return Result.err(rfc);
             }
         } else {
-            return ques.userRoleDAO.delete(trans, rulr.value.get(0), false);
+            return ques.userRoleDAO().delete(trans, rulr.value.get(0), false);
         }
     }
 
@@ -3521,7 +3371,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         
         HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
-        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readUserInRole(trans, user, role);
+        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readUserInRole(trans, user, role);
         if (rlurd.isOK()) {
             for (UserRoleDAO.Data data : rlurd.value) {
                 userSet.add(data);
@@ -3573,7 +3423,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         
         HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
-        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, role);
+        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByRole(trans, role);
         if (rlurd.isOK()) { 
             for (UserRoleDAO.Data data : rlurd.value) {
                 if (contactOnly) { //scrub data
@@ -3626,7 +3476,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(nss);
         }
         
-        Result<List<NsDAO.Data>> nsd = ques.nsDAO.read(trans, nss.value.ns);
+        Result<List<NsDAO.Data>> nsd = ques.nsDAO().read(trans, nss.value.ns);
         if (nsd.notOK()) {
             return Result.err(nsd);
         }
@@ -3640,7 +3490,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         Set<UserRoleDAO.Data> userSet = new HashSet<>();
         
         if (!nss.isEmpty()) {
-            Result<List<PermDAO.Data>> rlp = ques.permDAO.readByType(trans, nss.value.ns, nss.value.name);
+            Result<List<PermDAO.Data>> rlp = ques.permDAO().readByType(trans, nss.value.ns, nss.value.name);
             if (rlp.isOKhasData()) {
                 for (PermDAO.Data pd : rlp.value) {
                     if ((allInstance || pd.instance.equals(instance)) && 
@@ -3649,7 +3499,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                             for (String role : pd.roles) {
                                 if (!roleUsed.contains(role)) { // avoid evaluating Role many times
                                     roleUsed.add(role);
-                                    Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO.readByRole(trans, role.replace('|', '.'));
+                                    Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByRole(trans, role.replace('|', '.'));
                                     if (rlurd.isOKhasData()) {
                                         for (UserRoleDAO.Data urd : rlurd.value) {
                                             userSet.add(urd);
@@ -3703,7 +3553,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
             }
          }
-        Result<List<HistoryDAO.Data>> resp = ques.historyDAO.readByUser(trans, user, yyyymm);
+        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readByUser(trans, user, yyyymm);
         if (resp.notOK()) {
             return Result.err(resp);
         }
@@ -3726,7 +3576,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rnd.notOK()) {
             return Result.err(rnd);
         }
-        Result<List<HistoryDAO.Data>> resp = ques.historyDAO.readBySubject(trans, role, "role", yyyymm); 
+        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, role, "role", yyyymm); 
         if (resp.notOK()) {
             return Result.err(resp);
         }
@@ -3751,7 +3601,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rnd.notOK()) {
             return Result.err(rnd);    
         }
-        Result<List<HistoryDAO.Data>> resp = ques.historyDAO.readBySubject(trans, type, "perm", yyyymm);
+        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, type, "perm", yyyymm);
         if (resp.notOK()) {
             return Result.err(resp);
         }
@@ -3775,7 +3625,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(rnd);    
         }
 
-        Result<List<HistoryDAO.Data>> resp = ques.historyDAO.readBySubject(trans, ns, "ns", yyyymm);
+        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, ns, "ns", yyyymm);
         if (resp.notOK()) {
             return Result.err(resp);
         }
@@ -3805,7 +3655,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
         final DelegateDAO.Data dd = rd.value;
         
-        Result<List<DelegateDAO.Data>> ddr = ques.delegateDAO.read(trans, dd);
+        Result<List<DelegateDAO.Data>> ddr = ques.delegateDAO().read(trans, dd);
         if (access==Access.create && ddr.isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists, "[%s] already delegates to [%s]", dd.user, ddr.value.get(0).delegate);
         } else if (access!=Access.create && ddr.notOKorIsEmpty()) { 
@@ -3845,14 +3695,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
             case Status.ACC_Now:
                 if (access==Access.create) {
-                    Result<DelegateDAO.Data> rdr = ques.delegateDAO.create(trans, dd);
+                    Result<DelegateDAO.Data> rdr = ques.delegateDAO().create(trans, dd);
                     if (rdr.isOK()) {
                         return Result.ok();
                     } else {
                         return Result.err(rdr);
                     }
                 } else {
-                    return ques.delegateDAO.update(trans, dd);
+                    return ques.delegateDAO().update(trans, dd);
                 }
             default:
                 return Result.err(fd);
@@ -3868,7 +3718,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         
         Result<List<DelegateDAO.Data>> ddl;
-        if ((ddl=ques.delegateDAO.read(trans, rd.value)).notOKorIsEmpty()) {
+        if ((ddl=ques.delegateDAO().read(trans, rd.value)).notOKorIsEmpty()) {
             return Result.err(Status.ERR_DelegateNotFound,"Cannot delete non-existent Delegate");
         }
         final DelegateDAO.Data dd = ddl.value.get(0);
@@ -3877,7 +3727,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return rv;
         }
         
-        return ques.delegateDAO.delete(trans, dd, false);
+        return ques.delegateDAO().delete(trans, dd, false);
     }
 
     @Override
@@ -3889,7 +3739,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         dd.user = userName;
         Result<List<DelegateDAO.Data>> ddl;
-        if ((ddl=ques.delegateDAO.read(trans, dd)).notOKorIsEmpty()) {
+        if ((ddl=ques.delegateDAO().read(trans, dd)).notOKorIsEmpty()) {
             return Result.err(Status.ERR_DelegateNotFound,"Cannot delete non-existent Delegate");
         }
         dd = ddl.value.get(0);
@@ -3898,7 +3748,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return rv;
         }
         
-        return ques.delegateDAO.delete(trans, dd, false);
+        return ques.delegateDAO().delete(trans, dd, false);
     }
     
     @Override
@@ -3918,7 +3768,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         
         TimeTaken tt = trans.start("Get delegates for a user", Env.SUB);
 
-        Result<List<DelegateDAO.Data>> dbDelgs = ques.delegateDAO.read(trans, user);
+        Result<List<DelegateDAO.Data>> dbDelgs = ques.delegateDAO().read(trans, user);
         try {
             if (dbDelgs.isOKhasData()) {
                 return mapper.delegate(dbDelgs.value);
@@ -3946,7 +3796,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
         TimeTaken tt = trans.start("Get users for a delegate", Env.SUB);
 
-        Result<List<DelegateDAO.Data>> dbDelgs = ques.delegateDAO.readByDelegate(trans, delegate);
+        Result<List<DelegateDAO.Data>> dbDelgs = ques.delegateDAO().readByDelegate(trans, delegate);
         try {
             if (dbDelgs.isOKhasData()) {
                 return mapper.delegate(dbDelgs.value);
@@ -3979,16 +3829,16 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         Lookup<List<ApprovalDAO.Data>> apprByTicket=null;
         for (ApprovalDAO.Data updt : rlad.value) {
             if (updt.ticket!=null) {
-                curr = ques.approvalDAO.readByTicket(trans, updt.ticket);
+                curr = ques.approvalDAO().readByTicket(trans, updt.ticket);
                 if (curr.isOKhasData()) {
                     final List<ApprovalDAO.Data> add = curr.value;
                     // Store a Pre-Lookup
                     apprByTicket = (trans1, noop) -> add;
                 }
             } else if (updt.id!=null) {
-                curr = ques.approvalDAO.read(trans, updt);
+                curr = ques.approvalDAO().read(trans, updt);
             } else if (updt.approver!=null) {
-                curr = ques.approvalDAO.readByApprover(trans, updt.approver);
+                curr = ques.approvalDAO().readByApprover(trans, updt.approver);
             } else {
                 return Result.err(Status.ERR_BadData,"Approvals need ID, Ticket or Approval data to update");
             }
@@ -4024,7 +3874,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                 if (cd.ticket!=null) {
                                     FutureDAO.Data fdd = futureCache.get(cd.ticket);
                                     if (fdd==null) { // haven't processed ticket yet
-                                        Result<FutureDAO.Data> rfdd = ques.futureDAO.readPrimKey(trans, cd.ticket);
+                                        Result<FutureDAO.Data> rfdd = ques.futureDAO().readPrimKey(trans, cd.ticket);
                                         if (rfdd.isOK()) {
                                             fdd = rfdd.value; // null is ok
                                         } else {
@@ -4067,7 +3917,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                     ++numProcessed;
                                 }
                                 if (ch.hasChanged()) {
-                                    ques.approvalDAO.update(trans, cd, true);
+                                    ques.approvalDAO().update(trans, cd, true);
                                 }
                             }
                         }
@@ -4110,7 +3960,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
-        Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO.readByUser(trans, user);
+        Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO().readByUser(trans, user);
         if (rapd.isOK()) {
             return mapper.approvals(rapd.value);
         } else {
@@ -4131,7 +3981,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,e.getMessage());
         }
     
-        Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO.readByTicket(trans, uuid);
+        Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO().readByTicket(trans, uuid);
         if (rapd.isOK()) {
             return mapper.approvals(rapd.value);
         } else {
@@ -4148,19 +3998,19 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         
         List<ApprovalDAO.Data> listRapds = new ArrayList<>();
         
-        Result<List<ApprovalDAO.Data>> myRapd = ques.approvalDAO.readByApprover(trans, approver);
+        Result<List<ApprovalDAO.Data>> myRapd = ques.approvalDAO().readByApprover(trans, approver);
         if (myRapd.notOK()) {
             return Result.err(myRapd);
         }
         
         listRapds.addAll(myRapd.value);
         
-        Result<List<DelegateDAO.Data>> delegatedFor = ques.delegateDAO.readByDelegate(trans, approver);
+        Result<List<DelegateDAO.Data>> delegatedFor = ques.delegateDAO().readByDelegate(trans, approver);
         if (delegatedFor.isOK()) {
             for (DelegateDAO.Data dd : delegatedFor.value) {
                 if (dd.expires.after(new Date())) {
                     String delegator = dd.user;
-                    Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO.readByApprover(trans, delegator);
+                    Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO().readByApprover(trans, delegator);
                     if (rapd.isOK()) {
                         for (ApprovalDAO.Data d : rapd.value) { 
                             if (!d.user.equals(trans.user())) {
@@ -4210,7 +4060,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
      */
     @Override
     public void dbReset(AuthzTrans trans) {
-        ques.historyDAO.reportPerhapsReset(trans, null);
+        ques.historyDAO().reportPerhapsReset(trans, null);
     }
 
 }

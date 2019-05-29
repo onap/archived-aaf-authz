@@ -566,21 +566,10 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      */
     public Result<USERROLES> getUserRolesByUser(AuthzTrans trans, String user);
 
-    /**
-     * 
-     * @param trans
-     * @param from
-     * @return
+    /*
+     * Note: Removed "resetRolesForUsers" because it was too dangerous, and
+     *       removed "resetUsersForRoles" because it was being misused.
      */
-    public Result<Void> resetRolesForUser(AuthzTrans trans, REQUEST from);
-    
-    /**
-     * 
-     * @param trans
-     * @param from
-     * @return
-     */
-    public Result<Void> resetUsersForRole(AuthzTrans trans, REQUEST from);
     
     /**
      * 

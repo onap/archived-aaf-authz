@@ -40,12 +40,12 @@ import aaf.v2_0.UserRoleRequest;
  *
  */
 public class User extends Cmd {
-    private final static String[] options = {"add","del","setTo","extend"};
+    private final static String[] options = {"add","del","extend"};
     public User(Role parent) {
         super(parent,"user", 
                 new Param(optionsToString(options),true),
                 new Param("role",true),
-                new Param("id[,id]* (not required for setTo)",false)); 
+                new Param("id[,id]*",false)); 
     }
 
     @Override
@@ -63,87 +63,62 @@ public class User extends Cmd {
                 
                 Future<?> fp = null;
                 
-                if (option != 2) {
-                    String[] ids = args[idx++].split(",");
-                    String verb=null,participle=null;
-                    // You can request to be added or removed from role.
-                    setQueryParamsOn(client);
+                String[] ids = args[idx++].split(",");
+                String verb=null,participle=null;
+                // You can request to be added or removed from role.
+                setQueryParamsOn(client);
 
-                    for (String id: ids) {
-                        id=fullID(id);
-                        urr.setUser(id);
-                        switch(option) {
-                            case 0:
-                                fp = client.create(
-                                        "/authz/userRole", 
-                                        getDF(UserRoleRequest.class), 
-                                        urr);
-                                verb = "Added";
-                                participle = "] to Role [" ;
-                                break;
-                            case 1:
-                                fp = client.delete(
-                                        "/authz/userRole/"+urr.getUser()+'/'+urr.getRole(), 
-                                        Void.class);
-                                verb = "Removed";
-                                participle = "] from Role [" ;
-                                break;
-                            case 3:
-                                fp = client.update("/authz/userRole/extend/" + urr.getUser() + '/' + urr.getRole());
-                                verb = "Extended";
-                                participle = "] in Role [" ;
-                                break;
+                for (String id: ids) {
+                    id=fullID(id);
+                    urr.setUser(id);
+                    switch(option) {
+                        case 0:
+                            fp = client.create(
+                                    "/authz/userRole", 
+                                    getDF(UserRoleRequest.class), 
+                                    urr);
+                            verb = "Added";
+                            participle = "] to Role [" ;
+                            break;
+                        case 1:
+                            fp = client.delete(
+                                    "/authz/userRole/"+urr.getUser()+'/'+urr.getRole(), 
+                                    Void.class);
+                            verb = "Removed";
+                            participle = "] from Role [" ;
+                            break;
+                        case 2:
+                            fp = client.update("/authz/userRole/extend/" + urr.getUser() + '/' + urr.getRole());
+                            verb = "Extended";
+                            participle = "] in Role [" ;
+                            break;
 
-                            default: // actually, should never get here...
-                                throw new CadiException("Invalid action [" + action + ']');
-                        }
-                        if (fp.get(AAFcli.timeout())) {
-                            pw().print(verb);
-                            pw().print(" User [");
-                            pw().print(urr.getUser());
-                            pw().print(participle);
-                            pw().print(urr.getRole());
-                            pw().println(']');
-                        } else {
-                            switch(fp.code()) {
-                                case 202:
-                                    pw().print("User Role ");
-                                    pw().print(action);
-                                    pw().println(" is Accepted, but requires Approvals before actualizing");
-                                    break;
-                                case 404:
-                                    if (option==3) {
-                                        pw().println("Failed with code 404: UserRole is not found, or you do not have permission to view");
-                                        break;
-                                    }
-                                default:
-                                    error(fp);
-                            }
-                        }
+                        default: // actually, should never get here...
+                            throw new CadiException("Invalid action [" + action + ']');
                     }
-                } else {
-                    String allUsers = "";
-                    if (idx < args.length) 
-                        allUsers = args[idx++];
-                    StringBuilder finalUsers = new StringBuilder();    
-                    for (String u : allUsers.split(",")) {
-                        if (u != "") {
-                            u=fullID(u);
-                            if (finalUsers.length() > 0) finalUsers.append(",");
-                            finalUsers.append(u);
-                        }
-                    }
-
-                    urr.setUser(finalUsers.toString());
-                    fp = client.update(
-                            "/authz/userRole/role", 
-                            getDF(UserRoleRequest.class), 
-                            urr);
                     if (fp.get(AAFcli.timeout())) {
-                        pw().println("Set the Role to Users [" + allUsers + "]");
+                        pw().print(verb);
+                        pw().print(" User [");
+                        pw().print(urr.getUser());
+                        pw().print(participle);
+                        pw().print(urr.getRole());
+                        pw().println(']');
                     } else {
-                        error(fp);
-                    }        
+                        switch(fp.code()) {
+                            case 202:
+                                pw().print("User Role ");
+                                pw().print(action);
+                                pw().println(" is Accepted, but requires Approvals before actualizing");
+                                break;
+                            case 404:
+                                if (option==3) {
+                                    pw().println("Failed with code 404: UserRole is not found, or you do not have permission to view");
+                                    break;
+                                }
+                            default:
+                                error(fp);
+                        }
+                    }
                 }
                 return fp==null?0:fp.code();
             }
@@ -152,18 +127,13 @@ public class User extends Cmd {
     
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
-        detailLine(sb,indent,"Add OR Delete a User to/from a Role OR");
-        detailLine(sb,indent,"Set a User's Roles to the roles supplied");
+        detailLine(sb,indent,"Add OR Delete a User to/from a Role OR extend Expiration");
         detailLine(sb,indent+2,"role  - Name of Role to create");
         detailLine(sb,indent+2,"id(s) - ID or IDs to add to the Role");
         sb.append('\n');
-        detailLine(sb,indent+2,"Note: this is the same as \"user role add...\" except allows");
-        detailLine(sb,indent+2,"assignment of role to multiple userss");
-        detailLine(sb,indent+2,"WARNING: Users supplied with setTo will be the ONLY users attached to this role");
-        detailLine(sb,indent+2,"If no users are supplied, the users attached to this role are reset.");
         api(sb,indent,HttpMethods.POST,"authz/userRole",UserRoleRequest.class,true);
         api(sb,indent,HttpMethods.DELETE,"authz/userRole/<user>/<role>",Void.class,false);
-        api(sb,indent,HttpMethods.PUT,"authz/userRole/<role>",UserRoleRequest.class,false);
+        api(sb,indent,HttpMethods.PUT,"authz/userRole/extend/<user>/<role>",Void.class,false);
     }
 
 }

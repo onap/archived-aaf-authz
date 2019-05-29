@@ -24,20 +24,17 @@ package org.onap.aaf.auth.dao.cass;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
-import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,9 +43,7 @@ import org.mockito.Mockito;
 import org.onap.aaf.auth.dao.AbsCassDAO;
 import org.onap.aaf.auth.dao.AbsCassDAO.CRUD;
 import org.onap.aaf.auth.dao.AbsCassDAO.PSInfo;
-import org.onap.aaf.auth.dao.CassAccess;
 import org.onap.aaf.auth.dao.CassDAOImpl;
-import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -289,11 +284,13 @@ public class JU_UserRoleDAO {
 			innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {UserRoleDAO.Data.class, Integer.TYPE, Object[].class });
 			innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
 			
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream("JU_UserRoleDAOTest.java"));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos = new DataOutputStream(baos);
 			innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {UserRoleDAO.Data.class, DataOutputStream.class });
 			innnerClassMtd.invoke(obj, new Object[] {data, dos });
 
-			DataInputStream dis = new DataInputStream(new FileInputStream("JU_UserRoleDAOTest.java"));
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			DataInputStream dis = new DataInputStream(bais);
 			innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {UserRoleDAO.Data.class, DataInputStream.class });
 			innnerClassMtd.invoke(obj, new Object[] {data, dis });
 			
@@ -313,9 +310,6 @@ public class JU_UserRoleDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

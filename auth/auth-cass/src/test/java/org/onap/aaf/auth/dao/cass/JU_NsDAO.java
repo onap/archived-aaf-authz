@@ -25,11 +25,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -218,11 +218,13 @@ public class JU_NsDAO {
 			innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {NsDAO.Data.class, Integer.TYPE, Object[].class });
 			innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
 			
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream("JU_NsDAOTest.java"));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos = new DataOutputStream(baos);
 			innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {NsDAO.Data.class, DataOutputStream.class });
 			innnerClassMtd.invoke(obj, new Object[] {data, dos });
 
-			DataInputStream dis = new DataInputStream(new FileInputStream("JU_NsDAOTest.java"));
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			DataInputStream dis = new DataInputStream(bais);
 			innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {NsDAO.Data.class, DataInputStream.class });
 			innnerClassMtd.invoke(obj, new Object[] {data, dis });
 			
@@ -242,9 +244,6 @@ public class JU_NsDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

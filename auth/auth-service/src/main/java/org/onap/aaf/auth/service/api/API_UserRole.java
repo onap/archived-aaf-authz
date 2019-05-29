@@ -104,21 +104,17 @@ public class API_UserRole {
             }
         });
 
-        
+    /* TODO
+     * REMOVE dangerous resetUsersForRole and resetRolesForUser APIs
+     */
+        final Result<Object> removeAPI = Result.err(Result.ERR_NotFound,"API Removed, use /authz/userRole instead.");
         /**
          * Update roles attached to user in path
          */
         authzAPI.route(PUT,"/authz/userRole/user",API.USER_ROLE_REQ,new Code(facade,"Update Roles for a user", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-                Result<Void> r = context.resetRolesForUser(trans, resp, req);
-                switch(r.status) {
-                    case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
-                        break;
-                    default:
-                        context.error(trans,resp,r);
-                }
+            	context.error(trans,resp,removeAPI);
             }
         });
         
@@ -129,16 +125,14 @@ public class API_UserRole {
         authzAPI.route(PUT,"/authz/userRole/role",API.USER_ROLE_REQ,new Code(facade,"Update Users for a role", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-                Result<Void> r = context.resetUsersForRole(trans, resp, req);
-                switch(r.status) {
-                    case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
-                        break;
-                    default:
-                        context.error(trans,resp,r);
-                }
+            	context.error(trans,resp,removeAPI);
             }
         });
+
+    /*
+     * END REMOVE Dangerous API
+     */
+        
         
         /**
          * Extend Expiration Date (according to Organizational rules)

@@ -112,7 +112,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         }
     }
 
-    private static class CredLoader extends Loader<Data> implements Streamer<Data>{
+    public static class CredLoader extends Loader<Data> implements Streamer<Data>{
         public static final int MAGIC=153323443;
         public static final int VERSION=2;
         public static final int BUFF_SIZE=48; // Note: 

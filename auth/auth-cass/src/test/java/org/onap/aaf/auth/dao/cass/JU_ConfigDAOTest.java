@@ -23,17 +23,17 @@ package org.onap.aaf.auth.dao.cass;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -44,8 +44,8 @@ import org.mockito.Mockito;
 import org.onap.aaf.auth.dao.AbsCassDAO;
 import org.onap.aaf.auth.dao.AbsCassDAO.CRUD;
 import org.onap.aaf.auth.dao.AbsCassDAO.PSInfo;
-import org.onap.aaf.auth.dao.cass.ConfigDAO.Data;
 import org.onap.aaf.auth.dao.CassAccess;
+import org.onap.aaf.auth.dao.cass.ConfigDAO.Data;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
@@ -57,7 +57,6 @@ import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TimeTaken;
 
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -139,11 +138,13 @@ public class JU_ConfigDAOTest {
 			innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {ConfigDAO.Data.class, Integer.TYPE, Object[].class });
 			innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
 			
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream("JU_ConfigDAOTest.java"));
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos = new DataOutputStream(baos);
 			innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {ConfigDAO.Data.class, DataOutputStream.class });
 			innnerClassMtd.invoke(obj, new Object[] {data, dos });
 
-			DataInputStream dis = new DataInputStream(new FileInputStream("JU_ConfigDAOTest.java"));
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			DataInputStream dis = new DataInputStream(bais);
 			innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {ConfigDAO.Data.class, DataInputStream.class });
 			innnerClassMtd.invoke(obj, new Object[] {data, dis });
 			
@@ -163,12 +164,6 @@ public class JU_ConfigDAOTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

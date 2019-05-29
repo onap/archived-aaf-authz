@@ -59,8 +59,7 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             env.staticSlot(CachingFileAccess.CFA_WEB_PATH,"aaf_public_dir");
 
             CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
-            route(env,GET,"/:key", cfa); 
-            route(env,GET,"/:key/:cmd", cfa);
+            route(env,GET,"/:key*", cfa);
             final String aaf_locate_url = access.getProperty(Config.AAF_LOCATE_URL, null);
             if (aaf_locate_url == null) {
                 access.printf(Level.WARN, "Redirection requires property %s",Config.AAF_LOCATE_URL);

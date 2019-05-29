@@ -76,7 +76,7 @@ public class OAuthService {
     @SuppressWarnings("unchecked")
     public OAuthService(final Access access, final AuthzTrans trans, final Question q) throws APIException, IOException {
         permLoader = JSONPermLoaderFactory.direct(q);
-        tokenDAO = new OAuthTokenDAO(trans, q.historyDAO);
+        tokenDAO = new OAuthTokenDAO(trans, q.historyDAO());
         daos =(DAO<AuthzTrans, ?>[]) new DAO<?,?>[] {
             tokenDAO
         };

@@ -98,15 +98,25 @@ public class RegistrationCreator {
     				String protocol = access.getProperty(Config.AAF_LOCATOR_PROTOCOL + dot_le, null);
     				if (protocol!=null) {
     					locate.setProtocol(protocol);
-    					String subprotocols = access.getProperty(Config.AAF_LOCATOR_SUBPROTOCOL + dot_le, null);
-    					if(subprotocols!=null) {
-    						List<String> ls = locate.getSubprotocol();
-    						for (String s : Split.split(',', subprotocols)) {
-    							ls.add(s);
-    						}
-    					}
+						List<String> ls = locate.getSubprotocol();
+						if(ls==null || ls.isEmpty()) {
+	    					String subprotocols = access.getProperty(Config.AAF_LOCATOR_SUBPROTOCOL + dot_le, null);
+	    					if(subprotocols==null) {
+	    						subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
+	    					}
+	    					if(subprotocols!=null) {
+	    						for (String s : Split.split(',', subprotocols)) {
+	    							ls.add(s);
+	    						}
+	    					} else {
+	    						access.printf(Level.ERROR, "%s is required for Locator Registration of %s",
+	    								Config.AAF_LOCATOR_SUBPROTOCOL,Config.AAF_LOCATOR_PROTOCOL);
+	    					}
+						}
+        				lme.add(locate);
+    				} else {
+    					access.printf(Level.ERROR, "%s is required for Locator Registration",Config.AAF_LOCATOR_PROTOCOL);
     				}
-    				lme.add(locate);
     			}
     		}
     	} catch (NumberFormatException | UnknownHostException e) {

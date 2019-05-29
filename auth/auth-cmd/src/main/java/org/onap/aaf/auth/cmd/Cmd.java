@@ -406,6 +406,7 @@ public abstract class Cmd {
                 return i;
             }
         }
+        pw().printf("%s is not a valid cmd\n",test);
         throw new CadiException(build(new StringBuilder("Invalid Option: "),null).toString());
     }
 

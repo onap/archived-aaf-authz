@@ -48,7 +48,7 @@ public class CassExecutor implements Executor {
     public boolean inRole(String name) {
         Result<NsSplit> nss = q.deriveNsSplit(trans, name);
         if (nss.notOK())return false;
-        return q.roleDAO.read(trans, nss.value.ns,nss.value.name).isOKhasData();
+        return q.roleDAO().read(trans, nss.value.ns,nss.value.name).isOKhasData();
     }
 
     public boolean isGranted(String user, String ns, String type, String instance, String action) {

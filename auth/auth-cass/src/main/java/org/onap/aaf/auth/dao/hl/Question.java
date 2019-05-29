@@ -61,6 +61,7 @@ import org.onap.aaf.auth.dao.cass.PermDAO;
 import org.onap.aaf.auth.dao.cass.RoleDAO;
 import org.onap.aaf.auth.dao.cass.Status;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
+import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.env.AuthzTrans.REQD_TYPE;
 import org.onap.aaf.auth.env.AuthzTransFilter;
@@ -129,20 +130,65 @@ public class Question {
     private static Slot transIDSlot = null;
 
 
-    public final HistoryDAO historyDAO;
-    public final CachedNSDAO nsDAO;
-    public  CachedRoleDAO roleDAO;
-    public final CachedPermDAO permDAO;
-    public CachedUserRoleDAO userRoleDAO;
-    public final CachedCredDAO credDAO;
-    public final CachedCertDAO certDAO;
-    public final DelegateDAO delegateDAO;
-    public final FutureDAO futureDAO;
-    public final ApprovalDAO approvalDAO;
-    private final CacheInfoDAO cacheInfoDAO;
+    private final HistoryDAO historyDAO;
+    public HistoryDAO historyDAO() {
+    	return historyDAO;
+    }
+    
+    private final CachedNSDAO nsDAO;
+    public CachedNSDAO nsDAO() {
+    	return nsDAO;
+    }
+    
+    private final CachedRoleDAO roleDAO;
+    public CachedRoleDAO roleDAO() {
+    	return roleDAO;
+    }
+    
+    private final CachedPermDAO permDAO;
+    public CachedPermDAO permDAO() {
+    	return permDAO;
+    }
+    
+    private final CachedUserRoleDAO userRoleDAO;
+    public CachedUserRoleDAO userRoleDAO() {
+    	return userRoleDAO;
+    }
+    
+    private final CachedCredDAO credDAO;
+    public CachedCredDAO credDAO() {
+    	return credDAO;
+    }
+    
+    private final CachedCertDAO certDAO;
+    public CachedCertDAO certDAO() {
+    	return certDAO;
+    }
+    
+    private final DelegateDAO delegateDAO;
+    public DelegateDAO delegateDAO() {
+    	return delegateDAO;
+    }
+    
+    private final FutureDAO futureDAO;
+    public FutureDAO futureDAO() {
+    	return futureDAO;
+    }
+    
+    private final ApprovalDAO approvalDAO;
+    public ApprovalDAO approvalDAO() {
+    	return approvalDAO;
+    }
+    
     public final LocateDAO locateDAO;
+    public LocateDAO locateDAO() {
+    	return locateDAO;
+    }
+    
+    private final CacheInfoDAO cacheInfoDAO;
+	private final int cldays;
 
-    public Question(AuthzTrans trans, Cluster cluster, String keyspace, boolean startClean) throws APIException, IOException {
+    public Question(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         PERMS = trans.slot("USER_PERMS");
         trans.init().log("Instantiating DAOs");
         long expiresIn = Long.parseLong(trans.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
@@ -163,14 +209,6 @@ public class Question {
         delegateDAO = new DelegateDAO(trans, historyDAO);
         approvalDAO = new ApprovalDAO(trans, historyDAO);
 
-        // Only want to aggressively cleanse User related Caches... The others,
-        // just normal refresh
-        if (startClean) {
-            CachedDAO.startCleansing(trans.env(), credDAO, userRoleDAO);
-            CachedDAO.startRefresh(trans.env(), cacheInfoDAO);
-        }
-        // Set a Timer to Check Caches to send messages for Caching changes
-        
         if (specialLogSlot==null) {
             specialLogSlot = trans.slot(AuthzTransFilter.SPECIAL_LOG_SLOT);
         }
@@ -180,9 +218,17 @@ public class Question {
         }
         
         AbsCassDAO.primePSIs(trans);
+        
+        cldays = Integer.parseInt(trans.getProperty(Config.AAF_CRED_WARN_DAYS, Config.AAF_CRED_WARN_DAYS_DFT));
     }
 
-
+    public void startTimers(AuthzEnv env) {
+        // Only want to aggressively cleanse User related Caches... The others,
+        // just normal refresh
+        CachedDAO.startCleansing(env, credDAO, userRoleDAO);
+        CachedDAO.startRefresh(env, cacheInfoDAO);
+    }
+    
     public void close(AuthzTrans trans) {
         historyDAO.close(trans);
         cacheInfoDAO.close(trans);
@@ -784,7 +830,7 @@ public class Question {
                                 case CredDAO.BASIC_AUTH:
                                     byte[] md5=Hash.hashMD5(cred);
                                     if (Hash.compareTo(md5,dbcred)==0) {
-                                        checkLessThanDays(trans,7,now,cdd);
+                                        checkLessThanDays(trans,cldays,now,cdd);
                                         return Result.ok(cdd.expires);
                                     } else if (debug!=null) {
                                         load(debug, cdd);
@@ -797,7 +843,7 @@ public class Question {
                                     byte[] hash = Hash.hashSHA256(bb.array());
     
                                     if (Hash.compareTo(hash,dbcred)==0) {
-                                        checkLessThanDays(trans,7,now,cdd);
+                                        checkLessThanDays(trans,cldays,now,cdd);
                                         return Result.ok(cdd.expires);
                                     } else if (debug!=null) {
                                         load(debug, cdd);
@@ -849,8 +895,9 @@ public class Question {
         long cexp=cdd.expires.getTime();
         if (cexp<close) {
             int daysLeft = days-(int)((close-cexp)/86400000);
-            trans.audit().printf("user=%s,ip=%s,expires=%s,days=%d,msg=\"Password expires in less than %d day%s\"",
-                cdd.id,trans.ip(),Chrono.dateOnlyStamp(cdd.expires),daysLeft, daysLeft,daysLeft==1?"":"s");
+            trans.audit().printf("user=%s,ip=%s,expires=%s,days=%d,tag=%s,msg=\"Password expires in less than %d day%s\"",
+                cdd.id,trans.ip(),Chrono.dateOnlyStamp(cdd.expires),daysLeft, cdd.tag, 
+                daysLeft,daysLeft==1?"":"s");
         }
     }
 

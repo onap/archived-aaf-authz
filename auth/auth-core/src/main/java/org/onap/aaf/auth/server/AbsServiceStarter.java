@@ -67,8 +67,9 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         }
     }
     
-    public abstract void _start(RServlet<TRANS> rserv) throws Exception;
-    public abstract void _propertyAdjustment();
+    
+    protected abstract void _start(RServlet<TRANS> rserv) throws Exception;
+    protected abstract void _propertyAdjustment();
     
     public ENV env() {
         return service.env;
@@ -103,10 +104,8 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 			} catch (IOException e) {
 			}
 		}
-
     }
     
-
     @SafeVarargs
     public final synchronized void register(final Registrant<ENV> ... registrants) {
         if (do_register) {

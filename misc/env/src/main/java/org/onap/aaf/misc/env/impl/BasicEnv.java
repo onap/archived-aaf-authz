@@ -164,7 +164,7 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
                     case Env.REMOTE: sb.append("REMOTE "); break;
                 }
                 sb.append(String.format(name, values));
-                if (flag != Env.CHECKPOINT) {
+                if ((flag & Env.CHECKPOINT) != Env.CHECKPOINT) {
                     sb.append(' ');
                     sb.append((end-start)/1000000f);
                     sb.append("ms");
