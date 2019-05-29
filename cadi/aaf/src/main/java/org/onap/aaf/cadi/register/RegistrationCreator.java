@@ -99,7 +99,8 @@ public class RegistrationCreator {
     				if (protocol!=null) {
     					locate.setProtocol(protocol);
 						List<String> ls = locate.getSubprotocol();
-						if(ls==null || ls.isEmpty()) {
+						// ls cannot be null, per generated getSubprotocol code
+						if(ls.isEmpty()) {
 	    					String subprotocols = access.getProperty(Config.AAF_LOCATOR_SUBPROTOCOL + dot_le, null);
 	    					if(subprotocols==null) {
 	    						subprotocols = access.getProperty(Config.CADI_PROTOCOLS, null);
