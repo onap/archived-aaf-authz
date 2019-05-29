@@ -92,36 +92,20 @@ public class JU_Grant {
 
     @Test
     public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
-        grant._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+        grant._exec(0, new String[] {"grant","type","instance","action","role"});
     }
     
     @Test
     public void testExecSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
         when(futureMock.code()).thenReturn(202);
-        grant._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-        grant._exec(1, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
+        grant._exec(0, new String[] {"grant","type","instance","action","role"});
+
     }
     
     @Test
     public void testExecSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
         when(futureMock.get(any(Integer.class))).thenReturn(true);
-        grant._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-    }
-    
-    @Test
-    public void testExecSetToError() throws APIException, LocatorException, CadiException, URISyntaxException {
-        grant._exec(2, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-    }
-    
-    @Test
-    public void testExecSetToSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
-        when(futureMock.get(any(Integer.class))).thenReturn(true);
-        grant._exec(2, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
-    }
-    
-    @Test
-    public void testExecSetToSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
-        grant._exec(2, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo","another"});
+        grant._exec(0, new String[] {"grant","type","instance","action","role"});
     }
     
     @Test

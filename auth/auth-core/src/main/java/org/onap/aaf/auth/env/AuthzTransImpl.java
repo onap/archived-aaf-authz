@@ -34,16 +34,16 @@ import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.impl.BasicTrans;
 
 public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
+	private static final String N_A = "n/a";
+	private static final String BLANK = "";
+	private HttpServletRequest hreq;
     private TaggedPrincipal user;
-    private String ip,agent,meth,path;
-    private int port;
     private Lur lur;
     private Organization org;
     private int mask;
     private Date now;
     public AuthzTransImpl(AuthzEnv env) {
         super(env);
-        ip="n/a";
         org=null;
         mask=0;
     }
@@ -53,12 +53,8 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public AuthzTrans set(HttpServletRequest req) {
+    	hreq = req;
         user = (TaggedPrincipal)req.getUserPrincipal();
-        ip = req.getRemoteAddr();
-        port = req.getRemotePort();
-        agent = req.getHeader("User-Agent");
-        meth = req.getMethod();
-        path = req.getPathInfo();
         
         for (REQD_TYPE rt : REQD_TYPE.values()) {
             requested(rt,req);
@@ -72,6 +68,10 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         org=null;
         return this;
     }
+    @Override
+    public HttpServletRequest hreq() {
+    	return hreq;
+    }
     
     @Override
     public void setUser(TaggedPrincipal p) {
@@ -83,7 +83,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public String user() {
-        return user==null?"n/a":user.getName();
+        return user==null?N_A:user.getName();
     }
     
     /**
@@ -99,7 +99,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public String ip() {
-        return ip;
+        return hreq==null?N_A:hreq.getRemoteAddr();
     }
 
     /**
@@ -107,7 +107,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public int port() {
-        return port;
+        return hreq==null?0:hreq.getRemotePort();
     }
 
 
@@ -116,7 +116,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public String meth() {
-        return meth;
+        return hreq==null?"":hreq.getMethod();
     }
 
     /* (non-Javadoc)
@@ -124,7 +124,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public String path() {
-        return path;
+    	return hreq==null?"":hreq.getPathInfo();
     }
 
     /**
@@ -132,7 +132,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public String agent() {
-        return agent;
+        return hreq==null?BLANK:hreq.getHeader("User-Agent");
     }
 
     @Override

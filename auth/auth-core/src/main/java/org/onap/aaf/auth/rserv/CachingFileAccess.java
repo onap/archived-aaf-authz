@@ -154,10 +154,10 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     @Override
     public void handle(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String key = pathParam(req, ":key");
-        String cmd = pathParam(req,":cmd");
-        if (key.equals(clear_command)) {
+        int slash = key.indexOf('/');
+        if(key.length()>2 && slash>=0 && key.substring(0,slash).equals(clear_command)) {
             resp.setHeader("Content-Type",typeMap.get("txt"));
-            if ("clear".equals(cmd)) {
+            if ("clear".equals(key.substring(slash+1))) {
                 content.clear();
                 resp.setStatus(200/*HttpStatus.OK_200*/);
             } else {
@@ -165,7 +165,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             }
             return;
         }
-        Content c = load(logT , web_path,cmd!=null && cmd.length()>0?key+'/'+cmd:key, null, checkInterval);
+        Content c = load(logT , web_path,key, null, checkInterval);
         if (c.attachmentOnly) {
             resp.setHeader("Content-disposition", "attachment");
         }

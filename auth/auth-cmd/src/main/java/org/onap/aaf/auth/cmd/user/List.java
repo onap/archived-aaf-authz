@@ -56,16 +56,26 @@ public class List extends BaseCmd<User> {
             }
             return u1.getId().compareTo(u2.getId());
         });
-        String format = reportColHead("%-40s %-10s %-30s\n","User","Type","Expires");
+        String format = reportColHead("%-48s %-5s %-11s %-16s\n","User","Type","Expires","Tag");
         String date = "XXXX-XX-XX";
         for (aaf.v2_0.Users.User user : sorted) {
             if (!aafcli.isTest()) {
                 date = Chrono.dateOnlyStamp(user.getExpires());
             }
+            String tag=null;
+            if(user.getType()<200) {
+            	tag = user.getTag();
+            } else {
+            	tag = "\n\tfingerprint: " + user.getTag();
+            }
+            if(tag==null) {
+            	tag="";
+            }
             pw().format(format, 
                     count? (Integer.valueOf(++idx) + ") " + user.getId()): user.getId(),
                     org.onap.aaf.auth.cmd.ns.List.getType(user),
-                    date);
+                    date,
+                    tag);
         }
         pw().println();
     }

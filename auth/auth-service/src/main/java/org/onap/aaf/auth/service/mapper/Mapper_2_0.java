@@ -541,6 +541,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             user.setId(cred.id);
             user.setExpires(Chrono.timeStamp(cred.expires));
             user.setType(cred.type);
+            user.setTag(cred.tag);
             cu.add(user);
         }
         return Result.ok(to);

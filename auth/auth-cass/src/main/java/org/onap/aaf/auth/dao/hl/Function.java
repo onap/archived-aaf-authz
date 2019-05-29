@@ -227,6 +227,7 @@ public class Function {
         if (rparent.notOK()) {
             return Result.err(rparent);
         }
+        parent = rparent.value.parent;
         if (!fromApproval) {
             rparent = q.mayUser(trans, user, rparent.value, Access.write);
             if (rparent.notOK()) {
@@ -234,11 +235,24 @@ public class Function {
             }
         }
         parent = namespace.parent = rparent.value.name; // Correct Namespace from real data
+        String cname = parent.length()<1 || namespace.name.equals(parent)?null:namespace.name.substring(parent.length()+1);
 
         // 2) Does requested NS exist
-        if (q.nsDAO.read(trans, namespace.name).isOKhasData()) {
+        if (q.nsDAO().read(trans, namespace.name).isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists,
                     "Target Namespace already exists");
+        }
+        
+        // 2.1) Does role exist with that name
+        if(cname!=null && q.roleDAO().read(trans, parent, cname).isOKhasData()) {
+        	return Result.err(Status.ERR_ConflictAlreadyExists,
+                    "Role exists with that name");
+        }
+
+        // 2.2) Do perms exist with that name
+        if(cname!=null && q.permDAO().readByType(trans, parent, cname).isOKhasData()) {
+        	return Result.err(Status.ERR_ConflictAlreadyExists,
+                    "Perms exist with that name");
         }
 
         // Someone must be responsible.
@@ -283,7 +297,7 @@ public class Function {
         }
 
         // VALIDATIONS done... Add NS
-        if ((rq = q.nsDAO.create(trans, namespace.data())).notOK()) {
+        if ((rq = q.nsDAO().create(trans, namespace.data())).notOK()) {
             return Result.err(rq);
         }
 
@@ -296,12 +310,12 @@ public class Function {
         urdd.role(namespace.name, Question.ADMIN);
         for (String admin : namespace.admin) {
             urdd.user = admin;
-            eb.log(q.userRoleDAO.create(trans, urdd));
+            eb.log(q.userRoleDAO().create(trans, urdd));
         }
         urdd.role(namespace.name,Question.OWNER);
         for (String owner : namespace.owner) {
             urdd.user = owner;
-            eb.log(q.userRoleDAO.create(trans, urdd));
+            eb.log(q.userRoleDAO().create(trans, urdd));
         }
 
         addNSAdminRolesPerms(trans, eb, namespace.name);
@@ -318,7 +332,7 @@ public class Function {
             int targetNameDot = targetName.length() + 1;
 
             // 4) Change any roles with children matching this NS, and
-            Result<List<RoleDAO.Data>> rrdc = q.roleDAO.readChildren(trans,    targetNs, targetName);
+            Result<List<RoleDAO.Data>> rrdc = q.roleDAO().readChildren(trans,    targetNs, targetName);
             if (rrdc.isOKhasData()) {
                 for (RoleDAO.Data rdd : rrdc.value) {
                     // Remove old Role from Perms, save them off
@@ -328,7 +342,7 @@ public class Function {
                         if (rpdd.isOKhasData()) {
                             PermDAO.Data pdd = rpdd.value;
                             lpdd.add(pdd);
-                            q.permDAO.delRole(trans, pdd, rdd);
+                            q.permDAO().delRole(trans, pdd, rdd);
                         } else{
                             trans.error().log(rpdd.errorString());
                         }
@@ -345,24 +359,24 @@ public class Function {
                             
                     // Need to use non-cached, because switching namespaces, not
                     // "create" per se
-                    if ((rq = q.roleDAO.create(trans, rdd)).isOK()) {
+                    if ((rq = q.roleDAO().create(trans, rdd)).isOK()) {
                         // Put Role back into Perm, with correct info
                         for (PermDAO.Data pdd : lpdd) {
-                            q.permDAO.addRole(trans, pdd, rdd);
+                            q.permDAO().addRole(trans, pdd, rdd);
                         }
                         // Change data for User Roles 
-                        Result<List<UserRoleDAO.Data>> rurd = q.userRoleDAO.readByRole(trans, rdd.fullName());
+                        Result<List<UserRoleDAO.Data>> rurd = q.userRoleDAO().readByRole(trans, rdd.fullName());
                         if (rurd.isOKhasData()) {
                             for (UserRoleDAO.Data urd : rurd.value) {
                                 urd.ns = rdd.ns;
                                 urd.rname = rdd.name;
-                                q.userRoleDAO.update(trans, urd);
+                                q.userRoleDAO().update(trans, urd);
                             }
                         }
                         // Now delete old one
                         rdd.ns = delP1;
                         rdd.name = delP2;
-                        if ((rq = q.roleDAO.delete(trans, rdd, false)).notOK()) {
+                        if ((rq = q.roleDAO().delete(trans, rdd, false)).notOK()) {
                             eb.log(rq);
                         }
                     } else {
@@ -372,7 +386,7 @@ public class Function {
             }
 
             // 4) Change any Permissions with children matching this NS, and
-            Result<List<PermDAO.Data>> rpdc = q.permDAO.readChildren(trans,targetNs, targetName);
+            Result<List<PermDAO.Data>> rpdc = q.permDAO().readChildren(trans,targetNs, targetName);
             if (rpdc.isOKhasData()) {
                 for (PermDAO.Data pdd : rpdc.value) {
                     // Remove old Perm from Roles, save them off
@@ -383,7 +397,7 @@ public class Function {
                         if (rrdd.isOKhasData()) {
                             RoleDAO.Data rdd = rrdd.value;
                             lrdd.add(rdd);
-                            q.roleDAO.delPerm(trans, rdd, pdd);
+                            q.roleDAO().delPerm(trans, rdd, pdd);
                         } else{
                             trans.error().log(rrdd.errorString());
                         }
@@ -395,15 +409,15 @@ public class Function {
                     pdd.ns = namespace.name;
                     pdd.type = (delP2.length() > targetNameDot) ? delP2
                             .substring(targetNameDot) : "";
-                    if ((rq = q.permDAO.create(trans, pdd)).isOK()) {
+                    if ((rq = q.permDAO().create(trans, pdd)).isOK()) {
                         // Put Role back into Perm, with correct info
                         for (RoleDAO.Data rdd : lrdd) {
-                            q.roleDAO.addPerm(trans, rdd, pdd);
+                            q.roleDAO().addPerm(trans, rdd, pdd);
                         }
 
                         pdd.ns = delP1;
                         pdd.type = delP2;
-                        if ((rq = q.permDAO.delete(trans, pdd, false)).notOK()) {
+                        if ((rq = q.permDAO().delete(trans, pdd, false)).notOK()) {
                             eb.log(rq);
                             // Need to invalidate directly, because we're
                             // switching places in NS, not normal cache behavior
@@ -414,7 +428,7 @@ public class Function {
                 }
             }
             if (eb.hasErr()) {
-                return Result.err(Status.ERR_ActionNotCompleted,eb.sb.toString(), eb.vars());
+                return Result.err(Status.ERR_ActionNotCompleted,eb.sb.toString(), (Object[])eb.vars());
             }
         }
         return Result.ok();
@@ -436,11 +450,11 @@ public class Function {
 
         rd.perms = new HashSet<>();
         rd.perms.add(pd.encode());
-        eb.log(q.roleDAO.create(trans, rd));
+        eb.log(q.roleDAO().create(trans, rd));
 
         pd.roles = new HashSet<>();
         pd.roles.add(rd.encode());
-        eb.log(q.permDAO.create(trans, pd));
+        eb.log(q.permDAO().create(trans, pd));
     }
 
     private void addNSOwnerRolesPerms(AuthzTrans trans, ErrBuilder eb, String ns) {
@@ -458,11 +472,11 @@ public class Function {
 
         rd.perms = new HashSet<>();
         rd.perms.add(pd.encode());
-        eb.log(q.roleDAO.create(trans, rd));
+        eb.log(q.roleDAO().create(trans, rd));
 
         pd.roles = new HashSet<>();
         pd.roles.add(rd.encode());
-        eb.log(q.permDAO.create(trans, pd));
+        eb.log(q.permDAO().create(trans, pd));
     }
 
     /**
@@ -491,7 +505,7 @@ public class Function {
         boolean move = trans.requested(REQD_TYPE.move);
         // 1) Validate
         Result<List<NsDAO.Data>> nsl;
-        if ((nsl = q.nsDAO.read(trans, ns)).notOKorIsEmpty()) {
+        if ((nsl = q.nsDAO().read(trans, ns)).notOKorIsEmpty()) {
             return Result.err(Status.ERR_NsNotFound, "%s does not exist", ns);
         }
         NsDAO.Data nsd = nsl.value.get(0);
@@ -529,18 +543,18 @@ public class Function {
         ErrBuilder er = new ErrBuilder();
 
         // 2a) Deny if any IDs on Namespace
-        Result<List<CredDAO.Data>> creds = q.credDAO.readNS(trans, ns);
+        Result<List<CredDAO.Data>> creds = q.credDAO().readNS(trans, ns);
         if (creds.isOKhasData()) {
             if (force || move) {
                 for (CredDAO.Data cd : creds.value) {
-                    er.log(q.credDAO.delete(trans, cd, false));
+                    er.log(q.credDAO().delete(trans, cd, false));
                     // Since we're deleting all the creds, we should delete all
                     // the user Roles for that Cred
-                    Result<List<UserRoleDAO.Data>> rlurd = q.userRoleDAO
+                    Result<List<UserRoleDAO.Data>> rlurd = q.userRoleDAO()
                             .readByUser(trans, cd.id);
                     if (rlurd.isOK()) {
                         for (UserRoleDAO.Data data : rlurd.value) {
-                            q.userRoleDAO.delete(trans, data, false);
+                            q.userRoleDAO().delete(trans, data, false);
                         }
                     }
 
@@ -556,7 +570,7 @@ public class Function {
 
         // 2b) Find (or delete if forced flag is set) dependencies
         // First, find if NS Perms are the only ones
-        Result<List<PermDAO.Data>> rpdc = q.permDAO.readNS(trans, ns);
+        Result<List<PermDAO.Data>> rpdc = q.permDAO().readNS(trans, ns);
         if (rpdc.isOKhasData()) {
             // Since there are now NS perms, we have to count NON-NS perms.
             // FYI, if we delete them now, and the NS is not deleted, it is in
@@ -581,7 +595,7 @@ public class Function {
             }
         }
 
-        Result<List<RoleDAO.Data>> rrdc = q.roleDAO.readNS(trans, ns);
+        Result<List<RoleDAO.Data>> rrdc = q.roleDAO().readNS(trans, ns);
         if (rrdc.isOKhasData()) {
             // Since there are now NS roles, we have to count NON-NS roles.
             // FYI, if we delete th)em now, and the NS is not deleted, it is in
@@ -652,7 +666,7 @@ public class Function {
             }
         }
 
-        return q.nsDAO.delete(trans, nsd, false);
+        return q.nsDAO().delete(trans, nsd, false);
     }
 
     public Result<List<String>> getOwners(AuthzTrans trans, String ns,
@@ -712,7 +726,7 @@ public class Function {
     
         rq = q.mayUser(trans, trans.user(), rq.value, Access.write);
         if (rq.notOK()) {
-            Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO.readUserInRole(trans, trans.user(),ns+".owner");
+            Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO().readUserInRole(trans, trans.user(),ns+".owner");
             if (!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
                 return Result.err(rq);
             }
@@ -726,7 +740,7 @@ public class Function {
             try {
                 if (org.getIdentity(trans, user) == null) {
                     return Result.err(Status.ERR_Denied,
-                            "%s reports that %s is a faulty ID", org.getName(),
+                            "%s reports that %s is an invalid ID", org.getName(),
                             user);
                 }
                 return Result.ok();
@@ -738,7 +752,7 @@ public class Function {
 //        } else if (user.endsWith(ALTERNATE OAUTH DOMAIN)) {
 //            return Result.ok();
         } else {
-            Result<List<CredDAO.Data>> cdr = q.credDAO.readID(trans, user);
+            Result<List<CredDAO.Data>> cdr = q.credDAO().readID(trans, user);
             if (cdr.notOKorIsEmpty()) {
                 return Result.err(Status.ERR_Security,
                         "%s is not a valid AAF Credential", user);
@@ -780,7 +794,7 @@ public class Function {
         rq = q.mayUser(trans, trans.user(), rq.value, Access.write);
         if (rq.notOK()) { 
             // Even though not a "writer", Owners still determine who gets to be an Admin
-            Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO.readUserInRole(trans, trans.user(),ns+".owner");
+            Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO().readUserInRole(trans, trans.user(),ns+".owner");
             if (!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
                 return Result.err(rq);
             }
@@ -819,7 +833,7 @@ public class Function {
                     if (rrdd.isOKhasData()) {
                         RoleDAO.Data rdd = rrdd.value;
                         lrdd.add(rdd);
-                        q.roleDAO.delPerm(trans, rdd, pdd);
+                        q.roleDAO().delPerm(trans, rdd, pdd);
                     } else{
                         trans.error().log(rrdd.errorString());
                     }
@@ -831,21 +845,21 @@ public class Function {
                 pdd.ns = nss.ns;
                 pdd.type = nss.name;
                 // Use direct Create/Delete, because switching namespaces
-                if ((pd = q.permDAO.create(trans, pdd)).isOK()) {
+                if ((pd = q.permDAO().create(trans, pdd)).isOK()) {
                     // Put Role back into Perm, with correct info
                     for (RoleDAO.Data rdd : lrdd) {
-                        q.roleDAO.addPerm(trans, rdd, pdd);
+                        q.roleDAO().addPerm(trans, rdd, pdd);
                     }
 
                     pdd.ns = delP1;
                     pdd.type = delP2;
-                    if ((rv = q.permDAO.delete(trans, pdd, false)).notOK()) {
+                    if ((rv = q.permDAO().delete(trans, pdd, false)).notOK()) {
                         sb.append(rv.details);
                         sb.append('\n');
                         // } else {
                         // Need to invalidate directly, because we're switching
                         // places in NS, not normal cache behavior
-                        // q.permDAO.invalidate(trans,pdd);
+                        // q.permDAO().invalidate(trans,pdd);
                     }
                 } else {
                     sb.append(pd.details);
@@ -884,7 +898,7 @@ public class Function {
                     if (rpdd.isOKhasData()) {
                         PermDAO.Data pdd = rpdd.value;
                         lpdd.add(pdd);
-                        q.permDAO.delRole(trans, pdd, rdd);
+                        q.permDAO().delRole(trans, pdd, rdd);
                     } else{
                         trans.error().log(rpdd.errorString());
                     }
@@ -897,21 +911,21 @@ public class Function {
                 rdd.ns = nss.ns;
                 rdd.name = nss.name;
                 // Use direct Create/Delete, because switching namespaces
-                if ((rd = q.roleDAO.create(trans, rdd)).isOK()) {
+                if ((rd = q.roleDAO().create(trans, rdd)).isOK()) {
                     // Put Role back into Perm, with correct info
                     for (PermDAO.Data pdd : lpdd) {
-                        q.permDAO.addRole(trans, pdd, rdd);
+                        q.permDAO().addRole(trans, pdd, rdd);
                     }
 
                     rdd.ns = delP1;
                     rdd.name = delP2;
-                    if ((rv = q.roleDAO.delete(trans, rdd, true)).notOK()) {
+                    if ((rv = q.roleDAO().delete(trans, rdd, true)).notOK()) {
                         sb.append(rv.details);
                         sb.append('\n');
                         // } else {
                         // Need to invalidate directly, because we're switching
                         // places in NS, not normal cache behavior
-                        // q.roleDAO.invalidate(trans,rdd);
+                        // q.roleDAO().invalidate(trans,rdd);
                     }
                 } else {
                     sb.append(rd.details);
@@ -946,7 +960,7 @@ public class Function {
 
         // Does Child exist?
         if (!trans.requested(REQD_TYPE.force)) {
-            if (q.permDAO.read(trans, perm).isOKhasData()) {
+            if (q.permDAO().read(trans, perm).isOKhasData()) {
                 return Result.err(Status.ERR_ConflictAlreadyExists,
                         "Permission [%s.%s|%s|%s] already exists.", perm.ns,
                         perm.type, perm.instance, perm.action);
@@ -976,22 +990,22 @@ public class Function {
                 }
 
                 Result<List<RoleDAO.Data>> rlrd;
-                if ((rlrd = q.roleDAO.read(trans, rd)).notOKorIsEmpty()) {
+                if ((rlrd = q.roleDAO().read(trans, rd)).notOKorIsEmpty()) {
                     rd.perms(true).add(pstring);
-                    if (q.roleDAO.create(trans, rd).notOK()) {
+                    if (q.roleDAO().create(trans, rd).notOK()) {
                         roles.remove(role); // Role doesn't exist, and can't be
                                             // created
                     }
                 } else {
                     rd = rlrd.value.get(0);
                     if (!rd.perms.contains(pstring)) {
-                        q.roleDAO.addPerm(trans, rd, perm);
+                        q.roleDAO().addPerm(trans, rd, perm);
                     }
                 }
             }
         }
 
-        Result<PermDAO.Data> pdr = q.permDAO.create(trans, perm);
+        Result<PermDAO.Data> pdr = q.permDAO().create(trans, perm);
         if (pdr.isOK()) {
             return Result.ok();
         } else { 
@@ -1011,7 +1025,7 @@ public class Function {
             }
         }
         // Does Perm exist?
-        Result<List<PermDAO.Data>> pdr = q.permDAO.read(trans, perm);
+        Result<List<PermDAO.Data>> pdr = q.permDAO().read(trans, perm);
         if (pdr.notOKorIsEmpty()) {
             return Result.err(Status.ERR_PermissionNotFound,"Permission [%s.%s|%s|%s] does not exist.",
                     perm.ns,perm.type, perm.instance, perm.action);
@@ -1027,7 +1041,7 @@ public class Function {
                     Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, q, role);
                     if (rrdd.isOKhasData()) {
                         trans.debug().log("Removing", role, "from", fullperm, "on Perm Delete");
-                        if ((rv = q.roleDAO.delPerm(trans, rrdd.value, fullperm)).notOK()) {
+                        if ((rv = q.roleDAO().delPerm(trans, rrdd.value, fullperm)).notOK()) {
                             if (rv.notOK()) {
                                 trans.error().log("Error removing Role during delFromPermRole: ",
                                                 trans.getUserPrincipal(),
@@ -1046,7 +1060,7 @@ public class Function {
             }
         }
 
-        return q.permDAO.delete(trans, fullperm, false);
+        return q.permDAO().delete(trans, fullperm, false);
     }
 
     public Result<Void> deleteRole(final AuthzTrans trans, final RoleDAO.Data role, boolean force, boolean fromApproval) {
@@ -1062,11 +1076,11 @@ public class Function {
         }
 
         // Are there any Users Attached to Role?
-        Result<List<UserRoleDAO.Data>> urdr = q.userRoleDAO.readByRole(trans,role.fullName());
+        Result<List<UserRoleDAO.Data>> urdr = q.userRoleDAO().readByRole(trans,role.fullName());
         if (force) {
             if (urdr.isOKhasData()) {
                 for (UserRoleDAO.Data urd : urdr.value) {
-                    q.userRoleDAO.delete(trans, urd, false);
+                    q.userRoleDAO().delete(trans, urd, false);
                 }
             }
         } else if (urdr.isOKhasData()) {
@@ -1076,7 +1090,7 @@ public class Function {
         }
 
         // Does Role exist?
-        Result<List<RoleDAO.Data>> rdr = q.roleDAO.read(trans, role);
+        Result<List<RoleDAO.Data>> rdr = q.roleDAO().read(trans, role);
         if (rdr.notOKorIsEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,
                     "Role [%s.%s] does not exist", role.ns, role.name);
@@ -1090,7 +1104,7 @@ public class Function {
                 if (rpd.isOK()) {
                     trans.debug().log("Removing", perm, "from", fullrole,"on Role Delete");
 
-                    Result<?> r = q.permDAO.delRole(trans, rpd.value, fullrole);
+                    Result<?> r = q.permDAO().delRole(trans, rpd.value, fullrole);
                     if (r.notOK()) {
                         trans.error().log("ERR_FDR1 unable to remove",fullrole,"from",perm,':',r.status,'-',r.details);
                     }
@@ -1099,7 +1113,7 @@ public class Function {
                 }
             }
         }
-        return q.roleDAO.delete(trans, fullrole, false);
+        return q.roleDAO().delete(trans, fullrole, false);
     }
 
     /**
@@ -1149,7 +1163,7 @@ public class Function {
                 }
                 // Final Check... Don't allow Grantees to add to Roles they are
                 // part of
-                Result<List<UserRoleDAO.Data>> rlurd = q.userRoleDAO
+                Result<List<UserRoleDAO.Data>> rlurd = q.userRoleDAO()
                         .readByUser(trans, trans.user());
                 if (rlurd.isOK()) {
                     for (UserRoleDAO.Data ur : rlurd.value) {
@@ -1161,13 +1175,13 @@ public class Function {
             }
         }
 
-        Result<List<PermDAO.Data>> rlpd = q.permDAO.read(trans, pd);
+        Result<List<PermDAO.Data>> rlpd = q.permDAO().read(trans, pd);
         if (rlpd.notOKorIsEmpty()) {
             return Result.err(Status.ERR_PermissionNotFound,
                     "Permission must exist to add to Role");
         }
 
-        Result<List<RoleDAO.Data>> rlrd = q.roleDAO.read(trans, role); // Already
+        Result<List<RoleDAO.Data>> rlrd = q.roleDAO().read(trans, role); // Already
                                                                         // Checked
                                                                         // for
                                                                         // can
@@ -1187,7 +1201,7 @@ public class Function {
                 }
 
                 role.perms(true).add(pd.encode());
-                Result<RoleDAO.Data> rdd = q.roleDAO.create(trans, role);
+                Result<RoleDAO.Data> rdd = q.roleDAO().create(trans, role);
                 if (rdd.isOK()) {
                     rv = Result.ok();
                 } else {
@@ -1207,10 +1221,10 @@ public class Function {
             role.perms(true).add(pd.encode()); // this is added for Caching
                                                 // access purposes... doesn't
                                                 // affect addPerm
-            rv = q.roleDAO.addPerm(trans, role, pd);
+            rv = q.roleDAO().addPerm(trans, role, pd);
         }
         if (rv.status == Status.OK) {
-            return q.permDAO.addRole(trans, pd, role);
+            return q.permDAO().addRole(trans, pd, role);
             // exploring how to add information message to successful http
             // request
         }
@@ -1241,13 +1255,13 @@ public class Function {
             }
         }
 
-        Result<List<RoleDAO.Data>> rlr = q.roleDAO.read(trans, role);
+        Result<List<RoleDAO.Data>> rlr = q.roleDAO().read(trans, role);
         if (rlr.notOKorIsEmpty()) {
             // If Bad Data, clean out
-            Result<List<PermDAO.Data>> rlp = q.permDAO.read(trans, pd);
+            Result<List<PermDAO.Data>> rlp = q.permDAO().read(trans, pd);
             if (rlp.isOKhasData()) {
                 for (PermDAO.Data pv : rlp.value) {
-                    q.permDAO.delRole(trans, pv, role);
+                    q.permDAO().delRole(trans, pv, role);
                 }
             }
             return Result.err(rlr);
@@ -1279,12 +1293,12 @@ public class Function {
         }
 
         // Read Perm for full data
-        Result<List<PermDAO.Data>> rlp = q.permDAO.read(trans, pd);
+        Result<List<PermDAO.Data>> rlp = q.permDAO().read(trans, pd);
         Result<Void> rv = null;
         if (rlp.isOKhasData()) {
             for (PermDAO.Data pv : rlp.value) {
-                if ((rv = q.permDAO.delRole(trans, pv, role)).isOK()) {
-                    if ((rv = q.roleDAO.delPerm(trans, role, pv)).notOK()) {
+                if ((rv = q.permDAO().delRole(trans, pv, role)).isOK()) {
+                    if ((rv = q.roleDAO().delPerm(trans, role, pv)).notOK()) {
                         trans.error().log(
                                 "Error removing Perm during delFromPermRole:",
                                 trans.getUserPrincipal(), rv.errorString());
@@ -1296,7 +1310,7 @@ public class Function {
                 }
             }
         } else {
-            rv = q.roleDAO.delPerm(trans, role, pd);
+            rv = q.roleDAO().delPerm(trans, role, pd);
             if (rv.notOK()) {
                 trans.error().log("Error removing Role during delFromPermRole",
                         rv.errorString());
@@ -1342,11 +1356,11 @@ public class Function {
         }
         
         // Check if record exists
-        if (q.userRoleDAO.read(trans, urData).isOKhasData()) {
+        if (q.userRoleDAO().read(trans, urData).isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists,
                     "User Role exists");
         }
-        if (q.roleDAO.read(trans, urData.ns, urData.rname).notOKorIsEmpty()) {
+        if (q.roleDAO().read(trans, urData.ns, urData.rname).notOKorIsEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,
                     "Role [%s.%s] does not exist", urData.ns, urData.rname);
         }
@@ -1354,7 +1368,7 @@ public class Function {
         urData.expires = trans.org().expiration(null, Expiration.UserInRole, urData.user).getTime();
         
         
-        Result<UserRoleDAO.Data> udr = q.userRoleDAO.create(trans, urData);
+        Result<UserRoleDAO.Data> udr = q.userRoleDAO().create(trans, urData);
         if (udr.status == OK) {
             return Result.ok();
         }
@@ -1388,12 +1402,12 @@ public class Function {
      */
     public Result<Void> extendUserRole(AuthzTrans trans, UserRoleDAO.Data urData, boolean checkForExist) {
         // Check if record still exists
-        if (checkForExist && q.userRoleDAO.read(trans, urData).notOKorIsEmpty()) {
+        if (checkForExist && q.userRoleDAO().read(trans, urData).notOKorIsEmpty()) {
             return Result.err(Status.ERR_UserRoleNotFound,
                     "User Role does not exist");
         }
         
-        if (q.roleDAO.read(trans, urData.ns, urData.rname).notOKorIsEmpty()) {
+        if (q.roleDAO().read(trans, urData.ns, urData.rname).notOKorIsEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,
                     "Role [%s.%s] does not exist", urData.ns,urData.rname);
         }
@@ -1407,7 +1421,7 @@ public class Function {
                                                                                 // time
                                                                                 // starting
                                                                                 // today
-        return q.userRoleDAO.update(trans, urData);
+        return q.userRoleDAO().update(trans, urData);
     }
 
     // ////////////////////////////////////////////////////
@@ -1418,7 +1432,7 @@ public class Function {
     // Roles
     // ////////////////////////////////////////////////////
     public Result<List<String>> getUsersByRole(AuthzTrans trans, String role, boolean includeExpired) {
-        Result<List<UserRoleDAO.Data>> rurdd = q.userRoleDAO.readByRole(trans,role);
+        Result<List<UserRoleDAO.Data>> rurdd = q.userRoleDAO().readByRole(trans,role);
         if (rurdd.notOK()) {
             return Result.err(rurdd);
         }
@@ -1437,7 +1451,7 @@ public class Function {
         UserRoleDAO.Data urdd = new UserRoleDAO.Data();
         urdd.user = user;
         urdd.role(ns,rname);
-        Result<List<UserRoleDAO.Data>> r = q.userRoleDAO.read(trans, urdd);
+        Result<List<UserRoleDAO.Data>> r = q.userRoleDAO().read(trans, urdd);
         if (r.status == 404 || r.isEmpty()) {
             return Result.err(Status.ERR_UserRoleNotFound,
                     "UserRole [%s] [%s.%s]", user, ns, rname);
@@ -1446,7 +1460,7 @@ public class Function {
             return Result.err(r);
         }
 
-        return q.userRoleDAO.delete(trans, urdd, false);
+        return q.userRoleDAO().delete(trans, urdd, false);
     }
 
     public Result<String> createFuture(AuthzTrans trans, FutureDAO.Data data, String id, String user,
@@ -1458,7 +1472,7 @@ public class Function {
             List<Identity> approvers = op.equals(FUTURE_OP.A)?NO_ADDL_APPROVE:org.getApprovers(trans, user);
             List<Identity> owners = new ArrayList<>();
             if (nsd != null) {
-                Result<List<UserRoleDAO.Data>> rrbr = q.userRoleDAO
+                Result<List<UserRoleDAO.Data>> rrbr = q.userRoleDAO()
                         .readByRole(trans, nsd.name + Question.DOT_OWNER);
                 if (rrbr.isOKhasData()) {
                     for (UserRoleDAO.Data urd : rrbr.value) {
@@ -1478,7 +1492,7 @@ public class Function {
             
             // Create Future Object
             
-            Result<FutureDAO.Data> fr = q.futureDAO.create(trans, data, id);
+            Result<FutureDAO.Data> fr = q.futureDAO().create(trans, data, id);
             if (fr.isOK()) {
                 sb.append("Created Future: ");
                 sb.append(data.id);
@@ -1518,7 +1532,7 @@ public class Function {
     public Lookup<UserRoleDAO.Data> urDBLookup = new Lookup<UserRoleDAO.Data>() {
         @Override
         public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
-            Result<List<UserRoleDAO.Data>> r = q.userRoleDAO.read(trans, keys);
+            Result<List<UserRoleDAO.Data>> r = q.userRoleDAO().read(trans, keys);
             if (r.isOKhasData()) {
                 return r.value.get(0);
             } else {
@@ -1549,11 +1563,11 @@ public class Function {
                 // Get Current UserRole from lookup
                 UserRoleDAO.Data lurdd = lur.get(trans, urdd.user,urdd.role);
                 if (lurdd==null) {
-                    q.futureDAO.delete(trans, curr, false);
+                    q.futureDAO().delete(trans, curr, false);
                     return OP_STATUS.RL;
                 } else {
                     if (curr.expires.compareTo(lurdd.expires)<0) {
-                        q.futureDAO.delete(trans, curr, false);
+                        q.futureDAO().delete(trans, curr, false);
                         return OP_STATUS.RL;
                     }
                 }
@@ -1593,7 +1607,7 @@ public class Function {
         Result<OP_STATUS> ros=null;
         if (aDenial) {
             ros = OP_STATUS.RD;
-            if (q.futureDAO.delete(trans, curr, false).notOK()) {
+            if (q.futureDAO().delete(trans, curr, false).notOK()) {
                 trans.info().printf("Future %s could not be deleted", curr.id.toString());
             }  else {
                 if (FOP_USER_ROLE.equalsIgnoreCase(curr.target)) {
@@ -1623,7 +1637,7 @@ public class Function {
                     data.reconstitute(curr.construct);
                     switch(fop) {
                         case C:
-                            ros = set(OP_STATUS.RE,q.roleDAO.dao().create(trans, data));
+                            ros = set(OP_STATUS.RE,q.roleDAO().dao().create(trans, data));
                             break;
                         case D:
                             ros = set(OP_STATUS.RE,deleteRole(trans, data, true, true));
@@ -1693,10 +1707,10 @@ public class Function {
                     data.reconstitute(curr.construct);
                     switch(fop) {
                         case C:
-                            ros = set(OP_STATUS.RE,q.delegateDAO.create(trans, data));
+                            ros = set(OP_STATUS.RE,q.delegateDAO().create(trans, data));
                             break;
                         case U:
-                            ros = set(OP_STATUS.RE,q.delegateDAO.update(trans, data));
+                            ros = set(OP_STATUS.RE,q.delegateDAO().update(trans, data));
                             break;
                         default:
                     }
@@ -1704,7 +1718,7 @@ public class Function {
                     CredDAO.Data data = new CredDAO.Data();
                     data.reconstitute(curr.construct);
                     if (fop == FUTURE_OP.C) {
-                        ros = set(OP_STATUS.RE, q.credDAO.dao().create(trans, data));
+                        ros = set(OP_STATUS.RE, q.credDAO().dao().create(trans, data));
                     }
                 }                
             } catch (Exception e) {
@@ -1712,7 +1726,7 @@ public class Function {
                     " \n occurred while performing", curr.memo,
                     " from Ticket ", curr.id.toString());
             }
-            q.futureDAO.delete(trans, curr, false);
+            q.futureDAO().delete(trans, curr, false);
         } // end for goDecision
         if (ros==null) {
             //return Result.err(Status.ACC_Future, "Full Approvals not obtained: No action taken");
@@ -1743,7 +1757,7 @@ public class Function {
         ad.type = type;
         ad.operation = op.name();
         // Note ad.updated is created in System
-        Result<ApprovalDAO.Data> r = q.approvalDAO.create(trans,ad);
+        Result<ApprovalDAO.Data> r = q.approvalDAO().create(trans,ad);
         if (r.isOK()) {
             if (first[0]) {
                 first[0] = false;

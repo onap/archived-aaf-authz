@@ -44,7 +44,7 @@ public class JU_Log4JLogTargetTest {
     public void setup() {
     	initMocks(this);
     }
-
+    
     @Test
     public void testLoggable() {
     	Log4JLogTarget logObj = null;

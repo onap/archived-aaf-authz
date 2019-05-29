@@ -210,10 +210,10 @@ public interface AuthzFacade {
     public abstract Result<Void> getUserRolesByUser(AuthzTrans trans, HttpServletResponse resp, String user);
 
     public abstract Result<Void> deleteUserRole(AuthzTrans trans, HttpServletResponse resp, String user, String role);
-    
-    public abstract Result<Void> resetUsersForRole(AuthzTrans trans, HttpServletResponse resp, HttpServletRequest req);
 
-    public abstract Result<Void> resetRolesForUser(AuthzTrans trans, HttpServletResponse resp, HttpServletRequest req);
+    /*
+     * resetUsersForRoles and resetRolesForUsers is too dangerous and not helpful.
+     */
     
     public abstract Result<Void> extendUserRoleExpiration(AuthzTrans trans, HttpServletResponse resp, String user,
     String role);

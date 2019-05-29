@@ -76,7 +76,7 @@ class PermLookup {
     
     public Result<List<UserRoleDAO.Data>> getUserRoles() {
         if (userRoles==null) {
-            userRoles = q.userRoleDAO.readByUser(trans,user);
+            userRoles = q.userRoleDAO().readByUser(trans,user);
             if (userRoles.isOKhasData()) {
                 List<UserRoleDAO.Data> lurdd = new ArrayList<>();
                 Date now = new Date();
@@ -110,7 +110,7 @@ class PermLookup {
                         if (urdata.ns==null || urdata.rname==null) {
                             return Result.err(Status.ERR_BadData,"DB Content Error: nulls in User Role %s %s", urdata.user,urdata.role);
                         } else {
-                            Result<List<RoleDAO.Data>> rlrd = q.roleDAO.read(
+                            Result<List<RoleDAO.Data>> rlrd = q.roleDAO().read(
                                     trans, urdata.ns, urdata.rname);
                             if (rlrd.isOK()) {
                                 lrdd.addAll(rlrd.value);
@@ -155,7 +155,7 @@ class PermLookup {
                         Result<String[]> ap = PermDAO.Data.decodeToArray(trans, q, perm);
                         if (ap.isOK()) {
                              
-                            Result<List<PermDAO.Data>> rlpd = q.permDAO.read(perm,trans,ap.value);
+                            Result<List<PermDAO.Data>> rlpd = q.permDAO().read(perm,trans,ap.value);
                             if (rlpd.isOKhasData()) {
                                 for (PermDAO.Data pData : rlpd.value) {
                                     lpdd.add(pData);
