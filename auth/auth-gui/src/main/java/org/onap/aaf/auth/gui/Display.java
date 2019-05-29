@@ -31,7 +31,6 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.misc.env.Slot;
-import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class Display {
     private final Page get;

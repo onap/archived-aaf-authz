@@ -135,6 +135,11 @@ public class NullTrans implements AuthzTrans {
     }
 
     @Override
+	public HttpServletRequest hreq() {
+	 	return null;
+	}
+    
+	@Override
     public String user() {
         return null;
     }

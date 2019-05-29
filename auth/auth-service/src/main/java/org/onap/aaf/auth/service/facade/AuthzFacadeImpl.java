@@ -66,9 +66,9 @@ import org.onap.aaf.auth.service.mapper.Mapper.API;
 import org.onap.aaf.cadi.aaf.client.Examples;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
+import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
-import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.rosetta.Marshal;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
@@ -1939,8 +1939,8 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     private static final String GET_USERROLES = "getUserRoles";
     private static final String GET_USERROLES_BY_ROLE = "getUserRolesByRole";
     private static final String GET_USERROLES_BY_USER = "getUserRolesByUser";
-    private static final String SET_ROLES_FOR_USER = "setRolesForUser";
-    private static final String SET_USERS_FOR_ROLE = "setUsersForRole";
+//    private static final String SET_ROLES_FOR_USER = "setRolesForUser";
+//    private static final String SET_USERS_FOR_ROLE = "setUsersForRole";
     private static final String EXTEND_USER_ROLE = "extendUserRole";
     private static final String DELETE_USER_ROLE = "deleteUserRole";
     @Override
@@ -2059,75 +2059,6 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
     }
     
-
-    @Override
-    public Result<Void> resetUsersForRole(AuthzTrans trans, HttpServletResponse resp, HttpServletRequest req) {
-        TimeTaken tt = trans.start(SET_USERS_FOR_ROLE, Env.SUB|Env.ALWAYS);
-        try {
-            REQUEST rreq;
-            try {
-                RosettaData<REQUEST> data = userRoleRequestDF.newData().load(req.getInputStream());
-                if (Question.willSpecialLog(trans, trans.user())) {
-                    Question.logEncryptTrace(trans,data.asString());
-                }
-                rreq = data.asObject();
-            } catch (APIException e) {
-                trans.error().log("Invalid Input",IN, SET_USERS_FOR_ROLE);
-                return Result.err(Status.ERR_BadData,"Invalid Input");
-            }
-            
-            Result<Void> rp = service.resetUsersForRole(trans, rreq);
-            
-            switch(rp.status) {
-                case OK: 
-                    setContentType(resp,permsDF.getOutType());
-                    return Result.ok();
-                default:
-                    return Result.err(rp);
-            }
-        } catch (Exception e) {
-            trans.error().log(e,IN,SET_USERS_FOR_ROLE);
-            return Result.err(e);
-        } finally {
-            tt.done();
-        }
-        
-    }
-
-    @Override
-    public Result<Void> resetRolesForUser(AuthzTrans trans, HttpServletResponse resp, HttpServletRequest req) {
-        TimeTaken tt = trans.start(SET_ROLES_FOR_USER, Env.SUB|Env.ALWAYS);
-        try {
-            REQUEST rreq;
-            try {
-                RosettaData<REQUEST> data = userRoleRequestDF.newData().load(req.getInputStream());
-                if (Question.willSpecialLog(trans, trans.user())) {
-                    Question.logEncryptTrace(trans,data.asString());
-                }
-
-                rreq = data.asObject();
-            } catch (APIException e) {
-                trans.error().log("Invalid Input",IN, SET_ROLES_FOR_USER);
-                return Result.err(Status.ERR_BadData,"Invalid Input");
-            }
-            
-            Result<Void> rp = service.resetRolesForUser(trans, rreq);
-            
-            switch(rp.status) {
-                case OK: 
-                    setContentType(resp,permsDF.getOutType());
-                    return Result.ok();
-                default:
-                    return Result.err(rp);
-            }
-        } catch (Exception e) {
-            trans.error().log(e,IN,SET_ROLES_FOR_USER);
-            return Result.err(e);
-        } finally {
-            tt.done();
-        }
-        
-    }
 
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#extendUserRoleExpiration(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String)

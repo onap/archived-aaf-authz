@@ -27,21 +27,30 @@ import static org.onap.aaf.misc.xgen.html.HTMLGen.LI;
 import static org.onap.aaf.misc.xgen.html.HTMLGen.TITLE;
 import static org.onap.aaf.misc.xgen.html.HTMLGen.UL;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.rserv.CachingFileAccess;
+import org.onap.aaf.auth.gui.pages.Home;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.aaf.AAFPermission;
+import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.StaticSlot;
 import org.onap.aaf.misc.env.util.Split;
@@ -71,11 +80,9 @@ public class Page extends HTMLCacheGen {
     public static final String PERM_NS = Define.ROOT_NS();
 
     public static enum BROWSER {iPhone,html5,ie,ieOld};
-    
-    public static final int MAX_LINE=20;
 
+    public static final int MAX_LINE = 20;
     protected static final String[] NO_FIELDS = new String[0];
-
     private static final String BROWSER_TYPE = "BROWSER_TYPE";
 
     private final String bcName, bcUrl;
@@ -151,13 +158,89 @@ public class Page extends HTMLCacheGen {
             private final int backdots;
             protected AuthzEnv env;
             private StaticSlot sTheme;
+        	private static Map<String,List<String>> themes;
+        	private static Map<String,Properties> themeProps;
 
             public PageCode(AuthzEnv env, int backdots, final ContentCode[] content) {
                 this.content = content;
                 this.backdots = backdots;
                 browserSlot = env.slot(BROWSER_TYPE);
-                sTheme = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
+                sTheme = env.staticSlot(AAF_GUI.AAF_GUI_THEME);
                 this.env = env;
+            }
+
+            private static synchronized List<String> getThemeFiles(Env env, String theme) {
+            	if(themes==null) {
+            		themes = new TreeMap<>();
+                    File themeD = new File("theme");
+                    if(themeD.exists() && themeD.isDirectory()) {
+                    	for (File t : themeD.listFiles()) {
+                    		if(t.isDirectory()) {
+                    			List<String> la = new ArrayList<>();
+                    			for(File f : t.listFiles()) {
+                    				if(f.isFile()) {
+                    					if(f.getName().endsWith(".props")) {
+                    						Properties props;
+                    						if(themeProps == null) {
+                    							themeProps = new TreeMap<>();
+                    							props = null;
+                    						} else {
+                    							props = themeProps.get(theme);
+                    						}
+                    						if(props==null) {
+                    							props = new Properties();
+                    							themeProps.put(theme, props);
+                    						}
+                    						
+                    						try {
+	                    						FileInputStream fis = new FileInputStream(f);
+	                    						try {
+	                    							props.load(fis);
+	                    						} finally {
+	                    							fis.close();
+	                    						}
+                    						} catch (IOException e) {
+                    							env.error().log(e);
+                    						}
+                    					} else {
+                    						la.add(f.getName());
+                    					}
+                    				}
+                    			}
+                				themes.put(t.getName(),la);
+                    		}
+                    	}
+                    }
+            	}
+            	return themes.get(theme);
+            }
+            
+            protected Imports getImports(Env env, Holder<String> theme, String defaultTheme, int backdots, BROWSER browser) {
+            	List<String> ls = getThemeFiles(env,theme.get());
+            	Imports imp = new Imports(backdots);
+            	if(ls==null) {
+            		theme.set(defaultTheme);
+            	}
+        		String prefix = "theme/" + theme.get() + '/';
+        		for(String f : ls) {
+            		if(f.endsWith(".js")) {
+            			imp.js(prefix + f);
+            		} else if(f.endsWith(".css")) {
+            			if(f.endsWith("iPhone.css")) {
+            				if(BROWSER.iPhone.equals(browser)) {
+            					imp.css(prefix + f);
+            				}
+            			} else if (f.endsWith("Desktop.css")){
+            				if(!BROWSER.iPhone.equals(browser)) {
+            					imp.css(prefix + f);
+            				}
+            			// Make Console specific to Console page
+            			} else if (!"console.js".equals(f)) {
+            				imp.css(prefix + f);
+            			}
+            		}
+            	}
+            	return imp;
             }
             
             @Override
@@ -178,29 +261,34 @@ public class Page extends HTMLCacheGen {
                 });
                 hgen.html();
                 final String title = env.getProperty(AAF_GUI_TITLE,"Authentication/Authorization Framework");
-                final String theme = env.get(sTheme); 
+                final String defaultTheme = env.get(sTheme); 
+                final Holder<String> hTheme = new Holder<>(defaultTheme);
+              
                 Mark head = hgen.head();
                     hgen.leaf(TITLE).text(title).end();
-                    hgen.imports(new Imports(backdots).css(theme + "/aaf5.css")
-                                                    .js(theme + "/comm.js")
-                                                .js(theme + "/console.js")
-                                                .js(theme + "/common.js"));
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                            switch(browser(trans,browserSlot)) {
-                                case iPhone:
-                                    hgen.imports(new Imports(backdots).css(theme + "/aaf5iPhone.css"));
-                                    break;
+                        	BROWSER browser = browser(trans,browserSlot);  
+                        	Cookie[] cookies = trans.hreq().getCookies();
+                        	if(cookies!=null) {
+                        		for(Cookie c : cookies) {
+                        			if("aaf_theme".equals(c.getName())) {
+                        				hTheme.set(c.getValue());
+                        			}
+                        		}
+                        	}
+                            hgen.imports(getImports(env,hTheme,defaultTheme,backdots,browser));
+                            switch(browser) {
                                 case ie:
                                 case ieOld:
                                     hgen.js().text("document.createElement('header');")
                                             .text("document.createElement('nav');")
                                             .done();
-                                case html5:
-                                    hgen.imports(new Imports(backdots).css(theme + "/aaf5Desktop.css"));
                                     break;
+                                default:
                             }
+                            
                         }
                     });
                     hgen.end(head);
@@ -274,9 +362,62 @@ public class Page extends HTMLCacheGen {
 
                     hgen.end(inner);    
                     
-                    // Navigation - Using older Nav to work with decrepit  IE versions
+                    // Navigation - Using older Nav to work with decrepit   IE versions
                     
                     Mark nav = hgen.divID("nav");
+                    cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
+                        @Override
+                        public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
+                        	Properties props = themeProps.get(hTheme.get());
+                        	if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
+                                xgen.incr("h2").text("Navigation").end();
+                                Mark mark = new Mark();
+                            	boolean selected = isSelected(trans.path(),Home.HREF);
+                            			//trans.path().endsWith("home");
+                                xgen.incr(mark,HTMLGen.UL)
+                            		.incr(HTMLGen.LI,selected?"class=selected":"")
+                            		.incr(HTMLGen.A, "href=home")
+                            		.text("Home")
+                            		.end(2);
+                                boolean noSelection = !selected;
+                                for(String[] mi : Home.MENU_ITEMS) {
+                                	//selected = trans.path().endsWith(mi[0]);
+                                	if(noSelection) {
+                                		selected = isSelected(trans.path(),mi[2]);
+                                		noSelection = !selected;
+                                	} else {
+                                		selected = false;
+                                	}
+                                	xgen.incr(HTMLGen.LI,selected?"class=selected":"")
+                                	    .incr(HTMLGen.A, "href="+mi[0])
+                                	    .text(mi[1])
+                                	    .end(2);
+                                }
+                                xgen.end(mark);
+                        	}
+                        }
+
+						private boolean isSelected(String path, String item) {
+							if(item.equals(path)) {
+								return true;
+							} else {
+								for(ContentCode c : content) {
+									if(c instanceof BreadCrumbs) {
+										Page[] bc = ((BreadCrumbs)c).breadcrumbs;
+										if(bc!=null) {
+											for(int i = bc.length-1;i>0;--i) {
+												if(bc[i].url().equals(item)) {
+													return true;
+												}
+											}
+											return false;
+										}
+									}
+								}
+							}
+							return false;
+						}
+                    });
                     hgen.incr("h2").text("Related Links").end();
                     hgen.incr(UL);
                     String aaf_help = env.getProperty(AAF_URL_AAF_HELP,null);
@@ -397,7 +538,6 @@ public class Page extends HTMLCacheGen {
         String values[] = req.getParameterValues(tag);
         return values.length<1?null:values[0];
     }
-
 
 }
 

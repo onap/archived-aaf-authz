@@ -88,6 +88,9 @@ public class Config {
     public static final String CADI_LOGDIR = "cadi_log_dir";
     public static final String CADI_ETCDIR = "cadi_etc_dir";
     public static final String CADI_LOGNAME = "cadi_logname";
+//    public static final String CADI_LOGFMT="cad_logging_format";
+//    public static final String CADI_LOGFMT_UTC="UTC";
+//    public static final String CADI_LOGFMT_ISO8601="ISO-8601";
     public static final String CADI_KEYFILE = "cadi_keyfile";
     public static final String CADI_KEYSTORE = "cadi_keystore";
     public static final String CADI_KEYSTORE_PASSWORD = "cadi_keystore_password";
@@ -174,6 +177,11 @@ public class Config {
     public static final String AAF_LOCATOR_PUBLIC_PORT = "aaf_locator_public_port";
     public static final String AAF_LOCATOR_PUBLIC_FQDN = "aaf_locator_public_fqdn";
     public static final String AAF_LOCATOR_PUBLIC_NAME = "aaf_locator_public_name";
+    
+    // AAF Service will write to the Audit Log if a past due AAF stored Password
+    // is being used within # of days specified.
+    public static final String AAF_CRED_WARN_DAYS="aaf_cred_warn_days";
+    public static final String AAF_CRED_WARN_DAYS_DFT="7";
 
     public static final String AAF_APPID = "aaf_id";
     public static final String AAF_APPPASS = "aaf_password";

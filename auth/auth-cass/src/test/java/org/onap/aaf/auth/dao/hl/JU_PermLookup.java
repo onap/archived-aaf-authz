@@ -64,12 +64,21 @@ public class JU_PermLookup {
 	
 	@Mock
 	Access access;
+
+	@Mock
+	CachedRoleDAO roleDAO;
+
+	@Mock
+	CachedUserRoleDAO userRoleDAO;
 	
 	Function f;
 	
 	@Before
 	public void setUp() throws Exception {
 		initMocks(this);
+		Mockito.doReturn(userRoleDAO).when(q).userRoleDAO();
+		Mockito.doReturn(roleDAO).when(q).roleDAO();
+		
 		try {
 			Mockito.doReturn("0.0").when(access).getProperty("aaf_root_ns","org.osaaf.aaf");
 			Mockito.doReturn(new Properties()).when(access).getProperties();
@@ -106,18 +115,18 @@ public class JU_PermLookup {
 	}
 	
 	
-	@Test
-	public void testPerm() {
-		
-		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
-		
-//		System.out.println(cassExecutorObj);
-//		assertFalse(retVal);
-	}
+//	@Test
+//	public void testPerm() {
+//		
+//		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
+//		
+////		System.out.println(cassExecutorObj);
+////		assertFalse(retVal);
+//	}
 	
 	@Test
 	public void testGetUserRole() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
@@ -126,7 +135,7 @@ public class JU_PermLookup {
 		
 		retVal1.value.add(dataObj);
 		Mockito.doReturn(true).when(retVal1).isOKhasData();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<List<UserRoleDAO.Data>> userRoles = cassExecutorObj.getUserRoles();
 		
@@ -136,12 +145,12 @@ public class JU_PermLookup {
 	
 	@Test
 	public void testGetUserRolesFirstIf() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 				
 		Mockito.doReturn(false).when(retVal1).isOKhasData();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<List<UserRoleDAO.Data>> userRoles = cassExecutorObj.getUserRoles();
 		
@@ -151,7 +160,7 @@ public class JU_PermLookup {
 	
 	@Test
 	public void testGetUserRolesSecondIf() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
@@ -164,7 +173,7 @@ public class JU_PermLookup {
 		
 		retVal1.value.add(dataObj);
 		Mockito.doReturn(true).when(retVal1).isOKhasData();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<List<UserRoleDAO.Data>> userRoles = cassExecutorObj.getUserRoles();
 		
@@ -178,7 +187,7 @@ public class JU_PermLookup {
 	
 	@Test
 	public void testGetRole() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
@@ -188,7 +197,7 @@ public class JU_PermLookup {
 		retVal1.value.add(dataObj);
 		Mockito.doReturn(false).when(retVal1).isOKhasData();
 		Mockito.doReturn(true).when(retVal1).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<List<RoleDAO.Data>> userRoles = cassExecutorObj.getRoles();
 		
@@ -198,8 +207,7 @@ public class JU_PermLookup {
 	
 	@Test
 	public void testGetRoleFirstIf() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
-		q.roleDAO = Mockito.mock(CachedRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
@@ -211,8 +219,8 @@ public class JU_PermLookup {
 		retVal1.value.add(dataObj);
 		Mockito.doReturn(false).when(retVal1).isOKhasData();
 		Mockito.doReturn(false).when(retVal1).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
-		Mockito.doReturn(retVal1).when(q.roleDAO).read(trans,"","");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(roleDAO).read(trans,"","");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<List<RoleDAO.Data>> userRoles = cassExecutorObj.getRoles();
 		
@@ -222,8 +230,7 @@ public class JU_PermLookup {
 	
 	@Test
 	public void testGetRoleSecondIf() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
-		q.roleDAO = Mockito.mock(CachedRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
@@ -235,8 +242,8 @@ public class JU_PermLookup {
 		retVal1.value.add(dataObj);
 		Mockito.doReturn(false).when(retVal1).isOKhasData();
 		Mockito.doReturn(true).when(retVal1).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
-		Mockito.doReturn(retVal1).when(q.roleDAO).read(trans,"","");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(roleDAO).read(trans,"","");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<List<RoleDAO.Data>> userRoles = cassExecutorObj.getRoles();
 		userRoles = cassExecutorObj.getRoles();
@@ -246,12 +253,12 @@ public class JU_PermLookup {
 	}
 	@Test
 	public void testGetPerms() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		Mockito.doReturn(false).when(retVal1).isOKhasData();
 		Mockito.doReturn(true).when(retVal1).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<Set<String>> userRoles = cassExecutorObj.getPermNames();
 		userRoles = cassExecutorObj.getPermNames();
@@ -261,7 +268,7 @@ public class JU_PermLookup {
 	}
 	@Test
 	public void testGetPermsRrldOk() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
+		@SuppressWarnings("unchecked")
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		retVal1.value = new ArrayList<UserRoleDAO.Data>();
 		UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
@@ -271,7 +278,7 @@ public class JU_PermLookup {
 		retVal1.value.add(dataObj);
 		Mockito.doReturn(false).when(retVal1).isOKhasData();
 		Mockito.doReturn(true).when(retVal1).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
 		Result<Set<String>> userRoles = cassExecutorObj.getPermNames();
 		
@@ -280,10 +287,9 @@ public class JU_PermLookup {
 	}	
 
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetPerm() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
-		q.roleDAO = Mockito.mock(CachedRoleDAO.class);
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		Result<List<RoleDAO.Data>> retVal2 = Mockito.mock(Result.class);
 		
@@ -316,8 +322,8 @@ public class JU_PermLookup {
 		Mockito.doReturn(true).when(retVal1).isOKhasData();
 		Mockito.doReturn(true).when(retVal1).isOK();
 		Mockito.doReturn(true).when(retVal2).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
-		Mockito.doReturn(retVal2).when(q.roleDAO).read(trans,"","");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal2).when(roleDAO).read(trans,"","");
 
 		
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
@@ -330,10 +336,9 @@ public class JU_PermLookup {
 		assertEquals(0,userRoles.status);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetPermFalse() {
-		q.userRoleDAO = Mockito.mock(CachedUserRoleDAO.class);
-		q.roleDAO = Mockito.mock(CachedRoleDAO.class);
 		Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
 		Result<List<RoleDAO.Data>> retVal2 = Mockito.mock(Result.class);
 		
@@ -366,8 +371,8 @@ public class JU_PermLookup {
 		Mockito.doReturn(true).when(retVal1).isOKhasData();
 		Mockito.doReturn(true).when(retVal1).isOK();
 		Mockito.doReturn(true).when(retVal2).isOK();
-		Mockito.doReturn(retVal1).when(q.userRoleDAO).readByUser(trans,"");
-		Mockito.doReturn(retVal2).when(q.roleDAO).read(trans,"","");
+		Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
+		Mockito.doReturn(retVal2).when(roleDAO).read(trans,"","");
 
 		
 		PermLookup cassExecutorObj =PermLookup.get(trans, q,"");

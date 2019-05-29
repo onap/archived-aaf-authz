@@ -66,7 +66,6 @@ import com.datastax.driver.core.Cluster;
 import aafoauth.v2_0.Introspect;
 
 public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
-    private static final String DOT_OAUTH = ".oauth";
     public Map<String, Dated> cacheUser;
     public AAFAuthn<?> aafAuthn;
     public AAFLurPerm aafLurPerm;
@@ -103,7 +102,8 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
 
         // Start Background Processing
         //    Question question = 
-        question = new Question(trans, cluster, CassAccess.KEYSPACE, true);
+        question = new Question(trans, cluster, CassAccess.KEYSPACE);
+        question.startTimers(env);
 
         // Have AAFLocator object Create DirectLocators for Location needs
         AbsAAFLocator.setCreator(new DirectLocatorCreator(env, question.locateDAO));

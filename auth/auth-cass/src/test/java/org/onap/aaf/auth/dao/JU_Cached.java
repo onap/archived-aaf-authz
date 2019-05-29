@@ -80,7 +80,9 @@ public class JU_Cached {
         cached.invalidate("test");
         cached.invalidate("test1");
     }
-    
+
+/*
+ * DO NOT ATTEMPT TO TEST Timer Threads in JUNIT!!!!!
     @SuppressWarnings("static-access")
     @Test
     public void testStopTimer(){
@@ -96,6 +98,7 @@ public class JU_Cached {
         cached.startRefresh(authzEnvMock, cidaoATMock);
         assertTrue(true);
     }
+*/
 //    @Mock
 //    Trans transMock;
 //    @Mock

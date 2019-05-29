@@ -27,11 +27,23 @@ public abstract class Creator<T> {
     public abstract T create(Row row);
     public abstract String select();
     
+    public String suffix() {
+    	return "";
+    }
+    
     public String query(String where) {
         StringBuilder sb = new StringBuilder(select());
         if (where!=null) {
             sb.append(" WHERE ");
-            sb.append(where);
+        	int index = where.indexOf(" ALLOW FILTERING");
+        	if(index< 0 ) {
+        		sb.append(where);
+                sb.append(suffix());
+        	} else {
+        		sb.append(where.substring(0, index));
+                sb.append(suffix());
+                sb.append(" ALLOW FILTERING");
+        	}
         }
         sb.append(';');
         return sb.toString();

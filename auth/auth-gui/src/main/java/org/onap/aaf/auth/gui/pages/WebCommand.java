@@ -28,7 +28,9 @@ import org.onap.aaf.auth.gui.AAF_GUI;
 import org.onap.aaf.auth.gui.BreadCrumbs;
 import org.onap.aaf.auth.gui.NamedCode;
 import org.onap.aaf.auth.gui.Page;
+import org.onap.aaf.auth.rserv.CachingFileAccess;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.StaticSlot;
 import org.onap.aaf.misc.xgen.Cache;
 import org.onap.aaf.misc.xgen.DynamicCode;
 import org.onap.aaf.misc.xgen.Mark;
@@ -41,6 +43,8 @@ public class WebCommand extends Page {
         super(gui.env, "Web Command Client",HREF, NO_FIELDS,
                 new BreadCrumbs(breadcrumbs),
                 new NamedCode(true, "content") {
+        	StaticSlot sThemeWebPath = gui.env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
+        	StaticSlot sTheme = gui.env.staticSlot(AAF_GUI.AAF_GUI_THEME);
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                 hgen.leaf("p","id=help_msg")
@@ -56,31 +60,33 @@ public class WebCommand extends Page {
                 hgen.end(); //console_area
                 
                 hgen.divID("options_link", "class=closed");
-                hgen.img("src=../../"+gui.theme + "/options_down.png", "onclick=handleDivHiding('options',this);", 
-                        "id=options_img", "alt=Options", "title=Options")                    
-                    .end(); //options_link
-                
-                hgen.divID("options");
                 cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                     @Override
                     public void code(AAF_GUI state, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen)
                             throws APIException, IOException {
+                    	String image_root = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
+                        hgen.img(image_root + "/options_down.png", "onclick=handleDivHiding('options',this);", 
+                                "id=options_img", "alt=Options", "title=Options")                    
+                            .end(); //options_link
+                        
+                        hgen.divID("options");
+
                         switch(browser(trans,trans.env().slot(getBrowserType()))) {
                             case ie:
                             case ieOld:
                                 // IE doesn't support file save
                                 break;
                             default:
-                                xgen.img("src=../../"+gui.theme+"/AAFdownload.png", "onclick=saveToFile();",
+                                xgen.img(image_root+"/AAF_download.png", "onclick=saveToFile();",
                                         "alt=Save log to file", "title=Save log to file");
                         }
-//                        xgen.img("src=../../"+gui.theme+"/AAFemail.png", "onclick=emailLog();",
+//                        xgen.img("src=../../"+gui.theme+"/AAF_email.png", "onclick=emailLog();",
 //                                "alt=Email log to me", "title=Email log to me");
-                        xgen.img("src=../../"+gui.theme+"/AAF_font_size.png", "onclick=handleDivHiding('text_slider',this);", 
+                        xgen.img(image_root+"/AAF_font_size.png", "onclick=handleDivHiding('text_slider',this);", 
                                 "id=fontsize_img", "alt=Change text size", "title=Change text size");
-                        xgen.img("src=../../"+gui.theme+"/AAF_details.png", "onclick=selectOption(this,0);", 
+                        xgen.img(image_root+"/AAF_details.png", "onclick=selectOption(this,0);", 
                                 "id=details_img", "alt=Turn on/off details mode", "title=Turn on/off details mode");
-                        xgen.img("src=../../"+gui.theme+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
+                        xgen.img(image_root+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
                                 "id=maximize_img", "alt=Maximize Console Window", "title=Maximize Console Window");
                     }    
                 });

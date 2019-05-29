@@ -112,7 +112,6 @@ public class API_Creds {
                                         decoded.substring(0,colon), 
                                         CredVal.Type.PASSWORD , 
                                         decoded.substring(colon+1).getBytes(),trans)) {
-                                    
                                     resp.setStatus(HttpStatus.OK_200);
                                 } else {
                                     // DME2 at this version crashes without some sort of response

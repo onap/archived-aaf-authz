@@ -216,7 +216,8 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         		access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.app_name);
         	}
             access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
-            //server.join();
+            
+            rserv.postStartup(hostname, port);
         } catch (Exception e) {
             access().log(e,"Error registering " + service.app_name);
             String doExit = access().getProperty("cadi_exitOnFailure", "true");

@@ -22,7 +22,6 @@ package org.onap.aaf.auth.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
 import org.onap.aaf.cadi.Access.Level;
@@ -31,12 +30,11 @@ import org.onap.aaf.cadi.PropAccess.LogIt;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.log4j.LogFileNamer;
+import org.onap.aaf.misc.env.util.Chrono;
 
 public class Log4JLogIt implements LogIt {
     protected static final String AAF_LOG4J_PREFIX = "aaf_log4j_prefix";
-
-    // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
-    private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    // Log4j does it's own date.  Can't apparently turn it off.
     
     private final String service;
     private final String audit;
@@ -104,30 +102,30 @@ public class Log4JLogIt implements LogIt {
     public void push(Level level, Object... elements) {
         switch(level) {
             case AUDIT:
-                laudit.warn(PropAccess.buildMsg(audit, iso8601, level, elements));
+                laudit.warn(PropAccess.buildMsg(audit, Chrono.utcFmt, level, elements));
                 break;
             case INIT:
-                linit.warn(PropAccess.buildMsg(init, iso8601, level, elements));
+                linit.warn(PropAccess.buildMsg(init, Chrono.utcFmt, level, elements));
                 break;
             case ERROR:
-                lservice.error(PropAccess.buildMsg(service, iso8601, level, elements));
+                lservice.error(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
             case WARN:
-                lservice.warn(PropAccess.buildMsg(service, iso8601, level, elements));
+                lservice.warn(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
             case INFO:
-                lservice.info(PropAccess.buildMsg(service, iso8601, level, elements));
+                lservice.info(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
             case DEBUG:
-                lservice.debug(PropAccess.buildMsg(service, iso8601, level, elements));
+                lservice.debug(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
             case TRACE:
-                ltrace.trace(PropAccess.buildMsg(service, iso8601, level, elements));
+                ltrace.trace(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
             case NONE:
                 break;
             default:
-                lservice.info(PropAccess.buildMsg(service, iso8601, level, elements));
+                lservice.info(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
         
         }
