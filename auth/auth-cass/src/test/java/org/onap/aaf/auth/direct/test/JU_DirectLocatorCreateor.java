@@ -20,8 +20,6 @@
  */
 package org.onap.aaf.auth.direct.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.junit.Before;
@@ -37,54 +35,54 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
 
-
 @RunWith(MockitoJUnitRunner.class) 
-public class JU_DirectLocatorCreateor {
+public class JU_DirectLocatorCreator {
 
-	@Mock
-	LocateDAO ldao;
-	
 	@Mock
 	AuthzEnv env;
+	
+	@Mock
+	LocateDAO locateDAO;
+	
+	@Mock
+	PropAccess access;
 	
 	@Before
 	public void setUp() throws Exception {
 		initMocks(this);
 	}
 	
-	// These tests should not Mock PropAccess
 	@Test
 	public void testCreate() {
-		assertTrue(true);
+		Mockito.doReturn(access).when(env).access();
+		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
+		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
+		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("http://aafurl.com").when(access).getProperty(Config.AAF_URL,null);
+		DirectLocatorCreator directLocObj = new DirectLocatorCreator(env, locateDAO);
+		try {
+			directLocObj.create("test", "30.20.30.20");
+		} catch (LocatorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		directLocObj.setSelf("30.20.30.10", 8080);
+		try {
+			directLocObj.create("test", "30.20.30.20");
+		} catch (LocatorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-//		PropAccess access = Mockito.mock(PropAccess.class);
-//		Mockito.doReturn(access).when(env).access();
-//		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
-//		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-//		DirectLocatorCreator aafLocatorObj=new DirectLocatorCreator(env, ldao);
-//		try {
-//			aafLocatorObj.setSelf("test", 9080);
-//			aafLocatorObj.create("test","30.20.30.30");
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-//	
-//	@Test
-//	public void testCreateHostnameNull() {
-//		PropAccess access = Mockito.mock(PropAccess.class);
-//		Mockito.doReturn(access).when(env).access();
-//		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
-//		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-//		DirectLocatorCreator aafLocatorObj=new DirectLocatorCreator(env, ldao);
-//		try {
-//			aafLocatorObj.create("test","30.20.30.30");
-//		} catch (LocatorException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-	
+
+	@Test
+	public void testSetSelf() {
+		Mockito.doReturn(access).when(env).access();
+		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
+		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
+		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("http://aafurl.com").when(access).getProperty(Config.AAF_URL,null);
+		DirectLocatorCreator directLocObj = new DirectLocatorCreator(env, locateDAO);
+		directLocObj.setSelf("30.20.30.10", 8080);
+	}
 }
