@@ -24,6 +24,7 @@ package org.onap.aaf.cadi.register;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
@@ -35,6 +36,7 @@ import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.RegistrationPropHolder;
 import org.onap.aaf.cadi.locator.PropertyLocator;
 import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.misc.env.APIException;
@@ -66,12 +68,14 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
         } else {
             // Note: want Property Locator or Single, not AAFLocator, because we want the core service, not what it can find
             try {
+            	RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
+            	aaf_locate = rph.replacements(getClass().getSimpleName(),aaf_locate, null,null);
                 if (aaf_locate.indexOf(',')>=0) {
                     locator = new PropertyLocator(aaf_locate);
                 } else {
                     locator = new SingleEndpointLocator(aaf_locate);
                 }
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException | UnknownHostException e) {
                 throw new CadiException(e);
             }
         }

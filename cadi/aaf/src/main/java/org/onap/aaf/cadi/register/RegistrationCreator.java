@@ -51,6 +51,7 @@ public class RegistrationCreator {
     	try {
     		String dot_le;
     		String version=null;
+    		String defProtocol="https";
     		
     		RegistrationPropHolder ph = new RegistrationPropHolder(access, port);
     		
@@ -67,7 +68,7 @@ public class RegistrationCreator {
     					defData = locate = new MgmtEndpoint();
 
     					version = access.getProperty(Config.AAF_LOCATOR_VERSION, Defaults.AAF_VERSION);
-    					locate.setProtocol(access.getProperty(Config.AAF_LOCATOR_PROTOCOL,null));
+    					locate.setProtocol(defProtocol = access.getProperty(Config.AAF_LOCATOR_PROTOCOL,defProtocol));
     					List<String> ls = locate.getSubprotocol();
     					for(String sp : Split.splitTrim(',', access.getProperty(Config.AAF_LOCATOR_SUBPROTOCOL,""))) {
     						ls.add(sp);	
@@ -95,7 +96,7 @@ public class RegistrationCreator {
     					locate.setMajor(split.length>0?Integer.parseInt(split[0]):0);
     				}
 
-    				String protocol = access.getProperty(Config.AAF_LOCATOR_PROTOCOL + dot_le, null);
+    				String protocol = access.getProperty(Config.AAF_LOCATOR_PROTOCOL + dot_le, defProtocol);
     				if (protocol!=null) {
     					locate.setProtocol(protocol);
 						List<String> ls = locate.getSubprotocol();

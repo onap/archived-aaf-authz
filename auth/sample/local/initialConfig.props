@@ -26,20 +26,19 @@
 #   3) Helm (Kubernetes and Helm)
 #   4) OOM (Kubernetes with OOM)
 ################################
+aaf_locate_url.docker=https://aaf-locate:8095
+aaf_locate_url.helm=https://aaf-locate.%CNS:8095
+aaf_locate_url.oom=https://aaf-locate.%CNS:8095
+
 aaf_locator_app_ns=%AAF_NS
 aaf_locator_name=%NS.%N
 aaf_locator_name.docker=%CNS.%NS.%N
 aaf_root_ns=org.osaaf.aaf
 
-# Dublin
-aaf_locator_name.oom=%NS.%N
-aaf_locator_name.helm=%NS.%N
-aaf_locator_public_name.oom=public.%NS.%N
-aaf_locator_public_name.helm=public.%NS.%N
-
 # EL Alto and beyond
-# aaf_locator_name.oom=%CNS.%NS.%N
-# aaf_locator_name.helm=%CNS.%NS.%N
+aaf_locator_name.docker=%CNS.%NS.%N
+aaf_locator_name.oom=%CNS.%NS.%N
+aaf_locator_name.helm=%CNS.%NS.%N
 
 aaf_locator_fqdn.docker=aaf-%N
 aaf_locator_fqdn.helm=aaf-%N.%CNS
