@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Jonathan Gathman <jonathan.gathman@att.com>
+Submitted-by: Jonathan Gathman <jonathan.gathman@att.com>
+Submitted-at: Fri, 31 May 2019 14:07:03 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aaf/authz/+/89023
+Project: aaf/authz
+Branch: refs/heads/master
