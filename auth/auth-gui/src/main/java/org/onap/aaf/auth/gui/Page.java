@@ -261,7 +261,7 @@ public class Page extends HTMLCacheGen {
                 });
                 hgen.html();
                 final String title = env.getProperty(AAF_GUI_TITLE,"Authentication/Authorization Framework");
-                final String defaultTheme = env.get(sTheme); 
+                final String defaultTheme = env.get(sTheme,"onap"); 
                 final Holder<String> hTheme = new Holder<>(defaultTheme);
               
                 Mark head = hgen.head();
@@ -368,7 +368,7 @@ public class Page extends HTMLCacheGen {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
-                        	Properties props = themeProps.get(hTheme.get());
+                        	Properties props = themeProps==null?null:themeProps.get(hTheme.get());
                         	if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
                                 xgen.incr("h2").text("Navigation").end();
                                 Mark mark = new Mark();

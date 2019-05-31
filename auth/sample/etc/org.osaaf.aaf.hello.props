@@ -23,6 +23,7 @@
 ##
 cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.osaaf.aaf.log4j.props
 aaf_locator_entries=hello
+aaf_locator_protocol=https
 port=8130
 aaf_locator_public_port.helm=30086
 aaf_locator_public_port.oom=31116

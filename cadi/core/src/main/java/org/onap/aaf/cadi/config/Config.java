@@ -151,6 +151,9 @@ public class Config {
     public static final String AAF_ROOT_NS = "aaf_root_ns";
     public static final String AAF_ROOT_NS_DEF = "org.osaaf.aaf";
     public static final String AAF_ROOT_COMPANY = "aaf_root_company";
+    /**
+     * Use Config.getAAFLocateUrl(access) to get correct property in/out of container
+     */
     public static final String AAF_LOCATE_URL = "aaf_locate_url"; //URL for AAF locator
     public static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
     public static final String AAF_DEFAULT_API_VERSION = "2.1";
@@ -561,7 +564,7 @@ public class Config {
             }
             access.log(Level.INIT, sb);
 
-            Locator<URI> locator = loadLocator(si, logProp(rph, AAF_LOCATE_URL, null));
+            Locator<URI> locator = loadLocator(si, logProp(rph, Config.getAAFLocateUrl(access), null));
             
             taf = new HttpEpiTaf(access,locator, tc, htarray); // ok to pass locator == null
             String level = logProp(access, CADI_LOGLEVEL, null);
@@ -903,6 +906,18 @@ public class Config {
     // Set by CSP, or is hostname.
     public static String getDefaultRealm() {
         return defaultRealm;
+    }
+    
+    public static String getAAFLocateUrl(Access access) {
+    	String rv = null;
+    	String cont = access.getProperty(AAF_LOCATOR_CONTAINER,null);
+    	if(cont!=null) {
+    		rv = access.getProperty(AAF_LOCATE_URL + '.' +cont, null);
+    	}
+    	if(rv==null) {
+    		rv = access.getProperty(AAF_LOCATE_URL, null);
+    	}
+    	return rv;
     }
 
     private static class Priori<T> implements Comparable<Priori<T>> {

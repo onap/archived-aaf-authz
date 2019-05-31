@@ -62,7 +62,7 @@ public class JU_RegistrationCreator {
 				assertEquals(0,me.getPatch());
 				assertEquals(0,me.getPkg());
 				assertEquals(entry,me.getName());
-				assertEquals(null,me.getProtocol());
+				assertEquals("https",me.getProtocol());
 				assertEquals(0,me.getSpecialPorts().size());
 			}
 

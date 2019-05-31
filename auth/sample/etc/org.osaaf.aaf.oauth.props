@@ -24,6 +24,7 @@ cadi_prop_files=/opt/app/osaaf/local/org.osaaf.aaf.props:/opt/app/osaaf/etc/org.
 aaf_locator_entries=oauth,token,introspect
 aaf_locator_fqdn.helm=aaf-oauth.%CNS
 aaf_locator_fqdn.oom=aaf-oauth.%CNS
+aaf_locator_protocol=https
 port=8140
 aaf_locator_public_port.helm=30082
 aaf_locator_public_port.oom=31112

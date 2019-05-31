@@ -319,11 +319,11 @@ public class Agent {
 	        		lhost=Config.AAF_LOCATE_URL_TAG;
 	        	}
 	        	String value = rph.replacements("Agent:loadURLs",
-	        			proto + lhost + "/AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
+	        			proto + lhost + "/%CNS.%AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
 	        			null,dot_le);
 	        	switch(u) {
 	        		case "aaf": rv.put(Config.AAF_URL, value); break;
-	        		case "locate": rv.put(Config.AAF_LOCATE_URL, value); break;
+	        		case "locate": rv.put(Config.getAAFLocateUrl(access), value); break;
 	        		case "token": rv.put(Config.AAF_OAUTH2_TOKEN_URL, value); break;
 	        		case "introspect": rv.put(Config.AAF_OAUTH2_INTROSPECT_URL, value); break;
 	        		case "cm": rv.put(Config.AAF_URL_CM, value); break;
@@ -823,7 +823,7 @@ public class Agent {
             	app.add(es.getKey(), es.getValue());
             }
             
-            app.add(Config.AAF_LOCATE_URL, propAccess, null);
+            app.add(Config.AAF_LOCATE_URL, Config.getAAFLocateUrl(propAccess));
             app.add(Config.AAF_ENV,propAccess, "DEV");
             String release = propAccess.getProperty(Config.AAF_RELEASE);
             if(release!=null) {

@@ -298,7 +298,7 @@ public class AAFSSO {
                 err.append("-D" + Config.AAF_APPPASS + "=<passwd> ");
             }
             
-            String locateUrl = access.getProperty(Config.AAF_LOCATE_URL);
+            String locateUrl = Config.getAAFLocateUrl(access);
             if (locateUrl==null) {
                 locateUrl=AAFSSO.cons.readLine("AAF Locator URL=https://");
                 if (locateUrl==null || locateUrl.length()==0) {
