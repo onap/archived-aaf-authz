@@ -23,6 +23,7 @@ package org.onap.aaf.cadi.aaf.v2_0;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 
@@ -88,5 +89,9 @@ public class AAFSingleLocator implements Locator<URI> {
 	}
 	
 	private class SingleItem implements Item {
+	}
+	
+	public static AAFSingleLocator create(Access access, String url) throws URISyntaxException {
+		return new AAFSingleLocator(url);
 	}
 }

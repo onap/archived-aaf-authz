@@ -21,8 +21,14 @@
 
 package org.onap.aaf.cadi.http.test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -34,10 +40,10 @@ import java.net.URISyntaxException;
 
 import javax.net.ssl.SSLHandshakeException;
 
-import static org.hamcrest.CoreMatchers.*;
-
-import org.junit.*;
-import org.mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
@@ -48,6 +54,8 @@ import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
+
+import junit.framework.Assert;
 
 public class JU_HMangr {
     
@@ -173,9 +181,14 @@ public class JU_HMangr {
     @Test
     public void allTest() throws LocatorException, CadiException, APIException {
         HManagerStub hman = new HManagerStub(access, locMock);
+
         assertThat(hman.best(ssMock, retryableMock), is(nullValue()));
-        assertThat(hman.all(ssMock, retryableMock), is(nullValue()));
-        assertThat(hman.all(ssMock, retryableMock, true), is(nullValue()));
+        try {
+        	hman.all(ssMock, retryableMock, true);
+        	Assert.fail("Should have thrown LocatorException");
+        } catch (LocatorException e) {
+        	assertEquals(e.getLocalizedMessage(),"No available clients to call");
+        }
     }
 
     @Test

@@ -131,7 +131,8 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         deployedVersion = access.getProperty(Config.AAF_RELEASE, "N/A:2.x");
 
         // Certificate Manager
-        cmCon =  new AAFConHttp(env.access(),Config.AAF_URL_CM);
+        String aaf_url_cm = env.getProperty(Config.AAF_URL_CM,Config.AAF_URL_CM_DEF);
+        cmCon =  new AAFConHttp(env.access(),aaf_url_cm);
         artifactsDF = env.newDataFactory(Artifacts.class);
         certInfoDF  = env.newDataFactory(CertInfo.class);
         

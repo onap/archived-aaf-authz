@@ -509,22 +509,27 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         CredDAO.Data to = new CredDAO.Data();
         to.id=from.getId();
         to.ns = Question.domain2ns(to.id);
-        String passwd = from.getPassword();
-        if (requiresPass) {
-            String ok = trans.org().isValidPassword(trans, to.id,passwd);
-            if (ok.length()>0) {
-                return Result.err(Status.ERR_BadData,ok);
-            }
+        to.type = from.getType();
+        if(to.type!=null && to.type==CredDAO.FQI) {
+        	to.cred = null;
         } else {
-            to.type=0;
+        	String passwd = from.getPassword();
+	        if (requiresPass) {
+	            String ok = trans.org().isValidPassword(trans, to.id,passwd);
+	            if (ok.length()>0) {
+	                return Result.err(Status.ERR_BadData,ok);
+	            }
+	        } else {
+	            to.type=0;
+	        }
+	        if (passwd != null) {
+	            to.cred = ByteBuffer.wrap(passwd.getBytes());
+	            to.type = CredDAO.RAW; 
+	        } else {
+	            to.type = CredDAO.FQI;
+	        }
         }
-        if (passwd != null) {
-            to.cred = ByteBuffer.wrap(passwd.getBytes());
-            to.type = CredDAO.RAW; 
-        } else {
-            to.type = 0;
-        }
-        
+	        
         // Note: Ensure requested EndDate created will match Organization Password Rules
         //  P.S. Do not apply TempPassword rule here. Do that when you know you are doing a Create/Reset (see Service)
         to.expires = getExpires(trans.org(),Expiration.Password,base,from.getId());

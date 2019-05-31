@@ -29,6 +29,7 @@ public class User extends BaseCmd<User> {
     public User(AAFcli aafcli) throws APIException {
         super(aafcli,"user");
         cmds.add(new Role(this));
+        cmds.add(new ID(this));
         cmds.add(new Cred(this));
         cmds.add(new Delg(this));
         cmds.add(new List(this));

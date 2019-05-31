@@ -221,6 +221,7 @@ public class Config {
     public static final String AAF_URL_GUI="aaf_url_gui";
     public static final String AAF_URL_FS="aaf_url_fs";
     public static final String AAF_URL_CM = "aaf_url_cm";
+    public static final String AAF_URL_CM_DEF = "https://AAF_LOCATE_URL/AAF_NS.cm:"+AAF_DEFAULT_API_VERSION;
     public static final String AAF_URL_HELLO = "aaf_url_hello";
     public static final String CM_TRUSTED_CAS = "cm_trusted_cas";
 
@@ -856,18 +857,24 @@ public class Config {
     		} catch (UnknownHostException | CadiException e1) {
     			throw new LocatorException(e1);
     		}
-            
+
+            String aaf_locator_class;
+            if(_url.equals(url) && !url.contains("/locate/")) {
+            	aaf_locator_class = "org.onap.aaf.cadi.locator.DNSLocator";
+            } else {
+            	aaf_locator_class = AAF_LOCATOR_CLASS_DEF;
+            }
             try {
-                Class<?> lcls = loadClass(access,AAF_LOCATOR_CLASS_DEF);
+                Class<?> lcls = loadClass(access,aaf_locator_class);
                 if (lcls==null) {
                     throw new CadiException("Need to include aaf-cadi-aaf jar for AAFLocator");
                 }
                 // First check for preloaded
                 try {
-                    Method meth = lcls.getMethod("create",String.class);
-                    locator = (Locator<URI>)meth.invoke(null,url);
+                    Method meth = lcls.getMethod("create",Access.class,String.class);
+                    locator = (Locator<URI>)meth.invoke(null,access,url);
                 } catch (Exception e) {
-                    access.log(Level.DEBUG, "(Not fatal) Cannot load by create(String)", e);
+                    access.log(Level.TRACE, "(Not fatal) Cannot load by create(String)", e);
                 }
                 if (locator==null) {
                     URI locatorURI = new URI(url);

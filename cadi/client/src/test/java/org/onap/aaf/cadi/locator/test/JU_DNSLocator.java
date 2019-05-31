@@ -53,9 +53,9 @@ public class JU_DNSLocator {
         
         item = dl.best();
         uri = dl.get(item);
-        assertThat(uri.toString(), is("https://127.0.0.1:8100"));
+        assertThat(uri.toString(), is("https://localhost:8100"));
         item = dl.best();
-        assertThat(uri.toString(), is("https://127.0.0.1:8100"));
+        assertThat(uri.toString(), is("https://localhost:8100"));
 
         assertThat(dl.hasItems(), is(true));
         for (item = dl.first(); item != null; item = dl.next(item)) {

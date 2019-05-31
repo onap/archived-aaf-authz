@@ -920,6 +920,9 @@ public class Question {
                 tt.done();
             }
             
+        } else if (cred.type==CredDAO.FQI) {
+        	cred.cred = null;
+        	return Result.ok(cred);
         }
         return Result.err(Status.ERR_Security,"invalid/unreadable credential");
     }

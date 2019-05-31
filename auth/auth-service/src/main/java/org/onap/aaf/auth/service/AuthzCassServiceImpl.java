@@ -2290,7 +2290,6 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         try {
             Result<CredDAO.Data> rcred = mapper.cred(trans, from, true);
             if (rcred.isOKhasData()) {
-                byte[] rawCred = rcred.value.cred.array();
                 rcred = ques.userCredSetup(trans, rcred.value);
                 
                 final ServiceValidator v = new ServiceValidator();
@@ -2333,7 +2332,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         // Note: ASPR specifies character differences, but we don't actually store the
                         // password to validate char differences.
                         
-                        rb = ques.userCredCheck(trans, curr, rawCred);
+//                      byte[] rawCred = rcred.value.type==CredDAO.RAW?null:;
+
+                        rb = ques.userCredCheck(trans, curr, rcred.value.cred.array());
                         if (rb.notOK()) {
                             return Result.err(rb);
                         } else if (rb.value){

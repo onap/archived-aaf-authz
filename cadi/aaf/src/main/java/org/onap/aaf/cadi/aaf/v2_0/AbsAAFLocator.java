@@ -74,7 +74,12 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 		}
         try {
         	aaf_locator_host = rph.replacements(getClass().getSimpleName(),"https://"+Config.AAF_LOCATE_URL_TAG,null,null);
-            aaf_locator_uri = new URI(aaf_locator_host);
+        	if(aaf_locator_host.endsWith("/locate")) {
+                aaf_locator_uri = new URI(aaf_locator_host);
+        	} else {
+        		aaf_locator_uri = new URI(aaf_locator_host+"/locate");
+        	}
+        	
             access.printf(Level.INFO, "AbsAAFLocator AAF URI is %s",aaf_locator_uri);
         } catch (URISyntaxException e) {
             throw new LocatorException(e);

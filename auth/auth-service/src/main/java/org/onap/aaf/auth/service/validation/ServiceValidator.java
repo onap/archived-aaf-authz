@@ -162,6 +162,7 @@ public class ServiceValidator extends Validator {
             } else {
                 switch(cd.type) {
                     case CredDAO.BASIC_AUTH_SHA256:
+                    case CredDAO.FQI:
                         // ok
                         break;
                     default:

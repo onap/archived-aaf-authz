@@ -162,14 +162,21 @@ public class HMangr {
         return same(ss,retryable);
     }
     public<RET> RET all(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable) throws LocatorException, CadiException, APIException {
-        return oneOf(ss,retryable,true,null);
+        return call(ss,retryable,true,null);
     }
 
     public<RET> RET all(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify) throws LocatorException, CadiException, APIException {
-        return oneOf(ss,retryable,notify,null);
+        return call(ss,retryable,notify,null);
     }
     
+    public <RET> RET allExcept(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify, String selfHost) throws LocatorException, CadiException, APIException {
+    	return call(ss,retryable,notify,selfHost);
+    }
+
     public<RET> RET oneOf(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify,String host) throws LocatorException, CadiException, APIException {
+    	return call(ss,retryable,notify,host);
+    }
+    private<RET> RET call(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify,String host) throws LocatorException, CadiException, APIException {
         RET ret = null;
         // make sure we have all current references:
         loc.refresh();

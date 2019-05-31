@@ -60,23 +60,27 @@ public class DNSLocator implements Locator<URI> {
         if (aaf_locate==null) {
             throw new LocatorException("Null passed into DNSLocator constructor");
         }
-        int start, port;
+        int start, defPort;
         if (aaf_locate.startsWith("https:")) {
-            protocol = "https:";
-            start = 9; // https://
-            port = 443;
+            protocol = "https";
+            start = 8; // https://
+            defPort = 443;
         } else if (aaf_locate.startsWith("http:")) {
-            protocol = "http:";
-            start = 8; // http://
-            port = 80;
+            protocol = "http";
+            start = 7; // http://
+            defPort = 80;
         } else {
             throw new LocatorException("DNSLocator accepts only https or http protocols.  (requested URL " + aaf_locate + ')');
         }
-        
-        parsePorts(aaf_locate.substring(start), port);
+        host = parseHostAndPorts(aaf_locate, start, defPort);
+        refresh();
     }
 
-    @Override
+    public static DNSLocator create(Access access, String url) throws LocatorException {
+		return new DNSLocator(access, url);
+	}
+
+	@Override
     public URI get(Item item) throws LocatorException {
         return hosts[((DLItem)item).cnt].uri;
     }
@@ -159,10 +163,11 @@ public class DNSLocator implements Locator<URI> {
         return false;
     }
     
-    private void parsePorts(String aaf_locate, int defaultPort) throws LocatorException {
+    private String parseHostAndPorts(String aaf_locate, int _start, int defaultPort) throws LocatorException {
         int slash, start;
-        int colon = aaf_locate.indexOf(':');
+        int colon = aaf_locate.indexOf(':',_start);
         if (colon > 0) {
+        	host = aaf_locate.substring(_start,colon);
             start = colon + 1;
             int left = aaf_locate.indexOf('[', start);
             if (left > 0) {
@@ -195,8 +200,12 @@ public class DNSLocator implements Locator<URI> {
                 }
             }
         } else {
+        	slash = aaf_locate.indexOf('/', _start);
+        	host = slash<_start?aaf_locate.substring(_start):aaf_locate.substring(_start,slash);
             startPort = endPort = defaultPort;
-        }        
+        }
+        
+        return host;
     }
 
     private class Host {
@@ -206,8 +215,12 @@ public class DNSLocator implements Locator<URI> {
         
         public Host(InetAddress inetAddress, int port, String suffix) throws URISyntaxException {
             ia = inetAddress;
-            uri = new URI(protocol,null,inetAddress.getHostAddress(),port,suffix,null,null);
+            uri = new URI(protocol,null,inetAddress.getCanonicalHostName(),port,suffix,null,null);
             status = Status.UNTRIED;
+        }
+        
+        public String toString() {
+        	return uri.toString() + " - " + status.name();
         }
     }
     

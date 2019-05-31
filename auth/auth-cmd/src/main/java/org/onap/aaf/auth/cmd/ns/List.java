@@ -163,8 +163,9 @@ public class List extends BaseCmd<NS> {
             type = 9999;
         } 
         switch(type) {
+        	case 0:	  return "NoCrd";
             case 1:   return "U/P";
-            case 2:      return "U/P2";
+            case 2:   return "U/P2";
             case 10:  return "Cert";
             case 200: return "x509";
             default:

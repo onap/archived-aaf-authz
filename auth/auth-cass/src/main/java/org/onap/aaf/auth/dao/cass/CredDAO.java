@@ -53,6 +53,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     public static final String TABLE = "cred";
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
     public static final int RAW = -1;
+    public static final int FQI = 0;
     public static final int BASIC_AUTH = 1;
     public static final int BASIC_AUTH_SHA256 = 2;
     public static final int CERT_SHA256_RSA =200;
@@ -225,8 +226,12 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
 	@Override
 	public Result<Data> create(AuthzTrans trans, Data data) {
 		if(data.tag == null) {
-			long l = srand.nextLong();
-			data.tag = Long.toHexString(l);
+			if(data.type==0) {
+				data.tag="PlaceHolder";
+			} else {
+				long l = srand.nextLong();
+				data.tag = Long.toHexString(l);
+			}
 		}
 		return super.create(trans, data);
 	}
