@@ -22,53 +22,195 @@
 
 package org.onap.aaf.auth.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.onap.aaf.auth.dao.CassAccess;
+import org.mockito.Mockito;
+import org.onap.aaf.auth.dao.cass.HistoryDAO;
+import org.onap.aaf.auth.env.AuthzEnv;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.env.Decryptor;
 import org.onap.aaf.misc.env.Env;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.onap.aaf.misc.env.LogTarget;
 
-//import org.onap.aaf.auth.dao.CassAccess.Resettable;
-import com.datastax.driver.core.Cluster.Builder;
+import com.datastax.driver.core.Row;
 
-@RunWith(PowerMockRunner.class)
+
 public class JU_CassAccess {
     CassAccess cassAccess;
     
-    public static final String KEYSPACE = "authz";
-    public static final String CASSANDRA_CLUSTERS = "cassandra.clusters";
-    public static final String CASSANDRA_CLUSTERS_PORT = "cassandra.clusters.port";
-    public static final String CASSANDRA_CLUSTERS_USER_NAME = "cassandra.clusters.user";
-    public static final String CASSANDRA_CLUSTERS_PASSWORD = "cassandra.clusters.password";
-    public static final String CASSANDRA_RESET_EXCEPTIONS = "cassandra.reset.exceptions";
-    public static final String LATITUDE = "LATITUDE";
-    public static final String LONGITUDE = "LONGITUDE";
-    //private static final List<Resettable> resetExceptions = new ArrayList<>();
-    public static final String ERR_ACCESS_MSG = "Accessing Backend";
-    private static Builder cb = null;
     @Mock
-    Env envMock;
+    Env env;
+    
     String prefix=null;
     
     @Before
     public void setUp(){
+    	initMocks(this);
         cassAccess = new CassAccess();
+		Mockito.doReturn(Mockito.mock(LogTarget.class)).when(env).info();
+		Mockito.doReturn(Mockito.mock(LogTarget.class)).when(env).init();
     }
 
-//
-//    @Test(expected=APIException.class)
-//    public void testCluster() throws APIException, IOException {
-////        cassAccess.cluster(envMock, prefix);
-//        
-//    }
 
+    @Test
+    public void testCluster() {
+    	
+    	setCbField();
+    	try {
+			CassAccess.cluster(env, null);
+		} catch (APIException | IOException e) {
+			assertTrue(e.getMessage().contains(" are not set"));
+		}
+    	setCbField();
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,null);
+		try {
+			CassAccess.cluster(env, null);
+		} catch (APIException | IOException e) {
+			assertTrue(e.getMessage().contains("No Password configured for"));
+		}
+		setCbField();
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PASSWORD,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PASSWORD,null);
+		Decryptor decrypt = Mockito.mock(Decryptor.class);
+		Mockito.doReturn(decrypt).when(env).decryptor();
+		try {
+			CassAccess.cluster(env, null);
+		} catch (APIException | IOException e) {
+			assertTrue(e.getMessage().contains("cadi_latitude and/or cadi_longitude are not set"));
+		}
+		
+		setCbField();
+		env = Mockito.mock(AuthzEnv.class);
+		Mockito.doReturn(Mockito.mock(LogTarget.class)).when(env).info();
+		Mockito.doReturn(Mockito.mock(LogTarget.class)).when(env).init();
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,null);
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PASSWORD,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_CLUSTERS_PASSWORD,null);
+		decrypt = Mockito.mock(Decryptor.class);
+		Mockito.doReturn(decrypt).when(env).decryptor();
+		try {
+			CassAccess.cluster(env, null);
+		} catch (APIException | IOException e) {
+			assertTrue(e.getMessage().contains("cadi_latitude and/or cadi_longitude are not set"));
+		}
+		setCbField();
+		Mockito.doReturn("100").when(env).getProperty(Config.CADI_LATITUDE);
+		Mockito.doReturn("100").when(env).getProperty(Config.CADI_LONGITUDE);
+		Mockito.doReturn("google.com:90:90:90:90,google.com,google.com,google.com,google.com").when(env).getProperty("cassandra.clusters",null);
+		try {
+			CassAccess.cluster(env, null);
+		} catch (APIException | IOException e) {
+			assertTrue(e.getMessage().contains("cadi_latitude and/or cadi_longitude are not set"));
+		}
+		setCbField();
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_RESET_EXCEPTIONS,"100");
+		Mockito.doReturn("100").when(env).getProperty(CassAccess.CASSANDRA_RESET_EXCEPTIONS,null);
+		try {
+			CassAccess.cluster(env, null);
+		} catch (APIException | IOException e) {
+			assertTrue(e.getMessage().contains("Declared Cassandra Reset Exception, 100, cannot be ClassLoaded"));
+		}
+    }
+    
+    private void setCbField() {
+    	Field cbField;
+		try {
+			cbField = CassAccess.class.getDeclaredField("cb");
+			cbField.setAccessible(true);
+			cbField.set(cassAccess, null);
+		} catch (NoSuchFieldException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    @Test
+    public void testResettable() {
+    	Class<?> innerClass = null;
+		Class<?>[] innerClassArr = CassAccess.class.getDeclaredClasses();
+		for(Class indCls:innerClassArr) {
+			if(indCls.getName().contains("Resettable")) {
+				innerClass = indCls;
+				break;
+			}
+		}
+        Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+        Method innnerClassMtd;
+        try {
+			Object obj = constructor.newInstance(env, null);
+			obj = constructor.newInstance(env, "java.lang.String");
+			obj = constructor.newInstance(env, "java.lang.String:java.lang.Exception");
+			innnerClassMtd = innerClass.getMethod("matches", new Class[] {Exception.class});
+			innnerClassMtd.invoke(obj, new Object[] {new Exception()});
+			obj = constructor.newInstance(env, "java.lang.Exception");
+			innnerClassMtd = innerClass.getMethod("matches", new Class[] {Exception.class});
+			innnerClassMtd.invoke(obj, new Object[] {new Exception("test")});
+			
+			List<String> msg = new ArrayList<>();
+			msg.add("test");
+			Field innerField = innerClass.getDeclaredField("messages");
+			innerField.setAccessible(true);
+			innerField.set(obj, msg);
+			
+			innnerClassMtd = innerClass.getMethod("matches", new Class[] {Exception.class});
+			innnerClassMtd.invoke(obj, new Object[] {new Exception("test")});
+			
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+    }
+
+    @Test
+    public void testIsResetException() {
+    	assertTrue(CassAccess.isResetException(Mockito.mock(Exception.class)));
+    	assertTrue(CassAccess.isResetException(null));
+    	
+    }
 }
