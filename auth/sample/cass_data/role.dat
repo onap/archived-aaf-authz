@@ -13,6 +13,7 @@ org.onap.aai|resources_all|resources_all|"{'org.onap.aai|resources|*|delete', 'o
 org.onap.aai|resources_readonly|resources_readonly|"{'org.onap.aai|resources|*|get'}"
 org.onap.aai|traversal_advanced|traversal_advanced|"{'org.onap.aai|traversal|*|advanced'}"
 org.onap.aai|traversal_basic|traversal_basic|"{'org.onap.aai|traversal|*|basic'}"
+org.onap.aai|ui_view|**
 org.onap.dmaap.mr.PNF_REGISTRATION|admin|AAF Namespace Administrators|"{'org.onap.dmaap.mr.PNF_REGISTRATION|access|*|*'}"
 org.onap.dmaap.mr.PNF_REGISTRATION|owner|AAF Namespace Owners|"{'org.onap.dmaap.mr.PNF_REGISTRATION|access|*|read'}"
 org.onap.dmaap.mr.PNF_REGISTRATION|pub||

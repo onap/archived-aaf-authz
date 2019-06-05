@@ -76,6 +76,7 @@ shi@portal.onap.org|org.onap.portal.admin|2019-11-02 13:11:39.000+0000|org.onap.
 demo@people.osaaf.org|org.onap.aai.Account_Administrator|2019-11-02 13:11:39.000+0000|org.onap.aai|Account_Administrator
 demo@people.osaaf.org|org.onap.aai.resources_readonly|2019-11-02 13:11:39.000+0000|org.onap.aai|resources_readonly
 demo@people.osaaf.org|org.onap.aai.traversal_basic|2019-11-02 13:11:39.000+0000|org.onap.aai|traversal_basic
+demo@people.osaaf.org|org.onap.aai.ui_view|2019-11-02 13:11:39.000+0000|org.onap.aai|ui_view
 demo@people.osaaf.org|org.onap.dcae.pnfPublisher|2019-11-02 13:11:39.000+0000|org.onap.dcae|pnfPublisher
 demo@people.osaaf.org|org.onap.dcae.pnfSubscriber|2019-11-02 13:11:39.000+0000|org.onap.dcae|pnfSubscriber
 demo@people.osaaf.org|org.onap.dmaap-bc.api.Controller|2019-11-02 13:11:39.000+0000|org.onap.dmaap-bc.api|Controller
