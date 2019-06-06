@@ -39,13 +39,13 @@ public class OutJson extends Out {
         } else {
             ipw = null;
         }
-        
+
         // If it's a fragment, print first Object Name.  If root Object, skip first name
         Stack<LevelStack> jsonLevel = new Stack<LevelStack>();
         jsonLevel.push(new LevelStack(options.length>1 && options[1]));
         boolean print = true, hadData=false;
         char afterName=0, beforeName=0, maybe = 0, prev=0;
-        
+
         int count = 0;
         while ((p = prs.parse(in,p.reuse())).valid()) {
             ++count;
@@ -112,18 +112,20 @@ public class OutJson extends Out {
                 default:
                     print = true;
             }
-        
+
             if (maybe!=0) {
                 if (ipw==null)writer.append(maybe); 
                 else ipw.println(maybe);
                 maybe = 0;
             }
-            
-            if (beforeName!=0) {
-                if (ipw==null)writer.append(beforeName);
-                else ipw.println(beforeName);
-                beforeName = 0;
-            }
+
+            // commented out unreachable code (as it is, beforeName is never
+            // assigned any value except 0
+            //if (beforeName!=0) {
+            //    if (ipw==null)writer.append(beforeName);
+            //    else ipw.println(beforeName);
+            //    beforeName = 0;
+            //}
             if (print) {
                 if (p.hasName()) {
                     writer.append('"');
