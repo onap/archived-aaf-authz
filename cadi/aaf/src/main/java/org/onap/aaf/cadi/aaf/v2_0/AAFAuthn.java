@@ -117,7 +117,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
                 return "AAF Inaccessible";
             case UNVALIDATED:
                 addUser(new User<AAFPermission>(user,bytes,con.timeout));
-                return "User/Pass combo invalid for " + user;
+                return "user/pass combo invalid for " + user;
             case DENIED:
                 return "AAF denies API for " + user;
             default: 

@@ -91,12 +91,6 @@ public class SecurityInfo {
             this.access = access;
             // reuse DME2 Properties for convenience if specific Properties don't exist
             
-            msgHelp = String.format(INITIALIZING_ERR_FMT,"Keystore", access.getProperty(Config.CADI_KEYSTORE, ""));
-            initializeKeyManager();
-            
-            msgHelp = String.format(INITIALIZING_ERR_FMT,"Truststore", access.getProperty(Config.CADI_TRUSTSTORE, ""));
-            initializeTrustManager();
-            
             String str = access.getProperty(Config.CADI_ALIAS, null);
             if(str==null || str.isEmpty()) {
             	defaultAlias = null;
@@ -113,7 +107,14 @@ public class SecurityInfo {
             } else {
             	defaultClientAlias = str;
             }
+
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"Keystore", access.getProperty(Config.CADI_KEYSTORE, ""));
+            initializeKeyManager();
             
+            msgHelp = String.format(INITIALIZING_ERR_FMT,"Truststore", access.getProperty(Config.CADI_TRUSTSTORE, ""));
+            initializeTrustManager();
+            
+
             msgHelp = String.format(INITIALIZING_ERR_FMT,"Trustmasks", access.getProperty(Config.CADI_TRUST_MASKS, ""));
             initializeTrustMasks();
 
@@ -239,13 +240,51 @@ public class SecurityInfo {
                 }
             }
         }
+        
+        StringBuilder sb = null;
         for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
             if (keyManager instanceof X509KeyManager) {
-                keyManagers.add((X509KeyManager)keyManager);
+            	X509KeyManager xkm = (X509KeyManager)keyManager;
+                keyManagers.add(xkm);
+                if(defaultAlias!=null) {
+                	sb=new StringBuilder("X509 Chain\n");
+                	x509Info(sb,xkm.getCertificateChain(defaultAlias));
+                }
+                if(defaultClientAlias!=null && !defaultClientAlias.equals(defaultAlias)) {
+                	if(sb==null) {
+                		sb = new StringBuilder();
+                	} else {
+                		sb.append('\n');
+                	}
+                	sb.append("X509 Client Chain\n");
+                	x509Info(sb,xkm.getCertificateChain(defaultAlias));
+                }
             }
         }
         x509KeyManager = new X509KeyManager[keyManagers.size()];
         keyManagers.toArray(x509KeyManager);
+        
+        if(sb!=null) {
+        	access.log(Level.INIT, sb);
+        }
+    }
+    
+    private void x509Info(StringBuilder sb, X509Certificate[] chain) {
+    	if(chain!=null) {
+    		int i=0;
+    		for(X509Certificate x : chain) {
+    			sb.append("  ");
+    			sb.append(i++);
+    			sb.append(')');
+    			sb.append("\n    Subject: ");
+    			sb.append(x.getSubjectDN());
+    			sb.append("\n    Issuer : ");
+    			sb.append(x.getIssuerDN());
+    			sb.append("\n    Expires: ");
+    			sb.append(x.getNotAfter());
+    			sb.append('\n');
+    		}
+    	}
     }
 
     protected void initializeTrustManager() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException, CadiException {
