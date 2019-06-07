@@ -20,4 +20,4 @@
 #
 
 . ./d.props
-${DOCKER:=docker} exec -it aaf-$1 bash -c "cd /opt/app/osaaf/logs && exec bash"
+${DOCKER:=docker} exec -it aaf-$1 bash -c "cd /opt/app && exec bash"

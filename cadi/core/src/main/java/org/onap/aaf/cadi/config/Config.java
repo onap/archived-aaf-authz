@@ -221,6 +221,7 @@ public class Config {
     public static final String AAF_DATA_DIR = "aaf_data_dir"; // AAF processes and Components only.
     public static final String AAF_RELEASE = "aaf_release";
 
+    public static final String AAF_URL_OAUTH = "aaf_url_oauth";
     public static final String AAF_URL_GUI="aaf_url_gui";
     public static final String AAF_URL_FS="aaf_url_fs";
     public static final String AAF_URL_CM = "aaf_url_cm";

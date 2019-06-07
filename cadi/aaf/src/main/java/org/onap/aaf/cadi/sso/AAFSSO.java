@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -36,14 +37,24 @@ import java.util.Properties;
 
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.aaf.Defaults;
+import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
+import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.configure.ArtifactDir;
+import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.util.MyConsole;
 import org.onap.aaf.cadi.util.SubStandardConsole;
 import org.onap.aaf.cadi.util.TheConsole;
+import org.onap.aaf.misc.env.APIException;
+import org.onap.aaf.misc.rosetta.env.RosettaDF;
+import org.onap.aaf.misc.rosetta.env.RosettaEnv;
+
+import locate.v1_1.Configuration;
+import locate.v1_1.Configuration.Props;
 
 public class AAFSSO {
     public static final MyConsole  cons = TheConsole.implemented() ? new TheConsole() : new SubStandardConsole();
@@ -179,16 +190,20 @@ public class AAFSSO {
                 appID=null;
             }
             
+            String aaf_container_ns = "";
             if (appID!=null) {
-             	diskprops.setProperty(Config.AAF_APPID,appID);
             	if( access.getProperty(Config.AAF_APPPASS)==null) {
-	                char[] password = cons.readPassword("Password for %s: ", appID);
+            		appID = user = cons.readLine("Deployer ID [%s]: ", user);
+            		access.setProperty(Config.AAF_APPID,appID);
+	                char[] password = cons.readPassword("Password for %s: ", user);
 	                if(password.length>0) {
 		                String app_pass = access.encrypt(new String(password));
 		               	access.setProperty(Config.AAF_APPPASS,app_pass);
 		               	diskprops.setProperty(Config.AAF_APPPASS,app_pass);
 	                }
+	                aaf_container_ns = cons.readLine("Container Namespace (blank if none)? [\"\"]: ", aaf_container_ns);
             	}
+             	diskprops.setProperty(Config.AAF_APPID,appID);
             }
             
             String keystore=access.getProperty(Config.CADI_KEYSTORE);
@@ -298,36 +313,6 @@ public class AAFSSO {
                 err.append("-D" + Config.AAF_APPPASS + "=<passwd> ");
             }
             
-            String locateUrl = Config.getAAFLocateUrl(access);
-            if (locateUrl==null) {
-                locateUrl=AAFSSO.cons.readLine("AAF Locator URL=https://");
-                if (locateUrl==null || locateUrl.length()==0) {
-                    err = new StringBuilder(Config.AAF_LOCATE_URL);
-                    err.append(" is required.");
-                    ok = false;
-                    return;
-                } else {
-                    locateUrl="https://"+locateUrl;
-                }
-                access.setProperty(Config.AAF_LOCATE_URL, locateUrl);
-                addProp(Config.AAF_LOCATE_URL, locateUrl);
-            }
-            
-            final String apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
-            final String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS);
-            String locateRoot;
-            if(aaf_root_ns==null) {
-            	locateRoot=Defaults.AAF_ROOT;
-            } else {
-            	locateRoot = Defaults.AAF_LOCATE_CONST + "/%CNS." + aaf_root_ns;
-            }
-            if(access.getProperty(Config.AAF_URL)==null) {
-            	
-            	access.setProperty(Config.AAF_URL, locateRoot+".service:"+apiVersion);
-            }
-            if(access.getProperty(Config.AAF_URL_CM)==null) {
-            	access.setProperty(Config.AAF_URL_CM, locateRoot+".cm:"+apiVersion);
-            }
             String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
             if (cadiLatitude==null) {
                 System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");
@@ -381,6 +366,55 @@ public class AAFSSO {
             }
             ok = err==null;
         }
+        String locateUrl = Config.getAAFLocateUrl(access);
+        if (locateUrl==null) {
+            locateUrl=AAFSSO.cons.readLine("AAF Locator URL=https://");
+            if (locateUrl==null || locateUrl.length()==0) {
+                err = new StringBuilder(Config.AAF_LOCATE_URL);
+                err.append(" is required.");
+                ok = false;
+                return;
+            } else {
+                locateUrl="https://"+locateUrl;
+            }
+            access.setProperty(Config.AAF_LOCATE_URL, locateUrl);
+            addProp(Config.AAF_LOCATE_URL, locateUrl);
+            try {
+            	if(access.getProperty(Config.AAF_URL)==null) {
+            		access.setProperty(Config.AAF_URL, "https://AAF_LOCATE/AAF_NS.service:2.1");
+            	}
+				AAFCon<?> aafCon = AAFCon.newInstance(access);
+		    	Future<Configuration> acf;
+				RosettaDF<Configuration> configDF = new RosettaEnv().newDataFactory(Configuration.class);
+				acf = aafCon.client(new SingleEndpointLocator(locateUrl))
+				        .read("/configure/"+user+"/aaf", configDF);
+		        if (acf.get(aafCon.connTimeout)) {
+		        	for(Props p : acf.value.getProps()) {
+		        		addProp(p.getTag(),p.getValue());
+		        		if(access.getProperty(p.getTag())==null) {
+		        			access.setProperty(p.getTag(), p.getValue());
+		        		}
+		        	}
+		        } else {
+		        	access.log(Level.INFO,acf.body());
+		        }
+			} catch (LocatorException | APIException | URISyntaxException e) {
+				access.log(e);
+			}
+        }
+        
+        final String apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
+        final String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS);
+        String locateRoot;
+        if(aaf_root_ns==null) {
+        	locateRoot=Defaults.AAF_ROOT;
+        } else {
+        	locateRoot = Defaults.AAF_LOCATE_CONST + "/%CNS." + aaf_root_ns;
+        }
+        if(access.getProperty(Config.AAF_URL)==null) {
+        	access.setProperty(Config.AAF_URL, locateRoot+".service:"+apiVersion);
+        }
+
         writeFiles();
     }
 
