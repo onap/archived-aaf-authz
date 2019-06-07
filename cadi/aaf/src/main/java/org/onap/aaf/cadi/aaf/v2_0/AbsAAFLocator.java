@@ -234,7 +234,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     @Override
     public Item best() throws LocatorException {
         if (!hasItems()) {
-            throw new LocatorException("No Entries found for '" + aaf_locator_uri.toString() + "/locate/" + name + ':' + version + '\'');
+            throw new LocatorException("No Entries found for '" + aaf_locator_uri.toString() + '/' + name + ':' + version + '\'');
         }
         List<EP> lep = new ArrayList<>();
         EP first = null;

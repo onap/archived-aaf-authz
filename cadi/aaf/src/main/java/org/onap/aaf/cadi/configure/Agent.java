@@ -28,12 +28,14 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.GregorianCalendar;
@@ -233,8 +235,7 @@ public class Agent {
                             aafsso.setLogDefault();
                             aafsso.setStdErrDefault();
                             
-                            Map<String, String> aaf_urls = loadURLs(access);
-                            aafsso.addProp(Config.AAF_URL_CM, aaf_urls.get(Config.AAF_URL_CM));
+                            /*urls=*/loadURLs(access);
                             aafsso.writeFiles();
                         }
     
@@ -311,28 +312,38 @@ public class Agent {
 	    	dot_le=dot_le==null?"":'.'+dot_le;
 	    	String version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
 	        for(String u : new String[] {"aaf","locate","oauth","cm","gui","fs","hello","token","introspect"}) {
-	        	String proto = "fs".equals(u)?"http://":"https://";
-	        	String lhost;
-	        	if("locate".equals(u)) {
-	        		lhost=rph.default_fqdn;
-	        	} else {
-	        		lhost=Config.AAF_LOCATE_URL_TAG;
-	        	}
-	        	String value = rph.replacements("Agent:loadURLs",
-	        			proto + lhost + "/%CNS.%AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
-	        			null,dot_le);
+	        	String tag;
+	        	String append=null;
 	        	switch(u) {
-	        		case "aaf": rv.put(Config.AAF_URL, value); break;
-	        		case "locate": rv.put(Config.getAAFLocateUrl(access), value); break;
-	        		case "token": rv.put(Config.AAF_OAUTH2_TOKEN_URL, value); break;
-	        		case "introspect": rv.put(Config.AAF_OAUTH2_INTROSPECT_URL, value); break;
-	        		case "cm": rv.put(Config.AAF_URL_CM, value); break;
-	        		case "gui": rv.put(Config.AAF_URL_GUI, value); break;
-	        		case "fs": rv.put(Config.AAF_URL_FS, value); break;
-	        		case "hello": rv.put(Config.AAF_URL_HELLO, value); break;
+	        		case "aaf":   tag = Config.AAF_URL; break;
+	        		case "locate":tag = Config.AAF_LOCATE_URL; break;
+	        		case "oauth": tag = Config.AAF_URL_OAUTH; break;
+	        		case "token": tag = Config.AAF_OAUTH2_TOKEN_URL; append="/token"; break;
+	        		case "introspect": tag = Config.AAF_OAUTH2_INTROSPECT_URL; append="/introspect"; break;
+	        		case "cm":    tag = Config.AAF_URL_CM; break;
+	        		case "gui":   tag = Config.AAF_URL_GUI; break;
+	        		case "fs":    tag = Config.AAF_URL_FS; break;
+	        		case "hello": tag = Config.AAF_URL_HELLO; break;
 	        		default:
-	        		rv.put("aaf_url_" + u, value);
+		        		tag = "aaf_url_" + u;
 	        	}
+	        	String value;
+	        	if((value=access.getProperty(tag,null))==null) {
+		        	String proto = "fs".equals(u)?"http://":"https://";
+		        	String lhost;
+		        	if("locate".equals(u)) {
+		        		lhost=rph.default_fqdn;
+		        	} else {
+		        		lhost=Config.AAF_LOCATE_URL_TAG;
+		        	}
+		        	value = rph.replacements("Agent:loadURLs",
+		        			proto + lhost + "/%CNS.%AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
+		        			null,dot_le);
+		        	if(append!=null) {
+		        		value+=append;
+		        	}
+	        	}
+	        	rv.put(tag, value);
 	        };
 	        aaf_urls = rv;
 		}
@@ -825,9 +836,12 @@ public class Agent {
             
             app.add(Config.AAF_LOCATE_URL, Config.getAAFLocateUrl(propAccess));
             app.add(Config.AAF_ENV,propAccess, "DEV");
-            String release = propAccess.getProperty(Config.AAF_RELEASE);
+            String release = propAccess.getProperty(Config.AAF_DEPLOYED_VERSION);
+            if(release==null) {
+            	release = System.getProperty(Config.AAF_DEPLOYED_VERSION,null);
+            }
             if(release!=null) {
-            	app.add(Config.AAF_RELEASE, release);
+            	app.add(Config.AAF_DEPLOYED_VERSION, release);
             }
             for(Entry<Object, Object> aaf_loc_prop : propAccess.getProperties().entrySet()) {
             	String key = aaf_loc_prop.getKey().toString();
@@ -910,26 +924,15 @@ public class Agent {
                 } else {
                     aafcon = aafcon(propAccess);
                     if (aafcon!=null) { // get Properties from Remote AAF
-                        final String locator = getProperty(propAccess,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: ");
-
-                        Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
-                                .read("/configure/"+fqi+"/aaf", configDF);
-                        if (acf.get(TIMEOUT)) {
-                            for (Props props : acf.value.getProps()) {
-                            	PropHolder ph = CRED_TAGS.contains(props.getTag())?cred:app;
-                            	if(props.getTag().endsWith("_password")) {
-                            		ph.addEnc(props.getTag(), props.getValue());
-                            	} else {
-                            		ph.add(props.getTag(), props.getValue());
-                            	}
-                            }
-                        } else if (acf.code()==401){
-                            trans.error().log("Bad Password sent to AAF");
-                        } else if (acf.code()==404){
-                            trans.error().log("This version of AAF does not support remote Properties");
-                        } else {
-                            trans.error().log(errMsg.toMsg(acf));
+                        for (Props props : aafProps(trans,aafcon,getProperty(propAccess,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: "),fqi)) {
+                        	PropHolder ph = CRED_TAGS.contains(props.getTag())?cred:app;
+                        	if(props.getTag().endsWith("_password")) {
+                        		ph.addEnc(props.getTag(), props.getValue());
+                        	} else {
+                        		ph.add(props.getTag(), props.getValue());
+                        	}
                         }
+
                     }
                 }
             }
@@ -940,6 +943,20 @@ public class Agent {
         }
     }
 
+    public static List<Props> aafProps(Trans trans, AAFCon<?> aafcon, String locator, String fqi) throws CadiException, APIException, URISyntaxException {
+    	Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
+                .read("/configure/"+fqi+"/aaf", configDF);
+        if (acf.get(TIMEOUT)) {
+        	return acf.value.getProps();
+        } else if (acf.code()==401){
+            trans.error().log("Bad Password sent to AAF");
+        } else if (acf.code()==404){
+            trans.error().log("This version of AAF does not support remote Properties");
+        } else {
+            trans.error().log(errMsg.toMsg(acf));
+        }
+        return new ArrayList<>();
+    }
 
     private static void validate(final PropAccess pa) throws LocatorException, CadiException, APIException {
         System.out.println("Validating Configuration...");

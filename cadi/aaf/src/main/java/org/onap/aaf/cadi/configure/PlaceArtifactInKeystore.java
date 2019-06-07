@@ -66,17 +66,26 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             X509Certificate x509;
             List<X509Certificate> chainList = new ArrayList<>();
             Set<X509Certificate> caSet = new HashSet<>();
+            X509Certificate curr = null;
             for (Certificate c : certColl) {
                 x509 = (X509Certificate)c;
                 // Is a Root (self-signed, anyway)
                 if (x509.getSubjectDN().equals(x509.getIssuerDN())) {
                     caSet.add(x509);
                 } else {
-                    chainList.add(x509);
+                	// Expect Certs in Trust Chain Order. 
+                	if(curr==null) {
+                        chainList.add(x509);
+                        curr=x509;
+                	} else {
+                    	// Only Add Cert next on the list
+                		if(curr.getIssuerDN().equals(x509.getSubjectDN())) {
+                			chainList.add(x509);
+                			curr=x509;
+                		}
+                	}
                 }
             }
-//            chainList.addAll(caSet);
-            //Collections.reverse(chainList);
 
             // Properties, etc
             // Add CADI Keyfile Entry to Properties

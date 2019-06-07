@@ -157,6 +157,7 @@ public class Config {
     public static final String AAF_LOCATE_URL = "aaf_locate_url"; //URL for AAF locator
     public static final String AAF_LOCATE_URL_TAG = "AAF_LOCATE_URL"; // Name of Above for use in Config Variables.
     public static final String AAF_DEFAULT_API_VERSION = "2.1";
+    public static final String AAF_DEPLOYED_VERSION="aaf_deployed_version";
     public static final String AAF_API_VERSION = "aaf_api_version";
     public static final String AAF_URL = "aaf_url"; //URL for AAF... Use to trigger AAF configuration   
     public static final String AAF_LOCATOR_CLASS = "aaf_locator_class";
@@ -219,8 +220,8 @@ public class Config {
     public static final String AAF_CERT_IDS = "aaf_cert_ids";
     public static final String AAF_DEBUG_IDS = "aaf_debug_ids"; // comma delimited
     public static final String AAF_DATA_DIR = "aaf_data_dir"; // AAF processes and Components only.
-    public static final String AAF_RELEASE = "aaf_release";
 
+    public static final String AAF_URL_OAUTH = "aaf_url_oauth";
     public static final String AAF_URL_GUI="aaf_url_gui";
     public static final String AAF_URL_FS="aaf_url_fs";
     public static final String AAF_URL_CM = "aaf_url_cm";

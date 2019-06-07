@@ -56,7 +56,6 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         // do_register - this is used for specialty Debug Situations.  Developer can create an Instance for a remote system
         // for Debugging purposes without fear that real clients will start to call your debug instance
         do_register = !"TRUE".equalsIgnoreCase(access().getProperty("aaf_locate_no_register",null));
-        _propertyAdjustment();
         hostname = access().getProperty(Config.HOSTNAME, null);
         if (hostname==null) {
             try {
@@ -65,6 +64,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 				hostname= "cannotBeDetermined";
 			}
         }
+        _propertyAdjustment();
     }
     
     

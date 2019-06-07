@@ -90,6 +90,8 @@ spec:
               value: "{{.Values.services.aaf_locator_name}}"
             - name: aaf_locator_name_helm
               value: "{{.Values.services.aaf_locator_name_helm}}"
+            - name: aaf_deployed_version
+              value: "{{ .Values.image.version }}"
             - name: CASSANDRA_CLUSTER
               value: "{{.Values.services.cass.fqdn}}.{{.Values.services.ns}}"
 #            - name: CASSANDRA_USER

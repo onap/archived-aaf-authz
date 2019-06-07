@@ -49,7 +49,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
         	ldd.add(convert(me));
         }
     }
-    
+
     private LocateDAO.Data convert(MgmtEndpoint me) {
     	LocateDAO.Data out = new LocateDAO.Data();
     	out.name=me.getName();

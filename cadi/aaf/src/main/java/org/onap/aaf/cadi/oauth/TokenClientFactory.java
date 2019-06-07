@@ -29,6 +29,8 @@ import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -55,6 +57,7 @@ import aafoauth.v2_0.Token;
 
 public class TokenClientFactory extends Persist<Token,TimedToken> {
     private static TokenClientFactory instance;
+    private final Set<String> alts;
     private Map<String,AAFConHttp> aafcons = new ConcurrentHashMap<>();
     private SecurityInfoC<HttpURLConnection> hsi;
     // Package on purpose
@@ -62,14 +65,26 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 
     private TokenClientFactory(Access pa) throws APIException, GeneralSecurityException, IOException, CadiException {
         super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
+        
         Map<String, String> aaf_urls = Agent.loadURLs(pa);
+        alts = new TreeSet<>();
+        
         if (access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
             access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL)); // Default to AAF
         }
+        
         if (access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
             access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, aaf_urls.get(Config.AAF_OAUTH2_INTROSPECT_URL)); // Default to AAF);
         }
-
+        
+        for(String tag : new String[] {Config.AAF_ALT_OAUTH2_TOKEN_URL, Config.AAF_ALT_OAUTH2_INTROSPECT_URL}) {
+	        String value = access.getProperty(tag, null);
+	        if(value!=null) {
+	        	alts.add(tag);
+	        	alts.add(value);
+	        }
+        }
+        
         symm = Symm.encrypt.obtain();
         hsi = SecurityInfoC.instance(access, HttpURLConnection.class);
     }
@@ -105,15 +120,11 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
             }
         }
         char okind;
-        if ( Config.AAF_OAUTH2_TOKEN_URL.equals(tagOrURL) ||
-            Config.AAF_OAUTH2_INTROSPECT_URL.equals(tagOrURL) ||
-            tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_TOKEN_URL, null)) ||
-            tagOrURL.equals(access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL, null))
-            ) {
-                okind = Kind.AAF_OAUTH;
-            } else {
-                okind = Kind.OAUTH;
-            }
+        if (alts.contains(tagOrURL)) {
+        	okind = Kind.OAUTH;
+        } else {
+            okind = Kind.AAF_OAUTH;
+        }
         TokenClient tci = new TokenClient(
                 okind,
                 this,

@@ -62,14 +62,12 @@ public class List extends BaseCmd<User> {
             if (!aafcli.isTest()) {
                 date = Chrono.dateOnlyStamp(user.getExpires());
             }
-            String tag=null;
-            if(user.getType()<200) {
-            	tag = user.getTag();
-            } else {
-            	tag = "\n\tfingerprint: " + user.getTag();
-            }
+            String tag=user.getTag();
+            Integer type = user.getType();
             if(tag==null) {
             	tag="";
+            } else if(type!=null && type>=200) {
+            	tag = "\n\tfingerprint: " + tag;
             }
             pw().format(format, 
                     count? (Integer.valueOf(++idx) + ") " + user.getId()): user.getId(),

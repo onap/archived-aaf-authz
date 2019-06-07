@@ -87,7 +87,7 @@ public class JU_AAFAuthn {
 			Future<String> futureObj = Mockito.mock(Future.class);
 			Mockito.doReturn(futureObj).when(rcliObj).read( "/authn/basicAuth","text/plain");
 			realm = authnObj.validate("test", "test","test");
-			assertTrue(realm.contains("User/Pass combo invalid"));
+			assertTrue(realm.contains("user/pass combo invalid"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

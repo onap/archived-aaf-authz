@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 #########
 #  ============LICENSE_START====================================================
 #  org.onap.aaf
@@ -18,6 +18,12 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-
-. ./d.props
-${DOCKER:=docker} exec -it aaf-$1 bash -c "cd /opt/app && exec bash"
+# This is only called from HEAT, as it needs a single check and wait for Cassandra to be ready
+#
+cd ../auth-cass/docker
+. dinstall.sh $@
+cd -
+if [ "$1" = "publish" ]; then
+  shift
+fi
+. drun.sh 

@@ -21,9 +21,6 @@
 
 package org.onap.aaf.auth.cmd.user;
 
-import java.util.Collections;
-import java.util.Comparator;
-
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
@@ -36,7 +33,6 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.Users;
-import aaf.v2_0.Users.User;
 
 /**
  * p
@@ -61,13 +57,6 @@ public class ListForRoles extends Cmd {
                         getDF(Users.class)
                         );
                 if (fp.get(AAFcli.timeout())) {
-                    if (aafcli.isTest())
-                        Collections.sort(fp.value.getUser(), new Comparator<User>() {
-                            @Override
-                            public int compare(User u1, User u2) {
-                                return u1.getId().compareTo(u2.getId());
-                            }            
-                        });
                     ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,false, HEADER,role);
                     if (fp.code()==404)return 200;
                 } else {

@@ -33,7 +33,7 @@ echo "# Properties passed in"
 
 # Set from CAP Based PROPS, if necessary
 aaf_env=${aaf_env:-"${AAF_ENV}"}
-aaf_release=${aaf_release:-"${VERSION}"}
+aaf_deployed_version=${aaf_deployed_version:-"${VERSION}"}
 cadi_latitude=${cadi_latitude:-"${LATITUDE}"}
 cadi_longitude=${cadi_longitude:-"${LONGITUDE}"}
 cadi_x509_issuers=${cadi_x509_issuers:-"${CADI_X509_ISSUERS}"}

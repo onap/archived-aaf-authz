@@ -76,7 +76,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         	str = Defaults.AAF_VERSION;
         	env.setProperty(Config.AAF_LOCATOR_VERSION, str);
         }
-        app_version = str;
+        app_version = access.getProperty(Config.AAF_DEPLOYED_VERSION, str);
         
         // Print Cipher Suites Available
         if (access.willLog(Level.DEBUG)) {

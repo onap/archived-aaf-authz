@@ -128,6 +128,8 @@ public class LocateServiceImpl<IN,OUT,ERROR>
         /////   ADDED v1_1
         /* (non-Javadoc)
          * @see org.onap.aaf.auth.locate.service.LocateService#getConfig(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, java.lang.String)
+         * 
+         * Note: "id" is put in, in case we need to filter, or direct data change in the future by Permission
          */
         @Override
         public Result<Configuration> getConfig(AuthzTrans trans, String id, String type) {
@@ -145,7 +147,6 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                 }
             }
             return Result.ok(c);
-            //return Result.err(Result.ERR_NotImplemented,"not done yet");
         }
 
 
