@@ -58,6 +58,7 @@ import org.onap.aaf.auth.org.Organization.Expiration;
 import org.onap.aaf.auth.rserv.Pair;
 import org.onap.aaf.auth.service.MayChange;
 import org.onap.aaf.cadi.aaf.marshal.CertsMarshal;
+import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.cadi.util.Vars;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -364,18 +365,32 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     @Override
     public Result<PermDAO.Data> perm(AuthzTrans trans, Request req) {
         PermRequest from = (PermRequest)req;
-        Result<NsSplit> nss = q.deriveNsSplit(trans, from.getType());
+        String type = from.getType();
+        if(type==null) {
+        	return Result.err(Result.ERR_BadData, "Invalid Perm Type");
+        }
         PermDAO.Data pd = new PermDAO.Data();
-        if (nss.isOK()) { 
-            pd.ns=nss.value.ns;
-            pd.type = nss.value.name;
-            pd.instance = from.getInstance();
-            pd.action = from.getAction();
-            pd.description = from.getDescription();
-            trans.checkpoint(pd.fullPerm(), Env.ALWAYS);
-            return Result.ok(pd);
-        } else {
-            return Result.err(nss);
+        if(type.contains("@")) {
+        	String[] split = Split.splitTrim(':', type);
+        	pd.ns = split[0];
+        	pd.type=split.length>1?split[1]:"";
+        	pd.instance = from.getInstance();
+        	pd.action = from.getAction();
+        	pd.description = from.getDescription();
+        	return Result.ok(pd);
+        }  else {
+	        Result<NsSplit> nss = q.deriveNsSplit(trans, from.getType());
+	        if (nss.isOK()) { 
+	            pd.ns=nss.value.ns;
+	            pd.type = nss.value.name;
+	            pd.instance = from.getInstance();
+	            pd.action = from.getAction();
+	            pd.description = from.getDescription();
+	            trans.checkpoint(pd.fullPerm(), Env.ALWAYS);
+	            return Result.ok(pd);
+	        } else {
+	            return Result.err(nss);
+	        }
         }
     }
     

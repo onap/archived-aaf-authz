@@ -236,5 +236,12 @@ public class NullTrans implements AuthzTrans {
         }
         return now;
     }
+	@Override
+	public void setTag(String tag) {
+	}
+	@Override
+	public String getTag() {
+		return null;
+	}
 }
 

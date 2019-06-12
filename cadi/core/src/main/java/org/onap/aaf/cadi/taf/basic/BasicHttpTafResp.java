@@ -45,6 +45,14 @@ public class BasicHttpTafResp extends AbsTafResp implements TafResp {
         this.wasFailed = wasFailed;
     }
 
+    public BasicHttpTafResp(Access access, String target, String description, RESP status, HttpServletResponse resp, String realm, boolean wasFailed) {
+        super(access, tafName, target, description);
+        httpResp = resp;
+        this.realm = realm;
+        this.status = status;
+        this.wasFailed = wasFailed;
+    }
+
     public RESP authenticate() throws IOException {
         httpResp.setStatus(401); // Unauthorized    
         httpResp.setHeader("WWW-Authenticate", "Basic realm=\""+realm+'"');

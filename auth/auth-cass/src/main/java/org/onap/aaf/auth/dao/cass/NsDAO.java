@@ -64,6 +64,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     public static final String TABLE = "ns";
     public static final String TABLE_ATTRIB = "ns_attrib";
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
+    public static final int USER = 0;
     public static final int ROOT = 1;
     public static final int COMPANY=2;
     public static final int APP = 3;

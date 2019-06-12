@@ -187,6 +187,7 @@ public class Question {
     
     private final CacheInfoDAO cacheInfoDAO;
 	private final int cldays;
+	private final boolean alwaysSpecial;
 
     public Question(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         PERMS = trans.slot("USER_PERMS");
@@ -220,6 +221,8 @@ public class Question {
         AbsCassDAO.primePSIs(trans);
         
         cldays = Integer.parseInt(trans.getProperty(Config.AAF_CRED_WARN_DAYS, Config.AAF_CRED_WARN_DAYS_DFT));
+        
+        alwaysSpecial = Boolean.parseBoolean(trans.getProperty("aaf_always_special", Boolean.FALSE.toString()));
     }
 
     public void startTimers(AuthzEnv env) {
@@ -612,6 +615,17 @@ public class Question {
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user,PermDAO.Data pdd, Access access) {
+    	if(pdd.ns.indexOf('@')>-1) {
+	    	if(user.equals(pdd.ns)) {
+	    		NsDAO.Data ndd = new NsDAO.Data();
+	    		ndd.name = user;
+	    		ndd.type = NsDAO.USER;
+	    		ndd.parent = "";
+	    		return Result.ok(ndd);
+	    	} else {
+	    		return Result.err(Result.ERR_Security,"Only a User may modify User");
+	    	}
+    	}
         Result<NsDAO.Data> rnsd = deriveNs(trans, pdd.ns);
         if (rnsd.isOK()) {
             return mayUser(trans, user, rnsd.value, pdd, access);
@@ -831,6 +845,7 @@ public class Question {
                                     byte[] md5=Hash.hashMD5(cred);
                                     if (Hash.compareTo(md5,dbcred)==0) {
                                         checkLessThanDays(trans,cldays,now,cdd);
+                                        trans.setTag(cdd.tag);
                                         return Result.ok(cdd.expires);
                                     } else if (debug!=null) {
                                         load(debug, cdd);
@@ -844,6 +859,7 @@ public class Question {
     
                                     if (Hash.compareTo(hash,dbcred)==0) {
                                         checkLessThanDays(trans,cldays,now,cdd);
+                                        trans.setTag(cdd.tag);
                                         return Result.ok(cdd.expires);
                                     } else if (debug!=null) {
                                         load(debug, cdd);
@@ -858,34 +874,41 @@ public class Question {
                     } else {
                         if (expired==null || expired.before(cdd.expires)) {
                             expired = cdd.expires;
+                            trans.setTag(cdd.tag);
                         }
                     }
                 } // end for each
-                if (debug==null) {
-                    trans.audit().printf("No cred matches ip=%s, user=%s\n",trans.ip(),user);
-                } else {
-                    trans.audit().printf("No cred matches ip=%s, user=%s %s\n",trans.ip(),user,debug.toString());
-                }
+                
                 if (expired!=null) {
                     // Note: this is only returned if there are no good Credentials
                     rv = Result.err(Status.ERR_Security,
-                            "Credentials %s from %s expired %s",trans.user(), trans.ip(), Chrono.dateTime(expired));
+                            "Credentials expired %s",Chrono.utcStamp(expired));
+                } else {
+	                if (debug==null && alwaysSpecial) {
+	                	debug = new StringBuilder();
+	                }
+	                if (debug!=null) {
+	                	debug.append(trans.env().encryptor().encrypt(new String(cred)));
+	                	rv = Result.err(Status.ERR_Security,String.format("invalid password - %s",debug.toString()));
+	                }
                 }
             }
         } else {
             return Result.err(result);
         }
-        return rv == null ? Result.create((Date) null, Status.ERR_Security, "Wrong credential") : rv;
+        return rv == null ? Result.err(Status.ERR_Security, "Wrong credential") : rv;
     }
 
 
     private void load(StringBuilder debug, Data cdd) {
-        debug.append("DB Entry: user=");
+        debug.append("\nDB Entry: user=");
         debug.append(cdd.id);
         debug.append(",type=");
         debug.append(cdd.type);
         debug.append(",expires=");
         debug.append(Chrono.dateTime(cdd.expires));
+        debug.append(",tag=");
+        debug.append(cdd.tag);
         debug.append('\n');
     }
 

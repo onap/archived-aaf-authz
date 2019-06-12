@@ -39,8 +39,8 @@ public interface AuthzTrans extends TransStore {
         REQD_TYPE(int bit) {
             this.bit = bit;
         }
-    };
-    
+    }
+
     public abstract AuthzTrans set(HttpServletRequest req);
 
 	public abstract HttpServletRequest hreq();
@@ -76,5 +76,9 @@ public interface AuthzTrans extends TransStore {
     public abstract void logAuditTrail(LogTarget lt);
     
     public abstract Date now();
+    
+    public abstract void setTag(String tag);
+    
+    public abstract String getTag();
 
 }

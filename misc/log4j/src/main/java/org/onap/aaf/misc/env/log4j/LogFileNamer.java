@@ -57,14 +57,20 @@ public class LogFileNamer {
      */
     public String setAppender(String appender) throws IOException {
     	File f = new File(String.format(FIRST_FILE_FORMAT_STR, dir, root, appender));
+    	File lock = new File(f.getAbsoluteFile()+".lock");
     	if(f.exists()) {
-	        int i = 0;
-	        while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, i))).exists()) {
-	            ++i;
-	        }
+    		if(lock.exists()) {
+		        int i = 0;
+		        while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, i))).exists() &&
+		        	   (lock = new File(f.getAbsoluteFile()+".lock")).exists()) {
+		            ++i;
+		        }
+    		}
     	}
         
         try {
+        	lock.createNewFile();
+        	lock.deleteOnExit();
         	f.createNewFile();
         } catch (IOException e) {
         	throw new IOException("Cannot create file '" + f.getCanonicalPath() + '\'', e);

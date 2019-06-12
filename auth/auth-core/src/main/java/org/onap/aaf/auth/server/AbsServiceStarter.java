@@ -97,7 +97,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 		if(System.getProperty("ECLIPSE", null)!=null) {
 			Thread.sleep(2000);
 	        System.out.println("Service Started in Eclipse: ");
-	        System.out.print("  Hit <enter> to end:");
+	        System.out.print("  Hit <enter> to end\n:");
 	        try {
 				System.in.read();
 				System.exit(0);

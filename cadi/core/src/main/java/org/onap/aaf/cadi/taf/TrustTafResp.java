@@ -64,7 +64,15 @@ public class TrustTafResp implements TafResp {
         return principal;
     }
 
-    @Override
+    /* (non-Javadoc)
+	 * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
+	 */
+	@Override
+	public String getTarget() {
+		return delegate.getTarget();
+	}
+
+	@Override
     public Access getAccess() {
         return delegate.getAccess();
     }

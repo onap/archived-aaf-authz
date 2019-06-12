@@ -106,7 +106,14 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         }
         
         public String fullName() {
-            return ns + '.' + name;
+        	StringBuilder sb = new StringBuilder();
+        	if(ns==null) {
+        		sb.append('.');
+        	} else {
+            	sb.append(ns.indexOf('@')<0?'.':':'); 
+        	}
+        	sb.append(name);
+        	return sb.toString();
         }
         
         public String encode() {

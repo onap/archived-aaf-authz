@@ -57,7 +57,9 @@ public class ServiceValidator extends Validator {
         if (pd==null) {
             msg("Perm Data is null.");
         } else {
-            ns(pd.ns);
+        	if(!pd.ns.contains("@")) { 
+        		ns(pd.ns);
+        	}
             permType(pd.type,pd.ns);
             permInstance(pd.instance);
             permAction(pd.action);

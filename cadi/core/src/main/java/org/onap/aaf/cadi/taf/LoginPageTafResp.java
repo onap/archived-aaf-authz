@@ -37,7 +37,7 @@ public class LoginPageTafResp extends AbsTafResp {
     private final String loginPageURL;
 
     private LoginPageTafResp(Access access, final HttpServletResponse resp, String loginPageURL) {
-        super(access, "LoginPage", null, "Multiple Possible HTTP Logins available.  Redirecting to Login Choice Page");
+        super(access, "LoginPage","unknown", "Multiple Possible HTTP Logins available.  Redirecting to Login Choice Page");
         httpResp = resp;
         this.loginPageURL = loginPageURL;
     }

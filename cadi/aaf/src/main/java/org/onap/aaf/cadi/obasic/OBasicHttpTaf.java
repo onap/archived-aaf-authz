@@ -84,7 +84,7 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
      */
     public TafResp validate(Taf.LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
         // See if Request implements BasicCred (aka CadiWrap or other), and if User/Pass has already been set separately
-        final String user;
+        String user = "invalid";
         String password=null;
         byte[] cred=null;
         if (req instanceof BasicCred) {
@@ -106,18 +106,18 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
                     } else {
                         access.printf(Level.AUDIT,"Malformed BasicAuth entry ip=%s, entry=%s",req.getRemoteAddr(),
                                 access.encrypt(temp));
-                        return new BasicHttpTafResp(access,null,"Malformed BasicAuth entry",RESP.FAIL,resp,realm,false);
+                        return new BasicHttpTafResp(access,user,"Malformed BasicAuth entry",RESP.FAIL,resp,realm,false);
                     }
                     if (!rbac.validate(user,Type.PASSWORD,password.getBytes(),req)) {
-                        return new BasicHttpTafResp(access,null,buildMsg(null,req,"user/pass combo invalid for ",user,"from",req.getRemoteAddr()), 
+                        return new BasicHttpTafResp(access,user,buildMsg(null,req,"user/pass combo invalid for ",user,"from",req.getRemoteAddr()), 
                                 RESP.TRY_AUTHENTICATING,resp,realm,true);
                     }
                 } catch (IOException e) {
                     access.log(e, ERROR_GETTING_TOKEN_CLIENT);
-                    return new BasicHttpTafResp(access,null,ERROR_GETTING_TOKEN_CLIENT,RESP.FAIL,resp,realm,false);
+                    return new BasicHttpTafResp(access,user,ERROR_GETTING_TOKEN_CLIENT,RESP.FAIL,resp,realm,false);
                 }
             } else {
-                return new BasicHttpTafResp(access,null,"Not a Basic Auth",RESP.TRY_ANOTHER_TAF,resp,realm,false);
+                return new BasicHttpTafResp(access,user,"Not a Basic Auth",RESP.TRY_ANOTHER_TAF,resp,realm,false);
             }
         }
 
@@ -135,25 +135,25 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
                 Result<TimedToken> rtt = pclient.content.getToken('B',scope);
                 if (rtt.isOK()) {
                     if (rtt.value.expired()) {
-                        return new BasicHttpTafResp(access,null,"BasicAuth/OAuth Token: Token Expired",RESP.FAIL,resp,realm,true);
+                        return new BasicHttpTafResp(access,user,"BasicAuth/OAuth Token: Token Expired",RESP.FAIL,resp,realm,true);
                     } else {
                         TimedToken tt = rtt.value;
                         Result<OAuth2Principal> prin = tkMgr.toPrincipal(tt.getAccessToken(), cred);
                         if (prin.isOK()) {
                             return new BasicHttpTafResp(access,prin.value,"BasicAuth/OAuth Token Authentication",RESP.IS_AUTHENTICATED,resp,realm,true);
                         } else {
-                            return new BasicHttpTafResp(access,null,"BasicAuth/OAuth Token: " + prin.code + ' ' + prin.error,RESP.FAIL,resp,realm,true);
+                            return new BasicHttpTafResp(access,user,"BasicAuth/OAuth Token: " + prin.code + ' ' + prin.error,RESP.FAIL,resp,realm,true);
                         }
                     }
                 } else {
-                    return new BasicHttpTafResp(access,null,"BasicAuth/OAuth Token: " + rtt.code + ' ' + rtt.error,RESP.FAIL,resp,realm,true);
+                    return new BasicHttpTafResp(access,user,"BasicAuth/OAuth Token: " + rtt.code + ' ' + rtt.error,RESP.FAIL,resp,realm,true);
                 }
             } finally {
                 pclient.done();
             }                
         } catch (APIException | CadiException | LocatorException | NoSuchAlgorithmException e) {
             access.log(e, ERROR_GETTING_TOKEN_CLIENT);
-            return new BasicHttpTafResp(access,null,ERROR_GETTING_TOKEN_CLIENT,RESP.TRY_ANOTHER_TAF,resp,realm,false);
+            return new BasicHttpTafResp(access,user,ERROR_GETTING_TOKEN_CLIENT,RESP.TRY_ANOTHER_TAF,resp,realm,false);
         }
     }
     

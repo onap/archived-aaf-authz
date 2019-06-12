@@ -85,9 +85,9 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
     }
 
     @Override
-    protected void tallyHo(AuthzTrans trans) {
+    protected void tallyHo(AuthzTrans trans, String target) {
         Boolean b = trans.get(specialLogSlot, false);
-        LogTarget lt = b?trans.warn():trans.info();
+        LogTarget lt = b?trans.warn():trans.debug();
         
         if (lt.isLoggable()) {
             // Transaction is done, now post full Audit Trail
@@ -131,8 +131,11 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             sb.append("user=");
             Principal p = trans.getUserPrincipal();
             if (p==null) {
-                sb.append("n/a");
+            	lt=trans.warn();
+                sb.append(target);
+                sb.append("[None]");
             } else {
+            	lt=trans.info();
                 sb.append(p.getName());
                 if (p instanceof TrustPrincipal) {
                     sb.append('(');
@@ -147,6 +150,11 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
                     }
                     sb.append(']');
                 }
+            }
+            String tag = trans.getTag();
+            if(tag!=null) {
+                sb.append(",tag=");
+                sb.append(tag);
             }
             sb.append(",ip=");
             sb.append(trans.ip());
@@ -176,7 +184,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
                 sb.append('"');
             }
             
-            trans.warn().log(sb);
+            lt.log(sb);
         }
     }
 

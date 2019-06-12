@@ -266,6 +266,7 @@ public class X509Taf implements HttpTaf {
     
                 // if Principal is found, check for "AS_USER" and whether this entity is trusted to declare
                 if (prin!=null) {
+                	// Note: Tag for Certs is Fingerprint, but that takes computation... leaving off
                     return new X509HttpTafResp(
                         access,
                         prin,

@@ -42,10 +42,12 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     private Organization org;
     private int mask;
     private Date now;
+    private String tag;
     public AuthzTransImpl(AuthzEnv env) {
         super(env);
         org=null;
         mask=0;
+        tag=null;
     }
 
     /**
@@ -212,5 +214,19 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
             now = new Date();
         }
         return now;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.onap.aaf.auth.env.AuthzTrans#setTag(java.lang.String)
+     */
+    @Override
+    public void setTag(String tag) {
+    	this.tag = tag;
+    }
+
+    @Override
+    public String getTag() {
+    	return tag;
     }
 }

@@ -73,7 +73,7 @@ public class JU_AbsTafResp {
         assertThat(tafResp.getAccess(), is(access));
         assertThat(tafResp.isFailedAttempt(), is(false));
 
-        tafResp = new AbsTafResp(null, JUNIT, null, null) {
+        tafResp = new AbsTafResp(null, JUNIT, "unknown", null) {
             @Override public RESP authenticate() throws IOException {
                 return null;
             }
@@ -82,6 +82,7 @@ public class JU_AbsTafResp {
         assertThat(tafResp.isValid(), is(false));
         assertThat(tafResp.isAuthenticated(), is(RESP.TRY_ANOTHER_TAF));
         assertThat(tafResp.getPrincipal(), is(nullValue()));
+        assertThat(tafResp.getTarget(), is("unknown"));
         assertThat(tafResp.getAccess(), is(nullValue()));
         assertThat(tafResp.taf(), is(JUNIT));
         assertThat(tafResp.isFailedAttempt(), is(false));

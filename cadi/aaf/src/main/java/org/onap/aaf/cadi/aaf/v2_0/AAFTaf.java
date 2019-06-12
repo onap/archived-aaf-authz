@@ -106,6 +106,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 
         // Note: Either Carbon or Silicon based LifeForms ok
         String authz = req.getHeader("Authorization");
+        String target = "invalid";
         if (authz != null && authz.startsWith("Basic ")) {
             if (warn&&!req.isSecure()) {
                 aaf.access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
@@ -131,7 +132,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
 
                 Miss miss = missed(bp.getName(), bp.getCred());
                 if (miss!=null && !miss.mayContinue()) {
-                    return new BasicHttpTafResp(aaf.access,null,buildMsg(bp,req,
+                    return new BasicHttpTafResp(aaf.access,bp.getName(),buildMsg(bp,req,
                             "User/Pass Retry limit exceeded"), 
                             RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),true);
                 }
@@ -157,11 +158,11 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                                 // Note: AddMiss checks for miss==null, and is part of logic
                                 boolean rv= addMiss(bp.getName(),bp.getCred());
                                 if (rv) {
-                                    return new BasicHttpTafResp(aaf.access,null,buildMsg(bp,req,
+                                    return new BasicHttpTafResp(aaf.access,bp.getName(),buildMsg(bp,req,
                                             "user/pass combo invalid via AAF from " + req.getRemoteAddr()), 
                                             RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),true);
                                 } else {
-                                    return new BasicHttpTafResp(aaf.access,null,buildMsg(bp,req,
+                                    return new BasicHttpTafResp(aaf.access,bp.getName(),buildMsg(bp,req,
                                             "user/pass combo invalid via AAF from " + req.getRemoteAddr() + " - Retry limit exceeded"), 
                                             RESP.FAIL,resp,aaf.getRealm(),true);
                                 }
@@ -172,7 +173,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
             } catch (IOException e) {
                 String msg = buildMsg(null,req,"Invalid Auth Token");
                 aaf.access.log(Level.WARN,msg,'(', e.getMessage(), ')');
-                return new BasicHttpTafResp(aaf.access,null,msg, RESP.TRY_AUTHENTICATING, resp, aaf.getRealm(),true);
+                return new BasicHttpTafResp(aaf.access,target,msg, RESP.TRY_AUTHENTICATING, resp, aaf.getRealm(),true);
             } catch (Exception e) {
                 String msg = buildMsg(null,req,"Authenticating Service unavailable");
                 try {
@@ -181,10 +182,10 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                     aaf.access.log(e1, "Error Invalidating Client");
                 }
                 aaf.access.log(Level.WARN,msg,'(', e.getMessage(), ')');
-                return new BasicHttpTafResp(aaf.access,null,msg, RESP.FAIL, resp, aaf.getRealm(),false);
+                return new BasicHttpTafResp(aaf.access,target,msg, RESP.FAIL, resp, aaf.getRealm(),false);
             }
         }
-        return new BasicHttpTafResp(aaf.access,null,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),false);
+        return new BasicHttpTafResp(aaf.access,target,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),false);
     }
     
     private String buildMsg(Principal pr, HttpServletRequest req, Object... msg) {

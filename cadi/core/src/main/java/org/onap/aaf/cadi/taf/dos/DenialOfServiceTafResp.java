@@ -32,7 +32,7 @@ public class DenialOfServiceTafResp extends AbsTafResp  {
     private RESP ect;  // Homage to Arethra Franklin
 
     public DenialOfServiceTafResp(Access access, RESP resp, String description ) {
-        super(access, tafName, null, description);
+        super(access, tafName, "dos", description);
         ect = resp;
     }
 

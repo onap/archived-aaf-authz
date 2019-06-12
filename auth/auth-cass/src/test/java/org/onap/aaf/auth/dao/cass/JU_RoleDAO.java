@@ -430,7 +430,7 @@ public class JU_RoleDAO {
 	}
 	
 	@Test
-	public void testWasMOdified() {
+	public void testWasModified() {
 		TimeTaken tt = Mockito.mock(TimeTaken.class);
 		Mockito.doReturn(tt).when(trans).start("RoleDAO CREATE", Env.REMOTE);
 		Mockito.doReturn(tt).when(trans).start("Clear Reset Deque", Env.SUB);

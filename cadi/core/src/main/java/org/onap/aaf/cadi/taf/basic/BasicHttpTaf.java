@@ -120,13 +120,15 @@ public class BasicHttpTaf implements HttpTaf {
                     return new BasicHttpTafResp(access,bp,bp.getName()+" authenticated by password",RESP.IS_AUTHENTICATED,resp,realm,false);
                 } else {
                     //TODO may need timed retries in a given time period
-                    return new BasicHttpTafResp(access,null,buildMsg(bp,req,"user/pass combo invalid for ",bc.getUser(),"from",req.getRemoteAddr()), 
+                    return new BasicHttpTafResp(access,bc.getUser(),buildMsg(bp,req,"user/pass combo invalid for ",bc.getUser(),"from",req.getRemoteAddr()), 
                             RESP.TRY_AUTHENTICATING,resp,realm,true);
                 }
             }
         }
         // Get User/Password from Authorization Header value
         String authz = req.getHeader("Authorization");
+        String target="unknown";
+
         if (authz != null && authz.startsWith("Basic ")) {
             if (warn&&!req.isSecure()) {
                 access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
@@ -136,6 +138,7 @@ public class BasicHttpTaf implements HttpTaf {
             }
             try {
                 CachedBasicPrincipal ba = new CachedBasicPrincipal(this,authz,realm,timeToLive);
+                target=ba.getName();
                 if (DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
                     return DenialOfServiceTaf.respDenyID(access,ba.getName());
                 }
@@ -152,16 +155,16 @@ public class BasicHttpTaf implements HttpTaf {
                     return new BasicHttpTafResp(access,ba, ba.getName()+" authenticated by BasicAuth password",RESP.IS_AUTHENTICATED,resp,realm,false);
                 } else {
                     //TODO may need timed retries in a given time period
-                    return new BasicHttpTafResp(access,null,buildMsg(ba,req,"user/pass combo invalid"), 
+                    return new BasicHttpTafResp(access,target,buildMsg(ba,req,"user/pass combo invalid"), 
                             RESP.TRY_AUTHENTICATING,resp,realm,true);
                 }
             } catch (IOException e) {
                 String msg = buildMsg(null,req,"Failed HTTP Basic Authorization (", e.getMessage(), ')');
                 access.log(Level.INFO,msg);
-                return new BasicHttpTafResp(access,null,msg, RESP.TRY_AUTHENTICATING, resp, realm,true);
+                return new BasicHttpTafResp(access,target,msg, RESP.TRY_AUTHENTICATING, resp, realm,true);
             }
         }
-        return new BasicHttpTafResp(access,null,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,realm,false);
+        return new BasicHttpTafResp(access,target,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,realm,false);
     }
     
     protected String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {

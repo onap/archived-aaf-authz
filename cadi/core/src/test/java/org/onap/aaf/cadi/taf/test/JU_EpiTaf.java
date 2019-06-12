@@ -76,6 +76,7 @@ public class JU_EpiTaf {
         @Override public RESP isAuthenticated() { return RESP.TRY_ANOTHER_TAF; } 
         @Override public RESP authenticate() throws IOException { return null; } 
         @Override public TaggedPrincipal getPrincipal() { return null; } 
+        @Override public String getTarget() {return "unknown";}
         @Override public Access getAccess() { return null; } 
         @Override public boolean isFailedAttempt() { return false; }
         @Override public float timing() { return 0; }
@@ -93,6 +94,7 @@ public class JU_EpiTaf {
         @Override public RESP isAuthenticated() { return RESP.TRY_AUTHENTICATING; } 
         @Override public RESP authenticate() throws IOException { return null; } 
         @Override public TaggedPrincipal getPrincipal() { return null; } 
+        @Override public String getTarget() {return "unknown";}
         @Override public Access getAccess() { return null; } 
         @Override public boolean isFailedAttempt() { return false; } 
         @Override public float timing() { return 0; }

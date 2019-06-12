@@ -237,7 +237,7 @@ public class JU_DirectAAFLur {
 		
 		assertFalse(pp.match(null));
 		
-		pond = new AAFPermission("null.test", "name", "instance", "action");
-		pp.match(pond);
+		pond = new AAFPermission("test.test", "test", "test", "test");
+		assertTrue(pp.match(pond));
 	}
 }

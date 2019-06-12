@@ -33,6 +33,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CadiWrap;
@@ -88,7 +89,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
     protected abstract TRANS newTrans(HttpServletRequest request);
     protected abstract TimeTaken start(TRANS trans, ServletRequest request);
     protected abstract void authenticated(TRANS trans, Principal p);
-    protected abstract void tallyHo(TRANS trans);
+    protected abstract void tallyHo(TRANS trans, String target);
     
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -98,6 +99,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
         TRANS trans = newTrans(req);
         
         TimeTaken overall = start(trans,request);
+        String target = "n/a";
         try {
             request.setAttribute(TRANS_TAG, trans);
             
@@ -116,6 +118,10 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
             CadiWrap cw = null;
             try {
                 resp = cadi.validate(req,res,trans);
+                Object tag = req.getAttribute("CRED_TAG");
+                if(tag!=null) {
+                	((AuthzTrans)trans).setTag(tag.toString());
+                }
                 switch(r=resp.isAuthenticated()) {
                     case IS_AUTHENTICATED:
                         cw = new CadiWrap(req,resp,cadi.getLur());
@@ -139,7 +145,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 // use
                 trans.checkpoint(resp.desc(),Env.ALWAYS);
                 if (resp.isFailedAttempt()) {
-                        trans.audit().log(resp.desc());
+                	target = resp.getTarget();
                 }
             }
         } catch (Exception e) {
@@ -148,7 +154,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
             throw new ServletException(e);
         } finally {
             overall.done();
-            tallyHo(trans);
+            tallyHo(trans,target);
         }
     }
 

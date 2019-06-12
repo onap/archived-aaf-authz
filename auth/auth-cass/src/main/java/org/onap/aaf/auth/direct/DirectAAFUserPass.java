@@ -52,8 +52,13 @@ public class DirectAAFUserPass implements CredVal {
 
     @Override
     public boolean validate(String user, Type type, byte[] pass, Object state) {
+    		if(user==null || type==null || pass==null) {
+    			return false;
+    		}
+    	
             try {
                 AuthzTrans trans;
+                boolean transfer = false;
                 if (state !=null) {
                     if (state instanceof AuthzTrans) {
                         trans = (AuthzTrans)state;
@@ -61,19 +66,23 @@ public class DirectAAFUserPass implements CredVal {
                         trans = env.newTransNoAvg();
                         if (state instanceof HttpServletRequest) {
                             trans.set((HttpServletRequest)state);
+                            transfer=true;
                         }
                     }
                 } else {
                     trans = env.newTransNoAvg();
                 }
                 Result<Date> result = question.doesUserCredMatch(trans, user, pass);
-                trans.logAuditTrail(env.info());
+                if(transfer) {
+                	((HttpServletRequest)state).setAttribute("CRED_TAG", trans.getTag());
+                }
+                trans.logAuditTrail(env.debug());
                 switch(result.status) {
                     case OK:
                         return true;
                     default:
-                        String ip = trans.ip()==null?"":(", ip="+trans.ip());
-                        env.warn().log(user, "failed password validation" + ip + ':',result.errorString());
+                        String ip = trans.ip()==null?"":trans.ip();
+                        env.audit().printf("user=%s,tag=%s,ip=%s,msg=\"failed password validation: %s\"",user,trans.getTag(),ip,result.errorString());
                 }
             } catch (DAOException e) {
                 env.error().log(e,"Cannot validate user/pass from cassandra");

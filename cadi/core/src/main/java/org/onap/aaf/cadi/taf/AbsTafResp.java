@@ -37,7 +37,9 @@ public abstract class AbsTafResp implements TafResp {
 
     protected final Access access;
     protected final String tafName;
+    // Note: Valid Resp is based on Principal being non-null
     protected final TaggedPrincipal principal;
+    protected final String target;
     protected final String desc;
     private float timing;
 
@@ -58,6 +60,28 @@ public abstract class AbsTafResp implements TafResp {
         this.access = access;
         this.tafName = tafname;
         this.principal = principal;
+        this.target = principal==null?"unknown":principal.getName();
+        this.desc = description;
+    }
+    
+    /**
+     * AbsTafResp
+     * 
+     * Set and hold
+     * Description (for logging)
+     * Principal (as created by derived class)
+     * Access (for access to underlying container, i.e. for Logging, auditing, ClassLoaders, etc)
+     *  
+     * @param access
+     * @param tafname 
+     * @param principal
+     * @param description
+     */
+    public AbsTafResp(Access access, String tafname, String target, String description) {
+        this.access = access;
+        this.tafName = tafname;
+        this.principal = null;
+        this.target = target;
         this.desc = description;
     }
 
@@ -102,7 +126,15 @@ public abstract class AbsTafResp implements TafResp {
         return principal;
     }
 
-    /**
+    /* (non-Javadoc)
+	 * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
+	 */
+	@Override
+	public String getTarget() {
+		return target;
+	}
+	
+	/**
      * getAccess()
      * 
      * Get the Access object from the TAF, so that appropriate Logging, etc can be coordinated.

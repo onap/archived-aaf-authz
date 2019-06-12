@@ -47,6 +47,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.dao.DAOException;
+import org.onap.aaf.auth.dao.cached.CachedPermDAO;
+import org.onap.aaf.auth.dao.cached.CachedRoleDAO;
+import org.onap.aaf.auth.dao.cached.CachedUserRoleDAO;
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.dao.cass.CredDAO;
@@ -799,62 +802,129 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<Void> createPerm(final AuthzTrans trans,REQUEST rreq) {        
         final Result<PermDAO.Data> newPd = mapper.perm(trans, rreq);
-        // Does Perm Type exist as a Namespace?
-        if(newPd.value.type.isEmpty() || ques.nsDAO().read(trans, newPd.value.fullType()).isOKhasData()) {
-            return Result.err(Status.ERR_ConflictAlreadyExists,
-                    "Permission Type exists as a Namespace");
-        }
-        
+
         final ServiceValidator v = new ServiceValidator();
         if (v.perm(newPd).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
-        Result<FutureDAO.Data> fd = mapper.future(trans, PermDAO.TABLE, rreq, newPd.value,false,
-            new Mapper.Memo() {
-                @Override
-                public String get() {
-                    return "Create Permission [" + 
-                        newPd.value.fullType() + '|' + 
-                        newPd.value.instance + '|' + 
-                        newPd.value.action + ']';
-                }
-            },
-            new MayChange() {
-                private Result<NsDAO.Data> nsd;
-                @Override
-                public Result<?> mayChange() {
-                    if (nsd==null) {
-                        nsd = ques.mayUser(trans, trans.user(), newPd.value, Access.write);
-                    }
-                    return nsd;
-                }
-            });
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, newPd.value.ns);
-        if (nsr.notOKorIsEmpty()) {
-            return Result.err(nsr);
+
+        // User Permission mechanism
+        if(newPd.value.ns.indexOf('@')>0) {
+        	PermDAO.Data pdd = newPd.value;
+        	if(trans.user().equals(newPd.value.ns)) {
+        		CachedPermDAO permDAO = ques.permDAO();
+        		Result<List<PermDAO.Data>> rlpdd = permDAO.read(trans, pdd);
+        		if(rlpdd.notOK()) {
+        			return Result.err(rlpdd);
+        		}
+        		if(!rlpdd.isEmpty()) {
+        			return Result.err(Result.ERR_ConflictAlreadyExists,"Permission already exists"); 
+        		}
+
+				RoleDAO.Data rdd = new RoleDAO.Data();
+				rdd.ns = pdd.ns;
+				rdd.name = "user";
+
+				pdd.roles(true).add(rdd.encode());
+				Result<PermDAO.Data> rpdd = permDAO.create(trans, pdd);
+				if(rpdd.notOK()) {
+					return Result.err(rpdd);
+				}
+				
+        		CachedRoleDAO roleDAO = ques.roleDAO();
+        		Result<List<RoleDAO.Data>> rlrdd = roleDAO.read(trans, rdd);
+        		if(rlrdd.notOK()) {
+        			return Result.err(rlrdd);
+        		} else {
+        			if(!rlrdd.isEmpty()) {
+        				rdd = rlrdd.value.get(0);
+        			}
+        		}
+        		
+        		String eperm = pdd.encode();
+        		rdd.perms(true).add(eperm);
+        		Result<Void> rv = roleDAO.update(trans, rdd);
+        		if(rv.notOK()) {
+        			return rv;
+        		}
+        		 
+        		CachedUserRoleDAO urDAO = ques.userRoleDAO();
+    			UserRoleDAO.Data urdd = new UserRoleDAO.Data();
+    			urdd.user = trans.user();
+    			urdd.ns = rdd.ns;
+    			urdd.rname = rdd.name;
+    			urdd.role = rdd.fullName();
+        		Result<List<UserRoleDAO.Data>> rlurdd = urDAO.read(trans, urdd);
+        		if(rlurdd.notOK()) {
+        			return Result.err(rlrdd);
+        		} else if(rlurdd.isEmpty()) {
+        			GregorianCalendar gc = trans.org().expiration(null, Expiration.UserInRole);
+        			if(gc==null) {
+        				return Result.err(Result.ERR_Policy,"Organzation does not grant Expiration for UserRole");
+        			} else {
+        				urdd.expires = gc.getTime();
+        			}
+        			Result<UserRoleDAO.Data> rurdd = urDAO.create(trans, urdd);
+        			return Result.err(rurdd);
+        		}
+        		return rv;
+        	} else {
+        		return Result.err(Result.ERR_Security,"Only the User can create User Permissions");
+        	}
+        } else {
+	        // Does Perm Type exist as a Namespace?
+	        if(newPd.value.type.isEmpty() || ques.nsDAO().read(trans, newPd.value.fullType()).isOKhasData()) {
+	            return Result.err(Status.ERR_ConflictAlreadyExists,
+	                    "Permission Type exists as a Namespace");
+	        }
+	        
+	        Result<FutureDAO.Data> fd = mapper.future(trans, PermDAO.TABLE, rreq, newPd.value,false,
+	            new Mapper.Memo() {
+	                @Override
+	                public String get() {
+	                    return "Create Permission [" + 
+	                        newPd.value.fullType() + '|' + 
+	                        newPd.value.instance + '|' + 
+	                        newPd.value.action + ']';
+	                }
+	            },
+	            new MayChange() {
+	                private Result<NsDAO.Data> nsd;
+	                @Override
+	                public Result<?> mayChange() {
+	                    if (nsd==null) {
+	                        nsd = ques.mayUser(trans, trans.user(), newPd.value, Access.write);
+	                    }
+	                    return nsd;
+	                }
+	            });
+	        
+	        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, newPd.value.ns);
+	        if (nsr.notOKorIsEmpty()) {
+	            return Result.err(nsr);
+	        }
+	        switch(fd.status) {
+	            case OK:
+	                Result<String> rfc = func.createFuture(trans,fd.value, 
+	                        newPd.value.fullType() + '|' + newPd.value.instance + '|' + newPd.value.action,
+	                        trans.user(),
+	                        nsr.value.get(0),
+	                        FUTURE_OP.C);
+	                if (rfc.isOK()) {
+	                    return Result.err(Status.ACC_Future, "Perm [%s.%s|%s|%s] is saved for future processing",
+	                            newPd.value.ns,
+	                            newPd.value.type,
+	                            newPd.value.instance,
+	                            newPd.value.action);
+	                } else {
+	                    return Result.err(rfc);
+	                }
+	            case Status.ACC_Now:
+	                return func.createPerm(trans, newPd.value, true);
+	            default:
+	                return Result.err(fd);
+	        }
         }
-        switch(fd.status) {
-            case OK:
-                Result<String> rfc = func.createFuture(trans,fd.value, 
-                        newPd.value.fullType() + '|' + newPd.value.instance + '|' + newPd.value.action,
-                        trans.user(),
-                        nsr.value.get(0),
-                        FUTURE_OP.C);
-                if (rfc.isOK()) {
-                    return Result.err(Status.ACC_Future, "Perm [%s.%s|%s|%s] is saved for future processing",
-                            newPd.value.ns,
-                            newPd.value.type,
-                            newPd.value.instance,
-                            newPd.value.action);
-                } else {
-                    return Result.err(rfc);
-                }
-            case Status.ACC_Now:
-                return func.createPerm(trans, newPd.value, true);
-            default:
-                return Result.err(fd);
-        }    
     }
 
     @ApiDoc( 
@@ -1392,7 +1462,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_PermissionNotFound, "Permission [%s.%s|%s|%s] does not exist",
                     perm.ns,perm.type,perm.instance,perm.action    );
         }
-
+        
         Result<FutureDAO.Data> fd = mapper.future(trans,PermDAO.TABLE,from,perm,false,
                 new Mapper.Memo() {
                     @Override

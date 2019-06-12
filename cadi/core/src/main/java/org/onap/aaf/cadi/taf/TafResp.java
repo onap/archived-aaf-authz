@@ -81,6 +81,11 @@ public interface TafResp {
      * @return
      */
     public TaggedPrincipal getPrincipal();
+    
+    /** Target - when Authentication Fails, need to know what ID was being attempted
+     * @return
+     */
+    public String getTarget();
 
     /**
      * get the Access object which created this object, allowing the responder to appropriate Log, etc

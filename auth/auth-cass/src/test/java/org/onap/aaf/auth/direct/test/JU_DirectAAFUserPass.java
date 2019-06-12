@@ -125,7 +125,7 @@ public class JU_DirectAAFUserPass {
 		}
 		boolean retVal = aafLocatorObj.validate(null, null, null, null);
 		
-		assertTrue(retVal);
+		assertFalse(retVal);
 	}	
 	
 	@Test
