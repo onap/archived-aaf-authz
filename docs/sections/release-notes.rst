@@ -2,7 +2,6 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright © 2017 AT&T Intellectual Property. All rights reserved.
 
-
 Release Notes
 =============
 
@@ -37,6 +36,15 @@ Note: In general, Infrastructure must be accomplished in the release PRIOR to ge
 	- `AAF-514 <https://jira.onap.org/browse/AAF-514>`_ TPM Plugin: Remove global structure used for storing session data
 	- `AAF-785 <https://jira.onap.org/browse/AAF-785>`_ non STAGING version on master
 	- `AAF-822 <https://jira.onap.org/browse/AAF-822>`_ Startup issues with K8S, Certs
+
+**Usage Notes**
+	- AAF Core and SMS elements have consistently started from scratch. The one case where this didn't happen for SMS, 
+		it was found that incompatible data was left in volume.  Removal of old data for SMS (See SMS notes) should resolve
+        - On the same instance, one AAF Core component had a similar scenario.  A simple bounce of aaf-locator resolved.
+	- Existing Cassandra
+		- For each release, AAF maintains the authz/auth/auth-cass/cass_init/init.cql which is used to setup Keyspaces from scratch
+		- Any changes are also done in small CQL files, you MIGHT need authz/auth/auth-cass/cass_init/init2_10.cql for Dublin
+
 
 Version: 2.1.8 (Casablanca, 3.0.0-ONAP, Casablanca Maintenance Release)
 --------------------------------------------------------------------------
@@ -129,4 +137,6 @@ Version: 2.1.1 (Beijing, 2.0.0-ONAP)
  	- `AAF project page <https://wiki.onap.org/display/DW/Application+Authorization+Framework+Project>`_
  	- `CII Best Practices Passing Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=0>`_
  	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=43385140>`_
+
+
 
