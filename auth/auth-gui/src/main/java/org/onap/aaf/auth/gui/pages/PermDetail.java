@@ -135,7 +135,7 @@ public class PermDetail extends Page {
                                 String historyLink = PermHistory.HREF 
                                         + "?type=" + pType + "&instance=" + pInstance + "&action=" + pAction;
                                 
-                                rv.add(new AbsCell[] {new RefCell("See History",historyLink,false)});
+                                rv.add(new AbsCell[] {new RefCell("See History",historyLink,false,"class=greenbutton")});
                             } else {
                                 rv.add(new AbsCell[] {new TextCell(
                                     fp.code()==HttpStatus.NOT_FOUND_404?

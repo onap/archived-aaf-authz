@@ -22,7 +22,6 @@
 package org.onap.aaf.auth.locate.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.onap.aaf.auth.dao.cass.ConfigDAO;
 import org.onap.aaf.auth.dao.cass.ConfigDAO.Data;
@@ -72,27 +71,31 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                 return Result.err(Result.ERR_BadData,v.errs());
             }
             int count = 0;
+            StringBuilder denied = null;
             for (MgmtEndpoint me : meps.getMgmtEndpoint()) {
                 if (permToRegister) { 
                     int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
-                    AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getName(),"write"); 
-                    if (trans.fish(p)) {
-                        LocateDAO.Data data = mapper.locateData(me);
-                        locateDAO.update(trans, data, true);
-                        ++count;
-                    } else {
-                        return Result.err(Result.ERR_Denied,"May not register service (needs " + p.getKey() + ')');
+                    AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
+                    if (!trans.fish(p)) {
+                    	if(denied==null) {
+                    		denied = new StringBuilder("May not register service(s):");
+                    	}
+                    	
+                        denied.append("\n\t");
+                        denied.append(p.getKey());
+                        denied.append(')');
+                        continue;
                     }
-                } else { //TODO if (MechID is part of Namespace) { 
-                    LocateDAO.Data data = mapper.locateData(me);
-                    locateDAO.update(trans, data, true);
-                    ++count;
                 }
+                LocateDAO.Data data = mapper.locateData(me);
+                locateDAO.update(trans, data, true);
+                ++count;
             }
             if (count>0) {
                 return Result.ok();
             } else {
-                return Result.err(Result.ERR_NotFound, "No endpoints found");
+                return denied==null?Result.err(Result.ERR_NotFound, "No endpoints found")
+                		:Result.err(Result.ERR_Security,denied.toString());
             }
         }
 
@@ -106,22 +109,31 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                 return Result.err(Result.ERR_BadData,v.errs());
             }
             int count = 0;
+            StringBuilder denied = null;
             for (MgmtEndpoint me : meps.getMgmtEndpoint()) {
-                int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
-                AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
-                if (trans.fish(p)) {
-                    LocateDAO.Data data = mapper.locateData(me);
-                    data.port_key = UUID.randomUUID();
-                    locateDAO.delete(trans, data, false);
-                    ++count;
-                } else {
-                    return Result.err(Result.ERR_Denied,"May not register service (needs " + p.getKey() + ')');
-                }
+            	 if (permToRegister) { 
+                     int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
+                     AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
+                     if (!trans.fish(p)) {
+                     	if(denied==null) {
+                     		denied = new StringBuilder("May not deregister service(s):");
+                     	}
+                     	
+                         denied.append("\n\t");
+                         denied.append(p.getKey());
+                         denied.append(')');
+                         continue;
+                     }
+                 }
+                 LocateDAO.Data data = mapper.locateData(me);
+                 locateDAO.delete(trans, data, true);
+                 ++count;
             }
             if (count>0) {
                 return Result.ok();
             } else {
-                return Result.err(Result.ERR_NotFound, "No endpoints found");
+                return denied==null?Result.err(Result.ERR_NotFound, "No endpoints found")
+                		:Result.err(Result.ERR_Security,denied.toString());
             }
         }
 

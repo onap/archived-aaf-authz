@@ -86,8 +86,8 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
         return cadi.getLur();
     }
 
-    protected abstract TRANS newTrans(HttpServletRequest request);
-    protected abstract TimeTaken start(TRANS trans, ServletRequest request);
+    protected abstract TRANS newTrans(HttpServletRequest request,HttpServletResponse response);
+    protected abstract TimeTaken start(TRANS trans);
     protected abstract void authenticated(TRANS trans, Principal p);
     protected abstract void tallyHo(TRANS trans, String target);
     
@@ -96,9 +96,9 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
         HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
         
-        TRANS trans = newTrans(req);
+        TRANS trans = newTrans(req,res);
         
-        TimeTaken overall = start(trans,request);
+        TimeTaken overall = start(trans);
         String target = "n/a";
         try {
             request.setAttribute(TRANS_TAG, trans);

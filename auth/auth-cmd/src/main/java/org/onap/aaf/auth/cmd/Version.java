@@ -27,17 +27,18 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 public class Version extends Cmd {
+    private final String version;
 
-
-    public Version(AAFcli aafcli) {
-        super(aafcli, "--version");
+	public Version(AAFcli aafcli) {
+        super(aafcli, "version");
+        version = aafcli.access.getProperty(Config.AAF_DEPLOYED_VERSION, Config.AAF_DEFAULT_API_VERSION);
     }
 
     @Override
     protected int _exec(int idx, String... args) throws CadiException, APIException, LocatorException {
         pw().println("AAF Command Line Tool");
         pw().print("Version: ");
-        pw().println(Config.AAF_DEFAULT_API_VERSION);
+        pw().println(version);
         return 200;
     }
 }

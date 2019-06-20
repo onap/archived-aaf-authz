@@ -105,8 +105,13 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         }
         
         public String fullPerm() {
-        	StringBuilder sb = new StringBuilder(ns);
-        	sb.append(ns.indexOf('@')<0?'.':':'); 
+        	StringBuilder sb = new StringBuilder();
+        	if(ns==null) {
+        		sb.append("null.");
+        	} else {
+        		sb.append(ns);
+        		sb.append(ns.indexOf('@')<0?'.':':');
+        	}
         	sb.append(type);
         	sb.append('|');
         	sb.append(instance);

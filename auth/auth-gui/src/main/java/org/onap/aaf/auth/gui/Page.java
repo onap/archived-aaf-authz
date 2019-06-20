@@ -46,7 +46,6 @@ import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.gui.pages.Home;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.aaf.AAFPermission;
-import org.onap.aaf.cadi.client.Holder;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.APIException;
@@ -70,6 +69,7 @@ import org.onap.aaf.misc.xgen.html.Imports;
  *
  */
 public class Page extends HTMLCacheGen {
+    public static final String AAF_THEME = "aaf_theme";
     public static final String AAFURL_TOOLS = "aaf_url.tools";
     public static final String AAF_URL_TOOL_DOT = "aaf_url.tool.";
     public static final String AAF_URL_CUIGUI = "aaf_url.cuigui"; // link to help
@@ -151,7 +151,8 @@ public class Page extends HTMLCacheGen {
     
     
     private static class PageCode implements Code<HTMLGen> {
-            private static final String AAF_GUI_TITLE = "aaf_gui_title";
+			private static final String AAF_GUI_THEME = "aaf.gui.theme";
+			private static final String AAF_GUI_TITLE = "aaf_gui_title";
             
             private final ContentCode[] content;
             private final Slot browserSlot;
@@ -167,6 +168,7 @@ public class Page extends HTMLCacheGen {
                 browserSlot = env.slot(BROWSER_TYPE);
                 sTheme = env.staticSlot(AAF_GUI.AAF_GUI_THEME);
                 this.env = env;
+               	getThemeFiles(env,""); //
             }
 
             private static synchronized List<String> getThemeFiles(Env env, String theme) {
@@ -185,11 +187,11 @@ public class Page extends HTMLCacheGen {
                     							themeProps = new TreeMap<>();
                     							props = null;
                     						} else {
-                    							props = themeProps.get(theme);
+                    							props = themeProps.get(t.getName());
                     						}
                     						if(props==null) {
                     							props = new Properties();
-                    							themeProps.put(theme, props);
+                    							themeProps.put(t.getName(), props);
                     						}
                     						
                     						try {
@@ -215,13 +217,10 @@ public class Page extends HTMLCacheGen {
             	return themes.get(theme);
             }
             
-            protected Imports getImports(Env env, Holder<String> theme, String defaultTheme, int backdots, BROWSER browser) {
-            	List<String> ls = getThemeFiles(env,theme.get());
+            protected Imports getImports(Env env, String theme, int backdots, BROWSER browser) {
+            	List<String> ls = getThemeFiles(env,theme);
             	Imports imp = new Imports(backdots);
-            	if(ls==null) {
-            		theme.set(defaultTheme);
-            	}
-        		String prefix = "theme/" + theme.get() + '/';
+        		String prefix = "theme/" + theme + '/';
         		for(String f : ls) {
             		if(f.endsWith(".js")) {
             			imp.js(prefix + f);
@@ -262,7 +261,6 @@ public class Page extends HTMLCacheGen {
                 hgen.html();
                 final String title = env.getProperty(AAF_GUI_TITLE,"Authentication/Authorization Framework");
                 final String defaultTheme = env.get(sTheme,"onap"); 
-                final Holder<String> hTheme = new Holder<>(defaultTheme);
               
                 Mark head = hgen.head();
                     hgen.leaf(TITLE).text(title).end();
@@ -270,15 +268,37 @@ public class Page extends HTMLCacheGen {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                         	BROWSER browser = browser(trans,browserSlot);  
+                        	String theme = null;
                         	Cookie[] cookies = trans.hreq().getCookies();
                         	if(cookies!=null) {
                         		for(Cookie c : cookies) {
-                        			if("aaf_theme".equals(c.getName())) {
-                        				hTheme.set(c.getValue());
+                        			if(AAF_GUI_THEME.equals(c.getName())) {
+                        				theme=c.getValue();
+                        				if(!(themes.containsKey(theme))) {
+                        					theme = defaultTheme;
+                        				}
+                        				break;
                         			}
                         		}
                         	}
-                            hgen.imports(getImports(env,hTheme,defaultTheme,backdots,browser));
+                        	
+                        	if(theme==null) {
+	                        	for(String t : themes.keySet()) {
+	                        		if(!t.equals(defaultTheme) && trans.fish(new AAFPermission(null,trans.user()+":id", AAF_GUI_THEME, t))) {
+	                        			theme=t;
+	                        			break;
+	                        		}
+	                        	}
+	                        	if(theme==null) {
+	                        		theme = defaultTheme;
+	                        	}
+                    			Cookie cookie = new Cookie(AAF_GUI_THEME,theme);
+                    			cookie.setMaxAge(604_800); // one week
+                    			trans.hresp().addCookie(cookie);
+                        	}
+                        	trans.setProperty(Page.AAF_THEME, theme);
+
+                            hgen.imports(getImports(env,theme,backdots,browser));
                             switch(browser) {
                                 case ie:
                                 case ieOld:
@@ -350,7 +370,8 @@ public class Page extends HTMLCacheGen {
                     }
                     
                     hgen.end(header);
-                    
+
+                    hgen.divID("pageContent");
                     Mark inner = hgen.divID("inner");
                         // Content
                         for (int i=cIdx;i<content.length;++i) {
@@ -361,39 +382,65 @@ public class Page extends HTMLCacheGen {
                         }
 
                     hgen.end(inner);    
+
                     
+                    cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
+                        @Override
+                        public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
+                        	String theme = trans.getProperty(Page.AAF_THEME);
+                        	Properties props;
+                        	if(theme==null) {
+                        		props = null;
+                        	} else {
+                        		props = themeProps==null?null:themeProps.get(theme);
+                        	}
+                        	
+                        	if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("enable_nav_btn"))) {
+	                        		xgen.leaf("button", "id=navBtn").end();
+                        	}
+                        }
+                    });
+                    // Adding "nav Hamburger button"
                     // Navigation - Using older Nav to work with decrepit   IE versions
-                    
                     Mark nav = hgen.divID("nav");
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
-                        	Properties props = themeProps==null?null:themeProps.get(hTheme.get());
-                        	if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
-                                xgen.incr("h2").text("Navigation").end();
-                                Mark mark = new Mark();
-                            	boolean selected = isSelected(trans.path(),Home.HREF);
-                            			//trans.path().endsWith("home");
-                                xgen.incr(mark,HTMLGen.UL)
-                            		.incr(HTMLGen.LI,selected?"class=selected":"")
-                            		.incr(HTMLGen.A, "href=home")
-                            		.text("Home")
-                            		.end(2);
-                                boolean noSelection = !selected;
-                                for(String[] mi : Home.MENU_ITEMS) {
-                                	//selected = trans.path().endsWith(mi[0]);
-                                	if(noSelection) {
-                                		selected = isSelected(trans.path(),mi[2]);
-                                		noSelection = !selected;
-                                	} else {
-                                		selected = false;
-                                	}
-                                	xgen.incr(HTMLGen.LI,selected?"class=selected":"")
-                                	    .incr(HTMLGen.A, "href="+mi[0])
-                                	    .text(mi[1])
-                                	    .end(2);
-                                }
-                                xgen.end(mark);
+                        	String theme = trans.getProperty(Page.AAF_THEME);
+                        	Properties props;
+                        	if(theme==null) {
+                        		props = null;
+                        	} else {
+                        		props = themeProps==null?null:themeProps.get(theme);
+                        	}
+                        	
+                        	if(props!=null) {
+	                        	if("TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
+	                                xgen.incr("h2").text("Navigation").end();
+	                                Mark mark = new Mark();
+	                            	boolean selected = isSelected(trans.path(),Home.HREF);
+	                            			//trans.path().endsWith("home");
+	                                xgen.incr(mark,HTMLGen.UL)
+	                            		.incr(HTMLGen.LI,selected?"class=selected":"")
+	                            		.incr(HTMLGen.A, "href=home")
+	                            		.text("Home")
+	                            		.end(2);
+	                                boolean noSelection = !selected;
+	                                for(String[] mi : Home.MENU_ITEMS) {
+	                                	//selected = trans.path().endsWith(mi[0]);
+	                                	if(noSelection) {
+	                                		selected = isSelected(trans.path(),mi[2]);
+	                                		noSelection = !selected;
+	                                	} else {
+	                                		selected = false;
+	                                	}
+	                                	xgen.incr(HTMLGen.LI,selected?"class=selected":"")
+	                                	    .incr(HTMLGen.A, "href="+mi[0])
+	                                	    .text(mi[1])
+	                                	    .end(2);
+	                                }
+	                                xgen.end(mark);
+	                        	}
                         	}
                         }
 

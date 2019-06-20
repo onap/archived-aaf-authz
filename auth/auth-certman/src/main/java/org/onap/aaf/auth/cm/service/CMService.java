@@ -193,7 +193,8 @@ public class CMService {
                 } else if (primary == null) {
                     return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)", trans.ip());
                 } else {
-                    host = primary.getHostAddress();
+                    String thost = primary.getHostName();
+                    host = thost==null?primary.getHostAddress():thost;
                 }
 
                 ArtiDAO.Data add = null;

@@ -90,10 +90,11 @@ public class RegistrationCreator {
     				}
     				if(specificVersion!=null) {
     					String split[] = Split.splitTrim('.', specificVersion);
-    					locate.setPkg(split.length>3?Integer.parseInt(split[3]):0);
-    					locate.setPatch(split.length>2?Integer.parseInt(split[2]):0);
-    					locate.setMinor(split.length>1?Integer.parseInt(split[1]):0);
-    					locate.setMajor(split.length>0?Integer.parseInt(split[0]):0);
+    					String deply[]= Split.splitTrim('.', access.getProperty(Config.AAF_DEPLOYED_VERSION, ""));
+    					locate.setMajor(best(split,deply,0));
+    					locate.setMinor(best(split,deply,1));
+    					locate.setPatch(best(split,deply,2));
+    					locate.setPkg(best(split,deply,3));
     				}
 
     				String protocol = access.getProperty(Config.AAF_LOCATOR_PROTOCOL + dot_le, defProtocol);
@@ -131,7 +132,39 @@ public class RegistrationCreator {
     	return me;
     }
 	
-    private StringBuilder print(StringBuilder sb, List<MgmtEndpoint> lme) {
+    /*
+     * Find the best version between Actual Interface and Deployed version
+     */
+    private int best(String[] split, String[] deploy, int i) {
+    	StringBuilder sb = new StringBuilder();
+    	char c;
+		String s;
+    	if(split.length>i) {
+    		s=split[i];
+			for(int j=0;j<s.length();++j) {
+				if(Character.isDigit(c=s.charAt(j))) {
+					sb.append(c);
+				} else {
+					break;
+				}
+			}
+    	}	
+		
+		if(sb.length()==0 && deploy.length>i) {
+			s=deploy[i];
+			for(int j=0;j<s.length();++j) {
+				if(Character.isDigit(c=s.charAt(j))) {
+					sb.append(c);
+				} else {
+					break;
+				}
+			}
+		}
+		
+		return sb.length()==0?0:Integer.parseInt(sb.toString());
+    }
+
+	private StringBuilder print(StringBuilder sb, List<MgmtEndpoint> lme) {
     	int cnt = 0;
 		for(MgmtEndpoint m : lme) {
 			print(sb,cnt++,m);
@@ -155,9 +188,9 @@ public class RegistrationCreator {
 		out.append('.');
 		out.append(mep.getMinor());
 		out.append('.');
-		out.append(mep.getPkg());
-		out.append('.');
 		out.append(mep.getPatch());
+		out.append('.');
+		out.append(mep.getPkg());
 		out.append("\n\tPort:       ");
 		out.append(mep.getPort());
 		out.append("\n\tProtocol:   ");
@@ -201,8 +234,8 @@ public class RegistrationCreator {
 		out.setLongitude(mep.getLongitude());
 		out.setMajor(mep.getMajor());
 		out.setMinor(mep.getMinor());
-		out.setPkg(mep.getPkg());
 		out.setPatch(mep.getPatch());
+		out.setPkg(mep.getPkg());
 		out.setPort(mep.getPort());
 		out.setProtocol(mep.getProtocol());
 		out.getSpecialPorts().addAll(mep.getSpecialPorts());

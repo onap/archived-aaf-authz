@@ -24,6 +24,7 @@ package org.onap.aaf.auth.env;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.OrganizationFactory;
@@ -37,6 +38,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
 	private static final String N_A = "n/a";
 	private static final String BLANK = "";
 	private HttpServletRequest hreq;
+	private HttpServletResponse hresp;
     private TaggedPrincipal user;
     private Lur lur;
     private Organization org;
@@ -54,8 +56,9 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      * @see org.onap.aaf.auth.env.test.AuthTrans#set(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    public AuthzTrans set(HttpServletRequest req) {
+    public AuthzTrans set(HttpServletRequest req, HttpServletResponse resp) {
     	hreq = req;
+    	hresp = resp;
         user = (TaggedPrincipal)req.getUserPrincipal();
         
         for (REQD_TYPE rt : REQD_TYPE.values()) {
@@ -70,11 +73,17 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         org=null;
         return this;
     }
+    
     @Override
     public HttpServletRequest hreq() {
     	return hreq;
     }
-    
+
+    @Override
+    public HttpServletResponse hresp() {
+    	return hresp;
+    }
+
     @Override
     public void setUser(TaggedPrincipal p) {
         user = p;
@@ -174,7 +183,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         }
         return false;
     }
-
+    
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.env.test.AuthzTrans#org()
      */
@@ -229,4 +238,13 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     public String getTag() {
     	return tag;
     }
+
+	@Override
+	public void clearCache() {
+        if (lur!=null) {
+        	StringBuilder report = new StringBuilder();
+            lur.clear(user, report);
+            info().log(report);
+        }
+	}
 }

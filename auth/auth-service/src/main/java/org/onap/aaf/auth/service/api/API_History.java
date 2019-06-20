@@ -170,6 +170,33 @@ public class API_History {
                 }
             }
         });
+        
+        /**
+         * Get History by Subject 
+         */
+        authzAPI.route(GET,"/authz/hist/subject/:type/:subject",API.HISTORY,new Code(facade,"Get History by Perm Type", true) {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                int[] years;
+                int descend;
+                try {
+                    years = getYears(req);
+                    descend = decending(req);
+                } catch (Exception e) {
+                    context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
+                    return;
+                }
+                
+                Result<Void> r = context.getHistoryBySubject(trans, resp, pathParam(req,":type"), pathParam(req,":subject"),years,descend);
+                switch(r.status) {
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200); 
+                        break;
+                    default:
+                        context.error(trans,resp,r);
+                }
+            }
+        });
     }
 
     // Check if Ascending

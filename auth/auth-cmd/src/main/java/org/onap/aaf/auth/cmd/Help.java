@@ -31,7 +31,7 @@ public class Help extends Cmd {
     private List<Cmd> cmds;
 
     public Help(AAFcli aafcli, List<Cmd> cmds) {
-        super(aafcli, "--help", 
+        super(aafcli, "help", 
             new Param("-d (more details)", false),
             new Param("command",false));
         this.cmds = cmds;

@@ -76,10 +76,7 @@ public class JU_AuthzTransOnlyFilter {
     public void testStart() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         AuthzTransOnlyFilter aTF = new AuthzTransOnlyFilter(authzEnvMock);
         Class c = aTF.getClass();
-        Class[] cArg = new Class[2];
-        cArg[0] = AuthzTrans.class;
-        cArg[1] = ServletRequest.class;        //Steps to test a protected method
-        Method startMethod = c.getDeclaredMethod("start", cArg);
+        Method startMethod = c.getDeclaredMethod("start", new Class[] {AuthzTrans.class});
         startMethod.setAccessible(true);
         //startMethod.invoke(aTF, authzTransMock, servletRequestMock);
     }

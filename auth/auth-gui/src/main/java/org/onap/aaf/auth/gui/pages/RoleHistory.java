@@ -60,9 +60,7 @@ public class RoleHistory extends Page {
     static final String NAME="RoleHistory";
     static final String HREF = "/gui/roleHistory";
     static final String FIELDS[] = {"role","dates"};
-    static final String WEBPHONE = "http://webphone.att.com/cgi-bin/webphones.pl?id=";
-    static enum Month { JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, 
-        AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER };
+
     
     public RoleHistory(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, FIELDS,
@@ -90,7 +88,7 @@ public class RoleHistory extends Page {
                                 .done();
                             
                             hgen.br();
-                            hgen.leaf("a", "href=#advanced_search","onclick=divVisibility('advanced_search');").text("Advanced Search").end()
+                            hgen.leaf("a", "href=#advanced_search","onclick=divVisibility('advanced_search');","class=greenbutton").text("Advanced Search").end()
                                 .divID("advanced_search", "style=display:none");
                             hgen.incr("table");
                                 
@@ -98,7 +96,7 @@ public class RoleHistory extends Page {
                             addDateRow(hgen,"End Date");
                             hgen.incr("tr").incr("td");
                             hgen.tagOnly("input", "type=button","value=Get History",
-                                    "onclick=datesURL('"+HREF+"?role=" + obRole+"');");
+                                    "onclick=datesURL('"+HREF+"?role=" + obRole+"');","class=greenbutton");
                             hgen.end().end();
                             hgen.end();
                             hgen.end();
@@ -120,7 +118,7 @@ public class RoleHistory extends Page {
             .incr("td")
             .incr("select", "name=month"+s.substring(0, s.indexOf(' ')), "id=month"+s.substring(0, s.indexOf(' ')), "required")
             .incr("option", "value=").text("Month").end();
-        for (Month m : Month.values()) {
+        for (NsHistory.Month m : NsHistory.Month.values()) {
             if (Calendar.getInstance().get(Calendar.MONTH) == m.ordinal()) {
                 hgen.incr("option", "selected", "value="+(m.ordinal()+1)).text(m.name()).end();
             } else {

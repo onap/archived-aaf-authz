@@ -192,9 +192,13 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
             Log4JLogIt logIt = new Log4JLogIt(args, "oauth");
             PropAccess propAccess = new PropAccess(logIt,args);
 
-             AAF_OAuth service = new AAF_OAuth(new AuthzEnv(propAccess));
-            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-            jss.start();
+            try {
+                new JettyServiceStarter<AuthzEnv,AuthzTrans>(
+                	new AAF_OAuth(new AuthzEnv(propAccess)),true)
+                		.start();
+	        } catch (Exception e) {
+	            propAccess.log(e);
+	        }
         } catch (Exception e) {
             e.printStackTrace();
         }

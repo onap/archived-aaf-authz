@@ -58,7 +58,6 @@ public class NsHistory extends Page {
     static final String NAME="NsHistory";
     static final String HREF = "/gui/nsHistory";
     static final String FIELDS[] = {"name","dates"};
-    static final String WEBPHONE = "http://webphone.att.com/cgi-bin/webphones.pl?id=";
     static enum Month { JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, 
                             AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER };
     
@@ -88,7 +87,7 @@ public class NsHistory extends Page {
                                 .done();
                             
                             hgen.br();
-                            hgen.leaf("a","href=#advanced_search","onclick=divVisibility('advanced_search');").text("Advanced Search").end()
+                            hgen.leaf("a","href=#advanced_search","onclick=divVisibility('advanced_search');","class=greenbutton").text("Advanced Search").end()
                                 .divID("advanced_search", "style=display:none");
                             hgen.incr("table");
                                 
@@ -96,7 +95,7 @@ public class NsHistory extends Page {
                             addDateRow(hgen,"End Date");
                             hgen.incr("tr").incr("td");
                             hgen.tagOnly("input", "type=button","value=Get History",
-                                    "onclick=datesURL('"+HREF+"?name=" + obName+"');");
+                                    "onclick=datesURL('"+HREF+"?name=" + obName+"');","class=greenbutton");
                             hgen.end().end();
                             hgen.end();
                             hgen.end();

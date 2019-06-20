@@ -350,7 +350,7 @@ div.detail caption {
 	color: white;
 	font-family: "Lucida Console", Monaco, monospace;
 	overflow-y: scroll;
-	height: 300px;
+	height: 600px;
 	min-width: 600px;
 	padding: 5px;	
 	resize: vertical;

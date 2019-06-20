@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -157,7 +158,8 @@ public class JU_NullTrans {
     @Test
     public void testSet() {
         HttpServletRequest req = mock(HttpServletRequest.class);
-        AuthzTrans set = nullTrans.set(req);
+        HttpServletResponse res = mock(HttpServletResponse.class);
+        AuthzTrans set = nullTrans.set(req,res);
         Assert.assertNull(set);
     }
     

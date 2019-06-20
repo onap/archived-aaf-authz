@@ -21,8 +21,8 @@
 
 package org.onap.aaf.auth.env;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.rserv.TransOnlyFilter;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
@@ -43,13 +43,14 @@ public class AuthzTransOnlyFilter extends TransOnlyFilter<AuthzTrans> {
     }
     
     @Override
-    protected AuthzTrans newTrans() {
-        return env.newTrans();
+    protected AuthzTrans newTrans(HttpServletRequest req, HttpServletResponse resp) {
+        AuthzTrans trans = env.newTrans();
+        trans.set(req, resp);
+        return trans;
     }
 
     @Override
-    protected TimeTaken start(AuthzTrans trans, ServletRequest request) {
-        trans.set((HttpServletRequest)request);
+    protected TimeTaken start(AuthzTrans trans) {
         return trans.start("Trans " + //(context==null?"n/a":context.toString()) +
         " IP: " + trans.ip() +
         " Port: " + trans.port()

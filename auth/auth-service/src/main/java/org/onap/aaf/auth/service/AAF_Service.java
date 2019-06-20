@@ -239,9 +239,13 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
             Log4JLogIt logIt = new Log4JLogIt(args, "authz");
             PropAccess propAccess = new PropAccess(logIt,args);
             
-            AbsService<AuthzEnv, AuthzTrans> service = new AAF_Service(new AuthzEnv(propAccess));
-            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-            jss.start();
+            try {
+                new JettyServiceStarter<AuthzEnv,AuthzTrans>(
+                	new AAF_Service(new AuthzEnv(propAccess)),true)
+                		.start();
+	        } catch (Exception e) {
+	            propAccess.log(e);
+	        }
         } catch (Exception e) {
             e.printStackTrace();
         }

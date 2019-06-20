@@ -43,9 +43,11 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     private boolean do_register;
     protected AbsService<ENV,TRANS> service;
 	protected String hostname;
+	protected final boolean secure;
 
 
-    public AbsServiceStarter(final AbsService<ENV,TRANS> service) {
+    public AbsServiceStarter(final AbsService<ENV,TRANS> service, boolean secure) {
+    	this.secure = secure;
         this.service = service;
         try {
             OrganizationFactory.init(service.env);
@@ -96,12 +98,14 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     	});
 		if(System.getProperty("ECLIPSE", null)!=null) {
 			Thread.sleep(2000);
-	        System.out.println("Service Started in Eclipse: ");
-	        System.out.print("  Hit <enter> to end\n:");
-	        try {
-				System.in.read();
-				System.exit(0);
-			} catch (IOException e) {
+			if(!app.isCancelled()) {
+		        System.out.println("Service Started in Eclipse: ");
+		        System.out.print("  Hit <enter> to end:\n");
+		        try {
+					System.in.read();
+					System.exit(0);
+				} catch (IOException e) {
+				}
 			}
 		}
     }

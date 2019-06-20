@@ -29,7 +29,7 @@ function getCommand() {
 	cmds = document.querySelector("#command_field").value.split(" ");
 	var cleanCmd = "";
 	if (document.querySelector("#details_img").getAttribute("class") == "selected") 
-		cleanCmd += "set details=true ";
+		cleanCmd += "details ";
 	for (var i = 0; i < cmds.length;i++) {
 		var trimmed = cmds[i].trim();
 		if (trimmed != "")
@@ -286,7 +286,7 @@ function maximizeConsole(img) {
 		content.removeAttribute("class");
 		footer.style.display="";
 		console_area.style.resize="vertical";
-		console_area.style.height="300px";
+		console_area.style.height="600px";
 	}
 	selectOption(img,0);
 }

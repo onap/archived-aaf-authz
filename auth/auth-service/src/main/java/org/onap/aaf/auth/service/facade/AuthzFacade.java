@@ -235,13 +235,15 @@ public interface AuthzFacade {
      */
     public abstract Result<Void> getHistoryByUser(AuthzTrans trans,    HttpServletResponse resp, String user, int[] yyyymm, final int sort);
     
-    public abstract Result<Void> getHistoryByRole(AuthzTrans trans,    HttpServletResponse resp, String subject, int[] yyyymm, final int sort);
+    public abstract Result<Void> getHistoryByRole(AuthzTrans trans,    HttpServletResponse resp, String role, int[] yyyymm, final int sort);
 
-    public abstract Result<Void> getHistoryByPerm(AuthzTrans trans,    HttpServletResponse resp, String subject, int[] yyyymm, final int sort);
+    public abstract Result<Void> getHistoryByPerm(AuthzTrans trans,    HttpServletResponse resp, String perm, int[] yyyymm, final int sort);
 
-    public abstract Result<Void> getHistoryByNS(AuthzTrans trans,    HttpServletResponse resp, String subject, int[] yyyymm, final int sort);
+    public abstract Result<Void> getHistoryByNS(AuthzTrans trans,    HttpServletResponse resp, String ns, int[] yyyymm, final int sort);
 
-    /*
+    public abstract Result<Void> getHistoryBySubject(AuthzTrans trans, HttpServletResponse resp, String type, String subject, int[] yyyymm, int sort);
+
+	/*
      * Cache 
      */
     public abstract Result<Void> cacheClear(AuthzTrans trans, String pathParam);

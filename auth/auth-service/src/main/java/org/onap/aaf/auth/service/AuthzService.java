@@ -636,6 +636,16 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      */
     public Result<HISTORY> getHistoryByNS(AuthzTrans trans, String subj, int[] yyyymm, int sort);
 
+    /**
+     * 
+     * @param trans
+     * @param target
+     * @param yyyymm
+     * @param sort
+     * @return
+     */
+	public Result<HISTORY> getHistoryBySubject(AuthzTrans trans, String subject, String target, int[] yyyymm, int sort);
+
 /***********************************
  * DELEGATE 
  ***********************************/
@@ -752,8 +762,5 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @param trans
      */
     public void dbReset(AuthzTrans trans);
-
-
-
 
 }

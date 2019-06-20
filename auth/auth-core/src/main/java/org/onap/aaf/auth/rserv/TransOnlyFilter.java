@@ -29,6 +29,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -52,16 +54,15 @@ public abstract class TransOnlyFilter<TRANS extends TransStore> implements Filte
     
 
 
-    protected abstract TRANS newTrans();
-    protected abstract TimeTaken start(TRANS trans, ServletRequest request);
+    protected abstract TRANS newTrans(HttpServletRequest req, HttpServletResponse resp);
+    protected abstract TimeTaken start(TRANS trans);
     protected abstract void authenticated(TRANS trans, TaggedPrincipal p);
     protected abstract void tallyHo(TRANS trans);
     
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        TRANS trans = newTrans();
-        
-        TimeTaken overall = start(trans,request);
+        TRANS trans = newTrans((HttpServletRequest)request,(HttpServletResponse)response);
+        TimeTaken overall = start(trans);
         try {
             request.setAttribute(TransFilter.TRANS_TAG, trans);
             chain.doFilter(request, response);

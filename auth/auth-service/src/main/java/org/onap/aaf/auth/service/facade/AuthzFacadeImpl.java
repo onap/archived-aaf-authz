@@ -2274,6 +2274,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     public static final String GET_HISTORY_ROLE = "getHistoryByRole";
     public static final String GET_HISTORY_PERM = "getHistoryByPerm";
     public static final String GET_HISTORY_NS = "getHistoryByNS";
+    public static final String GET_HISTORY_SUBJECT = "getHistoryBySubject";
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#getHistoryByUser(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -2441,6 +2442,50 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
         } catch (Exception e) {
             trans.error().log(e,IN,GET_HISTORY_PERM);
+            return Result.err(e);
+        } finally {
+            tt.done();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see com.att.authz.facade.AuthzFacade#getHistoryByUser(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public Result<Void> getHistoryBySubject(AuthzTrans trans, HttpServletResponse resp, String subject, String target, int[] yyyymm, final int sort) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(GET_HISTORY_SUBJECT);
+        sb.append(' ');
+        sb.append(subject);
+        sb.append(" for ");
+        boolean first = true;
+        for (int i : yyyymm) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(',');
+            }
+            sb.append(i);
+        }
+        TimeTaken tt = trans.start(sb.toString(), Env.SUB|Env.ALWAYS);
+
+        try {
+            Result<HISTORY> rh = service.getHistoryBySubject(trans,subject,target,yyyymm,sort);
+            switch(rh.status) {
+                case OK: 
+                    RosettaData<HISTORY> data = historyDF.newData(trans).load(rh.value);
+                    if (Question.willSpecialLog(trans, trans.user())) {
+                        Question.logEncryptTrace(trans,data.asString());
+                    }
+
+                    data.to(resp.getOutputStream());
+                    setContentType(resp,historyDF.getOutType());
+                    return Result.ok();
+                default:
+                    return Result.err(rh);
+            }
+        } catch (Exception e) {
+            trans.error().log(e,IN,GET_HISTORY_USER);
             return Result.err(e);
         } finally {
             tt.done();

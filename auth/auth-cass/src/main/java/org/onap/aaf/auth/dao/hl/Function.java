@@ -1055,8 +1055,8 @@ public class Function {
             } else if (!fullperm.roles.isEmpty()) {
                 return Result
                         .err(Status.ERR_DependencyExists,
-                                "Permission [%s.%s|%s|%s] cannot be deleted as it is attached to 1 or more roles.",
-                                fullperm.ns, fullperm.type, fullperm.instance, fullperm.action);
+                                "Permission [%s] cannot be deleted as it is attached to 1 or more roles.",
+                                fullperm.fullPerm());
             }
         }
 

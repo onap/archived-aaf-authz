@@ -24,6 +24,7 @@ package org.onap.aaf.auth.env;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.cadi.Lur;
@@ -41,9 +42,11 @@ public interface AuthzTrans extends TransStore {
         }
     }
 
-    public abstract AuthzTrans set(HttpServletRequest req);
+    public abstract AuthzTrans set(HttpServletRequest req, HttpServletResponse resp);
 
 	public abstract HttpServletRequest hreq();
+	
+    public abstract HttpServletResponse hresp();
 
     public abstract String user();
 
@@ -80,5 +83,8 @@ public interface AuthzTrans extends TransStore {
     public abstract void setTag(String tag);
     
     public abstract String getTag();
+
+	public abstract void clearCache();
+
 
 }

@@ -50,7 +50,8 @@ public class Home extends Page {
    		//  {"onboard","Onboarding"},
     		{"passwd","Password Management","/gui/passwd"},
     		{"cui","Command Prompt","/gui/cui"},
-    		{"api","AAF API","/gui/api"}
+    		{"api","AAF API","/gui/api"},
+    		{"clear","Clear Preferences","/gui/clear"}
     };
     
 	public Home(final AAF_GUI gui) throws APIException, IOException {

@@ -82,32 +82,36 @@ trans.info().log("Step 1");
                                     arti.getSans().add(s);
                                 }
                             }
-                            // Disallow IP entries, except by special Permission
-                            if (!trans.fish(getPerm(ca,"ip"))) {
-                                boolean ok=true;
-                                if (IPValidator.ip(machine)) {
-                                    ok=false;
-                                }
-                                if (ok) {
-                                    for (String s: arti.getSans()) {
-                                        if (IPValidator.ip(s)) {
-                                            ok=false;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (!ok) {
-                                    hgen.p("Policy Failure: IPs in certificates are only allowed by Exception.");
-                                    return;
-                                }
-                            }
                             
-                            // Disallow Domain based Definitions without exception
-                            if (machine.startsWith("*")) { // Domain set
-                                if (!trans.fish(getPerm(ca, "domain"))) {
-                                    hgen.p("Policy Failure: Domain Artifact Declarations are only allowed by Exception.");
-                                    return;
-                                }
+                            // These checks to not apply to deletions
+                            if(!CMArtiChangeForm.DELETE.equals(trans.get(sCmd, ""))) {
+	                            // Disallow IP entries, except by special Permission
+	                            if (!trans.fish(getPerm(ca,"ip"))) {
+	                                boolean ok=true;
+	                                if (IPValidator.ip(machine)) {
+	                                    ok=false;
+	                                }
+	                                if (ok) {
+	                                    for (String s: arti.getSans()) {
+	                                        if (IPValidator.ip(s)) {
+	                                            ok=false;
+	                                            break;
+	                                        }
+	                                    }
+	                                }
+	                                if (!ok) {
+	                                    hgen.p("Policy Failure: IPs in certificates are only allowed by Exception.");
+	                                    return;
+	                                }
+	                            }
+	                            
+	                            // Disallow Domain based Definitions without exception
+	                            if (machine.startsWith("*")) { // Domain set
+	                                if (!trans.fish(getPerm(ca, "domain"))) {
+	                                    hgen.p("Policy Failure: Domain Artifact Declarations are only allowed by Exception.");
+	                                    return;
+	                                }
+	                            }
                             }
                             
                             arti.setMechid((String)trans.get(sID,null));

@@ -24,15 +24,17 @@
 package org.onap.aaf.auth.cui;
 
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.env.AuthzTrans;
-import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.gui.AAF_GUI;
+import org.onap.aaf.auth.gui.Page;
 import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
 import org.onap.aaf.cadi.http.HTransferSS;
@@ -43,6 +45,7 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 public class CUI extends HttpCode<AuthzTrans, Void> {
     private final AAF_GUI gui;
+    private final static Pattern userPerm = Pattern.compile("perm (create|delete).*@.*:id.*aaf.gui.*");
 
 
     public CUI(AAF_GUI gui) {
@@ -84,6 +87,13 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
             }
             try {
                 aafcli.eval(cmdStr);
+                if(userPerm.matcher(cmdStr).matches()) {
+                	trans.clearCache();
+                	Cookie cookie = new Cookie(Page.AAF_THEME,trans.getProperty(Page.AAF_THEME));
+                	cookie.setMaxAge(-1);
+                	cookie.setComment("Remove AAF GUI Theme");
+                	trans.hresp().addCookie(cookie);
+                }
                 pw.flush();
             } catch (Exception e) {
                 pw.flush();

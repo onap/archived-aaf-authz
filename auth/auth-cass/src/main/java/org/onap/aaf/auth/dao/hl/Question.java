@@ -616,7 +616,7 @@ public class Question {
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user,PermDAO.Data pdd, Access access) {
     	if(pdd.ns.indexOf('@')>-1) {
-	    	if(user.equals(pdd.ns)) {
+	    	if(user.equals(pdd.ns) || isGranted(trans,user,Define.ROOT_NS(),"access",pdd.instance,READ)) {
 	    		NsDAO.Data ndd = new NsDAO.Data();
 	    		ndd.name = user;
 	    		ndd.type = NsDAO.USER;

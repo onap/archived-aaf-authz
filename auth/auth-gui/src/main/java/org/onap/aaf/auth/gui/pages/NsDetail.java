@@ -168,7 +168,7 @@ public class NsDetail extends Page {
                                 }
                                 String historyLink = NsHistory.HREF 
                                         + "?name=" + nsName;
-                                rv.add(new AbsCell[] {new RefCell("See History",historyLink,false)});
+                                rv.add(new AbsCell[] {new RefCell("See History",historyLink,false,"class=greenbutton")});
                             } finally {
                                 tt.done();
                             }

@@ -117,7 +117,7 @@ public class ListUsersContact extends Cmd {
         indent+=4;
         detailLine(sb,indent,"Report Users associated with this Namespace's Roles");
         sb.append('\n');
-        detailLine(sb,indent,"If \"set details=true\" is specified, then all roles are printed ");
+        detailLine(sb,indent,"If \"details\" is specified, then all roles are printed ");
         detailLine(sb,indent,"with the associated users and expiration dates");
         indent-=4;
         api(sb,indent,HttpMethods.GET,"authz/nss/<ns>",Nss.class,true);

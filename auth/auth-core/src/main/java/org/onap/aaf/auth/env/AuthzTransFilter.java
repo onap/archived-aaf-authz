@@ -23,8 +23,8 @@ package org.onap.aaf.auth.env;
 
 import java.security.Principal;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.rserv.TransFilter;
 import org.onap.aaf.cadi.CadiException;
@@ -63,16 +63,15 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
     }
     
     @Override
-    protected AuthzTrans newTrans(HttpServletRequest req) {
+    protected AuthzTrans newTrans(HttpServletRequest req, HttpServletResponse resp) {
         AuthzTrans at = env.newTrans();
         at.setLur(getLur());
-        at.set(req);
+        at.set(req,resp);
         return at;
     }
 
     @Override
-    protected TimeTaken start(AuthzTrans trans, ServletRequest request) {
-        trans.set((HttpServletRequest)request);
+    protected TimeTaken start(AuthzTrans trans) {
         return trans.start("Trans " + //(context==null?"n/a":context.toString()) +
         " IP: " + trans.ip() +
         " Port: " + trans.port()

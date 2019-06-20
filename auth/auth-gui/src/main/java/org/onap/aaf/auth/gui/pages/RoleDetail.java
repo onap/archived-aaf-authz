@@ -266,7 +266,7 @@ public class RoleDetail extends Page {
                         
                 // History 
                 rv.add(new AbsCell[] {
-                        new RefCell("See History",RoleHistory.HREF + "?role=" + pRole,false)
+                        new RefCell("See History",RoleHistory.HREF + "?role=" + pRole,false,"class=greenbutton")
                     });
             } else {
                 rv.add(new AbsCell[]{

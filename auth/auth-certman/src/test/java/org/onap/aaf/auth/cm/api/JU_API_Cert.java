@@ -59,8 +59,9 @@ public class JU_API_Cert {
     public static void setUp() {
         AuthzTrans trans = mock(AuthzTrans.class);
         req = mock(HttpServletRequest.class);
+        res = mock(HttpServletResponse.class);
         trans.setProperty("testTag", "UserValue");
-        trans.set(req);
+        trans.set(req,res);
     }
     
     @Rule

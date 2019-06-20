@@ -214,6 +214,7 @@ public class CredDetail extends Page {
                                 StringWriter buttons = new StringWriter();
                                 HTMLGen hgen = cd.clone(buttons);
                                 hgen.leaf("button","onclick=divVisibility('"+key+"');","class=button").text("Expand").end();
+                                hgen.leaf(HTMLGen.A,"class=button","class=greenbutton","href="+CredHistory.HREF+"?user="+ulm.getKey()).text("History").end();
                                 
                                 StringWriter creds = new StringWriter();
                                 hgen = cd.clone(creds);
@@ -302,8 +303,9 @@ public class CredDetail extends Page {
                                                             Chrono.niceDateStamp(oldest),
                                                             Chrono.niceDateStamp(newest)))
                                                     .end(uRow);
-                                                    
+
                                             }
+                                         
                                         }
                                         hgen.end(utable);
                                     }
@@ -316,6 +318,7 @@ public class CredDetail extends Page {
                                         new TextCell(creds.toString(),STYLE_WIDTH_70)
                                     });
                             }
+
                             for (String missing : lns) {
                                 StringWriter buttons = new StringWriter();
                                 HTMLGen hgen = cd.clone(buttons);

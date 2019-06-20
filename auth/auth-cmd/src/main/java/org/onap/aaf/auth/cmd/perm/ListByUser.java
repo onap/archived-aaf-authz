@@ -57,9 +57,9 @@ public class ListByUser extends Cmd {
                 }
                 if (aafcli.isDetailed()) {
                     if (sb==null) {
-                        sb = new StringBuilder('?');
+                        sb = new StringBuilder("?");
                     } else {
-                        sb.append('&');
+                        sb.append("&");
                     }
                     sb.append("ns");
                 }

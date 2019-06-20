@@ -1,4 +1,4 @@
-. ../../docker/d.props
+. ../../docker/aaf.props
 IMAGE=onap/aaf/aaf_agent:$VERSION
 
 kubectl -n onap run -it --rm aaf-agent-$USER --image=$IMAGE --overrides='

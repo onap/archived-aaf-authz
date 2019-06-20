@@ -60,8 +60,7 @@ import aaf.v2_0.Approvals;
 public class PendingRequestsShow extends Page {
     public static final String HREF = "/gui/myrequests";
     public static final String NAME = "MyRequests";
-    static final String WEBPHONE = "http://webphone.att.com/cgi-bin/webphones.pl?id=";
-    static final String[] FIELDS = new String[] {"as_user"}; // as_user Checked in Display
+    private static final String[] FIELDS = new String[] {"as_user"}; // as_user Checked in Display
     private static final String AS_USER=NAME+".as_user";
     
     public PendingRequestsShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {

@@ -244,11 +244,10 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         try {
             Log4JLogIt logIt = new Log4JLogIt(args, "cm");
             PropAccess propAccess = new PropAccess(logIt,args);
-
             try {
-	            AAF_CM service = new AAF_CM(new AuthzEnv(propAccess));
-	            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-	            jss.start();
+	            new JettyServiceStarter<AuthzEnv,AuthzTrans>(
+	            	new AAF_CM(new AuthzEnv(propAccess)),true)
+	            		.start();
 	        } catch (Exception e) {
 	            propAccess.log(e);
 	        }

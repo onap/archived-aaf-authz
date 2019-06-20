@@ -65,7 +65,7 @@ public class DirectAAFUserPass implements CredVal {
                     } else {
                         trans = env.newTransNoAvg();
                         if (state instanceof HttpServletRequest) {
-                            trans.set((HttpServletRequest)state);
+                            trans.set((HttpServletRequest)state,null);
                             transfer=true;
                         }
                     }

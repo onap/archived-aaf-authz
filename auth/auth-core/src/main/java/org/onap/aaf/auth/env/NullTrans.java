@@ -24,6 +24,7 @@ package org.onap.aaf.auth.env;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.cadi.Lur;
@@ -130,7 +131,7 @@ public class NullTrans implements AuthzTrans {
         return null;
     }
     @Override
-    public AuthzTrans set(HttpServletRequest req) {
+    public AuthzTrans set(HttpServletRequest req, HttpServletResponse resp) {
         return null;
     }
 
@@ -138,7 +139,13 @@ public class NullTrans implements AuthzTrans {
 	public HttpServletRequest hreq() {
 	 	return null;
 	}
+
+    @Override
+	public HttpServletResponse hresp() {
+	 	return null;
+	}
     
+
 	@Override
     public String user() {
         return null;
@@ -242,6 +249,9 @@ public class NullTrans implements AuthzTrans {
 	@Override
 	public String getTag() {
 		return null;
+	}
+	@Override
+	public void clearCache() {
 	}
 }
 

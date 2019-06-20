@@ -49,8 +49,8 @@ public class JU_AbsServiceStarter {
     
     private class AbsServiceStarterStub extends AbsServiceStarter {
 
-        public AbsServiceStarterStub(AbsService service) {
-            super(service);
+        public AbsServiceStarterStub(AbsService service, boolean secure) {
+            super(service,secure);
             // TODO Auto-generated constructor stub
         }
 
@@ -110,7 +110,7 @@ public class JU_AbsServiceStarter {
         prop.setLogLevel(Level.DEBUG);
         absServiceStub = new AbsServiceStub(prop, bEnv);
         
-        absServiceStarterStub = new AbsServiceStarterStub(absServiceStub);
+        absServiceStarterStub = new AbsServiceStarterStub(absServiceStub,true);
     }
     
 //    @Test

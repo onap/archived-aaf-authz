@@ -26,6 +26,9 @@ import static org.onap.aaf.auth.rserv.HttpMethods.POST;
 import static org.onap.aaf.auth.rserv.HttpMethods.PUT;
 
 import javax.servlet.Filter;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cui.CUI;
@@ -40,6 +43,7 @@ import org.onap.aaf.auth.gui.pages.CMArtiChangeAction;
 import org.onap.aaf.auth.gui.pages.CMArtiChangeForm;
 import org.onap.aaf.auth.gui.pages.CMArtifactShow;
 import org.onap.aaf.auth.gui.pages.CredDetail;
+import org.onap.aaf.auth.gui.pages.CredHistory;
 import org.onap.aaf.auth.gui.pages.Home;
 import org.onap.aaf.auth.gui.pages.LoginLanding;
 import org.onap.aaf.auth.gui.pages.LoginLandingAction;
@@ -66,6 +70,7 @@ import org.onap.aaf.auth.gui.pages.UserRoleExtend;
 import org.onap.aaf.auth.gui.pages.UserRoleRemove;
 import org.onap.aaf.auth.gui.pages.WebCommand;
 import org.onap.aaf.auth.rserv.CachingFileAccess;
+import org.onap.aaf.auth.rserv.HttpCode;
 import org.onap.aaf.auth.server.AbsService;
 import org.onap.aaf.auth.server.JettyServiceStarter;
 import org.onap.aaf.auth.server.Log4JLogIt;
@@ -114,19 +119,19 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     protected final String deployedVersion;
     private StaticSlot sThemeWebPath;
     private StaticSlot sDefaultTheme;
-//  public final String theme;
 
 
     public AAF_GUI(final AuthzEnv env) throws Exception {
         super(env.access(), env);
         sDefaultTheme = env.staticSlot(AAF_GUI_THEME);
-        env.put(sDefaultTheme, env.getProperty(AAF_GUI_THEME,"onap"));
+        String defTheme = env.getProperty(AAF_GUI_THEME,"onap");
+        env.put(sDefaultTheme, defTheme);
         
         sThemeWebPath = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
         if(env.get(sThemeWebPath)==null) {
         	env.put(sThemeWebPath,"theme");
         }
-
+        
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
         deployedVersion = app_version;
 
@@ -157,8 +162,9 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         // MyNameSpace
         final Page myNamespaces = new Display(this, GET, new NssShow(this, start)).page();
         Page nsDetail  = new Display(this, GET, new NsDetail(this, start, myNamespaces)).page();
-                              new Display(this, GET, new NsHistory(this, start,myNamespaces,nsDetail));
+                         new Display(this, GET, new NsHistory(this, start,myNamespaces,nsDetail));
         Page crdDetail = new Display(this, GET, new CredDetail(this, start, myNamespaces, nsDetail)).page();
+                         new Display(this, GET, new CredHistory(this,start,myNamespaces,nsDetail,crdDetail));
         Page artiShow  = new Display(this, GET, new CMArtifactShow(this, start, myNamespaces, nsDetail, crdDetail)).page();
         Page artiCForm = new Display(this, GET, new CMArtiChangeForm(this, start, myNamespaces, nsDetail, crdDetail,artiShow)).page();
                          new Display(this, POST, new CMArtiChangeAction(this, start,artiShow,artiCForm));
@@ -203,6 +209,23 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
                                   
         // Command line Mechanism
         route(env, PUT, "/gui/cui", new CUI(this),"text/plain;charset=utf-8","*/*");
+        
+        route(env, GET, "/gui/clear", new HttpCode<AuthzTrans, Void>(null, "Clear"){
+			@Override
+			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+				trans.clearCache();
+				Cookie cookies[] = req.getCookies();
+				if(cookies!=null) {
+	        		for(Cookie c : cookies) {
+	        			if(c.getName().startsWith("aaf.gui.")) {
+	        				c.setMaxAge(0);
+	        				resp.addCookie(c);
+	        			}
+	        		}
+				}
+				resp.sendRedirect("/gui/home");
+			}
+        }, "text/plain;charset=utf-8","*/*");
         
         ///////////////////////  
         // WebContent Handler
@@ -262,9 +285,13 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
             Log4JLogIt logIt = new Log4JLogIt(args, "gui");
             PropAccess propAccess = new PropAccess(logIt,args);
 
-            AAF_GUI service = new AAF_GUI(new AuthzEnv(propAccess));
-            JettyServiceStarter<AuthzEnv,AuthzTrans> jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(service);
-            jss.start();
+            try {
+                new JettyServiceStarter<AuthzEnv,AuthzTrans>(
+                	new AAF_GUI(new AuthzEnv(propAccess)),true)
+                		.start();
+	        } catch (Exception e) {
+	            propAccess.log(e);
+	        }
         } catch (Exception e) {
             e.printStackTrace();
         }

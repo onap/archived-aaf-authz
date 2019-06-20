@@ -54,23 +54,11 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 
 public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> extends AbsServiceStarter<ENV,TRANS> {
-    private boolean secure;
 
-    public JettyServiceStarter(final AbsService<ENV,TRANS> service) throws OrganizationException {
-        super(service);
-        secure = true;
+    public JettyServiceStarter(final AbsService<ENV,TRANS> service, boolean secure) throws OrganizationException {
+        super(service, secure);
     }
     
-    /**
-     * Specifically set this Service starter to Insecure (HTTP) Mode. 
-     * @return
-     */
-    public JettyServiceStarter<ENV,TRANS> insecure() {
-        secure = false;
-        return this;
-    }
-
-
     @Override
     public void _propertyAdjustment() {
 //        System.setProperty("com.sun.management.jmxremote.port", "8081");

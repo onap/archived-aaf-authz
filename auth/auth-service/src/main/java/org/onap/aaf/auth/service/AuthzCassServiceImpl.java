@@ -86,6 +86,7 @@ import org.onap.aaf.auth.service.mapper.Mapper.API;
 import org.onap.aaf.auth.service.validation.ServiceValidator;
 import org.onap.aaf.auth.validation.Validator;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
+import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
@@ -2311,17 +2312,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         @Override
         public Result<?> mayChange() {
             // User can change himself (but not create)
-            if (trans.user().equals(cred.id)) {
-                return Result.ok();
-            }
             if (nsd==null) {
                 nsd = ques.validNSOfDomain(trans, cred.id);
             }
             // Get the Namespace
             if (nsd.isOK()) {
-                if (ques.mayUser(trans, trans.user(), nsd.value,Access.write).isOK()) {
-                    return Result.ok();
-                }
                 String user[] = Split.split('.',trans.user());
                 if (user.length>2) {
                     String company = user[user.length-1] + '.' + user[user.length-2];
@@ -3589,7 +3584,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return Result.ok(users);
     }
 
-    /***********************************
+/***********************************
  * HISTORY 
  ***********************************/    
     @Override
@@ -3682,8 +3677,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<HISTORY> getHistoryByNS(AuthzTrans trans, String ns, int[] yyyymm, final int sort) {
         final Validator v = new ServiceValidator();
-        if (v.nullOrBlank("NS",ns)
-            .err()) { 
+        if (v.nullOrBlank("NS",ns).err()) { 
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
@@ -3697,6 +3691,22 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, ns, "ns", yyyymm);
+        if (resp.notOK()) {
+            return Result.err(resp);
+        }
+        return mapper.history(trans, resp.value,sort);
+    }
+
+    @Override
+    public Result<HISTORY> getHistoryBySubject(AuthzTrans trans, String subject, String target, int[] yyyymm, final int sort) {
+    	NsDAO.Data ndd = new NsDAO.Data();
+    	ndd.name = FQI.reverseDomain(subject);
+        Result<Data> rnd = ques.mayUser(trans, trans.user(), ndd, Access.read);
+        if (rnd.notOK()) {
+            return Result.err(rnd);    
+        }
+
+        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, subject, target, yyyymm);
         if (resp.notOK()) {
             return Result.err(resp);
         }

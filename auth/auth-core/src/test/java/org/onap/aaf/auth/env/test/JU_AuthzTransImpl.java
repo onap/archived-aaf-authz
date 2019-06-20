@@ -66,11 +66,12 @@ public class JU_AuthzTransImpl {
     public void setUp(){
         authzTransImpl = new AuthzTransImpl(authzEnvMock);
         req = mock(HttpServletRequest.class);
-        authzTransImpl.set(req);
+        res = mock(HttpServletResponse.class);
+        authzTransImpl.set(req,res);
         when(req.getParameter("request")).thenReturn("NotNull");
-        authzTransImpl.set(req);
+        authzTransImpl.set(req,res);
         when(req.getParameter("request")).thenReturn("");
-        authzTransImpl.set(req);    
+        authzTransImpl.set(req,res);    
     }
     
     @Test

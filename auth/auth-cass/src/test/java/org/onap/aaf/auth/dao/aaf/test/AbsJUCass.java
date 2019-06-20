@@ -104,9 +104,6 @@ public class AbsJUCass {
         
         // Load special data here
         
-        // WebPhone
-        env.setProperty("java.naming.provider.url","ldap://ldap.webphone.att.com:389");
-        env.setProperty("com.sun.jndi.ldap.connect.pool","true");
         
         iterations = 0;
         
