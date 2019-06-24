@@ -1,0 +1,9 @@
+Code-Review+2: Jonathan Gathman <jonathan.gathman@att.com>
+Verified+1: Jonathan Gathman <jonathan.gathman@att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Sai Gandham <sai.gandham@att.com>
+Submitted-by: Sai Gandham <sai.gandham@att.com>
+Submitted-at: Mon, 24 Jun 2019 14:07:06 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aaf/authz/+/90384
+Project: aaf/authz
+Branch: refs/heads/dublin
