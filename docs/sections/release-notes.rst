@@ -5,7 +5,7 @@
 Release Notes
 =============
 
-Version: 2.1.13 (Dublin, 3.1.0-ONAP)
+Version: 2.1.13 (Dublin, 4.0.0-ONAP)
 ---------------------------------------
 
 :Release Date: 2019-06-06
