@@ -297,6 +297,7 @@ public class CMService {
             CSRMeta csrMeta;
             try {
                 csrMeta = BCFactory.createCSRMeta(ca, req.value.mechid, email, fqdns);
+                csrMeta.environment(ca.getEnv());
                 X509andChain x509ac = ca.sign(trans, csrMeta);
                 if (x509ac == null) {
                     return Result.err(Result.ERR_ActionNotCompleted, "x509 Certificate not signed by CA");

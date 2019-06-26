@@ -325,13 +325,22 @@ public class Question {
         return permDAO.readByType(trans, nss.value.ns, nss.value.name);
     }
 
-    public Result<List<PermDAO.Data>> getPermsByName(AuthzTrans trans,
-            String type, String instance, String action) {
-        Result<NsSplit> nss = deriveNsSplit(trans, type);
-        if (nss.notOK()) {
-            return Result.err(nss);
-        }
-        return permDAO.read(trans, nss.value.ns, nss.value.name, instance,action);
+    public Result<List<PermDAO.Data>> getPermsByName(AuthzTrans trans, String type, String instance, String action) {
+    	if(type.indexOf('@') >= 0) {
+    		int colon = type.indexOf(':');
+    		if(colon>=0) {
+    			return permDAO.read(trans, type.substring(0, colon),type.substring(colon+1), instance,action);
+    		} else {
+    			return Result.err(Result.ERR_BadData, "%s is malformed",type);
+    		}
+    	} else {
+	        Result<NsSplit> nss = deriveNsSplit(trans, type);
+	        if (nss.notOK()) {
+	            return Result.err(nss);
+	        }
+	        
+	        return permDAO.read(trans, nss.value.ns, nss.value.name, instance,action);
+    	}
     }
 
     public Result<List<PermDAO.Data>> getPermsByRole(AuthzTrans trans, String role, boolean lookup) {
@@ -377,8 +386,14 @@ public class Question {
         return Result.ok(perms);
     }
 
-    public Result<List<RoleDAO.Data>> getRolesByName(AuthzTrans trans,
-            String role) {
+    public Result<List<RoleDAO.Data>> getRolesByName(AuthzTrans trans, String role) {
+    	if(role.startsWith(trans.user()) ) {
+    		if(role.endsWith(":user")) {
+    			return roleDAO.read(trans,trans.user(), "user");
+    		} else {
+    			return Result.err(Result.ERR_BadData,"%s is a badly formatted role",role);
+    		}
+    	}
         Result<NsSplit> nss = deriveNsSplit(trans, role);
         if (nss.notOK()) {
             return Result.err(nss);
@@ -415,12 +430,7 @@ public class Question {
         if (r.isOKhasData()) {
             return Result.ok(r.value.get(0));
         } else {
-            int dot;
-            if (child==null) {
-                return Result.err(Status.ERR_NsNotFound, "No Namespace");
-            } else {
-                dot = child.lastIndexOf('.');
-            }
+            int dot = child.lastIndexOf('.');
             if (dot < 0) {
                 return Result.err(Status.ERR_NsNotFound, "No Namespace for [%s]", child);
             } else {
@@ -561,6 +571,9 @@ public class Question {
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user, RoleDAO.Data rdd, Access access) {
+    	if(trans.user().equals(rdd.ns)) {
+    		return Result.ok((NsDAO.Data)null);
+    	}
         Result<NsDAO.Data> rnsd = deriveNs(trans, rdd.ns);
         if (rnsd.isOK()) {
             return mayUser(trans, user, rnsd.value, rdd, access);

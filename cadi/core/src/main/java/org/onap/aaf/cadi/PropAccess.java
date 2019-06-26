@@ -42,7 +42,7 @@ import org.onap.aaf.cadi.util.Split;
 
 public class PropAccess implements Access {
     // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
-    private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private final static SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public static final Level DEFAULT = Level.AUDIT;
     
@@ -101,7 +101,7 @@ public class PropAccess implements Access {
         init(nprops);
     }
     
-    protected void init(Properties p) {
+    protected synchronized void init(Properties p) {
         // Make sure these two are set before any changes in Logging
         name = "cadi";
         level=DEFAULT.maskOf();
@@ -262,6 +262,10 @@ public class PropAccess implements Access {
         return buildMsg(name,iso8601,level,elements);
     }
 
+    public static StringBuilder buildMsg(final String name, Level level, Object[] elements) {
+    	return buildMsg(name,iso8601,level,elements);
+    }
+    
     public static StringBuilder buildMsg(final String name, final DateFormat sdf, Level level, Object[] elements) {
     	final StringBuilder sb;
         int end = elements.length;

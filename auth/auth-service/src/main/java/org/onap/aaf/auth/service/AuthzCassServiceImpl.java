@@ -826,7 +826,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 				rdd.ns = pdd.ns;
 				rdd.name = "user";
 
-				pdd.roles(true).add(rdd.encode());
+				pdd.roles(true).add(rdd.fullName());
 				Result<PermDAO.Data> rpdd = permDAO.create(trans, pdd);
 				if(rpdd.notOK()) {
 					return Result.err(rpdd);
@@ -3087,7 +3087,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             final UserRoleDAO.Data userRole = urr.value;
             
             final ServiceValidator v = new ServiceValidator();
-            if (v.user_role(userRole).err() ||
+            if (v.user_role(trans.user(),userRole).err() ||
                v.user(trans.org(), userRole.user).err()) {
                 return Result.err(Status.ERR_BadData,v.errs());
             }
@@ -3103,6 +3103,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     private Result<NsDAO.Data> nsd;
                     @Override
                     public Result<?> mayChange() {
+                    	if(urr.value.role.startsWith(urr.value.user)) {
+                    		return Result.ok((NsDAO.Data)null);
+                    	}
                         if (nsd==null) {
                             RoleDAO.Data r = RoleDAO.Data.decode(userRole);
                             nsd = ques.mayUser(trans, trans.user(), r, Access.write);
@@ -3110,15 +3113,24 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         return nsd;
                     }
                 });
-            Result<NsDAO.Data> nsr = ques.deriveNs(trans, userRole.role);
-            if (nsr.notOKorIsEmpty()) {
-                return Result.err(nsr);
+            
+            NsDAO.Data ndd;
+            if(userRole.role.startsWith(userRole.user)) {
+            	userRole.ns=userRole.user;
+            	userRole.rname="user";
+            	ndd = null;
+            } else {
+	            Result<NsDAO.Data> nsr = ques.deriveNs(trans, userRole.role);
+	            if (nsr.notOK()) {
+	                return Result.err(nsr);
+	            }
+	            ndd = nsr.value;
             }
 
             switch(fd.status) {
                 case OK:
                     Result<String> rfc = func.createFuture(trans, fd.value, userRole.user+'|'+userRole.ns + '.' + userRole.rname, 
-                            userRole.user, nsr.value, FUTURE_OP.C);
+                            userRole.user, ndd, FUTURE_OP.C);
                     if (rfc.isOK()) {
                         return Result.err(Status.ACC_Future, "UserRole [%s - %s.%s] is saved for future processing",
                                 userRole.user,
@@ -3658,16 +3670,21 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         // May user see Namespace of Permission (since it's only one piece... we can't check for "is permission part of")
-        Result<NsDAO.Data> rnd = ques.deriveNs(trans,type);
-        if (rnd.notOK()) {
-            return Result.err(rnd);
+        Result<List<HistoryDAO.Data>> resp;
+        if(type.startsWith(trans.user())) {
+        	resp = ques.historyDAO().readBySubject(trans, type, "perm", yyyymm);
+        } else {
+            Result<NsDAO.Data> rnd = ques.deriveNs(trans,type);
+	        if (rnd.notOK()) {
+	            return Result.err(rnd);
+	        }
+	        rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
+	        if (rnd.notOK()) {
+	            return Result.err(rnd);    
+	        }
+	        resp = ques.historyDAO().readBySubject(trans, type, "perm", yyyymm);
         }
         
-        rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
-        if (rnd.notOK()) {
-            return Result.err(rnd);    
-        }
-        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, type, "perm", yyyymm);
         if (resp.notOK()) {
             return Result.err(resp);
         }

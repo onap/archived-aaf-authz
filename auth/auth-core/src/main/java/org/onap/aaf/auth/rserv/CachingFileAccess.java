@@ -131,6 +131,12 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         typeMap.put("props", "text/plain");
         typeMap.put("jks", "application/octet-stream");
         
+        // Fonts
+        typeMap.put("ttf","font/ttf");
+        typeMap.put("woff","font/woff");
+        typeMap.put("woff2","font/woff2");
+
+        
         timer = new Timer("Caching Cleanup",true);
         timer.schedule(new Cleanup(content,500),60000,60000);
         

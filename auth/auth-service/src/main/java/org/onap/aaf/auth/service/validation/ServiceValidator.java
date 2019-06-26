@@ -86,7 +86,7 @@ public class ServiceValidator extends Validator {
         }
         return this;
     }
-
+    
     public ServiceValidator role(RoleDAO.Data pd) {
         if (pd==null) {
             msg("Role Data is null.");
@@ -219,6 +219,16 @@ public class ServiceValidator extends Validator {
         return this;
     }
 
+    public ServiceValidator user_role(String user, UserRoleDAO.Data urdd) {
+        role(user,urdd.role);
+        if(!urdd.role.startsWith(user)) { 
+	        nullOrBlank("UserRole.ns",urdd.ns);
+	        nullOrBlank("UserRole.rname",urdd.rname);
+        }
+        return this;
+    }
+
+    
     public ServiceValidator user_role(UserRoleDAO.Data urdd) {
         if (urdd==null) {
             msg("UserRole is null");

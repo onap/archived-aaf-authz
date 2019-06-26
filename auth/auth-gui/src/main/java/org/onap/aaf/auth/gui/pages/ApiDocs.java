@@ -43,6 +43,7 @@ import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
@@ -82,7 +83,7 @@ public class ApiDocs extends Page {
 
         public Preamble(AAF_GUI gui) {
             super(false, "preamble");
-            fsUrl = gui.access.getProperty("fs_url", "");
+            fsUrl = gui.access.getProperty(Config.AAF_URL_FS, "/theme");
         }
 
         @Override

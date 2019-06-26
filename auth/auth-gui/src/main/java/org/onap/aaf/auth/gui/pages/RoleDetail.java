@@ -106,7 +106,11 @@ public class RoleDetail extends Page {
         public void prefix(final AAF_GUI gui, final AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) {
             final String pRole = trans.get(sRoleName, null);
             Validator v = new Validator();
-            v.role(pRole);
+            if(!v.isNull("Role",pRole).err()) {
+            	if(!pRole.startsWith(trans.user())) {
+            		v.role(pRole);
+            	}
+            }
             if (v.err()) {
                 trans.warn().printf("Error in PermDetail Request: %s", v.errs());
                 return;

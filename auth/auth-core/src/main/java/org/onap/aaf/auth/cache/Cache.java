@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.Trans;
@@ -153,7 +152,7 @@ public class Cache<TRANS extends Trans, DATA> {
             }
             
             if (count>0) {
-                env.info().log(Level.INFO, "Cache removed",count,"expired Cached Elements out of", total);
+                env.debug().log("Cache removed",count,"expired Cached Elements out of", total);
             }
 
             // If High (total) is reached during this period, increase the number of expired services removed for next time.

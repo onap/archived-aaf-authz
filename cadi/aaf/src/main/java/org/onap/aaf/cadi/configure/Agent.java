@@ -86,7 +86,8 @@ import locate.v1_1.Configuration;
 import locate.v1_1.Configuration.Props;
 
 public class Agent {
-    private static final String HASHES = "################################################################";
+    private static final String AGENT_LOAD_URLS = "Agent:loadURLs";
+	private static final String HASHES = "################################################################";
     private static final String PRINT = "print";
     private static final String FILE = "file";
     public static final String PKCS12 = "pkcs12";
@@ -311,7 +312,7 @@ public class Agent {
 	    	String dot_le = access.getProperty(Config.AAF_LOCATOR_CONTAINER,null);
 	    	dot_le=dot_le==null?"":'.'+dot_le;
 	    	String version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
-	        for(String u : new String[] {"aaf","locate","oauth","cm","gui","fs","hello","token","introspect"}) {
+	        for(String u : new String[] {"locate","aaf","oauth","cm","gui","fs","hello","token","introspect"}) {
 	        	String tag;
 	        	String append=null;
 	        	switch(u) {
@@ -336,12 +337,14 @@ public class Agent {
 		        	} else {
 		        		lhost=Config.AAF_LOCATE_URL_TAG;
 		        	}
-		        	value = rph.replacements("Agent:loadURLs",
+		        	value = rph.replacements(AGENT_LOAD_URLS,
 		        			proto + lhost + "/%CNS.%AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
 		        			null,dot_le);
 		        	if(append!=null) {
 		        		value+=append;
 		        	}
+	        	} else {
+	        		value = rph.replacements(AGENT_LOAD_URLS, value,null,dot_le);
 	        	}
 	        	rv.put(tag, value);
 	        };

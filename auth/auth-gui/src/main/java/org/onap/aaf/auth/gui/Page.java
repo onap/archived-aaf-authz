@@ -435,7 +435,7 @@ public class Page extends HTMLCacheGen {
 	                                		selected = false;
 	                                	}
 	                                	xgen.incr(HTMLGen.LI,selected?"class=selected":"")
-	                                	    .incr(HTMLGen.A, "href="+mi[0])
+	                                	    .incr(HTMLGen.A, "href="+mi[2])
 	                                	    .text(mi[1])
 	                                	    .end(2);
 	                                }

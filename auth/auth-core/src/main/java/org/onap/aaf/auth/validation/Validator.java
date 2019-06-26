@@ -143,6 +143,21 @@ public class Validator {
         return this;
     }
 
+    public final Validator permTypeWithUser(String user, String type) {
+        if (type==null) {
+            msg("Perm Type is null");
+        } else if (user==null) {
+            msg("User is null");
+        } else {
+        	if(!(type.startsWith(user) && type.endsWith(":id"))) {
+        	  if(nob(type,NAME_CHARS)) {
+	            msg("Perm Type [" + type + "] is invalid.");
+        	  }
+        	}
+        }
+        return this;
+    }
+    
     public final Validator permType(String type, String ns) {
         if (type==null) {
             msg("Perm Type is null");
@@ -168,6 +183,26 @@ public class Validator {
         }
         return this;
     }
+
+    public final Validator role(String user, String role) {
+    	if(role==null) {
+    		msg("Role is null");
+    	}
+    	if(user==null) {
+    		msg("User is null");    		
+    	}
+    	if(!err()) {
+    		if(role.startsWith(user) && role.endsWith(":user")) {
+    			if(!(role.length() == user.length() + 5)) {
+    	            msg("Role [" + role + "] is invalid.");
+    			}
+    		} else if (nob(role, NAME_CHARS)) {
+	            msg("Role [" + role + "] is invalid.");
+	        }
+    	}
+        return this;
+    }
+
 
     public final Validator role(String role) {
         if (nob(role, NAME_CHARS)) {

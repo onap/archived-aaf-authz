@@ -47,6 +47,7 @@ public abstract class CA {
     public static final String ISSUING_CA = "Issuing CA";
     public static final String CM_CA_PREFIX = "cm_ca.";
     public static final String CM_CA_BASE_SUBJECT = ".baseSubject";
+    public static final String CM_CA_ENV_TAG = ".env_tag";
     protected static final String CM_PUBLIC_DIR = "cm_public_dir";
     private static final String CM_TRUST_CAS = "cm_trust_cas";
     protected static final String CM_BACKUP_CAS = "cm_backup_cas";
@@ -63,12 +64,15 @@ public abstract class CA {
     private String[] trustedCAs;
     private String[] caIssuerDNs;
     private List<RDN> rdns;
+    private final boolean env_tag;
 
 
     protected CA(Access access, String caName, String env) throws IOException, CertException {
         trustedCAs = new String[4]; // starting array
         this.name = caName;
         this.env = env;
+        this.env_tag = env==null || env.isEmpty()?false: 
+        		Boolean.parseBoolean(access.getProperty(CM_CA_ENV_TAG, Boolean.FALSE.toString()));
         permNS = CM_CA_PREFIX + name;
         permType = access.getProperty(permNS + ".perm_type",null);
         if (permType==null) {
@@ -187,6 +191,10 @@ public abstract class CA {
     
     public String[] getTrustedCAs() {
         return trustedCAs;
+    }
+    
+    public boolean shouldAddEnvTag() {
+    	return env_tag; 
     }
     
     public String getEnv() {

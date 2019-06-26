@@ -88,7 +88,7 @@ public class PermDetail extends Page {
             final String pInstance = trans.get(instance, null);
             final String pAction = trans.get(action, null);
             Validator v = new Validator();
-            v.permType(pType)
+            v.permTypeWithUser(trans.user(),pType)
              .permInstance(pInstance)
              .permAction(pAction);
             

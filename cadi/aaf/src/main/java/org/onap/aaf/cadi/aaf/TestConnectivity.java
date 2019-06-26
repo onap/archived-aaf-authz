@@ -76,7 +76,7 @@ public class TestConnectivity {
                 List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
                 /////////
                 String directAAFURL = aaf_urls.get(Config.AAF_URL);
-                if(directAAFURL!=null && !directAAFURL.contains("/locate/")) {
+                if(directAAFURL!=null && !directAAFURL.contains("/locate/") || !directAAFURL.contains("AAF_LOCATE_URL")) {
                     print(true,"Test Connections by non-located aaf_url");
                     Locator<URI> locator = new SingleEndpointLocator(directAAFURL);
                     connectTest(locator,new URI(directAAFURL));
