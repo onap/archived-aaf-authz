@@ -185,13 +185,16 @@ public class Validator {
     }
 
     public final Validator role(String user, String role) {
+    	boolean quit = false;
     	if(role==null) {
     		msg("Role is null");
+    		quit = true;
     	}
     	if(user==null) {
-    		msg("User is null");    		
+    		msg("User is null");
+    		quit = true;
     	}
-    	if(!err()) {
+    	if(!quit) {
     		if(role.startsWith(user) && role.endsWith(":user")) {
     			if(!(role.length() == user.length() + 5)) {
     	            msg("Role [" + role + "] is invalid.");

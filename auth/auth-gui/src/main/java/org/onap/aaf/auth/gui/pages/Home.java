@@ -37,22 +37,6 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class Home extends Page {
     public static final String HREF = "/gui/home";
-    /*
-     *      Relative path, Menu Name, Full Path
-     */
-    public static final String[][] MENU_ITEMS = new String[][] {
-    		{"myperms","My Permissions","/gui/myperms"},
-    		{"myroles","My Roles","/gui/myroles"},
-    		{"ns","My Namespaces","/gui/ns"},
-    		{"approve","My Approvals","/gui/approve"},
-    		{"myrequests","My Pending Requests","/gui/myrequests"},
-    	            // Enable later
-   		//  {"onboard","Onboarding"},
-    		{"passwd","Password Management","/gui/passwd"},
-    		{"cui","Command Prompt","/gui/cui"},
-    		{"api","AAF API","/gui/api"},
-    		{"clear","Clear Preferences","/gui/clear"}
-    };
     
 	public Home(final AAF_GUI gui) throws APIException, IOException {
         super(gui.env,"Home",HREF, NO_FIELDS, new NamedCode(false,"content") {

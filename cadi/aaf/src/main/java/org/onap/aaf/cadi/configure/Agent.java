@@ -393,6 +393,9 @@ public class Agent {
     private static String fqi(Deque<String> cmds) {
         if (cmds.size()<1) {
             String alias = env.getProperty(Config.CADI_ALIAS);
+            if(alias==null) {
+            	alias = env.getProperty(Config.AAF_APPID);
+            }
             return alias!=null?alias:AAFSSO.cons.readLine("AppID: ");
         }
         return cmds.removeFirst();    

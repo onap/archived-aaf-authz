@@ -92,6 +92,23 @@ public class Page extends HTMLCacheGen {
 
     // Note: Only access is synchronized in "getPerm"
     private final static Map<String,Map<String,Permission>> perms = new HashMap<>();
+    
+    /*
+     *      Relative path, Menu Name, Full Path
+     */
+    protected static final String[][] MENU_ITEMS = new String[][] {
+    		{"myperms","My Permissions","/gui/myperms"},
+    		{"myroles","My Roles","/gui/myroles"},
+    		{"ns","My Namespaces","/gui/ns"},
+    		{"approve","My Approvals","/gui/approve"},
+    		{"myrequests","My Pending Requests","/gui/myrequests"},
+    	            // Enable later
+   		//  {"onboard","Onboarding"},
+    		{"passwd","Password Management","/gui/passwd"},
+    		{"cui","Command Prompt","/gui/cui"},
+    		{"api","AAF API","/gui/api"},
+    		{"clear","Clear Preferences","/gui/clear"}
+    };
 
     public String name() {
         return bcName;
@@ -426,7 +443,7 @@ public class Page extends HTMLCacheGen {
 	                            		.text("Home")
 	                            		.end(2);
 	                                boolean noSelection = !selected;
-	                                for(String[] mi : Home.MENU_ITEMS) {
+	                                for(String[] mi : MENU_ITEMS) {
 	                                	//selected = trans.path().endsWith(mi[0]);
 	                                	if(noSelection) {
 	                                		selected = isSelected(trans.path(),mi[2]);

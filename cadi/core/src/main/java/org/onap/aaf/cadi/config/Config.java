@@ -565,7 +565,7 @@ public class Config {
             }
             access.log(Level.INIT, sb);
 
-            Locator<URI> locator = loadLocator(si, logProp(rph, Config.getAAFLocateUrl(access), null));
+            Locator<URI> locator = loadLocator(si, aafURL);
             
             taf = new HttpEpiTaf(access,locator, tc, htarray); // ok to pass locator == null
             String level = logProp(access, CADI_LOGLEVEL, null);
@@ -850,6 +850,21 @@ public class Config {
         if (_url==null) {
             access.log(Level.INIT,"No URL passed to 'loadLocator'. Disabled");
         } else {
+        	try {
+    			Class<?> aalCls = Class.forName("org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator");
+    			Method aalMth = aalCls.getMethod("create", String.class,String.class);
+    			int colon = _url.lastIndexOf(':');
+    			if(colon>=0) {
+    				String version = _url.substring(colon+1);
+    				int slash = _url.lastIndexOf('/',colon);
+    				if(slash>=0) {
+    					Object aal = aalMth.invoke(null/*static*/, _url.substring(slash+1, colon),version);
+    					return (Locator<URI>)aal;
+    				}
+    			}
+    		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+    			access.log(Level.DEBUG, "Configured AbsAAFLocator not found.  Continuing Locator creation");
+    		}
 //            String url = _url.replace("/AAF_NS.", "/%C%CID%AAF_NS.");
 //            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
         	String url;
