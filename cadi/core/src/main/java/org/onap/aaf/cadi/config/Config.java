@@ -855,15 +855,30 @@ public class Config {
     			Method aalMth = aalCls.getMethod("create", String.class,String.class);
     			int colon = _url.lastIndexOf(':');
     			if(colon>=0) {
-    				String version = _url.substring(colon+1);
-    				int slash = _url.lastIndexOf('/',colon);
+    				int slash = _url.indexOf('/',colon);
+    				String version;
+    				if(slash<0) {
+    					version = _url.substring(colon+1);
+    				} else {
+    					version = _url.substring(colon+1,slash);
+    				}
+    				slash = _url.lastIndexOf('/',colon);
     				if(slash>=0) {
     					Object aal = aalMth.invoke(null/*static*/, _url.substring(slash+1, colon),version);
     					return (Locator<URI>)aal;
     				}
     			}
     		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-    			access.log(Level.DEBUG, "Configured AbsAAFLocator not found.  Continuing Locator creation");
+    			String msg;
+    			char quote;
+    			if(e.getCause()!=null) {
+    				msg=e.getCause().getMessage();
+    				quote='"';
+    			} else {
+    				msg = "-";
+    				quote=' ';
+    			}
+    			access.printf(Level.DEBUG, "Configured AbsAAFLocator not found%c%s%cContinuing Locator creation ",quote,msg,quote);
     		}
 //            String url = _url.replace("/AAF_NS.", "/%C%CID%AAF_NS.");
 //            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);

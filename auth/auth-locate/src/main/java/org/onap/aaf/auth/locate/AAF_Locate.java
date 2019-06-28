@@ -199,8 +199,8 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 			} catch (UnknownHostException | CadiException e) {
 				throw new LocatorException(e);
 			}
-            gui_locator = AbsAAFLocator.create(rph.getPublicEntryName("gui", rph.default_container),
-            	Config.AAF_DEFAULT_API_VERSION);
+        	String url = rph.getPublicEntryName("gui", rph.default_container);
+            gui_locator = AbsAAFLocator.create(url,Config.AAF_DEFAULT_API_VERSION);
         }
         return gui_locator;
     }

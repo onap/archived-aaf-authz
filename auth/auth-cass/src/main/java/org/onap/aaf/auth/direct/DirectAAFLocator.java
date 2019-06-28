@@ -73,9 +73,11 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
         }
         
         try {
-        	String aaf_url = access.getProperty(Config.AAF_URL, null);
-        	if(aaf_url==null) {
-        		aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+"/%NS."+name;
+        	String aaf_url;
+        	if(name.indexOf('.')>=0) {
+            	aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+'/'+name+':'+version;
+        	} else {
+            	aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+"/%NS."+name+':'+version;
         	}
     		RegistrationPropHolder rph = new RegistrationPropHolder(access,0);
         	aaf_url = rph.replacements(getClass().getSimpleName(),aaf_url, null,null);

@@ -263,9 +263,10 @@ public class RegistrationPropHolder {
 		if(value.indexOf("%NS")>=0) {
 			str = getNS(dot_le);
 			if(str==null || str.isEmpty()) {
-				value = value.replace("%NS"+'.', str);
+				value = value.replace("%NS"+'.', "");
+			} else {
+				value = value.replace("%NS", str);
 			}
-			value = value.replace("%NS", str);
 		}
 
 		// aaf_root_ns

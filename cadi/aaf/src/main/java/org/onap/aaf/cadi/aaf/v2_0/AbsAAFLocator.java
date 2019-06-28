@@ -122,6 +122,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     }
         
     public static Locator<URI> create(final String name, final String version) throws LocatorException {
+    	if(locatorCreator==null) {
+    		throw new LocatorException("LocatorCreator is not set");
+    	}
         return locatorCreator.create(name, version);
     }
 
