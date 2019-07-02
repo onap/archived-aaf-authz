@@ -44,7 +44,9 @@ import static org.onap.aaf.auth.layer.Result.OK;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -172,9 +174,15 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (result.variables==null) {
             detail = new String[1];
         } else {
-            int l = result.variables.length;
-            detail=new String[l+1];
-            System.arraycopy(result.variables, 0, detail, 1, l);
+        	List<String> dlist = new ArrayList<String>();
+        	String os;
+        	for(Object s : result.variables) {
+        		if(s!=null && (os=s.toString()).length()>0) {
+        			dlist.add(os);
+        		}
+        	}
+        	detail = new String[dlist.size()];
+        	dlist.toArray(detail);
         }
         //int httpstatus;
         
@@ -280,10 +288,6 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 break;
             case ERR_ChoiceNeeded:
                 msgId = "SVC1300";
-                detail = new String[result.variables.length];
-                for(int i=0; i<result.variables.length;++i) {
-                	detail[i]=result.variables[i].toString();
-                }
                 response.setStatus(/*httpstatus=*/300);
                 break;
             case ERR_Backend: 
@@ -1623,7 +1627,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 Question.logEncryptTrace(trans,data.asString());
             }
 
-            return service.changeUserCred(trans, data.asObject());
+            return service.resetUserCred(trans, data.asObject());
         } catch (APIException e) {
             trans.error().log(e,"Bad Input data");
             return Result.err(Status.ERR_BadData, e.getLocalizedMessage());

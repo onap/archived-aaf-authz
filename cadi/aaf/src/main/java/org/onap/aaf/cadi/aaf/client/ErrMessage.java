@@ -88,9 +88,13 @@ public class ErrMessage {
     public StringBuilder toMsg(StringBuilder sb, Error err) {
         sb.append(err.getMessageId());
         sb.append(' ');
-        String[] vars = new String[err.getVariables().size()];
+        Object[] vars = new String[err.getVariables().size()];
         err.getVariables().toArray(vars);
         Vars.convert(sb, err.getText(),vars);
         return sb;
+    }
+    
+    public Error getError(Future<?> future) throws APIException {
+    	return errDF.newData().in(TYPE.JSON).load(future.body()).asObject();
     }
 }

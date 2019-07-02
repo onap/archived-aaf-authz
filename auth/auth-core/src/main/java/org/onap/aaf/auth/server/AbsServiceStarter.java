@@ -128,6 +128,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 			_start(service);
 		} catch (Exception e) {
 			e.printStackTrace();
+			shutdown();
 		}
 	}
 

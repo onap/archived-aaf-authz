@@ -94,6 +94,10 @@ public class AAFcli {
         this(access,new AuthzEnv(access.getProperties()),wtr,hman, si,ss);
     }
 
+    public AuthzEnv env() {
+    	return env;
+    }
+    
     public AAFcli(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
         this.env = env;
         this.access = access;
@@ -328,7 +332,7 @@ public class AAFcli {
                             Thread.sleep((long)(delay+globalDelay));
                         }
                     } catch (Exception e) {
-                        if (expect.contains(-1)) {
+                    	if (expect.contains(-1)) {
                             pw.println(e.getMessage());
                             ret = -1;
                         } else {

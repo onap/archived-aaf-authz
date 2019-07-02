@@ -90,9 +90,9 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
             data.memo         = row.getString(2);
             data.start        = row.getTimestamp(3);
             data.expires      = row.getTimestamp(4);
-            data.construct    = row.getBytes(5);
-            data.target_key   = row.getString(6);
-            data.target_date  = row.getTimestamp(7);
+            data.target_key   = row.getString(5);
+            data.target_date  = row.getTimestamp(6);
+            data.construct    = row.getBytes(7);
             return data;
         }
 
@@ -109,9 +109,9 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
             obj[++idx] = data.memo;
             obj[++idx] = data.start;
             obj[++idx] = data.expires;
-            obj[++idx] = data.construct;
             obj[++idx] = data.target_key;
             obj[++idx] = data.target_date;
+            obj[++idx] = data.construct;
         }
     }
 

@@ -73,6 +73,7 @@ import org.onap.aaf.auth.dao.hl.Function.OP_STATUS;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.dao.hl.Question.Access;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.env.AuthzTrans.REQD_TYPE;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.Executor;
 import org.onap.aaf.auth.org.Organization;
@@ -85,6 +86,7 @@ import org.onap.aaf.auth.service.mapper.Mapper;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
 import org.onap.aaf.auth.service.validation.ServiceValidator;
 import org.onap.aaf.auth.validation.Validator;
+import org.onap.aaf.cadi.aaf.Defaults;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.Env;
@@ -113,7 +115,8 @@ import aaf.v2_0.CredRequest;
 public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS>
     implements AuthzService            <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> {
     
-    private Mapper                    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper;
+    private static final String TWO_SPACE = "  ";
+	private Mapper                    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper;
     @Override
     public Mapper                    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper() {return mapper;}
     
@@ -1988,6 +1991,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     public Result<?> mayChange() {
                         if (nsd==null) {
                             nsd = ques.mayUser(trans, trans.user(), rpd.value, Access.write);
+                            if(nsd.notOK()) {
+                            	trans.requested(REQD_TYPE.future,true);
+                            }
                         }
                         return nsd;
                     }
@@ -1997,32 +2003,32 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(nsr);
         }
         switch(fd.status) {
-        case OK:
-            Result<String> rfc = func.createFuture(trans,fd.value, 
-                    rpd.value.fullPerm(),
-                    trans.user(),
-                    nsr.value.get(0),
-                    FUTURE_OP.G);
-            if (rfc.isOK()) {
-                return Result.err(Status.ACC_Future, "Perm [%s.%s|%s|%s] is saved for future processing",
-                        rpd.value.ns,
-                        rpd.value.type,
-                        rpd.value.instance,
-                        rpd.value.action);
-            } else { 
-                return Result.err(rfc);
-            }
-        case Status.ACC_Now:
-            Result<Void> rv = null;
-            if (createPerm!=null) {// has been validated for creating
-                rv = func.createPerm(trans, createPerm, false);
-            }
-            if (rv==null || rv.isOK()) {
-                rv = func.addPermToRole(trans, rrd.value, rpd.value, false);
-            }
-            return rv;
-        default:
-            return Result.err(fd);
+	        case OK:
+	            Result<String> rfc = func.createFuture(trans,fd.value, 
+	                    rpd.value.fullPerm(),
+	                    trans.user(),
+	                    nsr.value.get(0),
+	                    FUTURE_OP.G);
+	            if (rfc.isOK()) {
+	                return Result.err(Status.ACC_Future, "Perm [%s.%s|%s|%s] is saved for future processing",
+	                        rpd.value.ns,
+	                        rpd.value.type,
+	                        rpd.value.instance,
+	                        rpd.value.action);
+	            } else { 
+	                return Result.err(rfc);
+	            }
+	        case Status.ACC_Now:
+	            Result<Void> rv = null;
+	            if (createPerm!=null) {// has been validated for creating
+	                rv = func.createPerm(trans, createPerm, false);
+	            }
+	            if (rv==null || rv.isOK()) {
+	                rv = func.addPermToRole(trans, rrd.value, rpd.value, false);
+	            }
+	            return rv;
+	        default:
+	            return Result.err(fd);
         }
         
     }
@@ -2300,13 +2306,17 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     private class MayChangeCred implements MayChange {
-        
-        private Result<NsDAO.Data> nsd;
+        private static final String EXTEND = "extend";
+		private static final String RESET = "reset";
+		private static final String DELETE = "delete";
+		private Result<NsDAO.Data> nsd;
         private AuthzTrans trans;
         private CredDAO.Data cred;
-        public MayChangeCred(AuthzTrans trans, CredDAO.Data cred) {
+		private String action;
+        public MayChangeCred(AuthzTrans trans, CredDAO.Data cred, String action) {
             this.trans = trans;
             this.cred = cred;
+            this.action = action;
         }
 
         @Override
@@ -2317,17 +2327,38 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
             // Get the Namespace
             if (nsd.isOK()) {
-                String user[] = Split.split('.',trans.user());
-                if (user.length>2) {
-                    String company = user[user.length-1] + '.' + user[user.length-2];
-                    if (ques.isGranted(trans, trans.user(), ROOT_NS,"password",company,"reset")) {
-                        return Result.ok();
-                    }
-                }
+        		String ns = nsd.value.name;
+        		String user = trans.user();
+            	String company;
+            	String temp[] = Split.split('.',ns);
+            	switch(temp.length) {
+            		case 0:
+            			company = Defaults.AAF_NS;
+            			break;
+            		case 1:
+            			company = temp[0];
+            			break;
+            		default:
+            			company = temp[0] + '.' + temp[1];
+            	}
+            	switch(action) {
+            		case DELETE:
+            			if(ques.isOwner(trans, user,ns) ||
+                     		   ques.isAdmin(trans, user,ns) ||
+         					   ques.isGranted(trans, user, ROOT_NS,"password",company,DELETE)) {
+                     				return Result.ok();
+            			}
+            			break;
+            		case RESET:
+            		case EXTEND:
+                        if (ques.isGranted(trans, trans.user(), ROOT_NS,"password",company,action)) {
+                            return Result.ok();
+                        }
+                        break;
+            	}
             }
-            return Result.err(Status.ERR_Denied,"%s is not allowed to change %s in %s",trans.user(),cred.id,cred.ns);
+            return Result.err(Status.ERR_Denied,"%s is not allowed to %s %s in %s",trans.user(),action,cred.id,cred.ns);
         }
-
     }
 
     private final long DAY_IN_MILLIS = 24*3600*1000L;
@@ -2626,7 +2657,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                      }
             )
     @Override
-    public Result<Void> changeUserCred(final AuthzTrans trans, REQUEST from) {
+    public Result<Void> resetUserCred(final AuthzTrans trans, REQUEST from) {
         final String cmdDescription = "Update User Credential";
         TimeTaken tt = trans.start(cmdDescription, Env.SUB);
         try {
@@ -2644,13 +2675,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
                 } 
                 
-                MayChange mc = new MayChangeCred(trans, rcred.value);
+                MayChange mc = new MayChangeCred(trans, rcred.value,MayChangeCred.RESET);
                 Result<?> rmc = mc.mayChange(); 
                 if (rmc.notOK()) {
                     return Result.err(rmc);
                 }
                 
-                 Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, rlcd.value);
+                List<CredDAO.Data> lcdd = filterList(rlcd.value,CredDAO.BASIC_AUTH, CredDAO.BASIC_AUTH_SHA256);
+                
+                Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, lcdd, MayChangeCred.RESET);
                 if (ri.notOK()) {
                     return Result.err(ri);
                 }
@@ -2733,27 +2766,6 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    /*
-     * Codify the way to get Either Choice Needed or actual Integer from Credit Request
-     */
-    private Result<Integer> selectEntryIfMultiple(final CredRequest cr, List<CredDAO.Data> lcd) {
-        int entry = 0;
-        if (lcd.size() > 1) {
-            String inputOption = cr.getEntry();
-            if (inputOption == null) {
-                String message = selectCredFromList(lcd, false);
-                Object[] variables = buildVariables(lcd);
-                return Result.err(Status.ERR_ChoiceNeeded, message, variables);
-            } else {
-                entry = Integer.parseInt(inputOption) - 1;
-            }
-            if (entry < 0 || entry >= lcd.size()) {
-                return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-            }
-        }
-        return Result.ok(entry);
-    }
-    
     @ApiDoc( 
             method = PUT,  
             path = "/authn/cred/:days",
@@ -2795,14 +2807,18 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (rlcd.notOKorIsEmpty()) {
                 return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
             }
+            
+            // Only Passwords can be extended
+            List<CredDAO.Data> lcdd = filterList(rlcd.value,CredDAO.BASIC_AUTH, CredDAO.BASIC_AUTH_SHA256);
 
             //Need to do the "Pick Entry" mechanism
-            Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, rlcd.value);
+            // Note, this sorts
+            Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, lcdd, "extend");
             if (ri.notOK()) {
                 return Result.err(ri);
             }
 
-            CredDAO.Data found = rlcd.value.get(ri.value);
+            CredDAO.Data found = lcdd.get(ri.value);
             CredDAO.Data cd = cred.value;
             // Copy over the cred
             cd.id = found.id;
@@ -2824,29 +2840,204 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }    
 
-    private String[] buildVariables(List<CredDAO.Data> value) {
+    @ApiDoc( 
+	        method = DELETE,  
+	        path = "/authn/cred",
+	        params = {},
+	        expectedCode = 200,
+	        errorCodes = {300,403,404,406}, 
+	        text = { "Delete a Credential. If multiple credentials exist for this",
+	                "ID, you will need to specify which entry you are deleting in the",
+	                "CredRequest object."
+	                 }
+	        )
+	@Override
+	public Result<Void> deleteUserCred(AuthzTrans trans, REQUEST from)  {
+	    final Result<CredDAO.Data> cred = mapper.cred(trans, from, false);
+	    final Validator v = new ServiceValidator();
+	    if (v.nullOrBlank("cred", cred.value.id).err()) {
+	        return Result.err(Status.ERR_BadData,v.errs());
+	    }
+
+	    MayChange mc = new MayChangeCred(trans,cred.value,MayChangeCred.DELETE);
+	    Result<?> rmc = mc.mayChange(); 
+	    if (rmc.notOK()) {
+	        return Result.err(rmc);
+	    }
+
+	    Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
+	    if (rlcd.notOKorIsEmpty()) {
+	        // Empty Creds should have no user_roles.
+	        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
+	        if (rlurd.isOK()) {
+	            for (UserRoleDAO.Data data : rlurd.value) {
+	                ques.userRoleDAO().delete(trans, data, false);
+	            }
+	        }
+	        return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
+	    }
+	    boolean isLastCred = rlcd.value.size()==1;
+	    
+	    
+	    int entry = 0;
+	    if (!trans.requested(force)) {
+	        if (rlcd.value.size() > 1) {
+	            CredRequest cr = (CredRequest)from;
+	            String inputOption = cr.getEntry();
+	            if (inputOption == null) {
+	            	List<CredDAO.Data> list = filterList(rlcd.value,CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256,CredDAO.CERT_SHA256_RSA);
+	                String message = selectCredFromList(list, MayChangeCred.DELETE);
+	                Object[] variables = buildVariables(list);
+	                return Result.err(Status.ERR_ChoiceNeeded, message, variables);
+	            } else {
+	                try {
+	                    if (inputOption.length()>5) { // should be a date
+	                        Date d = Chrono.xmlDatatypeFactory.newXMLGregorianCalendar(inputOption).toGregorianCalendar().getTime();
+	                        entry = 0;
+	                        for (CredDAO.Data cd : rlcd.value) {
+	                            if (cd.type.equals(cr.getType()) && cd.expires.equals(d)) {
+	                                break;
+	                            }
+	                            ++entry;
+	                        }
+	                    } else {
+	                        entry = Integer.parseInt(inputOption) - 1;
+	                    }
+	                } catch (NullPointerException e) {
+	                    return Result.err(Status.ERR_BadData, "Invalid Date Format for Entry");
+	                } catch (NumberFormatException e) {
+	                    return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+	                }
+	            }
+	            isLastCred = (entry==-1)?true:false;
+	        } else {
+	            isLastCred = true;
+	        }
+	        if (entry < -1 || entry >= rlcd.value.size()) {
+	            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+	        }
+	    }
+	    
+	    Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from,cred.value,false,
+	        () -> "Delete Credential [" +
+	            cred.value.id +
+	            ']',
+	        mc);
+	
+	    Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, cred.value.ns);
+	    if (nsr.notOKorIsEmpty()) {
+	        return Result.err(nsr);
+	    }
+	
+	    switch(fd.status) {
+	        case OK:
+	            Result<String> rfc = func.createFuture(trans, fd.value, cred.value.id,
+	                    trans.user(), nsr.value.get(0), FUTURE_OP.D);
+	
+	            if (rfc.isOK()) {
+	                return Result.err(Status.ACC_Future, "Credential Delete [%s] is saved for future processing",cred.value.id);
+	            } else { 
+	                return Result.err(rfc);
+	            }
+	        case Status.ACC_Now:
+	            Result<?>udr = null;
+	            if (!trans.requested(force)) {
+	                if (entry<0 || entry >= rlcd.value.size()) {
+	                    return Result.err(Status.ERR_BadData,"Invalid Choice [" + entry + "] chosen for Delete [%s] is saved for future processing",cred.value.id);
+	                }
+	                udr = ques.credDAO().delete(trans, rlcd.value.get(entry),false);
+	            } else {
+	                for (CredDAO.Data curr : rlcd.value) {
+	                    udr = ques.credDAO().delete(trans, curr, false);
+	                    if (udr.notOK()) {
+	                        return Result.err(udr);
+	                    }
+	                }
+	            }
+	            if (isLastCred) {
+	                Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
+	                if (rlurd.isOK()) {
+	                    for (UserRoleDAO.Data data : rlurd.value) {
+	                        ques.userRoleDAO().delete(trans, data, false);
+	                    }
+	                }
+	            }
+	            if (udr==null) {
+	                return Result.err(Result.ERR_NotFound,"No User Data found");
+	            }
+	            if (udr.isOK()) {
+	                return Result.ok();
+	            }
+	            return Result.err(udr);
+	        default:
+	            return Result.err(fd);
+	    }
+	
+	}
+
+	/*
+	 * Codify the way to get Either Choice Needed or actual Integer from Credit Request
+	 */
+	private Result<Integer> selectEntryIfMultiple(final CredRequest cr, List<CredDAO.Data> lcd, String action) {
+	    int entry = 0;
+	    if (lcd.size() > 1) {
+	        String inputOption = cr.getEntry();
+	        if (inputOption == null) {
+	            String message = selectCredFromList(lcd, action);
+	            Object[] variables = buildVariables(lcd);
+	            return Result.err(Status.ERR_ChoiceNeeded, message, variables);
+	        } else {
+	            entry = Integer.parseInt(inputOption) - 1;
+	        }
+	        if (entry < 0 || entry >= lcd.size()) {
+	            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+	        }
+	    }
+	    return Result.ok(entry);
+	}
+
+	private List<CredDAO.Data> filterList(List<CredDAO.Data> orig, Integer ... types) {
+    	List<CredDAO.Data> rv = new ArrayList<>();
+        for(CredDAO.Data cdd : orig) {
+        	if(cdd!=null) {
+	        	for(int t : types) {
+	        		if(t==cdd.type) {
+	           			rv.add(cdd);
+	        		}
+	        	}
+        	}
+        }
+		return rv;
+	}
+
+	private String[] buildVariables(List<CredDAO.Data> value) {
         // ensure credentials are sorted so we can fully automate Cred regression test
-        Collections.sort(value, (cred1, cred2) -> cred1.expires.compareTo(cred2.expires));
+        Collections.sort(value, (cred1, cred2) -> 
+        	cred1.type==cred2.type?cred2.expires.compareTo(cred1.expires):
+        		cred1.type<cred2.type?-1:1);
         String [] vars = new String[value.size()+1];
         vars[0]="Choice";
+        CredDAO.Data cdd;
         for (int i = 0; i < value.size(); i++) {
-        vars[i+1] = value.get(i).id + "    " + value.get(i).type 
-                + "    |" + value.get(i).expires;
+        	cdd = value.get(i);
+        	vars[i+1] = cdd.id + TWO_SPACE + cdd.type + TWO_SPACE + (cdd.type<10?TWO_SPACE:"")+ cdd.expires + TWO_SPACE + cdd.tag;
         }
         return vars;
     }
     
-    private String selectCredFromList(List<CredDAO.Data> value, boolean isDelete) {
+    private String selectCredFromList(List<CredDAO.Data> value, String action) {
         StringBuilder errMessage = new StringBuilder();
-        String userPrompt = isDelete?"Select which cred to delete (set force=true to delete all):":"Select which cred to update:";
+        String userPrompt = MayChangeCred.DELETE.equals(action)?
+        		"Select which cred to delete (set force=true to delete all):":
+        		"Select which cred to " + action + ':';
         int numSpaces = value.get(0).id.length() - "Id".length();
         
         errMessage.append(userPrompt + '\n');
-        errMessage.append("       Id");
+        errMessage.append("        ID");
         for (int i = 0; i < numSpaces; i++) {
             errMessage.append(' ');
         }
-        errMessage.append("   Type  Expires" + '\n');
+        errMessage.append(" Type  Expires                       Tag " + '\n');
         for (int i=0;i<value.size();++i) {
             errMessage.append("    %s\n");
         }
@@ -2855,140 +3046,6 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return errMessage.toString();
         
     }
-
-    @ApiDoc( 
-            method = DELETE,  
-            path = "/authn/cred",
-            params = {},
-            expectedCode = 200,
-            errorCodes = {300,403,404,406}, 
-            text = { "Delete a Credential. If multiple credentials exist for this",
-                    "ID, you will need to specify which entry you are deleting in the",
-                    "CredRequest object."
-                     }
-            )
-    @Override
-    public Result<Void> deleteUserCred(AuthzTrans trans, REQUEST from)  {
-        final Result<CredDAO.Data> cred = mapper.cred(trans, from, false);
-        final Validator v = new ServiceValidator();
-        if (v.nullOrBlank("cred", cred.value.id).err()) {
-            return Result.err(Status.ERR_BadData,v.errs());
-        }
-    
-        Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
-        if (rlcd.notOKorIsEmpty()) {
-            // Empty Creds should have no user_roles.
-            Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
-            if (rlurd.isOK()) {
-                for (UserRoleDAO.Data data : rlurd.value) {
-                    ques.userRoleDAO().delete(trans, data, false);
-                }
-            }
-            return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
-        }
-        boolean isLastCred = rlcd.value.size()==1;
-        
-        MayChange mc = new MayChangeCred(trans,cred.value);
-        Result<?> rmc = mc.mayChange(); 
-        if (rmc.notOK()) {
-            return Result.err(rmc);
-        }
-        
-        int entry = 0;
-        if (!trans.requested(force)) {
-            if (rlcd.value.size() > 1) {
-                CredRequest cr = (CredRequest)from;
-                String inputOption = cr.getEntry();
-                if (inputOption == null) {
-                    String message = selectCredFromList(rlcd.value, true);
-                    Object[] variables = buildVariables(rlcd.value);
-                    return Result.err(Status.ERR_ChoiceNeeded, message, variables);
-                } else {
-                    try {
-                        if (inputOption.length()>5) { // should be a date
-                            Date d = Chrono.xmlDatatypeFactory.newXMLGregorianCalendar(inputOption).toGregorianCalendar().getTime();
-                            entry = 0;
-                            for (CredDAO.Data cd : rlcd.value) {
-                                if (cd.type.equals(cr.getType()) && cd.expires.equals(d)) {
-                                    break;
-                                }
-                                ++entry;
-                            }
-                        } else {
-                            entry = Integer.parseInt(inputOption) - 1;
-                        }
-                    } catch (NullPointerException e) {
-                        return Result.err(Status.ERR_BadData, "Invalid Date Format for Entry");
-                    } catch (NumberFormatException e) {
-                        return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-                    }
-                }
-                isLastCred = (entry==-1)?true:false;
-            } else {
-                isLastCred = true;
-            }
-            if (entry < -1 || entry >= rlcd.value.size()) {
-                return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-            }
-        }
-        
-        Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from,cred.value,false,
-            () -> "Delete Credential [" +
-                cred.value.id +
-                ']',
-            mc);
-    
-        Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, cred.value.ns);
-        if (nsr.notOKorIsEmpty()) {
-            return Result.err(nsr);
-        }
-    
-        switch(fd.status) {
-            case OK:
-                Result<String> rfc = func.createFuture(trans, fd.value, cred.value.id,
-                        trans.user(), nsr.value.get(0), FUTURE_OP.D);
-    
-                if (rfc.isOK()) {
-                    return Result.err(Status.ACC_Future, "Credential Delete [%s] is saved for future processing",cred.value.id);
-                } else { 
-                    return Result.err(rfc);
-                }
-            case Status.ACC_Now:
-                Result<?>udr = null;
-                if (!trans.requested(force)) {
-                    if (entry<0 || entry >= rlcd.value.size()) {
-                        return Result.err(Status.ERR_BadData,"Invalid Choice [" + entry + "] chosen for Delete [%s] is saved for future processing",cred.value.id);
-                    }
-                    udr = ques.credDAO().delete(trans, rlcd.value.get(entry),false);
-                } else {
-                    for (CredDAO.Data curr : rlcd.value) {
-                        udr = ques.credDAO().delete(trans, curr, false);
-                        if (udr.notOK()) {
-                            return Result.err(udr);
-                        }
-                    }
-                }
-                if (isLastCred) {
-                    Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
-                    if (rlurd.isOK()) {
-                        for (UserRoleDAO.Data data : rlurd.value) {
-                            ques.userRoleDAO().delete(trans, data, false);
-                        }
-                    }
-                }
-                if (udr==null) {
-                    return Result.err(Result.ERR_NotFound,"No User Data found");
-                }
-                if (udr.isOK()) {
-                    return Result.ok();
-                }
-                return Result.err(udr);
-            default:
-                return Result.err(fd);
-        }
-    
-    }
-
 
     @Override
     public Result<Date> doesCredentialMatch(AuthzTrans trans, REQUEST credReq) {
@@ -3014,22 +3071,6 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    @ApiDoc( 
-            method = GET,  
-            path = "/authn/basicAuth",
-            params = {},
-            expectedCode = 200,
-            errorCodes = { 403 }, 
-            text = { "!!!! DEPRECATED without X509 Authentication STOP USING THIS API BY DECEMBER 2017, or use Certificates !!!!\n" 
-                    + "Use /authn/validate instead\n"
-                    + "Note: Validate a Password using BasicAuth Base64 encoded Header. This HTTP/S call is intended as a fast"
-                    + " User/Password lookup for Security Frameworks, and responds 200 if it passes BasicAuth "
-                + "security, and 403 if it does not." }
-            )
-    private void basicAuth() {
-        // This is a place holder for Documentation.  The real BasicAuth API does not call Service.
-    }
-    
     @ApiDoc( 
             method = POST,  
             path = "/authn/validate",
@@ -3059,6 +3100,22 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         return Result.err(Status.ERR_Denied,"Bad Basic Auth");
     }
+
+@ApiDoc( 
+	        method = GET,  
+	        path = "/authn/basicAuth",
+	        params = {},
+	        expectedCode = 200,
+	        errorCodes = { 403 }, 
+	        text = { "!!!! DEPRECATED without X509 Authentication STOP USING THIS API BY DECEMBER 2017, or use Certificates !!!!\n" 
+	                + "Use /authn/validate instead\n"
+	                + "Note: Validate a Password using BasicAuth Base64 encoded Header. This HTTP/S call is intended as a fast"
+	                + " User/Password lookup for Security Frameworks, and responds 200 if it passes BasicAuth "
+	            + "security, and 403 if it does not." }
+	        )
+	private void basicAuth() {
+	    // This is a place holder for Documentation.  The real BasicAuth API does not call Service.
+	}
 
 /***********************************
  * USER-ROLE 

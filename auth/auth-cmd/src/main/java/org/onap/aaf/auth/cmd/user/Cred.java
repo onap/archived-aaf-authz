@@ -21,30 +21,37 @@
 
 package org.onap.aaf.auth.cmd.user;
 
+import java.util.List;
+
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.aaf.client.ErrMessage;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.CredRequest;
+import aaf.v2_0.Error;
 
 public class Cred extends Cmd {
     public static final String ATTEMPT_FAILED_SPECIFICS_WITHELD = "Attempt Failed.  Specifics witheld.";
     private static final String CRED_PATH = "/authn/cred";
     private static final String[] options = {"add","del","reset","extend"/*,"clean"*/};
-    public Cred(User parent) {
+	private ErrMessage em;
+//	private RosettaDF<Error> errDF;
+    public Cred(User parent) throws APIException {
         super(parent,"cred",
                 new Param(optionsToString(options),true),
                 new Param("id",true),
                 new Param("password (! D|E)",false),
                 new Param("entry# (if multi)",false)
         );
+        em = new ErrMessage(aafcli.env());
     }
 
     @Override
@@ -59,8 +66,9 @@ public class Cred extends Cmd {
             if (idx>=args.length) throw new CadiException("Password Required");
             cr.setPassword(args[idx++]);
         }
-        if (args.length>idx)
+        if (args.length>idx) {
             cr.setEntry(args[idx]);
+        }
         
         // Set Start/End commands
         setStartEnd(cr);
@@ -114,6 +122,19 @@ public class Cred extends Cmd {
                     pw().println(']');
                 } else if (fp.code()==202) {
                         pw().println("Credential Action Accepted, but requires Approvals before actualizing");
+                } else if (fp.code()==300) {
+                	Error err = em.getError(fp);
+                	String text = err.getText();
+                	List<String> vars = err.getVariables();
+                	
+                	// IMPORTANT! We do this backward, because it is looking for string
+                	// %1 or %13.  If we replace %1 first, that messes up %13
+                	for(int i=vars.size()-1;i>0;--i) {
+                		text = text.replace("%"+(i+1), (i<10?" ":"") + i+") " + vars.get(i));
+                	}
+
+                	text = text.replace("%1",vars.get(0));
+                	pw().println(text);
                 } else if (fp.code()==406 && option==1) {
                         pw().println("You cannot delete this Credential");
                 } else {

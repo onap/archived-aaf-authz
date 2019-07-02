@@ -447,7 +447,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @param from
      * @return
      */
-    Result<Void> changeUserCred(AuthzTrans trans, REQUEST from);
+    Result<Void> resetUserCred(AuthzTrans trans, REQUEST from);
 
     /**
      * 
