@@ -152,15 +152,17 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
             }
             sb.append('_');
             sb.append(tokenSource);
-            byte[] tohash=scope.getBytes();
-            if (hash!=null && hash.length>0) {
-                byte temp[] = new byte[hash.length+tohash.length];
-                System.arraycopy(tohash, 0, temp, 0, tohash.length);
-                System.arraycopy(hash, 0, temp, tohash.length, hash.length);
-                tohash = temp;
-            }
-            if (scope!=null && scope.length()>0) {
-                sb.append(Hash.toHexNo0x(Hash.hashSHA256(tohash)));
+            if (scope!=null) {
+                byte[] tohash=scope.getBytes();
+                if (hash!=null && hash.length>0) {
+                    byte temp[] = new byte[hash.length+tohash.length];
+                    System.arraycopy(tohash, 0, temp, 0, tohash.length);
+                    System.arraycopy(hash, 0, temp, tohash.length, hash.length);
+                    tohash = temp;
+                }
+                if (scope.length()>0) {
+                    sb.append(Hash.toHexNo0x(Hash.hashSHA256(tohash)));
+                }
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
