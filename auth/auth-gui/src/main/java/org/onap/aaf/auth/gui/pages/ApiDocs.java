@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.gui.AAF_GUI;
