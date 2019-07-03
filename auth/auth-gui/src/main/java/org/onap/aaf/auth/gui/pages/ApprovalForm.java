@@ -282,9 +282,8 @@ public class ApprovalForm extends Page {
 	//                                    title);
 	                                
 	                            } else {
-	                                userCell = new TextCell(prevUser==null?user:prevUser);
+	                                userCell = new TextCell(user);
 	                            }
-                                prevUser=user;
 	                            AbsCell[] sa = new AbsCell[] {
 	                                userCell,
 	                                new TextCell(appr.getMemo()),
@@ -292,6 +291,7 @@ public class ApprovalForm extends Page {
 	                                new RadioCell("line."+ line,"deny", "denied|"+appr.getTicket())
 	                            };
 	                            rv.add(sa);
+                                prevUser=user;
 	                        } else {
 	                            ++numLeft;
 	                        }
