@@ -4,6 +4,8 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ *  Modifications Copyright (C) 2019 IBM.
+ * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,10 +54,61 @@ public class Approval implements CacheChange.Data  {
     public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
     public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
     public static List<Approval> list = new LinkedList<>();
-    private final static CacheChange<Approval> cache = new CacheChange<>(); 
+    private static final CacheChange<Approval> cache = new CacheChange<>();
     
     public final ApprovalDAO.Data add;
     private String role;
+
+    public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
+        @Override
+        public Approval create(Row row) {
+            return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2),
+                    row.getString(3),row.getString(4),row.getString(5),row.getString(6),row.getString(7),
+                    row.getLong(8)/1000);
+        }
+
+        @Override
+        public String select() {
+            return "select id,ticket,approver,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
+        }
+    };
+
+    public static Visitor<Approval> FullLoad = new Visitor<Approval>() {
+        @Override
+        public void visit(Approval app) {
+            List<Approval> ln;
+            list.add(app);
+
+            String person = app.getApprover();
+            if (person!=null) {
+                ln = byApprover.get(person);
+                if (ln==null) {
+                    ln = new ArrayList<>();
+                    byApprover.put(app.getApprover(), ln);
+                }
+                ln.add(app);
+            }
+
+            person = app.getUser();
+            if (person!=null) {
+                ln = byUser.get(person);
+                if (ln==null) {
+                    ln = new ArrayList<>();
+                    byUser.put(app.getUser(), ln);
+                }
+                ln.add(app);
+            }
+            UUID ticket = app.getTicket();
+            if (ticket!=null) {
+                ln = byTicket.get(ticket);
+                if (ln==null) {
+                    ln = new ArrayList<>();
+                    byTicket.put(app.getTicket(), ln);
+                }
+                ln.add(app);
+            }
+        }
+    };
     
     public Approval(UUID id, UUID ticket, String approver,// Date last_notified, 
             String user, String memo, String operation, String status, String type, long updated) {
@@ -63,7 +116,6 @@ public class Approval implements CacheChange.Data  {
         add.id = id;
         add.ticket = ticket;
         add.approver = approver;
-//        add.last_notified = last_notified;
         add.user = user;
         add.memo = memo;
         add.operation = operation;
@@ -90,11 +142,9 @@ public class Approval implements CacheChange.Data  {
                 	first = memo.indexOf('[',second);
                 	if(first>=0) {
                 		second = memo.indexOf(']', ++first);
-                		if(second>=0) {
-                			if(memo.startsWith(RE_APPROVAL_IN_ROLE) ||
-                			   memo.startsWith(ADD_USER_TO_ROLE)) {
+                		if(second>=0 && (memo.startsWith(RE_APPROVAL_IN_ROLE) ||
+                                memo.startsWith(ADD_USER_TO_ROLE))) {
                 				return  memo.substring(first, second);
-                			}
                 		}
                 	}
                 }
@@ -179,57 +229,6 @@ public class Approval implements CacheChange.Data  {
     	list.clear();
     	cache.resetLocalData();
     }
-
-    public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
-        @Override
-        public Approval create(Row row) {
-            return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2),
-                    row.getString(3),row.getString(4),row.getString(5),row.getString(6),row.getString(7),
-                    row.getLong(8)/1000);
-        }
-
-        @Override
-        public String select() {
-            return "select id,ticket,approver,user,memo,operation,status,type,WRITETIME(status) from authz.approval";
-        }
-    };
-    
-    public static Visitor<Approval> FullLoad = new Visitor<Approval>() {
-		@Override
-		public void visit(Approval app) {
-	        List<Approval> ln;
-	        list.add(app);
-	        
-	        String person = app.getApprover();
-	        if (person!=null) {
-	        ln = byApprover.get(person);
-	            if (ln==null) {
-	                ln = new ArrayList<>();
-	                byApprover.put(app.getApprover(), ln);
-	            }
-	            ln.add(app);
-	        }
-	        
-	        person = app.getUser();
-	        if (person!=null) {
-	            ln = byUser.get(person);
-	            if (ln==null) {
-	                ln = new ArrayList<>();
-	                byUser.put(app.getUser(), ln);
-	            }
-	            ln.add(app);
-	        }
-	        UUID ticket = app.getTicket();
-	        if (ticket!=null) {
-	            ln = byTicket.get(ticket);
-	            if (ln==null) {
-	                ln = new ArrayList<>();
-	                byTicket.put(app.getTicket(), ln);
-	            }
-	            ln.add(app);
-	        }
-		}
-    };
 
     /**
      * @return the status
