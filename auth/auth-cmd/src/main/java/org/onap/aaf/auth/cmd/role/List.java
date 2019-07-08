@@ -104,7 +104,7 @@ public class List extends BaseCmd<Role> {
         if (roles==null || roles.getRole().isEmpty()) {
             pw().println("<No Roles Found>");
         } else if (aafcli.isDetailed()){
-            if (aafcli.isDetailed() && str[0].toLowerCase().contains(LIST_ROLES_BY_NAME)) {
+            if (str[0].toLowerCase().contains(LIST_ROLES_BY_NAME)) {
                 String description = roles.getRole().get(0).getDescription();
                 if (description == null) description = "";
                 reportColHead("%-80s\n","Description: " + description);
@@ -123,18 +123,24 @@ public class List extends BaseCmd<Role> {
                         pw().format(roleFormat, "["+ns+"]"+roleName.substring(ns.length()),XXXX_XX_XX);
                     }
                 } else {
-                    UserRole ur = get(roleName,urs);
+                	String fullname;
+                	if(ns==null) {
+                		fullname = roleName;
+                	} else {
+                		fullname = ns+'.'+roleName;
+                	}
+                    UserRole ur = get(fullname,urs);
                     if (ur!=null && now.compare(ur.getExpires().normalize())>0) {
                         if (ns==null) {
                             pw().format(roleExpiredFormat, roleName,Chrono.dateOnlyStamp(ur.getExpires()));
                         } else {
-                            pw().format(roleExpiredFormat, "["+ns+"]"+roleName.substring(ns.length()),Chrono.dateOnlyStamp(ur.getExpires()));
+                            pw().format(roleExpiredFormat, "["+ns+"]."+roleName,Chrono.dateOnlyStamp(ur.getExpires()));
                         }
                     } else {
                         if (ns==null) {
                             pw().format(roleFormat, roleName,ur!=null?Chrono.dateOnlyStamp(ur.getExpires()):"");
                         } else {
-                            pw().format(roleFormat, "["+ns+"]"+roleName.substring(ns.length()),ur!=null?Chrono.dateOnlyStamp(ur.getExpires()):"");
+                            pw().format(roleFormat, "["+ns+"]."+roleName,ur!=null?Chrono.dateOnlyStamp(ur.getExpires()):"");
                         }
                     }
                 }

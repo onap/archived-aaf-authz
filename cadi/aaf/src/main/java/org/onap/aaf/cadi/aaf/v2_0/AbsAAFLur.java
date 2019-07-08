@@ -43,6 +43,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     public AAFCon<?> aaf;
     public Lur preemptiveLur=null; // Initial Use is for OAuth2, preemptive Lur
     private String[] supports;
+    protected boolean details;
 
     public AbsAAFLur(AAFCon<?> con) throws APIException {
         super(con.access, con.cleanInterval, con.highCount, con.usageRefreshTriggerCount);
@@ -62,7 +63,12 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     public void setDebug(String ids) {
         this.debug = ids==null?null:Split.split(',', ids);
     }
+
+    public void details(boolean on) {
+    	details = on;
+    }
     
+
     public void setPreemptiveLur(Lur preemptive) {
         this.preemptiveLur = preemptive;
     }

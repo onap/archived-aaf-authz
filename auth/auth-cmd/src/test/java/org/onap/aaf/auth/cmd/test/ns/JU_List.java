@@ -136,7 +136,7 @@ public class JU_List {
         user.setType(2);
         Assert.assertEquals("U/P2", list.getType(user));
         user.setType(10);
-        Assert.assertEquals("Cert", list.getType(user));
+        Assert.assertEquals("FQI", list.getType(user));
         user.setType(200);
         Assert.assertEquals("x509", list.getType(user));
     }

@@ -534,14 +534,12 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 	            if (ok.length()>0) {
 	                return Result.err(Status.ERR_BadData,ok);
 	            }
-	        } else {
-	            to.type=0;
 	        }
 	        if (passwd != null) {
 	            to.cred = ByteBuffer.wrap(passwd.getBytes());
 	            to.type = CredDAO.RAW; 
 	        } else {
-	            to.type = CredDAO.FQI;
+	            to.type = CredDAO.NONE;
 	        }
         }
 	        

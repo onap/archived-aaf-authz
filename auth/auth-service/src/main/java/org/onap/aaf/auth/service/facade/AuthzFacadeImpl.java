@@ -171,10 +171,11 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         String msgId;
         String[] detail;
         boolean hidemsg = false;
-        if (result.variables==null) {
+        if (result.variables==null || result.variables.length<1) {
             detail = new String[1];
         } else {
         	List<String> dlist = new ArrayList<String>();
+        	dlist.add(null);
         	String os;
         	for(Object s : result.variables) {
         		if(s!=null && (os=s.toString()).length()>0) {
@@ -288,6 +289,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 break;
             case ERR_ChoiceNeeded:
                 msgId = "SVC1300";
+                detail[0] = "Choice Needed";
                 response.setStatus(/*httpstatus=*/300);
                 break;
             case ERR_Backend: 
