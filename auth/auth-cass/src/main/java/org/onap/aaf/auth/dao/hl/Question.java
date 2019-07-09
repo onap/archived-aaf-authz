@@ -974,6 +974,7 @@ public class Question {
                         return Result.ok(Hash.compareTo(orig.cred.array(),Hash.hashSHA256(bb.array()))==0);
                     case CredDAO.BASIC_AUTH:
                         return Result.ok( Hash.compareTo(orig.cred.array(), Hash.hashMD5(raw))==0);
+                    case CredDAO.FQI:
                     default:
                         return Result.ok(false);
                 }

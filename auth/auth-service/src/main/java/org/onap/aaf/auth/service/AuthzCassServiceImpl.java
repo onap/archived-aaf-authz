@@ -70,6 +70,7 @@ import org.onap.aaf.auth.dao.hl.Function;
 import org.onap.aaf.auth.dao.hl.Function.FUTURE_OP;
 import org.onap.aaf.auth.dao.hl.Function.Lookup;
 import org.onap.aaf.auth.dao.hl.Function.OP_STATUS;
+import org.onap.aaf.auth.dao.hl.PermLookup;
 import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.dao.hl.Question.Access;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -1011,8 +1012,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
-        Result<List<PermDAO.Data>> rlpd = ques.getPermsByUser(trans, user, 
-                trans.requested(force));
+        PermLookup pl = PermLookup.get(trans,ques,user);
+        Result<List<PermDAO.Data>> rlpd = pl.getPerms(trans.requested(force));
         if (rlpd.notOK()) {
             return Result.err(rlpd);
         }
@@ -1100,7 +1101,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         
         //////////////
-        Result<List<PermDAO.Data>> rlpd = ques.getPermsByUser(trans, user,trans.requested(force));
+        PermLookup pl = PermLookup.get(trans,ques,user);
+        Result<List<PermDAO.Data>> rlpd = pl.getPerms(trans.requested(force));
         if (rlpd.notOK()) {
             return Result.err(rlpd);
         }
@@ -2428,16 +2430,22 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         // Note: ASPR specifies character differences, but we don't actually store the
                         // password to validate char differences.
                         
-//                      byte[] rawCred = rcred.value.type==CredDAO.RAW?null:;
-
-                        rb = ques.userCredCheck(trans, curr, rcred.value.cred.array());
-                        if (rb.notOK()) {
-                            return Result.err(rb);
-                        } else if (rb.value){
-                            return Result.err(Status.ERR_Policy, "Credential content cannot be reused.");
-                        } else if (Chrono.dateOnlyStamp(curr.expires).equals(Chrono.dateOnlyStamp(rcred.value.expires)) && curr.type==rcred.value.type) {
-                            return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists, use 'reset'");
-                        }
+//                      byte[] rawCred = rcred.value.type==CredDAO.RAW?null:;                            return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
+                    	if(rcred.value.type==CredDAO.FQI ) {
+                    		if(curr.type==CredDAO.FQI) {
+                    	        return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
+                    		}
+                    	} else {
+	
+	                        rb = ques.userCredCheck(trans, curr, rcred.value.cred!=null?rcred.value.cred.array():null);
+	                        if (rb.notOK()) {
+	                            return Result.err(rb);
+	                        } else if (rb.value){
+	                            return Result.err(Status.ERR_Policy, "Credential content cannot be reused.");
+	                        } else if ((Chrono.dateOnlyStamp(curr.expires).equals(Chrono.dateOnlyStamp(rcred.value.expires)) && curr.type==rcred.value.type)) {
+	                            return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
+	                        }
+                    	}
                     }    
                 } else {
                     try {
@@ -2864,58 +2872,79 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 	    if (rmc.notOK()) {
 	        return Result.err(rmc);
 	    }
-
+	    
+	    boolean doForce = trans.requested(force);
 	    Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
 	    if (rlcd.notOKorIsEmpty()) {
-	        // Empty Creds should have no user_roles.
+	        // Empty Creds should not have user_roles.
 	        Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, cred.value.id);
-	        if (rlurd.isOK()) {
+	        if (rlurd.isOKhasData()) {
 	            for (UserRoleDAO.Data data : rlurd.value) {
 	                ques.userRoleDAO().delete(trans, data, false);
 	            }
-	        }
+        	}
 	        return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
 	    }
 	    boolean isLastCred = rlcd.value.size()==1;
 	    
-	    
-	    int entry = 0;
-	    if (!trans.requested(force)) {
-	        if (rlcd.value.size() > 1) {
-	            CredRequest cr = (CredRequest)from;
-	            String inputOption = cr.getEntry();
-	            if (inputOption == null) {
-	            	List<CredDAO.Data> list = filterList(rlcd.value,CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256,CredDAO.CERT_SHA256_RSA);
-	                String message = selectCredFromList(list, MayChangeCred.DELETE);
-	                Object[] variables = buildVariables(list);
-	                return Result.err(Status.ERR_ChoiceNeeded, message, variables);
-	            } else {
-	                try {
-	                    if (inputOption.length()>5) { // should be a date
-	                        Date d = Chrono.xmlDatatypeFactory.newXMLGregorianCalendar(inputOption).toGregorianCalendar().getTime();
-	                        entry = 0;
-	                        for (CredDAO.Data cd : rlcd.value) {
-	                            if (cd.type.equals(cr.getType()) && cd.expires.equals(d)) {
-	                                break;
-	                            }
-	                            ++entry;
-	                        }
-	                    } else {
-	                        entry = Integer.parseInt(inputOption) - 1;
-	                    }
-	                } catch (NullPointerException e) {
-	                    return Result.err(Status.ERR_BadData, "Invalid Date Format for Entry");
-	                } catch (NumberFormatException e) {
-	                    return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-	                }
-	            }
-	            isLastCred = (entry==-1)?true:false;
-	        } else {
-	            isLastCred = true;
-	        }
-	        if (entry < -1 || entry >= rlcd.value.size()) {
-	            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-	        }
+	    int entry = -1;
+    	int fentry = entry;
+	    if(cred.value.type==CredDAO.FQI) {
+	    	entry = -1;
+	    	for(CredDAO.Data cdd : rlcd.value) {
+	    		++fentry;
+	    		if(cdd.type == CredDAO.FQI) {
+	    			entry = fentry;
+	    			break; 
+	    		}
+	    	}
+	    } else {
+		    if (!doForce) {
+		        if (rlcd.value.size() > 1) {
+		            CredRequest cr = (CredRequest)from;
+		            String inputOption = cr.getEntry();
+		            if (inputOption == null) {
+		            	List<CredDAO.Data> list = filterList(rlcd.value,CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256,CredDAO.CERT_SHA256_RSA);
+		                String message = selectCredFromList(list, MayChangeCred.DELETE);
+		                Object[] variables = buildVariables(list);
+		                return Result.err(Status.ERR_ChoiceNeeded, message, variables);
+		            } else {
+		                try {
+		                    if (inputOption.length()>5) { // should be a date
+		                        Date d = Chrono.xmlDatatypeFactory.newXMLGregorianCalendar(inputOption).toGregorianCalendar().getTime();
+		                        for (CredDAO.Data cd : rlcd.value) {
+		                        	++fentry;
+		                            if (cd.type.equals(cr.getType()) && cd.expires.equals(d)) {
+		                            	entry = fentry;
+		                                break;
+		                            }
+		                        }
+		                    } else {
+	                        	entry = Integer.parseInt(inputOption) - 1;
+	                        	int count = 0;
+		                        for (CredDAO.Data cd : rlcd.value) {
+		                        	if(cd.type!=CredDAO.BASIC_AUTH && cd.type!=CredDAO.BASIC_AUTH_SHA256 && cd.type!=CredDAO.CERT_SHA256_RSA) {
+		                        		++entry;
+		                        	}
+		                        	if(++count>entry) {
+		                        		break;
+		                        	}
+		                        }
+		                    }
+		                } catch (NullPointerException e) {
+		                    return Result.err(Status.ERR_BadData, "Invalid Date Format for Entry");
+		                } catch (NumberFormatException e) {
+		                    return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+		                }
+		            }
+		            isLastCred = (entry==-1)?true:false;
+		        } else {
+		            isLastCred = true;
+		        }
+		        if (entry < -1 || entry >= rlcd.value.size()) {
+		            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+		        }
+		    }
 	    }
 	    
 	    Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from,cred.value,false,
@@ -2943,7 +2972,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 	            Result<?>udr = null;
 	            if (!trans.requested(force)) {
 	                if (entry<0 || entry >= rlcd.value.size()) {
-	                    return Result.err(Status.ERR_BadData,"Invalid Choice [" + entry + "] chosen for Delete [%s] is saved for future processing",cred.value.id);
+	                	if(cred.value.type==CredDAO.FQI) {
+	                		return Result.err(Status.ERR_BadData,"FQI does not exist");
+	                	} else {
+	                		return Result.err(Status.ERR_BadData,"Invalid Choice [" + entry + "] chosen for Delete [%s] is saved for future processing",cred.value.id);
+	                	}
 	                }
 	                udr = ques.credDAO().delete(trans, rlcd.value.get(entry),false);
 	            } else {
@@ -3015,12 +3048,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         Collections.sort(value, (cred1, cred2) -> 
         	cred1.type==cred2.type?cred2.expires.compareTo(cred1.expires):
         		cred1.type<cred2.type?-1:1);
-        String [] vars = new String[value.size()+1];
-        vars[0]="Choice";
+        String [] vars = new String[value.size()];
         CredDAO.Data cdd;
+        
         for (int i = 0; i < value.size(); i++) {
         	cdd = value.get(i);
-        	vars[i+1] = cdd.id + TWO_SPACE + cdd.type + TWO_SPACE + (cdd.type<10?TWO_SPACE:"")+ cdd.expires + TWO_SPACE + cdd.tag;
+        	vars[i] = cdd.id + TWO_SPACE + cdd.type + TWO_SPACE + (cdd.type<10?TWO_SPACE:"")+ cdd.expires + TWO_SPACE + cdd.tag;
         }
         return vars;
     }

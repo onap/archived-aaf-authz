@@ -119,7 +119,12 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                 @Override
                 public User<AAFPermission> code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                     final long remoteStart = System.nanoTime();
-                    Future<Perms> fp = client.read("/authz/perms/user/"+name,aaf.permsDF);
+                    StringBuilder sb = new StringBuilder("/authz/perms/user/");
+                    sb.append(name);
+                    if(details) {
+                    	sb.append("?force");
+                    }
+                    Future<Perms> fp = client.read(sb.toString(),aaf.permsDF);
                     
                     // In the meantime, lookup User, create if necessary
                     User<AAFPermission> user = getUser(principal);

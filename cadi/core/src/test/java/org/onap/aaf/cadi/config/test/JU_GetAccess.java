@@ -73,7 +73,7 @@ public class JU_GetAccess {
         @SuppressWarnings("unused")
         GetAccess getAccess = new GetAccess(accessGet);
         String[] lines = outStream.toString().split(System.lineSeparator());
-        assertThat(lines.length, is(6));
+        assertThat(lines.length, is(5));
         output = lines[0].split(" ", 2)[1];
 
     }

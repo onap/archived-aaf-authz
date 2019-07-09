@@ -53,7 +53,7 @@ public class ID extends Cmd {
 
         final CredRequest cr = new CredRequest();
         cr.setId(args[idx++]);
-        cr.setType(0);
+        cr.setType(10);
         if (args.length>idx)
             cr.setEntry(args[idx]);
         
@@ -92,9 +92,11 @@ public class ID extends Cmd {
                     pw().print(cr.getId());
                     pw().println(']');
                 } else if (fp.code()==202) {
-                        pw().println("ID Action Accepted, but requires Approvals before actualizing");
+                    pw().println("ID Action Accepted, but requires Approvals before actualizing");
+                } else if (fp.code()==409 && option==0) {
+                    pw().println("FQI already exists");
                 } else if (fp.code()==406 && option==1) {
-                        pw().println("You cannot delete this ID");
+                    pw().println("FQI does not exist");
                 } else {
                     pw().println(ATTEMPT_FAILED_SPECIFICS_WITHELD);
                 }

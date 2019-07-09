@@ -137,6 +137,8 @@ public class Cred extends Cmd {
                 	pw().println(text);
                 } else if (fp.code()==406 && option==1) {
                         pw().println("You cannot delete this Credential");
+                } else if (fp.code()==409 && option==0) {
+                    pw().println("You cannot add two Passwords for same day");
                 } else {
                     pw().println(ATTEMPT_FAILED_SPECIFICS_WITHELD);
                 }

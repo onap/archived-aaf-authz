@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.onap.aaf.auth.dao.cass.PermDAO;
@@ -44,7 +45,7 @@ import org.onap.aaf.auth.layer.Result;
  *
  */
 // Package on purpose
-class PermLookup {
+public class PermLookup {
     private AuthzTrans trans;
     private String user;
     private Question q;
@@ -55,7 +56,7 @@ class PermLookup {
     
     private PermLookup() {}
     
-    static PermLookup get(AuthzTrans trans, Question q, String user) {
+    public static PermLookup get(AuthzTrans trans, Question q, String user) {
         PermLookup lp=null;
         Map<String, PermLookup> permMap = trans.get(Question.PERMS, null);
         if (permMap == null) {
@@ -152,13 +153,32 @@ class PermLookup {
                 List<PermDAO.Data> lpdd = new ArrayList<>();
                 for (String perm : rss.value) {
                     if (lookup) {
+                    	Map<String,PermDAO.Data> mspdd = new TreeMap<>();
                         Result<String[]> ap = PermDAO.Data.decodeToArray(trans, q, perm);
                         if (ap.isOK()) {
                              
                             Result<List<PermDAO.Data>> rlpd = q.permDAO().read(perm,trans,ap.value);
                             if (rlpd.isOKhasData()) {
                                 for (PermDAO.Data pData : rlpd.value) {
-                                    lpdd.add(pData);
+                                	// ONLY add perms/roles which are related to this lookup
+                                	for(String pdr : pData.roles(false)) {
+                                		for(RoleDAO.Data r : roles.value) {
+                                			if(pdr.equals(r.encode())) {
+                                            	PermDAO.Data pdd = mspdd.get(pData.fullPerm());
+                                            	if(pdd==null) {
+                                            		pdd = new PermDAO.Data();
+                                            		pdd.ns = pData.ns;
+                                            		pdd.type = pData.type;
+                                            		pdd.instance = pData.instance;
+                                            		pdd.action = pData.action;
+                                            		pdd.description = pData.description;
+                                                    lpdd.add(pdd);
+                                            	}
+                                				pdd.roles(true).add(pdr);	
+                                				break;
+                                			}
+                                		}
+                                	}
                                 }
                             }
                         } else {

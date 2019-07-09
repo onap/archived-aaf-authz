@@ -108,7 +108,6 @@ public class PropAccess implements Access {
     protected synchronized void init(Properties p) {
         // Make sure these two are set before any changes in Logging
         name = "cadi";
-        level=DEFAULT.maskOf();
         
         props = new Properties();
         // First, load related System Properties
@@ -127,16 +126,14 @@ public class PropAccess implements Access {
         
         // Preset LogLevel
         String sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
-        if (sLevel!=null) {
-            level=Level.valueOf(sLevel).maskOf(); 
-        }
-        
         // Third, load any Chained Property Files
         load(props.getProperty(Config.CADI_PROP_FILES));
         
         if(sLevel==null) { // if LogLev wasn't set before, check again after Chained Load
 	        sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
-	        if (sLevel!=null) {
+	        if (sLevel==null) {
+	        	level=DEFAULT.maskOf();
+	        } else {
 	            level=Level.valueOf(sLevel).maskOf(); 
 	        }
         }
