@@ -38,14 +38,7 @@ public class NsAttrib {
     public final String ns;
     public final String key;
     public final String value;
-    
-    
-    public NsAttrib(String ns, String key, String value) {
-        this.ns = ns;
-        this.key = key;
-        this.value = value;
-    }
-    
+
     public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
         @Override
         public NsAttrib create(Row row) {
@@ -57,6 +50,13 @@ public class NsAttrib {
             return "select ns,key,value from authz.ns_attrib";
         }
     };
+    
+    
+    public NsAttrib(String ns, String key, String value) {
+        this.ns = ns;
+        this.key = key;
+        this.value = value;
+    }
     
    public static void load(Trans trans, Session session, Creator<NsAttrib> creator, Visitor<NsAttrib> visitor) {
         trans.info().log( "query: " + creator.select() );
