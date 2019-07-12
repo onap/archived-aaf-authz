@@ -1178,9 +1178,9 @@ public class Question {
     }
 
     public boolean isAdmin(AuthzTrans trans, String user, String ns) {
-        Date now = new Date();
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_ADMIN);
         if (rur.isOKhasData()) {
+            Date now = new Date();
         	for (UserRoleDAO.Data urdd : rur.value){
 	            if (urdd.expires.after(now)) {
 	                return true;
@@ -1192,8 +1192,8 @@ public class Question {
     
     public boolean isOwner(AuthzTrans trans, String user, String ns) {
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_OWNER);
-        Date now = new Date();
         if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
+            Date now = new Date();
             if (urdd.expires.after(now)) {
                 return true;
             }

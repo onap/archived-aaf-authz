@@ -24,8 +24,8 @@ package org.onap.aaf.auth.common;
 import java.util.Map.Entry;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.config.Config;
 
 public class Define {
@@ -89,6 +89,18 @@ public class Define {
 
     public static boolean isInitialized() {
         return initialized;
+    }
+    
+    public static String getCredType(int type) {
+        switch(type) {
+        	case 0:	  return "NoCrd";
+            case 1:   return "U/P";
+            case 2:   return "U/P2";
+            case 10:  return "FQI";
+            case 200: return "x509";
+            default:
+                return "n/a";
+        }
     }
     
 }

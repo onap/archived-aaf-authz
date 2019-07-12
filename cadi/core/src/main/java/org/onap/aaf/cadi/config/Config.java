@@ -228,6 +228,9 @@ public class Config {
     public static final String AAF_URL_CM_DEF = "https://AAF_LOCATE_URL/AAF_NS.cm:"+AAF_DEFAULT_API_VERSION;
     public static final String AAF_URL_HELLO = "aaf_url_hello";
     public static final String CM_TRUSTED_CAS = "cm_trusted_cas";
+    // let NS Owners choose with <ns>.certman aaf ignoreIPs" to ignoreIP Check for Configs
+    // Probably only want to allow in a DEV Env.
+    public static final String CM_ALLOW_IGNORE_IPS="cm_allow_ignore_ips";
 
     public static final String PATHFILTER_URLPATTERN = "pathfilter_urlpattern";
     public static final String PATHFILTER_STACK = "pathfilter_stack";

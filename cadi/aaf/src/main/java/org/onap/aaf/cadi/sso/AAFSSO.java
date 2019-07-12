@@ -381,7 +381,7 @@ public class AAFSSO {
             addProp(Config.AAF_LOCATE_URL, locateUrl);
             try {
             	if(access.getProperty(Config.AAF_URL)==null) {
-            		access.setProperty(Config.AAF_URL, "https://AAF_LOCATE/AAF_NS.service:2.1");
+            		access.setProperty(Config.AAF_URL, Defaults.AAF_ROOT+".service:"+Defaults.AAF_VERSION);
             	}
 				AAFCon<?> aafCon = AAFCon.newInstance(access);
 		    	Future<Configuration> acf;

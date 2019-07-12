@@ -265,6 +265,16 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         hd.memo = memo
                 ? String.format("%s by %s", override[0], hd.user)
                 : (modified.name() + "d credential for " + data.id);
+        String spacer = ": ";
+        if(data.notes!=null) {
+        	hd.memo+=spacer + data.notes;
+        	spacer = ", ";
+        }
+
+        if(data.tag!=null) {
+        	hd.memo+=spacer + data.tag;
+        }
+
         // Detail?
            if (modified==CRUD.delete) {
                     try {

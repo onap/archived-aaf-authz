@@ -94,10 +94,6 @@ public class AAFcli {
         this(access,new AuthzEnv(access.getProperties()),wtr,hman, si,ss);
     }
 
-    public AuthzEnv env() {
-    	return env;
-    }
-    
     public AAFcli(Access access, AuthzEnv env, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
         this.env = env;
         this.access = access;
@@ -127,7 +123,11 @@ public class AAFcli {
         cmds.add(new Mgmt(this));
     }
 
-    public static int timeout() {
+    public AuthzEnv env() {
+		return env;
+	}
+
+	public static int timeout() {
         return TIMEOUT;
     }
 

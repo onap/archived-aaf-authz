@@ -35,7 +35,6 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.CredRequest;
 
 public class ID extends Cmd {
-    public static final String ATTEMPT_FAILED_SPECIFICS_WITHELD = "Attempt Failed.  Specifics witheld.";
     private static final String CRED_PATH = "/authn/cred";
     private static final String[] options = {"add","del"};
     public ID(User parent) {
@@ -98,7 +97,7 @@ public class ID extends Cmd {
                 } else if (fp.code()==406 && option==1) {
                     pw().println("FQI does not exist");
                 } else {
-                    pw().println(ATTEMPT_FAILED_SPECIFICS_WITHELD);
+                    pw().println(Cred.ATTEMPT_FAILED_SPECIFICS_WITHELD);
                 }
                 return fp.code();
             }

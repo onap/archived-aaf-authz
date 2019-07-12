@@ -140,28 +140,75 @@ public class Agent {
         } else {
             try {
                 AAFSSO aafsso=null;
-                PropAccess access;
+                PropAccess access=null; 
                 
-                if (args.length>1 && args[0].equals("validate") ) {
-                    int idx = args[1].indexOf('=');
-                    aafsso = null;
-                    access = new PropAccess(
-                                (idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
-                                '='+
-                                (idx<0?args[1]:args[1].substring(idx+1)));
-                } else {
-                    aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
-                        @Override
-                        public Properties process(String[] args, Properties props) {
-                            if (args.length>1) {
-                                if (!args[0].equals("keypairgen")) {
-                                    props.put(Config.AAF_APPID, args[1]);
-                                }    
-                            }
-                            return props;
-                        }
-                    });
-                    access = aafsso.access();
+            	String hasEtc = null;
+                for(String a : args) {
+                	if(a.startsWith(Config.CADI_PROP_FILES)) {
+                		access = new PropAccess(args);
+                		break;
+                	} else if(a.startsWith(Config.CADI_ETCDIR)) {
+                		int idx = a.indexOf('=');
+                		if(idx>=0 && idx<a.length()) {
+                			hasEtc = a.substring(idx+1);
+                		}
+                	}
+                }
+                
+                if(access==null) {
+                	if(args.length>1 && args[1].contains("@")) {
+                		String domain = FQI.reverseDomain(args[1]);
+                		if(domain!=null) {
+                			if(hasEtc==null) {
+                				hasEtc = ".";
+                			}
+                			File etc = new File(hasEtc);
+                			if(etc.exists()) {
+                				File nsprops = new File(etc,domain+".props");
+                				if(nsprops.exists()) {
+                					access = new PropAccess(new String[] {Config.CADI_PROP_FILES+'='+nsprops.getAbsolutePath()});
+                				}
+                			}
+                		}
+                	} 
+                }
+                
+                if(access==null) {
+	                for(Entry<Object, Object> es : System.getProperties().entrySet()) {
+	                	if(Config.CADI_PROP_FILES.equals(es.getKey())) {
+	                		access = new PropAccess();
+	                	}
+	                }
+                }
+
+				// When using Config file, check if Cred Exists, and if not, work with Deployer.
+				if(access!=null && !"config".equals(args[0]) && access.getProperty(Config.AAF_APPPASS)==null && access.getProperty(Config.CADI_ALIAS)==null) {
+					// not enough credentials to use Props.  Use AAFSSO 
+					access = null;
+				}
+
+                if(access==null) {
+	                if (args.length>1 && args[0].equals("validate") ) {
+	                    int idx = args[1].indexOf('=');
+	                    aafsso = null;
+	                    access = new PropAccess(
+	                                (idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
+	                                '='+
+	                                (idx<0?args[1]:args[1].substring(idx+1)));
+	                } else {
+	                    aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
+	                        @Override
+	                        public Properties process(String[] args, Properties props) {
+	                            if (args.length>1) {
+	                                if (!args[0].equals("keypairgen")) {
+	                                    props.put(Config.AAF_APPID, args[1]);
+	                                }    
+	                            }
+	                            return props;
+	                        }
+	                    });
+	                    access = aafsso.access();
+	                }
                 }
                     
                 if (aafsso!=null && aafsso.loginOnly()) {
@@ -805,7 +852,7 @@ public class Agent {
         try {
 	        final String fqi = fqi(cmds);
 	        Artifact arti = new Artifact();
-	        arti.setDir(propAccess.getProperty(Config.CADI_ETCDIR, "."));
+	        arti.setDir(propAccess.getProperty(Config.CADI_ETCDIR, System.getProperty("user.dir")));
 	        arti.setNs(FQI.reverseDomain(fqi));
             PropHolder loc = PropHolder.get(arti, "location.props");
             PropHolder cred = PropHolder.get(arti,"cred.props");
@@ -822,13 +869,20 @@ public class Agent {
             	loc.add(tag, getProperty(propAccess, trans, false, tag, "%s: ",tag));
             }
             
+            String keyfile = cred.getKeyPath();
+            if(keyfile!=null) {
+            	File fkeyfile = new File(keyfile);
+            	if(!fkeyfile.exists()) {
+            		ArtifactDir.write(fkeyfile,Chmod.to400,Symm.keygen());
+            	}
+            }
             cred.add(Config.CADI_KEYFILE, cred.getKeyPath());
             final String ssoAppID = propAccess.getProperty(Config.AAF_APPID);
             if(fqi!=null && fqi.equals(ssoAppID)) {
             	cred.addEnc(Config.AAF_APPPASS, propAccess, null);
             // only Ask for Password when starting scratch
             } else if(propAccess.getProperty(Config.CADI_PROP_FILES)==null) {
-            	char[] pwd = AAFSSO.cons.readPassword("Password for %s: ", fqi);
+            	char[] pwd = AAFSSO.cons.readPassword("Password for %s (leave blank for NO password): ", fqi);
             	if(pwd.length>0) {
             		cred.addEnc(Config.AAF_APPPASS, new String(pwd));
             	}

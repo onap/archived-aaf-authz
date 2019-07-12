@@ -113,7 +113,8 @@ public class CmdLine {
 // Jonathan.  Oh, well, Deployment services need this behavior.  I will put this code in, but leave it undocumented. 
 // One still needs access to the keyfile to read.
 // July 2016 - thought of a tool "CMPass" to regurgitate from properties, but only if allowed.
-            } else if ("regurgitate".equalsIgnoreCase(args[0]) && args.length>2) {
+            } else if (("regurgitate".equalsIgnoreCase(args[0]) || "undigest".equalsIgnoreCase(args[0]))
+            			&& args.length>2) {
                 try {
                     Symm symm;
                     FileInputStream fis = new FileInputStream(args[2]);
@@ -188,7 +189,7 @@ public class CmdLine {
                     System.out.flush();
                     return;
                 } catch (IOException e) {
-                    System.err.println("Cannot regurgitate password");
+                    System.err.println("Cannot undigest password");
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
             } else if ("encode64".equalsIgnoreCase(args[0]) && args.length>1) {
@@ -334,6 +335,7 @@ public class CmdLine {
             System.out.println("  digest [<passwd>|-i|] <keyfile>        (Encrypts Password with \"keyfile\"");
             System.out.println("                                          if passwd = -i, will read StdIn");
             System.out.println("                                          if passwd is blank, will ask securely)");
+            System.out.println("  undigest <enc:...> <keyfile>           (Decrypts Encoded with \"keyfile\")");
             System.out.println("  passgen <digits>                       (Generate Password of given size)");
             System.out.println("  urlgen <digits>                        (Generate URL field of given size)");
             System.out.println("  encode64 <your text>                   (Encodes to Base64)");
