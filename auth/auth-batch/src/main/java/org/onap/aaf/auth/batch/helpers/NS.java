@@ -32,7 +32,6 @@ import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
-import org.onap.aaf.misc.env.util.Chrono;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
