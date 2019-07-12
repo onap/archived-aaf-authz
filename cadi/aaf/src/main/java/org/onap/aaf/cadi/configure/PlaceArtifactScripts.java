@@ -73,7 +73,11 @@ public class PlaceArtifactScripts extends ArtifactDir {
                     "APP="+arti.getNs()+'\n',
                     "EMAIL="+email+ '\n',
                     "JAR=\""+classpath.toString()+"\"\n",
-                    "JAVA=\""+javaHome() + "/bin/" +"java\"\n",
+                    "if [ -z \"$JAVA_HOME\" ]; then \n",
+                    "  JAVA=\""+javaHome() + "/bin/" +"java\"\n",
+                    "else\n",
+                    "  JAVA=\"$JAVA_HOME/bin/java\"\n",
+                    "fi\n",
                     checkScript
                     );
             

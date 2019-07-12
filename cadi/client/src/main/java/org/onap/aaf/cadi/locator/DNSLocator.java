@@ -187,6 +187,10 @@ public class DNSLocator implements Locator<URI> {
                     startPort = Integer.parseInt(aaf_locate.substring(left + 1, dash));
                     endPort = Integer.parseInt(aaf_locate.substring(dash + 1, right));
                 }
+                slash = aaf_locate.indexOf('/', start);
+                if(slash>=0) {
+                	suffix = aaf_locate.substring(slash);
+                }
                 
             } else {
                 slash = aaf_locate.indexOf('/', start);
@@ -197,6 +201,7 @@ public class DNSLocator implements Locator<URI> {
                     startPort = endPort = Integer.parseInt(aaf_locate.substring(start));
                 } else {
                     startPort = endPort = Integer.parseInt(aaf_locate.substring(start, slash));
+                    suffix = aaf_locate.substring(slash);
                 }
             }
         } else {

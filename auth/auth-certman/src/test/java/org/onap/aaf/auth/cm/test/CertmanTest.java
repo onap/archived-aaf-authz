@@ -21,41 +21,16 @@
 
 package org.onap.aaf.auth.cm.test;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URI;
-import java.security.cert.CertificateException;
-
-import javax.security.auth.x500.X500Principal;
-
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.onap.aaf.auth.env.AuthzEnv;
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.Locator.Item;
-import org.onap.aaf.cadi.client.Future;
-import org.onap.aaf.cadi.client.Rcli;
-import org.onap.aaf.cadi.client.Retryable;
-import org.onap.aaf.cadi.config.SecurityInfoC;
-import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.cadi.http.HBasicAuthSS;
 import org.onap.aaf.cadi.http.HMangr;
-import org.onap.aaf.cadi.locator.DNSLocator;
-import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.misc.env.Data;
-import org.onap.aaf.misc.env.Data.TYPE;
-import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
 import certman.v1_0.CertInfo;
 import certman.v1_0.CertificateRequest;
-import junit.framework.Assert;
 
 public class CertmanTest {
 
