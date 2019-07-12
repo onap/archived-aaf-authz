@@ -122,7 +122,7 @@ public class Cred extends Cmd {
                     pw().println(']');
                 } else if (fp.code()==202) {
                         pw().println("Credential Action Accepted, but requires Approvals before actualizing");
-                } else if (fp.code()==300) {
+                } else if (fp.code()==300 || fp.code()==406) {
                 	Error err = em.getError(fp);
                 	String text = err.getText();
                 	List<String> vars = err.getVariables();

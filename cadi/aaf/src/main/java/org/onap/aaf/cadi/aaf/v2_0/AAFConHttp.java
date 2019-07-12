@@ -60,31 +60,26 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
 
     public AAFConHttp(Access access, String tag) throws CadiException, LocatorException {
         super(access,tag,SecurityInfoC.instance(access, HttpURLConnection.class));
-        bestSS(si);
         hman = new HMangr(access,Config.loadLocator(si, access.getProperty(tag,tag/*try the content itself*/)));
     }
 
     public AAFConHttp(Access access, String urlTag, SecurityInfoC<HttpURLConnection> si) throws CadiException, LocatorException {
         super(access,urlTag,si);
-        bestSS(si);
         hman = new HMangr(access,Config.loadLocator(si, access.getProperty(urlTag,null)));
     }
 
     public AAFConHttp(Access access, Locator<URI> locator) throws CadiException, LocatorException {
         super(access,Config.AAF_URL,SecurityInfoC.instance(access, HttpURLConnection.class));
-        bestSS(si);
         hman = new HMangr(access,locator);
     }
 
     public AAFConHttp(Access access, Locator<URI> locator, SecurityInfoC<HttpURLConnection> si) throws CadiException, LocatorException, APIException {
         super(access,Config.AAF_URL,si);
-        bestSS(si);
         hman = new HMangr(access,locator);
     }
 
     public AAFConHttp(Access access, Locator<URI> locator, SecurityInfoC<HttpURLConnection> si, String tag) throws CadiException, LocatorException, APIException {
         super(access,tag,si);
-        bestSS(si);
         hman = new HMangr(access, locator);
     }
     

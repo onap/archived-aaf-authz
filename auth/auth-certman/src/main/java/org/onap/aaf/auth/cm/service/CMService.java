@@ -60,6 +60,7 @@ import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.Permission;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.configure.Factory;
@@ -88,6 +89,7 @@ public class CMService {
     private final CredDAO credDAO;
     private final ArtiDAO artiDAO;
     private AAF_CM certManager;
+	private Boolean allowIgnoreIPs;
 
     // @SuppressWarnings("unchecked")
     public CMService(final AuthzTrans trans, AAF_CM certman) throws APIException, IOException {
@@ -108,6 +110,10 @@ public class CMService {
                 "*",
                 "read"
         );
+        allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
+        if(allowIgnoreIPs) {
+            trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
+        }
     }
 
     public Result<CertResp> requestCert(final AuthzTrans trans, final Result<CertReq> req, final CA ca) {
@@ -133,7 +139,13 @@ public class CMService {
             try {
                 Organization org = trans.org();
 
-                boolean ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
+                boolean ignoreIPs;
+                if(allowIgnoreIPs) {
+                	ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
+                } else {
+                	ignoreIPs = false;
+                }
+                
 
                 InetAddress primary = null;
                 // Organize incoming information to get to appropriate Artifact
@@ -164,8 +176,8 @@ public class CMService {
                         }
 
                     } else {
-                        for (String cn : req.value.fqdns) {
-                            if (!ignoreIPs) {
+                        if (!ignoreIPs) {
+                        	for (String cn : req.value.fqdns) {
                                 try {
                                     InetAddress[] ias = InetAddress.getAllByName(cn);
                                     Set<String> potentialSanNames = new HashSet<>();

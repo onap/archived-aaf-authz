@@ -235,6 +235,7 @@ public class JU_CmdLine {
             "  digest [<passwd>|-i|] <keyfile>        (Encrypts Password with \"keyfile\"" + lineSeparator +
             "                                          if passwd = -i, will read StdIn" + lineSeparator +
             "                                          if passwd is blank, will ask securely)" + lineSeparator +
+            "  undigest <enc:...> <keyfile>           (Decrypts Encoded with \"keyfile\")" + lineSeparator +
             "  passgen <digits>                       (Generate Password of given size)" + lineSeparator +
             "  urlgen <digits>                        (Generate URL field of given size)" + lineSeparator +
             "  encode64 <your text>                   (Encodes to Base64)" + lineSeparator +

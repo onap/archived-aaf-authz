@@ -26,6 +26,7 @@ import java.util.Comparator;
 
 import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.auth.cmd.DeprecatedCMD;
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.misc.env.util.Chrono;
 
@@ -162,15 +163,8 @@ public class List extends BaseCmd<NS> {
         if ((type=u.getType())==null) {
             type = 9999;
         } 
-        switch(type) {
-        	case 0:	  return "NoCrd";
-            case 1:   return "U/P";
-            case 2:   return "U/P2";
-            case 10:  return "FQI";
-            case 200: return "x509";
-            default:
-                return "n/a";
-        }
+        return Define.getCredType(type);
     }
+    
 
 }

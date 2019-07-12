@@ -48,7 +48,6 @@ public class List extends BaseCmd<User> {
      
     void report(Users users, boolean count, String ... str) {
         reportHead(str);
-        int idx = 0;
         java.util.List<aaf.v2_0.Users.User> sorted = users.getUser();
         Collections.sort(sorted, (Comparator<aaf.v2_0.Users.User>) (u1, u2) -> {
             if (u1==null || u2 == null) {
@@ -56,11 +55,11 @@ public class List extends BaseCmd<User> {
             }
             return u1.getId().compareTo(u2.getId());
         });
-        String format = reportColHead("%-48s %-5s %-11s %-16s\n","User","Type","Expires","Tag");
+        String format = reportColHead("%-36s %-5s %-20s %-16s\n","User","Type","Expires","Tag");
         String date = "XXXX-XX-XX";
         for (aaf.v2_0.Users.User user : sorted) {
             if (!aafcli.isTest()) {
-                date = Chrono.dateOnlyStamp(user.getExpires());
+                date = Chrono.niceUTCStamp(user.getExpires());
             }
             String tag=user.getTag();
             Integer type = user.getType();
@@ -70,7 +69,7 @@ public class List extends BaseCmd<User> {
             	tag = "\n\tfingerprint: " + tag;
             }
             pw().format(format, 
-                    count? (Integer.valueOf(++idx) + ") " + user.getId()): user.getId(),
+                    user.getId(),
                     org.onap.aaf.auth.cmd.ns.List.getType(user),
                     date,
                     tag);

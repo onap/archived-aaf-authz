@@ -2821,7 +2821,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
             //Need to do the "Pick Entry" mechanism
             // Note, this sorts
-            Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, lcdd, "extend");
+            Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, lcdd, MayChangeCred.EXTEND);
             if (ri.notOK()) {
                 return Result.err(ri);
             }
@@ -2835,8 +2835,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             cd.type = found.type;
             cd.ns = found.ns;
             cd.notes = "Extended";
-            cd.expires = org.expiration(null, Expiration.ExtendPassword,days).getTime();
             cd.tag = found.tag;
+            cd.expires = org.expiration(null, Expiration.ExtendPassword,days).getTime();
+            if(cd.expires.before(found.expires)) {
+            	return Result.err(Result.ERR_BadData,String.format("Credential's expiration date is more than %s days in the future",days));
+            }
             
             cred = ques.credDAO().create(trans, cd);
             if (cred.isOK()) {
@@ -2887,63 +2890,72 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 	    }
 	    boolean isLastCred = rlcd.value.size()==1;
 	    
-	    int entry = -1;
-    	int fentry = entry;
-	    if(cred.value.type==CredDAO.FQI) {
-	    	entry = -1;
-	    	for(CredDAO.Data cdd : rlcd.value) {
-	    		++fentry;
-	    		if(cdd.type == CredDAO.FQI) {
-	    			entry = fentry;
-	    			break; 
-	    		}
+	    int entry;
+	    CredRequest cr = (CredRequest)from;
+	    if(isLastCred) {
+	    	if(cr.getEntry()==null || "1".equals(cr.getEntry())) {
+	    		entry = 0;
+	    	} else {
+	            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
 	    	}
 	    } else {
-		    if (!doForce) {
-		        if (rlcd.value.size() > 1) {
-		            CredRequest cr = (CredRequest)from;
-		            String inputOption = cr.getEntry();
-		            if (inputOption == null) {
-		            	List<CredDAO.Data> list = filterList(rlcd.value,CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256,CredDAO.CERT_SHA256_RSA);
-		                String message = selectCredFromList(list, MayChangeCred.DELETE);
-		                Object[] variables = buildVariables(list);
-		                return Result.err(Status.ERR_ChoiceNeeded, message, variables);
-		            } else {
-		                try {
-		                    if (inputOption.length()>5) { // should be a date
-		                        Date d = Chrono.xmlDatatypeFactory.newXMLGregorianCalendar(inputOption).toGregorianCalendar().getTime();
-		                        for (CredDAO.Data cd : rlcd.value) {
-		                        	++fentry;
-		                            if (cd.type.equals(cr.getType()) && cd.expires.equals(d)) {
-		                            	entry = fentry;
-		                                break;
-		                            }
-		                        }
-		                    } else {
-	                        	entry = Integer.parseInt(inputOption) - 1;
-	                        	int count = 0;
-		                        for (CredDAO.Data cd : rlcd.value) {
-		                        	if(cd.type!=CredDAO.BASIC_AUTH && cd.type!=CredDAO.BASIC_AUTH_SHA256 && cd.type!=CredDAO.CERT_SHA256_RSA) {
-		                        		++entry;
-		                        	}
-		                        	if(++count>entry) {
-		                        		break;
-		                        	}
-		                        }
-		                    }
-		                } catch (NullPointerException e) {
-		                    return Result.err(Status.ERR_BadData, "Invalid Date Format for Entry");
-		                } catch (NumberFormatException e) {
-		                    return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-		                }
-		            }
-		            isLastCred = (entry==-1)?true:false;
-		        } else {
-		            isLastCred = true;
-		        }
-		        if (entry < -1 || entry >= rlcd.value.size()) {
-		            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
-		        }
+		    entry = -1;
+	    	int fentry = entry;
+		    if(cred.value.type==CredDAO.FQI) {
+		    	entry = -1;
+		    	for(CredDAO.Data cdd : rlcd.value) {
+		    		++fentry;
+		    		if(cdd.type == CredDAO.FQI) {
+		    			entry = fentry;
+		    			break; 
+		    		}
+		    	}
+		    } else {
+			    if (!doForce) {
+			        if (rlcd.value.size() > 1) {
+			            String inputOption = cr.getEntry();
+			            if (inputOption == null) {
+			            	List<CredDAO.Data> list = filterList(rlcd.value,CredDAO.BASIC_AUTH,CredDAO.BASIC_AUTH_SHA256,CredDAO.CERT_SHA256_RSA);
+			                String message = selectCredFromList(list, MayChangeCred.DELETE);
+			                Object[] variables = buildVariables(list);
+			                return Result.err(Status.ERR_ChoiceNeeded, message, variables);
+			            } else {
+			                try {
+			                    if (inputOption.length()>5) { // should be a date
+			                        Date d = Chrono.xmlDatatypeFactory.newXMLGregorianCalendar(inputOption).toGregorianCalendar().getTime();
+			                        for (CredDAO.Data cd : rlcd.value) {
+			                        	++fentry;
+			                            if (cd.type.equals(cr.getType()) && cd.expires.equals(d)) {
+			                            	entry = fentry;
+			                                break;
+			                            }
+			                        }
+			                    } else {
+		                        	entry = Integer.parseInt(inputOption) - 1;
+		                        	int count = 0;
+			                        for (CredDAO.Data cd : rlcd.value) {
+			                        	if(cd.type!=CredDAO.BASIC_AUTH && cd.type!=CredDAO.BASIC_AUTH_SHA256 && cd.type!=CredDAO.CERT_SHA256_RSA) {
+			                        		++entry;
+			                        	}
+			                        	if(++count>entry) {
+			                        		break;
+			                        	}
+			                        }
+			                    }
+			                } catch (NullPointerException e) {
+			                    return Result.err(Status.ERR_BadData, "Invalid Date Format for Entry");
+			                } catch (NumberFormatException e) {
+			                    return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+			                }
+			            }
+			            isLastCred = (entry==-1)?true:false;
+			        } else {
+			            isLastCred = true;
+			        }
+			        if (entry < -1 || entry >= rlcd.value.size()) {
+			            return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
+			        }
+			    }
 		    }
 	    }
 	    
@@ -3020,6 +3032,32 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 	            Object[] variables = buildVariables(lcd);
 	            return Result.err(Status.ERR_ChoiceNeeded, message, variables);
 	        } else {
+	        	if(MayChangeCred.EXTEND.equals(action)) {
+	        		// might be Tag
+	        		if(inputOption.length()>4) { //Tag is at least 12
+	        			int e = 0;
+	        			CredDAO.Data last = null;
+	        			int lastIdx = -1;
+	        			for(CredDAO.Data cdd : lcd) {
+	        				if(inputOption.equals(cdd.tag)) {
+	        					if(last==null) {
+	        						last = cdd;
+	        						lastIdx = e;
+	        					} else {
+	        						if(last.expires.before(cdd.expires)) {
+	        							last = cdd;
+	        							lastIdx = e;
+	        						}
+	        					}
+	        				}
+	        				++e;
+	        			}
+	        			if(last!=null) {
+	        				return Result.ok(lastIdx);
+	        			}
+	        			return Result.err(Status.ERR_BadData, "User chose unknown Tag");
+	        		}
+	        	}
 	            entry = Integer.parseInt(inputOption) - 1;
 	        }
 	        if (entry < 0 || entry >= lcd.size()) {
@@ -3040,20 +3078,23 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 	        	}
         	}
         }
+        Collections.sort(rv, (o1,o2) -> {
+        	if(o1.type==o2.type) {
+        		return o1.expires.compareTo(o2.expires);
+        	} else {
+        		return o1.type.compareTo(o2.type);
+        	}
+        });
 		return rv;
 	}
 
 	private String[] buildVariables(List<CredDAO.Data> value) {
-        // ensure credentials are sorted so we can fully automate Cred regression test
-        Collections.sort(value, (cred1, cred2) -> 
-        	cred1.type==cred2.type?cred2.expires.compareTo(cred1.expires):
-        		cred1.type<cred2.type?-1:1);
         String [] vars = new String[value.size()];
         CredDAO.Data cdd;
         
         for (int i = 0; i < value.size(); i++) {
         	cdd = value.get(i);
-        	vars[i] = cdd.id + TWO_SPACE + cdd.type + TWO_SPACE + (cdd.type<10?TWO_SPACE:"")+ cdd.expires + TWO_SPACE + cdd.tag;
+        	vars[i] = cdd.id + TWO_SPACE + Define.getCredType(cdd.type) + TWO_SPACE + Chrono.niceUTCStamp(cdd.expires) + TWO_SPACE + cdd.tag;
         }
         return vars;
     }
@@ -3070,12 +3111,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         for (int i = 0; i < numSpaces; i++) {
             errMessage.append(' ');
         }
-        errMessage.append(" Type  Expires                       Tag " + '\n');
+        errMessage.append("  Type  Expires               Tag " + '\n');
         for (int i=0;i<value.size();++i) {
             errMessage.append("    %s\n");
         }
-        errMessage.append("Run same command again with chosen entry as last parameter");
-        
+        if(MayChangeCred.EXTEND.equals(action)) {
+            errMessage.append("Run same command again with chosen entry or Tag as last parameter");
+        } else {
+        	errMessage.append("Run same command again with chosen entry as last parameter");
+        }
         return errMessage.toString();
         
     }

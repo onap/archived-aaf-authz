@@ -126,43 +126,47 @@ public abstract class AAFCon<CLIENT> implements Connector {
 	            if (mechid==null) {
 	                mechid=access.getProperty(Config.OAUTH_CLIENT_ID,null);
 	            }
-	            String encpass = access.getProperty(Config.AAF_APPPASS, null);
-	            if (encpass==null) {
-	                encpass = access.getProperty(Config.OAUTH_CLIENT_SECRET,null);
-	            }
-	            if (encpass==null) {
-	                String alias = access.getProperty(Config.CADI_ALIAS, mechid);
-	                if (alias==null) {
-	                    access.printf(Access.Level.WARN,"%s, %s or %s required before use.", Config.CADI_ALIAS, Config.AAF_APPID, Config.OAUTH_CLIENT_ID);
-	                    set(si.defSS);
-	                } else {
-	                    si.defSS=x509Alias(alias);
-	                    set(si.defSS);
-	                }
+	            String alias = access.getProperty(Config.CADI_ALIAS, null);
+	            if(alias != null) {
+		            si.defSS=x509Alias(alias);
+		            set(si.defSS);
 	            } else {
-	                if (mechid!=null) {
-	                    si.defSS=basicAuth(mechid, encpass);
-	                    set(si.defSS);
-	                } else {
-	                    si.defSS=new SecuritySetter<CLIENT>() {
 	
-	                        @Override
-	                        public String getID() {
-	                            return "";
-	                        }
-	
-	                        @Override
-	                        public void setSecurity(CLIENT client) throws CadiException {
-	                            throw new CadiException("AAFCon has not been initialized with Credentials (SecuritySetter)");
-	                        }
-	
-	                        @Override
-	                        public int setLastResponse(int respCode) {
-	                            return 0;
-	                        }
-	                    };
-	                    set(si.defSS);
-	                }
+		            String encpass = access.getProperty(Config.AAF_APPPASS, null);
+		            if (encpass==null) {
+		                encpass = access.getProperty(Config.OAUTH_CLIENT_SECRET,null);
+		            }
+		            
+		            if (encpass==null) {
+		                if (alias==null) {
+		                    access.printf(Access.Level.WARN,"%s, %s or %s required before use.", Config.CADI_ALIAS, Config.AAF_APPID, Config.OAUTH_CLIENT_ID);
+		                    set(si.defSS);
+		                }
+		            } else {
+		                if (mechid!=null) {
+		                    si.defSS=basicAuth(mechid, encpass);
+		                    set(si.defSS);
+		                } else {
+		                    si.defSS=new SecuritySetter<CLIENT>() {
+		
+		                        @Override
+		                        public String getID() {
+		                            return "";
+		                        }
+		
+		                        @Override
+		                        public void setSecurity(CLIENT client) throws CadiException {
+		                            throw new CadiException("AAFCon has not been initialized with Credentials (SecuritySetter)");
+		                        }
+		
+		                        @Override
+		                        public int setLastResponse(int respCode) {
+		                            return 0;
+		                        }
+		                    };
+		                    set(si.defSS);
+		                }
+		            }
 	            }
 	        }
 	        
