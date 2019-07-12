@@ -39,7 +39,7 @@ public class ApprovalSet {
 	protected FutureDAO.Data fdd;
 	protected List<ApprovalDAO.Data> ladd;
 	
-	public ApprovalSet(final GregorianCalendar start, final String target, final DataView dv) throws CadiException {
+	public ApprovalSet(final GregorianCalendar start, final String target, final DataView dv) {
 		dataview = dv;
 		fdd = new FutureDAO.Data();
 		fdd.id = Chrono.dateToUUID(System.currentTimeMillis());
