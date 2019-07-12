@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +37,7 @@ public abstract class NotifyCredBody extends NotifyBody {
 	private final String explanation;
 	private final String instruction;
 	 
-	public NotifyCredBody(Access access, String name) throws IOException {
+	public NotifyCredBody(Access access, String name) {
 		super(access,"cred",name);
 		
 		// Default
@@ -76,7 +78,11 @@ public abstract class NotifyCredBody extends NotifyBody {
 		println(sb,indent,"<th>Warnings</th>");
 		indent-=2;
 		println(sb,indent,"</tr>");
-		String theid, type, info, expires, warnings;
+		String theid;
+		String type;
+		String info;
+		String expires;
+		String warnings;
 		GregorianCalendar gc = new GregorianCalendar();
 		for(List<String> row : rows.get(id)) {
 			theid=row.get(1);
