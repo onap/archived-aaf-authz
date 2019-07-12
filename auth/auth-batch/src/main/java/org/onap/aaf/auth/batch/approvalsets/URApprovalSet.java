@@ -123,7 +123,7 @@ public class URApprovalSet extends ApprovalSet {
 		fdd.target_key = key;
 	}
 
-	private ApprovalDAO.Data newApproval(UserRoleDAO.Data urdd) throws CadiException {
+	private ApprovalDAO.Data newApproval(UserRoleDAO.Data urdd) {
 		ApprovalDAO.Data add = new ApprovalDAO.Data();
 		add.id = Chrono.dateToUUID(System.currentTimeMillis());
 		add.ticket = fdd.id;
