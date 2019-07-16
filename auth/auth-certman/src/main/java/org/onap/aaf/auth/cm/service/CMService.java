@@ -286,7 +286,7 @@ public class CMService {
                 // Make sure Primary is the first in fqdns
                 if (fqdns.size() > 1) {
                     for (int i = 0; i < fqdns.size(); ++i) {
-                        if (primary==null) {
+                        if (primary==null && !ignoreIPs) {
                             trans.error().log("CMService var primary is null");
                         } else {
                             String fg = fqdns.get(i);

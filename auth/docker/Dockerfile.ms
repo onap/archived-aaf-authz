@@ -21,16 +21,21 @@ FROM ${DOCKER_REPOSITORY}/onap/aaf/aaf_core:${AAF_VERSION}
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
-LABEL description="aaf_${AAF_COMPONENT}"
+LABEL description="aaf_core"
 LABEL version=${AAF_VERSION}
- 
+
+COPY lib /opt/app/aaf/lib
+COPY bin /opt/app/aaf/bin
+COPY theme /opt/app/aaf/theme
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
+
 RUN mkdir -p /opt/app/osaaf &&\
     mkdir -p /opt/app/aaf/status &&\
     chmod 755 /opt/app/aaf/bin/* &&\
     if [ -n "${DUSER}" ]; then  chown ${DUSER}:${DUSER} /opt/app/aaf/status \
-    && chown ${DUSER}:${DUSER} /opt/app/osaaf \
-    && chown -R ${DUSER}:${DUSER} /opt/app/aaf; fi
+      && chown ${DUSER}:${DUSER} /opt/app/osaaf \
+      && chown -R ${DUSER}:${DUSER} /opt/app/aaf;\
+    fi
 
 #CMD ["bash","-c","cd /opt/app/aaf;bin/${AAF_COMPONENT}"]
 CMD []

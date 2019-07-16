@@ -103,6 +103,7 @@ cd -
 ########
 # Second, build a core Docker Image
 echo Building aaf_$AAF_COMPONENT...
+cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
 # Apply currrent Properties to Docker file, and put in place.
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
@@ -118,37 +119,6 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
 rm aaf_${VERSION}/Dockerfile
 cd -
-
-#######
-# Do all the Containers related to AAF Services
-#######
-AAF_COMPONENTS=$(cat components)
-
-cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
-for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-    echo Building aaf_$AAF_COMPONENT...
-    if [ "hello" = "${AAF_COMPONENT}" ]; then
-       echo Building Hello separately
-       DF="Dockerfile.hello"
-       cp -Rf ../sample/etc ../aaf_${VERSION}/etc
-    else 
-       DF="Dockerfile.ms"
-    fi  
-    sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-        -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
-        -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
-        -e 's/${DUSER}/'${DUSER}'/g' \
-        $DF >../aaf_${VERSION}/Dockerfile
-    cd ..
-    $DOCKER build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
-    $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
-    $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:latest
-    rm aaf_${VERSION}/Dockerfile
-    if [ -e aaf_${VERSION}/etc ]; then
-       rm -Rf aaf_${VERSION}/etc
-    fi
-    cd -
-done
 
 # Final cleanup
 rm ../aaf_${VERSION}/bin/pod_wait.sh
