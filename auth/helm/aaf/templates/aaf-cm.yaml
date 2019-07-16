@@ -102,7 +102,7 @@ spec:
 ### AAF-CERTMAN
 ###
       - name: aaf-cm
-        image: {{ .Values.image.repository }}onap/aaf/aaf_cm:{{ .Values.image.version }}
+        image: {{ .Values.image.repository }}onap/aaf/aaf_core:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-cm nc aaf-cass.{{ .Release.Namespace }} {{ .Values.services.cass.native_trans_port }} aaf-locate && exec bin/cm"]
         volumeMounts:

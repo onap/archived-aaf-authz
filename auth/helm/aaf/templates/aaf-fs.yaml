@@ -96,7 +96,7 @@ spec:
 ### AAF-FS
 ###
       - name: aaf-fs
-        image: {{ .Values.image.repository }}onap/aaf/aaf_fs:{{ .Values.image.version }}
+        image: {{ .Values.image.repository }}onap/aaf/aaf_core:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-fs aaf-locate && exec bin/fs"]
         volumeMounts:

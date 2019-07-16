@@ -58,7 +58,8 @@ cd ../auth-cass/docker
 bash ./dbuild.sh $DOCKER_PULL_REGISTRY
 cd -
 
-# AAF Base version - set the core image, etc
+########
+# First, build a AAF Base version - set the core image, etc
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${DUSER}/'${DUSER}'/g' \
     -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
@@ -68,7 +69,8 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${
 $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:latest
 rm Dockerfile
 
-# Create the AAF Config (Security) Images
+########
+# Second, Create the AAF Config (Security) Images
 cd ..
 cp auth-cmd/target/aaf-auth-cmd-$VERSION-full.jar sample/bin
 cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar sample/bin
@@ -101,8 +103,9 @@ rm -Rf sample/CA
 cd -
 
 ########
-# Second, build a core Docker Image
+# Third, build a core Docker Image to be used for all AAF Components
 echo Building aaf_$AAF_COMPONENT...
+cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
 # Apply currrent Properties to Docker file, and put in place.
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
@@ -117,38 +120,9 @@ $DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
 rm aaf_${VERSION}/Dockerfile
-cd -
 
-#######
-# Do all the Containers related to AAF Services
-#######
-AAF_COMPONENTS=$(cat components)
-
-cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
-for AAF_COMPONENT in ${AAF_COMPONENTS}; do
-    echo Building aaf_$AAF_COMPONENT...
-    if [ "hello" = "${AAF_COMPONENT}" ]; then
-       echo Building Hello separately
-       DF="Dockerfile.hello"
-       cp -Rf ../sample/etc ../aaf_${VERSION}/etc
-    else 
-       DF="Dockerfile.ms"
-    fi  
-    sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-        -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
-        -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
-        -e 's/${DUSER}/'${DUSER}'/g' \
-        $DF >../aaf_${VERSION}/Dockerfile
-    cd ..
-    $DOCKER build -t ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} aaf_${VERSION}
-    $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION}
-    $DOCKER tag ${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:latest
-    rm aaf_${VERSION}/Dockerfile
-    if [ -e aaf_${VERSION}/etc ]; then
-       rm -Rf aaf_${VERSION}/etc
-    fi
-    cd -
-done
 
 # Final cleanup
-rm ../aaf_${VERSION}/bin/pod_wait.sh
+rm aaf_${VERSION}/bin/pod_wait.sh
+
+cd -

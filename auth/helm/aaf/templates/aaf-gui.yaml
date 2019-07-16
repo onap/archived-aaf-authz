@@ -105,7 +105,7 @@ spec:
 ### AAF-GUI
 ###
       - name: aaf-gui
-        image: {{ .Values.image.repository }}onap/aaf/aaf_gui:{{ .Values.image.version }}
+        image: {{ .Values.image.repository }}onap/aaf/aaf_core:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-gui aaf-locate && exec bin/gui"]
         volumeMounts:

@@ -116,6 +116,6 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         $PUBLISH \
         -v "aaf_config:$CONF_ROOT_DIR" \
         -v "aaf_status:/opt/app/aaf/status" \
-        ${PREFIX}${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${VERSION} \
+        ${PREFIX}${ORG}/${PROJECT}/aaf_core:${VERSION} \
 	/bin/bash -c "$CMD_LINE"
 done

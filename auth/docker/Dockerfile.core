@@ -30,5 +30,11 @@ COPY lib /opt/app/aaf/lib
 COPY bin /opt/app/aaf/bin
 COPY theme /opt/app/aaf/theme
 
-RUN if [ -n "${DUSER}" ]; then chown -R ${DUSER}:${DUSER} /opt/app/aaf; fi
+RUN mkdir -p /opt/app/osaaf &&\
+    mkdir -p /opt/app/aaf/status &&\
+    chmod 755 /opt/app/aaf/bin/* &&\
+    if [ -n "${DUSER}" ]; then  chown ${DUSER}:${DUSER} /opt/app/aaf/status \
+      && chown ${DUSER}:${DUSER} /opt/app/osaaf \
+      && chown -R ${DUSER}:${DUSER} /opt/app/aaf;\
+    fi
 

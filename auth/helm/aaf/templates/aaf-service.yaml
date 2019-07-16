@@ -99,7 +99,7 @@ spec:
 ### AAF-SERVICE
 ###
       - name: aaf-service
-        image: {{ .Values.image.repository }}onap/aaf/aaf_service:{{ .Values.image.version }}
+        image: {{ .Values.image.repository }}onap/aaf/aaf_core:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
         command: ["/bin/bash","-c","cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-service nc aaf-cass.{{ .Release.Namespace }} {{ .Values.services.cass.native_trans_port }} aaf-cass && exec bin/service"]
         volumeMounts:
