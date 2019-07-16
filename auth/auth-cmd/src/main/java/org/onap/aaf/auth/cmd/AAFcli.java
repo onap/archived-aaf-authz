@@ -542,7 +542,7 @@ public class AAFcli {
                 
                                     String line;
                                     while ((line = reader.readLine()) != null) {
-                                        showDetails = (line.contains("-d"))?true:false;
+                                        showDetails = (line.contains("-d"));
                 
                                         if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q") || line.equalsIgnoreCase("exit")) {
                                             break;
