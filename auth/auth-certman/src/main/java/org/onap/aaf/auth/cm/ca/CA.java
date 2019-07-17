@@ -73,10 +73,11 @@ public abstract class CA {
         this.env = env;
         this.env_tag = env==null || env.isEmpty()?false: 
         		Boolean.parseBoolean(access.getProperty(CM_CA_ENV_TAG, Boolean.FALSE.toString()));
-        permNS = CM_CA_PREFIX + name;
-        permType = access.getProperty(permNS + ".perm_type",null);
+        permNS=null;
+        String prefix = CM_CA_PREFIX + name;
+        permType = access.getProperty(prefix + ".perm_type",null);
         if (permType==null) {
-            throw new CertException(permNS + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
+            throw new CertException(prefix + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
         }
         caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
         

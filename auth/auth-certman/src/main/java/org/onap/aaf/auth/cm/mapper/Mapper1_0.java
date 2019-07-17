@@ -24,6 +24,7 @@ package org.onap.aaf.auth.cm.mapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.onap.aaf.auth.cm.data.CertDrop;
 import org.onap.aaf.auth.cm.data.CertRenew;
@@ -219,31 +220,31 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         List<ArtiDAO.Data> ladd = new ArrayList<>();
         for (Artifact arti : artifacts.getArtifact()) {
             ArtiDAO.Data data = new ArtiDAO.Data();
-            data.mechid = arti.getMechid();
-            data.machine = arti.getMachine();
-            data.type(true).addAll(arti.getType());
-            data.ca = arti.getCa();
-            data.dir = arti.getDir();
-            data.os_user = arti.getOsUser();
+            data.mechid = trim(arti.getMechid());
+            data.machine = trim(arti.getMachine());
+            if(arti.getType()!=null) {
+	            Set<String> ss = data.type(true);
+	            for(String t : arti.getType()) {
+	            	ss.add(trim(t));
+	            }
+            }
+            data.ca = trim(arti.getCa());
+            data.dir = trim(arti.getDir());
+            data.os_user = trim(arti.getOsUser());
             // Optional (on way in)
-            data.ns = arti.getNs();
+            data.ns = trim(arti.getNs());
             data.renewDays = arti.getRenewDays();
-            data.notify = arti.getNotification();
+            data.notify = trim(arti.getNotification());
             
             // Ignored on way in for create/update
-            data.sponsor = arti.getSponsor();
-            data.expires = null;
-            
-            // Derive Optional Data from Machine (Domain) if exists
-            if (data.machine!=null) {
-                if (data.ca==null && data.machine.endsWith(".att.com")) {
-                        data.ca = "aaf"; // default
-                }
-                if (data.ns==null ) {
-                    data.ns=FQI.reverseDomain(data.machine);
-                }
+            data.sponsor = (arti.getSponsor());
+            if(arti.getSans()!=null) {
+                Set<String> ls = data.sans(true);
+	            for(String t : arti.getSans()) {
+	            	ls.add(trim(t));
+	            }
             }
-            data.sans(true).addAll(arti.getSans());
+            data.expires = null;
             ladd.add(data);
         }
         return ladd;
@@ -258,17 +259,21 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             Artifacts artis = new Artifacts();
             for (ArtiDAO.Data arti : lArtiDAO.value) {
                 Artifact a = new Artifact();
-                a.setMechid(arti.mechid);
-                a.setMachine(arti.machine);
-                a.setSponsor(arti.sponsor);
-                a.setNs(arti.ns);
-                a.setCa(arti.ca);
-                a.setDir(arti.dir);
-                a.getType().addAll(arti.type(false));
-                a.setOsUser(arti.os_user);
+                a.setMechid(trim(arti.mechid));
+                a.setMachine(trim(arti.machine));
+                a.setSponsor(trim(arti.sponsor));
+                a.setNs(trim(arti.ns));
+                a.setCa(trim(arti.ca));
+                a.setDir(trim(arti.dir));
+                for(String t : arti.type(false)) {
+                	a.getType().add(trim(t));
+                }
+                a.setOsUser(trim(arti.os_user));
                 a.setRenewDays(arti.renewDays);
-                a.setNotification(arti.notify);
-                a.getSans().addAll(arti.sans(false));
+                a.setNotification(trim(arti.notify));
+                for(String t : arti.sans(false)) {
+                	a.getSans().add(trim(t));
+                }
                 artis.getArtifact().add(a);
             }
             return Result.ok(artis);
@@ -279,4 +284,11 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
     
     
 
+    private String trim(String s) {
+    	if(s==null) {
+    		return s;
+    	} else {
+    		return s.trim();
+    	}
+	}
 }

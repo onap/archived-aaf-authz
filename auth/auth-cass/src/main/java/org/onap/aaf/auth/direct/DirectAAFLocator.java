@@ -77,7 +77,7 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
         	if(name.indexOf('.')>=0) {
             	aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+'/'+name+':'+version;
         	} else {
-            	aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+"/%NS."+name+':'+version;
+       			aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+"/%CNS.%NS."+name+':'+version;
         	}
     		RegistrationPropHolder rph = new RegistrationPropHolder(access,0);
         	aaf_url = rph.replacements(getClass().getSimpleName(),aaf_url, null,null);

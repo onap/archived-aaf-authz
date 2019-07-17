@@ -103,7 +103,8 @@ public class JU_DirectAAFLocator {
 		Mockito.doReturn(access).when(env).access();
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
 		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_APP_NS,"AAF_NS");
 		try {
 			DirectAAFLocator aafLocatorObj=new DirectAAFLocator(env, ldao,"test",null);
@@ -118,7 +119,8 @@ public class JU_DirectAAFLocator {
 		Mockito.doReturn(access).when(env).access();
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
 		Mockito.doReturn("20 30").when(access).getProperty(Config.AAF_URL,null);
 		try {
 			DirectAAFLocator aafLocatorObj=new DirectAAFLocator(env, ldao,"test","192.0.0.1");
@@ -138,7 +140,8 @@ public class JU_DirectAAFLocator {
 		Mockito.doReturn(trans).when(env).newTransNoAvg();
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
 		Mockito.doReturn("http://aafurl.com").when(access).getProperty(Config.AAF_URL,null);
 		try {
 			aafLocatorObj = new DirectAAFLocator(env, ldao,"test","30.20.30.30");
@@ -171,7 +174,8 @@ public class JU_DirectAAFLocator {
 		Mockito.doReturn(trans).when(env).newTransNoAvg();
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
 		Mockito.doReturn("http://aafurl.com").when(access).getProperty(Config.AAF_URL,null);
 		try {
 			aafLocatorObj = new DirectAAFLocator(env, ldao,"test","30.20.30.30");

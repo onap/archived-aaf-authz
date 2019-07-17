@@ -976,6 +976,7 @@ public class Config {
 	    public static<T> void add(Access access, final String tag, List<Priori<T>> list) {
 		    String plugins = access.getProperty(tag, null);
 		    if(plugins!=null) {
+		    	access.log(Level.INIT, "Adding TAF Plugins: ", plugins);
 		    	for(String tafs : Split.splitTrim(';', plugins)) {
 		    		String[] pluginArray = Split.splitTrim(',', tafs);
 		    		String clssn = null;
@@ -1004,7 +1005,12 @@ public class Config {
 			            		try {
 									list.add(new Priori<T>(cnst.newInstance(access),priority));
 								} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-									access.printf(Level.ERROR, "%s cannot be constructed with Access.\n",clssn);
+									String hostname = access.getProperty(Config.HOSTNAME,null);
+									if(hostname==null) {
+										access.printf(Level.ERROR, "%s cannot be constructed on this machine.  Set valid 'hostname' in your properties\n",clssn);	
+									} else {
+										access.printf(Level.ERROR, "%s cannot be constructed on %s with Access.\n",clssn, hostname);
+									}
 								}
 							} catch (NoSuchMethodException | SecurityException e) {
 								access.printf(Level.ERROR, "%s needs a Constructor taking Access as sole param.\n",clssn);

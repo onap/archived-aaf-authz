@@ -210,8 +210,8 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             ArtiDAO.Data data = new ArtiDAO.Data();
             data.mechid = trim(arti.getMechid());
             data.machine = trim(arti.getMachine());
-            Set<String> ss = data.type(true);
             if(arti.getType()!=null) {
+                Set<String> ss = data.type(true);
 	            for(String t : arti.getType()) {
 	            	ss.add(t.trim());
 	            }
@@ -228,8 +228,8 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             // Ignored on way in for create/update
             data.sponsor = trim(arti.getSponsor());
             data.expires = null;
-            ss = data.sans(true);
             if(arti.getSans()!=null) {
+              Set<String> ss = data.sans(true);
               for(String s : arti.getSans()) {
             	  ss.add(s.trim());
               }

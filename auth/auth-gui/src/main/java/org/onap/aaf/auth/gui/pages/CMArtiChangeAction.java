@@ -37,12 +37,13 @@ import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.util.Vars;
 import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.Data.TYPE;
+import org.onap.aaf.misc.env.Slot;
 import org.onap.aaf.misc.env.util.IPValidator;
 import org.onap.aaf.misc.env.util.Split;
 import org.onap.aaf.misc.xgen.Cache;
 import org.onap.aaf.misc.xgen.DynamicCode;
+import org.onap.aaf.misc.xgen.Mark;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 import aaf.v2_0.Error;
@@ -72,7 +73,7 @@ public class CMArtiChangeAction extends Page {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
                         @Override
                         public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-trans.info().log("Step 1");
+                        	trans.info().log("Step 1");
                             final Artifact arti = new Artifact();
                             final String machine = trans.get(sMachine,null);
                             final String ca = trans.get(sCA, null);
@@ -105,13 +106,6 @@ trans.info().log("Step 1");
 	                                }
 	                            }
 	                            
-	                            // Disallow Domain based Definitions without exception
-	                            if (machine.startsWith("*")) { // Domain set
-	                                if (!trans.fish(getPerm(ca, "domain"))) {
-	                                    hgen.p("Policy Failure: Domain Artifact Declarations are only allowed by Exception.");
-	                                    return;
-	                                }
-	                            }
                             }
                             
                             arti.setMechid((String)trans.get(sID,null));
@@ -193,9 +187,24 @@ trans.info().log("Step 1");
                                         if (f==null) {
                                             hgen.p("Unknown Command");
                                         } else {
-                                            if (f.body().contains("%")) {
+                                            if (f.code() > 201) {
                                                 Error err = gui.getDF(Error.class).newData().in(TYPE.JSON).load(f.body()).asObject();
-                                                hgen.p(Vars.convert(err.getText(),err.getVariables()));
+                                                if(f.body().contains("%") ) {
+                                                    hgen.p(Vars.convert(err.getText(),err.getVariables()));
+                                                } else {
+                                            		int colon = err.getText().indexOf(':');
+                                            		if(colon>0) {
+                                            			hgen.p(err.getMessageId() + ": " + err.getText().substring(0, colon));
+                                            			Mark bq = new Mark();
+                                                		hgen.incr(bq,"blockquote");
+	                                                	for(String em : Split.splitTrim('\n', err.getText().substring(colon+1))) {
+	                                                		hgen.p(em);
+	                                                	}
+	                                                	hgen.end(bq);
+                                            		} else {
+                                            			hgen.p(err.getMessageId() + ": " + err.getText());
+                                            		}
+                                                }
                                             } else {
                                                 hgen.p(arti.getMechid() + " on " + arti.getMachine() + ": " + f.body());
                                             }

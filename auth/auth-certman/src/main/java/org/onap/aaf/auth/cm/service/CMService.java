@@ -290,7 +290,7 @@ public class CMService {
                             trans.error().log("CMService var primary is null");
                         } else {
                             String fg = fqdns.get(i);
-                            if (fg!=null && fg.equals(primary.getHostName())) {
+                            if (fg!=null && primary!=null && fg.equals(primary.getHostName())) {
                                 if (i != 0) {
                                     String tmp = fqdns.get(0);
                                     fqdns.set(0, primary.getHostName());
@@ -301,7 +301,7 @@ public class CMService {
                     }
                 }
             } catch (Exception e) {
-                trans.debug().log(e);
+                trans.error().log(e);
                 return Result.err(Status.ERR_Denied,
                         "AppID Sponsorship cannot be determined at this time.  Try later.");
             }
@@ -474,7 +474,6 @@ public class CMService {
                 // Policy 6: Only do Domain by Exception
                 if (add.machine.startsWith("*")) { // Domain set
                     CA ca = certManager.getCA(add.ca);
-
                     if (!trans.fish(new AAFPermission(ca.getPermNS(),ca.getPermType(), add.ca, DOMAIN))) {
                         return Result.err(Result.ERR_Denied, "Domain Artifacts (%s) requires specific Permission",
                                 add.machine);

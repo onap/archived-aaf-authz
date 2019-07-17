@@ -628,12 +628,7 @@ public class Function {
                 return Result.err(Status.ERR_DependencyExists, sb.toString());
             }
 
-            if (move && parent == null) {
-                return Result
-                        .err(Status.ERR_DependencyExists,
-                                "Cannot move users, roles or permissions - parent is missing.\nDelete dependencies and try again");
-            }
-            else if (move && parent.type == NsType.COMPANY.type) {
+            if (move && (parent == null || parent.type == NsType.COMPANY.type)) {
                 return Result
                         .err(Status.ERR_DependencyExists,
                                 "Cannot move users, roles or permissions to [%s].\nDelete dependencies and try again",
@@ -1040,7 +1035,7 @@ public class Function {
 
         // Attached to any Roles?
         if (fullperm.roles != null) {
-            if (force) {
+            if (force || fullperm.roles.contains(user+":user")) {
                 for (String role : fullperm.roles) {
                     Result<Void> rv = null;
                     Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, q, role);

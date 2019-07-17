@@ -22,6 +22,7 @@
 package org.onap.aaf.auth.cm.validation;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.onap.aaf.auth.dao.cass.ArtiDAO;
 import org.onap.aaf.auth.dao.cass.ArtiDAO.Data;
@@ -47,7 +48,13 @@ public class CertmanValidator extends Validator{
     private static final String MUST_HAVE_AT_LEAST = " must have at least ";
     private static final String IS_NULL = " is null.";
     private static final String ARTIFACTS_MUST_HAVE_AT_LEAST = "Artifacts must have at least ";
-
+	private static final Pattern ALPHA_NUM = Pattern.compile("[a-zA-Z0-9]*");
+	
+	private static boolean disallowTmp = true;
+	public static void allowTmp() {
+		disallowTmp=false;
+	}
+	
     public CertmanValidator nullBlankMin(String name, List<String> list, int min) {
         if (list==null) {
             msg(name + IS_NULL);
@@ -72,7 +79,7 @@ public class CertmanValidator extends Validator{
             } else {
                 for (ArtiDAO.Data a : list) {
                     allRequired(a);
-                    if(a.dir!=null && a.dir.startsWith("/tmp")) {
+                    if(disallowTmp && a.dir!=null && a.dir.startsWith("/tmp")) {
                     	msg("Certificates may not be deployed into /tmp directory (they will be removed at a random time by O/S)");
                     }
                 }
@@ -99,7 +106,8 @@ public class CertmanValidator extends Validator{
             nullOrBlank(MACHINE, a.machine);
             nullOrBlank("ca",a.ca);
             nullOrBlank("dir",a.dir);
-            nullOrBlank("os_user",a.os_user);
+           	match("NS must be dot separated AlphaNumeric",a.ns,NAME_CHARS);
+            match("O/S User must be AlphaNumeric",a.os_user,ALPHA_NUM);
             // Note: AppName, Notify & Sponsor are currently not required
         }
         return this;

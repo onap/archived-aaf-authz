@@ -80,7 +80,7 @@ public class JU_CertmanValidator {
     public void artisRequired_shouldReportErrorWhenArtifactDoesNotHaveAllRequiredFields() {
 
         certmanValidator.artisRequired(newArrayList(newArtifactData("id", "", "ca", "dir", "user")), 1);
-        assertEquals("machine is blank.\n", certmanValidator.errs());
+        assertEquals("machine is blank.\n"  + "NS must be dot separated AlphaNumeric\n", certmanValidator.errs());
     }
 
     @Test

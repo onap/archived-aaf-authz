@@ -246,15 +246,29 @@ public class Question {
         approvalDAO.close(trans);
     }
 
-    public Result<PermDAO.Data> permFrom(AuthzTrans trans, String type,
-            String instance, String action) {
-        Result<NsDAO.Data> rnd = deriveNs(trans, type);
-        if (rnd.isOK()) {
-            return Result.ok(new PermDAO.Data(new NsSplit(rnd.value, type),
-                    instance, action));
-        } else {
-            return Result.err(rnd);
-        }
+    public Result<PermDAO.Data> permFrom(AuthzTrans trans, String type, String instance, String action) {
+    	if(type.indexOf('@') >= 0) {
+    		int colon = type.indexOf(':');
+    		if(colon>=0) {
+    			PermDAO.Data pdd = new PermDAO.Data();
+    			pdd.ns = type.substring(0, colon);
+    			pdd.type = type.substring(colon+1);
+    			pdd.instance = instance;
+    			pdd.action = action;
+    		
+    			return Result.ok(pdd);
+    		} else {
+    			return Result.err(Result.ERR_BadData,"Could not extract ns and type from " + type);
+    		}
+    	} else {
+	        Result<NsDAO.Data> rnd = deriveNs(trans, type);
+	        if (rnd.isOK()) {
+	            return Result.ok(new PermDAO.Data(new NsSplit(rnd.value, type),
+	                    instance, action));
+	        } else {
+	            return Result.err(rnd);
+	        }
+    	}
     }
 
     /**
@@ -317,12 +331,21 @@ public class Question {
         return Result.ok(rlpUser); 
     }
 
-    public Result<List<PermDAO.Data>> getPermsByType(AuthzTrans trans, String perm) {
-        Result<NsSplit> nss = deriveNsSplit(trans, perm);
-        if (nss.notOK()) {
-            return Result.err(nss);
-        }
-        return permDAO.readByType(trans, nss.value.ns, nss.value.name);
+    public Result<List<PermDAO.Data>> getPermsByType(AuthzTrans trans, String type) {
+    	if(type.indexOf('@') >= 0) {
+    		int colon = type.indexOf(':');
+    		if(colon>=0) {
+    			return permDAO.readByType(trans, type.substring(0, colon),type.substring(colon+1));
+    		} else {
+    			return Result.err(Result.ERR_BadData, "%s is malformed",type);
+    		}
+    	} else {
+	        Result<NsSplit> nss = deriveNsSplit(trans, type);
+	        if (nss.notOK()) {
+	            return Result.err(nss);
+	        }
+	        return permDAO.readByType(trans, nss.value.ns, nss.value.name);
+    	}
     }
 
     public Result<List<PermDAO.Data>> getPermsByName(AuthzTrans trans, String type, String instance, String action) {

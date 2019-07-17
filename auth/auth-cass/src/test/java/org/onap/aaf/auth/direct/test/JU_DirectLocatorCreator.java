@@ -57,7 +57,8 @@ public class JU_DirectLocatorCreator {
 		Mockito.doReturn(access).when(env).access();
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE,null);
 		Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE,null);
-		Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER,"");
+		Mockito.doReturn("").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER_NS,"");
 		Mockito.doReturn("http://aafurl.com").when(access).getProperty(Config.AAF_URL,null);
 		DirectLocatorCreator directLocObj = new DirectLocatorCreator(env, locateDAO);
 		try {

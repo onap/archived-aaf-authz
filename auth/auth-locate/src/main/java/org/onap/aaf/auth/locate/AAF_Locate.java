@@ -182,7 +182,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     protected AAFConHttp _newAAFConHttp() throws CadiException {
         try {
             if (dal==null) {
-                dal = AbsAAFLocator.create("%AAF_NS.service",Config.AAF_DEFAULT_API_VERSION);
+                dal = AbsAAFLocator.create("%CNS.%NS.service",Config.AAF_DEFAULT_API_VERSION);
             }
             // utilize pre-constructed DirectAAFLocator
             return new AAFConHttp(env.access(),dal);

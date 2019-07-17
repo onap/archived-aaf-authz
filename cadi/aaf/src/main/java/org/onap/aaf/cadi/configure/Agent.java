@@ -52,6 +52,7 @@ import org.onap.aaf.cadi.CmdLine;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.Symm;
+import org.onap.aaf.cadi.aaf.TestConnectivity;
 import org.onap.aaf.cadi.aaf.client.ErrMessage;
 import org.onap.aaf.cadi.aaf.v2_0.AAFCon;
 import org.onap.aaf.cadi.aaf.v2_0.AAFConHttp;
@@ -137,6 +138,13 @@ public class Agent {
                 System.out.println(HASHES);
             }
             CmdLine.main(newArgs);
+        } else if(args.length>0 && "connectivity".equals(args[0])) {
+            String[] newArgs = new String[args.length-1];
+            System.arraycopy(args, 1, newArgs, 0, newArgs.length);
+            if(newArgs.length>0 && newArgs[0].indexOf('@')>=0) {
+            	newArgs[0]=FQI.reverseDomain(newArgs[0])+".props";
+            }
+        	TestConnectivity.main(newArgs);
         } else {
             try {
                 AAFSSO aafsso=null;
@@ -235,17 +243,18 @@ public class Agent {
                         }
                         // NOTE: CHANGE IN CMDS should be reflected in AAFSSO constructor, to get FQI->aaf-id or not
                         System.out.println("Usage: java -jar <cadi-aaf-*-full.jar> cmd [<tag=value>]*");
-                        System.out.println("   create     <FQI> [<machine>]");
-                        System.out.println("   read       <FQI> [<machine>]");
-                        System.out.println("   update     <FQI> [<machine>]");
-                        System.out.println("   delete     <FQI> [<machine>]");
-                        System.out.println("   copy       <FQI> <machine> <newmachine>[,<newmachine>]*");
-                        System.out.println("   place      <FQI> [<machine>]");
-                        System.out.println("   showpass   <FQI> [<machine>]");
-                        System.out.println("   check      <FQI> [<machine>]");
-                        System.out.println("   keypairgen <FQI>");
-                        System.out.println("   config     <FQI>");
-                        System.out.println("   validate   <NS>.props>");
+                        System.out.println("   create       <FQI> [<machine>]");
+                        System.out.println("   read         <FQI> [<machine>]");
+                        System.out.println("   update       <FQI> [<machine>]");
+                        System.out.println("   delete       <FQI> [<machine>]");
+                        System.out.println("   copy         <FQI> <machine> <newmachine>[,<newmachine>]*");
+                        System.out.println("   place        <FQI> [<machine>]");
+                        System.out.println("   showpass     <FQI> [<machine>]");
+                        System.out.println("   check        <FQI> [<machine>]");
+                        System.out.println("   keypairgen   <FQI>");
+                        System.out.println("   config       <FQI>");
+                        System.out.println("   validate     <NS>.props>");
+                        System.out.println("   connectivity <NS>.props>");
                         System.out.println("   --- Additional Tool Access ---");
                         System.out.println("     ** Type with no params for Tool Help");
                         System.out.println("     ** If using with Agent, preface with \"cadi\"");

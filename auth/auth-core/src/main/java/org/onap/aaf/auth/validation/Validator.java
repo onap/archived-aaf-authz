@@ -86,8 +86,15 @@ public class Validator {
     }
 
     protected final boolean noMatch(String str, Pattern p) {
-        return !p.matcher(str).matches();
+        return str==null || !p.matcher(str).matches();
     }
+
+    protected final void match(String text, String str, Pattern p) {
+    	if(str==null || !p.matcher(str).matches()) {
+    		msg(text);
+    	}
+    }
+
     protected final boolean nob(String str, Pattern p) {
         return str==null || !p.matcher(str).matches(); 
     }

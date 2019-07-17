@@ -21,12 +21,14 @@
 
 package org.onap.aaf.cadi;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringBufferInputStream;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -303,6 +305,11 @@ public class PropAccess implements Access {
             if (o!=null) {
             	if(o.getClass().isArray()) {
             		first = write(first,sb,(Object[])o);
+            	} else if(o instanceof Throwable) {
+            		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            		PrintStream ps = new PrintStream(baos);
+            		((Throwable)o).printStackTrace(ps);
+            		sb.append(baos.toString());
             	} else {
 	                s=o.toString();
 	                if (first) {

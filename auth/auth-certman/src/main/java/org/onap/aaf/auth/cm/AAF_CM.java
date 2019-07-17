@@ -40,6 +40,7 @@ import org.onap.aaf.auth.cm.facade.FacadeFactory;
 import org.onap.aaf.auth.cm.mapper.Mapper.API;
 import org.onap.aaf.auth.cm.service.CMService;
 import org.onap.aaf.auth.cm.service.Code;
+import org.onap.aaf.auth.cm.validation.CertmanValidator;
 import org.onap.aaf.auth.dao.CassAccess;
 import org.onap.aaf.auth.dao.cass.LocateDAO;
 import org.onap.aaf.auth.direct.DirectLocatorCreator;
@@ -72,6 +73,7 @@ import com.datastax.driver.core.Cluster;
 public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
     private static final String USER_PERMS = "userPerms";
+	private static final String CM_ALLOW_TMP = "cm_allow_tmp";
     private static final Map<String,CA> certAuths = new TreeMap<>();
     public static  Facade1_0 facade1_0; // this is the default Facade
     public static  Facade1_0 facade1_0_XML; // this is the XML Facade
@@ -106,6 +108,13 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         if (aafEnv==null) {
             throw new APIException("aaf_env needs to be set");
         }
+        
+        // Check for allowing /tmp in Properties
+        String allowTmp = env.getProperty(CM_ALLOW_TMP);
+        if("true".equalsIgnoreCase(allowTmp)) {
+        	CertmanValidator.allowTmp();
+        }
+
 
         // Initialize Facade for all uses
         AuthzTrans trans = env.newTrans();
