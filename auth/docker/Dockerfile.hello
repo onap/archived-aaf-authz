@@ -17,7 +17,7 @@
 #  limitations under the License.
 #  ============LICENSE_END====================================================
 #
-FROM ${DOCKER_REPOSITORY}/onap/aaf/aaf_core:${AAF_VERSION}
+FROM ${DOCKER_REPOSITORY}/onap/aaf/aaf_base:${AAF_VERSION}
 MAINTAINER AAF Team, AT&T 2018
 ENV VERSION=${AAF_VERSION}
 
@@ -25,11 +25,16 @@ LABEL description="aaf_hello"
 LABEL version=${AAF_VERSION}
  
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
+COPY lib /opt/app/aaf/lib
 COPY etc /opt/app/osaaf/etc
-RUN mkdir -p /opt/app/aaf/status && chmod 755 /opt/app/aaf/bin/* &&\
-    if [ -n "${DUSER}" ]; then \
-       chown ${DUSER}:${DUSER} /opt/app/aaf/status &&\
-       chown ${DUSER}:${DUSER} /opt/app/osaaf &&\
-       chown -R ${DUSER}:${DUSER} /opt/app/aaf; fi
+COPY bin/hello /opt/app/aaf/bin/
+
+RUN mkdir -p /opt/app/osaaf &&\
+    mkdir -p /opt/app/aaf/status &&\
+    chmod 755 /opt/app/aaf/bin/* &&\
+    if [ -n "${DUSER}" ]; then  chown ${DUSER}:${DUSER} /opt/app/aaf/status \
+      && chown ${DUSER}:${DUSER} /opt/app/osaaf \
+      && chown -R ${DUSER}:${DUSER} /opt/app/aaf;\
+    fi
 
 CMD []

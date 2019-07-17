@@ -121,6 +121,23 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
 rm aaf_${VERSION}/Dockerfile
 
+########
+# Fourth, do Hello
+# Apply currrent Properties to Docker file, and put in place.
+cd -
+sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+    -e 's/${DUSER}/'${DUSER}'/g' \
+    Dockerfile.hello >../aaf_${VERSION}/Dockerfile
+cd ..
+echo "#######"
+pwd
+echo "#######"
+cp -Rf sample/etc aaf_${VERSION}
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_hello:${VERSION} aaf_${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:${VERSION}
+$DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:latest
+rm -Rf aaf_${VERSION}/Dockerfile aaf_${VERSION}/etc
 
 # Final cleanup
 rm aaf_${VERSION}/bin/pod_wait.sh

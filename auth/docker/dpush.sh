@@ -24,7 +24,7 @@
 . ./d.props
 DOCKER=${DOCKER:=docker}
 
-AAF_COMPONENTS="config agent base core cass $(cat components) "
+AAF_COMPONENTS="config agent base core cass hello "
 
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         # docker push ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_${AAF_COMPONENT}:${OLD_VERSION}

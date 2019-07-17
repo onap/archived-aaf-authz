@@ -102,7 +102,7 @@ spec:
       - name: aaf-hello
         image: {{ .Values.image.repository }}onap/aaf/aaf_hello:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","-c","cd /opt/app/aaf && exec bin/hello"]
+        command: ["/bin/bash","-c","cd /opt/app/aaf && sleep 240 && exec bin/hello"]
         volumeMounts:
         -  mountPath: "/opt/app/osaaf/local"
            name: aaf-hello-vol
