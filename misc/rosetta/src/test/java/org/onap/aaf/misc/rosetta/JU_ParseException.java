@@ -23,22 +23,34 @@
 
 package org.onap.aaf.misc.rosetta;
 
-public class ParseException extends Exception {
-    private static final long serialVersionUID = 7808836939102997012L;
 
-    public ParseException() {
-    }
 
-    public ParseException(String message) {
-        super(message);
-    }
+import org.junit.Test;
+import org.onap.aaf.misc.rosetta.ParseException;
 
-    public ParseException(Throwable cause) {
-        super(cause);
-    }
+public class JU_ParseException {
 
-    public ParseException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	@Test
+	public void test4() {
+		ParseException pe=new ParseException();
+		}
+	
+	@Test
+	public void test() {
+		ParseException pe=new ParseException("exception");
+		}
+	
+	@Test
+	public void test1() {
+		ParseException pe=new ParseException(new NullPointerException("demo"));
+		}
+	
+	@Test
+	public void test2() {
+		ParseException pe=new ParseException("exception1",new NullPointerException("demo"));
+		}
+	
+	
 
 }
+
