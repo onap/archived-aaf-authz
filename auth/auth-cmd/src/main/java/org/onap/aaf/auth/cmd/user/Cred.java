@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +45,6 @@ public class Cred extends Cmd {
     private static final String CRED_PATH = "/authn/cred";
     private static final String[] options = {"add","del","reset","extend"/*,"clean"*/};
 	private ErrMessage em;
-//	private RosettaDF<Error> errDF;
     public Cred(User parent) throws APIException {
         super(parent,"cred",
                 new Param(optionsToString(options),true),
@@ -55,15 +56,17 @@ public class Cred extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException { 
-        int idx = _idx;
+    public int _exec(int idxVar, final String ... args) throws CadiException, APIException, LocatorException {
+        int idx = idxVar;
         String key = args[idx++];
         final int option = whichOption(options,key);
 
         final CredRequest cr = new CredRequest();
         cr.setId(args[idx++]);
         if (option!=1 && option!=3) {
-            if (idx>=args.length) throw new CadiException("Password Required");
+            if (idx>=args.length) {
+                throw new CadiException("Password Required");
+            }
             cr.setPassword(args[idx++]);
         }
         if (args.length>idx) {
@@ -145,13 +148,15 @@ public class Cred extends Cmd {
                 return fp.code();
             }
         });
-        if (ret==null)ret = -1;
+        if (ret==null) {
+            ret = -1;
+        }
         return ret;
     }
     
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentVar, StringBuilder sb) {
+            int indent = indentVar;
         detailLine(sb,indent,"Add, Delete or Reset Credential");
         indent+=2;
         detailLine(sb,indent,"id       - the ID to create/delete/reset within AAF");
