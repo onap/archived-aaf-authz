@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * 
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +45,7 @@ import org.onap.aaf.cadi.util.Split;
 public class PropAccess implements Access {
     // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
     private final SimpleDateFormat iso8601 = newISO8601();
+    private Symm symm;
     		
     public static SimpleDateFormat newISO8601() {
     	return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -50,7 +53,7 @@ public class PropAccess implements Access {
 
     public static final Level DEFAULT = Level.AUDIT;
     
-    private Symm symm;
+    
     private int level;
     private Properties props;
     private List<String> recursionProtection = null;
