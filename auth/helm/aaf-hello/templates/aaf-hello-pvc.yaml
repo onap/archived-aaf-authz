@@ -19,26 +19,31 @@
 ##  ============LICENSE_END====================================================
 ##
 
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Chart.Name  }}-cass-pv
+  name: {{ .Chart.Name }}-pvc
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Chart.Name  }}-cass
+    app: {{ .Chart.Name }}
+{{- if .Values.persistence.annotations }}
+  annotations:
+{{ toYaml .Values.persistence.annotations | indent 4 }}
+{{- end }}
 spec:
-  capacity:
-    storage: {{ .Values.persistence.cass.size}}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
   accessModes:
-    - {{ .Values.persistence.cass.accessMode }}
-  persistentVolumeReclaimPolicy: {{ .Values.persistence.cass.volumeReclaimPolicy }}
-  hostPath:
-     path: {{ .Values.persistence.mountPath }}/{{ .Values.persistence.cass.mountSubPath }}
-{{- if .Values.persistence.cass.storageClass }}
-{{- if (eq "-" .Values.persistence.cass.storageClass) }}
+    - {{ .Values.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+{{- if .Values.persistence.storageClass }}
+{{- if (eq "-" .Values.persistence.storageClass) }}
   storageClassName: ""
 {{- else }}
-  storageClassName: "{{ .Values.persistence.cass.storageClass }}"
+  storageClassName: "{{ .Values.persistence.storageClass }}"
 {{- end }}
 {{- end }}
 {{- end -}}

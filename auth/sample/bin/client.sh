@@ -46,36 +46,21 @@ else
   CONFIG_BIN="."
 fi
 
-CLPATH="$CONFIG_BIN/aaf-auth-cmd-*-full.jar"
+AGENT_JAR="$CONFIG_BIN/aaf-cadi-aaf-*-full.jar"
 
-JAVA_CADI="$JAVA -cp $CLPATH org.onap.aaf.cadi.CmdLine"
-JAVA_AGENT="$JAVA -cp $CLPATH -Dcadi_prop_files=$SSO org.onap.aaf.cadi.configure.Agent"
-JAVA_AGENT_SELF="$JAVA -cp $CLPATH -Dcadi_prop_files=$LOCAL/${NS}.props org.onap.aaf.cadi.configure.Agent"
-JAVA_AAFCLI="$JAVA -cp $CLPATH -Dcadi_prop_files=$LOCAL/org.osaaf.aaf.props org.onap.aaf.auth.cmd.AAFcli"
-
-# Check for local dir
-if [ ! -d $LOCAL ]; then
-    mkdir -p $LOCAL
-    for D in bin logs; do
-        mkdir -p $OSAAF/$D
-        cp $CONFIG/$D/* $OSAAF/$D
-    done
-fi
-
-# Setup Bash, first time only
-if [ ! -e "$HOME/.bashrc" ] || [ -z "$(grep cadi $HOME/.bashrc)" ]; then
-  echo "alias cadi='$JAVA_CADI \$*'" >>$HOME/.bashrc
-  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" >>$HOME/.bashrc
-  echo "alias aafcli='$JAVA_AAFCLI \$*'" >>$HOME/.bashrc
-  chmod a+x $CONFIG_BIN/agent.sh
-  . $HOME/.bashrc
-fi
+JAVA_AGENT="$JAVA -Dcadi_loglevel=DEBUG -Dcadi_etc_dir=${LOCAL} -Dcadi_log_dir=${LOCAL} -jar $AGENT_JAR "
 
 # Setup SSO info for Deploy ID
 function sso_encrypt() {
-   $JAVA_CADI digest ${1} $DOT_AAF/keyfile
+   $JAVA_AGENT cadi digest ${1} $DOT_AAF/keyfile
 }
 
+# Setup Bash, first time only
+if [ ! -e "$HOME/.bashrc" ] || [ -z "$(grep agent $HOME/.bashrc)" ]; then
+  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" >>$HOME/.bashrc
+  chmod a+x $CONFIG_BIN/agent.sh
+  . $HOME/.bashrc
+fi
 if [ ! -e "$DOT_AAF/truststoreONAPall.jks" ]; then
     mkdir -p $DOT_AAF
     base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $DOT_AAF/truststoreONAPall.jks
@@ -83,7 +68,7 @@ fi
 
 # Create Deployer Info, located at /root/.aaf
 if [ ! -e "$DOT_AAF/keyfile" ]; then
-    $JAVA_CADI keygen $DOT_AAF/keyfile
+    $JAVA_AGENT cadi keygen $DOT_AAF/keyfile
     chmod 400 $DOT_AAF/keyfile
 
     # Add Deployer Creds to Root's SSO
@@ -94,8 +79,24 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
     fi
     
     # Cover case where using app.props
-    aaf_locater_container_ns=${aaf_locator_container_ns:=$CONTAINER_NS} 
+    aaf_locator_container_ns=${aaf_locator_container_ns:=$CONTAINER_NS}
+    if [ "$aaf_locator_container" = "docker" ]; then
+        echo "aaf_locate_url=https://aaf-locate:8095" >> ${SSO}
+        echo "aaf_url_cm=https://aaf-cm:8150" >> ${SSO}
+        echo "aaf_url=https://aaf-service:8100" >> ${SSO}
+    else 
+        echo "aaf_locate_url=https://$aaf-locator.${CONTAINER_NS}:8095" >> ${SSO}
+        echo "aaf_url_cm=https://AAF_LOCATE_URL/%CNS.%NS.cm:2.1" >> ${SSO}
+        echo "aaf_url=https://AAF_LOCATE_URL/%CNS.%NS.service:2.1" >> ${SSO}
+    fi
 
+    echo "cadi_truststore=$DOT_AAF/truststoreONAPall.jks" >> ${SSO}
+    echo "cadi_truststore_password=changeit" >> ${SSO}
+    echo "cadi_latitude=${LATITUDE}" >> ${SSO}
+    echo "cadi_longitude=${LONGITUDE}" >> ${SSO}
+    echo "hostname=${aaf_locator_fqdn}" >> ${SSO}
+
+    # Push in all AAF and CADI properties to SSO
     for E in $(env); do
         if [ "${E:0:4}" = "aaf_" ] || [ "${E:0:5}" = "cadi_" ]; then
            # Use Deployer ID in ${SSO}
@@ -107,71 +108,64 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
         fi
     done
 
-    echo "cadi_truststore=$DOT_AAF/truststoreONAPall.jks" >> ${SSO}
-    echo cadi_truststore_password=enc:$(sso_encrypt changeit) >> ${SSO}
+    . ${SSO}
     echo "Caller Properties Initialized"
     INITIALIZED="true"
+    echo "cat SSO"
+    cat ${SSO}
 fi
-echo "cat SSO"
-cat ${SSO}
+
+# Check for local dir
+if [ -d $LOCAL ]; then
+    echo "$LOCAL exists"
+else
+    mkdir -p $LOCAL
+    echo "Created $LOCAL"
+fi
+
+cd $LOCAL
+echo "Existing files in $LOCAL"
+ls -l
 
 # Should we clean up?
-if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION)" ]; then
+if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION 2> /dev/null)" ]; then
   echo "Clean up directory ${LOCAL}"
   rm -Rf ${LOCAL}/*
 fi
 echo "${VERSION}" > $LOCAL/VERSION
 
+echo "Namespace is ${NS}"
 # Only initialize once, automatically...
 if [ ! -e $LOCAL/${NS}.props ]; then
-    if [ -e '/opt/app/aaf_config/bin' ]; then
-      cp /opt/app/aaf_config/bin/*.jar $LOCAL
-      echo "#!/bin/bash" > agent
-      echo 'case "$1" in' >> agent
-      echo '  ""|-?|--help)CMD="";FQI="";FQDN="";;' >> agent
-      echo '  validate)CMD="$1";FQI="";FQDN="${2:-'"$NS.props"'}";;' >> agent
-      echo '    *)CMD="$1";FQI="${2:-'"$APP_FQI"'}";FQDN="${3:-'"$APP_FQDN"'}";;' >> agent
-      echo 'esac' >> agent
-      echo 'java -cp '$(ls aaf-auth-cmd-*-full.jar)' -Dcadi_prop_files='"$NS"'.props org.onap.aaf.cadi.configure.Agent $CMD $FQI $FQDN' >> agent
-
-      echo "#!/bin/bash" > cadi
-      echo "java -cp $(ls aaf-auth-cmd-*-full.jar) -Dcadi_prop_files=$NS.props org.onap.aaf.cadi.CmdLine " '$*' >> cadi
-      # echo "#!/bin/bash" > aafcli
-      # echo "java -cp $(ls aaf-auth-cmd-*-full.jar) -Dcadi_prop_files=$NS.props org.onap.aaf.auth.cmd.AAFcli " '$*' >> aafcli
-
-      echo "#!/bin/bash" > testConnectivity
-      echo "java -cp $(ls aaf-auth-cmd-*-full.jar) org.onap.aaf.cadi.aaf.TestConnectivity $NS.props" >> testConnectivity
-      chmod ug+x agent cadi testConnectivity
-    fi
-
     echo "#### Create Configuration files "
-    $JAVA_AGENT config $APP_FQI \
-        cadi_etc_dir=$LOCAL \
-        cadi_prop_files=$SSO
-	#aaf_url=https://AAF_LOCATE_URL/AAF_NS.locate:${AAF_INTERFACE_VERSION} 
+    $JAVA_AGENT config $APP_FQI $APP_FQDN 
     cat $LOCAL/$NS.props
 
     echo
     echo "#### Certificate Authorization Artifact"
     # TMP=$(mktemp)
     TMP=$LOCAL/agent.log
-    $JAVA_AGENT read ${APP_FQI} ${APP_FQDN} \
-        cadi_prop_files=${SSO} \
-        cadi_etc_dir=$LOCAL | tee $TMP
+    $JAVA_AGENT read ${APP_FQI} ${APP_FQDN} | tee $TMP
 
     if [ -n "$(grep 'Namespace:' $TMP)" ]; then
         echo "#### Place Certificates (by deployer)"
-        $JAVA_AGENT place ${APP_FQI} ${APP_FQDN} \
-            cadi_prop_files=${SSO} \
-            cadi_etc_dir=$LOCAL
+        $JAVA_AGENT place $APP_FQI $APP_FQDN
     
-        echo "#### Validate Configuration and Certificate with live call"
-        echo "Obtained Certificates"
-        INITIALIZED="true"
+        if [ -z "$(grep cadi_alias $NS.cred.props)" ]; then
+	    echo "FAILED to get Certificate"
+          INITIALIZED="false"
+        else 
+          echo "Obtained Certificates"
+          echo "#### Validate Configuration and Certificate with live call"
+          $JAVA_AGENT validate cadi_prop_files=${NS}.props
+          INITIALIZED="true"
+        fi
     else
 	echo "#### Certificate Authorization Artifact must be valid to continue"
     fi
     rm $TMP    
+else
+    INITIALIZED="true"
 fi
 
 # Now run a command
@@ -179,8 +173,6 @@ CMD=$2
 if [ -z "$CMD" ]; then
     if [ -n "$INITIALIZED" ]; then
       echo "Initialization complete"
-    else
-        $JAVA_AGENT_SELF validate $FQI $FQDN
     fi
 else 
     shift
@@ -207,19 +199,24 @@ else
         ;;
     showpass)
         echo "## Show Passwords"
-        $JAVA_AGENT showpass ${APP_FQI} ${APP_FQDN}
+        $JAVA_AGENT showpass $APP_FQI $APP_FQDN cadi_prop_files=${SSO}
         ;;
     check)
         echo "## Check Certificate"
-        $JAVA_AGENT check ${APP_FQI} ${APP_FQDN}
+        echo "$JAVA_AGENT check $APP_FQI $APP_FQDN cadi_prop_files=${LOCAL}/${NS}.props"
+        $JAVA_AGENT check $APP_FQI $APP_FQDN cadi_prop_files=${LOCAL}/${NS}.props
         ;;
     validate)
         echo "## validate requested"
-        $JAVA_AGENT_SELF validate $FQI $FQDN
+        $JAVA_AGENT validate $APP_FQI $APP_FQDN
+        ;;
+    place)
+        echo "## Renew Certificate"
+        $JAVA_AGENT place $APP_FQI $APP_FQDN cadi_prop_files=${SSO}
         ;;
     renew)
         echo "## Renew Certificate"
-        $JAVA_AGENT place ${APP_FQI} ${APP_FQDN}
+        $JAVA_AGENT place $APP_FQI $APP_FQDN
         ;;
     bash)
         shift

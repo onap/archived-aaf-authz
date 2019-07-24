@@ -26,8 +26,9 @@ LABEL version=${AAF_VERSION}
  
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
 COPY lib /opt/app/aaf/lib
-COPY etc /opt/app/osaaf/etc
 COPY bin/hello /opt/app/aaf/bin/
+COPY etc /opt/app/aaf/etc
+COPY logs /opt/app/aaf/logs
 
 RUN mkdir -p /opt/app/osaaf &&\
     mkdir -p /opt/app/aaf/status &&\

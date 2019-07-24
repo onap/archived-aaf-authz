@@ -31,8 +31,8 @@ spec:
   ports:
     - name: aaf-hello
       protocol: TCP
-      port: {{.Values.cadi.port}}
-      nodePort: {{ .Values.cadi.public_port}}
+      port: {{ .Values.service.port }}
+      nodePort: {{ .Values.service.public_port }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,61 +52,51 @@ spec:
     spec:
       volumes:
         # Use this Pod Sharing dir to declare various States of starting
-      - name: aaf-hello-vol
-        emptyDir: {}
+        - name: aaf-hello-vol
+          persistentVolumeClaim:
+            claimName: aaf-hello-pvc
       initContainers:
         - name: aaf-hello-config
-          image: {{ .Values.image.repository }}onap/aaf/aaf_agent:{{ .Values.image.version }}
+          image: "{{ .Values.image.repository }}{{ .Values.service.initImage }}"
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: "/opt/app/osaaf/local"
+            - mountPath: "/opt/app/osaaf"
               name: aaf-hello-vol
-          command: ["bash","-c","cd /opt/app/osaaf/local && /opt/app/aaf_config/bin/agent.sh place aaf@aaf.osaaf.org aaf-hello "]
+          command: ["bash","-c","exec /opt/app/aaf_config/bin/agent.sh"]
           env:
-            - name: aaf_env
-              value: "{{ .Values.cadi.aaf_env }}"
-            - name: cadi_latitude
-              value: "{{ .Values.cadi.cadi_latitude }}"
-            - name: cadi_longitude
-              value: "{{ .Values.cadi.cadi_longitude }}"
+            - name: APP_FQI
+              value: "{{ .Values.service.fqi }}"
+            - name: aaf_locate_url
+              value: "https://aaf-locate.{{.Release.Namespace }}:8095"
             - name: aaf_locator_container
               value: "helm"
             - name: aaf_locator_container_ns
               value: "{{ .Release.Namespace }}"
-            - name: aaf_locate_url
-              value: "https://aaf-locate.{{ .Release.Namespace }}:8095"
-            - name: aaf_locator_app_ns
-              value: "org.osaaf.aaf"
-            - name: "APP_FQDN"
-              value: "{{ .Values.cadi.fqdn }}"
-            - name: "APP_FQI"
-              value: "{{ .Values.cadi.fqi }}"
+            - name: aaf_locator_fqdn
+              value: "{{.Values.service.fqdn}}"
+            - name: aaf_locator_public_fqdn
+              value: "{{.Values.service.public_fqdn}}"
+            - name: cadi_latitude
+              value: "{{ .Values.service.cadi_latitude }}"
+            - name: cadi_longitude
+              value: "{{ .Values.service.cadi_longitude }}"
             - name: "DEPLOY_FQI"
               value: "deployer@people.osaaf.org"
             - name: "DEPLOY_PASSWORD"
               value: "demo123456!"
-# Hello specific.  Clients don't necessarily need this
-            - name: aaf_locator_public_fqdn
-              value: "{{.Values.cadi.public_fqdn}}"
-            - name: aaf_locator_name
-              value: "{{.Values.cadi.aaf_locator_name}}"
-            - name: aaf_locator_name_helm
-              value: "{{.Values.cadi.aaf_locator_name_helm}}"
-            - name: aaf_locator_fqdn_helm
-              value: "%N.%CNS"
 
 ###
 ### AAF-HELLO
 ###
       containers:
       - name: aaf-hello
-        image: {{ .Values.image.repository }}onap/aaf/aaf_hello:{{ .Values.image.version }}
+        image: {{ .Values.image.repository }}{{ .Values.service.image }}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/bash","-c","cd /opt/app/aaf && sleep 240 && exec bin/hello"]
+        command: ["bash","-c","cd /opt/app/aaf && if [ ! -d /opt/app/osaaf/etc ]; then cp -Rf etc logs /opt/app/osaaf; fi && exec bin/hello"]
         volumeMounts:
-        -  mountPath: "/opt/app/osaaf/local"
+        -  mountPath: "/opt/app/osaaf"
            name: aaf-hello-vol
         ports:
-        - name: aaf-hello
-          protocol: TCP
-          containerPort: 8130
+        -  name: aaf-hello
+           protocol: TCP
+           containerPort: {{ .Values.service.port }}

@@ -55,6 +55,7 @@ public class RegistrationCreator {
     		
     		RegistrationPropHolder ph = new RegistrationPropHolder(access, port);
     		
+    		String firstPrivateHostname = null;
     		// Now, loop through by Container
     		for(String le : Split.splitTrim(',', ph.lcontainer)) {
     			if(le.isEmpty()) {
@@ -81,7 +82,23 @@ public class RegistrationCreator {
     				}
     				
     				locate.setName(ph.getEntryName(entry,dot_le));
-    				locate.setHostname(ph.getEntryFQDN(entry,dot_le));
+    				/* Cover the situation where there is a Container, and multiple locator Entries,
+    				 * the first of which is the only real private FQDN
+    				 * example: oauth
+    				 *      aaf_locator_entries=oauth,token,introspect
+    				 *      
+    				 *      Entries for token and introspect, but they point to oauth service.
+    				 */
+    				String locateHostname;
+    				if(le.isEmpty()) {    			
+    					locateHostname=ph.getEntryFQDN(entry, dot_le);
+    				} else if(firstPrivateHostname==null) {
+    					firstPrivateHostname=locateHostname=ph.getEntryFQDN(entry, dot_le);
+    				} else {
+    					locateHostname=firstPrivateHostname;
+    				}
+    				
+    				locate.setHostname(locateHostname);
     				locate.setPort(ph.getEntryPort(dot_le));
     				
     				String specificVersion = access.getProperty(Config.AAF_LOCATOR_VERSION + dot_le,null);

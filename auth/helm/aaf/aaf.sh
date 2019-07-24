@@ -1,12 +1,12 @@
 . ../../docker/aaf.props
-IMAGE=onap/aaf/aaf_agent:$VERSION
+IMAGE=onap/aaf/aaf_config:$VERSION
 
-kubectl -n onap run -it --rm aaf-agent-$USER --image=$IMAGE --overrides='
+kubectl -n onap run -it --rm aaf-config-$USER --image=$IMAGE --overrides='
 {
     "spec": {
         "containers": [
             {
-                "name": "aaf-agent-'$USER'",
+                "name": "aaf-config-'$USER'",
 		"image": "'$IMAGE'",
                 "imagePullPolicy": "IfNotPresent",
 		"command": [
@@ -16,36 +16,45 @@ kubectl -n onap run -it --rm aaf-agent-$USER --image=$IMAGE --overrides='
                  ],
                 "env": [
                    {
-                     "name": "APP_FQI",
+                     "name": "aaf_env",
+                     "value": "DEV"
+		   },{
+                     "name": "aaf_id",
                      "value": "aaf@aaf.osaaf.org"
-                   },{
-                     "name": "DEPLOY_FQI",
-                     "value": "deployer@people.osaaf.org"
-                   },{
-                     "name": "DEPLOY_PASSWORD",
-                     "value": "demo123456!"
-                   },{
+		   },{
                      "name": "aaf_locate_url",
                      "value": "https://aaf-locate.onap:8095"
-                   },{
+		   },{
                      "name": "aaf_locator_container",
                      "value": "helm"
-                   },{
+		   },{
                      "name": "aaf_locator_container_ns",
                      "value": "onap"
-                   },{
+		   },{
                      "name": "aaf_locator_public_fqdn",
                      "value": "aaf.osaaf.org"
-                   },{
+		   },{
                      "name": "aaf_locator_fqdn",
-                     "value": "aaf-hello"
-                   },{
+                     "value": "aaf.osaaf.org"
+		   },{
                      "name": "cadi_latitude",
                      "value": "'$LATITUDE'"
-                   },{
+		   },{
                      "name": "cadi_longitude",
                      "value": "'$LONGITUDE'"
-                   }
+		   },{
+                     "name": "CASSANDRA_CLUSTER",
+                     "value": "'$CASSANDRA_CLUSTER'"
+		   },{
+                     "name": "CASSANDRA_USER",
+                     "value": "'$CASSANDRA_USER'"
+		   },{
+                     "name": "CASSANDRA_PASSWORD",
+                     "value": "'$CASSANDRA_PASSWORD'"
+		   },{
+                     "name": "CASSANDRA_PORT",
+                     "value": "'$CASSANDRA_PORT'"
+		   }
                 ],
                 "stdin": true,
                 "stdinOnce": true,
@@ -53,16 +62,26 @@ kubectl -n onap run -it --rm aaf-agent-$USER --image=$IMAGE --overrides='
                 "volumeMounts": [
                     {
                         "mountPath": "/opt/app/osaaf",
-                        "name": "aaf-hello-vol"
+                        "name": "aaf-config-vol"
+                    },
+                    {
+                        "mountPath": "/opt/app/aaf/status",
+                        "name": "aaf-status-vol"
                     }
                 ]
             }
         ],
       "volumes": [
             {
-                "name": "aaf-hello-vol",
+                "name": "aaf-config-vol",
                 "persistentVolumeClaim": {
-                    "claimName": "aaf-hello-pvc"
+                    "claimName": "aaf-config-pvc"
+                }
+            },
+            {
+                "name": "aaf-status-vol",
+                "persistentVolumeClaim": {
+                    "claimName": "aaf-status-pvc"
                 }
             }
         ]

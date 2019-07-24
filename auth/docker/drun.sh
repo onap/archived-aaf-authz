@@ -61,7 +61,7 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         ;;
     "cm")
         PUBLISH="--publish 8150:8150"
-        LINKS="--link aaf-cass --link aaf-service --link aaf-locate"
+        LINKS="--link aaf-cass --link aaf-service --link aaf-locate --link aaf-oauth"
 	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-cm aaf-locate && exec bin/cm"
         ;;
     "gui")
@@ -82,20 +82,11 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     esac
 
     echo Starting aaf-$AAF_COMPONENT...
-
-    #for A in aaf.osaaf.org $AH_ROOT; do 
-       #ADD_HOST="$ADD_HOST --add-host=$A:$HOST_IP"
-    #done
-
-    #if [ ! -z "$LINKS" ] && [[ "$CASS_HOST" =~ ":" ]]; then
-       #ADD_HOST="$ADD_HOST --add-host=$CASS_HOST"
-    #fi
-    #--hostname="${AAF_COMPONENT}.${NAMESPACE}" \
-    #    --env aaf_locate_url=https://aaf-locate:8095 \
-    #	$ADD_HOST \
     if [ -n "${DUSER}" ]; then
        THE_USER="--user $DUSER"
     fi
+
+
     $DOCKER run  \
         -d \
         ${THE_USER} \

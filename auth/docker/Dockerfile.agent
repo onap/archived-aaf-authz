@@ -26,9 +26,8 @@ LABEL version=${AAF_VERSION}
 
 COPY bin/client.sh /opt/app/aaf_config/bin/agent.sh
 COPY bin/pod_wait.sh /opt/app/aaf_config/bin/pod_wait.sh
-COPY bin/aaf-auth-cmd-${AAF_VERSION}-full.jar /opt/app/aaf_config/bin/
+COPY bin/aaf-cadi-aaf-${AAF_VERSION}-full.jar /opt/app/aaf_config/bin/
 COPY bin/aaf-cadi-servlet-sample-*-sample.jar /opt/app/aaf_config/bin/
-COPY logs /opt/app/aaf_config/logs
 COPY cert/*trust*.b64 /opt/app/aaf_config/cert/
 RUN chmod 755 /opt/app/aaf_config/bin/* &&\
     if [ -n "${DUSER}" ]; then chown -R ${DUSER}:${DUSER} /opt/app/aaf_config; fi

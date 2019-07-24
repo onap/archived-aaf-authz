@@ -123,6 +123,7 @@ public class Agent {
     		});
     // Note: This is set by loadURLs. Use that function as singleton, not directly.
 	private static Map<String,String> aaf_urls = null;
+	private static boolean configNoPasswd = false;
 
 
     public static void main(String[] args) {
@@ -160,6 +161,8 @@ public class Agent {
                 		if(idx>=0 && idx<a.length()) {
                 			hasEtc = a.substring(idx+1);
                 		}
+                	} else if(a.equals("--nopasswd")) {
+                		configNoPasswd=true;
                 	}
                 }
                 
@@ -252,7 +255,7 @@ public class Agent {
                         System.out.println("   showpass     <FQI> [<machine>]");
                         System.out.println("   check        <FQI> [<machine>]");
                         System.out.println("   keypairgen   <FQI>");
-                        System.out.println("   config       <FQI>");
+                        System.out.println("   config       <FQI> [--nopasswd]");
                         System.out.println("   validate     <NS>.props>");
                         System.out.println("   connectivity <NS>.props>");
                         System.out.println("   --- Additional Tool Access ---");
@@ -891,9 +894,11 @@ public class Agent {
             	cred.addEnc(Config.AAF_APPPASS, propAccess, null);
             // only Ask for Password when starting scratch
             } else if(propAccess.getProperty(Config.CADI_PROP_FILES)==null) {
-            	char[] pwd = AAFSSO.cons.readPassword("Password for %s (leave blank for NO password): ", fqi);
-            	if(pwd.length>0) {
-            		cred.addEnc(Config.AAF_APPPASS, new String(pwd));
+            	if(!configNoPasswd) {
+	            	char[] pwd = AAFSSO.cons.readPassword("Password for %s (leave blank for NO password): ", fqi);
+	            	if(pwd.length>0) {
+	            		cred.addEnc(Config.AAF_APPPASS, new String(pwd));
+	            	}
             	}
             }
             

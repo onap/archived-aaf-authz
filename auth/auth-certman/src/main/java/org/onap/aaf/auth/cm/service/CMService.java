@@ -90,6 +90,7 @@ public class CMService {
     private final ArtiDAO artiDAO;
     private AAF_CM certManager;
 	private Boolean allowIgnoreIPs;
+	private Boolean alwaysIgnoreIPs;
 
     // @SuppressWarnings("unchecked")
     public CMService(final AuthzTrans trans, AAF_CM certman) throws APIException, IOException {
@@ -110,9 +111,14 @@ public class CMService {
                 "*",
                 "read"
         );
-        allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
-        if(allowIgnoreIPs) {
-            trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
+        alwaysIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALWAYS_IGNORE_IPS, "false"));
+        if(alwaysIgnoreIPs) {
+        	trans.env().access().log(Level.INIT, "DNS Evaluation for Cert Creation is turned off with " + Config.CM_ALWAYS_IGNORE_IPS );
+        } else {
+	        allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
+	        if(allowIgnoreIPs) {
+	            trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
+	        }
         }
     }
 
@@ -140,7 +146,9 @@ public class CMService {
                 Organization org = trans.org();
 
                 boolean ignoreIPs;
-                if(allowIgnoreIPs) {
+                if(alwaysIgnoreIPs) {
+                	ignoreIPs=true;
+                } else if(allowIgnoreIPs) {
                 	ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
                 } else {
                 	ignoreIPs = false;

@@ -70,34 +70,36 @@ spec:
           env:
             - name: aaf_env
               value: "{{ .Values.services.aaf_env }}"
-            - name: cadi_latitude
-              value: "{{ .Values.services.cadi_latitude }}"
-            - name: cadi_longitude
-              value: "{{ .Values.services.cadi_longitude }}"
+            - name: aaf_id
+              value: "{{ .Values.services.aaf_id }}"
+            - name: aaf_locate_url
+              value: "https://aaf-locate.{{.Release.Namespace }}:{{.Values.services.locate.internal_port}}"
             - name: aaf_locator_container
               value: "helm"
             - name: aaf_locator_container_ns
               value: "{{ .Release.Namespace }}"
-            - name: aaf_locate_url
-              value: "https://aaf-locate.{{.Release.Namespace }}:{{.Values.services.locate.internal_port}}"
+            - name: aaf_locator_fqdn
+              value: "{{.Values.services.fqdn}}"
             - name: aaf_locator_public_fqdn
               value: "{{.Values.services.public_fqdn}}"
-            - name: aaf_locator_name
-              value: "{{.Values.services.aaf_locator_name}}"
-            - name: aaf_locator_name_helm
-              value: "{{.Values.services.aaf_locator_name_helm}}"
+            - name: cadi_latitude
+              value: "{{ .Values.services.cadi_latitude }}"
+            - name: cadi_longitude
+              value: "{{ .Values.services.cadi_longitude }}"
+            - name: cm_always_ignore_ips
+              value: "true"
             - name: CASSANDRA_CLUSTER
-              value: "{{.Values.services.cass.fqdn}}.{{.Values.services.ns}}"
+              value: "{{.Values.services.cass.fqdn}}.{{.Release.Namespace }}"
 #            - name: CASSANDRA_USER
 #              value: ""
 #            - name: CASSANDRA_PASSWORD
 #              value: ""
 #           - name: CASSANDRA_PORT
 #              value: ""
-      containers:
 ###
 ### AAF-SERVICE
 ###
+      containers:
       - name: aaf-service
         image: {{ .Values.image.repository }}onap/aaf/aaf_core:{{ .Values.image.version }}
         imagePullPolicy: IfNotPresent

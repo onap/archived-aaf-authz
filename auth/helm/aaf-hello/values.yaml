@@ -23,30 +23,11 @@
 # Declare variables to be passed into your templates.
 
 global:
-  common:
-    namespace: "onap"
+  persistence:
+    enabled: "true"
 
 replicas:
   hello: 1
-
-cadi:
-  fqdn: "aaf-hello"
-  port: 8130
-  public_fqdn: "aaf.osaaf.org"
-# DUBLIN ONLY - for M4 compatibility with Casablanca
-  aaf_locator_name: "public.%NS.%N"
-  aaf_locator_name_helm: "%NS.%N"
-# EL ALTO and Beyond
-#  aaf_locator_name: "%NS.%N"
-#  aaf_locator_name_helm: "%CNS.%NS.%N"
-  public_port: 30086
-  fqi: "aaf@aaf.osaaf.org"
-  app_ns: "org.osaaf.aaf"
-  cadi_latitude: 38.0
-  cadi_longitude: -72.0
-  aaf_env: "DEV"
-
-persistence: {}
 
 image:
   # When using locally built Docker Container, set Repository to ""
@@ -54,7 +35,26 @@ image:
   # When using Docker Repo, add, and include trailing "/"
   # repository: nexus3.onap.org:10003/
   # repository: localhost:5000/
-  version: 2.1.15-SNAPSHOT
+
+service:
+  initImage: onap/aaf/aaf_agent:2.1.15-SNAPSHOT
+  image: onap/aaf/aaf_hello:2.1.15-SNAPSHOT
+  app_ns: "org.osaaf.aaf"
+  fqi: "aaf@aaf.osaaf.org"
+  fqdn: "aaf-hello"
+  public_fqdn: "aaf.osaaf.org"
+  port: "8130"
+  public_port: "30086"
+  cadi_latitude: "38.0"
+  cadi_longitude: "-72.0"
+
+persistence: 
+  # Where on local disk to store
+  mountPath: "/data/aaf/hello"
+  volumeReclaimPolicy: Retain
+  accessMode: ReadWriteOnce
+  size: 10M
+  storageClass: "manual"
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

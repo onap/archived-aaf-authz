@@ -72,8 +72,11 @@ rm Dockerfile
 ########
 # Second, Create the AAF Config (Security) Images
 cd ..
+# Note: only 2 jars each in Agent/Config
 cp auth-cmd/target/aaf-auth-cmd-$VERSION-full.jar sample/bin
 cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar sample/bin
+cp ../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar sample/bin
+cp ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
 cp -Rf ../conf/CA sample
 
 # AAF Config image (for AAF itself)
@@ -86,7 +89,7 @@ $DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:latest
 
-cp ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
+
 # AAF Agent Image (for Clients)
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
@@ -98,7 +101,7 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/$
 $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
 
 # Clean up 
-rm sample/Dockerfile sample/bin/aaf-*-${VERSION}-full.jar sample/bin/aaf-cadi-servlet-sample-${VERSION}-sample.jar 
+rm sample/Dockerfile sample/bin/aaf-*-${VERSION}*.jar 
 rm -Rf sample/CA
 cd -
 
@@ -134,6 +137,7 @@ echo "#######"
 pwd
 echo "#######"
 cp -Rf sample/etc aaf_${VERSION}
+cp -Rf sample/logs aaf_${VERSION}
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_hello:${VERSION} aaf_${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:latest

@@ -62,41 +62,10 @@ spec:
         - name: aaf-config-container
           image: {{ .Values.image.repository }}onap/aaf/aaf_config:{{ .Values.image.version }}
           imagePullPolicy: IfNotPresent
-          command: ["bash","-c","cd /opt/app/aaf_config && bin/pod_wait.sh config aaf-service rm && bin/agent.sh"]
+          command: ["bash","-c","cd /opt/app/aaf_config && bin/pod_wait.sh config aaf-service rm "]
           volumeMounts:
-            - mountPath: "/opt/app/osaaf"
-              name: aaf-config-vol
             - mountPath: "/opt/app/aaf/status"
               name: aaf-status-vol
-          env:
-            - name: AAF_ENV
-              value: "{{ .Values.services.aaf_env }}"
-            - name: LATITUDE
-              value: "{{ .Values.services.cadi_latitude }}"
-            - name: LONGITUDE
-              value: "{{ .Values.services.cadi_longitude }}"
-            - name: aaf_locator_container
-              value: "helm"
-            - name: aaf_locator_container_ns
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: aaf_locate_url
-              value: "https://aaf-locate.{{.Release.Namespace }}:{{.Values.services.locate.internal_port}}"
-            - name: aaf_locator_public_fqdn
-              value: "{{.Values.services.public_fqdn}}"
-            - name: aaf_locator_name
-              value: "{{.Values.services.aaf_locator_name}}"
-            - name: aaf_locator_name_helm
-              value: "{{.Values.services.aaf_locator_name_helm}}"
-            - name: CASSANDRA_CLUSTER
-              value: "{{.Values.services.cass.fqdn}}.{{.Values.services.ns}}"
-#            - name: CASSANDRA_USER
-#              value: ""
-#            - name: CASSANDRA_PASSWORD
-#              value: ""
-#           - name: CASSANDRA_PORT
-#              value: ""
       containers:
 ###
 ### AAF-CERTMAN
@@ -116,6 +85,4 @@ spec:
           containerPort: 8150
         env:
         - name: aaf_locator_ns
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+          value: {{ .Release.Namespace }}

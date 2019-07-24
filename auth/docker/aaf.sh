@@ -25,6 +25,9 @@ DOCKER=${DOCKER:=docker}
 # if something, may not want CASS attached all the tim
 #LINKS="--link $CASSANDRA_DOCKER"
 
+# DOCKER doesn't have DNS out of the box, only links.  
+# so we add cm_always_ignore_ips in --env
+
 function run_it() {
   if [ -n "${DUSER}" ]; then
     USER_LINE="--user ${DUSER}"
@@ -39,6 +42,7 @@ function run_it() {
     --env aaf_locator_fqdn=${HOSTNAME} \
     --env aaf_locate_url=https://aaf-locate:8095 \
     --env aaf_locator_public_fqdn=${HOSTNAME} \
+    --env cm_always_ignore_ips=true \
     --env AAF_ENV=${AAF_ENV} \
     --env LATITUDE=${LATITUDE} \
     --env LONGITUDE=${LONGITUDE} \

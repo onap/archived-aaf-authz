@@ -158,7 +158,6 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
 	echo "$S" >> ${TMP}
       fi
     done
-
     cat $TMP
 
     $JAVA_AGENT config \
@@ -168,6 +167,7 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
         cadi_longitude=${cadi_longitude} \
         cadi_prop_files=$CONFIG/local/initialConfig.props:$CONFIG/local/aaf.props:${TMP}
     rm ${TMP}
+    echo "cm_always_ignore_ips=${cm_always_ignore_ips:=false}" >> $LOCAL/org.osaaf.aaf.props;
 
     # Cassandra Config stuff
     # Default is expect a Cassandra on same Node

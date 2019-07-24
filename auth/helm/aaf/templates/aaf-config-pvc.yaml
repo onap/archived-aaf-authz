@@ -23,7 +23,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ .Chart.Name }}-config-pvc
-  namespace: {{ .Values.services.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Chart.Name }}-config
 {{- if .Values.persistence.annotations }}

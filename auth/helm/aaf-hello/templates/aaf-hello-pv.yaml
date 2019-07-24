@@ -22,23 +22,23 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ .Chart.Name  }}-cass-pv
+  name: {{ .Chart.Name  }}-pv
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Chart.Name  }}-cass
+    app: {{ .Chart.Name  }}
 spec:
   capacity:
-    storage: {{ .Values.persistence.cass.size}}
+    storage: {{ .Values.persistence.size}}
   accessModes:
-    - {{ .Values.persistence.cass.accessMode }}
-  persistentVolumeReclaimPolicy: {{ .Values.persistence.cass.volumeReclaimPolicy }}
+    - {{ .Values.persistence.accessMode }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.volumeReclaimPolicy }}
   hostPath:
-     path: {{ .Values.persistence.mountPath }}/{{ .Values.persistence.cass.mountSubPath }}
-{{- if .Values.persistence.cass.storageClass }}
-{{- if (eq "-" .Values.persistence.cass.storageClass) }}
+     path: {{ .Values.persistence.mountPath }}
+{{- if .Values.persistence.storageClass }}
+{{- if (eq "-" .Values.persistence.storageClass) }}
   storageClassName: ""
 {{- else }}
-  storageClassName: "{{ .Values.persistence.cass.storageClass }}"
+  storageClassName: "{{ .Values.persistence.storageClass }}"
 {{- end }}
 {{- end }}
 {{- end -}}

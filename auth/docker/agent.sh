@@ -121,6 +121,7 @@ function run_it() {
     --env LONGITUDE=${LONGITUDE} \
     --env aaf_locator_container_ns=${CONTAINER_NS} \
     --env aaf_locator_container=docker \
+    --link aaf-service --link aaf-locate --link aaf-oauth --link aaf-cm \
     --name aaf-agent-$USER \
     "$PREFIX"onap/aaf/aaf_agent:$VERSION \
     bash -c "bash /opt/app/aaf_config/bin/agent.sh $PARAMS"

@@ -231,6 +231,8 @@ public class Config {
     // let NS Owners choose with <ns>.certman aaf ignoreIPs" to ignoreIP Check for Configs
     // Probably only want to allow in a DEV Env.
     public static final String CM_ALLOW_IGNORE_IPS="cm_allow_ignore_ips";
+    // Docker doesn't have a default DNS. The property turns off IP Checking of DNSs before creating.
+    public static final String CM_ALWAYS_IGNORE_IPS="cm_always_ignore_ips";
 
     public static final String PATHFILTER_URLPATTERN = "pathfilter_urlpattern";
     public static final String PATHFILTER_STACK = "pathfilter_stack";

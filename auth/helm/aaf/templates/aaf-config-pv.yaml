@@ -23,7 +23,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: {{ .Chart.Name  }}-config-pv
-  namespace: {{ .Values.services.namespace  }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Chart.Name  }}-config
 spec:
