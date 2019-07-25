@@ -2948,7 +2948,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 			                    return Result.err(Status.ERR_BadData, "User chose invalid credential selection");
 			                }
 			            }
-			            isLastCred = (entry==-1)?true:false;
+			            isLastCred = (entry==-1);
 			        } else {
 			            isLastCred = true;
 			        }
