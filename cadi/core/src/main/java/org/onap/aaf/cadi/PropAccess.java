@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.StringBufferInputStream;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,6 +43,8 @@ import org.onap.aaf.cadi.util.Split;
 
 public class PropAccess implements Access {
     // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
+	private int level;
+	private Properties props;
     private final SimpleDateFormat iso8601 = newISO8601();
     		
     public static SimpleDateFormat newISO8601() {
@@ -53,8 +54,6 @@ public class PropAccess implements Access {
     public static final Level DEFAULT = Level.AUDIT;
     
     private Symm symm;
-    private int level;
-    private Properties props;
     private List<String> recursionProtection = null;
     private LogIt logIt;
     private String name;
