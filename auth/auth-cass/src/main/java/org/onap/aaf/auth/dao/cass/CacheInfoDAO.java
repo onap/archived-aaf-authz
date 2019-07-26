@@ -47,6 +47,7 @@ import org.onap.aaf.cadi.SecuritySetter;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
@@ -69,20 +70,32 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     
     // Hold current time stamps from Tables
     private final Date startTime;
+	private final boolean cacheNotify;
     private PreparedStatement psCheck;
     
     public CacheInfoDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CacheInfoDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE,readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         startTime = new Date();
+        cacheNotify = noK8s(trans);
         init(trans);
     }
 
-    public CacheInfoDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) throws APIException, IOException {
+	public CacheInfoDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) throws APIException, IOException {
         super(trans, CacheInfoDAO.class.getSimpleName(),aDao,Data.class,TABLE,readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         startTime = new Date();
         init(trans);
+        cacheNotify = noK8s(trans);
     }
 
+	/** 
+	 * Need a different point to point cache clear strategy for K8s... 
+	 * @param trans
+	 * @return
+	 */
+    private boolean noK8s(AuthzTrans trans) {
+    	String container = trans.getProperty(Config.AAF_LOCATOR_CONTAINER);
+    	return ! ("helm".equals(container) || "oom".equals(container));
+	}
 
     //////////////////////////////////////////
     // Data Definition, matches Cassandra DM
@@ -328,7 +341,6 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     }
 
     private void init(AuthzTrans trans) throws APIException, IOException {
-        
         String[] helpers = setCRUD(trans, TABLE, Data.class, InfoLoader.dflt);
         psCheck = getSession(trans).prepare(SELECT_SP +  helpers[FIELD_COMMAS] + " FROM " + TABLE);
 
@@ -347,7 +359,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         /////////////
         // ConcurrentQueues are open-ended.  We don't want any Memory leaks 
         // Note: we keep a separate counter, because "size()" on a Linked Queue is expensive
-        if (cacheUpdate!=null) {
+        if (cacheNotify && cacheUpdate!=null) {
             try {
                 if (!CacheUpdate.notifyDQ.offer(new CacheUpdate.Transfer(name, seg),2,TimeUnit.SECONDS)) {
                     trans.error().log("Cache Notify Queue is not accepting messages, bouncing may be appropriate" );
