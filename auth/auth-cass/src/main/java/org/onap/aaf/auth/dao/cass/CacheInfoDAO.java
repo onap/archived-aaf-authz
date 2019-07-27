@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +74,11 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     private final Date startTime;
 	private final boolean cacheNotify;
     private PreparedStatement psCheck;
+
+    //////////////////////////////////////////
+    // Data Definition, matches Cassandra DM
+    //////////////////////////////////////////
+    private static final int KEYLIMIT = 2;
     
     public CacheInfoDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CacheInfoDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE,readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
@@ -96,15 +103,14 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     	String container = trans.getProperty(Config.AAF_LOCATOR_CONTAINER);
     	return ! ("helm".equals(container) || "oom".equals(container));
 	}
-
-    //////////////////////////////////////////
-    // Data Definition, matches Cassandra DM
-    //////////////////////////////////////////
-    private static final int KEYLIMIT = 2;
     /**
      * @author Jonathan
      */
     public static class Data {
+        public String        name;
+        public int            seg;
+        public Date            touched;
+
         public Data() {
             name = null;
             touched = null;
@@ -114,10 +120,6 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             this.seg = seg;
             touched = null;
         }
-        
-        public String        name;
-        public int            seg;
-        public Date            touched;
     }
 
     private static class InfoLoader extends Loader<Data> {
@@ -137,8 +139,8 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         }
 
         @Override
-        protected void key(Data data, int _idx, Object[] obj) {
-                int idx = _idx;
+        protected void key(Data data, int idxParam, Object[] obj) {
+                int idx = idxParam;
 
             obj[idx]=data.name;
             obj[++idx]=data.seg;
@@ -152,7 +154,8 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     
     public static synchronized <T extends Trans> void startUpdate(AuthzEnv env, HMangr hman, SecuritySetter<HttpURLConnection> ss, String ip, int port) {
         if (cacheUpdate==null) {
-            Thread t= new Thread(cacheUpdate = new CacheUpdate(env,hman,ss, ip,port),"CacheInfo Update Thread");
+            cacheUpdate = new CacheUpdate(env,hman,ss, ip,port);
+            Thread t= new Thread(cacheUpdate,"CacheInfo Update Thread");
             t.setDaemon(true);
             t.start();
         }
@@ -164,7 +167,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         }
     }
 
-    private final static class CacheUpdate extends Thread {
+    private static final class CacheUpdate extends Thread {
         public static BlockingQueue<Transfer> notifyDQ = new LinkedBlockingQueue<Transfer>(2000);
 
         private static final String VOID_CT="application/Void+json;q=1.0;charset=utf-8;version=2.0,application/json;q=1.0;version=2.0,*/*;q=1.0";
