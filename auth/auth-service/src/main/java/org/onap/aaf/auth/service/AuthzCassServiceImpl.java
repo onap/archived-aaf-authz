@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -2442,8 +2443,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 	                            return Result.err(rb);
 	                        } else if (rb.value){
 	                            return Result.err(Status.ERR_Policy, "Credential content cannot be reused.");
-	                        } else if ((Chrono.dateOnlyStamp(curr.expires).equals(Chrono.dateOnlyStamp(rcred.value.expires)) && curr.type==rcred.value.type)) {
-	                            return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
+	                        } else if(Chrono.dateOnlyStamp(curr.expires).equals(Chrono.dateOnlyStamp(rcred.value.expires)) 
+	                        		&& curr.type==rcred.value.type 
+	                        		) {
+	                        	// Allow if expiring differential is greater than 1 day (for TEMP)
+	                        	// Unless expiring in 1 day
+	                        	if(System.currentTimeMillis() - rcred.value.expires.getTime() > TimeUnit.DAYS.toMillis(1)) {
+	                        		return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
+	                        	}
 	                        }
                     	}
                     }    
@@ -2501,13 +2508,20 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     case Status.ACC_Now:
                         try {
                             if (firstID) {
-    //                            && !nsr.value.get(0).isAdmin(trans.getUserPrincipal().getName())) {
-                                Result<List<String>> admins = func.getAdmins(trans, nsr.value.get(0).name, false);
-                                // OK, it's a first ID, and not by NS Admin, so let's set TempPassword length
-                                // Note, we only do this on First time, because of possibility of 
-                                // prematurely expiring a production id
-                                if (admins.isOKhasData() && !admins.value.contains(trans.user())) {
-                                    rcred.value.expires = org.expiration(null, Expiration.TempPassword).getTime();
+                                // OK, it's a first ID, and not by NS Owner
+                                if(!ques.isOwner(trans,trans.user(),cdd.ns)) {
+                                	// Admins are not allowed to set first Cred, but Org has already
+                                	// said entity MAY create, typically by Permission
+                                	// We can't know which reason they are allowed here, so we 
+                                	// have to assume that any with Special Permission would not be 
+                                	// an Admin.
+                                	if(ques.isAdmin(trans, trans.user(), cdd.ns)) {
+                                		return Result.err(Result.ERR_Denied, 
+                                			"Only Owners may create first passwords in their Namespace. Admins may modify after one exists" );
+                                	} else {
+                                		// Allow IDs that AREN'T part of NS with Org Onboarding Permission  (see Org object) to create Temp Passwords.
+                                        rcred.value.expires = org.expiration(null, Expiration.TempPassword).getTime();
+                                	}
                                 }
                             }
                         } catch (Exception e) {

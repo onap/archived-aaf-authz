@@ -224,6 +224,31 @@ public class Question {
         
         alwaysSpecial = Boolean.parseBoolean(trans.getProperty("aaf_always_special", Boolean.FALSE.toString()));
     }
+    
+    /**
+     * Note: This Constructor created for JUNIT Purposes.  Do not use otherwise.
+     */
+    public Question(AuthzTrans trans, HistoryDAO historyDAO, CacheInfoDAO cacheInfoDAO,
+    		CachedNSDAO nsDAO, CachedPermDAO permDAO, CachedRoleDAO roleDAO,
+    		CachedUserRoleDAO userRoleDAO, CachedCredDAO credDAO, CachedCertDAO certDAO,
+    		LocateDAO locateDAO,FutureDAO futureDAO, DelegateDAO delegateDAO,
+    		ApprovalDAO approvalDAO ) {
+    	this.historyDAO = historyDAO;
+    	this.cacheInfoDAO = cacheInfoDAO;
+    	this.nsDAO = nsDAO;
+    	this.permDAO = permDAO;
+    	this.roleDAO = roleDAO;
+    	this.userRoleDAO = userRoleDAO;
+    	this.credDAO = credDAO;
+    	this.certDAO = certDAO;
+        this.locateDAO = locateDAO;
+        this.futureDAO = futureDAO;
+        this.delegateDAO = delegateDAO;
+        this.approvalDAO = approvalDAO;
+
+        cldays = Integer.parseInt(trans.getProperty(Config.AAF_CRED_WARN_DAYS, Config.AAF_CRED_WARN_DAYS_DFT));
+        alwaysSpecial = Boolean.parseBoolean(trans.getProperty("aaf_always_special", Boolean.FALSE.toString()));
+    }
 
     public void startTimers(AuthzEnv env) {
         // Only want to aggressively cleanse User related Caches... The others,
@@ -987,25 +1012,27 @@ public class Question {
     }
     
     public Result<Boolean> userCredCheck(AuthzTrans trans, CredDAO.Data orig, final byte[] raw) {
-            TimeTaken tt = trans.start("CheckCred Cred", Env.SUB);
-            try {
-                switch(orig.type) {
-                    case CredDAO.BASIC_AUTH_SHA256:
-                        ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE + raw.length);
-                        bb.putInt(orig.other);
-                        bb.put(raw);
-                        return Result.ok(Hash.compareTo(orig.cred.array(),Hash.hashSHA256(bb.array()))==0);
-                    case CredDAO.BASIC_AUTH:
-                        return Result.ok( Hash.compareTo(orig.cred.array(), Hash.hashMD5(raw))==0);
-                    case CredDAO.FQI:
-                    default:
-                        return Result.ok(false);
-                }
-            } catch (NoSuchAlgorithmException e) {
-                return Result.err(Status.ERR_General,e.getLocalizedMessage());
-            } finally {
-                tt.done();
+    	Result<Boolean> rv;
+        TimeTaken tt = trans.start("CheckCred Cred", Env.SUB);
+        try {
+            switch(orig.type) {
+                case CredDAO.BASIC_AUTH_SHA256:
+                    ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE + raw.length);
+                    bb.putInt(orig.other);
+                    bb.put(raw);
+                    rv = Result.ok(Hash.compareTo(orig.cred.array(),Hash.hashSHA256(bb.array()))==0);
+                case CredDAO.BASIC_AUTH:
+                    rv= Result.ok( Hash.compareTo(orig.cred.array(), Hash.hashMD5(raw))==0);
+                case CredDAO.FQI:
+                default:
+                    rv = Result.ok(false);
             }
+        } catch (NoSuchAlgorithmException e) {
+            rv = Result.err(Status.ERR_General,e.getLocalizedMessage());
+        } finally {
+            tt.done();
+        }
+        return rv;
     }
 
     public static final String APPROVED = "APPROVE";
@@ -1214,7 +1241,7 @@ public class Question {
     }
     
     public boolean isOwner(AuthzTrans trans, String user, String ns) {
-        Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_OWNER);
+        Result<List<UserRoleDAO.Data>> rur = userRoleDAO().read(trans, user,ns+DOT_OWNER);
         if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
             Date now = new Date();
             if (urdd.expires.after(now)) {
@@ -1225,7 +1252,7 @@ public class Question {
     }
 
     public int countOwner(AuthzTrans trans, String ns) {
-        Result<List<UserRoleDAO.Data>> rur = userRoleDAO.readByRole(trans,ns+DOT_OWNER);
+        Result<List<UserRoleDAO.Data>> rur = userRoleDAO().readByRole(trans,ns+DOT_OWNER);
         Date now = new Date();
         int count = 0;
         if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
