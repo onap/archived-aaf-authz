@@ -25,7 +25,6 @@ import static org.mockito.Mockito.*;
 
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -33,16 +32,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.onap.aaf.auth.dao.CachedDAO;
 import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
+
+import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.util.FQI;
-import org.onap.aaf.misc.env.Trans;
 
 import aaf.v2_0.CredRequest;
 import junit.framework.Assert;
@@ -68,7 +68,7 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
 		when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
 		when(orgIdentity.isFound()).thenReturn(true);
 		final String ns = "org.onap.sample";
-	    when(question.userRoleDAO().read(trans, fqi, ns+".owner")).thenReturn(Result.ok(listOf(urData(fqi,ns,"owner",100))));
+		whenRole(trans, fqi, ns, "owner", false, 100);
 	    when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
 	    when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
 	    when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
@@ -89,9 +89,9 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
 		when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
 		when(orgIdentity.isFound()).thenReturn(true);
 		final String ns = "org.onap.sample";
-	    when(question.userRoleDAO().read(trans, fqi, ns+".owner")).thenReturn(Result.ok(emptyList(UserRoleDAO.Data.class)));
-	    when(question.userRoleDAO().read(trans, fqi, ns+".admin")).thenReturn(Result.ok(listOf(urData(fqi,ns,"admin",100))));
-	    when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
+		whenRole(trans,fqi,ns,"owner",false, 100);
+		whenRole(trans,fqi,ns,"admin",true, 100);
+ 	    when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
 	    when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
 	    when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
 	    when(question.credDAO().readNS(trans, ns)).thenReturn(Result.ok(listOf(credDataFound(cr,100))));
