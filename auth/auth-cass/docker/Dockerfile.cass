@@ -31,9 +31,9 @@ COPY cass_init/*.props /opt/app/aaf/cass_init/
 COPY aaf-auth-batch-${AAF_VERSION}-full.jar /opt/app/aaf/cass_init/
 COPY cass_data/*.dat /opt/app/aaf/cass_init/dats/
 
-RUN mkdir -p /opt/app/aaf/status && chmod 777 /opt/app/aaf/status
-RUN addgroup ${USER} && adduser --no-create-home --ingroup ${USER} --disabled-password --gecos "" --shell /bin/bash ${USER}
-RUN chown -R ${USER}:${USER} /opt/app/aaf/cass_init
+RUN mkdir -p /opt/app/aaf/status && chmod 777 /opt/app/aaf/status && \
+    addgroup ${USER} && adduser --no-create-home --ingroup ${USER} --disabled-password --gecos "" --shell /bin/bash ${USER} && \
+    chown -R ${USER}:${USER} /opt/app/aaf/cass_init
 
 
 ENTRYPOINT ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh"]

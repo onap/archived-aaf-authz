@@ -22,5 +22,5 @@
 if [ -e ../../docker/d.props ]; then
   . ../../docker/d.props
 fi
-${DOCKER:=docker} exec -it aaf_cass /usr/bin/cqlsh -k authz
+${DOCKER:=docker} exec -it aaf-cass /usr/bin/cqlsh -k authz
 
