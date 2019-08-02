@@ -32,7 +32,6 @@
     <artifactId>aaf-auth-docker</artifactId>
     <name>AAF Docker Build</name>
     <description>Docker Build</description>
-    <!-- Build Docker with "cd < this dir>; mvn -N exec:exec -Pbuild-docker -->
 
     <profiles>
         <profile>
@@ -52,6 +51,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <skip>false</skip>
                             <executable>bash</executable>
                             <commandlineArgs>-c "pwd; bash dbuild.sh"</commandlineArgs>
                         </configuration>

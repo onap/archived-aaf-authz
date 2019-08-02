@@ -368,4 +368,43 @@
             <url>dav:${nexusproxy}${sitePath}</url>
         </site>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>build-docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>Docker Build</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <skip>true</skip>
+                            <executable>bash</executable>
+                            <commandlineArgs>echo "No Docker Here"</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                            <groupId>org.sonarsource.scanner.maven</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <modules>
+                <module>auth/docker</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
