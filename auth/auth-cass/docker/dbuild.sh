@@ -45,6 +45,8 @@ sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
 cd ..
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
+pwd
+ls -ltr auth-batch/target
 cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass
 
 echo "$0: $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass"

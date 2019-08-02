@@ -47,14 +47,14 @@ if [ $# -gt 0 ]; then
     fi
 fi
 
-echo "$0: AAF_COMPONENTS=$AAF_COMPONENTS DOCKER_PULL_REGISTRY=$DOCKER_PULL_REGISTRY"
+grep -v '#' d.props | grep '=' | grep -v -e "=$"
 
 DOCKER=${DOCKER:=docker}
 
 echo "Building Containers for aaf components, version $VERSION"
-
 # AAF_cass now needs a version...
 cd ../auth-cass/docker
+pwd
 bash ./dbuild.sh $DOCKER_PULL_REGISTRY
 cd -
 

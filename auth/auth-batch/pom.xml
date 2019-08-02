@@ -20,242 +20,235 @@
  *
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.onap.aaf.authz</groupId>
-		<artifactId>authparent</artifactId>
-		<version>2.1.15-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.onap.aaf.authz</groupId>
+        <artifactId>authparent</artifactId>
+        <version>2.1.15-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-	<artifactId>aaf-auth-batch</artifactId>
-	<name>AAF Auth Batch</name>
-	<description>Batch Processing for AAF Auth</description>
-	<packaging>jar</packaging>
+    <artifactId>aaf-auth-batch</artifactId>
+    <name>AAF Auth Batch</name>
+    <description>Batch Processing for AAF Auth</description>
+    <packaging>jar</packaging>
 
-	<developers>
-		<developer>
-			<name>Jonathan Gathman</name>
-			<email>jonathan.gathman@att.com</email>
-			<organization>ATT</organization>
-			<roles>
-				<role>Architect</role>
-				<role>Lead Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<name>Gabe Maurer</name>
-			<email>gabe.maurer@att.com</email>
-			<organization>ATT</organization>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<name>Ian Howell</name>
-			<email>ian.howell@att.com</email>
-			<organization>ATT</organization>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<name>Sai Gandham</name>
-			<email>sai.gandham@att.com</email>
-			<organization>ATT</organization>
-			<roles>
-				<role>Developer</role>
-			</roles>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>Jonathan Gathman</name>
+            <email>jonathan.gathman@att.com</email>
+            <organization>ATT</organization>
+            <roles>
+                <role>Architect</role>
+                <role>Lead Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Gabe Maurer</name>
+            <email>gabe.maurer@att.com</email>
+            <organization>ATT</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Ian Howell</name>
+            <email>ian.howell@att.com</email>
+            <organization>ATT</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Sai Gandham</name>
+            <email>sai.gandham@att.com</email>
+            <organization>ATT</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
-	<properties>
-	
-
-
-		<maven.test.failure.ignore>false</maven.test.failure.ignore>
-		<!--  SONAR  -->
-		<!-- <sonar.skip>true</sonar.skip> -->
-		 <jacoco.version>0.7.7.201606060606</jacoco.version>
-	    <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
-	    <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-	    <!-- Default Sonar configuration -->
-	    <sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
-	    <sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
-	    <!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
-	    <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
-		<nexusproxy>https://nexus.onap.org</nexusproxy>
-		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
-		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
-		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
-		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-	</properties>
-
-	<dependencies>
-
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-misc-env</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-cadi-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-misc-rosetta</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-cadi-aaf</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-auth-cass</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-auth-deforg</artifactId>
-		</dependency>
-
-		<!--dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency -->
-
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>	
-			<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<configuration>
-						<excludes>
-							<exclude>**/gen/**</exclude>
-							<exclude>**/generated-sources/**</exclude>
-							<exclude>**/yang-gen/**</exclude>
-							<exclude>**/pax/**</exclude>
-						</excludes>
-					</configuration>
-					<executions>
-
-						<execution>
-							<id>pre-unit-test</id>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-							<configuration>
-								<destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
-								<propertyName>surefireArgLine</propertyName>
-							</configuration>
-						</execution>
+    <properties>
+    
 
 
-						<execution>
-							<id>post-unit-test</id>
-							<phase>test</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-							<configuration>
-								<dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
-								<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-							</configuration>
-						</execution>
-						<execution>
-							<id>pre-integration-test</id>
-							<phase>pre-integration-test</phase>
-							<goals>
-								<goal>prepare-agent</goal>
-							</goals>
-							<configuration>
-								<destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
-								<propertyName>failsafeArgLine</propertyName>
-							</configuration>
-						</execution>
+        <maven.test.failure.ignore>false</maven.test.failure.ignore>
+        <!--  SONAR  -->
+        <!-- <sonar.skip>true</sonar.skip> -->
+         <jacoco.version>0.7.7.201606060606</jacoco.version>
+        <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <!-- Default Sonar configuration -->
+        <sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
+        <sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
+        <!-- Note: This list should match jacoco-maven-plugin's exclusion list below -->
+        <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
+        <nexusproxy>https://nexus.onap.org</nexusproxy>
+        <snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+        <releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+        <stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
+        <sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
+    </properties>
 
-						<execution>
-							<id>post-integration-test</id>
-							<phase>post-integration-test</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-							<configuration>
-								<dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
-								<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<classifier>tests</classifier>
-					<archive>
-						<manifest>
-							<mainClass>org.onap.aaf.auth.batch.Batch</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Sealed>true</Sealed>
-						</manifestEntries>
-					</archive>
+    <dependencies>
 
-				</configuration>
-				<executions>
-					<execution>
-						<id>full</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/assemble/auth-batch.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	
-	<distributionManagement>
-		<repository>
-			<id>ecomp-releases</id>
-			<name>AAF Release Repository</name>
-			<url>${nexusproxy}${releaseNexusPath}</url>
-		</repository>
-		<snapshotRepository>
-			<id>ecomp-snapshots</id>
-			<name>AAF Snapshot Repository</name>
-			<url>${nexusproxy}${snapshotNexusPath}</url>
-		</snapshotRepository>
-		<site>
-			<id>ecomp-site</id>
-			<url>dav:${nexusproxy}${sitePath}</url>
-		</site>
-	</distributionManagement>
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-misc-env</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-cadi-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-misc-rosetta</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-cadi-aaf</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-auth-cass</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-auth-deforg</artifactId>
+        </dependency>
+
+        <!--dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency -->
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/gen/**</exclude>
+                            <exclude>**/generated-sources/**</exclude>
+                            <exclude>**/yang-gen/**</exclude>
+                            <exclude>**/pax/**</exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+
+                        <execution>
+                            <id>pre-unit-test</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                            <configuration>
+                                <destFile>${project.build.directory}/code-coverage/jacoco-ut.exec</destFile>
+                                <propertyName>surefireArgLine</propertyName>
+                            </configuration>
+                        </execution>
+
+
+                        <execution>
+                            <id>post-unit-test</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <configuration>
+                                <dataFile>${project.build.directory}/code-coverage/jacoco-ut.exec</dataFile>
+                                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>pre-integration-test</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                            <configuration>
+                                <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+                                <propertyName>failsafeArgLine</propertyName>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>post-integration-test</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <configuration>
+                                <dataFile>${project.build.directory}/code-coverage/jacoco-it.exec</dataFile>
+                                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <classifier>tests</classifier>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.onap.aaf.auth.batch.Batch</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Sealed>true</Sealed>
+                        </manifestEntries>
+                    </archive>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>full</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assemble/auth-batch.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <distributionManagement>
+        <repository>
+            <id>ecomp-releases</id>
+            <name>AAF Release Repository</name>
+            <url>${nexusproxy}${releaseNexusPath}</url>
+        </repository>
+        <snapshotRepository>
+            <id>ecomp-snapshots</id>
+            <name>AAF Snapshot Repository</name>
+            <url>${nexusproxy}${snapshotNexusPath}</url>
+        </snapshotRepository>
+        <site>
+            <id>ecomp-site</id>
+            <url>dav:${nexusproxy}${sitePath}</url>
+        </site>
+    </distributionManagement>
 </project>

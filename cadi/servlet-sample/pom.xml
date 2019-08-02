@@ -1,95 +1,95 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<groupId>org.onap.aaf.authz</groupId>
-		<artifactId>cadiparent</artifactId>
-		<relativePath>..</relativePath>
-		<version>2.1.15-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<name>CADI Servlet Sample (Test Only)</name>
-	<artifactId>aaf-cadi-servlet-sample</artifactId>
-	<packaging>jar</packaging>
-	
-	<properties>
-		<!-- SONAR -->
-		<sonar.skip>true</sonar.skip>
-		<jacoco.version>0.7.7.201606060606</jacoco.version>
-		<sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
-		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-		<!-- Default Sonar configuration -->
-		<sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
-		<sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
-		<!-- Note: This list should match jacoco-maven-plugin's exclusion list 
-			below -->
-		<sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
-		<nexusproxy>https://nexus.onap.org</nexusproxy>
-		<snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
-		<releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
-		<stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
-		<sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
-		<project.bouncyCastleVersion>1.60</project.bouncyCastleVersion>
-	</properties>
-	<dependencies>
-	 	<!-- needs to be first to avoid jar signer implications for servlet api  -->
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>${project.jettyVersion}</version>
-		</dependency>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.onap.aaf.authz</groupId>
+        <artifactId>cadiparent</artifactId>
+        <relativePath>..</relativePath>
+        <version>2.1.15-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <name>CADI Servlet Sample (Test Only)</name>
+    <artifactId>aaf-cadi-servlet-sample</artifactId>
+    <packaging>jar</packaging>
+    
+    <properties>
+        <!-- SONAR -->
+        <sonar.skip>true</sonar.skip>
+        <jacoco.version>0.7.7.201606060606</jacoco.version>
+        <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
+        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+        <!-- Default Sonar configuration -->
+        <sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
+        <sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
+        <!-- Note: This list should match jacoco-maven-plugin's exclusion list 
+            below -->
+        <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
+        <nexusproxy>https://nexus.onap.org</nexusproxy>
+        <snapshotNexusPath>/content/repositories/snapshots/</snapshotNexusPath>
+        <releaseNexusPath>/content/repositories/releases/</releaseNexusPath>
+        <stagingNexusPath>/content/repositories/staging/</stagingNexusPath>
+        <sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
+        <project.bouncyCastleVersion>1.60</project.bouncyCastleVersion>
+    </properties>
+    <dependencies>
+         <!-- needs to be first to avoid jar signer implications for servlet api  -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${project.jettyVersion}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.onap.aaf.authz</groupId>
-			<artifactId>aaf-cadi-aaf</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-cadi-aaf</artifactId>
+        </dependency>
 
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>sample</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/assemble/servlet_sample.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<version>2.4</version>
-					<artifactId>maven-jar-plugin</artifactId>
-					<configuration>
-						<outputDirectory>target</outputDirectory>
-						<archive>
-							<manifestEntries>
-								<Sealed>true</Sealed>
-							</manifestEntries>
-						</archive>
-					</configuration>
-				</plugin>
-				<plugin>
-					<inherited>true</inherited>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
-					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sample</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assemble/servlet_sample.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <version>2.4</version>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <outputDirectory>target</outputDirectory>
+                        <archive>
+                            <manifestEntries>
+                                <Sealed>true</Sealed>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <inherited>true</inherited>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
