@@ -31,20 +31,36 @@ import org.onap.aaf.auth.dao.DAOException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
 public class JU_DAOException {
-DAOException daoException;
+	DAOException daoException;
 
-    //DAOException daoException = new DAOException();
     String message = "message";
     Throwable cause;    
     @Before
     public void setUp(){
-    daoException = new DAOException();    
+    	daoException = new DAOException();    
     }
 
     @Test
-    public void test(){
-        assertTrue(true);
+    public void testNoArgConstructor(){
+    	assertNull(daoException.getMessage());
+    }
+    
+    @Test
+    public void testOneArgConstructorMsg(){
+    	daoException = new DAOException("test message"); 
+    	assertTrue("test message".equalsIgnoreCase(daoException.getMessage()));
+    }
+    
+    @Test
+    public void testOneArgConstructorThrowable(){
+    	daoException = new DAOException(new Throwable()); 
+    	assertTrue("java.lang.Throwable".equalsIgnoreCase(daoException.getMessage()));
+    }
+    
+    @Test
+    public void testTwoArgConstructor(){
+    	daoException = new DAOException("test message", new Throwable()); 
+    	assertTrue("test message".equalsIgnoreCase(daoException.getMessage()));
     }
 }
