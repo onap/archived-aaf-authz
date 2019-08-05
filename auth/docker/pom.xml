@@ -53,7 +53,7 @@
                         <configuration>
                             <skip>false</skip>
                             <executable>bash</executable>
-                            <commandlineArgs>-c "pwd; bash dbuild.sh"</commandlineArgs>
+                            <commandlineArgs>-c "pwd; bash dbuild.sh;bash dstage.sh"</commandlineArgs>
                         </configuration>
                     </plugin>
                 </plugins>
