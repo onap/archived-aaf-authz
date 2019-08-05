@@ -70,10 +70,11 @@ fi
 if [ ! -e "$DOT_AAF/keyfile" ]; then
     $JAVA_AGENT cadi keygen $DOT_AAF/keyfile
     chmod 400 $DOT_AAF/keyfile
+    echo "cadi_keyfile=$DOT_AAF/keyfile" > ${SSO}
 
     # Add Deployer Creds to Root's SSO
     DEPLOY_FQI="${DEPLOY_FQI:=$app_id}"
-    echo "aaf_id=${DEPLOY_FQI}" > ${SSO}
+    echo "aaf_id=${DEPLOY_FQI}" >> ${SSO}
     if [ ! "${DEPLOY_PASSWORD}" = "" ]; then
        echo aaf_password=enc:$(sso_encrypt ${DEPLOY_PASSWORD}) >> ${SSO}
     fi
@@ -197,9 +198,13 @@ else
             fi
         fi
         ;;
+    read)
+        echo "## Read Artifacts"
+        $JAVA_AGENT read $APP_FQI $APP_FQDN cadi_prop_files=${SSO} cadi_loglevel=INFO
+        ;;
     showpass)
         echo "## Show Passwords"
-        $JAVA_AGENT showpass $APP_FQI $APP_FQDN cadi_prop_files=${SSO}
+        $JAVA_AGENT showpass $APP_FQI $APP_FQDN cadi_prop_files=${SSO} cadi_loglevel=ERROR
         ;;
     check)
         echo "## Check Certificate"

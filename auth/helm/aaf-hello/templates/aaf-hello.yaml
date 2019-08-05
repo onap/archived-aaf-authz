@@ -57,7 +57,7 @@ spec:
             claimName: aaf-hello-pvc
       initContainers:
         - name: aaf-hello-config
-          image: "{{ .Values.image.repository }}{{ .Values.service.initImage }}"
+          image: "{{ .Values.image.repository }}{{ .Values.service.agentImage }}"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: "/opt/app/osaaf"

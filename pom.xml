@@ -403,6 +403,10 @@
             </build>
 
             <modules>
+                <module>auth-client</module>
+                <module>misc</module>
+                <module>cadi</module>
+                <module>auth</module>
                 <module>auth/docker</module>
             </modules>
         </profile>

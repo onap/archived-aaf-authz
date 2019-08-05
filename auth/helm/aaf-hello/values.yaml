@@ -37,7 +37,7 @@ image:
   # repository: localhost:5000/
 
 service:
-  initImage: onap/aaf/aaf_agent:2.1.15-SNAPSHOT
+  agentImage: onap/aaf/aaf_agent:2.1.15-SNAPSHOT
   image: onap/aaf/aaf_hello:2.1.15-SNAPSHOT
   app_ns: "org.osaaf.aaf"
   fqi: "aaf@aaf.osaaf.org"
@@ -47,6 +47,7 @@ service:
   public_port: "30086"
   cadi_latitude: "38.0"
   cadi_longitude: "-72.0"
+  deploy_fqi: "deployer@people.osaaf.org"
 
 persistence: 
   # Where on local disk to store
