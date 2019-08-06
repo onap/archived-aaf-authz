@@ -341,7 +341,7 @@ public class AAFcli {
                     } finally {
                         clearSingleLineProperties();
                     }
-                    rv = expect.isEmpty() ? true : expect.contains(ret);
+                    rv = expect.isEmpty() || expect.contains(ret);
                     if (verbose) {
                         if (rv) {
                             pw.println();
