@@ -37,8 +37,8 @@ image:
   # repository: localhost:5000/
 
 service:
-  agentImage: onap/aaf/aaf_agent:2.1.15-SNAPSHOT
-  image: onap/aaf/aaf_hello:2.1.15-SNAPSHOT
+  agentImage: onap/aaf/aaf_agent:2.1.16-SNAPSHOT
+  image: onap/aaf/aaf_hello:2.1.16-SNAPSHOT
   app_ns: "org.osaaf.aaf"
   fqi: "aaf@aaf.osaaf.org"
   fqdn: "aaf-hello"
