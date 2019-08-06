@@ -1,4 +1,4 @@
-#!/bin/bash
+
 #########
 #  ============LICENSE_START====================================================
 #  org.onap.aaf
@@ -28,6 +28,9 @@ fi
 
 . ./d.props
 
+# Remove "SNAPSHOT" from AAF Jars in Containers
+JAR_VERSION=${VERSION/-SNAPSHOT/}
+
 # process input. originally, an optional positional parameter is used to designate a component.
 # A flagged parameter has been added to optionally indicate docker pull registry. Ideally, options
 # would be flagged but we're avoiding ripple effect of changing original usage
@@ -53,6 +56,7 @@ DOCKER=${DOCKER:=docker}
 
 echo "Building Containers for aaf components, version $VERSION"
 # AAF_cass now needs a version...
+echo "### Build Cass"
 cd ../auth-cass/docker
 pwd
 bash ./dbuild.sh $DOCKER_PULL_REGISTRY
@@ -60,7 +64,9 @@ cd -
 
 ########
 # First, build a AAF Base version - set the core image, etc
+echo "### Build Base"
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
     -e 's/${DUSER}/'${DUSER}'/g' \
     -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
     Dockerfile.base > Dockerfile
@@ -69,12 +75,13 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${
 $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:latest
 rm Dockerfile
 
-# Tack the "SNAPSHOT" out of name
 function SCP() {
   SANS=${1/-SNAPSHOT/}
+  echo $1 = $SANS
   if [ -e $SANS ]; then
     cp $SANS $2
   else 
+
     ln $1 $SANS
     cp $SANS $2
     rm $SANS
@@ -92,7 +99,9 @@ SCP ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar 
 cp -Rf ../conf/CA sample
 
 # AAF Config image (for AAF itself)
+echo "### Build Config"
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
     -e 's/${DUSER}/'${DUSER}'/g' \
@@ -103,7 +112,9 @@ $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/
 
 
 # AAF Agent Image (for Clients)
+echo "### Build Agent"
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
     -e 's/${DUSER}/'${DUSER}'/g' \
@@ -117,45 +128,80 @@ rm sample/Dockerfile sample/bin/aaf-*-*.jar
 rm -Rf sample/CA
 cd -
 
+
+########
+# Third Copy AAF Executables to a BUILD Directory, for easy Cleanup
+echo "### Copy to aaf_DBUILD"
+if [ -e "../aaf_$VERSION" ]; then
+  cp -Rf ../aaf_$VERSION ../aaf_DBUILD
+elif [ -e "../aaf_$JAR_VERSION" ]; then
+  cp -Rf ../aaf_$JAR_VERSION ../aaf_DBUILD
+else
+  echo "ERROR: No AAF Built.  use Maven"
+  exit
+fi
+if [ ! "$VERSION" = "$JAR_VERSION" ]; then 
+  START_DIR=$(pwd)
+  # Convert SNAPSHOT issues
+  cp -Rf ../aaf_$VERSION ../aaf_DBUILD
+  cd ../aaf_DBUILD/lib
+  # If Built Jars are "SNAPSHOT", convert to NON SNAPSHOT
+  for J in $(ls *-SNAPSHOT*); do mv $J ${J/-SNAPSHOT/}; done
+  cd ../bin
+  rm *.bat
+  for S in $(ls); do
+     sed -e "/$VERSION/s/$VERSION/$JAR_VERSION/g" $S > tmp
+     mv tmp $S
+  done
+  cd ${START_DIR}
+fi
+
 ########
 # Third, build a core Docker Image to be used for all AAF Components
-echo Building aaf_$AAF_COMPONENT...
-cp ../sample/bin/pod_wait.sh  ../aaf_${VERSION}/bin
+cp ../sample/bin/pod_wait.sh  ../aaf_DBUILD/bin
 # Apply currrent Properties to Docker file, and put in place.
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
     -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
     -e 's/${DUSER}/'${DUSER}'/g' \
-    Dockerfile.core >../aaf_${VERSION}/Dockerfile
+    Dockerfile.core >../aaf_DBUILD/Dockerfile
 cd ..
-echo "#######"
-pwd
-echo "#######"
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_${VERSION}
+
+echo "### Building Core"
+# Don't need "Hello" App in core
+mv aaf_DBUILD/lib/aaf-auth-hello-${JAR_VERSION}* /tmp
+
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_DBUILD
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
-rm aaf_${VERSION}/Dockerfile
+rm aaf_DBUILD/Dockerfile
+mv /tmp/aaf-auth-hello-${JAR_VERSION}* aaf_DBUILD/lib
 
 ########
 # Fourth, do Hello
 # Apply currrent Properties to Docker file, and put in place.
+echo "### Building Hello"
 cd -
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
     -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
     -e 's/${DUSER}/'${DUSER}'/g' \
-    Dockerfile.hello >../aaf_${VERSION}/Dockerfile
+    Dockerfile.hello >../aaf_DBUILD/Dockerfile
 cd ..
-echo "#######"
-pwd
-echo "#######"
-cp -Rf sample/etc aaf_${VERSION}
-cp -Rf sample/logs aaf_${VERSION}
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_hello:${VERSION} aaf_${VERSION}
+
+cp -Rf sample/etc aaf_DBUILD
+cp -Rf sample/logs aaf_DBUILD
+
+for C in cass certman cmd deforg fs gui locate oauth service; do
+   rm aaf_DBUILD/lib/aaf-auth-$C-*
+done
+
+$DOCKER build -t ${ORG}/${PROJECT}/aaf_hello:${VERSION} aaf_DBUILD
 $DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:${VERSION}
 $DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:latest
-rm -Rf aaf_${VERSION}/Dockerfile aaf_${VERSION}/etc
 
 # Final cleanup
-rm aaf_${VERSION}/bin/pod_wait.sh
+rm -Rf aaf_DBUILD
 
 cd -
