@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +153,7 @@ public class CSRMeta {
          }
     }
     
-    public X509Certificate initialConversationCert(Trans trans) throws IOException, CertificateException, OperatorCreationException {
+    public X509Certificate initialConversationCert(Trans trans) throws CertificateException, OperatorCreationException {
         GregorianCalendar gc = new GregorianCalendar();
         Date start = gc.getTime();
         gc.add(GregorianCalendar.DAY_OF_MONTH,2);
