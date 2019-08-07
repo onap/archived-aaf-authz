@@ -29,58 +29,58 @@ import org.onap.aaf.cadi.Access;
 
 public class NotifyPendingApprBody extends NotifyBody {
 
-	public NotifyPendingApprBody(Access access) {
-		super(access,"appr","PendingApproval");
-	}
+    public NotifyPendingApprBody(Access access) {
+        super(access,"appr","PendingApproval");
+    }
 
-	@Override
-	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
-		boolean rv = false;
-		for(List<String> row : rows.get(id)) {
-			String qty = row.get(2);
-			if("1".equals(qty)) {
-				printf(sb,indent,"You have an Approval in the AAF %s Environment awaiting your decision.\n",row.get(3));
-			} else {
-				printf(sb,indent,"You have %s Approvals in the AAF %s Environment awaiting your decision.\n",qty,row.get(3));
-			}
-			printf(sb,indent,"<br><br><b>ACTION:</b> <i>Click on</i> <a href=\"%s/approve\">AAF Approval Page</a>",n.guiURL);
-			rv = true;
-			break; // only one
-		}
-		
-		return rv;
-	}
+    @Override
+    public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
+        boolean rv = false;
+        for(List<String> row : rows.get(id)) {
+            String qty = row.get(2);
+            if("1".equals(qty)) {
+                printf(sb,indent,"You have an Approval in the AAF %s Environment awaiting your decision.\n",row.get(3));
+            } else {
+                printf(sb,indent,"You have %s Approvals in the AAF %s Environment awaiting your decision.\n",qty,row.get(3));
+            }
+            printf(sb,indent,"<br><br><b>ACTION:</b> <i>Click on</i> <a href=\"%s/approve\">AAF Approval Page</a>",n.guiURL);
+            rv = true;
+            break; // only one
+        }
+        
+        return rv;
+    }
 
-	@Override
-	public String user(List<String> row) {
-		if( (row != null) && row.size()>1) {
-			return row.get(1);
-		}
-		return null;
-	}
+    @Override
+    public String user(List<String> row) {
+        if( (row != null) && row.size()>1) {
+            return row.get(1);
+        }
+        return null;
+    }
 
-	@Override
-	public String subject() {
-		return String.format("AAF Pending Approval Notification (ENV: %s)",env);
-	}
+    @Override
+    public String subject() {
+        return String.format("AAF Pending Approval Notification (ENV: %s)",env);
+    }
 
-	
-	@Override
-	public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified lastN) {
-		for(String n : notified) {
-			// No special key for Pending Requests.
-			lastN.update(query,n,"pending","");
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyBody#store(java.util.List)
-	 */
-	@Override
-	public void store(List<String> row) {
-		// Notify Pending is setup for 1 Notification at a time
-		super.rows.clear();
-		super.store(row);
-	}
+    
+    @Override
+    public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified lastN) {
+        for(String n : notified) {
+            // No special key for Pending Requests.
+            lastN.update(query,n,"pending","");
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.batch.reports.bodies.NotifyBody#store(java.util.List)
+     */
+    @Override
+    public void store(List<String> row) {
+        // Notify Pending is setup for 1 Notification at a time
+        super.rows.clear();
+        super.store(row);
+    }
 
 }

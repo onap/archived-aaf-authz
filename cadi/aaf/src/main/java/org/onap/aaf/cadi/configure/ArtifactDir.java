@@ -45,8 +45,8 @@ public abstract class ArtifactDir implements PlaceArtifact {
     
     // This checks for multiple passes of Dir on the same objects.  Run clear after done.
     protected final static Map<String,Object> processed = new HashMap<>();
-	private static final Map<String, Symm> symms = new HashMap<>();
-	
+    private static final Map<String, Symm> symms = new HashMap<>();
+    
     /**
      * Note:  Derived Classes should ALWAYS call "super.place(cert,arti)" first, and 
      * then "placeProperties(arti)" just after they implement
@@ -94,7 +94,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
         return true;
     }
 
-	/**
+    /**
      * Derived Classes implement this instead, so Dir can process first, and write any Properties last
      * @param cert
      * @param arti
@@ -104,7 +104,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
     protected abstract boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException;
 
     public static void write(File f, Chmod c, String ... data) throws IOException {
-    	System.out.println("Writing file " + f.getCanonicalPath());
+        System.out.println("Writing file " + f.getCanonicalPath());
         f.setWritable(true,true);
         
         FileOutputStream fos = new FileOutputStream(f);
@@ -120,7 +120,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
     }
 
     public static void write(File f, Chmod c, byte[] bytes) throws IOException {
-    	System.out.println("Writing file " + f.getCanonicalPath());
+        System.out.println("Writing file " + f.getCanonicalPath());
         f.setWritable(true,true);
         
         FileOutputStream fos = new FileOutputStream(f);
@@ -133,7 +133,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
     }
     
     public static void write(File f, Chmod c, KeyStore ks, char[] pass ) throws IOException, CadiException {
-    	System.out.println("Writing file " + f.getCanonicalPath());
+        System.out.println("Writing file " + f.getCanonicalPath());
         f.setWritable(true,true);
         
         FileOutputStream fos = new FileOutputStream(f);
@@ -149,17 +149,17 @@ public abstract class ArtifactDir implements PlaceArtifact {
 
     // Get the Symm associated with specific File (there can be several active at once)
     public synchronized static final Symm getSymm(File f) throws IOException {
-    	Symm symm = symms.get(f.getCanonicalPath());
-    	if(symm==null) {
+        Symm symm = symms.get(f.getCanonicalPath());
+        if(symm==null) {
             if (!f.exists()) {
                 write(f,Chmod.to400,Symm.keygen());
 //            } else {
-//            	System.out.println("Encryptor using " + f.getCanonicalPath());
+//                System.out.println("Encryptor using " + f.getCanonicalPath());
             }
             symm = Symm.obtain(f); 
             symms.put(f.getCanonicalPath(),symm);
-    	}
-    	return symm;
+        }
+        return symm;
     }
 
     private void validate(Artifact a) throws CadiException {

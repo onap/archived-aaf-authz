@@ -42,97 +42,97 @@ import org.onap.aaf.cadi.aaf.AAFPermission;
 
 public class JU_AAFSingleLocator {
 
-	@Mock
-	AAFCon con;
-	
-	@Mock
-	AbsUserCache<AAFPermission> cache;
-	
-	@Mock
-	PropAccess propaccess;
-	
+    @Mock
+    AAFCon con;
+    
+    @Mock
+    AbsUserCache<AAFPermission> cache;
+    
+    @Mock
+    PropAccess propaccess;
+    
 
-	AAFSingleLocator authnObj;
-	
-	@Before
-	public void setUp() {
-		initMocks(this);
-		try {
-			authnObj = new AAFSingleLocator("http://www.google.com");
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-	}
+    AAFSingleLocator authnObj;
+    
+    @Before
+    public void setUp() {
+        initMocks(this);
+        try {
+            authnObj = new AAFSingleLocator("http://www.google.com");
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+    }
 
-	@Test
-	public void testGetRealm() {
-		try {
-			URI retVal = authnObj.get(Mockito.mock( Locator.Item.class));
-			assertEquals("www.google.com",retVal.getHost());
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testHasItem() {
-			boolean retVal = authnObj.hasItems();
-			assertTrue(retVal);
-	}
-	
-	@Test
-	public void testInvalidate() {
-		try {
-			 authnObj.invalidate(Mockito.mock( Locator.Item.class));
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testBest() {
-		try {
-			Locator.Item retVal = authnObj.best();
-			assertTrue(retVal.toString().contains("org.onap.aaf.cadi.aaf.v2_0.AAFSingleLocator$SingleItem"));
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	@Test
-	public void testFirst() {
-		try {
-			Locator.Item retVal = authnObj.first();
-			assertTrue(retVal.toString().contains("org.onap.aaf.cadi.aaf.v2_0.AAFSingleLocator$SingleItem"));
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	@Test
-	public void testNext() {
-		try {
-			Locator.Item retVal = authnObj.next(Mockito.mock( Locator.Item.class));
-			assertNull(retVal);
-		} catch (LocatorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testRefres() {
-			boolean retVal = authnObj.refresh();
-			assertFalse(retVal);
-	}
-	
-	@Test
-	public void testdestroy() {
-		authnObj.destroy();
-	}
-	
-	
+    @Test
+    public void testGetRealm() {
+        try {
+            URI retVal = authnObj.get(Mockito.mock( Locator.Item.class));
+            assertEquals("www.google.com",retVal.getHost());
+        } catch (LocatorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testHasItem() {
+            boolean retVal = authnObj.hasItems();
+            assertTrue(retVal);
+    }
+    
+    @Test
+    public void testInvalidate() {
+        try {
+             authnObj.invalidate(Mockito.mock( Locator.Item.class));
+        } catch (LocatorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testBest() {
+        try {
+            Locator.Item retVal = authnObj.best();
+            assertTrue(retVal.toString().contains("org.onap.aaf.cadi.aaf.v2_0.AAFSingleLocator$SingleItem"));
+        } catch (LocatorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void testFirst() {
+        try {
+            Locator.Item retVal = authnObj.first();
+            assertTrue(retVal.toString().contains("org.onap.aaf.cadi.aaf.v2_0.AAFSingleLocator$SingleItem"));
+        } catch (LocatorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void testNext() {
+        try {
+            Locator.Item retVal = authnObj.next(Mockito.mock( Locator.Item.class));
+            assertNull(retVal);
+        } catch (LocatorException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testRefres() {
+            boolean retVal = authnObj.refresh();
+            assertFalse(retVal);
+    }
+    
+    @Test
+    public void testdestroy() {
+        authnObj.destroy();
+    }
+    
+    
 }

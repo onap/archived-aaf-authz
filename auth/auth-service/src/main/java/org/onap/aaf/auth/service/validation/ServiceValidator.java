@@ -57,9 +57,9 @@ public class ServiceValidator extends Validator {
         if (pd==null) {
             msg("Perm Data is null.");
         } else {
-        	if(!pd.ns.contains("@")) { 
-        		ns(pd.ns);
-        	}
+            if(!pd.ns.contains("@")) { 
+                ns(pd.ns);
+            }
             permType(pd.type,pd.ns);
             permInstance(pd.instance);
             permAction(pd.action);
@@ -222,8 +222,8 @@ public class ServiceValidator extends Validator {
     public ServiceValidator user_role(String user, UserRoleDAO.Data urdd) {
         role(user,urdd.role);
         if(!urdd.role.startsWith(user)) { 
-	        nullOrBlank("UserRole.ns",urdd.ns);
-	        nullOrBlank("UserRole.rname",urdd.rname);
+            nullOrBlank("UserRole.ns",urdd.ns);
+            nullOrBlank("UserRole.rname",urdd.rname);
         }
         return this;
     }

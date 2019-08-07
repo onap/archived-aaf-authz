@@ -37,26 +37,26 @@ import org.onap.aaf.cadi.configure.CertException;
 
 public class JU_CertReqTest {
 
-	@Mock
-	CA ca;
+    @Mock
+    CA ca;
 
-	@Mock
-	CSRMeta csr;
+    @Mock
+    CSRMeta csr;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-		when(ca.newCSRMeta()).thenReturn(csr);
-		when(csr.cn()).thenReturn("cn123");
-		when(csr.mechID()).thenReturn("mechId");
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        when(ca.newCSRMeta()).thenReturn(csr);
+        when(csr.cn()).thenReturn("cn123");
+        when(csr.mechID()).thenReturn("mechId");
+    }
 
-	@Test
-	public void testCertResp() throws IOException, GeneralSecurityException, CertException {
-		CertReq req = new CertReq();
-		req.certAuthority = ca;
-		req.fqdns = new ArrayList<String>();
+    @Test
+    public void testCertResp() throws IOException, GeneralSecurityException, CertException {
+        CertReq req = new CertReq();
+        req.certAuthority = ca;
+        req.fqdns = new ArrayList<String>();
 
-		assertEquals(csr, req.getCSRMeta());
-	}
+        assertEquals(csr, req.getCSRMeta());
+    }
 }

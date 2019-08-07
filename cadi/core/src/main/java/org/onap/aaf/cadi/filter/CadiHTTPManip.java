@@ -56,12 +56,12 @@ import org.onap.aaf.cadi.util.UserChainManip;
  */
 public class CadiHTTPManip {
     private static final String ACCESS_DENIED = "Access Denied";
-	private static final String NO_TAF_WILL_AUTHORIZE = "No TAF will authorize";
-	private static final String AUTHENTICATION_FAILURE = "Authentication Failure";
-	private static final String AUTHENTICATING_VIA_REDIRECTION = "Authenticating via redirection";
-	private static final String MSG_FMT = "user=%s,ip=%s:%d,msg=\"%s: %s\"";
-	private static final String AUTHENTICATED = "Authenticated";
-	private static final String ACCESS_CADI_CONTROL = ".access|cadi|control";
+    private static final String NO_TAF_WILL_AUTHORIZE = "No TAF will authorize";
+    private static final String AUTHENTICATION_FAILURE = "Authentication Failure";
+    private static final String AUTHENTICATING_VIA_REDIRECTION = "Authenticating via redirection";
+    private static final String MSG_FMT = "user=%s,ip=%s:%d,msg=\"%s: %s\"";
+    private static final String AUTHENTICATED = "Authenticated";
+    private static final String ACCESS_CADI_CONTROL = ".access|cadi|control";
     private static final String METH = "OPTIONS";
     private static final String CADI = "/cadi/";
     private static final String CADI_CACHE_PRINT = "/cadi/cache/print";
@@ -127,38 +127,38 @@ public class CadiHTTPManip {
         switch(tresp.isAuthenticated()) {
             case IS_AUTHENTICATED:
                 access.printf(Level.DEBUG,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
-                	hreq.getRemotePort(),AUTHENTICATED,tresp.desc());
+                    hreq.getRemotePort(),AUTHENTICATED,tresp.desc());
                 break;
             case TRY_AUTHENTICATING:
                 switch (tresp.authenticate()) {
                     case IS_AUTHENTICATED:
-                    	access.printf(Level.DEBUG,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
-                    		hreq.getRemotePort(),AUTHENTICATED,tresp.desc());
+                        access.printf(Level.DEBUG,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
+                            hreq.getRemotePort(),AUTHENTICATED,tresp.desc());
                         break;
                     case HTTP_REDIRECT_INVOKED:
-                    	access.printf(Level.DEBUG,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
-                    		hreq.getRemotePort(),AUTHENTICATING_VIA_REDIRECTION,tresp.desc());
+                        access.printf(Level.DEBUG,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
+                            hreq.getRemotePort(),AUTHENTICATING_VIA_REDIRECTION,tresp.desc());
                         break;
                     case NO_FURTHER_PROCESSING:
                         access.printf(Level.AUDIT,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
-                        	hreq.getRemotePort(),AUTHENTICATION_FAILURE,tresp.desc());
+                            hreq.getRemotePort(),AUTHENTICATION_FAILURE,tresp.desc());
                         hresp.sendError(403, tresp.desc()); // Forbidden
                         break;
 
                     default:
-                    	access.printf(Level.AUDIT,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
-                    		hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
+                        access.printf(Level.AUDIT,MSG_FMT,tresp.getTarget(),hreq.getRemoteAddr(), 
+                            hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
                         hresp.sendError(403, tresp.desc()); // Forbidden
                 }
                 break;
             case NO_FURTHER_PROCESSING:
                 access.printf(Level.AUDIT,MSG_FMT, tresp.getTarget(),hreq.getRemoteAddr(), 
-                		hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
+                        hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
                 hresp.sendError(403, ACCESS_DENIED); // FORBIDDEN
                 break;
             default:
-            	access.printf(Level.AUDIT,MSG_FMT, tresp.getTarget(),hreq.getRemoteAddr(),
-            			hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
+                access.printf(Level.AUDIT,MSG_FMT, tresp.getTarget(),hreq.getRemoteAddr(),
+                        hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
                 hresp.sendError(403, ACCESS_DENIED); // FORBIDDEN
         }
         

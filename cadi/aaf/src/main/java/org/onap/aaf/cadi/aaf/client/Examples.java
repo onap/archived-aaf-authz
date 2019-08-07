@@ -100,25 +100,25 @@ public class Examples {
         }
         
         Class<?> cls=null;
-    	int minorIdx = version.indexOf('_');
-    	if(minorIdx<0) {
-    		throw new APIException("Invalid Interface Version " + version);
-    	}
-    	int minor = Integer.parseInt(version.substring(minorIdx+1));
-    	String vprefix=version.substring(0, minorIdx+1);
-    	while(cls==null && minor>=0) {
-    		try {
-    			cls = Examples.class.getClassLoader().loadClass("aaf."+vprefix+minor+'.'+className);
+        int minorIdx = version.indexOf('_');
+        if(minorIdx<0) {
+            throw new APIException("Invalid Interface Version " + version);
+        }
+        int minor = Integer.parseInt(version.substring(minorIdx+1));
+        String vprefix=version.substring(0, minorIdx+1);
+        while(cls==null && minor>=0) {
+            try {
+                cls = Examples.class.getClassLoader().loadClass("aaf."+vprefix+minor+'.'+className);
             } catch (ClassNotFoundException e) {
-            	if(--minor<0) {
-            		throw new APIException("No Example for Version " + version + " found.");
-            	}
+                if(--minor<0) {
+                    throw new APIException("No Example for Version " + version + " found.");
+                }
             }
-    	}
-    	
-    	if(cls==null) {
-    		throw new APIException("ERROR: " + "aaf."+vprefix+"X not found.");
-    	}
+        }
+        
+        if(cls==null) {
+            throw new APIException("ERROR: " + "aaf."+vprefix+"X not found.");
+        }
         
         Method meth;
         try {

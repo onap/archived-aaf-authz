@@ -85,8 +85,8 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         public Date                     expires;
         public Integer                  other;
         public String                   ns;
-        public String					tag;
-        public String					notes;
+        public String                    tag;
+        public String                    notes;
         public ByteBuffer               cred;  //   this is a blob in cassandra
 
 
@@ -139,7 +139,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
 
         @Override
         protected void key(Data data, int _idx, Object[] obj) {
-        	int idx = _idx;
+            int idx = _idx;
 
             obj[idx] = data.id;
             obj[++idx] = data.type;
@@ -221,23 +221,23 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
                 " WHERE id = ?", CredLoader.deflt,readConsistency);
     }
     
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.dao.CassDAOImpl#create(org.onap.aaf.misc.env.TransStore, java.lang.Object)
-	 */
-	@Override
-	public Result<Data> create(AuthzTrans trans, Data data) {
-		if(data.tag == null) {
-			if(data.type==0) {
-				data.tag="PlaceHolder";
-			} else {
-				long l = srand.nextLong();
-				data.tag = Long.toHexString(l);
-			}
-		}
-		return super.create(trans, data);
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.dao.CassDAOImpl#create(org.onap.aaf.misc.env.TransStore, java.lang.Object)
+     */
+    @Override
+    public Result<Data> create(AuthzTrans trans, Data data) {
+        if(data.tag == null) {
+            if(data.type==0) {
+                data.tag="PlaceHolder";
+            } else {
+                long l = srand.nextLong();
+                data.tag = Long.toHexString(l);
+            }
+        }
+        return super.create(trans, data);
+    }
 
-	public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
+    public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
         return psNS.read(trans, R_TEXT, new Object[]{ns});
     }
     
@@ -267,12 +267,12 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
                 : (modified.name() + "d credential for " + data.id);
         String spacer = ": ";
         if(data.notes!=null) {
-        	hd.memo+=spacer + data.notes;
-        	spacer = ", ";
+            hd.memo+=spacer + data.notes;
+            spacer = ", ";
         }
 
         if(data.tag!=null) {
-        	hd.memo+=spacer + data.tag;
+            hd.memo+=spacer + data.tag;
         }
 
         // Detail?

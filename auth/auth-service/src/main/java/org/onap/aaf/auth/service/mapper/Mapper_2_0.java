@@ -367,30 +367,30 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         PermRequest from = (PermRequest)req;
         String type = from.getType();
         if(type==null) {
-        	return Result.err(Result.ERR_BadData, "Invalid Perm Type");
+            return Result.err(Result.ERR_BadData, "Invalid Perm Type");
         }
         PermDAO.Data pd = new PermDAO.Data();
         if(type.contains("@")) {
-        	String[] split = Split.splitTrim(':', type);
-        	pd.ns = split[0];
-        	pd.type=split.length>1?split[1]:"";
-        	pd.instance = from.getInstance();
-        	pd.action = from.getAction();
-        	pd.description = from.getDescription();
-        	return Result.ok(pd);
+            String[] split = Split.splitTrim(':', type);
+            pd.ns = split[0];
+            pd.type=split.length>1?split[1]:"";
+            pd.instance = from.getInstance();
+            pd.action = from.getAction();
+            pd.description = from.getDescription();
+            return Result.ok(pd);
         }  else {
-	        Result<NsSplit> nss = q.deriveNsSplit(trans, from.getType());
-	        if (nss.isOK()) { 
-	            pd.ns=nss.value.ns;
-	            pd.type = nss.value.name;
-	            pd.instance = from.getInstance();
-	            pd.action = from.getAction();
-	            pd.description = from.getDescription();
-	            trans.checkpoint(pd.fullPerm(), Env.ALWAYS);
-	            return Result.ok(pd);
-	        } else {
-	            return Result.err(nss);
-	        }
+            Result<NsSplit> nss = q.deriveNsSplit(trans, from.getType());
+            if (nss.isOK()) { 
+                pd.ns=nss.value.ns;
+                pd.type = nss.value.name;
+                pd.instance = from.getInstance();
+                pd.action = from.getAction();
+                pd.description = from.getDescription();
+                trans.checkpoint(pd.fullPerm(), Env.ALWAYS);
+                return Result.ok(pd);
+            } else {
+                return Result.err(nss);
+            }
         }
     }
     
@@ -526,23 +526,23 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         to.ns = Question.domain2ns(to.id);
         to.type = from.getType();
         if(to.type!=null && to.type==CredDAO.FQI) {
-        	to.cred = null;
+            to.cred = null;
         } else {
-        	String passwd = from.getPassword();
-	        if (requiresPass) {
-	            String ok = trans.org().isValidPassword(trans, to.id,passwd);
-	            if (ok.length()>0) {
-	                return Result.err(Status.ERR_BadData,ok);
-	            }
-	        }
-	        if (passwd != null) {
-	            to.cred = ByteBuffer.wrap(passwd.getBytes());
-	            to.type = CredDAO.RAW; 
-	        } else {
-	            to.type = CredDAO.NONE;
-	        }
+            String passwd = from.getPassword();
+            if (requiresPass) {
+                String ok = trans.org().isValidPassword(trans, to.id,passwd);
+                if (ok.length()>0) {
+                    return Result.err(Status.ERR_BadData,ok);
+                }
+            }
+            if (passwd != null) {
+                to.cred = ByteBuffer.wrap(passwd.getBytes());
+                to.type = CredDAO.RAW; 
+            } else {
+                to.type = CredDAO.NONE;
+            }
         }
-	        
+            
         // Note: Ensure requested EndDate created will match Organization Password Rules
         //  P.S. Do not apply TempPassword rule here. Do that when you know you are doing a Create/Reset (see Service)
         to.expires = getExpires(trans.org(),Expiration.Password,base,from.getId());

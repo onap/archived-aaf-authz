@@ -89,8 +89,8 @@ public class CMService {
     private final CredDAO credDAO;
     private final ArtiDAO artiDAO;
     private AAF_CM certManager;
-	private Boolean allowIgnoreIPs;
-	private Boolean alwaysIgnoreIPs;
+    private Boolean allowIgnoreIPs;
+    private Boolean alwaysIgnoreIPs;
 
     // @SuppressWarnings("unchecked")
     public CMService(final AuthzTrans trans, AAF_CM certman) throws APIException, IOException {
@@ -113,12 +113,12 @@ public class CMService {
         );
         alwaysIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALWAYS_IGNORE_IPS, "false"));
         if(alwaysIgnoreIPs) {
-        	trans.env().access().log(Level.INIT, "DNS Evaluation for Cert Creation is turned off with " + Config.CM_ALWAYS_IGNORE_IPS );
+            trans.env().access().log(Level.INIT, "DNS Evaluation for Cert Creation is turned off with " + Config.CM_ALWAYS_IGNORE_IPS );
         } else {
-	        allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
-	        if(allowIgnoreIPs) {
-	            trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
-	        }
+            allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
+            if(allowIgnoreIPs) {
+                trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
+            }
         }
     }
 
@@ -147,11 +147,11 @@ public class CMService {
 
                 boolean ignoreIPs;
                 if(alwaysIgnoreIPs) {
-                	ignoreIPs=true;
+                    ignoreIPs=true;
                 } else if(allowIgnoreIPs) {
-                	ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
+                    ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
                 } else {
-                	ignoreIPs = false;
+                    ignoreIPs = false;
                 }
                 
 
@@ -185,7 +185,7 @@ public class CMService {
 
                     } else {
                         if (!ignoreIPs) {
-                        	for (String cn : req.value.fqdns) {
+                            for (String cn : req.value.fqdns) {
                                 try {
                                     InetAddress[] ias = InetAddress.getAllByName(cn);
                                     Set<String> potentialSanNames = new HashSet<>();

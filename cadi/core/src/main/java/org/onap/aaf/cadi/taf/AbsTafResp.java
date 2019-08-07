@@ -127,14 +127,14 @@ public abstract class AbsTafResp implements TafResp {
     }
 
     /* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
-	 */
-	@Override
-	public String getTarget() {
-		return target;
-	}
-	
-	/**
+     * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
+     */
+    @Override
+    public String getTarget() {
+        return target;
+    }
+    
+    /**
      * getAccess()
      * 
      * Get the Access object from the TAF, so that appropriate Logging, etc can be coordinated.

@@ -65,16 +65,16 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         String str = access.getProperty(Config.AAF_LOCATOR_ENTRIES, null);
         String[] scomp = Split.splitTrim(',', str);
         if(scomp.length==0) {
-        	throw new CadiException(Config.AAF_LOCATOR_ENTRIES + " must be defined.");
+            throw new CadiException(Config.AAF_LOCATOR_ENTRIES + " must be defined.");
         } else {
-        	str = ROOT_NS + '.' + scomp[0];
+            str = ROOT_NS + '.' + scomp[0];
         }
         app_name = str;
         
         str = access.getProperty(Config.AAF_LOCATOR_VERSION, null);
         if(str==null) {
-        	str = Defaults.AAF_VERSION;
-        	env.setProperty(Config.AAF_LOCATOR_VERSION, str);
+            str = Defaults.AAF_VERSION;
+            env.setProperty(Config.AAF_LOCATOR_VERSION, str);
         }
         app_version = access.getProperty(Config.AAF_DEPLOYED_VERSION, str);
         
@@ -101,11 +101,11 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     }
     
     public void setProtocol(String proto) {
-    	env.setProperty(Config.AAF_LOCATOR_PROTOCOL, proto);
+        env.setProperty(Config.AAF_LOCATOR_PROTOCOL, proto);
     }
 
     public void setSubprotocol(String subproto) {
-    	env.setProperty(Config.AAF_LOCATOR_SUBPROTOCOL, subproto);
+        env.setProperty(Config.AAF_LOCATOR_SUBPROTOCOL, subproto);
     }
     
     protected abstract Filter[] _filters(Object ... additionalTafLurs) throws CadiException,  LocatorException;

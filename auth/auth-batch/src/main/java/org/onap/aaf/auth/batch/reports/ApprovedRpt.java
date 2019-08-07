@@ -49,15 +49,15 @@ import com.datastax.driver.core.Statement;
 
 public class ApprovedRpt extends Batch {
     
-	private static final String APPR_RPT = "ApprovedRpt";
-	private static final String CSV = ".csv";
-	private static final String INFO = "info";
-	private Date now;
-	private Writer approvedW;
-	private CSV historyR;
-	private static String yr_mon;
-	
-	public ApprovedRpt(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+    private static final String APPR_RPT = "ApprovedRpt";
+    private static final String CSV = ".csv";
+    private static final String INFO = "info";
+    private Date now;
+    private Writer approvedW;
+    private CSV historyR;
+    private static String yr_mon;
+    
+    public ApprovedRpt(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
         
@@ -72,7 +72,7 @@ public class ApprovedRpt extends Batch {
             
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
-           	File file = new File(logDir(),APPR_RPT + sdate +CSV);
+               File file = new File(logDir(),APPR_RPT + sdate +CSV);
             CSV csv = new CSV(env.access(),file);
             approvedW = csv.writer(false);
             
@@ -86,33 +86,33 @@ public class ApprovedRpt extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
-		try {
-			Map<String,Boolean> checked = new TreeMap<String, Boolean>();
-			
-			final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
-//	        ResultSet results;
+        try {
+            Map<String,Boolean> checked = new TreeMap<String, Boolean>();
+            
+            final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
+//            ResultSet results;
 //            Statement stmt = new SimpleStatement( "select dateof(id), approver, status, user, type, memo from authz.approved;" );
 //            results = session.execute(stmt);
 //            Iterator<Row> iter = results.iterator();
 //            Row row;
-			/*
-			 *             while (iter.hasNext()) {
+            /*
+             *             while (iter.hasNext()) {
                 ++totalLoaded;
                 row = iter.next();
                 d = row.getTimestamp(0);
                 if(d.after(begin)) {
-	                approvedW.row("aprvd",
-	                		Chrono.dateOnlyStamp(d),
-	                		row.getString(1),
-	                		row.getString(2),
-	                		row.getString(3),
-	                		row.getString(4),
-	                		row.getString(5)
-	                );
+                    approvedW.row("aprvd",
+                            Chrono.dateOnlyStamp(d),
+                            row.getString(1),
+                            row.getString(2),
+                            row.getString(3),
+                            row.getString(4),
+                            row.getString(5)
+                    );
                 }
             }
 
-			 */
+             */
             int totalLoaded = 0;
             Date d;
             GregorianCalendar gc = new GregorianCalendar();
@@ -123,58 +123,58 @@ public class ApprovedRpt extends Batch {
             historyR.visit(row -> {
                 String s = row.get(7);
                 if(s.equals(yr_mon)) {
-                	String target = row.get(5);
-                	if("user_role".equals(target)) {
-                		String action = row.get(1);
-                		switch(action) {
-                			case "create":
-                				write("created",row);
-                				break;
-                			case "update":
-                				write("approved",row);
-                				break;
-                			case "delete":
-                				write("denied",row);
-                				break;
-                		}
-                	}
+                    String target = row.get(5);
+                    if("user_role".equals(target)) {
+                        String action = row.get(1);
+                        switch(action) {
+                            case "create":
+                                write("created",row);
+                                break;
+                            case "update":
+                                write("approved",row);
+                                break;
+                            case "delete":
+                                write("denied",row);
+                                break;
+                        }
+                    }
                 }
             });
             
-		} catch (Exception e) {
-			trans.info().log(e);
-		}
-	}
+        } catch (Exception e) {
+            trans.info().log(e);
+        }
+    }
     
-	private void write(String a_or_d, List<String> row) {
-		String[] target = Split.splitTrim('|', row.get(4));
-		
-		if(target.length>1) {
-			UUID id = UUID.fromString(row.get(0));
-			Date date = Chrono.uuidToDate(id);
-			String status;
-			String memo;
-			String approver = row.get(6);
-			if("batch:JobChange".equals(approver)) {
-				status = "reduced";
-				memo = "existing role membership reduced to invoke reapproval";
-			} else {
-				status = a_or_d;
-				memo = row.get(2);
-			}
-			if(!approver.equals(target[0])) {
-		        approvedW.row(
-		        	Chrono.niceDateStamp(date),
-		        	approver,
-		        	status,
-		        	target[0],
-		        	target[1],
-		        	memo
-		        );
-			}
-		}
+    private void write(String a_or_d, List<String> row) {
+        String[] target = Split.splitTrim('|', row.get(4));
+        
+        if(target.length>1) {
+            UUID id = UUID.fromString(row.get(0));
+            Date date = Chrono.uuidToDate(id);
+            String status;
+            String memo;
+            String approver = row.get(6);
+            if("batch:JobChange".equals(approver)) {
+                status = "reduced";
+                memo = "existing role membership reduced to invoke reapproval";
+            } else {
+                status = a_or_d;
+                memo = row.get(2);
+            }
+            if(!approver.equals(target[0])) {
+                approvedW.row(
+                    Chrono.niceDateStamp(date),
+                    approver,
+                    status,
+                    target[0],
+                    target[1],
+                    memo
+                );
+            }
+        }
 
-		
-	}
+        
+    }
 
 }

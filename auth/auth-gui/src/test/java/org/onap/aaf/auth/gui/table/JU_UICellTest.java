@@ -34,137 +34,137 @@ import org.onap.aaf.auth.gui.table.CheckBoxCell.ALIGN;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class JU_UICellTest {
-	@Mock
-	private HTMLGen hgen;
+    @Mock
+    private HTMLGen hgen;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void testButtonCell() {
-		String[] attrs = { "type=button", "value=null", "attribute1", "attribute2" };
-		ButtonCell cell = new ButtonCell(null, "attribute1", "attribute2");
+    @Test
+    public void testButtonCell() {
+        String[] attrs = { "type=button", "value=null", "attribute1", "attribute2" };
+        ButtonCell cell = new ButtonCell(null, "attribute1", "attribute2");
 
-		when(hgen.incr("input", true, attrs)).thenReturn(hgen);
+        when(hgen.incr("input", true, attrs)).thenReturn(hgen);
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		AbsCell.Null.write(hgen);
+        AbsCell.Null.write(hgen);
 
-		assertThat(AbsCell.Null.attrs(), equalTo(new String[0]));
+        assertThat(AbsCell.Null.attrs(), equalTo(new String[0]));
 
-		assertThat(cell.attrs(), equalTo(AbsCell.CENTER));
+        assertThat(cell.attrs(), equalTo(AbsCell.CENTER));
 
-		verify(hgen).end();
-	}
+        verify(hgen).end();
+    }
 
-	@Test
-	public void testCheckBoxCellWithoutAlign() {
-		String[] attrs = { "type=checkbox", "name=name", "value=attribute1", "attribute2" };
-		CheckBoxCell cell = new CheckBoxCell("name", "attribute1", "attribute2");
+    @Test
+    public void testCheckBoxCellWithoutAlign() {
+        String[] attrs = { "type=checkbox", "name=name", "value=attribute1", "attribute2" };
+        CheckBoxCell cell = new CheckBoxCell("name", "attribute1", "attribute2");
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(AbsCell.CENTER));
+        assertThat(cell.attrs(), equalTo(AbsCell.CENTER));
 
-		verify(hgen).tagOnly("input", attrs);
-	}
+        verify(hgen).tagOnly("input", attrs);
+    }
 
-	@Test
-	public void testCheckBoxCellWithLeftAlign() {
-		String[] attrs = { "type=checkbox", "name=name", "value=attribute1", "attribute2" };
-		CheckBoxCell cell = new CheckBoxCell("name", ALIGN.left, "attribute1", "attribute2");
+    @Test
+    public void testCheckBoxCellWithLeftAlign() {
+        String[] attrs = { "type=checkbox", "name=name", "value=attribute1", "attribute2" };
+        CheckBoxCell cell = new CheckBoxCell("name", ALIGN.left, "attribute1", "attribute2");
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(AbsCell.LEFT));
+        assertThat(cell.attrs(), equalTo(AbsCell.LEFT));
 
-		verify(hgen).tagOnly("input", attrs);
-	}
+        verify(hgen).tagOnly("input", attrs);
+    }
 
-	@Test
-	public void testCheckBoxCellWithRightAlign() {
-		String[] attrs = { "type=checkbox", "name=name", "value=attribute1", "attribute2" };
-		CheckBoxCell cell = new CheckBoxCell("name", ALIGN.right, "attribute1", "attribute2");
+    @Test
+    public void testCheckBoxCellWithRightAlign() {
+        String[] attrs = { "type=checkbox", "name=name", "value=attribute1", "attribute2" };
+        CheckBoxCell cell = new CheckBoxCell("name", ALIGN.right, "attribute1", "attribute2");
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(AbsCell.RIGHT));
+        assertThat(cell.attrs(), equalTo(AbsCell.RIGHT));
 
-		verify(hgen).tagOnly("input", attrs);
-	}
+        verify(hgen).tagOnly("input", attrs);
+    }
 
-	@Test
-	public void testRadioCell() {
-		String[] attrs = { "type=radio", "name=name", "class=attribute1", "value=attribute2" };
-		RadioCell cell = new RadioCell("name", "attribute1", "attribute2");
+    @Test
+    public void testRadioCell() {
+        String[] attrs = { "type=radio", "name=name", "class=attribute1", "value=attribute2" };
+        RadioCell cell = new RadioCell("name", "attribute1", "attribute2");
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(AbsCell.CENTER));
+        assertThat(cell.attrs(), equalTo(AbsCell.CENTER));
 
-		verify(hgen).tagOnly("input", attrs);
-	}
+        verify(hgen).tagOnly("input", attrs);
+    }
 
-	@Test
-	public void testRefCellWithNewWindow() {
-		String[] attrs = { "href=attribute1", "attribute2", null };
-		RefCell cell = new RefCell("name", "attribute1", true, "attribute2");
+    @Test
+    public void testRefCellWithNewWindow() {
+        String[] attrs = { "href=attribute1", "attribute2", null };
+        RefCell cell = new RefCell("name", "attribute1", true, "attribute2");
 
-		when(hgen.leaf(HTMLGen.A, attrs)).thenReturn(hgen);
+        when(hgen.leaf(HTMLGen.A, attrs)).thenReturn(hgen);
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(new String[0]));
-	}
+        assertThat(cell.attrs(), equalTo(new String[0]));
+    }
 
-	@Test
-	public void testRefCellWithoutNewWindow() {
-		String[] attrs = { "href=attribute1", "attribute2" };
-		RefCell cell = new RefCell("name", "attribute1", false, "attribute2");
+    @Test
+    public void testRefCellWithoutNewWindow() {
+        String[] attrs = { "href=attribute1", "attribute2" };
+        RefCell cell = new RefCell("name", "attribute1", false, "attribute2");
 
-		when(hgen.leaf(HTMLGen.A, attrs)).thenReturn(hgen);
+        when(hgen.leaf(HTMLGen.A, attrs)).thenReturn(hgen);
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(new String[0]));
+        assertThat(cell.attrs(), equalTo(new String[0]));
 
-	}
+    }
 
-	@Test
-	public void testTextAndRefCell() {
-		String[] attrs = { "href=href", "attribute1", null };
-		String[] attributes = { "attribute1" };
-		TextAndRefCell cell = new TextAndRefCell("text", "name", "href", true, attributes);
+    @Test
+    public void testTextAndRefCell() {
+        String[] attrs = { "href=href", "attribute1", null };
+        String[] attributes = { "attribute1" };
+        TextAndRefCell cell = new TextAndRefCell("text", "name", "href", true, attributes);
 
-		when(hgen.leaf(HTMLGen.A, attrs)).thenReturn(hgen);
+        when(hgen.leaf(HTMLGen.A, attrs)).thenReturn(hgen);
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		verify(hgen).text("text");
-	}
+        verify(hgen).text("text");
+    }
 
-	@Test
-	public void testTextCell() {
-		String[] attrs = { "href" };
-		TextCell cell = new TextCell("name", "href");
+    @Test
+    public void testTextCell() {
+        String[] attrs = { "href" };
+        TextCell cell = new TextCell("name", "href");
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(attrs));
+        assertThat(cell.attrs(), equalTo(attrs));
 
-		verify(hgen).text("name");
-	}
+        verify(hgen).text("name");
+    }
 
-	@Test
-	public void testTextInputCell() {
-		String[] attrs = { "href" };
-		TextInputCell cell = new TextInputCell("name", "textClass", "value");
+    @Test
+    public void testTextInputCell() {
+        String[] attrs = { "href" };
+        TextInputCell cell = new TextInputCell("name", "textClass", "value");
 
-		cell.write(hgen);
+        cell.write(hgen);
 
-		assertThat(cell.attrs(), equalTo(new String[0]));
-	}
+        assertThat(cell.attrs(), equalTo(new String[0]));
+    }
 }

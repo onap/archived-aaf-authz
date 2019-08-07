@@ -35,10 +35,10 @@ import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.impl.BasicTrans;
 
 public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
-	private static final String N_A = "n/a";
-	private static final String BLANK = "";
-	private HttpServletRequest hreq;
-	private HttpServletResponse hresp;
+    private static final String N_A = "n/a";
+    private static final String BLANK = "";
+    private HttpServletRequest hreq;
+    private HttpServletResponse hresp;
     private TaggedPrincipal user;
     private Lur lur;
     private Organization org;
@@ -57,8 +57,8 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public AuthzTrans set(HttpServletRequest req, HttpServletResponse resp) {
-    	hreq = req;
-    	hresp = resp;
+        hreq = req;
+        hresp = resp;
         user = (TaggedPrincipal)req.getUserPrincipal();
         
         for (REQD_TYPE rt : REQD_TYPE.values()) {
@@ -76,12 +76,12 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     
     @Override
     public HttpServletRequest hreq() {
-    	return hreq;
+        return hreq;
     }
 
     @Override
     public HttpServletResponse hresp() {
-    	return hresp;
+        return hresp;
     }
 
     @Override
@@ -135,7 +135,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public String path() {
-    	return hreq==null?"":hreq.getPathInfo();
+        return hreq==null?"":hreq.getPathInfo();
     }
 
     /**
@@ -231,20 +231,20 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
      */
     @Override
     public void setTag(String tag) {
-    	this.tag = tag;
+        this.tag = tag;
     }
 
     @Override
     public String getTag() {
-    	return tag;
+        return tag;
     }
 
-	@Override
-	public void clearCache() {
+    @Override
+    public void clearCache() {
         if (lur!=null) {
-        	StringBuilder report = new StringBuilder();
+            StringBuilder report = new StringBuilder();
             lur.clear(user, report);
             info().log(report);
         }
-	}
+    }
 }

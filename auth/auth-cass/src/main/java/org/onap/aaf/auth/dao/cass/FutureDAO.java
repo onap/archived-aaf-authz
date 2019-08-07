@@ -69,8 +69,8 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
         public String       memo;
         public Date         start;
         public Date         expires;
-        public String	    target_key;
-        public Date			target_date;
+        public String        target_key;
+        public Date            target_date;
         public ByteBuffer   construct;  //   this is a blob in cassandra
     }
 

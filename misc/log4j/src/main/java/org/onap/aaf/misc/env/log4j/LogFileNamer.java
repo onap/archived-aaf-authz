@@ -56,24 +56,24 @@ public class LogFileNamer {
      * @throws IOException
      */
     public String setAppender(String appender) throws IOException {
-    	File f = new File(String.format(FIRST_FILE_FORMAT_STR, dir, root, appender));
-    	File lock = new File(f.getAbsoluteFile()+".lock");
-    	if(f.exists()) {
-    		if(lock.exists()) {
-		        int i = 0;
-		        while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, i))).exists() &&
-		        	   (lock = new File(f.getAbsoluteFile()+".lock")).exists()) {
-		            ++i;
-		        }
-    		}
-    	}
+        File f = new File(String.format(FIRST_FILE_FORMAT_STR, dir, root, appender));
+        File lock = new File(f.getAbsoluteFile()+".lock");
+        if(f.exists()) {
+            if(lock.exists()) {
+                int i = 0;
+                while ((f = new File(String.format(FILE_FORMAT_STR, dir, root, appender, i))).exists() &&
+                       (lock = new File(f.getAbsoluteFile()+".lock")).exists()) {
+                    ++i;
+                }
+            }
+        }
         
         try {
-        	lock.createNewFile();
-        	lock.deleteOnExit();
-        	f.createNewFile();
+            lock.createNewFile();
+            lock.deleteOnExit();
+            f.createNewFile();
         } catch (IOException e) {
-        	throw new IOException("Cannot create file '" + f.getCanonicalPath() + '\'', e);
+            throw new IOException("Cannot create file '" + f.getCanonicalPath() + '\'', e);
         }
         System.setProperty("LOG4J_FILENAME_" + appender, f.getCanonicalPath());
         return appender;

@@ -114,7 +114,7 @@ public class CmdLine {
 // One still needs access to the keyfile to read.
 // July 2016 - thought of a tool "CMPass" to regurgitate from properties, but only if allowed.
             } else if (("regurgitate".equalsIgnoreCase(args[0]) || "undigest".equalsIgnoreCase(args[0]))
-            			&& args.length>2) {
+                        && args.length>2) {
                 try {
                     Symm symm;
                     FileInputStream fis = new FileInputStream(args[2]);

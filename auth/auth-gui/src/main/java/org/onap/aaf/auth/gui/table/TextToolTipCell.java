@@ -31,7 +31,7 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 public class TextToolTipCell extends AbsCell {
     public final String name;
     private final String[] attrs;
-	private final String tooltip;
+    private final String tooltip;
     
     public TextToolTipCell(String name, String tooltip, String... attributes) {
         attrs = attributes;

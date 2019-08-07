@@ -41,73 +41,73 @@ import org.onap.aaf.cadi.config.Config;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_DirectRegistrar {
 
-	@Mock
-	LocateDAO ldao;
+    @Mock
+    LocateDAO ldao;
 
-	// @Mock
-	// Data locate;
+    // @Mock
+    // Data locate;
 
-	@Mock
-	Access access;
+    @Mock
+    Access access;
 
-	@Mock
-	AuthzEnv env;
+    @Mock
+    AuthzEnv env;
 
-	// @Mock
-	AuthzTrans trans;
+    // @Mock
+    AuthzTrans trans;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void testUpdate() {
-		DirectRegistrar registrarObj = null;
-		org.onap.aaf.auth.layer.Result<Void> rs = null;
-		try {
-			Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE, null);
-			Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE, null);
-			Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER, "");
-			Mockito.doReturn("20,test,test").when(access).getProperty(Config.AAF_LOCATOR_ENTRIES, "");
-			rs = new org.onap.aaf.auth.layer.Result<Void>(null, 0, "test",	new Object[0]);
-			Mockito.doReturn(rs).when(ldao).update(Mockito.any(), Mockito.any());
-			registrarObj = new DirectRegistrar(access, ldao, 9080);
+    @Test
+    public void testUpdate() {
+        DirectRegistrar registrarObj = null;
+        org.onap.aaf.auth.layer.Result<Void> rs = null;
+        try {
+            Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE, null);
+            Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE, null);
+            Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER, "");
+            Mockito.doReturn("20,test,test").when(access).getProperty(Config.AAF_LOCATOR_ENTRIES, "");
+            rs = new org.onap.aaf.auth.layer.Result<Void>(null, 0, "test",    new Object[0]);
+            Mockito.doReturn(rs).when(ldao).update(Mockito.any(), Mockito.any());
+            registrarObj = new DirectRegistrar(access, ldao, 9080);
 
-		
-			org.onap.aaf.auth.layer.Result<Void> retVal1 = new Result<Void>(null, 0, "test", new Object[0]);
-			Mockito.doReturn(trans).when(env).newTransNoAvg();
-			// Mockito.doReturn(retVal1).when(ldao).update(trans,locate);
-			registrarObj.update(env);
-	
-			rs = new org.onap.aaf.auth.layer.Result<Void>(null, 1, "test", new Object[0]);
-			Mockito.doReturn(rs).when(ldao).update(Mockito.any(), Mockito.any());
-			registrarObj = new DirectRegistrar(access, ldao, 9080);
-			registrarObj.update(env);
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// System.out.println(retVal1);
-	}
+        
+            org.onap.aaf.auth.layer.Result<Void> retVal1 = new Result<Void>(null, 0, "test", new Object[0]);
+            Mockito.doReturn(trans).when(env).newTransNoAvg();
+            // Mockito.doReturn(retVal1).when(ldao).update(trans,locate);
+            registrarObj.update(env);
+    
+            rs = new org.onap.aaf.auth.layer.Result<Void>(null, 1, "test", new Object[0]);
+            Mockito.doReturn(rs).when(ldao).update(Mockito.any(), Mockito.any());
+            registrarObj = new DirectRegistrar(access, ldao, 9080);
+            registrarObj.update(env);
+        } catch (CadiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // System.out.println(retVal1);
+    }
 
-	@Test
-	public void testCancel() {
-		DirectRegistrar registrarObj = null;
-		try {
-			Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE, null);
-			Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE, null);
-			Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER, "");
-			Mockito.doReturn("20,test,test").when(access).getProperty(Config.AAF_LOCATOR_ENTRIES, "");
-			registrarObj = new DirectRegistrar(access, ldao, 9080);
-			
-			org.onap.aaf.auth.layer.Result<Void> rs = new org.onap.aaf.auth.layer.Result<Void>(null, 1, "test", new Object[0]);
-			Mockito.doReturn(rs).when(ldao).delete(Mockito.any(), Mockito.any(), Mockito.anyBoolean());
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 registrarObj.cancel(env);
-	}
+    @Test
+    public void testCancel() {
+        DirectRegistrar registrarObj = null;
+        try {
+            Mockito.doReturn("20").when(access).getProperty(Config.CADI_LATITUDE, null);
+            Mockito.doReturn("20").when(access).getProperty(Config.CADI_LONGITUDE, null);
+            Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER, "");
+            Mockito.doReturn("20,test,test").when(access).getProperty(Config.AAF_LOCATOR_ENTRIES, "");
+            registrarObj = new DirectRegistrar(access, ldao, 9080);
+            
+            org.onap.aaf.auth.layer.Result<Void> rs = new org.onap.aaf.auth.layer.Result<Void>(null, 1, "test", new Object[0]);
+            Mockito.doReturn(rs).when(ldao).delete(Mockito.any(), Mockito.any(), Mockito.anyBoolean());
+        } catch (CadiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+         registrarObj.cancel(env);
+    }
 
 }

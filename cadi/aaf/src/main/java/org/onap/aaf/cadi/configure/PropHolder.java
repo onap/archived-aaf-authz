@@ -39,104 +39,104 @@ import certman.v1_0.Artifacts.Artifact;
 // Doing this because there are lots of lists spread out in this model...
     // we want these to be unique.
 public class PropHolder {
-	private File dir;
-	private File file;
-	private File keyfile;
-	private Symm symm;
-	private Map<String,String> props;
+    private File dir;
+    private File file;
+    private File keyfile;
+    private Symm symm;
+    private Map<String,String> props;
 
-	private static boolean dirMessage = true;
+    private static boolean dirMessage = true;
     protected final static Map<String,PropHolder> propHolders = new HashMap<>();
 
     public static PropHolder get(Artifact arti, String suffix) throws IOException {
-    	File dir = new File(arti.getDir());
+        File dir = new File(arti.getDir());
         if (dir.exists()) {
-        	if(dirMessage) {
-        		System.out.println("Writing to " + dir.getCanonicalFile());
-        	}
+            if(dirMessage) {
+                System.out.println("Writing to " + dir.getCanonicalFile());
+            }
         } else if (dir.mkdirs()) {
-        	if(dirMessage) {
-        		System.out.println("Created directory " + dir.getCanonicalFile());
-        	}
+            if(dirMessage) {
+                System.out.println("Created directory " + dir.getCanonicalFile());
+            }
         } else {
             throw new IOException("Unable to create or write to " + dir.getCanonicalPath());
         }
         dirMessage = false;
-    	File file = new File(dir,arti.getNs()+'.'+suffix);
+        File file = new File(dir,arti.getNs()+'.'+suffix);
 
-    	PropHolder ph = propHolders.get(file.getAbsolutePath());
-    	if(ph == null) {
-    		ph = new PropHolder(dir,file,new File(dir,arti.getNs()+".keyfile"));
-    		propHolders.put(file.getAbsolutePath(), ph);
-    	} 
-    	return ph;
+        PropHolder ph = propHolders.get(file.getAbsolutePath());
+        if(ph == null) {
+            ph = new PropHolder(dir,file,new File(dir,arti.getNs()+".keyfile"));
+            propHolders.put(file.getAbsolutePath(), ph);
+        } 
+        return ph;
     }
-	
-	private PropHolder(File dir, File file, File keyfile) throws IOException {
-		this.dir = dir;
-		this.file = file;
-		this.keyfile = keyfile;
-		symm = null;
-		props = new TreeMap<>();
-	}
-	
-	public String getPath() {
-		return file.getAbsolutePath();
-	}
-	
-	public File getDir() {
-		return dir;
-	}
+    
+    private PropHolder(File dir, File file, File keyfile) throws IOException {
+        this.dir = dir;
+        this.file = file;
+        this.keyfile = keyfile;
+        symm = null;
+        props = new TreeMap<>();
+    }
+    
+    public String getPath() {
+        return file.getAbsolutePath();
+    }
+    
+    public File getDir() {
+        return dir;
+    }
 
-	public String getKeyPath() {
-		return keyfile.getAbsolutePath();
-	}
+    public String getKeyPath() {
+        return keyfile.getAbsolutePath();
+    }
 
-	public String add(final String tag, final String value) {
-		final String rv = value==null?"":value;
-		props.put(tag, rv);
-		return rv;
-	}
+    public String add(final String tag, final String value) {
+        final String rv = value==null?"":value;
+        props.put(tag, rv);
+        return rv;
+    }
 
-	public String add(final String tag, Access orig, final String def) {
-		return add(tag, orig.getProperty(tag, def));
-	}
+    public String add(final String tag, Access orig, final String def) {
+        return add(tag, orig.getProperty(tag, def));
+    }
 
-	public String addEnc(final String tag, final String value) throws IOException {
-		String rv;
-		if(value==null) {
-			rv = "";
-		} else {
-			if(symm==null) { // Lazy Instantiations... on a few PropFiles have Security
-				symm = ArtifactDir.getSymm(keyfile);
-			}
-			rv = "enc:"+symm.enpass(value);
-		}
-		props.put(tag, rv);
-		return rv;
-	}
+    public String addEnc(final String tag, final String value) throws IOException {
+        String rv;
+        if(value==null) {
+            rv = "";
+        } else {
+            if(symm==null) { // Lazy Instantiations... on a few PropFiles have Security
+                symm = ArtifactDir.getSymm(keyfile);
+            }
+            rv = "enc:"+symm.enpass(value);
+        }
+        props.put(tag, rv);
+        return rv;
+    }
 
-	public void addEnc(final String tag, Access orig, final String def) throws IOException {
-		String pwd = orig.getProperty(tag, def);
-		if(pwd==null) {
-			return;
-		} else if(pwd.startsWith("enc:")) {
-			pwd = orig.decrypt(pwd, true);
-		}
-		addEnc(tag,pwd);
-	}
-	
-	public void write() throws IOException {
+    public void addEnc(final String tag, Access orig, final String def) throws IOException {
+        String pwd = orig.getProperty(tag, def);
+        if(pwd==null) {
+            return;
+        } else if(pwd.startsWith("enc:")) {
+            pwd = orig.decrypt(pwd, true);
+        }
+        addEnc(tag,pwd);
+    }
+    
+    public void write() throws IOException {
         if (props.size()==0) {
             return;
         }
 
         if (file.exists()) {
-        	System.out.println("Backing up " + file.getCanonicalPath());
+            System.out.println("Backing up " + file.getCanonicalPath());
             File backup = File.createTempFile(file.getName()+'.', ".backup",dir);
             file.renameTo(backup);
         } else {
-        	System.out.println("Creating new " + file.getCanonicalPath());
+            System.out.println("Creating new " + file.getCanonicalPath());
         }
         
         // Append if not first
@@ -159,7 +159,7 @@ public class PropHolder {
             pw.println();
             
              for (Map.Entry<String,String> me : props.entrySet()) {
-            	String key = me.getKey();
+                String key = me.getKey();
                     pw.print(key);
                     pw.print('=');
                     pw.println(me.getValue());
@@ -168,16 +168,16 @@ public class PropHolder {
             pw.close();
         }
         Chmod.to644.chmod(file);
-	}
-	
-	public static void writeAll() throws IOException {
-		for(PropHolder ph : propHolders.values()) {
-			ph.write();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return file.getAbsolutePath() + ": " + props;
-	}
+    }
+    
+    public static void writeAll() throws IOException {
+        for(PropHolder ph : propHolders.values()) {
+            ph.write();
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return file.getAbsolutePath() + ": " + props;
+    }
 }

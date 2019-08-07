@@ -106,15 +106,15 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         }
         
         public String fullName() {
-        	StringBuilder sb = new StringBuilder();
-        	if(ns==null) {
-        		sb.append('.');
-        	} else {
-        		sb.append(ns);
-            	sb.append(ns.indexOf('@')<0?'.':':'); 
-        	}
-        	sb.append(name);
-        	return sb.toString();
+            StringBuilder sb = new StringBuilder();
+            if(ns==null) {
+                sb.append('.');
+            } else {
+                sb.append(ns);
+                sb.append(ns.indexOf('@')<0?'.':':'); 
+            }
+            sb.append(name);
+            return sb.toString();
         }
         
         public String encode() {
@@ -131,28 +131,28 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
          */
         public static Result<Data> decode(AuthzTrans trans, Question q, String r) {
             Data data = new Data();
-        	if(r.indexOf('@')>=0) {
-        		int colon = r.indexOf(':');
-        		if(colon<0) {
-        			return Result.err(Result.ERR_BadData, "%s is not a valid Role",r);
-        		} else {
-        			data.ns=r.substring(0, colon);
-        			data.name=r.substring(++colon);
-        		}
-        	} else {
-	            String[] ss = Split.splitTrim('|', r,2);
-	            if (ss[1]==null) { // older 1 part encoding must be evaluated for NS
-	                Result<NsSplit> nss = q.deriveNsSplit(trans, ss[0]);
-	                if (nss.notOK()) {
-	                    return Result.err(nss);
-	                }
-	                data.ns=nss.value.ns;
-	                data.name=nss.value.name;
-	            } else { // new 4 part encoding
-	                data.ns=ss[0];
-	                data.name=ss[1];
-	            }
-        	}
+            if(r.indexOf('@')>=0) {
+                int colon = r.indexOf(':');
+                if(colon<0) {
+                    return Result.err(Result.ERR_BadData, "%s is not a valid Role",r);
+                } else {
+                    data.ns=r.substring(0, colon);
+                    data.name=r.substring(++colon);
+                }
+            } else {
+                String[] ss = Split.splitTrim('|', r,2);
+                if (ss[1]==null) { // older 1 part encoding must be evaluated for NS
+                    Result<NsSplit> nss = q.deriveNsSplit(trans, ss[0]);
+                    if (nss.notOK()) {
+                        return Result.err(nss);
+                    }
+                    data.ns=nss.value.ns;
+                    data.name=nss.value.name;
+                } else { // new 4 part encoding
+                    data.ns=ss[0];
+                    data.name=ss[1];
+                }
+            }
             return Result.ok(data);
         }
 

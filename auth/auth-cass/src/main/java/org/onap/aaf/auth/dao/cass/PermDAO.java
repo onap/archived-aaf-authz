@@ -93,31 +93,31 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         }
 
         public String fullType() {
-        	StringBuilder sb = new StringBuilder();
-        	if(ns==null) {
-        		sb.append('.');
-        	} else {
-	        	sb.append(ns);
-	        	sb.append(ns.indexOf('@')<0?'.':':');
-        	}
-        	sb.append(type);
-        	return sb.toString();
+            StringBuilder sb = new StringBuilder();
+            if(ns==null) {
+                sb.append('.');
+            } else {
+                sb.append(ns);
+                sb.append(ns.indexOf('@')<0?'.':':');
+            }
+            sb.append(type);
+            return sb.toString();
         }
         
         public String fullPerm() {
-        	StringBuilder sb = new StringBuilder();
-        	if(ns==null) {
-        		sb.append("null.");
-        	} else {
-        		sb.append(ns);
-        		sb.append(ns.indexOf('@')<0?'.':':');
-        	}
-        	sb.append(type);
-        	sb.append('|');
-        	sb.append(instance);
-        	sb.append('|');
-        	sb.append(action);
-        	return sb.toString();
+            StringBuilder sb = new StringBuilder();
+            if(ns==null) {
+                sb.append("null.");
+            } else {
+                sb.append(ns);
+                sb.append(ns.indexOf('@')<0?'.':':');
+            }
+            sb.append(type);
+            sb.append('|');
+            sb.append(instance);
+            sb.append('|');
+            sb.append(action);
+            return sb.toString();
         }
 
         public String encode() {
@@ -213,26 +213,26 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             Data rv = new PermDAO.Data();
             if (rdns.isOKhasData()) {
                 switch(s.length) {
-	                case 4:
-	                	rv.ns=s[0];
-	                    rv.type=s[1];
-	                    rv.instance=s[2];
-	                    rv.action=s[3];
-	                    break;
+                    case 4:
+                        rv.ns=s[0];
+                        rv.type=s[1];
+                        rv.instance=s[2];
+                        rv.action=s[3];
+                        break;
                     case 3:
-	                	rv.ns=s[0];
+                        rv.ns=s[0];
                         rv.type=s[1];
                         rv.instance=s[2];
                         rv.action=s[3];
                         break;
                     case 2:
-	                	rv.ns=s[0];
+                        rv.ns=s[0];
                         rv.type=s[1];
                         rv.instance=s[2];
                         rv.action=STAR;
                         break;
                     default:
-	                	rv.ns=s[0];
+                        rv.ns=s[0];
                         rv.type=s[1];
                         rv.instance = STAR;
                         rv.action = STAR;

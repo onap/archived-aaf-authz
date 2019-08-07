@@ -42,136 +42,136 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 public class JU_AbsTransJaxb {
 
-	@Mock
-	EnvJAXB delegate;
-	
-	@Mock
-	LogTarget lt;
-	
-	@Before
-	public void setUp() {
-		initMocks(this);
-	}
-	
-	class AbsTransJAXBImpl extends AbsTransJAXB{
+    @Mock
+    EnvJAXB delegate;
+    
+    @Mock
+    LogTarget lt;
+    
+    @Before
+    public void setUp() {
+        initMocks(this);
+    }
+    
+    class AbsTransJAXBImpl extends AbsTransJAXB{
 
-		public AbsTransJAXBImpl(EnvJAXB env) {
-			super(env);
-			// TODO Auto-generated constructor stub
-		}
+        public AbsTransJAXBImpl(EnvJAXB env) {
+            super(env);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		public String setProperty(String tag, String value) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public String setProperty(String tag, String value) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public String getProperty(String tag) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public String getProperty(String tag) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public String getProperty(String tag, String deflt) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public String getProperty(String tag, String deflt) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public Decryptor decryptor() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Decryptor decryptor() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public Encryptor encryptor() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Encryptor encryptor() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public Slot slot(String name) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public Slot slot(String name) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public <T> T get(StaticSlot slot, T dflt) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public <T> T get(StaticSlot slot, T dflt) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		protected TimeTaken newTimeTaken(String name, int flag, Object ... values) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        protected TimeTaken newTimeTaken(String name, int flag, Object ... values) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		
-	}
-	
-	
-	@Test
-	public void testNewDataFactory() {
-		AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
-		DataFactory<Object> lt = null;
+        
+    }
+    
+    
+    @Test
+    public void testNewDataFactory() {
+        AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
+        DataFactory<Object> lt = null;
 
-		try {
-			Mockito.doReturn(lt).when(delegate).newDataFactory(new Class[] {AbsTransJAXB.class});
-			lt = absTransObj.newDataFactory(new Class[] {AbsTransJAXB.class});
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//assertTrue(lt instanceof LogTarget);
-	}
-	
-	@Test
-	public void testNewDataFactorySchema() {
-		AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
-		DataFactory<Object> lt = null;
-		Schema schema = Mockito.mock(Schema.class);
-		try {
-			Mockito.doReturn(lt).when(delegate).newDataFactory(schema, new Class[] {AbsTransJAXB.class});
-			lt = absTransObj.newDataFactory(schema, new Class[] {AbsTransJAXB.class});
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//assertTrue(lt instanceof LogTarget);
-	}
-	
-	@Test
-	public void testNewDataFactoryQname() {
-		AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
-		DataFactory<Object> lt = null;
-		QName schema = Mockito.mock(QName.class);
-		try {
-			Mockito.doReturn(lt).when(delegate).newDataFactory(schema, new Class[] {AbsTransJAXB.class});
-			lt = absTransObj.newDataFactory(schema, new Class[] {AbsTransJAXB.class});
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//assertTrue(lt instanceof LogTarget);
-	}
-	
-	@Test
-	public void testNewDataFactorySchemaQname() {
-		AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
-		DataFactory<Object> lt = null;
-		QName qname = Mockito.mock(QName.class);
-		Schema schema = Mockito.mock(Schema.class);
-		try {
-			Mockito.doReturn(lt).when(delegate).newDataFactory(schema, qname,new Class[] {AbsTransJAXB.class});
-			lt = absTransObj.newDataFactory(schema, qname,new Class[] {AbsTransJAXB.class});
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//assertTrue(lt instanceof LogTarget);
-	}
-	
-	
+        try {
+            Mockito.doReturn(lt).when(delegate).newDataFactory(new Class[] {AbsTransJAXB.class});
+            lt = absTransObj.newDataFactory(new Class[] {AbsTransJAXB.class});
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //assertTrue(lt instanceof LogTarget);
+    }
+    
+    @Test
+    public void testNewDataFactorySchema() {
+        AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
+        DataFactory<Object> lt = null;
+        Schema schema = Mockito.mock(Schema.class);
+        try {
+            Mockito.doReturn(lt).when(delegate).newDataFactory(schema, new Class[] {AbsTransJAXB.class});
+            lt = absTransObj.newDataFactory(schema, new Class[] {AbsTransJAXB.class});
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //assertTrue(lt instanceof LogTarget);
+    }
+    
+    @Test
+    public void testNewDataFactoryQname() {
+        AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
+        DataFactory<Object> lt = null;
+        QName schema = Mockito.mock(QName.class);
+        try {
+            Mockito.doReturn(lt).when(delegate).newDataFactory(schema, new Class[] {AbsTransJAXB.class});
+            lt = absTransObj.newDataFactory(schema, new Class[] {AbsTransJAXB.class});
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //assertTrue(lt instanceof LogTarget);
+    }
+    
+    @Test
+    public void testNewDataFactorySchemaQname() {
+        AbsTransJAXB absTransObj = new AbsTransJAXBImpl(delegate);
+        DataFactory<Object> lt = null;
+        QName qname = Mockito.mock(QName.class);
+        Schema schema = Mockito.mock(Schema.class);
+        try {
+            Mockito.doReturn(lt).when(delegate).newDataFactory(schema, qname,new Class[] {AbsTransJAXB.class});
+            lt = absTransObj.newDataFactory(schema, qname,new Class[] {AbsTransJAXB.class});
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //assertTrue(lt instanceof LogTarget);
+    }
+    
+    
 }

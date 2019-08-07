@@ -65,7 +65,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     }
 
     public void details(boolean on) {
-    	details = on;
+        details = on;
     }
     
 

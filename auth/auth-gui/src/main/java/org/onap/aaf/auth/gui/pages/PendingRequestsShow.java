@@ -72,53 +72,53 @@ public class PendingRequestsShow extends Page {
     }
 
     private static final class TopOfPage extends NamedCode {
-		private Slot sAsUser;
+        private Slot sAsUser;
 
-		private TopOfPage(AuthzEnv env, boolean no_cache, String name) {
-			super(no_cache, name);
-			 sAsUser = env.slot(AS_USER);
-		}
+        private TopOfPage(AuthzEnv env, boolean no_cache, String name) {
+            super(no_cache, name);
+             sAsUser = env.slot(AS_USER);
+        }
 
-		@Override
-		public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-		    cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
-		        @Override
-		        public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
-		        	String user = trans.get(sAsUser,null);
-		        	if(user==null) {
-		        		user=trans.user();
-		        	} else {
-		        		hgen.incr(HTMLGen.H3,"class=center").text("Displaying for " + user).end();
-		        	}
+        @Override
+        public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
+            cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
+                @Override
+                public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
+                    String user = trans.get(sAsUser,null);
+                    if(user==null) {
+                        user=trans.user();
+                    } else {
+                        hgen.incr(HTMLGen.H3,"class=center").text("Displaying for " + user).end();
+                    }
 
-		            hgen
-		                .leaf(HTMLGen.P, "class=expedite_request").text("These are your submitted Requests that are awaiting Approval. ")
-		                .br()
-		                .text("To Expedite a Request: ")
-		                .leaf("a","href=#expedite_directions","onclick=divVisibility('expedite_directions');")
-		                    .text("Click Here").end()
-		                .divID("expedite_directions", "style=display:none");
-		            
-		            hgen
-		                .incr(HTMLGen.OL)
-		                .incr(HTMLGen.LI)
-		                .leaf("a","href="+ApprovalForm.HREF+"?user="+user, "id=userApprove")
-		                .text("Copy This Link")
-		                .end()
-		                .end()
-		                .incr(HTMLGen.LI)
-		                .text("Send it to the Approver Listed")
-		                .end()
-		                .end()
-		                .text("NOTE: Using this link, the Approver will only see your requests. You only need to send this link once!")
-		                .end()
-		                .end();
-		        }
-		    });
+                    hgen
+                        .leaf(HTMLGen.P, "class=expedite_request").text("These are your submitted Requests that are awaiting Approval. ")
+                        .br()
+                        .text("To Expedite a Request: ")
+                        .leaf("a","href=#expedite_directions","onclick=divVisibility('expedite_directions');")
+                            .text("Click Here").end()
+                        .divID("expedite_directions", "style=display:none");
+                    
+                    hgen
+                        .incr(HTMLGen.OL)
+                        .incr(HTMLGen.LI)
+                        .leaf("a","href="+ApprovalForm.HREF+"?user="+user, "id=userApprove")
+                        .text("Copy This Link")
+                        .end()
+                        .end()
+                        .incr(HTMLGen.LI)
+                        .text("Send it to the Approver Listed")
+                        .end()
+                        .end()
+                        .text("NOTE: Using this link, the Approver will only see your requests. You only need to send this link once!")
+                        .end()
+                        .end();
+                }
+            });
          }
-	}
+    }
 
-	/**
+    /**
      * Implement the Table Content for Requests by User
      * 
      * @author Jeremiah
@@ -126,7 +126,7 @@ public class PendingRequestsShow extends Page {
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
-		private final Slot sAsUser;
+        private final Slot sAsUser;
         private static final String[] headers = new String[] {"Request Date","Status","Memo","Approver"};
 
         public Model(AuthzEnv env) {
@@ -145,7 +145,7 @@ public class PendingRequestsShow extends Page {
                 gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Void>() {
                     @Override
                     public Void code(Rcli<?> client)throws CadiException, ConnectException, APIException {
-                    	final String user = trans.get(sAsUser,trans.user());
+                        final String user = trans.get(sAsUser,trans.user());
 
                         TimeTaken tt = trans.start("AAF Get Approvals by User",Env.REMOTE);
                         try {

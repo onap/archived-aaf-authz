@@ -38,55 +38,55 @@ public class JU_LogFileNamerTest {
     }
 
     private void cleanup(String name) {
-//    	System.out.println("XXXX" + dir.getAbsolutePath());
-    	for(File f : dir.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.contains(name) && name.endsWith(".log");
-			}
-		})) {
-//    		System.out.println("Deleting " + f.getAbsolutePath());
-    		f.delete();
-    	};
+//        System.out.println("XXXX" + dir.getAbsolutePath());
+        for(File f : dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.contains(name) && name.endsWith(".log");
+            }
+        })) {
+//            System.out.println("Deleting " + f.getAbsolutePath());
+            f.delete();
+        };
     }
 
 
     @Test
     public void test() throws IOException {
-    	String name = "Append";
-    	try {
-	        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
-	        assertEquals(logFileNamer, logFileNamer.noPID());
-	
-	        logFileNamer.setAppender(name);
-	        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-	            dir.getCanonicalFile() + File.separator + "log-" + name + ".log");
-	
-	        logFileNamer.setAppender(name);
-	        assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
-	            dir.getCanonicalFile() + File.separator + "log-" + name + ".0.log");
-    	} finally {
-    		cleanup("log-" + name);
-    	}
+        String name = "Append";
+        try {
+            LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
+            assertEquals(logFileNamer, logFileNamer.noPID());
+    
+            logFileNamer.setAppender(name);
+            assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+                dir.getCanonicalFile() + File.separator + "log-" + name + ".log");
+    
+            logFileNamer.setAppender(name);
+            assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
+                dir.getCanonicalFile() + File.separator + "log-" + name + ".0.log");
+        } finally {
+            cleanup("log-" + name);
+        }
     }
 
     @Test
     public void testBlankRoot() throws IOException {
-    	String name = "Different";
-    	try {
-	        LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
-	        assertEquals(logFileNamer, logFileNamer.noPID());
-	
-	        logFileNamer.setAppender(name);
-	        assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
-	            dir.getCanonicalPath() + File.separator + name + ".log");
-	
-	        logFileNamer.setAppender(name);
-	        assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
-	            dir.getCanonicalPath() + File.separator + name + ".0.log");
-    	} finally {
-    		cleanup(name);
-    	}
+        String name = "Different";
+        try {
+            LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
+            assertEquals(logFileNamer, logFileNamer.noPID());
+    
+            logFileNamer.setAppender(name);
+            assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
+                dir.getCanonicalPath() + File.separator + name + ".log");
+    
+            logFileNamer.setAppender(name);
+            assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
+                dir.getCanonicalPath() + File.separator + name + ".0.log");
+        } finally {
+            cleanup(name);
+        }
     }
 
 }

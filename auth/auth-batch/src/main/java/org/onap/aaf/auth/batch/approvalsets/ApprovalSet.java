@@ -35,67 +35,67 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class ApprovalSet {
-	private DataView dataview;
-	protected FutureDAO.Data fdd;
-	protected List<ApprovalDAO.Data> ladd;
-	
-	public ApprovalSet(final GregorianCalendar start, final String target, final DataView dv) {
-		dataview = dv;
-		fdd = new FutureDAO.Data();
-		fdd.id = Chrono.dateToUUID(System.currentTimeMillis());
-		fdd.target = target;
-		fdd.start = start.getTime();
-		ladd = new ArrayList<>();
-	}
-	
-	protected void setConstruct(final ByteBuffer bytes) {
-		fdd.construct = bytes;
-	}
+    private DataView dataview;
+    protected FutureDAO.Data fdd;
+    protected List<ApprovalDAO.Data> ladd;
+    
+    public ApprovalSet(final GregorianCalendar start, final String target, final DataView dv) {
+        dataview = dv;
+        fdd = new FutureDAO.Data();
+        fdd.id = Chrono.dateToUUID(System.currentTimeMillis());
+        fdd.target = target;
+        fdd.start = start.getTime();
+        ladd = new ArrayList<>();
+    }
+    
+    protected void setConstruct(final ByteBuffer bytes) {
+        fdd.construct = bytes;
+    }
 
-	protected void setMemo(final String memo) {
-		fdd.memo = memo;
-	}
-	
-	protected void setExpires(final GregorianCalendar expires) {
-		fdd.expires = expires.getTime();
-	}
-	
-	public Result<Void> write(AuthzTrans trans) {
-		StringBuilder errs = null;
-		if(ladd == null || ladd.isEmpty()) {
-			errs = new StringBuilder("No Approvers for ");
-			errs .append(fdd.memo);
-		} else {
-			Result<FutureDAO.Data> rf = dataview.insert(trans, fdd);
-			if(rf.notOK()) {
-				errs = new StringBuilder();
-				errs.append(rf.errorString());
-			} else {
-				for(ApprovalDAO.Data add : ladd) {
-					Result<ApprovalDAO.Data> af = dataview.insert(trans, add);
-					if(af.notOK()) {
-						if(errs==null) {
-							errs = new StringBuilder();
-						} else {
-							errs.append('\n');
-						}
-						errs.append(af.errorString());
-					}
-				}
-			}
-		}
-		return errs==null?Result.ok():Result.err(Result.ERR_Backend,errs.toString());
-	}
+    protected void setMemo(final String memo) {
+        fdd.memo = memo;
+    }
+    
+    protected void setExpires(final GregorianCalendar expires) {
+        fdd.expires = expires.getTime();
+    }
+    
+    public Result<Void> write(AuthzTrans trans) {
+        StringBuilder errs = null;
+        if(ladd == null || ladd.isEmpty()) {
+            errs = new StringBuilder("No Approvers for ");
+            errs .append(fdd.memo);
+        } else {
+            Result<FutureDAO.Data> rf = dataview.insert(trans, fdd);
+            if(rf.notOK()) {
+                errs = new StringBuilder();
+                errs.append(rf.errorString());
+            } else {
+                for(ApprovalDAO.Data add : ladd) {
+                    Result<ApprovalDAO.Data> af = dataview.insert(trans, add);
+                    if(af.notOK()) {
+                        if(errs==null) {
+                            errs = new StringBuilder();
+                        } else {
+                            errs.append('\n');
+                        }
+                        errs.append(af.errorString());
+                    }
+                }
+            }
+        }
+        return errs==null?Result.ok():Result.err(Result.ERR_Backend,errs.toString());
+    }
 
-	public boolean hasApprovals() {
-		return !ladd.isEmpty();
-	}
-	
-	public Set<String> approvers() {
-		Set<String> rv = new HashSet<>();
-		for(ApprovalDAO.Data app : ladd) {
-			rv.add(app.approver);
-		}
-		return rv;
-	}
+    public boolean hasApprovals() {
+        return !ladd.isEmpty();
+    }
+    
+    public Set<String> approvers() {
+        Set<String> rv = new HashSet<>();
+        for(ApprovalDAO.Data app : ladd) {
+            rv.add(app.approver);
+        }
+        return rv;
+    }
 }

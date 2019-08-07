@@ -36,62 +36,62 @@ import org.onap.aaf.cadi.LocatorException;
  *
  */
 public class AAFSingleLocator implements Locator<URI> {
-	
-	private final URI uri;
+    
+    private final URI uri;
 
-	/**
-	 * NS here is "container" ns.  AAF NS is assumed to be AAF_NS at this level of client code.
-	 * @param cont_ns
-	 * @param prefix
-	 * @param version
-	 * @throws URISyntaxException 
-	 */
-	public AAFSingleLocator(final String uri) throws URISyntaxException {
-		this.uri = new URI(uri);
-	}
-	
-	@Override
-	public URI get(Item item) throws LocatorException {
-		return uri;
-	}
+    /**
+     * NS here is "container" ns.  AAF NS is assumed to be AAF_NS at this level of client code.
+     * @param cont_ns
+     * @param prefix
+     * @param version
+     * @throws URISyntaxException 
+     */
+    public AAFSingleLocator(final String uri) throws URISyntaxException {
+        this.uri = new URI(uri);
+    }
+    
+    @Override
+    public URI get(Item item) throws LocatorException {
+        return uri;
+    }
 
-	@Override
-	public boolean hasItems() {
-		return true;
-	}
+    @Override
+    public boolean hasItems() {
+        return true;
+    }
 
-	@Override
-	public void invalidate(Item item) throws LocatorException {
-	}
+    @Override
+    public void invalidate(Item item) throws LocatorException {
+    }
 
-	@Override
-	public Item best() throws LocatorException {
-		return new SingleItem();
-	}
+    @Override
+    public Item best() throws LocatorException {
+        return new SingleItem();
+    }
 
-	@Override
-	public Item first() throws LocatorException {
-		return new SingleItem();
-	}
+    @Override
+    public Item first() throws LocatorException {
+        return new SingleItem();
+    }
 
-	@Override
-	public Item next(Item item) throws LocatorException {
-		return null; // only one item
-	}
+    @Override
+    public Item next(Item item) throws LocatorException {
+        return null; // only one item
+    }
 
-	@Override
-	public boolean refresh() {
-		return false;
-	}
+    @Override
+    public boolean refresh() {
+        return false;
+    }
 
-	@Override
-	public void destroy() {
-	}
-	
-	private class SingleItem implements Item {
-	}
-	
-	public static AAFSingleLocator create(Access access, String url) throws URISyntaxException {
-		return new AAFSingleLocator(url);
-	}
+    @Override
+    public void destroy() {
+    }
+    
+    private class SingleItem implements Item {
+    }
+    
+    public static AAFSingleLocator create(Access access, String url) throws URISyntaxException {
+        return new AAFSingleLocator(url);
+    }
 }

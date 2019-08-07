@@ -65,9 +65,9 @@ public class JU_LogTargetTest {
         outTarget.log(t);
         outTarget.log(t, "First String Object");
 
-    	assertTrue(outTarget.isLoggable());
+        assertTrue(outTarget.isLoggable());
 
-    	verify(t, times(2)).printStackTrace(System.out);
+        verify(t, times(2)).printStackTrace(System.out);
     }
 
     @Test
@@ -80,9 +80,9 @@ public class JU_LogTargetTest {
         errTarget.log(t);
         errTarget.log(t, "First String Object");
 
-    	assertTrue(errTarget.isLoggable());
+        assertTrue(errTarget.isLoggable());
 
-    	verify(t, times(2)).printStackTrace(System.err);
+        verify(t, times(2)).printStackTrace(System.err);
     }
 
 }

@@ -73,7 +73,7 @@ import com.datastax.driver.core.Cluster;
 public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
     private static final String USER_PERMS = "userPerms";
-	private static final String CM_ALLOW_TMP = "cm_allow_tmp";
+    private static final String CM_ALLOW_TMP = "cm_allow_tmp";
     private static final Map<String,CA> certAuths = new TreeMap<>();
     public static  Facade1_0 facade1_0; // this is the default Facade
     public static  Facade1_0 facade1_0_XML; // this is the XML Facade
@@ -87,7 +87,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
     //Added for junits
     public CMService getService() {
-    	return null;
+        return null;
     }
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
@@ -112,7 +112,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         // Check for allowing /tmp in Properties
         String allowTmp = env.getProperty(CM_ALLOW_TMP);
         if("true".equalsIgnoreCase(allowTmp)) {
-        	CertmanValidator.allowTmp();
+            CertmanValidator.allowTmp();
         }
 
 
@@ -150,10 +150,10 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
                         pinst[2]= aafEnv;
                         pinst[3] = multiParams; 
                         try {
-                        	CA ca = cons.newInstance(pinst);
+                            CA ca = cons.newInstance(pinst);
                             certAuths.put(ca.getName(),ca);
                         } catch (InvocationTargetException e) {
-                    		access.log(e, "Loading", segs[0]);
+                            access.log(e, "Loading", segs[0]);
                         }
                     }
                 }
@@ -165,7 +165,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
 
         service = getService();
         if(service == null) {
-        	service = new CMService(trans, this);
+            service = new CMService(trans, this);
         }
         // note: Service knows how to shutdown Cluster on Shutdown, etc.  See Constructor
         facade1_0 = FacadeFactory.v1_0(this,trans, service,Data.TYPE.JSON);   // Default Facade
@@ -254,14 +254,14 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
             Log4JLogIt logIt = new Log4JLogIt(args, "cm");
             PropAccess propAccess = new PropAccess(logIt,args);
             try {
-	            new JettyServiceStarter<AuthzEnv,AuthzTrans>(
-	            	new AAF_CM(new AuthzEnv(propAccess)),true)
-	            		.start();
-	        } catch (Exception e) {
-	            propAccess.log(e);
-	        }
+                new JettyServiceStarter<AuthzEnv,AuthzTrans>(
+                    new AAF_CM(new AuthzEnv(propAccess)),true)
+                        .start();
+            } catch (Exception e) {
+                propAccess.log(e);
+            }
         } catch (APIException e) {
-        	e.printStackTrace(System.err);
+            e.printStackTrace(System.err);
         }
     }
 }

@@ -129,7 +129,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         
         sThemeWebPath = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
         if(env.get(sThemeWebPath)==null) {
-        	env.put(sThemeWebPath,"theme");
+            env.put(sThemeWebPath,"theme");
         }
         
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
@@ -211,20 +211,20 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         route(env, PUT, "/gui/cui", new CUI(this),"text/plain;charset=utf-8","*/*");
         
         route(env, GET, "/gui/clear", new HttpCode<AuthzTrans, Void>(null, "Clear"){
-			@Override
-			public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-				trans.clearCache();
-				Cookie cookies[] = req.getCookies();
-				if(cookies!=null) {
-	        		for(Cookie c : cookies) {
-	        			if(c.getName().startsWith("aaf.gui.")) {
-	        				c.setMaxAge(0);
-	        				resp.addCookie(c);
-	        			}
-	        		}
-				}
-				resp.sendRedirect("/gui/home");
-			}
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                trans.clearCache();
+                Cookie cookies[] = req.getCookies();
+                if(cookies!=null) {
+                    for(Cookie c : cookies) {
+                        if(c.getName().startsWith("aaf.gui.")) {
+                            c.setMaxAge(0);
+                            resp.addCookie(c);
+                        }
+                    }
+                }
+                resp.sendRedirect("/gui/home");
+            }
         }, "text/plain;charset=utf-8","*/*");
         
         ///////////////////////  
@@ -287,11 +287,11 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
 
             try {
                 new JettyServiceStarter<AuthzEnv,AuthzTrans>(
-                	new AAF_GUI(new AuthzEnv(propAccess)),true)
-                		.start();
-	        } catch (Exception e) {
-	            propAccess.log(e);
-	        }
+                    new AAF_GUI(new AuthzEnv(propAccess)),true)
+                        .start();
+            } catch (Exception e) {
+                propAccess.log(e);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -41,54 +41,54 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
     private LocateDAO ldao;
     private List<LocateDAO.Data> ldd; 
     public DirectRegistrar(Access access, LocateDAO ldao, int port) throws CadiException {
-    	this.ldao = ldao;
+        this.ldao = ldao;
         ldd = new ArrayList<>();
         RegistrationCreator rc = new RegistrationCreator(access);
         MgmtEndpoints mes = rc.create(port);
         for(MgmtEndpoint me : mes.getMgmtEndpoint()) {
-        	ldd.add(convert(me));
+            ldd.add(convert(me));
         }
     }
 
     private LocateDAO.Data convert(MgmtEndpoint me) {
-    	LocateDAO.Data out = new LocateDAO.Data();
-    	out.name=me.getName();
-		out.hostname=me.getHostname();
-		out.latitude=me.getLatitude();
-		out.longitude=me.getLongitude();
-		out.major=me.getMajor();
-		out.minor=me.getMinor();
-		out.pkg=me.getPkg();
-		out.patch=me.getPatch();
-		out.port=me.getPort();
-		out.protocol=me.getProtocol();
-		out.subprotocol(true).addAll(me.getSubprotocol());
-//		out.port_key = UUID.randomUUID();
-		return out;
-	}
+        LocateDAO.Data out = new LocateDAO.Data();
+        out.name=me.getName();
+        out.hostname=me.getHostname();
+        out.latitude=me.getLatitude();
+        out.longitude=me.getLongitude();
+        out.major=me.getMajor();
+        out.minor=me.getMinor();
+        out.pkg=me.getPkg();
+        out.patch=me.getPatch();
+        out.port=me.getPort();
+        out.protocol=me.getProtocol();
+        out.subprotocol(true).addAll(me.getSubprotocol());
+//        out.port_key = UUID.randomUUID();
+        return out;
+    }
 
-	@Override
+    @Override
 
     public Result<Void> update(AuthzEnv env) {
-    	AuthzTrans trans = env.newTransNoAvg(); 
-    	StringBuilder sb = null;
-    	for(LocateDAO.Data ld : ldd) {
-	        org.onap.aaf.auth.layer.Result<Void> dr = ldao.update(trans, ld);
-	        if (dr.notOK()) {
-	        	if(sb == null) {
-	        		sb = new StringBuilder(dr.errorString());
-	        	} else {
-	        		sb.append(';');
-		        	sb.append(dr.errorString());
-	        	}
-	        }
-    	}
-    	
-    	if(sb==null) {
-    		return Result.ok(200, null);
-    	} else {
-    		return Result.err(503, sb.toString());
-    	}
+        AuthzTrans trans = env.newTransNoAvg(); 
+        StringBuilder sb = null;
+        for(LocateDAO.Data ld : ldd) {
+            org.onap.aaf.auth.layer.Result<Void> dr = ldao.update(trans, ld);
+            if (dr.notOK()) {
+                if(sb == null) {
+                    sb = new StringBuilder(dr.errorString());
+                } else {
+                    sb.append(';');
+                    sb.append(dr.errorString());
+                }
+            }
+        }
+        
+        if(sb==null) {
+            return Result.ok(200, null);
+        } else {
+            return Result.err(503, sb.toString());
+        }
     }
 
     /* (non-Javadoc)
@@ -96,25 +96,25 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
      */
     @Override
     public Result<Void> cancel(AuthzEnv env) {
-    	AuthzTrans trans = env.newTransNoAvg(); 
-    	StringBuilder sb = null;
-    	for(LocateDAO.Data ld : ldd) {
+        AuthzTrans trans = env.newTransNoAvg(); 
+        StringBuilder sb = null;
+        for(LocateDAO.Data ld : ldd) {
             org.onap.aaf.auth.layer.Result<Void> dr = ldao.delete(trans, ld, false);
-	        if (dr.notOK()) {
-	        	if(sb == null) {
-	        		sb = new StringBuilder(dr.errorString());
-	        	} else {
-	        		sb.append(';');
-		        	sb.append(dr.errorString());
-	        	}
-	        }
-    	}
-    	
-    	if(sb==null) {
-    		return Result.ok(200, null);
-    	} else {
-    		return Result.err(503, sb.toString());
-    	}
+            if (dr.notOK()) {
+                if(sb == null) {
+                    sb = new StringBuilder(dr.errorString());
+                } else {
+                    sb.append(';');
+                    sb.append(dr.errorString());
+                }
+            }
+        }
+        
+        if(sb==null) {
+            return Result.ok(200, null);
+        } else {
+            return Result.err(503, sb.toString());
+        }
     }
 
 }

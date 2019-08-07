@@ -43,28 +43,28 @@ import org.onap.aaf.misc.env.LogTarget;
 
 public class JU_CachedPermDAOTest {
 
-	@Mock
-	private CIDAO<AuthzTrans> info;
-	@Mock
-	private PermDAO dao;
-	
-	@Mock
-	RoleDAO.Data role;
-	
-	@Mock
-	private PermDAO.Data perm;
-	
-	@Mock
-	private AuthzTrans trans;
-	@Mock
-	private Result<List<PermDAO.Data>> value;
+    @Mock
+    private CIDAO<AuthzTrans> info;
+    @Mock
+    private PermDAO dao;
+    
+    @Mock
+    RoleDAO.Data role;
+    
+    @Mock
+    private PermDAO.Data perm;
+    
+    @Mock
+    private AuthzTrans trans;
+    @Mock
+    private Result<List<PermDAO.Data>> value;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
 
-		when(dao.readNS(trans, "ns")).thenReturn(value);
-		when(trans.debug()).thenReturn(new LogTarget() {
+        when(dao.readNS(trans, "ns")).thenReturn(value);
+        when(trans.debug()).thenReturn(new LogTarget() {
             
             @Override
             public void printf(String fmt, Object... vars) {}
@@ -87,80 +87,80 @@ public class JU_CachedPermDAOTest {
                 return true;
             }
         });
-	}
+    }
 
-	@Test
-	public void testReadNS() {
-		when(value.isOKhasData()).thenReturn(true);
-		when(value.isOK()).thenReturn(false);
-		CachedPermDAO ccDao = new CachedPermDAO(dao, info, 100l);
+    @Test
+    public void testReadNS() {
+        when(value.isOKhasData()).thenReturn(true);
+        when(value.isOK()).thenReturn(false);
+        CachedPermDAO ccDao = new CachedPermDAO(dao, info, 100l);
 
-		Result<List<Data>> result = ccDao.readNS(trans, "ns");
+        Result<List<Data>> result = ccDao.readNS(trans, "ns");
 
-		assertEquals(result, value);
+        assertEquals(result, value);
 
-		when(value.isOKhasData()).thenReturn(false);
+        when(value.isOKhasData()).thenReturn(false);
 
-		result = ccDao.readNS(trans, "ns");
+        result = ccDao.readNS(trans, "ns");
 
-		assertEquals(result.status, Status.ERR_PermissionNotFound);
+        assertEquals(result.status, Status.ERR_PermissionNotFound);
 
-		ccDao.readChildren(trans, "ns", "type");
+        ccDao.readChildren(trans, "ns", "type");
 
-		verify(dao).readChildren(trans, "ns", "type");
-	}
-	
-	@Test
-	public void testReadByTypeSuccess() {
-		CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"test4",new String[0]);
-		Mockito.doReturn(retVal1).when(dao).readByType(trans, "test4","");
-		Result<List<Data>> retVal = roleDaoObj.readByType(trans, "test4","");
-//		System.out.println(retVal.status);
-		//retVal.status = 0;
-		assertEquals("1", Integer.toString(retVal.status));
-	}	
-	
-	@Test
-	public void testReadByTypeFailure() {
-		CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"test3123",new String[0]);
-		Mockito.doReturn(retVal1).when(dao).readByType(trans, "test3","");
-		Result<List<Data>> retVal = roleDaoObj.readByType(trans, "test3","");
-		//System.out.println(retVal.status);
-		assertEquals("23", Integer.toString(retVal.status));
-	}
-	
-	@Test
-	public void testAddRole() {
-		CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);
-		Result<Void> retVal1 = new Result<Void>(null,0,"testAddRole",new String[0]);
-		Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
-		Mockito.doReturn(retVal1).when(dao).addRole(trans, perm,null);
-		Result<Void> retVal = roleDaoObj.addRole(trans, perm, role);
-//		System.out.println("ret value is::"+retVal);
-		assertEquals("testAddRole", retVal.toString());
-	}
-	
-	@Test
-	public void testDelRole() {
-		CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);
-		Result<Void> retVal1 = new Result<Void>(null,0,"testAddRole",new String[0]);
-		Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
-		Mockito.doReturn(retVal1).when(dao).delRole(trans, perm,null);
-		Result<Void> retVal = roleDaoObj.delRole(trans, perm, role);
-//		System.out.println(retVal);
-		assertEquals("testAddRole", retVal.toString());
-	}
+        verify(dao).readChildren(trans, "ns", "type");
+    }
+    
+    @Test
+    public void testReadByTypeSuccess() {
+        CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"test4",new String[0]);
+        Mockito.doReturn(retVal1).when(dao).readByType(trans, "test4","");
+        Result<List<Data>> retVal = roleDaoObj.readByType(trans, "test4","");
+//        System.out.println(retVal.status);
+        //retVal.status = 0;
+        assertEquals("1", Integer.toString(retVal.status));
+    }    
+    
+    @Test
+    public void testReadByTypeFailure() {
+        CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"test3123",new String[0]);
+        Mockito.doReturn(retVal1).when(dao).readByType(trans, "test3","");
+        Result<List<Data>> retVal = roleDaoObj.readByType(trans, "test3","");
+        //System.out.println(retVal.status);
+        assertEquals("23", Integer.toString(retVal.status));
+    }
+    
+    @Test
+    public void testAddRole() {
+        CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);
+        Result<Void> retVal1 = new Result<Void>(null,0,"testAddRole",new String[0]);
+        Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
+        Mockito.doReturn(retVal1).when(dao).addRole(trans, perm,null);
+        Result<Void> retVal = roleDaoObj.addRole(trans, perm, role);
+//        System.out.println("ret value is::"+retVal);
+        assertEquals("testAddRole", retVal.toString());
+    }
+    
+    @Test
+    public void testDelRole() {
+        CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);
+        Result<Void> retVal1 = new Result<Void>(null,0,"testAddRole",new String[0]);
+        Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
+        Mockito.doReturn(retVal1).when(dao).delRole(trans, perm,null);
+        Result<Void> retVal = roleDaoObj.delRole(trans, perm, role);
+//        System.out.println(retVal);
+        assertEquals("testAddRole", retVal.toString());
+    }
 
-	@Test
-	public void testAddDescription() {
-		CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
-		Result<Void> retVal1 = new Result<Void>(null,0,"test1",new String[0]);
-		Mockito.doReturn(retVal1).when(dao).addDescription(trans, "","","","","");
-		Result<Void> retVal = roleDaoObj.addDescription(trans, "", "","","","");
-		//System.out.println(retVal.status);
-		assertEquals("0", Integer.toString(retVal.status));
-	}
+    @Test
+    public void testAddDescription() {
+        CachedPermDAO roleDaoObj =new CachedPermDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
+        Result<Void> retVal1 = new Result<Void>(null,0,"test1",new String[0]);
+        Mockito.doReturn(retVal1).when(dao).addDescription(trans, "","","","","");
+        Result<Void> retVal = roleDaoObj.addDescription(trans, "", "","","","");
+        //System.out.println(retVal.status);
+        assertEquals("0", Integer.toString(retVal.status));
+    }
 
 }

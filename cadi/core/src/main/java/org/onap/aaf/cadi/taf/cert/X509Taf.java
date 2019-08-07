@@ -137,52 +137,52 @@ public class X509Taf implements HttpTaf {
                 access.printf(Level.DEBUG,"Client Certificate found\n  Subject '%s'\n  Issuer  '%s'",subject,issuer);
                 if (cadiIssuers.contains(issuer)) {
                     // avoiding extra object creation, since this is validated EVERY transaction with a Cert
-                	int start = 0;
-                	int end = 1;
-                	int comma;
-                	int length = subject.length();
-                	
-                	compare:
-                	while(start<length) {
-                		while(Character.isWhitespace(subject.charAt(start))) {
-                			if(++start>length) {
-                				break compare;
-                			}
-                		}
-                    	comma = subject.indexOf(',',start);
-                    	if(comma<0) {
-                    		end = subject.length();
-                    	} else {
-                    		end = comma<=0?0:comma-1;
-                    	}
-                		while(Character.isWhitespace(subject.charAt(end))) {
-                			if(--end < 0) {
-                				break compare;
-                			}
-                		}
-                    	if(subject.regionMatches(start, "OU=", 0, 3) ||
-                    	   subject.regionMatches(start, "CN=", 0, 3)) {
-                    	   int at = subject.indexOf('@', start);
-                    	   if(at<end && at>=0) {
+                    int start = 0;
+                    int end = 1;
+                    int comma;
+                    int length = subject.length();
+                    
+                    compare:
+                    while(start<length) {
+                        while(Character.isWhitespace(subject.charAt(start))) {
+                            if(++start>length) {
+                                break compare;
+                            }
+                        }
+                        comma = subject.indexOf(',',start);
+                        if(comma<0) {
+                            end = subject.length();
+                        } else {
+                            end = comma<=0?0:comma-1;
+                        }
+                        while(Character.isWhitespace(subject.charAt(end))) {
+                            if(--end < 0) {
+                                break compare;
+                            }
+                        }
+                        if(subject.regionMatches(start, "OU=", 0, 3) ||
+                           subject.regionMatches(start, "CN=", 0, 3)) {
+                           int at = subject.indexOf('@', start);
+                           if(at<end && at>=0) {
                                String[] sa = Split.splitTrim(':', subject, start+3,end+1);
                                if (sa.length==1 || (sa.length>1 && env!=null && env.equals(sa[1]))) { // Check Environment 
                                    return new X509HttpTafResp(access, 
                                            new X509Principal(sa[0], certarr[0],(byte[])null,bht), 
                                            "X509Taf validated " + sa[0] + (sa.length<2?"":" for aaf_env " + env ), RESP.IS_AUTHENTICATED);
                                } else {
-                               	  access.printf(Level.DEBUG,"Certificate is not for environment '%s'",env);
-                               	  break;
+                                     access.printf(Level.DEBUG,"Certificate is not for environment '%s'",env);
+                                     break;
                                }
-                    	   }
-                    	}
-                    	start = comma+1;
-                	}
-                 	access.log(Level.DEBUG,"Certificate is not acceptable for Authentication");
+                           }
+                        }
+                        start = comma+1;
+                    }
+                     access.log(Level.DEBUG,"Certificate is not acceptable for Authentication");
                 } else {
-                	access.log(Level.DEBUG,"Issuer is not trusted for Authentication");
+                    access.log(Level.DEBUG,"Issuer is not trusted for Authentication");
                 }
             } else {
-            	access.log(Level.DEBUG,"There is no client certificate on the transaction");
+                access.log(Level.DEBUG,"There is no client certificate on the transaction");
             }
         
 
@@ -266,7 +266,7 @@ public class X509Taf implements HttpTaf {
     
                 // if Principal is found, check for "AS_USER" and whether this entity is trusted to declare
                 if (prin!=null) {
-                	// Note: Tag for Certs is Fingerprint, but that takes computation... leaving off
+                    // Note: Tag for Certs is Fingerprint, but that takes computation... leaving off
                     return new X509HttpTafResp(
                         access,
                         prin,

@@ -26,22 +26,22 @@ import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class TwoMonthNotifyCredBody extends NotifyCredBody {
-	public TwoMonthNotifyCredBody(Access access) throws IOException {
-		super(access, ExpireRange.TWO_MONTH);
-	}
-	
-	@Override
-	public String subject() {
-		return String.format("AAF Two Month Credential Notification (ENV: %s)",env);
-	}
+    public TwoMonthNotifyCredBody(Access access) throws IOException {
+        super(access, ExpireRange.TWO_MONTH);
+    }
+    
+    @Override
+    public String subject() {
+        return String.format("AAF Two Month Credential Notification (ENV: %s)",env);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
-	 */
-	@Override
-	protected String dynamic() {
-		return "This is a friendly, <b>2 month reminder</b> to schedule appropriate creation and deployment "
-				+ "of your credentials, and modification of your configurations on a per instance basis. "
-				+ " Use the following text to help create your Ticket.";
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
+     */
+    @Override
+    protected String dynamic() {
+        return "This is a friendly, <b>2 month reminder</b> to schedule appropriate creation and deployment "
+                + "of your credentials, and modification of your configurations on a per instance basis. "
+                + " Use the following text to help create your Ticket.";
+    }
 }

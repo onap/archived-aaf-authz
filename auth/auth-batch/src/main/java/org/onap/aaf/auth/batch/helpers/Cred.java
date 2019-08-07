@@ -79,29 +79,29 @@ public class Cred  {
          * @return
          */
         public List<Note> notes() {
-        	return notes;
+            return notes;
         }
         
         public void addNote(int level, String note) {
-        	if(notes==null) {
-        		notes=new ArrayList<>();
-        	} 
-        	notes.add(new Note(level,note));
+            if(notes==null) {
+                notes=new ArrayList<>();
+            } 
+            notes.add(new Note(level,note));
         }
         
         public String toString() {
-        	return expires.toString() + ": " + type + ' ' + tag;
+            return expires.toString() + ": " + type + ' ' + tag;
         }
     }
     
     public static class Note {
-    	public final int level;
-    	public final String note;
-    	
-    	public Note(int level, String note) {
-    		this.level = level;
-    		this.note = note;
-    	}
+        public final int level;
+        public final String note;
+        
+        public Note(int level, String note) {
+            this.level = level;
+            this.note = note;
+        }
     }
     public Date last(final int ... types) {
         Date last = null;
@@ -168,7 +168,7 @@ public class Cred  {
                         boolean hastype = false;
                         for (int t : types) {
                             if (t==type) {
-                            	hastype=true;
+                                hastype=true;
                                 break;
                             }
                         }
@@ -177,7 +177,7 @@ public class Cred  {
                         }
                     }
                     add(row.getString(0), row.getInt(1),row.getTimestamp(2),row.getInt(3),row.getLong(4),
-                    		row.getString(5));
+                            row.getString(5));
                 }
             } finally {
                 tt.done();
@@ -188,13 +188,13 @@ public class Cred  {
     }
 
     public static void add(
-    		final String id, 
-    		final int type,
-    		final Date timestamp,
-    		final int other,
-    		final long written,
-    		final String tag
-    		) {
+            final String id, 
+            final int type,
+            final Date timestamp,
+            final int other,
+            final long written,
+            final String tag
+            ) {
         Cred cred = data.get(id);
         if (cred==null) {
             cred = new Cred(id);
@@ -216,10 +216,10 @@ public class Cred  {
         if (!found) {
             lscd.add(cred);
         }
-	}
+    }
 
 
-	/** 
+    /** 
      * Count entries in Cred data.
      * Note, as opposed to other methods, need to load the whole cred table for the Types.
      * @param numbuckets 
@@ -306,28 +306,28 @@ public class Cred  {
     }
     
     public void row(final CSV.Writer csvw, final Instance inst) {
-    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
-    			inst.expires.getTime(),inst.tag);
+        csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
+                inst.expires.getTime(),inst.tag);
     }
 
     public void row(final CSV.Writer csvw, final Instance inst, final String reason) {
-    	csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
-    			inst.expires.getTime(),inst.tag,reason);
+        csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
+                inst.expires.getTime(),inst.tag,reason);
     }
 
 
     public static void batchDelete(StringBuilder sb, List<String> row) {
-    	sb.append("DELETE from authz.cred WHERE id='");
-    	sb.append(row.get(1));
-    	sb.append("' AND type=");
-    	sb.append(Integer.parseInt(row.get(3)));
-    	// Note: We have to work with long, because Expires is part of Key... can't easily do date.
-    	sb.append(" AND expires=dateof(maxtimeuuid(");
-    	sb.append(row.get(5));
-    	sb.append("));\n");
-	}
+        sb.append("DELETE from authz.cred WHERE id='");
+        sb.append(row.get(1));
+        sb.append("' AND type=");
+        sb.append(Integer.parseInt(row.get(3)));
+        // Note: We have to work with long, because Expires is part of Key... can't easily do date.
+        sb.append(" AND expires=dateof(maxtimeuuid(");
+        sb.append(row.get(5));
+        sb.append("));\n");
+    }
 
-	public String toString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder(id);
         sb.append('[');
         for (Instance i : instances) {
@@ -358,24 +358,24 @@ public class Cred  {
     }
 
 
-	public static String histSubject(List<String> row) {
-		return row.get(1);
-	}
+    public static String histSubject(List<String> row) {
+        return row.get(1);
+    }
 
 
-	public static String histMemo(String fmt, String orgName, List<String> row) {
-		String reason;
-		if(row.size()>5) { // Reason included
-			reason = row.get(5);
-		} else {
-			reason = String.format(fmt, row.get(1),orgName,row.get(4));
-		}
-		return reason;
-	}
+    public static String histMemo(String fmt, String orgName, List<String> row) {
+        String reason;
+        if(row.size()>5) { // Reason included
+            reason = row.get(5);
+        } else {
+            reason = String.format(fmt, row.get(1),orgName,row.get(4));
+        }
+        return reason;
+    }
 
 
-	public static void clear() {
-		data.clear();
-		byNS.clear();
-	}
+    public static void clear() {
+        data.clear();
+        byNS.clear();
+    }
 }

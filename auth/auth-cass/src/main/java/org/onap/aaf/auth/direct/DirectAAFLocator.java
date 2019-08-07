@@ -73,15 +73,15 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
         }
         
         try {
-        	String aaf_url;
-        	if(name.indexOf('.')>=0) {
-            	aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+'/'+name+':'+version;
-        	} else {
-       			aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+"/%CNS.%NS."+name+':'+version;
-        	}
-    		RegistrationPropHolder rph = new RegistrationPropHolder(access,0);
-        	aaf_url = rph.replacements(getClass().getSimpleName(),aaf_url, null,null);
-        	access.printf(Level.INIT,"Creating DirectAAFLocator to %s",aaf_url);
+            String aaf_url;
+            if(name.indexOf('.')>=0) {
+                aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+'/'+name+':'+version;
+            } else {
+                   aaf_url = "https://"+Config.AAF_LOCATE_URL_TAG+"/%CNS.%NS."+name+':'+version;
+            }
+            RegistrationPropHolder rph = new RegistrationPropHolder(access,0);
+            aaf_url = rph.replacements(getClass().getSimpleName(),aaf_url, null,null);
+            access.printf(Level.INIT,"Creating DirectAAFLocator to %s",aaf_url);
             uri = new URI(aaf_url);
         } catch (URISyntaxException | UnknownHostException | CadiException e) {
             throw new LocatorException(e);

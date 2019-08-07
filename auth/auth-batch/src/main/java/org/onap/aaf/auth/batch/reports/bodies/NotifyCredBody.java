@@ -34,110 +34,110 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public abstract class NotifyCredBody extends NotifyBody {
 
-	private final String explanation;
-	private final String instruction;
-	 
-	public NotifyCredBody(Access access, String name) {
-		super(access,"cred",name);
-		
-		// Default
-		explanation = "The following Credentials that you are responsible for "
-				+ "are expiring on the dates shown. <br><br>"
-				;
-				
+    private final String explanation;
+    private final String instruction;
+     
+    public NotifyCredBody(Access access, String name) {
+        super(access,"cred",name);
+        
+        // Default
+        explanation = "The following Credentials that you are responsible for "
+                + "are expiring on the dates shown. <br><br>"
+                ;
+                
         instruction = "<br><h3>Instructions for 'Password':</h3><ul>" 
-				+ "<li><b><i>Click</i></b> on the Fully Qualified ID to ADD a new Password</li>"
-				+ "<li><b>REMEMBER!</b> You are not finished until you <ol>"
-				+ "<li><b>CHANGE <i>ALL</i></b> the configurations on <b><i>ALL</i></b> your processes!!</li>"
-				+ "<li><b>BOUNCE</b> them</li></ol>"
-				+ "<li>IF there is a WARNING, click the link for more information</li>"
-				+ "</ul>";
-	}
-	
-	/**
-	 * Default Dynamic Text.  Override is expected
-	 * @return
-	 */
-	protected String dynamic() {
-		return "Failure to act before the expiration date will cause your App's Authentications to fail.";
-	}
+                + "<li><b><i>Click</i></b> on the Fully Qualified ID to ADD a new Password</li>"
+                + "<li><b>REMEMBER!</b> You are not finished until you <ol>"
+                + "<li><b>CHANGE <i>ALL</i></b> the configurations on <b><i>ALL</i></b> your processes!!</li>"
+                + "<li><b>BOUNCE</b> them</li></ol>"
+                + "<li>IF there is a WARNING, click the link for more information</li>"
+                + "</ul>";
+    }
+    
+    /**
+     * Default Dynamic Text.  Override is expected
+     * @return
+     */
+    protected String dynamic() {
+        return "Failure to act before the expiration date will cause your App's Authentications to fail.";
+    }
 
-	@Override
-	public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
-		print(sb,indent,explanation);
-		print(sb,indent,dynamic());
-		println(sb,indent,instruction);
-		println(sb,indent,"<table>");
-		indent+=2;
-		println(sb,indent,"<tr>");
-		indent+=2;
-		println(sb,indent,"<th>Fully Qualified ID</th>");
-		println(sb,indent,"<th>Unique ID</th>");
-		println(sb,indent,"<th>Type</th>");
-		println(sb,indent,"<th>Expires</th>");
-		println(sb,indent,"<th>Warnings</th>");
-		indent-=2;
-		println(sb,indent,"</tr>");
-		String theid;
-		String type;
-		String info;
-		String expires;
-		String warnings;
-		GregorianCalendar gc = new GregorianCalendar();
-		for(List<String> row : rows.get(id)) {
-			theid=row.get(1);
-			switch(row.get(3)) {
-				case "1":
-				case "2":
-					type = "Password";
-					break;
-				case "200":
-					type = "x509 (Certificate)";
-					break;
-				default:
-					type = "Unknown, see AAF GUI";
-					break;
-			}
-			theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
-			gc.setTimeInMillis(Long.parseLong(row.get(5)));
-			expires = Chrono.niceUTCStamp(gc);
-			info = row.get(6);
-			//TODO get Warnings 
-			warnings = "";
-			
-			println(sb,indent,"<tr>");
-			indent+=2;
-			printCell(sb,indent,theid);
-			printCell(sb,indent,info);
-			printCell(sb,indent,type);
-			printCell(sb,indent,expires);
-			printCell(sb,indent,warnings);
-			indent-=2;
-			println(sb,indent,"</tr>");
-		}
-		indent-=2;
-		println(sb,indent,"</table>");
-		
-		return true;
-	}
-	
-	@Override
-	public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln) {
-		for(List<String> row : rows.get(id)) {
-			for(String n : notified) {
-				// Need to match LastNotified Key ... cred.id + '|' + inst.type + '|' + inst.tag;
-				ln.update(query, n, row.get(0), row.get(1)+'|'+row.get(3)+'|'+row.get(6));
-			}
-		}
-	}
+    @Override
+    public boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id) {
+        print(sb,indent,explanation);
+        print(sb,indent,dynamic());
+        println(sb,indent,instruction);
+        println(sb,indent,"<table>");
+        indent+=2;
+        println(sb,indent,"<tr>");
+        indent+=2;
+        println(sb,indent,"<th>Fully Qualified ID</th>");
+        println(sb,indent,"<th>Unique ID</th>");
+        println(sb,indent,"<th>Type</th>");
+        println(sb,indent,"<th>Expires</th>");
+        println(sb,indent,"<th>Warnings</th>");
+        indent-=2;
+        println(sb,indent,"</tr>");
+        String theid;
+        String type;
+        String info;
+        String expires;
+        String warnings;
+        GregorianCalendar gc = new GregorianCalendar();
+        for(List<String> row : rows.get(id)) {
+            theid=row.get(1);
+            switch(row.get(3)) {
+                case "1":
+                case "2":
+                    type = "Password";
+                    break;
+                case "200":
+                    type = "x509 (Certificate)";
+                    break;
+                default:
+                    type = "Unknown, see AAF GUI";
+                    break;
+            }
+            theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
+            gc.setTimeInMillis(Long.parseLong(row.get(5)));
+            expires = Chrono.niceUTCStamp(gc);
+            info = row.get(6);
+            //TODO get Warnings 
+            warnings = "";
+            
+            println(sb,indent,"<tr>");
+            indent+=2;
+            printCell(sb,indent,theid);
+            printCell(sb,indent,info);
+            printCell(sb,indent,type);
+            printCell(sb,indent,expires);
+            printCell(sb,indent,warnings);
+            indent-=2;
+            println(sb,indent,"</tr>");
+        }
+        indent-=2;
+        println(sb,indent,"</table>");
+        
+        return true;
+    }
+    
+    @Override
+    public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln) {
+        for(List<String> row : rows.get(id)) {
+            for(String n : notified) {
+                // Need to match LastNotified Key ... cred.id + '|' + inst.type + '|' + inst.tag;
+                ln.update(query, n, row.get(0), row.get(1)+'|'+row.get(3)+'|'+row.get(6));
+            }
+        }
+    }
 
-	@Override
-	public String user(List<String> row) {
-		if( (row != null) && row.size()>1) {
-			return row.get(1);
-		}
-		return null;
-	}
+    @Override
+    public String user(List<String> row) {
+        if( (row != null) && row.size()>1) {
+            return row.get(1);
+        }
+        return null;
+    }
 
 
 }

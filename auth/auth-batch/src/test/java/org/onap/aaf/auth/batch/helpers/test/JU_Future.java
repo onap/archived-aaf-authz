@@ -51,84 +51,84 @@ import com.datastax.driver.core.SimpleStatement;
 
 public class JU_Future {
 
-	Future future;
-	Date start;
-	Date expires;
-	ByteBuffer bBuff;
+    Future future;
+    Date start;
+    Date expires;
+    ByteBuffer bBuff;
 
-	@Before
-	public void setUp() {
-		UUID id = new UUID(0, 0);
-		start = new Date();
-		expires = new Date();
-		future = new Future(id, "Re-Validate Ownership for AAF Namespace '\'test\'test", "target", start, expires,
-				bBuff);
-	}
+    @Before
+    public void setUp() {
+        UUID id = new UUID(0, 0);
+        start = new Date();
+        expires = new Date();
+        future = new Future(id, "Re-Validate Ownership for AAF Namespace '\'test\'test", "target", start, expires,
+                bBuff);
+    }
 
-	@Test
-	public void testId() {
-		Assert.assertTrue(future.id() instanceof UUID);
-	}
+    @Test
+    public void testId() {
+        Assert.assertTrue(future.id() instanceof UUID);
+    }
 
-	@Test
-	public void testMemo() {
-		Assert.assertEquals("Re-Validate Ownership for AAF Namespace '\'test\'test", future.memo());
-	}
+    @Test
+    public void testMemo() {
+        Assert.assertEquals("Re-Validate Ownership for AAF Namespace '\'test\'test", future.memo());
+    }
 
-	@Test
-	public void testStart() {
-		Assert.assertTrue(future.start() instanceof Date);
-	}
+    @Test
+    public void testStart() {
+        Assert.assertTrue(future.start() instanceof Date);
+    }
 
-	@Test
-	public void testExpires() {
-		Assert.assertTrue(future.expires() instanceof Date);
-	}
+    @Test
+    public void testExpires() {
+        Assert.assertTrue(future.expires() instanceof Date);
+    }
 
-	@Test
-	public void testTarget() {
-		Assert.assertEquals("target", future.target());
-	}
+    @Test
+    public void testTarget() {
+        Assert.assertEquals("target", future.target());
+    }
 
-	@Test
-	public void testExpunge() {
-		future.expunge();
-	}
+    @Test
+    public void testExpunge() {
+        future.expunge();
+    }
 
-	@Test
-	public void testCompareTo() {
-		future.compareTo(null);
-		future.compareTo(future);
-	}
+    @Test
+    public void testCompareTo() {
+        future.compareTo(null);
+        future.compareTo(future);
+    }
 
-	@Test
-	public void testResetLocalData() {
-		Future.resetLocalData();
-		Assert.assertEquals(0, Future.sizeForDeletion());
-		Assert.assertEquals(false, Future.pendingDelete(future));
-	}
+    @Test
+    public void testResetLocalData() {
+        Future.resetLocalData();
+        Assert.assertEquals(0, Future.sizeForDeletion());
+        Assert.assertEquals(false, Future.pendingDelete(future));
+    }
 
 
-	@Test
-	public void testDelayedDeleteWithDryRun() {
-		AuthzTrans trans = mock(AuthzTrans.class);
-		LogTarget target = mock(LogTarget.class);
+    @Test
+    public void testDelayedDeleteWithDryRun() {
+        AuthzTrans trans = mock(AuthzTrans.class);
+        LogTarget target = mock(LogTarget.class);
 
-		when(trans.info()).thenReturn(target);
+        when(trans.info()).thenReturn(target);
 
-		assertEquals(Result.ok().status, future.delayedDelete(trans, null, true, "text").status);
-	}
+        assertEquals(Result.ok().status, future.delayedDelete(trans, null, true, "text").status);
+    }
 
-	@Test
-	public void testDelayedDeleteNonDryRun() {
-		AuthzTrans trans = mock(AuthzTrans.class);
-		LogTarget target = mock(LogTarget.class);
-		FutureDAO fd = mock(FutureDAO.class);
+    @Test
+    public void testDelayedDeleteNonDryRun() {
+        AuthzTrans trans = mock(AuthzTrans.class);
+        LogTarget target = mock(LogTarget.class);
+        FutureDAO fd = mock(FutureDAO.class);
 
-		when(trans.info()).thenReturn(target);
-		when(fd.delete(any(AuthzTrans.class), any(FutureDAO.Data.class), any(Boolean.class))).thenReturn(Result.ok());
+        when(trans.info()).thenReturn(target);
+        when(fd.delete(any(AuthzTrans.class), any(FutureDAO.Data.class), any(Boolean.class))).thenReturn(Result.ok());
 
-		assertEquals(Result.ok().status, future.delayedDelete(trans, fd, false, "text").status);
-	}
+        assertEquals(Result.ok().status, future.delayedDelete(trans, fd, false, "text").status);
+    }
 
 }

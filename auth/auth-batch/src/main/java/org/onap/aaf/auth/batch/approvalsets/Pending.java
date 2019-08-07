@@ -28,82 +28,82 @@ import org.onap.aaf.cadi.util.CSV.Writer;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class Pending {
-	public static final String REMIND = "remind";
-	
-	int qty;
-	boolean hasNew;
-	Date earliest;
-	
-	/**
-	 * Use this constructor to indicate when last Notified
-	 * @param last_notified
-	 */
-	public Pending(Date last_notified) {
-		qty = 1;
-		hasNew = last_notified==null;
-		earliest = last_notified;
-	}
+    public static final String REMIND = "remind";
+    
+    int qty;
+    boolean hasNew;
+    Date earliest;
+    
+    /**
+     * Use this constructor to indicate when last Notified
+     * @param last_notified
+     */
+    public Pending(Date last_notified) {
+        qty = 1;
+        hasNew = last_notified==null;
+        earliest = last_notified;
+    }
 
-	/**
-	 * Create from CSV Row
-	 * @param row
-	 * @throws ParseException
-	 */
-	public Pending(List<String> row) throws ParseException {
-		hasNew = Boolean.parseBoolean(row.get(2));
-		String d = row.get(3);
-		if(d==null || d.isEmpty()) {
-			earliest = null;
-		} else {
-			earliest = Chrono.dateOnlyFmt.parse(d);
-		}
-		qty = Integer.parseInt(row.get(4));
-	}
+    /**
+     * Create from CSV Row
+     * @param row
+     * @throws ParseException
+     */
+    public Pending(List<String> row) throws ParseException {
+        hasNew = Boolean.parseBoolean(row.get(2));
+        String d = row.get(3);
+        if(d==null || d.isEmpty()) {
+            earliest = null;
+        } else {
+            earliest = Chrono.dateOnlyFmt.parse(d);
+        }
+        qty = Integer.parseInt(row.get(4));
+    }
 
-	/**
-	 *  Write CSV Row
-	 * @param approveCW
-	 * @param key
-	 */
-	public void row(Writer approveCW, String key) {
-		approveCW.row(REMIND,key,hasNew,Chrono.dateOnlyStamp(earliest),qty);
-	}
+    /**
+     *  Write CSV Row
+     * @param approveCW
+     * @param key
+     */
+    public void row(Writer approveCW, String key) {
+        approveCW.row(REMIND,key,hasNew,Chrono.dateOnlyStamp(earliest),qty);
+    }
 
-	public void inc() {
-		++qty;
-	}
-	
-	public void inc(Pending value) {
-		qty+=value.qty;
-		if(earliest==null) {
-			earliest = value.earliest;
-		} else if(value.earliest!=null && value.earliest.before(earliest)) {
-			earliest = value.earliest;
-		}
-	}
+    public void inc() {
+        ++qty;
+    }
+    
+    public void inc(Pending value) {
+        qty+=value.qty;
+        if(earliest==null) {
+            earliest = value.earliest;
+        } else if(value.earliest!=null && value.earliest.before(earliest)) {
+            earliest = value.earliest;
+        }
+    }
 
-	public void earliest(Date lastnotified) {
-		if(lastnotified==null) {
-			hasNew=true;
-		} else if (earliest==null || lastnotified.before(earliest)) {
-			earliest = lastnotified;
-		}
-	}
-	
-	public int qty() {
-		return qty;
-	}
-	
-	public Date earliest() {
-		return earliest;
-	}
-	
-	public boolean newApprovals() {
-		return hasNew;
-	}
+    public void earliest(Date lastnotified) {
+        if(lastnotified==null) {
+            hasNew=true;
+        } else if (earliest==null || lastnotified.before(earliest)) {
+            earliest = lastnotified;
+        }
+    }
+    
+    public int qty() {
+        return qty;
+    }
+    
+    public Date earliest() {
+        return earliest;
+    }
+    
+    public boolean newApprovals() {
+        return hasNew;
+    }
 
-	public static Pending create() {
-		return new Pending((Date)null);
-	}
+    public static Pending create() {
+        return new Pending((Date)null);
+    }
 
 }

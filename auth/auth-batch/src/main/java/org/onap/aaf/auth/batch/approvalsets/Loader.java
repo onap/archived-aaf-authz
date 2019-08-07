@@ -23,5 +23,5 @@ package org.onap.aaf.auth.batch.approvalsets;
 import org.onap.aaf.cadi.CadiException;
 
 public interface Loader<T> {
-	public T load() throws CadiException;
+    public T load() throws CadiException;
 }

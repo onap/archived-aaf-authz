@@ -72,7 +72,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     
     // Hold current time stamps from Tables
     private final Date startTime;
-	private final boolean cacheNotify;
+    private final boolean cacheNotify;
     private PreparedStatement psCheck;
 
     //////////////////////////////////////////
@@ -87,22 +87,22 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         init(trans);
     }
 
-	public CacheInfoDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) throws APIException, IOException {
+    public CacheInfoDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) throws APIException, IOException {
         super(trans, CacheInfoDAO.class.getSimpleName(),aDao,Data.class,TABLE,readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         startTime = new Date();
         init(trans);
         cacheNotify = noK8s(trans);
     }
 
-	/** 
-	 * Need a different point to point cache clear strategy for K8s... 
-	 * @param trans
-	 * @return
-	 */
+    /** 
+     * Need a different point to point cache clear strategy for K8s... 
+     * @param trans
+     * @return
+     */
     private boolean noK8s(AuthzTrans trans) {
-    	String container = trans.getProperty(Config.AAF_LOCATOR_CONTAINER);
-    	return ! ("helm".equals(container) || "oom".equals(container));
-	}
+        String container = trans.getProperty(Config.AAF_LOCATOR_CONTAINER);
+        return ! ("helm".equals(container) || "oom".equals(container));
+    }
     /**
      * @author Jonathan
      */

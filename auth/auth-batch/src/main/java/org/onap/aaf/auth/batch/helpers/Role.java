@@ -52,7 +52,7 @@ public class Role implements Comparable<Role> {
     private String encode;
     
     public Role(String full) {
-    	rdd = new RoleDAO.Data();
+        rdd = new RoleDAO.Data();
         rdd.ns = "";
         rdd.name = "";
         rdd.description = "";
@@ -61,7 +61,7 @@ public class Role implements Comparable<Role> {
     }
     
     public Role(String ns, String name, String description,Set<String> perms) {
-   		rdd = new RoleDAO.Data();
+           rdd = new RoleDAO.Data();
         rdd.ns = ns;
         rdd.name = name;
         rdd.description = description;
@@ -179,11 +179,11 @@ public class Role implements Comparable<Role> {
         deleteRoles.clear();
     }
 
-	public static void clear() {
-		data.clear();
-		keys.clear();
-		byName.clear();
-		deleteRoles.clear();
-	}
+    public static void clear() {
+        data.clear();
+        keys.clear();
+        byName.clear();
+        deleteRoles.clear();
+    }
 
 }

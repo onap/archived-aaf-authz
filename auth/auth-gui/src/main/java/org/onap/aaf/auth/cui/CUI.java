@@ -88,11 +88,11 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
             try {
                 aafcli.eval(cmdStr);
                 if(userPerm.matcher(cmdStr).matches()) {
-                	trans.clearCache();
-                	Cookie cookie = new Cookie(Page.AAF_THEME,trans.getProperty(Page.AAF_THEME));
-                	cookie.setMaxAge(-1);
-                	cookie.setComment("Remove AAF GUI Theme");
-                	trans.hresp().addCookie(cookie);
+                    trans.clearCache();
+                    Cookie cookie = new Cookie(Page.AAF_THEME,trans.getProperty(Page.AAF_THEME));
+                    cookie.setMaxAge(-1);
+                    cookie.setComment("Remove AAF GUI Theme");
+                    trans.hresp().addCookie(cookie);
                 }
                 pw.flush();
             } catch (Exception e) {

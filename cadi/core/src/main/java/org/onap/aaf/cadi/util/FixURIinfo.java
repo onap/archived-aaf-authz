@@ -30,37 +30,37 @@ import java.net.URI;
  *
  */
 public class FixURIinfo {
-	private String auth;
-	private String host;
-	private int port;
-	
-	public FixURIinfo(URI uri) {
-		auth = uri.getAuthority();
-		host = uri.getHost();
-		if(host==null || (auth!=null && auth.startsWith(host))) {
-			if(auth!=null) {
-				int colon = auth.indexOf(':');
-				if(colon >= 0 ) {
-					host = auth.substring(0, colon);
-					port = Integer.parseInt(auth.substring(colon+1));
-				} else {
-					host = auth;
-					port = uri.getPort();
-				}
-				auth=null;
-			}
-		}
-	}
-	
-	public String getHost() {
-		return host;
-	}
-	
-	public int getPort() {
-		return port;
-	}
+    private String auth;
+    private String host;
+    private int port;
+    
+    public FixURIinfo(URI uri) {
+        auth = uri.getAuthority();
+        host = uri.getHost();
+        if(host==null || (auth!=null && auth.startsWith(host))) {
+            if(auth!=null) {
+                int colon = auth.indexOf(':');
+                if(colon >= 0 ) {
+                    host = auth.substring(0, colon);
+                    port = Integer.parseInt(auth.substring(colon+1));
+                } else {
+                    host = auth;
+                    port = uri.getPort();
+                }
+                auth=null;
+            }
+        }
+    }
+    
+    public String getHost() {
+        return host;
+    }
+    
+    public int getPort() {
+        return port;
+    }
 
-	public String getUserInfo() {
-		return auth;
-	}
+    public String getUserInfo() {
+        return auth;
+    }
 }

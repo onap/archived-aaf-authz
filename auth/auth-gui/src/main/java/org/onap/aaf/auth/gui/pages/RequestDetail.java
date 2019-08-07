@@ -97,18 +97,18 @@ public class RequestDetail extends Page {
                                     );
                                 
                                 if (fa.get(AAF_GUI.TIMEOUT)) {
-                                	Approval app = fa.value.getApprovals().get(0);
-                                	if(app==null) {
-                                		return Cells.EMPTY;
-                                	} else {
-	                                    if (!(trans.user().equals(app.getUser()) ||
-	                                    	  trans.user().equals(app.getApprover()))) {
-	                                    	HttpServletRequest req = trans.get(gui.slot_httpServletRequest,null);
-	                                    	if(req==null || !req.isUserInRole(Define.ROOT_NS()+"|access|*|*")) {
-	                                    		return Cells.EMPTY;
-	                                    	}
-	                                    }
-                                	}
+                                    Approval app = fa.value.getApprovals().get(0);
+                                    if(app==null) {
+                                        return Cells.EMPTY;
+                                    } else {
+                                        if (!(trans.user().equals(app.getUser()) ||
+                                              trans.user().equals(app.getApprover()))) {
+                                            HttpServletRequest req = trans.get(gui.slot_httpServletRequest,null);
+                                            if(req==null || !req.isUserInRole(Define.ROOT_NS()+"|access|*|*")) {
+                                                return Cells.EMPTY;
+                                            }
+                                        }
+                                    }
                                     tt.done();
                                     tt = trans.start("Load Data", Env.SUB);
                                     boolean first = true;

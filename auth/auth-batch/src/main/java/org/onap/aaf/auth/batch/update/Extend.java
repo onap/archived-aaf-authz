@@ -49,15 +49,15 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class Extend extends Batch {
-	private final CQLBatch cqlBatch;
-	private final CredDAO credDAO;
-	private final AuthzTrans noAvg;
-	private List<File> extFiles;
-	private final int extendBy;
-	private int gcType;
-	
-	public Extend(AuthzTrans trans) throws APIException, IOException, OrganizationException {
-		super(trans.env());
+    private final CQLBatch cqlBatch;
+    private final CredDAO credDAO;
+    private final AuthzTrans noAvg;
+    private List<File> extFiles;
+    private final int extendBy;
+    private int gcType;
+    
+    public Extend(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+        super(trans.env());
         trans.info().log("Starting Connection Process");
         
         noAvg = env.newTransNoAvg();
@@ -65,13 +65,13 @@ public class Extend extends Batch {
 
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
-			TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
-			credDAO = new CredDAO(trans, cluster, CassAccess.KEYSPACE);
-			try {
-				session = credDAO.getSession(trans);
-			} finally {
-				tt.done();
-			}
+            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
+            credDAO = new CredDAO(trans, cluster, CassAccess.KEYSPACE);
+            try {
+                session = credDAO.getSession(trans);
+            } finally {
+                tt.done();
+            }
             cqlBatch = new CQLBatch(noAvg.info(),session); 
         } finally {
             tt0.done();
@@ -79,133 +79,133 @@ public class Extend extends Batch {
 
         gcType = GregorianCalendar.WEEK_OF_YEAR;
         int weeks = 4;
-		
+        
         Set<String> cmd = new HashSet<>();
-		for(int i=0; i< args().length;++i) {
-			if("-weeks".equals(args()[i])) {
-				if(args().length>i+1) {
-					weeks = Integer.parseInt(args()[++i]);
-				}
-			} else {
-				cmd.add(args()[i]);
-			}
-		}
-		
-		if(weeks<1 || weeks > 24) {
-			throw new APIException("Invalid --weeks");
-		}
-		extendBy = weeks;
+        for(int i=0; i< args().length;++i) {
+            if("-weeks".equals(args()[i])) {
+                if(args().length>i+1) {
+                    weeks = Integer.parseInt(args()[++i]);
+                }
+            } else {
+                cmd.add(args()[i]);
+            }
+        }
+        
+        if(weeks<1 || weeks > 24) {
+            throw new APIException("Invalid --weeks");
+        }
+        extendBy = weeks;
 
         // Create Intermediate Output 
         File logDir = logDir();
         extFiles = new ArrayList<>();
         if(cmd.isEmpty()) {
-        	extFiles.add(new File(logDir,PrepExtend.PREP_EXTEND+Chrono.dateOnlyStamp()+".csv"));
+            extFiles.add(new File(logDir,PrepExtend.PREP_EXTEND+Chrono.dateOnlyStamp()+".csv"));
         } else {
-        	for(String fn : cmd) {
-        		extFiles.add(new File(logDir, fn));
-        	}
+            for(String fn : cmd) {
+                extFiles.add(new File(logDir, fn));
+            }
         }
         
         // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
         // to find the last one.
-	}
+    }
 
-	@Override
-	protected void run(AuthzTrans trans) {
+    @Override
+    protected void run(AuthzTrans trans) {
         final int maxBatch = 50;
 
-		// Setup Date boundaries
+        // Setup Date boundaries
         final Holder<GregorianCalendar> hgc = new Holder<>(new GregorianCalendar());
         final GregorianCalendar now = new GregorianCalendar();
 
         ///////////////////////////
         trans.info().log("Bulk Extend Expiring User-Roles and Creds");
 
-		final Holder<List<String>> info = new Holder<>(null);
-		final Holder<StringBuilder> hsb = new Holder<>(null);
+        final Holder<List<String>> info = new Holder<>(null);
+        final Holder<StringBuilder> hsb = new Holder<>(null);
 
-		for(File f : extFiles) {
-			CSV csv = new CSV(env.access(),f);
-			try {
-				csv.visit(new CSV.Visitor() {
-		    		final Holder<Integer> hi = new Holder<>(0); 
+        for(File f : extFiles) {
+            CSV csv = new CSV(env.access(),f);
+            try {
+                csv.visit(new CSV.Visitor() {
+                    final Holder<Integer> hi = new Holder<>(0); 
 
-					@Override
-					public void visit(List<String> row) throws IOException, CadiException {
-						GregorianCalendar gc;
-						int i = hi.get();
-						StringBuilder sb = hsb.get();
-						if(sb==null) {
-							hsb.set(sb=cqlBatch.begin());
-						}
-						switch(row.get(0)) {
-							case "info":
-								info.set(row);
-								break;
-							case "ur":
-								hi.set(++i);
-								gc = hgc.get();
-								gc.setTime(new Date(Long.parseLong(row.get(6))));
-								if(gc.before(now)) {
-									gc.setTime(now.getTime());
-								}
-								gc.add(gcType, extendBy);
-								UserRole.batchExtend(sb,row,gc.getTime());
-								break;
-							case "cred":
-								int ctype = Integer.parseInt(row.get(3));
-								if(ctype == CredDAO.BASIC_AUTH_SHA256 || ctype == CredDAO.BASIC_AUTH) {
-									Result<List<Data>> result = credDAO.readID(noAvg, row.get(1));
-									if(result.isOKhasData()) {
-										for(CredDAO.Data cd : result.value) {
-											if(cd.type == CredDAO.BASIC_AUTH_SHA256 || cd.type == CredDAO.BASIC_AUTH) {
-												String prev;
-												if(row.get(4).equals(prev=Chrono.dateOnlyStamp(cd.expires))) {
-													gc = hgc.get();
-													gc.setTime(new Date(Long.parseLong(row.get(5))));
-													if(gc.before(now)) {
-														gc.setTime(now.getTime());
-													}
-													gc.add(gcType, extendBy);
-													cd.expires = gc.getTime();
-													if(dryRun) {
-														noAvg.info().printf("Would extend %s, %d - %s to %s",cd.id,cd.type,prev, Chrono.dateOnlyStamp(cd.expires));
-													} else {
-														Result<Void> r = credDAO.update(noAvg, cd, true);
-														noAvg.info().printf("%s %s, %d - %s to %s",
-																r.isOK()?"Extended":"Failed to Extend",
-																cd.id,cd.type,prev, Chrono.dateOnlyStamp(cd.expires));
-													}
-												}
-											}
-										}
-									}
-								}
-								break;
-						}
-						if(i%maxBatch==0 && sb!=null) {
-							cqlBatch.execute(dryRun);
-							hi.set(1);
-							hsb.set(sb=null);
-						}
-					}
-				});
-			} catch (IOException | CadiException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// Cleanup, if required.
-		cqlBatch.execute(dryRun);
+                    @Override
+                    public void visit(List<String> row) throws IOException, CadiException {
+                        GregorianCalendar gc;
+                        int i = hi.get();
+                        StringBuilder sb = hsb.get();
+                        if(sb==null) {
+                            hsb.set(sb=cqlBatch.begin());
+                        }
+                        switch(row.get(0)) {
+                            case "info":
+                                info.set(row);
+                                break;
+                            case "ur":
+                                hi.set(++i);
+                                gc = hgc.get();
+                                gc.setTime(new Date(Long.parseLong(row.get(6))));
+                                if(gc.before(now)) {
+                                    gc.setTime(now.getTime());
+                                }
+                                gc.add(gcType, extendBy);
+                                UserRole.batchExtend(sb,row,gc.getTime());
+                                break;
+                            case "cred":
+                                int ctype = Integer.parseInt(row.get(3));
+                                if(ctype == CredDAO.BASIC_AUTH_SHA256 || ctype == CredDAO.BASIC_AUTH) {
+                                    Result<List<Data>> result = credDAO.readID(noAvg, row.get(1));
+                                    if(result.isOKhasData()) {
+                                        for(CredDAO.Data cd : result.value) {
+                                            if(cd.type == CredDAO.BASIC_AUTH_SHA256 || cd.type == CredDAO.BASIC_AUTH) {
+                                                String prev;
+                                                if(row.get(4).equals(prev=Chrono.dateOnlyStamp(cd.expires))) {
+                                                    gc = hgc.get();
+                                                    gc.setTime(new Date(Long.parseLong(row.get(5))));
+                                                    if(gc.before(now)) {
+                                                        gc.setTime(now.getTime());
+                                                    }
+                                                    gc.add(gcType, extendBy);
+                                                    cd.expires = gc.getTime();
+                                                    if(dryRun) {
+                                                        noAvg.info().printf("Would extend %s, %d - %s to %s",cd.id,cd.type,prev, Chrono.dateOnlyStamp(cd.expires));
+                                                    } else {
+                                                        Result<Void> r = credDAO.update(noAvg, cd, true);
+                                                        noAvg.info().printf("%s %s, %d - %s to %s",
+                                                                r.isOK()?"Extended":"Failed to Extend",
+                                                                cd.id,cd.type,prev, Chrono.dateOnlyStamp(cd.expires));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                        if(i%maxBatch==0 && sb!=null) {
+                            cqlBatch.execute(dryRun);
+                            hi.set(1);
+                            hsb.set(sb=null);
+                        }
+                    }
+                });
+            } catch (IOException | CadiException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // Cleanup, if required.
+        cqlBatch.execute(dryRun);
 
-	}
-	
-	@Override
-	protected void _close(AuthzTrans trans) {
+    }
+    
+    @Override
+    protected void _close(AuthzTrans trans) {
         trans.info().log("End " + this.getClass().getSimpleName() + " processing" );
         credDAO.close(trans);
         session.close();
-	}
+    }
 
 }

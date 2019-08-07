@@ -57,7 +57,7 @@ public class    NS implements Comparable<NS> {
     };
 
     public NS(String name, String description, String parent, int type, int scope) {
-    	ndd = new NsDAO.Data();
+        ndd = new NsDAO.Data();
         ndd.name = name;
         ndd.description = description;
         ndd.parent = parent;
@@ -70,7 +70,7 @@ public class    NS implements Comparable<NS> {
                 "select name, description, parent, type, scope from authz.ns;"
                 ,creator
                 , v -> data.put(v.ndd.name,v)
-        		);
+                );
     }
     
     public static void loadOne(Trans trans, Session session, Creator<NS> creator, String ns) {
@@ -82,11 +82,11 @@ public class    NS implements Comparable<NS> {
     }
 
     public static void load(Trans trans, Session session, Creator<NS> creator, Visitor<NS> visitor) {
-    	 load(trans,session,creator.query(null),creator, visitor);
+         load(trans,session,creator.query(null),creator, visitor);
     }
     
     public void row(final CSV.Writer csvw, String tag) {
-    	csvw.row(tag,ndd.name,ndd.type,ndd.parent);
+        csvw.row(tag,ndd.name,ndd.type,ndd.parent);
     }
 
 

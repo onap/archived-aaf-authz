@@ -81,7 +81,7 @@ public abstract class Batch {
     protected static boolean dryRun; 
     protected static String batchEnv;
 
-	private static File logdir;
+    private static File logdir;
 
     public static final String CASS_ENV = "CASS_ENV";
     public static final String LOG_DIR = "LOG_DIR";
@@ -90,10 +90,10 @@ public abstract class Batch {
     public static final String GUI_URL="GUI_URL";
     
     protected final Organization org;
-	protected String version;
-	protected static final Date now = new Date();
-	protected static final Date never = new Date(0);
-	
+    protected String version;
+    protected static final Date now = new Date();
+    protected static final Date never = new Date(0);
+    
     protected Batch(AuthzEnv env) throws APIException, IOException, OrganizationException {
         if (batchEnv != null) {
             env.info().log("Redirecting to ",batchEnv,"environment");
@@ -116,7 +116,7 @@ public abstract class Batch {
 
         // Setup for Dry Run
         if(cluster==null) {
-        	cluster = CassAccess.cluster(env,batchEnv);
+            cluster = CassAccess.cluster(env,batchEnv);
         }
         env.info().log("cluster name - ",cluster.getClusterName());
         String dryRunStr = env.getProperty( "DRY_RUN" );
@@ -129,7 +129,7 @@ public abstract class Batch {
 
         org = OrganizationFactory.init(env);
         if(org==null) {
-        	throw new OrganizationException("Organization MUST be defined for Batch");
+            throw new OrganizationException("Organization MUST be defined for Batch");
         }
         org.setTestMode(dryRun);
 
@@ -143,9 +143,9 @@ public abstract class Batch {
             for (String s :names.split(",") ) {
                 env.info().log("\tspecial: " + s );
                 if(s.indexOf('@')>0) {
-                	specialNames.add( s.trim() );
+                    specialNames.add( s.trim() );
                 } else {
-                	specialDomains.add(s.trim());
+                    specialDomains.add(s.trim());
                 }
             }
         }
@@ -166,21 +166,21 @@ public abstract class Batch {
     }
     
     public boolean isSpecial(String user) {
-    	if(user==null) {
-    		return false;
-    	}
+        if(user==null) {
+            return false;
+        }
         if (specialNames != null && specialNames.contains(user)) {
             env.info().log("specialName: " + user);
             return (true);
         } else {
-        	if(specialDomains!=null) {
-	        	for(String sd : specialDomains) {
-	        		if(user.endsWith(sd)) {
-	        			env.info().log("specialDomain: " + user + " matches " + sd);
-	        			return (true);
-	        		}
-	        	}
-        	}
+            if(specialDomains!=null) {
+                for(String sd : specialDomains) {
+                    if(user.endsWith(sd)) {
+                        env.info().log("specialDomain: " + user + " matches " + sd);
+                        return (true);
+                    }
+                }
+            }
         }
         return (false);
     }
@@ -339,18 +339,18 @@ public abstract class Batch {
     
     protected static File logDir() {
         if(logdir == null) {
-	        String ld = env.getProperty(LOG_DIR);
-	        if (ld==null) {
-	            if (batchEnv==null) { // Deployed Batch doesn't use different ENVs, and a common logdir
-	                ld = "logs/";
-	            } else {
-	                ld = "logs/"+batchEnv;
-	            }
-	        }
-	        logdir = new File(ld);
-	        if(!logdir.exists()) {
-	        	logdir.mkdirs();
-	        }
+            String ld = env.getProperty(LOG_DIR);
+            if (ld==null) {
+                if (batchEnv==null) { // Deployed Batch doesn't use different ENVs, and a common logdir
+                    ld = "logs/";
+                } else {
+                    ld = "logs/"+batchEnv;
+                }
+            }
+            logdir = new File(ld);
+            if(!logdir.exists()) {
+                logdir.mkdirs();
+            }
         } 
         return logdir;
     }
@@ -369,8 +369,8 @@ public abstract class Batch {
     public final void close(AuthzTrans trans) {
         _close(trans);
         if(session!=null) {
-        	session.close();
-        	session = null;
+            session.close();
+            session = null;
         }
         if(cluster!=null && !cluster.isClosed()) {
             cluster.close();
@@ -378,13 +378,13 @@ public abstract class Batch {
     }
 
     public static void main(String[] args) {
-    	// Use a StringBuilder to save off logs until a File can be setup
-    	StringBuilderOutputStream sbos = new StringBuilderOutputStream();
+        // Use a StringBuilder to save off logs until a File can be setup
+        StringBuilderOutputStream sbos = new StringBuilderOutputStream();
         PropAccess access = new PropAccess(new PrintStream(sbos),args);
         access.log(Level.INIT, "------- Starting Batch ------\n  Args: ");
         for(String s: args) {
-        	sbos.getBuffer().append(s);
-        	sbos.getBuffer().append(' ');
+            sbos.getBuffer().append(s);
+            sbos.getBuffer().append(' ');
         }
         
         InputStream is = null;
@@ -394,32 +394,32 @@ public abstract class Batch {
             Define.set(access);
             
             if(access.getProperty(Config.CADI_PROP_FILES)==null) {
-	            File f = new File("authBatch.props");
-	            try {
-	                if (f.exists()) {
-	                    filename = f.getAbsolutePath();
-	                    is = new FileInputStream(f);
-	                    propLoc = f.getPath();
-	                } else {
-	                    URL rsrc = ClassLoader.getSystemResource("authBatch.props");
-	                    filename = rsrc.toString();
-	                    is = rsrc.openStream();
-	                    propLoc = rsrc.getPath();
-	                }
-	                access.load(is);
-	            } finally {
-	                if (is == null) {
-	                    System.err.println("authBatch.props must exist in current dir, or in Classpath");
-	                    System.exit(1);
-	                }
-	                is.close();
-	            }
-	            if (filename != null) {
-	                access.log(Level.INFO,"Instantiated properties from", filename);
-	            }
+                File f = new File("authBatch.props");
+                try {
+                    if (f.exists()) {
+                        filename = f.getAbsolutePath();
+                        is = new FileInputStream(f);
+                        propLoc = f.getPath();
+                    } else {
+                        URL rsrc = ClassLoader.getSystemResource("authBatch.props");
+                        filename = rsrc.toString();
+                        is = rsrc.openStream();
+                        propLoc = rsrc.getPath();
+                    }
+                    access.load(is);
+                } finally {
+                    if (is == null) {
+                        System.err.println("authBatch.props must exist in current dir, or in Classpath");
+                        System.exit(1);
+                    }
+                    is.close();
+                }
+                if (filename != null) {
+                    access.log(Level.INFO,"Instantiated properties from", filename);
+                }
 
-	            // Log where Config found
-	            access.log(Level.INFO,"Configuring from", propLoc);
+                // Log where Config found
+                access.log(Level.INFO,"Configuring from", propLoc);
 
             }
 
@@ -432,119 +432,119 @@ public abstract class Batch {
             // PERF.cassandra.clusters=....
             batchEnv = env.getProperty(CASS_ENV);
             if(batchEnv!=null) {
-            	batchEnv = batchEnv.trim();
+                batchEnv = batchEnv.trim();
             }
 
             File logFile = new File(logDir() + "/batch" + Chrono.dateOnlyStamp(new Date()) + ".log" );
             PrintStream batchLog = new PrintStream(new FileOutputStream(logFile,true));
             try {
-	            access.setStreamLogIt(batchLog);
-	            sbos.flush();
-	            batchLog.print(sbos.getBuffer());
-	            sbos = null;
-	            Logger.getRootLogger().addAppender(new Log4JAccessAppender(access));
+                access.setStreamLogIt(batchLog);
+                sbos.flush();
+                batchLog.print(sbos.getBuffer());
+                sbos = null;
+                Logger.getRootLogger().addAppender(new Log4JAccessAppender(access));
 
-	            Batch batch = null;
-	            AuthzTrans trans = env.newTrans();
-	
-	            TimeTaken tt = trans.start("Total Run", Env.SUB);
-	            try {
-	                int len = args.length;
-	                if (len > 0) {
-	                    String toolName = args[0];
-	                    len -= 1;
-	                    if (len < 0)
-	                        len = 0;
-	                    String nargs[] = new String[len];
-	                    if (len > 0) {
-	                        System.arraycopy(args, 1, nargs, 0, len);
-	                    }
-	
-	                    env.put(ssargs = env.staticSlot("ARGS"), nargs);
-	
-	                    /*
-	                     * Add New Batch Programs (inherit from Batch) here
-	                     */
-	
-	                    // Might be a Report, Update or Temp Batch
-	                    Class<?> cls = null;
-	                    String classifier = "";
-	
-	                    String[] pkgs = new String[] {
-	                    		"org.onap.aaf.auth.batch.update",
-	                    		"org.onap.aaf.auth.batch.reports",
-	                    		"org.onap.aaf.auth.batch.temp"
-	                    		};
-	                    		
-	                    String ebp = env.getProperty("EXTRA_BATCH_PKGS");
-	                    if(ebp!=null) {
-	                        String[] ebps = Split.splitTrim(':', ebp);
-	                    	String[] temp = new String[ebps.length + pkgs.length];
-	                    	System.arraycopy(pkgs,0, temp, 0, pkgs.length);
-	                    	System.arraycopy(ebps,0,temp,pkgs.length,ebps.length);
-	                    	pkgs = temp;
-	                    }
-	                    
-	                    for(String p : pkgs) {
-		                    try {
-		                        cls = ClassLoader.getSystemClassLoader().loadClass(p + '.' + toolName);
-		                        int lastDot = p.lastIndexOf('.');
-		                        if(p.length()>0 || p.length()!=lastDot) { 
-			                        StringBuilder sb = new StringBuilder();
-			                        sb.append(Character.toUpperCase(p.charAt(++lastDot)));
-			                        while(++lastDot<p.length()) {
-			                        	sb.append(p.charAt(lastDot));
-			                        }
-			                        sb.append(':');
-			                        classifier = sb.toString();
-			                        break;
-		                        }
-		                    } catch (ClassNotFoundException e) {
-		                    	cls = null;
-		                    }
-	                    }
-	                    if (cls != null) {
-	                        Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
-	                        batch = (Batch) cnst.newInstance(trans);
-	                        env.info().log("Begin", classifier, toolName);
-	                    }
-	                
-	
-	                    if (batch == null) {
-	                        trans.error().log("No Batch named", toolName, "found");
-	                    }
-	                    /*
-	                     * End New Batch Programs (inherit from Batch) here
-	                     */
-	
-	                }
-	                if (batch != null) {
-	                	try {
-	                		batch.run(trans);
-	                    } catch (Exception e) {
-	                    	if(cluster!=null && !cluster.isClosed()) {
-	                    		cluster.close();
-	                    	}
-	                        trans.error().log(e);
-	                    }
-	                }
-	            } finally {
-	                tt.done();
-	                if (batch != null) {
-	                    batch.close(trans);
-	                }
-	                StringBuilder sb = new StringBuilder("Task Times\n");
-	                trans.auditTrail(4, sb, AuthzTrans.SUB, AuthzTrans.REMOTE);
-	                trans.info().log(sb);
-	            }
+                Batch batch = null;
+                AuthzTrans trans = env.newTrans();
+    
+                TimeTaken tt = trans.start("Total Run", Env.SUB);
+                try {
+                    int len = args.length;
+                    if (len > 0) {
+                        String toolName = args[0];
+                        len -= 1;
+                        if (len < 0)
+                            len = 0;
+                        String nargs[] = new String[len];
+                        if (len > 0) {
+                            System.arraycopy(args, 1, nargs, 0, len);
+                        }
+    
+                        env.put(ssargs = env.staticSlot("ARGS"), nargs);
+    
+                        /*
+                         * Add New Batch Programs (inherit from Batch) here
+                         */
+    
+                        // Might be a Report, Update or Temp Batch
+                        Class<?> cls = null;
+                        String classifier = "";
+    
+                        String[] pkgs = new String[] {
+                                "org.onap.aaf.auth.batch.update",
+                                "org.onap.aaf.auth.batch.reports",
+                                "org.onap.aaf.auth.batch.temp"
+                                };
+                                
+                        String ebp = env.getProperty("EXTRA_BATCH_PKGS");
+                        if(ebp!=null) {
+                            String[] ebps = Split.splitTrim(':', ebp);
+                            String[] temp = new String[ebps.length + pkgs.length];
+                            System.arraycopy(pkgs,0, temp, 0, pkgs.length);
+                            System.arraycopy(ebps,0,temp,pkgs.length,ebps.length);
+                            pkgs = temp;
+                        }
+                        
+                        for(String p : pkgs) {
+                            try {
+                                cls = ClassLoader.getSystemClassLoader().loadClass(p + '.' + toolName);
+                                int lastDot = p.lastIndexOf('.');
+                                if(p.length()>0 || p.length()!=lastDot) { 
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append(Character.toUpperCase(p.charAt(++lastDot)));
+                                    while(++lastDot<p.length()) {
+                                        sb.append(p.charAt(lastDot));
+                                    }
+                                    sb.append(':');
+                                    classifier = sb.toString();
+                                    break;
+                                }
+                            } catch (ClassNotFoundException e) {
+                                cls = null;
+                            }
+                        }
+                        if (cls != null) {
+                            Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
+                            batch = (Batch) cnst.newInstance(trans);
+                            env.info().log("Begin", classifier, toolName);
+                        }
+                    
+    
+                        if (batch == null) {
+                            trans.error().log("No Batch named", toolName, "found");
+                        }
+                        /*
+                         * End New Batch Programs (inherit from Batch) here
+                         */
+    
+                    }
+                    if (batch != null) {
+                        try {
+                            batch.run(trans);
+                        } catch (Exception e) {
+                            if(cluster!=null && !cluster.isClosed()) {
+                                cluster.close();
+                            }
+                            trans.error().log(e);
+                        }
+                    }
+                } finally {
+                    tt.done();
+                    if (batch != null) {
+                        batch.close(trans);
+                    }
+                    StringBuilder sb = new StringBuilder("Task Times\n");
+                    trans.auditTrail(4, sb, AuthzTrans.SUB, AuthzTrans.REMOTE);
+                    trans.info().log(sb);
+                }
             } finally {
-            	batchLog.close();
+                batchLog.close();
             }
 
         } catch (Exception e) {
-        	if(cluster!=null && !cluster.isClosed()) {
-        		cluster.close();
-        	}
+            if(cluster!=null && !cluster.isClosed()) {
+                cluster.close();
+            }
             e.printStackTrace(System.err);
         }
     }

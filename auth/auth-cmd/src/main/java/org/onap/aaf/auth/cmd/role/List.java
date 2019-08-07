@@ -123,12 +123,12 @@ public class List extends BaseCmd<Role> {
                         pw().format(roleFormat, "["+ns+"]"+roleName.substring(ns.length()),XXXX_XX_XX);
                     }
                 } else {
-                	String fullname;
-                	if(ns==null) {
-                		fullname = roleName;
-                	} else {
-                		fullname = ns+'.'+roleName;
-                	}
+                    String fullname;
+                    if(ns==null) {
+                        fullname = roleName;
+                    } else {
+                        fullname = ns+'.'+roleName;
+                    }
                     UserRole ur = get(fullname,urs);
                     if (ur!=null && now.compare(ur.getExpires().normalize())>0) {
                         if (ns==null) {

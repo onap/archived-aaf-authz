@@ -46,111 +46,111 @@ import org.onap.aaf.cadi.CadiException;
 @RunWith(MockitoJUnitRunner.class) 
 public class JU_CassExecutor {
 
-	
-	
-	private static final Object NO_PARAM = new Object[0];
+    
+    
+    private static final Object NO_PARAM = new Object[0];
 
-	@Mock
-	AuthzTransImpl trans;
-	
-	@Mock
-	Question q;
-	
-	@Mock
-	Access access;
-	
-	Function f;
-	
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-		try {
-			Mockito.doReturn("0.0").when(access).getProperty("aaf_root_ns","org.osaaf.aaf");
-			Mockito.doReturn(new Properties()).when(access).getProperties();
-			Define.set(access);
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		f =new Function(trans, q);
-	}
-	
-	@Test
-	public void testHasPermission() {
-		
-		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Mockito.doReturn(false).when(q).isGranted(trans, "","","","","");
-		boolean retVal = cassExecutorObj.hasPermission("", "", "", "", "");
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}	
-	
-	@Test
-	public void testInRole() {
-		
-		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Result<NsSplit> retVal1 = new Result<NsSplit>(null,1,"",NO_PARAM);
-		Mockito.doReturn(retVal1).when(q).deriveNsSplit(trans, "test");
-		
-		boolean retVal = cassExecutorObj.inRole("test");
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}
-	
-	@Test
-	public void testNamespace() {
-		f =new Function(trans, q);
-		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Result<Data> retVal1 = new Result<Data>(null,1,"",NO_PARAM);
-		Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
-		
-		String retVal="";
-		try {
-			retVal = cassExecutorObj.namespace();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			assertEquals("33", e.getMessage());
-		}
-		System.out.println(retVal);
-//		assertFalse(retVal);
-	}
-	
-	@Test
-	public void testId() {
-		Mockito.doReturn("").when(trans).user();
-		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		String retVal = cassExecutorObj.id();
-		assertEquals("", retVal);
-	}
-	
-	@Test
-	public void testNamespaceSuccess() {
-		Mockito.doAnswer(new Answer<Object>() {
-		    private int count = 0;
+    @Mock
+    AuthzTransImpl trans;
+    
+    @Mock
+    Question q;
+    
+    @Mock
+    Access access;
+    
+    Function f;
+    
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        try {
+            Mockito.doReturn("0.0").when(access).getProperty("aaf_root_ns","org.osaaf.aaf");
+            Mockito.doReturn(new Properties()).when(access).getProperties();
+            Define.set(access);
+        } catch (CadiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        f =new Function(trans, q);
+    }
+    
+    @Test
+    public void testHasPermission() {
+        
+        CassExecutor cassExecutorObj =new CassExecutor(trans, f);
+        Mockito.doReturn(false).when(q).isGranted(trans, "","","","","");
+        boolean retVal = cassExecutorObj.hasPermission("", "", "", "", "");
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }    
+    
+    @Test
+    public void testInRole() {
+        
+        CassExecutor cassExecutorObj =new CassExecutor(trans, f);
+        Result<NsSplit> retVal1 = new Result<NsSplit>(null,1,"",NO_PARAM);
+        Mockito.doReturn(retVal1).when(q).deriveNsSplit(trans, "test");
+        
+        boolean retVal = cassExecutorObj.inRole("test");
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }
+    
+    @Test
+    public void testNamespace() {
+        f =new Function(trans, q);
+        CassExecutor cassExecutorObj =new CassExecutor(trans, f);
+        Result<Data> retVal1 = new Result<Data>(null,1,"",NO_PARAM);
+        Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
+        
+        String retVal="";
+        try {
+            retVal = cassExecutorObj.namespace();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            assertEquals("33", e.getMessage());
+        }
+        System.out.println(retVal);
+//        assertFalse(retVal);
+    }
+    
+    @Test
+    public void testId() {
+        Mockito.doReturn("").when(trans).user();
+        CassExecutor cassExecutorObj =new CassExecutor(trans, f);
+        String retVal = cassExecutorObj.id();
+        assertEquals("", retVal);
+    }
+    
+    @Test
+    public void testNamespaceSuccess() {
+        Mockito.doAnswer(new Answer<Object>() {
+            private int count = 0;
 
-		    public Object answer(InvocationOnMock invocation) {
-		        if (count++ == 1)
-		            return "test@test.com";
+            public Object answer(InvocationOnMock invocation) {
+                if (count++ == 1)
+                    return "test@test.com";
 
-		        return null;
-		    }
-		}).when(trans).user();
-		f =new Function(trans, q);
-		CassExecutor cassExecutorObj =new CassExecutor(trans, f);
-		Result<Data> retVal1 = new Result<Data>(null,0,"",NO_PARAM);
-		Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
-		
-		
-//		String retVal="";
-		try {
-			/*retVal =*/ cassExecutorObj.namespace();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println(e.getMessage());
-//			assertNull( e.getMessage());
-		}
-//		System.out.println(retVal);
-//		assertFalse(retVal);
-	}
-	
+                return null;
+            }
+        }).when(trans).user();
+        f =new Function(trans, q);
+        CassExecutor cassExecutorObj =new CassExecutor(trans, f);
+        Result<Data> retVal1 = new Result<Data>(null,0,"",NO_PARAM);
+        Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
+        
+        
+//        String retVal="";
+        try {
+            /*retVal =*/ cassExecutorObj.namespace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+//            assertNull( e.getMessage());
+        }
+//        System.out.println(retVal);
+//        assertFalse(retVal);
+    }
+    
 }

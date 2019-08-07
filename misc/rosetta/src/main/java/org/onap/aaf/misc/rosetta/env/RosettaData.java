@@ -60,7 +60,7 @@ public class RosettaData<T> implements Data<T>{
     
     //Added for junits
     void setSaved(Saved saved) {
-    	this.saved = saved;
+        this.saved = saved;
     }
 
 //    // @Override

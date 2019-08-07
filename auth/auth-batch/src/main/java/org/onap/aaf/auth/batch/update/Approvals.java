@@ -55,19 +55,19 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class Approvals extends Batch {
-	private final AuthzTrans noAvg;
-	private BatchDataView dataview;
-	private List<CSV> csvList;
-	private Writer napproveCW;
-	private final GregorianCalendar now;
-	private final String sdate;
-	private static final String CSV = ".csv";
-	private static final String APPROVALS_NEW = "ApprovalsNew";
-	
+    private final AuthzTrans noAvg;
+    private BatchDataView dataview;
+    private List<CSV> csvList;
+    private Writer napproveCW;
+    private final GregorianCalendar now;
+    private final String sdate;
+    private static final String CSV = ".csv";
+    private static final String APPROVALS_NEW = "ApprovalsNew";
+    
     public Approvals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
-    	now = new GregorianCalendar();
-    	sdate = Chrono.dateOnlyStamp(now);
+        now = new GregorianCalendar();
+        sdate = Chrono.dateOnlyStamp(now);
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("batch:Approvals"));
         session = cluster.connect();
@@ -79,21 +79,21 @@ public class Approvals extends Batch {
         csvList = new ArrayList<>();
         File f;
         if(args().length>0) {
-        	for(int i=0;i<args().length;++i) {
-        		f = new File(logDir(), args()[i]);
-        		if(f.exists()) {
-	        		csvList.add(new CSV(env.access(),f).processAll());
-        		} else {
-	            	trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
-        		}
-        	}
+            for(int i=0;i<args().length;++i) {
+                f = new File(logDir(), args()[i]);
+                if(f.exists()) {
+                    csvList.add(new CSV(env.access(),f).processAll());
+                } else {
+                    trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
+                }
+            }
         } else {
-        	f = new File(logDir(), Analyze.NEED_APPROVALS+Chrono.dateOnlyStamp()+".csv");
-        	if(f.exists()) {
-        		csvList.add(new CSV(env.access(),f).processAll());
-			} else {
-	        	trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
-			}
+            f = new File(logDir(), Analyze.NEED_APPROVALS+Chrono.dateOnlyStamp()+".csv");
+            if(f.exists()) {
+                csvList.add(new CSV(env.access(),f).processAll());
+            } else {
+                trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
+            }
         }
         
 
@@ -106,71 +106,71 @@ public class Approvals extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
-    	Map<String,Pending> mpending = new TreeMap<>();
-		Pending p = Pending.create();
+        Map<String,Pending> mpending = new TreeMap<>();
+        Pending p = Pending.create();
 
-		Holder<Integer> count = new Holder<>(0);
+        Holder<Integer> count = new Holder<>(0);
         for(CSV neeedApproveCSV : csvList) {
-        	TimeTaken tt = trans.start("Processing %s's UserRoles",Trans.SUB,neeedApproveCSV.name());
-        	try {
-				neeedApproveCSV.visit(row -> {
-					switch(row.get(0)) {
-						case UserRole.APPROVE_UR:
-							UserRoleDAO.Data urdd = UserRole.row(row);
-							// Create an Approval
-							ApprovalSet uras = new URApprovalSet(noAvg, now, dataview, () -> {
-								return urdd;
-							});
-							Result<Void> rw = uras.write(noAvg);
-							if(rw.isOK()) {
-								Set<String> approvers = uras.approvers();
-								if(approvers.isEmpty()) {
-									trans.error().printf("No Approvers found for %s-%s (probably no owner)",urdd.user,urdd.role);
-								} else {
-									for(String approver : approvers) {
-										Pending mp = mpending.get(approver);
-										if(mp==null) {
-											mpending.put(approver, Pending.create());
-										} else {
-											mp.inc(p); // FYI, unlikely
-										}
-									}
-									count.set(count.get()+1);
-								}
-							} else {
-								trans.error().log(rw.errorString());
-							}
-							break;
-					}
-				});
-				dataview.flush();
-			} catch (IOException | CadiException e) {
-				e.printStackTrace();
-				// .... but continue with next row
-	    	} finally {
-	    		tt.done();
-	    	}
+            TimeTaken tt = trans.start("Processing %s's UserRoles",Trans.SUB,neeedApproveCSV.name());
+            try {
+                neeedApproveCSV.visit(row -> {
+                    switch(row.get(0)) {
+                        case UserRole.APPROVE_UR:
+                            UserRoleDAO.Data urdd = UserRole.row(row);
+                            // Create an Approval
+                            ApprovalSet uras = new URApprovalSet(noAvg, now, dataview, () -> {
+                                return urdd;
+                            });
+                            Result<Void> rw = uras.write(noAvg);
+                            if(rw.isOK()) {
+                                Set<String> approvers = uras.approvers();
+                                if(approvers.isEmpty()) {
+                                    trans.error().printf("No Approvers found for %s-%s (probably no owner)",urdd.user,urdd.role);
+                                } else {
+                                    for(String approver : approvers) {
+                                        Pending mp = mpending.get(approver);
+                                        if(mp==null) {
+                                            mpending.put(approver, Pending.create());
+                                        } else {
+                                            mp.inc(p); // FYI, unlikely
+                                        }
+                                    }
+                                    count.set(count.get()+1);
+                                }
+                            } else {
+                                trans.error().log(rw.errorString());
+                            }
+                            break;
+                    }
+                });
+                dataview.flush();
+            } catch (IOException | CadiException e) {
+                e.printStackTrace();
+                // .... but continue with next row
+            } finally {
+                tt.done();
+            }
             trans.info().printf("Processed %d UserRoles", count.get());
 
-        	tt = trans.start("Writing Approvals to %s",Trans.SUB,neeedApproveCSV.name());
-        	int cnt = 0;
-        	try {
-	            for(Entry<String, Pending> es : mpending.entrySet()) {
-	            	p.row(napproveCW,es.getKey());
-	            	++cnt;
-	            }
+            tt = trans.start("Writing Approvals to %s",Trans.SUB,neeedApproveCSV.name());
+            int cnt = 0;
+            try {
+                for(Entry<String, Pending> es : mpending.entrySet()) {
+                    p.row(napproveCW,es.getKey());
+                    ++cnt;
+                }
             } finally {
-            	tt.done();
-            	trans.info().printf("Processed %d Reminders", cnt);
+                tt.done();
+                trans.info().printf("Processed %d Reminders", cnt);
             }
- 	    }
+         }
     }
 
-	@Override
+    @Override
     protected void _close(AuthzTrans trans) {
-		if(napproveCW!=null) {
-			napproveCW.flush();
-			napproveCW.close();
-		}
+        if(napproveCW!=null) {
+            napproveCW.flush();
+            napproveCW.close();
+        }
     }
 }

@@ -243,7 +243,7 @@ public interface AuthzFacade {
 
     public abstract Result<Void> getHistoryBySubject(AuthzTrans trans, HttpServletResponse resp, String type, String subject, int[] yyyymm, int sort);
 
-	/*
+    /*
      * Cache 
      */
     public abstract Result<Void> cacheClear(AuthzTrans trans, String pathParam);

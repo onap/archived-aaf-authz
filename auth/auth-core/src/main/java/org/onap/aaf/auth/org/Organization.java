@@ -65,17 +65,17 @@ public interface Organization {
         public Organization org();                 // Organization of Identity
 
 
-    	public static String mixedCase(String in) {
-    		StringBuilder sb = new StringBuilder();
-    		for(int i=0;i<in.length();++i) {
-    			if(i==0) {
-    				sb.append(Character.toUpperCase(in.charAt(i)));
-    			} else {
-    				sb.append(Character.toLowerCase(in.charAt(i)));
-    			}
-    		}
-    		return sb.toString();
-    	}
+        public static String mixedCase(String in) {
+            StringBuilder sb = new StringBuilder();
+            for(int i=0;i<in.length();++i) {
+                if(i==0) {
+                    sb.append(Character.toUpperCase(in.charAt(i)));
+                } else {
+                    sb.append(Character.toLowerCase(in.charAt(i)));
+                }
+            }
+            return sb.toString();
+        }
     }
 
 
@@ -115,7 +115,7 @@ public interface Organization {
      * feed with a "Deleted ID" feed.  
      * 
      */
-	public boolean isRevoked(AuthzTrans trans, String id);
+    public boolean isRevoked(AuthzTrans trans, String id);
 
 
     /**
@@ -559,17 +559,17 @@ public interface Organization {
             return nullStringArray; 
         }
         
-    	@Override
-    	public boolean isRevoked(AuthzTrans trans, String id) {
-    		// provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
-    		return false;
-    	}
+        @Override
+        public boolean isRevoked(AuthzTrans trans, String id) {
+            // provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
+            return false;
+        }
 
-		@Override
-		public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
     };
 }

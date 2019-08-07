@@ -245,13 +245,13 @@ public class Function {
         
         // 2.1) Does role exist with that name
         if(cname!=null && q.roleDAO().read(trans, parent, cname).isOKhasData()) {
-        	return Result.err(Status.ERR_ConflictAlreadyExists,
+            return Result.err(Status.ERR_ConflictAlreadyExists,
                     "Role exists with that name");
         }
 
         // 2.2) Do perms exist with that name
         if(cname!=null && q.permDAO().readByType(trans, parent, cname).isOKhasData()) {
-        	return Result.err(Status.ERR_ConflictAlreadyExists,
+            return Result.err(Status.ERR_ConflictAlreadyExists,
                     "Perms exist with that name");
         }
 

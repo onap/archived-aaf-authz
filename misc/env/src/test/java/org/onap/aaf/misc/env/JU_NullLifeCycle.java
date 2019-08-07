@@ -28,16 +28,16 @@ public class JU_NullLifeCycle {
 
     @Test
     public void testServicePrestart() {
-    	NullLifeCycle lifeCycleObj = new NullLifeCycle();
-    	try {
-    		lifeCycleObj.servicePrestart(null);
-    		lifeCycleObj.serviceDestroy(null);
-    		lifeCycleObj.threadDestroy(null);
-    		lifeCycleObj.threadPrestart(null);
-    		lifeCycleObj.refresh(null);
-    	}catch(APIException a) {
-    		
-    	}
+        NullLifeCycle lifeCycleObj = new NullLifeCycle();
+        try {
+            lifeCycleObj.servicePrestart(null);
+            lifeCycleObj.serviceDestroy(null);
+            lifeCycleObj.threadDestroy(null);
+            lifeCycleObj.threadPrestart(null);
+            lifeCycleObj.refresh(null);
+        }catch(APIException a) {
+            
+        }
     }
    
 }

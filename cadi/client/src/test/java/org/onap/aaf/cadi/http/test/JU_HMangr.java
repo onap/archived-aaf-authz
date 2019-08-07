@@ -184,10 +184,10 @@ public class JU_HMangr {
 
         assertThat(hman.best(ssMock, retryableMock), is(nullValue()));
         try {
-        	hman.all(ssMock, retryableMock, true);
-        	Assert.fail("Should have thrown LocatorException");
+            hman.all(ssMock, retryableMock, true);
+            Assert.fail("Should have thrown LocatorException");
         } catch (LocatorException e) {
-        	assertEquals(e.getLocalizedMessage(),"No available clients to call");
+            assertEquals(e.getLocalizedMessage(),"No available clients to call");
         }
     }
 

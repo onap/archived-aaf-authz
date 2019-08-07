@@ -50,11 +50,11 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 
 public class DataMigrateDublin extends Batch {
-	private final SecureRandom sr;
-	private final AuthzTrans noAvg;
-	
-	public DataMigrateDublin(AuthzTrans trans) throws APIException, IOException, OrganizationException {
-		super(trans.env());
+    private final SecureRandom sr;
+    private final AuthzTrans noAvg;
+    
+    public DataMigrateDublin(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+        super(trans.env());
         trans.info().log("Starting Connection Process");
         
         noAvg = env.newTransNoAvg();
@@ -62,152 +62,152 @@ public class DataMigrateDublin extends Batch {
 
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
-			TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
-			try {
-				session = cluster.connect();
-			} finally {
-				tt.done();
-			}
+            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
+            try {
+                session = cluster.connect();
+            } finally {
+                tt.done();
+            }
         } finally {
             tt0.done();
         }
         
         sr = new SecureRandom();
-	}
+    }
 
-	@Override
-	protected void run(AuthzTrans trans) {
+    @Override
+    protected void run(AuthzTrans trans) {
         ///////////////////////////
         trans.info().log("Add UniqueTag to Passwords");
 
         CQLBatchLoop cbl = new CQLBatchLoop(new CQLBatch(noAvg.info(),session), 50, dryRun);
         try {
-        	ResultSet rs = session.execute("SELECT id,type,expires,cred,tag FROM authz.cred");
-        	Iterator<Row> iter = rs.iterator();
-        	Row row;
-        	int count = 0;
-        	byte[] babytes = new byte[6];
-        	Map<String, List<CredInfo>> mlci = new TreeMap<>();
-        	Map<String, String> ba_tag = new TreeMap<>();
-        	while(iter.hasNext()) {
-        		++count;
-        		row = iter.next();
-        		String tag = row.getString(4);
-    			int type = row.getInt(1);
-    			switch(type) {
-    				case CredDAO.BASIC_AUTH:
-    				case CredDAO.BASIC_AUTH_SHA256:
-            			String key = row.getString(0) + '|' + type + '|' + Hash.toHex(row.getBytesUnsafe(3).array()); 
-            			String btag = ba_tag.get(key);
-            			if(btag == null) {
-            				if(tag==null || tag.isEmpty()) {
-            					sr.nextBytes(babytes);
-            					btag = Hash.toHexNo0x(babytes);
-            				} else {
-            					btag = tag;
-            				}
-            				ba_tag.put(key, btag);
-            			}
-            			
-            			if(!btag.equals(tag)) {
-	            			update(cbl,row,btag);
-            			}
-    					break;
-    				case CredDAO.CERT_SHA256_RSA:
-        				if(tag==null || tag.isEmpty()) {
-	    					String id = row.getString(0);
-	    					List<CredInfo> ld = mlci.get(id);
-	    					if(ld==null) {
-	    						ld = new ArrayList<>();
-	    						mlci.put(id,ld);
-	    					}
-	   						ld.add(new CredInfo(id,row.getInt(1),row.getTimestamp(2)));
-        				}
-   					 	break;
-        		}
-        	}
-        	cbl.flush();
-        	trans.info().printf("Processes %d cred records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
-        	count = 0;
-        	
-        	cbl.reset();
-        	
+            ResultSet rs = session.execute("SELECT id,type,expires,cred,tag FROM authz.cred");
+            Iterator<Row> iter = rs.iterator();
+            Row row;
+            int count = 0;
+            byte[] babytes = new byte[6];
+            Map<String, List<CredInfo>> mlci = new TreeMap<>();
+            Map<String, String> ba_tag = new TreeMap<>();
+            while(iter.hasNext()) {
+                ++count;
+                row = iter.next();
+                String tag = row.getString(4);
+                int type = row.getInt(1);
+                switch(type) {
+                    case CredDAO.BASIC_AUTH:
+                    case CredDAO.BASIC_AUTH_SHA256:
+                        String key = row.getString(0) + '|' + type + '|' + Hash.toHex(row.getBytesUnsafe(3).array()); 
+                        String btag = ba_tag.get(key);
+                        if(btag == null) {
+                            if(tag==null || tag.isEmpty()) {
+                                sr.nextBytes(babytes);
+                                btag = Hash.toHexNo0x(babytes);
+                            } else {
+                                btag = tag;
+                            }
+                            ba_tag.put(key, btag);
+                        }
+                        
+                        if(!btag.equals(tag)) {
+                            update(cbl,row,btag);
+                        }
+                        break;
+                    case CredDAO.CERT_SHA256_RSA:
+                        if(tag==null || tag.isEmpty()) {
+                            String id = row.getString(0);
+                            List<CredInfo> ld = mlci.get(id);
+                            if(ld==null) {
+                                ld = new ArrayList<>();
+                                mlci.put(id,ld);
+                            }
+                               ld.add(new CredInfo(id,row.getInt(1),row.getTimestamp(2)));
+                        }
+                            break;
+                }
+            }
+            cbl.flush();
+            trans.info().printf("Processes %d cred records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
+            count = 0;
+            
+            cbl.reset();
+            
             trans.info().log("Add Serial to X509 Creds");
             rs = session.execute("SELECT ca, id, x509 FROM authz.x509");
             iter = rs.iterator();
-        	while(iter.hasNext()) {
-        		++count;
-        		row = iter.next();
-        		String ca = row.getString(0);
-        		String id = row.getString(1);
-        		List<CredInfo> list = mlci.get(id);
-    			if(list!=null) {
-	        		ByteBuffer bb = row.getBytesUnsafe(2);
-	        		if(bb!=null) {
-		        		Collection<? extends Certificate> x509s = Factory.toX509Certificate(bb.array());
-		        		for(Certificate c : x509s) {
-		        			X509Certificate xc = (X509Certificate)c;
-		        			for(CredInfo ci : list) {
-			        			if(xc.getNotAfter().equals(ci.expires)) {
-			        				ci.update(cbl, ca + '|' + xc.getSerialNumber());
-			        				break;
-			        			}
-		        			}
-		        		}
-        			}
-        		}
-        	}
-    		cbl.flush();
-        	trans.info().printf("Processed %d x509 records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
-        	count = 0;
+            while(iter.hasNext()) {
+                ++count;
+                row = iter.next();
+                String ca = row.getString(0);
+                String id = row.getString(1);
+                List<CredInfo> list = mlci.get(id);
+                if(list!=null) {
+                    ByteBuffer bb = row.getBytesUnsafe(2);
+                    if(bb!=null) {
+                        Collection<? extends Certificate> x509s = Factory.toX509Certificate(bb.array());
+                        for(Certificate c : x509s) {
+                            X509Certificate xc = (X509Certificate)c;
+                            for(CredInfo ci : list) {
+                                if(xc.getNotAfter().equals(ci.expires)) {
+                                    ci.update(cbl, ca + '|' + xc.getSerialNumber());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            cbl.flush();
+            trans.info().printf("Processed %d x509 records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
+            count = 0;
         } catch (Exception e) {
-			trans.error().log(e);
+            trans.error().log(e);
         }
-	}
-	
-	private static class CredInfo {
-		public final String id;
-		public final int type;
-		public final Date expires;
-		
-		public CredInfo(String id, int type, Date expires) {
-			this.id = id;
-			this.type = type;
-			this.expires = expires;
-		}
-		
-		public void update(CQLBatchLoop cbl, String newtag) {
-			StringBuilder sb = cbl.inc();
-			sb.append("UPDATE authz.cred SET tag='");
-			sb.append(newtag);
-			sb.append("' WHERE id='");
-			sb.append(id);
-			sb.append("' AND type=");
-			sb.append(type);
-			sb.append(" AND expires=dateof(maxtimeuuid(");
-			sb.append(expires.getTime());
-			sb.append("));");
-		}
-	}
-		
-	private void update(CQLBatchLoop cbl, Row row, String newtag) {
-		StringBuilder sb = cbl.inc();
-		sb.append("UPDATE authz.cred SET tag='");
-		sb.append(newtag);
-		sb.append("' WHERE id='");
-		sb.append(row.getString(0));
-		sb.append("' AND type=");
-		sb.append(row.getInt(1));
-		sb.append(" AND expires=dateof(maxtimeuuid(");
-		Date lc = row.getTimestamp(2);
-		sb.append(lc.getTime());
-		sb.append("));");
-	}
+    }
+    
+    private static class CredInfo {
+        public final String id;
+        public final int type;
+        public final Date expires;
+        
+        public CredInfo(String id, int type, Date expires) {
+            this.id = id;
+            this.type = type;
+            this.expires = expires;
+        }
+        
+        public void update(CQLBatchLoop cbl, String newtag) {
+            StringBuilder sb = cbl.inc();
+            sb.append("UPDATE authz.cred SET tag='");
+            sb.append(newtag);
+            sb.append("' WHERE id='");
+            sb.append(id);
+            sb.append("' AND type=");
+            sb.append(type);
+            sb.append(" AND expires=dateof(maxtimeuuid(");
+            sb.append(expires.getTime());
+            sb.append("));");
+        }
+    }
+        
+    private void update(CQLBatchLoop cbl, Row row, String newtag) {
+        StringBuilder sb = cbl.inc();
+        sb.append("UPDATE authz.cred SET tag='");
+        sb.append(newtag);
+        sb.append("' WHERE id='");
+        sb.append(row.getString(0));
+        sb.append("' AND type=");
+        sb.append(row.getInt(1));
+        sb.append(" AND expires=dateof(maxtimeuuid(");
+        Date lc = row.getTimestamp(2);
+        sb.append(lc.getTime());
+        sb.append("));");
+    }
 
-	@Override
-	protected void _close(AuthzTrans trans) {
+    @Override
+    protected void _close(AuthzTrans trans) {
         trans.info().log("End " + this.getClass().getSimpleName() + " processing" );
         session.close();
-	}
+    }
 
 }

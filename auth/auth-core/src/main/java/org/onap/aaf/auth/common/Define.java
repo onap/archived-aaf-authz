@@ -75,15 +75,15 @@ public class Define {
     }
 
     public static String varReplace(final String potential) {
-    	int idx = potential.indexOf(ROOT_NS_TAG_DOT);
-    	if(idx<0) {
-    		return potential;
-    	} else if(idx==0) {
-    		return ROOT_NS + potential.substring(ROOT_NS_TAG_LEN);
+        int idx = potential.indexOf(ROOT_NS_TAG_DOT);
+        if(idx<0) {
+            return potential;
+        } else if(idx==0) {
+            return ROOT_NS + potential.substring(ROOT_NS_TAG_LEN);
         } else if('.'==potential.charAt(idx)) {
             return potential.replace(ROOT_NS_TAG, ROOT_NS);
         } else {
-    		return potential;
+            return potential;
         }
     }
 
@@ -93,7 +93,7 @@ public class Define {
     
     public static String getCredType(int type) {
         switch(type) {
-        	case 0:	  return "NoCrd";
+            case 0:      return "NoCrd";
             case 1:   return "U/P";
             case 2:   return "U/P2";
             case 10:  return "FQI";

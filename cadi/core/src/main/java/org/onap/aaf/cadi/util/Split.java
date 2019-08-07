@@ -31,93 +31,93 @@ package org.onap.aaf.cadi.util;
  */
 
 public class Split {
-	private static final String[] EMPTY = new String[0];
+    private static final String[] EMPTY = new String[0];
 
-	public static String[] split(char c, String value) {
-		if (value==null) {
-			return EMPTY;
-		}
+    public static String[] split(char c, String value) {
+        if (value==null) {
+            return EMPTY;
+        }
 
-		return split(c,value,0,value.length());
-	}
+        return split(c,value,0,value.length());
+    }
 
-	public static String[] split(char c, String value, int start, int end) {
-		if (value==null) {
-			return EMPTY;
-		}
+    public static String[] split(char c, String value, int start, int end) {
+        if (value==null) {
+            return EMPTY;
+        }
 
-		// Count items to preallocate Array (memory alloc is more expensive than counting twice)
-		int count,idx;
-		for (count=1,idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,++idx),++count);
-		String[] rv = new String[count];
-		if (count==1) {
-			rv[0]=value.substring(start,end);
-		} else {
-			int last=0;
-			count=-1;
-			for (idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,idx)) {
-				rv[++count]=value.substring(last,idx);
-				last = ++idx;
-			}
-			rv[++count]=value.substring(last,end);
-		}
-		return rv;
-	}
+        // Count items to preallocate Array (memory alloc is more expensive than counting twice)
+        int count,idx;
+        for (count=1,idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,++idx),++count);
+        String[] rv = new String[count];
+        if (count==1) {
+            rv[0]=value.substring(start,end);
+        } else {
+            int last=0;
+            count=-1;
+            for (idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,idx)) {
+                rv[++count]=value.substring(last,idx);
+                last = ++idx;
+            }
+            rv[++count]=value.substring(last,end);
+        }
+        return rv;
+    }
 
-	public static String[] splitTrim(char c, String value, int start, int end) {
-		if (value==null) {
-			return EMPTY;
-		}
+    public static String[] splitTrim(char c, String value, int start, int end) {
+        if (value==null) {
+            return EMPTY;
+        }
 
-		// Count items to preallocate Array (memory alloc is more expensive than counting twice)
-		int count,idx;
-		for (count=1,idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,++idx),++count);
-		String[] rv = new String[count];
-		if (count==1) {
-			rv[0]=value.substring(start,end).trim();
-		} else {
-			int last=start;
-			count=-1;
-			for (idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,idx)) {
-				rv[++count]=value.substring(last,idx).trim();
-				last = ++idx;
-			}
-			rv[++count]=value.substring(last,end).trim();
-		}
-		return rv;
-	}
+        // Count items to preallocate Array (memory alloc is more expensive than counting twice)
+        int count,idx;
+        for (count=1,idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,++idx),++count);
+        String[] rv = new String[count];
+        if (count==1) {
+            rv[0]=value.substring(start,end).trim();
+        } else {
+            int last=start;
+            count=-1;
+            for (idx=value.indexOf(c,start);idx>=0 && idx<end;idx=value.indexOf(c,idx)) {
+                rv[++count]=value.substring(last,idx).trim();
+                last = ++idx;
+            }
+            rv[++count]=value.substring(last,end).trim();
+        }
+        return rv;
+    }
 
-	public static String[] splitTrim(char c, String value) {
-		if (value==null) {
-			return EMPTY;
-		}
-		return splitTrim(c,value,0,value.length());
-	}
+    public static String[] splitTrim(char c, String value) {
+        if (value==null) {
+            return EMPTY;
+        }
+        return splitTrim(c,value,0,value.length());
+    }
 
-	public static String[] splitTrim(char c, String value, int size) {
-		if (value==null) {
-			return EMPTY;
-		}
+    public static String[] splitTrim(char c, String value, int size) {
+        if (value==null) {
+            return EMPTY;
+        }
 
-		int idx;
-		String[] rv = new String[size];
-		if (size==1) {
-			rv[0]=value.trim();
-		} else {
-			int last=0;
-			int count=-1;
-			size-=2;
-			for (idx=value.indexOf(c);idx>=0 && count<size;idx=value.indexOf(c,idx)) {
-				rv[++count]=value.substring(last,idx).trim();
-				last = ++idx;
-			}
-			if (idx>0) {
-				rv[++count]=value.substring(last,idx).trim();
-			} else {
-				rv[++count]=value.substring(last).trim();
-			}
-		}
-		return rv;
-	}
+        int idx;
+        String[] rv = new String[size];
+        if (size==1) {
+            rv[0]=value.trim();
+        } else {
+            int last=0;
+            int count=-1;
+            size-=2;
+            for (idx=value.indexOf(c);idx>=0 && count<size;idx=value.indexOf(c,idx)) {
+                rv[++count]=value.substring(last,idx).trim();
+                last = ++idx;
+            }
+            if (idx>0) {
+                rv[++count]=value.substring(last,idx).trim();
+            } else {
+                rv[++count]=value.substring(last).trim();
+            }
+        }
+        return rv;
+    }
 
 }

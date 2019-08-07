@@ -32,26 +32,26 @@ import org.onap.aaf.auth.env.AuthzTrans;
 
 public class JU_CachedCertDAOTest {
 
-	private long expiresIn;
-	private CIDAO<AuthzTrans> info;
-	@Mock
-	private CertDAO dao;
-	private AuthzTrans trans;
+    private long expiresIn;
+    private CIDAO<AuthzTrans> info;
+    @Mock
+    private CertDAO dao;
+    private AuthzTrans trans;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void test() {
-		CachedCertDAO ccDao = new CachedCertDAO(dao, info, expiresIn);
+    @Test
+    public void test() {
+        CachedCertDAO ccDao = new CachedCertDAO(dao, info, expiresIn);
 
-		ccDao.readID(trans, "id");
-		ccDao.readX500(trans, "x500");
+        ccDao.readID(trans, "id");
+        ccDao.readX500(trans, "x500");
 
-		verify(dao).readID(trans, "id");
-		verify(dao).readX500(trans, "x500");
-	}
+        verify(dao).readID(trans, "id");
+        verify(dao).readX500(trans, "x500");
+    }
 
 }

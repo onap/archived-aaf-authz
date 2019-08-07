@@ -47,23 +47,23 @@ import org.onap.aaf.misc.env.LogTarget;
 @RunWith(MockitoJUnitRunner.class) 
 public class JU_DirectAAFUserPass {
 
-	@Mock
-	Question question;
-	
-	@Mock
-	AuthzEnv env;
-	
-	@Mock
-	AuthzTrans trans;
-	
-	@Mock
-	HttpServletRequest request;
-	
-	
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-		when(env.warn()).thenReturn(new LogTarget() {
+    @Mock
+    Question question;
+    
+    @Mock
+    AuthzEnv env;
+    
+    @Mock
+    AuthzTrans trans;
+    
+    @Mock
+    HttpServletRequest request;
+    
+    
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        when(env.warn()).thenReturn(new LogTarget() {
             
             @Override
             public void printf(String fmt, Object... vars) {}
@@ -86,7 +86,7 @@ public class JU_DirectAAFUserPass {
                 return true;
             }
         });
-		when(env.error()).thenReturn(new LogTarget() {
+        when(env.error()).thenReturn(new LogTarget() {
             
             @Override
             public void printf(String fmt, Object... vars) {}
@@ -109,115 +109,115 @@ public class JU_DirectAAFUserPass {
                 return true;
             }
         });
-	}
-	
-	@Test
-	public void testUserPass() {
-		
-		DirectAAFUserPass aafLocatorObj=null;
-		aafLocatorObj = new DirectAAFUserPass(env, question);
-		Result<Date> retVal1 = new Result<Date>(null,0,"",new String[0]);
-		Mockito.doReturn(trans).when(env).newTransNoAvg();
-		try {
-			Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
-		} catch (DAOException e) {
-			e.printStackTrace();
-		}
-		boolean retVal = aafLocatorObj.validate(null, null, null, null);
-		
-		assertFalse(retVal);
-	}	
-	
-	@Test
-	public void testUserPassStateisRequest() {
-		
-		DirectAAFUserPass aafLocatorObj=null;
-		aafLocatorObj = new DirectAAFUserPass(env, question);
-		Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
-		Mockito.doReturn(trans).when(env).newTransNoAvg();
-		try {
-			Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
-		} catch (DAOException e) {
-			e.printStackTrace();
-		}
-		boolean retVal = aafLocatorObj.validate(null, null, null, request);
-		
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}
-	
-	@Test
-	public void testUserPassStateNotNull() {
-		
-		DirectAAFUserPass aafLocatorObj=null;
-		aafLocatorObj = new DirectAAFUserPass(env, question);
-		Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
-		Mockito.doReturn(trans).when(env).newTransNoAvg();
-		try {
-			Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
-		} catch (DAOException e) {
-			e.printStackTrace();
-		}
-		boolean retVal = aafLocatorObj.validate(null, null, null, "test");
-		
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}
-	
-	@Test
-	public void testUserPassTransChk() {
-		
-		DirectAAFUserPass aafLocatorObj=null;
-		aafLocatorObj = new DirectAAFUserPass(env, question);
-		Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
-		Mockito.doReturn(trans).when(env).newTransNoAvg();
-		try {
-			Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
-		} catch (DAOException e) {
-			e.printStackTrace();
-		}
-		boolean retVal = aafLocatorObj.validate(null, null, null, trans);
-		
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}
-	
-	@Test
-	public void testUserPassTransIpNotNull() {
-		
-		DirectAAFUserPass aafLocatorObj=null;
-		aafLocatorObj = new DirectAAFUserPass(env, question);
-		Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
-		Mockito.doReturn("test").when(trans).ip();
-		Mockito.doReturn(trans).when(env).newTransNoAvg();
-		try {
-			Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
-		} catch (DAOException e) {
-			e.printStackTrace();
-		}
-		boolean retVal = aafLocatorObj.validate(null, null, null, trans);
-		
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}
-	
-	@Test
-	public void testUserExceptionChk() {
-		
-		DirectAAFUserPass aafLocatorObj=null;
-		aafLocatorObj = new DirectAAFUserPass(env, question);
-		Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
-		Mockito.doReturn(trans).when(env).newTransNoAvg();
-		try {
-			Mockito.doThrow(DAOException.class).when(question).doesUserCredMatch(trans, null, null);
-		} catch (DAOException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-		}
-		boolean retVal = aafLocatorObj.validate(null, null, null, trans);
-		
-//		System.out.println(retVal);
-		assertFalse(retVal);
-	}
-	
+    }
+    
+    @Test
+    public void testUserPass() {
+        
+        DirectAAFUserPass aafLocatorObj=null;
+        aafLocatorObj = new DirectAAFUserPass(env, question);
+        Result<Date> retVal1 = new Result<Date>(null,0,"",new String[0]);
+        Mockito.doReturn(trans).when(env).newTransNoAvg();
+        try {
+            Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+        boolean retVal = aafLocatorObj.validate(null, null, null, null);
+        
+        assertFalse(retVal);
+    }    
+    
+    @Test
+    public void testUserPassStateisRequest() {
+        
+        DirectAAFUserPass aafLocatorObj=null;
+        aafLocatorObj = new DirectAAFUserPass(env, question);
+        Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
+        Mockito.doReturn(trans).when(env).newTransNoAvg();
+        try {
+            Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+        boolean retVal = aafLocatorObj.validate(null, null, null, request);
+        
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }
+    
+    @Test
+    public void testUserPassStateNotNull() {
+        
+        DirectAAFUserPass aafLocatorObj=null;
+        aafLocatorObj = new DirectAAFUserPass(env, question);
+        Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
+        Mockito.doReturn(trans).when(env).newTransNoAvg();
+        try {
+            Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+        boolean retVal = aafLocatorObj.validate(null, null, null, "test");
+        
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }
+    
+    @Test
+    public void testUserPassTransChk() {
+        
+        DirectAAFUserPass aafLocatorObj=null;
+        aafLocatorObj = new DirectAAFUserPass(env, question);
+        Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
+        Mockito.doReturn(trans).when(env).newTransNoAvg();
+        try {
+            Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+        boolean retVal = aafLocatorObj.validate(null, null, null, trans);
+        
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }
+    
+    @Test
+    public void testUserPassTransIpNotNull() {
+        
+        DirectAAFUserPass aafLocatorObj=null;
+        aafLocatorObj = new DirectAAFUserPass(env, question);
+        Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
+        Mockito.doReturn("test").when(trans).ip();
+        Mockito.doReturn(trans).when(env).newTransNoAvg();
+        try {
+            Mockito.doReturn(retVal1).when(question).doesUserCredMatch(trans, null, null);
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+        boolean retVal = aafLocatorObj.validate(null, null, null, trans);
+        
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }
+    
+    @Test
+    public void testUserExceptionChk() {
+        
+        DirectAAFUserPass aafLocatorObj=null;
+        aafLocatorObj = new DirectAAFUserPass(env, question);
+        Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
+        Mockito.doReturn(trans).when(env).newTransNoAvg();
+        try {
+            Mockito.doThrow(DAOException.class).when(question).doesUserCredMatch(trans, null, null);
+        } catch (DAOException e) {
+            // TODO Auto-generated catch block
+//            e.printStackTrace();
+        }
+        boolean retVal = aafLocatorObj.validate(null, null, null, trans);
+        
+//        System.out.println(retVal);
+        assertFalse(retVal);
+    }
+    
 }

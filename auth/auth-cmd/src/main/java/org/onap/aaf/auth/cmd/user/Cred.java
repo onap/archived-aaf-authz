@@ -44,7 +44,7 @@ public class Cred extends Cmd {
     public static final String ATTEMPT_FAILED_SPECIFICS_WITHELD = "Attempt Failed.  Specifics witheld.";
     private static final String CRED_PATH = "/authn/cred";
     private static final String[] options = {"add","del","reset","extend"/*,"clean"*/};
-	private ErrMessage em;
+    private ErrMessage em;
     public Cred(User parent) throws APIException {
         super(parent,"cred",
                 new Param(optionsToString(options),true),
@@ -126,18 +126,18 @@ public class Cred extends Cmd {
                 } else if (fp.code()==202) {
                         pw().println("Credential Action Accepted, but requires Approvals before actualizing");
                 } else if (fp.code()==300 || fp.code()==406) {
-                	Error err = em.getError(fp);
-                	String text = err.getText();
-                	List<String> vars = err.getVariables();
-                	
-                	// IMPORTANT! We do this backward, because it is looking for string
-                	// %1 or %13.  If we replace %1 first, that messes up %13
-                	for(int i=vars.size()-1;i>0;--i) {
-                		text = text.replace("%"+(i+1), (i<10?" ":"") + i+") " + vars.get(i));
-                	}
+                    Error err = em.getError(fp);
+                    String text = err.getText();
+                    List<String> vars = err.getVariables();
+                    
+                    // IMPORTANT! We do this backward, because it is looking for string
+                    // %1 or %13.  If we replace %1 first, that messes up %13
+                    for(int i=vars.size()-1;i>0;--i) {
+                        text = text.replace("%"+(i+1), (i<10?" ":"") + i+") " + vars.get(i));
+                    }
 
-                	text = text.replace("%1",vars.get(0));
-                	pw().println(text);
+                    text = text.replace("%1",vars.get(0));
+                    pw().println(text);
                 } else if (fp.code()==406 && option==1) {
                         pw().println("You cannot delete this Credential");
                 } else if (fp.code()==409 && option==0) {

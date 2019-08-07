@@ -45,7 +45,7 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Approval implements CacheChange.Data  {
-	public static final String ADD_USER_TO_ROLE = "Add User [";
+    public static final String ADD_USER_TO_ROLE = "Add User [";
     public static final String RE_APPROVAL_IN_ROLE = "Extend access of User [";
     public static final String RE_VALIDATE_ADMIN = "Revalidate as Admin of AAF Namespace [";
     public static final String RE_VALIDATE_OWNER = "Revalidate as Owner of AAF Namespace [";
@@ -139,14 +139,14 @@ public class Approval implements CacheChange.Data  {
                 } else if (memo.startsWith(RE_VALIDATE_OWNER)) {
                     return role + ".owner";
                 } else {
-                	first = memo.indexOf('[',second);
-                	if(first>=0) {
-                		second = memo.indexOf(']', ++first);
-                		if(second>=0 && (memo.startsWith(RE_APPROVAL_IN_ROLE) ||
+                    first = memo.indexOf('[',second);
+                    if(first>=0) {
+                        second = memo.indexOf(']', ++first);
+                        if(second>=0 && (memo.startsWith(RE_APPROVAL_IN_ROLE) ||
                                 memo.startsWith(ADD_USER_TO_ROLE))) {
-                				return  memo.substring(first, second);
-                		}
-                	}
+                                return  memo.substring(first, second);
+                        }
+                    }
                 }
             }
         }
@@ -154,47 +154,47 @@ public class Approval implements CacheChange.Data  {
     }
 
     public static int load(Trans trans, Session session, Creator<Approval> creator, Visitor<Approval> visitor) {
-    	int count = 0;
-    	try {
-	    	count+=call(trans,session,creator.query(null), creator, visitor);
+        int count = 0;
+        try {
+            count+=call(trans,session,creator.query(null), creator, visitor);
         } finally {
             trans.info().log("Found",count,"Approval Records");
         }
-    	return count;
+        return count;
     }
     
-	public static int load(Trans trans, Session session, Creator<Approval> creator ) {
-    	int count = 0;
-    	try {
-	    	count+=call(trans,session,creator.query(null), creator, FullLoad);
+    public static int load(Trans trans, Session session, Creator<Approval> creator ) {
+        int count = 0;
+        try {
+            count+=call(trans,session,creator.query(null), creator, FullLoad);
         } finally {
             trans.info().log("Found",count,"Approval Records");
         }
-    	return count;
+        return count;
     }
     
     public static int loadUsers(Trans trans, Session session, Set<String> users, Visitor<Approval> visitor) {
-		int total = 0;
-    	for(String user : users) {
-			total+=call(trans,session,String.format("%s WHERE user='%s';",v2_0_17.select(), user),v2_0_17,visitor);
-    	}
-    	return total;
+        int total = 0;
+        for(String user : users) {
+            total+=call(trans,session,String.format("%s WHERE user='%s';",v2_0_17.select(), user),v2_0_17,visitor);
+        }
+        return total;
     }
     
     public static void row(CSV.RowSetter crs, Approval app) {
-		crs.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
-	}
+        crs.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
+    }
 
-	private static int call(Trans trans, Session session, String query, Creator<Approval> creator, Visitor<Approval> visitor) {
-    	TimeTaken tt = trans.start("DB Query", Trans.REMOTE);
+    private static int call(Trans trans, Session session, String query, Creator<Approval> creator, Visitor<Approval> visitor) {
+        TimeTaken tt = trans.start("DB Query", Trans.REMOTE);
         ResultSet results;
         try {
             Statement stmt = new SimpleStatement( query );
             results = session.execute(stmt);
             int count = 0;
             for (Row row : results.all()) {
-            	++count;
-            	visitor.visit(creator.create(row));
+                ++count;
+                visitor.visit(creator.create(row));
             }
             return count;
         } finally {
@@ -223,11 +223,11 @@ public class Approval implements CacheChange.Data  {
     }
 
     public static void clear() {
-    	byApprover.clear();
-    	byUser.clear();
-    	byTicket.clear();
-    	list.clear();
-    	cache.resetLocalData();
+        byApprover.clear();
+        byUser.clear();
+        byTicket.clear();
+        list.clear();
+        cache.resetLocalData();
     }
 
     /**
@@ -332,10 +332,10 @@ public class Approval implements CacheChange.Data  {
         return cache.contains(a);
     }
 
-	public static void deleteByIDBatch(StringBuilder sb, String id) {
-		sb.append("DELETE from authz.approval where id=");
-		sb.append(id);
-		sb.append(";\n");
-	}
+    public static void deleteByIDBatch(StringBuilder sb, String id) {
+        sb.append("DELETE from authz.approval where id=");
+        sb.append(id);
+        sb.append(";\n");
+    }
 
 }

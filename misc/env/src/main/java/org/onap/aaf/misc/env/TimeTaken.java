@@ -78,7 +78,7 @@ public abstract class TimeTaken {
     }
     
 
-	/**
+    /**
      * For sizable contents, set the size.  Implementations can simply write a no-op if they don't wish to 
      * store the size. 
      * 

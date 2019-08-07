@@ -61,14 +61,14 @@ class NullTafResp implements TafResp {
     }
 
     /* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
-	 */
-	@Override
-	public String getTarget() {
-		return "unknown";
-	}
+     * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
+     */
+    @Override
+    public String getTarget() {
+        return "unknown";
+    }
 
-	public Access getAccess() {
+    public Access getAccess() {
         return Access.NULL;
     }
 

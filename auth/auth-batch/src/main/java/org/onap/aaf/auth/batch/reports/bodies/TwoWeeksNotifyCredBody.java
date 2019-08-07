@@ -26,20 +26,20 @@ import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class TwoWeeksNotifyCredBody extends NotifyCredBody {
-	public TwoWeeksNotifyCredBody(Access access) throws IOException {
-		super(access, ExpireRange.TWO_WEEK);
-	}
+    public TwoWeeksNotifyCredBody(Access access) throws IOException {
+        super(access, ExpireRange.TWO_WEEK);
+    }
 
-	@Override
-	public String subject() {
-		return String.format("AAF Two Week Credential Notification (ENV: %s)",env);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
-	 */
-	@Override
-	protected String dynamic() {
-		return "You have now reached critical stage. This email is escalated to your superiors. " + super.dynamic();
-	}
+    @Override
+    public String subject() {
+        return String.format("AAF Two Week Credential Notification (ENV: %s)",env);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
+     */
+    @Override
+    protected String dynamic() {
+        return "You have now reached critical stage. This email is escalated to your superiors. " + super.dynamic();
+    }
 }

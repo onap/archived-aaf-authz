@@ -32,23 +32,23 @@ import org.onap.aaf.auth.env.AuthzTrans;
 
 public class JU_CachedNSDAOTest {
 
-	private long expiresIn;
-	private CIDAO<AuthzTrans> info;
-	@Mock
-	private NsDAO dao;
-	private AuthzTrans trans;
+    private long expiresIn;
+    private CIDAO<AuthzTrans> info;
+    @Mock
+    private NsDAO dao;
+    private AuthzTrans trans;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void test() {
-		CachedNSDAO ccDao = new CachedNSDAO(dao, info, expiresIn);
+    @Test
+    public void test() {
+        CachedNSDAO ccDao = new CachedNSDAO(dao, info, expiresIn);
 
-		assertNotNull(ccDao);
+        assertNotNull(ccDao);
 
-	}
+    }
 
 }

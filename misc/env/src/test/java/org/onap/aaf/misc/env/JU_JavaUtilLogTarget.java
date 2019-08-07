@@ -43,44 +43,44 @@ public class JU_JavaUtilLogTarget {
 
     @Before
     public void setup() {
-    	initMocks(this);
+        initMocks(this);
     }
 
     @Test
     public void testLoggable() {
-    	JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
-    	boolean retVal = logObj.isLoggable();
-    	
+        JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
+        boolean retVal = logObj.isLoggable();
+        
         assertFalse(retVal);
     }
 
     @Test
     public void testLog() {
-    	JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
-    	Mockito.doReturn(false).when(log).isLoggable(level);
-    	logObj.log(new Object[] {"test","test2",""});
-    	Mockito.doReturn(true).when(log).isLoggable(level);
-    	logObj.log(new Object[] {"test","test2",""});
-    	
+        JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
+        Mockito.doReturn(false).when(log).isLoggable(level);
+        logObj.log(new Object[] {"test","test2",""});
+        Mockito.doReturn(true).when(log).isLoggable(level);
+        logObj.log(new Object[] {"test","test2",""});
+        
     }
     
     @Test
     public void testLogThrowable() {
-    	JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
-    	
-    	Mockito.doReturn(true).when(log).isLoggable(level);
-    	logObj.log(new Throwable("test exception"), new Object[] {"test","test2",""});
-    	logObj.log(new Throwable(), new Object[] {"test","test2",""});
+        JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
+        
+        Mockito.doReturn(true).when(log).isLoggable(level);
+        logObj.log(new Throwable("test exception"), new Object[] {"test","test2",""});
+        logObj.log(new Throwable(), new Object[] {"test","test2",""});
     }
     
     @Test
     public void testPrintf() {
-    	JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
-    	
-    	Mockito.doReturn(true).when(log).isLoggable(level);
-    	logObj.printf("test", new Object[] {"test","test2",""});
+        JavaUtilLogTarget logObj = new JavaUtilLogTarget( log, level);
+        
+        Mockito.doReturn(true).when(log).isLoggable(level);
+        logObj.printf("test", new Object[] {"test","test2",""});
 
-    	Mockito.doReturn(false).when(log).isLoggable(level);
-    	logObj.printf("test", new Object[] {"test","test2",""});
+        Mockito.doReturn(false).when(log).isLoggable(level);
+        logObj.printf("test", new Object[] {"test","test2",""});
     }
 }

@@ -34,75 +34,75 @@ import org.onap.aaf.misc.env.APIException;
 
 public class JU_Log4JLogTargetTest {
 
-	@Mock
-	Level level;
-	 
+    @Mock
+    Level level;
+     
     @Mock
     Logger log;
 
     @Before
     public void setup() {
-    	initMocks(this);
+        initMocks(this);
     }
     
     @Test
     public void testLoggable() {
-    	Log4JLogTarget logObj = null;
-		try {
-			logObj = new Log4JLogTarget( "testLogger", Level.DEBUG);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	boolean retVal = logObj.isLoggable();
+        Log4JLogTarget logObj = null;
+        try {
+            logObj = new Log4JLogTarget( "testLogger", Level.DEBUG);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        boolean retVal = logObj.isLoggable();
         assertTrue(retVal);
     }
     
     @Test
     public void testLog() {
-    	Log4JLogTarget logObj = null;
-		try {
-			logObj = new Log4JLogTarget( null, Level.DEBUG);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	logObj.log(new Object[] {"test"});
+        Log4JLogTarget logObj = null;
+        try {
+            logObj = new Log4JLogTarget( null, Level.DEBUG);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        logObj.log(new Object[] {"test"});
     }
     
     @Test
     public void testLogThrowable() {
-    	Log4JLogTarget logObj = null;
-		try {
-			logObj = new Log4JLogTarget( null, Level.DEBUG);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		logObj.log(new Throwable("test exception"), new Object[] {"test","test2","",null});
+        Log4JLogTarget logObj = null;
+        try {
+            logObj = new Log4JLogTarget( null, Level.DEBUG);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        logObj.log(new Throwable("test exception"), new Object[] {"test","test2","",null});
     }
     
     @Test
     public void testPrintf() {
-    	Log4JLogTarget logObj = null;
-		try {
-			logObj = new Log4JLogTarget( "", level);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	logObj.printf("test", new Object[] {"test","test2",""});
+        Log4JLogTarget logObj = null;
+        try {
+            logObj = new Log4JLogTarget( "", level);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        logObj.printf("test", new Object[] {"test","test2",""});
 
     }
     
     @Test
     public void testSetEnv() {
-		try {
-			Log4JLogTarget.setLog4JEnv("test", Mockito.mock(BasicEnv.class));
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            Log4JLogTarget.setLog4JEnv("test", Mockito.mock(BasicEnv.class));
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
 }

@@ -193,13 +193,13 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
     public Locator<URI> getGUILocator() throws LocatorException {
         if (gui_locator==null) {
-        	RegistrationPropHolder rph;
-        	try {
-				 rph = new RegistrationPropHolder(access, 0);
-			} catch (UnknownHostException | CadiException e) {
-				throw new LocatorException(e);
-			}
-        	String url = rph.getPublicEntryName("gui", rph.default_container);
+            RegistrationPropHolder rph;
+            try {
+                 rph = new RegistrationPropHolder(access, 0);
+            } catch (UnknownHostException | CadiException e) {
+                throw new LocatorException(e);
+            }
+            String url = rph.getPublicEntryName("gui", rph.default_container);
             gui_locator = AbsAAFLocator.create(url,Config.AAF_DEFAULT_API_VERSION);
         }
         return gui_locator;
@@ -243,11 +243,11 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
 
             try {
                 new JettyServiceStarter<AuthzEnv,AuthzTrans>(
-                	new AAF_Locate(new AuthzEnv(propAccess)),true)
-                		.start();
-	        } catch (Exception e) {
-	            propAccess.log(e);
-	        }
+                    new AAF_Locate(new AuthzEnv(propAccess)),true)
+                        .start();
+            } catch (Exception e) {
+                propAccess.log(e);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

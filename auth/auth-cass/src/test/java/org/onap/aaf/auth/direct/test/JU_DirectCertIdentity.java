@@ -48,53 +48,53 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_DirectCertIdentity {
 
-	public DirectCertIdentity directCertIdentity;
+    public DirectCertIdentity directCertIdentity;
 
-	@Before
-	public void setUp() {
-		directCertIdentity = new DirectCertIdentity();
-	}
+    @Before
+    public void setUp() {
+        directCertIdentity = new DirectCertIdentity();
+    }
 
-	@Mock
-	HttpServletRequest req;
-	X509Certificate cert;
-	byte[] _certBytes;
+    @Mock
+    HttpServletRequest req;
+    X509Certificate cert;
+    byte[] _certBytes;
 
-	@Test
-	public void testidentity() {
+    @Test
+    public void testidentity() {
 
-		try {
-			Principal p = directCertIdentity.identity(req, cert, _certBytes);
-			assertEquals(((p) == null), true);
-			
-			cert = Mockito.mock(X509Certificate.class);
-			Mockito.when(cert.getEncoded()).thenReturn(new byte[128]);
-			
-			Result<List<CertDAO.Data>> rs = new Result<List<CertDAO.Data>>(null, 1, "test", new Object[0]);
-			
-			CachedCertDAO cacheDao = Mockito.mock(CachedCertDAO.class);
-			Mockito.when(cacheDao.read(Mockito.any(AuthzTrans.class),Mockito.any(Object[].class))).thenReturn(rs);
-			DirectCertIdentity.set(cacheDao);
-			p = directCertIdentity.identity(req, cert, _certBytes);
-			
-			_certBytes = new byte[128];
-			List<CertDAO.Data> dataAL = new ArrayList<>();
-			CertDAO.Data data = new CertDAO.Data();
-			dataAL.add(data);
-			rs = new Result<List<CertDAO.Data>>(dataAL, 0, "test", new Object[0]);
-			Mockito.when(cacheDao.read(Mockito.any(AuthzTrans.class),Mockito.any(Object[].class))).thenReturn(rs);
-			DirectCertIdentity.set(cacheDao);
-			p = directCertIdentity.identity(req, cert, _certBytes);
-			assertTrue(p.toString().contains("X509 Authentication for null"));
-			
-			cert = null;
-			directCertIdentity.identity(req, cert, _certBytes);
-		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// assertTrue(true);
+        try {
+            Principal p = directCertIdentity.identity(req, cert, _certBytes);
+            assertEquals(((p) == null), true);
+            
+            cert = Mockito.mock(X509Certificate.class);
+            Mockito.when(cert.getEncoded()).thenReturn(new byte[128]);
+            
+            Result<List<CertDAO.Data>> rs = new Result<List<CertDAO.Data>>(null, 1, "test", new Object[0]);
+            
+            CachedCertDAO cacheDao = Mockito.mock(CachedCertDAO.class);
+            Mockito.when(cacheDao.read(Mockito.any(AuthzTrans.class),Mockito.any(Object[].class))).thenReturn(rs);
+            DirectCertIdentity.set(cacheDao);
+            p = directCertIdentity.identity(req, cert, _certBytes);
+            
+            _certBytes = new byte[128];
+            List<CertDAO.Data> dataAL = new ArrayList<>();
+            CertDAO.Data data = new CertDAO.Data();
+            dataAL.add(data);
+            rs = new Result<List<CertDAO.Data>>(dataAL, 0, "test", new Object[0]);
+            Mockito.when(cacheDao.read(Mockito.any(AuthzTrans.class),Mockito.any(Object[].class))).thenReturn(rs);
+            DirectCertIdentity.set(cacheDao);
+            p = directCertIdentity.identity(req, cert, _certBytes);
+            assertTrue(p.toString().contains("X509 Authentication for null"));
+            
+            cert = null;
+            directCertIdentity.identity(req, cert, _certBytes);
+        } catch (CertificateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // assertTrue(true);
 
-	}
+    }
 
 }

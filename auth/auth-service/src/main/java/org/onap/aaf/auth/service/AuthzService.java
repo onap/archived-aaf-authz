@@ -644,7 +644,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @param sort
      * @return
      */
-	public Result<HISTORY> getHistoryBySubject(AuthzTrans trans, String subject, String target, int[] yyyymm, int sort);
+    public Result<HISTORY> getHistoryBySubject(AuthzTrans trans, String subject, String target, int[] yyyymm, int sort);
 
 /***********************************
  * DELEGATE 

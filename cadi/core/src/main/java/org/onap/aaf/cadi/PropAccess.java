@@ -48,9 +48,9 @@ public class PropAccess implements Access {
     // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
     private final SimpleDateFormat iso8601 = newISO8601();
     private Symm symm;
-    		
+            
     public static SimpleDateFormat newISO8601() {
-    	return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     }
 
     public static final Level DEFAULT = Level.AUDIT;
@@ -135,12 +135,12 @@ public class PropAccess implements Access {
         load(props.getProperty(Config.CADI_PROP_FILES));
         
         if(sLevel==null) { // if LogLev wasn't set before, check again after Chained Load
-	        sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
-	        if (sLevel==null) {
-	        	level=DEFAULT.maskOf();
-	        } else {
-	            level=Level.valueOf(sLevel).maskOf(); 
-	        }
+            sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
+            if (sLevel==null) {
+                level=DEFAULT.maskOf();
+            } else {
+                level=Level.valueOf(sLevel).maskOf(); 
+            }
         }
         // Setup local Symmetrical key encryption
         if (symm==null) {
@@ -179,15 +179,15 @@ public class PropAccess implements Access {
                         // Only load props from recursion which are not already in props
                         // meaning top Property file takes precedence
                         for(Entry<Object, Object> es : fileProps.entrySet()) {
-                        	if(props.get(es.getKey())==null) {
-                        		String key = es.getKey().toString();
-                        		String value = es.getValue().toString();
-                        		props.put(key, value);
-                        		if(key.contains("pass")) {
-                        			value = "XXXXXXX";
-                        		}
-                        		printf(Level.DEBUG,"  %s=%s",key,value);
-                        	}
+                            if(props.get(es.getKey())==null) {
+                                String key = es.getKey().toString();
+                                String value = es.getValue().toString();
+                                props.put(key, value);
+                                if(key.contains("pass")) {
+                                    value = "XXXXXXX";
+                                }
+                                printf(Level.DEBUG,"  %s=%s",key,value);
+                            }
                         }
                         // Recursively Load
                         String chainProp = fileProps.getProperty(Config.CADI_PROP_FILES);
@@ -272,64 +272,64 @@ public class PropAccess implements Access {
      * Need to pass in DateFormat per thread, because not marked as thread safe
      */
     public static StringBuilder buildMsg(final String name, final DateFormat sdf, Level level, Object[] elements) {
-    	final StringBuilder sb;
+        final StringBuilder sb;
         int end = elements.length;
-    	if(sdf==null) {
-    		sb = new StringBuilder();
-    		write(true,sb,elements);
-    	} else {
-    		sb = new StringBuilder(
-    				sdf.format(new Date())
-    				);
+        if(sdf==null) {
+            sb = new StringBuilder();
+            write(true,sb,elements);
+        } else {
+            sb = new StringBuilder(
+                    sdf.format(new Date())
+                    );
             sb.append(' ');
             sb.append(level.name());
             sb.append(" [");
             sb.append(name);
-	        if (end<=0) {
-	            sb.append("] ");
-	        } else {
-	            int idx = 0;
-	            if(elements[idx]!=null  && 
-	            	elements[idx] instanceof Integer) {
-	                sb.append('-');
-	                sb.append(elements[idx]);
-	                ++idx;
-	            }
-	            sb.append("] ");
-	            write(true,sb,elements);
-	        }
-    	}
+            if (end<=0) {
+                sb.append("] ");
+            } else {
+                int idx = 0;
+                if(elements[idx]!=null  && 
+                    elements[idx] instanceof Integer) {
+                    sb.append('-');
+                    sb.append(elements[idx]);
+                    ++idx;
+                }
+                sb.append("] ");
+                write(true,sb,elements);
+            }
+        }
         return sb;
     }
     
     private static boolean write(boolean first, StringBuilder sb, Object[] elements) {
-    	String s;
+        String s;
         for (Object o : elements) {
             if (o!=null) {
-            	if(o.getClass().isArray()) {
-            		first = write(first,sb,(Object[])o);
-            	} else if(o instanceof Throwable) {
-            		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            		PrintStream ps = new PrintStream(baos);
-            		((Throwable)o).printStackTrace(ps);
-            		sb.append(baos.toString());
-            	} else {
-	                s=o.toString();
-	                if (first) {
-	                    first = false;
-	                } else {
-	                    int l = s.length();
-	                    if (l>0)    {
-	                        switch(s.charAt(l-1)) {
-	                            case ' ':
-	                                break;
-	                            default:
-	                                sb.append(' ');
-	                        }
-	                    }
-	                }
-	                sb.append(s);
-            	}
+                if(o.getClass().isArray()) {
+                    first = write(first,sb,(Object[])o);
+                } else if(o instanceof Throwable) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    PrintStream ps = new PrintStream(baos);
+                    ((Throwable)o).printStackTrace(ps);
+                    sb.append(baos.toString());
+                } else {
+                    s=o.toString();
+                    if (first) {
+                        first = false;
+                    } else {
+                        int l = s.length();
+                        if (l>0)    {
+                            switch(s.charAt(l-1)) {
+                                case ' ':
+                                    break;
+                                default:
+                                    sb.append(' ');
+                            }
+                        }
+                    }
+                    sb.append(s);
+                }
             }
         }
         return first;
@@ -337,10 +337,10 @@ public class PropAccess implements Access {
 
     @Override
     public void log(Exception e, Object... elements) {
-    	StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	pw.println();
-    	e.printStackTrace(pw);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        pw.println();
+        e.printStackTrace(pw);
         log(Level.ERROR,elements,sw.toString());
     }
 
@@ -436,6 +436,6 @@ public class PropAccess implements Access {
     }
 
     public String toString() {
-    	return props.toString();
+        return props.toString();
     }
 }

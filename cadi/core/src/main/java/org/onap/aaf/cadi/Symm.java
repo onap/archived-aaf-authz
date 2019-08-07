@@ -82,7 +82,7 @@ public class Symm {
     private byte[] keyBytes = null;
     //Note: AES Encryption is not Thread Safe.  It is Synchronized
     //private AES aes = null;  // only initialized from File, and only if needed for Passwords
-	private String name;
+    private String name;
     
     /**
      * This is the standard base64 Key Set.
@@ -900,6 +900,6 @@ public class Symm {
   
   @Override
   public String toString() {
-	  return name;
+      return name;
   }
 }

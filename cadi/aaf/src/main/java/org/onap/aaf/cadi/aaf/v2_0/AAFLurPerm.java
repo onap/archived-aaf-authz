@@ -122,7 +122,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                     StringBuilder sb = new StringBuilder("/authz/perms/user/");
                     sb.append(name);
                     if(details) {
-                    	sb.append("?force");
+                        sb.append("?force");
                     }
                     Future<Perms> fp = client.read(sb.toString(),aaf.permsDF);
                     

@@ -66,20 +66,20 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
 
 
     public AbsAAFLocator(Access access, String name, final long refreshMin) throws LocatorException {
-    	RegistrationPropHolder rph;
-		try {
-			rph = new RegistrationPropHolder(access, 0);
-		} catch (UnknownHostException | CadiException e1) {
-			throw new LocatorException(e1);
-		}
+        RegistrationPropHolder rph;
         try {
-        	aaf_locator_host = rph.replacements(getClass().getSimpleName(),"https://"+Config.AAF_LOCATE_URL_TAG,null,null);
-        	if(aaf_locator_host.endsWith("/locate")) {
+            rph = new RegistrationPropHolder(access, 0);
+        } catch (UnknownHostException | CadiException e1) {
+            throw new LocatorException(e1);
+        }
+        try {
+            aaf_locator_host = rph.replacements(getClass().getSimpleName(),"https://"+Config.AAF_LOCATE_URL_TAG,null,null);
+            if(aaf_locator_host.endsWith("/locate")) {
                 aaf_locator_uri = new URI(aaf_locator_host);
-        	} else {
-        		aaf_locator_uri = new URI(aaf_locator_host+"/locate");
-        	}
-        	
+            } else {
+                aaf_locator_uri = new URI(aaf_locator_host+"/locate");
+            }
+            
             access.printf(Level.INFO, "AbsAAFLocator AAF URI is %s",aaf_locator_uri);
         } catch (URISyntaxException e) {
             throw new LocatorException(e);
@@ -122,9 +122,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     }
         
     public static Locator<URI> create(final String name, final String version) throws LocatorException {
-    	if(locatorCreator==null) {
-    		throw new LocatorException("LocatorCreator is not set");
-    	}
+        if(locatorCreator==null) {
+            throw new LocatorException("LocatorCreator is not set");
+        }
         return locatorCreator.create(name, version);
     }
 
@@ -138,7 +138,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         if (path.length>1 && "locate".equals(path[1])) {
            return path[2];
         } else if(path.length>1) {
-     		return path[1];
+             return path[1];
         } else {
             return locatorURI.toString();
         }
@@ -471,8 +471,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     }
 
     protected void clear() {
-    	epList.clear();
-    	earliest=0L;
+        epList.clear();
+        earliest=0L;
     }
 
 

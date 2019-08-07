@@ -44,7 +44,7 @@ public class Role extends Cmd {
     private static final String[] options = {"add", "del", "extend"};
     public Role(User parent) {
         super(parent, "role", new Param(optionsToString(options), true), new Param("user", true),
-        		new Param("role[,role]*", false));
+                new Param("role[,role]*", false));
     }
 
     @Override

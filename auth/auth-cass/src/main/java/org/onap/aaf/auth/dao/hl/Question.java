@@ -132,62 +132,62 @@ public class Question {
 
     private final HistoryDAO historyDAO;
     public HistoryDAO historyDAO() {
-    	return historyDAO;
+        return historyDAO;
     }
     
     private final CachedNSDAO nsDAO;
     public CachedNSDAO nsDAO() {
-    	return nsDAO;
+        return nsDAO;
     }
     
     private final CachedRoleDAO roleDAO;
     public CachedRoleDAO roleDAO() {
-    	return roleDAO;
+        return roleDAO;
     }
     
     private final CachedPermDAO permDAO;
     public CachedPermDAO permDAO() {
-    	return permDAO;
+        return permDAO;
     }
     
     private final CachedUserRoleDAO userRoleDAO;
     public CachedUserRoleDAO userRoleDAO() {
-    	return userRoleDAO;
+        return userRoleDAO;
     }
     
     private final CachedCredDAO credDAO;
     public CachedCredDAO credDAO() {
-    	return credDAO;
+        return credDAO;
     }
     
     private final CachedCertDAO certDAO;
     public CachedCertDAO certDAO() {
-    	return certDAO;
+        return certDAO;
     }
     
     private final DelegateDAO delegateDAO;
     public DelegateDAO delegateDAO() {
-    	return delegateDAO;
+        return delegateDAO;
     }
     
     private final FutureDAO futureDAO;
     public FutureDAO futureDAO() {
-    	return futureDAO;
+        return futureDAO;
     }
     
     private final ApprovalDAO approvalDAO;
     public ApprovalDAO approvalDAO() {
-    	return approvalDAO;
+        return approvalDAO;
     }
     
     public final LocateDAO locateDAO;
     public LocateDAO locateDAO() {
-    	return locateDAO;
+        return locateDAO;
     }
     
     private final CacheInfoDAO cacheInfoDAO;
-	private final int cldays;
-	private final boolean alwaysSpecial;
+    private final int cldays;
+    private final boolean alwaysSpecial;
 
     public Question(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         PERMS = trans.slot("USER_PERMS");
@@ -229,18 +229,18 @@ public class Question {
      * Note: This Constructor created for JUNIT Purposes.  Do not use otherwise.
      */
     public Question(AuthzTrans trans, HistoryDAO historyDAO, CacheInfoDAO cacheInfoDAO,
-    		CachedNSDAO nsDAO, CachedPermDAO permDAO, CachedRoleDAO roleDAO,
-    		CachedUserRoleDAO userRoleDAO, CachedCredDAO credDAO, CachedCertDAO certDAO,
-    		LocateDAO locateDAO,FutureDAO futureDAO, DelegateDAO delegateDAO,
-    		ApprovalDAO approvalDAO ) {
-    	this.historyDAO = historyDAO;
-    	this.cacheInfoDAO = cacheInfoDAO;
-    	this.nsDAO = nsDAO;
-    	this.permDAO = permDAO;
-    	this.roleDAO = roleDAO;
-    	this.userRoleDAO = userRoleDAO;
-    	this.credDAO = credDAO;
-    	this.certDAO = certDAO;
+            CachedNSDAO nsDAO, CachedPermDAO permDAO, CachedRoleDAO roleDAO,
+            CachedUserRoleDAO userRoleDAO, CachedCredDAO credDAO, CachedCertDAO certDAO,
+            LocateDAO locateDAO,FutureDAO futureDAO, DelegateDAO delegateDAO,
+            ApprovalDAO approvalDAO ) {
+        this.historyDAO = historyDAO;
+        this.cacheInfoDAO = cacheInfoDAO;
+        this.nsDAO = nsDAO;
+        this.permDAO = permDAO;
+        this.roleDAO = roleDAO;
+        this.userRoleDAO = userRoleDAO;
+        this.credDAO = credDAO;
+        this.certDAO = certDAO;
         this.locateDAO = locateDAO;
         this.futureDAO = futureDAO;
         this.delegateDAO = delegateDAO;
@@ -272,28 +272,28 @@ public class Question {
     }
 
     public Result<PermDAO.Data> permFrom(AuthzTrans trans, String type, String instance, String action) {
-    	if(type.indexOf('@') >= 0) {
-    		int colon = type.indexOf(':');
-    		if(colon>=0) {
-    			PermDAO.Data pdd = new PermDAO.Data();
-    			pdd.ns = type.substring(0, colon);
-    			pdd.type = type.substring(colon+1);
-    			pdd.instance = instance;
-    			pdd.action = action;
-    		
-    			return Result.ok(pdd);
-    		} else {
-    			return Result.err(Result.ERR_BadData,"Could not extract ns and type from " + type);
-    		}
-    	} else {
-	        Result<NsDAO.Data> rnd = deriveNs(trans, type);
-	        if (rnd.isOK()) {
-	            return Result.ok(new PermDAO.Data(new NsSplit(rnd.value, type),
-	                    instance, action));
-	        } else {
-	            return Result.err(rnd);
-	        }
-    	}
+        if(type.indexOf('@') >= 0) {
+            int colon = type.indexOf(':');
+            if(colon>=0) {
+                PermDAO.Data pdd = new PermDAO.Data();
+                pdd.ns = type.substring(0, colon);
+                pdd.type = type.substring(colon+1);
+                pdd.instance = instance;
+                pdd.action = action;
+            
+                return Result.ok(pdd);
+            } else {
+                return Result.err(Result.ERR_BadData,"Could not extract ns and type from " + type);
+            }
+        } else {
+            Result<NsDAO.Data> rnd = deriveNs(trans, type);
+            if (rnd.isOK()) {
+                return Result.ok(new PermDAO.Data(new NsSplit(rnd.value, type),
+                        instance, action));
+            } else {
+                return Result.err(rnd);
+            }
+        }
     }
 
     /**
@@ -357,38 +357,38 @@ public class Question {
     }
 
     public Result<List<PermDAO.Data>> getPermsByType(AuthzTrans trans, String type) {
-    	if(type.indexOf('@') >= 0) {
-    		int colon = type.indexOf(':');
-    		if(colon>=0) {
-    			return permDAO.readByType(trans, type.substring(0, colon),type.substring(colon+1));
-    		} else {
-    			return Result.err(Result.ERR_BadData, "%s is malformed",type);
-    		}
-    	} else {
-	        Result<NsSplit> nss = deriveNsSplit(trans, type);
-	        if (nss.notOK()) {
-	            return Result.err(nss);
-	        }
-	        return permDAO.readByType(trans, nss.value.ns, nss.value.name);
-    	}
+        if(type.indexOf('@') >= 0) {
+            int colon = type.indexOf(':');
+            if(colon>=0) {
+                return permDAO.readByType(trans, type.substring(0, colon),type.substring(colon+1));
+            } else {
+                return Result.err(Result.ERR_BadData, "%s is malformed",type);
+            }
+        } else {
+            Result<NsSplit> nss = deriveNsSplit(trans, type);
+            if (nss.notOK()) {
+                return Result.err(nss);
+            }
+            return permDAO.readByType(trans, nss.value.ns, nss.value.name);
+        }
     }
 
     public Result<List<PermDAO.Data>> getPermsByName(AuthzTrans trans, String type, String instance, String action) {
-    	if(type.indexOf('@') >= 0) {
-    		int colon = type.indexOf(':');
-    		if(colon>=0) {
-    			return permDAO.read(trans, type.substring(0, colon),type.substring(colon+1), instance,action);
-    		} else {
-    			return Result.err(Result.ERR_BadData, "%s is malformed",type);
-    		}
-    	} else {
-	        Result<NsSplit> nss = deriveNsSplit(trans, type);
-	        if (nss.notOK()) {
-	            return Result.err(nss);
-	        }
-	        
-	        return permDAO.read(trans, nss.value.ns, nss.value.name, instance,action);
-    	}
+        if(type.indexOf('@') >= 0) {
+            int colon = type.indexOf(':');
+            if(colon>=0) {
+                return permDAO.read(trans, type.substring(0, colon),type.substring(colon+1), instance,action);
+            } else {
+                return Result.err(Result.ERR_BadData, "%s is malformed",type);
+            }
+        } else {
+            Result<NsSplit> nss = deriveNsSplit(trans, type);
+            if (nss.notOK()) {
+                return Result.err(nss);
+            }
+            
+            return permDAO.read(trans, nss.value.ns, nss.value.name, instance,action);
+        }
     }
 
     public Result<List<PermDAO.Data>> getPermsByRole(AuthzTrans trans, String role, boolean lookup) {
@@ -435,13 +435,13 @@ public class Question {
     }
 
     public Result<List<RoleDAO.Data>> getRolesByName(AuthzTrans trans, String role) {
-    	if(role.startsWith(trans.user()) ) {
-    		if(role.endsWith(":user")) {
-    			return roleDAO.read(trans,trans.user(), "user");
-    		} else {
-    			return Result.err(Result.ERR_BadData,"%s is a badly formatted role",role);
-    		}
-    	}
+        if(role.startsWith(trans.user()) ) {
+            if(role.endsWith(":user")) {
+                return roleDAO.read(trans,trans.user(), "user");
+            } else {
+                return Result.err(Result.ERR_BadData,"%s is a badly formatted role",role);
+            }
+        }
         Result<NsSplit> nss = deriveNsSplit(trans, role);
         if (nss.notOK()) {
             return Result.err(nss);
@@ -619,9 +619,9 @@ public class Question {
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user, RoleDAO.Data rdd, Access access) {
-    	if(trans.user().equals(rdd.ns)) {
-    		return Result.ok((NsDAO.Data)null);
-    	}
+        if(trans.user().equals(rdd.ns)) {
+            return Result.ok((NsDAO.Data)null);
+        }
         Result<NsDAO.Data> rnsd = deriveNs(trans, rdd.ns);
         if (rnsd.isOK()) {
             return mayUser(trans, user, rnsd.value, rdd, access);
@@ -676,17 +676,17 @@ public class Question {
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user,PermDAO.Data pdd, Access access) {
-    	if(pdd.ns.indexOf('@')>-1) {
-	    	if(user.equals(pdd.ns) || isGranted(trans,user,Define.ROOT_NS(),"access",pdd.instance,READ)) {
-	    		NsDAO.Data ndd = new NsDAO.Data();
-	    		ndd.name = user;
-	    		ndd.type = NsDAO.USER;
-	    		ndd.parent = "";
-	    		return Result.ok(ndd);
-	    	} else {
-	    		return Result.err(Result.ERR_Security,"Only a User may modify User");
-	    	}
-    	}
+        if(pdd.ns.indexOf('@')>-1) {
+            if(user.equals(pdd.ns) || isGranted(trans,user,Define.ROOT_NS(),"access",pdd.instance,READ)) {
+                NsDAO.Data ndd = new NsDAO.Data();
+                ndd.name = user;
+                ndd.type = NsDAO.USER;
+                ndd.parent = "";
+                return Result.ok(ndd);
+            } else {
+                return Result.err(Result.ERR_Security,"Only a User may modify User");
+            }
+        }
         Result<NsDAO.Data> rnsd = deriveNs(trans, pdd.ns);
         if (rnsd.isOK()) {
             return mayUser(trans, user, rnsd.value, pdd, access);
@@ -885,7 +885,7 @@ public class Question {
                         }
                     }
                     if (cddl.size()>1) {
-                    	Collections.sort(cddl, (a, b) -> b.expires.compareTo(a.expires));
+                        Collections.sort(cddl, (a, b) -> b.expires.compareTo(a.expires));
                     }
                 } else {
                     cddl = result.value;
@@ -945,13 +945,13 @@ public class Question {
                     rv = Result.err(Status.ERR_Security,
                             "Credentials expired %s",Chrono.utcStamp(expired));
                 } else {
-	                if (debug==null && alwaysSpecial) {
-	                	debug = new StringBuilder();
-	                }
-	                if (debug!=null) {
-	                	debug.append(trans.env().encryptor().encrypt(new String(cred)));
-	                	rv = Result.err(Status.ERR_Security,String.format("invalid password - %s",debug.toString()));
-	                }
+                    if (debug==null && alwaysSpecial) {
+                        debug = new StringBuilder();
+                    }
+                    if (debug!=null) {
+                        debug.append(trans.env().encryptor().encrypt(new String(cred)));
+                        rv = Result.err(Status.ERR_Security,String.format("invalid password - %s",debug.toString()));
+                    }
                 }
             }
         } else {
@@ -1005,14 +1005,14 @@ public class Question {
             }
             
         } else if (cred.type==CredDAO.FQI) {
-        	cred.cred = null;
-        	return Result.ok(cred);
+            cred.cred = null;
+            return Result.ok(cred);
         }
         return Result.err(Status.ERR_Security,"invalid/unreadable credential");
     }
     
     public Result<Boolean> userCredCheck(AuthzTrans trans, CredDAO.Data orig, final byte[] raw) {
-    	Result<Boolean> rv;
+        Result<Boolean> rv;
         TimeTaken tt = trans.start("CheckCred Cred", Env.SUB);
         try {
             switch(orig.type) {
@@ -1231,11 +1231,11 @@ public class Question {
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO.read(trans, user,ns+DOT_ADMIN);
         if (rur.isOKhasData()) {
             Date now = new Date();
-        	for (UserRoleDAO.Data urdd : rur.value){
-	            if (urdd.expires.after(now)) {
-	                return true;
-	            }
-	        }
+            for (UserRoleDAO.Data urdd : rur.value){
+                if (urdd.expires.after(now)) {
+                    return true;
+                }
+            }
         };
         return false;
     }

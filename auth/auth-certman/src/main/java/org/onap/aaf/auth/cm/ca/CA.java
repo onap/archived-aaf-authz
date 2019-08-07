@@ -72,7 +72,7 @@ public abstract class CA {
         this.name = caName;
         this.env = env;
         this.env_tag = env==null || env.isEmpty()?false: 
-        		Boolean.parseBoolean(access.getProperty(CM_CA_ENV_TAG, Boolean.FALSE.toString()));
+                Boolean.parseBoolean(access.getProperty(CM_CA_ENV_TAG, Boolean.FALSE.toString()));
         permNS=null;
         String prefix = CM_CA_PREFIX + name;
         permType = access.getProperty(prefix + ".perm_type",null);
@@ -195,7 +195,7 @@ public abstract class CA {
     }
     
     public boolean shouldAddEnvTag() {
-    	return env_tag; 
+        return env_tag; 
     }
     
     public String getEnv() {

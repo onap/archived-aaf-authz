@@ -48,25 +48,25 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class JU_CachedUserRoleDAO {
 
-	@Mock
-	UserRoleDAO dao;
-	
-	@Mock
-	CIDAO<AuthzTrans> info;
-	
-	@Mock
-	AuthzTransImpl trans;
-	
-	@Mock
-	RoleDAO.Data data;
-	
-	@Mock
-	PermDAO.Data permData;
-	
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-		when(trans.debug()).thenReturn(new LogTarget() {
+    @Mock
+    UserRoleDAO dao;
+    
+    @Mock
+    CIDAO<AuthzTrans> info;
+    
+    @Mock
+    AuthzTransImpl trans;
+    
+    @Mock
+    RoleDAO.Data data;
+    
+    @Mock
+    PermDAO.Data permData;
+    
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        when(trans.debug()).thenReturn(new LogTarget() {
             
             @Override
             public void printf(String fmt, Object... vars) {}
@@ -89,92 +89,92 @@ public class JU_CachedUserRoleDAO {
                 return true;
             }
         });
-	}
-	
-	private class TaggedPrincipalStub extends TaggedPrincipal {
-		String name="TaggedPrincipalStub";
+    }
+    
+    private class TaggedPrincipalStub extends TaggedPrincipal {
+        String name="TaggedPrincipalStub";
         public TaggedPrincipalStub() { super(); }
         public TaggedPrincipalStub(final TagLookup tl) { super(tl); }
         @Override public String getName() { return name; }
         @Override public String tag() { return null; }
     }
-	
-	@Test
-	public void testReadName() {
-		CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10L);
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"test4",new String[0]);
-		Mockito.doReturn(retVal1).when(dao).readByUser(trans, "test4");
-//		Mockito.when(roleDaoObj.get(Mockito.any(), Mockito.any(String.class), Mockito.any())).thenReturn(retVal1);
-		Result<List<Data>> retVal = roleDaoObj.readByUser(trans, "test4");
-		//System.out.println(retVal.status);
-		//retVal.status = 0;
-		assertEquals("25", Integer.toString(retVal.status));
-	}	
-	
-	@Test
-	public void testReadNameUser() {
-		CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10L);
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"TaggedPrincipalStub",new String[0]);
-		AuthzEnv env = Mockito.mock(AuthzEnv.class);
-		AuthzTransImpl transTemp = new AuthzTransImpl(env) {
-			@Override
-		    public<T> T get(Slot slot, T deflt) {
-				Object o=null;
-				return (T)o;
-			}
-			
-		};
-		transTemp.setUser(new TaggedPrincipalStub());
-		Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
-		Mockito.doReturn(retVal1).when(dao).readByUser(transTemp, "TaggedPrincipalStub");
-		roleDaoObj.invalidate("TaggedPrincipalStub");
-		Result<List<Data>> retVal = roleDaoObj.readByUser(transTemp, "TaggedPrincipalStub");
-//		System.out.println(retVal.status);
-		assertEquals("1", Integer.toString(retVal.status));
-	}
-	
-	@Test
-	public void testReadByRoleSuccess() {
-		CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 0);//Mockito.mock(CachedRoleDAO.class);//
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"test",new String[0]);
-		Mockito.doReturn(retVal1).when(dao).readByRole(trans, "");
-		roleDaoObj.invalidate("");
-		Result<List<Data>> retVal = roleDaoObj.readByRole(trans, "");
-		//System.out.println(retVal.status);
-		assertEquals("1", Integer.toString(retVal.status));
-	}	
-	@Test
-	public void testReadByRoleFailure() {
-		CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 0);//Mockito.mock(CachedRoleDAO.class);//
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"test1",new String[0]);
-		Mockito.doReturn(retVal1).when(dao).readByRole(trans, "");
-		roleDaoObj.invalidate("");
-		Result<List<Data>> retVal = roleDaoObj.readByRole(trans, "");
-		//System.out.println(retVal.status);
-		assertEquals("25", Integer.toString(retVal.status));
-	}
-	
-	@Test
-	public void testReadUserInRole() {
-		CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
-		Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"TaggedPrincipalStub",new String[0]);
-		AuthzEnv env = Mockito.mock(AuthzEnv.class);
-		AuthzTransImpl transTemp = new AuthzTransImpl(env) {
-			@Override
-		    public<T> T get(Slot slot, T deflt) {
-				Object o=null;
-				return (T)o;
-			}
-			
-		};
-		transTemp.setUser(new TaggedPrincipalStub());
-		Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
-		Mockito.doReturn(retVal1).when(dao).readByUserRole(transTemp, "","");
-		Mockito.doReturn(retVal1).when(dao).readByUser(transTemp, "TaggedPrincipalStub");
-		Result<List<Data>> retVal = roleDaoObj.readUserInRole(transTemp, "TaggedPrincipalStub","");
-		//System.out.println(retVal.status);
-		assertEquals("25", Integer.toString(retVal.status));
-	}
-	
+    
+    @Test
+    public void testReadName() {
+        CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10L);
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"test4",new String[0]);
+        Mockito.doReturn(retVal1).when(dao).readByUser(trans, "test4");
+//        Mockito.when(roleDaoObj.get(Mockito.any(), Mockito.any(String.class), Mockito.any())).thenReturn(retVal1);
+        Result<List<Data>> retVal = roleDaoObj.readByUser(trans, "test4");
+        //System.out.println(retVal.status);
+        //retVal.status = 0;
+        assertEquals("25", Integer.toString(retVal.status));
+    }    
+    
+    @Test
+    public void testReadNameUser() {
+        CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10L);
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"TaggedPrincipalStub",new String[0]);
+        AuthzEnv env = Mockito.mock(AuthzEnv.class);
+        AuthzTransImpl transTemp = new AuthzTransImpl(env) {
+            @Override
+            public<T> T get(Slot slot, T deflt) {
+                Object o=null;
+                return (T)o;
+            }
+            
+        };
+        transTemp.setUser(new TaggedPrincipalStub());
+        Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
+        Mockito.doReturn(retVal1).when(dao).readByUser(transTemp, "TaggedPrincipalStub");
+        roleDaoObj.invalidate("TaggedPrincipalStub");
+        Result<List<Data>> retVal = roleDaoObj.readByUser(transTemp, "TaggedPrincipalStub");
+//        System.out.println(retVal.status);
+        assertEquals("1", Integer.toString(retVal.status));
+    }
+    
+    @Test
+    public void testReadByRoleSuccess() {
+        CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 0);//Mockito.mock(CachedRoleDAO.class);//
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"test",new String[0]);
+        Mockito.doReturn(retVal1).when(dao).readByRole(trans, "");
+        roleDaoObj.invalidate("");
+        Result<List<Data>> retVal = roleDaoObj.readByRole(trans, "");
+        //System.out.println(retVal.status);
+        assertEquals("1", Integer.toString(retVal.status));
+    }    
+    @Test
+    public void testReadByRoleFailure() {
+        CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 0);//Mockito.mock(CachedRoleDAO.class);//
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"test1",new String[0]);
+        Mockito.doReturn(retVal1).when(dao).readByRole(trans, "");
+        roleDaoObj.invalidate("");
+        Result<List<Data>> retVal = roleDaoObj.readByRole(trans, "");
+        //System.out.println(retVal.status);
+        assertEquals("25", Integer.toString(retVal.status));
+    }
+    
+    @Test
+    public void testReadUserInRole() {
+        CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
+        Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"TaggedPrincipalStub",new String[0]);
+        AuthzEnv env = Mockito.mock(AuthzEnv.class);
+        AuthzTransImpl transTemp = new AuthzTransImpl(env) {
+            @Override
+            public<T> T get(Slot slot, T deflt) {
+                Object o=null;
+                return (T)o;
+            }
+            
+        };
+        transTemp.setUser(new TaggedPrincipalStub());
+        Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
+        Mockito.doReturn(retVal1).when(dao).readByUserRole(transTemp, "","");
+        Mockito.doReturn(retVal1).when(dao).readByUser(transTemp, "TaggedPrincipalStub");
+        Result<List<Data>> retVal = roleDaoObj.readUserInRole(transTemp, "TaggedPrincipalStub","");
+        //System.out.println(retVal.status);
+        assertEquals("25", Integer.toString(retVal.status));
+    }
+    
 
 }

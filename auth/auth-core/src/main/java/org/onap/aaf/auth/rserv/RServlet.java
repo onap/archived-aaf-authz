@@ -125,11 +125,11 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
         return "RServlet for Jetty";
     }
 
-	/**
+    /**
      * Allow Service to instantiate certain actions after service starts up
-	 * @throws LocatorException 
-	 * @throws CadiException 
-	 * @throws APIException 
+     * @throws LocatorException 
+     * @throws CadiException 
+     * @throws APIException 
      */
     public void postStartup(String hostname, int port) throws APIException {
     }

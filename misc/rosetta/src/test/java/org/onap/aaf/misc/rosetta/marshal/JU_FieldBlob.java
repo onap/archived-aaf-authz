@@ -26,24 +26,24 @@ import org.onap.aaf.misc.env.jaxb.JAXBumar;
 
 public class JU_FieldBlob {
 
-	class FieldBlobImpl extends FieldBlob{
+    class FieldBlobImpl extends FieldBlob{
 
-		public FieldBlobImpl(String name) {
-			super(name);
-			// TODO Auto-generated constructor stub
-		}
+        public FieldBlobImpl(String name) {
+            super(name);
+            // TODO Auto-generated constructor stub
+        }
 
-		@Override
-		protected byte[] data(Object t) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-	}
-	@Test
-	public void testData() {
-		FieldBlob<JAXBumar> obj = new FieldBlobImpl("test");
-		obj.data(Mockito.mock(JAXBumar.class), new StringBuilder());
-	}
+        @Override
+        protected byte[] data(Object t) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+    }
+    @Test
+    public void testData() {
+        FieldBlob<JAXBumar> obj = new FieldBlobImpl("test");
+        obj.data(Mockito.mock(JAXBumar.class), new StringBuilder());
+    }
 
 }

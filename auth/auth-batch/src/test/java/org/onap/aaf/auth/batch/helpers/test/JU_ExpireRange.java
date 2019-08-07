@@ -31,42 +31,42 @@ import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.PropAccess;
 
 public class JU_ExpireRange {
-	@Test
-	public void test() {
-		ExpireRange expRange = new ExpireRange(new PropAccess());
-		Date now = expRange.now();
-		
-		Set<String> names=expRange.names();
-		assertTrue(names.contains("OneMonth"));
-		assertTrue(names.contains("OneWeek"));
-		assertTrue(names.contains("Delete"));
-		assertFalse(names.contains(null));
-		assertFalse(names.contains("bogus"));
-		
-		ExpireRange.Range r;
-		GregorianCalendar gc = new GregorianCalendar();
-		String[] all = new String[] {"ur","cred"};
-		
-		// Test 3 weeks prior
-		gc.setTime(now);
-		gc.add(GregorianCalendar.WEEK_OF_MONTH,-3);
-		for(String rs : all) {
-			r = expRange.getRange(rs, gc.getTime());
-			assertNotNull(r);
-			assertEquals("Delete",r.name());
-		}
-		
-		// Test 1 week prior
-		gc.setTime(now);
-		gc.add(GregorianCalendar.WEEK_OF_MONTH,-1);
-		for(String rs : all) {
-			r = expRange.getRange(rs, gc.getTime());
-			assertNull(r);
-		}
-		
-		// Test Today
-		r = expRange.getRange("cred", now);
-		assertNotNull(r);
-	}
+    @Test
+    public void test() {
+        ExpireRange expRange = new ExpireRange(new PropAccess());
+        Date now = expRange.now();
+        
+        Set<String> names=expRange.names();
+        assertTrue(names.contains("OneMonth"));
+        assertTrue(names.contains("OneWeek"));
+        assertTrue(names.contains("Delete"));
+        assertFalse(names.contains(null));
+        assertFalse(names.contains("bogus"));
+        
+        ExpireRange.Range r;
+        GregorianCalendar gc = new GregorianCalendar();
+        String[] all = new String[] {"ur","cred"};
+        
+        // Test 3 weeks prior
+        gc.setTime(now);
+        gc.add(GregorianCalendar.WEEK_OF_MONTH,-3);
+        for(String rs : all) {
+            r = expRange.getRange(rs, gc.getTime());
+            assertNotNull(r);
+            assertEquals("Delete",r.name());
+        }
+        
+        // Test 1 week prior
+        gc.setTime(now);
+        gc.add(GregorianCalendar.WEEK_OF_MONTH,-1);
+        for(String rs : all) {
+            r = expRange.getRange(rs, gc.getTime());
+            assertNull(r);
+        }
+        
+        // Test Today
+        r = expRange.getRange("cred", now);
+        assertNotNull(r);
+    }
 
 }

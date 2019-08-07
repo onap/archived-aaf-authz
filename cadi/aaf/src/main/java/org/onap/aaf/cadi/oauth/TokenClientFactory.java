@@ -78,11 +78,11 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
         }
         
         for(String tag : new String[] {Config.AAF_ALT_OAUTH2_TOKEN_URL, Config.AAF_ALT_OAUTH2_INTROSPECT_URL}) {
-	        String value = access.getProperty(tag, null);
-	        if(value!=null) {
-	        	alts.add(tag);
-	        	alts.add(value);
-	        }
+            String value = access.getProperty(tag, null);
+            if(value!=null) {
+                alts.add(tag);
+                alts.add(value);
+            }
         }
         
         symm = Symm.encrypt.obtain();
@@ -121,7 +121,7 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
         }
         char okind;
         if (alts.contains(tagOrURL)) {
-        	okind = Kind.OAUTH;
+            okind = Kind.OAUTH;
         } else {
             okind = Kind.AAF_OAUTH;
         }

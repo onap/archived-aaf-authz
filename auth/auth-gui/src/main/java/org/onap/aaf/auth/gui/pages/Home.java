@@ -38,7 +38,7 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 public class Home extends Page {
     public static final String HREF = "/gui/home";
     
-	public Home(final AAF_GUI gui) throws APIException, IOException {
+    public Home(final AAF_GUI gui) throws APIException, IOException {
         super(gui.env,"Home",HREF, NO_FIELDS, new NamedCode(false,"content") {
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen htmlGen) throws APIException, IOException {
@@ -57,7 +57,7 @@ public class Home extends Page {
                 final Mark pages = htmlGen.divID("Pages");
                 htmlGen.leaf(H3).text("Choose from the following:").end();
                 for(String[] mi : MENU_ITEMS) {
-                	htmlGen.leaf(A,"href="+mi[0]).text(mi[1]).end();
+                    htmlGen.leaf(A,"href="+mi[0]).text(mi[1]).end();
                 }
                 htmlGen.end(pages);
             }

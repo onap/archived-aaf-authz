@@ -57,7 +57,7 @@ public class TestConnectivity {
     private static Map<String, String> aaf_urls;
 
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         if (args.length<1) {
             System.out.println("Usage: ConnectivityTester <cadi_prop_files> [<AAF FQDN (i.e. aaf.dev.att.com)>]");
         } else {
@@ -84,48 +84,48 @@ public class TestConnectivity {
                     SecuritySetter<HttpURLConnection> ss = si.defSS;
                     permTest(locator,ss);
                 } else {
-	                /////////
-	                print(true,"Test Connections driven by AAFLocator");
-	                String serviceURI = aaf_urls.get(Config.AAF_URL);
-	
-	                for (String url : new String[] {
-	                        serviceURI,
-	                        aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL),
-	                        aaf_urls.get(Config.AAF_OAUTH2_INTROSPECT_URL),
-	                        aaf_urls.get(Config.AAF_URL_CM),
-	                        aaf_urls.get(Config.AAF_URL_GUI),
-	                        aaf_urls.get(Config.AAF_URL_FS),
-	                        aaf_urls.get(Config.AAF_URL_HELLO)
-	                }) {
-	                	URI uri = new URI(url);
-	                    Locator<URI> locator = new AAFLocator(si, uri);
-	                    try {
-	                        connectTest(locator, uri);
-	                    } catch (Exception e) {
-	                        e.printStackTrace();
-	                        System.err.flush();
-	                    }
-	                }
+                    /////////
+                    print(true,"Test Connections driven by AAFLocator");
+                    String serviceURI = aaf_urls.get(Config.AAF_URL);
+    
+                    for (String url : new String[] {
+                            serviceURI,
+                            aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL),
+                            aaf_urls.get(Config.AAF_OAUTH2_INTROSPECT_URL),
+                            aaf_urls.get(Config.AAF_URL_CM),
+                            aaf_urls.get(Config.AAF_URL_GUI),
+                            aaf_urls.get(Config.AAF_URL_FS),
+                            aaf_urls.get(Config.AAF_URL_HELLO)
+                    }) {
+                        URI uri = new URI(url);
+                        Locator<URI> locator = new AAFLocator(si, uri);
+                        try {
+                            connectTest(locator, uri);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.err.flush();
+                        }
+                    }
 
-	                /////////
-	                print(true,"Test Service for Perms driven by AAFLocator");
-	                Locator<URI> locator = new AAFLocator(si,new URI(serviceURI));
-	                for (SecuritySetter<HttpURLConnection> ss : lss) {
-	                    permTest(locator,ss);
-	                }
+                    /////////
+                    print(true,"Test Service for Perms driven by AAFLocator");
+                    Locator<URI> locator = new AAFLocator(si,new URI(serviceURI));
+                    for (SecuritySetter<HttpURLConnection> ss : lss) {
+                        permTest(locator,ss);
+                    }
 
-	                //////////
-	                print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
-	                boolean hasBath=false;
-	                for (SecuritySetter<HttpURLConnection> ss : lss) {
-	                    if (ss instanceof HBasicAuthSS) {
-	                    	hasBath=true;
-	                        basicAuthTest(new AAFLocator(si, new URI(serviceURI)),ss);
-	                    }
-	                }
-	                if(!hasBath) {
-	                	System.out.println("No User/Password to test");
-	                }
+                    //////////
+                    print(true,"Test essential BasicAuth Service call, driven by AAFLocator");
+                    boolean hasBath=false;
+                    for (SecuritySetter<HttpURLConnection> ss : lss) {
+                        if (ss instanceof HBasicAuthSS) {
+                            hasBath=true;
+                            basicAuthTest(new AAFLocator(si, new URI(serviceURI)),ss);
+                        }
+                    }
+                    if(!hasBath) {
+                        System.out.println("No User/Password to test");
+                    }
                 }
                 
             } catch (Exception e) {
@@ -137,7 +137,7 @@ public class TestConnectivity {
     }
     
 
-	private static List<SecuritySetter<HttpURLConnection>> loadSetters(PropAccess access, SecurityInfoC<HttpURLConnection> si)  {
+    private static List<SecuritySetter<HttpURLConnection>> loadSetters(PropAccess access, SecurityInfoC<HttpURLConnection> si)  {
         print(true,"Load Security Setters from Configuration Information");
         String user = access.getProperty(Config.AAF_APPID);
 
@@ -227,10 +227,10 @@ public class TestConnectivity {
             if ((uri = dl.get(li)) == null) {
                 System.out.println("Locator Item empty");
             } else {
-            	System.out.printf("Located %s using %s\n",uri.toString(), locatorURI.toString());
+                System.out.printf("Located %s using %s\n",uri.toString(), locatorURI.toString());
                 socket = new Socket();
                 try {
-                	FixURIinfo fui = new FixURIinfo(uri);
+                    FixURIinfo fui = new FixURIinfo(uri);
                     try {
                         socket.connect(new InetSocketAddress(fui.getHost(),  fui.getPort()),3000);
                         System.out.printf("Can Connect a Socket to %s %d\n",fui.getHost(),fui.getPort());
@@ -261,7 +261,7 @@ public class TestConnectivity {
             if (ss instanceof HRenewingTokenSS) {
                 System.out.println(" " + ((HRenewingTokenSS)ss).tokenURL());
             } else {
-            	System.out.println();
+                System.out.println();
             }
             HClient client = new HClient(ss, uri, 3000);
             client.setMethod("GET");

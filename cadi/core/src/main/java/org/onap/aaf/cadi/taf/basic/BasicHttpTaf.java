@@ -70,7 +70,7 @@ public class BasicHttpTaf implements HttpTaf {
     private Map<String,CredVal> rbacs = new TreeMap<>();
     private boolean warn;
     private long timeToLive;
-	private MapBathConverter mapIds;
+    private MapBathConverter mapIds;
     
     public BasicHttpTaf(Access access, CredVal rbac, String realm, long timeToLive, boolean turnOnWarning) {
         this.access = access;
@@ -80,13 +80,13 @@ public class BasicHttpTaf implements HttpTaf {
         this.timeToLive = timeToLive;
         String csvFile = access.getProperty(Config.CADI_BATH_CONVERT, null);
         if(csvFile==null) {
-        	mapIds=null;
+            mapIds=null;
         } else {
-        	try {
-				mapIds = new MapBathConverter(access, new CSV(access,csvFile));
-			} catch (IOException | CadiException e) {
-				access.log(e,"Bath Map Conversion is not initialzed (non fatal)");
-			}
+            try {
+                mapIds = new MapBathConverter(access, new CSV(access,csvFile));
+            } catch (IOException | CadiException e) {
+                access.log(e,"Bath Map Conversion is not initialzed (non fatal)");
+            }
         }
     }
 
@@ -134,7 +134,7 @@ public class BasicHttpTaf implements HttpTaf {
                 access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
             }
             if(mapIds != null) {
-            	authz = mapIds.convert(access, authz);
+                authz = mapIds.convert(access, authz);
             }
             try {
                 CachedBasicPrincipal ba = new CachedBasicPrincipal(this,authz,realm,timeToLive);

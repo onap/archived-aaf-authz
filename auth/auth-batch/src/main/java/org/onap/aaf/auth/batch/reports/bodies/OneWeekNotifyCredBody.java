@@ -26,20 +26,20 @@ import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class OneWeekNotifyCredBody extends NotifyCredBody {
-	public OneWeekNotifyCredBody(Access access) throws IOException {
-		super(access, ExpireRange.ONE_WEEK);
-	}
+    public OneWeekNotifyCredBody(Access access) throws IOException {
+        super(access, ExpireRange.ONE_WEEK);
+    }
 
-	@Override
-	public String subject() {
-		return String.format("AAF Final Week Credential Notification (ENV: %s)",env);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
-	 */
-	@Override
-	protected String dynamic() {
-		return "Failure for your App is <b><i>IMMINENT</i></b>. This email is escalated to your superior and General Manager. " + super.dynamic();
-	}
+    @Override
+    public String subject() {
+        return String.format("AAF Final Week Credential Notification (ENV: %s)",env);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
+     */
+    @Override
+    protected String dynamic() {
+        return "Failure for your App is <b><i>IMMINENT</i></b>. This email is escalated to your superior and General Manager. " + super.dynamic();
+    }
 }

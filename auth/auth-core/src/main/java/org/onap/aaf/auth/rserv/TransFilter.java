@@ -120,7 +120,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 resp = cadi.validate(req,res,trans);
                 Object tag = req.getAttribute("CRED_TAG");
                 if(tag!=null) {
-                	((AuthzTrans)trans).setTag(tag.toString());
+                    ((AuthzTrans)trans).setTag(tag.toString());
                 }
                 switch(r=resp.isAuthenticated()) {
                     case IS_AUTHENTICATED:
@@ -145,7 +145,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 // use
                 trans.checkpoint(resp.desc(),Env.ALWAYS);
                 if (resp.isFailedAttempt()) {
-                	target = resp.getTarget();
+                    target = resp.getTarget();
                 }
             }
         } catch (Exception e) {

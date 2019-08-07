@@ -37,69 +37,69 @@ import org.onap.aaf.misc.env.APIException;
 
 public class JU_Namespace {
 
-	Namespace namespace;
-	
-	@Before
-	public void setUp() throws APIException, IOException {
-		initMocks(this);
-	}
+    Namespace namespace;
+    
+    @Before
+    public void setUp() throws APIException, IOException {
+        initMocks(this);
+    }
 
-	@Test
-	public void testInit() {
-		new Namespace();
-		NsDAO.Data data = new NsDAO.Data();
-		data.name = "name";
-		namespace = new Namespace(data);
-		assertTrue(namespace.name.equals("name"));
-		data.attrib = new HashMap<>();
-		namespace = new Namespace(data);
-		data.attrib.put("test", "test");
-		namespace = new Namespace(data);
-	}
-	
-	
-	
-	@Test
-	public void testSecondConstructor() {
+    @Test
+    public void testInit() {
+        new Namespace();
+        NsDAO.Data data = new NsDAO.Data();
+        data.name = "name";
+        namespace = new Namespace(data);
+        assertTrue(namespace.name.equals("name"));
+        data.attrib = new HashMap<>();
+        namespace = new Namespace(data);
+        data.attrib.put("test", "test");
+        namespace = new Namespace(data);
+    }
+    
+    
+    
+    @Test
+    public void testSecondConstructor() {
 
-		NsDAO.Data data = new NsDAO.Data();
-		data.name = "name";
-		List<String> owner = new ArrayList<>();
-		List<String> admin = new ArrayList<>();;
-		namespace = new Namespace(data,owner, admin);
-		assertTrue(namespace.name.equals("name"));
-		data.attrib = new HashMap<>();
-		namespace = new Namespace(data,owner, admin);
-		data.attrib.put("test", "test");
-		namespace = new Namespace(data ,owner, admin);
-		
-		NsDAO.Data retData = namespace.data();
-		assertTrue(retData.name.equals("name"));
-	
-	}
-	@Test
-	public void testBytify() {
-		testSecondConstructor();
-		try {
-			ByteBuffer retVal = namespace.bytify();
-			namespace.reconstitute(retVal);
-			namespace.hashCode();
-			namespace.toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	@Test
-	public void testEquals() {
-		testSecondConstructor();
-		NsDAO.Data data = new NsDAO.Data();
-		data.name = "name";
-		Namespace nameObj = null;
-		assertFalse(namespace.equals(nameObj));
-		assertFalse(namespace.equals(data));
-		nameObj = new Namespace(data);
-		assertTrue(namespace.equals(nameObj));
-	}
-	
+        NsDAO.Data data = new NsDAO.Data();
+        data.name = "name";
+        List<String> owner = new ArrayList<>();
+        List<String> admin = new ArrayList<>();;
+        namespace = new Namespace(data,owner, admin);
+        assertTrue(namespace.name.equals("name"));
+        data.attrib = new HashMap<>();
+        namespace = new Namespace(data,owner, admin);
+        data.attrib.put("test", "test");
+        namespace = new Namespace(data ,owner, admin);
+        
+        NsDAO.Data retData = namespace.data();
+        assertTrue(retData.name.equals("name"));
+    
+    }
+    @Test
+    public void testBytify() {
+        testSecondConstructor();
+        try {
+            ByteBuffer retVal = namespace.bytify();
+            namespace.reconstitute(retVal);
+            namespace.hashCode();
+            namespace.toString();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void testEquals() {
+        testSecondConstructor();
+        NsDAO.Data data = new NsDAO.Data();
+        data.name = "name";
+        Namespace nameObj = null;
+        assertFalse(namespace.equals(nameObj));
+        assertFalse(namespace.equals(data));
+        nameObj = new Namespace(data);
+        assertTrue(namespace.equals(nameObj));
+    }
+    
 }

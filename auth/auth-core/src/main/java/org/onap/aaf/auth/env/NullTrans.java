@@ -136,17 +136,17 @@ public class NullTrans implements AuthzTrans {
     }
 
     @Override
-	public HttpServletRequest hreq() {
-	 	return null;
-	}
+    public HttpServletRequest hreq() {
+         return null;
+    }
 
     @Override
-	public HttpServletResponse hresp() {
-	 	return null;
-	}
+    public HttpServletResponse hresp() {
+         return null;
+    }
     
 
-	@Override
+    @Override
     public String user() {
         return null;
     }
@@ -243,15 +243,15 @@ public class NullTrans implements AuthzTrans {
         }
         return now;
     }
-	@Override
-	public void setTag(String tag) {
-	}
-	@Override
-	public String getTag() {
-		return null;
-	}
-	@Override
-	public void clearCache() {
-	}
+    @Override
+    public void setTag(String tag) {
+    }
+    @Override
+    public String getTag() {
+        return null;
+    }
+    @Override
+    public void clearCache() {
+    }
 }
 

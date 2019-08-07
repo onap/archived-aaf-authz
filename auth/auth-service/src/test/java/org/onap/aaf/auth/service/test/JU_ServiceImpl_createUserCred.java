@@ -49,100 +49,100 @@ import junit.framework.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
-	@Mock 
-    private Result<CredDAO.Data> rcdd;	
-	
-	@Before
-	public void setUp() throws Exception {
-	    super.setUp();
-	}
+    @Mock 
+    private Result<CredDAO.Data> rcdd;    
+    
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
 
     @Test
     public void validCreateNewIsOwner() throws OrganizationException {
-    	CredRequest cr = credRequest1();
-    	final String fqi = "bob@people.onap.org";
-    	when(trans.user()).thenReturn(fqi);
-    	when(org.isValidPassword(trans, cr.getId(),cr.getPassword())).thenReturn("");
-    	when(org.isValidCred(trans, cr.getId())).thenReturn(true);
-    	when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
-		when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
-		when(orgIdentity.isFound()).thenReturn(true);
-		final String ns = "org.onap.sample";
-		whenRole(trans, fqi, ns, "owner", false, 100);
-	    when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
-	    when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
-	    when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
-	    when(question.credDAO().readNS(trans, ns)).thenReturn(Result.ok(listOf(credDataFound(cr,100))));
-	    Result<?> result = acsi.createUserCred(trans,cr);
-	    // Owner may do FIRST Creds
-    	Assert.assertEquals(Result.OK,result.status);
+        CredRequest cr = credRequest1();
+        final String fqi = "bob@people.onap.org";
+        when(trans.user()).thenReturn(fqi);
+        when(org.isValidPassword(trans, cr.getId(),cr.getPassword())).thenReturn("");
+        when(org.isValidCred(trans, cr.getId())).thenReturn(true);
+        when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
+        when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
+        when(orgIdentity.isFound()).thenReturn(true);
+        final String ns = "org.onap.sample";
+        whenRole(trans, fqi, ns, "owner", false, 100);
+        when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
+        when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
+        when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
+        when(question.credDAO().readNS(trans, ns)).thenReturn(Result.ok(listOf(credDataFound(cr,100))));
+        Result<?> result = acsi.createUserCred(trans,cr);
+        // Owner may do FIRST Creds
+        Assert.assertEquals(Result.OK,result.status);
     }
 
     @Test
     public void validCreateNewOnlyAdmin() throws OrganizationException {
-    	CredRequest cr = credRequest1();
-    	final String fqi = "bob@people.onap.org";
-    	when(trans.user()).thenReturn(fqi);
-    	when(org.isValidPassword(trans, cr.getId(),cr.getPassword())).thenReturn("");
-    	when(org.isValidCred(trans, cr.getId())).thenReturn(true);
-    	when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
-		when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
-		when(orgIdentity.isFound()).thenReturn(true);
-		final String ns = "org.onap.sample";
-		whenRole(trans,fqi,ns,"owner",false, 100);
-		whenRole(trans,fqi,ns,"admin",true, 100);
- 	    when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
-	    when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
-	    when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
-	    when(question.credDAO().readNS(trans, ns)).thenReturn(Result.ok(listOf(credDataFound(cr,100))));
-	    Result<?> result = acsi.createUserCred(trans,cr);
-	    // Admins may not do FIRST Creds
-    	Assert.assertEquals(Result.ERR_Denied,result.status);
+        CredRequest cr = credRequest1();
+        final String fqi = "bob@people.onap.org";
+        when(trans.user()).thenReturn(fqi);
+        when(org.isValidPassword(trans, cr.getId(),cr.getPassword())).thenReturn("");
+        when(org.isValidCred(trans, cr.getId())).thenReturn(true);
+        when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
+        when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
+        when(orgIdentity.isFound()).thenReturn(true);
+        final String ns = "org.onap.sample";
+        whenRole(trans,fqi,ns,"owner",false, 100);
+        whenRole(trans,fqi,ns,"admin",true, 100);
+         when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
+        when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
+        when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
+        when(question.credDAO().readNS(trans, ns)).thenReturn(Result.ok(listOf(credDataFound(cr,100))));
+        Result<?> result = acsi.createUserCred(trans,cr);
+        // Admins may not do FIRST Creds
+        Assert.assertEquals(Result.ERR_Denied,result.status);
     }
 
     @Test
     public void validCreateExisting() throws OrganizationException {
-    	CredRequest cr = credRequest1();
-    	when(org.isValidPassword(trans, cr.getId(),cr.getPassword())).thenReturn("");
-    	when(org.isValidCred(trans, cr.getId())).thenReturn(true);
-    	when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
-		when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
-		when(orgIdentity.isFound()).thenReturn(true);
-		String ns = "org.onap.sample";
-	    when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
-	    
-	    CredDAO.Data cdd = credDataFound(cr,100);
-	    when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(cdd));
-	    when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(listOf(cdd)));
+        CredRequest cr = credRequest1();
+        when(org.isValidPassword(trans, cr.getId(),cr.getPassword())).thenReturn("");
+        when(org.isValidCred(trans, cr.getId())).thenReturn(true);
+        when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
+        when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
+        when(orgIdentity.isFound()).thenReturn(true);
+        String ns = "org.onap.sample";
+        when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
+        
+        CredDAO.Data cdd = credDataFound(cr,100);
+        when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(cdd));
+        when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(listOf(cdd)));
 
-	    Result<?> result = acsi.createUserCred(trans,cr);
-    	Assert.assertEquals(Result.OK,result.status);
+        Result<?> result = acsi.createUserCred(trans,cr);
+        Assert.assertEquals(Result.OK,result.status);
     }
 
     private CredRequest credRequest1() {
-    	CredRequest cr = new CredRequest();
-    	cr.setId("m12345@sample.onap.org");
-    	cr.setPassword("BobAndWeave");
-    	cr.setType(CredDAO.RAW);
-    	return cr;
+        CredRequest cr = new CredRequest();
+        cr.setId("m12345@sample.onap.org");
+        cr.setPassword("BobAndWeave");
+        cr.setType(CredDAO.RAW);
+        return cr;
     }
     
    private CredDAO.Data credDataFound(CredRequest cr, int days) {
-    	CredDAO.Data cdd = new CredDAO.Data();
-    	cdd.id = cr.getId();
-    	cdd.ns = FQI.reverseDomain(cr.getId());
-    	cdd.other = 12345;
-    	cdd.tag = "1355434";
-    	cdd.type = CredDAO.BASIC_AUTH_SHA256;
-    	try {
-			cdd.cred = ByteBuffer.wrap(Hash.hashSHA256(cr.getPassword().getBytes()));
-		} catch (NoSuchAlgorithmException e) {
-			Assert.fail(e.getMessage());
-		}
-    	GregorianCalendar gc = new GregorianCalendar();
-    	gc.add(GregorianCalendar.DAY_OF_YEAR, days);
-    	cdd.expires = gc.getTime();
-    	return cdd;
+        CredDAO.Data cdd = new CredDAO.Data();
+        cdd.id = cr.getId();
+        cdd.ns = FQI.reverseDomain(cr.getId());
+        cdd.other = 12345;
+        cdd.tag = "1355434";
+        cdd.type = CredDAO.BASIC_AUTH_SHA256;
+        try {
+            cdd.cred = ByteBuffer.wrap(Hash.hashSHA256(cr.getPassword().getBytes()));
+        } catch (NoSuchAlgorithmException e) {
+            Assert.fail(e.getMessage());
+        }
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.add(GregorianCalendar.DAY_OF_YEAR, days);
+        cdd.expires = gc.getTime();
+        return cdd;
     }
     
 }

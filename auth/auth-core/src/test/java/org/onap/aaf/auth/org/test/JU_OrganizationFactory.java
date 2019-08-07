@@ -56,7 +56,7 @@ public class JU_OrganizationFactory {
     @SuppressWarnings("static-access")
     @Test
     public void testInit() throws OrganizationException {
-  		Assert.assertEquals(null, organizationFactory.init(bEnv));
+          Assert.assertEquals(null, organizationFactory.init(bEnv));
     }
 
     @SuppressWarnings("static-access")                //TODO:Fix this once real input is available AAF-111

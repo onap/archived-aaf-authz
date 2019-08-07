@@ -45,101 +45,101 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class LastNotified {
-	private Map<String,Date> lastNotified = new TreeMap<>();
-	private Session session;
-	public static final Date NEVER = new Date(0);
-	private static final String SELECT = "SELECT user,target,key,last FROM authz.notified";
-	
-	public LastNotified(Session session) {
-		this.session = session;
-	}
-	
-	public void add(Set<String> users) {
-		StringBuilder query = new StringBuilder();
-		startQuery(query);
-		int cnt = 0;
-    	for(String user : users) {
-    		if(++cnt>1) {
-    			query.append(',');
-    		}
-    		query.append('\'');
-    		query.append(user);
-    		query.append('\'');
-    		if(cnt>=30) {
-    			endQuery(query);
-    			add(session.execute(query.toString()),lastNotified, (x,y) -> false);
-    			query.setLength(0);
-    			startQuery(query);
-    			cnt=0;
-    		}
-    	}
-    	if(cnt>0) {
-    		endQuery(query);
-			add(session.execute(query.toString()),lastNotified, (x,y) -> false);
-    	}
-	}
+    private Map<String,Date> lastNotified = new TreeMap<>();
+    private Session session;
+    public static final Date NEVER = new Date(0);
+    private static final String SELECT = "SELECT user,target,key,last FROM authz.notified";
+    
+    public LastNotified(Session session) {
+        this.session = session;
+    }
+    
+    public void add(Set<String> users) {
+        StringBuilder query = new StringBuilder();
+        startQuery(query);
+        int cnt = 0;
+        for(String user : users) {
+            if(++cnt>1) {
+                query.append(',');
+            }
+            query.append('\'');
+            query.append(user);
+            query.append('\'');
+            if(cnt>=30) {
+                endQuery(query);
+                add(session.execute(query.toString()),lastNotified, (x,y) -> false);
+                query.setLength(0);
+                startQuery(query);
+                cnt=0;
+            }
+        }
+        if(cnt>0) {
+            endQuery(query);
+            add(session.execute(query.toString()),lastNotified, (x,y) -> false);
+        }
+    }
 
-	/**
-	 * Note: target_key CAN also contain a Pipe.
-	 * 
-	 * @param user
-	 * @param target
-	 * @param targetkey
-	 * @return
-	 */
-	public Date lastNotified(String user, String target, String targetkey) {
-		String key = user + '|' + target + '|' + (targetkey==null?"":targetkey);
-		return lastNotified(key);
-	}
-	
-	public Date lastNotified(String key) {
-		Date d = lastNotified.get(key);
-		return d==null?NEVER:d;
-	}
-	
-	private Date add(ResultSet result, Map<String, Date> lastNotified, MarkDelete md) {
-		Date last = null;
-		Row r;
-    	for(Iterator<Row> iter = result.iterator(); iter.hasNext();) {
-    		r = iter.next();
-    		String ttKey = r.getString(1) + '|' +
-				     	   r.getString(2);
+    /**
+     * Note: target_key CAN also contain a Pipe.
+     * 
+     * @param user
+     * @param target
+     * @param targetkey
+     * @return
+     */
+    public Date lastNotified(String user, String target, String targetkey) {
+        String key = user + '|' + target + '|' + (targetkey==null?"":targetkey);
+        return lastNotified(key);
+    }
+    
+    public Date lastNotified(String key) {
+        Date d = lastNotified.get(key);
+        return d==null?NEVER:d;
+    }
+    
+    private Date add(ResultSet result, Map<String, Date> lastNotified, MarkDelete md) {
+        Date last = null;
+        Row r;
+        for(Iterator<Row> iter = result.iterator(); iter.hasNext();) {
+            r = iter.next();
+            String ttKey = r.getString(1) + '|' +
+                            r.getString(2);
  
-    		String fullKey = r.getString(0) + '|' +
-    				         ttKey;
-    		last=r.getTimestamp(3);
-    		if(!md.process(fullKey, last)) {
-	    		lastNotified.put(fullKey, last);
-	    		Date d = lastNotified.get(ttKey);
-	    		if(d==null || d.after(last)) { // put most recent, if different
-	    			lastNotified.put(ttKey, last);
-	    		}
-    		}
-    	}
-    	return last;
-	}
-	
-	private interface MarkDelete {
-		boolean process(String fullKey, Date last);
-	}
+            String fullKey = r.getString(0) + '|' +
+                             ttKey;
+            last=r.getTimestamp(3);
+            if(!md.process(fullKey, last)) {
+                lastNotified.put(fullKey, last);
+                Date d = lastNotified.get(ttKey);
+                if(d==null || d.after(last)) { // put most recent, if different
+                    lastNotified.put(ttKey, last);
+                }
+            }
+        }
+        return last;
+    }
+    
+    private interface MarkDelete {
+        boolean process(String fullKey, Date last);
+    }
 
-	private void startQuery(StringBuilder query) {
-		query.append(SELECT + " WHERE user in (");
-	}
+    private void startQuery(StringBuilder query) {
+        query.append(SELECT + " WHERE user in (");
+    }
 
-	private void endQuery(StringBuilder query) {
-		query.append(");");
-	}
+    private void endQuery(StringBuilder query) {
+        query.append(");");
+    }
 
-	public void update(StringBuilder query,String user, String target, String key) {
-		query.append("UPDATE authz.notified SET last=dateof(now()) WHERE user='");
-		query.append(user);
-		query.append("' AND target='");
-		query.append(target);
-		query.append("' AND key='");
-		query.append(key);
-		query.append("';\n");
-	}
+    public void update(StringBuilder query,String user, String target, String key) {
+        query.append("UPDATE authz.notified SET last=dateof(now()) WHERE user='");
+        query.append(user);
+        query.append("' AND target='");
+        query.append(target);
+        query.append("' AND key='");
+        query.append(key);
+        query.append("';\n");
+    }
 
     public LastNotified loadAll(Trans trans, final Range delRange, final CSV.Writer cw) {
         trans.debug().log( "query: ",SELECT );
@@ -150,14 +150,14 @@ public class LastNotified {
             Statement stmt = new SimpleStatement( SELECT );
             results = session.execute(stmt);
             add(results,lastNotified, (fullKey, last) ->  {
-            	if(delRange.inRange(last)) {
-            		String[] params = Split.splitTrim('|', fullKey,3);
-            		if(params.length==3) {
-	            		cw.row("notified",params[0],params[1],params[2]);
-	            		return true;
-            		}
-            	}
-            	return false;
+                if(delRange.inRange(last)) {
+                    String[] params = Split.splitTrim('|', fullKey,3);
+                    if(params.length==3) {
+                        cw.row("notified",params[0],params[1],params[2]);
+                        return true;
+                    }
+                }
+                return false;
             });
         } finally {
             tt.done();
@@ -165,26 +165,26 @@ public class LastNotified {
         return this;
     }
 
-	public static String newKey(UserRole ur) {
-		return "ur|" + ur.user() + '|'+ur.role();
-	}
+    public static String newKey(UserRole ur) {
+        return "ur|" + ur.user() + '|'+ur.role();
+    }
 
-	public static String newKey(Cred cred, Instance inst) {
-		return "cred|" + cred.id + '|' + inst.type + '|' + inst.tag;
-	}
+    public static String newKey(Cred cred, Instance inst) {
+        return "cred|" + cred.id + '|' + inst.type + '|' + inst.tag;
+    }
 
-	public static String newKey(X509 x509, X509Certificate x509Cert) {
-		return "x509|" + x509.id + '|' + x509Cert.getSerialNumber().toString();
-	}
+    public static String newKey(X509 x509, X509Certificate x509Cert) {
+        return "x509|" + x509.id + '|' + x509Cert.getSerialNumber().toString();
+    }
 
-	public static void delete(StringBuilder query, List<String> row) {
-		query.append("DELETE FROM authz.notified WHERE user='");
-		query.append(row.get(1));
-		query.append("' AND target='");
-		query.append(row.get(2));
-		query.append("' AND key='");
-		query.append(row.get(3));
-		query.append("';\n");
-	}
+    public static void delete(StringBuilder query, List<String> row) {
+        query.append("DELETE FROM authz.notified WHERE user='");
+        query.append(row.get(1));
+        query.append("' AND target='");
+        query.append(row.get(2));
+        query.append("' AND key='");
+        query.append(row.get(3));
+        query.append("';\n");
+    }
 
 }

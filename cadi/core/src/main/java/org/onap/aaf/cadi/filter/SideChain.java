@@ -38,36 +38,36 @@ import javax.xml.ws.Holder;
  *
  */
 public class SideChain {
-	private List<Filter> sideChain;
-	
-	public SideChain() {
-		sideChain = new ArrayList<Filter>();
-	}
-	
-	public void add(Filter f) {
-		sideChain.add(f);
-	}
-	
+    private List<Filter> sideChain;
+    
+    public SideChain() {
+        sideChain = new ArrayList<Filter>();
+    }
+    
+    public void add(Filter f) {
+        sideChain.add(f);
+    }
+    
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)throws IOException, ServletException {
-    	final Holder<Boolean> hbool = new Holder<Boolean>(Boolean.TRUE);
-    	FilterChain truth = new FilterChain() {
-			@Override
-			public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-			   hbool.value=Boolean.TRUE;
-			}
-			public String toString() {
-				return hbool.value.toString();
-			}
-    	};
-    	for(Filter f : sideChain) {
-			hbool.value=Boolean.FALSE;
-    		f.doFilter(request, response, truth);
-    		if(!hbool.value) {
-    			return;
-    		}
-    	}
-    	if(hbool.value) {
-    		chain.doFilter(request, response);
-    	}
+        final Holder<Boolean> hbool = new Holder<Boolean>(Boolean.TRUE);
+        FilterChain truth = new FilterChain() {
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+               hbool.value=Boolean.TRUE;
+            }
+            public String toString() {
+                return hbool.value.toString();
+            }
+        };
+        for(Filter f : sideChain) {
+            hbool.value=Boolean.FALSE;
+            f.doFilter(request, response, truth);
+            if(!hbool.value) {
+                return;
+            }
+        }
+        if(hbool.value) {
+            chain.doFilter(request, response);
+        }
     }
 }

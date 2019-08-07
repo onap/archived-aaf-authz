@@ -44,83 +44,83 @@ import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.misc.env.APIException;
 
 public class JU_AAF_FS {
-	AuthzEnv aEnv;
-	AAF_FS aafFs;
-	File fService;
-	File fEtc;
-	String value;
-	File d;
-	private static final String testDir = "src/test/resources/logs";
-	private ByteArrayOutputStream outStream;
-	private ByteArrayOutputStream errStream;
+    AuthzEnv aEnv;
+    AAF_FS aafFs;
+    File fService;
+    File fEtc;
+    String value;
+    File d;
+    private static final String testDir = "src/test/resources/logs";
+    private ByteArrayOutputStream outStream;
+    private ByteArrayOutputStream errStream;
 
-	@Before
-	public void setUp() throws APIException, IOException, CadiException {
-		outStream = new ByteArrayOutputStream();
-		errStream = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outStream));
-		System.setErr(new PrintStream(errStream));
-		value = System.setProperty(Config.CADI_LOGDIR, testDir);
-		System.setProperty(Config.CADI_ETCDIR, testDir);
-		System.out.println(ClassLoader.getSystemResource("org.osaaf.aaf.log4j.props"));
-		d = new File(testDir);
-		d.mkdirs();
-		fService = new File(d + "/fs-serviceTEST.log");
-		fService.createNewFile();
-		fEtc = new File(d + "/org.osaaf.aaf.log4j.props");
-		fEtc.createNewFile();
+    @Before
+    public void setUp() throws APIException, IOException, CadiException {
+        outStream = new ByteArrayOutputStream();
+        errStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outStream));
+        System.setErr(new PrintStream(errStream));
+        value = System.setProperty(Config.CADI_LOGDIR, testDir);
+        System.setProperty(Config.CADI_ETCDIR, testDir);
+        System.out.println(ClassLoader.getSystemResource("org.osaaf.aaf.log4j.props"));
+        d = new File(testDir);
+        d.mkdirs();
+        fService = new File(d + "/fs-serviceTEST.log");
+        fService.createNewFile();
+        fEtc = new File(d + "/org.osaaf.aaf.log4j.props");
+        fEtc.createNewFile();
 
-		aEnv = new AuthzEnv();
-		aEnv.staticSlot("test");
-		aEnv.access().setProperty("aaf_public_dir", "test");
-		aEnv.access().setProperty(Config.AAF_LOCATOR_ENTRIES, "aaf_com");
+        aEnv = new AuthzEnv();
+        aEnv.staticSlot("test");
+        aEnv.access().setProperty("aaf_public_dir", "test");
+        aEnv.access().setProperty(Config.AAF_LOCATOR_ENTRIES, "aaf_com");
         aEnv.access().setProperty(Config.AAF_LOCATOR_VERSION, "1.1");
-		Server serverMock = mock(Server.class);
-		JettyServiceStarter<AuthzEnv, AuthzTrans> jssMock = mock(JettyServiceStarter.class);
-		aafFs = new AAF_FS(aEnv);
-		aEnv.access().setProperty(Config.AAF_LOCATE_URL, "aaf_loc:ate.url");
-		aafFs = new AAF_FS(aEnv);
-	}
+        Server serverMock = mock(Server.class);
+        JettyServiceStarter<AuthzEnv, AuthzTrans> jssMock = mock(JettyServiceStarter.class);
+        aafFs = new AAF_FS(aEnv);
+        aEnv.access().setProperty(Config.AAF_LOCATE_URL, "aaf_loc:ate.url");
+        aafFs = new AAF_FS(aEnv);
+    }
 
-	@Test
-	public void testRegistrants() throws CadiException, LocatorException {
-		int port = 8008;
-		aEnv.access().setProperty(Config.AAF_URL, "www.google.com");
-		aEnv.access().setProperty(Config.CADI_LATITUDE, "38.550674");
-		aEnv.access().setProperty(Config.CADI_LONGITUDE, "-90.146942");
-		aEnv.access().setProperty(Config.AAF_LOCATE_URL, "testLocateUrl");
-		aEnv.access().setProperty(Config.HOSTNAME, "testHost");
+    @Test
+    public void testRegistrants() throws CadiException, LocatorException {
+        int port = 8008;
+        aEnv.access().setProperty(Config.AAF_URL, "www.google.com");
+        aEnv.access().setProperty(Config.CADI_LATITUDE, "38.550674");
+        aEnv.access().setProperty(Config.CADI_LONGITUDE, "-90.146942");
+        aEnv.access().setProperty(Config.AAF_LOCATE_URL, "testLocateUrl");
+        aEnv.access().setProperty(Config.HOSTNAME, "testHost");
 
-		// Doesn't work within Jenkins
-		Registrant<AuthzEnv>[] registrants = aafFs.registrants(port);
-		assertNotNull(registrants);
-	}
+        // Doesn't work within Jenkins
+        Registrant<AuthzEnv>[] registrants = aafFs.registrants(port);
+        assertNotNull(registrants);
+    }
 
-	@Test
-	public void testFilters() throws CadiException, LocatorException {
-		aafFs.filters();
-	}
+    @Test
+    public void testFilters() throws CadiException, LocatorException {
+        aafFs.filters();
+    }
 
-	@Test
-	public void testMain() {
-		System.setProperty("cadi_exitOnFailure", "false");
+    @Test
+    public void testMain() {
+        System.setProperty("cadi_exitOnFailure", "false");
 
-		String[] strArr = { "aaf_component=aaf_com:po.nent" };
-		try {
-			AAF_FS.main(strArr); // Timeout caused in Jenkins but not in local
-		} catch (Exception e) {
-			// Failure expected until we understand how code is.
-		}
-	}
+        String[] strArr = { "aaf_component=aaf_com:po.nent" };
+        try {
+            AAF_FS.main(strArr); // Timeout caused in Jenkins but not in local
+        } catch (Exception e) {
+            // Failure expected until we understand how code is.
+        }
+    }
 
-	@After
-	public void cleanUp() {
-		for (File f : d.listFiles()) {
-			f.delete();
-		}
-		d.delete();
-		System.setErr(System.err);
-		System.setOut(System.out);
-	}
+    @After
+    public void cleanUp() {
+        for (File f : d.listFiles()) {
+            f.delete();
+        }
+        d.delete();
+        System.setErr(System.err);
+        System.setOut(System.out);
+    }
 
 }

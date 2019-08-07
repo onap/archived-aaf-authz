@@ -27,14 +27,14 @@ import java.util.concurrent.Future;
 
 public class TestKill implements Runnable {
 
-	public static void main(String[] args) {
-		ExecutorService es = Executors.newSingleThreadExecutor();
-		TestKill tk = new TestKill();
-		Future<?> app = es.submit(tk);
+    public static void main(String[] args) {
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        TestKill tk = new TestKill();
+        Future<?> app = es.submit(tk);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-            	System.out.println("Shutdown Hook, thread: setting interrupt");
+                System.out.println("Shutdown Hook, thread: setting interrupt");
                 app.cancel(true);
                 tk.longProcess();
                 es.shutdown();
@@ -43,23 +43,23 @@ public class TestKill implements Runnable {
         System.out.println("Service Start");
         System.out.print("Hit <enter> to end:");
         try {
-			System.in.read();
-			System.exit(0);
-		} catch (IOException e) {
-		}
-	}
+            System.in.read();
+            System.exit(0);
+        } catch (IOException e) {
+        }
+    }
 
     @Override
-	public void run() {
-	}
+    public void run() {
+    }
     
     private void longProcess() {
-    	System.out.println("Starting long cleanup process");
-    	try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-    	System.out.println("Ending long cleanup process");
+        System.out.println("Starting long cleanup process");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Ending long cleanup process");
     }
 }

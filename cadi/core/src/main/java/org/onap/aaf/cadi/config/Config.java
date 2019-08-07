@@ -275,10 +275,10 @@ public class Config {
         Access access = si.access;
         RegistrationPropHolder rph;
         try {
-			rph = new RegistrationPropHolder(access, 0);
-		} catch (UnknownHostException e2) {
-			throw new CadiException(e2);
-		}
+            rph = new RegistrationPropHolder(access, 0);
+        } catch (UnknownHostException e2) {
+            throw new CadiException(e2);
+        }
         /////////////////////////////////////////////////////
         // Setup AAFCon for any following
         /////////////////////////////////////////////////////
@@ -504,7 +504,7 @@ public class Config {
         // Any Additional Tafs passed in Constructor
         /////////////////////////////////////////////////////
         if (additionalTafLurs!=null) {
-        	int i=0;
+            int i=0;
             for (Object additional : additionalTafLurs) {
                 if (additional instanceof BasicHttpTaf) {
                     BasicHttpTaf ht = (BasicHttpTaf)additional;
@@ -556,17 +556,17 @@ public class Config {
             // just return the one
             taf = htlist.get(0).t;
         } else {
-        	Collections.sort(htlist);
+            Collections.sort(htlist);
             HttpTaf[] htarray = new HttpTaf[htlist.size()];
             int i=-1;
             StringBuilder sb = new StringBuilder("Tafs processed in this order:\n");
             for(Priori<HttpTaf> pht : htlist) {
-            	htarray[++i] = pht.t;
-            	sb.append("    ");
-            	sb.append(pht.t.getClass().getName());
-            	sb.append('(');
-            	sb.append(pht.priority);
-            	sb.append(")\n");
+                htarray[++i] = pht.t;
+                sb.append("    ");
+                sb.append(pht.t.getClass().getName());
+                sb.append('(');
+                sb.append(pht.priority);
+                sb.append(")\n");
             }
             access.log(Level.INIT, sb);
 
@@ -585,13 +585,13 @@ public class Config {
     public static String logProp(RegistrationPropHolder rph, String tag, String def) {
         String rv = rph.access().getProperty(tag, def);
         if (rv == null) {
-        	rph.access().log(Level.INIT,tag,"is not explicitly set");
+            rph.access().log(Level.INIT,tag,"is not explicitly set");
         } else {
-        	rv = rph.replacements("Config.logProp",rv, null, null);
-        	rph.access().log(Level.INIT,tag,"is set to",rv);
+            rv = rph.replacements("Config.logProp",rv, null, null);
+            rph.access().log(Level.INIT,tag,"is set to",rv);
         }
         return rv;
-    	
+        
     }
     
     public static String logProp(Access access,String tag, String def) {
@@ -608,10 +608,10 @@ public class Config {
         Access access = si.access;
         RegistrationPropHolder rph;
         try {
-			rph = new RegistrationPropHolder(access, 0);
-		} catch (UnknownHostException e2) {
-			throw new CadiException(e2);
-		}
+            rph = new RegistrationPropHolder(access, 0);
+        } catch (UnknownHostException e2) {
+            throw new CadiException(e2);
+        }
 
         List<Priori<Lur>> lurs = new ArrayList<>();
         
@@ -728,7 +728,7 @@ public class Config {
         // Any Additional passed in Constructor
         /////////////////////////////////////////////////////
         if (additionalTafLurs!=null) {
-        	int i=0;
+            int i=0;
             for (Object additional : additionalTafLurs) {
                 if (additional instanceof Lur) {
                     lurs.add(new Priori<Lur>((Lur)additional,50+i++));
@@ -754,17 +754,17 @@ public class Config {
                 return lurs.get(0).t; // Only one, just return it, save processing
             default:
                 // Multiple Lurs, use EpiLUR to handle
-            	Collections.sort(lurs);
+                Collections.sort(lurs);
                 Lur[] la = new Lur[lurs.size()];
                 int i=-1;
                 StringBuilder sb = new StringBuilder("Lurs processed in this order:\n");
                 for(Priori<Lur> pht : lurs) {
-                	la[++i] = pht.t;
-                	sb.append("    ");
-                	sb.append(pht.t.getClass().getName());
-                	sb.append('(');
-                	sb.append(pht.priority);
-                	sb.append(")\n");
+                    la[++i] = pht.t;
+                    sb.append("    ");
+                    sb.append(pht.t.getClass().getName());
+                    sb.append('(');
+                    sb.append(pht.priority);
+                    sb.append(")\n");
                 }
                 access.log(Level.INIT, sb);
                 return new EpiLur(la);
@@ -855,53 +855,53 @@ public class Config {
         if (_url==null) {
             access.log(Level.INIT,"No URL passed to 'loadLocator'. Disabled");
         } else {
-        	try {
-    			Class<?> aalCls = Class.forName("org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator");
-    			Method aalMth = aalCls.getMethod("create", String.class,String.class);
-    			int colon = _url.lastIndexOf(':');
-    			if(colon>=0) {
-    				int slash = _url.indexOf('/',colon);
-    				String version;
-    				if(slash<0) {
-    					version = _url.substring(colon+1);
-    				} else {
-    					version = _url.substring(colon+1,slash);
-    				}
-    				slash = _url.lastIndexOf('/',colon);
-    				if(slash>=0) {
-    					Object aal = aalMth.invoke(null/*static*/, _url.substring(slash+1, colon),version);
-    					return (Locator<URI>)aal;
-    				}
-    			}
-    		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-    			String msg;
-    			char quote;
-    			if(e.getCause()!=null) {
-    				msg=e.getCause().getMessage();
-    				quote='"';
-    			} else {
-    				msg = "-";
-    				quote=' ';
-    			}
-    			access.printf(Level.DEBUG, "Configured AbsAAFLocator not found%c%s%cContinuing Locator creation ",quote,msg,quote);
-    		}
+            try {
+                Class<?> aalCls = Class.forName("org.onap.aaf.cadi.aaf.v2_0.AbsAAFLocator");
+                Method aalMth = aalCls.getMethod("create", String.class,String.class);
+                int colon = _url.lastIndexOf(':');
+                if(colon>=0) {
+                    int slash = _url.indexOf('/',colon);
+                    String version;
+                    if(slash<0) {
+                        version = _url.substring(colon+1);
+                    } else {
+                        version = _url.substring(colon+1,slash);
+                    }
+                    slash = _url.lastIndexOf('/',colon);
+                    if(slash>=0) {
+                        Object aal = aalMth.invoke(null/*static*/, _url.substring(slash+1, colon),version);
+                        return (Locator<URI>)aal;
+                    }
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                String msg;
+                char quote;
+                if(e.getCause()!=null) {
+                    msg=e.getCause().getMessage();
+                    quote='"';
+                } else {
+                    msg = "-";
+                    quote=' ';
+                }
+                access.printf(Level.DEBUG, "Configured AbsAAFLocator not found%c%s%cContinuing Locator creation ",quote,msg,quote);
+            }
 //            String url = _url.replace("/AAF_NS.", "/%C%CID%AAF_NS.");
 //            String root_ns = access.getProperty(Config.AAF_ROOT_NS, null);
-        	String url;
+            String url;
             RegistrationPropHolder rph;
             try {
-    			 rph = new RegistrationPropHolder(access, 0);
-    			 url = rph.replacements("Config.loadLocator",_url, null, null);
-    			 access.printf(Level.INFO, "loadLocator URL is %s",url);
-    		} catch (UnknownHostException | CadiException e1) {
-    			throw new LocatorException(e1);
-    		}
+                 rph = new RegistrationPropHolder(access, 0);
+                 url = rph.replacements("Config.loadLocator",_url, null, null);
+                 access.printf(Level.INFO, "loadLocator URL is %s",url);
+            } catch (UnknownHostException | CadiException e1) {
+                throw new LocatorException(e1);
+            }
 
             String aaf_locator_class;
             if(_url.equals(url) && !url.contains("/locate/")) {
-            	aaf_locator_class = "org.onap.aaf.cadi.locator.DNSLocator";
+                aaf_locator_class = "org.onap.aaf.cadi.locator.DNSLocator";
             } else {
-            	aaf_locator_class = AAF_LOCATOR_CLASS_DEF;
+                aaf_locator_class = AAF_LOCATOR_CLASS_DEF;
             }
             try {
                 Class<?> lcls = loadClass(access,aaf_locator_class);
@@ -945,83 +945,83 @@ public class Config {
     }
     
     public static String getAAFLocateUrl(Access access) {
-    	String rv = null;
-    	String cont = access.getProperty(AAF_LOCATOR_CONTAINER,null);
-    	if(cont!=null) {
-    		rv = access.getProperty(AAF_LOCATE_URL + '.' +cont, null);
-    	}
-    	if(rv==null) {
-    		rv = access.getProperty(AAF_LOCATE_URL, null);
-    	}
-    	return rv;
+        String rv = null;
+        String cont = access.getProperty(AAF_LOCATOR_CONTAINER,null);
+        if(cont!=null) {
+            rv = access.getProperty(AAF_LOCATE_URL + '.' +cont, null);
+        }
+        if(rv==null) {
+            rv = access.getProperty(AAF_LOCATE_URL, null);
+        }
+        return rv;
     }
 
     private static class Priori<T> implements Comparable<Priori<T>> {
-    	public final T t;
-    	public final int priority;
-    	
-    	public Priori(final T t, final int priority) {
-    		this.t = t;
-    		this.priority = priority;
-    	}
+        public final T t;
+        public final int priority;
+        
+        public Priori(final T t, final int priority) {
+            this.t = t;
+            this.priority = priority;
+        }
 
-		@Override
-		public int compareTo(Priori<T> o) {
-			if(priority==o.priority) {
-				return 0;
-			} else if(priority<o.priority) {
-				return -1;
-			} else {
-				return 1;
-			}
-		}
-	    public static<T> void add(Access access, final String tag, List<Priori<T>> list) {
-		    String plugins = access.getProperty(tag, null);
-		    if(plugins!=null) {
-		    	access.log(Level.INIT, "Adding TAF Plugins: ", plugins);
-		    	for(String tafs : Split.splitTrim(';', plugins)) {
-		    		String[] pluginArray = Split.splitTrim(',', tafs);
-		    		String clssn = null;
-		    		int priority = 60;
-		    		switch(pluginArray.length) {
-		    			case 0:
-		    				break;
-		    			case 1:
-		    				clssn = tafs;
-		    				break;
-		    			default:
-		    				clssn = pluginArray[0];
-		    				try {
-		    					priority = Integer.parseInt(pluginArray[1]);
-		    				} catch (NumberFormatException nfe) {
-		    					access.printf(Level.ERROR, "%s format is <classname>,priority[;...]\n",CADI_ADD_TAFS);
-		    				}
-		    		}
-		    		
-		    		if(clssn!=null) {
-		    			Class<?> cls = loadClass(access, clssn);
-		    			if(cls!=null) {
-		    				try {
-								@SuppressWarnings("unchecked")
-								Constructor<T> cnst = (Constructor<T>)cls.getConstructor(Access.class);
-			            		try {
-									list.add(new Priori<T>(cnst.newInstance(access),priority));
-								} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-									String hostname = access.getProperty(Config.HOSTNAME,null);
-									if(hostname==null) {
-										access.printf(Level.ERROR, "%s cannot be constructed on this machine.  Set valid 'hostname' in your properties\n",clssn);	
-									} else {
-										access.printf(Level.ERROR, "%s cannot be constructed on %s with Access.\n",clssn, hostname);
-									}
-								}
-							} catch (NoSuchMethodException | SecurityException e) {
-								access.printf(Level.ERROR, "%s needs a Constructor taking Access as sole param.\n",clssn);
-							}
-		    			}
-		    		}
-		    	}
-		    }
-		}
+        @Override
+        public int compareTo(Priori<T> o) {
+            if(priority==o.priority) {
+                return 0;
+            } else if(priority<o.priority) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+        public static<T> void add(Access access, final String tag, List<Priori<T>> list) {
+            String plugins = access.getProperty(tag, null);
+            if(plugins!=null) {
+                access.log(Level.INIT, "Adding TAF Plugins: ", plugins);
+                for(String tafs : Split.splitTrim(';', plugins)) {
+                    String[] pluginArray = Split.splitTrim(',', tafs);
+                    String clssn = null;
+                    int priority = 60;
+                    switch(pluginArray.length) {
+                        case 0:
+                            break;
+                        case 1:
+                            clssn = tafs;
+                            break;
+                        default:
+                            clssn = pluginArray[0];
+                            try {
+                                priority = Integer.parseInt(pluginArray[1]);
+                            } catch (NumberFormatException nfe) {
+                                access.printf(Level.ERROR, "%s format is <classname>,priority[;...]\n",CADI_ADD_TAFS);
+                            }
+                    }
+                    
+                    if(clssn!=null) {
+                        Class<?> cls = loadClass(access, clssn);
+                        if(cls!=null) {
+                            try {
+                                @SuppressWarnings("unchecked")
+                                Constructor<T> cnst = (Constructor<T>)cls.getConstructor(Access.class);
+                                try {
+                                    list.add(new Priori<T>(cnst.newInstance(access),priority));
+                                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                                    String hostname = access.getProperty(Config.HOSTNAME,null);
+                                    if(hostname==null) {
+                                        access.printf(Level.ERROR, "%s cannot be constructed on this machine.  Set valid 'hostname' in your properties\n",clssn);    
+                                    } else {
+                                        access.printf(Level.ERROR, "%s cannot be constructed on %s with Access.\n",clssn, hostname);
+                                    }
+                                }
+                            } catch (NoSuchMethodException | SecurityException e) {
+                                access.printf(Level.ERROR, "%s needs a Constructor taking Access as sole param.\n",clssn);
+                            }
+                        }
+                    }
+                }
+            }
+        }
    }
 }
 

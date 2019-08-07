@@ -63,10 +63,10 @@ public class OnapClientExample {
         // Note: This style will load "cadi_prop_files" from VM Args
         // access = PropAccess();
         try {
-	        Map<String, String> aaf_urls = Agent.loadURLs(access);
-	        Agent.fillMissing(access, aaf_urls);
+            Map<String, String> aaf_urls = Agent.loadURLs(access);
+            Agent.fillMissing(access, aaf_urls);
         
-	        // Token aware Client Factory
+            // Token aware Client Factory
             tcf = TokenClientFactory.instance(access);
         } catch (APIException | GeneralSecurityException | IOException | CadiException e1) {
             access.log(e1, "Unable to setup OAuth Client Factory, Fail Fast");

@@ -44,71 +44,71 @@ import locate.v1_0.MgmtEndpoints;
 
 public class JU_LocateServiceImplTest {
 
-	// Extend, because I don't want a "setter" in the original.  Compromised with a protected...
-	private final class LocateServiceImplExtension extends LocateServiceImpl {
-		private LocateServiceImplExtension(AuthzTrans trans, AAF_Locate locate, Mapper mapper) throws APIException {
-			super(trans, locate, mapper);
-		}
-		public void set(LocateDAO ld) {
-			locateDAO=ld;
-		}
-	}
+    // Extend, because I don't want a "setter" in the original.  Compromised with a protected...
+    private final class LocateServiceImplExtension extends LocateServiceImpl {
+        private LocateServiceImplExtension(AuthzTrans trans, AAF_Locate locate, Mapper mapper) throws APIException {
+            super(trans, locate, mapper);
+        }
+        public void set(LocateDAO ld) {
+            locateDAO=ld;
+        }
+    }
 
-	@Mock
-	private AuthzTrans trans;
-	@Mock
-	private AAF_Locate aaf_locate;
-	@Mock
-	private LocateDAO locateDAO;
-	@Mock
-	private Mapper mapper;
-	@Mock
-	private Result<List<Data>> result;
-	@Mock
-	private Result endPointResult;
-	@Mock
-	private MgmtEndpoints meps;
-	@Mock
-	private MgmtEndpoint mgmtEndPoint;
+    @Mock
+    private AuthzTrans trans;
+    @Mock
+    private AAF_Locate aaf_locate;
+    @Mock
+    private LocateDAO locateDAO;
+    @Mock
+    private Mapper mapper;
+    @Mock
+    private Result<List<Data>> result;
+    @Mock
+    private Result endPointResult;
+    @Mock
+    private MgmtEndpoints meps;
+    @Mock
+    private MgmtEndpoint mgmtEndPoint;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void test() throws APIException {
-		LocateServiceImplExtension locateServiceImpl = new LocateServiceImplExtension(trans, aaf_locate, mapper);
-		locateServiceImpl.set(locateDAO);
+    @Test
+    public void test() throws APIException {
+        LocateServiceImplExtension locateServiceImpl = new LocateServiceImplExtension(trans, aaf_locate, mapper);
+        locateServiceImpl.set(locateDAO);
 
-		assertEquals(mapper, locateServiceImpl.mapper());
+        assertEquals(mapper, locateServiceImpl.mapper());
 
-		when(locateDAO.readByName(trans, "http")).thenReturn(result);
-		when(mapper.endpoints(result, "1.0", "other")).thenReturn(endPointResult);
+        when(locateDAO.readByName(trans, "http")).thenReturn(result);
+        when(mapper.endpoints(result, "1.0", "other")).thenReturn(endPointResult);
 
-		Result output = locateServiceImpl.getEndPoints(trans, "http", "1.0", "other");
+        Result output = locateServiceImpl.getEndPoints(trans, "http", "1.0", "other");
 
-		assertEquals(endPointResult, output);
+        assertEquals(endPointResult, output);
 
-		List<MgmtEndpoint> mgmtEndPoints = new ArrayList<>();
-		mgmtEndPoints.add(mgmtEndPoint);
+        List<MgmtEndpoint> mgmtEndPoints = new ArrayList<>();
+        mgmtEndPoints.add(mgmtEndPoint);
 
-		when(mgmtEndPoint.getName()).thenReturn("http.Endpoint1");
-		when(mgmtEndPoint.getHostname()).thenReturn("HOST1");
-		when(mgmtEndPoint.getPort()).thenReturn(9090);
-		when(mgmtEndPoint.getProtocol()).thenReturn("HTTP");
+        when(mgmtEndPoint.getName()).thenReturn("http.Endpoint1");
+        when(mgmtEndPoint.getHostname()).thenReturn("HOST1");
+        when(mgmtEndPoint.getPort()).thenReturn(9090);
+        when(mgmtEndPoint.getProtocol()).thenReturn("HTTP");
 
-		when(meps.getMgmtEndpoint()).thenReturn(mgmtEndPoints);
-		output = locateServiceImpl.putMgmtEndPoints(trans, meps);
+        when(meps.getMgmtEndpoint()).thenReturn(mgmtEndPoints);
+        output = locateServiceImpl.putMgmtEndPoints(trans, meps);
 
-		assertEquals(output.toString(), Result.ok().toString());
+        assertEquals(output.toString(), Result.ok().toString());
 
-		when(trans.fish(any())).thenReturn(true);
-		Data data = new LocateDAO.Data();
-		when(mapper.locateData(mgmtEndPoint)).thenReturn(data);
-		output = locateServiceImpl.removeMgmtEndPoints(trans, meps);
+        when(trans.fish(any())).thenReturn(true);
+        Data data = new LocateDAO.Data();
+        when(mapper.locateData(mgmtEndPoint)).thenReturn(data);
+        output = locateServiceImpl.removeMgmtEndPoints(trans, meps);
 
-		assertEquals(output.toString(), Result.ok().toString());
-	}
+        assertEquals(output.toString(), Result.ok().toString());
+    }
 
 }

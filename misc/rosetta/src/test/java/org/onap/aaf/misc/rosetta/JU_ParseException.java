@@ -26,24 +26,24 @@ import org.junit.Test;
 
 public class JU_ParseException {
 
-	@Test
-	public void test() {
-		ParseException pe = new ParseException();
-	    }
-	@Test
-	public void test1() {
-		ParseException pe = new ParseException("exception");
-	    }
-	@Test
-	public void test2() {
-		ParseException pe = new ParseException(new NullPointerException("exception"));
-	    }
-	@Test
-	public void test3() {
-		ParseException pe = new ParseException("exception",new NullPointerException("exception"));
-	    }
+    @Test
+    public void test() {
+        ParseException pe = new ParseException();
+        }
+    @Test
+    public void test1() {
+        ParseException pe = new ParseException("exception");
+        }
+    @Test
+    public void test2() {
+        ParseException pe = new ParseException(new NullPointerException("exception"));
+        }
+    @Test
+    public void test3() {
+        ParseException pe = new ParseException("exception",new NullPointerException("exception"));
+        }
 
-	
-	
+    
+    
 
 }

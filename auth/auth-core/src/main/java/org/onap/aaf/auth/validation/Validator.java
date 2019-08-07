@@ -90,9 +90,9 @@ public class Validator {
     }
 
     protected final void match(String text, String str, Pattern p) {
-    	if(str==null || !p.matcher(str).matches()) {
-    		msg(text);
-    	}
+        if(str==null || !p.matcher(str).matches()) {
+            msg(text);
+        }
     }
 
     protected final boolean nob(String str, Pattern p) {
@@ -156,11 +156,11 @@ public class Validator {
         } else if (user==null) {
             msg("User is null");
         } else {
-        	if(!(type.startsWith(user) && type.endsWith(":id"))) {
-        	  if(nob(type,NAME_CHARS)) {
-	            msg("Perm Type [" + type + "] is invalid.");
-        	  }
-        	}
+            if(!(type.startsWith(user) && type.endsWith(":id"))) {
+              if(nob(type,NAME_CHARS)) {
+                msg("Perm Type [" + type + "] is invalid.");
+              }
+            }
         }
         return this;
     }
@@ -177,7 +177,7 @@ public class Validator {
     }
 
     public final Validator permInstance(String instance) {
-    	if(!"/".equals(instance) && nob(instance,instChars)) {
+        if(!"/".equals(instance) && nob(instance,instChars)) {
             msg("Perm Instance [" + instance + "] is invalid.");
         }
         return this;
@@ -192,24 +192,24 @@ public class Validator {
     }
 
     public final Validator role(String user, String role) {
-    	boolean quit = false;
-    	if(role==null) {
-    		msg("Role is null");
-    		quit = true;
-    	}
-    	if(user==null) {
-    		msg("User is null");
-    		quit = true;
-    	}
-    	if(!quit) {
-    		if(role.startsWith(user) && role.endsWith(":user")) {
-    			if(!(role.length() == user.length() + 5)) {
-    	            msg("Role [" + role + "] is invalid.");
-    			}
-    		} else if (nob(role, NAME_CHARS)) {
-	            msg("Role [" + role + "] is invalid.");
-	        }
-    	}
+        boolean quit = false;
+        if(role==null) {
+            msg("Role is null");
+            quit = true;
+        }
+        if(user==null) {
+            msg("User is null");
+            quit = true;
+        }
+        if(!quit) {
+            if(role.startsWith(user) && role.endsWith(":user")) {
+                if(!(role.length() == user.length() + 5)) {
+                    msg("Role [" + role + "] is invalid.");
+                }
+            } else if (nob(role, NAME_CHARS)) {
+                msg("Role [" + role + "] is invalid.");
+            }
+        }
         return this;
     }
 

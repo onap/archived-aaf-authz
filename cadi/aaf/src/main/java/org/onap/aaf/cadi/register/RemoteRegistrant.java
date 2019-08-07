@@ -68,8 +68,8 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
         } else {
             // Note: want Property Locator or Single, not AAFLocator, because we want the core service, not what it can find
             try {
-            	RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
-            	aaf_locate = rph.replacements(getClass().getSimpleName(),aaf_locate, null,null);
+                RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
+                aaf_locate = rph.replacements(getClass().getSimpleName(),aaf_locate, null,null);
                 if (aaf_locate.indexOf(',')>=0) {
                     locator = new PropertyLocator(aaf_locate);
                 } else {
@@ -86,7 +86,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
     
 
 
-	@Override
+    @Override
     public Result<Void> update(ENV env) {
         try {
             Rcli<?> client = aafcon.client(locator);

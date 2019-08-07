@@ -56,95 +56,95 @@ import com.datastax.driver.core.Session;
 
 public class JU_ApprovalSetTest {
     
-	@Mock
+    @Mock
     AuthzTrans trans;
-	@Mock
-	Cluster cluster;
-	@Mock
-	PropAccess access;
-	
-	@Mock
-	ApprovalSet actionObj;
+    @Mock
+    Cluster cluster;
+    @Mock
+    PropAccess access;
+    
+    @Mock
+    ApprovalSet actionObj;
 
-	@Mock
-	DataView dv;
+    @Mock
+    DataView dv;
     
     @Before
     public void setUp() throws APIException, IOException {
-    	initMocks(this);
-    	Session sessionObj=Mockito.mock(Session.class);
-    	PreparedStatement psObj =Mockito.mock(PreparedStatement.class);
-		try {
-			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).init();
-			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).warn();
-			Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).debug();
-			Mockito.doReturn("10").when(trans).getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF);
-			Mockito.doReturn(Mockito.mock(TimeTaken.class)).when(trans).start(Mockito.anyString(),Mockito.anyInt());
-			Mockito.doReturn(sessionObj).when(cluster).connect("authz");
-			Mockito.doReturn(psObj).when(sessionObj).prepare(Mockito.anyString());
-			
-			Mockito.doReturn(Mockito.mock(ColumnDefinitions.class)).when(psObj).getVariables();
-			Mockito.doReturn(Mockito.mock(PreparedId.class)).when(psObj).getPreparedId();
-			Mockito.doReturn(Mockito.mock(Properties.class)).when(access).getProperties();
-			Mockito.doReturn("test.test").when(access).getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
-			Define.set(access);
-			GregorianCalendar start= new GregorianCalendar();
-			actionObj = new ApprovalSet(start, "test", dv);
-		} catch (CadiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        initMocks(this);
+        Session sessionObj=Mockito.mock(Session.class);
+        PreparedStatement psObj =Mockito.mock(PreparedStatement.class);
+        try {
+            Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).init();
+            Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).warn();
+            Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).debug();
+            Mockito.doReturn("10").when(trans).getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF);
+            Mockito.doReturn(Mockito.mock(TimeTaken.class)).when(trans).start(Mockito.anyString(),Mockito.anyInt());
+            Mockito.doReturn(sessionObj).when(cluster).connect("authz");
+            Mockito.doReturn(psObj).when(sessionObj).prepare(Mockito.anyString());
+            
+            Mockito.doReturn(Mockito.mock(ColumnDefinitions.class)).when(psObj).getVariables();
+            Mockito.doReturn(Mockito.mock(PreparedId.class)).when(psObj).getPreparedId();
+            Mockito.doReturn(Mockito.mock(Properties.class)).when(access).getProperties();
+            Mockito.doReturn("test.test").when(access).getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
+            Define.set(access);
+            GregorianCalendar start= new GregorianCalendar();
+            actionObj = new ApprovalSet(start, "test", dv);
+        } catch (CadiException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
    }
     
     @Test
-	public void testPuntDate() {
-    	actionObj.write(trans);
-    	ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
-    	
-    	Result<FutureDAO.Data> rs1 = new Result<FutureDAO.Data>(null,0,"test",new Object[0]);
-    	Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(FutureDAO.Data.class));
-    	Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
-    	actionObj.ladd.add(dataObj);
-    	Result<Void> retVal = actionObj.write(trans);
-    	
-    	rs1 = new Result<FutureDAO.Data>(null,1,"test",new Object[0]);
-    	Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
-    	retVal = actionObj.write(trans);
-    	assertTrue("Security - test".equals(retVal.details));
-    	
-    	actionObj.ladd.add(dataObj);
-    	retVal = actionObj.write(trans);
-    	assertTrue(retVal.details.contains("Security - test"));
+    public void testPuntDate() {
+        actionObj.write(trans);
+        ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
+        
+        Result<FutureDAO.Data> rs1 = new Result<FutureDAO.Data>(null,0,"test",new Object[0]);
+        Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(FutureDAO.Data.class));
+        Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
+        actionObj.ladd.add(dataObj);
+        Result<Void> retVal = actionObj.write(trans);
+        
+        rs1 = new Result<FutureDAO.Data>(null,1,"test",new Object[0]);
+        Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
+        retVal = actionObj.write(trans);
+        assertTrue("Security - test".equals(retVal.details));
+        
+        actionObj.ladd.add(dataObj);
+        retVal = actionObj.write(trans);
+        assertTrue(retVal.details.contains("Security - test"));
 
-    	Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(FutureDAO.Data.class));
-    	retVal = actionObj.write(trans);
-    	assertTrue(retVal.details.contains("Security - test"));
-    	
-    	actionObj.setConstruct(null);
-    	actionObj.setExpires(new GregorianCalendar());
-    	actionObj.setMemo("");
-    	actionObj.ladd = null;
-    	actionObj.write(trans);
-	}
-    
-    @Test
-	public void testHasApprovals() {
-    	assertFalse(actionObj.hasApprovals());
-    	
-    	ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
-    	actionObj.ladd.add(dataObj);
-    	assertTrue(actionObj.hasApprovals());
+        Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(FutureDAO.Data.class));
+        retVal = actionObj.write(trans);
+        assertTrue(retVal.details.contains("Security - test"));
+        
+        actionObj.setConstruct(null);
+        actionObj.setExpires(new GregorianCalendar());
+        actionObj.setMemo("");
+        actionObj.ladd = null;
+        actionObj.write(trans);
     }
     
     @Test
-	public void testApprovers() {
-    	Set<String> retVal = actionObj.approvers();
-    	assertTrue(retVal.size() == 0);
-    	
-    	ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
-    	actionObj.ladd.add(dataObj);
-    	retVal = actionObj.approvers();
-    	assertTrue(retVal.size() == 1);
-    	
+    public void testHasApprovals() {
+        assertFalse(actionObj.hasApprovals());
+        
+        ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
+        actionObj.ladd.add(dataObj);
+        assertTrue(actionObj.hasApprovals());
+    }
+    
+    @Test
+    public void testApprovers() {
+        Set<String> retVal = actionObj.approvers();
+        assertTrue(retVal.size() == 0);
+        
+        ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
+        actionObj.ladd.add(dataObj);
+        retVal = actionObj.approvers();
+        assertTrue(retVal.size() == 1);
+        
     }
 }

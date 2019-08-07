@@ -69,7 +69,7 @@ public class ListForPermission extends Cmd {
                         );
                 if (fp.get(AAFcli.timeout())) {
                     if (aafcli.isTest())
-                    	Collections.sort(fp.value.getUser(), (Comparator<User>) (u1, u2) -> u1.getId().compareTo(u2.getId()));
+                        Collections.sort(fp.value.getUser(), (Comparator<User>) (u1, u2) -> u1.getId().compareTo(u2.getId()));
                     ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,false,HEADER,type+"|"+instance+"|"+action);
                     if (fp.code()==404)return 200;
                 } else {

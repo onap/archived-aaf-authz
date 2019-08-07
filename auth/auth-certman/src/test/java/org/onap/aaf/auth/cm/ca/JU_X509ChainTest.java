@@ -39,34 +39,34 @@ import org.onap.aaf.cadi.configure.CertException;
 
 public class JU_X509ChainTest {
 
-	@Mock
-	X509Certificate x509;
+    @Mock
+    X509Certificate x509;
 
-	@Mock
-	X509ChainWithIssuer orig;
-	@Mock
-	Principal subject;
-	@Mock
-	Reader reader;
-	@Mock
-	X509Certificate cert;
+    @Mock
+    X509ChainWithIssuer orig;
+    @Mock
+    Principal subject;
+    @Mock
+    Reader reader;
+    @Mock
+    X509Certificate cert;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-		// when(subject.get)
-		// when(x509.getSubjectDN()).thenReturn(subject);
-		when(cert.getEncoded()).thenReturn("x509".getBytes());
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        // when(subject.get)
+        // when(x509.getSubjectDN()).thenReturn(subject);
+        when(cert.getEncoded()).thenReturn("x509".getBytes());
+    }
 
-	@Test
-	public void test() throws IOException, CertException {
-		Certificate[] certs = { x509 };
-		X509andChain x509Chain = new X509andChain(cert, new ArrayList<String>());
-		x509Chain.addTrustChainEntry(cert);
+    @Test
+    public void test() throws IOException, CertException {
+        Certificate[] certs = { x509 };
+        X509andChain x509Chain = new X509andChain(cert, new ArrayList<String>());
+        x509Chain.addTrustChainEntry(cert);
 
-		assertNotNull(x509Chain.getX509());
-		assertEquals(2, x509Chain.getTrustChain().length);
-	}
+        assertNotNull(x509Chain.getX509());
+        assertEquals(2, x509Chain.getTrustChain().length);
+    }
 
 }

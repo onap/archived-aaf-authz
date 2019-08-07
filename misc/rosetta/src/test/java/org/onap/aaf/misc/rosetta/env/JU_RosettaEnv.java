@@ -41,58 +41,58 @@ import org.onap.aaf.misc.rosetta.Saved;
 
 public class JU_RosettaEnv {
 
-	@Before
-	public void setUp() {
-		initMocks(this);
-	}
-	
-	@Test
-	public void testNewDataFactoryClass() {
-		RosettaEnv rosettaObj = new RosettaEnv();
-		try {
-			Object retVal = rosettaObj.newDataFactory(Api.class);
-			assertTrue(retVal instanceof RosettaDF);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testNewDataFactorySchema() {
-		RosettaEnv rosettaObj = new RosettaEnv(Mockito.mock(Applet.class),"test");
-		try {
-			Object retVal = rosettaObj.newDataFactory(Mockito.mock(Schema.class),Api.class);
-			assertTrue(retVal instanceof RosettaDF);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testNewDataFactoryQname() {
-		RosettaEnv rosettaObj = new RosettaEnv(new String[] {"test"});
-		rosettaObj = new RosettaEnv(Mockito.mock(Properties.class));
-		try {
-			Object retVal = rosettaObj.newDataFactory(Mockito.mock(QName.class),Api.class);
-			assertTrue(retVal instanceof RosettaDF);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testNewDataFactoryQnameSchema() {
-		RosettaEnv rosettaObj = new RosettaEnv("test", new String[] {"test"});
-		rosettaObj = new RosettaEnv("test", Mockito.mock(Properties.class));
-		try {
-			Object retVal = rosettaObj.newDataFactory(Mockito.mock(Schema.class),Mockito.mock(QName.class),Api.class);
-			assertTrue(retVal instanceof RosettaDF);
-		} catch (APIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    @Before
+    public void setUp() {
+        initMocks(this);
+    }
+    
+    @Test
+    public void testNewDataFactoryClass() {
+        RosettaEnv rosettaObj = new RosettaEnv();
+        try {
+            Object retVal = rosettaObj.newDataFactory(Api.class);
+            assertTrue(retVal instanceof RosettaDF);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testNewDataFactorySchema() {
+        RosettaEnv rosettaObj = new RosettaEnv(Mockito.mock(Applet.class),"test");
+        try {
+            Object retVal = rosettaObj.newDataFactory(Mockito.mock(Schema.class),Api.class);
+            assertTrue(retVal instanceof RosettaDF);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testNewDataFactoryQname() {
+        RosettaEnv rosettaObj = new RosettaEnv(new String[] {"test"});
+        rosettaObj = new RosettaEnv(Mockito.mock(Properties.class));
+        try {
+            Object retVal = rosettaObj.newDataFactory(Mockito.mock(QName.class),Api.class);
+            assertTrue(retVal instanceof RosettaDF);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testNewDataFactoryQnameSchema() {
+        RosettaEnv rosettaObj = new RosettaEnv("test", new String[] {"test"});
+        rosettaObj = new RosettaEnv("test", Mockito.mock(Properties.class));
+        try {
+            Object retVal = rosettaObj.newDataFactory(Mockito.mock(Schema.class),Mockito.mock(QName.class),Api.class);
+            assertTrue(retVal instanceof RosettaDF);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

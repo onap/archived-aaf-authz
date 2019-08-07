@@ -88,7 +88,7 @@ import locate.v1_1.Configuration.Props;
 
 public class Agent {
     private static final String AGENT_LOAD_URLS = "Agent:loadURLs";
-	private static final String HASHES = "################################################################";
+    private static final String HASHES = "################################################################";
     private static final String PRINT = "print";
     private static final String FILE = "file";
     public static final String PKCS12 = "pkcs12";
@@ -119,11 +119,11 @@ public class Agent {
             Config.CADI_ALIAS, Config.CADI_X509_ISSUERS
             });
     private static List<String> LOC_TAGS = Arrays.asList(new String[] {
-    		Config.CADI_LATITUDE, Config.CADI_LONGITUDE
-    		});
+            Config.CADI_LATITUDE, Config.CADI_LONGITUDE
+            });
     // Note: This is set by loadURLs. Use that function as singleton, not directly.
-	private static Map<String,String> aaf_urls = null;
-	private static boolean configNoPasswd = false;
+    private static Map<String,String> aaf_urls = null;
+    private static boolean configNoPasswd = false;
 
 
     public static void main(String[] args) {
@@ -143,83 +143,83 @@ public class Agent {
             String[] newArgs = new String[args.length-1];
             System.arraycopy(args, 1, newArgs, 0, newArgs.length);
             if(newArgs.length>0 && newArgs[0].indexOf('@')>=0) {
-            	newArgs[0]=FQI.reverseDomain(newArgs[0])+".props";
+                newArgs[0]=FQI.reverseDomain(newArgs[0])+".props";
             }
-        	TestConnectivity.main(newArgs);
+            TestConnectivity.main(newArgs);
         } else {
             try {
                 AAFSSO aafsso=null;
                 PropAccess access=null; 
                 
-            	String hasEtc = null;
+                String hasEtc = null;
                 for(String a : args) {
-                	if(a.startsWith(Config.CADI_PROP_FILES)) {
-                		access = new PropAccess(args);
-                		break;
-                	} else if(a.startsWith(Config.CADI_ETCDIR)) {
-                		int idx = a.indexOf('=');
-                		if(idx>=0 && idx<a.length()) {
-                			hasEtc = a.substring(idx+1);
-                		}
-                	} else if(a.equals("--nopasswd")) {
-                		configNoPasswd=true;
-                	}
+                    if(a.startsWith(Config.CADI_PROP_FILES)) {
+                        access = new PropAccess(args);
+                        break;
+                    } else if(a.startsWith(Config.CADI_ETCDIR)) {
+                        int idx = a.indexOf('=');
+                        if(idx>=0 && idx<a.length()) {
+                            hasEtc = a.substring(idx+1);
+                        }
+                    } else if(a.equals("--nopasswd")) {
+                        configNoPasswd=true;
+                    }
                 }
                 
                 if(access==null) {
-                	if(args.length>1 && args[1].contains("@")) {
-                		String domain = FQI.reverseDomain(args[1]);
-                		if(domain!=null) {
-                			if(hasEtc==null) {
-                				hasEtc = ".";
-                			}
-                			File etc = new File(hasEtc);
-                			if(etc.exists()) {
-                				File nsprops = new File(etc,domain+".props");
-                				if(nsprops.exists()) {
-                					access = new PropAccess(new String[] {Config.CADI_PROP_FILES+'='+nsprops.getAbsolutePath()});
-                				}
-                			}
-                		}
-                	} 
+                    if(args.length>1 && args[1].contains("@")) {
+                        String domain = FQI.reverseDomain(args[1]);
+                        if(domain!=null) {
+                            if(hasEtc==null) {
+                                hasEtc = ".";
+                            }
+                            File etc = new File(hasEtc);
+                            if(etc.exists()) {
+                                File nsprops = new File(etc,domain+".props");
+                                if(nsprops.exists()) {
+                                    access = new PropAccess(new String[] {Config.CADI_PROP_FILES+'='+nsprops.getAbsolutePath()});
+                                }
+                            }
+                        }
+                    } 
                 }
                 
                 if(access==null) {
-	                for(Entry<Object, Object> es : System.getProperties().entrySet()) {
-	                	if(Config.CADI_PROP_FILES.equals(es.getKey())) {
-	                		access = new PropAccess();
-	                	}
-	                }
+                    for(Entry<Object, Object> es : System.getProperties().entrySet()) {
+                        if(Config.CADI_PROP_FILES.equals(es.getKey())) {
+                            access = new PropAccess();
+                        }
+                    }
                 }
 
-				// When using Config file, check if Cred Exists, and if not, work with Deployer.
-				if(access!=null && !"config".equals(args[0]) && access.getProperty(Config.AAF_APPPASS)==null && access.getProperty(Config.CADI_ALIAS)==null) {
-					// not enough credentials to use Props.  Use AAFSSO 
-					access = null;
-				}
+                // When using Config file, check if Cred Exists, and if not, work with Deployer.
+                if(access!=null && !"config".equals(args[0]) && access.getProperty(Config.AAF_APPPASS)==null && access.getProperty(Config.CADI_ALIAS)==null) {
+                    // not enough credentials to use Props.  Use AAFSSO 
+                    access = null;
+                }
 
                 if(access==null) {
-	                if (args.length>1 && args[0].equals("validate") ) {
-	                    int idx = args[1].indexOf('=');
-	                    aafsso = null;
-	                    access = new PropAccess(
-	                                (idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
-	                                '='+
-	                                (idx<0?args[1]:args[1].substring(idx+1)));
-	                } else {
-	                    aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
-	                        @Override
-	                        public Properties process(String[] args, Properties props) {
-	                            if (args.length>1) {
-	                                if (!args[0].equals("keypairgen")) {
-	                                    props.put(Config.AAF_APPID, args[1]);
-	                                }    
-	                            }
-	                            return props;
-	                        }
-	                    });
-	                    access = aafsso.access();
-	                }
+                    if (args.length>1 && args[0].equals("validate") ) {
+                        int idx = args[1].indexOf('=');
+                        aafsso = null;
+                        access = new PropAccess(
+                                    (idx<0?Config.CADI_PROP_FILES:args[1].substring(0, idx))+
+                                    '='+
+                                    (idx<0?args[1]:args[1].substring(idx+1)));
+                    } else {
+                        aafsso= new AAFSSO(args, new AAFSSO.ProcessArgs() {
+                            @Override
+                            public Properties process(String[] args, Properties props) {
+                                if (args.length>1) {
+                                    if (!args[0].equals("keypairgen")) {
+                                        props.put(Config.AAF_APPID, args[1]);
+                                    }    
+                                }
+                                return props;
+                            }
+                        });
+                        access = aafsso.access();
+                    }
                 }
                     
                 if (aafsso!=null && aafsso.loginOnly()) {
@@ -230,13 +230,13 @@ public class Agent {
                     env = new RosettaEnv(access.getProperties());
                     Deque<String> cmds = new ArrayDeque<String>();
                     for (String p : args) {
-                    	int eq;
+                        int eq;
                         if ("-noexit".equalsIgnoreCase(p)) {
                             doExit = false;
                         } else if ((eq=p.indexOf('=')) < 0) {
                             cmds.add(p);
                         } else {
-                        	access.setProperty(p.substring(0,eq), p.substring(eq+1));
+                            access.setProperty(p.substring(0,eq), p.substring(eq+1));
                         }
                     }
                     
@@ -328,7 +328,7 @@ public class Agent {
                                 keypairGen(trans, access, cmds);
                                 break;
                             case "config":
-                            	config(trans,access,args,cmds);
+                                config(trans,access,args,cmds);
                                 break;
                             case "validate":
                                 validate(access);
@@ -365,62 +365,62 @@ public class Agent {
     }
 
     public synchronized static Map<String,String> loadURLs(Access access) throws UnknownHostException, CadiException {
-		if(aaf_urls==null) {
-	    	Map<String,String> rv = new HashMap<>();
-	        RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
-	    	String dot_le = access.getProperty(Config.AAF_LOCATOR_CONTAINER,null);
-	    	dot_le=dot_le==null?"":'.'+dot_le;
-	    	String version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
-	        for(String u : new String[] {"locate","aaf","oauth","cm","gui","fs","hello","token","introspect"}) {
-	        	String tag;
-	        	String append=null;
-	        	switch(u) {
-	        		case "aaf":   tag = Config.AAF_URL; break;
-	        		case "locate":tag = Config.AAF_LOCATE_URL; break;
-	        		case "oauth": tag = Config.AAF_URL_OAUTH; break;
-	        		case "token": tag = Config.AAF_OAUTH2_TOKEN_URL; append="/token"; break;
-	        		case "introspect": tag = Config.AAF_OAUTH2_INTROSPECT_URL; append="/introspect"; break;
-	        		case "cm":    tag = Config.AAF_URL_CM; break;
-	        		case "gui":   tag = Config.AAF_URL_GUI; break;
-	        		case "fs":    tag = Config.AAF_URL_FS; break;
-	        		case "hello": tag = Config.AAF_URL_HELLO; break;
-	        		default:
-		        		tag = "aaf_url_" + u;
-	        	}
-	        	String value;
-	        	if((value=access.getProperty(tag,null))==null) {
-		        	String proto = "fs".equals(u)?"http://":"https://";
-		        	String lhost;
-		        	if("locate".equals(u)) {
-		        		lhost=rph.default_fqdn;
-		        	} else {
-		        		lhost=Config.AAF_LOCATE_URL_TAG;
-		        	}
-		        	value = rph.replacements(AGENT_LOAD_URLS,
-		        			proto + lhost + "/%CNS.%AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
-		        			null,dot_le);
-		        	if(append!=null) {
-		        		value+=append;
-		        	}
-	        	} else {
-	        		value = rph.replacements(AGENT_LOAD_URLS, value,null,dot_le);
-	        	}
-	        	rv.put(tag, value);
-	        };
-	        aaf_urls = rv;
-		}
-	    return aaf_urls;
-	}
+        if(aaf_urls==null) {
+            Map<String,String> rv = new HashMap<>();
+            RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
+            String dot_le = access.getProperty(Config.AAF_LOCATOR_CONTAINER,null);
+            dot_le=dot_le==null?"":'.'+dot_le;
+            String version = access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
+            for(String u : new String[] {"locate","aaf","oauth","cm","gui","fs","hello","token","introspect"}) {
+                String tag;
+                String append=null;
+                switch(u) {
+                    case "aaf":   tag = Config.AAF_URL; break;
+                    case "locate":tag = Config.AAF_LOCATE_URL; break;
+                    case "oauth": tag = Config.AAF_URL_OAUTH; break;
+                    case "token": tag = Config.AAF_OAUTH2_TOKEN_URL; append="/token"; break;
+                    case "introspect": tag = Config.AAF_OAUTH2_INTROSPECT_URL; append="/introspect"; break;
+                    case "cm":    tag = Config.AAF_URL_CM; break;
+                    case "gui":   tag = Config.AAF_URL_GUI; break;
+                    case "fs":    tag = Config.AAF_URL_FS; break;
+                    case "hello": tag = Config.AAF_URL_HELLO; break;
+                    default:
+                        tag = "aaf_url_" + u;
+                }
+                String value;
+                if((value=access.getProperty(tag,null))==null) {
+                    String proto = "fs".equals(u)?"http://":"https://";
+                    String lhost;
+                    if("locate".equals(u)) {
+                        lhost=rph.default_fqdn;
+                    } else {
+                        lhost=Config.AAF_LOCATE_URL_TAG;
+                    }
+                    value = rph.replacements(AGENT_LOAD_URLS,
+                            proto + lhost + "/%CNS.%AAF_NS." + ("aaf".equals(u)?"service":u) + ':' + version, 
+                            null,dot_le);
+                    if(append!=null) {
+                        value+=append;
+                    }
+                } else {
+                    value = rph.replacements(AGENT_LOAD_URLS, value,null,dot_le);
+                }
+                rv.put(tag, value);
+            };
+            aaf_urls = rv;
+        }
+        return aaf_urls;
+    }
 
-	public static void fillMissing(PropAccess access, Map<String, String> map) {
-		for(Entry<String, String> es : map.entrySet()) {
-			if(access.getProperty(es.getKey())==null) {
-				access.setProperty(es.getKey(),es.getValue());
-			}
-		}
-	}
+    public static void fillMissing(PropAccess access, Map<String, String> map) {
+        for(Entry<String, String> es : map.entrySet()) {
+            if(access.getProperty(es.getKey())==null) {
+                access.setProperty(es.getKey(),es.getValue());
+            }
+        }
+    }
 
-	private static synchronized AAFCon<?> aafcon(Access access) throws APIException, CadiException, LocatorException {
+    private static synchronized AAFCon<?> aafcon(Access access) throws APIException, CadiException, LocatorException {
         if (aafcon==null) {
             aafcon = new AAFConHttp(access,Config.AAF_URL_CM);
         }
@@ -453,7 +453,7 @@ public class Agent {
         if (cmds.size()<1) {
             String alias = env.getProperty(Config.CADI_ALIAS);
             if(alias==null) {
-            	alias = env.getProperty(Config.AAF_APPID);
+                alias = env.getProperty(Config.AAF_APPID);
             }
             return alias!=null?alias:AAFSSO.cons.readLine("AppID: ");
         }
@@ -803,8 +803,8 @@ public class Agent {
                                 File chalFile = new File(dir,a.getNs()+".chal");
                                 if(chalFile.exists()) {
                                     fis.close();
-	                                fis = new FileInputStream(chalFile);
-	                                props.load(fis);
+                                    fis = new FileInputStream(chalFile);
+                                    props.load(fis);
                                 }
                             } finally {
                                 fis.close();
@@ -862,66 +862,66 @@ public class Agent {
     private static void config(Trans trans, PropAccess propAccess, String[] args, Deque<String> cmds) throws Exception {
         TimeTaken tt = trans.start("Get Configuration", Env.REMOTE);
         try {
-	        final String fqi = fqi(cmds);
-	        Artifact arti = new Artifact();
-	        arti.setDir(propAccess.getProperty(Config.CADI_ETCDIR, System.getProperty("user.dir")));
-	        arti.setNs(FQI.reverseDomain(fqi));
+            final String fqi = fqi(cmds);
+            Artifact arti = new Artifact();
+            arti.setDir(propAccess.getProperty(Config.CADI_ETCDIR, System.getProperty("user.dir")));
+            arti.setNs(FQI.reverseDomain(fqi));
             PropHolder loc = PropHolder.get(arti, "location.props");
             PropHolder cred = PropHolder.get(arti,"cred.props");
             PropHolder app= PropHolder.get(arti,"props");
             for(String c : args) {
-            	int idx = c.indexOf('=');
-            	if(idx>0) {
-            		app.add(c.substring(0,idx), c.substring(idx+1));
-            	}
+                int idx = c.indexOf('=');
+                if(idx>0) {
+                    app.add(c.substring(0,idx), c.substring(idx+1));
+                }
             }
             app.add(Config.CADI_PROP_FILES, loc.getPath()+':'+cred.getPath());
 
             for (String tag : LOC_TAGS) {
-            	loc.add(tag, getProperty(propAccess, trans, false, tag, "%s: ",tag));
+                loc.add(tag, getProperty(propAccess, trans, false, tag, "%s: ",tag));
             }
             
             String keyfile = cred.getKeyPath();
             if(keyfile!=null) {
-            	File fkeyfile = new File(keyfile);
-            	if(!fkeyfile.exists()) {
-            		ArtifactDir.write(fkeyfile,Chmod.to400,Symm.keygen());
-            	}
+                File fkeyfile = new File(keyfile);
+                if(!fkeyfile.exists()) {
+                    ArtifactDir.write(fkeyfile,Chmod.to400,Symm.keygen());
+                }
             }
             cred.add(Config.CADI_KEYFILE, cred.getKeyPath());
             final String ssoAppID = propAccess.getProperty(Config.AAF_APPID);
             if(fqi!=null && fqi.equals(ssoAppID)) {
-            	cred.addEnc(Config.AAF_APPPASS, propAccess, null);
+                cred.addEnc(Config.AAF_APPPASS, propAccess, null);
             // only Ask for Password when starting scratch
             } else if(propAccess.getProperty(Config.CADI_PROP_FILES)==null) {
-            	if(!configNoPasswd) {
-	            	char[] pwd = AAFSSO.cons.readPassword("Password for %s (leave blank for NO password): ", fqi);
-	            	if(pwd.length>0) {
-	            		cred.addEnc(Config.AAF_APPPASS, new String(pwd));
-	            	}
-            	}
+                if(!configNoPasswd) {
+                    char[] pwd = AAFSSO.cons.readPassword("Password for %s (leave blank for NO password): ", fqi);
+                    if(pwd.length>0) {
+                        cred.addEnc(Config.AAF_APPPASS, new String(pwd));
+                    }
+                }
             }
             
             // load all properties that are already setup.
             Map<String, String> aaf_urls = loadURLs(propAccess);
             for(Entry<String, String> es : aaf_urls.entrySet()) {
-            	app.add(es.getKey(), es.getValue());
+                app.add(es.getKey(), es.getValue());
             }
             
             app.add(Config.AAF_LOCATE_URL, Config.getAAFLocateUrl(propAccess));
             app.add(Config.AAF_ENV,propAccess, "DEV");
             String release = propAccess.getProperty(Config.AAF_DEPLOYED_VERSION);
             if(release==null) {
-            	release = System.getProperty(Config.AAF_DEPLOYED_VERSION,null);
+                release = System.getProperty(Config.AAF_DEPLOYED_VERSION,null);
             }
             if(release!=null) {
-            	app.add(Config.AAF_DEPLOYED_VERSION, release);
+                app.add(Config.AAF_DEPLOYED_VERSION, release);
             }
             for(Entry<Object, Object> aaf_loc_prop : propAccess.getProperties().entrySet()) {
-            	String key = aaf_loc_prop.getKey().toString();
-            	if(key.startsWith("aaf_locator")) {
-            		app.add(key, aaf_loc_prop.getValue().toString());
-            	}
+                String key = aaf_loc_prop.getKey().toString();
+                if(key.startsWith("aaf_locator")) {
+                    app.add(key, aaf_loc_prop.getValue().toString());
+                }
             }
             
             app.add(Config.AAF_APPID, fqi);
@@ -932,64 +932,64 @@ public class Agent {
                 File origTruststore = new File(cts);
                 File newTruststore = new File(app.getDir(),origTruststore.getName());
                 if(!newTruststore.exists()) {
-	                if (!origTruststore.exists()) {
-	                    // Try same directory as cadi_prop_files
-	                    String cpf = propAccess.getProperty(Config.CADI_PROP_FILES);
-	                    if (cpf!=null) {
-	                        for (String f : Split.split(File.pathSeparatorChar, cpf)) {
-	                            File fcpf = new File(f);
-	                            if (fcpf.exists()) {
-	                                int lastSep = cts.lastIndexOf(File.pathSeparator);
-	                                origTruststore = new File(fcpf.getParentFile(),lastSep>=0?cts.substring(lastSep):cts);
-	                                if (origTruststore.exists()) { 
-	                                    break;
-	                                }
-	                            }
-	                        }
-	                        if (!origTruststore.exists()) {
-	                            throw new CadiException(cts + " does not exist");
-	                        }
-	                    }
-	                    
-	                }
-	                if (!newTruststore.exists() && origTruststore.exists()) {
-	                    Files.copy(origTruststore.toPath(), newTruststore.toPath());
-	                }
+                    if (!origTruststore.exists()) {
+                        // Try same directory as cadi_prop_files
+                        String cpf = propAccess.getProperty(Config.CADI_PROP_FILES);
+                        if (cpf!=null) {
+                            for (String f : Split.split(File.pathSeparatorChar, cpf)) {
+                                File fcpf = new File(f);
+                                if (fcpf.exists()) {
+                                    int lastSep = cts.lastIndexOf(File.pathSeparator);
+                                    origTruststore = new File(fcpf.getParentFile(),lastSep>=0?cts.substring(lastSep):cts);
+                                    if (origTruststore.exists()) { 
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!origTruststore.exists()) {
+                                throw new CadiException(cts + " does not exist");
+                            }
+                        }
+                        
+                    }
+                    if (!newTruststore.exists() && origTruststore.exists()) {
+                        Files.copy(origTruststore.toPath(), newTruststore.toPath());
+                    }
                 }
 
-            	System.out.println("New Truststore is " + newTruststore);
+                System.out.println("New Truststore is " + newTruststore);
                 cred.add(Config.CADI_TRUSTSTORE, newTruststore.getCanonicalPath());
                 cred.add(Config.CADI_TRUSTSTORE_PASSWORD, "changeit" /* Java default */);
                     
                 String cpf = propAccess.getProperty(Config.CADI_PROP_FILES);
                 if (cpf!=null){
-                	String[] propFiles = Split.splitTrim(File.pathSeparatorChar, cpf); 
+                    String[] propFiles = Split.splitTrim(File.pathSeparatorChar, cpf); 
                     for (int pfi = propFiles.length-1;pfi>=0;--pfi) {
-                    	String f = propFiles[pfi];
+                        String f = propFiles[pfi];
                         System.out.format("Reading %s\n",f);
                         FileInputStream fis = new FileInputStream(f); 
                         try {
                             Properties props = new Properties();
                             props.load(fis);
                             for (Entry<Object, Object> prop : props.entrySet()) {
-                            	boolean lower = true;
-                            	String key = prop.getKey().toString();
-                            	if(LOC_TAGS.contains(key)) {
-                            		break;
-                            	}
-                            	for(int i=0;lower && i<key.length();++i) {
-                            		if(Character.isUpperCase(key.charAt(i))) {
-                            			lower = false;
-                            		}
-                            	}
-                            	if(lower) {
-                                	PropHolder ph = CRED_TAGS.contains(key)?cred:app;
-                                	if(key.endsWith("_password")) {
-                                		ph.addEnc(key, prop.getValue().toString());
-                                	} else {
-                                		ph.add(key, prop.getValue().toString());
-                                	}
-                            	}
+                                boolean lower = true;
+                                String key = prop.getKey().toString();
+                                if(LOC_TAGS.contains(key)) {
+                                    break;
+                                }
+                                for(int i=0;lower && i<key.length();++i) {
+                                    if(Character.isUpperCase(key.charAt(i))) {
+                                        lower = false;
+                                    }
+                                }
+                                if(lower) {
+                                    PropHolder ph = CRED_TAGS.contains(key)?cred:app;
+                                    if(key.endsWith("_password")) {
+                                        ph.addEnc(key, prop.getValue().toString());
+                                    } else {
+                                        ph.add(key, prop.getValue().toString());
+                                    }
+                                }
                             }
                         } finally {
                             fis.close();
@@ -999,12 +999,12 @@ public class Agent {
                     aafcon = aafcon(propAccess);
                     if (aafcon!=null) { // get Properties from Remote AAF
                         for (Props props : aafProps(trans,aafcon,getProperty(propAccess,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: "),fqi)) {
-                        	PropHolder ph = CRED_TAGS.contains(props.getTag())?cred:app;
-                        	if(props.getTag().endsWith("_password")) {
-                        		ph.addEnc(props.getTag(), props.getValue());
-                        	} else {
-                        		ph.add(props.getTag(), props.getValue());
-                        	}
+                            PropHolder ph = CRED_TAGS.contains(props.getTag())?cred:app;
+                            if(props.getTag().endsWith("_password")) {
+                                ph.addEnc(props.getTag(), props.getValue());
+                            } else {
+                                ph.add(props.getTag(), props.getValue());
+                            }
                         }
 
                     }
@@ -1018,10 +1018,10 @@ public class Agent {
     }
 
     public static List<Props> aafProps(Trans trans, AAFCon<?> aafcon, String locator, String fqi) throws CadiException, APIException, URISyntaxException {
-    	Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
+        Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
                 .read("/configure/"+fqi+"/aaf", configDF);
         if (acf.get(TIMEOUT)) {
-        	return acf.value.getProps();
+            return acf.value.getProps();
         } else if (acf.code()==401){
             trans.error().log("Bad Password sent to AAF");
         } else if (acf.code()==404){

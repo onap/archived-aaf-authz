@@ -73,7 +73,7 @@ public class CMArtiChangeAction extends Page {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
                         @Override
                         public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                        	trans.info().log("Step 1");
+                            trans.info().log("Step 1");
                             final Artifact arti = new Artifact();
                             final String machine = trans.get(sMachine,null);
                             final String ca = trans.get(sCA, null);
@@ -86,26 +86,26 @@ public class CMArtiChangeAction extends Page {
                             
                             // These checks to not apply to deletions
                             if(!CMArtiChangeForm.DELETE.equals(trans.get(sCmd, ""))) {
-	                            // Disallow IP entries, except by special Permission
-	                            if (!trans.fish(getPerm(ca,"ip"))) {
-	                                boolean ok=true;
-	                                if (IPValidator.ip(machine)) {
-	                                    ok=false;
-	                                }
-	                                if (ok) {
-	                                    for (String s: arti.getSans()) {
-	                                        if (IPValidator.ip(s)) {
-	                                            ok=false;
-	                                            break;
-	                                        }
-	                                    }
-	                                }
-	                                if (!ok) {
-	                                    hgen.p("Policy Failure: IPs in certificates are only allowed by Exception.");
-	                                    return;
-	                                }
-	                            }
-	                            
+                                // Disallow IP entries, except by special Permission
+                                if (!trans.fish(getPerm(ca,"ip"))) {
+                                    boolean ok=true;
+                                    if (IPValidator.ip(machine)) {
+                                        ok=false;
+                                    }
+                                    if (ok) {
+                                        for (String s: arti.getSans()) {
+                                            if (IPValidator.ip(s)) {
+                                                ok=false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (!ok) {
+                                        hgen.p("Policy Failure: IPs in certificates are only allowed by Exception.");
+                                        return;
+                                    }
+                                }
+                                
                             }
                             
                             arti.setMechid((String)trans.get(sID,null));
@@ -192,18 +192,18 @@ public class CMArtiChangeAction extends Page {
                                                 if(f.body().contains("%") ) {
                                                     hgen.p(Vars.convert(err.getText(),err.getVariables()));
                                                 } else {
-                                            		int colon = err.getText().indexOf(':');
-                                            		if(colon>0) {
-                                            			hgen.p(err.getMessageId() + ": " + err.getText().substring(0, colon));
-                                            			Mark bq = new Mark();
-                                                		hgen.incr(bq,"blockquote");
-	                                                	for(String em : Split.splitTrim('\n', err.getText().substring(colon+1))) {
-	                                                		hgen.p(em);
-	                                                	}
-	                                                	hgen.end(bq);
-                                            		} else {
-                                            			hgen.p(err.getMessageId() + ": " + err.getText());
-                                            		}
+                                                    int colon = err.getText().indexOf(':');
+                                                    if(colon>0) {
+                                                        hgen.p(err.getMessageId() + ": " + err.getText().substring(0, colon));
+                                                        Mark bq = new Mark();
+                                                        hgen.incr(bq,"blockquote");
+                                                        for(String em : Split.splitTrim('\n', err.getText().substring(colon+1))) {
+                                                            hgen.p(em);
+                                                        }
+                                                        hgen.end(bq);
+                                                    } else {
+                                                        hgen.p(err.getMessageId() + ": " + err.getText());
+                                                    }
                                                 }
                                             } else {
                                                 hgen.p(arti.getMechid() + " on " + arti.getMachine() + ": " + f.body());

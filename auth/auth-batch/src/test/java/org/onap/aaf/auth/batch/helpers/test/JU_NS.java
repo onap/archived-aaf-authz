@@ -48,112 +48,112 @@ import junit.framework.Assert;
 
 public class JU_NS {
 
-	NS ns;
-	NSSplit nSSplit;
+    NS ns;
+    NSSplit nSSplit;
 
-	@Before
-	public void setUp() {
-		ns = new NS("name", "description", "parent", 1, 1);
-		nSSplit = new NSSplit("string", 1);
-	}
+    @Before
+    public void setUp() {
+        ns = new NS("name", "description", "parent", 1, 1);
+        nSSplit = new NSSplit("string", 1);
+    }
 
-	@Test
-	public void testToString() {
-		Assert.assertEquals("name", ns.toString());
-	}
+    @Test
+    public void testToString() {
+        Assert.assertEquals("name", ns.toString());
+    }
 
-	@Test
-	public void testHashCode() {
-		Assert.assertEquals(3373707, ns.hashCode());
-	}
+    @Test
+    public void testHashCode() {
+        Assert.assertEquals(3373707, ns.hashCode());
+    }
 
-	@Test
-	public void testEquals() {
-		Assert.assertEquals(true, ns.equals("name"));
-		Assert.assertEquals(false, ns.equals("name1"));
-	}
+    @Test
+    public void testEquals() {
+        Assert.assertEquals(true, ns.equals("name"));
+        Assert.assertEquals(false, ns.equals("name1"));
+    }
 
-	@Test
-	public void testCompareTo() {
-		NS nsValid = new NS("name", "description", "parent", 1, 1);
-		Assert.assertEquals(0, ns.compareTo(nsValid));
+    @Test
+    public void testCompareTo() {
+        NS nsValid = new NS("name", "description", "parent", 1, 1);
+        Assert.assertEquals(0, ns.compareTo(nsValid));
 
-		NS nsInvalid = new NS("name1", "description", "parent", 1, 1);
-		Assert.assertEquals(-1, ns.compareTo(nsInvalid));
-	}
+        NS nsInvalid = new NS("name1", "description", "parent", 1, 1);
+        Assert.assertEquals(-1, ns.compareTo(nsInvalid));
+    }
 
-	@Test
-	public void testDeriveParent() {
-		ns.deriveParent("d.ot.te.d");
-	}
+    @Test
+    public void testDeriveParent() {
+        ns.deriveParent("d.ot.te.d");
+    }
 
-	@Test
-	public void testLoadWithoutNS() {
-		Trans trans = mock(Trans.class);
-		Session session = mock(Session.class);
-		Creator<NS> creator = mock(Creator.class);
-		LogTarget target = mock(LogTarget.class);
-		TimeTaken tt = mock(TimeTaken.class);
-		ResultSet results = mock(ResultSet.class);
-		ArrayList<Row> rows = new ArrayList<Row>();
-		Row row = RowCreator.getRow();
-		rows.add(row);
+    @Test
+    public void testLoadWithoutNS() {
+        Trans trans = mock(Trans.class);
+        Session session = mock(Session.class);
+        Creator<NS> creator = mock(Creator.class);
+        LogTarget target = mock(LogTarget.class);
+        TimeTaken tt = mock(TimeTaken.class);
+        ResultSet results = mock(ResultSet.class);
+        ArrayList<Row> rows = new ArrayList<Row>();
+        Row row = RowCreator.getRow();
+        rows.add(row);
 
-		when(trans.info()).thenReturn(target);
-		when(trans.start("Read Namespaces", Env.REMOTE)).thenReturn(tt);
-		when(trans.start("Load Namespaces", Env.SUB)).thenReturn(tt);
-		when(session.execute(any(SimpleStatement.class))).thenReturn(results);
-		when(results.iterator()).thenReturn(rows.iterator());
-		when(creator.create(row)).thenReturn(ns);
+        when(trans.info()).thenReturn(target);
+        when(trans.start("Read Namespaces", Env.REMOTE)).thenReturn(tt);
+        when(trans.start("Load Namespaces", Env.SUB)).thenReturn(tt);
+        when(session.execute(any(SimpleStatement.class))).thenReturn(results);
+        when(results.iterator()).thenReturn(rows.iterator());
+        when(creator.create(row)).thenReturn(ns);
 
-		NS.load(trans, session, creator);
-	}
+        NS.load(trans, session, creator);
+    }
 
-	@Test
-	public void testLoadOne() {
-		Trans trans = mock(Trans.class);
-		Session session = mock(Session.class);
-		Creator<NS> creator = mock(Creator.class);
-		LogTarget target = mock(LogTarget.class);
-		TimeTaken tt = mock(TimeTaken.class);
-		ResultSet results = mock(ResultSet.class);
-		ArrayList<Row> rows = new ArrayList<Row>();
-		Row row = RowCreator.getRow();
-		rows.add(row);
+    @Test
+    public void testLoadOne() {
+        Trans trans = mock(Trans.class);
+        Session session = mock(Session.class);
+        Creator<NS> creator = mock(Creator.class);
+        LogTarget target = mock(LogTarget.class);
+        TimeTaken tt = mock(TimeTaken.class);
+        ResultSet results = mock(ResultSet.class);
+        ArrayList<Row> rows = new ArrayList<Row>();
+        Row row = RowCreator.getRow();
+        rows.add(row);
 
-		when(trans.info()).thenReturn(target);
-		when(trans.start("Read Namespaces", Env.REMOTE)).thenReturn(tt);
-		when(trans.start("Load Namespaces", Env.SUB)).thenReturn(tt);
-		when(session.execute(any(SimpleStatement.class))).thenReturn(results);
-		when(results.iterator()).thenReturn(rows.iterator());
-		when(creator.create(row)).thenReturn(ns);
+        when(trans.info()).thenReturn(target);
+        when(trans.start("Read Namespaces", Env.REMOTE)).thenReturn(tt);
+        when(trans.start("Load Namespaces", Env.SUB)).thenReturn(tt);
+        when(session.execute(any(SimpleStatement.class))).thenReturn(results);
+        when(results.iterator()).thenReturn(rows.iterator());
+        when(creator.create(row)).thenReturn(ns);
 
-		NS.loadOne(trans, session, creator, "text");
-	}
+        NS.loadOne(trans, session, creator, "text");
+    }
 
-	@Test
-	public void testCount() {
-		Trans trans = mock(Trans.class);
-		Session session = mock(Session.class);
-		LogTarget target = mock(LogTarget.class);
-		TimeTaken tt = mock(TimeTaken.class);
-		ResultSet results = mock(ResultSet.class);
-		ArrayList<Row> rows = new ArrayList<Row>();
-		Row row = RowCreator.getRow();
-		rows.add(row);
+    @Test
+    public void testCount() {
+        Trans trans = mock(Trans.class);
+        Session session = mock(Session.class);
+        LogTarget target = mock(LogTarget.class);
+        TimeTaken tt = mock(TimeTaken.class);
+        ResultSet results = mock(ResultSet.class);
+        ArrayList<Row> rows = new ArrayList<Row>();
+        Row row = RowCreator.getRow();
+        rows.add(row);
 
-		when(trans.info()).thenReturn(target);
-		when(trans.start("Count Namespaces", Env.REMOTE)).thenReturn(tt);
-		when(session.execute(any(SimpleStatement.class))).thenReturn(results);
-		when(results.one()).thenReturn(row);
+        when(trans.info()).thenReturn(target);
+        when(trans.start("Count Namespaces", Env.REMOTE)).thenReturn(tt);
+        when(session.execute(any(SimpleStatement.class))).thenReturn(results);
+        when(results.one()).thenReturn(row);
 
-		assertEquals(0, NS.count(trans, session));
-	}
+        assertEquals(0, NS.count(trans, session));
+    }
 
-	@Test
-	public void testV2() {
-		NS.v2_0_11.create(RowCreator.getRow());
-		assertEquals(NS.v2_0_11.select(), "SELECT name, description, parent, type, scope FROM authz.ns ");
-	}
+    @Test
+    public void testV2() {
+        NS.v2_0_11.create(RowCreator.getRow());
+        assertEquals(NS.v2_0_11.select(), "SELECT name, description, parent, type, scope FROM authz.ns ");
+    }
 
 }

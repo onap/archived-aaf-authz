@@ -32,40 +32,40 @@ import org.onap.aaf.auth.locate.facade.LocateFacade;
 
 public class JU_API_AAFTest {
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	private AAF_Locate gwAPI;
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	private LocateFacade facade;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private AAF_Locate gwAPI;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private LocateFacade facade;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void testAPI_AAFAccess() throws Exception {
-		try {
-			API_AAFAccess.init(gwAPI, facade);
-		} catch (Exception e) {
-			fail("There should be no exception as Mocks are used");
-		}
-	}
+    @Test
+    public void testAPI_AAFAccess() throws Exception {
+        try {
+            API_AAFAccess.init(gwAPI, facade);
+        } catch (Exception e) {
+            fail("There should be no exception as Mocks are used");
+        }
+    }
 
-	@Test
-	public void testAPI_Find() throws Exception {
-		try {
-			API_Find.init(gwAPI, facade);
-		} catch (Exception e) {
-			fail("There should be no exception as Mocks are used");
-		}
-	}
+    @Test
+    public void testAPI_Find() throws Exception {
+        try {
+            API_Find.init(gwAPI, facade);
+        } catch (Exception e) {
+            fail("There should be no exception as Mocks are used");
+        }
+    }
 
-	@Test
-	public void testAPI_API() throws Exception {
-		try {
-			API_Api.init(gwAPI, facade);
-		} catch (Exception e) {
-			fail("There should be no exception as Mocks are used");
-		}
-	}
+    @Test
+    public void testAPI_API() throws Exception {
+        try {
+            API_Api.init(gwAPI, facade);
+        } catch (Exception e) {
+            fail("There should be no exception as Mocks are used");
+        }
+    }
 }

@@ -44,141 +44,141 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class PrepExtend extends Batch {
 
-	public static final String PREP_EXTEND = "PrepExtend";
-	private static final String CSV = ".csv";
-	private static final String INFO = "info";
+    public static final String PREP_EXTEND = "PrepExtend";
+    private static final String CSV = ".csv";
+    private static final String INFO = "info";
 
-	/**
-	 * Create a list of Creds and UserRoles to extend
-	 * Note: Certificates cannot be renewed in this way.
-	 * 
-	 * Arguments From (0 = today, -2 = 2 weeks back) and To (weeks from today)
-	 * 
-	 * @param trans
-	 * @throws APIException
-	 * @throws IOException
-	 * @throws OrganizationException
-	 */
-	public PrepExtend(AuthzTrans trans) throws APIException, IOException, OrganizationException {
-		super(trans.env());
-		trans.info().log("Starting Connection Process");
+    /**
+     * Create a list of Creds and UserRoles to extend
+     * Note: Certificates cannot be renewed in this way.
+     * 
+     * Arguments From (0 = today, -2 = 2 weeks back) and To (weeks from today)
+     * 
+     * @param trans
+     * @throws APIException
+     * @throws IOException
+     * @throws OrganizationException
+     */
+    public PrepExtend(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+        super(trans.env());
+        trans.info().log("Starting Connection Process");
 
-		TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
-		try {
-			TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
-			try {
-				session = cluster.connect();
-			} finally {
-				tt.done();
-			}
-		} finally {
-			tt0.done();
-		}
-	}
+        TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
+        try {
+            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
+            try {
+                session = cluster.connect();
+            } finally {
+                tt.done();
+            }
+        } finally {
+            tt0.done();
+        }
+    }
 
-	@Override
-	protected void run(AuthzTrans trans) {
-		GregorianCalendar gc = new GregorianCalendar();
-		Date now = gc.getTime();
-		
-		int ifrom = 0;
-		int ito = 4;
-		
-		for(int i=0; i< args().length;++i) {
-			switch(args()[i]) {
-				case "-from":
-					if(args().length>i+1) {
-						ifrom = Integer.parseInt(args()[i++ +1]); 
-					}
-					break;
-				case "-to":
-					if(args().length>i+1) {
-						ito = Integer.parseInt(args()[i++ +1]);
-					}
-					break;
-			}
-		}
-		if(ifrom < -4) {
-			System.err.println("Invalid -from param");
-			return;
-		}
-		
-		if(ito<=0 || ito>24 || ifrom>ito) {
-			System.err.println("Invalid -to param");
-			return;
-		}
-		
-		// Make sure to is Zero based from today.
-		if(ifrom<0) {
-			ito+= ifrom*-1;
-		}
-		
-		gc.add(GregorianCalendar.WEEK_OF_MONTH, ifrom);
-		Date from = gc.getTime();
-		
-		gc.add(GregorianCalendar.WEEK_OF_MONTH, ito /* with From calculated in */);
-		Date to = gc.getTime();
-		
-		try {
-			File file = new File(logDir(), PREP_EXTEND + Chrono.dateOnlyStamp(now) + CSV);
-			final CSV puntCSV = new CSV(env.access(),file);
-			final Writer cw = puntCSV.writer();
-			cw.row(INFO,PREP_EXTEND,Chrono.dateOnlyStamp(now),0);
+    @Override
+    protected void run(AuthzTrans trans) {
+        GregorianCalendar gc = new GregorianCalendar();
+        Date now = gc.getTime();
+        
+        int ifrom = 0;
+        int ito = 4;
+        
+        for(int i=0; i< args().length;++i) {
+            switch(args()[i]) {
+                case "-from":
+                    if(args().length>i+1) {
+                        ifrom = Integer.parseInt(args()[i++ +1]); 
+                    }
+                    break;
+                case "-to":
+                    if(args().length>i+1) {
+                        ito = Integer.parseInt(args()[i++ +1]);
+                    }
+                    break;
+            }
+        }
+        if(ifrom < -4) {
+            System.err.println("Invalid -from param");
+            return;
+        }
+        
+        if(ito<=0 || ito>24 || ifrom>ito) {
+            System.err.println("Invalid -to param");
+            return;
+        }
+        
+        // Make sure to is Zero based from today.
+        if(ifrom<0) {
+            ito+= ifrom*-1;
+        }
+        
+        gc.add(GregorianCalendar.WEEK_OF_MONTH, ifrom);
+        Date from = gc.getTime();
+        
+        gc.add(GregorianCalendar.WEEK_OF_MONTH, ito /* with From calculated in */);
+        Date to = gc.getTime();
+        
+        try {
+            File file = new File(logDir(), PREP_EXTEND + Chrono.dateOnlyStamp(now) + CSV);
+            final CSV puntCSV = new CSV(env.access(),file);
+            final Writer cw = puntCSV.writer();
+            cw.row(INFO,PREP_EXTEND,Chrono.dateOnlyStamp(now),0);
 
-			try {
-				trans.info().log("Process UserRoles for Extending");
-				/**
-				   Run through User Roles.  
-				   If match Date Range, write out to appropriate file.
-				*/
-				UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
-					if(from.before(ur.expires()) && to.after(ur.expires())) {
-						ur.row(cw,UserRole.UR);
-					}
-				});
-				
-				trans.info().log("Process BasicAuth for Extending");
-				TimeTaken tt0 = trans.start("Load Credentials", Env.REMOTE);
-				try {
-					// Load only Valid Basic Auth
-					Cred.load(trans, session, CredDAO.BASIC_AUTH_SHA256);
-				} finally {
-					tt0.done();
-				}
+            try {
+                trans.info().log("Process UserRoles for Extending");
+                /**
+                   Run through User Roles.  
+                   If match Date Range, write out to appropriate file.
+                */
+                UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
+                    if(from.before(ur.expires()) && to.after(ur.expires())) {
+                        ur.row(cw,UserRole.UR);
+                    }
+                });
+                
+                trans.info().log("Process BasicAuth for Extending");
+                TimeTaken tt0 = trans.start("Load Credentials", Env.REMOTE);
+                try {
+                    // Load only Valid Basic Auth
+                    Cred.load(trans, session, CredDAO.BASIC_AUTH_SHA256);
+                } finally {
+                    tt0.done();
+                }
 
 
-				/**
-				   Run through Creds.  
-				   If match Date Range, write out to appropriate file.
-				*/
-				Map<Integer,Instance> imap = new HashMap<>();
-				Instance prev;
-				for(Cred cred : Cred.data.values()) {
-					imap.clear();
-					for(Instance i : cred.instances) {
-						if(from.before(i.expires) && to.after(i.expires)) {
-							prev = imap.get(i.other);
-							// Only do LATEST instance of same cred (accounts for previously extended creds)
-							if(prev==null || prev.expires.before(i.expires)) {
-								imap.put(i.other,i);
-							}
-						}
-					};
-					for(Instance i: imap.values()) {
-						cred.row(cw,i);
-					}
-				}
-			} finally {
-				cw.close();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-	@Override
-	protected void _close(AuthzTrans trans) {
-		session.close();
-	}
+                /**
+                   Run through Creds.  
+                   If match Date Range, write out to appropriate file.
+                */
+                Map<Integer,Instance> imap = new HashMap<>();
+                Instance prev;
+                for(Cred cred : Cred.data.values()) {
+                    imap.clear();
+                    for(Instance i : cred.instances) {
+                        if(from.before(i.expires) && to.after(i.expires)) {
+                            prev = imap.get(i.other);
+                            // Only do LATEST instance of same cred (accounts for previously extended creds)
+                            if(prev==null || prev.expires.before(i.expires)) {
+                                imap.put(i.other,i);
+                            }
+                        }
+                    };
+                    for(Instance i: imap.values()) {
+                        cred.row(cw,i);
+                    }
+                }
+            } finally {
+                cw.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    protected void _close(AuthzTrans trans) {
+        session.close();
+    }
 
 
 }

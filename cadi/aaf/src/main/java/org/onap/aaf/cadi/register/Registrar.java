@@ -71,7 +71,7 @@ public class Registrar<ENV extends BasicEnv> {
                             erroringTimer = null;
                         }
                     } else {
-                    	env.error().log(rv.toString());
+                        env.error().log(rv.toString());
                         // Account for different Registrations not being to same place
                         if (erroringTimer==null) {
                             erroringTimer =  new Timer(REGISTRAR + " error re-check ",true);

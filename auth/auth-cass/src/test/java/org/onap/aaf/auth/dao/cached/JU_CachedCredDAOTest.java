@@ -39,32 +39,32 @@ import org.onap.aaf.auth.layer.Result;
 
 public class JU_CachedCredDAOTest {
 
-	@Mock
-	private CIDAO<AuthzTrans> info;
-	@Mock
-	private CredDAO dao;
-	private AuthzTrans trans;
-	@Mock
-	private Result<List<Data>> value;
+    @Mock
+    private CIDAO<AuthzTrans> info;
+    @Mock
+    private CredDAO dao;
+    private AuthzTrans trans;
+    @Mock
+    private Result<List<Data>> value;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
 
-		when(dao.readID(trans, "id")).thenReturn(value);
-	}
+        when(dao.readID(trans, "id")).thenReturn(value);
+    }
 
-	@Test
-	public void testOk() {
-		when(value.isOK()).thenReturn(false);
-		CachedCredDAO ccDao = new CachedCredDAO(dao, info, 100l);
+    @Test
+    public void testOk() {
+        when(value.isOK()).thenReturn(false);
+        CachedCredDAO ccDao = new CachedCredDAO(dao, info, 100l);
 
-		ccDao.readNS(trans, "ns");
-		Result<List<Data>> result = ccDao.readID(trans, "id");
+        ccDao.readNS(trans, "ns");
+        Result<List<Data>> result = ccDao.readID(trans, "id");
 
-		assertEquals(result.status, Status.OK);
-		verify(dao).readNS(trans, "ns");
-		verify(dao).readID(trans, "id");
-	}
+        assertEquals(result.status, Status.OK);
+        verify(dao).readNS(trans, "ns");
+        verify(dao).readID(trans, "id");
+    }
 
 }

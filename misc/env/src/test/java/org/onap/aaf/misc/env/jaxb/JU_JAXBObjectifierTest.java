@@ -41,178 +41,178 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 public class JU_JAXBObjectifierTest {
 
-	@Mock
-	JAXBumar jumar;
-	
-	@Mock
-	Schema schema;
-	
-	@Mock
-	Env env;
-	
-	TimeTaken tt,ttObjectify;
-	
-	LogTarget logT;
-	
-	@Before
-	public void setUp() {
-		initMocks(this);
-		tt=Mockito.mock(TimeTaken.class);
-    	Mockito.doReturn(tt).when(env).start("JAXB Unmarshal", Env.XML);
-		Mockito.doNothing().when(tt).done();
-		logT = Mockito.mock(LogTarget.class);
-		Mockito.doReturn(logT).when(env).debug();
-	}
+    @Mock
+    JAXBumar jumar;
+    
+    @Mock
+    Schema schema;
+    
+    @Mock
+    Env env;
+    
+    TimeTaken tt,ttObjectify;
+    
+    LogTarget logT;
+    
+    @Before
+    public void setUp() {
+        initMocks(this);
+        tt=Mockito.mock(TimeTaken.class);
+        Mockito.doReturn(tt).when(env).start("JAXB Unmarshal", Env.XML);
+        Mockito.doNothing().when(tt).done();
+        logT = Mockito.mock(LogTarget.class);
+        Mockito.doReturn(logT).when(env).debug();
+    }
 
-	@Test
+    @Test
     public void testObjectify() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier( schema, new Class[] {this.getClass()});
-			bdfObj = new JAXBObjectifier(jumar);
-			Mockito.doReturn(this.getClass()).when(jumar).unmarshal(logT, "test");
-			bdfObj.objectify(env, "test");
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier( schema, new Class[] {this.getClass()});
+            bdfObj = new JAXBObjectifier(jumar);
+            Mockito.doReturn(this.getClass()).when(jumar).unmarshal(logT, "test");
+            bdfObj.objectify(env, "test");
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testObjectifyException() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).unmarshal(logT, "test");
-			bdfObj.objectify(env, "test");
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).unmarshal(logT, "test");
+            bdfObj.objectify(env, "test");
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testObjectifyRdr() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(new Class[] {this.getClass()});
-			bdfObj = new JAXBObjectifier(jumar);
-			Mockito.doReturn(this.getClass()).when(jumar).unmarshal(logT, Mockito.mock(StringReader.class));
-			bdfObj.objectify(env, Mockito.mock(StringReader.class));
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(new Class[] {this.getClass()});
+            bdfObj = new JAXBObjectifier(jumar);
+            Mockito.doReturn(this.getClass()).when(jumar).unmarshal(logT, Mockito.mock(StringReader.class));
+            bdfObj.objectify(env, Mockito.mock(StringReader.class));
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testObjectifyRdrException() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			StringReader sr = Mockito.mock(StringReader.class);
-			Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).unmarshal(logT, sr);
-			bdfObj.objectify(env, sr);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            StringReader sr = Mockito.mock(StringReader.class);
+            Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).unmarshal(logT, sr);
+            bdfObj.objectify(env, sr);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testObjectifyIs() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			Mockito.doReturn(this.getClass()).when(jumar).unmarshal(logT, Mockito.mock(InputStream.class));
-			bdfObj.objectify(env, Mockito.mock(InputStream.class));
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            Mockito.doReturn(this.getClass()).when(jumar).unmarshal(logT, Mockito.mock(InputStream.class));
+            bdfObj.objectify(env, Mockito.mock(InputStream.class));
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testObjectifyIsException() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			InputStream sr = Mockito.mock(InputStream.class);
-			Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).unmarshal(logT, sr);
-			bdfObj.objectify(env, sr);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            InputStream sr = Mockito.mock(InputStream.class);
+            Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).unmarshal(logT, sr);
+            bdfObj.objectify(env, sr);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testEmptyMethods() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			bdfObj.servicePrestart(env);
-			bdfObj.threadPrestart(env);
-			bdfObj.threadDestroy(env);
-			bdfObj.serviceDestroy(env);
-			bdfObj.refresh(env);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} 
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            bdfObj.servicePrestart(env);
+            bdfObj.threadPrestart(env);
+            bdfObj.threadDestroy(env);
+            bdfObj.serviceDestroy(env);
+            bdfObj.refresh(env);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testNewInstance() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			Object retVal = bdfObj.newInstance();
-			Mockito.doThrow(new IllegalAccessException("Test Exception")).when(jumar).newInstance();
-	    	
-		} catch (IllegalAccessException e) {
-			assertEquals("Test Exception", e.getLocalizedMessage());
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            Object retVal = bdfObj.newInstance();
+            Mockito.doThrow(new IllegalAccessException("Test Exception")).when(jumar).newInstance();
+            
+        } catch (IllegalAccessException e) {
+            assertEquals("Test Exception", e.getLocalizedMessage());
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
-	
-	@Test
+    
+    @Test
     public void testNewInstanceException() {
-		JAXBObjectifier<?> bdfObj = null;
-		try {
-			bdfObj = new JAXBObjectifier(jumar);
-			Mockito.doThrow(new IllegalAccessException("Test Exception")).when(jumar).newInstance();
-			Object retVal = bdfObj.newInstance();
-		} catch (IllegalAccessException e) {
-			assertEquals("Test Exception", e.getLocalizedMessage());
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
+        JAXBObjectifier<?> bdfObj = null;
+        try {
+            bdfObj = new JAXBObjectifier(jumar);
+            Mockito.doThrow(new IllegalAccessException("Test Exception")).when(jumar).newInstance();
+            Object retVal = bdfObj.newInstance();
+        } catch (IllegalAccessException e) {
+            assertEquals("Test Exception", e.getLocalizedMessage());
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 }

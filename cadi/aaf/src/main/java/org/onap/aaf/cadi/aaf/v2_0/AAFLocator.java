@@ -91,7 +91,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
         }
         
         if(si.access.willLog(Access.Level.DEBUG)) {
-        	si.access.log(Access.Level.DEBUG, "Root URI:",client.getURI());
+            si.access.log(Access.Level.DEBUG, "Root URI:",client.getURI());
         }
     }
 

@@ -107,9 +107,9 @@ public class RoleDetail extends Page {
             final String pRole = trans.get(sRoleName, null);
             Validator v = new Validator();
             if(!v.isNull("Role",pRole).err()) {
-            	if(!pRole.startsWith(trans.user())) {
-            		v.role(pRole);
-            	}
+                if(!pRole.startsWith(trans.user())) {
+                    v.role(pRole);
+                }
             }
             if (v.err()) {
                 trans.warn().printf("Error in PermDetail Request: %s", v.errs());

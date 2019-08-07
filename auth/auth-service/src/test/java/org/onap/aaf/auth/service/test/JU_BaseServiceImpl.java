@@ -75,20 +75,20 @@ import aaf.v2_0.Users;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class JU_BaseServiceImpl {
-	protected AuthzCassServiceImpl<Nss, Perms, Pkey, Roles, Users, UserRoles, Delgs, Certs, Keys, Request, History, Error, Approvals> 
-		acsi;
-	protected Mapper_2_0 mapper;
+    protected AuthzCassServiceImpl<Nss, Perms, Pkey, Roles, Users, UserRoles, Delgs, Certs, Keys, Request, History, Error, Approvals> 
+        acsi;
+    protected Mapper_2_0 mapper;
 
-	@Mock
+    @Mock
     protected DefaultOrg org;
-	@Mock
+    @Mock
     protected DefaultOrgIdentity orgIdentity;
 
 //
 // NOTE: Annotation format (@Mock and @Spy) do NOT seem to always work as a Base Class,
 //       so we construct manually.
 //
-// Mock Objects	
+// Mock Objects    
     protected HistoryDAO historyDAO = mock(HistoryDAO.class);
     protected CacheInfoDAO cacheInfoDAO = mock(CacheInfoDAO.class);
     protected CachedNSDAO nsDAO = mock(CachedNSDAO.class);
@@ -102,47 +102,47 @@ public abstract class JU_BaseServiceImpl {
     protected DelegateDAO delegateDAO = mock(DelegateDAO.class);
     protected ApprovalDAO approvalDAO = mock(ApprovalDAO.class);
 
- // Spy Objects	
+ // Spy Objects    
     @Spy
     protected static PropAccess access = new PropAccess();
     @Spy
-	protected static AuthzEnv env = new AuthzEnv(access);
+    protected static AuthzEnv env = new AuthzEnv(access);
     @Spy
     protected static AuthzTrans trans = env.newTransNoAvg();
     
     // @Spy doesn't seem to work on Question.
     @Spy
     protected Question question = spy(new Question(trans,
-	    		historyDAO,cacheInfoDAO,nsDAO,permDAO,
-	    		roleDAO,userRoleDAO,credDAO,certDAO,
-	    		locateDAO,futureDAO,delegateDAO,approvalDAO));
+                historyDAO,cacheInfoDAO,nsDAO,permDAO,
+                roleDAO,userRoleDAO,credDAO,certDAO,
+                locateDAO,futureDAO,delegateDAO,approvalDAO));
     
-	public void setUp() throws Exception {
-	    when(trans.org()).thenReturn(org);
-	    when(org.getDomain()).thenReturn("org.onap");
-	    Define.set(access);
-		access.setProperty(Config.CADI_LATITUDE, "38.0");
-		access.setProperty(Config.CADI_LONGITUDE, "-72.0");
-		
-	    mapper = new Mapper_2_0(question);
-		acsi = new AuthzCassServiceImpl<>(trans, mapper, question);
-	}
-	
-	//////////
-	//  Common Data Objects
-	/////////
+    public void setUp() throws Exception {
+        when(trans.org()).thenReturn(org);
+        when(org.getDomain()).thenReturn("org.onap");
+        Define.set(access);
+        access.setProperty(Config.CADI_LATITUDE, "38.0");
+        access.setProperty(Config.CADI_LONGITUDE, "-72.0");
+        
+        mapper = new Mapper_2_0(question);
+        acsi = new AuthzCassServiceImpl<>(trans, mapper, question);
+    }
+    
+    //////////
+    //  Common Data Objects
+    /////////
     protected List<NsDAO.Data> nsData(String name) {
-    	NsDAO.Data ndd = new NsDAO.Data();
-    	ndd.name=name;
-    	int dot = name.lastIndexOf('.');
-    	if(dot<0) {
-    		ndd.parent=".";
-    	} else {
-    		ndd.parent=name.substring(0,dot);
-    	}
-    	List<NsDAO.Data> rv = new ArrayList<NsDAO.Data>();
-    	rv.add(ndd);
-    	return rv;
+        NsDAO.Data ndd = new NsDAO.Data();
+        ndd.name=name;
+        int dot = name.lastIndexOf('.');
+        if(dot<0) {
+            ndd.parent=".";
+        } else {
+            ndd.parent=name.substring(0,dot);
+        }
+        List<NsDAO.Data> rv = new ArrayList<NsDAO.Data>();
+        rv.add(ndd);
+        return rv;
     }
     
     /**
@@ -155,36 +155,36 @@ public abstract class JU_BaseServiceImpl {
      * @param days
      */
     protected void whenRole(AuthzTrans trans, String user, String ns, String role, boolean exists, int days) {
-    	Result<List<UserRoleDAO.Data>> result;
-    	if(exists) {
-    		result = Result.ok(listOf(urData(user,ns,role,days)));
-    	} else {
-    		result = Result.ok(emptyList(UserRoleDAO.Data.class));
-    	}
-    	when(question.userRoleDAO().read(trans, user, ns+'.'+role)).thenReturn(result);
+        Result<List<UserRoleDAO.Data>> result;
+        if(exists) {
+            result = Result.ok(listOf(urData(user,ns,role,days)));
+        } else {
+            result = Result.ok(emptyList(UserRoleDAO.Data.class));
+        }
+        when(question.userRoleDAO().read(trans, user, ns+'.'+role)).thenReturn(result);
     }
     
     protected UserRoleDAO.Data urData(String user, String ns, String rname, int days) {
-    	UserRoleDAO.Data urdd = new UserRoleDAO.Data();
-    	urdd.user = user;
-    	urdd.ns = ns;
-    	urdd.rname = rname;
-    	urdd.role = ns + '.' + rname;
-    	GregorianCalendar gc = new GregorianCalendar();
-    	gc.add(GregorianCalendar.DAY_OF_YEAR, days);
-    	urdd.expires = gc.getTime();
-    	return urdd;
+        UserRoleDAO.Data urdd = new UserRoleDAO.Data();
+        urdd.user = user;
+        urdd.ns = ns;
+        urdd.rname = rname;
+        urdd.role = ns + '.' + rname;
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.add(GregorianCalendar.DAY_OF_YEAR, days);
+        urdd.expires = gc.getTime();
+        return urdd;
     }
 
 
     protected <T> List<T> listOf(T t) {
-    	List<T> list = new ArrayList<>();
-    	list.add(t);
-    	return list;
+        List<T> list = new ArrayList<>();
+        list.add(t);
+        return list;
     }
     
     protected <T> List<T> emptyList(Class<T> cls) {
-    	return new ArrayList<>();
+        return new ArrayList<>();
     }
 
 }

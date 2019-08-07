@@ -197,12 +197,12 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             }
         }
         try {
-        	String no_register = env().getProperty("aaf_no_register",null);
-        	if(no_register==null) {
-        		register(service.registrants(port));
-        	} else {
-        		access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.app_name);
-        	}
+            String no_register = env().getProperty("aaf_no_register",null);
+            if(no_register==null) {
+                register(service.registrants(port));
+            } else {
+                access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.app_name);
+            }
             access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
             
             rserv.postStartup(hostname, port);

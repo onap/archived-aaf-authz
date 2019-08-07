@@ -56,159 +56,159 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class Remove extends Batch {
-	private final AuthzTrans noAvg;
-	private HistoryDAO historyDAO;
-	private CQLBatch cqlBatch;
+    private final AuthzTrans noAvg;
+    private HistoryDAO historyDAO;
+    private CQLBatch cqlBatch;
 
-	public Remove(AuthzTrans trans) throws APIException, IOException, OrganizationException {
-		super(trans.env());
-		trans.info().log("Starting Connection Process");
+    public Remove(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+        super(trans.env());
+        trans.info().log("Starting Connection Process");
 
-		noAvg = env.newTransNoAvg();
-		noAvg.setUser(new BatchPrincipal("Remove"));
+        noAvg = env.newTransNoAvg();
+        noAvg.setUser(new BatchPrincipal("Remove"));
 
-		TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
-		try {
-			historyDAO = new HistoryDAO(trans, cluster, CassAccess.KEYSPACE);
-			TimeTaken tt2 = trans.start("Connect to Cluster", Env.REMOTE);
-			try {
-				session = historyDAO.getSession(trans);
-			} finally {
-				tt2.done();
-			}
-			cqlBatch = new CQLBatch(noAvg.info(),session); 
+        TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
+        try {
+            historyDAO = new HistoryDAO(trans, cluster, CassAccess.KEYSPACE);
+            TimeTaken tt2 = trans.start("Connect to Cluster", Env.REMOTE);
+            try {
+                session = historyDAO.getSession(trans);
+            } finally {
+                tt2.done();
+            }
+            cqlBatch = new CQLBatch(noAvg.info(),session); 
 
 
-		} finally {
-			tt0.done();
-		}
-	}
+        } finally {
+            tt0.done();
+        }
+    }
 
-	@Override
-	protected void run(AuthzTrans trans) {
+    @Override
+    protected void run(AuthzTrans trans) {
 
-		// Create Intermediate Output 
-		File logDir = logDir();
+        // Create Intermediate Output 
+        File logDir = logDir();
 
-		List<File> remove = new ArrayList<>();
-		if(args().length>0) {
-			for(int i=0;i<args().length;++i) {
-				remove.add(new File(logDir, args()[i]));
-			}
-		} else {
-			remove.add(new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv"));
-		}
+        List<File> remove = new ArrayList<>();
+        if(args().length>0) {
+            for(int i=0;i<args().length;++i) {
+                remove.add(new File(logDir, args()[i]));
+            }
+        } else {
+            remove.add(new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv"));
+        }
 
-		for(File f : remove) {
-			trans.init().log("Processing File:",f.getAbsolutePath());
-		}
+        for(File f : remove) {
+            trans.init().log("Processing File:",f.getAbsolutePath());
+        }
 
-		final Holder<Boolean> ur = new Holder<>(false);
-		final Holder<Boolean> cred = new Holder<>(false);
-		final Holder<Boolean> x509 = new Holder<>(false);
-		final Holder<String> memoFmt = new Holder<String>("");
-		final HistoryDAO.Data hdd = new HistoryDAO.Data();
-		final String orgName = trans.org().getName();
+        final Holder<Boolean> ur = new Holder<>(false);
+        final Holder<Boolean> cred = new Holder<>(false);
+        final Holder<Boolean> x509 = new Holder<>(false);
+        final Holder<String> memoFmt = new Holder<String>("");
+        final HistoryDAO.Data hdd = new HistoryDAO.Data();
+        final String orgName = trans.org().getName();
 
-		hdd.action="delete";
-		hdd.reconstruct = ByteBuffer.allocate(0);
-		hdd.user = noAvg.user();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-		hdd.yr_mon = Integer.parseInt(sdf.format(new Date()));
+        hdd.action="delete";
+        hdd.reconstruct = ByteBuffer.allocate(0);
+        hdd.user = noAvg.user();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        hdd.yr_mon = Integer.parseInt(sdf.format(new Date()));
 
-		try { 
-			final CQLBatchLoop cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
-			for(File f : remove) {
-				trans.info().log("Processing ",f.getAbsolutePath(),"for Deletions");
-				if(f.exists()) {
-					CSV removeCSV = new CSV(env.access(),f);
-					try {
-						removeCSV.visit( row -> {
-							switch(row.get(0)) {
-								case "info":
-									switch(row.get(1)) {
-										case "Delete":
-											memoFmt.set("%s expired from %s on %s");
-											break;
-										case "NotInOrgDelete":
-											memoFmt.set("Identity %s was removed from %s on %s");
-											break;
-									}
-									break;
-								case "ur":
-									if(!ur.get()) {
-										ur.set(true);
-									}
-									//TODO If deleted because Role is no longer there, double check...
-									
-									UserRole.batchDelete(cbl.inc(),row);
-									hdd.target=UserRoleDAO.TABLE; 
-									hdd.subject=UserRole.histSubject(row);
-									hdd.memo=UserRole.histMemo(memoFmt.get(), row);
-									historyDAO.createBatch(cbl.inc(), hdd);
-									break;
-								case "cred":
-									if(!cred.get()) {
-										cred.set(true);
-									}
-									Cred.batchDelete(cbl.inc(),row);
-									hdd.target=CredDAO.TABLE; 
-									hdd.subject=Cred.histSubject(row);
-									hdd.memo=Cred.histMemo(memoFmt.get(), orgName,row);
-									historyDAO.createBatch(cbl.inc(), hdd);
-									break;
-								case "x509":
-									if(!x509.get()) {
-										x509.set(true);
-									}
-									X509.batchDelete(cbl.inc(),row);
-									hdd.target="x509"; 
-									hdd.subject=X509.histSubject(row);
-									hdd.memo=X509.histMemo(memoFmt.get(),row);
-									historyDAO.createBatch(cbl.inc(), hdd);
-									break;
-								case "future":
-									// Not cached
-									Future.deleteByIDBatch(cbl.inc(),row.get(1));
-									break;
-								case "approval":
-									// Not cached
-									Approval.deleteByIDBatch(cbl.inc(),row.get(1));
-									break;
-								case "notified":
-									LastNotified.delete(cbl.inc(),row);
-									break;
-							}
-						});
-						cbl.flush();
-					} catch (IOException | CadiException e) {
-						e.printStackTrace();
-					}
-				} else {
-					trans.error().log("File",f.getAbsolutePath(),"does not exist.");
-				}
-			}
-		} finally {
-			TimeTaken tt = trans.start("Touch UR,Cred and Cert Caches",Trans.REMOTE);
-			try {
-				if(ur.get()) {
-					cqlBatch.touch(UserRoleDAO.TABLE, 0, UserRoleDAO.CACHE_SEG, dryRun);
-				}
-				if(cred.get()) {
-					cqlBatch.touch(CredDAO.TABLE, 0, CredDAO.CACHE_SEG, dryRun);
-				}
-				if(x509.get()) {
-					cqlBatch.touch(CertDAO.TABLE, 0, CertDAO.CACHE_SEG, dryRun);
-				}
-			} finally {
-				tt.done();
-			}
-		}
-	}
+        try { 
+            final CQLBatchLoop cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
+            for(File f : remove) {
+                trans.info().log("Processing ",f.getAbsolutePath(),"for Deletions");
+                if(f.exists()) {
+                    CSV removeCSV = new CSV(env.access(),f);
+                    try {
+                        removeCSV.visit( row -> {
+                            switch(row.get(0)) {
+                                case "info":
+                                    switch(row.get(1)) {
+                                        case "Delete":
+                                            memoFmt.set("%s expired from %s on %s");
+                                            break;
+                                        case "NotInOrgDelete":
+                                            memoFmt.set("Identity %s was removed from %s on %s");
+                                            break;
+                                    }
+                                    break;
+                                case "ur":
+                                    if(!ur.get()) {
+                                        ur.set(true);
+                                    }
+                                    //TODO If deleted because Role is no longer there, double check...
+                                    
+                                    UserRole.batchDelete(cbl.inc(),row);
+                                    hdd.target=UserRoleDAO.TABLE; 
+                                    hdd.subject=UserRole.histSubject(row);
+                                    hdd.memo=UserRole.histMemo(memoFmt.get(), row);
+                                    historyDAO.createBatch(cbl.inc(), hdd);
+                                    break;
+                                case "cred":
+                                    if(!cred.get()) {
+                                        cred.set(true);
+                                    }
+                                    Cred.batchDelete(cbl.inc(),row);
+                                    hdd.target=CredDAO.TABLE; 
+                                    hdd.subject=Cred.histSubject(row);
+                                    hdd.memo=Cred.histMemo(memoFmt.get(), orgName,row);
+                                    historyDAO.createBatch(cbl.inc(), hdd);
+                                    break;
+                                case "x509":
+                                    if(!x509.get()) {
+                                        x509.set(true);
+                                    }
+                                    X509.batchDelete(cbl.inc(),row);
+                                    hdd.target="x509"; 
+                                    hdd.subject=X509.histSubject(row);
+                                    hdd.memo=X509.histMemo(memoFmt.get(),row);
+                                    historyDAO.createBatch(cbl.inc(), hdd);
+                                    break;
+                                case "future":
+                                    // Not cached
+                                    Future.deleteByIDBatch(cbl.inc(),row.get(1));
+                                    break;
+                                case "approval":
+                                    // Not cached
+                                    Approval.deleteByIDBatch(cbl.inc(),row.get(1));
+                                    break;
+                                case "notified":
+                                    LastNotified.delete(cbl.inc(),row);
+                                    break;
+                            }
+                        });
+                        cbl.flush();
+                    } catch (IOException | CadiException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    trans.error().log("File",f.getAbsolutePath(),"does not exist.");
+                }
+            }
+        } finally {
+            TimeTaken tt = trans.start("Touch UR,Cred and Cert Caches",Trans.REMOTE);
+            try {
+                if(ur.get()) {
+                    cqlBatch.touch(UserRoleDAO.TABLE, 0, UserRoleDAO.CACHE_SEG, dryRun);
+                }
+                if(cred.get()) {
+                    cqlBatch.touch(CredDAO.TABLE, 0, CredDAO.CACHE_SEG, dryRun);
+                }
+                if(x509.get()) {
+                    cqlBatch.touch(CertDAO.TABLE, 0, CertDAO.CACHE_SEG, dryRun);
+                }
+            } finally {
+                tt.done();
+            }
+        }
+    }
 
-	@Override
-	protected void _close(AuthzTrans trans) {
-		session.close();
-	}
+    @Override
+    protected void _close(AuthzTrans trans) {
+        session.close();
+    }
 
 }

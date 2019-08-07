@@ -56,12 +56,12 @@ import org.onap.aaf.cadi.util.NetMask;
 import org.onap.aaf.cadi.util.Split;
 
 public class SecurityInfo {
-	private static final String SECURITY_ALGO = "RSA";
+    private static final String SECURITY_ALGO = "RSA";
     private static final String HTTPS_PROTOCOLS = "https.protocols";
     private static final String JDK_TLS_CLIENT_PROTOCOLS = "jdk.tls.client.protocols";
     private static final String INITIALIZING_ERR_FMT = "Error initializing %s: %s";
-	private static final String LOADED_FROM_CADI_PROPERTIES = "%s loaded from CADI Properties";
-	private static final String LOADED_FROM_SYSTEM_PROPERTIES = "%s loaded from System Properties";
+    private static final String LOADED_FROM_CADI_PROPERTIES = "%s loaded from CADI Properties";
+    private static final String LOADED_FROM_SYSTEM_PROPERTIES = "%s loaded from System Properties";
 
     public static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM;
     
@@ -86,26 +86,26 @@ public class SecurityInfo {
     
 
     public SecurityInfo(final Access access) throws CadiException {
-    	String msgHelp = "";
+        String msgHelp = "";
         try {
             this.access = access;
             // reuse DME2 Properties for convenience if specific Properties don't exist
             
             String str = access.getProperty(Config.CADI_ALIAS, null);
             if(str==null || str.isEmpty()) {
-            	defaultAlias = null;
+                defaultAlias = null;
             } else {
-            	defaultAlias = str;
+                defaultAlias = str;
             }
             
             str = access.getProperty(Config.CADI_CLIENT_ALIAS, null);
             if(str==null) {
-            	defaultClientAlias = defaultAlias;
+                defaultClientAlias = defaultAlias;
             } else if(str.isEmpty()) {
-            	// intentionally off, i.e. cadi_client_alias=
-            	defaultClientAlias = null;
+                // intentionally off, i.e. cadi_client_alias=
+                defaultClientAlias = null;
             } else {
-            	defaultClientAlias = str;
+                defaultClientAlias = str;
             }
 
             msgHelp = String.format(INITIALIZING_ERR_FMT,"Keystore", access.getProperty(Config.CADI_KEYSTORE, ""));
@@ -134,34 +134,34 @@ public class SecurityInfo {
     public static void setHTTPProtocols(Access access) {
         String httpsProtocols = System.getProperty(Config.HTTPS_PROTOCOLS);
         if(httpsProtocols!=null) {
-        	access.printf(Level.INIT, LOADED_FROM_SYSTEM_PROPERTIES, HTTPS_PROTOCOLS);
+            access.printf(Level.INIT, LOADED_FROM_SYSTEM_PROPERTIES, HTTPS_PROTOCOLS);
         } else {
-        	httpsProtocols = access.getProperty(Config.HTTPS_PROTOCOLS,null);
-        	if(httpsProtocols!=null) {
-        		access.printf(Level.INIT, LOADED_FROM_CADI_PROPERTIES, HTTPS_PROTOCOLS);
-        	} else {
-        		httpsProtocols = access.getProperty(HTTPS_PROTOCOLS, Config.HTTPS_PROTOCOLS_DEFAULT);
-        		access.printf(Level.INIT, "%s set by %s in CADI Properties",Config.HTTPS_PROTOCOLS,Config.CADI_PROTOCOLS);
-        	}
-        	// This needs to be set when people do  not.
+            httpsProtocols = access.getProperty(Config.HTTPS_PROTOCOLS,null);
+            if(httpsProtocols!=null) {
+                access.printf(Level.INIT, LOADED_FROM_CADI_PROPERTIES, HTTPS_PROTOCOLS);
+            } else {
+                httpsProtocols = access.getProperty(HTTPS_PROTOCOLS, Config.HTTPS_PROTOCOLS_DEFAULT);
+                access.printf(Level.INIT, "%s set by %s in CADI Properties",Config.HTTPS_PROTOCOLS,Config.CADI_PROTOCOLS);
+            }
+            // This needs to be set when people do  not.
             System.setProperty(HTTPS_PROTOCOLS, httpsProtocols);
         }
         String httpsClientProtocols = System.getProperty(JDK_TLS_CLIENT_PROTOCOLS,null); 
         if(httpsClientProtocols!=null) {
-        	access.printf(Level.INIT, LOADED_FROM_SYSTEM_PROPERTIES, JDK_TLS_CLIENT_PROTOCOLS);
+            access.printf(Level.INIT, LOADED_FROM_SYSTEM_PROPERTIES, JDK_TLS_CLIENT_PROTOCOLS);
         } else {
-        	httpsClientProtocols = access.getProperty(Config.HTTPS_CLIENT_PROTOCOLS, null);
-        	if(httpsClientProtocols!=null) {
-        		access.printf(Level.INIT, LOADED_FROM_CADI_PROPERTIES, Config.HTTPS_CLIENT_PROTOCOLS);
-        	} else {
-        		httpsClientProtocols = Config.HTTPS_PROTOCOLS_DEFAULT;
-        		access.printf(Level.INIT, "%s set from %s",Config.HTTPS_CLIENT_PROTOCOLS, "Default Protocols");
-        	}
-        	System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, httpsClientProtocols);
+            httpsClientProtocols = access.getProperty(Config.HTTPS_CLIENT_PROTOCOLS, null);
+            if(httpsClientProtocols!=null) {
+                access.printf(Level.INIT, LOADED_FROM_CADI_PROPERTIES, Config.HTTPS_CLIENT_PROTOCOLS);
+            } else {
+                httpsClientProtocols = Config.HTTPS_PROTOCOLS_DEFAULT;
+                access.printf(Level.INIT, "%s set from %s",Config.HTTPS_CLIENT_PROTOCOLS, "Default Protocols");
+            }
+            System.setProperty(JDK_TLS_CLIENT_PROTOCOLS, httpsClientProtocols);
         }
-	}
+    }
 
-	/**
+    /**
      * @return the scf
      */
     public SSLSocketFactory getSSLSocketFactory() {
@@ -201,7 +201,7 @@ public class SecurityInfo {
     protected void initializeKeyManager() throws CadiException, IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         String keyStore = access.getProperty(Config.CADI_KEYSTORE, null);
         if(keyStore==null) {
-        	return;
+            return;
         } else if (!new File(keyStore).exists()) {
             throw new CadiException(keyStore + " does not exist");
         }
@@ -244,20 +244,20 @@ public class SecurityInfo {
         StringBuilder sb = null;
         for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
             if (keyManager instanceof X509KeyManager) {
-            	X509KeyManager xkm = (X509KeyManager)keyManager;
+                X509KeyManager xkm = (X509KeyManager)keyManager;
                 keyManagers.add(xkm);
                 if(defaultAlias!=null) {
-                	sb=new StringBuilder("X509 Chain\n");
-                	x509Info(sb,xkm.getCertificateChain(defaultAlias));
+                    sb=new StringBuilder("X509 Chain\n");
+                    x509Info(sb,xkm.getCertificateChain(defaultAlias));
                 }
                 if(defaultClientAlias!=null && !defaultClientAlias.equals(defaultAlias)) {
-                	if(sb==null) {
-                		sb = new StringBuilder();
-                	} else {
-                		sb.append('\n');
-                	}
-                	sb.append("X509 Client Chain\n");
-                	x509Info(sb,xkm.getCertificateChain(defaultAlias));
+                    if(sb==null) {
+                        sb = new StringBuilder();
+                    } else {
+                        sb.append('\n');
+                    }
+                    sb.append("X509 Client Chain\n");
+                    x509Info(sb,xkm.getCertificateChain(defaultAlias));
                 }
             }
         }
@@ -265,32 +265,32 @@ public class SecurityInfo {
         keyManagers.toArray(x509KeyManager);
         
         if(sb!=null) {
-        	access.log(Level.INIT, sb);
+            access.log(Level.INIT, sb);
         }
     }
     
     private void x509Info(StringBuilder sb, X509Certificate[] chain) {
-    	if(chain!=null) {
-    		int i=0;
-    		for(X509Certificate x : chain) {
-    			sb.append("  ");
-    			sb.append(i++);
-    			sb.append(')');
-    			sb.append("\n    Subject: ");
-    			sb.append(x.getSubjectDN());
-    			sb.append("\n    Issuer : ");
-    			sb.append(x.getIssuerDN());
-    			sb.append("\n    Expires: ");
-    			sb.append(x.getNotAfter());
-    			sb.append('\n');
-    		}
-    	}
+        if(chain!=null) {
+            int i=0;
+            for(X509Certificate x : chain) {
+                sb.append("  ");
+                sb.append(i++);
+                sb.append(')');
+                sb.append("\n    Subject: ");
+                sb.append(x.getSubjectDN());
+                sb.append("\n    Issuer : ");
+                sb.append(x.getIssuerDN());
+                sb.append("\n    Expires: ");
+                sb.append(x.getNotAfter());
+                sb.append('\n');
+            }
+        }
     }
 
     protected void initializeTrustManager() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException, CadiException {
         String trustStore = access.getProperty(Config.CADI_TRUSTSTORE, null);
         if(trustStore==null) {
-        	return; 
+            return; 
         } else if(!new File(trustStore).exists()) {
             throw new CadiException(trustStore + " does not exist");
         }

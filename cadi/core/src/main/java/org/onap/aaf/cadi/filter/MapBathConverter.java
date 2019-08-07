@@ -59,7 +59,7 @@ import org.onap.aaf.cadi.util.CSV.Visitor;
  */
 public class MapBathConverter {
     private static final String BASIC = "Basic ";
-	private final Map<String,String> map;
+    private final Map<String,String> map;
 
     /**
      * Create with colon separated name value pairs
@@ -78,53 +78,53 @@ public class MapBathConverter {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         final Date now = new Date();
         csv.visit(new Visitor() {
-			@Override
-			public void visit(List<String> row) throws CadiException {
-				if(row.size()<3) {
-					throw new CadiException("CSV file " + csv + " must have at least 2 Basic Auth columns and an Expiration Date(YYYY-MM-DD) in each row");
-				}
-				try {
-					Date date = sdf.parse(row.get(2));
-					String oldID = row.get(0);
-					String newID = row.get(1);
-					if(date.after(now)) {
-						if(!oldID.startsWith(BASIC) && newID.startsWith(BASIC)) {
-							throw new CadiException("CSV file " + csv + ": Uncredentialed ID " + idFromBasic(oldID,null) +
-													" may not transfer to credentialed ID " + idFromBasic(newID,null));
-						} else {
-							map.put(oldID,newID);
-							access.printf(Level.INIT, "ID Conversion from %s to %s enabled",
-									idFromBasic(oldID,null),
-									idFromBasic(newID,null));
-						}
-					} else {
-						access.printf(Level.INIT, "ID Conversion from %s to %s has expired.",
-								idFromBasic(oldID,null),
-								idFromBasic(newID,null));
-					}
-				} catch (ParseException e) {
-					throw new CadiException("Cannot Parse Date: " + row.get(2));
-				} catch (IOException e) {
-					throw new CadiException(e);
-				}
-			}
-		});
+            @Override
+            public void visit(List<String> row) throws CadiException {
+                if(row.size()<3) {
+                    throw new CadiException("CSV file " + csv + " must have at least 2 Basic Auth columns and an Expiration Date(YYYY-MM-DD) in each row");
+                }
+                try {
+                    Date date = sdf.parse(row.get(2));
+                    String oldID = row.get(0);
+                    String newID = row.get(1);
+                    if(date.after(now)) {
+                        if(!oldID.startsWith(BASIC) && newID.startsWith(BASIC)) {
+                            throw new CadiException("CSV file " + csv + ": Uncredentialed ID " + idFromBasic(oldID,null) +
+                                                    " may not transfer to credentialed ID " + idFromBasic(newID,null));
+                        } else {
+                            map.put(oldID,newID);
+                            access.printf(Level.INIT, "ID Conversion from %s to %s enabled",
+                                    idFromBasic(oldID,null),
+                                    idFromBasic(newID,null));
+                        }
+                    } else {
+                        access.printf(Level.INIT, "ID Conversion from %s to %s has expired.",
+                                idFromBasic(oldID,null),
+                                idFromBasic(newID,null));
+                    }
+                } catch (ParseException e) {
+                    throw new CadiException("Cannot Parse Date: " + row.get(2));
+                } catch (IOException e) {
+                    throw new CadiException(e);
+                }
+            }
+        });
     }
     
     private static String idFromBasic(String bath, Holder<String> hpass) throws IOException, CadiException {
-    	if(bath.startsWith(BASIC)) {
-			String cred = Symm.base64noSplit.decode(bath.substring(6));
-			int colon = cred.indexOf(':');
-			if(colon<0) {
-				throw new CadiException("Invalid Authentication Credential for " + cred);
-			}
-			if(hpass!=null) {
-				hpass.value = cred.substring(colon+1);
-			}
-			return cred.substring(0, colon);
-    	} else {
-    		return bath;
-    	}
+        if(bath.startsWith(BASIC)) {
+            String cred = Symm.base64noSplit.decode(bath.substring(6));
+            int colon = cred.indexOf(':');
+            if(colon<0) {
+                throw new CadiException("Invalid Authentication Credential for " + cred);
+            }
+            if(hpass!=null) {
+                hpass.value = cred.substring(colon+1);
+            }
+            return cred.substring(0, colon);
+        } else {
+            return bath;
+        }
     }
 
     /**
@@ -137,40 +137,40 @@ public class MapBathConverter {
     }
 
     public String convert(Access access, final String bath) {
-    	String rv = map.get(bath);
+        String rv = map.get(bath);
 
-    	String cred;
-		String tcred=null;
-		Holder<String> hpass=null;
-		try {
-			if(bath.startsWith(BASIC)) {
-	    		cred = idFromBasic(bath,(hpass=new Holder<String>()));
-	    		if(rv==null) {
-					rv = map.get(cred);
-	    		}
-	    	} else {
-	    		cred = bath;
-	    	}
+        String cred;
+        String tcred=null;
+        Holder<String> hpass=null;
+        try {
+            if(bath.startsWith(BASIC)) {
+                cred = idFromBasic(bath,(hpass=new Holder<String>()));
+                if(rv==null) {
+                    rv = map.get(cred);
+                }
+            } else {
+                cred = bath;
+            }
 
-			if(rv==null) {
-				// Nothing here, just return original
-				rv = bath;
-			} else {
-    			if(rv.startsWith(BASIC)) {
-    				tcred = idFromBasic(rv,null);
-    			} else {
-    				if(hpass!=null) {
-        				tcred = rv;
-    					rv = BASIC + Symm.base64noSplit.encode(rv+':'+hpass.value);
-    				}
-    			}
-    			if(tcred != null) {
-    				access.printf(Level.AUDIT, "ID %s converted to %s",cred,tcred);
-    			}
-    		}
-		} catch (IOException | CadiException e) {
-			access.log(e,"Invalid Authorization");
-		}
-    	return rv==null?bath:rv;
+            if(rv==null) {
+                // Nothing here, just return original
+                rv = bath;
+            } else {
+                if(rv.startsWith(BASIC)) {
+                    tcred = idFromBasic(rv,null);
+                } else {
+                    if(hpass!=null) {
+                        tcred = rv;
+                        rv = BASIC + Symm.base64noSplit.encode(rv+':'+hpass.value);
+                    }
+                }
+                if(tcred != null) {
+                    access.printf(Level.AUDIT, "ID %s converted to %s",cred,tcred);
+                }
+            }
+        } catch (IOException | CadiException e) {
+            access.log(e,"Invalid Authorization");
+        }
+        return rv==null?bath:rv;
     }
 }

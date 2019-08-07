@@ -42,145 +42,145 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 public class JU_JAXBStringifierTest {
 
-	@Mock
-	JAXBmar jumar;
-	
-	@Mock
-	QName qname;
-	
-	@Mock
-	Env env;
-	
-	TimeTaken tt,ttstringify;
-	
-	LogTarget logT;
-	
-	@Before
-	public void setUp() {
-		initMocks(this);
-		tt=Mockito.mock(TimeTaken.class);
-    	Mockito.doReturn(tt).when(env).start("JAXB Marshal", Env.XML);
-		Mockito.doNothing().when(tt).done();
-		logT = Mockito.mock(LogTarget.class);
-		Mockito.doReturn(logT).when(env).debug();
-	}
+    @Mock
+    JAXBmar jumar;
+    
+    @Mock
+    QName qname;
+    
+    @Mock
+    Env env;
+    
+    TimeTaken tt,ttstringify;
+    
+    LogTarget logT;
+    
+    @Before
+    public void setUp() {
+        initMocks(this);
+        tt=Mockito.mock(TimeTaken.class);
+        Mockito.doReturn(tt).when(env).start("JAXB Marshal", Env.XML);
+        Mockito.doNothing().when(tt).done();
+        logT = Mockito.mock(LogTarget.class);
+        Mockito.doReturn(logT).when(env).debug();
+    }
 
-	@Test
+    @Test
     public void teststringify() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		try {
-			bdfObj = new JAXBStringifier<JAXBmar>( qname, new Class[] {this.getClass()});
-			bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-			Mockito.doReturn(this.getClass()).when(jumar).marshal(logT, jumar, Mockito.mock(StringWriter.class), true);
-			bdfObj.stringify(env, jumar, true);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        try {
+            bdfObj = new JAXBStringifier<JAXBmar>( qname, new Class[] {this.getClass()});
+            bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+            Mockito.doReturn(this.getClass()).when(jumar).marshal(logT, jumar, Mockito.mock(StringWriter.class), true);
+            bdfObj.stringify(env, jumar, true);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void teststringifyWriter() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		try {
-			bdfObj = new JAXBStringifier<JAXBmar>(new Class[] {this.getClass()});
-			bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-			Mockito.doReturn(this.getClass()).when(jumar).marshal(logT, jumar, Mockito.mock(StringWriter.class), true);
-			bdfObj.stringify(env, jumar, Mockito.mock(StringWriter.class), true);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        try {
+            bdfObj = new JAXBStringifier<JAXBmar>(new Class[] {this.getClass()});
+            bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+            Mockito.doReturn(this.getClass()).when(jumar).marshal(logT, jumar, Mockito.mock(StringWriter.class), true);
+            bdfObj.stringify(env, jumar, Mockito.mock(StringWriter.class), true);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void teststringifyWriterException() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		try {
-			bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-			StringWriter sr = Mockito.mock(StringWriter.class);
-			Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).marshal(logT, jumar, sr, true);
-			bdfObj.stringify(env, jumar, sr, true);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        try {
+            bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+            StringWriter sr = Mockito.mock(StringWriter.class);
+            Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).marshal(logT, jumar, sr, true);
+            bdfObj.stringify(env, jumar, sr, true);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void teststringifyOs() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		try {
-			bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-			Mockito.doReturn(this.getClass()).when(jumar).marshal(logT, jumar, Mockito.mock(OutputStream.class), true);
-			bdfObj.stringify(env, jumar, Mockito.mock(OutputStream.class), true);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        try {
+            bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+            Mockito.doReturn(this.getClass()).when(jumar).marshal(logT, jumar, Mockito.mock(OutputStream.class), true);
+            bdfObj.stringify(env, jumar, Mockito.mock(OutputStream.class), true);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void teststringifyOsException() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		try {
-			bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-			OutputStream os = Mockito.mock(OutputStream.class);
-			Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).marshal(logT, jumar, os, true);
-			bdfObj.stringify(env, jumar, os, true);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        try {
+            bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+            OutputStream os = Mockito.mock(OutputStream.class);
+            Mockito.doThrow(new JAXBException("Test Exception")).when(jumar).marshal(logT, jumar, os, true);
+            bdfObj.stringify(env, jumar, os, true);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testEmptyMethods() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		try {
-			bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-			bdfObj.servicePrestart(env);
-			bdfObj.threadPrestart(env);
-			bdfObj.threadDestroy(env);
-			bdfObj.serviceDestroy(env);
-			bdfObj.refresh(env);
-		} catch (APIException e) {
-			assertTrue(e.getMessage().contains("Test Exception"));
-		} 
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        try {
+            bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+            bdfObj.servicePrestart(env);
+            bdfObj.threadPrestart(env);
+            bdfObj.threadDestroy(env);
+            bdfObj.serviceDestroy(env);
+            bdfObj.refresh(env);
+        } catch (APIException e) {
+            assertTrue(e.getMessage().contains("Test Exception"));
+        } 
+        
     }
-	
-	@Test
+    
+    @Test
     public void testPretty() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-		Mockito.doReturn(jumar).when(jumar).pretty(true);
-		Object retVal = bdfObj.pretty(true);
-		assertTrue(retVal instanceof JAXBStringifier);
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+        Mockito.doReturn(jumar).when(jumar).pretty(true);
+        Object retVal = bdfObj.pretty(true);
+        assertTrue(retVal instanceof JAXBStringifier);
     }
-	
-	@Test
+    
+    @Test
     public void testNewInstanceException() {
-		JAXBStringifier<JAXBmar> bdfObj = null;
-		bdfObj = new JAXBStringifier<JAXBmar>(jumar);
-		Mockito.doReturn(jumar).when(jumar).asFragment(true);
-		Object retVal = bdfObj.asFragment(true);
-		assertTrue(retVal instanceof JAXBStringifier);
-    	
+        JAXBStringifier<JAXBmar> bdfObj = null;
+        bdfObj = new JAXBStringifier<JAXBmar>(jumar);
+        Mockito.doReturn(jumar).when(jumar).asFragment(true);
+        Object retVal = bdfObj.asFragment(true);
+        assertTrue(retVal instanceof JAXBStringifier);
+        
     }
 }

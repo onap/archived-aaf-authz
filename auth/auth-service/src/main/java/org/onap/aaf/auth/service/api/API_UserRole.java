@@ -114,7 +114,7 @@ public class API_UserRole {
         authzAPI.route(PUT,"/authz/userRole/user",API.USER_ROLE_REQ,new Code(facade,"Update Roles for a user", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-            	context.error(trans,resp,removeAPI);
+                context.error(trans,resp,removeAPI);
             }
         });
         
@@ -125,7 +125,7 @@ public class API_UserRole {
         authzAPI.route(PUT,"/authz/userRole/role",API.USER_ROLE_REQ,new Code(facade,"Update Users for a role", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-            	context.error(trans,resp,removeAPI);
+                context.error(trans,resp,removeAPI);
             }
         });
 

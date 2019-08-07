@@ -100,8 +100,8 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             LocateLoader.deflt.unmarshal(this, toDIS(bb));
         }
 
-		public Data copy() {
-			Data out = new Data();
+        public Data copy() {
+            Data out = new Data();
             out.name = name;
             out.hostname = hostname;
             out.port = port;
@@ -115,8 +115,8 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             out.subprotocol = new HashSet<>();
             out.subprotocol.addAll(subprotocol);
             out.port_key = port_key;
-			return out;
-		}
+            return out;
+        }
     }
 
     private static class LocateLoader extends Loader<Data> implements Streamer<Data>{

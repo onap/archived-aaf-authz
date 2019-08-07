@@ -38,75 +38,75 @@ import org.onap.aaf.cadi.Access;
 
 public class JU_Log4jAccessAppender {
 
-	@Mock
-	Access access;
-	
-	@Before
-	public void setUp() {
-		initMocks(this);
-	}
-	
-	@Test
-	public void testRequiresLayout() {
-		Log4JAccessAppender log4jObj = new Log4JAccessAppender(access);
-		boolean retObj = log4jObj.requiresLayout();
-		assertFalse(retObj);
-	}
-	
-	@Test
-	public void testClose() {
-		Log4JAccessAppender log4jObj = new Log4JAccessAppender(access);
-		log4jObj.close();
-		
-	}
-	
-	@Test
-	public void testAppend() {
-		Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
-		LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.FATAL,"test",Thread.currentThread().getName(),null,null,null,null);
-		log4jObj.append(event);
-		Mockito.doReturn(true).when(access).willLog(Access.Level.ERROR);
-		event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.ERROR,"test",Thread.currentThread().getName(),null,null,null,null);
-		log4jObj.append(event);
-		event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.ALL,"test",Thread.currentThread().getName(),null,null,null,null);
-		log4jObj.append(event);
-	}
-	
-	@Test
-	public void testAppendWARN() {
-		Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
-		Mockito.doReturn(false).when(access).willLog(Access.Level.WARN);
-		LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.WARN,"test",Thread.currentThread().getName(),null,null,null,null);
-		log4jObj.append(event);
-	}
-	
-	@Test
-	public void testAppendINFO() {
-		Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
-		Mockito.doReturn(true).when(access).willLog(Access.Level.INFO);
-		LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.INFO,"test",Thread.currentThread().getName(),null,null,null,null);
-		log4jObj.append(event);
-	}
-	
-	@Test
-	public void testAppendWTrace() {
-		Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
-		Mockito.doReturn(false).when(access).willLog(Access.Level.TRACE);
-		LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.TRACE,"test",Thread.currentThread().getName(),null,null,null,null);
-		log4jObj.append(event);
-	}
-	
-	class Log4jAccessAppenderImpl extends Log4JAccessAppender{
+    @Mock
+    Access access;
+    
+    @Before
+    public void setUp() {
+        initMocks(this);
+    }
+    
+    @Test
+    public void testRequiresLayout() {
+        Log4JAccessAppender log4jObj = new Log4JAccessAppender(access);
+        boolean retObj = log4jObj.requiresLayout();
+        assertFalse(retObj);
+    }
+    
+    @Test
+    public void testClose() {
+        Log4JAccessAppender log4jObj = new Log4JAccessAppender(access);
+        log4jObj.close();
+        
+    }
+    
+    @Test
+    public void testAppend() {
+        Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
+        LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.FATAL,"test",Thread.currentThread().getName(),null,null,null,null);
+        log4jObj.append(event);
+        Mockito.doReturn(true).when(access).willLog(Access.Level.ERROR);
+        event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.ERROR,"test",Thread.currentThread().getName(),null,null,null,null);
+        log4jObj.append(event);
+        event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.ALL,"test",Thread.currentThread().getName(),null,null,null,null);
+        log4jObj.append(event);
+    }
+    
+    @Test
+    public void testAppendWARN() {
+        Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
+        Mockito.doReturn(false).when(access).willLog(Access.Level.WARN);
+        LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.WARN,"test",Thread.currentThread().getName(),null,null,null,null);
+        log4jObj.append(event);
+    }
+    
+    @Test
+    public void testAppendINFO() {
+        Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
+        Mockito.doReturn(true).when(access).willLog(Access.Level.INFO);
+        LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.INFO,"test",Thread.currentThread().getName(),null,null,null,null);
+        log4jObj.append(event);
+    }
+    
+    @Test
+    public void testAppendWTrace() {
+        Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
+        Mockito.doReturn(false).when(access).willLog(Access.Level.TRACE);
+        LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.TRACE,"test",Thread.currentThread().getName(),null,null,null,null);
+        log4jObj.append(event);
+    }
+    
+    class Log4jAccessAppenderImpl extends Log4JAccessAppender{
 
-		public Log4jAccessAppenderImpl(Access access) {
-			super(access);
-			// TODO Auto-generated constructor stub
-		}
-		
-		@Override
-		protected void append(LoggingEvent event) {
-			super.append(event);
-		}
-		
-	}
+        public Log4jAccessAppenderImpl(Access access) {
+            super(access);
+            // TODO Auto-generated constructor stub
+        }
+        
+        @Override
+        protected void append(LoggingEvent event) {
+            super.append(event);
+        }
+        
+    }
 }

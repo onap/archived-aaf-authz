@@ -121,7 +121,7 @@ public class HClient implements EClient<HttpURLConnection> {
             }
             pi.append(pathinfo);
         }
-       	URI sendURI = null;
+           URI sendURI = null;
         try {
             sendURI = new URI(
                     uri.getScheme(),
@@ -149,13 +149,13 @@ public class HClient implements EClient<HttpURLConnection> {
             }
             // TODO other settings? There's a bunch here.
         } catch (APIException e) {
-        	throw e;
+            throw e;
         } catch (Exception e) {
-        	if(sendURI==null) {
-        		throw new APIException("Cannot connect to Root URI: '" + uri.toString() + '\'',e);
-        	} else {
-        		throw new APIException("Cannot connect to '" + sendURI.toString() + "' (Root URI: '" + uri.toString() + "')",e);
-        	}
+            if(sendURI==null) {
+                throw new APIException("Cannot connect to Root URI: '" + uri.toString() + '\'',e);
+            } else {
+                throw new APIException("Cannot connect to '" + sendURI.toString() + "' (Root URI: '" + uri.toString() + "')",e);
+            }
         } finally { // ensure all these are reset after sends
             meth=pathinfo=null;
             if (headers!=null) {
@@ -170,7 +170,7 @@ public class HClient implements EClient<HttpURLConnection> {
     }
     
     public void setURI(URI uri) {
-    	this.uri = uri;
+        this.uri = uri;
     }
 
     public int timeout() {

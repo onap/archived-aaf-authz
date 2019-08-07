@@ -43,8 +43,8 @@ public class WebCommand extends Page {
         super(gui.env, "Web Command Client",HREF, NO_FIELDS,
                 new BreadCrumbs(breadcrumbs),
                 new NamedCode(true, "content") {
-        	StaticSlot sThemeWebPath = gui.env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
-        	StaticSlot sTheme = gui.env.staticSlot(AAF_GUI.AAF_GUI_THEME);
+            StaticSlot sThemeWebPath = gui.env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
+            StaticSlot sTheme = gui.env.staticSlot(AAF_GUI.AAF_GUI_THEME);
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                 hgen.leaf("p","id=help_msg")
@@ -64,7 +64,7 @@ public class WebCommand extends Page {
                     @Override
                     public void code(AAF_GUI state, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen)
                             throws APIException, IOException {
-                    	String image_root = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
+                        String image_root = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
                         hgen.img(image_root + "/options_down.png", "onclick=handleDivHiding('options',this);", 
                                 "id=options_img", "alt=Options", "title=Options")                    
                             .end(); //options_link

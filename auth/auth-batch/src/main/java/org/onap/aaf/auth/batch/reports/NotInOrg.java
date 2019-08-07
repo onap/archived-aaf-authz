@@ -46,16 +46,16 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class NotInOrg extends Batch {
     
-	private static final String NOT_IN_ORG = "NotInOrg";
-	private static final String CSV = ".csv";
-	private static final String INFO = "info";
-	private Map<String, CSV.Writer> writerList;
-	private Map<String, CSV.Writer> whichWriter; 
-	private Date now;
-	private Writer notInOrgW;
-	private Writer notInOrgDeleteW;
-	
-	public NotInOrg(AuthzTrans trans) throws APIException, IOException, OrganizationException {
+    private static final String NOT_IN_ORG = "NotInOrg";
+    private static final String CSV = ".csv";
+    private static final String INFO = "info";
+    private Map<String, CSV.Writer> writerList;
+    private Map<String, CSV.Writer> whichWriter; 
+    private Date now;
+    private Writer notInOrgW;
+    private Writer notInOrgDeleteW;
+    
+    public NotInOrg(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
         
@@ -77,7 +77,7 @@ public class NotInOrg extends Batch {
 
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
-           	File file = new File(logDir(),NOT_IN_ORG + sdate +CSV);
+               File file = new File(logDir(),NOT_IN_ORG + sdate +CSV);
             CSV csv = new CSV(env.access(),file);
             notInOrgW = csv.writer(false);
             notInOrgW.row(INFO,NOT_IN_ORG,Chrono.dateOnlyStamp(now),0);
@@ -98,75 +98,75 @@ public class NotInOrg extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
-		try {
-			Map<String,Boolean> checked = new TreeMap<String, Boolean>();
-			trans.info().log("Process Organization Identities");
-			trans.info().log("User Roles");
-			
-			final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
-			UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
-				try {
-					if(!check(transNoAvg, checked, ur.user())) {
-						ur.row(whichWriter(transNoAvg,ur.user()),UserRole.UR);
-					}
-				} catch (OrganizationException e) {
-					trans.error().log(e, "Error Decrypting X509");
-				}
-			});
-			
-			trans.info().log("Checking for Creds without IDs");
-			
-			for (Cred cred : Cred.data.values()) {
-				if(!check(transNoAvg,checked, cred.id)) {
-					CSV.Writer cw = whichWriter(transNoAvg, cred.id);
-					for(Instance inst : cred.instances) {
-						cred.row(cw, inst);
-					}
-				}
-			}
-			
-		} catch (OrganizationException e) {
-			trans.info().log(e);
-		}
-	}
+        try {
+            Map<String,Boolean> checked = new TreeMap<String, Boolean>();
+            trans.info().log("Process Organization Identities");
+            trans.info().log("User Roles");
+            
+            final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
+            UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
+                try {
+                    if(!check(transNoAvg, checked, ur.user())) {
+                        ur.row(whichWriter(transNoAvg,ur.user()),UserRole.UR);
+                    }
+                } catch (OrganizationException e) {
+                    trans.error().log(e, "Error Decrypting X509");
+                }
+            });
+            
+            trans.info().log("Checking for Creds without IDs");
+            
+            for (Cred cred : Cred.data.values()) {
+                if(!check(transNoAvg,checked, cred.id)) {
+                    CSV.Writer cw = whichWriter(transNoAvg, cred.id);
+                    for(Instance inst : cred.instances) {
+                        cred.row(cw, inst);
+                    }
+                }
+            }
+            
+        } catch (OrganizationException e) {
+            trans.info().log(e);
+        }
+    }
     
  
-	private Writer whichWriter(AuthzTrans transNoAvg, String id) {
-		Writer w = whichWriter.get(id);
-		if(w==null) {
-			w = org.isRevoked(transNoAvg, id)?
-					notInOrgDeleteW:
-					notInOrgW;
-			whichWriter.put(id,w);
-		}
-		return w;
-	}
+    private Writer whichWriter(AuthzTrans transNoAvg, String id) {
+        Writer w = whichWriter.get(id);
+        if(w==null) {
+            w = org.isRevoked(transNoAvg, id)?
+                    notInOrgDeleteW:
+                    notInOrgW;
+            whichWriter.put(id,w);
+        }
+        return w;
+    }
 
-	private boolean check(AuthzTrans trans, Map<String, Boolean> checked, String id) throws OrganizationException {
-		Boolean rv = checked.get(id);
-		if(rv==null) {
-			if(isSpecial(id)) { // do not check against org... too important to delete.
-				return true; 
-			}
-			Organization org = trans.org();
-			if(org != null) {
-				Identity identity = org.getIdentity(trans, id);
-				rv = identity!=null;
-				checked.put(id, rv);
-			} else {
-				throw new OrganizationException("No Organization Found for " + id + ": required for processing");
-			}
-		}
-		return rv;
-	}
+    private boolean check(AuthzTrans trans, Map<String, Boolean> checked, String id) throws OrganizationException {
+        Boolean rv = checked.get(id);
+        if(rv==null) {
+            if(isSpecial(id)) { // do not check against org... too important to delete.
+                return true; 
+            }
+            Organization org = trans.org();
+            if(org != null) {
+                Identity identity = org.getIdentity(trans, id);
+                rv = identity!=null;
+                checked.put(id, rv);
+            } else {
+                throw new OrganizationException("No Organization Found for " + id + ": required for processing");
+            }
+        }
+        return rv;
+    }
 
     
-	@Override
+    @Override
     protected void _close(AuthzTrans trans) {
         session.close();
-    	for(CSV.Writer cw : writerList.values()) {
-    		cw.close();
-    	}
+        for(CSV.Writer cw : writerList.values()) {
+            cw.close();
+        }
     }
 
 }

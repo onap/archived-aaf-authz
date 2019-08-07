@@ -77,8 +77,8 @@ public class ListByUser extends Cmd {
                     urs = fur.value;
                     code = fur.code();
                 } else {
-                	error(fur);
-                	return fur.code();
+                    error(fur);
+                    return fur.code();
                 }
 
                 if (aafcli.isDetailed()) {
@@ -88,37 +88,37 @@ public class ListByUser extends Cmd {
                             getDF(Perms.class)
                         );
                     if (fp.get(AAFcli.timeout())) {
-                    	Map<String, Role> rs = new TreeMap<>();
+                        Map<String, Role> rs = new TreeMap<>();
                         perms = fp.value;
                         for( Perm p : perms.getPerm()) {
-                        	for(String sr : p.getRoles()) {
-                        		Role r = rs.get(sr);
-                        		if(r==null) {
-                        			r = new Role();
-                        			String[] split = Split.split('|', sr);
-                        			if(split.length>1) {
-                        				r.setNs(split[0]);
-                        				r.setName(split[1]);
-                        			} else {
-                        				r.setName(sr);
-                        			}
-                        			rs.put(sr, r);
-                        			roles.getRole().add(r);
-                        		}
-                        		r.getPerms().add(p);
-                        	}
+                            for(String sr : p.getRoles()) {
+                                Role r = rs.get(sr);
+                                if(r==null) {
+                                    r = new Role();
+                                    String[] split = Split.split('|', sr);
+                                    if(split.length>1) {
+                                        r.setNs(split[0]);
+                                        r.setName(split[1]);
+                                    } else {
+                                        r.setName(sr);
+                                    }
+                                    rs.put(sr, r);
+                                    roles.getRole().add(r);
+                                }
+                                r.getPerms().add(p);
+                            }
                         }
                     } 
                     code = fp.code();
                 } else {
-                	roles = new Roles();
-                	java.util.List<Role> lr = roles.getRole();
-                	Role r;
-                	for(UserRole ur : urs.getUserRole()) {
-                		r = new Role();
-                		r.setName(ur.getRole());
-                		lr.add(r);
-                	}
+                    roles = new Roles();
+                    java.util.List<Role> lr = roles.getRole();
+                    Role r;
+                    for(UserRole ur : urs.getUserRole()) {
+                        r = new Role();
+                        r.setName(ur.getRole());
+                        lr.add(r);
+                    }
                 }
                 
                 

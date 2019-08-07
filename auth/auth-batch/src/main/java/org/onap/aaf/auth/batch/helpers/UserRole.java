@@ -51,7 +51,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     public static final String UR = "ur";
     public static final String APPROVE_UR = "ur";
 
-	private static final String SEPARATOR = "\",\"";
+    private static final String SEPARATOR = "\",\"";
 
     // CACHE Calling
     private static final String LOG_FMT = "%s UserRole - %s: %s-%s (%s, %s) expiring %s";
@@ -127,11 +127,11 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
 
     public static void load(Trans trans, CSV csv, Creator<UserRole> creator, Visitor<UserRole> visitor) throws IOException, CadiException {
-//	    public UserRole(String user, String role, String ns, String rname, Date expires) {
-    	csv.visit( row -> {
-    		visitor.visit(new UserRole(row.get(1),row.get(2),row.get(3),row.get(4),
-    			new Date(Long.parseLong(row.get(6)))));
-    	});
+//        public UserRole(String user, String role, String ns, String rname, Date expires) {
+        csv.visit( row -> {
+            visitor.visit(new UserRole(row.get(1),row.get(2),row.get(3),row.get(4),
+                new Date(Long.parseLong(row.get(6)))));
+        });
     }
     
     private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
@@ -169,8 +169,8 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
 
     public static class DataLoadVisitor implements Visitor<UserRole> {
-		@Override
-		public void visit(UserRole ur) {
+        @Override
+        public void visit(UserRole ur) {
             data.add(ur);
 
             List<UserRole> lur = byUser.get(ur.urdd.user);
@@ -186,7 +186,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
                 byRole.put(ur.urdd.role, lur);
             }
             lur.add(ur);
-		}
+        }
     }
     
     public int totalLoaded() {
@@ -305,81 +305,81 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
     
     public void row(final CSV.Writer csvw, String tag) {
-    	csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
+        csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
     }
 
     public void row(final CSV.Writer csvw, String tag, String reason) {
-    	csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime(),reason);
+        csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime(),reason);
     }
     
     public static Data row(List<String> row) {
-		Data data = new Data();
-		data.user = row.get(1);
-		data.role = row.get(2);
-		data.ns = row.get(3);
-		data.rname = row.get(4);
-		data.expires = new Date(Long.parseLong(row.get(6)));
-		return data;
-	}
+        Data data = new Data();
+        data.user = row.get(1);
+        data.role = row.get(2);
+        data.ns = row.get(3);
+        data.rname = row.get(4);
+        data.expires = new Date(Long.parseLong(row.get(6)));
+        return data;
+    }
 
-	public static void batchDelete(StringBuilder sb, List<String> row) {
-    	sb.append("DELETE from authz.user_role WHERE user='");
-    	sb.append(row.get(1));
-    	sb.append("' AND role='");
-    	sb.append(row.get(2));
-    	sb.append("';\n");
+    public static void batchDelete(StringBuilder sb, List<String> row) {
+        sb.append("DELETE from authz.user_role WHERE user='");
+        sb.append(row.get(1));
+        sb.append("' AND role='");
+        sb.append(row.get(2));
+        sb.append("';\n");
     }
 
     public static void batchExtend(StringBuilder sb, List<String> row, Date newDate ) {
-    	sb.append("UPDATE authz.user_role SET expires='");
-    	sb.append(Chrono.dateTime(newDate));
-    	sb.append("' WHERE user='");
-    	sb.append(row.get(1));
-    	sb.append("' AND role='");
-    	sb.append(row.get(2));
-    	sb.append("';\n");
+        sb.append("UPDATE authz.user_role SET expires='");
+        sb.append(Chrono.dateTime(newDate));
+        sb.append("' WHERE user='");
+        sb.append(row.get(1));
+        sb.append("' AND role='");
+        sb.append(row.get(2));
+        sb.append("';\n");
     }
 
     public void batchExtend(StringBuilder sb, Date newDate) {
-    	sb.append("UPDATE authz.user_role SET expires='");
-    	sb.append(Chrono.dateTime(newDate));
-    	sb.append("' WHERE user='");
-    	sb.append(user());
-    	sb.append("' AND role='");
-    	sb.append(role());
-    	sb.append("';\n");
+        sb.append("UPDATE authz.user_role SET expires='");
+        sb.append(Chrono.dateTime(newDate));
+        sb.append("' WHERE user='");
+        sb.append(user());
+        sb.append("' AND role='");
+        sb.append(role());
+        sb.append("';\n");
     }
     
     public void batchUpdateExpires(StringBuilder sb) {
-    	sb.append("UPDATE authz.user_role SET expires='");
-    	sb.append(Chrono.dateTime(expires()));
-    	sb.append("' WHERE user='");
-    	sb.append(user());
-    	sb.append("' AND role='");
-    	sb.append(role());
-    	sb.append("';\n");
+        sb.append("UPDATE authz.user_role SET expires='");
+        sb.append(Chrono.dateTime(expires()));
+        sb.append("' WHERE user='");
+        sb.append(user());
+        sb.append("' AND role='");
+        sb.append(role());
+        sb.append("';\n");
     }
 
-	public static String histMemo(String fmt, List<String> row) {
-		String reason;
-		if(row.size()>7) { // Reason included
-			reason = String.format("%s removed from %s because %s", 
-					row.get(1),row.get(2),row.get(7));
-		} else {
-			reason = String.format(fmt, row.get(1),row.get(2), row.get(5));
-		}
-		return reason;
-	}
+    public static String histMemo(String fmt, List<String> row) {
+        String reason;
+        if(row.size()>7) { // Reason included
+            reason = String.format("%s removed from %s because %s", 
+                    row.get(1),row.get(2),row.get(7));
+        } else {
+            reason = String.format(fmt, row.get(1),row.get(2), row.get(5));
+        }
+        return reason;
+    }
 
-	public static String histSubject(List<String> row) {
-		return row.get(1) + '|' + row.get(2);	
-	}
+    public static String histSubject(List<String> row) {
+        return row.get(1) + '|' + row.get(2);    
+    }
 
-	public static void clear() {
-		data.clear();
-		byUser.clear();
-		byRole.clear();
-		cache.resetLocalData();
-		
-	}
+    public static void clear() {
+        data.clear();
+        byUser.clear();
+        byRole.clear();
+        cache.resetLocalData();
+        
+    }
 }

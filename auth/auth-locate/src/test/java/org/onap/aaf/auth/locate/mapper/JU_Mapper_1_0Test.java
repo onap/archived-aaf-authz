@@ -35,31 +35,31 @@ import locate_local.v1_0.Out;
 
 public class JU_Mapper_1_0Test {
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
-	}
+    }
 
-	@Test
-	public void testGetClasses() {
-		Mapper_1_1 mapper = new Mapper_1_1();
-		assertEquals(InRequest.class, mapper.getClass(API.IN_REQ));
-		assertEquals(Out.class, mapper.getClass(API.OUT));
-		assertEquals(Error.class, mapper.getClass(API.ERROR));
-		assertEquals(Void.class, mapper.getClass(API.VOID));
-		assertEquals(Endpoints.class, mapper.getClass(API.ENDPOINTS));
-		assertEquals(MgmtEndpoints.class, mapper.getClass(API.MGMT_ENDPOINTS));
-	}
+    @Test
+    public void testGetClasses() {
+        Mapper_1_1 mapper = new Mapper_1_1();
+        assertEquals(InRequest.class, mapper.getClass(API.IN_REQ));
+        assertEquals(Out.class, mapper.getClass(API.OUT));
+        assertEquals(Error.class, mapper.getClass(API.ERROR));
+        assertEquals(Void.class, mapper.getClass(API.VOID));
+        assertEquals(Endpoints.class, mapper.getClass(API.ENDPOINTS));
+        assertEquals(MgmtEndpoints.class, mapper.getClass(API.MGMT_ENDPOINTS));
+    }
 
-	@Test
-	public void testNewInstance() {
-		Mapper_1_1 mapper = new Mapper_1_1();
-		assertTrue(mapper.newInstance(API.IN_REQ) instanceof InRequest);
-		assertTrue(mapper.newInstance(API.OUT) instanceof Out);
-		assertTrue(mapper.newInstance(API.ERROR) instanceof Error);
-		assertTrue(mapper.newInstance(API.ENDPOINTS) instanceof Endpoints);
-		assertTrue(mapper.newInstance(API.MGMT_ENDPOINTS) instanceof MgmtEndpoints);
-		assertEquals(null, mapper.newInstance(API.VOID));
-	}
+    @Test
+    public void testNewInstance() {
+        Mapper_1_1 mapper = new Mapper_1_1();
+        assertTrue(mapper.newInstance(API.IN_REQ) instanceof InRequest);
+        assertTrue(mapper.newInstance(API.OUT) instanceof Out);
+        assertTrue(mapper.newInstance(API.ERROR) instanceof Error);
+        assertTrue(mapper.newInstance(API.ENDPOINTS) instanceof Endpoints);
+        assertTrue(mapper.newInstance(API.MGMT_ENDPOINTS) instanceof MgmtEndpoints);
+        assertEquals(null, mapper.newInstance(API.VOID));
+    }
 
 }

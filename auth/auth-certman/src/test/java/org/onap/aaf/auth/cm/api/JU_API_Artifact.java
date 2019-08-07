@@ -69,7 +69,7 @@ public class JU_API_Artifact {
     
     @Test
     public void placeholder() {
-    	Assert.assertTrue(true);
+        Assert.assertTrue(true);
     }
     
     /*

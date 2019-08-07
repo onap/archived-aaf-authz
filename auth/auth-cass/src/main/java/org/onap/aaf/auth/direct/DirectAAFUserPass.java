@@ -52,10 +52,10 @@ public class DirectAAFUserPass implements CredVal {
 
     @Override
     public boolean validate(String user, Type type, byte[] pass, Object state) {
-    		if(user==null || type==null || pass==null) {
-    			return false;
-    		}
-    	
+            if(user==null || type==null || pass==null) {
+                return false;
+            }
+        
             try {
                 AuthzTrans trans;
                 boolean transfer = false;
@@ -74,7 +74,7 @@ public class DirectAAFUserPass implements CredVal {
                 }
                 Result<Date> result = question.doesUserCredMatch(trans, user, pass);
                 if(transfer) {
-                	((HttpServletRequest)state).setAttribute("CRED_TAG", trans.getTag());
+                    ((HttpServletRequest)state).setAttribute("CRED_TAG", trans.getTag());
                 }
                 trans.logAuditTrail(env.debug());
                 switch(result.status) {

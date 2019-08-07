@@ -50,11 +50,11 @@ public class X509 {
     public ByteBuffer serial;
     
     public X509(String ca, String id, String x500, String x509, ByteBuffer serial) {
-    	this.ca = ca;
-    	this.id = id;
-    	this.x500 = x500;
-    	this.x509 = x509;
-    	this.serial = serial;
+        this.ca = ca;
+        this.id = id;
+        this.x500 = x500;
+        this.x509 = x509;
+        this.serial = serial;
     }
     
 
@@ -81,7 +81,7 @@ public class X509 {
             tt = trans.start("Load X509s", Env.SUB);
             try {
                 while (iter.hasNext()) {
-                	++count;
+                    ++count;
                     row = iter.next();
                     visitor.visit(new X509(row.getString(0),row.getString(1), row.getString(2),row.getString(3),row.getBytes(4)));
                 }
@@ -108,48 +108,48 @@ public class X509 {
     }
     
 
-	public void row(CSV.Writer cw, X509Certificate x509Cert) {
-		cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500);
-	}
+    public void row(CSV.Writer cw, X509Certificate x509Cert) {
+        cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500);
+    }
 
-	public void row(CSV.Writer cw, X509Certificate x509Cert,String reason) {
-		cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500,reason);
-	}
+    public void row(CSV.Writer cw, X509Certificate x509Cert,String reason) {
+        cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500,reason);
+    }
 
 
-	public static void row(StringBuilder sb, List<String> row) {
-    	sb.append("DELETE from authz.x509 WHERE ca='");
-    	sb.append(row.get(1));
-    	sb.append("' AND serial=");
-    	sb.append(row.get(2));
-    	sb.append(";\n");
-	}
+    public static void row(StringBuilder sb, List<String> row) {
+        sb.append("DELETE from authz.x509 WHERE ca='");
+        sb.append(row.get(1));
+        sb.append("' AND serial=");
+        sb.append(row.get(2));
+        sb.append(";\n");
+    }
 
     public static void batchDelete(StringBuilder sb, List<String> row) {
-    	sb.append("DELETE from authz.x509 WHERE ca='");
-    	sb.append(row.get(1));
-    	sb.append("' AND serial=");
-    	sb.append(row.get(2));
-    	sb.append(";\n");
-	}
-	public static String histSubject(List<String> row) {
-		return row.get(4);
-	}
+        sb.append("DELETE from authz.x509 WHERE ca='");
+        sb.append(row.get(1));
+        sb.append("' AND serial=");
+        sb.append(row.get(2));
+        sb.append(";\n");
+    }
+    public static String histSubject(List<String> row) {
+        return row.get(4);
+    }
 
 
-	public static String histMemo(String fmt, List<String> row) {
-		String id="n/a";
-		for(String s : Split.splitTrim(',', row.get(4))) {
-			if(s.startsWith("OU=") && s.indexOf('@')>=0) {
-				int colon = s.indexOf(':');
-				if(colon<0) {
-					colon=s.length();
-				}
-				id=s.substring(3,colon);
-				break;
-			}
-		}
-		return String.format(fmt, "Cert for " + id,"CA " + row.get(1),row.get(3));
-	}
+    public static String histMemo(String fmt, List<String> row) {
+        String id="n/a";
+        for(String s : Split.splitTrim(',', row.get(4))) {
+            if(s.startsWith("OU=") && s.indexOf('@')>=0) {
+                int colon = s.indexOf(':');
+                if(colon<0) {
+                    colon=s.length();
+                }
+                id=s.substring(3,colon);
+                break;
+            }
+        }
+        return String.format(fmt, "Cert for " + id,"CA " + row.get(1),row.get(3));
+    }
 
 }

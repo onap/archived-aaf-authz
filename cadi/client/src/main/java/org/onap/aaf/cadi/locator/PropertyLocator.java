@@ -182,7 +182,7 @@ public class PropertyLocator implements Locator<URI> {
             String realname;
             for (int i = 0; i < orig.length ; ++i) {
                 try {
-                	FixURIinfo fui = new FixURIinfo(orig[i]);
+                    FixURIinfo fui = new FixURIinfo(orig[i]);
                     InetAddress ia[] = InetAddress.getAllByName(fui.getHost());
 
                     URI o,n;

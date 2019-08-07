@@ -131,11 +131,11 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
             //long end = (first.flag&SUB)==SUB?first.end():trail.get(last).end();
             long end = 0L;
             for(int i=last;end==0L && i>=0;--i) {
-            	end= trail.get(i).end();
+                end= trail.get(i).end();
             }
             metric.total = (end - first.start) / 1000000f;
         } else {
-        	metric.total=0L;
+            metric.total=0L;
         }
         
         if (sb==null) {
@@ -170,14 +170,14 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
                     sb.append("  ");
                 }
                 if((tt.flag & CHECKPOINT)==CHECKPOINT) {
-                	// Checkpoint
-                	sb.append("  ");
+                    // Checkpoint
+                    sb.append("  ");
                 } else {
-                	float ms=tt.millis();
+                    float ms=tt.millis();
                     // Add time values to Metric
                     for (int i=0;i<flags.length;++i) {
                         if ((tt.flag & flags[i]) == flags[i]) {
-                        	metric.buckets[i]+=ms;
+                            metric.buckets[i]+=ms;
                         }
                     }
                 }

@@ -33,31 +33,31 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class JU_FormTest {
 
-	@Mock
-	private Cache<HTMLGen> cache;
+    @Mock
+    private Cache<HTMLGen> cache;
 
-	@Mock
-	private HTMLGen hgen;
+    @Mock
+    private HTMLGen hgen;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void test() throws Exception {
-		when(hgen.incr("p", "class=preamble")).thenReturn(hgen);
-		when(hgen.text("preamable")).thenReturn(hgen);
-		when(hgen.tagOnly("input", "type=submit", "value=Submit")).thenReturn(hgen);
-		when(hgen.tagOnly("input", "type=reset", "value=Reset")).thenReturn(hgen);
+    @Test
+    public void test() throws Exception {
+        when(hgen.incr("p", "class=preamble")).thenReturn(hgen);
+        when(hgen.text("preamable")).thenReturn(hgen);
+        when(hgen.tagOnly("input", "type=submit", "value=Submit")).thenReturn(hgen);
+        when(hgen.tagOnly("input", "type=reset", "value=Reset")).thenReturn(hgen);
 
-		Form form = new Form(false, new BreadCrumbs(null));
+        Form form = new Form(false, new BreadCrumbs(null));
 
-		assertThat(form.idattrs(), equalTo(new String[] { "breadcrumbs" }));
+        assertThat(form.idattrs(), equalTo(new String[] { "breadcrumbs" }));
 
-		assertThat(form.preamble("preamable"), equalTo(form));
+        assertThat(form.preamble("preamable"), equalTo(form));
 
-		form.code(cache, hgen);
-	}
+        form.code(cache, hgen);
+    }
 
 }

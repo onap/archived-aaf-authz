@@ -108,11 +108,11 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             PropAccess propAccess = new PropAccess(logIt,args);
             try {
                 new JettyServiceStarter<AuthzEnv,AuthzTrans>(
-                	new AAF_FS(new AuthzEnv(propAccess)),false)
-                		.start();
-	        } catch (Exception e) {
-	            propAccess.log(e);
-	        }
+                    new AAF_FS(new AuthzEnv(propAccess)),false)
+                        .start();
+            } catch (Exception e) {
+                propAccess.log(e);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

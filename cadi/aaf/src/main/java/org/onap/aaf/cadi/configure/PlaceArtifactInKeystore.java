@@ -50,7 +50,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 
     @Override
     public boolean _place(Trans trans, CertInfo certInfo, Artifact arti) throws CadiException {
-    	final String ext = (kst==Agent.PKCS12?"p12":kst);
+        final String ext = (kst==Agent.PKCS12?"p12":kst);
         File fks = new File(dir,arti.getNs()+'.'+ext);
         try {
             KeyStore jks = KeyStore.getInstance(kst);
@@ -73,17 +73,17 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
                 if (x509.getSubjectDN().equals(x509.getIssuerDN())) {
                     caSet.add(x509);
                 } else {
-                	// Expect Certs in Trust Chain Order. 
-                	if(curr==null) {
+                    // Expect Certs in Trust Chain Order. 
+                    if(curr==null) {
                         chainList.add(x509);
                         curr=x509;
-                	} else {
-                    	// Only Add Cert next on the list
-                		if(curr.getIssuerDN().equals(x509.getSubjectDN())) {
-                			chainList.add(x509);
-                			curr=x509;
-                		}
-                	}
+                    } else {
+                        // Only Add Cert next on the list
+                        if(curr.getIssuerDN().equals(x509.getSubjectDN())) {
+                            chainList.add(x509);
+                            curr=x509;
+                        }
+                    }
                 }
             }
 

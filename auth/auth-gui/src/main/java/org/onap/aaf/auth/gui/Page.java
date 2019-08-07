@@ -97,17 +97,17 @@ public class Page extends HTMLCacheGen {
      *      Relative path, Menu Name, Full Path
      */
     protected static final String[][] MENU_ITEMS = new String[][] {
-    		{"myperms","My Permissions","/gui/myperms"},
-    		{"myroles","My Roles","/gui/myroles"},
-    		{"ns","My Namespaces","/gui/ns"},
-    		{"approve","My Approvals","/gui/approve"},
-    		{"myrequests","My Pending Requests","/gui/myrequests"},
-    	            // Enable later
-   		//  {"onboard","Onboarding"},
-    		{"passwd","Password Management","/gui/passwd"},
-    		{"cui","Command Prompt","/gui/cui"},
-    		{"api","AAF API","/gui/api"},
-    		{"clear","Clear Preferences","/gui/clear"}
+            {"myperms","My Permissions","/gui/myperms"},
+            {"myroles","My Roles","/gui/myroles"},
+            {"ns","My Namespaces","/gui/ns"},
+            {"approve","My Approvals","/gui/approve"},
+            {"myrequests","My Pending Requests","/gui/myrequests"},
+                    // Enable later
+           //  {"onboard","Onboarding"},
+            {"passwd","Password Management","/gui/passwd"},
+            {"cui","Command Prompt","/gui/cui"},
+            {"api","AAF API","/gui/api"},
+            {"clear","Clear Preferences","/gui/clear"}
     };
 
     public String name() {
@@ -168,16 +168,16 @@ public class Page extends HTMLCacheGen {
     
     
     private static class PageCode implements Code<HTMLGen> {
-			private static final String AAF_GUI_THEME = "aaf.gui.theme";
-			private static final String AAF_GUI_TITLE = "aaf_gui_title";
+            private static final String AAF_GUI_THEME = "aaf.gui.theme";
+            private static final String AAF_GUI_TITLE = "aaf_gui_title";
             
             private final ContentCode[] content;
             private final Slot browserSlot;
             private final int backdots;
             protected AuthzEnv env;
             private StaticSlot sTheme;
-        	private static Map<String,List<String>> themes;
-        	private static Map<String,Properties> themeProps;
+            private static Map<String,List<String>> themes;
+            private static Map<String,Properties> themeProps;
 
             public PageCode(AuthzEnv env, int backdots, final ContentCode[] content) {
                 this.content = content;
@@ -185,78 +185,78 @@ public class Page extends HTMLCacheGen {
                 browserSlot = env.slot(BROWSER_TYPE);
                 sTheme = env.staticSlot(AAF_GUI.AAF_GUI_THEME);
                 this.env = env;
-               	getThemeFiles(env,""); //
+                   getThemeFiles(env,""); //
             }
 
             private static synchronized List<String> getThemeFiles(Env env, String theme) {
-            	if(themes==null) {
-            		themes = new TreeMap<>();
+                if(themes==null) {
+                    themes = new TreeMap<>();
                     File themeD = new File("theme");
                     if(themeD.exists() && themeD.isDirectory()) {
-                    	for (File t : themeD.listFiles()) {
-                    		if(t.isDirectory()) {
-                    			List<String> la = new ArrayList<>();
-                    			for(File f : t.listFiles()) {
-                    				if(f.isFile()) {
-                    					if(f.getName().endsWith(".props")) {
-                    						Properties props;
-                    						if(themeProps == null) {
-                    							themeProps = new TreeMap<>();
-                    							props = null;
-                    						} else {
-                    							props = themeProps.get(t.getName());
-                    						}
-                    						if(props==null) {
-                    							props = new Properties();
-                    							themeProps.put(t.getName(), props);
-                    						}
-                    						
-                    						try {
-	                    						FileInputStream fis = new FileInputStream(f);
-	                    						try {
-	                    							props.load(fis);
-	                    						} finally {
-	                    							fis.close();
-	                    						}
-                    						} catch (IOException e) {
-                    							env.error().log(e);
-                    						}
-                    					} else {
-                    						la.add(f.getName());
-                    					}
-                    				}
-                    			}
-                				themes.put(t.getName(),la);
-                    		}
-                    	}
+                        for (File t : themeD.listFiles()) {
+                            if(t.isDirectory()) {
+                                List<String> la = new ArrayList<>();
+                                for(File f : t.listFiles()) {
+                                    if(f.isFile()) {
+                                        if(f.getName().endsWith(".props")) {
+                                            Properties props;
+                                            if(themeProps == null) {
+                                                themeProps = new TreeMap<>();
+                                                props = null;
+                                            } else {
+                                                props = themeProps.get(t.getName());
+                                            }
+                                            if(props==null) {
+                                                props = new Properties();
+                                                themeProps.put(t.getName(), props);
+                                            }
+                                            
+                                            try {
+                                                FileInputStream fis = new FileInputStream(f);
+                                                try {
+                                                    props.load(fis);
+                                                } finally {
+                                                    fis.close();
+                                                }
+                                            } catch (IOException e) {
+                                                env.error().log(e);
+                                            }
+                                        } else {
+                                            la.add(f.getName());
+                                        }
+                                    }
+                                }
+                                themes.put(t.getName(),la);
+                            }
+                        }
                     }
-            	}
-            	return themes.get(theme);
+                }
+                return themes.get(theme);
             }
             
             protected Imports getImports(Env env, String theme, int backdots, BROWSER browser) {
-            	List<String> ls = getThemeFiles(env,theme);
-            	Imports imp = new Imports(backdots);
-        		String prefix = "theme/" + theme + '/';
-        		for(String f : ls) {
-            		if(f.endsWith(".js")) {
-            			imp.js(prefix + f);
-            		} else if(f.endsWith(".css")) {
-            			if(f.endsWith("iPhone.css")) {
-            				if(BROWSER.iPhone.equals(browser)) {
-            					imp.css(prefix + f);
-            				}
-            			} else if (f.endsWith("Desktop.css")){
-            				if(!BROWSER.iPhone.equals(browser)) {
-            					imp.css(prefix + f);
-            				}
-            			// Make Console specific to Console page
-            			} else if (!"console.js".equals(f)) {
-            				imp.css(prefix + f);
-            			}
-            		}
-            	}
-            	return imp;
+                List<String> ls = getThemeFiles(env,theme);
+                Imports imp = new Imports(backdots);
+                String prefix = "theme/" + theme + '/';
+                for(String f : ls) {
+                    if(f.endsWith(".js")) {
+                        imp.js(prefix + f);
+                    } else if(f.endsWith(".css")) {
+                        if(f.endsWith("iPhone.css")) {
+                            if(BROWSER.iPhone.equals(browser)) {
+                                imp.css(prefix + f);
+                            }
+                        } else if (f.endsWith("Desktop.css")){
+                            if(!BROWSER.iPhone.equals(browser)) {
+                                imp.css(prefix + f);
+                            }
+                        // Make Console specific to Console page
+                        } else if (!"console.js".equals(f)) {
+                            imp.css(prefix + f);
+                        }
+                    }
+                }
+                return imp;
             }
             
             @Override
@@ -284,36 +284,36 @@ public class Page extends HTMLCacheGen {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                        	BROWSER browser = browser(trans,browserSlot);  
-                        	String theme = null;
-                        	Cookie[] cookies = trans.hreq().getCookies();
-                        	if(cookies!=null) {
-                        		for(Cookie c : cookies) {
-                        			if(AAF_GUI_THEME.equals(c.getName())) {
-                        				theme=c.getValue();
-                        				if(!(themes.containsKey(theme))) {
-                        					theme = defaultTheme;
-                        				}
-                        				break;
-                        			}
-                        		}
-                        	}
-                        	
-                        	if(theme==null) {
-	                        	for(String t : themes.keySet()) {
-	                        		if(!t.equals(defaultTheme) && trans.fish(new AAFPermission(null,trans.user()+":id", AAF_GUI_THEME, t))) {
-	                        			theme=t;
-	                        			break;
-	                        		}
-	                        	}
-	                        	if(theme==null) {
-	                        		theme = defaultTheme;
-	                        	}
-                    			Cookie cookie = new Cookie(AAF_GUI_THEME,theme);
-                    			cookie.setMaxAge(604_800); // one week
-                    			trans.hresp().addCookie(cookie);
-                        	}
-                        	trans.setProperty(Page.AAF_THEME, theme);
+                            BROWSER browser = browser(trans,browserSlot);  
+                            String theme = null;
+                            Cookie[] cookies = trans.hreq().getCookies();
+                            if(cookies!=null) {
+                                for(Cookie c : cookies) {
+                                    if(AAF_GUI_THEME.equals(c.getName())) {
+                                        theme=c.getValue();
+                                        if(!(themes.containsKey(theme))) {
+                                            theme = defaultTheme;
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if(theme==null) {
+                                for(String t : themes.keySet()) {
+                                    if(!t.equals(defaultTheme) && trans.fish(new AAFPermission(null,trans.user()+":id", AAF_GUI_THEME, t))) {
+                                        theme=t;
+                                        break;
+                                    }
+                                }
+                                if(theme==null) {
+                                    theme = defaultTheme;
+                                }
+                                Cookie cookie = new Cookie(AAF_GUI_THEME,theme);
+                                cookie.setMaxAge(604_800); // one week
+                                trans.hresp().addCookie(cookie);
+                            }
+                            trans.setProperty(Page.AAF_THEME, theme);
 
                             hgen.imports(getImports(env,theme,backdots,browser));
                             switch(browser) {
@@ -404,17 +404,17 @@ public class Page extends HTMLCacheGen {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
-                        	String theme = trans.getProperty(Page.AAF_THEME);
-                        	Properties props;
-                        	if(theme==null) {
-                        		props = null;
-                        	} else {
-                        		props = themeProps==null?null:themeProps.get(theme);
-                        	}
-                        	
-                        	if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("enable_nav_btn"))) {
-	                        		xgen.leaf("button", "id=navBtn").end();
-                        	}
+                            String theme = trans.getProperty(Page.AAF_THEME);
+                            Properties props;
+                            if(theme==null) {
+                                props = null;
+                            } else {
+                                props = themeProps==null?null:themeProps.get(theme);
+                            }
+                            
+                            if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("enable_nav_btn"))) {
+                                    xgen.leaf("button", "id=navBtn").end();
+                            }
                         }
                     });
                     // Adding "nav Hamburger button"
@@ -423,64 +423,64 @@ public class Page extends HTMLCacheGen {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
-                        	String theme = trans.getProperty(Page.AAF_THEME);
-                        	Properties props;
-                        	if(theme==null) {
-                        		props = null;
-                        	} else {
-                        		props = themeProps==null?null:themeProps.get(theme);
-                        	}
-                        	
-                        	if(props!=null) {
-	                        	if("TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
-	                                xgen.incr("h2").text("Navigation").end();
-	                                Mark mark = new Mark();
-	                            	boolean selected = isSelected(trans.path(),Home.HREF);
-	                            			//trans.path().endsWith("home");
-	                                xgen.incr(mark,HTMLGen.UL)
-	                            		.incr(HTMLGen.LI,selected?"class=selected":"")
-	                            		.incr(HTMLGen.A, "href=home")
-	                            		.text("Home")
-	                            		.end(2);
-	                                boolean noSelection = !selected;
-	                                for(String[] mi : MENU_ITEMS) {
-	                                	//selected = trans.path().endsWith(mi[0]);
-	                                	if(noSelection) {
-	                                		selected = isSelected(trans.path(),mi[2]);
-	                                		noSelection = !selected;
-	                                	} else {
-	                                		selected = false;
-	                                	}
-	                                	xgen.incr(HTMLGen.LI,selected?"class=selected":"")
-	                                	    .incr(HTMLGen.A, "href="+mi[2])
-	                                	    .text(mi[1])
-	                                	    .end(2);
-	                                }
-	                                xgen.end(mark);
-	                        	}
-                        	}
+                            String theme = trans.getProperty(Page.AAF_THEME);
+                            Properties props;
+                            if(theme==null) {
+                                props = null;
+                            } else {
+                                props = themeProps==null?null:themeProps.get(theme);
+                            }
+                            
+                            if(props!=null) {
+                                if("TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
+                                    xgen.incr("h2").text("Navigation").end();
+                                    Mark mark = new Mark();
+                                    boolean selected = isSelected(trans.path(),Home.HREF);
+                                            //trans.path().endsWith("home");
+                                    xgen.incr(mark,HTMLGen.UL)
+                                        .incr(HTMLGen.LI,selected?"class=selected":"")
+                                        .incr(HTMLGen.A, "href=home")
+                                        .text("Home")
+                                        .end(2);
+                                    boolean noSelection = !selected;
+                                    for(String[] mi : MENU_ITEMS) {
+                                        //selected = trans.path().endsWith(mi[0]);
+                                        if(noSelection) {
+                                            selected = isSelected(trans.path(),mi[2]);
+                                            noSelection = !selected;
+                                        } else {
+                                            selected = false;
+                                        }
+                                        xgen.incr(HTMLGen.LI,selected?"class=selected":"")
+                                            .incr(HTMLGen.A, "href="+mi[2])
+                                            .text(mi[1])
+                                            .end(2);
+                                    }
+                                    xgen.end(mark);
+                                }
+                            }
                         }
 
-						private boolean isSelected(String path, String item) {
-							if(item.equals(path)) {
-								return true;
-							} else {
-								for(ContentCode c : content) {
-									if(c instanceof BreadCrumbs) {
-										Page[] bc = ((BreadCrumbs)c).breadcrumbs;
-										if(bc!=null) {
-											for(int i = bc.length-1;i>0;--i) {
-												if(bc[i].url().equals(item)) {
-													return true;
-												}
-											}
-											return false;
-										}
-									}
-								}
-							}
-							return false;
-						}
+                        private boolean isSelected(String path, String item) {
+                            if(item.equals(path)) {
+                                return true;
+                            } else {
+                                for(ContentCode c : content) {
+                                    if(c instanceof BreadCrumbs) {
+                                        Page[] bc = ((BreadCrumbs)c).breadcrumbs;
+                                        if(bc!=null) {
+                                            for(int i = bc.length-1;i>0;--i) {
+                                                if(bc[i].url().equals(item)) {
+                                                    return true;
+                                                }
+                                            }
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                            return false;
+                        }
                     });
                     hgen.incr("h2").text("Related Links").end();
                     hgen.incr(UL);

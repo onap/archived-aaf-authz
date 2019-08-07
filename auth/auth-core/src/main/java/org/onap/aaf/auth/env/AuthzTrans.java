@@ -44,8 +44,8 @@ public interface AuthzTrans extends TransStore {
 
     public abstract AuthzTrans set(HttpServletRequest req, HttpServletResponse resp);
 
-	public abstract HttpServletRequest hreq();
-	
+    public abstract HttpServletRequest hreq();
+    
     public abstract HttpServletResponse hresp();
 
     public abstract String user();
@@ -84,7 +84,7 @@ public interface AuthzTrans extends TransStore {
     
     public abstract String getTag();
 
-	public abstract void clearCache();
+    public abstract void clearCache();
 
 
 }

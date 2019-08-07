@@ -32,35 +32,35 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 public class JU_DAOException {
-	DAOException daoException;
+    DAOException daoException;
 
     String message = "message";
     Throwable cause;    
     @Before
     public void setUp(){
-    	daoException = new DAOException();    
+        daoException = new DAOException();    
     }
 
     @Test
     public void testNoArgConstructor(){
-    	assertNull(daoException.getMessage());
+        assertNull(daoException.getMessage());
     }
     
     @Test
     public void testOneArgConstructorMsg(){
-    	daoException = new DAOException("test message"); 
-    	assertTrue("test message".equalsIgnoreCase(daoException.getMessage()));
+        daoException = new DAOException("test message"); 
+        assertTrue("test message".equalsIgnoreCase(daoException.getMessage()));
     }
     
     @Test
     public void testOneArgConstructorThrowable(){
-    	daoException = new DAOException(new Throwable()); 
-    	assertTrue("java.lang.Throwable".equalsIgnoreCase(daoException.getMessage()));
+        daoException = new DAOException(new Throwable()); 
+        assertTrue("java.lang.Throwable".equalsIgnoreCase(daoException.getMessage()));
     }
     
     @Test
     public void testTwoArgConstructor(){
-    	daoException = new DAOException("test message", new Throwable()); 
-    	assertTrue("test message".equalsIgnoreCase(daoException.getMessage()));
+        daoException = new DAOException("test message", new Throwable()); 
+        assertTrue("test message".equalsIgnoreCase(daoException.getMessage()));
     }
 }

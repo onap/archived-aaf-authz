@@ -212,9 +212,9 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             data.machine = trim(arti.getMachine());
             if(arti.getType()!=null) {
                 Set<String> ss = data.type(true);
-	            for(String t : arti.getType()) {
-	            	ss.add(t.trim());
-	            }
+                for(String t : arti.getType()) {
+                    ss.add(t.trim());
+                }
             }
             data.type(true).addAll(arti.getType());
             data.ca = trim(arti.getCa());
@@ -231,7 +231,7 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             if(arti.getSans()!=null) {
               Set<String> ss = data.sans(true);
               for(String s : arti.getSans()) {
-            	  ss.add(s.trim());
+                  ss.add(s.trim());
               }
             }
             ladd.add(data);
@@ -240,14 +240,14 @@ public class Mapper2_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
     }
 
     private String trim(String s) {
-    	if(s==null) {
-    		return s;
-    	} else {
-    		return s.trim();
-    	}
-	}
+        if(s==null) {
+            return s;
+        } else {
+            return s.trim();
+        }
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
      * @see org.onap.aaf.auth.cm.mapper.Mapper#fromArtifacts(org.onap.aaf.auth.layer.test.Result)
      */
     @Override

@@ -30,53 +30,53 @@ import org.onap.aaf.misc.env.impl.EnvFactory;
 
 public class JU_BaseDataFactory {
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
-	
-	@Test
-	public void testGenSchemaException() {
-		Store env = Mockito.mock(Store.class);
-		Mockito.doReturn("testdir").when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
-		try {
-			BaseDataFactory.genSchema(env, new String[] {});
-		} catch (APIException e) {
-			assertTrue(e.getLocalizedMessage().contains("does not exist.  You can set this with"));
-		}
-	}
-	
-	@Test
-	public void testGenSchemaXsdException() {
-		Store env = Mockito.mock(Store.class);
-		Mockito.doReturn(System.getProperty("user.dir")).when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
-		String[] schemaFIles = new String[] {"../auth-client/src/main/xsd/aaf_2_0.xsd"};
-		try {
-			BaseDataFactory.genSchema(env, schemaFIles);
-		} catch (APIException e) {
-			assertTrue(e.getLocalizedMessage().contains("for schema validation"));
-		}
-	}
-	
-	@Test
-	public void testGenSchemaNoException() {
-		Store env = Mockito.mock(Store.class);
-		Mockito.doReturn(System.getProperty("user.dir")).when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
-		String[] schemaFIles = new String[] {"../../auth-client/src/main/xsd/aaf_2_0.xsd"};
-		try {
-			BaseDataFactory.genSchema(env, schemaFIles);
-		} catch (APIException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void testGetQName() {
-		String[] schemaFIles = new String[] {"../../auth-client/src/main/xsd/aaf_2_0.xsd"};
-		try {
-			BaseDataFactory.getQName(Api.class);
-		} catch (APIException e) {
-			assertTrue(e.getLocalizedMessage().contains("package-info does not have an XmlSchema annotation"));
-		}
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
+    
+    @Test
+    public void testGenSchemaException() {
+        Store env = Mockito.mock(Store.class);
+        Mockito.doReturn("testdir").when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
+        try {
+            BaseDataFactory.genSchema(env, new String[] {});
+        } catch (APIException e) {
+            assertTrue(e.getLocalizedMessage().contains("does not exist.  You can set this with"));
+        }
+    }
+    
+    @Test
+    public void testGenSchemaXsdException() {
+        Store env = Mockito.mock(Store.class);
+        Mockito.doReturn(System.getProperty("user.dir")).when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
+        String[] schemaFIles = new String[] {"../auth-client/src/main/xsd/aaf_2_0.xsd"};
+        try {
+            BaseDataFactory.genSchema(env, schemaFIles);
+        } catch (APIException e) {
+            assertTrue(e.getLocalizedMessage().contains("for schema validation"));
+        }
+    }
+    
+    @Test
+    public void testGenSchemaNoException() {
+        Store env = Mockito.mock(Store.class);
+        Mockito.doReturn(System.getProperty("user.dir")).when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
+        String[] schemaFIles = new String[] {"../../auth-client/src/main/xsd/aaf_2_0.xsd"};
+        try {
+            BaseDataFactory.genSchema(env, schemaFIles);
+        } catch (APIException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void testGetQName() {
+        String[] schemaFIles = new String[] {"../../auth-client/src/main/xsd/aaf_2_0.xsd"};
+        try {
+            BaseDataFactory.getQName(Api.class);
+        } catch (APIException e) {
+            assertTrue(e.getLocalizedMessage().contains("package-info does not have an XmlSchema annotation"));
+        }
+    }
 }

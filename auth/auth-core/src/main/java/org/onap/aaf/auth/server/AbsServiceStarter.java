@@ -42,18 +42,18 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     private Registrar<ENV> registrar;
     private boolean do_register;
     protected AbsService<ENV,TRANS> service;
-	protected String hostname;
-	protected final boolean secure;
+    protected String hostname;
+    protected final boolean secure;
 
 
     public AbsServiceStarter(final AbsService<ENV,TRANS> service, boolean secure) {
-    	this.secure = secure;
+        this.secure = secure;
         this.service = service;
         try {
             OrganizationFactory.init(service.env);
         } catch (OrganizationException e) {
             service.access.log(e, "Missing defined Organization Plugins");
-           	System.exit(3);
+               System.exit(3);
         }
         // do_register - this is used for specialty Debug Situations.  Developer can create an Instance for a remote system
         // for Debugging purposes without fear that real clients will start to call your debug instance
@@ -61,10 +61,10 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         hostname = access().getProperty(Config.HOSTNAME, null);
         if (hostname==null) {
             try {
-				hostname = Inet4Address.getLocalHost().getHostName();
-			} catch (UnknownHostException e) {
-				hostname= "cannotBeDetermined";
-			}
+                hostname = Inet4Address.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                hostname= "cannotBeDetermined";
+            }
         }
         _propertyAdjustment();
     }
@@ -83,31 +83,31 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 
     @Override
     public final void start() throws Exception {
-    	ExecutorService es = Executors.newSingleThreadExecutor();
-    	Future<?> app = es.submit(this);
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Future<?> app = es.submit(this);
         final AbsServiceStarter<?,?> absSS = this;
         // Docker/K8 may separately create startup Status in this dir for startup 
         // sequencing.  If so, delete ON EXIT 
-    	Runtime.getRuntime().addShutdownHook(new Thread() {
-	      @Override
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+          @Override
           public void run() {
-	    	  absSS.access().printf(Level.INIT, "Shutting down %s:%s\n",absSS.service.app_name, absSS.service.app_version);
-	    	  absSS.shutdown();
-	    	  app.cancel(true);
-	      }
-    	});
-		if(System.getProperty("ECLIPSE", null)!=null) {
-			Thread.sleep(2000);
-			if(!app.isCancelled()) {
-		        System.out.println("Service Started in Eclipse: ");
-		        System.out.print("  Hit <enter> to end:\n");
-		        try {
-					System.in.read();
-					System.exit(0);
-				} catch (IOException e) {
-				}
-			}
-		}
+              absSS.access().printf(Level.INIT, "Shutting down %s:%s\n",absSS.service.app_name, absSS.service.app_version);
+              absSS.shutdown();
+              app.cancel(true);
+          }
+        });
+        if(System.getProperty("ECLIPSE", null)!=null) {
+            Thread.sleep(2000);
+            if(!app.isCancelled()) {
+                System.out.println("Service Started in Eclipse: ");
+                System.out.print("  Hit <enter> to end:\n");
+                try {
+                    System.in.read();
+                    System.exit(0);
+                } catch (IOException e) {
+                }
+            }
+        }
     }
     
     @SafeVarargs
@@ -123,16 +123,16 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
     }
 
     @Override
-	public void run() {
+    public void run() {
         try {
-			_start(service);
-		} catch (Exception e) {
-			e.printStackTrace();
-			shutdown();
-		}
-	}
+            _start(service);
+        } catch (Exception e) {
+            e.printStackTrace();
+            shutdown();
+        }
+    }
 
-	@Override
+    @Override
     public void shutdown() {
         if (registrar!=null) {
             registrar.close(env());
@@ -141,26 +141,26 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         if (service!=null) {
             File status = new File("/opt/app/aaf/status/");
             boolean deleted = false;
-    		if(status.exists()) {
-    			int lastdot = service.app_name.lastIndexOf("aaf.");
-    			String fname;
-    			if(lastdot<0) {
-    				fname = service.app_name + '-' + hostname;
-    			} else {
-    				fname = service.app_name.substring(lastdot).replace('.', '-') 
-    						+ '-' + hostname;
-    			}
-    			status = new File(status, fname);
-    			if(status.exists()) {
-    				deleted=status.delete();
-    			}
-    		}
-    		if(deleted) {
-    			service.access.log(Level.INIT, "Deleted Status",status.getAbsolutePath());
-    		} else {
-    			service.access.log(Level.INIT, "Status not deleted: ",status.getAbsolutePath());
-    		}
-        	service.destroy();
+            if(status.exists()) {
+                int lastdot = service.app_name.lastIndexOf("aaf.");
+                String fname;
+                if(lastdot<0) {
+                    fname = service.app_name + '-' + hostname;
+                } else {
+                    fname = service.app_name.substring(lastdot).replace('.', '-') 
+                            + '-' + hostname;
+                }
+                status = new File(status, fname);
+                if(status.exists()) {
+                    deleted=status.delete();
+                }
+            }
+            if(deleted) {
+                service.access.log(Level.INIT, "Deleted Status",status.getAbsolutePath());
+            } else {
+                service.access.log(Level.INIT, "Status not deleted: ",status.getAbsolutePath());
+            }
+            service.destroy();
         }
     }
 }

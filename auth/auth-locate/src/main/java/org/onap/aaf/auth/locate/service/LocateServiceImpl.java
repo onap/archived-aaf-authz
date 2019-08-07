@@ -77,10 +77,10 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                     int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
                     AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
                     if (!trans.fish(p)) {
-                    	if(denied==null) {
-                    		denied = new StringBuilder("May not register service(s):");
-                    	}
-                    	
+                        if(denied==null) {
+                            denied = new StringBuilder("May not register service(s):");
+                        }
+                        
                         denied.append("\n\t");
                         denied.append(p.getKey());
                         denied.append(')');
@@ -95,7 +95,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                 return Result.ok();
             } else {
                 return denied==null?Result.err(Result.ERR_NotFound, "No endpoints found")
-                		:Result.err(Result.ERR_Security,denied.toString());
+                        :Result.err(Result.ERR_Security,denied.toString());
             }
         }
 
@@ -111,14 +111,14 @@ public class LocateServiceImpl<IN,OUT,ERROR>
             int count = 0;
             StringBuilder denied = null;
             for (MgmtEndpoint me : meps.getMgmtEndpoint()) {
-            	 if (permToRegister) { 
+                 if (permToRegister) { 
                      int dot = me.getName().lastIndexOf('.'); // Note: Validator checks for NS for getName()
                      AAFPermission p = new AAFPermission(me.getName().substring(0,dot),"locator",me.getHostname(),"write"); 
                      if (!trans.fish(p)) {
-                     	if(denied==null) {
-                     		denied = new StringBuilder("May not deregister service(s):");
-                     	}
-                     	
+                         if(denied==null) {
+                             denied = new StringBuilder("May not deregister service(s):");
+                         }
+                         
                          denied.append("\n\t");
                          denied.append(p.getKey());
                          denied.append(')');
@@ -133,7 +133,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                 return Result.ok();
             } else {
                 return denied==null?Result.err(Result.ERR_NotFound, "No endpoints found")
-                		:Result.err(Result.ERR_Security,denied.toString());
+                        :Result.err(Result.ERR_Security,denied.toString());
             }
         }
 

@@ -34,8 +34,8 @@ public interface Mailer {
             String body,
             Boolean urgent) throws OrganizationException;
 
-	public String mailFrom();
+    public String mailFrom();
 
-	public int count();
+    public int count();
 
 }

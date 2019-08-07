@@ -79,123 +79,123 @@ public abstract class AAFCon<CLIENT> implements Connector {
 
     final public RosettaEnv env;
     protected AAFCon(AAFCon<CLIENT> copy) {
-	    access = copy.access;
-	    apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
-	    timeout = copy.timeout;
-	    cleanInterval = copy.cleanInterval;
-	    connTimeout = copy.connTimeout;
-	    highCount = copy.highCount;
-	    userExpires = copy.userExpires;
-	    usageRefreshTriggerCount = copy.usageRefreshTriggerCount;
-	    permsDF = copy.permsDF;
-	    certsDF = copy.certsDF;
-	    usersDF = copy.usersDF;
-	    errDF = copy.errDF;
-	    app = copy.app;
-	    si = copy.si;
-	    env = copy.env;
-	    realm = copy.realm;
-	}
-	protected AAFCon(Access access, String tag, SecurityInfoC<CLIENT> si) throws CadiException{
-	    apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
-	    if (tag==null) {
-	        throw new CadiException("AAFCon cannot be constructed without a property tag or URL");
-	    } else {
-	        String str = access.getProperty(tag,null);
-	        if (str==null) {
-	            if (tag.contains("://")) { // assume a URL
-	                str = tag;
-	            } else {
-	                throw new CadiException("A URL or " + tag + " property is required.");
-	            }
-	        }
-        	try {
-				RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
-				str = rph.replacements("AAFCon",str, null,null);
-			} catch (UnknownHostException e) {
-				throw new CadiException(e);
-			}
-	        access.printf(Level.INFO, "AAFCon has URL of %s",str);
-	        setInitURI(str);
-	    }
-	    try {
-	        this.access = access;
-	        this.si = si;
-	        if (si.defSS.getID().equals(SecurityInfoC.DEF_ID)) { // it's the Preliminary SS, try to get a better one
-	            String mechid = access.getProperty(Config.AAF_APPID, null);
-	            if (mechid==null) {
-	                mechid=access.getProperty(Config.OAUTH_CLIENT_ID,null);
-	            }
-	            String alias = access.getProperty(Config.CADI_ALIAS, null);
-	            if(alias != null) {
-		            si.defSS=x509Alias(alias);
-		            set(si.defSS);
-	            } else {
-	
-		            String encpass = access.getProperty(Config.AAF_APPPASS, null);
-		            if (encpass==null) {
-		                encpass = access.getProperty(Config.OAUTH_CLIENT_SECRET,null);
-		            }
-		            
-		            if (encpass==null) {
-		                if (alias==null) {
-		                    access.printf(Access.Level.WARN,"%s, %s or %s required before use.", Config.CADI_ALIAS, Config.AAF_APPID, Config.OAUTH_CLIENT_ID);
-		                    set(si.defSS);
-		                }
-		            } else {
-		                if (mechid!=null) {
-		                    si.defSS=basicAuth(mechid, encpass);
-		                    set(si.defSS);
-		                } else {
-		                    si.defSS=new SecuritySetter<CLIENT>() {
-		
-		                        @Override
-		                        public String getID() {
-		                            return "";
-		                        }
-		
-		                        @Override
-		                        public void setSecurity(CLIENT client) throws CadiException {
-		                            throw new CadiException("AAFCon has not been initialized with Credentials (SecuritySetter)");
-		                        }
-		
-		                        @Override
-		                        public int setLastResponse(int respCode) {
-		                            return 0;
-		                        }
-		                    };
-		                    set(si.defSS);
-		                }
-		            }
-	            }
-	        }
-	        
-	        timeout = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT, Config.AAF_CALL_TIMEOUT_DEF));
-	        cleanInterval = Integer.parseInt(access.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF));
-	        highCount = Integer.parseInt(access.getProperty(Config.AAF_HIGH_COUNT, Config.AAF_HIGH_COUNT_DEF).trim());
-	        connTimeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF).trim());
-	        userExpires = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim());
-	        usageRefreshTriggerCount = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim())-1; // zero based
-	
-	        app=FQI.reverseDomain(si.defSS.getID());
-	        //TODO Get Realm from AAF
-	        realm="people.osaaf.org";
-	
-	        env = new RosettaEnv();
-	        permsDF = env.newDataFactory(Perms.class);
-	        usersDF = env.newDataFactory(Users.class);
-	        certsDF = env.newDataFactory(Certs.class);
-	        certsDF.rootMarshal(new CertsMarshal()); // Speedier Marshaling
-	        errDF = env.newDataFactory(Error.class);
-	    } catch (APIException e) {
-	        throw new CadiException("AAFCon cannot be configured",e);
-	    }
-	}
-	protected abstract URI initURI();
+        access = copy.access;
+        apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
+        timeout = copy.timeout;
+        cleanInterval = copy.cleanInterval;
+        connTimeout = copy.connTimeout;
+        highCount = copy.highCount;
+        userExpires = copy.userExpires;
+        usageRefreshTriggerCount = copy.usageRefreshTriggerCount;
+        permsDF = copy.permsDF;
+        certsDF = copy.certsDF;
+        usersDF = copy.usersDF;
+        errDF = copy.errDF;
+        app = copy.app;
+        si = copy.si;
+        env = copy.env;
+        realm = copy.realm;
+    }
+    protected AAFCon(Access access, String tag, SecurityInfoC<CLIENT> si) throws CadiException{
+        apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
+        if (tag==null) {
+            throw new CadiException("AAFCon cannot be constructed without a property tag or URL");
+        } else {
+            String str = access.getProperty(tag,null);
+            if (str==null) {
+                if (tag.contains("://")) { // assume a URL
+                    str = tag;
+                } else {
+                    throw new CadiException("A URL or " + tag + " property is required.");
+                }
+            }
+            try {
+                RegistrationPropHolder rph = new RegistrationPropHolder(access, 0);
+                str = rph.replacements("AAFCon",str, null,null);
+            } catch (UnknownHostException e) {
+                throw new CadiException(e);
+            }
+            access.printf(Level.INFO, "AAFCon has URL of %s",str);
+            setInitURI(str);
+        }
+        try {
+            this.access = access;
+            this.si = si;
+            if (si.defSS.getID().equals(SecurityInfoC.DEF_ID)) { // it's the Preliminary SS, try to get a better one
+                String mechid = access.getProperty(Config.AAF_APPID, null);
+                if (mechid==null) {
+                    mechid=access.getProperty(Config.OAUTH_CLIENT_ID,null);
+                }
+                String alias = access.getProperty(Config.CADI_ALIAS, null);
+                if(alias != null) {
+                    si.defSS=x509Alias(alias);
+                    set(si.defSS);
+                } else {
+    
+                    String encpass = access.getProperty(Config.AAF_APPPASS, null);
+                    if (encpass==null) {
+                        encpass = access.getProperty(Config.OAUTH_CLIENT_SECRET,null);
+                    }
+                    
+                    if (encpass==null) {
+                        if (alias==null) {
+                            access.printf(Access.Level.WARN,"%s, %s or %s required before use.", Config.CADI_ALIAS, Config.AAF_APPID, Config.OAUTH_CLIENT_ID);
+                            set(si.defSS);
+                        }
+                    } else {
+                        if (mechid!=null) {
+                            si.defSS=basicAuth(mechid, encpass);
+                            set(si.defSS);
+                        } else {
+                            si.defSS=new SecuritySetter<CLIENT>() {
+        
+                                @Override
+                                public String getID() {
+                                    return "";
+                                }
+        
+                                @Override
+                                public void setSecurity(CLIENT client) throws CadiException {
+                                    throw new CadiException("AAFCon has not been initialized with Credentials (SecuritySetter)");
+                                }
+        
+                                @Override
+                                public int setLastResponse(int respCode) {
+                                    return 0;
+                                }
+                            };
+                            set(si.defSS);
+                        }
+                    }
+                }
+            }
+            
+            timeout = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT, Config.AAF_CALL_TIMEOUT_DEF));
+            cleanInterval = Integer.parseInt(access.getProperty(Config.AAF_CLEAN_INTERVAL, Config.AAF_CLEAN_INTERVAL_DEF));
+            highCount = Integer.parseInt(access.getProperty(Config.AAF_HIGH_COUNT, Config.AAF_HIGH_COUNT_DEF).trim());
+            connTimeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF).trim());
+            userExpires = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim());
+            usageRefreshTriggerCount = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim())-1; // zero based
+    
+            app=FQI.reverseDomain(si.defSS.getID());
+            //TODO Get Realm from AAF
+            realm="people.osaaf.org";
+    
+            env = new RosettaEnv();
+            permsDF = env.newDataFactory(Perms.class);
+            usersDF = env.newDataFactory(Users.class);
+            certsDF = env.newDataFactory(Certs.class);
+            certsDF.rootMarshal(new CertsMarshal()); // Speedier Marshaling
+            errDF = env.newDataFactory(Error.class);
+        } catch (APIException e) {
+            throw new CadiException("AAFCon cannot be configured",e);
+        }
+    }
+    protected abstract URI initURI();
     protected abstract void setInitURI(String uriString) throws CadiException;
 
     public final String aafVersion() {
-    	return apiVersion;
+        return apiVersion;
     }
     
     /**
@@ -207,8 +207,8 @@ public abstract class AAFCon<CLIENT> implements Connector {
      * @throws CadiException
      */
     public Rcli<CLIENT> client() throws CadiException {
-    	return client(apiVersion);
-    }    	
+        return client(apiVersion);
+    }        
 
     /**
      * Use this call to get the appropriate client based on configuration (HTTP, future)
@@ -218,7 +218,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
      * @throws CadiException
      */
     public Rcli<CLIENT> client(final String apiVersion) throws CadiException {
-    	Rcli<CLIENT> client = clients.get(apiVersion);
+        Rcli<CLIENT> client = clients.get(apiVersion);
         if (client==null) {
             client = rclient(initURI(),si.defSS);
             client.apiVersion(apiVersion)

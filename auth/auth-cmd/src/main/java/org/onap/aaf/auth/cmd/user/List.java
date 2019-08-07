@@ -64,9 +64,9 @@ public class List extends BaseCmd<User> {
             String tag=user.getTag();
             Integer type = user.getType();
             if(tag==null) {
-            	tag="";
+                tag="";
             } else if(type!=null && type>=200) {
-            	tag = "\n\tfingerprint: " + tag;
+                tag = "\n\tfingerprint: " + tag;
             }
             pw().format(format, 
                     user.getId(),

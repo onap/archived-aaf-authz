@@ -130,11 +130,11 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             sb.append("user=");
             Principal p = trans.getUserPrincipal();
             if (p==null) {
-            	lt=trans.warn();
+                lt=trans.warn();
                 sb.append(target);
                 sb.append("[None]");
             } else {
-            	lt=trans.info();
+                lt=trans.info();
                 sb.append(p.getName());
                 if (p instanceof TrustPrincipal) {
                     sb.append('(');

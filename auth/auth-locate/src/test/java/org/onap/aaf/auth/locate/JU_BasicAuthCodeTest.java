@@ -41,74 +41,74 @@ import org.onap.aaf.cadi.principal.X509Principal;
 import org.onap.aaf.misc.env.LogTarget;
 
 public class JU_BasicAuthCodeTest {
-	@Mock
-	AAFAuthn authn;
+    @Mock
+    AAFAuthn authn;
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	AuthzTrans trans;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    AuthzTrans trans;
 
-	@Mock
-	HttpServletRequest req;
+    @Mock
+    HttpServletRequest req;
 
-	@Mock
-	HttpServletResponse resp;
+    @Mock
+    HttpServletResponse resp;
 
-	@Mock
-	LogTarget error;
+    @Mock
+    LogTarget error;
 
-	@Mock
-	LocateFacade facade;
+    @Mock
+    LocateFacade facade;
 
-	@Mock
-	BasicPrincipal basicPrincipal;
-	@Mock
-	X509Principal x509Principal;
+    @Mock
+    BasicPrincipal basicPrincipal;
+    @Mock
+    X509Principal x509Principal;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void testWithNullUserPrincipal() throws Exception {
-		BasicAuthCode basicAuthCode = new BasicAuthCode(authn, facade);
-		LocateCode locateCode = basicAuthCode.clone(facade, false);
+    @Test
+    public void testWithNullUserPrincipal() throws Exception {
+        BasicAuthCode basicAuthCode = new BasicAuthCode(authn, facade);
+        LocateCode locateCode = basicAuthCode.clone(facade, false);
 
-		assertEquals(locateCode.desc(), basicAuthCode.desc());
+        assertEquals(locateCode.desc(), basicAuthCode.desc());
 
-		when(trans.getUserPrincipal()).thenReturn(null);
-		when(trans.error()).thenReturn(error);
+        when(trans.getUserPrincipal()).thenReturn(null);
+        when(trans.error()).thenReturn(error);
 
-		basicAuthCode.handle(trans, req, resp);
-	}
+        basicAuthCode.handle(trans, req, resp);
+    }
 
-	@Test
-	public void testWithBasicUserPrincipal() throws Exception {
-		BasicAuthCode basicAuthCode = new BasicAuthCode(authn, facade);
-		LocateCode locateCode = basicAuthCode.clone(facade, false);
+    @Test
+    public void testWithBasicUserPrincipal() throws Exception {
+        BasicAuthCode basicAuthCode = new BasicAuthCode(authn, facade);
+        LocateCode locateCode = basicAuthCode.clone(facade, false);
 
-		assertEquals(locateCode.desc(), basicAuthCode.desc());
+        assertEquals(locateCode.desc(), basicAuthCode.desc());
 
-		when(trans.getUserPrincipal()).thenReturn(basicPrincipal);
+        when(trans.getUserPrincipal()).thenReturn(basicPrincipal);
 
-		basicAuthCode.handle(trans, req, resp);
+        basicAuthCode.handle(trans, req, resp);
 
-		verify(resp).setStatus(HttpStatus.OK_200);
-	}
+        verify(resp).setStatus(HttpStatus.OK_200);
+    }
 
-	@Test
-	public void testWithX509UserPrincipal() throws Exception {
-		BasicAuthCode basicAuthCode = new BasicAuthCode(authn, facade);
-		LocateCode locateCode = basicAuthCode.clone(facade, false);
+    @Test
+    public void testWithX509UserPrincipal() throws Exception {
+        BasicAuthCode basicAuthCode = new BasicAuthCode(authn, facade);
+        LocateCode locateCode = basicAuthCode.clone(facade, false);
 
-		assertEquals(locateCode.desc(), basicAuthCode.desc());
+        assertEquals(locateCode.desc(), basicAuthCode.desc());
 
-		when(trans.getUserPrincipal()).thenReturn(x509Principal);
-		when(req.getHeader("Authorization")).thenReturn("Basic 76//76");
+        when(trans.getUserPrincipal()).thenReturn(x509Principal);
+        when(req.getHeader("Authorization")).thenReturn("Basic 76//76");
 
-		basicAuthCode.handle(trans, req, resp);
+        basicAuthCode.handle(trans, req, resp);
 
-		verify(resp).setStatus(HttpStatus.FORBIDDEN_403);
-	}
+        verify(resp).setStatus(HttpStatus.FORBIDDEN_403);
+    }
 
 }

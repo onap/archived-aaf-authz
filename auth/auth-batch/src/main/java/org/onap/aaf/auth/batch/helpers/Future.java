@@ -104,7 +104,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
                 e.printStackTrace(System.err);
             }
         }
-    	this.role = role;
+        this.role = role;
     }
     
     public final UUID id() {
@@ -128,7 +128,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     }
     
     public static void load(Trans trans, Session session, Creator<Future> creator) {
-    	load(trans,session,creator, f -> {
+        load(trans,session,creator, f -> {
             data.put(f.fdd.id,f);
             if (f.role==null) {
                 return;
@@ -154,8 +154,8 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         tt = trans.start("Process Futures", Env.SUB);
         try {
             for (Row row : results.all()) {
-        	    ++count;
-            	visitor.visit(creator.create(row));
+                ++count;
+                visitor.visit(creator.create(row));
             }
         } finally {
             tt.done();
@@ -216,15 +216,15 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         return cache.contains(f);
     }
     
-	public static void row(CSV.Writer cw, Future f) {
-		cw.row("future",f.fdd.id,f.fdd.target,f.fdd.expires,f.role,f.fdd.memo);
-	}
+    public static void row(CSV.Writer cw, Future f) {
+        cw.row("future",f.fdd.id,f.fdd.target,f.fdd.expires,f.role,f.fdd.memo);
+    }
 
 
-	public static void deleteByIDBatch(StringBuilder sb, String id) {
-		sb.append("DELETE from authz.future where id=");
-		sb.append(id);
-		sb.append(";\n");
-	}
+    public static void deleteByIDBatch(StringBuilder sb, String id) {
+        sb.append("DELETE from authz.future where id=");
+        sb.append(id);
+        sb.append(";\n");
+    }
 
 }

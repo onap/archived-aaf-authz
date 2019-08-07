@@ -161,7 +161,7 @@ public class CadiFilter implements Filter {
                cf= (Class<Filter>) Class.forName("org.onap.aaf.cadi.oauth.OAuthFilter");
                sideChain.add(cf.newInstance());
            } catch (ClassNotFoundException e) {
-        	   access.log(Level.DEBUG, "OAuthFilter not enabled");
+               access.log(Level.DEBUG, "OAuthFilter not enabled");
            }
        } catch (Exception e) {
            access.log(Level.INIT, "AAFTrustChecker cannot be loaded",e.getMessage());
@@ -229,7 +229,7 @@ public class CadiFilter implements Filter {
         // Add API Enforcement Point
         String enforce = getter.get(Config.CADI_API_ENFORCEMENT, null, true); 
         if(enforce!=null && enforce.length()>0) {
-        	sideChain.add(new CadiApiEnforcementFilter(access,enforce));
+            sideChain.add(new CadiApiEnforcementFilter(access,enforce));
         }
         // Remove Getter
         getter = Get.NULL;
@@ -304,11 +304,11 @@ public class CadiFilter implements Filter {
         if (pathExceptions!=null) {
             String pi = hreq.getPathInfo();
             if (pi==null) {
-            	// Attempt to get from URI only  (Daniel Rose)
+                // Attempt to get from URI only  (Daniel Rose)
                 pi = hreq.getRequestURI().substring(hreq.getContextPath().length());
                 if(pi==null) {
-                	// Nothing works.
-                	return false; // JBoss sometimes leaves null
+                    // Nothing works.
+                    return false; // JBoss sometimes leaves null
                 }
             }
             for (String pe : pathExceptions) {

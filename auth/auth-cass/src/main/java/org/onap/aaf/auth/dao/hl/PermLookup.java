@@ -153,32 +153,32 @@ public class PermLookup {
                 List<PermDAO.Data> lpdd = new ArrayList<>();
                 for (String perm : rss.value) {
                     if (lookup) {
-                    	Map<String,PermDAO.Data> mspdd = new TreeMap<>();
+                        Map<String,PermDAO.Data> mspdd = new TreeMap<>();
                         Result<String[]> ap = PermDAO.Data.decodeToArray(trans, q, perm);
                         if (ap.isOK()) {
                              
                             Result<List<PermDAO.Data>> rlpd = q.permDAO().read(perm,trans,ap.value);
                             if (rlpd.isOKhasData()) {
                                 for (PermDAO.Data pData : rlpd.value) {
-                                	// ONLY add perms/roles which are related to this lookup
-                                	for(String pdr : pData.roles(false)) {
-                                		for(RoleDAO.Data r : roles.value) {
-                                			if(pdr.equals(r.encode())) {
-                                            	PermDAO.Data pdd = mspdd.get(pData.fullPerm());
-                                            	if(pdd==null) {
-                                            		pdd = new PermDAO.Data();
-                                            		pdd.ns = pData.ns;
-                                            		pdd.type = pData.type;
-                                            		pdd.instance = pData.instance;
-                                            		pdd.action = pData.action;
-                                            		pdd.description = pData.description;
+                                    // ONLY add perms/roles which are related to this lookup
+                                    for(String pdr : pData.roles(false)) {
+                                        for(RoleDAO.Data r : roles.value) {
+                                            if(pdr.equals(r.encode())) {
+                                                PermDAO.Data pdd = mspdd.get(pData.fullPerm());
+                                                if(pdd==null) {
+                                                    pdd = new PermDAO.Data();
+                                                    pdd.ns = pData.ns;
+                                                    pdd.type = pData.type;
+                                                    pdd.instance = pData.instance;
+                                                    pdd.action = pData.action;
+                                                    pdd.description = pData.description;
                                                     lpdd.add(pdd);
-                                            	}
-                                				pdd.roles(true).add(pdr);	
-                                				break;
-                                			}
-                                		}
-                                	}
+                                                }
+                                                pdd.roles(true).add(pdr);    
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         } else {

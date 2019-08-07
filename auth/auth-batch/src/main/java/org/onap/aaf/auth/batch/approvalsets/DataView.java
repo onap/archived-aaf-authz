@@ -37,7 +37,7 @@ import org.onap.aaf.auth.layer.Result;
  *   2) tested in Memory
  *   3) combined for REAL time by running Cached Memory
  *   4) Streamable in
- *   	a) Binary
+ *       a) Binary
  *      b) CSV
  *      c) JSON
  *      d) XML
@@ -46,7 +46,7 @@ import org.onap.aaf.auth.layer.Result;
  * But in the end, it looks like:
  *   1) Data Structures
  *   2) Find the Data Structures by various means, accounting for 
- *   	a) Multiple Responses
+ *       a) Multiple Responses
  *      b) Errors from the deepest level, made available through the call stack
  *   3) 
  *     
@@ -54,20 +54,20 @@ import org.onap.aaf.auth.layer.Result;
  *
  */
 public interface DataView {
-	// Reads
-	public Result<NsDAO.Data> ns(final AuthzTrans trans, final String id);
-	public Result<RoleDAO.Data> roleByName(final AuthzTrans trans, final String name);
-	public Result<List<UserRoleDAO.Data>> ursByRole(final AuthzTrans trans, final String role);
-	public Result<List<UserRoleDAO.Data>> ursByUser(final AuthzTrans trans, final String user);
+    // Reads
+    public Result<NsDAO.Data> ns(final AuthzTrans trans, final String id);
+    public Result<RoleDAO.Data> roleByName(final AuthzTrans trans, final String name);
+    public Result<List<UserRoleDAO.Data>> ursByRole(final AuthzTrans trans, final String role);
+    public Result<List<UserRoleDAO.Data>> ursByUser(final AuthzTrans trans, final String user);
 
-	// Inserts
-	public Result<ApprovalDAO.Data> insert(final AuthzTrans trans, final ApprovalDAO.Data add);
-	public Result<FutureDAO.Data> insert(final AuthzTrans trans, final FutureDAO.Data add);
-	
-	// Deletes
-	public Result<ApprovalDAO.Data> delete(final AuthzTrans trans, final ApprovalDAO.Data add);
-	public Result<FutureDAO.Data> delete(final AuthzTrans trans, final FutureDAO.Data add);
-	
-	// Clear any buffers
-	public void flush();
+    // Inserts
+    public Result<ApprovalDAO.Data> insert(final AuthzTrans trans, final ApprovalDAO.Data add);
+    public Result<FutureDAO.Data> insert(final AuthzTrans trans, final FutureDAO.Data add);
+    
+    // Deletes
+    public Result<ApprovalDAO.Data> delete(final AuthzTrans trans, final ApprovalDAO.Data add);
+    public Result<FutureDAO.Data> delete(final AuthzTrans trans, final FutureDAO.Data add);
+    
+    // Clear any buffers
+    public void flush();
 }

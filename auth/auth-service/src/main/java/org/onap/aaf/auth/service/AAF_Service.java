@@ -196,11 +196,11 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
     
     @Override 
     public void postStartup(final String hostname, final int port) throws APIException {
-    	try {
-			CacheInfoDAO.startUpdate(env, aafCon().hman(), aafCon().securityInfo().defSS,hostname,port);
-		} catch (CadiException | LocatorException e) {
-			throw new APIException(e);
-		}
+        try {
+            CacheInfoDAO.startUpdate(env, aafCon().hman(), aafCon().securityInfo().defSS,hostname,port);
+        } catch (CadiException | LocatorException e) {
+            throw new APIException(e);
+        }
     }
 
     @Override
@@ -241,11 +241,11 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
             
             try {
                 new JettyServiceStarter<AuthzEnv,AuthzTrans>(
-                	new AAF_Service(new AuthzEnv(propAccess)),true)
-                		.start();
-	        } catch (Exception e) {
-	            propAccess.log(e);
-	        }
+                    new AAF_Service(new AuthzEnv(propAccess)),true)
+                        .start();
+            } catch (Exception e) {
+                propAccess.log(e);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

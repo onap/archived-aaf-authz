@@ -60,10 +60,10 @@ public class Delete extends Cmd {
                 pk.setAction(args[idx++]);
         
                 if(pk.getType().contains("@")) { // User Perm deletion... Must remove from hidden role
-                	client.setQueryParams("force");
+                    client.setQueryParams("force");
                 } else {
-	                // Set "Force" if set
-	                setQueryParamsOn(client);
+                    // Set "Force" if set
+                    setQueryParamsOn(client);
                 }
                 Future<PermRequest> fp = client.delete(
                         "/authz/perm", 

@@ -170,11 +170,11 @@ public class HMangr {
     }
     
     public <RET> RET allExcept(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify, String selfHost) throws LocatorException, CadiException, APIException {
-    	return call(ss,retryable,notify,selfHost);
+        return call(ss,retryable,notify,selfHost);
     }
 
     public<RET> RET oneOf(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify,String host) throws LocatorException, CadiException, APIException {
-    	return call(ss,retryable,notify,host);
+        return call(ss,retryable,notify,host);
     }
     private<RET> RET call(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify,String host) throws LocatorException, CadiException, APIException {
         RET ret = null;

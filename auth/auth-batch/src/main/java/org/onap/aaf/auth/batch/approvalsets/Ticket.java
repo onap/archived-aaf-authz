@@ -27,11 +27,11 @@ import org.onap.aaf.auth.batch.helpers.Approval;
 import org.onap.aaf.auth.batch.helpers.Future;
 
 public class Ticket {
-	public final Future f;
-	public final Set<Approval> approvals;
-	
-	public Ticket(Future future) {
-		this.f = future;
-		approvals = new HashSet<>();
-	}
+    public final Future f;
+    public final Set<Approval> approvals;
+    
+    public Ticket(Future future) {
+        this.f = future;
+        approvals = new HashSet<>();
+    }
 }

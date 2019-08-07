@@ -49,106 +49,106 @@ import junit.framework.Assert;
 
 public class JU_UserRole {
 
-	UserRole userRole;
-	UserRole userRole1;
-	Date date;
-	PrintStream ds;
+    UserRole userRole;
+    UserRole userRole1;
+    Date date;
+    PrintStream ds;
 
-	@Before
-	public void setUp() {
-		date = new Date();
-		userRole = new UserRole("user", "ns", "rname", date);
-		userRole = new UserRole("user", "role", "ns", "rname", date);
-	}
+    @Before
+    public void setUp() {
+        date = new Date();
+        userRole = new UserRole("user", "ns", "rname", date);
+        userRole = new UserRole("user", "role", "ns", "rname", date);
+    }
 
-	@Test
-	public void testTotalLoaded() {
-		Assert.assertEquals(0, userRole.totalLoaded());
-	}
+    @Test
+    public void testTotalLoaded() {
+        Assert.assertEquals(0, userRole.totalLoaded());
+    }
 
-	@Test
-	public void testDeleted() {
-		Assert.assertEquals(0, userRole.deleted());
-	}
+    @Test
+    public void testDeleted() {
+        Assert.assertEquals(0, userRole.deleted());
+    }
 
-	@Test
-	public void testExpunge() {
-		userRole.expunge();
-	}
+    @Test
+    public void testExpunge() {
+        userRole.expunge();
+    }
 
-	@Test
-	public void testSetDeleteStream() {
-		userRole.setDeleteStream(ds);
-	}
+    @Test
+    public void testSetDeleteStream() {
+        userRole.setDeleteStream(ds);
+    }
 
-	@Test
-	public void testSetRecoverStream() {
-		userRole.setRecoverStream(ds);
-	}
+    @Test
+    public void testSetRecoverStream() {
+        userRole.setRecoverStream(ds);
+    }
 
-	@Test
-	public void testUrdd() {
-		Assert.assertTrue(userRole.urdd() instanceof UserRoleDAO.Data);
-	}
+    @Test
+    public void testUrdd() {
+        Assert.assertTrue(userRole.urdd() instanceof UserRoleDAO.Data);
+    }
 
-	@Test
-	public void testUser() {
-		Assert.assertEquals("user", userRole.user());
-	}
+    @Test
+    public void testUser() {
+        Assert.assertEquals("user", userRole.user());
+    }
 
-	@Test
-	public void testRole() {
-		Assert.assertEquals("role", userRole.role());
-	}
+    @Test
+    public void testRole() {
+        Assert.assertEquals("role", userRole.role());
+    }
 
-	@Test
-	public void testNs() {
-		Assert.assertEquals("ns", userRole.ns());
-	}
+    @Test
+    public void testNs() {
+        Assert.assertEquals("ns", userRole.ns());
+    }
 
-	@Test
-	public void testRName() {
-		Assert.assertEquals("rname", userRole.rname());
-	}
+    @Test
+    public void testRName() {
+        Assert.assertEquals("rname", userRole.rname());
+    }
 
-	@Test
-	public void testExpires() {
-		Assert.assertEquals(date, userRole.expires());
-		userRole.expires(date);
-	}
+    @Test
+    public void testExpires() {
+        Assert.assertEquals(date, userRole.expires());
+        userRole.expires(date);
+    }
 
-	@Test
-	public void testToString() {
-		Assert.assertTrue(userRole.toString() instanceof String);
-	}
+    @Test
+    public void testToString() {
+        Assert.assertTrue(userRole.toString() instanceof String);
+    }
 
-	@Test
-	public void testGet() {
-		userRole.get("u", "r");
-	}
+    @Test
+    public void testGet() {
+        userRole.get("u", "r");
+    }
 
-	@Test
-	public void testResetLocalData() {
-		userRole.resetLocalData();
-	}
+    @Test
+    public void testResetLocalData() {
+        userRole.resetLocalData();
+    }
 
-	@Test
-	public void testLoad() {
-		Creator<UserRole> creator = mock(Creator.class);
-		Trans trans = mock(Trans.class);
-		Session session = mock(Session.class);
-		LogTarget target = mock(LogTarget.class);
-		TimeTaken tt = mock(TimeTaken.class);
-		ResultSet results = mock(ResultSet.class);
+    @Test
+    public void testLoad() {
+        Creator<UserRole> creator = mock(Creator.class);
+        Trans trans = mock(Trans.class);
+        Session session = mock(Session.class);
+        LogTarget target = mock(LogTarget.class);
+        TimeTaken tt = mock(TimeTaken.class);
+        ResultSet results = mock(ResultSet.class);
 
-		List<Row> rows = new ArrayList<Row>();
+        List<Row> rows = new ArrayList<Row>();
 
-		when(trans.info()).thenReturn(target);
-		when(trans.start("Read UserRoles", Env.REMOTE)).thenReturn(tt);
-		when(trans.start("Load UserRole", Env.SUB)).thenReturn(tt);
-		when(session.execute(any(SimpleStatement.class))).thenReturn(results);
-		when(results.iterator()).thenReturn(rows.iterator());
+        when(trans.info()).thenReturn(target);
+        when(trans.start("Read UserRoles", Env.REMOTE)).thenReturn(tt);
+        when(trans.start("Load UserRole", Env.SUB)).thenReturn(tt);
+        when(session.execute(any(SimpleStatement.class))).thenReturn(results);
+        when(results.iterator()).thenReturn(rows.iterator());
 
-	}
+    }
 
 }

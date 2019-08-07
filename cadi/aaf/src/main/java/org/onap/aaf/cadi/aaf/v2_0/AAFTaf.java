@@ -89,14 +89,14 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
     private void initMapBathConverter() {
         String csvFile = access.getProperty(Config.CADI_BATH_CONVERT, null);
         if(csvFile==null) {
-        	mapIds=null;
+            mapIds=null;
         } else {
-        	try {
-				mapIds = new MapBathConverter(access, new CSV(access,csvFile));
-				access.log(Level.INIT,"Basic Auth Conversion using",csvFile,"enabled" );
-			} catch (IOException | CadiException e) {
-				access.log(e,"Bath Map Conversion is not initialized (non fatal)");
-			}
+            try {
+                mapIds = new MapBathConverter(access, new CSV(access,csvFile));
+                access.log(Level.INIT,"Basic Auth Conversion using",csvFile,"enabled" );
+            } catch (IOException | CadiException e) {
+                access.log(e,"Bath Map Conversion is not initialized (non fatal)");
+            }
         }
 
     }
@@ -112,7 +112,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                 aaf.access.log(Level.WARN,"WARNING! BasicAuth has been used over an insecure channel");
             }
             if(mapIds != null) {
-            	authz = mapIds.convert(access, authz);
+                authz = mapIds.convert(access, authz);
             }
 
             try {

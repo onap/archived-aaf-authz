@@ -34,7 +34,7 @@ public class HBasicAuthSS extends HAuthorizationHeader implements BasicAuth {
     public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String password) throws IOException {
         super(si, user, "Basic " + Symm.base64noSplit.encode(user + ':' + password));
         if(password==null) {
-        	throw new IOException("No password passed for " + user);
+            throw new IOException("No password passed for " + user);
         }
     }
 

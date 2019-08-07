@@ -60,7 +60,7 @@ public class JU_AAFSSO {
 
     @Test
     public void test()  {
-    	
+        
     // Note  this is desctructive of personal dirs, and doesn't really test anything.  Needs redoing. 
 //        AAFSSO sso;
 //        String[] args;
@@ -70,7 +70,7 @@ public class JU_AAFSSO {
 //                "-noexit",
 //        };
 //        try {
-//			sso = new AAFSSO(args);
+//            sso = new AAFSSO(args);
 //        
 //        assertThat(new File(aafDir).exists(), is(true));
 //        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
@@ -108,9 +108,9 @@ public class JU_AAFSSO {
 //        assertThat(sso.useX509(), is(false));
 ////
 ////        sso.close();
-//		} catch (IOException | CadiException e) {
-//			e.printStackTrace();
-//		}
+//        } catch (IOException | CadiException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

@@ -223,10 +223,10 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             data.mechid = trim(arti.getMechid());
             data.machine = trim(arti.getMachine());
             if(arti.getType()!=null) {
-	            Set<String> ss = data.type(true);
-	            for(String t : arti.getType()) {
-	            	ss.add(trim(t));
-	            }
+                Set<String> ss = data.type(true);
+                for(String t : arti.getType()) {
+                    ss.add(trim(t));
+                }
             }
             data.ca = trim(arti.getCa());
             data.dir = trim(arti.getDir());
@@ -240,9 +240,9 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             data.sponsor = (arti.getSponsor());
             if(arti.getSans()!=null) {
                 Set<String> ls = data.sans(true);
-	            for(String t : arti.getSans()) {
-	            	ls.add(trim(t));
-	            }
+                for(String t : arti.getSans()) {
+                    ls.add(trim(t));
+                }
             }
             data.expires = null;
             ladd.add(data);
@@ -266,13 +266,13 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
                 a.setCa(trim(arti.ca));
                 a.setDir(trim(arti.dir));
                 for(String t : arti.type(false)) {
-                	a.getType().add(trim(t));
+                    a.getType().add(trim(t));
                 }
                 a.setOsUser(trim(arti.os_user));
                 a.setRenewDays(arti.renewDays);
                 a.setNotification(trim(arti.notify));
                 for(String t : arti.sans(false)) {
-                	a.getSans().add(trim(t));
+                    a.getSans().add(trim(t));
                 }
                 artis.getArtifact().add(a);
             }
@@ -285,10 +285,10 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
     
 
     private String trim(String s) {
-    	if(s==null) {
-    		return s;
-    	} else {
-    		return s.trim();
-    	}
-	}
+        if(s==null) {
+            return s;
+        } else {
+            return s.trim();
+        }
+    }
 }

@@ -77,10 +77,10 @@ public class DNSLocator implements Locator<URI> {
     }
 
     public static DNSLocator create(Access access, String url) throws LocatorException {
-		return new DNSLocator(access, url);
-	}
+        return new DNSLocator(access, url);
+    }
 
-	@Override
+    @Override
     public URI get(Item item) throws LocatorException {
         return hosts[((DLItem)item).cnt].uri;
     }
@@ -167,7 +167,7 @@ public class DNSLocator implements Locator<URI> {
         int slash, start;
         int colon = aaf_locate.indexOf(':',_start);
         if (colon > 0) {
-        	host = aaf_locate.substring(_start,colon);
+            host = aaf_locate.substring(_start,colon);
             start = colon + 1;
             int left = aaf_locate.indexOf('[', start);
             if (left > 0) {
@@ -189,7 +189,7 @@ public class DNSLocator implements Locator<URI> {
                 }
                 slash = aaf_locate.indexOf('/', start);
                 if(slash>=0) {
-                	suffix = aaf_locate.substring(slash);
+                    suffix = aaf_locate.substring(slash);
                 }
                 
             } else {
@@ -205,8 +205,8 @@ public class DNSLocator implements Locator<URI> {
                 }
             }
         } else {
-        	slash = aaf_locate.indexOf('/', _start);
-        	host = slash<_start?aaf_locate.substring(_start):aaf_locate.substring(_start,slash);
+            slash = aaf_locate.indexOf('/', _start);
+            host = slash<_start?aaf_locate.substring(_start):aaf_locate.substring(_start,slash);
             startPort = endPort = defaultPort;
         }
         
@@ -225,7 +225,7 @@ public class DNSLocator implements Locator<URI> {
         }
         
         public String toString() {
-        	return uri.toString() + " - " + status.name();
+            return uri.toString() + " - " + status.name();
         }
     }
     

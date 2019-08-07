@@ -124,11 +124,11 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
 
             try {
                 new JettyServiceStarter<AuthzEnv,AuthzTrans>(
-                	new AAF_Hello(new AuthzEnv(propAccess)),true)
-                		.start();
-	        } catch (Exception e) {
-	            propAccess.log(e);
-	        }
+                    new AAF_Hello(new AuthzEnv(propAccess)),true)
+                        .start();
+            } catch (Exception e) {
+                propAccess.log(e);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

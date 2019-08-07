@@ -48,7 +48,7 @@ public class DefaultOrg implements Organization {
     final String domain;
     final String atDomain;
     final String realm;
-	
+    
     private final String root_ns;
 
     private final String NAME;
@@ -112,15 +112,15 @@ public class DefaultOrg implements Organization {
                 temp = env.getProperty(AAF_DATA_DIR);
                 if (temp!=null) {
                     File dir = new File(temp);
-                	fRevoked=new File(dir,"revoked.dat");
+                    fRevoked=new File(dir,"revoked.dat");
                 }
             } else {
-            	fRevoked = new File(temp);
+                fRevoked = new File(temp);
             }
             if (fRevoked!=null && fRevoked.exists()) {
                 revoked = new Identities(fRevoked);
             } else {
-            	revoked = null;
+                revoked = null;
             }
             
         } catch (IOException e) {
@@ -172,54 +172,54 @@ public class DefaultOrg implements Organization {
      * If the ID isn't in the revoked file, if it exists, it is revoked.
      */
     @Override
-	public boolean isRevoked(AuthzTrans trans, String key) {
-    	if(revoked!=null) {
+    public boolean isRevoked(AuthzTrans trans, String key) {
+        if(revoked!=null) {
             try {
-            	revoked.open(trans, DefaultOrgIdentity.TIMEOUT);
-            	try {
-	                Reuse r = revoked.reuse();
-	                int at = key.indexOf(domain);
-	                String search;
-	                if (at>=0) {
-	                    search = key.substring(0,at);
-	                } else {
-	                    search = key;
-	                }
-	                return revoked.find(search, r)!=null;
+                revoked.open(trans, DefaultOrgIdentity.TIMEOUT);
+                try {
+                    Reuse r = revoked.reuse();
+                    int at = key.indexOf(domain);
+                    String search;
+                    if (at>=0) {
+                        search = key.substring(0,at);
+                    } else {
+                        search = key;
+                    }
+                    return revoked.find(search, r)!=null;
                 } finally {
                     revoked.close(trans);
                 }
-			} catch (IOException e) {
-				trans.error().log(e);
+            } catch (IOException e) {
+                trans.error().log(e);
             }
-    	}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.org.Organization#getEsclaations(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, int)
-	 */
-	@Override
-	public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
-		List<Identity> rv = new ArrayList<>();
-		int end = Math.min(3,Math.abs(escalate));
-		Identity id = null;
-		for(int i=0;i<end;++i) {
-			if(id==null) {
-				id = getIdentity(trans,user);
-			} else {
-				id = id.responsibleTo();
-			}
-			if(id==null) {
-				break;
-			} else {
-				rv.add(id);
-			}
-		}
-		return rv;
-	}
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.org.Organization#getEsclaations(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, int)
+     */
+    @Override
+    public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
+        List<Identity> rv = new ArrayList<>();
+        int end = Math.min(3,Math.abs(escalate));
+        Identity id = null;
+        for(int i=0;i<end;++i) {
+            if(id==null) {
+                id = getIdentity(trans,user);
+            } else {
+                id = id.responsibleTo();
+            }
+            if(id==null) {
+                break;
+            } else {
+                rv.add(id);
+            }
+        }
+        return rv;
+    }
 
-	// Note: Return a null if found; return a String Message explaining why not found.
+    // Note: Return a null if found; return a String Message explaining why not found.
     @Override
     public String isValidID(final AuthzTrans trans, final String id) {
         try {
@@ -569,7 +569,7 @@ public class DefaultOrg implements Organization {
 
     @Override
     public String validate(AuthzTrans trans, Policy policy, Executor executor, String... vars) throws OrganizationException {
-    	String user;
+        String user;
         switch(policy) {
             case OWNS_MECHID:
             case CREATE_MECHID:
@@ -595,11 +595,11 @@ public class DefaultOrg implements Organization {
             case CREATE_MECHID_BY_PERM_ONLY:
                 return getName() + " only allows sponsors to create MechIDs";
 
-			case MAY_EXTEND_CRED_EXPIRES:
-				// If parm, use it, otherwise, trans
-				user = vars.length>1?vars[1]:trans.user();
-				return executor.hasPermission(user, root_ns,"password", root_ns , "extend")
-						?null:user + " does not have permission to extend passwords at " + getName();
+            case MAY_EXTEND_CRED_EXPIRES:
+                // If parm, use it, otherwise, trans
+                user = vars.length>1?vars[1]:trans.user();
+                return executor.hasPermission(user, root_ns,"password", root_ns , "extend")
+                        ?null:user + " does not have permission to extend passwords at " + getName();
 
             default:
                 return policy.name() + " is unsupported at " + getName();
@@ -647,7 +647,7 @@ public class DefaultOrg implements Organization {
     public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList, String subject, String body,
             Boolean urgent) throws OrganizationException {
         if (mailer!=null) {
-        	String mailFrom = mailer.mailFrom();
+            String mailFrom = mailer.mailFrom();
             List<String> to = new ArrayList<>();
             for (String em : toList) {
                 if (em.indexOf('@')<0) {

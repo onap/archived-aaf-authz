@@ -26,20 +26,20 @@ import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class OneMonthNotifyCredBody extends NotifyCredBody {
-	public OneMonthNotifyCredBody(Access access) throws IOException {
-		super(access, ExpireRange.ONE_MONTH);
-	}
-	
-	@Override
-	public String subject() {
-		return String.format("AAF One Month Credential Notification (ENV: %s)",env);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
-	 */
-	@Override
-	protected String dynamic() {
-		return "This is your <b>one month</b> notification. " + super.dynamic();
-	}
+    public OneMonthNotifyCredBody(Access access) throws IOException {
+        super(access, ExpireRange.ONE_MONTH);
+    }
+    
+    @Override
+    public String subject() {
+        return String.format("AAF One Month Credential Notification (ENV: %s)",env);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.batch.reports.bodies.NotifyCredBody#dynamic()
+     */
+    @Override
+    protected String dynamic() {
+        return "This is your <b>one month</b> notification. " + super.dynamic();
+    }
 }

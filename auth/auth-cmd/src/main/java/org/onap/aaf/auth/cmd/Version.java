@@ -29,7 +29,7 @@ import org.onap.aaf.misc.env.APIException;
 public class Version extends Cmd {
     private final String version;
 
-	public Version(AAFcli aafcli) {
+    public Version(AAFcli aafcli) {
         super(aafcli, "version");
         version = aafcli.access.getProperty(Config.AAF_DEPLOYED_VERSION, Config.AAF_DEFAULT_API_VERSION);
     }

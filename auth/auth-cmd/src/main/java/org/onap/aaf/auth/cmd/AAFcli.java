@@ -124,10 +124,10 @@ public class AAFcli {
     }
 
     public AuthzEnv env() {
-		return env;
-	}
+        return env;
+    }
 
-	public static int timeout() {
+    public static int timeout() {
         return TIMEOUT;
     }
 
@@ -332,7 +332,7 @@ public class AAFcli {
                             Thread.sleep((long)(delay+globalDelay));
                         }
                     } catch (Exception e) {
-                    	if (expect.contains(-1)) {
+                        if (expect.contains(-1)) {
                             pw.println(e.getMessage());
                             ret = -1;
                         } else {

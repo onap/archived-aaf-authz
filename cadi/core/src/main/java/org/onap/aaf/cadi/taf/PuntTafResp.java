@@ -64,14 +64,14 @@ public class PuntTafResp implements TafResp {
     }
 
     /* (non-Javadoc)
-	 * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
-	 */
-	@Override
-	public String getTarget() {
-		return "punt";
-	}
+     * @see org.onap.aaf.cadi.taf.TafResp#getTarget()
+     */
+    @Override
+    public String getTarget() {
+        return "punt";
+    }
 
-	public Access getAccess() {
+    public Access getAccess() {
         return NullTafResp.singleton().getAccess();
     }
 

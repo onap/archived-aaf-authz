@@ -69,18 +69,18 @@ public interface LogTarget {
     public static final LogTarget SYSERR = new StreamLogTarget(System.err,false);
     
     public static class StreamLogTarget implements LogTarget {
-    	private final PrintStream out;
-		private final boolean closeMe;
+        private final PrintStream out;
+        private final boolean closeMe;
 
-    	public StreamLogTarget(PrintStream ps) {
-    		this(ps,true);
-    	}
+        public StreamLogTarget(PrintStream ps) {
+            this(ps,true);
+        }
 
-		/* Do NOT close SYSTEM ERR or OUT*/
-    	protected StreamLogTarget(PrintStream ps, boolean shouldClose) {
-    		out = ps;
-    		closeMe = shouldClose;
-    	}
+        /* Do NOT close SYSTEM ERR or OUT*/
+        protected StreamLogTarget(PrintStream ps, boolean shouldClose) {
+            out = ps;
+            closeMe = shouldClose;
+        }
         public void log(Object ... msgs) {
             out.print(Chrono.dateFmt.format(new Date()));
             out.print(": ");
@@ -117,9 +117,9 @@ public interface LogTarget {
         }
         
         public void close() {
-        	if(closeMe) {
-        		out.close();
-        	}
+            if(closeMe) {
+                out.close();
+            }
         }
 
     }

@@ -39,36 +39,36 @@ import org.onap.aaf.cadi.configure.CertException;
 
 public class JU_X509ChainWithIssuerTest {
 
-	@Mock
-	X509Certificate x509;
+    @Mock
+    X509Certificate x509;
 
-	@Mock
-	X509ChainWithIssuer orig;
-	@Mock
-	Principal subject;
-	@Mock
-	Reader reader;
+    @Mock
+    X509ChainWithIssuer orig;
+    @Mock
+    Principal subject;
+    @Mock
+    Reader reader;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-		// when(subject.get)
-		when(x509.getSubjectDN()).thenReturn(subject);
-		when(x509.getEncoded()).thenReturn("x509".getBytes());
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+        // when(subject.get)
+        when(x509.getSubjectDN()).thenReturn(subject);
+        when(x509.getEncoded()).thenReturn("x509".getBytes());
+    }
 
-	@Test
-	public void test() throws IOException, CertException {
-		X509ChainWithIssuer x509Chain = new X509ChainWithIssuer(orig, x509);
+    @Test
+    public void test() throws IOException, CertException {
+        X509ChainWithIssuer x509Chain = new X509ChainWithIssuer(orig, x509);
 
-		assertNull(x509Chain.getIssuerDN());
-		Certificate[] certs = { x509 };
-		// Certificate cert = ;
-		x509Chain = new X509ChainWithIssuer(certs);
-		List<Reader> rdrs = new ArrayList<Reader>();
-		rdrs.add(null);
+        assertNull(x509Chain.getIssuerDN());
+        Certificate[] certs = { x509 };
+        // Certificate cert = ;
+        x509Chain = new X509ChainWithIssuer(certs);
+        List<Reader> rdrs = new ArrayList<Reader>();
+        rdrs.add(null);
 
-		x509Chain = new X509ChainWithIssuer(rdrs);
-	}
+        x509Chain = new X509ChainWithIssuer(rdrs);
+    }
 
 }

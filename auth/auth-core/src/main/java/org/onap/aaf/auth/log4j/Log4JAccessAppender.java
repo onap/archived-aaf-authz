@@ -27,52 +27,52 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.onap.aaf.cadi.Access;
 
 public class Log4JAccessAppender extends AppenderSkeleton{
-	private Access access;
+    private Access access;
 
-	public Log4JAccessAppender(Access access) {
-		this.access = access;
-	}
+    public Log4JAccessAppender(Access access) {
+        this.access = access;
+    }
 
-	@Override
-	public void close() {
-	}
+    @Override
+    public void close() {
+    }
 
-	@Override
-	public boolean requiresLayout() {
-		return false;
-	}
+    @Override
+    public boolean requiresLayout() {
+        return false;
+    }
 
-	@Override
-	protected void append(LoggingEvent event) {
-		Access.Level al = null;
-		switch(event.getLevel().toInt()) {
-			case Level.FATAL_INT:
-			case Level.ERROR_INT:
-				if(access.willLog(Access.Level.ERROR)) {
-					al=Access.Level.ERROR;
-				}
-				break;
-			case Level.WARN_INT:
-				if(!access.willLog(Access.Level.WARN)) {
-					al=Access.Level.WARN;
-				}
-				break;
-			case Level.ALL_INT:
-			case Level.INFO_INT:
-				if(!access.willLog(Access.Level.INFO)) {
-					al=Access.Level.INFO;
-				}
-				break;
-			case Level.TRACE_INT:
-				if(!access.willLog(Access.Level.TRACE)) {
-					al=Access.Level.TRACE;
-				}
-				break;
-		}
-		if(al!=null) {
-			access.log(al,"Log4J["+event.getLoggerName()+"]["+event.getLevel()+']',event.getMessage());
-		}
-	}
+    @Override
+    protected void append(LoggingEvent event) {
+        Access.Level al = null;
+        switch(event.getLevel().toInt()) {
+            case Level.FATAL_INT:
+            case Level.ERROR_INT:
+                if(access.willLog(Access.Level.ERROR)) {
+                    al=Access.Level.ERROR;
+                }
+                break;
+            case Level.WARN_INT:
+                if(!access.willLog(Access.Level.WARN)) {
+                    al=Access.Level.WARN;
+                }
+                break;
+            case Level.ALL_INT:
+            case Level.INFO_INT:
+                if(!access.willLog(Access.Level.INFO)) {
+                    al=Access.Level.INFO;
+                }
+                break;
+            case Level.TRACE_INT:
+                if(!access.willLog(Access.Level.TRACE)) {
+                    al=Access.Level.TRACE;
+                }
+                break;
+        }
+        if(al!=null) {
+            access.log(al,"Log4J["+event.getLoggerName()+"]["+event.getLevel()+']',event.getMessage());
+        }
+    }
 
 }
 

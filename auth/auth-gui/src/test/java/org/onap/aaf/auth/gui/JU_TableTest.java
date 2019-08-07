@@ -39,33 +39,33 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class JU_TableTest {
 
-	@Mock
-	private TransStore trans;
-	private Code<HTMLGen> other;
-	@Mock
-	private Data data;
-	@Mock
-	private Cache cache;
-	@Mock
-	private HTMLGen hgen;
+    @Mock
+    private TransStore trans;
+    private Code<HTMLGen> other;
+    @Mock
+    private Data data;
+    @Mock
+    private Cache cache;
+    @Mock
+    private HTMLGen hgen;
 
-	@Before
-	public void setUp() throws Exception {
-		initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+    }
 
-	@Test
-	public void test() throws APIException, IOException {
-		when(hgen.leaf("caption", "class=title")).thenReturn(hgen);
-		when(hgen.text("title")).thenReturn(hgen);
-		when(data.headers()).thenReturn(new String[0]);
+    @Test
+    public void test() throws APIException, IOException {
+        when(hgen.leaf("caption", "class=title")).thenReturn(hgen);
+        when(hgen.text("title")).thenReturn(hgen);
+        when(data.headers()).thenReturn(new String[0]);
 
-		Table table = new Table("title", trans, data, other, "name", "attr1", "attr1");
-		Table.Cells cells = new Table.Cells(new ArrayList(), "");
+        Table table = new Table("title", trans, data, other, "name", "attr1", "attr1");
+        Table.Cells cells = new Table.Cells(new ArrayList(), "");
 
-		table.code(cache, hgen);
+        table.code(cache, hgen);
 
-		verify(hgen).end();
-	}
+        verify(hgen).end();
+    }
 
 }
