@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +52,10 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
     private static final String TABLE = "approval";
     private static final String TABLELOG = "approved";
     private HistoryDAO historyDAO;
-    private PSInfo psByUser, psByApprover, psByTicket, psByStatus;
+    private PSInfo psByUser;
+    private PSInfo psByApprover;
+    private PSInfo psByTicket;
+    private PSInfo psByStatus;
 
     
     public ApprovalDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
@@ -213,12 +218,18 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             sb.append(TABLELOG);
             sb.append(" (id,user,approver,type,status,memo,operation) VALUES (");
             sb.append(data.id);
-            sb.append(",'"); sb.append(data.user);
-            sb.append("','"); sb.append(data.approver);
-            sb.append("','"); sb.append(data.type);
-            sb.append("','"); sb.append(data.status);
-            sb.append("','"); sb.append(data.memo.replace("'", "''"));
-            sb.append("','"); sb.append(data.operation);
+            sb.append(",'");
+            sb.append(data.user);
+            sb.append("','");
+            sb.append(data.approver);
+            sb.append("','");
+            sb.append(data.type);
+            sb.append("','");
+            sb.append(data.status);
+            sb.append("','");
+            sb.append(data.memo.replace("'", "''"));
+            sb.append("','");
+            sb.append(data.operation);
             sb.append("');\n");
             sb.append("DELETE FROM ");
             sb.append(TABLE);
