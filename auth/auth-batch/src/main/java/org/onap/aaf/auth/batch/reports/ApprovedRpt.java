@@ -30,13 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.OrganizationException;
-import org.onap.aaf.cadi.routing.GreatCircle;
 import org.onap.aaf.cadi.util.CSV;
-import org.onap.aaf.cadi.util.CSV.Visitor;
 import org.onap.aaf.cadi.util.CSV.Writer;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
