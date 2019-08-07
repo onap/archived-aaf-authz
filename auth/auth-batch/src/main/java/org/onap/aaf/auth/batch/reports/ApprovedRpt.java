@@ -72,7 +72,7 @@ public class ApprovedRpt extends Batch {
             
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
-               File file = new File(logDir(),APPR_RPT + sdate +CSV);
+            File file = new File(logDir(),APPR_RPT + sdate +CSV);
             CSV csv = new CSV(env.access(),file);
             approvedW = csv.writer(false);
             
