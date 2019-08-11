@@ -97,16 +97,13 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
     private final RosettaDF<ARTIFACTS>    artiDF;
     private Mapper<REQ, CERT, ARTIFACTS, ERROR>     mapper;
 //    private Slot sCertAuth;
-    private AAF_CM certman;
     private final String voidResp;
-
     public FacadeImpl(AAF_CM certman,
                       CMService service, 
                       Mapper<REQ,CERT,ARTIFACTS,ERROR> mapper, 
                       Data.TYPE dataType) throws APIException {
         this.service = service;
         this.mapper = mapper;
-        this.certman = certman;
         AuthzEnv env = certman.env;
         //TODO: Gabe [JUnit] Static issue, talk to Jonathan
         (errDF                 = env.newDataFactory(mapper.getClass(API.ERROR))).in(dataType).out(dataType);
