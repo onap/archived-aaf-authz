@@ -25,7 +25,6 @@ package org.onap.aaf.auth.cmd.perm;
 
 import org.onap.aaf.auth.cmd.BaseCmd;
 import org.onap.aaf.auth.cmd.role.Role;
-import org.onap.aaf.misc.env.APIException;
 
 public class Perm extends BaseCmd<Perm> {
     Role role;
