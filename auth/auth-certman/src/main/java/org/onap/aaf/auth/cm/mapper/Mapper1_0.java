@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +37,6 @@ import org.onap.aaf.auth.dao.cass.ArtiDAO.Data;
 import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
-import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.cadi.util.Vars;
 
 import aaf.v2_0.Error;
