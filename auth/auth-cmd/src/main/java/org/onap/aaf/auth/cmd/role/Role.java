@@ -25,7 +25,6 @@ package org.onap.aaf.auth.cmd.role;
 
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.BaseCmd;
-import org.onap.aaf.misc.env.APIException;
 
 public class Role extends BaseCmd<Role> {
     public List list;
