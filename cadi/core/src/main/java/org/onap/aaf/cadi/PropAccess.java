@@ -48,14 +48,7 @@ public class PropAccess implements Access {
     // Sonar says cannot be static... it's ok.  not too many PropAccesses created.
     private final SimpleDateFormat iso8601 = newISO8601();
     private Symm symm;
-            
-    public static SimpleDateFormat newISO8601() {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    }
-
     public static final Level DEFAULT = Level.AUDIT;
-    
-    
     private int level;
     private Properties props;
     private List<String> recursionProtection = null;
@@ -110,6 +103,10 @@ public class PropAccess implements Access {
         init(nprops);
     }
     
+    public static SimpleDateFormat newISO8601() {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    }
+
     protected synchronized void init(Properties p) {
         // Make sure these two are set before any changes in Logging
         name = "cadi";
