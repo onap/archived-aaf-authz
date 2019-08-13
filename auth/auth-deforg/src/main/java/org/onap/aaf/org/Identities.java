@@ -3,6 +3,7 @@
  * * org.onap.aaf
  * * ===========================================================================
  * * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
+ * * Modifications Copyright (C) 2018 IBM.
  * * ===========================================================================
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
@@ -56,7 +57,7 @@ import org.onap.aaf.auth.local.DataFile.Token.Field;
 public class Identities extends AbsData {
     public final static Data NO_DATA = new Data();
 
-    public Identities(File users) throws IOException {
+    public Identities(File users) {
         super(users,'|',512,0);
     }
 
