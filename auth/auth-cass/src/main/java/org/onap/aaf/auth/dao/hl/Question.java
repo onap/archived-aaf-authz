@@ -857,7 +857,7 @@ public class Question {
         return false;
     }
 
-    public Result<Date> doesUserCredMatch(AuthzTrans trans, String user, byte[] cred) throws DAOException {
+    public Result<Date> doesUserCredMatch(AuthzTrans trans, String user, byte[] cred){
         Result<List<CredDAO.Data>> result;
         TimeTaken tt = trans.start("Read DB Cred", Env.REMOTE);
         try {
