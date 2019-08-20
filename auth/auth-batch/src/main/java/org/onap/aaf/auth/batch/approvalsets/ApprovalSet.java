@@ -31,7 +31,6 @@ import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.FutureDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
-import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.util.Chrono;
 
 public class ApprovalSet {
