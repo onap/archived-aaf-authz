@@ -49,12 +49,12 @@ public class BatchDataView implements DataView {
     private final CQLBatchLoop cqlBatch;
     private final Session session;
 
-    public BatchDataView(final AuthzTrans trans, final Session session, final boolean dryRun ) throws APIException, IOException {
+    public BatchDataView(final AuthzTrans trans, final Session session, final boolean dryRun ){
         this.session = session;
         cqlBatch = new CQLBatchLoop(new CQLBatch(trans.info(),session),50,dryRun);
     }
 
-    public Session getSession(AuthzTrans trans) throws APIException, IOException {
+    public Session getSession(AuthzTrans trans){
         return session;
     }
     
