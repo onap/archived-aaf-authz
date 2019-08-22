@@ -49,6 +49,25 @@ your accessing machine:
 
     10.12.6.214 aaf-onap-beijing-test aaf-onap-beijing-test.osaaf.org
 
+--------------------
+Finding AAF Services
+--------------------
+
+AAF can be run as standalone Java Services, Docker and Kubernetes. For Kubernetes and some Docker installs, AAF's Services  need to be able to be contacted both inside the K8S, not just one name or port. 
+
+AAF has a Locator Service, default port of 8095, which will give the URLs of Running Services.  The CADI Client uses this, but any Authenticated Client may make queries.
+
+With El Alto, you can request Internal or External URLs.
+
+Example
+  * assumes ONAP Test Env URL, and access to ONAP Test Systems
+  * put URL in browser
+
+External URL:https://aaf-onap-test.osaaf.org:8095/locate/org.osaaf.aaf.service:2.1
+Internal URL:https://aaf-onap-test.osaaf.org:8095/locate/onap.org.osaaf.aaf.service:2.1
+
+Where "onap" is the Container name
+
 ------------------------------
 Environment Artifacts (AAF FS)
 ------------------------------
