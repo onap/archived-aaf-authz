@@ -41,13 +41,6 @@
         <sitePath>/content/sites/site/org/onap/aaf/authz/${project.artifactId}/${project.version}</sitePath>
 
         <maven.test.failure.ignore>false</maven.test.failure.ignore>
-        <!-- SONAR -->
-        <jacoco.version>0.7.7.201606060606</jacoco.version>
-        <sonar-jacoco-listeners.version>3.2</sonar-jacoco-listeners.version>
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <!-- Default Sonar configuration -->
-        <sonar.jacoco.reportPaths>target/code-coverage/jacoco-ut.exec</sonar.jacoco.reportPaths>
-        <sonar.jacoco.itReportPaths>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPaths>
         <!-- Note: This list should match jacoco-maven-plugin's exclusion list 
             below -->
         <sonar.exclusions>**/gen/**,**/generated-sources/**,**/yang-gen**,**/pax/**</sonar.exclusions>
