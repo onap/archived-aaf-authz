@@ -212,7 +212,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             }
             ApprovalLoader.deflt.load(data, rd.value.one());
         }
-        if ("approved".equals(data.status) || "denied".equals(data.status)) { 
+        if (APPROVED.equals(data.status) || DENIED.equals(data.status)) { 
             StringBuilder sb = new StringBuilder("BEGIN BATCH\n");
             sb.append("INSERT INTO ");
             sb.append(TABLELOG);
