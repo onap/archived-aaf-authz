@@ -63,7 +63,7 @@ public class AES implements Encryption {
         return kgen.generateKey();
     }
 
-    public AES(byte[] aeskey, int offset, int len) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public AES(byte[] aeskey, int offset, int len){
         aeskeySpec = new SecretKeySpec(aeskey,offset,len,AES);
     }
     
