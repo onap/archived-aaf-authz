@@ -35,7 +35,7 @@ public class Section<G extends XGen<G>> {
     protected String backward;
     
     // Default is to use the set Strings (static) 
-    public Section<G> use(State<Env> state, Trans trans, XGenBuff<G> buff) throws APIException, IOException {
+    public Section<G> use(State<Env> state, Trans trans, XGenBuff<G> buff){
         return this;
     }
     
