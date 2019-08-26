@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *  Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +52,6 @@ public class ApprovedRpt extends Batch {
     
     private static final String APPR_RPT = "ApprovedRpt";
     private static final String CSV = ".csv";
-    private static final String INFO = "info";
     private Date now;
     private Writer approvedW;
     private CSV historyR;
@@ -87,9 +87,7 @@ public class ApprovedRpt extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
         try {
-            Map<String,Boolean> checked = new TreeMap<String, Boolean>();
             
-            final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
 //            ResultSet results;
 //            Statement stmt = new SimpleStatement( "select dateof(id), approver, status, user, type, memo from authz.approved;" );
 //            results = session.execute(stmt);
@@ -113,11 +111,8 @@ public class ApprovedRpt extends Batch {
             }
 
              */
-            int totalLoaded = 0;
-            Date d;
             GregorianCalendar gc = new GregorianCalendar();
             gc.add(GregorianCalendar.MONTH, -2);
-            Date begin = gc.getTime();
             approvedW.comment("date, approver, status, user, role, memo");
             
             historyR.visit(row -> {
