@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,13 +64,6 @@ public class ApprovedRpt extends Batch {
         
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
-//            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
-//            try {
-//                session = cluster.connect();
-//            } finally {
-//                tt.done();
-//            }
-            
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
             File file = new File(logDir(),APPR_RPT + sdate +CSV);
@@ -90,29 +84,6 @@ public class ApprovedRpt extends Batch {
             Map<String,Boolean> checked = new TreeMap<String, Boolean>();
             
             final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
-//            ResultSet results;
-//            Statement stmt = new SimpleStatement( "select dateof(id), approver, status, user, type, memo from authz.approved;" );
-//            results = session.execute(stmt);
-//            Iterator<Row> iter = results.iterator();
-//            Row row;
-            /*
-             *             while (iter.hasNext()) {
-                ++totalLoaded;
-                row = iter.next();
-                d = row.getTimestamp(0);
-                if(d.after(begin)) {
-                    approvedW.row("aprvd",
-                            Chrono.dateOnlyStamp(d),
-                            row.getString(1),
-                            row.getString(2),
-                            row.getString(3),
-                            row.getString(4),
-                            row.getString(5)
-                    );
-                }
-            }
-
-             */
             int totalLoaded = 0;
             Date d;
             GregorianCalendar gc = new GregorianCalendar();
