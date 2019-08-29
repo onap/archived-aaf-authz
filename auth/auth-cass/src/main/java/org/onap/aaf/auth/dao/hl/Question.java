@@ -494,7 +494,6 @@ public class Question {
             Result<List<NsDAO.Data>> rld = nsDAO.read(trans, lookup);
             if (rld.isOKhasData()) {
                 nsd=rld.value.get(0);
-                lookup = nsd.parent;
                 if (type.type == nsd.type) {
                     return Result.ok(nsd);
                 } else {
