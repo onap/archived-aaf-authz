@@ -21,6 +21,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -139,7 +140,7 @@ public class Cred  {
     }
 
     public static void loadOneNS(Trans trans, Session session, String ns,int ... types ) {
-        load(trans, session,"select id, type, expires, other, writetime(cred), tag from authz.cred WHERE ns='" + ns + "';");
+        load(trans, session,"select id, type, expires, other, writetime(cred), tag from authz.cred WHERE ns='" + ns + "';", types);
     }
 
     private static void load(Trans trans, Session session, String query, int ...types) {
@@ -315,16 +316,22 @@ public class Cred  {
                 inst.expires.getTime(),inst.tag,reason);
     }
 
-
+    static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
     public static void batchDelete(StringBuilder sb, List<String> row) {
+        Long l = Long.parseLong(row.get(5));
+        String date = sdf.format(new Date(l));
         sb.append("DELETE from authz.cred WHERE id='");
         sb.append(row.get(1));
         sb.append("' AND type=");
         sb.append(Integer.parseInt(row.get(3)));
         // Note: We have to work with long, because Expires is part of Key... can't easily do date.
-        sb.append(" AND expires=dateof(maxtimeuuid(");
-        sb.append(row.get(5));
-        sb.append("));\n");
+        sb.append(" AND expires='");
+        sb.append(date);
+        sb.append("';\n");
+//        sb.append(" AND expires=dateof(maxtimeuuid(");
+//        sb.append(row.get(5));
+//        sb.append("));\n");
+        
     }
 
     public String toString() {

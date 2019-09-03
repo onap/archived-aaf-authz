@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,6 +44,7 @@ import org.onap.aaf.auth.dao.cached.CachedNSDAO;
 import org.onap.aaf.auth.dao.cached.CachedPermDAO;
 import org.onap.aaf.auth.dao.cached.CachedRoleDAO;
 import org.onap.aaf.auth.dao.cached.CachedUserRoleDAO;
+import org.onap.aaf.auth.dao.cached.FileGetter;
 import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.dao.cass.CacheInfoDAO;
 import org.onap.aaf.auth.dao.cass.CertDAO;
@@ -124,7 +124,7 @@ public class Question {
     static Slot PERMS;
 
     private static Set<String> specialLog = null;
-    public static final Random random = new SecureRandom();
+    public static final SecureRandom random = new SecureRandom();
     private static long traceID = random.nextLong();
     private static Slot specialLogSlot = null;
     private static Slot transIDSlot = null;
@@ -202,6 +202,8 @@ public class Question {
         permDAO = new CachedPermDAO(new PermDAO(trans, historyDAO, cacheInfoDAO), cacheInfoDAO, expiresIn);
         roleDAO = new CachedRoleDAO(new RoleDAO(trans, historyDAO, cacheInfoDAO), cacheInfoDAO, expiresIn);
         userRoleDAO = new CachedUserRoleDAO(new UserRoleDAO(trans, historyDAO,cacheInfoDAO), cacheInfoDAO, expiresIn);
+        // Create if aaf_file_cred exists with file
+        FileGetter.singleton(trans.env().access());
         credDAO = new CachedCredDAO(new CredDAO(trans, historyDAO, cacheInfoDAO), cacheInfoDAO, expiresIn);
         certDAO = new CachedCertDAO(new CertDAO(trans, historyDAO, cacheInfoDAO), cacheInfoDAO, expiresIn);
 
@@ -595,27 +597,35 @@ public class Question {
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user,NsDAO.Data ndd, Access access) {
         // <ns>.access|:role:<role name>|<read|write>
         String ns = ndd.name;
+        boolean isRoot = ns.startsWith(Define.ROOT_NS());
         int last;
         do {
             if (isGranted(trans, user, ns, ACCESS, ":ns", access.name())) {
                 return Result.ok(ndd);
             }
+            if(isRoot) {
+                break;
+            }
             if ((last = ns.lastIndexOf('.')) >= 0) {
                 ns = ns.substring(0, last);
             }
         } while (last >= 0);
-        // com.att.aaf.ns|:<client ns>:ns|<access>
-        // AAF-724 - Make consistent response for May User", and not take the
-        // last check... too confusing.
-        Result<NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, ":"    + ndd.name + ":ns", access.name());
-        if (rv.isOK()) {
-            return rv;
-        } else if (rv.status==Result.ERR_Backend) {
-            return Result.err(rv);
-        } else {
-            return Result.err(Status.ERR_Denied, "[%s] may not %s in NS [%s]",
-                    user, access.name(), ndd.name);
-        }
+        
+        // SAFETY - Do not allow these when NS is Root
+        if(!isRoot) {
+            // com.att.aaf.ns|:<client ns>:ns|<access>
+            // AAF-724 - Make consistent response for May User", and not take the
+            // last check... too confusing.
+            Result<NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, ":"    + ndd.name + ":ns", access.name());
+                if (rv.isOK()) {
+                    return rv;
+                } else if (rv.status==Result.ERR_Backend) {
+                    return Result.err(rv);
+                }
+            }
+        return Result.err(Status.ERR_Denied, "[%s] may not %s in NS [%s]",
+                user, access.name(), ndd.name);
+
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user, RoleDAO.Data rdd, Access access) {
@@ -630,49 +640,56 @@ public class Question {
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user, NsDAO.Data ndd, RoleDAO.Data rdd, Access access) {
-        // 1) Is User in the Role?
-        Result<List<UserRoleDAO.Data>> rurd = userRoleDAO.readUserInRole(trans, user, rdd.fullName());
-        if (rurd.isOKhasData()) {
-            return Result.ok(ndd);
+        // 1) For "read", Is User in the Role is enough
+        if(Access.read.equals(access)) {
+            Result<List<UserRoleDAO.Data>> rurd = userRoleDAO.readUserInRole(trans, user, rdd.fullName());
+            if (rurd.isOKhasData()) {
+                return Result.ok(ndd);
+            }
         }
 
         String roleInst = ":role:" + rdd.name;
         // <ns>.access|:role:<role name>|<read|write>
         String ns = rdd.ns;
+        boolean isRoot = ns.startsWith(Define.ROOT_NS());
         int last;
         do {
             if (isGranted(trans, user, ns,ACCESS, roleInst, access.name())) {
                 return Result.ok(ndd);
+            }
+            if(isRoot) {
+                break;
             }
             if ((last = ns.lastIndexOf('.')) >= 0) {
                 ns = ns.substring(0, last);
             }
         } while (last >= 0);
 
-        // Check if Access by Global Role perm
-        // com.att.aaf.ns|:<client ns>:role:name|<access>
-        Result<NsDAO.Data> rnsd = mayUserVirtueOfNS(trans, user, ndd, ":"
-                + rdd.ns + roleInst, access.name());
-        if (rnsd.isOK()) {
-            return rnsd;
-        } else if (rnsd.status==Result.ERR_Backend) {
-            return Result.err(rnsd);
-        }
+        // SAFETY - Do not allow these when NS is Root
+        if(!isRoot) {
+            // Check if Access by Global Role perm
+            // com.att.aaf.ns|:<client ns>:role:name|<access>
+            Result<NsDAO.Data> rnsd = mayUserVirtueOfNS(trans, user, ndd, ":"
+                    + rdd.ns + roleInst, access.name());
+            if (rnsd.isOK()) {
+                return rnsd;
+            } else if (rnsd.status==Result.ERR_Backend) {
+                return Result.err(rnsd);
+            }
 
-        // Check if Access to Whole NS
-        // AAF-724 - Make consistent response for May User", and not take the
-        // last check... too confusing.
-        Result<org.onap.aaf.auth.dao.cass.NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, 
-                ":" + rdd.ns + ":ns", access.name());
-        if (rv.isOK()) {
-            return rv;
-        } else if (rnsd.status==Result.ERR_Backend) {
-            return Result.err(rnsd);
-        } else {
-            return Result.err(Status.ERR_Denied, "[%s] may not %s Role [%s]",
+            // Check if Access to Whole NS
+            // AAF-724 - Make consistent response for May User", and not take the
+            // last check... too confusing.
+            Result<org.onap.aaf.auth.dao.cass.NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, 
+                    ":" + rdd.ns + ":ns", access.name());
+            if (rv.isOK()) {
+                return rv;
+            } else if (rnsd.status==Result.ERR_Backend) {
+                return Result.err(rnsd);
+            }
+        }
+        return Result.err(Status.ERR_Denied, "[%s] may not %s Role [%s]",
                     user, access.name(), rdd.fullName());
-        }
-
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user,PermDAO.Data pdd, Access access) {
@@ -695,43 +712,50 @@ public class Question {
     }
 
     public Result<NsDAO.Data> mayUser(AuthzTrans trans, String user,NsDAO.Data ndd, PermDAO.Data pdd, Access access) {
+        // Most common occurrence... if granted Permission
         if (isGranted(trans, user, pdd.ns, pdd.type, pdd.instance, pdd.action)) {
             return Result.ok(ndd);
         }
+        
         String permInst = ":perm:" + pdd.type + ':' + pdd.instance + ':' + pdd.action;
         // <ns>.access|:role:<role name>|<read|write>
         String ns = ndd.name;
+        boolean isRoot = ns.startsWith(Define.ROOT_NS());
         int last;
         do {
             if (isGranted(trans, user, ns, ACCESS, permInst, access.name())) {
                 return Result.ok(ndd);
+            }
+            if(isRoot) {
+                break;
             }
             if ((last = ns.lastIndexOf('.')) >= 0) {
                 ns = ns.substring(0, last);
             }
         } while (last >= 0);
 
-        // Check if Access by NS perm
-        // com.att.aaf.ns|:<client ns>:role:name|<access>
-        Result<NsDAO.Data> rnsd = mayUserVirtueOfNS(trans, user, ndd, ":" + pdd.ns + permInst, access.name());
-        if (rnsd.isOK()) {
-            return rnsd;
-        } else if (rnsd.status==Result.ERR_Backend) {
-            return Result.err(rnsd);
-        }
+        // SAFETY - Do not allow these when NS is Root
+        if(!isRoot) {
+            // Check if Access by NS perm
+            // com.att.aaf.ns|:<client ns>:role:name|<access>
+            Result<NsDAO.Data> rnsd = mayUserVirtueOfNS(trans, user, ndd, ":" + pdd.ns + permInst, access.name());
+            if (rnsd.isOK()) {
+                return rnsd;
+            } else if (rnsd.status==Result.ERR_Backend) {
+                return Result.err(rnsd);
+            }
 
-        // Check if Access to Whole NS
-        // AAF-724 - Make consistent response for May User", and not take the
-        // last check... too confusing.
-        Result<NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, ":"    + pdd.ns + ":ns", access.name());
-        if (rv.isOK()) {
-            return rv;
-        } else {
-            return Result.err(Status.ERR_Denied,
-                    "[%s] may not %s Perm [%s|%s|%s]", user, access.name(),
-                    pdd.fullType(), pdd.instance, pdd.action);
+            // Check if Access to Whole NS
+            // AAF-724 - Make consistent response for May User", and not take the
+            // last check... too confusing.
+            Result<NsDAO.Data> rv = mayUserVirtueOfNS(trans, user, ndd, ":"    + pdd.ns + ":ns", access.name());
+            if (rv.isOK()) {
+                return rv;
+            }
         }
-
+        return Result.err(Status.ERR_Denied,
+                "[%s] may not %s Perm [%s|%s|%s]", user, access.name(),
+                pdd.fullType(), pdd.instance, pdd.action);
     }
 
     public Result<Void> mayUser(AuthzTrans trans, DelegateDAO.Data dd, Access access) {
@@ -861,7 +885,7 @@ public class Question {
         Result<List<CredDAO.Data>> result;
         TimeTaken tt = trans.start("Read DB Cred", Env.REMOTE);
         try {
-            result = credDAO.readID(trans, user);
+            result = credDAO.readIDBAth(trans, user);
         } finally {
             tt.done();
         }

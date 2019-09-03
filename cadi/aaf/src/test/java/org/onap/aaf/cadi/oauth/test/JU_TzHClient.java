@@ -21,12 +21,13 @@
 
 package org.onap.aaf.cadi.oauth.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.hamcrest.CoreMatchers.is; 
-import static org.hamcrest.CoreMatchers.nullValue; 
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -38,7 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.Locator.Item;
@@ -46,11 +46,11 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
+import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.oauth.TimedToken;
 import org.onap.aaf.cadi.oauth.TzHClient;
 import org.onap.aaf.misc.env.APIException;
-import org.onap.aaf.cadi.config.Config;
-import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class JU_TzHClient {
     
@@ -72,8 +72,9 @@ public class JU_TzHClient {
         MockitoAnnotations.initMocks(this);
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
         access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
-        access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx lon    }
-        
+        access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx long
+    	//access.setProperty("tag", "http://aaf.something.com");
+    	
         errStream = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errStream));
     }

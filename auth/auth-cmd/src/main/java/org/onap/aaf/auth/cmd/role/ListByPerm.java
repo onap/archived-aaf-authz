@@ -22,6 +22,9 @@
 
 package org.onap.aaf.auth.cmd.role;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
 import org.onap.aaf.auth.rserv.HttpMethods;
@@ -29,6 +32,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.Roles;
@@ -51,20 +55,25 @@ public class ListByPerm extends Cmd {
 
     @Override
     public int _exec(int idx0, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = idx0;
+        int idx = idx0;
         final String type=args[idx];
         final String instance=args[++idx];
-        final String action=args[++idx];
-
+        final String action = args[++idx];
+        
         return same(((List)parent).new ListRoles() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
-
-                Future<Roles> fp = client.read(
-                        "/authz/roles/perm/"+type+'/'+instance+'/'+action, 
-                        getDF(Roles.class)
-                        );
-                return list(fp,client, HEADER+type+'|'+instance+'|'+action);
+                try {
+                    Future<Roles> fp = client.read(
+                            "/authz/roles/perm/"+type+'/' + 
+                                URLEncoder.encode(instance,Config.UTF_8)+'/'+
+                                action, 
+                            getDF(Roles.class)
+                            );
+                    return list(fp,client, HEADER+type+'|'+instance+'|'+action);
+                } catch (UnsupportedEncodingException e) {
+                    throw new CadiException(e);
+                }
             }
         });
     }

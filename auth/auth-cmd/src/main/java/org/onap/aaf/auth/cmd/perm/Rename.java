@@ -22,6 +22,9 @@
 package org.onap.aaf.auth.cmd.perm;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.onap.aaf.auth.cmd.AAFcli;
 import org.onap.aaf.auth.cmd.Cmd;
 import org.onap.aaf.auth.cmd.Param;
@@ -31,6 +34,7 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.PermRequest;
@@ -65,24 +69,31 @@ public class Rename extends Cmd {
                 
                 // Set Start/End commands
                 setStartEnd(pr);
-                Future<PermRequest> fp = client.update(
-                        "/authz/perm/"+origType+"/"+origInstance+"/"+origAction,
-                        getDF(PermRequest.class),
-                        pr
-                        );
-                int rv;
-                if (fp.get(AAFcli.timeout())) {
-                    rv = fp.code();
-                    pw().println("Updated Permission");
-                } else {
-                    rv = fp.code();
-                    if (rv==202) {
-                        pw().println("Permission Update Accepted, but requires Approvals before actualizing");
+                try {
+                    Future<PermRequest> fp = client.update(
+                            "/authz/perm/"+
+                            origType+ '/' +
+                            URLEncoder.encode(origInstance,Config.UTF_8) + '/' +
+                            origAction,
+                            getDF(PermRequest.class),
+                            pr
+                            );
+                    int rv;
+                    if (fp.get(AAFcli.timeout())) {
+                        rv = fp.code();
+                        pw().println("Updated Permission");
                     } else {
-                        error(fp);
+                        rv = fp.code();
+                        if (rv==202) {
+                            pw().println("Permission Update Accepted, but requires Approvals before actualizing");
+                        } else {
+                            error(fp);
+                        }
                     }
+                    return rv;
+                } catch (UnsupportedEncodingException e) {
+                    throw new CadiException(e);
                 }
-                return rv;
             }
         });
         

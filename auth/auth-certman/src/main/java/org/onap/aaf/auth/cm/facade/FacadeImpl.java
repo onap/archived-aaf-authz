@@ -98,6 +98,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
     private Mapper<REQ, CERT, ARTIFACTS, ERROR>     mapper;
 //    private Slot sCertAuth;
     private final String voidResp;
+
     public FacadeImpl(AAF_CM certman,
                       CMService service, 
                       Mapper<REQ,CERT,ARTIFACTS,ERROR> mapper, 

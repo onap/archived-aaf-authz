@@ -40,12 +40,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.onap.aaf.auth.layer.Result.ERR_BadData;
 import static org.onap.aaf.auth.layer.Result.ERR_General;
 
-import aaf.v2_0.Certs;
-import aaf.v2_0.Certs.Cert;
-import aaf.v2_0.History;
-import aaf.v2_0.History.Item;
-import aaf.v2_0.Users;
-import aaf.v2_0.Users.User;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -61,7 +55,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,7 +85,11 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
+import aaf.v2_0.Certs;
+import aaf.v2_0.Certs.Cert;
 import aaf.v2_0.CredRequest;
+import aaf.v2_0.History;
+import aaf.v2_0.History.Item;
 import aaf.v2_0.NsRequest;
 import aaf.v2_0.Nss;
 import aaf.v2_0.Nss.Ns;
@@ -107,6 +104,8 @@ import aaf.v2_0.Roles;
 import aaf.v2_0.UserRole;
 import aaf.v2_0.UserRoleRequest;
 import aaf.v2_0.UserRoles;
+import aaf.v2_0.Users;
+import aaf.v2_0.Users.User;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Mapper_2_0 {
@@ -665,11 +664,11 @@ public class JU_Mapper_2_0 {
     public void cred_shouldReturnError_whenGivenPasswordDoesNotFulfillPolicy() {
         //given
         String id = "aaf@aaf.osaaf.org";
-        String password = "invalid";
-        given(org.isValidPassword(transaction, id, password)).willReturn("Password does not match org.osaaf Password Standards");
+        String strp = "invalid";
+        given(org.isValidPassword(transaction, id, strp)).willReturn("Password does not match org.osaaf Password Standards");
 
         //when
-        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, password), true);
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, strp), true);
 
         //then
         assertFalse(result.isOK());
@@ -698,13 +697,13 @@ public class JU_Mapper_2_0 {
         //given
         String ns = "org.osaaf.aaf";
         String id = "aaf@aaf.osaaf.org";
-        String password = "SomeValidPassword123!";
+        String strp = "SomeValidPassword123!";
         GregorianCalendar expiration = new GregorianCalendar();
         given(org.expiration(isA(GregorianCalendar.class), eq(Expiration.Password), eq(id))).willReturn(expiration);
-        given(org.isValidPassword(transaction, id, password)).willReturn("");
+        given(org.isValidPassword(transaction, id, strp)).willReturn("");
 
         //when
-        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, password), true);
+        Result<CredDAO.Data> result = mapper.cred(transaction, createCredRequest(id, strp), true);
 
         //then
         assertTrue(result.isOK());
@@ -939,6 +938,7 @@ public class JU_Mapper_2_0 {
      *
      */
     public static class ImmutableMap {
+        @SuppressWarnings("unchecked")
         public static <T,U> Map<T,U> of(Object ... tag_value) {
             Map<T,U> rv = new HashMap<>();
             for(int i=0;i<tag_value.length-1;i+=2) {
@@ -970,7 +970,7 @@ public class JU_Mapper_2_0 {
      *
      */
     public static class Lists {
-        @SuppressWarnings("unchecked")
+        @SafeVarargs
         public static <T> List<T> newArrayList(Collection<T> ... init ) {
             List<T> rv = new ArrayList<>();
             for(Collection<T> o : init) {

@@ -26,13 +26,61 @@ import java.util.List;
 import org.onap.aaf.auth.dao.CIDAO;
 import org.onap.aaf.auth.dao.CachedDAO;
 import org.onap.aaf.auth.dao.cass.CredDAO;
+import org.onap.aaf.auth.dao.cass.CredDAO.Data;
 import org.onap.aaf.auth.dao.cass.Status;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 
 public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> {
+    private final ReadID readID;
+    private final ReadID readIDBath;
+    
     public CachedCredDAO(CredDAO dao, CIDAO<AuthzTrans> info, long expiresIn) {
         super(dao, info, CredDAO.CACHE_SEG, expiresIn);
+        if(FileGetter.isLoaded) {
+            readID = new ReadID() {
+                @Override
+                public Result<List<Data>> read(AuthzTrans trans, final String id) {
+                    return FileGetter.singleton(null).getter(id).get();
+                }
+            };
+            // Both are the same... File read in only does BAth
+            readIDBath = readID;
+        } else {
+            readID = new ReadID() {
+                @Override
+                public Result<List<Data>> read(AuthzTrans trans, final String id) {
+                    DAOGetter getter = new DAOGetter(trans,dao()) {
+                        public Result<List<CredDAO.Data>> call() {
+                            return dao().readID(trans, id);
+                        }
+                    };
+                    
+                    Result<List<CredDAO.Data>> lurd = get(trans, id, getter);
+                    if (lurd.isOK() && lurd.isEmpty()) {
+                        return Result.err(Status.ERR_UserNotFound,"No User Cred found");
+                    }
+                    return lurd;
+                }
+            };
+            
+            readIDBath = new ReadID() {
+                @Override
+                public Result<List<Data>> read(AuthzTrans trans, final String id) {
+                     DAOGetter getter = new DAOGetter(trans,dao()) {
+                         public Result<List<CredDAO.Data>> call() {
+                             return dao().readIDBAth(trans, id);
+                         }
+                     };
+                     
+                     Result<List<CredDAO.Data>> lurd = get(trans, id, getter);
+                     if (lurd.isOK() && lurd.isEmpty()) {
+                         return Result.err(Status.ERR_UserNotFound,"No User Cred found");
+                     }
+                     return lurd;
+                }
+            };
+        }
     }
     
     /**
@@ -48,19 +96,16 @@ public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> 
         
         return dao().readNS(trans, ns);
     }
-    
+
     public Result<List<CredDAO.Data>> readID(AuthzTrans trans, final String id) {
-        DAOGetter getter = new DAOGetter(trans,dao()) {
-            public Result<List<CredDAO.Data>> call() {
-                return dao().readID(trans, id);
-            }
-        };
-        
-        Result<List<CredDAO.Data>> lurd = get(trans, id, getter);
-        if (lurd.isOK() && lurd.isEmpty()) {
-            return Result.err(Status.ERR_UserNotFound,"No User Cred found");
-        }
-        return lurd;
+        return readID.read(trans, id);
     }
 
+    public Result<List<Data>> readIDBAth(AuthzTrans trans, String id) {
+        return readIDBath.read(trans,id);
+    }
+
+    private interface ReadID {
+        public Result<List<CredDAO.Data>> read(final AuthzTrans trans, final String id);
+    }
 }

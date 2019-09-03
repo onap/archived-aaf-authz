@@ -36,7 +36,6 @@ import org.onap.aaf.auth.dao.cass.ArtiDAO.Data;
 import org.onap.aaf.auth.dao.cass.CertDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
-import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.cadi.util.Vars;
 
 import aaf.v2_0.Error;

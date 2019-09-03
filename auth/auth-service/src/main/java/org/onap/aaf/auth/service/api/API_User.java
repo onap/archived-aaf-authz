@@ -24,6 +24,8 @@ package org.onap.aaf.auth.service.api;
 import static org.onap.aaf.auth.layer.Result.OK;
 import static org.onap.aaf.auth.rserv.HttpMethods.GET;
 
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,6 +36,7 @@ import org.onap.aaf.auth.service.AAF_Service;
 import org.onap.aaf.auth.service.Code;
 import org.onap.aaf.auth.service.facade.AuthzFacade;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
+import org.onap.aaf.cadi.config.Config;
 
 /**
  * User Role APIs
@@ -61,7 +64,7 @@ public class API_User {
 //
                 Result<Void> r = context.getUsersByPermission(trans, resp,
                         pathParam(req, ":type"),
-                        pathParam(req, ":instance"),
+                        URLDecoder.decode(pathParam(req, ":instance"),Config.UTF_8),
                         pathParam(req, ":action"));
                 switch(r.status) {
                     case OK:

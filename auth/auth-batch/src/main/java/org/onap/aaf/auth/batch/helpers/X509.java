@@ -59,10 +59,15 @@ public class X509 {
     
 
     public static void load(Trans trans, Session session, Visitor<X509> visitor) {
-        load(trans,session,"select ca, id, x500, x509, serial from authz.x509;", visitor);
+        load(trans,session, "" , visitor);
+    }
+    
+    public static void load(Trans trans, Session session, String where, Visitor<X509> visitor) {
+        load(trans,session, visitor,"select ca, id, x500, x509, serial from authz.x509 " + where +';');
     }
 
-    private static void load(Trans trans, Session session, String query, Visitor<X509> visitor) {
+
+    private static void load(Trans trans, Session session, Visitor<X509> visitor, String query) {
         trans.info().log( "query: " + query );
         TimeTaken tt = trans.start("Read X509", Env.REMOTE);
        
