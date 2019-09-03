@@ -232,8 +232,10 @@ public class API_Perms {
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
                 
-                Result<Void> r = context.renamePerm(trans, req, resp, pathParam(req, "type"), 
-                        pathParam(req, "instance"), pathParam(req, "action"));
+                Result<Void> r = context.renamePerm(trans, req, resp, 
+                        pathParam(req, "type"), 
+                        URLDecoder.decode(pathParam(req, "instance"),Config.UTF_8), 
+                        pathParam(req, "action"));
                 switch(r.status) {
                     case OK: 
                         resp.setStatus(HttpStatus.OK_200); 

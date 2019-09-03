@@ -67,6 +67,8 @@ public interface AuthzTrans extends TransStore {
     public abstract AuthzEnv env();
 
     public abstract void setLur(Lur lur);
+    
+    public abstract Lur getLur();
 
     public abstract boolean fish(Permission ... p);
     

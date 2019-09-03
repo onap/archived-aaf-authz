@@ -40,6 +40,8 @@ public class DNSLocator implements Locator<URI> {
     private Host[] hosts;
     private int startPort, endPort;
     private String suffix;
+
+    private int size = 1; // initial, until refreshed.
     
     public DNSLocator(Access access, String protocol, String host, String range) {
         this.host = host;
@@ -156,6 +158,7 @@ public class DNSLocator implements Locator<URI> {
                 }
             }
             hosts = temp;
+            size = temp.length * (endPort-startPort+1);
             return true;
         } catch (Exception e) {
             access.log(Level.ERROR, e);
@@ -238,4 +241,8 @@ public class DNSLocator implements Locator<URI> {
     }
     
     public void destroy() {}
+
+    public int size() {
+        return size;
+    }
 }

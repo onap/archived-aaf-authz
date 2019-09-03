@@ -21,6 +21,8 @@
 
 package org.onap.aaf.auth.cmd.user;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -33,6 +35,7 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 
 import aaf.v2_0.Users;
@@ -63,19 +66,26 @@ public class ListForPermission extends Cmd {
                 if ("\\*".equals(instance))instance="*";
                 String action = args[idx++];
                 if ("\\*".equals(action))action="*";
-                Future<Users> fp = client.read(
-                        "/authz/users/perm/"+type+'/'+instance+'/'+action, 
-                        getDF(Users.class)
-                        );
-                if (fp.get(AAFcli.timeout())) {
-                    if (aafcli.isTest())
-                        Collections.sort(fp.value.getUser(), (Comparator<User>) (u1, u2) -> u1.getId().compareTo(u2.getId()));
-                    ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,false,HEADER,type+"|"+instance+"|"+action);
-                    if (fp.code()==404)return 200;
-                } else {
-                    error(fp);
+                try {
+                    Future<Users> fp = client.read(
+                            "/authz/users/perm/" + 
+                                type + '/' +
+                                URLEncoder.encode(instance,Config.UTF_8) + '/' + 
+                                action, 
+                            getDF(Users.class)
+                            );
+                    if (fp.get(AAFcli.timeout())) {
+                        if (aafcli.isTest())
+                            Collections.sort(fp.value.getUser(), (Comparator<User>) (u1, u2) -> u1.getId().compareTo(u2.getId()));
+                        ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,false,HEADER,type+"|"+instance+"|"+action);
+                        if (fp.code()==404)return 200;
+                    } else {
+                        error(fp);
+                    }
+                    return fp.code();
+                } catch (UnsupportedEncodingException e) {
+                    throw new CadiException(e);
                 }
-                return fp.code();
             }
         });
     }

@@ -177,6 +177,11 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     }
     
     @Override
+    public Lur getLur() {
+    	return lur;
+    }
+    
+    @Override
     public boolean fish(Permission ... pond) {
         if (lur!=null) {
             return lur.fish(user, pond);

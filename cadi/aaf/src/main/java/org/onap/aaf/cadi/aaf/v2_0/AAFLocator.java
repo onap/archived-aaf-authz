@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.SecuritySetter;
@@ -36,6 +37,7 @@ import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HClient;
+import org.onap.aaf.cadi.locator.DNSLocator;
 import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.misc.env.APIException;
@@ -49,8 +51,12 @@ import locate.v1_0.Endpoints;
 
 public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     private static RosettaEnv env;
-    HClient client;
+    private HClient client;
+    private HClient lclient;
     private RosettaDF<Endpoints> epsDF;
+    private DNSLocator locatorLocator;
+    private Item locatorItem;
+
 
     public AAFLocator(SecurityInfoC<HttpURLConnection> si, URI locatorURI) throws LocatorException {
         super(si.access, nameFromLocatorURI(locatorURI), 10000L /* Wait at least 10 seconds between refreshes */);
@@ -73,13 +79,6 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
                     sb.append(path[i]);
                 }
                 setPathInfo(sb.toString());
-//                URI uri = new URI(
-//                            locatorURI.getScheme(),
-//                            locatorURI.getAuthority(),
-//                            locatorURI.getPath(),
-//                            null,
-//                            null
-//                            );
                 client = createClient(si.defSS, locatorURI, connectTimeout);
             } else {
                 client = new HClient(si.defSS, locatorURI, connectTimeout);
@@ -89,19 +88,72 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
         } catch (APIException /*| URISyntaxException*/ e) {
             throw new LocatorException(e);
         }
+        lclient = new HClient(si.defSS, locatorURI, connectTimeout);
         
         if(si.access.willLog(Access.Level.DEBUG)) {
             si.access.log(Access.Level.DEBUG, "Root URI:",client.getURI());
         }
+        
+        String dnsString;
+        if(locatorURI.getPort()<0) {
+        	dnsString=locatorURI.getScheme() + "://" + locatorURI.getHost();
+        } else {
+        	dnsString=locatorURI.getScheme() + "://" +locatorURI.getHost()+':'+locatorURI.getPort();
+        }
+        if(dnsString.contains("null")) { // for Testing Purposes, mostly.
+        	locatorLocator = null;
+        } else {
+	        locatorLocator = new DNSLocator(access, dnsString);
+	        locatorItem = locatorLocator.best();
+        }
     }
+
+    private URI locatorFail(URI uri) throws LocatorException, URISyntaxException {
+        locatorLocator.invalidate(locatorItem);
+        locatorItem = locatorLocator.best();
+        URI newURI = locatorLocator.get(locatorItem);
+        return new URI(uri.getScheme(),
+                       uri.getUserInfo(),
+                       newURI.getHost(),
+                       newURI.getPort(),
+                       uri.getPath(),
+                       uri.getQuery(),
+                       uri.getFragment());
+    }
+
+    protected final int maxIters() {
+        return locatorLocator.size();
+    }
+
 
     @Override
     public boolean refresh() {
         try {
-            client.setMethod("GET");
-            client.send();
-            Future<Endpoints> fr = client.futureRead(epsDF, TYPE.JSON);
-            if (fr.get(client.timeout())) {
+            int max = locatorLocator.size();
+            for(int i=0;i<max;) {
+                ++i;
+                try {
+                    lclient.setMethod("GET");
+                    lclient.send();
+                    break;
+                } catch (APIException connectE) {
+                    Throwable ce = connectE.getCause();
+                    if(ce!=null && ce instanceof java.net.ConnectException && i< maxIters()) {
+                        try {
+                            URI old = client.getURI();
+                            lclient.setURI(locatorFail(old));
+                            access.printf(Level.INFO, "AAF Locator changed from %s to %s",old, lclient.getURI());
+                            continue;
+                        } catch (LocatorException e) {
+                            throw connectE;
+                        }
+                    }
+                    // last one, just throw
+                    throw connectE;
+                }
+            }
+            Future<Endpoints> fr = lclient.futureRead(epsDF, TYPE.JSON);
+            if (fr.get(lclient.timeout())) {
                 List<EP> epl = new LinkedList<>();
                 for (Endpoint endpoint : fr.value.getEndpoint()) {
                     epl.add(new EP(endpoint,latitude,longitude));

@@ -72,6 +72,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         } catch (UnknownHostException | CadiException e1) {
             throw new LocatorException(e1);
         }
+        URI aaf_locator_uri;
         try {
             aaf_locator_host = rph.replacements(getClass().getSimpleName(),"https://"+Config.AAF_LOCATE_URL_TAG,null,null);
             if(aaf_locator_host.endsWith("/locate")) {
@@ -79,7 +80,6 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             } else {
                 aaf_locator_uri = new URI(aaf_locator_host+"/locate");
             }
-            
             access.printf(Level.INFO, "AbsAAFLocator AAF URI is %s",aaf_locator_uri);
         } catch (URISyntaxException e) {
             throw new LocatorException(e);
@@ -110,9 +110,8 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             this.name = split[0];
             this.version = (split.length > 1) ? split[1] : access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
         }
-        
     }
-
+    
     /**
      * This is the way to setup specialized AAFLocators ahead of time.
      * @param preload
@@ -368,7 +367,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         }
         return null;
     }
-
+    
     protected static class AAFLItem implements Item {
             private Iterator<EP> iter;
             private URI uri;

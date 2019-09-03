@@ -20,6 +20,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.misc.env.LogTarget;
 
 import com.datastax.driver.core.ResultSet;
@@ -30,12 +31,15 @@ public class CQLBatch {
     private StringBuilder sb;
     private int hasAdded;
     private LogTarget log;
+    private long sleep;
+    private long last;
 
     public CQLBatch(LogTarget log, Session session) {
         this.log = log;
         this.session = session;
         sb = new StringBuilder();
         hasAdded = 0;
+        sleep = 0L;
     }
     public StringBuilder begin() {
         sb.setLength(0);
@@ -56,6 +60,17 @@ public class CQLBatch {
     
     public ResultSet execute() {
         if(end()) {
+            if(sleep>0) {
+                long left = last - System.currentTimeMillis();
+                if(left>0) {
+                    try {
+                        Thread.sleep(left);
+                    } catch (InterruptedException e) {
+                        Access.NULL.log(e); // Keep code check idiocy at bay
+                    }
+                }
+                last = System.currentTimeMillis()+sleep;
+            }
             return session.execute(sb.toString());
         } else {
             return null;
@@ -65,6 +80,17 @@ public class CQLBatch {
     public ResultSet execute(boolean dryRun) {
         ResultSet rv = null;
         if(dryRun) {
+            if(sleep>0) {
+                long left = last - System.currentTimeMillis();
+                if(left>0) {
+                    try {
+                        Thread.sleep(left);
+                    } catch (InterruptedException e) {
+                        Access.NULL.log(e); // Keep code check idiocy at bay
+                    }
+                }
+                last = System.currentTimeMillis()+sleep;
+            }
             end();
         } else {
             rv = execute();
@@ -91,6 +117,10 @@ public class CQLBatch {
             sb.append(";\n");
         }
         execute(dryRun);
+    }
+    
+    public void sleep(int j) {
+        sleep = j*1000;
     }
     
     public String toString() {

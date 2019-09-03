@@ -47,6 +47,8 @@ public class JU_Log4JLogTargetTest {
     
     @Test
     public void testLoggable() {
+    	Logger l4jLogger = Logger.getLogger("testLogger");
+    	l4jLogger.setLevel(Level.DEBUG);
         Log4JLogTarget logObj = null;
         try {
             logObj = new Log4JLogTarget( "testLogger", Level.DEBUG);

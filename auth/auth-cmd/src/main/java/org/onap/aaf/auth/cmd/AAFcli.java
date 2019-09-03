@@ -250,7 +250,13 @@ public class AAFcli {
                     pw.println("Press <Return> to continue...");
                     ++idx;
                     // Sonar insists we do something with the string, though it's only a pause.  Not very helpful...
-                    String sonar = new BufferedReader(new InputStreamReader(System.in)).readLine();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                    String sonar;
+                    try {
+                        sonar = br.readLine();
+                    } finally {
+                        br.close();
+                    }
                     sonar=""; // this useless code brought to you by Sonar.
                     pw.print(sonar);
                     continue;
@@ -569,12 +575,16 @@ public class AAFcli {
                                 }
                             } else if (rdr != null) {
                                 BufferedReader br = new BufferedReader(rdr);
-                                String line;
-                                while ((line = br.readLine()) != null) {
-                                    if (!aafcli.eval(line) && exitOnFailure) {
-                                        rv = 1;
-                                        break;
+                                try {
+                                    String line;
+                                    while ((line = br.readLine()) != null) {
+                                        if (!aafcli.eval(line) && exitOnFailure) {
+                                            rv = 1;
+                                            break;
+                                        }
                                     }
+                                } finally {
+                                    br.close();
                                 }
                             } else { // just run the command line
                                 aafcli.verbose(false);

@@ -34,6 +34,7 @@ import org.onap.aaf.misc.env.util.Split;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;
+import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 
@@ -162,6 +163,7 @@ public class CassAccess {
                 env.init().printf("Cassandra is using Default Policy, which is not DC aware");
             }
         }
+        cb.withSocketOptions(new SocketOptions().setReadTimeoutMillis(6500000));
         return cb.build();
     }
     
