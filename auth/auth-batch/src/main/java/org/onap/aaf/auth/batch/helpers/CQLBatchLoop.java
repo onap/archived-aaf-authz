@@ -32,7 +32,7 @@ public class CQLBatchLoop {
     private int batches;
     private final StringBuilder current;
     private boolean showProgress;
-    
+
     public CQLBatchLoop(CQLBatch cb, int max, boolean dryRun) {
         cqlBatch = cb;
         i=0;

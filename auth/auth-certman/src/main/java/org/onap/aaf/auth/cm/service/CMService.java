@@ -27,10 +27,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +47,7 @@ import org.onap.aaf.auth.cm.data.CertRenew;
 import org.onap.aaf.auth.cm.data.CertReq;
 import org.onap.aaf.auth.cm.data.CertResp;
 import org.onap.aaf.auth.cm.validation.CertmanValidator;
+import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.dao.CassAccess;
 import org.onap.aaf.auth.dao.cass.ArtiDAO;
 import org.onap.aaf.auth.dao.cass.CacheInfoDAO;
@@ -58,9 +62,9 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.org.Organization;
 import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.Permission;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.configure.Factory;
@@ -73,12 +77,16 @@ public class CMService {
     private static final int STD_RENEWAL = 30;
     private static final int MAX_RENEWAL = 60;
     private static final int MIN_RENEWAL = 10;
-
+    // Limit total requests
+    private static final int MAX_X509s = 200; // Need a "LIMIT Exception" DB.
+    private static final String MAX_X509S_TAG = "cm_max_x509s"; // be able to adjust limit in future
+    
     public static final String REQUEST = "request";
     public static final String IGNORE_IPS = "ignoreIPs";
     public static final String RENEW = "renew";
     public static final String DROP = "drop";
     public static final String DOMAIN = "domain";
+    public static final String DYNAMIC_SANS="dynamic_sans";
 
     private static final String CERTMAN = "certman";
     private static final String ACCESS = "access";
@@ -90,7 +98,8 @@ public class CMService {
     private final ArtiDAO artiDAO;
     private AAF_CM certManager;
     private Boolean allowIgnoreIPs;
-    private Boolean alwaysIgnoreIPs;
+    private AAFPermission limitOverridePerm;
+    private int max_509s;
 
     // @SuppressWarnings("unchecked")
     public CMService(final AuthzTrans trans, AAF_CM certman) throws APIException, IOException {
@@ -111,20 +120,21 @@ public class CMService {
                 "*",
                 "read"
         );
-        alwaysIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALWAYS_IGNORE_IPS, "false"));
-        if(alwaysIgnoreIPs) {
-            trans.env().access().log(Level.INIT, "DNS Evaluation for Cert Creation is turned off with " + Config.CM_ALWAYS_IGNORE_IPS );
-        } else {
-            allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
-            if(allowIgnoreIPs) {
-                trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
-            }
+        try {
+            max_509s = Integer.parseInt(trans.env().getProperty(MAX_X509S_TAG,Integer.toString(MAX_X509s)));
+        } catch (Exception e) {
+            trans.env().log(e, "");
+            max_509s = MAX_X509s;
+        }
+        limitOverridePerm = new AAFPermission(Define.ROOT_NS(),"certman","quantity","override");
+        allowIgnoreIPs = Boolean.valueOf(certman.access.getProperty(Config.CM_ALLOW_IGNORE_IPS, "false"));
+        if(allowIgnoreIPs) {
+            trans.env().access().log(Level.INIT, "Allowing DNS Evaluation to be turned off with <ns>.certman|<ca name>|"+IGNORE_IPS);
         }
     }
 
     public Result<CertResp> requestCert(final AuthzTrans trans, final Result<CertReq> req, final CA ca) {
         if (req.isOK()) {
-
             if (req.value.fqdns.isEmpty()) {
                 return Result.err(Result.ERR_BadData, "No Machines passed in Request");
             }
@@ -138,7 +148,31 @@ public class CMService {
             }
 
             List<String> notes = null;
-            List<String> fqdns = new ArrayList<>(req.value.fqdns);
+            List<String> fqdns;
+            boolean domain_based = false;
+            boolean dynamic_sans = false;
+
+            if(req.value.fqdns.isEmpty()) {
+            	fqdns = new ArrayList<>();
+            } else {
+            	// Only Template or Dynamic permitted to pass in FQDNs
+            	if (req.value.fqdns.get(0).startsWith("*")) { // Domain set
+                    if (trans.fish(new AAFPermission(null,ca.getPermType(), ca.getName(), DOMAIN))) {
+                    	domain_based = true;
+                    } else {
+                        return Result.err(Result.ERR_Denied,
+                              "Domain based Authorizations (" + req.value.fqdns.get(0) + ") requires Exception");
+                    }
+            	} else {
+                	if(trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS))) {
+                		dynamic_sans = true;
+                	} else {
+                        return Result.err(Result.ERR_Denied,
+                            "Dynamic SANs for (" + req.value.mechid + ") requires Permission");                    		
+                	}
+            	}
+            	fqdns = new ArrayList<>(req.value.fqdns);
+            }
 
             String email = null;
 
@@ -146,9 +180,7 @@ public class CMService {
                 Organization org = trans.org();
 
                 boolean ignoreIPs;
-                if(alwaysIgnoreIPs) {
-                    ignoreIPs=true;
-                } else if(allowIgnoreIPs) {
+                if(allowIgnoreIPs) {
                     ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
                 } else {
                     ignoreIPs = false;
@@ -157,33 +189,30 @@ public class CMService {
 
                 InetAddress primary = null;
                 // Organize incoming information to get to appropriate Artifact
-                if (!fqdns.isEmpty()) {
+                if (!fqdns.isEmpty()) { // Passed in FQDNS, validated above
                     // Accept domain wild cards, but turn into real machines
                     // Need *domain.com:real.machine.domain.com:san.machine.domain.com:...
-                    if (fqdns.get(0).startsWith("*")) { // Domain set
-                        if (!trans.fish(new AAFPermission(null,ca.getPermType(), ca.getName(), DOMAIN))) {
-                            return Result.err(Result.ERR_Denied,
-                                    "Domain based Authorizations (" + fqdns.get(0) + ") requires Exception");
-                        }
-
+                    if (domain_based) { // Domain set
                         // check for Permission in Add Artifact?
-                        String domain = fqdns.get(0).substring(1);
+                        String domain = fqdns.get(0).substring(1); // starts with *, see above
                         fqdns.remove(0);
                         if (fqdns.isEmpty()) {
-                            return Result.err(Result.ERR_Denied, "Requests using domain require machine declaration");
+                            return Result.err(Result.ERR_Denied, 
+                            	"Requests using domain require machine declaration");
                         }
 
                         if (!ignoreIPs) {
                             InetAddress ia = InetAddress.getByName(fqdns.get(0));
                             if (ia == null) {
                                 return Result.err(Result.ERR_Denied,
-                                        "Request not made from matching IP matching domain");
+                                     "Request not made from matching IP matching domain");
                             } else if (ia.getHostName().endsWith(domain)) {
                                 primary = ia;
                             }
                         }
 
                     } else {
+                    	// Passed in FQDNs, but not starting with *
                         if (!ignoreIPs) {
                             for (String cn : req.value.fqdns) {
                                 try {
@@ -211,7 +240,7 @@ public class CMService {
                 if (ignoreIPs) {
                     host = req.value.fqdns.get(0);
                 } else if (primary == null) {
-                    return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)", trans.ip());
+                    return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)", req.value.fqdns.get(0));
                 } else {
                     String thost = primary.getHostName();
                     host = thost==null?primary.getHostAddress():thost;
@@ -220,35 +249,42 @@ public class CMService {
                 ArtiDAO.Data add = null;
                 Result<List<ArtiDAO.Data>> ra = artiDAO.read(trans, req.value.mechid, host);
                 if (ra.isOKhasData()) {
-                    if (add == null) {
-                        add = ra.value.get(0); // single key
+                    add = ra.value.get(0); // single key
+                    if(dynamic_sans && (add.sans!=null && !add.sans.isEmpty())) { // do not allow both Dynamic and Artifact SANS
+                        return Result.err(Result.ERR_Denied,"Authorization must not include SANS when doing Dynamic SANS (%s, %s)", req.value.mechid, key);
                     }
                 } else {
-                    ra = artiDAO.read(trans, req.value.mechid, key);
-                    if (ra.isOKhasData()) { // is the Template available?
-                        add = ra.value.get(0);
-                        add.machine = host;
-                        for (String s : fqdns) {
-                            if (!s.equals(add.machine)) {
-                                add.sans(true).add(s);
-                            }
-                        }
-                        Result<ArtiDAO.Data> rc = artiDAO.create(trans, add); // Create new Artifact from Template
-                        if (rc.notOK()) {
-                            return Result.err(rc);
-                        }
-                    } else {
-                        add = ra.value.get(0);
-                    }
+                	if(domain_based) {
+	                    ra = artiDAO.read(trans, req.value.mechid, key);
+	                    if (ra.isOKhasData()) { // is the Template available?
+	                        add = ra.value.get(0);
+	                        add.machine = host;
+	                        for (String s : fqdns) {
+	                            if (!s.equals(add.machine)) {
+	                                add.sans(true).add(s);
+	                            }
+	                        }
+	                        Result<ArtiDAO.Data> rc = artiDAO.create(trans, add); // Create new Artifact from Template
+	                        if (rc.notOK()) {
+	                            return Result.err(rc);
+	                        }
+	                    } else {
+	                        return Result.err(Result.ERR_Denied,"No Authorization Template for %s, %s", req.value.mechid, key);
+	                    }
+                	} else {
+                        return Result.err(Result.ERR_Denied,"No Authorization found for %s, %s", req.value.mechid, key);
+                	}
                 }
 
                 // Add Artifact listed FQDNs
-                if (add.sans != null) {
-                    for (String s : add.sans) {
-                        if (!fqdns.contains(s)) {
-                            fqdns.add(s);
-                        }
-                    }
+                if(!dynamic_sans) {
+	                if (add.sans != null) {
+	                    for (String s : add.sans) {
+	                        if (!fqdns.contains(s)) {
+	                            fqdns.add(s);
+	                        }
+	                    }
+	                }
                 }
 
                 // Policy 2: If Config marked as Expired, do not create or renew
@@ -318,6 +354,31 @@ public class CMService {
             try {
                 csrMeta = BCFactory.createCSRMeta(ca, req.value.mechid, email, fqdns);
                 csrMeta.environment(ca.getEnv());
+                
+                // Before creating, make sure they don't have too many
+                if(!trans.fish(limitOverridePerm)) {
+                    Result<List<CertDAO.Data>> existing = certDAO.readID(trans, req.value.mechid);
+                    if(existing.isOK()) {
+                        String cn = "CN=" + csrMeta.cn();
+                        int count = 0;
+                        Date now = new Date();
+                        for (CertDAO.Data cdd : existing.value) {
+                            Collection<? extends Certificate> certs = Factory.toX509Certificate(cdd.x509);
+                            for(Iterator<? extends Certificate> iter = certs.iterator(); iter.hasNext();) {
+                                X509Certificate x509 = (X509Certificate)iter.next();
+                                if(x509.getNotAfter().after(now) && x509.getSubjectDN().getName().contains(cn)) {
+                                    if(++count>MAX_X509s) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if(count>max_509s) {
+                            return Result.err(Result.ERR_Denied, "There are too many Certificates generated for " + cn + " for " + req.value.mechid);
+                        }
+                    }
+                }
+                // Here is where we send off to CA for Signing.
                 X509andChain x509ac = ca.sign(trans, csrMeta);
                 if (x509ac == null) {
                     return Result.err(Result.ERR_ActionNotCompleted, "x509 Certificate not signed by CA");
@@ -331,6 +392,7 @@ public class CMService {
                 cdd.id = req.value.mechid;
                 cdd.x500 = x509.getSubjectDN().getName();
                 cdd.x509 = Factory.toString(trans, x509);
+                
                 certDAO.create(trans, cdd);
 
                 CredDAO.Data crdd = new CredDAO.Data();
@@ -340,7 +402,7 @@ public class CMService {
                 crdd.id = req.value.mechid;
                 crdd.ns = Question.domain2ns(crdd.id);
                 crdd.type = CredDAO.CERT_SHA256_RSA;
-                crdd.tag = cdd.serial.toString(16);
+                crdd.tag = cdd.ca + '|' + cdd.serial.toString();
                 credDAO.create(trans, crdd);
 
                 CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), compileNotes(notes));

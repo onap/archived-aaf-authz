@@ -27,6 +27,8 @@ import static org.onap.aaf.auth.rserv.HttpMethods.GET;
 import static org.onap.aaf.auth.rserv.HttpMethods.POST;
 import static org.onap.aaf.auth.rserv.HttpMethods.PUT;
 
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,6 +40,7 @@ import org.onap.aaf.auth.service.AAF_Service;
 import org.onap.aaf.auth.service.Code;
 import org.onap.aaf.auth.service.facade.AuthzFacade;
 import org.onap.aaf.auth.service.mapper.Mapper.API;
+import org.onap.aaf.cadi.config.Config;
 
 public class API_Roles {
     public static void init(AAF_Service authzAPI, AuthzFacade facade) throws Exception {
@@ -231,7 +234,7 @@ public class API_Roles {
                 
                 Result<Void> r = context.getRolesByPerm(trans, resp, 
                         pathParam(req, "type"),
-                        pathParam(req, "instance"),
+                        URLDecoder.decode(pathParam(req, "instance"),Config.UTF_8),
                         pathParam(req, "action"));
                 switch(r.status) {
                     case OK: 

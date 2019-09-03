@@ -309,6 +309,10 @@ public class Page extends HTMLCacheGen {
                                 if(theme==null) {
                                     theme = defaultTheme;
                                 }
+                                List<String> ls = getThemeFiles(trans, theme);
+                                if(ls==null) {
+                                	throw new APIException("Theme " + theme + " does not exist.");
+                                }
                                 Cookie cookie = new Cookie(AAF_GUI_THEME,theme);
                                 cookie.setMaxAge(604_800); // one week
                                 trans.hresp().addCookie(cookie);

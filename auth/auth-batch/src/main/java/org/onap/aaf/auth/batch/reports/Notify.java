@@ -322,7 +322,7 @@ import org.onap.aaf.misc.env.util.Chrono;
                 trans.info().printf("Notified %d persons of Pending Approvals", npab.count());
             }
 
-        } catch (APIException | IOException e1) {
+        } catch (Exception e1) {
             trans.error().log(e1);
         } finally {
              for(String s : errorSet) {

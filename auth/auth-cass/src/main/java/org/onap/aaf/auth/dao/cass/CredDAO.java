@@ -64,6 +64,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     private CIDAO<AuthzTrans> infoDAO;
     private PSInfo psNS;
     private PSInfo psID;
+    private PSInfo psIDBath;
     
     public CredDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CredDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
@@ -219,6 +220,15 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         
         psID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE id = ?", CredLoader.deflt,readConsistency);
+        
+        // NOTE: (type) in ((1),(2)) is valid for Cass 2.1.14.  After 2.1.14, more obvious
+        // syntax of type in (1,2) is available
+        // ALSO, 1 & 2 STAND FOR BASIC_AUTH (MD5) AND BASIC_AUTH_SHA256(with salt).
+        // If more Basic Auth Protocols become available, add here but do NOT
+        // add X509, and there can be man Certs, and we don't need to read them every time, or
+        // as discovered, or provide CASS Outage due to too many Certs to read.
+        psIDBath = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
+                " WHERE id = ? and (type) in ((1),(2))", CredLoader.deflt,readConsistency);
     }
     
     /* (non-Javadoc)
@@ -245,6 +255,10 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         return psID.read(trans, R_TEXT, new Object[]{id});
     }
     
+    public Result<List<Data>> readIDBAth(AuthzTrans trans, String id) {
+        return psIDBath.read(trans, R_TEXT, new Object[] {id});
+    }
+
     /**
      * Log Modification statements to History
      *

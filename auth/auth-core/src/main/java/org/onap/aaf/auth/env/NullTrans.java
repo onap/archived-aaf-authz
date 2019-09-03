@@ -208,6 +208,11 @@ public class NullTrans implements AuthzTrans {
     }
 
     @Override
+    public Lur getLur() {
+    	return null;
+    }
+
+    @Override
     public boolean fish(Permission ... p) {
         return false;
     }

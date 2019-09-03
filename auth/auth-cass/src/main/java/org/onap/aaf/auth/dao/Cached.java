@@ -99,7 +99,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         return Result.ok();
     }
 
-    protected interface Getter<D> {
+    public interface Getter<D> {
         public abstract Result<List<D>> get();
     };
     
