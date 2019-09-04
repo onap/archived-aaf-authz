@@ -48,35 +48,32 @@ portal_admin|Portal Admin|Portal|Admin|||e|mmanager
 # ONAP App IDs
 aaf|AAF Application|AAF|Application|||a|aaf_admin
 aaf-sms|AAF SMS Application|AAF SMS|Application|||a|aaf_admin
-clamp|ONAP CLAMP Application|CLAMP|Application|||a|aaf_admin
-aai|ONAP AAI Application|AAI|ONAP Application|||a|aaf_admin
-appc|ONAP APPC Application|APPC|ONAP Application|||a|aaf_admin
-dcae|ONAP DCAE Application|CLAMP|ONAP Application|||a|aaf_admin
-oof|ONAP OOF Application|OOF|ONAP Application|||a|aaf_admin
-so|ONAP SO Application|SO|ONAP Application|||a|aaf_admin
-sdc|ONAP SDC Application|SDC|ONAP Application|||a|aaf_admin
-sdnc|ONAP SDNC Application|SDNC|ONAP Application|||a|aaf_admin
-vfc|ONAP VFC Application|VNC|ONAP Application|||a|aaf_admin
-policy|ONAP Policy Application|POLICY|ONAP Application|||a|aaf_admin
-pomba|ONAP Pomba Application|POMBA|ONAP Application|||a|aaf_admin
-holmes|ONAP Holmes Application|HOLMES|ONAP Application|||a|aaf_admin
-nbi|ONAP NBI Application|NBI|ONAP Application|||a|aaf_admin
-
+clamp|ONAP CLAMP Application|CLAMP|Application|||a|mmanager
+aai|ONAP AAI Application|AAI|ONAP Application|||a|mmanager
+appc|ONAP APPC Application|APPC|ONAP Application|||a|mmanager
+dcae|ONAP DCAE Application|CLAMP|ONAP Application|||a|mmanager
+oof|ONAP OOF Application|OOF|ONAP Application|||a|mmanager
+so|ONAP SO Application|SO|ONAP Application|||a|mmanager
+sdc|ONAP SDC Application|SDC|ONAP Application|||a|mmanager
+sdnc|ONAP SDNC Application|SDNC|ONAP Application|||a|mmanager
+sdnc-cds|ONAP SDNC CDS Application|SDNC-CDS|ONAP Application|||a|mmanager
+vfc|ONAP VFC Application|VNC|ONAP Application|||a|mmanager
+policy|ONAP Policy Application|POLICY|ONAP Application|||a|mmanager
+pomba|ONAP Pomba Application|POMBA|ONAP Application|||a|mmanager
+holmes|ONAP Holmes Application|HOLMES|ONAP Application|||a|mmanager
+nbi|ONAP NBI Application|NBI|ONAP Application|||a|mmanager
 # VID Identities
-vid|ONAP VID Application|VID|ONAP Application|||a|aaf_admin
-vid1|ONAP VID Application 1|VID 1|ONAP Application|||a|aaf_admin
-vid2|ONAP VID Application 2|VID 2|ONAP Application|||a|aaf_admin
-
+vid|ONAP VID Application|VID|ONAP Application|||a|mmanager
+vid1|ONAP VID Application 1|VID 1|ONAP Application|||a|mmanager
+vid2|ONAP VID Application 2|VID 2|ONAP Application|||a|mmanager
 # DMAAP Identities
-dmaap-bc|ONAP DMaap BC Application|DMaap BC|ONAP Application|||a|aaf_admin
-dmaap-bc-topic-mgr|ONAP DMaap BC Topic Manager|DMaap BC Topic Manager|DMaap BC|||a|aaf_admin
-dmaap-bc-mm-prov|ONAP DMaap BC Provisioning Manager|DMaap BC Provision Manager|DMaap BC|||a|aaf_admin
-dmaap-dr|ONAP DMaap DR|Prov|DMaap DR|||a|aaf_admin
-dmaap-dr-prov|ONAP DMaap DR Prov|Prov|DMaap MR|||a|aaf_admin
-dmaap-dr-node|ONAP DMaap DR Node|Node|DMaap MR|||a|aaf_admin
-dmaap-mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
-
+dmaap-bc|ONAP DMaap BC Application|DMaap BC|ONAP Application|||a|mmanager
+dmaap-bc-topic-mgr|ONAP DMaap BC Topic Manager|DMaap BC Topic Manager|DMaap BC|||a|mmanager
+dmaap-bc-mm-prov|ONAP DMaap BC Provisioning Manager|DMaap BC Provision Manager|DMaap BC|||a|mmanager
+dmaap-dr|ONAP DMaap DR|Prov|DMaap DR|||a|mmanager
+dmaap-dr-prov|ONAP DMaap DR Prov|Prov|DMaap MR|||a|mmanager
+dmaap-dr-node|ONAP DMaap DR Node|Node|DMaap MR|||a|mmanager
+dmaap-mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|mmanager
 #deprecate these in El Alto
-dmaapmr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
-#dmaap.mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|aaf_admin
-
+dmaapmr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|mmanager
+#dmaap.mr|ONAP DMaap MR Application|DMaap MR|ONAP Application|||a|mmanager
