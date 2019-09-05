@@ -271,11 +271,9 @@ public class Cred  {
         public void inc(int type, Date start, Date expires) {
             for (int i=0;i<dates.length-1;++i) {
                 if (start.before(dates[i])) {
-                    if (type==CredDAO.CERT_SHA256_RSA) {
-                        if (start.after(dates[i+1])) {
+                    if ((type==CredDAO.CERT_SHA256_RSA)&&(start.after(dates[i+1]))) {
                             ++x509Added[i];
-                        }
-                    }
+                         }
                     if (expires.after(dates[i])) {
                         switch(type) {
                             case CredDAO.RAW:
