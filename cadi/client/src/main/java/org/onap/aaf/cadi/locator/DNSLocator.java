@@ -27,11 +27,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.onap.aaf.cadi.Access;
-import org.onap.aaf.cadi.Locator;
-import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.LocatorException;
 
-public class DNSLocator implements Locator<URI> {
+public class DNSLocator implements SizedLocator<URI> {
     private static enum Status {UNTRIED, OK, INVALID, SLOW};
     private static final int CHECK_TIME = 3000;
     
@@ -63,11 +62,11 @@ public class DNSLocator implements Locator<URI> {
             throw new LocatorException("Null passed into DNSLocator constructor");
         }
         int start, defPort;
-        if (aaf_locate.startsWith("https:")) {
+        if (aaf_locate.startsWith("https://")) {
             protocol = "https";
             start = 8; // https://
             defPort = 443;
-        } else if (aaf_locate.startsWith("http:")) {
+        } else if (aaf_locate.startsWith("http://")) {
             protocol = "http";
             start = 7; // http://
             defPort = 80;

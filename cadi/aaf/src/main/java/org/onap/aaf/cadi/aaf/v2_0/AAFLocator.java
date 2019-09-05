@@ -38,6 +38,8 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfoC;
 import org.onap.aaf.cadi.http.HClient;
 import org.onap.aaf.cadi.locator.DNSLocator;
+import org.onap.aaf.cadi.locator.SingleEndpointLocator;
+import org.onap.aaf.cadi.locator.SizedLocator;
 import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.cadi.util.Split;
 import org.onap.aaf.misc.env.APIException;
@@ -54,7 +56,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     private HClient client;
     private HClient lclient;
     private RosettaDF<Endpoints> epsDF;
-    private DNSLocator locatorLocator;
+    private SizedLocator<URI> locatorLocator;
     private Item locatorItem;
 
 
@@ -104,7 +106,12 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
         	locatorLocator = null;
         } else {
 	        locatorLocator = new DNSLocator(access, dnsString);
-	        locatorItem = locatorLocator.best();
+	        if(locatorLocator.hasItems()) {
+	        	locatorItem = locatorLocator.best();
+	        } else {
+	        	// For when DNS doesn't work, including some K8s Installations
+				locatorLocator = new SingleEndpointLocator(dnsString);
+	        }
         }
     }
 
@@ -122,6 +129,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     }
 
     protected final int maxIters() {
+    	
         return locatorLocator.size();
     }
 
