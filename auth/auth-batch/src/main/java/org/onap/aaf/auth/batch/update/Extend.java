@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,7 +162,8 @@ public class Extend extends Batch {
                                         for(CredDAO.Data cd : result.value) {
                                             if(cd.type == CredDAO.BASIC_AUTH_SHA256 || cd.type == CredDAO.BASIC_AUTH) {
                                                 String prev;
-                                                if(row.get(4).equals(prev=Chrono.dateOnlyStamp(cd.expires))) {
+                                                prev=Chrono.dateOnlyStamp(cd.expires);
+                                                if(row.get(4).equals(prev)){
                                                     gc = hgc.get();
                                                     gc.setTime(new Date(Long.parseLong(row.get(5))));
                                                     if(gc.before(now)) {
