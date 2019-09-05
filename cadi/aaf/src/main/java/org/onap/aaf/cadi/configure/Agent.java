@@ -1017,7 +1017,7 @@ public class Agent {
         }
     }
 
-    public static List<Props> aafProps(Trans trans, AAFCon<?> aafcon, String locator, String fqi) throws CadiException, APIException, URISyntaxException {
+    public static List<Props> aafProps(Trans trans, AAFCon<?> aafcon, String locator, String fqi) throws CadiException, APIException, LocatorException {
         Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
                 .read("/configure/"+fqi+"/aaf", configDF);
         if (acf.get(TIMEOUT)) {

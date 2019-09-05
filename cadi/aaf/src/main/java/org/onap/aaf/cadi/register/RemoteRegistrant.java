@@ -75,7 +75,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
                 } else {
                     locator = new SingleEndpointLocator(aaf_locate);
                 }
-            } catch (URISyntaxException | UnknownHostException e) {
+            } catch (UnknownHostException e) {
                 throw new CadiException(e);
             }
         }

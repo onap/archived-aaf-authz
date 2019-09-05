@@ -21,17 +21,20 @@
 
 package org.onap.aaf.cadi.locator.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URI;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.aaf.cadi.Access.Level;
+import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.Locator.Item;
 import org.onap.aaf.cadi.locator.DNSLocator;
 
 public class JU_DNSLocator {
@@ -73,12 +76,20 @@ public class JU_DNSLocator {
         new DNSLocator(access, "https", "localhost", "8100");
         new DNSLocator(access, "https", "localhost", "8100-8101");
 
-        new DNSLocator(access, "http:localhost");
-        new DNSLocator(access, "https:localhost");
-        new DNSLocator(access, "https:localhost:8100");
-        new DNSLocator(access, "https:localhost:[8100]");
-        new DNSLocator(access, "https:localhost:[8100-8101]");
-        new DNSLocator(access, "https:localhost:8000/");
+        new DNSLocator(access, "http://localhost");
+        new DNSLocator(access, "https://localhost");
+        new DNSLocator(access, "https://localhost:8100");
+        new DNSLocator(access, "https://localhost:[8100]");
+        new DNSLocator(access, "https://localhost:[8100-8101]");
+        new DNSLocator(access, "https://localhost:8000/");
+        new DNSLocator(access, "https://aaf-locatexx.onapxxx:8095/locate");
+        try {
+        	new DNSLocator(access, "https:localhost:8000");
+        	fail("Invalid URL should not pass");
+        } catch (LocatorException e) {
+        	access.log(Level.DEBUG, "Valid Exception");
+        	
+        }
     }
     
     @Test

@@ -24,10 +24,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 
-import org.onap.aaf.cadi.Locator;
 import org.onap.aaf.cadi.LocatorException;
 
-public class SingleEndpointLocator implements Locator<URI> {
+public class SingleEndpointLocator implements SizedLocator<URI> {
     private final URI uri;
     private final static Item item = new Item() {};  
     private Date noRetryUntil;
@@ -36,8 +35,12 @@ public class SingleEndpointLocator implements Locator<URI> {
         this.uri = uri;
     }
     
-    public SingleEndpointLocator(final String endpoint) throws URISyntaxException {
-        this.uri = new URI(endpoint);
+    public SingleEndpointLocator(final String endpoint) throws LocatorException {
+        try {
+			this.uri = new URI(endpoint);
+		} catch (URISyntaxException e) {
+			throw new LocatorException(e);
+		}
     }
 
     @Override
@@ -83,6 +86,11 @@ public class SingleEndpointLocator implements Locator<URI> {
     public boolean refresh() {
         // Never refreshed
         return true;
+    }
+    
+    @Override
+    public int size() {
+    	return 1;
     }
 
     @Override
