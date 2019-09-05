@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,9 +204,10 @@ public class Cred  {
         }
         cred.instances.add(new Instance(type, timestamp, other, written/1000,tag));
         
-        List<Cred> lscd = byNS.get(cred.ns);
+        List<Cred> lscd = byNS.get(cred.ns);	
         if (lscd==null) {
-            byNS.put(cred.ns, (lscd=new ArrayList<>()));
+        	lscd=new ArrayList<>();
+            byNS.put(cred.ns,lscd);
         }
         boolean found = false;
         for (Cred c : lscd) {
