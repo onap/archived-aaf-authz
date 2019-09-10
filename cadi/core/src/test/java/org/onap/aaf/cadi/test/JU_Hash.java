@@ -208,4 +208,11 @@ public class JU_Hash {
         assertEquals(new String(new byte[] {(byte)0x0A, (byte)0xB0}), new String(output));
         assertNull(Hash.fromHexNo0x("~~"));
     }
+//    
+//    @Test
+//    public void aaf_941() throws Exception {
+//        // User notes: From reported error "aaf" not coded right
+//        
+//        
+//    }
 }
