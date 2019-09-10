@@ -18,6 +18,12 @@ An important change, however, is that the AAF Locator requires internal K8s Apps
 	internal-to-K8s Service URL tags as (example) "onap.org.osaaf.aaf.service:2.1" 
         external-to-K8s Service URL tags as (example) "org.osaaf.aaf.service.2.1"
 
+        IF you are using previous configurations, you may need to clear the existing directory
+	
+	- Login to your Init Container
+	- cd /opt/app/osaaf/local
+        - CAREFULLY rm *.*, and have it regenerate 
+
 **Bug Fixes**
 	- `AAF-859 <https://jira.onap.org/browse/AAF-859>`_ Images hardcoded in AAF helm deployment yamls
 
