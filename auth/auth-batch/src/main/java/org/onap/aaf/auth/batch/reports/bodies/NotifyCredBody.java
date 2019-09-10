@@ -125,7 +125,7 @@ public abstract class NotifyCredBody extends NotifyBody {
     public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln) {
         for(List<String> row : rows.get(id)) {
             for(String n : notified) {
-                // Need to match LastNotified Key ... cred.id + '|' + inst.type + '|' + inst.tag;
+                
                 ln.update(query, n, row.get(0), row.get(1)+'|'+row.get(3)+'|'+row.get(6));
             }
         }
