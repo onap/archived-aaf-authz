@@ -26,10 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -42,21 +39,15 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.env.util.Split;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.SimpleStatement;
-import com.datastax.driver.core.Statement;
-
 
 public class ApprovedRpt extends Batch {
     
     private static final String APPR_RPT = "ApprovedRpt";
     private static final String CSV = ".csv";
-    private static final String INFO = "info";
     private Date now;
     private Writer approvedW;
     private CSV historyR;
-    private static String yr_mon;
+    private static String yrMon;
     
     public ApprovedRpt(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -71,8 +62,8 @@ public class ApprovedRpt extends Batch {
             approvedW = csv.writer(false);
             
             historyR = new CSV(env.access(),args()[1]).setDelimiter('|');
-            
-            yr_mon = args()[0];
+
+            yrMon = args()[0];
         } finally {
             tt0.done();
         }
@@ -81,19 +72,13 @@ public class ApprovedRpt extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
         try {
-            Map<String,Boolean> checked = new TreeMap<String, Boolean>();
-            
-            final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
-            int totalLoaded = 0;
-            Date d;
             GregorianCalendar gc = new GregorianCalendar();
             gc.add(GregorianCalendar.MONTH, -2);
-            Date begin = gc.getTime();
             approvedW.comment("date, approver, status, user, role, memo");
             
             historyR.visit(row -> {
                 String s = row.get(7);
-                if(s.equals(yr_mon)) {
+                if(s.equals(yrMon)) {
                     String target = row.get(5);
                     if("user_role".equals(target)) {
                         String action = row.get(1);
@@ -117,7 +102,7 @@ public class ApprovedRpt extends Batch {
         }
     }
     
-    private void write(String a_or_d, List<String> row) {
+    private void write(String aORd, List<String> row) {
         String[] target = Split.splitTrim('|', row.get(4));
         
         if(target.length>1) {
@@ -130,7 +115,7 @@ public class ApprovedRpt extends Batch {
                 status = "reduced";
                 memo = "existing role membership reduced to invoke reapproval";
             } else {
-                status = a_or_d;
+                status = aORd;
                 memo = row.get(2);
             }
             if(!approver.equals(target[0])) {
