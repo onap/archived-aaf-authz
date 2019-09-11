@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +22,6 @@
  */
 package org.onap.aaf.auth.batch.helpers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,6 @@ import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.Hash;
-import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
@@ -135,8 +135,6 @@ public class BatchDataView implements DataView {
         sb.append(add.id.toString());
         sb.append(COMMA_QUOTE);
         sb.append(add.approver);
-//        sb.append(QUOTE_COMMA_QUOTE);
-//        sb.append(Chrono.utcStamp(add.last_notified));
         sb.append(QUOTE_COMMA_QUOTE);
         sb.append(add.memo.replace("'", "''"));
         sb.append(QUOTE_COMMA_QUOTE);
