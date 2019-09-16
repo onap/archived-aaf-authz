@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +46,7 @@ import aaf.v2_0.Users.User;
  *
  */
 public class ListForCreds extends Cmd {
-    private final static String[] options = {"ns","id"};
+    private static final String[] options = {"ns","id"};
 
     private static final String HEADER = "List creds by Namespace or ID ";
     public ListForCreds(List parent) {
@@ -54,8 +56,8 @@ public class ListForCreds extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+    public int _exec(int idxParam, final String ... args) throws CadiException, APIException, LocatorException {
+            int idx = idxParam;
         final int option = whichOption(options, args[idx++]);
         final String which = options[option];
         final String value = args[idx++];
@@ -75,7 +77,9 @@ public class ListForCreds extends Cmd {
                             }            
                         });
                     ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,option==1,HEADER+which,value);
-                    if (fp.code()==404)return 200;
+                    if (fp.code()==404) {
+                        return 200;
+                    }
                 } else {
                     error(fp);
                 }
@@ -85,8 +89,8 @@ public class ListForCreds extends Cmd {
     }
     
     @Override
-    public void detailedHelp(int _indent, StringBuilder sb) {
-            int indent = _indent;
+    public void detailedHelp(int indentParam, StringBuilder sb) {
+            int indent = indentParam;
         detailLine(sb,indent,HEADER);
         indent+=2;
         detailLine(sb,indent,"This report lists the users associated to either Namespaces or IDs.");
