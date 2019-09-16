@@ -143,14 +143,16 @@ public class API_Creds {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+                // will be a valid Entity.  Do we need to add permission
+            	//if(trans.fish("ns","password","request")) or the like
                 Result<Date> r = context.doesCredentialMatch(trans, req, resp);
                 if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     // For Security, we don't give any info out on why failed, other than forbidden
                     // Can't do "401", because that is on the call itself
-                    resp.setStatus(HttpStatus.FORBIDDEN_403);
+                	// 403 Implies you MAY NOT Ask.
+                    resp.setStatus(HttpStatus.NOT_ACCEPTABLE_406);
                 }
             }
         });  

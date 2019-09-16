@@ -26,12 +26,13 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.onap.aaf.auth.common.Define;
@@ -496,6 +497,7 @@ public class Question {
             Result<List<NsDAO.Data>> rld = nsDAO.read(trans, lookup);
             if (rld.isOKhasData()) {
                 nsd=rld.value.get(0);
+                lookup = nsd.parent;
                 if (type.type == nsd.type) {
                     return Result.ok(nsd);
                 } else {
@@ -898,18 +900,28 @@ public class Question {
                 }
             } else {
                 Date now = new Date();
-                // Bug noticed 6/22. Sorting on the result can cause Concurrency Issues.     
-                List<CredDAO.Data> cddl;
+                // Bug noticed 6/22. Sorting on the result can cause Concurrency Issues.  
+                // 9/14/2019. Use TreeSet for sorting, and using only the LAST of a Tagged entry
+                Collection<CredDAO.Data> cddl;
                 if (result.value.size() > 1) {
-                    cddl = new ArrayList<>(result.value.size());
-                    for (CredDAO.Data old : result.value) {
-                        if (old.type==CredDAO.BASIC_AUTH || old.type==CredDAO.BASIC_AUTH_SHA256) {
-                            cddl.add(old);
+                	Map<String,CredDAO.Data> mcdd = new TreeMap<>();
+                	CredDAO.Data cdd;
+                	String tag;
+                	int pseudoTag = 0;
+                    for (CredDAO.Data rcdd : result.value) {
+                        if (rcdd.type==CredDAO.BASIC_AUTH || rcdd.type==CredDAO.BASIC_AUTH_SHA256) {
+                        	if(rcdd.tag==null) {
+                        		mcdd.put(Integer.toString(++pseudoTag),rcdd);
+                        	} else {
+                        		tag = rcdd.tag;
+	                        	cdd = mcdd.get(tag);
+	                        	if(cdd==null || cdd.expires.before(rcdd.expires)) {
+	                        		mcdd.put(tag,rcdd);
+	                        	}
+                        	}
                         }
                     }
-                    if (cddl.size()>1) {
-                        Collections.sort(cddl, (a, b) -> b.expires.compareTo(a.expires));
-                    }
+                    cddl = mcdd.values();
                 } else {
                     cddl = result.value;
                 }

@@ -20,7 +20,6 @@
  */
 package org.onap.aaf.auth.batch.helpers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.Hash;
-import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;

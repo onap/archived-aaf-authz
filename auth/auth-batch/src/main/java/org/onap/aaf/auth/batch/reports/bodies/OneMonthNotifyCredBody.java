@@ -26,7 +26,7 @@ import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class OneMonthNotifyCredBody extends NotifyCredBody {
-    public OneMonthNotifyCredBody(Access access){
+    public OneMonthNotifyCredBody(Access access) throws IOException {
         super(access, ExpireRange.ONE_MONTH);
     }
     

@@ -29,8 +29,9 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.User;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.client.Future;
-import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.lur.ConfigPrincipal;
+
+import aaf.v2_0.CredRequest;
 
 public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
     private AAFCon<CLIENT> con;
@@ -139,12 +140,16 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
             try {
                 Miss missed = missed(getName(),getCred());
                 if (missed==null || missed.mayContinue()) {
-                    Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
-                    Future<String> fp = client.read(
-                            "/authn/basicAuth",
-                            "text/plain"
-                            );
-                    if (fp.get(con.timeout)) {
+                	CredRequest cr = new CredRequest();
+                	cr.setId(getName());
+                	cr.setPassword(new String(getCred()));
+                	Future<String> fp = con.client().readPost("/authn/validate", con.credReqDF, cr);
+                    //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
+                    //Future<String> fp = client.read(
+                    //        "/authn/basicAuth",
+                    //        "text/plain"
+                    //       );
+                     if (fp.get(con.timeout)) {
                         expires = System.currentTimeMillis() + timeToLive;
                         addUser(new User<AAFPermission>(this, expires));
                         return Resp.REVALIDATED;

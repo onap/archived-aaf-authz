@@ -167,6 +167,8 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
 //            }
             sb.append(",ms=");
             sb.append(m.total);
+            sb.append(",status=");
+            sb.append(trans.hresp().getStatus());
             sb.append(",meth=");
             sb.append(trans.meth());
             sb.append(",path=");

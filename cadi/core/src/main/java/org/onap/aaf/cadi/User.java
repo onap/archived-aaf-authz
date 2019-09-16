@@ -40,7 +40,7 @@ public final class User<PERM extends Permission> {
     public String name;
     private byte[] cred;
     public Principal principal;
-    Map<String, Permission> perms ;
+    Map<String, Permission> perms;
     long permExpires;
     private final long interval;
     int count;

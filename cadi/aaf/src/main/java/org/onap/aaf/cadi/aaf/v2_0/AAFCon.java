@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.Access;
+import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.CadiWrap;
 import org.onap.aaf.cadi.Connector;
@@ -36,7 +37,6 @@ import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Lur;
 import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.SecuritySetter;
-import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.aaf.marshal.CertsMarshal;
 import org.onap.aaf.cadi.client.Future;
@@ -56,6 +56,7 @@ import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 import aaf.v2_0.Certs;
+import aaf.v2_0.CredRequest;
 import aaf.v2_0.Error;
 import aaf.v2_0.Perms;
 import aaf.v2_0.Users;
@@ -69,6 +70,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
     final public RosettaDF<Perms> permsDF;
     final public RosettaDF<Certs> certsDF;
     final public RosettaDF<Users> usersDF;
+    final public RosettaDF<CredRequest> credReqDF;
     final public RosettaDF<Error> errDF;
     private String realm;
     public final String app;
@@ -90,6 +92,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
         permsDF = copy.permsDF;
         certsDF = copy.certsDF;
         usersDF = copy.usersDF;
+        credReqDF = copy.credReqDF;
         errDF = copy.errDF;
         app = copy.app;
         si = copy.si;
@@ -186,6 +189,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
             usersDF = env.newDataFactory(Users.class);
             certsDF = env.newDataFactory(Certs.class);
             certsDF.rootMarshal(new CertsMarshal()); // Speedier Marshaling
+            credReqDF = env.newDataFactory(CredRequest.class);
             errDF = env.newDataFactory(Error.class);
         } catch (APIException e) {
             throw new CadiException("AAFCon cannot be configured",e);

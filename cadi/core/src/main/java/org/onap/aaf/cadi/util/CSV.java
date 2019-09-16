@@ -45,17 +45,20 @@ public class CSV {
     private Access access;
     private boolean processAll;
     private char delimiter = ',';
+    private boolean go;
     
     public CSV(Access access, File file) {
         this.access = access;
         csv = file;
         processAll = false;
+        go = true;
     }
     
     public CSV(Access access, String csvFilename) {
         this.access = access;
         csv = new File(csvFilename);
         processAll = false;
+        go = true;
     }
     
     public CSV setDelimiter(char delimiter) {
@@ -88,7 +91,7 @@ public class CSV {
         try {
             String line;
             StringBuilder sb = new StringBuilder();
-            while((line = br.readLine())!=null) {
+            while(go && (line = br.readLine())!=null) {
                 line=line.trim();
                 if(!line.startsWith("#") && line.length()>0) {
 //                    System.out.println(line);  uncomment to debug
@@ -267,6 +270,13 @@ public class CSV {
         public String toString() {
             return csv.getAbsolutePath();
         }
+    }
+    
+    /**
+     * Provides a way to stop processing records from inside a Visit
+     */
+    public void stop() {
+    	go = false;
     }
 
     public void delete() {
