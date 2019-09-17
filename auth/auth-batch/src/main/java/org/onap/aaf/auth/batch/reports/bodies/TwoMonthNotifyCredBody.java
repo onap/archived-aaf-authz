@@ -20,13 +20,12 @@
  */
 package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.io.IOException;
 
 import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class TwoMonthNotifyCredBody extends NotifyCredBody {
-    public TwoMonthNotifyCredBody(Access access) throws IOException {
+    public TwoMonthNotifyCredBody(Access access) {
         super(access, ExpireRange.TWO_MONTH);
     }
     
