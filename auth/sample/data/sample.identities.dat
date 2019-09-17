@@ -62,6 +62,7 @@ policy|ONAP Policy Application|POLICY|ONAP Application|||a|mmanager
 pomba|ONAP Pomba Application|POMBA|ONAP Application|||a|mmanager
 holmes|ONAP Holmes Application|HOLMES|ONAP Application|||a|mmanager
 nbi|ONAP NBI Application|NBI|ONAP Application|||a|mmanager
+music|ONAP MUSIC Application|MUSIC|ONAP Application|||a|mmanager
 # VID Identities
 vid|ONAP VID Application|VID|ONAP Application|||a|mmanager
 vid1|ONAP VID Application 1|VID 1|ONAP Application|||a|mmanager
