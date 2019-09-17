@@ -83,7 +83,8 @@ public class JscepCA extends CA {
         
         // Set this for NTLM password Microsoft
         Authenticator.setDefault(new Authenticator() {
-              public PasswordAuthentication getPasswordAuthentication () {
+            @Override  
+        	public PasswordAuthentication getPasswordAuthentication () {
                     try {
                         return new PasswordAuthentication (id,access.decrypt(pw,true).toCharArray());
                     } catch (IOException e) {
