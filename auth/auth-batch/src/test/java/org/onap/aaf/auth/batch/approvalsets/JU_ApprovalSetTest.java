@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
 import java.util.Set;
@@ -51,7 +50,6 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.PreparedId;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
 public class JU_ApprovalSetTest {

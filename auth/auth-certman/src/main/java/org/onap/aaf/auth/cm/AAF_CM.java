@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,7 +219,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         // Add other Supported APIs here as created
     }
 
-    public void routeAll(HttpMethods meth, String path, API api, Code code) throws Exception {
+    public void routeAll(HttpMethods meth, String path, API api, Code code) {
         route(env,meth,path,code,""); // this will always match
     }
 

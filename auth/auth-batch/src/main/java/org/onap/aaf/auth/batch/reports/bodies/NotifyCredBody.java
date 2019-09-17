@@ -22,7 +22,6 @@
  */
 package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
 

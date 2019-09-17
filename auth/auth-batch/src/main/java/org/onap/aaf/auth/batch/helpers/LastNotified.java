@@ -119,6 +119,7 @@ public class LastNotified {
         return last;
     }
     
+    @FunctionalInterface
     private interface MarkDelete {
         boolean process(String fullKey, Date last);
     }

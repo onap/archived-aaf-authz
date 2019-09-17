@@ -309,8 +309,6 @@ import org.onap.aaf.misc.env.util.Chrono;
                         rs.row("appr", id,p.qty(),batchEnv);
                         npab.store(rs.asList());
                         if(notify(noAvg, npab)>0) {
-                            // Update
-//                            lastN.update(cbl.inc(),key,"pending","");
                             npab.record(trans,cbl.inc(), id, idList, lastN);
                             npab.inc();
                         }

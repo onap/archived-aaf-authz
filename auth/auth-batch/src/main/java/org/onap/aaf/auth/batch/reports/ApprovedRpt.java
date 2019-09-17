@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
+
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.OrganizationException;
@@ -41,17 +40,11 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.env.util.Split;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.SimpleStatement;
-import com.datastax.driver.core.Statement;
-
 
 public class ApprovedRpt extends Batch {
     
     private static final String APPR_RPT = "ApprovedRpt";
     private static final String CSV = ".csv";
-    private static final String INFO = "info";
     private Date now;
     private Writer approvedW;
     private CSV historyR;
@@ -86,10 +79,7 @@ public class ApprovedRpt extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
-        try {
-            Map<String,Boolean> checked = new TreeMap<String, Boolean>();
-            
-            final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
+        try {          
 //            ResultSet results;
 //            Statement stmt = new SimpleStatement( "select dateof(id), approver, status, user, type, memo from authz.approved;" );
 //            results = session.execute(stmt);
@@ -111,15 +101,10 @@ public class ApprovedRpt extends Batch {
                     );
                 }
             }
-
              */
-            int totalLoaded = 0;
-            Date d;
             GregorianCalendar gc = new GregorianCalendar();
             gc.add(GregorianCalendar.MONTH, -2);
-            Date begin = gc.getTime();
             approvedW.comment("date, approver, status, user, role, memo");
-            
             historyR.visit(row -> {
                 String s = row.get(7);
                 if(s.equals(yr_mon)) {

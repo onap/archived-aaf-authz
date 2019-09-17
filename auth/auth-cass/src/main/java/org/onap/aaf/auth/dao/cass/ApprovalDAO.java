@@ -57,6 +57,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
     private PSInfo psByTicket;
     private PSInfo psByStatus;
 
+    private static final int KEYLIMIT = 1;
     
     public ApprovalDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, ApprovalDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
@@ -71,7 +72,6 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
         init(trans);
     }
 
-    private static final int KEYLIMIT = 1;
     public static class Data {
         public UUID   id;
         public UUID   ticket;
@@ -81,7 +81,6 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
         public String status;
         public String memo;
         public String operation;
-//        public Date last_notified;
         public Date updated;
     }
     
@@ -102,7 +101,6 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             data.status = row.getString(5);
             data.memo = row.getString(6);
             data.operation = row.getString(7);
-//            data.last_notified = row.getTimestamp(8);
             // This is used to get "WRITETIME(STATUS)" from Approval, which gives us an "updated" 
             if (row.getColumnDefinitions().size()>8) {
                 // Rows reported in MicroSeconds
@@ -117,8 +115,8 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
         }
 
         @Override
-        protected void body(Data data, int _idx, Object[] obj) {
-                int idx = _idx;
+        protected void body(Data data, int idxParam, Object[] obj) {
+                int idx = idxParam;
             obj[idx]=data.ticket;
             obj[++idx]=data.user;
             obj[++idx]=data.approver;
@@ -126,7 +124,6 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             obj[++idx]=data.status;
             obj[++idx]=data.memo;
             obj[++idx]=data.operation;
-//            obj[++idx]=data.last_notified;
         }
     }    
     

@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +22,11 @@
  */
 package org.onap.aaf.auth.batch.reports.bodies;
 
-import java.io.IOException;
-
 import org.onap.aaf.auth.batch.helpers.ExpireRange;
 import org.onap.aaf.cadi.Access;
 
 public class OneMonthNotifyCredBody extends NotifyCredBody {
-    public OneMonthNotifyCredBody(Access access) throws IOException {
+    public OneMonthNotifyCredBody(Access access) {
         super(access, ExpireRange.ONE_MONTH);
     }
     

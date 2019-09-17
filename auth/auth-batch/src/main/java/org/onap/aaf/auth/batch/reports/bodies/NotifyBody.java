@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -205,15 +206,13 @@ public abstract class NotifyBody {
         for(String cls : classNames) {
             try {
                 Class<?> c = cl.loadClass(cls);
-                if(c!=null) {
-                    if(!Modifier.isAbstract(c.getModifiers())) {
-                        Constructor<?> cst = c.getConstructor(Access.class);
+                if((c!=null)&&(!Modifier.isAbstract(c.getModifiers()))) {
+                       Constructor<?> cst = c.getConstructor(Access.class);
                         NotifyBody nb = (NotifyBody)cst.newInstance(access);
                         if(nb!=null) {
                             bodyMap.put("info|"+nb.name, nb);
                             bodyMap.put(nb.type+'|'+nb.name, nb);
-                        }
-                    }
+                          }
                 }
             } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 e.printStackTrace();

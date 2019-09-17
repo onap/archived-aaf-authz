@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,10 +88,10 @@ public class List extends BaseCmd<Role> {
         }
     }
 
-    private final static String roleFormat = "%-56s Expires %s\n";
-    private final static String roleFormatNoDate = "%-61s\n";
-    private final static String roleExpiredFormat = "%-53s !!! EXPIRED !!! %s\n";
-    private final static String permFormat = "   %-30s %-30s %-15s\n";
+    private static final String roleFormat = "%-56s Expires %s\n";
+    private static final String roleFormatNoDate = "%-61s\n";
+    private static final String roleExpiredFormat = "%-53s !!! EXPIRED !!! %s\n";
+    private static final String permFormat = "   %-30s %-30s %-15s\n";
 
     
     private static final Comparator<aaf.v2_0.Role> roleCompare = new Comparator<aaf.v2_0.Role>() {
@@ -106,9 +108,11 @@ public class List extends BaseCmd<Role> {
         } else if (aafcli.isDetailed()){
             if (str[0].toLowerCase().contains(LIST_ROLES_BY_NAME)) {
                 String description = roles.getRole().get(0).getDescription();
-                if (description == null) description = "";
+                if (description == null) {
+                    description = "";
+                }
                 reportColHead("%-80s\n","Description: " + description);
-            }             
+            }
 
             String fullFormat = roleFormat+permFormat;
             reportColHead(fullFormat,"[ROLE NS].Name","","[PERM NS].Type","Instance","Action");
