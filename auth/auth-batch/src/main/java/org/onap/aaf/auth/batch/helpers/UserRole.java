@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,10 +129,10 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 
     public static void load(Trans trans, CSV csv, Creator<UserRole> creator, Visitor<UserRole> visitor) throws IOException, CadiException {
 //        public UserRole(String user, String role, String ns, String rname, Date expires) {
-        csv.visit( row -> {
+        csv.visit( row -> 
             visitor.visit(new UserRole(row.get(1),row.get(2),row.get(3),row.get(4),
-                new Date(Long.parseLong(row.get(6)))));
-        });
+                new Date(Long.parseLong(row.get(6)))))
+        );
     }
     
     private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
