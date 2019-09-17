@@ -73,7 +73,7 @@ public class RequestDetail extends Page {
      *
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-        final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
+       static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
         private Slot sTicket;
         public Model(AuthzEnv env) {
             sTicket = env.slot(NAME+".ticket");
