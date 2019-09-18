@@ -167,19 +167,27 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
 
     public void replace(CRUD crud, PSInfo psInfo) {
         switch(crud) {
-            case create: createPS = psInfo; break;
-            case read:   readPS = psInfo; break;
-            case update: updatePS = psInfo; break;
-            case delete: deletePS = psInfo; break;
+            case create: createPS = psInfo;
+            break;
+            case read:   readPS = psInfo;
+            break;
+            case update: updatePS = psInfo;
+            break;
+            case delete: deletePS = psInfo;
+            break;
         }
     }
 
     public void disable(CRUD crud) {
         switch(crud) {
-            case create: createPS = null; break;
-            case read:   readPS = null; break;
-            case update: updatePS = null; break;
-            case delete: deletePS = null; break;
+            case create: createPS = null;
+            break;
+            case read:   readPS = null;
+            break;
+            case update: updatePS = null;
+            break;
+            case delete: deletePS = null;
+            break;
         }
     }
 
