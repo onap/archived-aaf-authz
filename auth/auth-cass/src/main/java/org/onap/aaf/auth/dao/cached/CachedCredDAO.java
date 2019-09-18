@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +52,7 @@ public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> 
                 @Override
                 public Result<List<Data>> read(AuthzTrans trans, final String id) {
                     DAOGetter getter = new DAOGetter(trans,dao()) {
+                    	@Override
                         public Result<List<CredDAO.Data>> call() {
                             return dao().readID(trans, id);
                         }
@@ -68,6 +70,7 @@ public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> 
                 @Override
                 public Result<List<Data>> read(AuthzTrans trans, final String id) {
                      DAOGetter getter = new DAOGetter(trans,dao()) {
+                    	 @Override
                          public Result<List<CredDAO.Data>> call() {
                              return dao().readIDBAth(trans, id);
                          }
@@ -105,6 +108,7 @@ public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> 
         return readIDBath.read(trans,id);
     }
 
+    @FunctionalInterface
     private interface ReadID {
         public Result<List<CredDAO.Data>> read(final AuthzTrans trans, final String id);
     }
