@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modification Copyright (c) 2019 IBM
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +39,6 @@ import org.onap.aaf.misc.env.Trans;
 
 public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<TRANS,DATA> {
     // Java does not allow creation of Arrays with Generics in them...
-    // private Map<String,Dated> cache[];
     protected final CIDAO<TRANS> info;
     
     private static Timer infoTimer;
@@ -47,19 +48,8 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
     protected final String name;
 
     private final long expireIn;
-    
 
 
-    // Taken from String Hash, but coded, to ensure consistent across Java versions.  Also covers negative case;
-    public int cacheIdx(String key) {
-        int h = 0;
-        for (int i = 0; i < key.length(); i++) {
-            h = 31*h + key.charAt(i);
-        }
-        if (h<0)h*=-1;
-        return h%segSize;
-    }
-    
     public Cached(CIDAO<TRANS> info, String name, int segSize, long expireIn) {
         this.name =name;
         this.segSize = segSize;
@@ -70,6 +60,18 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         for (int i=0;i<segSize;++i) {
             cache[i]=obtain(name+i);
         }
+    }
+
+    // Taken from String Hash, but coded, to ensure consistent across Java versions.  Also covers negative case;
+    public int cacheIdx(String key) {
+        int h = 0;
+        for (int i = 0; i < key.length(); i++) {
+            h = 31*h + key.charAt(i);
+        }
+        if (h<0) {
+            h*=-1;
+        }
+        return h%segSize;
     }
     
     public void add(String key, List<DATA> data) {
@@ -83,14 +85,14 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         int cacheIdx = cacheIdx(key);
         @SuppressWarnings("unchecked")
         Map<String,Dated> map = ((Map<String,Dated>)cache[cacheIdx]);
-//        if (map.remove(key)!=null) // Not seeming to remove all the time
         if (map!=null)map.clear();
-//            System.err.println("Remove " + name + " " + key);
         return cacheIdx;
     }
 
     public Result<Void> invalidate(int segment)  {
-        if (segment<0 || segment>=cache.length) return Result.err(Status.ERR_BadData,"Cache Segment %s is out of range",Integer.toString(segment));
+        if (segment<0 || segment>=cache.length) {
+            return Result.err(Status.ERR_BadData,"Cache Segment %s is out of range",Integer.toString(segment));
+        }
         @SuppressWarnings("unchecked")
         Map<String,Dated> map = ((Map<String,Dated>)cache[segment]);
         if (map!=null) {
@@ -99,6 +101,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         return Result.ok();
     }
 
+    @FunctionalInterface
     public interface Getter<D> {
         public abstract Result<List<D>> get();
     };
@@ -125,8 +128,6 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
             rld = getter.get();
             if (rld.isOK()) { // only store valid lists
                 map.put(key, new Dated(rld.value,expireIn));  // successful item found gets put in cache
-//            } else if (rld.status == Result.ERR_Backend){
-//                map.remove(key);
             }
         }
         return rld;
@@ -162,8 +163,8 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         }
     }
     
-    private final static class Refresh extends TimerTask {
-        private static final int maxRefresh = 2*60*10000; // 20 mins
+    private static final class Refresh extends TimerTask {
+        private static final int MAXREFRESH = 2*60*10000; // 20 mins
         private AuthzEnv env;
         private CIDAO<AuthzTrans> cidao;
         private int minRefresh;
@@ -173,7 +174,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
             this.env = env;
             this.cidao = cidao;
             this.minRefresh = minRefresh;
-            lastRun = System.currentTimeMillis()-maxRefresh-1000;
+            lastRun = System.currentTimeMillis()-MAXREFRESH-1000;
         }
         
         @Override
@@ -182,7 +183,9 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
             long now = System.currentTimeMillis();
             long interval = now-lastRun;
 
-            if (interval < minRefresh || interval < Math.min(env.transRate(),maxRefresh)) return;
+            if (interval < minRefresh || interval < Math.min(env.transRate(),MAXREFRESH)) {
+                return;
+            }
             lastRun = now;
             AuthzTrans trans = env.newTransNoAvg();
             Result<Void> rv = cidao.check(trans);
