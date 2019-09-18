@@ -45,7 +45,7 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 public class CUI extends HttpCode<AuthzTrans, Void> {
     private final AAF_GUI gui;
-    private final static Pattern userPerm = Pattern.compile("perm (create|delete).*@.*:id.*aaf.gui.*");
+    private static final Pattern userPerm = Pattern.compile("perm (create|delete).*@.*:id.*aaf.gui.*");
 
 
     public CUI(AAF_GUI gui) {
@@ -90,6 +90,7 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
                 if(userPerm.matcher(cmdStr).matches()) {
                     trans.clearCache();
                     Cookie cookie = new Cookie(Page.AAF_THEME,trans.getProperty(Page.AAF_THEME));
+                    cookie.setSecure(true);
                     cookie.setMaxAge(-1);
                     cookie.setComment("Remove AAF GUI Theme");
                     trans.hresp().addCookie(cookie);
