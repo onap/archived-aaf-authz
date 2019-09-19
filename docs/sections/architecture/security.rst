@@ -33,6 +33,10 @@ Whenever two processing entities exist that need to communicate securely, it is 
 
 Encryption is provided by HTTP/S with the TLS 1.2+ protocol. Lesser protocols can also be added, but it is highly recommended that the protocol go no lower than TLS 1.1
 
+ALL components of AAF are accessible only by HTTP/S (service, locate, oauth, gui, certman), EXCEPT the component "FS".  
+
+FS *must* be HTTP, because it is responsible for being accessible DURING the TLS process for recent RCLs.  (Revocation lists).  Since it is part of the TLS process, it cannot be TLS itself.
+
 .. image:: images/SecurityArchBasic_TLS.svg
    	:width: 70%
 	:align: center
