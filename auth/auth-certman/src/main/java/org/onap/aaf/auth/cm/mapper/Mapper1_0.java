@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *  Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,11 +124,9 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
         // Certs in keystore versus Truststore.  Separate in Version 2_0
         if (cin.trustCAs()!=null) {
             for (String c : cin.trustCAs()) {
-                if (c!=null) {
-                    if (!cout.getCerts().contains(c)) {
-                        cout.getCerts().add(c);
-                    }
-                }
+                if ((c!=null)&&(!cout.getCerts().contains(c))) {
+                     cout.getCerts().add(c);
+                 }
             }
         }
         if (cin.notes()!=null) {
