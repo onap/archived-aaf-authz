@@ -64,6 +64,17 @@ Enjoy stretching your mind
 
 AAF can support models of either side.  In the meantime, enjoy the use of your mind to comtemplate things beyond tickets and this will help drive what you need to ask for in terms of Identities for your Apps.
 
+Components
+==========
+
+The running components of AAF include the following:
+ - "service" - RESTful HTTP/S - The main API Service for Authentication, Authorization and Management
+ - "locate" - RESTful HTTP/S - Provides Scaleble, Cross-Deployment Global location, inside or outside a container, of Registered Components (at minimum, AAF Components).  Locate also provide Configuration information for Generated Configurations.
+ - "oauth" - RESTful HTTP/S - OAuth 2 implementation.  Provides "token" and "introspection" methods, where Authorization data is included.
+ - "gui" - Browser HTTP/S - Management GUI, where user interactions occur, including a Web-based CMD-Line interface, API Docs, Approval pages, etc.
+ - "cm" - RESTful HTTP/S - Certificate Manager API, see more details below.
+ - "fs" - HTTP ONLY - File Server.  This Component MUST NOT be HTTP/S, because it Provides HTTP Accessed RCLs as part of the TLS process.  Other public information may be presented as well (such as Certificates, which are by definition Public)
+
 Certificate Manager
 ===================
 

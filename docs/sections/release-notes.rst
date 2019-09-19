@@ -5,7 +5,7 @@
 Release Notes
 =============
 
-Version: 2.1.15 (El Alto, Early Drop, 5.0.0)
+Version: 2.1.15 (El Alto, 5.0.1)
 ---------------------------------------------
 
 :Release Date: 2019-08-12

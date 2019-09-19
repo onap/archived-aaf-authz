@@ -1,4 +1,8 @@
 distribution_type: 'maven'
+<<<<<<< Updated upstream
 version: '2.1.15'
+=======
+version: '2.1.16-SNAPSHOT'
+>>>>>>> Stashed changes
 project: 'aaf-authz'
-log_dir: 'aaf-authz-maven-stage-master/63/'
+log_dir: 'aaf-authz-maven-stage-master/70/'
