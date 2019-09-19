@@ -45,7 +45,7 @@ public class Delg extends BaseCmd<User> {
     static final String AUTHZ_DELG = "/authz/delegate";
     private static final String[] options = {"add","upd","del"};
 
-    public Delg(User user) throws APIException {
+    public Delg(User user){
         super(user,"delegate",
                 new Param(optionsToString(options),true),
                 new Param("from",true),
