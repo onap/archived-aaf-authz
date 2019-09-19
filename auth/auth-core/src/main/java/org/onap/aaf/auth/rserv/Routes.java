@@ -48,7 +48,9 @@ public class Routes<TRANS extends Trans> {
     synchronized Route<TRANS> findOrCreate(HttpMethods  meth, String path) {
         Route<TRANS> rv = null;
         for (int i=0;i<end;++i) {
-            if (routes[i].resolvesTo(meth,path))rv = routes[i];
+            if (routes[i].resolvesTo(meth,path)) {
+            	rv = routes[i];
+            }
         }
         
         if (rv==null) {
