@@ -90,7 +90,7 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
      * to do Versions and Content switches
      * 
      */
-    public void route(HttpMethods meth, String path, API api, HttpCode<AuthzTrans, AAF_Hello> code) throws Exception {
+    public void route(HttpMethods meth, String path, API api, HttpCode<AuthzTrans, AAF_Hello> code){
         String version = "1.0";
         // Get Correct API Class from Mapper
         route(env,meth,path,code,"text/plain;version="+version,"*/*");
