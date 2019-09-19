@@ -145,12 +145,18 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         env.init().log("CachingFileAccess path: " + new File(web_path).getCanonicalPath());
         Object obj;
         obj = env.get(env.staticSlot(CFA_CACHE_CHECK_INTERVAL),600000L);  // Default is 10 mins
-        if (obj instanceof Long) {checkInterval=(Long)obj;
-        } else {checkInterval=Long.parseLong((String)obj);}
+        if (obj instanceof Long) {
+          checkInterval=(Long)obj;
+        } else {
+          checkInterval=Long.parseLong((String)obj);
+        }
         
         obj = env.get(env.staticSlot(CFA_MAX_SIZE), 512000);    // Default is max file 500k
-        if (obj instanceof Integer) {maxItemSize=(Integer)obj;
-        } else {maxItemSize =Integer.parseInt((String)obj);}
+        if (obj instanceof Integer) {
+          maxItemSize=(Integer)obj;
+        } else {
+          maxItemSize =Integer.parseInt((String)obj);
+        }
               
          clear_command = env.getProperty(CFA_CLEAR_COMMAND,null);
     }
