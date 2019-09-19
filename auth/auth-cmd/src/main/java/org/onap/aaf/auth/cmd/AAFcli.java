@@ -215,8 +215,7 @@ public class AAFcli {
                     }
                 } else if ("expect".equalsIgnoreCase(largs[idx])) {
                     expect.clear();
-                    if (largs.length > idx++) {
-                        if (!"nothing".equals(largs[idx])) {
+                    if ((largs.length > idx++)&&(!"nothing".equals(largs[idx]))) {
                             for (String str : largs[idx].split(",")) {
                                 try {
                                     if ("Exception".equalsIgnoreCase(str)) {
@@ -229,8 +228,7 @@ public class AAFcli {
                                 }
                             }
                         ++idx;
-                        }
-                    }
+                }
                     continue;
                     // Sleep, typically for reports, to allow DB to update
                     // Milliseconds
