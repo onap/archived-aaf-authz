@@ -45,7 +45,7 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class LastNotified {
-    private Map<String,Date> lastNotified = new TreeMap<>();
+    private Map<String,Date> lastNotifiedVar = new TreeMap<>();
     private Session session;
     public static final Date NEVER = new Date(0);
     private static final String SELECT = "SELECT user,target,key,last FROM authz.notified";
@@ -67,7 +67,7 @@ public class LastNotified {
             query.append('\'');
             if(cnt>=30) {
                 endQuery(query);
-                add(session.execute(query.toString()),lastNotified, (x,y) -> false);
+                add(session.execute(query.toString()),lastNotifiedVar, (x,y) -> false);
                 query.setLength(0);
                 startQuery(query);
                 cnt=0;
@@ -75,7 +75,7 @@ public class LastNotified {
         }
         if(cnt>0) {
             endQuery(query);
-            add(session.execute(query.toString()),lastNotified, (x,y) -> false);
+            add(session.execute(query.toString()),lastNotifiedVar, (x,y) -> false);
         }
     }
 
@@ -93,7 +93,7 @@ public class LastNotified {
     }
     
     public Date lastNotified(String key) {
-        Date d = lastNotified.get(key);
+        Date d = lastNotifiedVar.get(key);
         return d==null?NEVER:d;
     }
     
@@ -150,7 +150,7 @@ public class LastNotified {
         try {
             Statement stmt = new SimpleStatement( SELECT );
             results = session.execute(stmt);
-            add(results,lastNotified, (fullKey, last) ->  {
+            add(results,lastNotifiedVar, (fullKey, last) ->  {
                 if(delRange.inRange(last)) {
                     String[] params = Split.splitTrim('|', fullKey,3);
                     if(params.length==3) {
