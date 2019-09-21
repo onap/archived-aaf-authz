@@ -28,8 +28,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.env.AuthzTrans;
@@ -55,7 +53,7 @@ public class ApprovedRpt extends Batch {
     private Date now;
     private Writer approvedW;
     private CSV historyR;
-    private static String yr_mon;
+    private static String yrMon;
     
     public ApprovedRpt(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -77,8 +75,8 @@ public class ApprovedRpt extends Batch {
             approvedW = csv.writer(false);
             
             historyR = new CSV(env.access(),args()[1]).setDelimiter('|');
-            
-            yr_mon = args()[0];
+
+            yrMon = args()[0];
         } finally {
             tt0.done();
         }
@@ -114,7 +112,7 @@ public class ApprovedRpt extends Batch {
             approvedW.comment("date, approver, status, user, role, memo");
             historyR.visit(row -> {
                 String s = row.get(7);
-                if(s.equals(yr_mon)) {
+                if(s.equals(yrMon)) {
                     String target = row.get(5);
                     if("user_role".equals(target)) {
                         String action = row.get(1);
@@ -138,7 +136,7 @@ public class ApprovedRpt extends Batch {
         }
     }
     
-    private void write(String a_or_d, List<String> row) {
+    private void write(String aOrd, List<String> row) {
         String[] target = Split.splitTrim('|', row.get(4));
         
         if(target.length>1) {
@@ -151,7 +149,7 @@ public class ApprovedRpt extends Batch {
                 status = "reduced";
                 memo = "existing role membership reduced to invoke reapproval";
             } else {
-                status = a_or_d;
+                status = aOrd;
                 memo = row.get(2);
             }
             if(!approver.equals(target[0])) {
