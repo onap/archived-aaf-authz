@@ -3,6 +3,8 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ *
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +38,12 @@ public class Pending {
     
     /**
      * Use this constructor to indicate when last Notified
-     * @param last_notified
+     * @param lastNotified
      */
-    public Pending(Date last_notified) {
+    public Pending(Date lastNotified) {
         qty = 1;
-        hasNew = last_notified==null;
-        earliest = last_notified;
+        hasNew = lastNotified==null;
+        earliest = lastNotified;
     }
 
     /**
