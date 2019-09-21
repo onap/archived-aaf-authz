@@ -53,6 +53,8 @@ public class Cred  {
     public final String id;
     public final List<Instance> instances;
     public final String ns;
+
+    static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
     
     public Cred(String id) {
         this.id = id;
@@ -62,7 +64,8 @@ public class Cred  {
     
     public static class Instance {
         public final int type;
-        public final Date expires,written;
+        public final Date expires;
+        public final Date written;
         public final Integer other;
         public final String tag;
         public List<Note> notes;
@@ -98,11 +101,11 @@ public class Cred  {
     
     public static class Note {
         public final int level;
-        public final String note;
+        public final String NOTE;
         
         public Note(int level, String note) {
             this.level = level;
-            this.note = note;
+            this.NOTE = note;
         }
     }
     public Date last(final int ... types) {
@@ -239,13 +242,13 @@ public class Cred  {
     }
 
     public static class CredCount {
-        public int raw[];
-        public int basic_auth[];
-        public int basic_auth_256[];
-        public int cert[];
-        public int x509Added[];
-        public int x509Expired[];
-        public Date dates[];
+        public int[] raw;
+        public int[] basic_auth;
+        public int[] basic_auth_256;
+        public int[] cert;
+        public int[] x509Added;
+        public int[] x509Expired;
+        public Date[] dates;
         
         public CredCount(int numbuckets) {
             raw = new int[numbuckets];
@@ -316,7 +319,6 @@ public class Cred  {
                 inst.expires.getTime(),inst.tag,reason);
     }
 
-    static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
     public static void batchDelete(StringBuilder sb, List<String> row) {
         Long l = Long.parseLong(row.get(5));
         String date = sdf.format(new Date(l));
@@ -328,9 +330,6 @@ public class Cred  {
         sb.append(" AND expires='");
         sb.append(date);
         sb.append("';\n");
-//        sb.append(" AND expires=dateof(maxtimeuuid(");
-//        sb.append(row.get(5));
-//        sb.append("));\n");
         
     }
 
