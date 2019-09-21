@@ -52,7 +52,7 @@ public abstract class NotifyBody {
 
     protected Map<String,List<List<String>>> rows;
     protected final String env;
-    protected final String gui_url;
+    protected final String guiUrl;
     
     private final String name;
     private final String type;
@@ -68,7 +68,7 @@ public abstract class NotifyBody {
         escalation = 1;
         count = 0;
         env = access.getProperty("CASS_ENV","DEVL");
-        gui_url = access.getProperty("GUI_URL", "");
+        guiUrl = access.getProperty("GUI_URL", "");
     }
     
     public void store(List<String> row) {
