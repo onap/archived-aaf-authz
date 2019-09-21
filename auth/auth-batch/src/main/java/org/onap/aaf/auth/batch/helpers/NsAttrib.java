@@ -38,19 +38,6 @@ public class NsAttrib {
     public final String ns;
     public final String key;
     public final String value;
-
-    public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
-        @Override
-        public NsAttrib create(Row row) {
-            return new NsAttrib(row.getString(0), row.getString(1), row.getString(2));
-        }
-
-        @Override
-        public String select() {
-            return "select ns,key,value from authz.ns_attrib";
-        }
-    };
-    
     
     public NsAttrib(String ns, String key, String value) {
         this.ns = ns;
