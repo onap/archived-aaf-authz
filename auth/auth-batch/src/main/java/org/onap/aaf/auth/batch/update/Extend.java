@@ -138,7 +138,8 @@ public class Extend extends Batch {
                         int i = hi.get();
                         StringBuilder sb = hsb.get();
                         if(sb==null) {
-                            hsb.set(sb=cqlBatch.begin());
+                        	sb=cqlBatch.begin();
+                            hsb.set(sb);
                         }
                         switch(row.get(0)) {
                             case "info":
