@@ -47,7 +47,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
         private ConfigDAO configDAO;
         private boolean permToRegister;
     
-        public LocateServiceImpl(AuthzTrans trans, AAF_Locate locate, Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper) throws APIException {
+        public LocateServiceImpl(AuthzTrans trans, AAF_Locate locate, Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper){
             this.mapper = mapper;
             this.locateDAO = locate.locateDAO;
             this.configDAO = locate.configDAO;
