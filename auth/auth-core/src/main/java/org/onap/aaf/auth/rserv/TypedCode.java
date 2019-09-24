@@ -128,7 +128,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             return type.y.y.add(new Pair<String,Object>(tag,"version".equals(tag)?new Version(value):value));
         }
         
-        public Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> prep(TRANS trans, String compare) throws IOException, ServletException {
+        public Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> prep(TRANS trans, String compare){
             Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> c,rv=null;
             if (types.size()==1 && "".equals((c=types.get(0)).x)) { // if there are no checks for type, skip
                 rv = c;
