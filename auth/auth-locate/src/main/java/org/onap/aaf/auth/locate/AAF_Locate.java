@@ -170,7 +170,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         // Add other Supported APIs here as created
     }
     
-    public void routeAll(HttpMethods meth, String path, API api, LocateCode code) throws Exception {
+    public void routeAll(HttpMethods meth, String path, API api, LocateCode code){
         route(env,meth,path,code,""); // this will always match
     }
 
