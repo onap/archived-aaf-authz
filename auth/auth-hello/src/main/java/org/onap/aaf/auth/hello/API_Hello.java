@@ -56,7 +56,7 @@ public class API_Hello {
      * @param facade
      * @throws Exception
      */
-    public static void init(final AAF_Hello oauthHello) throws Exception {
+    public static void init(final AAF_Hello oauthHello){
         ////////
         // Simple "GET" API
         ///////
