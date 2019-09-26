@@ -90,7 +90,7 @@ public class AAFcli {
     private static int globalDelay=0;
 
     // Create when only have Access
-    public AAFcli(Access access, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException, CadiException {
+    public AAFcli(Access access, Writer wtr, HMangr hman, SecurityInfoC<HttpURLConnection> si, SecuritySetter<HttpURLConnection> ss) throws APIException {
         this(access,new AuthzEnv(access.getProperties()),wtr,hman, si,ss);
     }
 
