@@ -290,7 +290,7 @@ import org.onap.aaf.misc.env.util.Chrono;
             Pending p;
             
             tt = trans.start("Notify for Pending", Trans.SUB);
-            List<String> idList = new ArrayList<String>();
+            List<String> idList = new ArrayList<>();
             String id;
             try {
                 for(Entry<String, Pending> es : mpending.entrySet()) {
