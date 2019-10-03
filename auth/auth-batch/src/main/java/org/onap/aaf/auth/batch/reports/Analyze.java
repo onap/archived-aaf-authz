@@ -391,8 +391,7 @@ public class Analyze extends Batch {
                                 return;
                             }
                             // Just let expired UserRoles sit until deleted
-                            if(futureRange.inRange(ur.expires())) {
-                                if(!mur.containsKey(ur.user() + '|' + ur.role())) {
+                            if(futureRange.inRange(ur.expires())&&(!mur.containsKey(ur.user() + '|' + ur.role()))) {    
                                     // Cannot just delete owners, unless there is at least one left. Process later
                                     if ("owner".equals(ur.rname())) {
                                         Set<UserRole> urs = owners.get(ur.role());
@@ -410,8 +409,7 @@ public class Analyze extends Batch {
                                             }
                                         }
                                     }
-                                }
-                            }
+                             }
                         } catch (OrganizationException e) {
                             noAvg.error().log(e);
                         }
