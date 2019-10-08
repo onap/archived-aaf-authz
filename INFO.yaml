@@ -1,5 +1,5 @@
 ---
-project: 'aaf-authz'
+project: 'aaf/authz'
 project_creation_date: '2017-07-12'
 project_category: ''
 lifecycle_state: 'Incubation'
@@ -46,15 +46,5 @@ committers:
       company: 'ATT'
       id: 'sg481n'
       timezone: 'America/Dallas'
-    - name: 'Girish Havaldar'
-      email: 'hg0071052@techmahindra.com'
-      company: 'Techmahindra'
-      id: 'giri'
-      timezone: 'India/Bangalore'
-    - name: 'Huabing Zhao'
-      email: 'zhaohuabing@gmail.com'
-      company: 'ZTE'
-      id: 'Huabing_Zhao'
-      timezone: 'China/Chengdu'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
