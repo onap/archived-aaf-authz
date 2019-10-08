@@ -142,7 +142,7 @@ public class OrganizationFactory {
         return org;
     }
 
-    public static Organization get(AuthzTrans trans) throws OrganizationException {
+    public static Organization get(AuthzTrans trans){
         String domain = FQI.reverseDomain(trans.user());
         Organization org = orgs.get(domain);
         if (org==null) {
