@@ -29,11 +29,6 @@ meetings:
       time: '14:00 UTC'
 repositories:
     - 'aaf-authz'
-    - 'aaf/cadi'
-    - 'aaf/luaplugin'
-    - 'aaf/oom'
-    - 'aaf/sms'
-    - 'aaf/sshsm'
 committers:
     - <<: *onap_aaf_ptl
     - name: 'Kiran Kamineni'
@@ -46,15 +41,5 @@ committers:
       company: 'ATT'
       id: 'sg481n'
       timezone: 'America/Dallas'
-    - name: 'Girish Havaldar'
-      email: 'hg0071052@techmahindra.com'
-      company: 'Techmahindra'
-      id: 'giri'
-      timezone: 'India/Bangalore'
-    - name: 'Huabing Zhao'
-      email: 'zhaohuabing@gmail.com'
-      company: 'ZTE'
-      id: 'Huabing_Zhao'
-      timezone: 'China/Chengdu'
 tsc:
     approval: 'https://lists.onap.org/pipermail/onap-tsc'
