@@ -49,7 +49,7 @@ import org.onap.aaf.misc.env.APIException;
 
 public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
 
-    public AAF_FS(final AuthzEnv env) throws APIException, IOException, CadiException {
+    public AAF_FS(final AuthzEnv env) throws IOException, CadiException {
         super(env.access(),env);
         try {
             ///////////////////////  
