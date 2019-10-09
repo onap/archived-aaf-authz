@@ -51,6 +51,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
      */
     public Result<List<Data>> readByUser(AuthzTrans trans, final String user) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
+        	@Override
             public Result<List<Data>> call() {
                 // If the call is for THIS user, and it exists, get from TRANS, add to TRANS if not.
                 if (user!=null && user.equals(trans.user())) {
@@ -74,6 +75,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
     
     public Result<List<Data>> readByRole(AuthzTrans trans, final String role) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
+        	@Override
             public Result<List<Data>> call() {
                 return dao.readByRole(trans, role);
             }
@@ -87,6 +89,7 @@ public class CachedUserRoleDAO extends CachedDAO<AuthzTrans,UserRoleDAO, UserRol
 
     public Result<List<UserRoleDAO.Data>> readUserInRole(final AuthzTrans trans, final String user, final String role) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
+        	@Override
             public Result<List<Data>> call() {
                 if (user.equals(trans.user())) {
                     Result<List<Data>> rrbu = readByUser(trans, user);
