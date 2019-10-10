@@ -39,7 +39,8 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
 
     public Result<List<Data>> readNS(AuthzTrans trans, final String ns) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
-            public Result<List<Data>> call() {
+            @Override
+        	public Result<List<Data>> call() {
                 return dao.readNS(trans, ns);
             }
         };
@@ -53,7 +54,8 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
 
     public Result<List<Data>> readName(AuthzTrans trans, final String name) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
-            public Result<List<Data>> call() {
+            @Override
+        	public Result<List<Data>> call() {
                 return dao().readName(trans, name);
             }
         };
