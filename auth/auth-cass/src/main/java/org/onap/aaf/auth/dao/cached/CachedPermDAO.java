@@ -74,7 +74,8 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
      */
     public Result<List<Data>> readByType(AuthzTrans trans, final String ns, final String type) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
-            public Result<List<Data>> call() {
+            @Override
+        	public Result<List<Data>> call() {
                 return dao.readByType(trans, ns, type);
             }
         };
