@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +30,6 @@ public class DAOException extends Exception {
     private static final long serialVersionUID = 1527904125585539823L;
 
 //    // TODO -   enum in result class == is our intended design, currently the DAO layer does not use Result<RV> so we still use these for now
-//    public final static DAOException RoleNotFoundDAOException = new DAOException("RoleNotFound");
-//    public final static DAOException PermissionNotFoundDAOException = new DAOException("PermissionNotFound");
-//    public final static DAOException UserNotFoundDAOException = new DAOException("UserNotFound");
 
     public DAOException() {
     }
