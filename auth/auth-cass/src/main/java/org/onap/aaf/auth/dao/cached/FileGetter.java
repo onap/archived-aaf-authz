@@ -51,8 +51,7 @@ public class FileGetter {
 	private FileGetter(Access access) {
 		if(access!=null) {
 			String filename = access.getProperty(AAF_FILEGETTER,null);
-			if(filename!=null) {
-				if(!isLoaded) {
+			if((filename!=null)&&(!isLoaded)) { 
 					data = new TreeMap<>();
 					sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
 					CSV csv = new CSV(access, filename).setDelimiter('|');
@@ -103,7 +102,7 @@ public class FileGetter {
 					} catch( CadiException | IOException e) {
 						access.log(Level.ERROR, e);
 					}
-				}
+				
 			}
 		}
 	}
