@@ -190,7 +190,8 @@ public class Extend extends Batch {
                         if(i%maxBatch==0 && sb!=null) {
                             cqlBatch.execute(dryRun);
                             hi.set(1);
-                            hsb.set(sb=null);
+                            sb=null;
+                            hsb.set(sb);
                         }
                     }
                 });
