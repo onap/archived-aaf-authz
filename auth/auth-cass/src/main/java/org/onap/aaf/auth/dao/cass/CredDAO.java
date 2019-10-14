@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +151,8 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         @Override
         protected void body(Data data, int idx, Object[] obj) {
             int i;
-            obj[i=idx] = data.other;
+            i=idx;
+            obj[i] = data.other;
             obj[++i] = data.ns;
             obj[++i] = data.tag;
             obj[++i] = data.notes;
