@@ -27,6 +27,9 @@ An important change, however, is that the AAF Locator requires internal K8s Apps
 **Bug Fixes**
 	- `AAF-859 <https://jira.onap.org/browse/AAF-859>`_ Images hardcoded in AAF helm deployment yamls
 
+**Known Issues - solve in Frankfurt**
+        - `AAF-962 <https://jira.onap.org/browse/AAF-962>`_ AAF Certs could not generate...    dd
+
 Version: 2.1.13 (Dublin, 4.0.0-ONAP)
 ---------------------------------------
 
