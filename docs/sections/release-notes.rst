@@ -5,6 +5,31 @@
 Release Notes
 =============
 
+Version: 2.1.15 (El Alto, 5.0.1)
+---------------------------------------------
+
+:Release Date: 2019-08-12
+
+**New Features**
+El Alto is a consolidation release.  New Features are not Added.  
+However, for El Alto, ONAP is propagating the AAF Auto-Configuration and Certificate Generation feature from Dublin, see below
+
+An important change, however, is that the AAF Locator requires internal K8s Apps to use 
+	internal-to-K8s Service URL tags as (example) "onap.org.osaaf.aaf.service:2.1" 
+        external-to-K8s Service URL tags as (example) "org.osaaf.aaf.service.2.1"
+
+        IF you are using previous configurations, you may need to clear the existing directory
+	
+	- Login to your Init Container
+	- cd /opt/app/osaaf/local
+        - CAREFULLY rm *.*, and have it regenerate 
+
+**Bug Fixes**
+	- `AAF-859 <https://jira.onap.org/browse/AAF-859>`_ Images hardcoded in AAF helm deployment yamls
+
+**Known Issues - solve in Frankfurt**
+        - `AAF-962 <https://jira.onap.org/browse/AAF-962>`_ AAF Certs could not generate...
+
 Version: 2.1.13 (Dublin, 4.0.0-ONAP)
 ---------------------------------------
 
@@ -91,11 +116,6 @@ Note: AAF did not create new artifacts for Casablanca Maintenance Release.
 
  - AAF code has been formally scanned during build time using NexusIQ and all Critical vulnerabilities have been addressed, items that remain open have been assessed for risk and determined to be false positive. The AAF open Critical security vulnerabilities and their risk assessment have been documented as part of the `project <https://wiki.onap.org/pages/viewpage.action?pageId=43386201>`_.
 
-**Quick Links:**
- 	- `AAF project page <https://wiki.onap.org/display/DW/Application+Authorization+Framework+Project>`_
- 	- `CII Best Practices Silver Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=1>`_
- 	- `CII Best Practices Passing Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=0>`_
- 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=43386201>`_
 
 **Upgrade Notes**
   NA
@@ -133,10 +153,13 @@ Version: 2.1.1 (Beijing, 2.0.0-ONAP)
      - Cassandra Instance in Kubernetes ONAP Test environment is a single instance.  REAL deployments should follow global, multi-datacenter deployment strategies per Cassandra recommendations.
 
 
-**Quick Links:**
+================
+Quick Links
+================
  	- `AAF project page <https://wiki.onap.org/display/DW/Application+Authorization+Framework+Project>`_
+ 	- `CII Best Practices Silver Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=1>`_
  	- `CII Best Practices Passing Badge information for AAF <https://bestpractices.coreinfrastructure.org/en/projects/2303?criteria_level=0>`_
- 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=43385140>`_
+ 	- `Project Vulnerability Review Table for AAF <https://wiki.onap.org/pages/viewpage.action?pageId=43386201>`_
 
 
 
