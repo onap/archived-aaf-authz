@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,7 +76,7 @@ AuthzTrans authzTransMock;
     }
 
     //TODO: Gabe [JUnit] Visibility issue
-    @Test 
+    @Test
     public void testReadConsistency() {
         String table = "users";
         PowerMockito.when(authzTransMock.getProperty(CASS_READ_CONSISTENCY+'.'+table)).thenReturn("TWO");
@@ -84,8 +84,8 @@ AuthzTrans authzTransMock;
         System.out.println("Consistency level" + consistencyLevel.name());
         assertEquals("TWO", consistencyLevel.name());
     }
-    
-    @Test 
+
+    @Test
     public void testWriteConsistency() {
         String table = "users";
         PowerMockito.when(authzTransMock.getProperty(CASS_WRITE_CONSISTENCY+'.'+table)).thenReturn(null);
@@ -93,5 +93,5 @@ AuthzTrans authzTransMock;
         System.out.println("Consistency level" + consistencyLevel.name());
         assertEquals("ONE", consistencyLevel.name());
     }
-    
+
 }

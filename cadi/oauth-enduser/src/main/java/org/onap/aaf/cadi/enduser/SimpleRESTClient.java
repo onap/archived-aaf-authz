@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,18 +56,18 @@ public class SimpleRESTClient {
         public String[] headers() {
             return EMPTY;
         }};
-    
+
     public SimpleRESTClient(final TokenClientFactory tcf, final String tokenURL, final String endpoint, final String[] scope) throws CadiException, LocatorException, APIException {
         callTimeout = Integer.parseInt(tcf.access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
         tokenClient = tcf.newClient(tokenURL);
         Result<TimedToken> rtt = tokenClient.getToken(scope);
         if (rtt.isOK()) {
             restClient = tcf.newTzClient(endpoint);
-            
+
             if ((client_id = tcf.access.getProperty(Config.AAF_APPID, null))==null) {
                 if ((client_id = tcf.access.getProperty(Config.CADI_ALIAS, null))==null) {
                     throw new CadiException(Config.AAF_APPID + " or " + Config.CADI_ALIAS + " needs to be defined");
-                }                
+                }
             }
             try {
                 restClient.setToken(client_id,rtt.value);
@@ -78,7 +78,7 @@ public class SimpleRESTClient {
             throw new CadiException(rtt.error);
         }
     }
-    
+
     public SimpleRESTClient timeout(int newTimeout) {
         callTimeout = newTimeout;
         return this;
@@ -98,7 +98,7 @@ public class SimpleRESTClient {
         }
         return this;
     }
-    
+
     /**
      * Single Threaded Class for building up content
      * @author Instrumental
@@ -109,24 +109,24 @@ public class SimpleRESTClient {
 
         private String content;
         private StringBuilder sb;
-        
+
         public Input() {
             content = null;
             sb = null;
         }
-        
+
         public Input(final String content) {
             this.content = content;
         }
-        
+
         public void set(final String content) {
             this.content = content;
         }
-        
+
         public PrintWriter writer() {
             return new PrintWriter(new StringBuilderWriter(builder()));
         }
-        
+
         public StringBuilder builder() {
             if (sb==null) {
                 sb = new StringBuilder();
@@ -134,7 +134,7 @@ public class SimpleRESTClient {
             }
             return sb;
         }
-        
+
         /**
          * Reuse StringBuilder object
          */
@@ -144,7 +144,7 @@ public class SimpleRESTClient {
                 sb.setLength(0);
             }
         }
-        
+
         @Override
         public String toString() {
             if (content!=null) {
@@ -162,7 +162,7 @@ public class SimpleRESTClient {
                 if (sb==null) {
                     rv = EMPTY_STREAM_BYTES;
                 } else {
-                    rv = sb.toString().getBytes();    
+                    rv = sb.toString().getBytes();
                 }
             } else {
                 rv = content.getBytes();
@@ -173,7 +173,7 @@ public class SimpleRESTClient {
     }
 
     /////////////////////////////////////////////////////////////
-    //  
+    //
     // CREATE
     //
     /////////////////////////////////////////////////////////////
@@ -194,11 +194,11 @@ public class SimpleRESTClient {
         });
         if (!future.get(callTimeout)) {
             throw new RESTException(future);
-        }                    
+        }
     }
 
     /////////////////////////////////////////////////////////////
-    //  
+    //
     // READ
     //
     /////////////////////////////////////////////////////////////
@@ -221,11 +221,11 @@ public class SimpleRESTClient {
             return future.value;
         } else {
             throw new RESTException(future);
-        }                    
+        }
     }
-    
+
     /////////////////////////////////////////////////////////////
-    //  
+    //
     // UPDATE
     //
     /////////////////////////////////////////////////////////////
@@ -249,18 +249,18 @@ public class SimpleRESTClient {
             return future.value;
         } else {
             throw new RESTException(future);
-        }                    
+        }
     }
 
     /////////////////////////////////////////////////////////////
-    //  
+    //
     // DELETE
     //
     /////////////////////////////////////////////////////////////
     public void delete(final String path) throws RESTException, CadiException, LocatorException, APIException  {
         delete(path,APPLICATION_JSON);
     }
-        
+
     public void delete(final String path, final String contentType) throws RESTException, CadiException, LocatorException, APIException  {
         Future<Void> future = restClient.best(new Retryable<Future<Void>>() {
             @Override
@@ -270,17 +270,17 @@ public class SimpleRESTClient {
         });
         if (!future.get(callTimeout)) {
             throw new RESTException(future);
-        }                    
+        }
     }
 
     /////////////////////////////////////////////////////////////
-    
+
     private static class ETransfer implements EClient.Transfer {
         private Input input;
         public ETransfer(final Input input) {
             this.input = input;
         }
-        
+
         @Override
         public void transfer(OutputStream os) throws IOException, APIException {
             os.write(input.getBytes());
@@ -290,7 +290,7 @@ public class SimpleRESTClient {
     public interface Headers {
         String[] headers();
     }
-    
+
     public String[] headers() {
         if (chain==null) {
             return headers.headers();

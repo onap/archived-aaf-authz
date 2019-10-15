@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,7 +68,7 @@ public class RequestDetail extends Page {
 
     /**
      * Implement the table content for Request Detail
-     * 
+     *
      * @author Jeremiah
      *
      */
@@ -92,10 +92,10 @@ public class RequestDetail extends Page {
                             ArrayList<AbsCell[]> rv = new ArrayList<>();
                             try {
                                 Future<Approvals> fa = client.read(
-                                    "/authz/approval/ticket/"+ticket, 
+                                    "/authz/approval/ticket/"+ticket,
                                     gui.getDF(Approvals.class)
                                     );
-                                
+
                                 if (fa.get(AAF_GUI.TIMEOUT)) {
                                     Approval app = fa.value.getApprovals().get(0);
                                     if(app==null) {
@@ -118,39 +118,39 @@ public class RequestDetail extends Page {
                                         if (first) {
                                             DateFormat createdDF = new SimpleDateFormat(DATE_TIME_FORMAT);
                                             UUID id = UUID.fromString(approval.getId());
-                                            
+
                                             rv.add(new AbsCell[]{new TextCell("Ticket ID:"),new TextCell(approval.getTicket(),"colspan=3")});
                                             rv.add(new AbsCell[]{new TextCell("Memo:"),new TextCell(approval.getMemo(),"colspan=3")});
-                                            rv.add(new AbsCell[]{new TextCell("Requested On:"), 
+                                            rv.add(new AbsCell[]{new TextCell("Requested On:"),
                                                     new TextCell(createdDF.format((id.timestamp() - NUM_100NS_INTERVALS_SINCE_UUID_EPOCH)/10000),"colspan=3")
                                             });
                                             rv.add(new AbsCell[]{new TextCell("Operation:"),new TextCell(decodeOp(approval.getOperation()),"colspan=3")});
                                             String user = approval.getUser();
                                             rv.add(new AbsCell[]{new TextCell("User:"),new TextCell(user,"colspan=3")});
-                                            
+
                                             // headers for listing each approver
                                             rv.add(new AbsCell[]{new TextCell(" ","colspan=4","class=blank_line")});
                                             rv.add(new AbsCell[]{AbsCell.Null,
-                                                    new TextCell("Approver","class=bold"), 
-                                                    new TextCell("Type","class=bold"), 
+                                                    new TextCell("Approver","class=bold"),
+                                                    new TextCell("Type","class=bold"),
                                                     new TextCell("Status","class=bold")});
                                             approverLine[0] = new TextCell("Approvals:");
-                                            
+
                                             first = false;
                                         } else {
                                             approverLine[0] = AbsCell.Null;
                                         }
-                                        
+
                                         approverLine[1] = new TextCell(approval.getApprover());
                                         String type = approval.getType();
                                         if ("owner".equalsIgnoreCase(type)) {
                                             type = "resource owner";
                                         }
-                                        
+
                                         approverLine[2] = new TextCell(type);
                                         approverLine[3] = new TextCell(approval.getStatus());
                                         rv.add(approverLine);
-                                    
+
                                     }
                                 } else {
                                     rv.add(new AbsCell[] {new TextCell("*** Data Unavailable ***")});

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,7 @@ import org.onap.aaf.auth.layer.Result;
 
 /**
  * I have become convinced that Data for Apps is modeled by abstract access methods against multiple data
- * sources.  With the insistence of JUnits, it becomes much more paramount to create a model which can 
+ * sources.  With the insistence of JUnits, it becomes much more paramount to create a model which can
  *   1) be easily loaded from Disk "Test Data" without resorting to complex "mokito" schemes
  *   2) tested in Memory
  *   3) combined for REAL time by running Cached Memory
@@ -42,14 +42,14 @@ import org.onap.aaf.auth.layer.Result;
  *      c) JSON
  *      d) XML
  *   5) persisted Globally through a store like Cassandra
- *   
+ *
  * But in the end, it looks like:
  *   1) Data Structures
- *   2) Find the Data Structures by various means, accounting for 
+ *   2) Find the Data Structures by various means, accounting for
  *       a) Multiple Responses
  *      b) Errors from the deepest level, made available through the call stack
- *   3) 
- *     
+ *   3)
+ *
  * @author jonathan.gathman
  *
  */
@@ -63,11 +63,11 @@ public interface DataView {
     // Inserts
     public Result<ApprovalDAO.Data> insert(final AuthzTrans trans, final ApprovalDAO.Data add);
     public Result<FutureDAO.Data> insert(final AuthzTrans trans, final FutureDAO.Data add);
-    
+
     // Deletes
     public Result<ApprovalDAO.Data> delete(final AuthzTrans trans, final ApprovalDAO.Data add);
     public Result<FutureDAO.Data> delete(final AuthzTrans trans, final FutureDAO.Data add);
-    
+
     // Clear any buffers
     public void flush();
 }

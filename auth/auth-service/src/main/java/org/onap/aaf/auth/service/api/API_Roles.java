@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,16 +51,16 @@ public class API_Roles {
                     @Override
                     public void handle(
                             AuthzTrans trans,
-                            HttpServletRequest req, 
+                            HttpServletRequest req,
                             HttpServletResponse resp) throws Exception {
                         Result<Void> r = context.createRole(trans, req, resp);
-                            
+
                         switch(r.status) {
                             case OK:
-                                resp.setStatus(HttpStatus.CREATED_201); 
+                                resp.setStatus(HttpStatus.CREATED_201);
                                 break;
                             case Status.ACC_Future:
-                                resp.setStatus(HttpStatus.ACCEPTED_202); 
+                                resp.setStatus(HttpStatus.ACCEPTED_202);
                                 break;
                             default:
                                 context.error(trans,resp,r);
@@ -69,19 +69,19 @@ public class API_Roles {
                 }
             );
 
-        /** 
+        /**
          *  get Role by name
          */
         authzAPI.route(GET, "/authz/roles/:role", API.ROLES, new Code(facade,"GetRolesByFullName",true) {
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+
                 Result<Void> r = context.getRolesByName(trans, resp, pathParam(req, "role"));
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -91,19 +91,19 @@ public class API_Roles {
         });
 
 
-        /** 
+        /**
          *  gets all Roles by user name
          */
         authzAPI.route(GET, "/authz/roles/user/:name", API.ROLES, new Code(facade,"GetRolesByUser",true) {
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+
                 Result<Void> r = context.getRolesByUser(trans, resp, pathParam(req, "name"));
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -112,19 +112,19 @@ public class API_Roles {
 
         });
 
-        /** 
+        /**
          *  gets all Roles by Namespace
          */
         authzAPI.route(GET, "/authz/roles/ns/:ns", API.ROLES, new Code(facade,"GetRolesByNS",true) {
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+
                 Result<Void> r = context.getRolesByNS(trans, resp, pathParam(req, "ns"));
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -132,25 +132,25 @@ public class API_Roles {
             }
         });
 
-        /** 
+        /**
          *  gets all Roles by Name without the Namespace
          */
         authzAPI.route(GET, "/authz/roles/name/:name", API.ROLES, new Code(facade,"GetRolesByNameOnly",true) {
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.getRolesByNameOnly(trans, resp, pathParam(req, ":name"));
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
         });
-        
+
         /**
          * Deletes a Role from Authz DB by Object
          */
@@ -158,24 +158,24 @@ public class API_Roles {
                 @Override
                 public void handle(
                         AuthzTrans trans,
-                        HttpServletRequest req, 
+                        HttpServletRequest req,
                         HttpServletResponse resp) throws Exception {
                     Result<Void> r = context.deleteRole(trans, req, resp);
-                    
+
                     switch(r.status) {
                         case OK:
-                            resp.setStatus(HttpStatus.OK_200); 
+                            resp.setStatus(HttpStatus.OK_200);
                             break;
                         default:
                             context.error(trans,resp,r);
                     }
                 }
-            
+
             }
         );
-    
 
-        
+
+
         /**
          * Deletes a Role from Authz DB by Key
          */
@@ -183,22 +183,22 @@ public class API_Roles {
                 @Override
                 public void handle(
                         AuthzTrans trans,
-                        HttpServletRequest req, 
+                        HttpServletRequest req,
                         HttpServletResponse resp) throws Exception {
                     Result<Void> r = context.deleteRole(trans, resp, pathParam(req,":role"));
-                        
+
                     switch(r.status) {
                         case OK:
-                            resp.setStatus(HttpStatus.OK_200); 
+                            resp.setStatus(HttpStatus.OK_200);
                             break;
                         default:
                             context.error(trans,resp,r);
                     }
                 }
-            
+
             }
         );
-    
+
 
         /**
          * Add a Permission to a Role (Grant)
@@ -207,14 +207,14 @@ public class API_Roles {
                 @Override
                 public void handle(
                         AuthzTrans trans,
-                        HttpServletRequest req, 
+                        HttpServletRequest req,
                         HttpServletResponse resp) throws Exception {
-                    
+
                     Result<Void> r = context.addPermToRole(trans, req, resp);
-                        
+
                     switch(r.status) {
                         case OK:
-                            resp.setStatus(HttpStatus.CREATED_201); 
+                            resp.setStatus(HttpStatus.CREATED_201);
                             break;
                         default:
                             context.error(trans,resp,r);
@@ -222,72 +222,72 @@ public class API_Roles {
                 }
             }
         );
-        
+
         /**
          * Get all Roles by Permission
          */
         authzAPI.route(GET,"/authz/roles/perm/:type/:instance/:action",API.ROLES,new Code(facade,"GetRolesByPerm",true) {
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
-                Result<Void> r = context.getRolesByPerm(trans, resp, 
+
+                Result<Void> r = context.getRolesByPerm(trans, resp,
                         pathParam(req, "type"),
                         URLDecoder.decode(pathParam(req, "instance"),Config.UTF_8),
                         pathParam(req, "action"));
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
         });
-        
+
         /**
          * Set a role's description
          */
         authzAPI.route(PUT,"/authz/role",API.ROLE_REQ,new Code(facade,"Set Description for role",true) {
             @Override
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+
                 Result<Void> r = context.updateRoleDescription(trans, req, resp);
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
-        });    
-        
+        });
+
         /**
          * Set a permission's roles to roles given
          */
         authzAPI.route(PUT,"/authz/role/perm",API.ROLE_PERM_REQ,new Code(facade,"Set a Permission's Roles",true) {
             @Override
             public void handle(
-                    AuthzTrans trans, 
+                    AuthzTrans trans,
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+
                 Result<Void> r = context.resetPermRoles(trans, req, resp);
                 switch(r.status) {
-                    case OK: 
-                        resp.setStatus(HttpStatus.OK_200); 
+                    case OK:
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
-        });    
-        
+        });
+
         /**
          * Delete a Permission from a Role
          * With multiple perms
@@ -296,13 +296,13 @@ public class API_Roles {
             @Override
             public void handle(
                     AuthzTrans trans,
-                    HttpServletRequest req, 
+                    HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.delPermFromRole(trans, req, resp);
-                    
+
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -318,17 +318,17 @@ public class API_Roles {
             @Override
             public void handle(
                     AuthzTrans trans,
-                    HttpServletRequest req, 
+                    HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                Result<Void> r = context.delPermFromRole(trans, resp, 
+                Result<Void> r = context.delPermFromRole(trans, resp,
                         pathParam(req,":role"),
                         pathParam(req,":type"),
                         pathParam(req,":instance"),
                         pathParam(req,":action"));
-                    
+
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,9 +47,9 @@ public class List extends BaseCmd<NS> {
     public List(NS parent) {
         super(parent,"list");
         cmds.add(new ListByName(this));
-        
-//        TODO: uncomment when on cassandra 2.1.2 if we like cli command to get all ns's 
-//                a user is admin or responsible for 
+
+//        TODO: uncomment when on cassandra 2.1.2 if we like cli command to get all ns's
+//                a user is admin or responsible for
         cmds.add(new ListAdminResponsible(this));
         cmds.add(new DeprecatedCMD<List>(this,"responsible","'responsible' is deprecated.  use 'owner'")); // deprecated
         cmds.add(new ListActivity(this));
@@ -57,13 +57,13 @@ public class List extends BaseCmd<NS> {
         cmds.add(new ListChildren(this));
         cmds.add(new ListNsKeysByAttrib(this));
     }
-    
+
     public void report(Future<Nss> fp, String ... str) {
         reportHead(str);
         if (fp==null) {
             pw().println("    *** Namespace Not Found ***");
         }
-        
+
         if (fp!=null && fp.value!=null) {
             for (Ns ns : fp.value.getNs()) {
                 pw().println(ns.getName());
@@ -93,12 +93,12 @@ public class List extends BaseCmd<NS> {
                         }
                         pw().format(sformat,sb.toString());
                     }
-                    
+
                 }
             }
         }
     }
-    
+
     public void reportName(Future<Nss> fp, String ... str) {
         reportHead(str);
         if (fp!=null && fp.value!=null) {
@@ -109,7 +109,7 @@ public class List extends BaseCmd<NS> {
                     return ns1.getName().compareTo(ns2.getName());
                 }
             });
-            
+
             for (Ns ns : nss) {
                 pw().println(ns.getName());
                 if (this.aafcli.isDetailed() && ns.getDescription() != null) {
@@ -136,9 +136,9 @@ public class List extends BaseCmd<NS> {
             }
         }
     }
-    
 
-    public void reportCred(Future<Users> fc) {        
+
+    public void reportCred(Future<Users> fc) {
         if (fc!=null && fc.value!=null && !(fc.value.getUser().isEmpty())) {
             pw().println("    Credentials");
             java.util.List<User> users = fc.value.getUser();
@@ -162,9 +162,9 @@ public class List extends BaseCmd<NS> {
         Integer type;
         if ((type=u.getType())==null) {
             type = 9999;
-        } 
+        }
         return Define.getCredType(type);
     }
-    
+
 
 }

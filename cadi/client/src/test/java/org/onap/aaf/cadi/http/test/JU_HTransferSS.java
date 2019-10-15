@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,10 +41,10 @@ import org.onap.aaf.cadi.http.HTransferSS;
 import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 public class JU_HTransferSS {
-    
+
     @Mock
     TaggedPrincipal princMock;
-    
+
     @Mock
     HttpURLConnection hucMock;
 
@@ -53,15 +53,15 @@ public class JU_HTransferSS {
 
     @Mock
     SecurityInfoC<HttpURLConnection> siMock;
-    
+
     @Mock
     SecurityInfoC<HttpURLConnection> siMockNoDefSS;
 
     @Mock
     SecuritySetter<HttpURLConnection> ssMock;
-    
+
     private static final String princName = "name";
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -73,7 +73,7 @@ public class JU_HTransferSS {
     public void test() throws IOException, CadiException {
         HTransferSS transfer = new HTransferSS(princMock, "string1");
         assertThat(transfer.setLastResponse(0), is(0));
-        
+
         transfer = new HTransferSS(princMock, "string1", siMock);
         transfer.setSecurity(hucsMock);
         assertThat(transfer.getID(), is(princName));

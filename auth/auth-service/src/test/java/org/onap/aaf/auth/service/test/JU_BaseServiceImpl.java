@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,7 +75,7 @@ import aaf.v2_0.Users;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class JU_BaseServiceImpl {
-    protected AuthzCassServiceImpl<Nss, Perms, Pkey, Roles, Users, UserRoles, Delgs, Certs, Keys, Request, History, Error, Approvals> 
+    protected AuthzCassServiceImpl<Nss, Perms, Pkey, Roles, Users, UserRoles, Delgs, Certs, Keys, Request, History, Error, Approvals>
         acsi;
     protected Mapper_2_0 mapper;
 
@@ -88,7 +88,7 @@ public abstract class JU_BaseServiceImpl {
 // NOTE: Annotation format (@Mock and @Spy) do NOT seem to always work as a Base Class,
 //       so we construct manually.
 //
-// Mock Objects    
+// Mock Objects
     protected HistoryDAO historyDAO = mock(HistoryDAO.class);
     protected CacheInfoDAO cacheInfoDAO = mock(CacheInfoDAO.class);
     protected CachedNSDAO nsDAO = mock(CachedNSDAO.class);
@@ -102,32 +102,32 @@ public abstract class JU_BaseServiceImpl {
     protected DelegateDAO delegateDAO = mock(DelegateDAO.class);
     protected ApprovalDAO approvalDAO = mock(ApprovalDAO.class);
 
- // Spy Objects    
+ // Spy Objects
     @Spy
     protected static PropAccess access = new PropAccess();
     @Spy
     protected static AuthzEnv env = new AuthzEnv(access);
     @Spy
     protected static AuthzTrans trans = env.newTransNoAvg();
-    
+
     // @Spy doesn't seem to work on Question.
     @Spy
     protected Question question = spy(new Question(trans,
                 historyDAO,cacheInfoDAO,nsDAO,permDAO,
                 roleDAO,userRoleDAO,credDAO,certDAO,
                 locateDAO,futureDAO,delegateDAO,approvalDAO));
-    
+
     public void setUp() throws Exception {
         when(trans.org()).thenReturn(org);
         when(org.getDomain()).thenReturn("org.onap");
         Define.set(access);
         access.setProperty(Config.CADI_LATITUDE, "38.0");
         access.setProperty(Config.CADI_LONGITUDE, "-72.0");
-        
+
         mapper = new Mapper_2_0(question);
         acsi = new AuthzCassServiceImpl<>(trans, mapper, question);
     }
-    
+
     //////////
     //  Common Data Objects
     /////////
@@ -144,7 +144,7 @@ public abstract class JU_BaseServiceImpl {
         rv.add(ndd);
         return rv;
     }
-    
+
     /**
      * Setup Role Data for Mock Usages
      * @param trans
@@ -163,7 +163,7 @@ public abstract class JU_BaseServiceImpl {
         }
         when(question.userRoleDAO().read(trans, user, ns+'.'+role)).thenReturn(result);
     }
-    
+
     protected UserRoleDAO.Data urData(String user, String ns, String rname, int days) {
         UserRoleDAO.Data urdd = new UserRoleDAO.Data();
         urdd.user = user;
@@ -182,7 +182,7 @@ public abstract class JU_BaseServiceImpl {
         list.add(t);
         return list;
     }
-    
+
     protected <T> List<T> emptyList(Class<T> cls) {
         return new ArrayList<>();
     }

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,9 +62,9 @@ public class    NS implements Comparable<NS> {
         ndd.description = description;
         ndd.parent = parent;
         ndd.type = type;
-        // ndd.attrib = 
+        // ndd.attrib =
     }
-    
+
     public static void load(Trans trans, Session session, Creator<NS> creator) {
         load(trans,session,
                 "select name, description, parent, type, scope from authz.ns;"
@@ -72,10 +72,10 @@ public class    NS implements Comparable<NS> {
                 , v -> data.put(v.ndd.name,v)
                 );
     }
-    
+
     public static void loadOne(Trans trans, Session session, Creator<NS> creator, String ns) {
         load(trans,session,
-                ("select name, description, parent, type, scope from authz.ns WHERE name='"+ns+"';")
+                ("select name, description, parent, type, scope from authz.ns WHERE name='" + ns + "';")
                 ,creator
                 , v -> data.put(v.ndd.name,v)
                 );
@@ -84,7 +84,7 @@ public class    NS implements Comparable<NS> {
     public static void load(Trans trans, Session session, Creator<NS> creator, Visitor<NS> visitor) {
          load(trans,session,creator.query(null),creator, visitor);
     }
-    
+
     public void row(final CSV.Writer csvw, String tag) {
         csvw.row(tag,ndd.name,ndd.type,ndd.parent);
     }
@@ -102,7 +102,7 @@ public class    NS implements Comparable<NS> {
         } finally {
             tt.done();
         }
-        
+
 
         try {
             Iterator<Row> iter = results.iterator();
@@ -136,7 +136,7 @@ public class    NS implements Comparable<NS> {
             tt.done();
         }
     }
-        
+
     public String toString() {
         return ndd.name;
     }
@@ -161,21 +161,21 @@ public class    NS implements Comparable<NS> {
     public int compareTo(NS o) {
         return ndd.name.compareTo(o.ndd.name);
     }
-    
+
     public static class NSSplit {
         public String ns;
         public String other;
         public NSSplit(String s, int dot) {
             ns = s.substring(0,dot);
-            other = s.substring(dot+1);
+            other = s.substring(dot + 1);
         }
     }
     public static NSSplit deriveParent(String dotted) {
         if (dotted==null) {
             return null;
         }
-        for (int idx = dotted.lastIndexOf('.');idx>=0; idx=dotted.lastIndexOf('.',idx-1)) {
-            if (data.get(dotted.substring(0, idx))!=null) {
+        for (int idx = dotted.lastIndexOf('.');idx >= 0; idx = dotted.lastIndexOf('.',idx - 1)) {
+            if (data.get(dotted.substring(0, idx)) != null) {
                 return new NSSplit(dotted,idx);
             }
         }

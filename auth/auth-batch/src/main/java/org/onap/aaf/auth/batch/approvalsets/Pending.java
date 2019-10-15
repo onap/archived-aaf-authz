@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,11 +31,11 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 public class Pending {
     public static final String REMIND = "remind";
-    
+
     int qty;
     boolean hasNew;
     Date earliest;
-    
+
     /**
      * Use this constructor to indicate when last Notified
      * @param lastNotified
@@ -74,32 +74,32 @@ public class Pending {
     public void inc() {
         ++qty;
     }
-    
+
     public void inc(Pending value) {
-        qty+=value.qty;
-        if(earliest==null) {
+        qty += value.qty;
+        if(earliest == null) {
             earliest = value.earliest;
-        } else if(value.earliest!=null && value.earliest.before(earliest)) {
+        } else if(value.earliest != null && value.earliest.before(earliest)) {
             earliest = value.earliest;
         }
     }
 
     public void earliest(Date lastnotified) {
-        if(lastnotified==null) {
+        if(lastnotified == null) {
             hasNew=true;
-        } else if (earliest==null || lastnotified.before(earliest)) {
+        } else if (earliest == null || lastnotified.before(earliest)) {
             earliest = lastnotified;
         }
     }
-    
+
     public int qty() {
         return qty;
     }
-    
+
     public Date earliest() {
         return earliest;
     }
-    
+
     public boolean newApprovals() {
         return hasNew;
     }

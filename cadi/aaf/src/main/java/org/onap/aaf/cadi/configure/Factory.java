@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,8 +79,8 @@ public class Factory {
     private static final KeyFactory keyFactory;
     private static final CertificateFactory certificateFactory;
     private static final SecureRandom random;
-    
-    
+
+
     private static final Symm base64 = Symm.base64.copy(64);
 
     static {
@@ -103,7 +103,7 @@ public class Factory {
                 e.printStackTrace(System.err);
             };
             keyFactory = tempKeyFactory;
-             
+
             CertificateFactory tempCertificateFactory;
             try {
                 tempCertificateFactory = CertificateFactory.getInstance("X.509");
@@ -113,7 +113,7 @@ public class Factory {
             }
             certificateFactory = tempCertificateFactory;
 
-         
+
     }
 
 
@@ -131,7 +131,7 @@ public class Factory {
                 tt.done();
             }
         }
-    }  
+    }
 
     private static final String LINE_END = "-----\n";
 
@@ -145,7 +145,7 @@ public class Factory {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         base64.encode(bais, baos);
         sb.append(new String(baos.toByteArray()));
-        
+
         if (sb.charAt(sb.length()-1)!='\n') {
             sb.append('\n');
         }
@@ -154,7 +154,7 @@ public class Factory {
         sb.append(LINE_END);
         return sb.toString();
     }
-    
+
     public static PrivateKey toPrivateKey(Trans trans, String pk) throws IOException, CertException {
         byte[] bytes = decode(new StringReader(pk), null);
         return toPrivateKey(trans, bytes);
@@ -202,7 +202,7 @@ public class Factory {
             tt.done();
         }
     }
-    
+
     public static String toString(Trans trans, PublicKey pk) throws IOException {
         trans.debug().log("Public Key to String");
         return textBuilder("PUBLIC KEY",pk.getEncoded());
@@ -211,7 +211,7 @@ public class Factory {
     public static Collection<? extends Certificate> toX509Certificate(String x509) throws CertificateException {
         return toX509Certificate(x509.getBytes());
     }
-    
+
     public static Collection<? extends Certificate> toX509Certificate(List<String> x509s) throws CertificateException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -265,7 +265,7 @@ public class Factory {
     }
 
     public static Cipher pkCipher() throws NoSuchAlgorithmException, NoSuchPaddingException {
-        return Cipher.getInstance(KEY_ALGO); 
+        return Cipher.getInstance(KEY_ALGO);
     }
 
     public static Cipher pkCipher(Key key, boolean encrypt) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
@@ -277,7 +277,7 @@ public class Factory {
     public static byte[] strip(Reader rdr) throws IOException {
         return strip(rdr,null);
     }
-    
+
     public static byte[] strip(Reader rdr, Holder<String> hs) throws IOException {
         BufferedReader br = new BufferedReader(rdr);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -317,7 +317,7 @@ public class Factory {
             }
             created = null;
         }
-        
+
         public StripperInputStream(File file) throws FileNotFoundException {
             this(new FileReader(file));
             created = br;
@@ -365,7 +365,7 @@ public class Factory {
         private byte duo[];
         private int idx;
 
-        
+
         public Base64InputStream(File file) throws FileNotFoundException {
             this(new FileInputStream(file));
             created = is;
@@ -390,7 +390,7 @@ public class Factory {
                 }
                 idx=0;
             }
-            
+
             return duo[idx++];
         }
 
@@ -411,7 +411,7 @@ public class Factory {
         Symm.base64.decode(bais, baos);
         return baos.toByteArray();
     }
-    
+
     public static byte[] decode(File f, Holder<String> hs) throws IOException {
         FileReader fr = new FileReader(f);
         try {
@@ -464,12 +464,12 @@ public class Factory {
             return sig.verify(signature);
         } finally {
             tt.done();
-        }    
+        }
     }
 
     /**
      * Get the Security Provider, or, if not exists yet, attempt to load
-     * 
+     *
      * @param providerType
      * @param params
      * @return
@@ -480,7 +480,7 @@ public class Factory {
         if (p!=null) {
             switch(providerType) {
                 case "PKCS12":
-                    
+
                     break;
                 case "PKCS11": // PKCS11 only known to be supported by Sun
                     try {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.onap.aaf.cadi.Hash;
 
 public class AAFToken {
     private static final int CAPACITY = (Long.SIZE*2+Byte.SIZE*3)/8;
-    private static final SecureRandom sr = new SecureRandom(); 
+    private static final SecureRandom sr = new SecureRandom();
 
     public static final String toToken(UUID uuid) {
         long lsb = uuid.getLeastSignificantBits();
@@ -67,7 +67,7 @@ public class AAFToken {
         long lsb = bb.getLong();
         byte b3 = (byte)(0x3F&bb.get());
         int sum=35;
-        
+
         for (int i=0;i<Long.SIZE;i+=8) {
             sum+=((lsb>>i) & 0xFF);
         }
@@ -78,9 +78,9 @@ public class AAFToken {
         if (b1!=((byte)sum) ||
            b2!=((byte)(sum>>8)) ||
            b3!=((byte)((sum>>16)))) {
-            return null; // not a CADI Token            
+            return null; // not a CADI Token
         }
         return new UUID(msb, lsb);
     }
-    
+
 }

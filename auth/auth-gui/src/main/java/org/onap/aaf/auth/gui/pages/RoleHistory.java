@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ public class RoleHistory extends Page {
     static final String HREF = "/gui/roleHistory";
     static final String FIELDS[] = {"role","dates"};
 
-    
+
     public RoleHistory(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, FIELDS,
             new BreadCrumbs(breadcrumbs),
@@ -74,24 +74,24 @@ public class RoleHistory extends Page {
                         @Override
                         public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
                             String obRole = trans.get(role, null);
-                            
+
                             // Use Javascript to make the table title more descriptive
                             hgen.js()
                             .text("var caption = document.querySelector(\".title\");")
-                            .text("caption.innerHTML='History for Role [ " + obRole + " ]';")                        
+                            .text("caption.innerHTML='History for Role [ " + obRole + " ]';")
                             .done();
-                            
+
                             // Use Javascript to change Link Target to our last visited Detail page
                             String lastPage = RoleDetail.HREF + "?role=" + obRole;
                             hgen.js()
-                                .text("alterLink('roledetail', '"+lastPage + "');")                            
+                                .text("alterLink('roledetail', '"+lastPage + "');")
                                 .done();
-                            
+
                             hgen.br();
                             hgen.leaf("a", "href=#advanced_search","onclick=divVisibility('advanced_search');","class=greenbutton").text("Advanced Search").end()
                                 .divID("advanced_search", "style=display:none");
                             hgen.incr("table");
-                                
+
                             addDateRow(hgen,"Start Date");
                             addDateRow(hgen,"End Date");
                             hgen.incr("tr").incr("td");
@@ -106,9 +106,9 @@ public class RoleHistory extends Page {
             }
 
             );
-        
+
     }
-    
+
     private static void addDateRow(HTMLGen hgen, String s) {
         hgen
             .incr("tr")
@@ -129,16 +129,16 @@ public class RoleHistory extends Page {
             .end()
             .incr("td")
             .tagOnly("input","type=number","id=year"+s.substring(0, s.indexOf(' ')),"required",
-                    "value="+Calendar.getInstance().get(Calendar.YEAR), "min=1900", 
+                    "value="+Calendar.getInstance().get(Calendar.YEAR), "min=1900",
                     "max="+Calendar.getInstance().get(Calendar.YEAR),
                     "placeholder=Year").end()
             .end();
     }
-    
-    
+
+
     /**
      * Implement the Table Content for History
-     * 
+     *
      * @author Jeremiah
      *
      */
@@ -146,25 +146,25 @@ public class RoleHistory extends Page {
         private static final String[] headers = new String[] {"Date","User","Memo"};
         private Slot role;
         private Slot dates;
-        
+
         public Model(AuthzEnv env) {
             role = env.slot(NAME+".role");
             dates = env.slot(NAME+".dates");
         }
-        
+
         @Override
         public String[] headers() {
             return headers;
         }
-        
+
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String oName = trans.get(role,null);
             final String oDates = trans.get(dates,null);
-            
+
             Cells rv = Cells.EMPTY;
             if (oName!=null) {
-                
+
                 try {
                     rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
                         @Override
@@ -181,14 +181,14 @@ public class RoleHistory extends Page {
                                     tt.done();
                                     tt = trans.start("Load History Data", Env.SUB);
                                     List<Item> histItems = fh.value.getItem();
-                                    
+
                                     java.util.Collections.sort(histItems, new Comparator<Item>() {
                                         @Override
                                         public int compare(Item o1, Item o2) {
                                             return o2.getTimestamp().compare(o1.getTimestamp());
                                         }
                                     });
-                                    
+
                                     for (Item i : histItems) {
                                         String user = i.getUser();
                                         AbsCell userCell = new TextCell(user);
@@ -209,7 +209,7 @@ public class RoleHistory extends Page {
                                 }
                             } finally {
                                 tt.done();
-                            }    
+                            }
                             return new Cells(rv,msg);
                         }
                     });

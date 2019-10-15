@@ -68,7 +68,7 @@ public class PermEval {
                     String[] pkeys=Split.split(startChar,pInst);
                     if (pkeys.length<skeys.length) {
                         return false;
-                    } else if(pkeys.length > skeys.length && 
+                    } else if(pkeys.length > skeys.length &&
                              (skeys.length==0 || !ASTERIX.equals(skeys[skeys.length-1]))) {
                            return false;
                     }

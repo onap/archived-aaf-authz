@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,20 +44,20 @@ import org.onap.aaf.auth.service.mapper.Mapper.API;
 
 /**
  * Pull certain types of History Info
- * 
- * Specify yyyymm as 
+ *
+ * Specify yyyymm as
  *     single - 201504
  *  commas 201503,201504
  *  ranges 201501-201504
  *  combinations 201301,201401,201501-201504
- *  
+ *
  * @author Jonathan
  *
  */
 public class API_History {
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param authzAPI
      * @param facade
      * @throws Exception
@@ -82,7 +82,7 @@ public class API_History {
                 Result<Void> r = context.getHistoryByUser(trans, resp, pathParam(req,":user"),years,descend);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -105,11 +105,11 @@ public class API_History {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
-                
+
                 Result<Void> r = context.getHistoryByNS(trans, resp, pathParam(req,":ns"),years,descend);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -136,7 +136,7 @@ public class API_History {
                 Result<Void> r = context.getHistoryByRole(trans, resp, pathParam(req,":role"),years,descend);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -159,20 +159,20 @@ public class API_History {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
-                
+
                 Result<Void> r = context.getHistoryByPerm(trans, resp, pathParam(req,":type"),years,descend);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
         });
-        
+
         /**
-         * Get History by Subject 
+         * Get History by Subject
          */
         authzAPI.route(GET,"/authz/hist/subject/:type/:subject",API.HISTORY,new Code(facade,"Get History by Perm Type", true) {
             @Override
@@ -186,11 +186,11 @@ public class API_History {
                     context.error(trans, resp, Result.err(Status.ERR_BadData, e.getMessage()));
                     return;
                 }
-                
+
                 Result<Void> r = context.getHistoryBySubject(trans, resp, pathParam(req,":type"), pathParam(req,":subject"),years,descend);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -205,9 +205,9 @@ public class API_History {
         if ("true".equalsIgnoreCase(req.getParameter("asc")))return 1;
         return 0;
     }
-    
+
     // Get Common "yyyymm" parameter, or none
-    
+
     private static int[] getYears(HttpServletRequest req) throws NumberFormatException {
         // Sonar says threading issues.
         SimpleDateFormat FMT = new SimpleDateFormat("yyyyMM");
@@ -237,8 +237,8 @@ public class API_History {
                         GregorianCalendar gc = new GregorianCalendar();
                         gc.set(GregorianCalendar.MONTH, Integer.parseInt(range[1].substring(4,6))-1);
                         gc.set(GregorianCalendar.YEAR, Integer.parseInt(range[1].substring(0,4)));
-                        int end = getNum(FMT.format(gc.getTime())); 
-                        
+                        int end = getNum(FMT.format(gc.getTime()));
+
                         gc.set(GregorianCalendar.MONTH, Integer.parseInt(range[0].substring(4,6))-1);
                         gc.set(GregorianCalendar.YEAR, Integer.parseInt(range[0].substring(0,4)));
                         for (int i=getNum(FMT.format(gc.getTime()));i<=end;gc.add(GregorianCalendar.MONTH, 1),i=getNum(FMT.format(gc.getTime()))) {
@@ -258,7 +258,7 @@ public class API_History {
         }
         return ym;
     }
-    
+
     private static int getNum(String n) {
         if (n==null || n.length()!=6) throw new NumberFormatException(n + " is not in YYYYMM format");
         return Integer.parseInt(n);

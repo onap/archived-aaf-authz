@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -99,8 +99,8 @@ import org.onap.aaf.misc.env.util.Split;
 import aaf.v2_0.CredRequest;
 
 /**
- * AuthzCassServiceImpl implements AuthzCassService for 
- * 
+ * AuthzCassServiceImpl implements AuthzCassService for
+ *
  * @author Jonathan
  *
  * @param <NSS>
@@ -116,12 +116,12 @@ import aaf.v2_0.CredRequest;
  */
 public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS>
     implements AuthzService            <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> {
-    
+
     private static final String TWO_SPACE = "  ";
     private Mapper                    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper;
     @Override
     public Mapper                    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper() {return mapper;}
-    
+
     private static final String ASTERIX = "*";
     private static final String CACHE = "cache";
     private static final String ROOT_NS = Define.ROOT_NS();
@@ -129,28 +129,28 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
     private final Question ques;
     private final Function func;
-    
+
     public AuthzCassServiceImpl(AuthzTrans trans, Mapper<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper,Question question) {
         this.ques = question;
         func = new Function(trans, question);
         this.mapper = mapper;
-        
+
     }
 
 /***********************************
- * NAMESPACE 
+ * NAMESPACE
  ***********************************/
     /**
      * createNS
-     * @throws DAOException 
+     * @throws DAOException
      * @see org.onap.aaf.auth.service.AuthzService#createNS(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.String, java.lang.String)
      */
-    @ApiDoc( 
-            method = POST,  
+    @ApiDoc(
+            method = POST,
             path = "/authz/ns",
             params = {},
             expectedCode = 201,
-            errorCodes = { 403,404,406,409 }, 
+            errorCodes = { 403,404,406,409 },
             text = { "Namespace consists of: ",
                     "<ul><li>name - What you want to call this Namespace</li>",
                     "<li>responsible(s) - Person(s) who receive Notifications and approves Requests ",
@@ -168,7 +168,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     public Result<Void> createNS(final AuthzTrans trans, REQUEST from, NsType type) {
         final Result<Namespace> rnamespace = mapper.ns(trans, from);
         final ServiceValidator v = new ServiceValidator();
-        if (v.ns(rnamespace).err()) { 
+        if (v.ns(rnamespace).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
         final Namespace namespace = rnamespace.value;
@@ -176,13 +176,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (parentNs.notOK()) {
             return Result.err(parentNs);
         }
-        
+
         // Note: Data validate occurs in func.createNS
         if (namespace.name.lastIndexOf('.')<0) { // Root Namespace... Function will check if allowed
             return func.createNS(trans, namespace, false);
         }
-        
-        Result<FutureDAO.Data> fd = mapper.future(trans, NsDAO.TABLE,from,namespace,true, 
+
+        Result<FutureDAO.Data> fd = mapper.future(trans, NsDAO.TABLE,from,namespace,true,
                 new Mapper.Memo() {
                     @Override
                     public String get() {
@@ -204,7 +204,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     Result<String> rfc = func.createFuture(trans, fd.value, namespace.name, trans.user(),parentNs.value, FUTURE_OP.C);
                     if (rfc.isOK()) {
                         return Result.err(Status.ACC_Future, "NS [%s] is saved for future processing",namespace.name);
-                    } else { 
+                    } else {
                         return Result.err(rfc);
                     }
                 case Status.ACC_Now:
@@ -213,16 +213,16 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(fd);
             }
     }
-    
+
     @ApiDoc(
-            method = POST,  
+            method = POST,
             path = "/authz/ns/:ns/admin/:id",
             params = {     "ns|string|true",
-                        "id|string|true" 
+                        "id|string|true"
                     },
             expectedCode = 201,
-            errorCodes = { 403,404,406,409 }, 
-            text = {     "Add an Identity :id to the list of Admins for the Namespace :ns", 
+            errorCodes = { 403,404,406,409 },
+            text = {     "Add an Identity :id to the list of Admins for the Namespace :ns",
                         "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" }
             )
     @Override
@@ -231,13 +231,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = DELETE,  
+            method = DELETE,
             path = "/authz/ns/:ns/admin/:id",
             params = {     "ns|string|true",
-                        "id|string|true" 
+                        "id|string|true"
                     },
             expectedCode = 200,
-            errorCodes = { 403,404 }, 
+            errorCodes = { 403,404 },
             text = {     "Remove an Identity :id from the list of Admins for the Namespace :ns",
                         "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" }
             )
@@ -247,13 +247,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = POST,  
+            method = POST,
             path = "/authz/ns/:ns/responsible/:id",
             params = {     "ns|string|true",
-                        "id|string|true" 
+                        "id|string|true"
                     },
             expectedCode = 201,
-            errorCodes = { 403,404,406,409 }, 
+            errorCodes = { 403,404,406,409 },
             text = {     "Add an Identity :id to the list of Responsibles for the Namespace :ns",
                         "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" }
             )
@@ -263,13 +263,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = DELETE,  
+            method = DELETE,
             path = "/authz/ns/:ns/responsible/:id",
             params = {     "ns|string|true",
-                        "id|string|true" 
+                        "id|string|true"
                     },
             expectedCode = 200,
-            errorCodes = { 403,404 }, 
+            errorCodes = { 403,404 },
             text = {     "Remove an Identity :id to the list of Responsibles for the Namespace :ns",
                         "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)",
                         "Note: A namespace must have at least 1 responsible party"
@@ -284,14 +284,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
      * @see org.onap.aaf.auth.service.AuthzService#applyModel(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.Object)
      */
     @ApiDoc(
-            method = POST,  
+            method = POST,
             path = "/authz/ns/:ns/attrib/:key/:value",
             params = {     "ns|string|true",
                         "key|string|true",
                         "value|string|true"},
             expectedCode = 201,
-            errorCodes = { 403,404,406,409 },  
-            text = {     
+            errorCodes = { 403,404,406,409 },
+            text = {
                 "Create an attribute in the Namespace",
                 "You must be given direct permission for key by AAF"
                 }
@@ -319,9 +319,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (nsd.attrib.get(key)!=null) {
                 return Result.err(Status.ERR_ConflictAlreadyExists, "NS Property %s:%s exists", ns, key);
             }
-            
+
             // Check if User may put
-            if (!ques.isGranted(trans, trans.user(), ROOT_NS, Question.ATTRIB, 
+            if (!ques.isGranted(trans, trans.user(), ROOT_NS, Question.ATTRIB,
                     ":"+trans.org().getDomain()+".*:"+key, Access.write.name())) {
                 return Result.err(Status.ERR_Denied, "%s may not create NS Attrib [%s:%s]", trans.user(),ns, key);
             }
@@ -335,14 +335,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             tt.done();
         }
     }
-    
+
     @ApiDoc(
-            method = GET,  
+            method = GET,
             path = "/authz/ns/attrib/:key",
             params = {     "key|string|true" },
             expectedCode = 200,
-            errorCodes = { 403,404 },  
-            text = {     
+            errorCodes = { 403,404 },
+            text = {
                 "Read Attributes for Namespace"
                 }
             )
@@ -355,7 +355,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         // May Read
-        if (!ques.isGranted(trans, trans.user(), ROOT_NS, Question.ATTRIB, 
+        if (!ques.isGranted(trans, trans.user(), ROOT_NS, Question.ATTRIB,
                     ":"+trans.org().getDomain()+".*:"+key, Question.READ)) {
             return Result.err(Status.ERR_Denied,"%s may not read NS by Attrib '%s'",trans.user(),key);
         }
@@ -369,13 +369,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
 
     @ApiDoc(
-            method = PUT,  
+            method = PUT,
             path = "/authz/ns/:ns/attrib/:key/:value",
             params = {     "ns|string|true",
                         "key|string|true"},
             expectedCode = 200,
-            errorCodes = { 403,404 },  
-            text = {     
+            errorCodes = { 403,404 },
+            text = {
                 "Update Value on an existing attribute in the Namespace",
                 "You must be given direct permission for key by AAF"
                 }
@@ -403,9 +403,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (nsd.attrib.get(key)==null) {
                 return Result.err(Status.ERR_NotFound, "NS Property %s:%s exists", ns, key);
             }
-            
+
             // Check if User may put
-            if (!ques.isGranted(trans, trans.user(), ROOT_NS, Question.ATTRIB, 
+            if (!ques.isGranted(trans, trans.user(), ROOT_NS, Question.ATTRIB,
                     ":"+trans.org().getDomain()+".*:"+key, Access.write.name())) {
                 return Result.err(Status.ERR_Denied, "%s may not create NS Attrib [%s:%s]", trans.user(),ns, key);
             }
@@ -414,20 +414,20 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             nsd.attrib.put(key, value);
             ques.nsDAO().invalidate(trans, nsd);
             return ques.nsDAO().update(trans,nsd);
- 
+
         } finally {
             tt.done();
         }
     }
 
     @ApiDoc(
-            method = DELETE,  
+            method = DELETE,
             path = "/authz/ns/:ns/attrib/:key",
             params = {     "ns|string|true",
                         "key|string|true"},
             expectedCode = 200,
-            errorCodes = { 403,404 },  
-            text = {     
+            errorCodes = { 403,404 },
+            text = {
                 "Delete an attribute in the Namespace",
                 "You must be given direct permission for key by AAF"
                 }
@@ -454,7 +454,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (nsd.attrib.get(key)==null) {
                 return Result.err(Status.ERR_NotFound, "NS Property [%s:%s] does not exist", ns, key);
             }
-            
+
             // Check if User may del
             if (!ques.isGranted(trans, trans.user(), ROOT_NS, "attrib", ":" + ROOT_COMPANY + ".*:"+key, Access.write.name())) {
                 return Result.err(Status.ERR_Denied, "%s may not delete NS Attrib [%s:%s]", trans.user(),ns, key);
@@ -471,12 +471,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = GET,  
+            method = GET,
             path = "/authz/nss/:id",
             params = {     "id|string|true" },
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
-            text = {     
+            errorCodes = { 404,406 },
+            text = {
                 "Lists the Owner(s), Admin(s), Description, and Attributes of Namespace :id",
             }
             )
@@ -486,7 +486,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("NS", ns).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         Result<List<NsDAO.Data>> rlnd = ques.nsDAO().read(trans, ns);
         if (rlnd.isOK()) {
             if (rlnd.isEmpty()) {
@@ -494,10 +494,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
             Result<NsDAO.Data> rnd = ques.mayUser(trans, trans.user(), rlnd.value.get(0), Access.read);
             if (rnd.notOK()) {
-                return Result.err(rnd); 
+                return Result.err(rnd);
             }
-            
-            
+
+
             Namespace namespace = new Namespace(rnd.value);
             Result<List<String>> rd = func.getOwners(trans, namespace.name, includeExpired);
             if (rd.isOK()) {
@@ -507,7 +507,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (rd.isOK()) {
                 namespace.admin = rd.value;
             }
-            
+
             NSS nss = mapper.newInstance(API.NSS);
             return mapper.nss(trans, namespace, nss);
         } else {
@@ -516,13 +516,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = GET,  
+            method = GET,
             path = "/authz/nss/admin/:id",
             params = {     "id|string|true" },
             expectedCode = 200,
-            errorCodes = { 403,404 }, 
-            text = {     "Lists all Namespaces where Identity :id is an Admin", 
-                        "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" 
+            errorCodes = { 403,404 },
+            text = {     "Lists all Namespaces where Identity :id is an Admin",
+                        "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)"
                     }
             )
     @Override
@@ -531,13 +531,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("User", user).err()) {
             return Result.err(Status.ERR_BadData, v.errs());
         }
-        
+
         Result<Collection<Namespace>> rn = loadNamepace(trans, user, ".admin", full);
         if (rn.notOK()) {
             return Result.err(rn);
         }
         if (rn.isEmpty()) {
-            return Result.err(Status.ERR_NotFound, "[%s] is not an admin for any namespaces",user);        
+            return Result.err(Status.ERR_NotFound, "[%s] is not an admin for any namespaces",user);
         }
         NSS nss = mapper.newInstance(API.NSS);
         // Note: "loadNamespace" already validates view of Namespace
@@ -545,13 +545,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = GET,  
+            method = GET,
             path = "/authz/nss/either/:id",
             params = {     "id|string|true" },
             expectedCode = 200,
-            errorCodes = { 403,404 }, 
-            text = {     "Lists all Namespaces where Identity :id is either an Admin or an Owner", 
-                        "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)" 
+            errorCodes = { 403,404 },
+            text = {     "Lists all Namespaces where Identity :id is either an Admin or an Owner",
+                        "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)"
                     }
             )
     @Override
@@ -560,13 +560,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("User", user).err()) {
             return Result.err(Status.ERR_BadData, v.errs());
         }
-        
+
         Result<Collection<Namespace>> rn = loadNamepace(trans, user, null, full);
         if (rn.notOK()) {
             return Result.err(rn);
         }
         if (rn.isEmpty()) {
-            return Result.err(Status.ERR_NotFound, "[%s] is not an admin or owner for any namespaces",user);        
+            return Result.err(Status.ERR_NotFound, "[%s] is not an admin or owner for any namespaces",user);
         }
         NSS nss = mapper.newInstance(API.NSS);
         // Note: "loadNamespace" already validates view of Namespace
@@ -595,7 +595,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         if (rls.isOK()) {
                             namespace.admin=rls.value;
                         }
-                        
+
                         rls = func.getOwners(trans, namespace.name, false);
                         if (rls.isOK()) {
                             namespace.owner=rls.value;
@@ -619,7 +619,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                             }
                             if (endsWith==null || urdd.role.endsWith(endsWith)) {
                                 lm.put(namespace.name,namespace);
-                            } else { 
+                            } else {
                                 other.put(namespace.name,namespace);
                             }
                         }
@@ -636,12 +636,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     @ApiDoc(
-            method = GET,  
+            method = GET,
             path = "/authz/nss/responsible/:id",
             params = {     "id|string|true" },
             expectedCode = 200,
-            errorCodes = { 403,404 }, 
-            text = {     "Lists all Namespaces where Identity :id is a Responsible Party", 
+            errorCodes = { 403,404 },
+            text = {     "Lists all Namespaces where Identity :id is a Responsible Party",
                         "Note: :id must be fully qualified (i.e. ab1234@people.osaaf.org)"
                     }
             )
@@ -656,20 +656,20 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(rn);
         }
         if (rn.isEmpty()) {
-            return Result.err(Status.ERR_NotFound, "[%s] is not an owner for any namespaces",user);        
+            return Result.err(Status.ERR_NotFound, "[%s] is not an owner for any namespaces",user);
         }
         NSS nss = mapper.newInstance(API.NSS);
         // Note: "loadNamespace" prevalidates
         return mapper.nss(trans, rn.value, nss);
     }
-    
+
     @ApiDoc(
-            method = GET,  
+            method = GET,
             path = "/authz/nss/children/:id",
             params = {     "id|string|true" },
             expectedCode = 200,
-            errorCodes = { 403,404 }, 
-            text = {     "Lists all Child Namespaces of Namespace :id", 
+            errorCodes = { 403,404 },
+            text = {     "Lists all Child Namespaces of Namespace :id",
                         "Note: This is not a cached read"
                     }
             )
@@ -679,14 +679,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("NS", parent).err())  {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         Result<NsDAO.Data> rnd = ques.deriveNs(trans, parent);
         if (rnd.notOK()) {
             return Result.err(rnd);
         }
         rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd); 
+            return Result.err(rnd);
         }
 
         Set<Namespace> lm = new HashSet<>();
@@ -701,7 +701,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if (rls.isOK()) {
                     namespace.admin=rls.value;
                 }
-                
+
                 rls = func.getOwners(trans, namespace.name, false);
                 if (rls.isOK()) {
                     namespace.owner=rls.value;
@@ -718,11 +718,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
 
     @ApiDoc(
-            method = PUT,  
+            method = PUT,
             path = "/authz/ns",
             params = {},
             expectedCode = 200,
-            errorCodes = { 403,404,406 }, 
+            errorCodes = { 403,404,406 },
             text = { "Replace the Current Description of a Namespace with a new one"
                     }
             )
@@ -739,11 +739,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
         Namespace namespace = nsd.value;
         Result<List<NsDAO.Data>> rlnd = ques.nsDAO().read(trans, namespace.name);
-        
+
         if (rlnd.notOKorIsEmpty()) {
             return Result.err(Status.ERR_NotFound, "Namespace [%s] does not exist",namespace.name);
         }
-        
+
         if (ques.mayUser(trans, trans.user(), rlnd.value.get(0), Access.write).notOK()) {
             return Result.err(Status.ERR_Denied, "You do not have approval to change %s",namespace.name);
         }
@@ -755,18 +755,18 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(rdr);
         }
     }
-    
+
     /**
      * deleteNS
-     * @throws DAOException 
+     * @throws DAOException
      * @see org.onap.aaf.auth.service.AuthzService#deleteNS(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.String, java.lang.String)
      */
     @ApiDoc(
-            method = DELETE,  
+            method = DELETE,
             path = "/authz/ns/:ns",
             params = {     "ns|string|true" },
             expectedCode = 200,
-            errorCodes = { 403,404,424 }, 
+            errorCodes = { 403,404,424 },
             text = {     "Delete the Namespace :ns. Namespaces cannot normally be deleted when there ",
                         "are still credentials associated with them, but they can be deleted by setting ",
                         "the \"force\" property. To do this: Add 'force=true' as a query parameter",
@@ -783,19 +783,19 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
 
 /***********************************
- * PERM 
+ * PERM
  ***********************************/
 
     /*
      * (non-Javadoc)
      * @see org.onap.aaf.auth.service.AuthzService#createOrUpdatePerm(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.Object, boolean, java.lang.String, java.lang.String, java.lang.String, java.util.List, java.util.List)
      */
-    @ApiDoc( 
-            method = POST,  
+    @ApiDoc(
+            method = POST,
             path = "/authz/perm",
             params = {},
             expectedCode = 201,
-            errorCodes = {403,404,406,409}, 
+            errorCodes = {403,404,406,409},
             text = { "Permission consists of:",
                      "<ul><li>type - a Namespace qualified identifier specifying what kind of resource "
                      + "is being protected</li>",
@@ -806,7 +806,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                      }
             )
     @Override
-    public Result<Void> createPerm(final AuthzTrans trans,REQUEST rreq) {        
+    public Result<Void> createPerm(final AuthzTrans trans,REQUEST rreq) {
         final Result<PermDAO.Data> newPd = mapper.perm(trans, rreq);
 
         final ServiceValidator v = new ServiceValidator();
@@ -824,7 +824,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(rlpdd);
                 }
                 if(!rlpdd.isEmpty()) {
-                    return Result.err(Result.ERR_ConflictAlreadyExists,"Permission already exists"); 
+                    return Result.err(Result.ERR_ConflictAlreadyExists,"Permission already exists");
                 }
 
                 RoleDAO.Data rdd = new RoleDAO.Data();
@@ -836,7 +836,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if(rpdd.notOK()) {
                     return Result.err(rpdd);
                 }
-                
+
                 CachedRoleDAO roleDAO = ques.roleDAO();
                 Result<List<RoleDAO.Data>> rlrdd = roleDAO.read(trans, rdd);
                 if(rlrdd.notOK()) {
@@ -846,14 +846,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         rdd = rlrdd.value.get(0);
                     }
                 }
-                
+
                 String eperm = pdd.encode();
                 rdd.perms(true).add(eperm);
                 Result<Void> rv = roleDAO.update(trans, rdd);
                 if(rv.notOK()) {
                     return rv;
                 }
-                 
+
                 CachedUserRoleDAO urDAO = ques.userRoleDAO();
                 UserRoleDAO.Data urdd = new UserRoleDAO.Data();
                 urdd.user = trans.user();
@@ -883,14 +883,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 return Result.err(Status.ERR_ConflictAlreadyExists,
                         "Permission Type exists as a Namespace");
             }
-            
+
             Result<FutureDAO.Data> fd = mapper.future(trans, PermDAO.TABLE, rreq, newPd.value,false,
                 new Mapper.Memo() {
                     @Override
                     public String get() {
-                        return "Create Permission [" + 
-                            newPd.value.fullType() + '|' + 
-                            newPd.value.instance + '|' + 
+                        return "Create Permission [" +
+                            newPd.value.fullType() + '|' +
+                            newPd.value.instance + '|' +
                             newPd.value.action + ']';
                     }
                 },
@@ -904,14 +904,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         return nsd;
                     }
                 });
-            
+
             Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, newPd.value.ns);
             if (nsr.notOKorIsEmpty()) {
                 return Result.err(nsr);
             }
             switch(fd.status) {
                 case OK:
-                    Result<String> rfc = func.createFuture(trans,fd.value, 
+                    Result<String> rfc = func.createFuture(trans,fd.value,
                             newPd.value.fullType() + '|' + newPd.value.instance + '|' + newPd.value.action,
                             trans.user(),
                             nsr.value.get(0),
@@ -933,12 +933,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    @ApiDoc( 
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authz/perms/:type",
             params = {"type|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List All Permissions that match the :type element of the key" }
             )
     @Override
@@ -956,7 +956,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 //        We don't have instance & action for mayUserView... do we want to loop through all returned here as well as in mapper?
 //        Result<NsDAO.Data> r;
 //        if ((r = ques.mayUserViewPerm(trans, trans.user(), permType)).notOK())return Result.err(r);
-        
+
         PERMS perms = mapper.newInstance(API.PERMS);
         if (!rlpd.isEmpty()) {
             // Note: Mapper will restrict what can be viewed
@@ -964,15 +964,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         return Result.ok(perms);
     }
-    
-    @ApiDoc( 
-            method = GET,  
+
+    @ApiDoc(
+            method = GET,
             path = "/authz/perms/:type/:instance/:action",
             params = {"type|string|true",
                       "instance|string|true",
                       "action|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List Permissions that match key; :type, :instance and :action" }
             )
     @Override
@@ -983,7 +983,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 || v.nullOrBlank("PermAction", action).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         Result<List<PermDAO.Data>> rlpd = ques.getPermsByName(trans, type, instance, action);
         if (rlpd.notOK()) {
             return Result.err(rlpd);
@@ -997,12 +997,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return Result.ok(perms);
     }
 
-    @ApiDoc( 
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authz/perms/user/:user",
             params = {"user|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List All Permissions that match user :user",
                      "<p>'user' must be expressed as full identity (ex: id@full.domain.com)</p>"}
             )
@@ -1018,25 +1018,25 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rlpd.notOK()) {
             return Result.err(rlpd);
         }
-        
+
         PERMS perms = mapper.newInstance(API.PERMS);
-        
+
         if (rlpd.isEmpty()) {
             return Result.ok(perms);
         }
         // Note: Mapper will restrict what can be viewed
         //   if user is the same as that which is looked up, no filtering is required
-        return mapper.perms(trans, rlpd.value, 
-                perms, 
+        return mapper.perms(trans, rlpd.value,
+                perms,
                 !user.equals(trans.user()));
     }
 
-    @ApiDoc( 
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authz/perms/user/:user/scope/:scope",
             params = {"user|string|true","scope|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List All Permissions that match user :user, filtered by NS (Scope)",
                      "<p>'user' must be expressed as full identity (ex: id@full.domain.com)</p>",
                      "<p>'scope' must be expressed as NSs separated by ':'</p>"
@@ -1053,26 +1053,26 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rlpd.notOK()) {
             return Result.err(rlpd);
         }
-        
+
         PERMS perms = mapper.newInstance(API.PERMS);
-        
+
         if (rlpd.isEmpty()) {
             return Result.ok(perms);
         }
         // Note: Mapper will restrict what can be viewed
         //   if user is the same as that which is looked up, no filtering is required
-        return mapper.perms(trans, rlpd.value, 
-                perms, 
+        return mapper.perms(trans, rlpd.value,
+                perms,
                 scopes,
                 !user.equals(trans.user()));
     }
 
-    @ApiDoc( 
-            method = POST,  
+    @ApiDoc(
+            method = POST,
             path = "/authz/perms/user/:user",
             params = {"user|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List All Permissions that match user :user",
                      "<p>'user' must be expressed as full identity (ex: id@full.domain.com)</p>",
                      "",
@@ -1100,15 +1100,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("User", user).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         //////////////
         PermLookup pl = PermLookup.get(trans,ques,user);
         Result<List<PermDAO.Data>> rlpd = pl.getPerms(trans.requested(force));
         if (rlpd.notOK()) {
             return Result.err(rlpd);
         }
-        
-        /*//TODO 
+
+        /*//TODO
           1) See if allowed to query
           2) See if User is allowed
           */
@@ -1150,25 +1150,25 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     out.add(pdd);
                 }
             }
-        }        
-        
+        }
+
         perms = mapper.newInstance(API.PERMS);
         if (rlpd.isEmpty()) {
             return Result.ok(perms);
         }
         // Note: Mapper will restrict what can be viewed
         //   if user is the same as that which is looked up, no filtering is required
-        return mapper.perms(trans, rlpd.value, 
-                perms, 
+        return mapper.perms(trans, rlpd.value,
+                perms,
                 !user.equals(trans.user()));
     }
-    
-    @ApiDoc( 
-            method = GET,  
+
+    @ApiDoc(
+            method = GET,
             path = "/authz/perms/role/:role",
             params = {"role|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List All Permissions that are granted to :role" }
             )
     @Override
@@ -1198,12 +1198,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return Result.ok(perms);
     }
 
-    @ApiDoc( 
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authz/perms/ns/:ns",
             params = {"ns|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "List All Permissions that are in Namespace :ns" }
             )
     @Override
@@ -1220,9 +1220,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
         rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd);     
+            return Result.err(rnd);
         }
-        
+
         Result<List<PermDAO.Data>> rlpd = ques.permDAO().readNS(trans, ns);
         if (rlpd.notOK()) {
             return Result.err(rlpd);
@@ -1235,15 +1235,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         return Result.ok(perms);
     }
-    
-    @ApiDoc( 
-            method = PUT,  
+
+    @ApiDoc(
+            method = PUT,
             path =     "/authz/perm/:type/:instance/:action",
             params = {"type|string|true",
                       "instance|string|true",
                         "action|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406, 409 }, 
+            errorCodes = { 404,406, 409 },
             text = { "Rename the Permission referenced by :type :instance :action, and "
                     + "rename (copy/delete) to the Permission described in PermRequest" }
             )
@@ -1259,54 +1259,54 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_Denied, "You do not have approval to change Permission [%s.%s|%s|%s]",
                     newPd.value.ns,newPd.value.type,newPd.value.instance,newPd.value.action);
         }
-        
+
         Result<NsSplit> nss = ques.deriveNsSplit(trans, origType);
-        Result<List<PermDAO.Data>> origRlpd = ques.permDAO().read(trans, nss.value.ns, nss.value.name, origInstance, origAction); 
-        
+        Result<List<PermDAO.Data>> origRlpd = ques.permDAO().read(trans, nss.value.ns, nss.value.name, origInstance, origAction);
+
         if (origRlpd.notOKorIsEmpty()) {
-            return Result.err(Status.ERR_PermissionNotFound, 
+            return Result.err(Status.ERR_PermissionNotFound,
                     "Permission [%s|%s|%s] does not exist",
                     origType,origInstance,origAction);
         }
-        
+
         PermDAO.Data origPd = origRlpd.value.get(0);
 
         if (!origPd.ns.equals(newPd.value.ns)) {
             return Result.err(Status.ERR_Denied, "Cannot change namespace with rename command. " +
                     "<new type> must start with [" + origPd.ns + "]");
         }
-        
-        if ( origPd.type.equals(newPd.value.type) && 
-                origPd.action.equals(newPd.value.action) && 
+
+        if ( origPd.type.equals(newPd.value.type) &&
+                origPd.action.equals(newPd.value.action) &&
                 origPd.instance.equals(newPd.value.instance) ) {
             return Result.err(Status.ERR_ConflictAlreadyExists, "New Permission must be different than original permission");
         }
-        
+
         Set<String> origRoles = origPd.roles(false);
         if (!origRoles.isEmpty()) {
             Set<String> roles = newPd.value.roles(true);
             for (String role : origPd.roles) {
-                roles.add(role); 
+                roles.add(role);
             }
-        }    
-        
+        }
+
         newPd.value.description = origPd.description;
-        
+
         Result<Void> rv = null;
-        
+
         rv = func.createPerm(trans, newPd.value, false);
         if (rv.isOK()) {
             rv = func.deletePerm(trans, origPd, true, false);
         }
         return rv;
     }
-    
-    @ApiDoc( 
-            method = PUT,  
+
+    @ApiDoc(
+            method = PUT,
             path = "/authz/perm",
             params = {},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "Add Description Data to Perm" }
             )
     @Override
@@ -1344,7 +1344,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
     }
-    
+
     @ApiDoc(
             method = PUT,
             path = "/authz/role/perm",
@@ -1372,18 +1372,18 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         // Read full set to get CURRENT values
-        Result<List<PermDAO.Data>> rcurr = ques.permDAO().read(trans, 
-                updt.value.ns, 
-                updt.value.type, 
-                updt.value.instance, 
+        Result<List<PermDAO.Data>> rcurr = ques.permDAO().read(trans,
+                updt.value.ns,
+                updt.value.type,
+                updt.value.instance,
                 updt.value.action);
-        
+
         if (rcurr.notOKorIsEmpty()) {
-            return Result.err(Status.ERR_PermissionNotFound, 
+            return Result.err(Status.ERR_PermissionNotFound,
                     "Permission [%s.%s|%s|%s] does not exist",
                      updt.value.ns,updt.value.type,updt.value.instance,updt.value.action);
         }
-        
+
         // Create a set of Update Roles, which are in Internal Format
         Set<String> updtRoles = new HashSet<>();
         Result<NsSplit> nss;
@@ -1397,11 +1397,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         Result<Void> rv = null;
-        
+
         for (PermDAO.Data curr : rcurr.value) {
             Set<String> currRoles = curr.roles(false);
-            // must add roles to this perm, and add this perm to each role 
-            // in the update, but not in the current            
+            // must add roles to this perm, and add this perm to each role
+            // in the update, but not in the current
             for (String role : updtRoles) {
                 if (!currRoles.contains(role)) {
                     Result<RoleDAO.Data> key = RoleDAO.Data.decode(trans, ques, role);
@@ -1437,17 +1437,17 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         }
                     }
                 }
-            }                
-        } 
-        return rv==null?Result.ok():rv;        
+            }
+        }
+        return rv==null?Result.ok():rv;
     }
-    
-    @ApiDoc( 
+
+    @ApiDoc(
             method = DELETE,
             path = "/authz/perm",
             params = {},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "Delete the Permission referenced by PermKey.",
                     "You cannot normally delete a permission which is still granted to roles,",
                     "however the \"force\" property allows you to do just that. To do this: Add",
@@ -1469,7 +1469,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_PermissionNotFound, "Permission [%s.%s|%s|%s] does not exist",
                     perm.ns,perm.type,perm.instance,perm.action    );
         }
-        
+
         Result<FutureDAO.Data> fd = mapper.future(trans,PermDAO.TABLE,from,perm,false,
                 new Mapper.Memo() {
                     @Override
@@ -1487,36 +1487,36 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return nsd;
                 }
             });
-        
+
         switch(fd.status) {
         case OK:
             Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, perm.ns);
             if (nsr.notOKorIsEmpty()) {
                 return Result.err(nsr);
             }
-            
-            Result<String> rfc = func.createFuture(trans, fd.value, 
+
+            Result<String> rfc = func.createFuture(trans, fd.value,
                     perm.encode(), trans.user(),nsr.value.get(0),FUTURE_OP.D);
             if (rfc.isOK()) {
                 return Result.err(Status.ACC_Future, "Perm Deletion [%s] is saved for future processing",perm.encode());
-            } else { 
+            } else {
                 return Result.err(rfc);
             }
         case Status.ACC_Now:
             return func.deletePerm(trans,perm,trans.requested(force), false);
         default:
             return Result.err(fd);
-        }            
-    }    
-    
-    @ApiDoc( 
+        }
+    }
+
+    @ApiDoc(
             method = DELETE,
             path = "/authz/perm/:name/:type/:action",
             params = {"type|string|true",
                       "instance|string|true",
                           "action|string|true"},
             expectedCode = 200,
-            errorCodes = { 404,406 }, 
+            errorCodes = { 404,406 },
             text = { "Delete the Permission referenced by :type :instance :action",
                     "You cannot normally delete a permission which is still granted to roles,",
                     "however the \"force\" property allows you to do just that. To do this: Add",
@@ -1532,7 +1532,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             .err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         Result<PermDAO.Data> pd = ques.permFrom(trans, type, instance, action);
         if (pd.isOK()) {
             return func.deletePerm(trans, pd.value, trans.requested(force), false);
@@ -1542,7 +1542,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
 /***********************************
- * ROLE 
+ * ROLE
  ***********************************/
     @ApiDoc(
             method = POST,
@@ -1586,8 +1586,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             new Mapper.Memo() {
                 @Override
                 public String get() {
-                    return "Create Role [" + 
-                        rd.value.fullName() + 
+                    return "Create Role [" +
+                        rd.value.fullName() +
                         ']';
                 }
             },
@@ -1601,7 +1601,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return nsd;
                 }
             });
-        
+
         Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rd.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
@@ -1609,13 +1609,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
         switch(fd.status) {
             case OK:
-                Result<String> rfc = func.createFuture(trans, fd.value, 
+                Result<String> rfc = func.createFuture(trans, fd.value,
                         role.encode(), trans.user(),nsr.value.get(0),FUTURE_OP.C);
                 if (rfc.isOK()) {
                     return Result.err(Status.ACC_Future, "Role [%s.%s] is saved for future processing",
                             rd.value.ns,
                             rd.value.name);
-                } else { 
+                } else {
                     return Result.err(rfc);
                 }
             case Status.ACC_Now:
@@ -1636,7 +1636,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @ApiDoc(
             method = GET,
             path = "/authz/roles/:role",
-            params = {"role|string|true"}, 
+            params = {"role|string|true"},
             expectedCode = 200,
             errorCodes = {404,406},
             text = { "List Roles that match :role",
@@ -1649,7 +1649,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("Role", role).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         // Determine if User can ask this question
         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, ques, role);
         if (rrdd.isOKhasData()) {
@@ -1660,7 +1660,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         } else {
             return Result.err(rrdd);
         }
-        
+
         // Look up data
         int query = role.indexOf('?');
         Result<List<RoleDAO.Data>> rlrd = ques.getRolesByName(trans, query<0?role:role.substring(0, query));
@@ -1722,7 +1722,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             params = {"ns|string|true"},
             expectedCode = 200,
             errorCodes = {404,406},
-            text = { "List all Roles for the Namespace :ns", 
+            text = { "List all Roles for the Namespace :ns",
                          "Note: You must have permission to see any given role"
             }
            )
@@ -1733,15 +1733,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("NS", ns).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         // check if user is allowed to view NS
-        Result<NsDAO.Data> rnsd = ques.deriveNs(trans, ns); 
+        Result<NsDAO.Data> rnsd = ques.deriveNs(trans, ns);
         if (rnsd.notOK()) {
-            return Result.err(rnsd);     
+            return Result.err(rnsd);
         }
         rnsd = ques.mayUser(trans, trans.user(), rnsd.value, Access.read);
         if (rnsd.notOK()) {
-            return Result.err(rnsd);     
+            return Result.err(rnsd);
         }
 
         TimeTaken tt = trans.start("MAP Roles by NS to Roles", Env.SUB);
@@ -1773,7 +1773,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             params = {"name|string|true"},
             expectedCode = 200,
             errorCodes = {404,406},
-            text = { "List all Roles for only the Name of Role (without Namespace)", 
+            text = { "List all Roles for only the Name of Role (without Namespace)",
                          "Note: You must have permission to see any given role"
             }
            )
@@ -1783,7 +1783,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("Name", name).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         // User Mapper to make sure user is allowed to view NS
 
         TimeTaken tt = trans.start("MAP Roles by Name to Roles", Env.SUB);
@@ -1834,7 +1834,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             .err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         TimeTaken tt = trans.start("Map Perm Roles Roles", Env.SUB);
         try {
             ROLES roles = mapper.newInstance(API.ROLES);
@@ -1846,7 +1846,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if ((res=ques.mayUser(trans, trans.user(), pdd, Question.Access.read)).notOK()) {
                     return Result.err(res);
                 }
-                
+
                 Result<List<PermDAO.Data>> pdlr = ques.permDAO().read(trans, pdd);
                 if (pdlr.isOK())for (PermDAO.Data pd : pdlr.value) {
                     Result<List<RoleDAO.Data>> rlrd;
@@ -1910,7 +1910,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
     }
-    
+
     @ApiDoc(
             method = POST,
             path = "/authz/role/perm",
@@ -1918,7 +1918,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             expectedCode = 201,
             errorCodes = {403,404,406,409},
             text = { "Grant a Permission to a Role",
-                     "Permission consists of:", 
+                     "Permission consists of:",
                      "<ul><li>type - a Namespace qualified identifier specifying what kind of resource "
                      + "is being protected</li>",
                      "<li>instance - a key, possibly multi-dimensional, that identifies a specific "
@@ -1942,7 +1942,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rrd.notOKorIsEmpty()) {
             return Result.err(rrd);
         }
-        
+
         // Validate Role and Perm values
         final ServiceValidator v = new ServiceValidator();
         if (v.perm(rpd.value)
@@ -1955,9 +1955,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rlrd.notOKorIsEmpty()) {
             return Result.err(Status.ERR_RoleNotFound, "Role [%s] does not exist", rrd.value.fullName());
         }
-        
+
         // Check Status of Data in DB (does it exist)
-        Result<List<PermDAO.Data>> rlpd = ques.permDAO().read(trans, rpd.value.ns, 
+        Result<List<PermDAO.Data>> rlpd = ques.permDAO().read(trans, rpd.value.ns,
                 rpd.value.type, rpd.value.instance, rpd.value.action);
         PermDAO.Data createPerm = null; // if not null, create first
         if (rlpd.notOKorIsEmpty()) { // Permission doesn't exist
@@ -1966,7 +1966,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 createPerm = rpd.value;
                 createPerm.roles.clear();
             } else {
-                return Result.err(Status.ERR_PermissionNotFound,"Permission [%s.%s|%s|%s] does not exist", 
+                return Result.err(Status.ERR_PermissionNotFound,"Permission [%s.%s|%s|%s] does not exist",
                         rpd.value.ns,rpd.value.type,rpd.value.instance,rpd.value.action);
             }
         } else {
@@ -1979,7 +1979,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
         }
 
-        
+
         Result<FutureDAO.Data> fd = mapper.future(trans, PermDAO.TABLE, rreq, rpd.value,true, // Allow grants to create Approvals
                 new Mapper.Memo() {
                     @Override
@@ -2007,7 +2007,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         switch(fd.status) {
             case OK:
-                Result<String> rfc = func.createFuture(trans,fd.value, 
+                Result<String> rfc = func.createFuture(trans,fd.value,
                         rpd.value.fullPerm(),
                         trans.user(),
                         nsr.value.get(0),
@@ -2018,7 +2018,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                             rpd.value.type,
                             rpd.value.instance,
                             rpd.value.action);
-                } else { 
+                } else {
                     return Result.err(rfc);
                 }
             case Status.ACC_Now:
@@ -2033,7 +2033,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             default:
                 return Result.err(fd);
         }
-        
+
     }
 
     /**
@@ -2071,17 +2071,17 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
         return delPermFromRole(trans, updt.value,rrd.value, rreq);
     }
-        
-    private Result<Void> delPermFromRole(final AuthzTrans trans, PermDAO.Data pdd, RoleDAO.Data rdd, REQUEST rreq) {        
-        Result<List<PermDAO.Data>> rlpd = ques.permDAO().read(trans, pdd.ns, pdd.type, 
+
+    private Result<Void> delPermFromRole(final AuthzTrans trans, PermDAO.Data pdd, RoleDAO.Data rdd, REQUEST rreq) {
+        Result<List<PermDAO.Data>> rlpd = ques.permDAO().read(trans, pdd.ns, pdd.type,
                 pdd.instance, pdd.action);
-        
+
         if (rlpd.notOKorIsEmpty()) {
-            return Result.err(Status.ERR_PermissionNotFound, 
+            return Result.err(Status.ERR_PermissionNotFound,
                 "Permission [%s.%s|%s|%s] does not exist",
                     pdd.ns,pdd.type,pdd.instance,pdd.action);
         }
-        
+
         Result<FutureDAO.Data> fd = mapper.future(trans, PermDAO.TABLE, rreq, pdd,true, // allow ungrants requests
                 new Mapper.Memo() {
                     @Override
@@ -2106,7 +2106,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         switch(fd.status) {
             case OK:
-                Result<String> rfc = func.createFuture(trans,fd.value, 
+                Result<String> rfc = func.createFuture(trans,fd.value,
                         pdd.fullPerm(),
                         trans.user(),
                         nsr.value.get(0),
@@ -2127,7 +2127,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 return Result.err(fd);
         }
     }
-    
+
 /*
     @ApiDoc(
             method = DELETE,
@@ -2148,7 +2148,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rpns.notOKorIsEmpty()) {
             return Result.err(rpns);
         }
-        
+
             final Validator v = new ServiceValidator();
         if (v.role(role)
             .permType(rpns.value.name,rpns.value.parent)
@@ -2157,26 +2157,26 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             .err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
             Result<Data> rrns = ques.deriveNs(trans, role);
             if (rrns.notOKorIsEmpty()) {
                 return Result.err(rrns);
             }
-            
+
         final Result<List<RoleDAO.Data>> rrd = ques.roleDAO().read(trans, rrns.value.parent, rrns.value.name);
         if (rrd.notOKorIsEmpty()) {
             return Result.err(rrd);
         }
-        
+
         final Result<List<PermDAO.Data>> rpd = ques.permDAO().read(trans, rpns.value.parent, rpns.value.name, instance, action);
         if (rpd.notOKorIsEmpty()) {
             return Result.err(rpd);
         }
 
-        
+
         return delPermFromRole(trans,rpd.value.get(0), rrd.value.get(0), mapper.ungrantRequest(trans, role, type, instance, action));
     }
-    
+
     @ApiDoc(
             method = DELETE,
             path = "/authz/role/:role",
@@ -2191,7 +2191,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,ques,role);
         if (rrdd.isOKhasData()) {
             final ServiceValidator v = new ServiceValidator();
-            if (v.nullOrBlank(rrdd.value).err()) { 
+            if (v.nullOrBlank(rrdd.value).err()) {
                 return Result.err(Status.ERR_BadData,v.errs());
             }
             return func.deleteRole(trans, rrdd.value, false, false);
@@ -2241,21 +2241,21 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return nsd;
                 }
             });
-        
+
         switch(fd.status) {
         case OK:
             Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rd.value.ns);
             if (nsr.notOKorIsEmpty()) {
                 return Result.err(nsr);
             }
-            
-            Result<String> rfc = func.createFuture(trans, fd.value, 
+
+            Result<String> rfc = func.createFuture(trans, fd.value,
                     role.encode(), trans.user(),nsr.value.get(0),FUTURE_OP.D);
             if (rfc.isOK()) {
                 return Result.err(Status.ACC_Future, "Role Deletion [%s.%s] is saved for future processing",
                         rd.value.ns,
                         rd.value.name);
-            } else { 
+            } else {
                 return Result.err(rfc);
             }
         case Status.ACC_Now:
@@ -2267,14 +2267,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
 /***********************************
- * CRED 
+ * CRED
  ***********************************/
     private class MayCreateCred implements MayChange {
         private Result<NsDAO.Data> nsd;
         private AuthzTrans trans;
         private CredDAO.Data cred;
         private Executor exec;
-        
+
         public MayCreateCred(AuthzTrans trans, CredDAO.Data cred, Executor exec) {
             this.trans = trans;
             this.cred = cred;
@@ -2291,7 +2291,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 try {
                     // Check Org Policy
                     if (trans.org().validate(trans,Policy.CREATE_MECHID, exec, cred.id)==null) {
-                        return Result.ok(); 
+                        return Result.ok();
                     } else {
                        Result<?> rmc = ques.mayUser(trans, trans.user(), nsd.value, Access.write);
                        if (rmc.isOKhasData()) {
@@ -2365,13 +2365,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
     private final long DAY_IN_MILLIS = 24*3600*1000L;
-    
-    @ApiDoc( 
-            method = POST,  
+
+    @ApiDoc(
+            method = POST,
             path = "/authn/cred",
             params = {},
             expectedCode = 201,
-            errorCodes = {403,404,406,409}, 
+            errorCodes = {403,404,406,409},
             text = { "A credential consists of:",
                      "<ul><li>id - the ID to create within AAF. The domain is in reverse",
                      "order of Namespace (i.e. Users of Namespace com.att.myapp would be",
@@ -2385,18 +2385,18 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     public Result<Void> createUserCred(final AuthzTrans trans, REQUEST from) {
         final String cmdDescription = ("Create User Credential");
         TimeTaken tt = trans.start(cmdDescription, Env.SUB);
-        
+
         try {
             Result<CredDAO.Data> rcred = mapper.cred(trans, from, true);
             if (rcred.isOKhasData()) {
                 rcred = ques.userCredSetup(trans, rcred.value);
-                
+
                 final ServiceValidator v = new ServiceValidator();
-                
-                if (v.cred(trans, trans.org(),rcred,true).err()) { // Note: Creates have stricter Validations 
+
+                if (v.cred(trans, trans.org(),rcred,true).err()) { // Note: Creates have stricter Validations
                     return Result.err(Status.ERR_BadData,v.errs());
                 }
-                
+
 
                 // 2016-4 Jonathan, New Behavior - If MechID is not registered with Org, deny creation
                 Identity mechID =  null;
@@ -2406,7 +2406,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 } catch (Exception e1) {
                     trans.error().log(e1,rcred.value.id,"cannot be validated at this time");
                 }
-                if (mechID==null || !mechID.isFound()) { 
+                if (mechID==null || !mechID.isFound()) {
                     return Result.err(Status.ERR_Policy,"MechIDs must be registered with %s before provisioning in AAF",org.getName());
                 }
 
@@ -2414,11 +2414,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 if (nsr.notOKorIsEmpty()) {
                     return Result.err(Status.ERR_NsNotFound,"Cannot provision %s on non-existent Namespace %s",mechID.id(),rcred.value.ns);
                 }
-                
+
 
                 boolean firstID = false;
                 MayChange mc;
-                
+
                 CassExecutor exec = new CassExecutor(trans, func);
                 Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, rcred.value.id);
                 if (rlcd.isOKhasData()) {
@@ -2430,21 +2430,21 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         // May not use the same password in the list
                         // Note: ASPR specifies character differences, but we don't actually store the
                         // password to validate char differences.
-                        
+
 //                      byte[] rawCred = rcred.value.type==CredDAO.RAW?null:;                            return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
                         if(rcred.value.type==CredDAO.FQI ) {
                             if(curr.type==CredDAO.FQI) {
                                 return Result.err(Status.ERR_ConflictAlreadyExists, "Credential with same Expiration Date exists");
                             }
                         } else {
-    
+
                             rb = ques.userCredCheck(trans, curr, rcred.value.cred!=null?rcred.value.cred.array():null);
                             if (rb.notOK()) {
                                 return Result.err(rb);
                             } else if (rb.value){
                                 return Result.err(Status.ERR_Policy, "Credential content cannot be reused.");
-                            } else if(Chrono.dateOnlyStamp(curr.expires).equals(Chrono.dateOnlyStamp(rcred.value.expires)) 
-                                    && curr.type==rcred.value.type 
+                            } else if(Chrono.dateOnlyStamp(curr.expires).equals(Chrono.dateOnlyStamp(rcred.value.expires))
+                                    && curr.type==rcred.value.type
                                     ) {
                                 // Allow if expiring differential is greater than 1 day (for TEMP)
                                 // Unless expiring in 1 day
@@ -2453,7 +2453,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                 }
                             }
                         }
-                    }    
+                    }
                 } else {
                     try {
                     // 2016-04-12 Jonathan If Caller is the Sponsor and is also an Owner of NS, allow without special Perm
@@ -2469,32 +2469,32 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         String reason;
                         // We can say "ID does not exist" here
                         if ((reason=org.validate(trans, Policy.CREATE_MECHID, exec, theMechID,trans.user(),otherMechIDs.toString()))!=null) {
-                            return Result.err(Status.ERR_Denied, reason); 
+                            return Result.err(Status.ERR_Denied, reason);
                         }
                         firstID=true;
                     } catch (Exception e) {
                         return Result.err(e);
                     }
                 }
-    
+
                 mc = new MayCreateCred(trans, rcred.value, exec);
-                
+
                 final CredDAO.Data cdd = rcred.value;
                 Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from, rcred.value,false, // may want to enable in future.
                     new Mapper.Memo() {
                         @Override
                         public String get() {
-                            return cmdDescription + " [" + 
-                                cdd.id + '|' 
-                                + cdd.type + '|' 
+                            return cmdDescription + " [" +
+                                cdd.id + '|'
+                                + cdd.type + '|'
                                 + cdd.expires + ']';
                         }
                     },
                     mc);
-                
+
                 switch(fd.status) {
                     case OK:
-                        Result<String> rfc = func.createFuture(trans, fd.value, 
+                        Result<String> rfc = func.createFuture(trans, fd.value,
                                 rcred.value.id + '|' + rcred.value.type.toString() + '|' + rcred.value.expires,
                                 trans.user(), nsr.value.get(0), FUTURE_OP.C);
                         if (rfc.isOK()) {
@@ -2502,7 +2502,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                     rcred.value.id,
                                     Integer.toString(rcred.value.type),
                                     rcred.value.expires.toString());
-                        } else { 
+                        } else {
                             return Result.err(rfc);
                         }
                     case Status.ACC_Now:
@@ -2512,11 +2512,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                 if(!ques.isOwner(trans,trans.user(),cdd.ns)) {
                                     // Admins are not allowed to set first Cred, but Org has already
                                     // said entity MAY create, typically by Permission
-                                    // We can't know which reason they are allowed here, so we 
-                                    // have to assume that any with Special Permission would not be 
+                                    // We can't know which reason they are allowed here, so we
+                                    // have to assume that any with Special Permission would not be
                                     // an Admin.
                                     if(ques.isAdmin(trans, trans.user(), cdd.ns)) {
-                                        return Result.err(Result.ERR_Denied, 
+                                        return Result.err(Result.ERR_Denied,
                                             "Only Owners may create first passwords in their Namespace. Admins may modify after one exists" );
                                     } else {
                                         // Allow IDs that AREN'T part of NS with Org Onboarding Permission  (see Org object) to create Temp Passwords.
@@ -2527,7 +2527,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         } catch (Exception e) {
                             trans.error().log(e, "While setting expiration to TempPassword");
                         }
-                        
+
                         Result<?>udr = ques.credDAO().create(trans, rcred.value);
                         if (udr.isOK()) {
                             return Result.ok();
@@ -2545,12 +2545,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    @ApiDoc(   
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authn/creds/ns/:ns",
             params = {"ns|string|true"},
             expectedCode = 200,
-            errorCodes = {403,404,406}, 
+            errorCodes = {403,404,406},
             text = { "Return all IDs in Namespace :ns"
                      }
             )
@@ -2560,42 +2560,42 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.ns(ns).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         // check if user is allowed to view NS
         Result<NsDAO.Data> rnd = ques.deriveNs(trans,ns);
         if (rnd.notOK()) {
-            return Result.err(rnd); 
+            return Result.err(rnd);
         }
         rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd); 
+            return Result.err(rnd);
         }
-    
+
         TimeTaken tt = trans.start("MAP Creds by NS to Creds", Env.SUB);
-        try {            
+        try {
             USERS users = mapper.newInstance(API.USERS);
             Result<List<CredDAO.Data>> rlcd = ques.credDAO().readNS(trans, ns);
-                    
+
             if (rlcd.isOK()) {
                 if (!rlcd.isEmpty()) {
                     return mapper.cred(rlcd.value, users);
                 }
-                return Result.ok(users);        
+                return Result.ok(users);
             } else {
                 return Result.err(rlcd);
             }
         } finally {
             tt.done();
         }
-            
+
     }
 
-    @ApiDoc(   
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authn/creds/id/:ns",
             params = {"id|string|true"},
             expectedCode = 200,
-            errorCodes = {403,404,406}, 
+            errorCodes = {403,404,406},
             text = { "Return all IDs in for ID"
                     ,"(because IDs are multiple, due to multiple Expiration Dates)"
                      }
@@ -2606,59 +2606,59 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.nullOrBlank("ID",id).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         String ns = Question.domain2ns(id);
         // check if user is allowed to view NS
         Result<NsDAO.Data> rnd = ques.deriveNs(trans,ns);
         if (rnd.notOK()) {
-            return Result.err(rnd); 
+            return Result.err(rnd);
         }
         rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd); 
+            return Result.err(rnd);
         }
-    
+
         TimeTaken tt = trans.start("MAP Creds by ID to Creds", Env.SUB);
-        try {            
+        try {
             USERS users = mapper.newInstance(API.USERS);
             Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, id);
-                    
+
             if (rlcd.isOK()) {
                 if (!rlcd.isEmpty()) {
                     return mapper.cred(rlcd.value, users);
                 }
-                return Result.ok(users);        
+                return Result.ok(users);
             } else {
                 return Result.err(rlcd);
             }
         } finally {
             tt.done();
         }
-            
+
     }
 
-    @ApiDoc(   
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authn/certs/id/:id",
             params = {"id|string|true"},
             expectedCode = 200,
-            errorCodes = {403,404,406}, 
+            errorCodes = {403,404,406},
             text = { "Return Cert Info for ID"
                    }
             )
     @Override
     public Result<CERTS> getCertInfoByID(AuthzTrans trans, HttpServletRequest req, String id) {
         TimeTaken tt = trans.start("Get Cert Info by ID", Env.SUB);
-        try {            
+        try {
             CERTS certs = mapper.newInstance(API.CERTS);
             Result<List<CertDAO.Data>> rlcd = ques.certDAO().readID(trans, id);
-                    
+
             if (rlcd.isOK()) {
                 if (!rlcd.isEmpty()) {
                     return mapper.cert(rlcd.value, certs);
                 }
-                return Result.ok(certs);        
-            } else { 
+                return Result.ok(certs);
+            } else {
                 return Result.err(rlcd);
             }
         } finally {
@@ -2667,12 +2667,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
     }
 
-    @ApiDoc( 
-            method = PUT,  
+    @ApiDoc(
+            method = PUT,
             path = "/authn/cred",
             params = {},
             expectedCode = 200,
-            errorCodes = {300,403,404,406}, 
+            errorCodes = {300,403,404,406},
             text = { "Reset a Credential Password. If multiple credentials exist for this",
                         "ID, you will need to specify which entry you are resetting in the",
                         "CredRequest object"
@@ -2686,54 +2686,54 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             Result<CredDAO.Data> rcred = mapper.cred(trans, from, true);
             if (rcred.isOKhasData()) {
                 rcred = ques.userCredSetup(trans, rcred.value);
-    
+
                 final ServiceValidator v = new ServiceValidator();
-                
-                if (v.cred(trans, trans.org(),rcred,false).err()) {// Note: Creates have stricter Validations 
+
+                if (v.cred(trans, trans.org(),rcred,false).err()) {// Note: Creates have stricter Validations
                     return Result.err(Status.ERR_BadData,v.errs());
                 }
                 Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, rcred.value.id);
                 if (rlcd.notOKorIsEmpty()) {
                     return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
-                } 
-                
+                }
+
                 MayChange mc = new MayChangeCred(trans, rcred.value,MayChangeCred.RESET);
-                Result<?> rmc = mc.mayChange(); 
+                Result<?> rmc = mc.mayChange();
                 if (rmc.notOK()) {
                     return Result.err(rmc);
                 }
-                
+
                 List<CredDAO.Data> lcdd = filterList(rlcd.value,CredDAO.BASIC_AUTH, CredDAO.BASIC_AUTH_SHA256);
-                
+
                 Result<Integer> ri = selectEntryIfMultiple((CredRequest)from, lcdd, MayChangeCred.RESET);
                 if (ri.notOK()) {
                     return Result.err(ri);
                 }
                 int entry = ri.value;
-    
-                
+
+
                 final CredDAO.Data cred = rcred.value;
-                
+
                 Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from, rcred.value,false,
                 new Mapper.Memo() {
                     @Override
                     public String get() {
-                        return cmdDescription + " [" + 
-                            cred.id + '|' 
-                            + cred.type + '|' 
+                        return cmdDescription + " [" +
+                            cred.id + '|'
+                            + cred.type + '|'
                             + cred.expires + ']';
                     }
                 },
                 mc);
-                
+
                 Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, rcred.value.ns);
                 if (nsr.notOKorIsEmpty()) {
                     return Result.err(nsr);
                 }
-    
+
                 switch(fd.status) {
                     case OK:
-                        Result<String> rfc = func.createFuture(trans, fd.value, 
+                        Result<String> rfc = func.createFuture(trans, fd.value,
                                 rcred.value.id + '|' + rcred.value.type.toString() + '|' + rcred.value.expires,
                                 trans.user(), nsr.value.get(0), FUTURE_OP.U);
                         if (rfc.isOK()) {
@@ -2741,7 +2741,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                     rcred.value.id,
                                     Integer.toString(rcred.value.type),
                                     rcred.value.expires.toString());
-                        } else { 
+                        } else {
                             return Result.err(rfc);
                         }
                     case Status.ACC_Now:
@@ -2754,15 +2754,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         } else {
                             exp = Expiration.TempPassword;
                         }
-                        
+
                         Organization org = trans.org();
                         CredDAO.Data current = rlcd.value.get(entry);
                         // If user resets password in same day, we will have a primary key conflict, so subtract 1 day
-                        if (current.expires.equals(rcred.value.expires) 
+                        if (current.expires.equals(rcred.value.expires)
                                     && rlcd.value.get(entry).type==rcred.value.type) {
                             GregorianCalendar gc = org.expiration(null, exp,rcred.value.id);
                             gc = Chrono.firstMomentOfDay(gc);
-                            gc.set(GregorianCalendar.HOUR_OF_DAY, org.startOfDay());                        
+                            gc.set(GregorianCalendar.HOUR_OF_DAY, org.startOfDay());
                             rcred.value.expires = new Date(gc.getTimeInMillis() - DAY_IN_MILLIS);
                         } else {
                             rcred.value.expires = org.expiration(null,exp).getTime();
@@ -2775,7 +2775,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         if (udr.isOK()) {
                             return Result.ok();
                         }
-    
+
                         return Result.err(udr);
                     default:
                         return Result.err(fd);
@@ -2788,12 +2788,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    @ApiDoc( 
-            method = PUT,  
+    @ApiDoc(
+            method = PUT,
             path = "/authn/cred/:days",
             params = {"days|string|true"},
             expectedCode = 200,
-            errorCodes = {300,403,404,406}, 
+            errorCodes = {300,403,404,406},
             text = { "Extend a Credential Expiration Date. The intention of this API is",
                         "to avoid an outage in PROD due to a Credential expiring before it",
                         "can be configured correctly. Measures are being put in place ",
@@ -2807,12 +2807,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             Result<CredDAO.Data> cred = mapper.cred(trans, from, false);
             Organization org = trans.org();
             final ServiceValidator v = new ServiceValidator();
-            if (v.notOK(cred).err() || 
+            if (v.notOK(cred).err() ||
                v.nullOrBlank(cred.value.id, "Invalid ID").err() ||
                v.user(org,cred.value.id).err())  {
                  return Result.err(Status.ERR_BadData,v.errs());
             }
-            
+
             try {
                 String reason;
                 if ((reason=org.validate(trans, Policy.MAY_EXTEND_CRED_EXPIRES, new CassExecutor(trans,func)))!=null) {
@@ -2823,13 +2823,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 trans.error().log(e, msg="Could not contact Organization for User Validation");
                 return Result.err(Status.ERR_Denied, msg);
             }
-    
+
             // Get the list of Cred Entries
             Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
             if (rlcd.notOKorIsEmpty()) {
                 return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
             }
-            
+
             // Only Passwords can be extended
             List<CredDAO.Data> lcdd = filterList(rlcd.value,CredDAO.BASIC_AUTH, CredDAO.BASIC_AUTH_SHA256);
 
@@ -2854,7 +2854,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if(cd.expires.before(found.expires)) {
                 return Result.err(Result.ERR_BadData,String.format("Credential's expiration date is more than %s days in the future",days));
             }
-            
+
             cred = ques.credDAO().create(trans, cd);
             if (cred.isOK()) {
                 return Result.ok();
@@ -2863,14 +2863,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         } finally {
             tt.done();
         }
-    }    
+    }
 
-    @ApiDoc( 
-            method = DELETE,  
+    @ApiDoc(
+            method = DELETE,
             path = "/authn/cred",
             params = {},
             expectedCode = 200,
-            errorCodes = {300,403,404,406}, 
+            errorCodes = {300,403,404,406},
             text = { "Delete a Credential. If multiple credentials exist for this",
                     "ID, you will need to specify which entry you are deleting in the",
                     "CredRequest object."
@@ -2885,11 +2885,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         MayChange mc = new MayChangeCred(trans,cred.value,MayChangeCred.DELETE);
-        Result<?> rmc = mc.mayChange(); 
+        Result<?> rmc = mc.mayChange();
         if (rmc.notOK()) {
             return Result.err(rmc);
         }
-        
+
         boolean doForce = trans.requested(force);
         Result<List<CredDAO.Data>> rlcd = ques.credDAO().readID(trans, cred.value.id);
         if (rlcd.notOKorIsEmpty()) {
@@ -2903,7 +2903,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(Status.ERR_UserNotFound, "Credential does not exist");
         }
         boolean isLastCred = rlcd.value.size()==1;
-        
+
         int entry;
         CredRequest cr = (CredRequest)from;
         if(isLastCred) {
@@ -2921,7 +2921,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     ++fentry;
                     if(cdd.type == CredDAO.FQI) {
                         entry = fentry;
-                        break; 
+                        break;
                     }
                 }
             } else {
@@ -2972,26 +2972,26 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
             }
         }
-        
+
         Result<FutureDAO.Data> fd = mapper.future(trans,CredDAO.TABLE,from,cred.value,false,
             () -> "Delete Credential [" +
                 cred.value.id +
                 ']',
             mc);
-    
+
         Result<List<NsDAO.Data>> nsr = ques.nsDAO().read(trans, cred.value.ns);
         if (nsr.notOKorIsEmpty()) {
             return Result.err(nsr);
         }
-    
+
         switch(fd.status) {
             case OK:
                 Result<String> rfc = func.createFuture(trans, fd.value, cred.value.id,
                         trans.user(), nsr.value.get(0), FUTURE_OP.D);
-    
+
                 if (rfc.isOK()) {
                     return Result.err(Status.ACC_Future, "Credential Delete [%s] is saved for future processing",cred.value.id);
-                } else { 
+                } else {
                     return Result.err(rfc);
                 }
             case Status.ACC_Now:
@@ -3031,7 +3031,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             default:
                 return Result.err(fd);
         }
-    
+
     }
 
     /*
@@ -3105,21 +3105,21 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     private String[] buildVariables(List<CredDAO.Data> value) {
         String [] vars = new String[value.size()];
         CredDAO.Data cdd;
-        
+
         for (int i = 0; i < value.size(); i++) {
             cdd = value.get(i);
             vars[i] = cdd.id + TWO_SPACE + Define.getCredType(cdd.type) + TWO_SPACE + Chrono.niceUTCStamp(cdd.expires) + TWO_SPACE + cdd.tag;
         }
         return vars;
     }
-    
+
     private String selectCredFromList(List<CredDAO.Data> value, String action) {
         StringBuilder errMessage = new StringBuilder();
         String userPrompt = MayChangeCred.DELETE.equals(action)?
                 "Select which cred to delete (set force=true to delete all):":
                 "Select which cred to " + action + ':';
         int numSpaces = value.get(0).id.length() - "Id".length();
-        
+
         errMessage.append(userPrompt + '\n');
         errMessage.append("        ID");
         for (int i = 0; i < numSpaces; i++) {
@@ -3135,7 +3135,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             errMessage.append("Run same command again with chosen entry as last parameter");
         }
         return errMessage.toString();
-        
+
     }
 
     @Override
@@ -3162,12 +3162,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    @ApiDoc( 
-            method = POST,  
+    @ApiDoc(
+            method = POST,
             path = "/authn/validate",
             params = {},
             expectedCode = 200,
-            errorCodes = { 403 }, 
+            errorCodes = { 403 },
             text = { "Validate a Credential given a Credential Structure.  This is a more comprehensive validation, can "
                     + "do more than BasicAuth as Credential types exp" }
             )
@@ -3192,13 +3192,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return Result.err(Status.ERR_Denied,"Bad Basic Auth");
     }
 
-@ApiDoc( 
-            method = GET,  
+@ApiDoc(
+            method = GET,
             path = "/authn/basicAuth",
             params = {},
             expectedCode = 200,
-            errorCodes = { 403 }, 
-            text = { "!!!! DEPRECATED without X509 Authentication STOP USING THIS API BY DECEMBER 2017, or use Certificates !!!!\n" 
+            errorCodes = { 403 },
+            text = { "!!!! DEPRECATED without X509 Authentication STOP USING THIS API BY DECEMBER 2017, or use Certificates !!!!\n"
                     + "Use /authn/validate instead\n"
                     + "Note: Validate a Password using BasicAuth Base64 encoded Header. This HTTP/S call is intended as a fast"
                     + " User/Password lookup for Security Frameworks, and responds 200 if it passes BasicAuth "
@@ -3209,14 +3209,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
 /***********************************
- * USER-ROLE 
+ * USER-ROLE
  ***********************************/
-    @ApiDoc( 
-            method = POST,  
+    @ApiDoc(
+            method = POST,
             path = "/authz/userRole",
             params = {},
             expectedCode = 201,
-            errorCodes = {403,404,406,409}, 
+            errorCodes = {403,404,406,409},
             text = { "Create a UserRole relationship (add User to Role)",
                      "A UserRole is an object Representation of membership of a Role for limited time.",
                      "If a shorter amount of time for Role ownership is required, use the 'End' field.",
@@ -3233,7 +3233,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 return Result.err(urr);
             }
             final UserRoleDAO.Data userRole = urr.value;
-            
+
             final ServiceValidator v = new ServiceValidator();
             if (v.user_role(trans.user(),userRole).err() ||
                v.user(trans.org(), userRole.user).err()) {
@@ -3241,7 +3241,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
 
 
-             
+
             // Check if user can change first
             Result<FutureDAO.Data> fd = mapper.future(trans,UserRoleDAO.TABLE,from,urr.value,true, // may request Approvals
                 () -> "Add User [" + userRole.user + "] to Role [" +
@@ -3261,7 +3261,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         return nsd;
                     }
                 });
-            
+
             NsDAO.Data ndd;
             if(userRole.role.startsWith(userRole.user)) {
                 userRole.ns=userRole.user;
@@ -3277,14 +3277,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
             switch(fd.status) {
                 case OK:
-                    Result<String> rfc = func.createFuture(trans, fd.value, userRole.user+'|'+userRole.ns + '.' + userRole.rname, 
+                    Result<String> rfc = func.createFuture(trans, fd.value, userRole.user+'|'+userRole.ns + '.' + userRole.rname,
                             userRole.user, ndd, FUTURE_OP.C);
                     if (rfc.isOK()) {
                         return Result.err(Status.ACC_Future, "UserRole [%s - %s.%s] is saved for future processing",
                                 userRole.user,
                                 userRole.ns,
                                 userRole.rname);
-                    } else { 
+                    } else {
                         return Result.err(rfc);
                     }
                 case Status.ACC_Now:
@@ -3296,7 +3296,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             tt.done();
         }
     }
-    
+
         /**
          * getUserRolesByRole
          */
@@ -3315,7 +3315,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (v.nullOrBlank("Role",role).err()) {
                 return Result.err(Status.ERR_BadData,v.errs());
             }
-            
+
             Result<RoleDAO.Data> rrdd;
             rrdd = RoleDAO.Data.decode(trans,ques,role);
             if (rrdd.notOK()) {
@@ -3326,11 +3326,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (ns.notOK()) {
                 return Result.err(ns);
             }
-    
-    //        boolean filter = true;        
+
+    //        boolean filter = true;
     //        if (ns.value.isAdmin(trans.user()) || ns.value.isResponsible(trans.user()))
     //            filter = false;
-            
+
             // Get list of roles per user, then add to Roles as we go
             HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
             Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByRole(trans, role);
@@ -3339,7 +3339,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     userSet.add(data);
                 }
             }
-            
+
             @SuppressWarnings("unchecked")
             USERROLES users = (USERROLES) mapper.newInstance(API.USER_ROLES);
             // Checked for permission
@@ -3364,18 +3364,18 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             if (v.nullOrBlank("User",user).err()) {
                 return Result.err(Status.ERR_BadData,v.errs());
             }
-            
+
             // Get list of roles per user, then add to Roles as we go
             Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByUser(trans, user);
-            if (rlurd.notOK()) { 
+            if (rlurd.notOK()) {
                 return Result.err(rlurd);
             }
-            
+
             /* Check for
-             *   1) is User 
+             *   1) is User
              *   2) is User's Supervisor
              *   3) Has special global access =read permission
-             *   
+             *
              *   If none of the 3, then filter results to NSs in which Calling User has Ns.access * read
              */
             boolean mustFilter;
@@ -3401,11 +3401,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     mustFilter = true;
                 }
             }
-            
+
             List<UserRoleDAO.Data> content;
             if (mustFilter) {
                 content = new ArrayList<>(rlurd.value.size()); // avoid multi-memory redos
-                
+
                 for (UserRoleDAO.Data data : rlurd.value) {
                     ndd.name=data.ns;
                     Result<Data> mur = ques.mayUser(trans, callingUser, ndd, Access.read);
@@ -3413,7 +3413,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         content.add(data);
                     }
                 }
-                
+
             } else {
                 content = rlurd.value;
             }
@@ -3426,9 +3426,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.ok(users);
         }
 
-        
- 
-    
+
+
+
      @ApiDoc(
             method = GET,
             path = "/authz/userRole/extend/:user/:role",
@@ -3450,18 +3450,18 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             .err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-    
+
         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,ques,role);
         if (rrdd.notOK()) {
             return Result.err(rrdd);
         }
-        
+
         Result<NsDAO.Data> rcr = ques.mayUser(trans, trans.user(), rrdd.value, Access.write);
         boolean mayNotChange;
         if ((mayNotChange = rcr.notOK()) && !trans.requested(future)) {
             return Result.err(rcr);
         }
-        
+
         Result<List<UserRoleDAO.Data>> rr = ques.userRoleDAO().read(trans, user,role);
         if (rr.notOK()) {
             return Result.err(rr);
@@ -3481,7 +3481,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     return Result.err(e);
                 }
 
-                Result<String> rfc = func.createFuture(trans, fto, 
+                Result<String> rfc = func.createFuture(trans, fto,
                         userRole.user+'|'+userRole.role, userRole.user, rcr.value, FUTURE_OP.U);
                 if (rfc.isOK()) {
                     return Result.err(Status.ACC_Future, "UserRole [%s - %s] is saved for future processing",
@@ -3497,14 +3497,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return Result.err(Result.ERR_NotFound,"This user and role doesn't exist");
     }
 
-    @ApiDoc( 
-            method = DELETE,  
+    @ApiDoc(
+            method = DELETE,
             path = "/authz/userRole/:user/:role",
             params = {    "user|string|true",
                         "role|string|true"
                     },
             expectedCode = 200,
-            errorCodes = {403,404,406}, 
+            errorCodes = {403,404,406},
             text = { "Remove Role :role from User :user."
                    }
             )
@@ -3521,7 +3521,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rrdd.notOK()) {
             return Result.err(rrdd);
         }
-        
+
         RoleDAO.Data rdd = rrdd.value;
         Result<NsDAO.Data> rns = ques.mayUser(trans, trans.user(), rdd, Access.write);
 
@@ -3529,7 +3529,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rns.isOKhasData() && Question.OWNER.equals(rdd.name) && ques.countOwner(trans,rdd.ns)<=1) {
             return Result.err(Status.ERR_Denied,"You may not delete the last Owner of " + rdd.ns );
         }
-        
+
         if (mayNotChange=rns.notOK()) {
             if (!trans.requested(future)) {
                 return Result.err(rns);
@@ -3551,13 +3551,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             fto.start = now.getTime();
             fto.expires = trans.org().expiration(now, Expiration.Future).getTime();
 
-            Result<String> rfc = func.createFuture(trans, fto, 
+            Result<String> rfc = func.createFuture(trans, fto,
                     userRole.user+'|'+userRole.role, userRole.user, rns.value, FUTURE_OP.D);
             if (rfc.isOK()) {
-                return Result.err(Status.ACC_Future, "UserRole [%s - %s] is saved for future processing", 
+                return Result.err(Status.ACC_Future, "UserRole [%s - %s] is saved for future processing",
                         userRole.user,
                         userRole.role);
-            } else { 
+            } else {
                 return Result.err(rfc);
             }
         } else {
@@ -3565,13 +3565,13 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
     }
 
-    @ApiDoc( 
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authz/userRole/:user/:role",
             params = {"user|string|true",
                       "role|string|true"},
             expectedCode = 200,
-            errorCodes = {403,404,406}, 
+            errorCodes = {403,404,406},
             text = { "Returns the User (with Expiration date from listed User/Role) if it exists"
                    }
             )
@@ -3584,7 +3584,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
 //        Result<NsDAO.Data> ns = ques.deriveNs(trans, role);
 //        if (ns.notOK()) return Result.err(ns);
-//        
+//
 //        Result<NsDAO.Data> rnd = ques.mayUser(trans, trans.user(), ns.value, Access.write);
         // May calling user see by virtue of the Role
         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, ques, role);
@@ -3593,9 +3593,9 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         Result<NsDAO.Data> rnd = ques.mayUser(trans, trans.user(), rrdd.value,Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd); 
+            return Result.err(rnd);
         }
-        
+
         HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
         Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readUserInRole(trans, user, role);
         if (rlurd.isOK()) {
@@ -3603,20 +3603,20 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 userSet.add(data);
             }
         }
-        
+
         @SuppressWarnings("unchecked")
         USERS users = (USERS) mapper.newInstance(API.USERS);
         mapper.users(trans, userSet, users);
         return Result.ok(users);
     }
 
-    @ApiDoc( 
-            method = GET,  
+    @ApiDoc(
+            method = GET,
             path = "/authz/users/role/:role",
             params = {"user|string|true",
                       "role|string|true"},
             expectedCode = 200,
-            errorCodes = {403,404,406}, 
+            errorCodes = {403,404,406},
             text = { "Returns the User (with Expiration date from listed User/Role) if it exists"
                    }
             )
@@ -3629,14 +3629,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
 
 //        Result<NsDAO.Data> ns = ques.deriveNs(trans, role);
 //        if (ns.notOK()) return Result.err(ns);
-//        
+//
 //        Result<NsDAO.Data> rnd = ques.mayUser(trans, trans.user(), ns.value, Access.write);
         // May calling user see by virtue of the Role
         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans, ques, role);
         if (rrdd.notOK()) {
             return Result.err(rrdd);
         }
-        
+
         boolean contactOnly = false;
         // Allow the request of any valid user to find the contact of the NS (Owner)
         Result<NsDAO.Data> rnd = ques.mayUser(trans, trans.user(), rrdd.value,Access.read);
@@ -3647,10 +3647,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 return Result.err(rnd);
             }
         }
-        
+
         HashSet<UserRoleDAO.Data> userSet = new HashSet<>();
         Result<List<UserRoleDAO.Data>> rlurd = ques.userRoleDAO().readByRole(trans, role);
-        if (rlurd.isOK()) { 
+        if (rlurd.isOK()) {
             for (UserRoleDAO.Data data : rlurd.value) {
                 if (contactOnly) { //scrub data
                     // Can't change actual object, or will mess up the cache.
@@ -3665,7 +3665,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
             }
         }
-        
+
         @SuppressWarnings("unchecked")
         USERS users = (USERS) mapper.newInstance(API.USERS);
         mapper.users(trans, userSet, users);
@@ -3692,7 +3692,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         final Validator v = new ServiceValidator();
         if (v.nullOrBlank("Type",type)
             .nullOrBlank("Instance",instance)
-            .nullOrBlank("Action",action)            
+            .nullOrBlank("Action",action)
             .err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
@@ -3701,25 +3701,25 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (nss.notOK()) {
             return Result.err(nss);
         }
-        
+
         Result<List<NsDAO.Data>> nsd = ques.nsDAO().read(trans, nss.value.ns);
         if (nsd.notOK()) {
             return Result.err(nsd);
         }
-        
+
         boolean allInstance = ASTERIX.equals(instance);
         boolean allAction = ASTERIX.equals(action);
-        // Get list of roles per Permission, 
+        // Get list of roles per Permission,
         // Then loop through Roles to get Users
         // Note: Use Sets to avoid processing or responding with Duplicates
         Set<String> roleUsed = new HashSet<>();
         Set<UserRoleDAO.Data> userSet = new HashSet<>();
-        
+
         if (!nss.isEmpty()) {
             Result<List<PermDAO.Data>> rlp = ques.permDAO().readByType(trans, nss.value.ns, nss.value.name);
             if (rlp.isOKhasData()) {
                 for (PermDAO.Data pd : rlp.value) {
-                    if ((allInstance || pd.instance.equals(instance)) && 
+                    if ((allInstance || pd.instance.equals(instance)) &&
                             (allAction || pd.action.equals(action))) {
                         if (ques.mayUser(trans, trans.user(),pd,Access.read).isOK()) {
                             for (String role : pd.roles) {
@@ -3745,10 +3745,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
 /***********************************
- * HISTORY 
- ***********************************/    
+ * HISTORY
+ ***********************************/
     @Override
-    public Result<HISTORY> getHistoryByUser(final AuthzTrans trans, String user, final int[] yyyymm, final int sort) {    
+    public Result<HISTORY> getHistoryByUser(final AuthzTrans trans, String user, final int[] yyyymm, final int sort) {
         final Validator v = new ServiceValidator();
         if (v.nullOrBlank("User",user).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
@@ -3797,12 +3797,12 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rrdd.notOK()) {
             return Result.err(rrdd);
         }
-        
+
         Result<NsDAO.Data> rnd = ques.mayUser(trans, trans.user(), rrdd.value, Access.read);
         if (rnd.notOK()) {
             return Result.err(rnd);
         }
-        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, role, "role", yyyymm); 
+        Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, role, "role", yyyymm);
         if (resp.notOK()) {
             return Result.err(resp);
         }
@@ -3828,11 +3828,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
             rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
             if (rnd.notOK()) {
-                return Result.err(rnd);    
+                return Result.err(rnd);
             }
             resp = ques.historyDAO().readBySubject(trans, type, "perm", yyyymm);
         }
-        
+
         if (resp.notOK()) {
             return Result.err(resp);
         }
@@ -3842,7 +3842,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<HISTORY> getHistoryByNS(AuthzTrans trans, String ns, int[] yyyymm, final int sort) {
         final Validator v = new ServiceValidator();
-        if (v.nullOrBlank("NS",ns).err()) { 
+        if (v.nullOrBlank("NS",ns).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
@@ -3852,7 +3852,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         rnd = ques.mayUser(trans, trans.user(), rnd.value, Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd);    
+            return Result.err(rnd);
         }
 
         Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, ns, "ns", yyyymm);
@@ -3868,7 +3868,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         ndd.name = FQI.reverseDomain(subject);
         Result<Data> rnd = ques.mayUser(trans, trans.user(), ndd, Access.read);
         if (rnd.notOK()) {
-            return Result.err(rnd);    
+            return Result.err(rnd);
         }
 
         Result<List<HistoryDAO.Data>> resp = ques.historyDAO().readBySubject(trans, subject, target, yyyymm);
@@ -3879,7 +3879,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     }
 
 /***********************************
- * DELEGATE 
+ * DELEGATE
  ***********************************/
     @Override
     public Result<Void> createDelegate(final AuthzTrans trans, REQUEST base) {
@@ -3895,23 +3895,23 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     private Result<Void> createOrUpdateDelegate(final AuthzTrans trans, REQUEST base, final Access access) {
         final Result<DelegateDAO.Data> rd = mapper.delegate(trans, base);
         final ServiceValidator v = new ServiceValidator();
-        if (v.delegate(trans.org(),rd).err()) { 
+        if (v.delegate(trans.org(),rd).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
         final DelegateDAO.Data dd = rd.value;
-        
+
         Result<List<DelegateDAO.Data>> ddr = ques.delegateDAO().read(trans, dd);
         if (access==Access.create && ddr.isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists, "[%s] already delegates to [%s]", dd.user, ddr.value.get(0).delegate);
-        } else if (access!=Access.create && ddr.notOKorIsEmpty()) { 
+        } else if (access!=Access.create && ddr.notOKorIsEmpty()) {
             return Result.err(Status.ERR_NotFound, "[%s] does not have a Delegate Record to [%s].",dd.user,access.name());
         }
         Result<Void> rv = ques.mayUser(trans, dd, access);
         if (rv.notOK()) {
             return rv;
         }
-        
+
         Result<FutureDAO.Data> fd = mapper.future(trans,DelegateDAO.TABLE,base, dd, false,
             () -> {
                 StringBuilder sb = new StringBuilder();
@@ -3928,15 +3928,15 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             () -> {
                 return Result.ok(); // Validate in code above
             });
-        
+
         switch(fd.status) {
             case OK:
-                Result<String> rfc = func.createFuture(trans, fd.value, 
+                Result<String> rfc = func.createFuture(trans, fd.value,
                         dd.user, trans.user(),null, access==Access.create?FUTURE_OP.C:FUTURE_OP.U);
-                if (rfc.isOK()) { 
+                if (rfc.isOK()) {
                     return Result.err(Status.ACC_Future, "Delegate for [%s]",
                             dd.user);
-                } else { 
+                } else {
                     return Result.err(rfc);
                 }
             case Status.ACC_Now:
@@ -3962,7 +3962,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (v.notOK(rd).nullOrBlank("User", rd.value.user).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         Result<List<DelegateDAO.Data>> ddl;
         if ((ddl=ques.delegateDAO().read(trans, rd.value)).notOKorIsEmpty()) {
             return Result.err(Status.ERR_DelegateNotFound,"Cannot delete non-existent Delegate");
@@ -3972,7 +3972,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rv.notOK()) {
             return rv;
         }
-        
+
         return ques.delegateDAO().delete(trans, dd, false);
     }
 
@@ -3993,10 +3993,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rv.notOK()) {
             return rv;
         }
-        
+
         return ques.delegateDAO().delete(trans, dd, false);
     }
-    
+
     @Override
     public Result<DELGS> getDelegatesByUser(AuthzTrans trans, String user) {
         final Validator v = new ServiceValidator();
@@ -4011,7 +4011,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (rv.notOK()) {
             return Result.err(rv);
         }
-        
+
         TimeTaken tt = trans.start("Get delegates for a user", Env.SUB);
 
         Result<List<DelegateDAO.Data>> dbDelgs = ques.delegateDAO().read(trans, user);
@@ -4023,7 +4023,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
         } finally {
             tt.done();
-        }        
+        }
     }
 
     @Override
@@ -4051,11 +4051,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             }
         } finally {
             tt.done();
-        }        
+        }
     }
 
 /***********************************
- * APPROVAL 
+ * APPROVAL
  ***********************************/
     private static final String APPR_FMT = "actor=%s, action=%s, operation=\"%s\", requestor=%s, delegator=%s";
     @Override
@@ -4070,7 +4070,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
         int numProcessed = 0;
         String user = trans.user();
-        
+
         Result<List<ApprovalDAO.Data>> curr;
         Lookup<List<ApprovalDAO.Data>> apprByTicket=null;
         for (ApprovalDAO.Data updt : rlad.value) {
@@ -4093,14 +4093,14 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 Map<String, Result<List<DelegateDAO.Data>>> delegateCache = new HashMap<>();
                 Map<UUID, FutureDAO.Data> futureCache = new HashMap<>();
                 FutureDAO.Data hasDeleted = new FutureDAO.Data();
-                
+
                 for (ApprovalDAO.Data cd : curr.value) {
                     if ("pending".equals(cd.status)) {
                         // Check for right record.  Need ID, or (Ticket&Trans.User==Appr)
                         // If Default ID
                         boolean delegatedAction = ques.isDelegated(trans, user, cd.approver, delegateCache);
                         String delegator = cd.approver;
-                        if (updt.id!=null || 
+                        if (updt.id!=null ||
                             (updt.ticket!=null && user.equals(cd.approver)) ||
                             (updt.ticket!=null && delegatedAction)) {
                             if (updt.ticket.equals(cd.ticket)) {
@@ -4178,7 +4178,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         return Result.err(Status.ERR_ActionNotCompleted,numProcessed + " out of " + numApprs + " completed");
 
     }
-    
+
     private static class Changed {
         private boolean hasChanged = false;
 
@@ -4202,7 +4202,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<APPROVALS> getApprovalsByUser(AuthzTrans trans, String user) {
         final Validator v = new ServiceValidator();
-        if (v.nullOrBlank("User", user).err()) { 
+        if (v.nullOrBlank("User", user).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
 
@@ -4217,7 +4217,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
     @Override
     public Result<APPROVALS> getApprovalsByTicket(AuthzTrans trans, String ticket) {
         final Validator v = new ServiceValidator();
-        if (v.nullOrBlank("Ticket", ticket).err()) { 
+        if (v.nullOrBlank("Ticket", ticket).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
         UUID uuid;
@@ -4226,7 +4226,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         } catch (IllegalArgumentException e) {
             return Result.err(Status.ERR_BadData,e.getMessage());
         }
-    
+
         Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO().readByTicket(trans, uuid);
         if (rapd.isOK()) {
             return mapper.approvals(rapd.value);
@@ -4234,23 +4234,23 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             return Result.err(rapd);
         }
     }
-    
+
     @Override
     public Result<APPROVALS> getApprovalsByApprover(AuthzTrans trans, String approver) {
         final Validator v = new ServiceValidator();
         if (v.nullOrBlank("Approver", approver).err()) {
             return Result.err(Status.ERR_BadData,v.errs());
         }
-        
+
         List<ApprovalDAO.Data> listRapds = new ArrayList<>();
-        
+
         Result<List<ApprovalDAO.Data>> myRapd = ques.approvalDAO().readByApprover(trans, approver);
         if (myRapd.notOK()) {
             return Result.err(myRapd);
         }
-        
+
         listRapds.addAll(myRapd.value);
-        
+
         Result<List<DelegateDAO.Data>> delegatedFor = ques.delegateDAO().readByDelegate(trans, approver);
         if (delegatedFor.isOK()) {
             for (DelegateDAO.Data dd : delegatedFor.value) {
@@ -4258,7 +4258,7 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                     String delegator = dd.user;
                     Result<List<ApprovalDAO.Data>> rapd = ques.approvalDAO().readByApprover(trans, delegator);
                     if (rapd.isOK()) {
-                        for (ApprovalDAO.Data d : rapd.value) { 
+                        for (ApprovalDAO.Data d : rapd.value) {
                             if (!d.user.equals(trans.user())) {
                                 listRapds.add(d);
                             }
@@ -4267,10 +4267,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
             }
         }
-        
+
         return mapper.approvals(listRapds);
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.service.AuthzService#clearCache(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.String)
      */

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class FileMailer implements Mailer {
 
     public FileMailer(Access access) throws APIException {
         count = 0;
-        
+
         mail_from = access.getProperty("MAIL_FROM", null);
         if(mail_from==null) {
             throw new APIException("MAIL_FROM property is required for Email Notifications");
@@ -59,7 +59,7 @@ public class FileMailer implements Mailer {
                 throw new APIException("Cannot create directory: " + dir.toString(),e);
             }
         }
-        
+
         boolean dryrun = Boolean.parseBoolean(access.getProperty("DRY_RUN","false"));
         String str = access.getProperty("MAX_EMAIL", null);
         int maxEmail = str==null || str.isEmpty()?Integer.MAX_VALUE:Integer.parseInt(str);
@@ -94,7 +94,7 @@ public class FileMailer implements Mailer {
                     bw.write(to);
                 }
                 bw.newLine();
-                
+
                 bw.write("CC: ");
                 first = true;
                 for(String cc : ccList) {
@@ -106,17 +106,17 @@ public class FileMailer implements Mailer {
                     bw.write(cc);
                 }
                 bw.newLine();
-                
+
                 bw.write("FROM: ");
                 bw.write(mail_from);
                 bw.newLine();
-                
+
                 bw.write("SUBJECT: ");
                 bw.write(subject);
                 bw.newLine();
-                
+
                 if(urgent) {
-                    bw.write("Importance: High");  
+                    bw.write("Importance: High");
                     bw.newLine();
                 }
 

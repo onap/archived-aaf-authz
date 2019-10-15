@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,12 +44,12 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
                 return dao.readNS(trans, ns);
             }
         };
-        
+
         Result<List<Data>> lurd = get(trans, ns, getter);
         if (lurd.isOKhasData()) {
             return lurd;
         } else {
-            
+
         }
 //        if (getter.result==null) {
 //            if (lurd==null) {
@@ -66,7 +66,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
     }
 
     /**
-     * 
+     *
      * @param trans
      * @param ns
      * @param type
@@ -78,7 +78,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
                 return dao.readByType(trans, ns, type);
             }
         };
-        
+
         // Note: Can reuse index1 here, because there is no name collision versus response
         Result<List<Data>> lurd = get(trans, ns+'|'+type, getter);
         if (lurd.isOK() && lurd.isEmpty()) {
@@ -86,10 +86,10 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
         }
         return lurd;
     }
-    
+
     /**
      * Add desciption to this permission
-     * 
+     *
      * @param trans
      * @param ns
      * @param type
@@ -98,12 +98,12 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
      * @param description
      * @return
      */
-    public Result<Void> addDescription(AuthzTrans trans, String ns, String type, 
+    public Result<Void> addDescription(AuthzTrans trans, String ns, String type,
             String instance, String action, String description) {
         //TODO Invalidate?
         return dao().addDescription(trans, ns, type, instance, action, description);
     }
-    
+
     public Result<Void> addRole(AuthzTrans trans, PermDAO.Data perm, RoleDAO.Data role) {
         Result<Void> rv = dao().addRole(trans,perm,role.encode());
         if (trans.debug().isLoggable())

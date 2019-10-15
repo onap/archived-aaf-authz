@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,13 +48,13 @@ public class JU_Content {
             "\"m55555@jr583u.cred.test.com 1 Thu Oct 09 12:54:46 CDT 2014\"," +
             "\"m55555@jr583u.cred.test.com 1 Tue Jan 06 05:00:00 CST 2015\"," +
             "\"m55555@jr583u.cred.test.com 1 Wed Jan 07 05:00:00 CST 2015\"]}";
-        
+
         Error err = new Error();
         err.setText("Hello");
         err.getVariables().add("I'm a teapot");
         err.setMessageId("12");
-        
-        
+
+
 //        System.out.println(msg);
         RosettaEnv env = new RosettaEnv();
         RosettaDF<aaf.v2_0.Error> errDF = env.newDataFactory(aaf.v2_0.Error.class);
@@ -62,16 +62,16 @@ public class JU_Content {
         errDF.out(RosettaData.TYPE.JSON);
         RosettaData<Error> data = errDF.newData();
         data.load(err);
-        
+
         @SuppressWarnings("unused")
         String output = data.asString();
 //        System.out.println(output);
-        
+
         data.load(new StringReader(msg));
         err = data.asObject();
         output = err.getText();
 //        System.out.println(output);
     }
-        
+
 
 }

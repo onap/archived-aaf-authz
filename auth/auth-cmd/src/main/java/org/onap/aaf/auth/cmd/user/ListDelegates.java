@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,10 +39,10 @@ import aaf.v2_0.Delgs;
  *
  */
 public class ListDelegates extends Cmd {
-    private static final String HEADER = "List Delegates"; 
+    private static final String HEADER = "List Delegates";
     private static final String[] options = {"user","delegate"};
     public ListDelegates(List parent) {
-        super(parent,"delegates", 
+        super(parent,"delegates",
                 new Param(optionsToString(options),true),
                 new Param("id",true));
     }
@@ -56,9 +56,9 @@ public class ListDelegates extends Cmd {
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
-        
+
                 Future<Delgs> fp = client.read(
-                        "/authz/delegates/" + key + '/' + id, 
+                        "/authz/delegates/" + key + '/' + id,
                         getDF(Delgs.class)
                         );
                 if (fp.get(AAFcli.timeout())) {

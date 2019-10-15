@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,6 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -53,13 +52,13 @@ public class Cred  {
     public final String id;
     public final List<Instance> instances;
     public final String ns;
-    
+
     public Cred(String id) {
         this.id = id;
         instances = new ArrayList<>();
         ns=Question.domain2ns(id);
     }
-    
+
     public static class Instance {
         public final int type;
         public final Date expires,written;
@@ -67,7 +66,7 @@ public class Cred  {
         public final String tag;
         public List<Note> notes;
 
-        
+
         public Instance(int type, Date expires, Integer other, long written, String tag) {
             this.type = type;
             this.expires = expires;
@@ -75,7 +74,7 @@ public class Cred  {
             this.written = new Date(written);
             this.tag = tag;
         }
-        
+
         /**
          * Usually returns Null...
          * @return
@@ -83,23 +82,23 @@ public class Cred  {
         public List<Note> notes() {
             return notes;
         }
-        
+
         public void addNote(int level, String note) {
             if(notes==null) {
                 notes=new ArrayList<>();
-            } 
+            }
             notes.add(new Note(level,note));
         }
-        
+
         public String toString() {
             return expires.toString() + ": " + type + ' ' + tag;
         }
     }
-    
+
     public static class Note {
         public final int level;
         public final String note;
-        
+
         public Note(int level, String note) {
             this.level = level;
             this.note = note;
@@ -127,7 +126,7 @@ public class Cred  {
         return last;
     }
 
-    
+
     public Set<Integer> types() {
         Set<Integer> types = new HashSet<>();
         for (Instance i : instances) {
@@ -148,7 +147,7 @@ public class Cred  {
 
         trans.info().log( "query: " + query );
         TimeTaken tt = trans.start("Read Creds", Env.REMOTE);
-       
+
         ResultSet results;
         try {
             Statement stmt = new SimpleStatement( query );
@@ -190,7 +189,7 @@ public class Cred  {
     }
 
     public static void add(
-            final String id, 
+            final String id,
             final int type,
             final Date timestamp,
             final int other,
@@ -203,10 +202,10 @@ public class Cred  {
             data.put(id, cred);
         }
         cred.instances.add(new Instance(type, timestamp, other, written/1000,tag));
-        
-        List<Cred> lscd = byNS.get(cred.ns);	
+
+        List<Cred> lscd = byNS.get(cred.ns);
         if (lscd==null) {
-        	lscd=new ArrayList<>();
+            lscd=new ArrayList<>();
             byNS.put(cred.ns,lscd);
         }
         boolean found = false;
@@ -222,10 +221,10 @@ public class Cred  {
     }
 
 
-    /** 
+    /**
      * Count entries in Cred data.
      * Note, as opposed to other methods, need to load the whole cred table for the Types.
-     * @param numbuckets 
+     * @param numbuckets
      * @return
      */
     public static CredCount count(int numbuckets) {
@@ -246,7 +245,7 @@ public class Cred  {
         public int x509Added[];
         public int x509Expired[];
         public Date dates[];
-        
+
         public CredCount(int numbuckets) {
             raw = new int[numbuckets];
             basic_auth = new int[numbuckets];
@@ -263,17 +262,17 @@ public class Cred  {
             gc.set(GregorianCalendar.SECOND,0);
             gc.set(GregorianCalendar.MILLISECOND,0);
             gc.add(GregorianCalendar.MILLISECOND, -1); // last milli of month
-            for (int i=1;i<numbuckets;++i) {
+            for (int i = 1; i < numbuckets; ++i) {
                 dates[i] = gc.getTime();
                 gc.add(GregorianCalendar.MONTH, -1);
             }
-            
+
         }
-        
+
         public void inc(int type, Date start, Date expires) {
-            for (int i=0;i<dates.length-1;++i) {
+            for (int i = 0; i < dates.length - 1; ++i) {
                 if (start.before(dates[i])) {
-                    if ((type==CredDAO.CERT_SHA256_RSA)&&(start.after(dates[i+1]))) {
+                    if ((type == CredDAO.CERT_SHA256_RSA)&&(start.after(dates[i + 1]))) {
                             ++x509Added[i];
                          }
                     if (expires.after(dates[i])) {
@@ -297,15 +296,15 @@ public class Cred  {
         }
 
         public long authCount(int idx) {
-            return (long)basic_auth[idx]+basic_auth_256[idx];
+            return (long)basic_auth[idx] + basic_auth_256[idx];
         }
-        
+
         public long x509Count(int idx) {
             return cert[idx];
         }
 
     }
-    
+
     public void row(final CSV.Writer csvw, final Instance inst) {
         csvw.row("cred",id,ns,Integer.toString(inst.type),Chrono.dateOnlyStamp(inst.expires),
                 inst.expires.getTime(),inst.tag);
@@ -316,10 +315,9 @@ public class Cred  {
                 inst.expires.getTime(),inst.tag,reason);
     }
 
-    static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
     public static void batchDelete(StringBuilder sb, List<String> row) {
         Long l = Long.parseLong(row.get(5));
-        String date = sdf.format(new Date(l));
+        String date = Chrono.batchFmt.format(new Date(l));
         sb.append("DELETE from authz.cred WHERE id='");
         sb.append(row.get(1));
         sb.append("' AND type=");
@@ -331,7 +329,7 @@ public class Cred  {
 //        sb.append(" AND expires=dateof(maxtimeuuid(");
 //        sb.append(row.get(5));
 //        sb.append("));\n");
-        
+
     }
 
     public String toString() {

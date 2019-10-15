@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,8 +41,8 @@ import aaf.v2_0.PermRequest;
  */
 public class Delete extends Cmd {
     public Delete(Perm parent) {
-        super(parent,"delete", 
-                new Param("type",true), 
+        super(parent,"delete",
+                new Param("type",true),
                 new Param("instance",true),
                 new Param("action", true));
     }
@@ -58,7 +58,7 @@ public class Delete extends Cmd {
                 pk.setType(args[idx++]);
                 pk.setInstance(args[idx++]);
                 pk.setAction(args[idx++]);
-        
+
                 if(pk.getType().contains("@")) { // User Perm deletion... Must remove from hidden role
                     client.setQueryParams("force");
                 } else {
@@ -66,7 +66,7 @@ public class Delete extends Cmd {
                     setQueryParamsOn(client);
                 }
                 Future<PermRequest> fp = client.delete(
-                        "/authz/perm", 
+                        "/authz/perm",
                         getDF(PermRequest.class),
                         pk);
                 if (fp.get(AAFcli.timeout())) {

@@ -146,7 +146,7 @@ public class JU_AuthzEnv {
 
     @Test
     public void testLog1() {
-        
+
         Exception e = new Exception();
         Object msgs = null;
         authzEnv.log(e, msgs);

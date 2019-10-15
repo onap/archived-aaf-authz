@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ import locate.v1_0.MgmtEndpoints;
 public class DirectRegistrar implements Registrant<AuthzEnv> {
 
     private LocateDAO ldao;
-    private List<LocateDAO.Data> ldd; 
+    private List<LocateDAO.Data> ldd;
     public DirectRegistrar(Access access, LocateDAO ldao, int port) throws CadiException {
         this.ldao = ldao;
         ldd = new ArrayList<>();
@@ -70,7 +70,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
     @Override
 
     public Result<Void> update(AuthzEnv env) {
-        AuthzTrans trans = env.newTransNoAvg(); 
+        AuthzTrans trans = env.newTransNoAvg();
         StringBuilder sb = null;
         for(LocateDAO.Data ld : ldd) {
             org.onap.aaf.auth.layer.Result<Void> dr = ldao.update(trans, ld);
@@ -83,7 +83,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
                 }
             }
         }
-        
+
         if(sb==null) {
             return Result.ok(200, null);
         } else {
@@ -96,7 +96,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
      */
     @Override
     public Result<Void> cancel(AuthzEnv env) {
-        AuthzTrans trans = env.newTransNoAvg(); 
+        AuthzTrans trans = env.newTransNoAvg();
         StringBuilder sb = null;
         for(LocateDAO.Data ld : ldd) {
             org.onap.aaf.auth.layer.Result<Void> dr = ldao.delete(trans, ld, false);
@@ -109,7 +109,7 @@ public class DirectRegistrar implements Registrant<AuthzEnv> {
                 }
             }
         }
-        
+
         if(sb==null) {
             return Result.ok(200, null);
         } else {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,12 +55,12 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
     // store all the directories to review
     // No Concurrent HashSet, or at least, it is all implemented with HashMap in older versions
     private static Queue<Persist<?,?>> allPersists = new ConcurrentLinkedQueue<Persist<?,?>>();
-    
+
     private Map<String,CT> tmap;
     protected RosettaEnv env;
     private RosettaDF<T> df;
 
-    
+
     public Persist(Access access, RosettaEnv env, Class<T> cls, String sub_dir) throws CadiException, APIException {
         super(access, sub_dir);
         this.env = env;
@@ -74,11 +74,11 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
         }
         allPersists.add(this);
     }
-    
+
     public void close() {
         allPersists.remove(this);
     }
-    
+
     protected abstract CT newCacheable(T t, long expires_secsFrom1970, byte[] hash, Path path) throws APIException, IOException;
 
     public RosettaDF<T> getDF() {
@@ -113,7 +113,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
                     access.log(e,"Reading Token from",key);
                 }
             } // if not read, then ct still==null
-            
+
             // If not in memory, or on disk, get from Remote... IF reloadable (meaning, isn't hitting too often, etc).
             if (ct==null || ct.checkReloadable()) {
                 // Load from external (if makes sense)
@@ -133,7 +133,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
                     return Result.err(rtp);
                 }
             }
-            
+
             if (ct!=null) {
                 tmap.put(key, ct);
             }
@@ -149,39 +149,39 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
         writeDisk(df, ct.get(), ct.getHash(), key, ct.expires());
         tmap.put(key,ct);
     }
-    
+
     public void delete(String key) {
         tmap.remove(key);
         deleteFromDisk(key);
     }
 
     public interface Loader<CT> {
-        Result<CT> load(String key) throws APIException, CadiException, LocatorException;  
+        Result<CT> load(String key) throws APIException, CadiException, LocatorException;
     }
 
     /**
      * Clean will examine resources, and remove those that have expired.
-     * 
+     *
      * If "highs" have been exceeded, then we'll expire 10% more the next time.  This will adjust after each run
      * without checking contents more than once, making a good average "high" in the minimum speed.
-     * 
+     *
      * @author Jonathan
      *
      */
     private static final class Clean extends TimerTask {
         private final Access access;
         private long hourly;
-        
+
         public Clean(Access access) {
             this.access = access;
             hourly=0;
         }
-        
+
         private static class Metrics {
             public int mexists = 0, dexists=0;
             public int mremoved = 0, dremoved=0;
         }
-        
+
         public void run() {
             final long now = System.currentTimeMillis();
             final long dayFromNow = now + ONE_DAY;
@@ -203,7 +203,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
                             p.clearCount();
                         }
                     } else if (Files.exists(p.path())) {
-                        
+
                     }
                 }
                 // Clear disk
@@ -246,7 +246,7 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
                                     sb.append(e.getMessage());
                                     ++metrics.dremoved;
                                 }
-                                
+
                             }
                             return FileVisitResult.CONTINUE;
                         }
@@ -262,14 +262,14 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
                             access.log(Level.DEBUG, sb);
                             return FileVisitResult.CONTINUE;
                         }
-                    
+
                     });
                 } catch (IOException e) {
                     access.log(e, "Exception while cleaning Persistance");
                 }
-                
+
             }
-            
+
             // We want to print some activity of Persistence Check at least hourly, even if no activity has occurred, but not litter the log if nothing is happening
             boolean go=false;
             Level level=Level.WARN;
@@ -279,9 +279,9 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
             } else if (access.willLog(Level.WARN)) {
                 go = metrics.mremoved>0 || metrics.dremoved>0 || --hourly <= 0;
             }
-            
+
             if (go) {
-                access.printf(level, "Persist Cache: removed %d of %d items from memory and %d of %d from disk", 
+                access.printf(level, "Persist Cache: removed %d of %d items from memory and %d of %d from disk",
                     metrics.mremoved, metrics.mexists, metrics.dremoved, metrics.dexists);
                 hourly = 3600000/CLEAN_CHECK;
             }
@@ -296,6 +296,6 @@ public abstract class Persist<T,CT extends Persistable<T>> extends PersistFile {
         close(); // can call twice.
     }
 
-    
+
 
 }

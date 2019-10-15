@@ -66,7 +66,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 public class JU_List {
-    
+
     AAFcli cli;
     Role role;
     List list;
@@ -74,7 +74,7 @@ public class JU_List {
     AuthzEnv aEnv;
     Writer wtr;
     Locator<URI> loc;
-    HMangr hman;    
+    HMangr hman;
     AAFcli aafcli;
 
     private class ListRolesStub extends List {
@@ -84,7 +84,7 @@ public class JU_List {
             // TODO Auto-generated constructor stub
         }
     }
-    
+
     private class RolesStub extends Roles {
         public void addRole(aaf.v2_0.Role role) {
             if (this.role == null) {
@@ -93,17 +93,17 @@ public class JU_List {
             this.role.add(role);
         }
     }
-    
+
     private class RoleStub extends aaf.v2_0.Role {
-        
+
         public void addPerms(Pkey perms) {
             if (this.perms == null) {
                 this.perms = new ArrayList<>();
             }
-            this.perms.add(perms); 
+            this.perms.add(perms);
         }
     }
-    
+
     @Before
     public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException{
         prop = new PropAccess();
@@ -111,19 +111,19 @@ public class JU_List {
         wtr = mock(Writer.class);
         loc = mock(Locator.class);
         SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-        hman = new HMangr(aEnv, loc);    
+        hman = new HMangr(aEnv, loc);
         aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
         role = new Role(aafcli);
         list = new List(role);
     }
-    
+
     @Test
     public void testRoles() throws APIException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Role role = new Role(aafcli);
         ListRolesStub listStub = new ListRolesStub(role);
         Future future = mock(Future.class);
         Rcli rcli = mock(Rcli.class);
-        
+
         Class c = listStub.getClass();
         Class[] cArg = new Class[3];
         cArg[0] = Future.class;
@@ -132,9 +132,9 @@ public class JU_List {
         //Method listMethod = c.getDeclaredMethod("list", cArg);
         //listMethod.setAccessible(true);
         //listMethod.invoke(listStub, future, rcli, "test");
-        
+
     }
-    
+
     @Test
     public void testReport() throws Exception {
         UserRoles urs = new UserRoles();
@@ -152,7 +152,7 @@ public class JU_List {
         role.addPerms(pkey);
         list.report(roles, perms , null , "test");
         list.report(roles, perms , urs , "test");
-        
+
         aafcli.eval("DETAILS @[ 123");
         role.setName("test");
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,14 +35,14 @@ public class Routes<TRANS extends Trans> {
     // Since this must be very, very fast, and only needs one creation, we'll use just an array.
     private Route<TRANS>[] routes;
     private int end;
-    
+
 
     @SuppressWarnings("unchecked")
     public Routes() {
         routes = new Route[10];
         end = 0;
     }
-    
+
     // This method for setup of Routes only...
     // Package on purpose
     synchronized Route<TRANS> findOrCreate(HttpMethods  meth, String path) {
@@ -50,7 +50,7 @@ public class Routes<TRANS extends Trans> {
         for (int i=0;i<end;++i) {
             if (routes[i].resolvesTo(meth,path))rv = routes[i];
         }
-        
+
         if (rv==null) {
             if (end>=routes.length) {
                 @SuppressWarnings("unchecked")
@@ -58,12 +58,12 @@ public class Routes<TRANS extends Trans> {
                 System.arraycopy(routes, 0, temp, 0, routes.length);
                 routes = temp;
             }
-            
+
             routes[end++]=rv=new Route<TRANS>(meth,path);
         }
         return rv;
     }
-    
+
     public Route<TRANS> derive(HttpServletRequest req, CodeSetter<TRANS> codeSetter)  throws IOException, ServletException {
         Route<TRANS> rv = null;
         String path = req.getPathInfo();
@@ -71,13 +71,13 @@ public class Routes<TRANS extends Trans> {
         //TODO a TREE would be better
         for (int i=0;rv==null && i<end; ++i) {
             rv = routes[i].matches(meth,path);
-            if (rv!=null && !codeSetter.matches(rv)) { // potential match, check if has Code 
+            if (rv!=null && !codeSetter.matches(rv)) { // potential match, check if has Code
                 rv = null; // not quite, keep going
             }
         }
         return rv;
     }
-    
+
     public List<RouteReport> routeReport() {
         ArrayList<RouteReport> ltr = new ArrayList<>();
         for (int i=0;i<end;++i) {

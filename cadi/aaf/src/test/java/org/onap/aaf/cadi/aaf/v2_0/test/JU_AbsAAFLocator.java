@@ -149,7 +149,7 @@ public class JU_AbsAAFLocator {
         assertThat(loc.setPathInfo("pathInfo"), is(not(nullValue())));
         assertThat(loc.setQuery("query"), is(not(nullValue())));
         assertThat(loc.setFragment("fragment"), is(not(nullValue())));
-        
+
         assertThat(loc.exposeGetURI(uri), is(not(uri)));
     }
 

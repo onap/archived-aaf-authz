@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ import java.net.URI;
 
 /**
  * URI and URL, if the host does not have "dots", will interpret Host:port as Authority
- * 
+ *
  * This is very problematic for Containers, which like single name entries.
  * @author Instrumental(Jonathan)
  *
@@ -33,7 +33,7 @@ public class FixURIinfo {
     private String auth;
     private String host;
     private int port;
-    
+
     public FixURIinfo(URI uri) {
         auth = uri.getAuthority();
         host = uri.getHost();
@@ -51,11 +51,11 @@ public class FixURIinfo {
             }
         }
     }
-    
+
     public String getHost() {
         return host;
     }
-    
+
     public int getPort() {
         return port;
     }

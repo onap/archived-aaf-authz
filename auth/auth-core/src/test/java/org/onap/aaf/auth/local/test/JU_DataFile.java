@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class JU_DataFile {
 //    public void netYetTested() {
 //        fail("Tests not yet implemented");
 //    }
-    
+
 //    @Test
 //    public void test() throws Exception {
 //        File file = new File("../authz-batch/data/v1.dat");
@@ -52,7 +52,7 @@ public class JU_DataFile {
 //            df.open();
 //            Token tok = df.new Token(1024000);
 //            Field fld = tok.new Field('|');
-//    
+//
 //            while (tok.nextLine()) {
 //                ++count;
 //                fld.reset();

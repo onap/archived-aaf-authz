@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,10 +40,10 @@ import org.onap.aaf.cadi.taf.cert.X509Taf;
 
 /**
  * Direct view of CertIdentities
- * 
- * Warning:  this class is difficult to instantiate.  The only service that can use it is AAF itself, and is thus 
+ *
+ * Warning:  this class is difficult to instantiate.  The only service that can use it is AAF itself, and is thus
  * entered in the "init" after the CachedCertDAO is created.
- * 
+ *
  * @author Jonathan
  *
  */
@@ -62,7 +62,7 @@ public class DirectCertIdentity implements CertIdentity {
         byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
 
         AuthzTrans trans = (AuthzTrans) req.getAttribute(TransFilter.TRANS_TAG);
-        
+
         Result<List<Data>> cresp = certDAO.read(trans, ByteBuffer.wrap(fingerprint));
         if (cresp.isOKhasData()) {
             Data cdata = cresp.value.get(0);

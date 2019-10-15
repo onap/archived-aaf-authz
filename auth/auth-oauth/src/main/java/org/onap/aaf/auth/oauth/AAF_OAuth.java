@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -72,36 +72,36 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
     private final OAuthService service;
     private OAFacade1_0 facade1_0;
     private final Question question;
-    private TokenPermLoader tpLoader; 
+    private TokenPermLoader tpLoader;
     private final Cluster cluster;
-    
+
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-     * 
+     *
      * @param env
-     * @param si 
-     * @param dm 
-     * @param decryptor 
-     * @throws APIException 
+     * @param si
+     * @param dm
+     * @param decryptor
+     * @throws APIException
      */
     public AAF_OAuth(final AuthzEnv env) throws Exception {
         super(env.access(),env);
-        
+
         String aaf_env = env.getProperty(Config.AAF_ENV);
         if (aaf_env==null) {
             throw new APIException("aaf_env needs to be set");
         }
-        
+
         // Initialize Facade for all uses
         AuthzTrans trans = env.newTrans();
         cluster = org.onap.aaf.auth.dao.CassAccess.cluster(env,null);
-        
+
         aafLurPerm = aafCon().newLur();
         // Note: If you need both Authn and Authz construct the following:
         aafAuthn = aafCon().newAuthn(aafLurPerm);
 
         // Start Background Processing
-        //    Question question = 
+        //    Question question =
         question = new Question(trans, cluster, CassAccess.KEYSPACE);
         question.startTimers(env);
 
@@ -114,21 +114,21 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
         StringBuilder sb = new StringBuilder();
         trans.auditTrail(2, sb);
         trans.init().log(sb);
-        
+
         API_Token.init(this, facade1_0);
     }
-    
+
     /**
      * Setup XML and JSON implementations for each supported Version type
-     * 
+     *
      * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
      * to do Versions and Content switches
-     * 
+     *
      */
     public void route(HttpMethods meth, String path, API api, HttpCode<AuthzTrans, OAFacade<Introspect>> code) throws Exception {
         String version = "1.0";
         // Get Correct API Class from Mapper
-        Class<?> respCls = facade1_0.mapper().getClass(api); 
+        Class<?> respCls = facade1_0.mapper().getClass(api);
         if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         // setup Application API HTML ContentTypes for JSON and Route
         String application = applicationJSON(respCls, version);
@@ -138,7 +138,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
             route(env,meth,path,code,application,"application/json;version="+version,"*/*");
         }
     }
-    
+
     @Override
     public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
         try {
@@ -150,7 +150,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
             if (additionalTafLurs.length>0) {
                 System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
             }
-            
+
             return new Filter[] {
                 new AuthzTransFilter(env,aafCon(),
                     new AAFTrustChecker((Env)env),
@@ -160,7 +160,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
             throw new CadiException("Invalid Property information", e);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public Registrant<AuthzEnv>[] registrants(final int port) throws CadiException {
@@ -181,7 +181,7 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
         }
         super.destroy();
     }
-    
+
     // For use in CADI ONLY
     public TokenMgr.TokenPermLoader tpLoader() {
         return tpLoader;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,10 +53,10 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
 
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
     private static final String STAR = "*";
-    
+
     private final HistoryDAO historyDAO;
     private final CacheInfoDAO infoDAO;
-    
+
     private PSInfo psNS, psChildren, psByType;
 
     public PermDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
@@ -80,11 +80,11 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         public String        type;
         public String        instance;
         public String        action;
-        public Set<String>  roles; 
+        public Set<String>  roles;
         public String        description;
 
         public Data() {}
-        
+
         public Data(NsSplit nss, String instance, String action) {
             ns = nss.ns;
             type = nss.name;
@@ -103,7 +103,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             sb.append(type);
             return sb.toString();
         }
-        
+
         public String fullPerm() {
             StringBuilder sb = new StringBuilder();
             if(ns==null) {
@@ -123,10 +123,10 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         public String encode() {
             return ns + '|' + type + '|' + instance + '|' + action;
         }
-        
+
         /**
          * Decode Perm String, including breaking into appropriate Namespace
-         * 
+         *
          * @param trans
          * @param q
          * @param p
@@ -158,7 +158,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
 
         /**
          * Decode Perm String, including breaking into appropriate Namespace
-         * 
+         *
          * @param trans
          * @param q
          * @param p
@@ -169,7 +169,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             if (ss[2]==null) {
                 return Result.err(Status.ERR_BadData,"Perm Encodings must be separated by '|'");
             }
-            
+
             if (ss[3]==null) { // older 3 part encoding must be evaluated for NS
                 ss[3] = ss[2];
                 ss[2] = ss[1];
@@ -206,7 +206,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             }
             return rv;
         }
-        
+
         public static Data create(AuthzTrans trans, Question q, String name) {
             String[] s = name.split("\\|");
             Result<NsSplit> rdns = q.deriveNsSplit(trans, s[0]);
@@ -240,7 +240,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             }
             return rv;
         }
-        
+
         ////////////////////////////////////////
         // Getters
         public Set<String> roles(boolean mutable) {
@@ -268,7 +268,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             PermLoader.deflt.marshal(this, new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             PermLoader.deflt.unmarshal(this, toDIS(bb));
@@ -279,18 +279,18 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             return encode();
         }
     }
-    
+
     private static class PermLoader extends Loader<Data> implements Streamer<Data> {
         public static final int MAGIC=283939453;
         public static final int VERSION=1;
         public static final int BUFF_SIZE=96;
 
         public static final PermLoader deflt = new PermLoader(KEYLIMIT);
-        
+
         public PermLoader(int keylimit) {
             super(keylimit);
         }
-        
+
         @Override
         public Data load(Data data, Row row) {
             // Int more efficient Match "fields" string
@@ -343,25 +343,25 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
             data.description = readString(is,buff);
         }
     }
-    
+
     private void init(AuthzTrans trans) {
         // the 3 is the number of key fields
         String[] helpers = setCRUD(trans, TABLE, Data.class, PermLoader.deflt);
-        
+
         // Other SELECT style statements... match with a local Method
-        psByType = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE + 
+        psByType = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE ns = ? AND type = ?", new PermLoader(2) {
             @Override
             protected void key(Data data, int idx, Object[] obj) {
                 obj[idx]=data.type;
             }
         },readConsistency);
-        
+
         psNS = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE ns = ?", new PermLoader(1),readConsistency);
-                
-        psChildren = new PSInfo(trans, SELECT_SP +  helpers[FIELD_COMMAS] +  " FROM " + TABLE + 
-                " WHERE ns=? AND type > ? AND type < ?", 
+
+        psChildren = new PSInfo(trans, SELECT_SP +  helpers[FIELD_COMMAS] +  " FROM " + TABLE +
+                " WHERE ns=? AND type > ? AND type < ?",
                 new PermLoader(3) {
             @Override
             protected void key(Data data, int _idx, Object[] obj) {
@@ -377,7 +377,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
 
     /**
      * Add a single Permission to the Role's Permission Collection
-     * 
+     *
      * @param trans
      * @param roleFullName
      * @param perm
@@ -438,11 +438,11 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
     }
 
 
-    
+
     /**
-     * Additional method: 
+     * Additional method:
      *         Select all Permissions by Name
-     * 
+     *
      * @param name
      * @return
      * @throws DAOException
@@ -450,7 +450,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
     public Result<List<Data>> readByType(AuthzTrans trans, String ns, String type) {
         return psByType.read(trans, R_TEXT, new Object[]{ns, type});
     }
-    
+
     public Result<List<Data>> readChildren(AuthzTrans trans, String ns, String type) {
         return psChildren.read(trans, R_TEXT, new Object[]{ns, type+DOT, type + DOT_PLUS_ONE});
     }
@@ -461,7 +461,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
 
     /**
      * Add description to this permission
-     * 
+     *
      * @param trans
      * @param ns
      * @param type
@@ -473,7 +473,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
     public Result<Void> addDescription(AuthzTrans trans, String ns, String type,
             String instance, String action, String description) {
         try {
-            getSession(trans).execute(UPDATE_SP + TABLE + " SET description = '" 
+            getSession(trans).execute(UPDATE_SP + TABLE + " SET description = '"
                 + description + "' WHERE ns = '" + ns + "' AND type = '" + type + "'"
                 + "AND instance = '" + instance + "' AND action = '" + action + "';");
         } catch (DriverException | APIException | IOException e) {
@@ -486,11 +486,11 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         data.type=type;
         data.instance=instance;
         data.action=action;
-        wasModified(trans, CRUD.update, data, "Added description " + description + " to permission " 
+        wasModified(trans, CRUD.update, data, "Added description " + description + " to permission "
                 + data.encode(), null );
         return Result.ok();
     }
-    
+
     /**
      * Log Modification statements to History
      */
@@ -510,7 +510,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
         } else {
             hd.memo = String.format("%sd %s|%s|%s", modified.name(),data.fullType(),data.instance,data.action);
         }
-        
+
         if (modified==CRUD.delete) {
             try {
                 hd.reconstruct = data.bytify();
@@ -518,7 +518,7 @@ public class PermDAO extends CassDAOImpl<AuthzTrans,PermDAO.Data> {
                 trans.error().log(e,"Could not serialize PermDAO.Data");
             }
         }
-        
+
         if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }

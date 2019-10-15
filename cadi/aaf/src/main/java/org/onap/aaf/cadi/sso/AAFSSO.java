@@ -83,7 +83,7 @@ public class AAFSSO {
     public AAFSSO(String[] args) throws IOException, CadiException {
         this(args,new Properties());
     }
-    
+
     public AAFSSO(String[] args, ProcessArgs pa) throws IOException, CadiException {
         this(args,pa.process(args, new Properties()));
     }
@@ -114,7 +114,7 @@ public class AAFSSO {
                 propStream.close();
             }
         }
-        
+
         File dot_aaf_kf = new File(dot_aaf, "keyfile");
 
         if (removeSSO) {
@@ -143,7 +143,7 @@ public class AAFSSO {
             System.out.println("AAF SSO information removed");
         } else {
             //    Config.setDefaultRealm(access);
-    
+
             if (!dot_aaf_kf.exists()) {
                 // This will create, as required, or reuse
                 ArtifactDir.getSymm(dot_aaf_kf);
@@ -155,9 +155,9 @@ public class AAFSSO {
             String[] naargs = new String[nargs.size()];
             nargs.toArray(naargs);
             access = new PropAccess(os, naargs);
-            
+
             if (loginOnly) {
-                for (String tag : new String[] {Config.AAF_APPID, Config.AAF_APPPASS, 
+                for (String tag : new String[] {Config.AAF_APPID, Config.AAF_APPPASS,
                         Config.CADI_ALIAS, Config.CADI_KEYSTORE,Config.CADI_KEYSTORE_PASSWORD,Config.CADI_KEY_PASSWORD}) {
                     access.getProperties().remove(tag);
                     diskprops.remove(tag);
@@ -171,14 +171,14 @@ public class AAFSSO {
 //                }
 //                touchDiskprops=true;
             }
-    
+
             String keyfile = access.getProperty(Config.CADI_KEYFILE); // in case its CertificateMan props
             if (keyfile == null) {
                 access.setProperty(Config.CADI_KEYFILE, dot_aaf_kf.getAbsolutePath());
                 addProp(Config.CADI_KEYFILE,dot_aaf_kf.getAbsolutePath());
             }
-    
-    
+
+
             String alias, appID;
             alias = access.getProperty(Config.CADI_ALIAS);
             if (alias==null) {
@@ -188,7 +188,7 @@ public class AAFSSO {
                 user=alias;
                 appID=null;
             }
-            
+
             String aaf_container_ns = "";
             if (appID!=null) {
                 if( access.getProperty(Config.AAF_APPPASS)==null) {
@@ -204,10 +204,10 @@ public class AAFSSO {
                 }
                  diskprops.setProperty(Config.AAF_APPID,appID);
             }
-            
+
             String keystore=access.getProperty(Config.CADI_KEYSTORE);
             String keystore_pass=access.getProperty(Config.CADI_KEYSTORE_PASSWORD);
-            
+
             if (user==null || (alias!=null && (keystore==null || keystore_pass==null))) {
                 String select = null;
                 String name;
@@ -224,7 +224,7 @@ public class AAFSSO {
                             encrypted_pass= access.encrypt(new String(password));
                             access.setProperty(Config.CADI_KEYSTORE_PASSWORD, encrypted_pass);
                             addProp(Config.CADI_KEYSTORE_PASSWORD, encrypted_pass);
-                            
+
                             // TODO READ Aliases out of Keystore?
                             user = alias = cons.readLine("Keystore alias: ");
                             access.setProperty(Config.CADI_ALIAS, user);
@@ -251,8 +251,8 @@ public class AAFSSO {
                     keystore_pass = encrypted_pass;
                 }
             }
-            
-    
+
+
             if (alias!=null) {
                 use_X509 = true;
             } else {
@@ -302,7 +302,7 @@ public class AAFSSO {
             if (user == null) {
                 err = new StringBuilder("Add -D" + Config.AAF_APPID + "=<id> ");
             }
-    
+
             if (encrypted_pass == null && alias == null) {
                 if (err == null) {
                     err = new StringBuilder();
@@ -311,7 +311,7 @@ public class AAFSSO {
                 }
                 err.append("-D" + Config.AAF_APPPASS + "=<passwd> ");
             }
-            
+
             String cadiLatitude = access.getProperty(Config.CADI_LATITUDE);
             if (cadiLatitude==null) {
                 System.out.println("# If you do not know your Global Coordinates, we suggest bing.com/maps");
@@ -321,7 +321,7 @@ public class AAFSSO {
                 }
                 access.setProperty(Config.CADI_LATITUDE, cadiLatitude);
                 addProp(Config.CADI_LATITUDE, cadiLatitude);
-                
+
             }
             String cadiLongitude = access.getProperty(Config.CADI_LONGITUDE);
             if (cadiLongitude==null) {
@@ -332,14 +332,14 @@ public class AAFSSO {
                 access.setProperty(Config.CADI_LONGITUDE, cadiLongitude);
                 addProp(Config.CADI_LONGITUDE, cadiLongitude);
             }
-    
+
             String cadi_truststore = access.getProperty(Config.CADI_TRUSTSTORE);
             if (cadi_truststore==null) {
-                String name; 
+                String name;
                 String select;
                 for (File tsf : dot_aaf.listFiles()) {
                     name = tsf.getName();
-                    if (name.contains("trust") && 
+                    if (name.contains("trust") &&
                             (name.endsWith(".jks") || name.endsWith(".p12"))) {
                         select = cons.readLine("Use %s for TrustStore? (y/n):",tsf.getName());
                         if ("y".equalsIgnoreCase(select)) {
@@ -401,7 +401,7 @@ public class AAFSSO {
                 access.log(e);
             }
         }
-        
+
         final String apiVersion = access.getProperty(Config.AAF_API_VERSION, Config.AAF_DEFAULT_API_VERSION);
         final String aaf_root_ns = access.getProperty(Config.AAF_ROOT_NS);
         String locateRoot;
@@ -521,7 +521,7 @@ public class AAFSSO {
         }
         return larg;
     }
-    
+
     private void setReadonly(File file) {
         file.setExecutable(false, false);
         file.setWritable(false, false);
@@ -532,7 +532,7 @@ public class AAFSSO {
     public boolean ok() {
         return ok;
     }
-    
+
     public static interface ProcessArgs {
         public Properties process(final String[] args, final Properties props);
     }

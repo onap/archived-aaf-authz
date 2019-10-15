@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ public class Validator {
         actionChars = ACTION_CHARS;
         instChars = INST_CHARS;
     }
-    
+
     public final String errs() {
         return msgs.toString();
     }
@@ -96,7 +96,7 @@ public class Validator {
     }
 
     protected final boolean nob(String str, Pattern p) {
-        return str==null || !p.matcher(str).matches(); 
+        return str==null || !p.matcher(str).matches();
     }
 
     protected final void msg(String ... strs) {
@@ -164,7 +164,7 @@ public class Validator {
         }
         return this;
     }
-    
+
     public final Validator permType(String type, String ns) {
         if (type==null) {
             msg("Perm Type is null");
@@ -227,7 +227,7 @@ public class Validator {
             return this;
         } else if (nob(ns,NAME_CHARS)) {
             msg("NS [" + ns + "] is invalid.");
-        } 
+        }
         for (String s : nsKeywords) {
             if (ns.endsWith(s)) {
                 msg("NS [" + ns + "] may not be named with NS keywords");

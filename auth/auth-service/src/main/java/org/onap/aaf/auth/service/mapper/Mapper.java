@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public interface Mapper<
     ERROR,
     APPROVALS>
 {
-    enum API{NSS,NS_REQ,    
+    enum API{NSS,NS_REQ,
              PERMS,PERM_KEY,PERM_REQ,
              ROLES,ROLE,ROLE_REQ,ROLE_PERM_REQ,
              USERS,USER_ROLE_REQ,USER_ROLES,
@@ -83,12 +83,12 @@ public interface Mapper<
     public Result<APPROVALS> approvals(List<ApprovalDAO.Data> lAppr);
     public Result<List<ApprovalDAO.Data>> approvals(APPROVALS apprs);
     public Result<List<PermDAO.Data>> perms(AuthzTrans trans, PERMS perms);
-    
+
     public Result<UserRoleDAO.Data> userRole(AuthzTrans trans, REQUEST from);
     public Result<PermDAO.Data> permFromRPRequest(AuthzTrans trans, REQUEST from);
     public REQUEST ungrantRequest(AuthzTrans trans, String role, String type, String instance, String action);
     public Result<RoleDAO.Data> roleFromRPRequest(AuthzTrans trans, REQUEST from);
-    
+
     /*
      * Check Requests of varying sorts for Future fields set
      */
@@ -108,9 +108,9 @@ public interface Mapper<
     public Result<KEYS> keys(Collection<String> from);
 
     public Result<HISTORY> history(AuthzTrans trans, List<HistoryDAO.Data> history, final int sort);
-    
+
     public ERROR errorFromMessage(StringBuilder holder, String msgID, String text, String... detail);
-    
+
     /*
      * A Memo Creator... Use to avoid creating superfluous Strings until needed.
      */

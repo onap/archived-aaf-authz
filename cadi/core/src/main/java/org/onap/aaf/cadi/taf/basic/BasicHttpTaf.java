@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,15 +51,15 @@ import org.onap.aaf.cadi.util.CSV;
 
 /**
  * BasicHttpTaf
- * 
- * This TAF implements the "Basic Auth" protocol.  
- * 
- * WARNING! It is true for any implementation of "Basic Auth" that the password is passed unencrypted.  
- * This is because the expectation, when designed years ago, was that it would only be used in 
+ *
+ * This TAF implements the "Basic Auth" protocol.
+ *
+ * WARNING! It is true for any implementation of "Basic Auth" that the password is passed unencrypted.
+ * This is because the expectation, when designed years ago, was that it would only be used in
  * conjunction with SSL (https).  It is common, however, for users to ignore this on the assumption that
  * their internal network is secure, or just ignorance.  Therefore, a WARNING will be printed
  * when the HTTP Channel is not encrypted (unless explicitly turned off).
- * 
+ *
  * @author Jonathan
  *
  */
@@ -71,7 +71,7 @@ public class BasicHttpTaf implements HttpTaf {
     private boolean warn;
     private long timeToLive;
     private MapBathConverter mapIds;
-    
+
     public BasicHttpTaf(Access access, CredVal rbac, String realm, long timeToLive, boolean turnOnWarning) {
         this.access = access;
         this.realm = realm;
@@ -93,9 +93,9 @@ public class BasicHttpTaf implements HttpTaf {
     public void add(final CredValDomain cvd) {
         rbacs.put(cvd.domain(), cvd);
     }
-    
+
     /**
-     * Note: BasicHttp works for either Carbon Based (Humans) or Silicon Based (machine) Lifeforms.  
+     * Note: BasicHttp works for either Carbon Based (Humans) or Silicon Based (machine) Lifeforms.
      * @see Taf
      */
     public TafResp validate(Taf.LifeForm reading, HttpServletRequest req, HttpServletResponse resp) {
@@ -107,20 +107,20 @@ public class BasicHttpTaf implements HttpTaf {
                     return DenialOfServiceTaf.respDenyID(access,bc.getUser());
                 }
                 CachedBasicPrincipal bp = new CachedBasicPrincipal(this,bc,realm,timeToLive);
-                
+
                 // Be able to do Organizational specific lookups by Domain
                 CredVal cv = rbacs.get(bp.getDomain());
                 if (cv==null) {
                     cv = rbac;
                 }
-                
-                // ONLY FOR Last Ditch DEBUGGING... 
+
+                // ONLY FOR Last Ditch DEBUGGING...
                 // access.log(Level.WARN,bp.getName() + ":" + new String(bp.getCred()));
                 if (cv.validate(bp.getName(),Type.PASSWORD,bp.getCred(),req)) {
                     return new BasicHttpTafResp(access,bp,bp.getName()+" authenticated by password",RESP.IS_AUTHENTICATED,resp,realm,false);
                 } else {
                     //TODO may need timed retries in a given time period
-                    return new BasicHttpTafResp(access,bc.getUser(),buildMsg(bp,req,"user/pass combo invalid for ",bc.getUser(),"from",req.getRemoteAddr()), 
+                    return new BasicHttpTafResp(access,bc.getUser(),buildMsg(bp,req,"user/pass combo invalid for ",bc.getUser(),"from",req.getRemoteAddr()),
                             RESP.TRY_AUTHENTICATING,resp,realm,true);
                 }
             }
@@ -142,20 +142,20 @@ public class BasicHttpTaf implements HttpTaf {
                 if (DenialOfServiceTaf.isDeniedID(ba.getName())!=null) {
                     return DenialOfServiceTaf.respDenyID(access,ba.getName());
                 }
-                
+
                 final int at = ba.getName().indexOf('@');
                 CredVal cv = rbacs.get(ba.getName().substring(at+1));
-                if (cv==null) { 
+                if (cv==null) {
                     cv = rbac; // default
                 }
 
-                // ONLY FOR Last Ditch DEBUGGING... 
+                // ONLY FOR Last Ditch DEBUGGING...
                 // access.log(Level.WARN,ba.getName() + ":" + new String(ba.getCred()));
                 if (cv.validate(ba.getName(), Type.PASSWORD, ba.getCred(), req)) {
                     return new BasicHttpTafResp(access,ba, ba.getName()+" authenticated by BasicAuth password",RESP.IS_AUTHENTICATED,resp,realm,false);
                 } else {
                     //TODO may need timed retries in a given time period
-                    return new BasicHttpTafResp(access,target,buildMsg(ba,req,"user/pass combo invalid"), 
+                    return new BasicHttpTafResp(access,target,buildMsg(ba,req,"user/pass combo invalid"),
                             RESP.TRY_AUTHENTICATING,resp,realm,true);
                 }
             } catch (IOException e) {
@@ -166,7 +166,7 @@ public class BasicHttpTaf implements HttpTaf {
         }
         return new BasicHttpTafResp(access,target,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,realm,false);
     }
-    
+
     protected String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {
         StringBuilder sb = new StringBuilder();
         if (pr!=null) {
@@ -187,7 +187,7 @@ public class BasicHttpTaf implements HttpTaf {
         }
         return sb.toString();
     }
-    
+
     public void addCredVal(final String realm, final CredVal cv) {
         rbacs.put(realm, cv);
     }
@@ -199,7 +199,7 @@ public class BasicHttpTaf implements HttpTaf {
         }
         return cv;
     }
-    
+
     @Override
     public Resp revalidate(CachedPrincipal prin, Object state) {
         if (prin instanceof BasicPrincipal) {
@@ -211,7 +211,7 @@ public class BasicHttpTaf implements HttpTaf {
         }
         return Resp.NOT_MINE;
     }
-    
+
     public String toString() {
         return "Basic Auth enabled on realm: " + realm;
     }

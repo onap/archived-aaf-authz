@@ -34,7 +34,7 @@ public class XFrameFilter implements Filter {
     enum TYPE {none,self};
     // Note: Content-Security Params need to be worked out for GUI before activating.
     private final String xframe;//,csp;
-    
+
     public XFrameFilter(TYPE type) {
         switch(type) {
         case self:
@@ -46,10 +46,10 @@ public class XFrameFilter implements Filter {
             xframe="DENY";
 //            csp="default-src 'none'";
             break;
-        
+
         }
     }
-    
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain fc) throws IOException, ServletException {
         if (resp instanceof HttpServletResponse) {

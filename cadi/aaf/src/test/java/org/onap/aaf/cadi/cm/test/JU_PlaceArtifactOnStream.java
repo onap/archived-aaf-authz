@@ -47,7 +47,7 @@ public class JU_PlaceArtifactOnStream {
 
     private static final String luggagePassword = "12345";  // That's the stupidest combination I've ever heard in my life
     private static final String privateKeyString = "I'm a private key!";
-    
+
     private ByteArrayOutputStream outStream;
 
     private List<String> certs;
@@ -63,7 +63,7 @@ public class JU_PlaceArtifactOnStream {
         when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
         when(certInfoMock.getCerts()).thenReturn(certs);
         when(certInfoMock.getPrivatekey()).thenReturn(privateKeyString);
-        
+
         outStream = new ByteArrayOutputStream();
     }
 
@@ -71,9 +71,9 @@ public class JU_PlaceArtifactOnStream {
     public void test() {
         PlaceArtifactOnStream placer = new PlaceArtifactOnStream(new PrintStream(outStream));
         placer.place(transMock, certInfoMock, artiMock, "machine");
-        
+
         String[] output = outStream.toString().split(System.lineSeparator(), 0);
-        
+
         String[] expected = {
                 "Challenge:  " + luggagePassword,
                 "PrivateKey:",
@@ -82,7 +82,7 @@ public class JU_PlaceArtifactOnStream {
                 "cert1",
                 "cert2"
         };
-        
+
         assertThat(output.length, is(expected.length));
         for (int i = 0; i < output.length; i++) {
             assertThat(output[i], is(expected[i]));

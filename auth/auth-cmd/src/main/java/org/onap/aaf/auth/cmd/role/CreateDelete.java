@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.RoleRequest;
 
 /**
- * 
+ *
  * @author Jonathan
  *
  */
@@ -45,9 +45,9 @@ public class CreateDelete extends Cmd {
     private static final String ROLE_PATH = "/authz/role";
     private static final String[] options = {"create","delete"};
     public CreateDelete(Role parent) {
-        super(parent,null, 
+        super(parent,null,
                 new Param(optionsToString(options),true),
-                new Param("name",true)); 
+                new Param("name",true));
     }
 
     @Override
@@ -58,13 +58,13 @@ public class CreateDelete extends Cmd {
                 int idx = index;
                 String action = args[idx++];
                 int option = whichOption(options, action);
-        
+
                 RoleRequest rr = new RoleRequest();
                 rr.setName(args[idx++]);
-        
+
                 // Set Start/End commands
                 setStartEnd(rr);
-                
+
                 Future<RoleRequest> fp = null;
                 String verb = null;
                 int rv;
@@ -81,7 +81,7 @@ public class CreateDelete extends Cmd {
                         // Send "Force" if set
                         setQueryParamsOn(client);
                         fp = client.delete(
-                                ROLE_PATH, // +args[idx++], 
+                                ROLE_PATH, // +args[idx++],
                                 getDF(RoleRequest.class),
                                 rr
                                 );
@@ -89,11 +89,11 @@ public class CreateDelete extends Cmd {
                         break;
                     default: // note, if not an option, whichOption throws Exception
                         break;
-                        
+
                 }
                 boolean rolesSupplied = (args.length>idx);
                 if (fp == null) {// This useless code brought to you by Sonar.
-                    throw new CadiException("No call made.");  
+                    throw new CadiException("No call made.");
                 }
                 if (fp.get(AAFcli.timeout())) {
                     rv=fp.code();

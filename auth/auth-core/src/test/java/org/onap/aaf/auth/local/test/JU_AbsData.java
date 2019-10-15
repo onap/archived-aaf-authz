@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,16 +54,16 @@ public class JU_AbsData {
     String filePath = "test/output_.key";
     File keyfile = new File(filePath);
     AuthzTrans trans = mock(AuthzTrans.class);
-    
+
     private class AbsDataStub extends AbsData {
 
-        
+
         public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
             super(dataf, sepChar, maxLineSize, fieldOffset);
             // TODO Auto-generated constructor stub
-            
+
         }
-        
+
     }
 
     @Test
@@ -81,18 +81,18 @@ public class JU_AbsData {
         AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
         ads.skipLines(0);
         ads.name();
-        
+
         long lng = 1823286886660L;
         //ads.open(trans, lng);
         keyfile.delete();
     }
-    
+
     @Test
     public void testClose() throws IOException {
         AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);
         ads.close(trans);
     }
-    
+
     @Test
     public void testReuse() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         char character = 'x';
@@ -105,7 +105,7 @@ public class JU_AbsData {
         //reuse.pos(10);
         keyfile.delete();
     }
-    
+
     @Test
     public void testIter() throws IOException {
         AbsDataStub ads = new AbsDataStub(keyfile, character, 0, 0);

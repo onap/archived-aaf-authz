@@ -60,8 +60,8 @@ public class JU_AAFSSO {
 
     @Test
     public void test()  {
-        
-    // Note  this is desctructive of personal dirs, and doesn't really test anything.  Needs redoing. 
+
+    // Note  this is desctructive of personal dirs, and doesn't really test anything.  Needs redoing.
 //        AAFSSO sso;
 //        String[] args;
 //
@@ -71,7 +71,7 @@ public class JU_AAFSSO {
 //        };
 //        try {
 //            sso = new AAFSSO(args);
-//        
+//
 //        assertThat(new File(aafDir).exists(), is(true));
 //        assertThat(new File(aafDir + "/.aaf").exists(), is(true));
 //        assertThat(new File(aafDir + "/.aaf/keyfile").exists(), is(true));
@@ -80,7 +80,7 @@ public class JU_AAFSSO {
 //
 //// Not necessarily true
 ////        assertThat(new File(aafDir + "/.aaf/sso.props").exists(), is(true));
-//        
+//
 //        sso.setLogDefault();
 //        sso.setStdErrDefault();
 //
@@ -104,7 +104,7 @@ public class JU_AAFSSO {
 //
 //        sso.addProp("key", "value");
 //        assertThat(sso.err(), is(nullValue()));
-//        
+//
 //        assertThat(sso.useX509(), is(false));
 ////
 ////        sso.close();

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,9 +51,9 @@ public class PrepExtend extends Batch {
     /**
      * Create a list of Creds and UserRoles to extend
      * Note: Certificates cannot be renewed in this way.
-     * 
+     *
      * Arguments From (0 = today, -2 = 2 weeks back) and To (weeks from today)
-     * 
+     *
      * @param trans
      * @throws APIException
      * @throws IOException
@@ -80,15 +80,15 @@ public class PrepExtend extends Batch {
     protected void run(AuthzTrans trans) {
         GregorianCalendar gc = new GregorianCalendar();
         Date now = gc.getTime();
-        
+
         int ifrom = 0;
         int ito = 4;
-        
+
         for(int i=0; i< args().length;++i) {
             switch(args()[i]) {
                 case "-from":
                     if(args().length>i+1) {
-                        ifrom = Integer.parseInt(args()[i++ +1]); 
+                        ifrom = Integer.parseInt(args()[i++ +1]);
                     }
                     break;
                 case "-to":
@@ -102,23 +102,23 @@ public class PrepExtend extends Batch {
             System.err.println("Invalid -from param");
             return;
         }
-        
+
         if(ito<=0 || ito>24 || ifrom>ito) {
             System.err.println("Invalid -to param");
             return;
         }
-        
+
         // Make sure to is Zero based from today.
         if(ifrom<0) {
             ito+= ifrom*-1;
         }
-        
+
         gc.add(GregorianCalendar.WEEK_OF_MONTH, ifrom);
         Date from = gc.getTime();
-        
+
         gc.add(GregorianCalendar.WEEK_OF_MONTH, ito /* with From calculated in */);
         Date to = gc.getTime();
-        
+
         try {
             File file = new File(logDir(), PREP_EXTEND + Chrono.dateOnlyStamp(now) + CSV);
             final CSV puntCSV = new CSV(env.access(),file);
@@ -128,7 +128,7 @@ public class PrepExtend extends Batch {
             try {
                 trans.info().log("Process UserRoles for Extending");
                 /**
-                   Run through User Roles.  
+                   Run through User Roles.
                    If match Date Range, write out to appropriate file.
                 */
                 UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
@@ -136,7 +136,7 @@ public class PrepExtend extends Batch {
                         ur.row(cw,UserRole.UR);
                     }
                 });
-                
+
                 trans.info().log("Process BasicAuth for Extending");
                 TimeTaken tt0 = trans.start("Load Credentials", Env.REMOTE);
                 try {
@@ -148,7 +148,7 @@ public class PrepExtend extends Batch {
 
 
                 /**
-                   Run through Creds.  
+                   Run through Creds.
                    If match Date Range, write out to appropriate file.
                 */
                 Map<Integer,Instance> imap = new HashMap<>();

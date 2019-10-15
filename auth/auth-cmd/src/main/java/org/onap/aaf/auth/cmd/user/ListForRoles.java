@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ import aaf.v2_0.Users;
 public class ListForRoles extends Cmd {
     private static final String HEADER = "List Users for Role";
     public ListForRoles(List parent) {
-        super(parent,"role", new Param("role",true)); 
+        super(parent,"role", new Param("role",true));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ListForRoles extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Users> fp = client.read(
-                        "/authz/users/role/"+role, 
+                        "/authz/users/role/"+role,
                         getDF(Users.class)
                         );
                 if (fp.get(AAFcli.timeout())) {
@@ -66,7 +66,7 @@ public class ListForRoles extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int _indent, StringBuilder sb) {
             int indent = _indent;

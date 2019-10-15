@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +37,12 @@ public class CertResp {
     private CA ca;
     private KeyPair keyPair;
     private String challenge;
-    
+
     private String privateKey;
     private String certString;
     private String[] trustChain;
     private String[] notes;
-    
+
     public CertResp(Trans trans, CA ca, X509Certificate x509, CSRMeta csrMeta, String[] trustChain, String[] notes) throws IOException, CertException {
         keyPair = csrMeta.keypair(trans);
         privateKey = Factory.toString(trans, keyPair.getPrivate());
@@ -58,35 +58,35 @@ public class CertResp {
         certString = cert;
     }
 
-    
+
     public String asCertString() {
         return certString;
     }
-    
+
     public String privateString() {
         return privateKey;
     }
-    
+
     public String challenge() {
         return challenge==null?"":challenge;
     }
-    
+
     public String[] notes() {
         return notes;
     }
-    
+
     public String[] caIssuerDNs() {
         return ca.getCaIssuerDNs();
     }
-    
+
     public String env() {
         return ca.getEnv();
     }
-    
+
     public String[] trustChain() {
         return trustChain;
     }
-    
+
     public String[] trustCAs() {
         return ca.getTrustedCAs();
     }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,16 +34,16 @@ import aaf.v2_0.Perms;
 
 /**
  * Return Perms by NS
- * 
+ *
  * @author Jeremiah
  *
  */
 public class ListByNS extends Cmd {
     private static final String HEADER = "List Perms by NS ";
-    
+
     public ListByNS(List parent) {
-        super(parent,"ns", 
-                new Param("name",true)); 
+        super(parent,"ns",
+                new Param("name",true));
     }
 
     public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
@@ -53,14 +53,14 @@ public class ListByNS extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Perms> fp = client.read(
-                        "/authz/perms/ns/"+ns+(aafcli.isDetailed()?"?ns":""), 
+                        "/authz/perms/ns/"+ns+(aafcli.isDetailed()?"?ns":""),
                         getDF(Perms.class)
                         );
                 return list(fp, HEADER, ns);
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
         detailLine(sb,indent,HEADER);

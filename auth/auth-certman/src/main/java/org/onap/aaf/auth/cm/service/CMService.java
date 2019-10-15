@@ -80,7 +80,7 @@ public class CMService {
     // Limit total requests
     private static final int MAX_X509s = 200; // Need a "LIMIT Exception" DB.
     private static final String MAX_X509S_TAG = "cm_max_x509s"; // be able to adjust limit in future
-    
+
     public static final String REQUEST = "request";
     public static final String IGNORE_IPS = "ignoreIPs";
     public static final String RENEW = "renew";
@@ -153,25 +153,25 @@ public class CMService {
             boolean dynamic_sans = false;
 
             if(req.value.fqdns.isEmpty()) {
-            	fqdns = new ArrayList<>();
+                fqdns = new ArrayList<>();
             } else {
-            	// Only Template or Dynamic permitted to pass in FQDNs
-            	if (req.value.fqdns.get(0).startsWith("*")) { // Domain set
+                // Only Template or Dynamic permitted to pass in FQDNs
+                if (req.value.fqdns.get(0).startsWith("*")) { // Domain set
                     if (trans.fish(new AAFPermission(null,ca.getPermType(), ca.getName(), DOMAIN))) {
-                    	domain_based = true;
+                        domain_based = true;
                     } else {
                         return Result.err(Result.ERR_Denied,
                               "Domain based Authorizations (" + req.value.fqdns.get(0) + ") requires Exception");
                     }
-            	} else {
-                	if(trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS))) {
-                		dynamic_sans = true;
-                	} else {
+                } else {
+                    if(trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS))) {
+                        dynamic_sans = true;
+                    } else {
                         return Result.err(Result.ERR_Denied,
-                            "Dynamic SANs for (" + req.value.mechid + ") requires Permission");                    		
-                	}
-            	}
-            	fqdns = new ArrayList<>(req.value.fqdns);
+                            "Dynamic SANs for (" + req.value.mechid + ") requires Permission");
+                    }
+                }
+                fqdns = new ArrayList<>(req.value.fqdns);
             }
 
             String email = null;
@@ -185,7 +185,7 @@ public class CMService {
                 } else {
                     ignoreIPs = false;
                 }
-                
+
 
                 InetAddress primary = null;
                 // Organize incoming information to get to appropriate Artifact
@@ -197,8 +197,8 @@ public class CMService {
                         String domain = fqdns.get(0).substring(1); // starts with *, see above
                         fqdns.remove(0);
                         if (fqdns.isEmpty()) {
-                            return Result.err(Result.ERR_Denied, 
-                            	"Requests using domain require machine declaration");
+                            return Result.err(Result.ERR_Denied,
+                                "Requests using domain require machine declaration");
                         }
 
                         if (!ignoreIPs) {
@@ -212,7 +212,7 @@ public class CMService {
                         }
 
                     } else {
-                    	// Passed in FQDNs, but not starting with *
+                        // Passed in FQDNs, but not starting with *
                         if (!ignoreIPs) {
                             for (String cn : req.value.fqdns) {
                                 try {
@@ -254,37 +254,37 @@ public class CMService {
                         return Result.err(Result.ERR_Denied,"Authorization must not include SANS when doing Dynamic SANS (%s, %s)", req.value.mechid, key);
                     }
                 } else {
-                	if(domain_based) {
-	                    ra = artiDAO.read(trans, req.value.mechid, key);
-	                    if (ra.isOKhasData()) { // is the Template available?
-	                        add = ra.value.get(0);
-	                        add.machine = host;
-	                        for (String s : fqdns) {
-	                            if (!s.equals(add.machine)) {
-	                                add.sans(true).add(s);
-	                            }
-	                        }
-	                        Result<ArtiDAO.Data> rc = artiDAO.create(trans, add); // Create new Artifact from Template
-	                        if (rc.notOK()) {
-	                            return Result.err(rc);
-	                        }
-	                    } else {
-	                        return Result.err(Result.ERR_Denied,"No Authorization Template for %s, %s", req.value.mechid, key);
-	                    }
-                	} else {
+                    if(domain_based) {
+                        ra = artiDAO.read(trans, req.value.mechid, key);
+                        if (ra.isOKhasData()) { // is the Template available?
+                            add = ra.value.get(0);
+                            add.machine = host;
+                            for (String s : fqdns) {
+                                if (!s.equals(add.machine)) {
+                                    add.sans(true).add(s);
+                                }
+                            }
+                            Result<ArtiDAO.Data> rc = artiDAO.create(trans, add); // Create new Artifact from Template
+                            if (rc.notOK()) {
+                                return Result.err(rc);
+                            }
+                        } else {
+                            return Result.err(Result.ERR_Denied,"No Authorization Template for %s, %s", req.value.mechid, key);
+                        }
+                    } else {
                         return Result.err(Result.ERR_Denied,"No Authorization found for %s, %s", req.value.mechid, key);
-                	}
+                    }
                 }
 
                 // Add Artifact listed FQDNs
                 if(!dynamic_sans) {
-	                if (add.sans != null) {
-	                    for (String s : add.sans) {
-	                        if (!fqdns.contains(s)) {
-	                            fqdns.add(s);
-	                        }
-	                    }
-	                }
+                    if (add.sans != null) {
+                        for (String s : add.sans) {
+                            if (!fqdns.contains(s)) {
+                                fqdns.add(s);
+                            }
+                        }
+                    }
                 }
 
                 // Policy 2: If Config marked as Expired, do not create or renew
@@ -354,7 +354,7 @@ public class CMService {
             try {
                 csrMeta = BCFactory.createCSRMeta(ca, req.value.mechid, email, fqdns);
                 csrMeta.environment(ca.getEnv());
-                
+
                 // Before creating, make sure they don't have too many
                 if(!trans.fish(limitOverridePerm)) {
                     Result<List<CertDAO.Data>> existing = certDAO.readID(trans, req.value.mechid);
@@ -392,7 +392,7 @@ public class CMService {
                 cdd.id = req.value.mechid;
                 cdd.x500 = x509.getSubjectDN().getName();
                 cdd.x509 = Factory.toString(trans, x509);
-                
+
                 certDAO.create(trans, cdd);
 
                 CredDAO.Data crdd = new CredDAO.Data();

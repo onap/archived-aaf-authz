@@ -22,7 +22,7 @@
 package org.onap.aaf.cadi.oauth.test;
 
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.is; 
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -35,16 +35,16 @@ import org.onap.aaf.cadi.oauth.TokenPerm;
 public class JU_OAuth2Principal {
 
     @Mock TokenPerm tpMock;
-    
-    
+
+
     private static final String username = "username";
-    
+
     private static final byte[] hash = "hashstring".getBytes();
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        
+
         when(tpMock.getUsername()).thenReturn(username);
     }
 

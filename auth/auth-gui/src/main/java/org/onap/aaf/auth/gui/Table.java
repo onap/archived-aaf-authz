@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         this(title,trans,data,name, attrs);
         this.other = other;
     }
-    
+
     public Table(String title, TRANS trans, Data<S,TRANS> data, String name, String ... attrs)  {
         super(true,name);
 //        prefix=postfix=null;
@@ -73,7 +73,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         this.title = title;
         // Derive an ID from title (from no spaces, etc), and prepend to IDAttributes (Protected from NamedCode)
         addAttr(true,title(trans).replaceAll("\\s",""));
-        
+
         other = null;
     }
 
@@ -87,12 +87,12 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         });
         Mark table = new Mark();
         Mark tr = new Mark();
-        
+
         hgen.incr(table,TABLE);
         if (title==null) {
             cache.dynamic(hgen, new DynamicCode<HTMLGen,S,TRANS>() {
                 @Override
-                public void code(S state, TRANS trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {            
+                public void code(S state, TRANS trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     hgen.leaf("caption", "class=title").text(title(trans)).end();
                 }
             });
@@ -104,16 +104,16 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
                     hgen.leaf("th").text(column).end();
                 }
             hgen.end(tr);
-                
+
         // Load Rows Dynamically
         cache.dynamic(hgen, rows);
         // End Table
-        hgen.end(table); 
-        
+        hgen.end(table);
+
         if (other!=null) {
             other.code(cache,hgen);
         }
-            
+
         // Print Message from Row Gathering, if available
         cache.dynamic(hgen, new DynamicCode<HTMLGen,S,TRANS>() {
             @Override
@@ -122,7 +122,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
                 if ((msg = trans.get(EMPTY_TABLE_SLOT, null))!=null) {
                     hgen.incr("style").text("#inner tr,caption,input,p.preamble {display: none;}#inner p.notfound {margin: 0px 0px 0px 20px}").end();
                     hgen.incr(HTMLGen.P,"class=notfound").text(msg).end().br();
-                } else if ((msg=trans.get(ROW_MSG_SLOT,null))!=null) { 
+                } else if ((msg=trans.get(ROW_MSG_SLOT,null))!=null) {
                     hgen.p(msg).br();
                 }
             }
@@ -146,7 +146,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
             cells = new AbsCell[0][0];
             msg = "No Data Found";
         }
-        
+
         public Cells(ArrayList<AbsCell[]> arrayCells, String msg) {
             cells = new AbsCell[arrayCells.size()][];
             arrayCells.toArray(cells);
@@ -154,9 +154,9 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         }
         public AbsCell[][] cells;
         public String msg;
-        
+
     }
-    
+
     public interface Data<S extends State<Env>, TRANS extends Trans> {
         // Note: Trans is not first to avoid Method Name Collision
         public void prefix(S state, TRANS trans, final Cache<HTMLGen> cache, final HTMLGen hgen);
@@ -168,17 +168,17 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
     private class Rows extends DynamicCode<HTMLGen,S,TRANS> {
         private Data<S,TRANS> data;
         private int alt;
-        
+
         public Rows(Data<S,TRANS> data, int alt) {
             this.data = data;
             this.alt = alt;
         }
-        
+
         @Override
         public void code(final S state, final TRANS trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
             Mark tr = new Mark();
             Mark td = new Mark();
-            
+
             int alt = this.alt;
             Cells cells = data.get(trans,state);
             if (cells.cells.length>0) {
@@ -220,7 +220,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
 //        prefix = dynamicCode;
 //        return this;
 //    }
-//    
+//
 //    public Table<S,TRANS> setPostfix(DynamicCode<HTMLGen, AuthGUI, AuthzTrans> dynamicCode) {
 //        postfix = dynamicCode;
 //        return this;

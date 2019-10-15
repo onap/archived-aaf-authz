@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,9 +38,9 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.locator.DNSLocator;
 
 public class JU_DNSLocator {
-    
+
     private PropAccess access;
-    
+
     @Before
     public void setup() {
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
@@ -53,7 +53,7 @@ public class JU_DNSLocator {
         URI uri;
 
         dl = new DNSLocator(access, "https", "localhost", "8100-8101");
-        
+
         item = dl.best();
         uri = dl.get(item);
         assertThat(uri.toString(), is("https://localhost:8100"));
@@ -66,10 +66,10 @@ public class JU_DNSLocator {
         }
         assertThat(dl.hasItems(), is(false));
 
-        // This doesn't actually do anything besides increase coverage 
+        // This doesn't actually do anything besides increase coverage
         dl.destroy();
     }
-    
+
     @Test
     public void constructorTest() throws LocatorException {
         // For coverage
@@ -84,20 +84,20 @@ public class JU_DNSLocator {
         new DNSLocator(access, "https://localhost:8000/");
         new DNSLocator(access, "https://aaf-locatexx.onapxxx:8095/locate");
         try {
-        	new DNSLocator(access, "https:localhost:8000");
-        	fail("Invalid URL should not pass");
+            new DNSLocator(access, "https:localhost:8000");
+            fail("Invalid URL should not pass");
         } catch (LocatorException e) {
-        	access.log(Level.DEBUG, "Valid Exception");
-        	
+            access.log(Level.DEBUG, "Valid Exception");
+
         }
     }
-    
+
     @Test
     public void refreshTest() throws LocatorException {
         DNSLocator dl = new DNSLocator(access, "https", "bogushost", "8100-8101");
         assertThat(dl.refresh(), is(false));
     }
-    
+
     @Test(expected = LocatorException.class)
     public void throws1Test() throws LocatorException {
         new DNSLocator(access, null);

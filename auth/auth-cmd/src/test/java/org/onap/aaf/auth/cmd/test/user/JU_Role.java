@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,16 +56,16 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Role {
-    
+
     private static Role role;
     User user;
     PropAccess prop;
     AuthzEnv aEnv;
     Writer wtr;
     Locator<URI> loc;
-    HMangr hman;    
+    HMangr hman;
     AAFcli aafcli;
-    
+
     @Before
     public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
         prop = new PropAccess();
@@ -73,13 +73,13 @@ public class JU_Role {
         wtr = mock(Writer.class);
         loc = mock(Locator.class);
         SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-        hman = new HMangr(aEnv, loc);    
+        hman = new HMangr(aEnv, loc);
         aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
         User usr = new User(aafcli);
         role = new Role(usr);
-        
+
     }
-    
+
     @Test
     public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
         Item value = mock(Item.class);
@@ -92,18 +92,18 @@ public class JU_Role {
 //        HRcli hcli = new HRcli(hman, uri, item, secSet);
 //        String[] strArr = {"add", "del", "setTo","extend", "del", "setTo","extend"};
 //        Assert.assertEquals(200, role._exec(0, strArr));
-//        
+//
 //        String[] strArr1 = { "del", "setTo","extend","add", "del", "setTo","extend"};
 //        Assert.assertEquals(501, role._exec(0, strArr1));
-//        
+//
 //        String[] strArr2 = {"setTo","extend","add", "del", "del", "setTo","extend" };
 //        Assert.assertEquals(501, role._exec(0, strArr2));
-//        
+//
 //        String[] strArr3 = {"extend","add", "del","setTo", "del", "setTo","extend" };
 //        Assert.assertEquals(501, role._exec(0, strArr3));
 
     }
-    
+
     @Test
     public void testDetailedHelp() {
         StringBuilder sb = new StringBuilder();

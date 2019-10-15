@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -150,7 +150,7 @@ public class JU_DefaultOrg {
         assertEquals(response.name(), "OK");
 
     }
-    
+
     @Test
     public void testDefOrgPasswords() {
         assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
@@ -255,15 +255,15 @@ public class JU_DefaultOrg {
     //     System.out.println("value of res " +Result);
     //     assertNotNull(Result);
     // }
-    
+
     @Test
     public void testResponsible() throws OrganizationException {
         Identity id = defaultOrg.getIdentity(authzTransMock, "osaaf");
         Identity rt = id.responsibleTo();
         assertTrue(rt.id().equals("bdevl"));
-        
+
     }
-    
+
     //@Test
     public void notYetImplemented() {
         fail("Tests in this file should not be trusted");

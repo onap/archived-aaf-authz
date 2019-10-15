@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,11 +52,11 @@ import com.datastax.driver.core.Row;
 public class DataMigrateDublin extends Batch {
     private final SecureRandom sr;
     private final AuthzTrans noAvg;
-    
+
     public DataMigrateDublin(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
-        
+
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("Migrate"));
 
@@ -71,7 +71,7 @@ public class DataMigrateDublin extends Batch {
         } finally {
             tt0.done();
         }
-        
+
         sr = new SecureRandom();
     }
 
@@ -97,7 +97,7 @@ public class DataMigrateDublin extends Batch {
                 switch(type) {
                     case CredDAO.BASIC_AUTH:
                     case CredDAO.BASIC_AUTH_SHA256:
-                        String key = row.getString(0) + '|' + type + '|' + Hash.toHex(row.getBytesUnsafe(3).array()); 
+                        String key = row.getString(0) + '|' + type + '|' + Hash.toHex(row.getBytesUnsafe(3).array());
                         String btag = ba_tag.get(key);
                         if(btag == null) {
                             if(tag==null || tag.isEmpty()) {
@@ -108,7 +108,7 @@ public class DataMigrateDublin extends Batch {
                             }
                             ba_tag.put(key, btag);
                         }
-                        
+
                         if(!btag.equals(tag)) {
                             update(cbl,row,btag);
                         }
@@ -129,9 +129,9 @@ public class DataMigrateDublin extends Batch {
             cbl.flush();
             trans.info().printf("Processes %d cred records, updated %d records in %d batches.", count, cbl.total(), cbl.batches());
             count = 0;
-            
+
             cbl.reset();
-            
+
             trans.info().log("Add Serial to X509 Creds");
             rs = session.execute("SELECT ca, id, x509 FROM authz.x509");
             iter = rs.iterator();
@@ -164,18 +164,18 @@ public class DataMigrateDublin extends Batch {
             trans.error().log(e);
         }
     }
-    
+
     private static class CredInfo {
         public final String id;
         public final int type;
         public final Date expires;
-        
+
         public CredInfo(String id, int type, Date expires) {
             this.id = id;
             this.type = type;
             this.expires = expires;
         }
-        
+
         public void update(CQLBatchLoop cbl, String newtag) {
             StringBuilder sb = cbl.inc();
             sb.append("UPDATE authz.cred SET tag='");
@@ -189,7 +189,7 @@ public class DataMigrateDublin extends Batch {
             sb.append("));");
         }
     }
-        
+
     private void update(CQLBatchLoop cbl, Row row, String newtag) {
         StringBuilder sb = cbl.inc();
         sb.append("UPDATE authz.cred SET tag='");

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ public class Help extends Cmd {
     private List<Cmd> cmds;
 
     public Help(AAFcli aafcli, List<Cmd> cmds) {
-        super(aafcli, "help", 
+        super(aafcli, "help",
             new Param("-d (more details)", false),
             new Param("command",false));
         this.cmds = cmds;
@@ -83,7 +83,7 @@ public class Help extends Cmd {
         pw().println(sb.toString());
         return 200 /*HttpStatus.OK_200*/;
     }
-    
+
     @Override
     public void detailedHelp(int indentValue, StringBuilder sb) {
             int indent = indentValue;

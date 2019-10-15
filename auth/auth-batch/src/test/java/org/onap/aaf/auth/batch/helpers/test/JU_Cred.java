@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ import java.util.Date;
 import org.junit.Test;
 
 public class JU_Cred {
-    
+
     private ByteArrayOutputStream outStream;
     private ByteArrayOutputStream errStream;
     Cred cred;
@@ -78,43 +78,43 @@ public class JU_Cred {
         prop.setProperty(Config.AAF_ROOT_NS, "org.onap.aaf");
         prop.setProperty(Config.AAF_ROOT_COMPANY,"test");
         Define.set(prop);
-        
+
         instance = new Instance(12, date, integer, 125642678910L,"234");
         cred = new Cred("myid1234@aaf.att.com");
     }
-    
+
     @Test
-    public void testLast() {        //TODO: set instances 
+    public void testLast() {        //TODO: set instances
         Assert.assertNull(cred.last(null));
     }
-    
+
     @Test
-    public void testTypes() {        //TODO: set instances 
+    public void testTypes() {        //TODO: set instances
         Assert.assertNotNull(cred.types());
     }
-    
+
     @Test
-    public void testCount() {        //TODO: set instances 
+    public void testCount() {        //TODO: set instances
         Assert.assertNotNull(cred.count(3));
     }
-    
+
     @Test
-    public void testToString() {        //TODO: set instances 
+    public void testToString() {        //TODO: set instances
         Assert.assertEquals("myid1234@aaf.att.com[]", cred.toString());
     }
-    
+
     @Test
-    public void testHashCode() {        //TODO: set instances 
+    public void testHashCode() {        //TODO: set instances
         Assert.assertEquals(-1619358251, cred.hashCode());
     }
-    
+
     @Test
-    public void testEquals() {        //TODO: set instances 
+    public void testEquals() {        //TODO: set instances
         Assert.assertEquals(true, cred.equals("myid1234@aaf.att.com"));
     }
-    
+
     @Test
-    public void testInc() {        
+    public void testInc() {
         Date begin = new Date(date.getTime() - 10);
         Date after = new Date(date.getTime() + 10);
         cc.inc(-1, begin, after);
@@ -122,17 +122,17 @@ public class JU_Cred {
         cc.inc(2, begin, after);
         cc.inc(200, begin, after);
     }
-    
+
     @Test
-    public void testAuthCount() {        //TODO: set instances 
+    public void testAuthCount() {        //TODO: set instances
         Assert.assertEquals(0, cc.authCount(1));
     }
-    
+
     @Test
-    public void testX509Count() {        //TODO: set instances 
+    public void testX509Count() {        //TODO: set instances
         Assert.assertEquals(0, cc.x509Count(0));
     }
-    
+
     @After
     public void cleanUp() {
         System.setErr(System.err);

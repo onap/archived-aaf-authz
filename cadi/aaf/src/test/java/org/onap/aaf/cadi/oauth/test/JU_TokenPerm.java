@@ -98,7 +98,7 @@ public class JU_TokenPerm {
         String json;
         LoadPermissions lp;
         Permission p;
-        
+
         json = "{\"perm\":[" +
             "  {\"ns\":\"com\",\"type\":\"access\",\"instance\":\"*\",\"action\":\"read,approve\"}," +
             "]}";

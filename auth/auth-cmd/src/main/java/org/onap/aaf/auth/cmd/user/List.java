@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class List extends BaseCmd<User> {
         cmds.add(new ListActivity(this));
     }
 
-     
+
     void report(Users users, boolean count, String ... str) {
         reportHead(str);
         java.util.List<aaf.v2_0.Users.User> sorted = users.getUser();
@@ -68,7 +68,7 @@ public class List extends BaseCmd<User> {
             } else if(type!=null && type>=200) {
                 tag = "\n\tfingerprint: " + tag;
             }
-            pw().format(format, 
+            pw().format(format,
                     user.getId(),
                     org.onap.aaf.auth.cmd.ns.List.getType(user),
                     date,
@@ -107,9 +107,9 @@ public class List extends BaseCmd<User> {
         String format = reportColHead(" %-25s %-25s  %-10s\n","User","Delegate","Expires");
         String date = "XXXX-XX-XX";
         for (Delg delg : delgs.getDelgs()) {
-            if (!this.aafcli.isTest()) 
+            if (!this.aafcli.isTest())
                 date = Chrono.dateOnlyStamp(delg.getExpires());
-            pw().printf(format, 
+            pw().printf(format,
                         delg.getUser(),
                         delg.getDelegate(),
                         date

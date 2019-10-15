@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,13 +34,13 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
     public static final String DEF_ID = "ID not Set";
     private static Map<Class<?>,SecurityInfoC<?>> sicMap = new HashMap<>();
     public SecuritySetter<CLIENT> defSS;
- 
+
 
     public SecurityInfoC(Access access) throws CadiException {
         super(access);
         defSS = new DEFSS<CLIENT>();
     }
-    
+
     @SuppressWarnings("unchecked")
     public static synchronized <CLIENT> SecurityInfoC<CLIENT> instance(Access access, Class<CLIENT> cls) throws CadiException {
         SecurityInfoInit<CLIENT> sii;
@@ -58,9 +58,9 @@ public class SecurityInfoC<CLIENT> extends SecurityInfo {
                 public SecuritySetter<CLIENT> bestDefault(SecurityInfoC<CLIENT> si) throws CadiException {
                     return new DEFSS<CLIENT>();
                 }
-            }; 
+            };
         }
-        
+
         SecurityInfoC<CLIENT> sic = (SecurityInfoC<CLIENT>) sicMap.get(cls);
         if (sic==null) {
             sic = new SecurityInfoC<CLIENT>(access);

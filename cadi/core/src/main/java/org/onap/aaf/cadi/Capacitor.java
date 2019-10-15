@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,10 +26,10 @@ import java.util.ArrayList;
 
 /**
  * Capacitor
- * 
+ *
  * Storage mechanism for read data, specifically designed for InputStreams.
- * 
- * The Standard BufferedInputStream requires a limit to be set for buffered reading, which is 
+ *
+ * The Standard BufferedInputStream requires a limit to be set for buffered reading, which is
  * impractical for reading SOAP headers, which can be quite large.
  * @author Jonathan
  *
@@ -39,22 +39,22 @@ public class Capacitor {
     private ArrayList<ByteBuffer> bbs = new ArrayList<>();
     private ByteBuffer curr = null;
     private int idx;
-    
+
     // Maintain a private RingBuffer for Memory, for efficiency
     private static ByteBuffer[] ring = new ByteBuffer[16];
     private static int start, end;
-    
-    
+
+
     public void put(byte b) {
         if (curr == null || curr.remaining()==0) { // ensure we have a "curr" buffer ready for data
             curr = ringGet();
             bbs.add(curr);
         }
-        curr.put(b); 
+        curr.put(b);
     }
 
     public int read() {
-        if (curr!=null) { 
+        if (curr!=null) {
             if (curr.remaining()>0) { // have a buffer, use it!
                 return curr.get();
             } else if (idx<bbs.size()){ // Buffer not enough, get next one from array
@@ -64,10 +64,10 @@ public class Capacitor {
         } // if no curr buffer, treat as end of stream
         return -1;
     }
-    
+
     /**
      * read into an array like Streams
-     * 
+     *
      * @param array
      * @param offset
      * @param length
@@ -99,7 +99,7 @@ public class Capacitor {
 
     /**
      * Put an array of data into Capacitor
-     * 
+     *
      * @param array
      * @param offset
      * @param length
@@ -109,7 +109,7 @@ public class Capacitor {
             curr = ringGet();
             bbs.add(curr);
         }
-        
+
         int len;
         while (length>0) {
             if ((len=curr.remaining())>length) {
@@ -125,7 +125,7 @@ public class Capacitor {
             }
         }
     }
-     
+
     /**
      * Move state from Storage mode into Read mode, changing all internal buffers to read mode, etc
      */
@@ -141,7 +141,7 @@ public class Capacitor {
             idx=1;
         }
     }
-    
+
     /**
      * reuse all the buffers
      */
@@ -152,10 +152,10 @@ public class Capacitor {
         bbs.clear();
         curr = null;
     }
-    
+
     /**
      * Declare amount of data available to be read at once.
-     * 
+     *
      * @return
      */
     public int available() {
@@ -165,7 +165,7 @@ public class Capacitor {
         }
         return count;
     }
-    
+
     /**
      * Returns how many are left that were not skipped
      * @param n
@@ -184,7 +184,7 @@ public class Capacitor {
                 n=0;
             } else {
                 curr.position(curr.limit());
-                
+
                 skipped-=skip;
                 if (idx<bbs.size()) {
                     curr=bbs.get(idx++);
@@ -214,7 +214,7 @@ public class Capacitor {
     }
 
     /*
-     * Ring Functions.  Reuse allocated memory 
+     * Ring Functions.  Reuse allocated memory
      */
     private ByteBuffer ringGet() {
         ByteBuffer bb = null;
@@ -230,7 +230,7 @@ public class Capacitor {
         }
         return bb;
     }
-    
+
     private void ringPut(ByteBuffer bb) {
         synchronized(ring) {
             ring[end]=bb; // if null or not, BB will just be Garbage collected

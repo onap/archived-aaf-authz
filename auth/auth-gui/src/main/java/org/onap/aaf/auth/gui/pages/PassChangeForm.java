@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,15 +56,15 @@ public class PassChangeForm extends Page {
     static final String HREF = "/gui/passwd";
     static final String NAME = "PassChange";
     static final String fields[] = {"id","current","password","password2","startDate","ns"};
-    
+
     public PassChangeForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, fields,
             new BreadCrumbs(breadcrumbs),
-            new NamedCode(true,NAME) {    
+            new NamedCode(true,NAME) {
                 private final Slot sID = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[0]);
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                    
+
                     // p tags not closing right using .p() - causes issues in IE8 password form - so using leaf for the moment
                     hgen.incr(HTMLGen.H4,true,"style=margin: 0em 0em .4em 0em")
                         .text("You are <i>adding</i> a New Password in the AAF System.")
@@ -72,7 +72,7 @@ public class PassChangeForm extends Page {
 
                     Mark form = new Mark();
                     hgen.incr(form,"form","method=post");
-                    
+
                     Mark table = new Mark(TABLE);
                     hgen.incr(table);
 
@@ -96,7 +96,7 @@ public class PassChangeForm extends Page {
                                         } else {
                                             // Owners/or the IDs themselves are allowed to reset password without previous one
                                             skipCurrent=skipCurrent(trans, user);
-                                            
+
                                             if (!skipCurrent) {
                                                 final String id = incomingID;
                                                 try {
@@ -113,7 +113,7 @@ public class PassChangeForm extends Page {
                                                                 }
                                                                 return true; // no existing, no expired password
                                                             } else {
-                                                                if (fc.code()==404) { // not found... 
+                                                                if (fc.code()==404) { // not found...
                                                                     return true;
                                                                 } else {
                                                                     trans.error().log(gui.aafCon.readableErrMsg(fc));
@@ -127,13 +127,13 @@ public class PassChangeForm extends Page {
                                                 }
                                             }
                                         }
-                                    }                                    
+                                    }
                                 } catch (OrganizationException e) {
                                     hgen.incr(HTMLGen.H4,"style=color:red;").text("Error: ")
                                         .text(e.getMessage()).end();
                                 }
                             }
-                            
+
                             hgen.input(fields[0],"ID*",true,"value="+incomingID,(incomingID.length()==0?"":"readonly"));
                             if (!skipCurrent) {
                                 hgen.input(fields[1],"Current Password*",true,"type=password");
@@ -159,7 +159,7 @@ public class PassChangeForm extends Page {
                            "This allows you to migrate services to this new password until the old ones expire.").br().br()
                         .p("Note: You must be an Admin of the Namespace where the MechID is defined.").br()
                         ;
-                    
+
                     Mark div = hgen.divID("passwordRules");
                     cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
                         @Override

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ import org.onap.aaf.misc.env.util.Split;
 public class DirectAAFLur implements Lur {
     private final AuthzEnv env;
     private final Question question;
-    
+
     public DirectAAFLur(AuthzEnv env, Question question/*, TokenMgr tm*/) {
         this.env = env;
         this.question = question;
@@ -55,7 +55,7 @@ public class DirectAAFLur implements Lur {
     public boolean fish(Principal bait, Permission ... pond) {
         return fish(env.newTransNoAvg(),bait,pond);
     }
-    
+
     public boolean fish(AuthzTrans trans, Principal bait, Permission ... pond) {
         boolean rv = false;
         Result<List<Data>> pdr = question.getPermsByUser(trans, bait.getName(),false);
@@ -94,7 +94,7 @@ public class DirectAAFLur implements Lur {
                 env.error().log("Can't access Cassandra to fulfill Permission Query: ",pdr.status,"-", pdr.details);
         }
     }
-    
+
     @Override
     public void destroy() {
     }
@@ -103,7 +103,7 @@ public class DirectAAFLur implements Lur {
     public boolean handlesExclusively(Permission ... pond) {
         return false;
     }
-    
+
     /**
      * Small Class implementing CADI's Permission with Cassandra Data
      * @author Jonathan
@@ -111,15 +111,15 @@ public class DirectAAFLur implements Lur {
      */
     public static class PermPermission implements Permission {
         private PermDAO.Data data;
-        
+
         public PermPermission(PermDAO.Data d) {
             data = d;
         }
-        
+
         public PermPermission(AuthzTrans trans, Question q, String p) {
             data = PermDAO.Data.create(trans, q, p);
         }
-        
+
         public PermPermission(String ns, String type, String instance, String action) {
             data = new PermDAO.Data();
             data.ns = ns;
@@ -161,12 +161,12 @@ public class DirectAAFLur implements Lur {
         public String permType() {
             return "AAFLUR";
         }
-        
+
     }
-    
+
     public String toString() {
         return "DirectAAFLur is enabled";
-        
+
     }
 
     /* (non-Javadoc)

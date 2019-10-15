@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ public class Role implements Comparable<Role> {
     public RoleDAO.Data rdd;
     private String full;
     private String encode;
-    
+
     public Role(String full) {
         rdd = new RoleDAO.Data();
         rdd.ns = "";
@@ -59,7 +59,7 @@ public class Role implements Comparable<Role> {
         rdd.perms = new HashSet<>();
         this.full = full;
     }
-    
+
     public Role(String ns, String name, String description,Set<String> perms) {
            rdd = new RoleDAO.Data();
         rdd.ns = ns;
@@ -69,18 +69,18 @@ public class Role implements Comparable<Role> {
         this.full = null;
         this.encode = null;
     }
-    
+
     public String encode() {
         if (encode==null) {
             encode = rdd.ns + '|' + rdd.name;
-        } 
+        }
         return encode;
     }
 
     public String fullName() {
         if (full==null) {
             full = rdd.ns + '.' + rdd.name;
-        } 
+        }
         return full;
     }
 
@@ -95,7 +95,7 @@ public class Role implements Comparable<Role> {
     private static void load(Trans trans, Session session, String query) {
         trans.info().log( "query: " + query );
         TimeTaken tt = trans.start("Read Roles", Env.REMOTE);
-       
+
         ResultSet results;
         try {
             Statement stmt = new SimpleStatement( query );
@@ -123,7 +123,7 @@ public class Role implements Comparable<Role> {
             trans.info().log("Found",data.size(),"roles");
         }
     }
-    
+
     public static long count(Trans trans, Session session) {
         String query = "select count(*) from authz.role LIMIT 1000000;";
         trans.info().log( "query: " + query );
@@ -166,11 +166,11 @@ public class Role implements Comparable<Role> {
     public static String fullName(String role) {
         return role.replace('|', '.');
     }
-    
+
     public static void stageRemove(Role r) {
         deleteRoles.add(r);
     }
-    
+
     public static void executeRemove() {
         for (Role p : deleteRoles) {
             keys.remove(p.encode);

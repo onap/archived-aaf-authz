@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,21 +39,21 @@ import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.cadi.util.CSV.Visitor;
 
 /**
- * This Filter is designed to help MIGRATE users from systems that don't match the FQI style.  
- *  
+ * This Filter is designed to help MIGRATE users from systems that don't match the FQI style.
+ *
  * Style 1, where just the ID is translated, i.e. OLD => new@something.onap.org, that is acceptable
  * longer term, because it does not store Creds locally.  The passwords are in appropriate systems, but
  * it's still painful operationally, though it does ease migration.
  *
  * Style 3, however, which is Direct match of Authorization Header to replacement, is only there
  * because some passwords are simply not acceptable for AAF, (too easy, for instance), and it is
- * not feasible to break Organization Password rules for a Migration.  Therefore, this method 
+ * not feasible to break Organization Password rules for a Migration.  Therefore, this method
  * should not considered something that is in any way a permanent
- * 
+ *
 
- * 
+ *
  * It goes without saying that any file with the password conversion should be protected by "400", etc.
- * 
+ *
  * @author Instrumental (Jonathan)
  *
  */
@@ -63,15 +63,15 @@ public class MapBathConverter {
 
     /**
      * Create with colon separated name value pairs
-     *  Enter the entire "Basic dXNlcjpwYXNz" "Authorization" header, where "dXNlcjpwYXNz" is 
+     *  Enter the entire "Basic dXNlcjpwYXNz" "Authorization" header, where "dXNlcjpwYXNz" is
      *  base64 encoded, which can be created with "cadi" tool (in jar)
-     *  
-     *  The replacement should also be an exact replacement of what you want.  Recognize that 
-     *  this should be TEMPORARY as you are storing credentials outside the users control. 
-     *  
+     *
+     *  The replacement should also be an exact replacement of what you want.  Recognize that
+     *  this should be TEMPORARY as you are storing credentials outside the users control.
+     *
      * @param value
-     * @throws IOException 
-     * @throws CadiException 
+     * @throws IOException
+     * @throws CadiException
      */
     public MapBathConverter(final Access access, final CSV csv) throws IOException, CadiException {
         map = new TreeMap<>();
@@ -110,7 +110,7 @@ public class MapBathConverter {
             }
         });
     }
-    
+
     private static String idFromBasic(String bath, Holder<String> hpass) throws IOException, CadiException {
         if(bath.startsWith(BASIC)) {
             String cred = Symm.base64noSplit.decode(bath.substring(6));
@@ -128,8 +128,8 @@ public class MapBathConverter {
     }
 
     /**
-     * use to instantiate entries 
-     * 
+     * use to instantiate entries
+     *
      * @return
      */
     public Map<String,String> map() {

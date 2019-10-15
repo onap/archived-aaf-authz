@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.onap.aaf.cadi.util.JsonOutputStream;
 
 /**
  * A Class to run on command line to determine suitability of environment for certain TAFs.
- *  * 
+ *  *
  * @author Jonathan
  *
  */
@@ -90,7 +90,7 @@ public class CmdLine {
                         System.out.println(args[1]);
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         b64.enpass(args[1], baos);
-                        String pass; 
+                        String pass;
                         System.out.println(pass=new String(baos.toByteArray()));
                         ByteArrayOutputStream reconstituted = new ByteArrayOutputStream();
                         b64.depass(pass, reconstituted);
@@ -104,13 +104,13 @@ public class CmdLine {
                     }
                     System.out.flush();
                     */
-                     
+
                 } catch (IOException e) {
                     System.err.println("Cannot digest password");
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
 // DO NOT LEAVE THIS METHOD Compiled IN CODE... Do not want looking at passwords on disk too easy
-// Jonathan.  Oh, well, Deployment services need this behavior.  I will put this code in, but leave it undocumented. 
+// Jonathan.  Oh, well, Deployment services need this behavior.  I will put this code in, but leave it undocumented.
 // One still needs access to the keyfile to read.
 // July 2016 - thought of a tool "CMPass" to regurgitate from properties, but only if allowed.
             } else if (("regurgitate".equalsIgnoreCase(args[0]) || "undigest".equalsIgnoreCase(args[0]))
@@ -151,7 +151,7 @@ public class CmdLine {
                                     }
                                 } else {
                                     int idx;
-                                    if ((idx = line.indexOf(' '))>=0 
+                                    if ((idx = line.indexOf(' '))>=0
                                             && (idx = line.indexOf(' ',++idx))>0
                                             && (idx = line.indexOf('=',++idx))>0
                                             ) {
@@ -249,7 +249,7 @@ public class CmdLine {
                             int salt = Integer.parseInt(args[i]);
                             System.out.println(Hash.hashSHA256asStringHex(args[1],salt));
                         }
-                    } else { 
+                    } else {
                         System.out.println(Hash.hashSHA256asStringHex(args[1]));
                     }
                 } catch (NoSuchAlgorithmException e) {
@@ -280,13 +280,13 @@ public class CmdLine {
                     System.err.println("Cannot create a key " + args[0]);
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            
+
             } else if ("passgen".equalsIgnoreCase(args[0])) {
                 int numDigits;
                 if (args.length <= 1) {
                     numDigits = 24;
                 } else {
-                    numDigits = Integer.parseInt(args[1]); 
+                    numDigits = Integer.parseInt(args[1]);
                     if (numDigits<8)numDigits = 8;
                 }
                 String pass;
@@ -305,17 +305,17 @@ public class CmdLine {
                         }
                         if (noLower) {
                             noLower=!(c>=0x61 && c<=0x7A);
-                        } 
+                        }
                         if (noUpper) {
                             noUpper=!(c>=0x41 && c<=0x5A);
-                        } 
+                        }
                         if (noDigits) {
                             noDigits=!(c>=0x30 && c<=0x39);
-                        } 
+                        }
                         if (noSpecial) {
                             noSpecial = "+!@#$%^&*(){}[]?:;,.".indexOf(c)<0;
-                        } 
-                        
+                        }
+
                         missingChars = (noLower || noUpper || noDigits || noSpecial);
                     }
                 } while (missingChars || repeatingChars);
@@ -325,7 +325,7 @@ public class CmdLine {
                 if (args.length <= 1) {
                     numDigits = 24;
                 } else {
-                    numDigits = Integer.parseInt(args[1]); 
+                    numDigits = Integer.parseInt(args[1]);
                 }
                 System.out.println(Symm.randomGen(Symm.base64url.codeset, numDigits).substring(0,numDigits));
             }
@@ -349,9 +349,9 @@ public class CmdLine {
             System.exit(1);
         }
     }
-    
+
     public static void setSystemExit(boolean shouldExit) {
         systemExit = shouldExit;
     }
-    
+
 }

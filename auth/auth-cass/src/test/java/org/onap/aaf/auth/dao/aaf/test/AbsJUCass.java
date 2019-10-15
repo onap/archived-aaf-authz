@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ import junit.framework.Assert;
 
 /**
  * Do Setup of Cassandra for Cassandra JUnit Testing
- * 
+ *
  *
  */
 public class AbsJUCass {
@@ -63,8 +63,8 @@ public class AbsJUCass {
     protected static float json = 0.0f;
     protected static AuthzTrans trans;
     protected static boolean details = true;
-    
-    @BeforeClass 
+
+    @BeforeClass
     public static void startup() throws APIException, IOException {
         synchronized(AUTHZ) {
             if (env==null) {
@@ -101,14 +101,14 @@ public class AbsJUCass {
             Assert.fail("Not able to connect to DB: " + e.getLocalizedMessage());
         }
         env.info().log("Connected");
-        
+
         // Load special data here
-        
-        
+
+
         iterations = 0;
-        
+
     }
-    
+
     @AfterClass
     public static void shutdown() {
         if (cluster!=null) {
@@ -120,10 +120,10 @@ public class AbsJUCass {
     @Before
     public void newTrans() {
         trans = env.newTrans();
-        
+
         trans.setProperty(CassDAOImpl.USER_NAME, System.getProperty("user.name"));
     }
-    
+
     @After
     public void auditTrail() {
         if (totals==0) { // "updateTotals()" was not called... just do one Trans
@@ -144,7 +144,7 @@ public class AbsJUCass {
             }
         }
     }
-    
+
     protected void updateTotals() {
         Metric metric = trans.auditTrail(0, null, Env.JSON, Env.REMOTE);
         totals+=metric.total;
@@ -163,7 +163,7 @@ public class AbsJUCass {
         }
         env.info().log(
         "Total time:",
-        totals,   
+        totals,
         "JSON time:",
         json,
         "REMOTE time:",
@@ -174,10 +174,10 @@ public class AbsJUCass {
         transTime
         );
     }
-    
+
     /**
      * Take a User/Pass and turn into an MD5 Hashed BasicAuth
-     * 
+     *
      * @param user
      * @param pass
      * @return

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,14 +58,14 @@ import org.onap.aaf.misc.env.APIException;
 import junit.framework.Assert;
 
 public class JU_HMangr {
-    
+
     @Mock Locator<URI> locMock;
     @Mock SecuritySetter<HttpURLConnection> ssMock;
     @Mock Retryable<Void> retryableMock;
     @Mock Retryable<Integer> goodRetry;
     @Mock Locator.Item itemMock;
     @Mock Rcli<Object> clientMock;
-    
+
     private PropAccess access;
     private URI uri;
     private final static String uriString = "http://example.com";
@@ -84,11 +84,11 @@ public class JU_HMangr {
         when(retryableMock.item()).thenReturn(itemMock);
         when(locMock.get(itemMock)).thenReturn(uri);
         assertThat(hman.same(ssMock, retryableMock), is(nullValue()));
-        
+
         //coverage...
         when(retryableMock.lastClient()).thenReturn(clientMock);
         assertThat(hman.same(ssMock, retryableMock), is(nullValue()));
-        
+
         CadiException cadiException;
 
         ConnectException connectException = new ConnectException();
@@ -210,7 +210,7 @@ public class JU_HMangr {
         assertThat(hman.oneOf(ssMock, retryableMock, false, "host"), is(nullValue()));
 
         assertThat(hman.oneOf(ssMock, retryableMock, false, uriString.substring(7)), is(nullValue()));
-        
+
         CadiException cadiException;
 
         cadiException = new CadiException(new ConnectException());
@@ -244,7 +244,7 @@ public class JU_HMangr {
             fail("Should've thrown an exception");
         } catch (CadiException e) {
         }
-        
+
         doThrow(new ConnectException()).when(retryableMock).code((Rcli<?>) any());
         assertThat(hman.oneOf(ssMock, retryableMock, false, uriString.substring(7)), is(nullValue()));
 
@@ -274,5 +274,5 @@ public class JU_HMangr {
             return null;
         }
     }
-        
+
 }

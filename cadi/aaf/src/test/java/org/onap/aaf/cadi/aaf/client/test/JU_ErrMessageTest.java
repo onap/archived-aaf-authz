@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,29 +44,29 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 import aaf.v2_0.Error;
 
 public class JU_ErrMessageTest {
-    
+
     @Mock
     private RosettaEnv env;
-    
+
     @Mock(answer=Answers.RETURNS_DEEP_STUBS)
     private RosettaDF<Object> errDF;
 
     private ErrMessage errMessage;
 
     private String attErrJson = "key:value";
-    
+
     private Error error;
 
     private Future<?> future;
 
     private ByteArrayOutputStream errStream;
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        
+
         when(env.newDataFactory(Error.class)).thenReturn(errDF);
-        
+
         future = new Future<Error>() {
 
             @Override
@@ -89,47 +89,47 @@ public class JU_ErrMessageTest {
                 return "header";
             }
         };
-        
+
         error = new Error();
         error.setMessageId("Error Message Id");
         error.setText("Error Text");
         errMessage = new ErrMessage(env);
-        
+
         errStream = new ByteArrayOutputStream();
     }
 
     @Test
     public void testPrintErrMessage() throws APIException {
         when(errDF.newData().in(TYPE.JSON).load(attErrJson).asObject()).thenReturn(error);
-        
+
         errMessage.printErr(new PrintStream(errStream), attErrJson);
         assertEquals("Error Message Id Error Text" + System.lineSeparator(), errStream.toString());
     }
-    
+
     @Test
     public void testToMsgJsonErrAttribute() throws APIException {
         when(errDF.newData().in(TYPE.JSON).load(attErrJson).asObject()).thenReturn(error);
-        
+
         StringBuilder sb = new StringBuilder();
         errMessage.toMsg(sb,attErrJson);
-        
+
         assertEquals(sb.toString(),"Error Message Id Error Text");
     }
-    
+
     @Test
     public void testToMsgFuture() {
         StringBuilder sb = errMessage.toMsg(future);
-        
+
         assertEquals(sb.toString(), "0: Body");
     }
 
-    
+
     @Test
     public void testToMsgFutureWithoutException() throws APIException {
         when(errDF.newData().in(TYPE.JSON).load(future.body()).asObject()).thenReturn(error);
-        
+
         StringBuilder sb = errMessage.toMsg(future);
-        
+
         assertEquals(sb.toString(), "Error Message Id Error Text");
     }
 }

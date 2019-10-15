@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ import aaf.v2_0.Role;
 import aaf.v2_0.Roles;
 
 public class NsDetail extends Page {
-    
+
     public static final String HREF = "/gui/nsdetail";
     public static final String NAME = "NsDetail";
     public static enum NS_FIELD { OWNERS, ADMINS, ROLES, PERMISSIONS, CREDS};
@@ -69,7 +69,7 @@ public class NsDetail extends Page {
 
 
     public NsDetail(final AAF_GUI gui, Page ... breadcrumbs) throws APIException, IOException {
-        super(gui.env, NAME, HREF, new String[] {"ns"}, 
+        super(gui.env, NAME, HREF, new String[] {"ns"},
                 new BreadCrumbs(breadcrumbs),
                 new Table<AAF_GUI,AuthzTrans>("Namespace Details",gui.env.newTransNoAvg(),model=new Model(),"class=detail")
                 );
@@ -85,7 +85,7 @@ public class NsDetail extends Page {
 
     /**
      * Implement the table content for Namespace Detail
-     * 
+     *
      * @author Jeremiah
      *
      */
@@ -123,11 +123,11 @@ public class NsDetail extends Page {
                             tt.done();
                             try {
 //                                TimeTaken tt = trans.start("Load Data", Env.SUB);
-                                
+
                                 for (Ns n : fn.value.getNs()) {
                                     String desc = (n.getDescription()!=null?n.getDescription():BLANK);
                                     rv.add(new AbsCell[]{new TextCell("Description:"),new TextCell(desc)});
-                                    
+
                                     addField(trans, nsName, rv, n.getAdmin(), NS_FIELD.ADMINS);
                                     addField(trans, nsName, rv, n.getResponsible(), NS_FIELD.OWNERS);
 
@@ -138,10 +138,10 @@ public class NsDetail extends Page {
                                             new TextCell("Credentials"),
                                             new TextCell(sw.toString())
                                         });
-                                    
-            
+
+
                                     Future<Roles> fr = client.read(
-                                                    "/authz/roles/ns/"+nsName, 
+                                                    "/authz/roles/ns/"+nsName,
                                                     gui.getDF(Roles.class)
                                                     );
                                     List<String> roles = new ArrayList<>();
@@ -151,14 +151,14 @@ public class NsDetail extends Page {
                                         }
                                     }
                                     addField(trans, nsName, rv, roles, NS_FIELD.ROLES);
-                                    
-                                    
+
+
                                     Future<Perms> fp = client.read(
-                                                    "/authz/perms/ns/"+nsName, 
+                                                    "/authz/perms/ns/"+nsName,
                                                     gui.getDF(Perms.class)
                                                     );
                                     List<String> perms = new ArrayList<>();
-            
+
                                     if (fp.get(AAFcli.timeout())) {
                                         for (Perm p : fp.value.getPerm()) {
                                             perms.add(p.getType() + "|" + p.getInstance() + "|" + p.getAction());
@@ -166,7 +166,7 @@ public class NsDetail extends Page {
                                     }
                                     addField(trans, nsName, rv, perms, NS_FIELD.PERMISSIONS);
                                 }
-                                String historyLink = NsHistory.HREF 
+                                String historyLink = NsHistory.HREF
                                         + "?name=" + nsName;
                                 rv.add(new AbsCell[] {new RefCell("See History",historyLink,false,"class=greenbutton")});
                             } finally {
@@ -197,7 +197,7 @@ public class NsDetail extends Page {
                         String user = values.get(i);
                         AbsCell userCell = (new TextCell(user));
                         rv.add(new AbsCell[] {
-                                label, 
+                                label,
                                 userCell
                         });
                     }
@@ -217,14 +217,14 @@ public class NsDetail extends Page {
                         AbsCell label = (i==0?new TextCell(sentenceCase(field)+":","style=width:20%"):AbsCell.Null);
                         String perm = values.get(i);
                         String[] fields = perm.split("\\|");
-                        String grantLink = locate_url  
+                        String grantLink = locate_url
                                 + PermGrantForm.HREF
                                 + "?type=" + fields[0].trim()
                                 + "&amp;instance=" + fields[1].trim()
                                 + "&amp;action=" + fields[2].trim();
-                        
+
                         rv.add(new AbsCell[] {
-                                label, 
+                                label,
                                 new TextCell(perm,"style=width:60%;"),
                                 new RefCell("Grant", grantLink,false,"class=button","style=width:20%;")
                         });
@@ -239,6 +239,6 @@ public class NsDetail extends Page {
             String sField = field.toString();
             return sField.substring(0, 1).toUpperCase() + sField.substring(1).toLowerCase();
         }
-    
+
     }
 }

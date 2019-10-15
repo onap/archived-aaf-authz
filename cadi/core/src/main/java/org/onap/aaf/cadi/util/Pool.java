@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@
 
 /*
  * Pool
- * 
+ *
  * Author: Jonathan
  * 5/27/2011
  */
@@ -35,29 +35,29 @@ import org.onap.aaf.cadi.CadiException;
 /**
  * This Class pools on an As-Needed-Basis any particular kind of class, which is
  * quite suitable for expensive operations.
- * 
+ *
  * The user calls "get" on a Pool, and if a waiting resource (T) is available,
  * it will be returned. Otherwise, one will be created with the "Creator" class
  * (must be defined for (T)).
- * 
+ *
  * You can Prime the instances to avoid huge startup costs
- * 
+ *
  * The returned "Pooled" object simply has to call "done()" and the object is
  * returned to the pool. If the developer does not return the object, a memory
  * leak does not occur. There are no references to the object once "get" is
  * called. However, the developer who does not return the object when done
  * obviates the point of the pool, as new Objects are created in place of the
  * Object not returned when another call to "get" is made.
- * 
+ *
  * There is a cushion of extra objects, currently defaulted to MAX_RANGE. If the
  * items returned become higher than the MAX_RANGE, the object is allowed to go
  * out of scope, and be cleaned up. the default can be changed on a per-pool
  * basis.
- * 
+ *
  * Class revamped for CadiExceptions and Access logging 10/4/2017
- * 
+ *
  * @author Jonathan
- * 
+ *
  * @param <T>
  */
 public class Pool<T> {
@@ -69,7 +69,7 @@ public class Pool<T> {
 
     /**
      * only Simple List needed.
-     * 
+     *
      * NOTE TO MAINTAINERS: THIS OBJECT DOES IT'S OWN SYNCHRONIZATION. All
      * changes that touch list must account for correctly synchronizing list.
      */
@@ -101,7 +101,7 @@ public class Pool<T> {
     /**
      * Create a new Pool, given the implementation of Creator<T>, which must be
      * able to create/destroy T objects at will.
-     * 
+     *
      * @param creator
      */
     public Pool(Creator<T> creator) {
@@ -110,7 +110,7 @@ public class Pool<T> {
         list = new LinkedList<>();
         logger = Log.NULL;
     }
-    
+
     /**
      * Attach Pool Logging activities to any other Logging Mechanism.
      * @param logger
@@ -118,7 +118,7 @@ public class Pool<T> {
     public void setLogger(Log logger) {
         this.logger = logger;
     }
-    
+
     public void log(Object ...objects) {
         logger.log(objects);
     }
@@ -126,10 +126,10 @@ public class Pool<T> {
     /**
      * Preallocate a certain number of T Objects. Useful for services so that
      * the first transactions don't get hit with all the Object creation costs
-     * 
+     *
      * @param lt
      * @param prime
-     * @throws CadiException 
+     * @throws CadiException
      */
     public void prime(int prime) throws CadiException  {
         for (int i = 0; i < prime; ++i) {
@@ -164,16 +164,16 @@ public class Pool<T> {
      * This is the essential function for Pool. Get an Object "T" inside a
      * "Pooled<T>" object. If there is a spare Object, then use it. If not, then
      * create and pass back.
-     * 
+     *
      * This one uses a Null LogTarget
-     * 
+     *
      * IMPORTANT: When the use of this object is done (and the object is still
      * in a valid state), then "done()" should be called immediately to allow
      * the object to be reused. That is the point of the Pool...
-     * 
+     *
      * If the Object is in an invalid state, then "toss()" should be used so the
      * Pool doesn't pass on invalid objects to others.
-     * 
+     *
      * @param lt
      * @return
      * @throws CadiException
@@ -205,7 +205,7 @@ public class Pool<T> {
      * state. If not, they are tossed from the Pool. This is valuable to have
      * when Remote Connections go down, and there is a question on whether the
      * Pooled Objects are still functional.
-     * 
+     *
      * @return
      */
     public boolean validate() {
@@ -225,11 +225,11 @@ public class Pool<T> {
 
     /**
      * This is an internal method, used only by the Internal Pooled<T> class.
-     * 
+     *
      * The Pooled<T> class "offers" it's Object back after use. It is an
      * "offer", because Pool will simply destroy and remove the object if it has
      * more than enough spares.
-     * 
+     *
      * @param lt
      * @param used
      * @return
@@ -253,9 +253,9 @@ public class Pool<T> {
      * The Creator Interface give the Pool the ability to Create, Destroy and
      * Validate the Objects it is maintaining. Thus, it is a specially written
      * Implementation for each type.
-     * 
+     *
      * @author Jonathan
-     * 
+     *
      * @param <T>
      */
     public interface Creator<T> {
@@ -270,7 +270,7 @@ public class Pool<T> {
 
     public interface Log {
         public void log(Object ... o);
-        
+
         public final static Log NULL = new Log() {
             @Override
             public void log(Object ... o) {
@@ -281,7 +281,7 @@ public class Pool<T> {
      * The "Pooled<T>" class is the transient class that wraps the actual Object
      * T for API use/ It gives the ability to return ("done()", or "toss()") the
      * Object to the Pool when processing is finished.
-     * 
+     *
      * For Safety, i.e. to avoid memory leaks and invalid Object States, there
      * is a "finalize" method. It is strictly for when coder forgets to return
      * the object, or perhaps hasn't covered the case during Exceptions or
@@ -291,9 +291,9 @@ public class Pool<T> {
      * However, we don't want Coding Mistakes to put the whole program in an
      * invalid state, so if something happened such that "done()" or "toss()"
      * were not called, the resource is still cleaned up as well as possible.
-     * 
+     *
      * @author Jonathan
-     * 
+     *
      * @param <T>
      */
     public static class Pooled<T> {
@@ -302,7 +302,7 @@ public class Pool<T> {
 
         /**
          * Create the Wrapping Object Pooled<T>.
-         * 
+         *
          * @param t
          * @param pool
          * @param logTarget
@@ -316,7 +316,7 @@ public class Pool<T> {
         /**
          * This is the key API for the Pool, as calling "done()" offers this
          * object back to the Pool for reuse.
-         * 
+         *
          * Do not use the Pooled<T> object again after calling "done()".
          */
         public void done() {
@@ -329,12 +329,12 @@ public class Pool<T> {
          * The user of the Object may discover that the Object t is no longer in
          * a valid state. Don't put Garbage back in the Refrigerator... Toss it,
          * if it's no longer valid.
-         * 
+         *
          * toss() is also used for draining the Pool, etc.
-         * 
+         *
          * toss() will attempt to destroy the Object by using the Creator
          * Interface.
-         * 
+         *
          */
         public void toss() {
             if (pool != null) {
@@ -360,7 +360,7 @@ public class Pool<T> {
 
     /**
      * Get the maximum number of spare objects allowed at any moment
-     * 
+     *
      * @return
      */
     public int getMaxRange() {
@@ -369,9 +369,9 @@ public class Pool<T> {
 
     /**
      * Set a Max Range for numbers of spare objects waiting to be used.
-     * 
+     *
      * No negative numbers are allowed
-     * 
+     *
      * @return
      */
     public void setMaxRange(int max_range) {

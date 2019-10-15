@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,12 +42,12 @@ public class HBasicAuthSS extends HAuthorizationHeader implements BasicAuth {
         this(si,si.access.getProperty(Config.AAF_APPID, null),
                 si.access.decrypt(si.access.getProperty(Config.AAF_APPPASS, null), false));
     }
-    
+
     public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, boolean setDefault) throws IOException {
         this(si,si.access.getProperty(Config.AAF_APPID, null),
                 si.access.decrypt(si.access.getProperty(Config.AAF_APPPASS, null), false),setDefault);
     }
-    
+
 
     public HBasicAuthSS(SecurityInfoC<HttpURLConnection> si, String user, String pass, boolean asDefault) throws IOException {
         this(si, user,pass);
@@ -55,11 +55,11 @@ public class HBasicAuthSS extends HAuthorizationHeader implements BasicAuth {
             si.set(this);
         }
     }
-    
+
     public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si) throws IOException {
         this(si, bp.getName(),new String(bp.getCred()));
     }
-    
+
     public HBasicAuthSS(BasicPrincipal bp, SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws IOException {
         this(si, bp.getName(),new String(bp.getCred()));
         if (asDefault) {

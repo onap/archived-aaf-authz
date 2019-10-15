@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,7 +52,7 @@ public class ListForCreds extends Cmd {
     public ListForCreds(List parent) {
         super(parent,"cred",
                 new Param(optionsToString(options),true),
-                new Param("value",true)); 
+                new Param("value",true));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ListForCreds extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Users> fp = client.read(
-                        "/authn/creds/"+which+'/'+value, 
+                        "/authn/creds/"+which+'/'+value,
                         getDF(Users.class)
                         );
                 if (fp.get(AAFcli.timeout())) {
@@ -74,7 +74,7 @@ public class ListForCreds extends Cmd {
                             @Override
                             public int compare(User u1, User u2) {
                                 return u1.getId().compareTo(u2.getId());
-                            }            
+                            }
                         });
                     ((org.onap.aaf.auth.cmd.user.List)parent).report(fp.value,option==1,HEADER+which,value);
                     if (fp.code()==404) {
@@ -87,7 +87,7 @@ public class ListForCreds extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int indentParam, StringBuilder sb) {
             int indent = indentParam;

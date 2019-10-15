@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,9 +54,9 @@ import com.datastax.driver.core.exceptions.DriverException;
 
 /**
  * NsDAO
- * 
+ *
  * Data Access Object for Namespace Data
- * 
+ *
  * @author Jonathan
  *
  */
@@ -73,7 +73,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     private static final String APPLY_BATCH = "\nAPPLY BATCH;\n";
     private static final String SQSCCR = "';\n";
     private static final String SQCSQ = "','";
-    
+
     private HistoryDAO historyDAO;
     private CacheInfoDAO infoDAO;
     private PSInfo psNS;
@@ -97,7 +97,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     private static final int KEYLIMIT = 1;
     /**
      * Data class that matches the Cassandra Table "role"
-     * 
+     *
      * @author Jonathan
      */
     public static class Data extends CacheableData implements Bytification {
@@ -135,19 +135,19 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             NSLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             NSLoader.deflt.unmarshal(this,toDIS(bb));
         }
-        
+
         @Override
         public String toString() {
             return name;
         }
-        
+
     }
-    
+
     private void init(AuthzTrans trans) throws APIException, IOException {
         // Set up sub-DAOs
         if (historyDAO==null) {
@@ -158,19 +158,19 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     }
 
         String[] helpers = setCRUD(trans, TABLE, Data.class, NSLoader.deflt,4/*need to skip attrib */);
-        
+
         psNS = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE parent = ?", new NSLoader(1),readConsistency);
 
     }
-    
+
     private static final class NSLoader extends Loader<Data> implements Streamer<Data> {
         public static final int MAGIC=250935515;
         public static final int VERSION=1;
         public static final int BUFF_SIZE=48;
 
         public static final NSLoader deflt = new NSLoader(KEYLIMIT);
-        
+
         public NSLoader(int keylimit) {
             super(keylimit);
         }
@@ -198,7 +198,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             obj[++idx]=data.description;
             obj[++idx]=data.parent;
         }
-        
+
         @Override
         public void marshal(Data data, DataOutputStream os) throws IOException {
             writeHeader(os,MAGIC,VERSION);
@@ -221,7 +221,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         public void unmarshal(Data data, DataInputStream is) throws IOException {
             /*int version = */readHeader(is,MAGIC,VERSION);
             // If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
-            
+
             byte[] buff = new byte[BUFF_SIZE];
             data.name = readString(is, buff);
             data.type = is.readInt();
@@ -237,7 +237,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         }
 
     }
-    
+
     @Override
     public Result<Data> create(AuthzTrans trans, Data data) {
         String ns = data.name;
@@ -253,8 +253,8 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         stmt.append(APPLY_BATCH);
         try {
             getSession(trans).execute(stmt.toString());
-//// TEST CODE for Exception                
-//            boolean force = true; 
+//// TEST CODE for Exception
+//            boolean force = true;
 //            if (force) {
 //                throw new com.datastax.driver.core.exceptions.NoHostAvailableException(new HashMap<>());
 ////                throw new com.datastax.driver.core.exceptions.AuthenticationException(new InetSocketAddress(9999),"Sample Message");
@@ -293,7 +293,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
                     attribUpdateStmt(stmt, ns, es.getKey(),es.getValue());
                 }
             }
-            
+
             // No point in deleting... insert overwrites...
 //            for (Entry<String, String> es : remoteAttr.entrySet()) {
 //                str = localAttr.get(es.getKey());
@@ -320,7 +320,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     @Override
     public Result<List<Data>> read(AuthzTrans trans, Data data) {
         Result<List<Data>> rld = super.read(trans, data);
-        
+
         if (rld.isOKhasData()) {
             for (Data d : rld.value) {
                 // Note: Map is null at this point, save time/mem by assignment
@@ -375,17 +375,17 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         return super.delete(trans, data, reread);
 
     }
-    
+
     public Result<Map<String,String>> readAttribByNS(AuthzTrans trans, String ns) {
         Map<String,String> map = new HashMap<>();
         TimeTaken tt = trans.start("readAttribByNS " + ns, Env.REMOTE);
         try {
-            ResultSet rs = getSession(trans).execute("SELECT key,value FROM " 
-                    + TABLE_ATTRIB 
+            ResultSet rs = getSession(trans).execute("SELECT key,value FROM "
+                    + TABLE_ATTRIB
                     + " WHERE ns='"
                     + ns
                     + "';");
-            
+
             for (Iterator<Row> iter = rs.iterator();iter.hasNext(); ) {
                 Row r = iter.next();
                 map.put(r.getString(0), r.getString(1));
@@ -403,12 +403,12 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         Set<String> set = new HashSet<>();
         TimeTaken tt = trans.start("readNsBykey " + key, Env.REMOTE);
         try {
-            ResultSet rs = getSession(trans).execute("SELECT ns FROM " 
-                + TABLE_ATTRIB 
+            ResultSet rs = getSession(trans).execute("SELECT ns FROM "
+                + TABLE_ATTRIB
                 + " WHERE key='"
                 + key
                 + "';");
-        
+
             for (Iterator<Row> iter = rs.iterator();iter.hasNext(); ) {
                 Row r = iter.next();
                 set.add(r.getString(0));
@@ -431,7 +431,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             return Result.err(Result.ERR_Backend, CassAccess.ERR_ACCESS_MSG);
         }
     }
-    
+
     private StringBuilder attribInsertStmt(StringBuilder sb, String ns, String key, String value) {
         sb.append("INSERT INTO ");
         sb.append(TABLE_ATTRIB);
@@ -457,7 +457,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         sb.append("';");
         return sb;
     }
-    
+
 
     public Result<Void> attribRemove(AuthzTrans trans, String ns, String key) {
         try {
@@ -468,7 +468,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
             return Result.err(Result.ERR_Backend, CassAccess.ERR_ACCESS_MSG);
         }
     }
-    
+
     private StringBuilder attribDeleteStmt(StringBuilder stmt, String ns, String key) {
         stmt.append("DELETE FROM ");
         stmt.append(TABLE_ATTRIB);
@@ -479,7 +479,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
         stmt.append("';");
         return stmt;
     }
-    
+
     private void attribDeleteAllStmt(StringBuilder stmt, Data data) {
         stmt.append("  DELETE FROM ");
         stmt.append(TABLE_ATTRIB);
@@ -505,7 +505,7 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
      */
     public Result<Void> addDescription(AuthzTrans trans, String ns, String description) {
         try {
-            getSession(trans).execute(UPDATE_SP + TABLE + " SET description = '" 
+            getSession(trans).execute(UPDATE_SP + TABLE + " SET description = '"
                 + description.replace("'", "''") + "' WHERE name = '" + ns + "';");
         } catch (DriverException | APIException | IOException e) {
             reportPerhapsReset(trans,e);
@@ -521,11 +521,11 @@ public class NsDAO extends CassDAOImpl<AuthzTrans,NsDAO.Data> {
     public Result<List<Data>> getChildren(AuthzTrans trans, String parent) {
         return psNS.read(trans, R_TEXT, new Object[]{parent});
     }
-        
+
 
     /**
      * Log Modification statements to History
-     * 
+     *
      * @param modified           which CRUD action was done
      * @param data               entity data that needs a log entry
      * @param overrideMessage    if this is specified, we use it rather than crafting a history message based on data

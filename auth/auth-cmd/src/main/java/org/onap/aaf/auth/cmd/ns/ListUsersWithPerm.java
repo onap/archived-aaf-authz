@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,10 +49,10 @@ import aaf.v2_0.Users.User;
  */
 public class ListUsersWithPerm extends Cmd {
     private static final String HEADER="List Users of Permissions of Namespace ";
-    
+
     public ListUsersWithPerm(ListUsers parent) {
-        super(parent,"perm", 
-                new Param("ns-name",true)); 
+        super(parent,"perm",
+                new Param("ns-name",true));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ListUsersWithPerm extends Cmd {
                 if (fn.get(AAFcli.timeout())) {
                     if (fn.value!=null) {
                         Set<String> uset = detail?null:new HashSet<>();
-                        
+
                         for (Ns n : fn.value.getNs()) {
                             Future<Perms> fp = client.read("/authz/perms/ns/"+n.getName()+(aafcli.isDetailed()?"?ns":"")
                                     , getDF(Perms.class));
@@ -77,14 +77,14 @@ public class ListUsersWithPerm extends Cmd {
                                     String perm = p.getType()+'/'+p.getInstance()+'/'+p.getAction();
                                     if (detail)((ListUsers)parent).report(perm);
                                     Future<Users> fus = client.read(
-                                            "/authz/users/perm/"+perm, 
+                                            "/authz/users/perm/"+perm,
                                             getDF(Users.class)
                                             );
                                     if (fus.get(AAFcli.timeout())) {
                                         for (User u : fus.value.getUser()) {
                                             if (detail)
                                                 ((ListUsers)parent).report("  ",u);
-                                            else 
+                                            else
                                                 uset.add(u.getId());
                                         }
                                     } else if (fn.code()==404) {
@@ -102,7 +102,7 @@ public class ListUsersWithPerm extends Cmd {
                     }
                 } else if (fn.code()==404) {
                     return 200;
-                } else {    
+                } else {
                     error(fn);
                 }
                 return fn.code();

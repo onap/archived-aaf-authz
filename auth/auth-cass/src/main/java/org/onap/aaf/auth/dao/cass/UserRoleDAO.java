@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,15 +47,15 @@ import com.datastax.driver.core.Row;
 
 public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
     public static final String TABLE = "user_role";
-    
+
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
 
     private static final String TRANS_UR_SLOT = "_TRANS_UR_SLOT_";
     public Slot transURSlot;
-    
+
     private final HistoryDAO historyDAO;
     private final CacheInfoDAO infoDAO;
-    
+
     private PSInfo psByUser, psByRole, psUserInRole;
 
 
@@ -82,10 +82,10 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
     public static class Data extends CacheableData implements Bytification {
         public String  user;
         public String  role;
-        public String  ns; 
-        public String  rname; 
+        public String  ns;
+        public String  rname;
         public Date   expires;
-        
+
         @Override
         public int[] invalidate(Cached<?,?> cache) {
             // Note: I'm not worried about Name collisions, because the formats are different:
@@ -105,7 +105,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
             URLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             URLoader.deflt.unmarshal(this, toDIS(bb));
@@ -116,14 +116,14 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
             this.rname = rname;
             this.role = ns + '.' + rname;
         }
-        
+
         public void role(RoleDAO.Data rdd) {
             ns = rdd.ns;
             rname = rdd.name;
             role = rdd.fullName();
         }
 
-        
+
         public boolean role(AuthzTrans trans, Question ques, String role) {
             this.role = role;
             Result<NsSplit> rnss = ques.deriveNsSplit(trans, role);
@@ -141,12 +141,12 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
             return user + '|' + ns + '|' +  rname + '|' + Chrono.dateStamp(expires);
         }
     }
-    
+
     private static class URLoader extends Loader<Data> implements Streamer<Data> {
         public static final int MAGIC=738469903;
         public static final int VERSION=1;
         public static final int BUFF_SIZE=48;
-        
+
         public static final URLoader deflt = new URLoader(KEYLIMIT);
 
         public URLoader(int keylimit) {
@@ -177,7 +177,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
             obj[++idx]=data.rname;
             obj[++idx]=data.expires;
         }
-        
+
         @Override
         public void marshal(Data data, DataOutputStream os) throws IOException {
             writeHeader(os,MAGIC,VERSION);
@@ -193,7 +193,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
         public void unmarshal(Data data, DataInputStream is) throws IOException {
             /*int version = */readHeader(is,MAGIC,VERSION);
             // If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
-            
+
             byte[] buff = new byte[BUFF_SIZE];
             data.user = readString(is,buff);
             data.role = readString(is,buff);
@@ -204,27 +204,27 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
         }
 
     };
-    
+
     private void init(AuthzTrans trans) {
         String[] helper = setCRUD(trans, TABLE, Data.class, URLoader.deflt);
-        
-        psByUser = new PSInfo(trans, SELECT_SP + helper[FIELD_COMMAS] + " FROM user_role WHERE user = ?", 
+
+        psByUser = new PSInfo(trans, SELECT_SP + helper[FIELD_COMMAS] + " FROM user_role WHERE user = ?",
             new URLoader(1) {
                 @Override
                 protected void key(Data data, int idx, Object[] obj) {
                     obj[idx]=data.user;
                 }
             },readConsistency);
-        
+
         // Note: We understand this call may have poor performance, so only should be used in Management (Delete) func
-        psByRole = new PSInfo(trans, SELECT_SP + helper[FIELD_COMMAS] + " FROM user_role WHERE role = ? ALLOW FILTERING", 
+        psByRole = new PSInfo(trans, SELECT_SP + helper[FIELD_COMMAS] + " FROM user_role WHERE role = ? ALLOW FILTERING",
                 new URLoader(1) {
                     @Override
                     protected void key(Data data, int idx, Object[] obj) {
                         obj[idx]=data.role;
                     }
                 },readConsistency);
-        
+
         psUserInRole = new PSInfo(trans,SELECT_SP + helper[FIELD_COMMAS] + " FROM user_role WHERE user = ? AND role = ?",
                 URLoader.deflt,readConsistency);
     }
@@ -243,7 +243,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
     public Result<List<Data>> readByRole(AuthzTrans trans, String role) {
         return psByRole.read(trans, R_TEXT + " by Role " + role, new Object[]{role});
     }
-    
+
     /**
      * Direct Lookup of User Role
      * Don't forget to check for Expiration
@@ -266,7 +266,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
 
         HistoryDAO.Data hd = HistoryDAO.newInitedData();
         HistoryDAO.Data hdRole = HistoryDAO.newInitedData();
-        
+
         hd.user = hdRole.user = trans.user();
         hd.action = modified.name();
         // Modifying User/Role is an Update to Role, not a Create.  Jonathan, 07-14-2015
@@ -276,17 +276,17 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
         hd.subject = subject?override[1] : (data.user + '|'+data.role);
         hdRole.subject = data.role;
         switch(modified) {
-            case create: 
+            case create:
                 hd.memo = hdRole.memo = memo
                     ? String.format("%s by %s", override[0], hd.user)
-                    : String.format("%s added to %s",data.user,data.role);    
+                    : String.format("%s added to %s",data.user,data.role);
                 break;
-            case update: 
+            case update:
                 hd.memo = hdRole.memo = memo
                     ? String.format("%s by %s", override[0], hd.user)
                     : String.format("%s - %s was updated",data.user,data.role);
                 break;
-            case delete: 
+            case delete:
                 hd.memo = hdRole.memo = memo
                     ? String.format("%s by %s", override[0], hd.user)
                     : String.format("%s removed from %s",data.user,data.role);
@@ -305,7 +305,7 @@ public class UserRoleDAO extends CassDAOImpl<AuthzTrans,UserRoleDAO.Data> {
         if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
-        
+
         if (historyDAO.create(trans, hdRole).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }

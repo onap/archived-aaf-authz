@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,11 +37,11 @@ import aaf.v2_0.PermRequest;
 public class Describe extends Cmd {
     private static final String PERM_PATH = "/authz/perm";
     public Describe(Perm parent) {
-        super(parent,"describe", 
+        super(parent,"describe",
                 new Param("type",true),
                 new Param("instance", true),
                 new Param("action", true),
-                new Param("description",true)); 
+                new Param("description",true));
     }
 
     @Override
@@ -57,16 +57,16 @@ public class Describe extends Cmd {
                 while (idx < args.length) {
                     desc.append(args[idx++] + ' ');
                 }
-        
+
                 PermRequest pr = new PermRequest();
                 pr.setType(type);
                 pr.setInstance(instance);
                 pr.setAction(action);
                 pr.setDescription(desc.toString());
-        
+
                 // Set Start/End commands
                 setStartEnd(pr);
-                
+
                 Future<PermRequest> fp = null;
                 int rv;
 

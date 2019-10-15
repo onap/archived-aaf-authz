@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,9 +42,9 @@ public class Create extends Cmd {
     private static final String COMMA = ",";
 
     public Create(NS parent) {
-        super(parent,"create", 
+        super(parent,"create",
                 new Param("ns-name",true),
-                new Param("owner (id[,id]*)",true), 
+                new Param("owner (id[,id]*)",true),
                 new Param("admin (id[,id]*)",false));
     }
 
@@ -53,7 +53,7 @@ public class Create extends Cmd {
             int idx = _idx;
 
         final NsRequest nr = new NsRequest();
-        
+
         nr.setName(args[idx++]);
         String[] responsible = args[idx++].split(COMMA);
         for (String s : responsible) {
@@ -68,17 +68,17 @@ public class Create extends Cmd {
         for (String s : admin) {
             nr.getAdmin().add(fullID(s));
         }
-        
+
         // Set Start/End commands
         setStartEnd(nr);
-        
+
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 // Requestable
                 setQueryParamsOn(client);
                 Future<NsRequest> fp = client.create(
-                        "/authz/ns", 
+                        "/authz/ns",
                         getDF(NsRequest.class),
                         nr
                         );

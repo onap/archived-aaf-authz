@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class InJson implements Parse<Reader, State> {
             state.unsent = 0;
             return parsed;
         }
-        
+
         int ch;
         char c;
         StringBuilder sb = parsed.sb;
@@ -48,7 +48,7 @@ public class InJson implements Parse<Reader, State> {
             while (go && (ch=r.read())>=0) {
                 if (state.braces>=0 || ch==Parse.START_OBJ) { // ignore garbage/whitespace before content
                     c=(char)ch;
-                    // Character is a quote.  
+                    // Character is a quote.
                     if (c=='"') {
                         if (inQuotes) {
                             if (escaped) {  // if escaped Quote, add to data.
@@ -112,7 +112,7 @@ public class InJson implements Parse<Reader, State> {
                                     parsed.event = c;
                                     go = false;
                                     break;
-                                        
+
                                 // The Escape Sequence, for Quote marks within Quotes
                                 case '\\':
                                 // Ignore these, unless within quotes, at which point data-gather
@@ -141,7 +141,7 @@ public class InJson implements Parse<Reader, State> {
         public int braces = 0;
         public char unsent = 0;
     }
-    
+
 //    @Override
     public Parsed<State> newParsed() {
         return new Parsed<State>(new State()); // no State needed

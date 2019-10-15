@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,10 +29,10 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 /**
  * This client represents the ability to Transfer the Identity of the caller to the authenticated
- * user being transferred to.  This ability is critical for App-to-App communication to ensure that 
+ * user being transferred to.  This ability is critical for App-to-App communication to ensure that
  * Authorization can happen on the End-Users' credentials when appropriate, even though Authentication
  * to App1 by App2 must be by App2's credentials.
- *  
+ *
  * @author Jonathan
  *
  * @param <CLIENT>
@@ -59,8 +59,8 @@ public abstract class AbsTransferSS<CLIENT> implements SecuritySetter<CLIENT> {
         if (principal==null) {
             return;
         } else  {
-            value = principal.getName() + ':' + 
-                    app + ':' + 
+            value = principal.getName() + ':' +
+                    app + ':' +
                     principal.tag() + ':' +
                     "AS";
         }

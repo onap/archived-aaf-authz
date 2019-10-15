@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,37 +43,37 @@ import org.onap.aaf.cadi.config.Config;
 
 /**
  * Key Conversion, primarily "Base64"
- * 
+ *
  * Base64 is required for "Basic Authorization", which is an important part of the overall CADI Package.
- * 
- * Note: This author found that there is not a "standard" library for Base64 conversion within Java.  
- * The source code implementations available elsewhere were surprisingly inefficient, requiring, for 
+ *
+ * Note: This author found that there is not a "standard" library for Base64 conversion within Java.
+ * The source code implementations available elsewhere were surprisingly inefficient, requiring, for
  * instance, multiple string creation, on a transaction pass.  Integrating other packages that might be
- * efficient enough would put undue Jar File Dependencies given this Framework should have none-but-Java 
+ * efficient enough would put undue Jar File Dependencies given this Framework should have none-but-Java
  * dependencies.
- * 
+ *
  * The essential algorithm is good for a symmetrical key system, as Base64 is really just
- * a symmetrical key that everyone knows the values.  
- * 
- * This code is quite fast, taking about .016 ms for encrypting, decrypting and even .08 for key 
- * generation. The speed quality, especially of key generation makes this a candidate for a short term token 
+ * a symmetrical key that everyone knows the values.
+ *
+ * This code is quite fast, taking about .016 ms for encrypting, decrypting and even .08 for key
+ * generation. The speed quality, especially of key generation makes this a candidate for a short term token
  * used for identity.
- * 
- * It may be used to easily avoid placing Clear-Text passwords in configurations, etc. and contains 
- * supporting functions such as 2048 keyfile generation (see keygen).  This keyfile should, of course, 
- * be set to "400" (Unix) and protected as any other mechanism requires. 
- * 
+ *
+ * It may be used to easily avoid placing Clear-Text passwords in configurations, etc. and contains
+ * supporting functions such as 2048 keyfile generation (see keygen).  This keyfile should, of course,
+ * be set to "400" (Unix) and protected as any other mechanism requires.
+ *
  * AES Encryption is also employed to include standards.
- * 
+ *
  * @author Jonathan
  *
  */
 public class Symm {
-    private static final byte[] DOUBLE_EQ = new byte[] {'=','='}; 
+    private static final byte[] DOUBLE_EQ = new byte[] {'=','='};
     public static final String ENC = "enc:";
     private static final Object LOCK = new Object();
     private static final SecureRandom random = new SecureRandom();
-    
+
     public final char[] codeset;
     private final int splitLinesAt;
     private final String encoding;
@@ -83,7 +83,7 @@ public class Symm {
     //Note: AES Encryption is not Thread Safe.  It is Synchronized
     //private AES aes = null;  // only initialized from File, and only if needed for Passwords
     private String name;
-    
+
     /**
      * This is the standard base64 Key Set.
      * RFC 2045
@@ -116,15 +116,15 @@ public class Symm {
      * Note, this is too large to fit into the algorithm. Only use with PassGen
      */
     private static char passChars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+!@#$%^&*(){}[]?:;,.".toCharArray();
-            
+
 
     private static Symm internalOnly = null;
-    
+
     /**
      * Use this to create special case Case Sets and/or Line breaks
-     * 
+     *
      * If you don't know why you need this, use the Singleton Method
-     * 
+     *
      * @param codeset
      * @param split
      */
@@ -136,8 +136,8 @@ public class Symm {
         this.name = name;
         char prev = 0, curr=0, first = 0;
         int offset=Integer.SIZE; // something that's out of range for integer array
-        
-        // There can be time efficiencies gained when the underlying keyset consists mainly of ordered 
+
+        // There can be time efficiencies gained when the underlying keyset consists mainly of ordered
         // data (i.e. abcde...).  Therefore, we'll quickly analyze the keyset.  If it proves to have
         // too much entropy, the "Unordered" algorithm, which is faster in such cases is used.
         ArrayList<int[]> la = new ArrayList<>();
@@ -146,7 +146,7 @@ public class Symm {
             if (prev+1==curr) { // is next character in set
                 prev = curr;
             } else {
-                if (offset!=Integer.SIZE) { // add previous range 
+                if (offset!=Integer.SIZE) { // add previous range
                     la.add(new int[]{first,prev,offset});
                 }
                 first = prev = curr;
@@ -162,11 +162,11 @@ public class Symm {
             convert = new Ordered(range);
         }
     }
-    
+
     public Symm copy(int lines) {
         return new Symm(codeset,lines,encoding,endEquals, "Copied " + lines);
     }
-    
+
     // Only used by keygen, which is intentionally randomized. Therefore, always use unordered
     private  Symm(char[] codeset, Symm parent) {
         this.codeset = codeset;
@@ -186,7 +186,7 @@ public class Symm {
     }
 
     /**
-     * Obtain the base64() behavior of this class, for use in standard BASIC AUTH mechanism, etc.  
+     * Obtain the base64() behavior of this class, for use in standard BASIC AUTH mechanism, etc.
      * No Line Splitting
      * @return
      */
@@ -222,7 +222,7 @@ public class Symm {
         }
         return exec.exec(new AES(keyBytes,0,keyBytes.length));
     }
-    
+
     public interface Encryption {
         public CipherOutputStream outputStream(OutputStream os, boolean encrypt);
         public CipherInputStream inputStream(InputStream is, boolean encrypt);
@@ -231,7 +231,7 @@ public class Symm {
     public static interface SyncExec<T> {
         public T exec(Encryption enc) throws IOException, Exception;
     }
-    
+
     public byte[] encode(byte[] toEncrypt) throws IOException {
             if (toEncrypt==null) {
                 return EMPTY;
@@ -251,7 +251,7 @@ public class Symm {
     /**
      *  Helper function for String API of "Encode"
      *  use "getBytes" with appropriate char encoding, etc.
-     *  
+     *
      * @param str
      * @return
      * @throws IOException
@@ -259,7 +259,7 @@ public class Symm {
     public String encode(String str) throws IOException {
         byte[] array;
         boolean useDefaultEncoding = false;
-        try { 
+        try {
             array = str.getBytes(encoding);
         } catch (IOException e) {
             array = str.getBytes(); // take default
@@ -267,14 +267,14 @@ public class Symm {
         }
         // Calculate expected size to avoid any buffer expansion copies within the ByteArrayOutput code
         ByteArrayOutputStream baos = new ByteArrayOutputStream((int)(array.length*1.363)); // account for 4 bytes for 3 and a byte or two more
-        
+
         encode(new ByteArrayInputStream(array),baos);
         if (useDefaultEncoding) {
             return baos.toString();
         }
         return baos.toString(encoding);
     }
-    
+
     /**
      * Helper function for the String API of "Decode"
      * use "getBytes" with appropriate char encoding, etc.
@@ -285,7 +285,7 @@ public class Symm {
     public String decode(String str) throws IOException {
         byte[] array;
         boolean useDefaultEncoding = false;
-        try { 
+        try {
             array = str.getBytes(encoding);
         } catch (IOException e) {
             array = str.getBytes(); // take default
@@ -302,9 +302,9 @@ public class Symm {
 
     /**
      * Convenience Function
-     * 
+     *
      * encode String into InputStream and call encode(InputStream, OutputStream)
-     * 
+     *
      * @param string
      * @param out
      * @throws IOException
@@ -315,9 +315,9 @@ public class Symm {
 
     /**
      * Convenience Function
-     * 
+     *
      * encode String into InputStream and call decode(InputStream, OutputStream)
-     * 
+     *
      * @param string
      * @param out
      * @throws IOException
@@ -331,16 +331,16 @@ public class Symm {
         encode(is,os);
     }
 
-    /** 
+    /**
      * encode InputStream onto Output Stream
-     * 
+     *
      * @param is
      * @param estimate
      * @return
      * @throws IOException
      */
     public void encode(InputStream is, OutputStream os) throws IOException {
-        // StringBuilder sb = new StringBuilder((int)(estimate*1.255)); // try to get the right size of StringBuilder from start.. slightly more than 1.25 times 
+        // StringBuilder sb = new StringBuilder((int)(estimate*1.255)); // try to get the right size of StringBuilder from start.. slightly more than 1.25 times
         int prev=0;
         int read, idx=0, line=0;
         boolean go;
@@ -360,7 +360,7 @@ public class Symm {
                         os.write(codeset[((prev & 0x03)<<4) | (read>>4)]);
                         prev = read;
                         break;
-                    default: //(3+) 
+                    default: //(3+)
                             // Char 1 is last 4 bits of prev plus the first 2 bits of read
                             // Char 2 is the last 6 bits of read
                         os.write(codeset[(((prev & 0xF)<<2) | (read>>6))]);
@@ -387,7 +387,7 @@ public class Symm {
                 }
                 idx = 0;
             }
-            
+
         } while (go);
     }
 
@@ -412,7 +412,7 @@ public class Symm {
                if (index>=0) {
                 switch(++idx) { // 1 based cases, slightly faster ++
                     case 1: // index goes into first 6 bits of prev
-                        prev = index<<2; 
+                        prev = index<<2;
                         break;
                     case 2: // write second 2 bits of into prev, write byte, last 4 bits go into prev
                         os.write((byte)(prev|(index>>4)));
@@ -430,7 +430,7 @@ public class Symm {
            };
            os.flush();
    }
-   
+
    /**
     * Interface to allow this class to choose which algorithm to find index of character in Key
     * @author Jonathan
@@ -454,7 +454,7 @@ public class Symm {
        public int convert(int read) throws IOException {
            // System.out.print((char)read);
            switch(read) {
-               case -1: 
+               case -1:
                case '=':
                case ' ':
                case '\n':
@@ -469,7 +469,7 @@ public class Symm {
            throw new IOException("Unacceptable Character in Stream");
        }
    }
-   
+
    /**
     * Unordered, i.e. the key is purposely randomized, simply has to investigate each character
     * until we find a match.
@@ -483,7 +483,7 @@ public class Symm {
        }
        public int convert(int read) throws IOException {
            switch(read) {
-               case -1: 
+               case -1:
                case '=':
                  case '\n':
                  case '\r':
@@ -499,7 +499,7 @@ public class Symm {
 
    /**
     * Generate a 2048 based Key from which we extract our code base
-    * 
+    *
     * @return
     * @throws IOException
     */
@@ -510,7 +510,7 @@ public class Symm {
         base64url.encode(new ByteArrayInputStream(inkey), baos);
         return baos.toByteArray();
    }
-   
+
    // A class allowing us to be less predictable about significant digits (i.e. not picking them up from the
    // beginning, and not picking them up in an ordered row.  Gives a nice 2048 with no visible patterns.
    private class Obtain {
@@ -518,7 +518,7 @@ public class Symm {
        private int skip;
        private int length;
        private byte[] key;
-  
+
        private Obtain(Symm b64, byte[] key) {
            skip = Math.abs(key[key.length-13]%key.length);
            if ((key.length&0x1) == (skip&0x1)) { // if both are odd or both are even
@@ -528,19 +528,19 @@ public class Symm {
            last = 17+length%59; // never start at beginning
            this.key = key;
        }
-       
+
        private int next() {
              return Math.abs(key[(++last*skip)%key.length])%length;
        }
    };
-  
+
    /**
     * Obtain a Symm from "keyfile" (Config.KEYFILE) property
-    * 
+    *
     * @param acesss
     * @return
- * @throws IOException 
- * @throws CadiException 
+ * @throws IOException
+ * @throws CadiException
     */
    public static Symm obtain(Access access) throws CadiException {
         String keyfile = access.getProperty(Config.CADI_KEYFILE,null);
@@ -586,7 +586,7 @@ public class Symm {
         }
    }
   /**
-   *  Create a new random key 
+   *  Create a new random key
    */
   public Symm obtain() throws IOException {
         byte inkey[] = new byte[0x800];
@@ -595,10 +595,10 @@ public class Symm {
         s.name = "from Random";
         return s;
   }
-  
+
   /**
    * Obtain a Symm from 2048 key from a String
-   * 
+   *
    * @param key
    * @return
    * @throws IOException
@@ -608,10 +608,10 @@ public class Symm {
       s.name = "from String";
       return s;
   }
-  
+
   /**
    * Obtain a Symm from 2048 key from a Stream
-   * 
+   *
    * @param is
    * @return
    * @throws IOException
@@ -635,7 +635,7 @@ public class Symm {
 
   /**
    * Convenience for picking up Keyfile
-   * 
+   *
    * @param f
    * @return
    * @throws IOException
@@ -654,7 +654,7 @@ public class Symm {
    * Decrypt into a String
    *
    *  Convenience method
-   * 
+   *
    * @param password
    * @return
    * @throws IOException
@@ -667,7 +667,7 @@ public class Symm {
 
   /**
    * Create an encrypted password, making sure that even short passwords have a minimum length.
-   * 
+   *
    * @param password
    * @param os
    * @throws IOException
@@ -682,7 +682,7 @@ public class Symm {
         if (this.getClass().getSimpleName().startsWith("base64")) { // don't expose randomization
             dos.write(bytes);
         } else {
-            
+
             Random r = new SecureRandom();
             int start = 0;
             byte b;
@@ -710,7 +710,7 @@ public class Symm {
                 dos.write(bytes);
             }
         }
-        
+
         // 7/21/2016 Jonathan add AES Encryption to the mix
         try {
             exec(new SyncExec<Void>() {
@@ -735,9 +735,9 @@ public class Symm {
 
   /**
    * Decrypt a password into a String
-   * 
+   *
    * Convenience method
-   * 
+   *
    * @param password
    * @return
    * @throws IOException
@@ -748,12 +748,12 @@ public class Symm {
       depass(password,baos);
       return new String(baos.toByteArray());
   }
-  
+
   /**
    * Decrypt a password
-   * 
+   *
    * Skip Symm.ENC
-   * 
+   *
    * @param password
    * @param os
    * @return
@@ -803,7 +803,7 @@ public class Symm {
                 dos.writeByte(dis.readByte());
             }
           } else {
-              int pre =((Byte.SIZE*3+Integer.SIZE+Byte.SIZE)/Byte.SIZE)+start; 
+              int pre =((Byte.SIZE*3+Integer.SIZE+Byte.SIZE)/Byte.SIZE)+start;
               os.write(bytes, pre, bytes.length-pre);
           }
       }
@@ -811,9 +811,9 @@ public class Symm {
   }
 
   public static String randomGen(int numBytes) {
-      return randomGen(passChars,numBytes);  
+      return randomGen(passChars,numBytes);
   }
-  
+
   public static String randomGen(char[] chars ,int numBytes) {
         int rint;
         StringBuilder sb = new StringBuilder(numBytes);
@@ -824,11 +824,11 @@ public class Symm {
         return sb.toString();
   }
   // Internal mechanism for helping to randomize placement of characters within a Symm codeset
-  // Based on an incoming data stream (originally created randomly, but can be recreated within 
+  // Based on an incoming data stream (originally created randomly, but can be recreated within
   // 2048 key), go after a particular place in the new codeset.  If that codeset spot is used, then move
-  // right or left (depending on iteration) to find the next available slot.  In this way, key generation 
+  // right or left (depending on iteration) to find the next available slot.  In this way, key generation
   // is speeded up by only enacting N iterations, but adds a spreading effect of the random number stream, so that keyset is also
-  // shuffled for a good spread. It is, however, repeatable, given the same number set, allowing for 
+  // shuffled for a good spread. It is, however, repeatable, given the same number set, allowing for
   // quick recreation when the official stream is actually obtained.
   public Symm obtain(byte[] key) throws IOException {
       int filled = codeset.length;
@@ -844,7 +844,7 @@ public class Symm {
           if (index<0 || index>=codeset.length) {
               System.out.println("uh, oh");
           }
-          if (right) { // alternate going left or right to find the next open slot (keeps it from taking too long to hit something) 
+          if (right) { // alternate going left or right to find the next open slot (keeps it from taking too long to hit something)
               for (int j=index;j<end;++j) {
                   if (seq[j]==0) {
                       seq[j]=codeset[filled];
@@ -879,12 +879,12 @@ public class Symm {
 
       return newSymm;
   }
-  
-  /** 
+
+  /**
    * This Symm is generated for internal JVM use.  It has no external keyfile, but can be used
    * for securing Memory, as it remains the same ONLY of the current JVM
    * @return
- * @throws IOException 
+ * @throws IOException
    */
   public static synchronized Symm internalOnly() throws IOException {
       if (internalOnly==null) {
@@ -897,7 +897,7 @@ public class Symm {
       }
       return internalOnly;
   }
-  
+
   @Override
   public String toString() {
       return name;

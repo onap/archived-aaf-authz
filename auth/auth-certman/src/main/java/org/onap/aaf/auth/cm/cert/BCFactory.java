@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ import org.onap.aaf.misc.env.Trans;
 /**
  * Additional Factory mechanisms for CSRs, and BouncyCastle.  The main Factory
  * utilizes only Java abstractions, and is useful in Client code.
- * 
+ *
  * @author JonathanGathman
  *
  */
@@ -59,11 +59,11 @@ public class BCFactory extends Factory {
         // Bouncy
         jcsb = new JcaContentSignerBuilder(Factory.SIG_ALGO);
     }
-    
+
     public static ContentSigner contentSigner(PrivateKey pk) throws OperatorCreationException {
         return jcsb.build(pk);
     }
-    
+
     public static String toString(PKCS10CertificationRequest csr) throws IOException, CertException {
         if (csr==null) {
             throw new CertException("x509 Certificate Request not built");
@@ -89,7 +89,7 @@ public class BCFactory extends Factory {
             tt.done();
         }
     }
-    
+
     public static CSRMeta createCSRMeta(CA ca, String mechid, String sponsorEmail, List<String> fqdns) throws CertException {
         CSRMeta csr = ca.newCSRMeta();
         boolean first = true;
@@ -99,9 +99,9 @@ public class BCFactory extends Factory {
                 first = false;
                 csr.cn(fqdn);
             }
-            csr.san(fqdn); // duplicate CN in SAN, per RFC 5280 section 4.2.1.6 
+            csr.san(fqdn); // duplicate CN in SAN, per RFC 5280 section 4.2.1.6
         }
-        
+
         csr.challenge(new String(Symm.randomGen(24)));
         csr.mechID(mechid);
         csr.email(sponsorEmail);
@@ -111,7 +111,7 @@ public class BCFactory extends Factory {
         }
         return csr;
     }
-    
+
     private static String validateApp(CSRMeta csr) {
         CertmanValidator v = new CertmanValidator();
         if (v.nullOrBlank("cn", csr.cn())
@@ -146,6 +146,6 @@ public class BCFactory extends Factory {
             return null;
         }
     }
-    
+
 
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,22 +44,22 @@ import org.onap.aaf.cadi.http.HMangr;
 import org.onap.aaf.cadi.http.HRcli;
 
 public class JU_HRcli {
-    
+
     @Mock
     SecuritySetter<HttpURLConnection> ssMock;
-    
+
     @Mock
     Locator<URI> locMock;
-    
+
     @Mock
     Locator.Item itemMock;
-    
+
     private HMangr hman;
     private PropAccess access;
     private static URI uri;
-    
+
     private static final String uriString = "example.com";
-    
+
     @Before
     public void setup() throws LocatorException, URISyntaxException {
         MockitoAnnotations.initMocks(this);
@@ -79,20 +79,20 @@ public class JU_HRcli {
 
         hrcli.setSecuritySetter(ssMock);
         assertThat(hrcli.getSecuritySetter(), is(ssMock));
-        
+
         // No throw
         hrcli.invalidate();
         // Throw
         doThrow(CadiException.class).when(locMock).invalidate(itemMock);
         hrcli.invalidate();
     }
-    
+
     @Test(expected = CadiException.class)
     public void protectedInterfaceTest() throws CadiException, LocatorException {
         HRcliStub hrcli = new HRcliStub(hman, uri, itemMock, ssMock);
         HRcli clone = hrcli.clone(uri, ssMock);
         assertThat(clone.toString(), is(hrcli.toString()));
-        
+
         EClient<HttpURLConnection> eclient = hrcli.client();
         assertThat(eclient, is(not(nullValue())));
 
@@ -105,7 +105,7 @@ public class JU_HRcli {
         when(locMock.best()).thenReturn(null);
         eclient = hrcli.client();
     }
-    
+
     private class HRcliStub extends HRcli {
         public HRcliStub(HMangr hman, URI uri, Item locItem, SecuritySetter<HttpURLConnection> secSet) {
             super(hman, uri, locItem, secSet);

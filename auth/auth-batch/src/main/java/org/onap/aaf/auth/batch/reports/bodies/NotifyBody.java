@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,13 +53,13 @@ public abstract class NotifyBody {
     protected Map<String,List<List<String>>> rows;
     protected final String env;
     protected final String gui_url;
-    
+
     private final String name;
     private final String type;
     private String date;
     private int escalation;
     private int count;
-    
+
     public NotifyBody(Access access, final String type, final String name) {
         rows = new TreeMap<>();
         this.name = name;
@@ -70,7 +70,7 @@ public abstract class NotifyBody {
         env = access.getProperty("CASS_ENV","DEVL");
         gui_url = access.getProperty("GUI_URL", "");
     }
-    
+
     public void store(List<String> row) {
         if(!row.isEmpty()) {
             if("info".equals(row.get(0))) {
@@ -84,7 +84,7 @@ public abstract class NotifyBody {
             } else if(type.equals(row.get(0))) {
                 String user = user(row);
                 if(user!=null) {
-                    List<List<String>> lss = rows.get(user); 
+                    List<List<String>> lss = rows.get(user);
                     if(lss == null) {
                         lss = new ArrayList<>();
                         rows.put(user,lss);
@@ -98,25 +98,25 @@ public abstract class NotifyBody {
     public String name() {
         return name;
     }
-    
+
     public String type() {
         return type;
     }
-    
+
     public String date() {
         return date;
     }
     public int escalation() {
         return escalation;
     }
-    
+
     public Set<String> users() {
         return rows.keySet();
     }
-    
+
     /**
      * ID must be set from Row for Email lookup
-     * 
+     *
      * @param trans
      * @param n
      * @param id
@@ -124,30 +124,30 @@ public abstract class NotifyBody {
      * @return
      */
     public abstract boolean body(AuthzTrans trans, StringBuilder sb, int indent, Notify n, String id);
-    
+
     /**
      * Return "null" if user not found in row... Code will handle.
      * @param row
      * @return
      */
     protected abstract String user(List<String> row);
-    
+
     /**
      * Provide a context-sensitive Subject, which includes ENV as well as details
-     * 
+     *
      * @return
      */
     public abstract String subject();
 
     /**
      * Record the fact that a particular Notification was marked as "sent" by Emailer.
-     * 
+     *
      * @param trans
      * @param approver
      * @param ln
      */
     public abstract void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln);
-    
+
     /**
      * Get Notify Body based on key of
      * type|name
@@ -155,10 +155,10 @@ public abstract class NotifyBody {
     public static NotifyBody get(String key) {
         return bodyMap.get(key);
     }
-    
+
     /**
      * Return set of loaded NotifyBodies
-     * 
+     *
      */
     public static Collection<NotifyBody> getAll() {
         // Note: The same Notify Body is entered several times with different keys.
@@ -167,11 +167,11 @@ public abstract class NotifyBody {
         set.addAll(bodyMap.values());
         return set;
     }
-    
+
     /**
-     * @param propAccess 
-     * @throws URISyntaxException 
-     * 
+     * @param propAccess
+     * @throws URISyntaxException
+     *
      */
     public static void load(Access access) throws APIException, IOException {
         // class load available NotifyBodies
@@ -199,7 +199,7 @@ public abstract class NotifyBody {
             File dir = new File(url.getFile());
             for( String f : dir.list()) {
                 if(f.endsWith(".class")) {
-                    classNames.add(pkg.getName()+'.'+f.substring(0,f.length()-6));
+                    classNames.add(pkg.getName() + '.' + f.substring(0,f.length() - 6));
                 }
             }
         }
@@ -210,8 +210,8 @@ public abstract class NotifyBody {
                        Constructor<?> cst = c.getConstructor(Access.class);
                         NotifyBody nb = (NotifyBody)cst.newInstance(access);
                         if(nb!=null) {
-                            bodyMap.put("info|"+nb.name, nb);
-                            bodyMap.put(nb.type+'|'+nb.name, nb);
+                            bodyMap.put("info|" + nb.name, nb);
+                            bodyMap.put(nb.type+'|' + nb.name, nb);
                           }
                 }
             } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -221,14 +221,14 @@ public abstract class NotifyBody {
     }
 
     protected void print(StringBuilder sb, int indent, Object ... objs) {
-        for(int i=0;i<indent;++i) {
+        for(int i = 0; i < indent; ++i) {
             sb.append(' ');
         }
         for(Object o : objs) {
             sb.append(o.toString());
         }
     }
-            
+
     protected void println(StringBuilder sb, int indent, Object ... objs) {
         print(sb,indent,objs);
         sb.append('\n');
@@ -246,15 +246,15 @@ public abstract class NotifyBody {
         }
         return current; // use to set prev...
     }
-    
+
     protected void printCell(StringBuilder sb, int indent, String current) {
         println(sb,indent,"<td>",current,"</td>");
     }
-    
+
     public synchronized void inc() {
         ++count;
     }
-    
+
     public int count() {
         return count;
     }

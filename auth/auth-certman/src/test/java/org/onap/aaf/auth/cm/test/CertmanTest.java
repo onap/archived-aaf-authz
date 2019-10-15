@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,14 +54,14 @@ public class CertmanTest {
 //        for (Item item = loc.first(); item!=null; item=loc.next(item)) {
 //            System.out.println(loc.get(item));
 //        }
-//        
-//        
+//
+//
 //        SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(env, HttpURLConnection.class);
-//        ss = new HBasicAuthSS(si,"m12345@aaf.att.com", 
+//        ss = new HBasicAuthSS(si,"m12345@aaf.att.com",
 //                env.decrypt("enc:gvptdJyo0iKdVZw2rzMb0woxa7YKMdqLuhfQ4OQfZ8k",false));
 //                env.decrypt("enc:jFfAnO3mOKb9Gzm2OFysslmXpbnyuAxuoNJK",false), si);
 //                    SecuritySetter<HttpURLConnection> ss = new X509SS(si, "aaf");
-        
+
 //        hman = new HMangr(env,loc);
 //
 //        reqDF = env.newDataFactory(CertificateRequest.class);
@@ -85,13 +85,13 @@ public class CertmanTest {
 
 //    @Test
 //    public void testX500Name() throws Exception {
-//        
+//
 //        for ( InetAddress ia : InetAddress.getAllByName("aaf.dev.att.com")) {
 //            System.out.printf("%s - %s\n", ia.getHostName(), ia.getHostAddress());
 //            InetAddress ia1 = InetAddress.getByName(ia.getHostAddress());
 //            System.out.printf("%s - %s\n", ia1.getHostName(), ia1.getHostAddress());
 //        }
-//        
+//
 //        hman.best(ss, new Retryable<Void>() {
 //            @Override
 //            public Void code(Rcli<?> client) throws APIException, CadiException {
@@ -101,7 +101,7 @@ public class CertmanTest {
 //                cr.getFqdns().add("mithrilcsp.sbc.com");
 //                cr.getFqdns().add("zld01907.vci.att.com");
 //                cr.getFqdns().add("aaftest.test.att.com");
-//                
+//
 //                String path = "/cert/local"; // Local Test
 ////                String path = "/cert/aaf"; // Official CA
 //                long end=0,start = System.nanoTime();
@@ -131,12 +131,12 @@ public class CertmanTest {
 //                return null;
 //            }
 //        });
-//        
-//        
+//
+//
 //    }
 //
 //    public X500Principal ephemeral() {
 //        return null;
 //    }
-    
+
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,8 +45,8 @@ import aaf.v2_0.Pkey;
 import aaf.v2_0.RolePermRequest;
 
 public class PermGrantAction extends Page {
-    
-    
+
+
     public PermGrantAction(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,PermGrantForm.NAME, PermGrantForm.HREF, PermGrantForm.fields,
             new BreadCrumbs(breadcrumbs),
@@ -55,7 +55,7 @@ public class PermGrantAction extends Page {
                 final Slot sInstance = gui.env.slot(PermGrantForm.NAME+'.'+PermGrantForm.fields[1]);
                 final Slot sAction = gui.env.slot(PermGrantForm.NAME+'.'+PermGrantForm.fields[2]);
                 final Slot sRole = gui.env.slot(PermGrantForm.NAME+'.'+PermGrantForm.fields[3]);
-                
+
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -66,16 +66,16 @@ public class PermGrantAction extends Page {
                             String instance = trans.get(sInstance,null);
                             String action = trans.get(sAction,null);
                             String role = trans.get(sRole,null);
-                            
-                            String lastPage = PermGrantForm.HREF 
+
+                            String lastPage = PermGrantForm.HREF
                                     + "?type=" + type + "&instance=" + instance + "&action=" + action;
-                            
+
                             // Run Validations
                             boolean fail = true;
-                        
+
                             TimeTaken tt = trans.start("AAF Grant Permission to Role",Env.REMOTE);
                             try {
-                                
+
                                 final RolePermRequest grantReq = new RolePermRequest();
                                 Pkey pkey = new Pkey();
                                 pkey.setType(type);
@@ -83,7 +83,7 @@ public class PermGrantAction extends Page {
                                 pkey.setAction(action);
                                 grantReq.setPerm(pkey);
                                 grantReq.setRole(role);
-                                
+
                                 fail = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Boolean>() {
                                     @Override
                                     public Boolean code(Rcli<?> client) throws CadiException, ConnectException, APIException {
@@ -114,7 +114,7 @@ public class PermGrantAction extends Page {
                             } finally {
                                 tt.done();
                             }
-                                
+
                             hgen.br();
                             hgen.incr("a",true,"href="+lastPage);
                             if (fail) {
@@ -124,7 +124,7 @@ public class PermGrantAction extends Page {
                             }
                             hgen.end();
                             hgen.js()
-                                .text("alterLink('permgrant', '"+lastPage + "');")                            
+                                .text("alterLink('permgrant', '"+lastPage + "');")
                                 .done();
 
                         }

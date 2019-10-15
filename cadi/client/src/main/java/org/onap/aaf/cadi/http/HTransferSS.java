@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class HTransferSS extends AbsTransferSS<HttpURLConnection> {
     public HTransferSS(TaggedPrincipal principal, String app) throws IOException {
         super(principal, app);
     }
-    
+
     public HTransferSS(TaggedPrincipal principal, String app, SecurityInfoC<HttpURLConnection> si) {
         super(principal, app, si);
     }
@@ -55,7 +55,7 @@ public class HTransferSS extends AbsTransferSS<HttpURLConnection> {
             securityInfo.setSocketFactoryOn((HttpsURLConnection)huc);
         }
     }
-    
+
     @Override
     public int setLastResponse(int respCode) {
         return 0;

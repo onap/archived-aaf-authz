@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,19 +29,19 @@ import org.onap.aaf.cadi.config.SecurityInfoC;
 
 /**
  * AbsAuthentication is a class representing how to Authenticate onto a Client.
- * 
+ *
  * Methods of setting Authentication on a Client vary, so CLIENT is a Generic Type
- * This allows the ability to apply security onto Different Client Types, as they come 
+ * This allows the ability to apply security onto Different Client Types, as they come
  * into vogue, or change over time.
- * 
+ *
  * Password is encrypted at rest.
- *  
+ *
  * @author Jonathan
  *
  * @param <CLIENT>
  */
 public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT> {
-    // HTTP Header for Authentication is "Authorization".  This was from an early stage of internet where 
+    // HTTP Header for Authentication is "Authorization".  This was from an early stage of internet where
     // Access by Credential "Authorized" you for everything on the site.  Since those early days, it became
     // clear that "full access" wasn't appropriate, so the split between Authentication and Authorization
     // came into being... But the Header remains.
@@ -57,14 +57,14 @@ public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT
     protected final SecurityInfoC<CLIENT> securityInfo;
     protected long lastMiss;
     protected int count;
-    
+
     static {
         try {
             symm = Symm.encrypt.obtain();
         } catch (IOException e) {
             throw new RuntimeException("Cannot create critical internal encryption key",e);
         }
-        
+
     }
 
     public AbsAuthentication(final SecurityInfoC<CLIENT> securityInfo, final String user, final byte[] headValue) throws IOException {
@@ -82,11 +82,11 @@ public abstract class AbsAuthentication<CLIENT> implements SecuritySetter<CLIENT
             return new String(symm.decode(headValue));
         }
     }
-    
+
     protected void setUser(String id) {
         user = id;
     }
-    
+
     @Override
     public String getID() {
         return user;

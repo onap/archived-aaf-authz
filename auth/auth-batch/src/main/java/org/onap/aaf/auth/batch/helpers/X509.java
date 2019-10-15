@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class X509 {
     public final String x500;
     public final String x509;
     public ByteBuffer serial;
-    
+
     public X509(String ca, String id, String x500, String x509, ByteBuffer serial) {
         this.ca = ca;
         this.id = id;
@@ -56,12 +56,12 @@ public class X509 {
         this.x509 = x509;
         this.serial = serial;
     }
-    
+
 
     public static void load(Trans trans, Session session, Visitor<X509> visitor) {
         load(trans,session, "" , visitor);
     }
-    
+
     public static void load(Trans trans, Session session, String where, Visitor<X509> visitor) {
         load(trans,session, visitor,"select ca, id, x500, x509, serial from authz.x509 " + where +';');
     }
@@ -70,7 +70,7 @@ public class X509 {
     private static void load(Trans trans, Session session, Visitor<X509> visitor, String query) {
         trans.info().log( "query: " + query );
         TimeTaken tt = trans.start("Read X509", Env.REMOTE);
-       
+
         ResultSet results;
         try {
             Statement stmt = new SimpleStatement( query );
@@ -97,7 +97,7 @@ public class X509 {
             trans.info().log("Found",count,"X509 Certificates");
         }
     }
-    
+
     public static long count(Trans trans, Session session) {
         String query = "select count(*) from authz.x509 LIMIT 1000000;";
         trans.info().log( "query: " + query );
@@ -111,7 +111,7 @@ public class X509 {
             tt.done();
         }
     }
-    
+
 
     public void row(CSV.Writer cw, X509Certificate x509Cert) {
         cw.row("x509",ca,Hash.toHex(serial.array()),Chrono.dateOnlyStamp(x509Cert.getNotAfter()),x500);

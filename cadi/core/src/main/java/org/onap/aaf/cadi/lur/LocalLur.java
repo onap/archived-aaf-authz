@@ -148,7 +148,7 @@ public final class LocalLur extends AbsUserCache<LocalPermission> implements Lur
     public Permission createPerm(String p) {
         return new LocalPermission(p);
     }
-    
+
     private void parseUserProperties(String userProperties) throws IOException {
         // For each User name...
         for (String userProperty : userProperties.trim().split(SEMI)) {
@@ -179,7 +179,7 @@ public final class LocalLur extends AbsUserCache<LocalPermission> implements Lur
         }
     }
 
-    
+
     private void parseGroupProperties(String groupProperties) throws IOException {
         // For each Group name...
         for (String group : groupProperties.trim().split(SEMI)) {

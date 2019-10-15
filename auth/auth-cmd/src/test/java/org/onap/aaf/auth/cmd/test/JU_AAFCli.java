@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -147,12 +147,12 @@ public class JU_AAFCli {
     public void eval10() throws Exception {
         assertTrue(cli.eval("set @[ 123"));
     }
-    
+
     @Test
     public void eval11() throws Exception {
         assertTrue(cli.eval("DETAILS @[ 123"));
     }
-    
+
     @Test
     public void eval12() throws Exception {
         assertTrue(cli.eval(". |/, .\"0 \" "));
@@ -179,7 +179,7 @@ public class JU_AAFCli {
         }
         assertTrue(noError);
     }
-    
+
     @Test
     public void eval_randomString() throws Exception {
         assertTrue(cli.eval("Some random string @#&*& to check complete 100 coverage"));
@@ -198,64 +198,64 @@ public class JU_AAFCli {
         // TODO: Consider requiring a default in properties
         env.setProperty(Config.AAF_DEFAULT_REALM,
                 System.getProperty(Config.AAF_DEFAULT_REALM, Config.getDefaultRealm()));
-        
+
         HBasicAuthSS ss = mock(HBasicAuthSS.class);
         env.setProperty(Config.AAF_APPPASS, "test");
         return new AAFcli(env, new OutputStreamWriter(System.out), hman, si, ss);
     }
-    
+
     @Test
     public void testVerbose() {
         cli.verbose(true);
         cli.verbose(false);
     }
-    
+
     @Test
     public void testClose() {
         cli.close();
     }
-    
+
     @Test
     public void testTimeout() {
         Assert.assertNotNull(cli.timeout());
     }
-    
+
     @Test
     public void testTest() {
         Assert.assertNotNull(cli.isTest());
     }
-    
+
     @Test
     public void testIsDetailed() {
         Assert.assertNotNull(cli.isDetailed());
     }
-    
+
     @Test
     public void testAddRequest() {
         Assert.assertNotNull(cli.addRequest());
     }
-    
+
     @Test
     public void testForceString() {
         cli.clearSingleLineProperties();
         Assert.assertNull(cli.forceString());
     }
-    
+
     @Test
     public void testClearSingleLineProperties() {
         cli.clearSingleLineProperties();
     }
-    
+
     @Test
     public void testGui() {
         cli.gui(true);
         cli.gui(false);
     }
-    
+
     @Test
     public void testMain() {
         String[] strArr = {"\\*","test1"};
         //cli.main(strArr);
     }
-    
+
 }

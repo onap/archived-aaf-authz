@@ -75,7 +75,7 @@ public class JU_SecurityInfoC {
 //        SecurityInfoC<HttpURLConnection> siClone = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
 //        assertThat(siClone, is(si));
 //    }
-    
+
     @Test
     public void setTest() throws MalformedURLException, CadiException {
         SecurityInfoC<HttpURLConnectionStub> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnectionStub.class);
@@ -95,9 +95,9 @@ public class JU_SecurityInfoC {
     }
 
     public static class HttpURLConnectionStub extends HttpURLConnection {
-        public HttpURLConnectionStub() throws MalformedURLException { super(new URL("http://www.example.com")); } 
-        @Override public void disconnect() { } 
-        @Override public boolean usingProxy() { return false; } 
+        public HttpURLConnectionStub() throws MalformedURLException { super(new URL("http://www.example.com")); }
+        @Override public void disconnect() { }
+        @Override public boolean usingProxy() { return false; }
         @Override public void connect() throws IOException { }
     }
 

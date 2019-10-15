@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ import certman.v1_0.Artifacts;
 import certman.v1_0.Artifacts.Artifact;
 
 public class CredDetail extends Page {
-    
+
     public static final String HREF = "/gui/creddetail";
     public static final String NAME = "CredDetail";
     private static Model model;
@@ -76,7 +76,7 @@ public class CredDetail extends Page {
 
 
     public CredDetail(final AAF_GUI gui, Page ... breadcrumbs) throws APIException, IOException {
-        super(gui.env, NAME, HREF, Params.values(), 
+        super(gui.env, NAME, HREF, Params.values(),
                 new BreadCrumbs(breadcrumbs),
                 new Table<AAF_GUI,AuthzTrans>("Cred Details",gui.env.newTransNoAvg(),model = new Model(),
                 slotCode = new SlotCode<AuthzTrans>(false,gui.env,NAME,Params.values()) {
@@ -109,7 +109,7 @@ public class CredDetail extends Page {
                     });
                     }
                 },"class=std")
-                
+
                 );
         // Setting so we can get access to HTMLGen clone
         model.set(this,slotCode);
@@ -119,7 +119,7 @@ public class CredDetail extends Page {
 
     /**
      * Implement the table content for Cred Detail
-     * 
+     *
      * @author Jeremiah
      *
      */
@@ -136,7 +136,7 @@ public class CredDetail extends Page {
             cd = credDetail;
             sc = slotCode;
         }
-        
+
         @Override
         public void prefix(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) {
         }
@@ -150,7 +150,7 @@ public class CredDetail extends Page {
             }
             final ArrayList<AbsCell[]> rv = new ArrayList<>();
             final TimeTaken tt = trans.start("AAF Cred Details",Env.REMOTE);
-            List<Artifact> la; 
+            List<Artifact> la;
             try {
                     la = gui.cmClientAsUser(trans.getUserPrincipal(), new Retryable<List<Artifact>>() {
                     @Override
@@ -177,11 +177,11 @@ public class CredDetail extends Page {
                         if (fu.get(AAFcli.timeout())) {
                             // Organize User entries
                             Map<String,List<Map<Integer,List<User>>>> users = new HashMap<>();
-        
+
                             List<Map<Integer,List<User>>> lmu=null;
                             Map<Integer, List<User>> mu = null;
                             List<User> lu = null;
-                            
+
                             for (User u : fu.value.getUser()) {
                                 if (u.getType() == 200) {
                                     lns.remove(u.getId());
@@ -196,11 +196,11 @@ public class CredDetail extends Page {
                                         mu = xmu;
                                     }
                                 }
-                                
+
                                 if (mu==null) {
                                     lmu.add(mu=new HashMap<>());
                                 }
-                                
+
                                 lu = mu.get(u.getType());
                                 if (lu==null) {
                                     mu.put(u.getType(),lu = new ArrayList<>());
@@ -215,7 +215,7 @@ public class CredDetail extends Page {
                                 HTMLGen hgen = cd.clone(buttons);
                                 hgen.leaf("button","onclick=divVisibility('"+key+"');","class=button").text("Expand").end();
                                 hgen.leaf(HTMLGen.A,"class=button","class=greenbutton","href="+CredHistory.HREF+"?user="+ulm.getKey()).text("History").end();
-                                
+
                                 StringWriter creds = new StringWriter();
                                 hgen = cd.clone(creds);
                                 Mark div = hgen.divID(key,ulm.getKey().equals(id)?"":"style=display:none;");
@@ -226,7 +226,7 @@ public class CredDetail extends Page {
                                         Mark uRow = new Mark();
                                         String cls;
                                         boolean first = true;
-                                        
+
                                         for ( Entry<Integer, List<User>> es : miu.entrySet()) {
                                             Collections.sort(es.getValue(),new Comparator<User>() {
                                                 @Override
@@ -256,8 +256,8 @@ public class CredDetail extends Page {
                                                     if (first) {
                                                         hgen.leaf(HTMLGen.TD,cls="class=detailFirst",STYLE_WIDTH_10);
                                                         switch(es.getKey()) {
-                                                            case 1:   
-                                                            case 2:      hgen.text("Password"); 
+                                                            case 1:
+                                                            case 2:      hgen.text("Password");
                                                                     break;
                                                             case 10:  hgen.text("Certificate"); break;
                                                         }
@@ -266,7 +266,7 @@ public class CredDetail extends Page {
                                                     }
                                                     hgen.end();
                                                     hgen.incr(HTMLGen.TD,cls,STYLE_WIDTH_20);
-                                                    
+
                                                     hgen.leaf(HTMLGen.A,
                                                             "class=button",
                                                             "href="+PassDeleteAction.HREF+
@@ -284,7 +284,7 @@ public class CredDetail extends Page {
                                                     hgen.end().leaf(HTMLGen.TD,cls,STYLE_WIDTH_70)
                                                         .text(Chrono.niceDateStamp(u.getExpires()))
                                                         .end();
-                                        
+
                                                     hgen.end(uRow);
                                                 }
                                             }
@@ -305,15 +305,15 @@ public class CredDetail extends Page {
                                                     .end(uRow);
 
                                             }
-                                         
+
                                         }
                                         hgen.end(utable);
                                     }
-                                    
+
                                 hgen.end(div);
 
                                 rv.add(new AbsCell[] {
-                                        new TextCell(ulm.getKey(),STYLE_WIDTH_15), 
+                                        new TextCell(ulm.getKey(),STYLE_WIDTH_15),
                                         new TextCell(buttons.toString(),STYLE_WIDTH_5),
                                         new TextCell(creds.toString(),STYLE_WIDTH_70)
                                     });

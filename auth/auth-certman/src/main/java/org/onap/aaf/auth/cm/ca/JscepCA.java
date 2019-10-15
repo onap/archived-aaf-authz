@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,20 +71,20 @@ public class JscepCA extends CA {
          super(access, name, env);
          mxcwiS = new ConcurrentHashMap<>();
          mxcwiC = new ConcurrentHashMap<>();
-         
+
          if (params.length<2) {
              throw new CertException("No Trust Chain parameters are included");
-         } 
+         }
          if (params[0].length<2) {
              throw new CertException("User/Password required for JSCEP");
          }
          final String id = params[0][0];
-         final String pw = params[0][1]; 
-        
+         final String pw = params[0][1];
+
         // Set this for NTLM password Microsoft
         Authenticator.setDefault(new Authenticator() {
-            @Override  
-        	public PasswordAuthentication getPasswordAuthentication () {
+            @Override
+            public PasswordAuthentication getPasswordAuthentication () {
                     try {
                         return new PasswordAuthentication (id,access.decrypt(pw,true).toCharArray());
                     } catch (IOException e) {
@@ -93,16 +93,16 @@ public class JscepCA extends CA {
                     return null;
               }
         });
-        
+
         StringBuilder urlstr = new StringBuilder();
 
         for (int i=1;i<params.length;++i) { // skip first section, which is user/pass
-            // Work 
+            // Work
             if (i>1) {
                 urlstr.append(','); // delimiter
             }
             urlstr.append(params[i][0]);
-            
+
             String dir = access.getProperty(CM_PUBLIC_DIR, "");
             if (!"".equals(dir) && !dir.endsWith("/")) {
                 dir = dir + '/';
@@ -125,12 +125,12 @@ public class JscepCA extends CA {
                     }
                 }
             }
-        }        
+        }
         clients = new JscepClientLocator(access,urlstr.toString());
     }
 
     // package on purpose
-    
+
     @Override
     public X509ChainWithIssuer sign(Trans trans, CSRMeta csrmeta) throws IOException, CertException {
         TimeTaken tt = trans.start("Generating CSR and Keys for New Certificate", Env.SUB);
@@ -139,14 +139,14 @@ public class JscepCA extends CA {
             csr = csrmeta.generateCSR(trans);
             if (trans.info().isLoggable()) {
                 trans.info().log(BCFactory.toString(csr));
-            } 
+            }
             if (trans.info().isLoggable()) {
                 trans.info().log(csr);
             }
         } finally {
             tt.done();
         }
-        
+
         tt = trans.start("Enroll CSR", Env.SUB);
         Client client = null;
         Item item = null;
@@ -154,13 +154,13 @@ public class JscepCA extends CA {
             try {
                 item = clients.best();
                 client = clients.get(item);
-                
+
                 EnrollmentResponse er = client.enrol(
                         csrmeta.initialConversationCert(trans),
                         csrmeta.keypair(trans).getPrivate(),
                         csr,
                         MS_PROFILE /* profile... MS can't deal with blanks*/);
-                
+
                 while (true) {
                     if (er.isSuccess()) {
                         trans.checkpoint("Cert from " + clients.info(item));
@@ -186,7 +186,7 @@ public class JscepCA extends CA {
                 i=MAX_RETRY;
             } catch (ClientException e) {
                 trans.error().log(e,"SCEP Client Error, Temporarily Invalidating Client: " + clients.info(item));
-                try  { 
+                try  {
                     clients.invalidate(client);
                     if (!clients.hasItems()) {
                         clients.refresh();
@@ -202,13 +202,13 @@ public class JscepCA extends CA {
                 tt.done();
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Locator specifically for Jscep Clients.
-     * 
+     *
      * Class based client for access to common Map
      */
     private class JscepClientLocator extends HotPeerLocator<Client> {
@@ -247,7 +247,7 @@ public class JscepCA extends CA {
         protected void _destroy(Client client) {
             mxcwiC.remove(client);
         }
-        
-        
+
+
     }
 }

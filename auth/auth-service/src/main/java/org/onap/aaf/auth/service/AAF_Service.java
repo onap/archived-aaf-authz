@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,13 +79,13 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
     private DirectAAFUserPass directAAFUserPass;
     private final Cluster cluster;
     //private final OAuthService oauthService;
-    
+
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-     * 
+     *
      * @param env
-     * @param decryptor 
-     * @throws APIException 
+     * @param decryptor
+     * @throws APIException
      */
     public AAF_Service( final AuthzEnv env) throws Exception {
         super(env.access(), env);
@@ -99,12 +99,12 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         // Start Background Processing
         question = new Question(trans, cluster, CassAccess.KEYSPACE);
         question.startTimers(env);
-        
+
         DirectCertIdentity.set(question.certDAO());
 
         // Have AAFLocator object Create DirectLocators for Location needs
         AbsAAFLocator.setCreator(new DirectLocatorCreator(env, question.locateDAO));
-        
+
         // Initialize Organizations... otherwise, first pass may miss
         int org_size = ORGANIZATION.length();
         for (String n : env.existingStaticSlotNames()) {
@@ -112,16 +112,16 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
                 OrganizationFactory.obtain(env, n.substring(org_size));
             }
         }
-        
+
 
         // For direct Introspection needs.
         //oauthService = new OAuthService(trans, question);
-        
+
         facade = AuthzFacadeFactory.v2_0(env,trans,Data.TYPE.JSON,question);
         facade_XML = AuthzFacadeFactory.v2_0(env,trans,Data.TYPE.XML,question);
 
         directAAFUserPass = new DirectAAFUserPass(trans.env(),question);
-    
+
         // Print results and cleanup
         StringBuilder sb = new StringBuilder();
         trans.auditTrail(0, sb);
@@ -157,9 +157,9 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         // init functions
         API_Mgmt.init(this, facade);
         API_Api.init(this, facade);
-        
+
     }
-    
+
     @Override
     public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
         final String domain = FQI.reverseDomain(access.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF));
@@ -173,7 +173,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
             if (additionalTafLurs.length>0) {
                 System.arraycopy(additionalTafLurs, 0, atl, 2, additionalTafLurs.length);
             }
-            
+
             return new Filter[] {
                 new AuthzTransFilter(env,aafCon(),
                     new AAFTrustChecker((Env)env),
@@ -193,8 +193,8 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
             new DirectRegistrar(access,question.locateDAO, actualPort)
         };
     }
-    
-    @Override 
+
+    @Override
     public void postStartup(final String hostname, final int port) throws APIException {
         try {
             CacheInfoDAO.startUpdate(env, aafCon().hman(), aafCon().securityInfo().defSS,hostname,port);
@@ -213,16 +213,16 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         super.destroy();
     }
 
-    
+
     /**
      * Setup XML and JSON implementations for each supported Version type
-     * 
+     *
      * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
      * to do Versions and Content switches
-     * 
+     *
      */
     public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
-        Class<?> respCls = facade.mapper().getClass(api); 
+        Class<?> respCls = facade.mapper().getClass(api);
         if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         String application = applicationJSON(respCls, Config.AAF_DEFAULT_API_VERSION);
 
@@ -238,7 +238,7 @@ public class AAF_Service extends AbsService<AuthzEnv,AuthzTrans> {
         try {
             Log4JLogIt logIt = new Log4JLogIt(args, "authz");
             PropAccess propAccess = new PropAccess(logIt,args);
-            
+
             try {
                 new JettyServiceStarter<AuthzEnv,AuthzTrans>(
                     new AAF_Service(new AuthzEnv(propAccess)),true)

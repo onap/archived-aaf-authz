@@ -107,7 +107,7 @@ public class JU_Symm {
         String orig = "I'm a password, really";
         String b64encrypted;
         String output;
-        
+
         ByteArrayOutputStream baosEncrypt = new ByteArrayOutputStream();
         Symm.base64.encode(orig, baosEncrypt);
         b64encrypted = new String(baosEncrypt.toByteArray());
@@ -126,7 +126,7 @@ public class JU_Symm {
         String output;
 
         byte[] prefix = "enc:".getBytes();
-        
+
         ByteArrayInputStream baisEncrypt = new ByteArrayInputStream(orig.getBytes());
         ByteArrayOutputStream baosEncrypt = new ByteArrayOutputStream();
         Symm.base64.encode(baisEncrypt, baosEncrypt, prefix);
@@ -209,5 +209,5 @@ public class JU_Symm {
             assertTrue(e.getMessage().contains(" does not exist!"));
         }
     }
-    
+
 }

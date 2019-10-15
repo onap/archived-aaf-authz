@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ import junit.framework.Assert;
 
 /**
  * Test a simple Migration conversion tool for CADI
- * 
+ *
  * @author Instrumental(Jonathan)
  *
  */
@@ -62,19 +62,19 @@ public class JU_MapBathConverter {
     public static void createFile() throws IOException {
         // Note, you cate a "MapBathConverter" by access to a File.
         // We will create that file now.  Local is fine.
-        csv = new CSV(access,"JU_MapBathConverter.csv"); 
+        csv = new CSV(access,"JU_MapBathConverter.csv");
     }
-    
+
     @BeforeClass
     public static void beforeClass() {
         expected = new ArrayList<>();
     }
-    
+
     @Before
     public void before() {
         expected.clear();
     }
-    
+
     @Test
     public void test() throws IOException, CadiException {
         CSV.Writer cw = csv.writer();
@@ -88,14 +88,14 @@ public class JU_MapBathConverter {
                 // Style 1 - Incoming ID/pass, create new cred with NweID and same Pass
                 cw.row(exp(bath(OLD_ID,SHARED_PASS)), exp(NEW_USER_SOMETHING_ORG),sdf.format(gc.getTime()));
                 // the response should be Basic with NEW_ID and OLD_PASS
-                
+
                 // Style 2
                 cw.row(exp(bath(OLD_ID,"OLD_PASS")), exp(bath(NEW_USER_SOMETHING_ORG,"NEW_PASS")),sdf.format(gc.getTime()));
 
             } finally {
                 cw.close();
             }
-            
+
             final Iterator<String> exp = expected.iterator();
             csv.visit(new Visitor() {
                 @Override
@@ -120,7 +120,7 @@ public class JU_MapBathConverter {
                     }
                 }
             });
-            
+
             MapBathConverter mbc = new MapBathConverter(access, csv);
 
             // Check no lookup just returns the same
@@ -128,12 +128,12 @@ public class JU_MapBathConverter {
 
             Iterator<String> exp1 = expected.iterator();
             // there's no passwords in CSV
-            String old = exp1.next(); 
+            String old = exp1.next();
             String nw = exp1.next();
             Assert.assertEquals(nw, mbc.convert(access,old));
-            
+
             Assert.assertEquals(bath(NEW_USER_SOMETHING_ORG,SHARED_PASS), mbc.convert(access,bath(OLD_ID,SHARED_PASS)));
-            
+
             // Style 1 (new cred, old password)
             old = exp1.next();
             nw = bath(exp1.next(),SHARED_PASS);
@@ -162,7 +162,7 @@ public class JU_MapBathConverter {
             } finally {
                 cw.close();
             }
-            
+
             try {
                 new MapBathConverter(access, csv);
                 Assert.fail("Invalid Data should throw Exception");
@@ -184,7 +184,7 @@ public class JU_MapBathConverter {
             } finally {
                 cw.close();
             }
-            
+
             try {
                 new MapBathConverter(access, csv);
                 Assert.fail("file with too few rows should throw exception");
@@ -205,7 +205,7 @@ public class JU_MapBathConverter {
             Assert.assertTrue("Correctly thrown Exception",true);
         }
     }
-    
+
     @Test
     public void testBadRows() throws IOException {
         try {
@@ -215,7 +215,7 @@ public class JU_MapBathConverter {
             } finally {
                 cw.close();
             }
-            
+
             try {
                 new MapBathConverter(access,csv);
                 Assert.fail("Non Existent File should throw exception");
@@ -225,11 +225,11 @@ public class JU_MapBathConverter {
         } finally {
             csv.delete();
         }
-        
-        // Check for deletion 
+
+        // Check for deletion
         Assert.assertFalse(csv.toString() + "should have been deleted",new File(csv.toString()).exists());
     }
-    
+
     private String bath(String user, String password) throws IOException {
         StringBuilder sb = new StringBuilder(user);
         sb.append(':');

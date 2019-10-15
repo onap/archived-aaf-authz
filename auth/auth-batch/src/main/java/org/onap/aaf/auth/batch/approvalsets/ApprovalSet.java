@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class ApprovalSet {
     private DataView dataview;
     protected FutureDAO.Data fdd;
     protected List<ApprovalDAO.Data> ladd;
-    
+
     public ApprovalSet(final GregorianCalendar start, final String target, final DataView dv) {
         dataview = dv;
         fdd = new FutureDAO.Data();
@@ -46,7 +46,7 @@ public class ApprovalSet {
         fdd.start = start.getTime();
         ladd = new ArrayList<>();
     }
-    
+
     protected void setConstruct(final ByteBuffer bytes) {
         fdd.construct = bytes;
     }
@@ -54,11 +54,11 @@ public class ApprovalSet {
     protected void setMemo(final String memo) {
         fdd.memo = memo;
     }
-    
+
     protected void setExpires(final GregorianCalendar expires) {
         fdd.expires = expires.getTime();
     }
-    
+
     public Result<Void> write(AuthzTrans trans) {
         StringBuilder errs = null;
         if(ladd == null || ladd.isEmpty()) {
@@ -89,7 +89,7 @@ public class ApprovalSet {
     public boolean hasApprovals() {
         return !ladd.isEmpty();
     }
-    
+
     public Set<String> approvers() {
         Set<String> rv = new HashSet<>();
         for(ApprovalDAO.Data app : ladd) {

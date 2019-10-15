@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,11 +40,11 @@ public abstract class Loader<DATA> {
     public Loader(int keylimit) {
         this.keylimit = keylimit;
     }
-    
+
     public int keylimit() {
         return keylimit;
     }
-    
+
     protected abstract DATA load(DATA data, Row row);
     protected abstract void key(DATA data, int idx, Object[] obj);
     protected abstract void body(DATA data, int idx, Object[] obj);
@@ -74,7 +74,7 @@ public abstract class Loader<DATA> {
         }
         return rv;
     }
-    
+
     public static void writeString(DataOutputStream os, String s) throws IOException {
         if (s==null) {
             os.writeInt(-1);
@@ -90,11 +90,11 @@ public abstract class Loader<DATA> {
             }
         }
     }
-    
-    
+
+
     /**
      * We use bytes here to set a Maximum
-     * 
+     *
      * @param is
      * @param MAX
      * @return
@@ -118,10 +118,10 @@ public abstract class Loader<DATA> {
 
     /**
      * Write a set with proper sizing
-     * 
+     *
      * Note: at the moment, this is just String.  Probably can develop system where types
      * are supported too... but not now.
-     * 
+     *
      * @param os
      * @param set
      * @throws IOException
@@ -137,7 +137,7 @@ public abstract class Loader<DATA> {
         }
 
     }
-    
+
     public static Set<String> readStringSet(DataInputStream is, byte[] buff) throws IOException {
         int l = is.readInt();
         if (l<0) {
@@ -149,7 +149,7 @@ public abstract class Loader<DATA> {
         }
         return set;
     }
-    
+
     public static List<String> readStringList(DataInputStream is, byte[] buff) throws IOException {
         int l = is.readInt();
         if (l<0) {
@@ -162,7 +162,7 @@ public abstract class Loader<DATA> {
         return list;
     }
 
-    /** 
+    /**
      * Write a map
      * @param os
      * @param map
@@ -198,7 +198,7 @@ public abstract class Loader<DATA> {
         os.writeInt(magic);
         os.writeInt(version);
     }
-    
+
     public static int readHeader(DataInputStream is, final int magic, final int version) throws IOException {
         if (is.readInt()!=magic) {
             throw new IOException("Corrupted Data Stream");

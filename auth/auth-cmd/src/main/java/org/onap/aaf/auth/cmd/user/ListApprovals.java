@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,17 +35,17 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.Approvals;
 
 /**
- * 
+ *
  * @author Jonathan
  *
  */
 public class ListApprovals extends Cmd {
-    private static final String HEADER = "List Approvals"; 
+    private static final String HEADER = "List Approvals";
     private final static String[] options = {"user","approver","ticket"};
     public ListApprovals(List parent) {
-        super(parent,"approvals", 
+        super(parent,"approvals",
                 new Param(optionsToString(options),true),
-                new Param("value",true)); 
+                new Param("value",true));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ListApprovals extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Approvals> fp = client.read(
-                        "/authz/approval/"+type+'/'+fullValue, 
+                        "/authz/approval/"+type+'/'+fullValue,
                         getDF(Approvals.class)
                         );
                 if (fp.get(AAFcli.timeout())) {

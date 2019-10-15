@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,15 +47,15 @@ public class LoginPageTafResp extends AbsTafResp {
         httpResp.sendRedirect(loginPageURL);
         return RESP.HTTP_REDIRECT_INVOKED;
     }
-    
+
     @Override
     public RESP isAuthenticated() {
         return RESP.TRY_AUTHENTICATING;
     }
-    
+
     public static TafResp create(Access access, Locator<URI> locator, final HttpServletResponse resp, List<Redirectable> redirectables) {
         if (locator == null) {
-            if (!redirectables.isEmpty()) { 
+            if (!redirectables.isEmpty()) {
                 access.log(Level.DEBUG,"LoginPage Locator is not configured. Taking first Redirectable Taf");
                 return redirectables.get(0);
             }
@@ -91,7 +91,7 @@ public class LoginPageTafResp extends AbsTafResp {
 
         return NullTafResp.singleton();
     }
-    
+
     @Override
     public String taf() {
         return "LoginPage";

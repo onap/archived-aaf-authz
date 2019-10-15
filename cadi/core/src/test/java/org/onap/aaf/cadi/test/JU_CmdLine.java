@@ -82,7 +82,7 @@ public class JU_CmdLine {
             fis.close();
         }
     }
-    
+
     @After
     public void restoreStreams() throws IOException {
         System.setOut(System.out);
@@ -189,7 +189,7 @@ public class JU_CmdLine {
         CmdLine.main(new String[]{"passgen", String.valueOf(length)});
         output = outContent.toString().trim();
         assertThat(output.length(), is(length));
-        
+
         length = 5;
         outContent.reset();
         CmdLine.main(new String[]{"passgen", String.valueOf(length)});

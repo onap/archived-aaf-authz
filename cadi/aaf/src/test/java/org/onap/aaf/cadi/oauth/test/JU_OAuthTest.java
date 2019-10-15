@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -145,7 +145,7 @@ public class JU_OAuthTest {
                     Assert.fail(rtt.code + ' ' + rtt.error);
                 }
             }
-        
+
             // ISAM Test
             if (true) {
                 System.out.println("**** ISAM TEST ****");
@@ -156,7 +156,7 @@ public class JU_OAuthTest {
                     tc = tcf.newClient(tokenServiceURL, 3000);
                     tc.client_creds(client_id, client_secret);
                     int at = username.indexOf('@');
-                    
+
                     tc.password(at>=0?username.substring(0, at):username,access.getProperty("cadi_password"));
                     rtt = tc.getToken("org.osaaf.aaf","org.osaaf.test");
                     if (rtt.isOK()) {
@@ -164,7 +164,7 @@ public class JU_OAuthTest {
                         rtt = tc.refreshToken(rtt.value);
                         if (rtt.isOK()) {
                             print(rtt.value);
-                            
+
                             tc = tcf.newClient(tokenAltIntrospectURL, 3000);
                             tc.client_creds(client_id, client_secret);
                             Result<Introspect> rti = tc.introspect(rtt.value.getAccessToken());
@@ -211,8 +211,8 @@ public class JU_OAuthTest {
 //            Assert.fail();
         }
     }
-    
-    
+
+
 //    private TokenClient testROPCFlow(final String url, final String client_id, final String client_secret, String user, String password, final String ... scope) throws Exception {
 //        TokenClient tclient = tcf.newClient(url,3000);
 //        tclient.client_creds(client_id, client_secret);
@@ -233,7 +233,7 @@ public class JU_OAuthTest {
 //        }
 //        return tclient;
 //    }
-    
+
     private String serviceCall(TzClient tzClient) throws Exception {
         return tzClient.best(new Retryable<String>() {
             @Override
@@ -263,7 +263,7 @@ public class JU_OAuthTest {
         t.getScope(),
         t.getRefreshToken());
     }
-    
+
     private void print(Introspect ti) {
         if (ti==null || ti.getClientId()==null) {
             System.out.println("Empty Introspect");
@@ -288,7 +288,7 @@ public class JU_OAuthTest {
         Chrono.timeStamp(exp),
         ti.getScope(),
         ti.getContent()==null?"":ti.getContent());
-        
+
         System.out.println();
     }
 }

@@ -50,7 +50,7 @@ public class JU_Define {
     public void setUp() throws CadiException{
         acc = mock(Access.class);
     }
-    
+
     @Test
     public void testSet() throws CadiException {
         PropAccess prop = new PropAccess();
@@ -60,7 +60,7 @@ public class JU_Define {
         Define.set(prop);
         Define.ROOT_NS();
         Define.ROOT_COMPANY();
-        
+
         PropAccess prop1 = new PropAccess();
         prop1.setProperty(AAF_NS_DOT, AAF_NS_DOT);
         prop1.setProperty(Config.AAF_ROOT_NS, ".ns_Test");

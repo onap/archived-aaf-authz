@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,18 +39,18 @@ import aaf.v2_0.Roles;
 
 /**
  * Return Roles by NS
- * 
+ *
  * @author Jonathan
  *
  */
 public class ListByPerm extends Cmd {
     private static final String HEADER = "List Roles by Perm ";
-    
+
     public ListByPerm(List parent) {
-        super(parent,"perm", 
+        super(parent,"perm",
                 new Param("type",true),
                 new Param("instance", true),
-                new Param("action", true)); 
+                new Param("action", true));
     }
 
     @Override
@@ -59,15 +59,15 @@ public class ListByPerm extends Cmd {
         final String type=args[idx];
         final String instance=args[++idx];
         final String action = args[++idx];
-        
+
         return same(((List)parent).new ListRoles() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 try {
                     Future<Roles> fp = client.read(
-                            "/authz/roles/perm/"+type+'/' + 
+                            "/authz/roles/perm/"+type+'/' +
                                 URLEncoder.encode(instance,Config.UTF_8)+'/'+
-                                action, 
+                                action,
                             getDF(Roles.class)
                             );
                     return list(fp,client, HEADER+type+'|'+instance+'|'+action);
@@ -77,7 +77,7 @@ public class ListByPerm extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
         detailLine(sb,indent,HEADER);

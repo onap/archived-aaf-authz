@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,9 +76,7 @@ public class Remove extends Batch {
             } finally {
                 tt2.done();
             }
-            cqlBatch = new CQLBatch(noAvg.info(),session); 
-
-
+            cqlBatch = new CQLBatch(noAvg.info(),session);
         } finally {
             tt0.done();
         }
@@ -87,7 +85,7 @@ public class Remove extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
 
-        // Create Intermediate Output 
+        // Create Intermediate Output
         File logDir = logDir();
 
         List<File> remove = new ArrayList<>();
@@ -116,7 +114,7 @@ public class Remove extends Batch {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         hdd.yr_mon = Integer.parseInt(sdf.format(new Date()));
 
-        try { 
+        try {
             final CQLBatchLoop cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
             for(File f : remove) {
                 trans.info().log("Processing ",f.getAbsolutePath(),"for Deletions");
@@ -140,9 +138,9 @@ public class Remove extends Batch {
                                         ur.set(true);
                                     }
                                     //TODO If deleted because Role is no longer there, double check...
-                                    
+
                                     UserRole.batchDelete(cbl.inc(),row);
-                                    hdd.target=UserRoleDAO.TABLE; 
+                                    hdd.target=UserRoleDAO.TABLE;
                                     hdd.subject=UserRole.histSubject(row);
                                     hdd.memo=UserRole.histMemo(memoFmt.get(), row);
                                     historyDAO.createBatch(cbl.inc(), hdd);
@@ -152,7 +150,7 @@ public class Remove extends Batch {
                                         cred.set(true);
                                     }
                                     Cred.batchDelete(cbl.inc(),row);
-                                    hdd.target=CredDAO.TABLE; 
+                                    hdd.target=CredDAO.TABLE;
                                     hdd.subject=Cred.histSubject(row);
                                     hdd.memo=Cred.histMemo(memoFmt.get(), orgName,row);
                                     historyDAO.createBatch(cbl.inc(), hdd);
@@ -162,7 +160,7 @@ public class Remove extends Batch {
                                         x509.set(true);
                                     }
                                     X509.batchDelete(cbl.inc(),row);
-                                    hdd.target="x509"; 
+                                    hdd.target="x509";
                                     hdd.subject=X509.histSubject(row);
                                     hdd.memo=X509.histMemo(memoFmt.get(),row);
                                     historyDAO.createBatch(cbl.inc(), hdd);

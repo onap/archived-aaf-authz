@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public abstract class AbsOTafLur {
     protected final PropAccess access;
     protected final String client_id;
     protected static Pool<TokenClient> tokenClientPool;
-    
+
     protected AbsOTafLur(final PropAccess access, final String token_url, final String introspect_url) throws CadiException {
         this.access = access;
         String ci;
@@ -68,18 +68,18 @@ public abstract class AbsOTafLur {
         private TokenClientFactory tcf;
         private final int timeout;
         private final String url,enc_secret;
-        
-        public TCCreator(PropAccess access) throws CadiException { 
+
+        public TCCreator(PropAccess access) throws CadiException {
             try {
                 tcf = TokenClientFactory.instance(access);
             } catch (APIException | GeneralSecurityException | IOException e1) {
                 throw new CadiException(e1);
             }
-            
+
             if ((url = access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null))==null) {
                 throw new CadiException(Config.AAF_OAUTH2_TOKEN_URL + REQUIRED_FOR_OAUTH2);
             }
-            
+
             try {
                 timeout = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
             } catch (NumberFormatException e) {
@@ -89,7 +89,7 @@ public abstract class AbsOTafLur {
                 throw new CadiException(Config.AAF_APPPASS + REQUIRED_FOR_OAUTH2);
             }
         }
-        
+
         @Override
         public TokenClient create() throws APIException {
             try {
@@ -121,14 +121,14 @@ public abstract class AbsOTafLur {
     public void destroy() {
         tkMgr.close();
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.cadi.Lur#clear(java.security.Principal, java.lang.StringBuilder)
      */
     public void clear(Principal p, StringBuilder report) {
         tkMgr.clear(p, report);
     }
-    
 
-    
+
+
 }

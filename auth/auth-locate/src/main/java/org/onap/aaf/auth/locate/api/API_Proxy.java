@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 /**
  * API Apis.. using Redirect for mechanism
- * 
+ *
  * @author Jonathan
  *
  */
@@ -54,13 +54,13 @@ public class API_Proxy {
 
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param gwAPI
      * @param facade
      * @throws Exception
      */
     public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
-        
+
         String aafurl = gwAPI.access.getProperty(Config.AAF_URL,null);
         if (aafurl!=null) {
             ////////
@@ -68,7 +68,7 @@ public class API_Proxy {
             // But DO NOT transfer BasicAuth case... wastes resources.
             ///////
             final BasicAuthCode bac = new BasicAuthCode(gwAPI.aafAuthn,facade);
-            
+
             gwAPI.routeAll(HttpMethods.GET,"/proxy/:path*",API.VOID,new LocateCode(facade,"Proxy GET", true) {
                 @Override
                 public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
@@ -85,7 +85,7 @@ public class API_Proxy {
                                     return null;
                                 }
                             });
-                        
+
                         } catch (CadiException | APIException e) {
                             trans.error().log(e);
                         } finally {
@@ -94,7 +94,7 @@ public class API_Proxy {
                     }
                 }
             });
-            
+
             gwAPI.routeAll(HttpMethods.POST,"/proxy/:path*",API.VOID,new LocateCode(facade,"Proxy POST", true) {
                 @Override
                 public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
@@ -115,7 +115,7 @@ public class API_Proxy {
                     }
                 }
             });
-            
+
             gwAPI.routeAll(HttpMethods.PUT,"/proxy/:path*",API.VOID,new LocateCode(facade,"Proxy PUT", true) {
                 @Override
                 public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
@@ -136,7 +136,7 @@ public class API_Proxy {
                     }
                 }
             });
-            
+
             gwAPI.routeAll(HttpMethods.DELETE,"/proxy/:path*",API.VOID,new LocateCode(facade,"Proxy DELETE", true) {
                 @Override
                 public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {

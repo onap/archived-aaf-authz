@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,8 +63,8 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 import org.onap.aaf.misc.xgen.html.Imports;
 
 /**
- * A Base "Mobile First" Page 
- * 
+ * A Base "Mobile First" Page
+ *
  * @author Jonathan
  *
  */
@@ -92,7 +92,7 @@ public class Page extends HTMLCacheGen {
 
     // Note: Only access is synchronized in "getPerm"
     private final static Map<String,Map<String,Permission>> perms = new HashMap<>();
-    
+
     /*
      *      Relative path, Menu Name, Full Path
      */
@@ -113,15 +113,15 @@ public class Page extends HTMLCacheGen {
     public String name() {
         return bcName;
     }
-    
+
     public String url() {
         return bcUrl;
     }
-    
+
     public String[] fields() {
         return fields;
     }
-    
+
     public Page(AuthzEnv env, String name, String url, Enum<?>[] en, final NamedCode ...content) throws APIException, IOException {
         super(CacheGen.PRETTY, new PageCode(env, 1, content));
         fields = new String[en.length];
@@ -135,7 +135,7 @@ public class Page extends HTMLCacheGen {
         // Mark which fields must be "no_cache"
         boolean no_cacheTemp=false;
         for (NamedCode nc : content) {
-            if (nc.no_cache()) { 
+            if (nc.no_cache()) {
                 no_cacheTemp=true;
                 break;
             }
@@ -145,7 +145,7 @@ public class Page extends HTMLCacheGen {
     public Page(AuthzEnv env, String name, String url, String [] fields, final NamedCode ... content) throws APIException,IOException {
         this(env,name,url,1,fields,content);
     }
-    
+
     public Page(AuthzEnv env, String name, String url, int backdots, String [] fields, final NamedCode ... content) throws APIException,IOException {
         super(CacheGen.PRETTY, new PageCode(env, backdots, content));
         if (fields==null) {
@@ -158,19 +158,19 @@ public class Page extends HTMLCacheGen {
         // Mark which fields must be "no_cache"
         boolean no_cacheTemp=false;
         for (NamedCode nc : content) {
-            if (nc.no_cache()) { 
+            if (nc.no_cache()) {
                 no_cacheTemp=true;
                 break;
             }
         }
         no_cache=no_cacheTemp;
     }
-    
-    
+
+
     private static class PageCode implements Code<HTMLGen> {
             private static final String AAF_GUI_THEME = "aaf.gui.theme";
             private static final String AAF_GUI_TITLE = "aaf_gui_title";
-            
+
             private final ContentCode[] content;
             private final Slot browserSlot;
             private final int backdots;
@@ -210,7 +210,7 @@ public class Page extends HTMLCacheGen {
                                                 props = new Properties();
                                                 themeProps.put(t.getName(), props);
                                             }
-                                            
+
                                             try {
                                                 FileInputStream fis = new FileInputStream(f);
                                                 try {
@@ -233,7 +233,7 @@ public class Page extends HTMLCacheGen {
                 }
                 return themes.get(theme);
             }
-            
+
             protected Imports getImports(Env env, String theme, int backdots, BROWSER browser) {
                 List<String> ls = getThemeFiles(env,theme);
                 Imports imp = new Imports(backdots);
@@ -258,10 +258,10 @@ public class Page extends HTMLCacheGen {
                 }
                 return imp;
             }
-            
+
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                // Note: I found that App Storage saves everything about the page, or not.  Thus, if you declare the page uncacheable, none of the 
+                // Note: I found that App Storage saves everything about the page, or not.  Thus, if you declare the page uncacheable, none of the
                 // Artifacts, like JPGs are stored, which makes this feature useless for Server driven elements
                 cache.dynamic(hgen,  new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                     @Override
@@ -277,14 +277,14 @@ public class Page extends HTMLCacheGen {
                 });
                 hgen.html();
                 final String title = env.getProperty(AAF_GUI_TITLE,"Authentication/Authorization Framework");
-                final String defaultTheme = env.get(sTheme,"onap"); 
-              
+                final String defaultTheme = env.get(sTheme,"onap");
+
                 Mark head = hgen.head();
                     hgen.leaf(TITLE).text(title).end();
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                            BROWSER browser = browser(trans,browserSlot);  
+                            BROWSER browser = browser(trans,browserSlot);
                             String theme = null;
                             Cookie[] cookies = trans.hreq().getCookies();
                             if(cookies!=null) {
@@ -298,7 +298,7 @@ public class Page extends HTMLCacheGen {
                                     }
                                 }
                             }
-                            
+
                             if(theme==null) {
                                 for(String t : themes.keySet()) {
                                     if(!t.equals(defaultTheme) && trans.fish(new AAFPermission(null,trans.user()+":id", AAF_GUI_THEME, t))) {
@@ -311,7 +311,7 @@ public class Page extends HTMLCacheGen {
                                 }
                                 List<String> ls = getThemeFiles(trans, theme);
                                 if(ls==null) {
-                                	throw new APIException("Theme " + theme + " does not exist.");
+                                    throw new APIException("Theme " + theme + " does not exist.");
                                 }
                                 Cookie cookie = new Cookie(AAF_GUI_THEME,theme);
                                 cookie.setMaxAge(604_800); // one week
@@ -329,11 +329,11 @@ public class Page extends HTMLCacheGen {
                                     break;
                                 default:
                             }
-                            
+
                         }
                     });
                     hgen.end(head);
-                    
+
                 Mark body = hgen.body();
                     Mark header = hgen.header();
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
@@ -345,7 +345,7 @@ public class Page extends HTMLCacheGen {
                             String env = trans.getProperty(Config.AAF_ENV,"N/A");
                             xgen.leaf(H1).text(title + " on " + env).end();
                             xgen.leaf("p","id=version").text("AAF Version: " + state.deployedVersion).end();
-                            
+
                             // Obtain User Info, and print
                             TaggedPrincipal p = trans.getUserPrincipal();
                             String user,secured;
@@ -361,11 +361,11 @@ public class Page extends HTMLCacheGen {
                                 .text("<sup>")
                                 .text(secured)
                                 .text("</sup>").end();
-                            
+
                             switch(browser(trans,browserSlot)) {
                                 case ieOld:
                                 case ie:
-                                    xgen.incr("h5").text("This app is Mobile First HTML5.  Internet Explorer " 
+                                    xgen.incr("h5").text("This app is Mobile First HTML5.  Internet Explorer "
                                             + " does not support all HTML5 standards. Old, non TSS-Standard versions may not function correctly.").br()
                                             .text("  For best results, use a highly compliant HTML5 browser like Firefox.")
                                         .end();
@@ -374,9 +374,9 @@ public class Page extends HTMLCacheGen {
                             }
                         }
                     });
-                    
+
                     hgen.hr();
-                    
+
                     int cIdx;
                     ContentCode nc;
                     // If BreadCrumbs, put here
@@ -389,7 +389,7 @@ public class Page extends HTMLCacheGen {
                     } else {
                         cIdx = 0;
                     }
-                    
+
                     hgen.end(header);
 
                     hgen.divID("pageContent");
@@ -402,9 +402,9 @@ public class Page extends HTMLCacheGen {
                             hgen.end(ctnt);
                         }
 
-                    hgen.end(inner);    
+                    hgen.end(inner);
 
-                    
+
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                         @Override
                         public void code(AAF_GUI state, AuthzTrans trans,Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
@@ -415,7 +415,7 @@ public class Page extends HTMLCacheGen {
                             } else {
                                 props = themeProps==null?null:themeProps.get(theme);
                             }
-                            
+
                             if(props!=null && "TRUE".equalsIgnoreCase(props.getProperty("enable_nav_btn"))) {
                                     xgen.leaf("button", "id=navBtn").end();
                             }
@@ -434,7 +434,7 @@ public class Page extends HTMLCacheGen {
                             } else {
                                 props = themeProps==null?null:themeProps.get(theme);
                             }
-                            
+
                             if(props!=null) {
                                 if("TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
                                     xgen.incr("h2").text("Navigation").end();
@@ -516,15 +516,15 @@ public class Page extends HTMLCacheGen {
                         hgen.end();
                     }
                     hgen.end();
-                    
+
                     hgen.hr();
-                    
+
                     hgen.end(nav);
                     // Footer - Using older Footer to work with decrepit IE versions
                     Mark footer = hgen.divID("footer");
                         hgen.textCR(1, env.getProperty(AAF_GUI.AAF_GUI_COPYRIGHT))
                         .end(footer);
-                        
+
                     hgen.end(body);
                 hgen.endAll();
         }
@@ -533,27 +533,27 @@ public class Page extends HTMLCacheGen {
     public static String getBrowserType() {
         return BROWSER_TYPE;
     }
-    
+
     /**
      * It's IE if int >=0
-     * 
+     *
      * Use int found in "ieVersion"
-     * 
+     *
      * Official IE 7
-     *         Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; 
+     *         Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322;
      *         .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)
      * Official IE 8
-     *         Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; 
+     *         Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2;
      *         .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; ATT)
-     * 
+     *
      * IE 11 Compatibility
-     *         Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; SLCC2; .NET CLR 2.0.50727; 
+     *         Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; SLCC2; .NET CLR 2.0.50727;
      *         .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET CLR 1.1.4322; .NET4.0C; .NET4.0E; InfoPath.3; HVD; ATT)
-     * 
+     *
      * IE 11 (not Compatiblity)
-     *         Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; 
+     *         Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727;
      *         .NET CLR 3.5.30729; .NET CLR 3.0.30729;    Media Center PC 6.0; .NET CLR 1.1.4322; .NET4.0C; .NET4.0E; InfoPath.3; HVD; ATT)
-     * 
+     *
      * @param trans
      * @return
      */
@@ -561,7 +561,7 @@ public class Page extends HTMLCacheGen {
         BROWSER br = trans.get(slot, null);
         if (br==null) {
             String agent = trans.agent();
-            int msie; 
+            int msie;
             if (agent.contains("iPhone") /* other phones? */) {
                 br=BROWSER.iPhone;
             } else if ((msie = agent.indexOf("MSIE"))>=0) {
@@ -581,7 +581,7 @@ public class Page extends HTMLCacheGen {
         }
         return br;
     }
-    
+
     /*
      * Get, rather than create each time, permissions for validations
      */

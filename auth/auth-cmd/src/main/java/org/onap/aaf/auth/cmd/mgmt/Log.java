@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ public class Log extends BaseCmd<Mgmt> {
                 new Param(optionsToString(options),true),
                 new Param("id[,id]*",true));
     }
-    
+
     @Override
     public int _exec(int idxValue, String ... args) throws CadiException, APIException, LocatorException {
         int rv=409;
@@ -56,7 +56,7 @@ public class Log extends BaseCmd<Mgmt> {
             } else {
                 fname = name;
             }
-            
+
             rv = all(new Retryable<Integer>() {
                 @Override
                 public Integer code(Rcli<?> client) throws APIException, CadiException {
@@ -65,7 +65,7 @@ public class Log extends BaseCmd<Mgmt> {
                     String str = "/mgmt/log/id/"+fname;
                     String msg;
                     switch(option) {
-                        case 0:    
+                        case 0:
                             fp = client.create(str,Void.class);
                             msg = "Added";
                             break;
@@ -77,7 +77,7 @@ public class Log extends BaseCmd<Mgmt> {
                             fp = null;
                             msg = "Ignored";
                     }
-                            
+
                     if (fp!=null) {
                         if (fp.get(AAFcli.timeout())) {
                             pw().println(msg + " Special Log for " + fname + " on " + client);

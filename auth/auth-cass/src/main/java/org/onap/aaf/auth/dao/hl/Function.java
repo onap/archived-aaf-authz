@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,17 +64,17 @@ public class Function {
 
     public enum FUTURE_OP {
         C("Create"),U("Update"),D("Delete"),G("Grant"),UG("UnGrant"),A("Approval");
-        
+
         private String desc;
-    
+
         private FUTURE_OP(String desc) {
             this.desc = desc;
         }
-        
+
         public String desc() {
             return desc;
         }
-        
+
         /**
          *  Same as valueOf(), but passes back null instead of throwing Exception
          * @param value
@@ -94,7 +94,7 @@ public class Function {
 
     public enum OP_STATUS {
         E("Executed"),D("Denied"),P("Pending"),L("Lapsed");
-        
+
         private String desc;
         public final static Result<OP_STATUS> RE = Result.ok(OP_STATUS.E);
         public final static Result<OP_STATUS> RD = Result.ok(OP_STATUS.D);
@@ -104,11 +104,11 @@ public class Function {
         private OP_STATUS(String desc) {
             this.desc = desc;
         }
-        
+
         public String desc() {
             return desc;
         }
-        
+
     }
 
     public static final String FOP_CRED = "cred";
@@ -159,16 +159,16 @@ public class Function {
 
     /**
      * createNS
-     * 
+     *
      * Create Namespace
-     * 
+     *
      * @param trans
      * @param org
      * @param ns
      * @param user
      * @return
      * @throws DAOException
-     * 
+     *
      *             To create an NS, you need to: 1) validate permission to
      *             modify parent NS 2) Does NS exist already? 3) Create NS with
      *             a) "user" as owner. NOTE: Per 10-15 request for AAF 1.0 4)
@@ -185,7 +185,7 @@ public class Function {
                 Identity orgUser = org.getIdentity(trans, u);
                 String reason;
                 if (orgUser == null) {
-                    return Result.err(Status.ERR_Policy,"%s is not a valid user at %s",u,org.getName());    
+                    return Result.err(Status.ERR_Policy,"%s is not a valid user at %s",u,org.getName());
                 } else if ((reason=orgUser.mayOwn())!=null) {
                     if (org.isTestEnv()) {
                         String reason2;
@@ -242,7 +242,7 @@ public class Function {
             return Result.err(Status.ERR_ConflictAlreadyExists,
                     "Target Namespace already exists");
         }
-        
+
         // 2.1) Does role exist with that name
         if(cname!=null && q.roleDAO().read(trans, parent, cname).isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists,
@@ -347,7 +347,7 @@ public class Function {
                             trans.error().log(rpdd.errorString());
                         }
                     }
-                    
+
                     // Save off Old keys
                     String delP1 = rdd.ns;
                     String delP2 = rdd.name;
@@ -356,7 +356,7 @@ public class Function {
                     rdd.ns = namespace.name;
                     rdd.name = (delP2.length() > targetNameDot) ? delP2
                             .substring(targetNameDot) : "";
-                            
+
                     // Need to use non-cached, because switching namespaces, not
                     // "create" per se
                     if ((rq = q.roleDAO().create(trans, rdd)).isOK()) {
@@ -364,7 +364,7 @@ public class Function {
                         for (PermDAO.Data pdd : lpdd) {
                             q.permDAO().addRole(trans, pdd, rdd);
                         }
-                        // Change data for User Roles 
+                        // Change data for User Roles
                         Result<List<UserRoleDAO.Data>> rurd = q.userRoleDAO().readByRole(trans, rdd.fullName());
                         if (rurd.isOKhasData()) {
                             for (UserRoleDAO.Data urd : rurd.value) {
@@ -391,7 +391,7 @@ public class Function {
                 for (PermDAO.Data pdd : rpdc.value) {
                     // Remove old Perm from Roles, save them off
                     List<RoleDAO.Data> lrdd = new ArrayList<>();
-                    
+
                     for (String rl : pdd.roles(false)) {
                         Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,q,rl);
                         if (rrdd.isOKhasData()) {
@@ -402,7 +402,7 @@ public class Function {
                             trans.error().log(rrdd.errorString());
                         }
                     }
-                    
+
                     // Save off Old keys
                     String delP1 = pdd.ns;
                     String delP2 = pdd.type;
@@ -481,9 +481,9 @@ public class Function {
 
     /**
      * deleteNS
-     * 
+     *
      * Delete Namespace
-     * 
+     *
      * @param trans
      * @param org
      * @param ns
@@ -491,8 +491,8 @@ public class Function {
      * @param user
      * @return
      * @throws DAOException
-     * 
-     * 
+     *
+     *
      *             To delete an NS, you need to: 1) validate permission to
      *             modify this NS 2) Find all Roles with this NS, and 2a) if
      *             Force, delete them, else modify to Parent NS 3) Find all
@@ -723,7 +723,7 @@ public class Function {
         if (rq.notOK()) {
             return Result.err(rq);
         }
-    
+
         rq = q.mayUser(trans, trans.user(), rq.value, Access.write);
         if (rq.notOK()) {
             Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO().readUserInRole(trans, trans.user(),ns+".owner");
@@ -757,7 +757,7 @@ public class Function {
                 return Result.err(Status.ERR_Security,
                         "%s is not a valid AAF Credential", user);
             }
-    
+
             for (CredDAO.Data cd : cdr.value) {
                 if (cd.expires.after(now)) {
                     return Result.ok();
@@ -792,7 +792,7 @@ public class Function {
         }
 
         rq = q.mayUser(trans, trans.user(), rq.value, Access.write);
-        if (rq.notOK()) { 
+        if (rq.notOK()) {
             // Even though not a "writer", Owners still determine who gets to be an Admin
             Result<List<UserRoleDAO.Data>> ruinr = q.userRoleDAO().readUserInRole(trans, trans.user(),ns+".owner");
             if (!(ruinr.isOKhasData() && ruinr.value.get(0).expires.after(new Date()))) {
@@ -806,7 +806,7 @@ public class Function {
     /**
      * Helper function that moves permissions from a namespace being deleted to
      * its parent namespace
-     * 
+     *
      * @param trans
      * @param parent
      * @param sb
@@ -827,7 +827,7 @@ public class Function {
                 }
                 // Remove old Perm from Roles, save them off
                 List<RoleDAO.Data> lrdd = new ArrayList<>();
-                
+
                 for (String rl : pdd.roles(false)) {
                     Result<RoleDAO.Data> rrdd = RoleDAO.Data.decode(trans,q,rl);
                     if (rrdd.isOKhasData()) {
@@ -838,7 +838,7 @@ public class Function {
                         trans.error().log(rrdd.errorString());
                     }
                 }
-                
+
                 // Save off Old keys
                 String delP1 = pdd.ns;
                 NsSplit nss = new NsSplit(parent, pdd.fullType());
@@ -872,7 +872,7 @@ public class Function {
     /**
      * Helper function that moves roles from a namespace being deleted to its
      * parent namespace
-     * 
+     *
      * @param trans
      * @param parent
      * @param sb
@@ -903,7 +903,7 @@ public class Function {
                         trans.error().log(rpdd.errorString());
                     }
                 }
-                
+
                 // Save off Old keys
                 String delP1 = rdd.ns;
 
@@ -938,9 +938,9 @@ public class Function {
     /**
      * Create Permission (and any missing Permission between this and Parent) if
      * we have permission
-     * 
+     *
      * Pass in the desired Management Permission for this Permission
-     * 
+     *
      * If Force is set, then Roles listed will be created, if allowed,
      * pre-granted.
      */
@@ -1008,7 +1008,7 @@ public class Function {
         Result<PermDAO.Data> pdr = q.permDAO().create(trans, perm);
         if (pdr.isOK()) {
             return Result.ok();
-        } else { 
+        } else {
             return Result.err(pdr);
         }
     }
@@ -1118,10 +1118,10 @@ public class Function {
 
     /**
      * Only owner of Permission may add to Role
-     * 
+     *
      * If force set, however, Role will be created before Grant, if User is
      * allowed to create.
-     * 
+     *
      * @param trans
      * @param role
      * @param pd
@@ -1129,7 +1129,7 @@ public class Function {
      */
     public Result<Void> addPermToRole(AuthzTrans trans, RoleDAO.Data role,PermDAO.Data pd, boolean fromApproval) {
         String user = trans.user();
-        
+
         if (!fromApproval) {
             Result<NsDAO.Data> rRoleCo = q.deriveFirstNsForType(trans, role.ns, NsType.COMPANY);
             if (rRoleCo.notOK()) {
@@ -1148,14 +1148,14 @@ public class Function {
                     return Result.err(r);
                 }
             }
-            
+
 
             // Must be Perm Admin, or Granted Special Permission
             Result<NsDAO.Data> ucp = q.mayUser(trans, user, pd, Access.write);
             if (ucp.notOK()) {
                 // Don't allow CLI potential Grantees to change their own AAF
                 // Perms,
-                if ((ROOT_NS.equals(pd.ns) && Question.NS.equals(pd.type)) 
+                if ((ROOT_NS.equals(pd.ns) && Question.NS.equals(pd.type))
                         || !q.isGranted(trans, trans.user(),ROOT_NS,Question.PERM, rPermCo.value.name, "grant")) {
                 // Not otherwise granted
                 // TODO Needed?
@@ -1233,7 +1233,7 @@ public class Function {
 
     /**
      * Either Owner of Role or Permission may delete from Role
-     * 
+     *
      * @param trans
      * @param role
      * @param pd
@@ -1332,10 +1332,10 @@ public class Function {
 
     /**
      * Add a User to Role
-     * 
+     *
      * 1) Role must exist 2) User must be a known Credential (i.e. mechID ok if
      * Credential) or known Organizational User
-     * 
+     *
      * @param trans
      * @param org
      * @param urData
@@ -1352,9 +1352,9 @@ public class Function {
             rv = checkValidID(trans, new Date(), urData.user);
         }
         if (rv.notOK()) {
-            return rv; 
+            return rv;
         }
-        
+
         // Check if record exists
         if (q.userRoleDAO().read(trans, urData).isOKhasData()) {
             return Result.err(Status.ERR_ConflictAlreadyExists,
@@ -1366,8 +1366,8 @@ public class Function {
         }
 
         urData.expires = trans.org().expiration(null, Expiration.UserInRole, urData.user).getTime();
-        
-        
+
+
         Result<UserRoleDAO.Data> udr = q.userRoleDAO().create(trans, urData);
         if (udr.status == OK) {
             return Result.ok();
@@ -1392,9 +1392,9 @@ public class Function {
 
     /**
      * Extend User Role.
-     * 
+     *
      * extend the Expiration data, according to Organization rules.
-     * 
+     *
      * @param trans
      * @param org
      * @param urData
@@ -1406,7 +1406,7 @@ public class Function {
             return Result.err(Status.ERR_UserRoleNotFound,
                     "User Role does not exist");
         }
-        
+
         if (q.roleDAO().read(trans, urData.ns, urData.rname).notOKorIsEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,
                     "Role [%s.%s] does not exist", urData.ns,urData.rname);
@@ -1485,13 +1485,13 @@ public class Function {
                     }
                 }
             }
-            
+
             if (owners.isEmpty()) {
                 return Result.err(Result.ERR_NotFound,"No Owners found for " + nsd.name);
             }
-            
+
             // Create Future Object
-            
+
             Result<FutureDAO.Data> fr = q.futureDAO().create(trans, data, id);
             if (fr.isOK()) {
                 sb.append("Created Future: ");
@@ -1518,7 +1518,7 @@ public class Function {
         } catch (Exception e) {
             return Result.err(e);
         }
-        
+
         return Result.ok(sb.toString());
     }
 
@@ -1528,7 +1528,7 @@ public class Function {
     public interface Lookup<T> {
         T get(AuthzTrans trans, Object ... keys);
     }
-    
+
     public Lookup<UserRoleDAO.Data> urDBLookup = new Lookup<UserRoleDAO.Data>() {
         @Override
         public UserRoleDAO.Data get(AuthzTrans trans, Object ... keys) {
@@ -1542,11 +1542,11 @@ public class Function {
     };
 
     /**
-     * Note: if "allApprovals for Ticket is null, it will be looked up.  
+     * Note: if "allApprovals for Ticket is null, it will be looked up.
      *       if "fdd" is null, it will be looked up, but
-     *       
+     *
      * They can be passed for performance reasons.
-     * 
+     *
      * @param trans
      * @param cd
      * @param allApprovalsForTicket
@@ -1575,7 +1575,7 @@ public class Function {
                 return Result.err(Result.ERR_BadData,"Cannot reconstitute %1",curr.memo);
             }
         }
-        
+
         boolean aDenial = false;
         int cntSuper=0, appSuper=0,cntOwner=0, appOwner=0;
         for (ApprovalDAO.Data add : la.get(trans)) {
@@ -1603,7 +1603,7 @@ public class Function {
                     break;
             }
         }
-        
+
         Result<OP_STATUS> ros=null;
         if (aDenial) {
             ros = OP_STATUS.RD;
@@ -1624,7 +1624,7 @@ public class Function {
                 }
             }
         }
-        
+
         // Decision: If not Denied, and at least owner, if exists, and at least one Super, if exists
         boolean goDecision = (cntOwner>0?appOwner>0:true) && (cntSuper>0?appSuper>0:true);
 
@@ -1720,7 +1720,7 @@ public class Function {
                     if (fop == FUTURE_OP.C) {
                         ros = set(OP_STATUS.RE, q.credDAO().dao().create(trans, data));
                     }
-                }                
+                }
             } catch (Exception e) {
                 trans.error().log("Exception: ", e.getMessage(),
                     " \n occurred while performing", curr.memo,
@@ -1732,7 +1732,7 @@ public class Function {
             //return Result.err(Status.ACC_Future, "Full Approvals not obtained: No action taken");
             ros = OP_STATUS.RP;
         }
-            
+
         return ros;
     }
 
@@ -1745,7 +1745,7 @@ public class Function {
         }
     }
 
-    private Result<ApprovalDAO.Data>  addIdentity(AuthzTrans trans, StringBuilder sb, 
+    private Result<ApprovalDAO.Data>  addIdentity(AuthzTrans trans, StringBuilder sb,
                         Boolean[] first, String user, String memo, FUTURE_OP op, Identity u, UUID ticket, String type) throws OrganizationException {
         ApprovalDAO.Data ad = new ApprovalDAO.Data();
         // Note ad.id is set by ApprovalDAO Create

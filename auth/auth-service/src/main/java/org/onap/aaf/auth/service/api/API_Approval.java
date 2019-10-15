@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ import org.onap.aaf.auth.service.mapper.Mapper.API;
 public class API_Approval {
     // Hide Public Constructor
     private API_Approval() {}
-    
+
     public static void init(AAF_Service authzAPI, AuthzFacade facade) throws Exception {
 
         /**
@@ -50,11 +50,11 @@ public class API_Approval {
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.getApprovalsByUser(trans, resp, pathParam(req,"user"));
                 if (r.isOK()) {
-                    resp.setStatus(HttpStatus.OK_200); 
+                    resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
 
         /**
@@ -68,8 +68,8 @@ public class API_Approval {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
 
         /**
@@ -83,8 +83,8 @@ public class API_Approval {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
 
 
@@ -99,8 +99,8 @@ public class API_Approval {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
     }
 }

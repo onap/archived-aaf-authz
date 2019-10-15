@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,11 +57,11 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
     public HX509SS(SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
         this(null,si,false);
     }
-    
+
     public HX509SS(SecurityInfoC<HttpURLConnection> si, boolean asDefault) throws APIException, CadiException {
         this(null,si,asDefault);
     }
-    
+
     public HX509SS(final String sendAlias, SecurityInfoC<HttpURLConnection> si) throws APIException, CadiException {
         this(sendAlias, si, false);
     }
@@ -75,7 +75,7 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
                 alias = si.defaultAlias;
             }
         }
-        
+
         priv=null;
         X509KeyManager[] xkms = si.getKeyManagers();
         if (xkms==null || xkms.length==0) {
@@ -88,9 +88,9 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
             for (int i=0;cert==null&&i<xkms.length;++i) {
                 X509Certificate[] chain = xkms[i].getCertificateChain(alias);
                 if (chain!=null&&chain.length>0) {
-                    algo = chain[0].getSigAlgName(); 
+                    algo = chain[0].getSigAlgName();
                     pub = chain[0].getEncoded();
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream(pub.length*2); 
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream(pub.length*2);
                     ByteArrayInputStream bais = new ByteArrayInputStream(pub);
                     Symm.base64noSplit.encode(bais,baos,X509);
                     cert = baos.toString();
@@ -111,32 +111,32 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
         }
         if (alias==null) { // must be a one-way
             huc.setRequestProperty(AbsAuthentication.AUTHORIZATION, cert);
-            
+
             // Test Signed content
             try {
                 String data = "SignedContent["+ inc() + ']' + Chrono.dateTime();
                 huc.setRequestProperty("Data", data);
-                
+
                 Signature sig = Signature.getInstance(algo);
                 sig.initSign(priv);
                 sig.update(data.getBytes());
                 byte[] signature = sig.sign();
-                
+
                 ByteArrayOutputStream baos = new ByteArrayOutputStream((int)(signature.length*1.3));
                 ByteArrayInputStream bais = new ByteArrayInputStream(signature);
                 Symm.base64noSplit.encode(bais, baos);
                 huc.setRequestProperty("Signature", new String(baos.toByteArray()));
-                
+
             } catch (Exception e) {
                 throw new CadiException(e);
             }
         }
     }
-    
+
     private synchronized int inc() {
         return ++count;
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.cadi.SecuritySetter#getID()
      */
@@ -144,7 +144,7 @@ public class HX509SS implements SecuritySetter<HttpURLConnection> {
     public String getID() {
         return alias;
     }
-    
+
     @Override
     public int setLastResponse(int respCode) {
         return 0;

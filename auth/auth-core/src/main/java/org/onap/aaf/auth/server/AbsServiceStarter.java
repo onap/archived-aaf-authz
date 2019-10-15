@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,15 +68,15 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         }
         _propertyAdjustment();
     }
-    
-    
+
+
     protected abstract void _start(RServlet<TRANS> rserv) throws Exception;
     protected abstract void _propertyAdjustment();
-    
+
     public ENV env() {
         return service.env;
     }
-    
+
     public Access access() {
         return service.access;
     }
@@ -86,8 +86,8 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         ExecutorService es = Executors.newSingleThreadExecutor();
         Future<?> app = es.submit(this);
         final AbsServiceStarter<?,?> absSS = this;
-        // Docker/K8 may separately create startup Status in this dir for startup 
-        // sequencing.  If so, delete ON EXIT 
+        // Docker/K8 may separately create startup Status in this dir for startup
+        // sequencing.  If so, delete ON EXIT
         Runtime.getRuntime().addShutdownHook(new Thread() {
           @Override
           public void run() {
@@ -109,7 +109,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
             }
         }
     }
-    
+
     @SafeVarargs
     public final synchronized void register(final Registrant<ENV> ... registrants) {
         if (do_register) {
@@ -137,7 +137,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         if (registrar!=null) {
             registrar.close(env());
             registrar=null;
-        } 
+        }
         if (service!=null) {
             File status = new File("/opt/app/aaf/status/");
             boolean deleted = false;
@@ -147,7 +147,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
                 if(lastdot<0) {
                     fname = service.app_name + '-' + hostname;
                 } else {
-                    fname = service.app_name.substring(lastdot).replace('.', '-') 
+                    fname = service.app_name.substring(lastdot).replace('.', '-')
                             + '-' + hostname;
                 }
                 status = new File(status, fname);

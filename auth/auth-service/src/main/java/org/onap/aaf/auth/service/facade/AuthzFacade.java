@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,12 +35,12 @@ import org.onap.aaf.auth.rserv.RServlet;
  * AuthzFacade
  *   This layer is responsible for covering the Incoming Messages, be they XML, JSON or just entries on the URL,
  *   and converting them to data that can be called on the Service Layer.
- *   
+ *
  *   Upon response, this layer, because it knew the incoming Data Formats (i.e. XML/JSON), the HTTP call types
  *   are set on "ContentType" on Response.
- *   
+ *
  *   Finally, we wrap the call in Time Stamps with explanation of what is happing for Audit trails.
- *   
+ *
  * @author Jonathan
  *
  */
@@ -52,13 +52,13 @@ public interface AuthzFacade {
      * Namespaces
      */
     public abstract Result<Void> requestNS(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, NsType type);
-    
+
     public abstract Result<Void> getNSsByName(AuthzTrans trans, HttpServletResponse resp, String ns, boolean full);
-    
+
     public abstract Result<Void> getNSsByAdmin(AuthzTrans trans, HttpServletResponse resp, String user, boolean full);
-    
+
     public abstract Result<Void> getNSsByResponsible(AuthzTrans trans, HttpServletResponse resp, String user, boolean full);
-    
+
     public abstract Result<Void> getNSsByEither(AuthzTrans trans, HttpServletResponse resp, String user, boolean full);
 
     public abstract Result<Void> getNSsChildren(AuthzTrans trans, HttpServletResponse resp, String pathParam);
@@ -70,7 +70,7 @@ public interface AuthzFacade {
     public abstract Result<Void> addResponsibilityForNS(AuthzTrans trans, HttpServletResponse resp, String ns, String id);
 
     public abstract Result<Void> delResponsibilityForNS(AuthzTrans trans, HttpServletResponse resp, String ns, String id);
-    
+
     public abstract Result<Void> updateNsDescription(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
     public abstract Result<Void> deleteNS(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, String ns);
@@ -87,40 +87,40 @@ public interface AuthzFacade {
     /*
      * Permissions
      */
-    public abstract Result<Void> createPerm(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);    
-    
-    public abstract Result<Void> getPermsByName(AuthzTrans trans, HttpServletResponse resp, 
+    public abstract Result<Void> createPerm(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
+
+    public abstract Result<Void> getPermsByName(AuthzTrans trans, HttpServletResponse resp,
             String type, String instance, String action);
 
     public abstract Result<Void> getPermsByUser(AuthzTrans trans, HttpServletResponse response, String user);
 
     public abstract Result<Void> getPermsByUserScope(AuthzTrans trans, HttpServletResponse resp, String user, String[] scopes);
-    
+
     public abstract Result<Void> getPermsByUserWithAAFQuery(AuthzTrans trans, HttpServletRequest request, HttpServletResponse response, String user);
-    
+
     public abstract Result<Void> getPermsByType(AuthzTrans trans, HttpServletResponse resp, String type);
 
     public abstract Result<Void> getPermsForRole(AuthzTrans trans, HttpServletResponse response, String roleName);
 
     public abstract Result<Void> getPermsByNS(AuthzTrans trans, HttpServletResponse response, String ns);
-    
+
     public abstract Result<Void> renamePerm(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp,
             String type, String instance, String action);
-    
+
     public abstract Result<Void> updatePermDescription(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> resetPermRoles(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
     public abstract Result<Void> deletePerm(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
-    public abstract Result<Void> deletePerm(AuthzTrans trans,    HttpServletResponse resp, 
+    public abstract Result<Void> deletePerm(AuthzTrans trans,    HttpServletResponse resp,
             String perm, String type, String action);
 
     /*
      * Roles
      */
     public abstract Result<Void> createRole(AuthzTrans trans, HttpServletRequest req, HttpServletResponse response);
-    
+
     public abstract Result<Void> getRolesByName(AuthzTrans trans,HttpServletResponse resp, String name);
 
     public abstract Result<Void> getRolesByNS(AuthzTrans trans, HttpServletResponse resp, String ns);
@@ -132,12 +132,12 @@ public interface AuthzFacade {
     public abstract Result<Void> getRolesByPerm(AuthzTrans trans, HttpServletResponse resp, String type, String instance, String action);
 
     public abstract Result<Void> updateRoleDescription(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> addPermToRole(AuthzTrans trans,HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> delPermFromRole(AuthzTrans trans,HttpServletRequest req, HttpServletResponse resp);
 
-    public abstract Result<Void> delPermFromRole(AuthzTrans trans, HttpServletResponse resp, 
+    public abstract Result<Void> delPermFromRole(AuthzTrans trans, HttpServletResponse resp,
             String role, String type, String instance, String action);
 
     public abstract Result<Void> deleteRole(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
@@ -147,10 +147,10 @@ public interface AuthzFacade {
     /*
      * Users
      */
-    
+
     public abstract Result<Void> getUsersByRole(AuthzTrans trans, HttpServletResponse resp, String role);
-    
-    public abstract Result<Void> getUsersByPermission(AuthzTrans trans, HttpServletResponse resp, 
+
+    public abstract Result<Void> getUsersByPermission(AuthzTrans trans, HttpServletResponse resp,
             String type, String instance, String action);
 
 
@@ -159,13 +159,13 @@ public interface AuthzFacade {
      * Delegates
      */
     public abstract Result<Void> createDelegate(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> updateDelegate(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> deleteDelegate(AuthzTrans trans,  HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> deleteDelegate(AuthzTrans trans,  String user);
-    
+
     public abstract Result<Void> getDelegatesByUser(AuthzTrans trans, String userName, HttpServletResponse resp);
 
     public abstract Result<Void> getDelegatesByDelegate(AuthzTrans trans, String userName, HttpServletResponse resp);
@@ -202,11 +202,11 @@ public interface AuthzFacade {
      * UserRole
      */
     public abstract Result<Void> requestUserRole(AuthzTrans trans,HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> getUserInRole(AuthzTrans trans, HttpServletResponse resp, String user, String role);
-    
+
     public abstract Result<Void> getUserRolesByRole(AuthzTrans trans, HttpServletResponse resp, String role);
-    
+
     public abstract Result<Void> getUserRolesByUser(AuthzTrans trans, HttpServletResponse resp, String user);
 
     public abstract Result<Void> deleteUserRole(AuthzTrans trans, HttpServletResponse resp, String user, String role);
@@ -214,19 +214,19 @@ public interface AuthzFacade {
     /*
      * resetUsersForRoles and resetRolesForUsers is too dangerous and not helpful.
      */
-    
+
     public abstract Result<Void> extendUserRoleExpiration(AuthzTrans trans, HttpServletResponse resp, String user,
     String role);
 
     /*
-     * Approval 
+     * Approval
      */
     public abstract Result<Void> updateApproval(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
-    
+
     public abstract Result<Void> getApprovalsByUser(AuthzTrans trans, HttpServletResponse resp, String user);
-    
+
     public abstract Result<Void> getApprovalsByTicket(AuthzTrans trans, HttpServletResponse resp, String ticket);
-    
+
     public abstract Result<Void> getApprovalsByApprover(AuthzTrans trans, HttpServletResponse resp, String approver);
 
 
@@ -234,7 +234,7 @@ public interface AuthzFacade {
      * History
      */
     public abstract Result<Void> getHistoryByUser(AuthzTrans trans,    HttpServletResponse resp, String user, int[] yyyymm, final int sort);
-    
+
     public abstract Result<Void> getHistoryByRole(AuthzTrans trans,    HttpServletResponse resp, String role, int[] yyyymm, final int sort);
 
     public abstract Result<Void> getHistoryByPerm(AuthzTrans trans,    HttpServletResponse resp, String perm, int[] yyyymm, final int sort);
@@ -244,12 +244,12 @@ public interface AuthzFacade {
     public abstract Result<Void> getHistoryBySubject(AuthzTrans trans, HttpServletResponse resp, String type, String subject, int[] yyyymm, int sort);
 
     /*
-     * Cache 
+     * Cache
      */
     public abstract Result<Void> cacheClear(AuthzTrans trans, String pathParam);
 
     public abstract Result<Void> cacheClear(AuthzTrans trans, String string,String segments);
-    
+
     public abstract void dbReset(AuthzTrans trans);
 
 

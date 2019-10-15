@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,10 +49,10 @@ import aaf.v2_0.Users.User;
 public class ListForPermission extends Cmd {
     private static final String HEADER = "List Users for Permission";
     public ListForPermission(List parent) {
-        super(parent,"perm", 
+        super(parent,"perm",
                 new Param("type",true),
                 new Param("instance",true),
-                new Param("action",true)); 
+                new Param("action",true));
     }
 
     @Override
@@ -68,10 +68,10 @@ public class ListForPermission extends Cmd {
                 if ("\\*".equals(action))action="*";
                 try {
                     Future<Users> fp = client.read(
-                            "/authz/users/perm/" + 
+                            "/authz/users/perm/" +
                                 type + '/' +
-                                URLEncoder.encode(instance,Config.UTF_8) + '/' + 
-                                action, 
+                                URLEncoder.encode(instance,Config.UTF_8) + '/' +
+                                action,
                             getDF(Users.class)
                             );
                     if (fp.get(AAFcli.timeout())) {
@@ -89,7 +89,7 @@ public class ListForPermission extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int _indent, StringBuilder sb) {
             int indent = _indent;

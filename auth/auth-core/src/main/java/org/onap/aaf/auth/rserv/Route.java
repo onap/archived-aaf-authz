@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,12 +36,12 @@ public class Route<TRANS extends Trans> {
     public final String auditText;
     public final HttpMethods meth;
     public final String path;
-    
+
     private Match match;
     // package on purpose
     private final TypedCode<TRANS> content;
     private final boolean isContentType;
-    
+
     public Route(HttpMethods meth, String path) {
         this.path = path;
         auditText = meth.name() + ' ' + path;
@@ -50,12 +50,12 @@ public class Route<TRANS extends Trans> {
         match = new Match(path);
         content = new TypedCode<TRANS>();
     }
-    
+
     public void add(HttpCode<TRANS,?> code, String ... others) {
         code.match = match;
         content.add(code, others);
     }
-    
+
     public HttpCode<TRANS,?> getCode(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         // Type is associated with Accept for GET (since it is what is being returned
         // We associate the rest with ContentType.
@@ -82,11 +82,11 @@ public class Route<TRANS extends Trans> {
         }
         return null;
     }
-    
+
     public Route<TRANS> matches(String method, String path) {
         return meth.name().equalsIgnoreCase(method) && match.match(path)?this:null;
     }
-    
+
     public TimeTaken start(Trans trans, String auditText, HttpCode<TRANS,?> code, String type) {
         StringBuilder sb = new StringBuilder(auditText);
         sb.append(", ");
@@ -100,9 +100,9 @@ public class Route<TRANS extends Trans> {
     boolean resolvesTo(HttpMethods hm, String p) {
         return(path.equals(p) && hm.equals(meth));
     }
-    
+
     public String toString() {
-        return auditText + ' ' + content; 
+        return auditText + ' ' + content;
     }
 
     public String report(HttpCode<TRANS, ?> code) {

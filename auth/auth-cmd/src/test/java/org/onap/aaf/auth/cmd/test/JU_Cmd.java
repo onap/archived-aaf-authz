@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public class JU_Cmd {
     CmdStub cmd1;
     CmdStub cmd2;
     AAFcli cli;
-    
+
     private class CmdStub extends Cmd {
 
 
@@ -75,7 +75,7 @@ public class JU_Cmd {
             super(aafcli, name, params);
             // TODO Auto-generated constructor stub
         }
-        
+
         public CmdStub(Cmd parent, String name, Param[] params) {
             super(parent, name, params);
             // TODO Auto-generated constructor stub
@@ -86,40 +86,40 @@ public class JU_Cmd {
             // TODO Auto-generated method stub
             return 0;
         }
-        
+
         @Override
         public void error(Future<?> future) {
             super.error(future);
         }
 
     }
-    
+
     @Before
     public void setUp() throws APIException, LocatorException, GeneralSecurityException, IOException, CadiException {
         cli = JU_AAFCli.getAAfCli();
         Param[] param = new Param[] {new Param("name",true)};
-        
+
         cmd = new CmdStub(cli,"test", param);
         cmd1 = new CmdStub(cmd,"test", param);
         cmd2 = new CmdStub(cmd,"test", param);
     }
-    
+
     @Test
     public void testReportColHead() {
         String[] args = new String[] {new String("test")};
         cmd.reportColHead("format", args);
     }
-    
+
     @Test
     public void testBuilder() {
         StringBuilder detail = new StringBuilder();
         StringBuilder sb = new StringBuilder("test 123");
-        
+
         cmd.build(sb, detail);
         detail.append("test");
         cmd.build(sb, detail);
     }
-    
+
     @Test
     public void testApi() throws APIException, CadiException {
         StringBuilder sb = new StringBuilder("test 123");
@@ -131,19 +131,19 @@ public class JU_Cmd {
         Clear clr = new Clear(cache);
         clr.detailedHelp(0, sb);
     }
-    
+
     @Test
     public void testToString() {
         cmd.toString();
     }
-    
+
     @Test
     public void testFullID() {
         cmd.fullID("test");
         cmd.fullID("t@st");
         cmd.fullID(null);
     }
-    
+
     @Test
     public void testError() {
         Future<?> future = mock(Future.class);
@@ -161,32 +161,32 @@ public class JU_Cmd {
         when(future.body()).thenReturn("<html>NotNull");
         cmd.error(future);
     }
-    
+
     @Test
     public void testActivity() {
         History hist = new History();
         cmd.activity(hist, "test");
         cmd.activity(hist, "te[st");
     }
-    
+
     @Test
     public void testWhichOption() throws CadiException {
         String[] strArr = {"a", "b", "c"};
         cmd.whichOption(strArr, "b");
     }
-    
+
     @Test
     public void testOneOf() throws APIException, CadiException, LocatorException {
         Retryable retryable = mock(Retryable.class);
         //cmd.oneOf(retryable, "host");            //TODO: AAF-111 need input for hMan
     }
-    
+
     @Test
     public void testExec() throws CadiException, APIException, LocatorException {
         String[] strArr = {"a", "b", "c"};
         cmd.exec(1, strArr);
     }
-    
-    
+
+
 
 }

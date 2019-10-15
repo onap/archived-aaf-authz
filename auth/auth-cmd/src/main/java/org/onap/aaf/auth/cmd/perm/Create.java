@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,14 +36,14 @@ import aaf.v2_0.PermRequest;
 import aaf.v2_0.RoleRequest;
 
 /**
- * 
+ *
  * @author Jonathan
  *
  */
 public class Create extends Cmd {
     public Create(Perm parent) {
-        super(parent,"create", 
-                new Param("type",true), 
+        super(parent,"create",
+                new Param("type",true),
                 new Param("instance",true),
                 new Param("action", true),
                 new Param("role[,role]* (to Grant to)", false)
@@ -56,7 +56,7 @@ public class Create extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 int idx = index;
-                final PermRequest pr = new PermRequest();  
+                final PermRequest pr = new PermRequest();
                 pr.setType(args[idx++]);
                 pr.setInstance(args[idx++]);
                 pr.setAction(args[idx++]);
@@ -64,7 +64,7 @@ public class Create extends Cmd {
                 String[] roles = roleCommas==null?null:roleCommas.split("\\s*,\\s*");
                 boolean force = aafcli.forceString()!=null;
                 int rv;
-                
+
                 if (roles!=null && force) { // Make sure Roles are Created
                     RoleRequest rr = new RoleRequest();
                     for (String role : roles) {
@@ -81,7 +81,7 @@ public class Create extends Cmd {
                                 break;
                             case 409:
                                 break;
-                            default: 
+                            default:
                                 pw().println("Role [" + role + "] does not exist, and cannot be created.");
                                 return 206 /*HttpStatus.PARTIAL_CONTENT_206*/;
                         }
@@ -113,14 +113,14 @@ public class Create extends Cmd {
                                 switch(fr.code()){
                                     case 201:
                                     case 409:break;
-                                    default: 
-                                        
+                                    default:
+
                                 }
                             }
                         }
-                        
+
                         try {
-                            if (201!=(rv=((Perm)parent)._exec(0, 
+                            if (201!=(rv=((Perm)parent)._exec(0,
                                     new String[] {"grant",pr.getType(),pr.getInstance(),pr.getAction(),roleCommas}))) {
                                 rv = 206 /*HttpStatus.PARTIAL_CONTENT_206*/;
                             }
@@ -144,7 +144,7 @@ public class Create extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int _indent, StringBuilder sb) {
             int indent = _indent;

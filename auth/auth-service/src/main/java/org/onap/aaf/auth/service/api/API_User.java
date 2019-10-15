@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ import org.onap.aaf.cadi.config.Config;
 public class API_User {
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param authzAPI
      * @param facade
      * @throws Exception
@@ -58,8 +58,8 @@ public class API_User {
         authzAPI.route(GET,"/authz/users/perm/:type/:instance/:action",API.USERS,new Code(facade,"Get Users By Permission", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-//                trans.checkpoint(pathParam(req,"type") + " " 
-//                        + pathParam(req,"instance") + " " 
+//                trans.checkpoint(pathParam(req,"type") + " "
+//                        + pathParam(req,"instance") + " "
 //                        + pathParam(req,"action"));
 //
                 Result<Void> r = context.getUsersByPermission(trans, resp,
@@ -68,7 +68,7 @@ public class API_User {
                         pathParam(req, ":action"));
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -86,14 +86,14 @@ public class API_User {
                 Result<Void> r = context.getUsersByRole(trans, resp, pathParam(req, ":role"));
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
         });
-        
+
         /**
          * Get User Role if exists
          * @deprecated
@@ -104,7 +104,7 @@ public class API_User {
                 Result<Void> r = context.getUserInRole(trans, resp, pathParam(req,":user"),pathParam(req,":role"));
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -121,16 +121,16 @@ public class API_User {
                 Result<Void> r = context.getUserInRole(trans, resp, pathParam(req,":user"),pathParam(req,":role"));
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
         });
-        
+
 
 
     }
-        
+
 }

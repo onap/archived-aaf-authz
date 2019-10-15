@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ public class OutJson extends Out {
         while ((p = prs.parse(in,p.reuse())).valid()) {
             ++count;
             switch(p.event) {
-                case 1: 
+                case 1:
                     continue;
                 case 2:
                     if (count==2) { // it's empty, write open/close on it's own
@@ -64,7 +64,7 @@ public class OutJson extends Out {
                     if (jsonLevel.peek().printObjectName) {
                         print = true;
                     } else { // don't print names on first
-                        print=false; 
+                        print=false;
                     }
                     maybe=jsonLevel.peek().listItem();
                     jsonLevel.push(new LevelStack(true));
@@ -72,9 +72,9 @@ public class OutJson extends Out {
                 case '}':
                     if (p.hasData()) { // if we have data, we print that, so may need to prepend a comma.
                         maybe = jsonLevel.peek().listItem();
-                    } else { // No data means just print, 
+                    } else { // No data means just print,
                         p.name = ""; // XML tags come through with names, but no data
-                    } 
+                    }
                     print = true;
                     jsonLevel.pop();
                     afterName = p.event;
@@ -94,7 +94,7 @@ public class OutJson extends Out {
                         else maybe = jsonLevel.peek().listItem();
                     } else {
                         p.name = ""; // XML tags come through with names, but no data
-                    } 
+                    }
                     jsonLevel.pop();
 
                     print = true;
@@ -114,7 +114,7 @@ public class OutJson extends Out {
             }
 
             if (maybe!=0) {
-                if (ipw==null)writer.append(maybe); 
+                if (ipw==null)writer.append(maybe);
                 else ipw.println(maybe);
                 maybe = 0;
             }
@@ -132,7 +132,7 @@ public class OutJson extends Out {
                     if (p.event==3)writer.append("__");
                     writer.append(p.name);
                     writer.append("\":");
-                } 
+                }
                 if (p.hasData()) {
                     if (p.isString) {
                         writer.append('"');
@@ -171,7 +171,7 @@ public class OutJson extends Out {
                 }
                 afterName = 0;
             }
-            
+
             if (ipw!=null) {
                 switch(p.event) {
                     case '[':
@@ -206,7 +206,7 @@ public class OutJson extends Out {
             }
         }
 
-        
+
     }
 
     @Override
@@ -217,11 +217,11 @@ public class OutJson extends Out {
     private static class LevelStack {
         public boolean printObjectName=false;
         private boolean first_n_List=true;
-        
+
         public LevelStack(boolean printObjectName) {
             this.printObjectName = printObjectName;
         }
-        
+
         public char listItem() {
             if (first_n_List) {
                 first_n_List=false;

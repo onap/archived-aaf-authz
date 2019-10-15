@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,7 +66,7 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
             name = name + '@' + defaultDomain;
         }
     }
-    
+
     public BasicPrincipal(BasicCred bc, String domain) {
         name = bc.getUser();
         cred = bc.getCred();
@@ -76,7 +76,7 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
     private class BasicOS extends OutputStream {
         private boolean first = true;
         private ByteArrayOutputStream baos;
-        
+
         public BasicOS(int size) {
             baos = new ByteArrayOutputStream(size);
         }
@@ -86,33 +86,33 @@ public class BasicPrincipal extends BearerPrincipal implements GetCred {
             if (b==':' && first) {
                 first = false;
                 name = new String(baos.toByteArray());
-                baos.reset(); // 
+                baos.reset(); //
             } else {
                 baos.write(b);
             }
         }
-        
+
         private byte[] toCred() {
             return baos.toByteArray();
         }
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public String getShortName() {
         return shortName;
     }
-    
+
     public String getDomain() {
         return domain;
     }
-    
+
     public byte[] getCred() {
         return cred;
     }
-    
+
     public long created() {
         return created;
     }

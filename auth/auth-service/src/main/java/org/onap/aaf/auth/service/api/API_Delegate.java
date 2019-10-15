@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,14 +50,14 @@ public class API_Delegate {
                 Result<Void> r = context.createDelegate(trans, req, resp);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.CREATED_201); 
+                        resp.setStatus(HttpStatus.CREATED_201);
                         break;
                     default:
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
-        
+
         /**
          * Update a delegate
          */
@@ -68,14 +68,14 @@ public class API_Delegate {
                 Result<Void> r = context.updateDelegate(trans, req, resp);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
-        
+
         /**
          * DELETE delegates for a user
          */
@@ -86,14 +86,14 @@ public class API_Delegate {
                 Result<Void> r = context.deleteDelegate(trans, req, resp);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
-        
+
         /**
          * DELETE a delegate
          */
@@ -104,14 +104,14 @@ public class API_Delegate {
                 Result<Void> r = context.deleteDelegate(trans, pathParam(req, "user_name"));
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
-        
+
         /**
          * Read who is delegating for User
          */
@@ -122,12 +122,12 @@ public class API_Delegate {
                 Result<Void> r = context.getDelegatesByUser(trans, pathParam(req, "user"), resp);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
 
         /**
@@ -140,12 +140,12 @@ public class API_Delegate {
                 Result<Void> r = context.getDelegatesByDelegate(trans, pathParam(req, "delegate"), resp);
                 switch(r.status) {
                     case OK:
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
-                }                
-            }            
+                }
+            }
         });
 
     }

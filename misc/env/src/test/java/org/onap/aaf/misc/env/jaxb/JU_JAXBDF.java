@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,16 +50,16 @@ public class JU_JAXBDF {
 
     @Mock
     EnvJAXB primaryEnv;
-    
+
     @Mock
     JAXBumar jumar;
-    
+
     @Mock
     JAXBmar jmar;
-    
+
     @Mock
     Env env;
-    
+
     TimeTaken tt,ttObjectify;
 
     @Before
@@ -89,9 +89,9 @@ public class JU_JAXBDF {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
-    
+
     @Test
     public void testNewInstanceNoException() {
         JAXBDF<?> bdfObj = null;
@@ -101,10 +101,10 @@ public class JU_JAXBDF {
             assertTrue(retVal instanceof JU_JAXBDF);
         } catch (APIException e) {
             e.printStackTrace();
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testPrettyNoException() {
         JAXBDF<?> bdfObj = null;
@@ -114,7 +114,7 @@ public class JU_JAXBDF {
             assertTrue(retVal instanceof JAXBDF);
         } catch (APIException e) {
             e.printStackTrace();
-        } 
+        }
     }
 
     @Test
@@ -131,10 +131,10 @@ public class JU_JAXBDF {
             bdfObj.serviceDestroy(null);
         } catch (APIException e) {
             e.printStackTrace();
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testNewData() {
         JAXBDF<?> bdfObj = null;
@@ -144,9 +144,9 @@ public class JU_JAXBDF {
             assertTrue(retVal instanceof JAXBData);
         } catch (APIException e) {
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testNewDataENV() {
         JAXBDF<?> bdfObj = null;
@@ -156,9 +156,9 @@ public class JU_JAXBDF {
             assertTrue(retVal instanceof JAXBData);
         } catch (APIException e) {
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testNewDataType() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -171,9 +171,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testNewDataStream() {
         JAXBDF<?> bdfObj = null;
@@ -191,9 +191,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testNewDataStreamException() {
         JAXBDF<?> bdfObj = null;
@@ -210,9 +210,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             assertTrue(e.getMessage().contains("test"));
-        } 
+        }
     }
-    
+
     @Test
     public void testNewDataFromString() {
         JAXBDF<?> bdfObj = null;
@@ -222,9 +222,9 @@ public class JU_JAXBDF {
             assertTrue(retVal instanceof JAXBData);
         } catch (APIException e) {
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringify() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -243,9 +243,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyException() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -263,9 +263,9 @@ public class JU_JAXBDF {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyWriter() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -283,9 +283,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyWriterException() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -303,9 +303,9 @@ public class JU_JAXBDF {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyOS() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -323,9 +323,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyOsException() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -343,9 +343,9 @@ public class JU_JAXBDF {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyOptions() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -363,9 +363,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyOSOptions() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -383,9 +383,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifyOsOptionsException() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -403,7 +403,7 @@ public class JU_JAXBDF {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
+        }
     }
     @Test
     public void testStringifySWOptions() {
@@ -422,9 +422,9 @@ public class JU_JAXBDF {
         } catch (JAXBException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testStringifySWOptionsException() {
         JAXBDF<JAXBmar> bdfObj = null;
@@ -442,9 +442,9 @@ public class JU_JAXBDF {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
+        }
     }
- 
+
     @Test
     public void testObjectifyEnv() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -456,14 +456,14 @@ public class JU_JAXBDF {
             LogTarget logT = Mockito.mock(LogTarget.class);
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jumar).unmarshal(logT, Mockito.mock(StringReader.class));
-            
+
             bdfObj.objectify(env, Mockito.mock(StringReader.class));
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
     @Test
     public void testObjectifyEnvException() {
@@ -477,16 +477,16 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(env).debug();
             StringReader sr = Mockito.mock(StringReader.class);
             Mockito.doThrow(new JAXBException("test")).when(bdfObj.jumar).unmarshal(logT, sr);
-            
+
             bdfObj.objectify(env, sr);
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testObjectifyRdr() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -498,14 +498,14 @@ public class JU_JAXBDF {
             LogTarget logT = Mockito.mock(LogTarget.class);
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jumar).unmarshal(logT, Mockito.mock(StringReader.class));
-            
+
             bdfObj.objectify( Mockito.mock(StringReader.class));
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
     @Test
     public void testObjectifyRdrException() {
@@ -519,16 +519,16 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(envJaxb).debug();
             StringReader sr = Mockito.mock(StringReader.class);
             Mockito.doThrow(new JAXBException("test")).when(bdfObj.jumar).unmarshal(logT, sr);
-            
+
             bdfObj.objectify(sr);
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testObjectifyEnvIS() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -540,14 +540,14 @@ public class JU_JAXBDF {
             LogTarget logT = Mockito.mock(LogTarget.class);
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jumar).unmarshal(logT, Mockito.mock(InputStream.class));
-            
+
             bdfObj.objectify(env, Mockito.mock(InputStream.class));
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
     @Test
     public void testObjectifyEnvISException() {
@@ -561,16 +561,16 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(env).debug();
             InputStream sr = Mockito.mock(InputStream.class);
             Mockito.doThrow(new JAXBException("test")).when(bdfObj.jumar).unmarshal(logT, sr);
-            
+
             bdfObj.objectify(env, sr);
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testObjectifyIs() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -582,14 +582,14 @@ public class JU_JAXBDF {
             LogTarget logT = Mockito.mock(LogTarget.class);
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jumar).unmarshal(logT, Mockito.mock(InputStream.class));
-            
+
             bdfObj.objectify( Mockito.mock(InputStream.class));
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
     @Test
     public void testObjectifyIsException() {
@@ -603,16 +603,16 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(envJaxb).debug();
             InputStream sr = Mockito.mock(InputStream.class);
             Mockito.doThrow(new JAXBException("test")).when(bdfObj.jumar).unmarshal(logT, sr);
-            
+
             bdfObj.objectify(sr);
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testObjectifyEnvStr() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -624,14 +624,14 @@ public class JU_JAXBDF {
             LogTarget logT = Mockito.mock(LogTarget.class);
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jumar).unmarshal(logT, "test");
-            
+
             bdfObj.objectify(env, "test");
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
     @Test
     public void testObjectifyEnvStrException() {
@@ -645,16 +645,16 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(env).debug();
             InputStream sr = Mockito.mock(InputStream.class);
             Mockito.doThrow(new JAXBException("test")).when(bdfObj.jumar).unmarshal(logT, "test");
-            
+
             bdfObj.objectify(env, "test");
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testObjectifyStr() {
         JAXBDF<JAXBumar> bdfObj = null;
@@ -666,14 +666,14 @@ public class JU_JAXBDF {
             LogTarget logT = Mockito.mock(LogTarget.class);
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jumar).unmarshal(logT, "test");
-            
+
             bdfObj.objectify( "test");
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
     @Test
     public void testObjectifyStrException() {
@@ -687,28 +687,28 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(envJaxb).debug();
             InputStream sr = Mockito.mock(InputStream.class);
             Mockito.doThrow(new JAXBException("test")).when(bdfObj.jumar).unmarshal(logT, "test");
-            
+
             bdfObj.objectify("test");
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
         } catch (JAXBException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
-    
+
     @Test
     public void testTypeClass() {
         JAXBDF<JAXBumar> bdfObj = null;
         try {
             EnvJAXB envJaxb = Mockito.mock(EnvJAXB.class);
             bdfObj = new JAXBDF<JAXBumar>( envJaxb, new Class[] {this.getClass()});
-            
+
             Object obj = bdfObj.getTypeClass();
             assertFalse(obj instanceof JU_JAXBDF);
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("test"));
-        } 
-        
+        }
+
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,14 +54,14 @@ public class TestHClient {
                     for (Item item = loc.first(); item!=null; item=loc.next(item)) {
                         System.out.println(loc.get(item));
                     }
-                    
+
                     hman = new HMangr(access,loc);
                     final String path = String.format("/authz/perms/user/%s",
                             access.getProperty(Config.AAF_APPID,"xx9999@people.osaaf.org"));
                     hman.best(si.defSS, new Retryable<Void>() {
                         @Override
                         public Void code(Rcli<?> cli) throws APIException, CadiException {
-                            Future<String> ft = cli.read(path,"application/json");  
+                            Future<String> ft = cli.read(path,"application/json");
                             if (ft.get(10000)) {
                                 System.out.println("Hurray,\n"+ft.body());
                             } else {
@@ -79,5 +79,5 @@ public class TestHClient {
             e.printStackTrace();
         }
     }
-    
+
 }

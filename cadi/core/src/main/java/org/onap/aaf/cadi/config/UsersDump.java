@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class UsersDump {
 
             // We loop through Users, but want to write Groups first... therefore, save off print
             StringBuilder sb = new StringBuilder();
-            
+
             // Obtain all unique role names
             HashSet<String> groups = new HashSet<>();
             for (AbsUserCache<?>.DumpInfo di : lur.dumpInfo()) {
@@ -80,7 +80,7 @@ public class UsersDump {
                 ps.print(group);
                 ps.println("\"/>");
             }
-    
+
             ps.println(sb);
 
             ps.println("</tomcat-users>");
@@ -91,13 +91,13 @@ public class UsersDump {
         }
         return true;
     }
-    
+
     /**
-     * 
+     *
      * Note: This method returns a String if there's an error, or null if ok.
-     * This unusual style is necessitated by the fact that any Exceptions thrown are likely to 
+     * This unusual style is necessitated by the fact that any Exceptions thrown are likely to
      * be unlogged and hidden from view, making debugging almost impossible.
-     * 
+     *
      * @param writeto
      * @param up
      * @return
@@ -129,7 +129,7 @@ public class UsersDump {
                             int startA=0, startB=0;
                             for (int i=0;startA<orig.length && i<3;++startA) if (orig[startA]=='<')++i;
                             for (int i=0;startB<orig.length && i<3;++startB) if (postulate[startB]=='<')++i;
-                            
+
                             writeIt=orig.length-startA!=postulate.length-startB; // first, check if remaining length is the same
                             while (!writeIt && startA<orig.length && startB<postulate.length) {
                                 if (orig[startA++]!=postulate[startB++])writeIt = true;
@@ -141,7 +141,7 @@ public class UsersDump {
                 } else {
                     writeIt = true;
                 }
-                
+
                 if (writeIt) {
                     try {
                         FileOutputStream fos = new FileOutputStream(file);

@@ -7,9 +7,9 @@
 * * Licensed under the Apache License, Version 2.0 (the "License");
 * * you may not use this file except in compliance with the License.
 * * You may obtain a copy of the License at
-* * 
+* *
 *  *      http://www.apache.org/licenses/LICENSE-2.0
-* * 
+* *
 *  * Unless required by applicable law or agreed to in writing, software
 * * distributed under the License is distributed on an "AS IS" BASIS,
 * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,15 +39,15 @@ import org.onap.aaf.cadi.taf.AbsTafResp;
 import org.onap.aaf.cadi.taf.TafResp.RESP;
 
 public class JU_AbsTafResp {
-    
+
     private static final String JUNIT = "Junit";
     private static final String name = "name";
     private static final String tag = "tag";
     private static final String description = "description";
-    
+
     private Access access;
     private TaggedPrincipal taggedPrinc;
-    
+
     @Before
     public void setup() {
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);

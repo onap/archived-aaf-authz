@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,13 +52,13 @@ public class PersistFile {
 
     private static final String HASH_NO_MATCH = "Hash does not match in Persistence";
     private static final Object LOCK = new Object();
-    
+
     protected static Symm symm;
     public Access access;
     protected final Path tokenPath;
     protected final String tokenDir;
     private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-    
+
     public PersistFile(Access access, String sub_dir) throws CadiException, APIException {
         this.access = access;
         tokenPath = Paths.get(access.getProperty(Config.CADI_TOKEN_DIR,"tokens"), sub_dir);
@@ -112,7 +112,7 @@ public class PersistFile {
                             }
                             df.newData().load(t).to(os);
                         } finally {
-                            // Note: Someone on the Web noticed that using a DataOutputStream would not full close out without a flush first, 
+                            // Note: Someone on the Web noticed that using a DataOutputStream would not full close out without a flush first,
                             // leaving files open.
                             try {
                                 os.flush();
@@ -146,7 +146,7 @@ public class PersistFile {
         }
         return readDisk(df,cred,hp.get(),hl);
     }
-    
+
     public <T> T readDisk(final RosettaDF<T> df, final byte[] cred, final Path target, final Holder<Long> hexpired) throws CadiException {
         // Try from Disk
         T t = null;
@@ -160,7 +160,7 @@ public class PersistFile {
                         exp |= ((long)is.read()<<i);
                     }
                     hexpired.set(exp);
-                
+
                     t = symm.exec(new Symm.SyncExec<T>() {
                         @Override
                         public T exec(Encryption enc) throws Exception {
@@ -194,7 +194,7 @@ public class PersistFile {
                 } finally {
                     is.close();
                 }
-            } catch (NoSuchFileException e) { 
+            } catch (NoSuchFileException e) {
                 return t;
             } catch (Exception e) {
                 throw new CadiException(e);
@@ -202,7 +202,7 @@ public class PersistFile {
         }
         return t;
     }
-    
+
     public long readExpiration(final Path target) throws CadiException {
         long exp=0L;
         if (Files.exists(target)) {
@@ -243,7 +243,7 @@ public class PersistFile {
     public Path getPath(String filename) {
         return Paths.get(tokenDir,filename);
     }
-    
+
     public FileTime getFileTime(String filename, Holder<Path> hp) throws IOException {
         Path p = hp.get();
         if (p==null) {

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,28 +49,28 @@ public class LastNotified {
     private Session session;
     public static final Date NEVER = new Date(0);
     private static final String SELECT = "SELECT user,target,key,last FROM authz.notified";
-    
+
     public LastNotified(Session session) {
         this.session = session;
     }
-    
+
     public void add(Set<String> users) {
         StringBuilder query = new StringBuilder();
         startQuery(query);
         int cnt = 0;
         for(String user : users) {
-            if(++cnt>1) {
+            if(++cnt > 1) {
                 query.append(',');
             }
             query.append('\'');
             query.append(user);
             query.append('\'');
-            if(cnt>=30) {
+            if(cnt >= 30) {
                 endQuery(query);
                 add(session.execute(query.toString()),lastNotifiedVar, (x,y) -> false);
                 query.setLength(0);
                 startQuery(query);
-                cnt=0;
+                cnt = 0;
             }
         }
         if(cnt>0) {
@@ -81,7 +81,7 @@ public class LastNotified {
 
     /**
      * Note: target_key CAN also contain a Pipe.
-     * 
+     *
      * @param user
      * @param target
      * @param targetkey
@@ -91,12 +91,12 @@ public class LastNotified {
         String key = user + '|' + target + '|' + (targetkey==null?"":targetkey);
         return lastNotified(key);
     }
-    
+
     public Date lastNotified(String key) {
         Date d = lastNotifiedVar.get(key);
         return d==null?NEVER:d;
     }
-    
+
     private Date add(ResultSet result, Map<String, Date> lastNotified, MarkDelete md) {
         Date last = null;
         Row r;
@@ -104,7 +104,7 @@ public class LastNotified {
             r = iter.next();
             String ttKey = r.getString(1) + '|' +
                             r.getString(2);
- 
+
             String fullKey = r.getString(0) + '|' +
                              ttKey;
             last=r.getTimestamp(3);
@@ -118,7 +118,7 @@ public class LastNotified {
         }
         return last;
     }
-    
+
     @FunctionalInterface
     private interface MarkDelete {
         boolean process(String fullKey, Date last);
@@ -167,7 +167,7 @@ public class LastNotified {
     }
 
     public static String newKey(UserRole ur) {
-        return "ur|" + ur.user() + '|'+ur.role();
+        return "ur|" + ur.user() + '|' + ur.role();
     }
 
     public static String newKey(Cred cred, Instance inst) {

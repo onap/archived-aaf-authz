@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,7 @@ public class JU_CacheInfoDAO {
     AuthzEnv env;
     @Mock
     LogTarget logTarget;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -90,7 +90,7 @@ public class JU_CacheInfoDAO {
         Mockito.doReturn("100").when(trans).getProperty(Config.CADI_LONGITUDE);
         Mockito.doReturn(session).when(cluster).connect("test");
     }
-    
+
     @Test
     public void testInit() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -103,7 +103,7 @@ public class JU_CacheInfoDAO {
         PSInfo createPS = Mockito.mock(PSInfo.class);
         Result<ResultSet> rs = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs).when(createPS).exec(trans, "CacheInfoDAOImpl CREATE", data);
-        
+
         CacheInfoDAOImpl daoObj=null;
         try {
             daoObj = new CacheInfoDAOImpl(trans, cluster, "test",data, createPS);
@@ -115,7 +115,7 @@ public class JU_CacheInfoDAO {
         Result<Data> retVal = daoObj.create(trans, data);
         assertTrue(retVal.status == 0);
     }
-    
+
     @Test
     public void testTouch() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -128,12 +128,12 @@ public class JU_CacheInfoDAO {
         Mockito.doNothing().when(tt).done();
 
         Mockito.doReturn(logTarget).when(env).debug();
-        
+
         CacheInfoDAO.Data data  = new CacheInfoDAO.Data();
         PSInfo createPS = Mockito.mock(PSInfo.class);
         Result<ResultSet> rs = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs).when(createPS).exec(trans, "CacheInfoDAOImpl CREATE", data);
-        
+
         CacheInfoDAOImpl daoObj=null;
         try {
             daoObj = new CacheInfoDAOImpl(trans, cluster, "test",data, createPS);
@@ -147,8 +147,8 @@ public class JU_CacheInfoDAO {
         Mockito.doThrow(DriverException.class).when(session).executeAsync(Mockito.anyString());
         daoObj.startUpdate(env, Mockito.mock(HMangr.class), Mockito.mock(SecuritySetter.class), "12.0.0.1", 8080);
         retVal = daoObj.touch(trans, "test", 1, 2);
-        
-        
+
+
         try {
             daoObj = new CacheInfoDAOImpl(trans, cluster, "test",data, createPS);
         } catch (APIException | IOException e) {
@@ -175,7 +175,7 @@ public class JU_CacheInfoDAO {
         retVal = daoObj.touch(trans, "test", 1, 2);
         assertTrue(retVal.status == Result.ERR_Backend);
     }
-    
+
     @Test
     public void testCheck() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -189,7 +189,7 @@ public class JU_CacheInfoDAO {
         PSInfo createPS = Mockito.mock(PSInfo.class);
         Result<ResultSet> rs = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs).when(createPS).exec(trans, "CacheInfoDAOImpl CREATE", data);
-        
+
         CacheInfoDAOImpl daoObj=null;
         PreparedStatement ps = Mockito.mock(PreparedStatement.class);
         Mockito.doReturn(ps).when(session).prepare(Mockito.anyString());
@@ -208,7 +208,7 @@ public class JU_CacheInfoDAO {
         Mockito.doReturn(resultSet).when(session).execute(Mockito.any(Statement.class));
         Result<Void> retVal = daoObj.check(trans);
         assertTrue(retVal.status == 0);
-        
+
         Row row  = Mockito.mock(Row.class);
         Mockito.doReturn("test").when(row).getString(Mockito.anyInt());
         rowList.add(row);
@@ -243,9 +243,9 @@ public class JU_CacheInfoDAO {
     }
     @Test
     public void testStopUpdate() {
-        
+
         CacheInfoDAO.stopUpdate();
-        
+
     }
 
 
@@ -264,7 +264,7 @@ public class JU_CacheInfoDAO {
         PSInfo createPS = Mockito.mock(PSInfo.class);
         Result<ResultSet> rs = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs).when(createPS).exec(trans, "CacheInfoDAOImpl CREATE", data);
-        
+
         CacheInfoDAOImpl daoObj=null;
         try {
             daoObj = new CacheInfoDAOImpl(trans, cluster, "test",data, createPS);
@@ -276,7 +276,7 @@ public class JU_CacheInfoDAO {
         }
     }
 */
-    
+
     @Test
     public void testWasMOdified() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -288,11 +288,11 @@ public class JU_CacheInfoDAO {
         Mockito.doNothing().when(tt).done();
         CacheInfoDAO.Data data  = new CacheInfoDAO.Data("test",1);
         PSInfo createPS = Mockito.mock(PSInfo.class);
-        
+
         HistoryDAO historyDAO = Mockito.mock(HistoryDAO.class);
         Result<ResultSet> rs1 = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+
         CacheInfoDAOImpl daoObj=null;
         try {
             daoObj = new CacheInfoDAOImpl(trans, cluster, "test", createPS);
@@ -301,10 +301,10 @@ public class JU_CacheInfoDAO {
             e.printStackTrace();
         }
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test"});
-        
-        
+
+
     }
-    
+
     @Test
     public void testInfoLoader(){
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -338,12 +338,12 @@ public class JU_CacheInfoDAO {
         try {
             Object obj = constructor.newInstance(1);
             Method innnerClassMtd;
-                
+
             CacheInfoDAO.Data data  = new CacheInfoDAO.Data();
             Row row = Mockito.mock(Row.class);
             innnerClassMtd = innerClass.getMethod("load", new Class[] {CacheInfoDAO.Data.class, Row.class});
             innnerClassMtd.invoke(obj, new Object[] {data, row});
-            
+
             innnerClassMtd = innerClass.getDeclaredMethod("key", new Class[] {CacheInfoDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test"}});
 
@@ -367,9 +367,9 @@ public class JU_CacheInfoDAO {
         } catch (SecurityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testCacheUpdate(){
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -407,24 +407,24 @@ public class JU_CacheInfoDAO {
             Constructor<?> innerConstructor = innerInnerClass.getDeclaredConstructors()[0];
             innerConstructor.setAccessible(true);
             Object innerClassObj = innerConstructor.newInstance(obj, trans);
-            
+
             Method innnerClassMtd;
-                
+
             CacheInfoDAO.Data data  = new CacheInfoDAO.Data();
             Row row = Mockito.mock(Row.class);
             Rcli rcli = Mockito.mock(Rcli.class);
             URI uri = new URI("ftp","admin:admin@geeksforgeeks.org:1234","/path/data","tt","ttd");
             Mockito.doReturn(uri).when(rcli).getURI();
             Mockito.doReturn(Mockito.mock(org.onap.aaf.cadi.client.Future.class)).when(rcli).delete("/mgmt/cache/null/null", "application/Void+json;q=1.0;charset=utf-8;version=2.0,application/json;q=1.0;version=2.0,*/*;q=1.0");
-            
+
             innnerClassMtd = innerInnerClass.getMethod("code", new Class[] {Rcli.class});
             innnerClassMtd.invoke(innerClassObj, new Object[] {rcli});
-            
+
             org.onap.aaf.cadi.client.Future futureObj = Mockito.mock(org.onap.aaf.cadi.client.Future.class);
             Mockito.doReturn(futureObj).when(rcli).delete("/mgmt/cache/null/null", "application/Void+json;q=1.0;charset=utf-8;version=2.0,application/json;q=1.0;version=2.0,*/*;q=1.0");
             Mockito.doReturn(true).when(futureObj).get(0);
             innnerClassMtd.invoke(innerClassObj, new Object[] {rcli});
-            
+
             uri = new URI("ftp","12.0.0.1:8080","/path/data","tt","ttd");
             Mockito.doReturn(uri).when(rcli).getURI();
             innnerClassMtd.invoke(innerClassObj, new Object[] {rcli});
@@ -458,9 +458,9 @@ public class JU_CacheInfoDAO {
         } catch (CadiException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     @Test
     public void testIntHolder(){
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -499,16 +499,16 @@ public class JU_CacheInfoDAO {
             innerConstructor.setAccessible(true);
             int[] a = new int[10];
             Object innerClassObj = innerConstructor.newInstance(obj, a);
-            
+
             Method innnerClassMtd=null;
-                
+
             CacheInfoDAO.Data data  = new CacheInfoDAO.Data();
             Row row = Mockito.mock(Row.class);
             Rcli rcli = Mockito.mock(Rcli.class);
             URI uri = new URI("ftp","admin:admin@geeksforgeeks.org:1234","/path/data","tt","ttd");
             Mockito.doReturn(uri).when(rcli).getURI();
             Mockito.doReturn(Mockito.mock(org.onap.aaf.cadi.client.Future.class)).when(rcli).delete("/mgmt/cache/null/null", "application/Void+json;q=1.0;charset=utf-8;version=2.0,application/json;q=1.0;version=2.0,*/*;q=1.0");
-            
+
             Method[] allMtds = innerInnerClass.getDeclaredMethods();
             for(Method indMtd:allMtds) {
                 if(indMtd.getName().contains("add")) {
@@ -516,8 +516,8 @@ public class JU_CacheInfoDAO {
                 }
             }
             innnerClassMtd.invoke(innerClassObj, new Object[] {a});
-            
-            
+
+
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -545,9 +545,9 @@ public class JU_CacheInfoDAO {
         } catch (CadiException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
+        }
     }
-    
+
     //@Test
     public void testSecondConstructor() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -580,24 +580,24 @@ class CacheInfoDAOImpl extends CacheInfoDAO{
 //        setPs(this, createPS, "psByStatus");
 //        setSession(this, Mockito.mock(Session.class));
     }
-    
+
     public CacheInfoDAOImpl(AuthzTrans trans, Cluster cluster, String keyspace,PSInfo readPS  ) throws APIException, IOException {
         super(trans, cluster, keyspace);
         this.readPS = readPS;
     }
-    
+
 
     public void setPs(CacheInfoDAOImpl CacheInfoDAOObj, PSInfo psInfoObj, String methodName) {
         Field nsDaoField;
         try {
             nsDaoField = CacheInfoDAO.class.getDeclaredField(methodName);
-            
+
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+
             nsDaoField.set(CacheInfoDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -611,12 +611,12 @@ class CacheInfoDAOImpl extends CacheInfoDAO{
         }
     }
 
-    
+
     public void setSession(CacheInfoDAOImpl CacheInfoDAOObj, Session session) {
         Field nsDaoField;
         try {
             nsDaoField = AbsCassDAO.class.getDeclaredField("session");
-            
+
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -634,5 +634,5 @@ class CacheInfoDAOImpl extends CacheInfoDAO{
             e.printStackTrace();
         }
     }
-    
+
 }

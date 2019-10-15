@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,12 +73,12 @@ public abstract class Batch {
 
     protected static final String STARS = "*****";
 
-    protected static Cluster cluster; 
+    protected static Cluster cluster;
     protected static AuthzEnv env;
     protected static Session session;
     protected static Set<String> specialNames;
     protected static List<String> specialDomains;
-    protected static boolean dryRun; 
+    protected static boolean dryRun;
     protected static String batchEnv;
 
     private static File logdir;
@@ -88,12 +88,12 @@ public abstract class Batch {
     protected static final String MAX_EMAILS="MAX_EMAILS";
     protected static final String VERSION="VERSION";
     public static final String GUI_URL="GUI_URL";
-    
+
     protected final Organization org;
     protected String version;
     protected static final Date now = new Date();
     protected static final Date never = new Date(0);
-    
+
     protected Batch(AuthzEnv env) throws APIException, IOException, OrganizationException {
         if (batchEnv != null) {
             env.info().log("Redirecting to ",batchEnv,"environment");
@@ -149,22 +149,22 @@ public abstract class Batch {
                 }
             }
         }
-        
+
         version = env.getProperty(VERSION,Config.AAF_DEFAULT_API_VERSION);
     }
 
     protected abstract void run(AuthzTrans trans);
     protected void _close(AuthzTrans trans) {}
-    
+
     public String[] args() {
         return env.get(ssargs);
     }
-    
+
     public boolean isDryRun()
     {
         return dryRun;
     }
-    
+
     public boolean isSpecial(String user) {
         if(user==null) {
             return false;
@@ -230,7 +230,7 @@ public abstract class Batch {
 
         return (organization);
     }
-    
+
     public static Row executeDeleteQuery(Statement stmt) {
         Row row = null;
         if (!dryRun) {
@@ -240,7 +240,7 @@ public abstract class Batch {
         return (row);
 
     }
-        
+
     public static int acquireRunLock(String className) {
         Boolean testEnv = true;
         String envStr = env.getProperty("AFT_ENVIRONMENT");
@@ -320,7 +320,7 @@ public abstract class Batch {
         }
         return (1);
     }
-    
+
     private static void deleteLock( String className) {
         Row row = session.execute( String.format( "DELETE FROM authz.run_lock WHERE class = '%s' IF EXISTS", className ) ).one();
         if (! row.getBool("[applied]")) {
@@ -336,7 +336,7 @@ public abstract class Batch {
             }
         }
     }
-    
+
     protected static File logDir() {
         if(logdir == null) {
             String ld = env.getProperty(LOG_DIR);
@@ -351,7 +351,7 @@ public abstract class Batch {
             if(!logdir.exists()) {
                 logdir.mkdirs();
             }
-        } 
+        }
         return logdir;
     }
     protected int count(String str, char c) {
@@ -386,13 +386,13 @@ public abstract class Batch {
             sbos.getBuffer().append(s);
             sbos.getBuffer().append(' ');
         }
-        
+
         InputStream is = null;
         String filename;
         String propLoc;
         try {
             Define.set(access);
-            
+
             if(access.getProperty(Config.CADI_PROP_FILES)==null) {
                 File f = new File("authBatch.props");
                 try {
@@ -424,7 +424,7 @@ public abstract class Batch {
             }
 
             env = new AuthzEnv(access);
-            
+
             transferVMProps(env, CASS_ENV, "DRY_RUN", "NS", "Organization");
 
             // Be able to change Environments
@@ -446,7 +446,7 @@ public abstract class Batch {
 
                 Batch batch = null;
                 AuthzTrans trans = env.newTrans();
-    
+
                 TimeTaken tt = trans.start("Total Run", Env.SUB);
                 try {
                     int len = args.length;
@@ -459,23 +459,23 @@ public abstract class Batch {
                         if (len > 0) {
                             System.arraycopy(args, 1, nargs, 0, len);
                         }
-    
+
                         env.put(ssargs = env.staticSlot("ARGS"), nargs);
-    
+
                         /*
                          * Add New Batch Programs (inherit from Batch) here
                          */
-    
+
                         // Might be a Report, Update or Temp Batch
                         Class<?> cls = null;
                         String classifier = "";
-    
+
                         String[] pkgs = new String[] {
                                 "org.onap.aaf.auth.batch.update",
                                 "org.onap.aaf.auth.batch.reports",
                                 "org.onap.aaf.auth.batch.temp"
                                 };
-                                
+
                         String ebp = env.getProperty("EXTRA_BATCH_PKGS");
                         if(ebp!=null) {
                             String[] ebps = Split.splitTrim(':', ebp);
@@ -484,12 +484,12 @@ public abstract class Batch {
                             System.arraycopy(ebps,0,temp,pkgs.length,ebps.length);
                             pkgs = temp;
                         }
-                        
+
                         for(String p : pkgs) {
                             try {
                                 cls = ClassLoader.getSystemClassLoader().loadClass(p + '.' + toolName);
                                 int lastDot = p.lastIndexOf('.');
-                                if(p.length()>0 || p.length()!=lastDot) { 
+                                if(p.length()>0 || p.length()!=lastDot) {
                                     StringBuilder sb = new StringBuilder();
                                     sb.append(Character.toUpperCase(p.charAt(++lastDot)));
                                     while(++lastDot<p.length()) {
@@ -508,15 +508,15 @@ public abstract class Batch {
                             batch = (Batch) cnst.newInstance(trans);
                             env.info().log("Begin", classifier, toolName);
                         }
-                    
-    
+
+
                         if (batch == null) {
                             trans.error().log("No Batch named", toolName, "found");
                         }
                         /*
                          * End New Batch Programs (inherit from Batch) here
                          */
-    
+
                     }
                     if (batch != null) {
                         try {

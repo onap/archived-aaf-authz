@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,18 +50,18 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
     private final URI uri;
 
     /**
-     * 
+     *
      * @param env
      * @param ldao
      * @param key  must be one or more of service, version, other in that order
-     * @throws LocatorException 
+     * @throws LocatorException
      */
     public DirectAAFLocator(AuthzEnv env, LocateDAO ldao, String name, String version) throws LocatorException {
-        super(env.access(), name, 1000L /* Don't hit DB more than once a second */); 
+        super(env.access(), name, 1000L /* Don't hit DB more than once a second */);
         this.env = env;
         this.ldao = ldao;
         if (version!=null) {
-            try { 
+            try {
                 String[] v = Split.split('.',version);
                 if (v.length>0) {major = Integer.parseInt(v[0]);}
                 if (v.length>1) {minor = Integer.parseInt(v[1]);}
@@ -71,7 +71,7 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
                 throw new LocatorException("Invalid Version String: " + version);
             }
         }
-        
+
         try {
             String aaf_url;
             if(name.indexOf('.')>=0) {
@@ -87,10 +87,10 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
             throw new LocatorException(e);
         }
         myhostname=null;
-        myport = 0; 
+        myport = 0;
     }
-    
-    
+
+
     @Override
     public boolean refresh() {
         AuthzTrans trans = env.newTransNoAvg();
@@ -119,7 +119,7 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
                     for (String s : d.subprotocol(false)) {
                         endpoint.getSubprotocol().add(s);
                     }
-                    
+
                     try {
                         epl.add(new EP(endpoint,latitude,longitude));
                     } catch (URISyntaxException e) {

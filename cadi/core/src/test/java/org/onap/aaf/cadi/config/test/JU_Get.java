@@ -95,7 +95,7 @@ public class JU_Get {
         @SuppressWarnings("unused")
         private String thrower = null;
 
-        public TestBean() { } 
+        public TestBean() { }
         public String getProperty1() { return property1; }
         public void setProperty1(final String value) { this.property1 = value; }
         public String getProperty2() { return property2; }

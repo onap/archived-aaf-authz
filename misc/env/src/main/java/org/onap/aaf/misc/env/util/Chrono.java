@@ -38,7 +38,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class Chrono {
     private static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
 
-    public final static DateFormat dateFmt, dateOnlyFmt, niceDateFmt, utcFmt, niceUTCDateFmt, iso8601Fmt;
+    public final static DateFormat dateFmt;
+    public final static DateFormat dateOnlyFmt;
+    public final static DateFormat niceDateFmt;
+    public final static DateFormat utcFmt;
+    public final static DateFormat niceUTCDateFmt;
+    public final static DateFormat iso8601Fmt;
+    public final static DateFormat batchFmt;
     // Give general access to XML DataType Factory, since it's pretty common
     public static final DatatypeFactory xmlDatatypeFactory;
     
@@ -56,6 +62,7 @@ public class Chrono {
         niceUTCDateFmt = new SimpleDateFormat("yyyy/MM/dd HH:mm zzz");
         niceUTCDateFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
         iso8601Fmt =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        batchFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
     }
     
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,16 +78,16 @@ public class JU_RosettaDF {
                 tt.done();
             }
             sbw.append('\n');
-            
+
             tt = trans.start("To XML from Cache",4);
             try {
                 data.out(Data.TYPE.XML).to(sbw);
             } finally {
                 tt.done();
             }
-            
+
             sbw.append('\n');
-            
+
             tt = trans.start("To JSON from Cache",5);
             try {
                 data.out(Data.TYPE.JSON).to(sbw);
@@ -96,10 +96,10 @@ public class JU_RosettaDF {
             }
             report.glean(trans, 1,2,3,4,5);
         } while (report.go());
-        
+
         report.report(sbw);
         System.out.println(sbw);
-        
+
     }
 
     @Test
@@ -118,12 +118,12 @@ public class JU_RosettaDF {
             data.direct(new StringReader(JU_FromJSON.str), sbw);
             report.glean(trans);
         } while (report.go());
-        
+
         report.report(sbw);
         System.out.println(sbw);
-        
+
     }
-    
+
     @Test
     public void testMulti() throws Exception {
         RosettaEnv env = new RosettaEnv();
@@ -135,10 +135,10 @@ public class JU_RosettaDF {
         Multi m = new Multi();
         m.getF1().add("String1");
         m.getF2().add("String2");
-        
+
         System.out.println(df.newData().load(m).out(TYPE.RAW).asString());
         System.out.println(df.newData().load(m).out(TYPE.JSON).asString());
-        
+
     }
 
     @Test
@@ -154,7 +154,7 @@ public class JU_RosettaDF {
         Assert.assertEquals(
                 "{\"id\":\"\\\"AT&T Services, Inc.\\\"\",\"date\":0}",
                 out);
-        
+
         SampleData sd2 = df.newData().in(TYPE.JSON).load(out).asObject();
         System.out.println(sd2.getId());
         Assert.assertEquals(sd.getId(),sd2.getId());

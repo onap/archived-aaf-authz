@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
     private AAFCon<CLIENT> aaf;
     private boolean warn;
     private MapBathConverter mapIds;
-    
+
     public AAFTaf(AAFCon<CLIENT> con, boolean turnOnWarning) {
         super(con.access,con.cleanInterval,con.highCount, con.usageRefreshTriggerCount);
         aaf = con;
@@ -73,7 +73,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
         initMapBathConverter();
 
     }
-    
+
     // Note: Needed for Creation of this Object with Generics
     @SuppressWarnings("unchecked")
     public AAFTaf(Connector mustBeAAFCon, boolean turnOnWarning, AbsUserCache<AAFPermission> other) {
@@ -133,10 +133,10 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                 Miss miss = missed(bp.getName(), bp.getCred());
                 if (miss!=null && !miss.mayContinue()) {
                     return new BasicHttpTafResp(aaf.access,bp.getName(),buildMsg(bp,req,
-                            "User/Pass Retry limit exceeded"), 
+                            "User/Pass Retry limit exceeded"),
                             RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),true);
                 }
-                
+
                 return aaf.bestForUser(
                     new GetSetter() {
                         @Override
@@ -159,11 +159,11 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
                                 boolean rv= addMiss(bp.getName(),bp.getCred());
                                 if (rv) {
                                     return new BasicHttpTafResp(aaf.access,bp.getName(),buildMsg(bp,req,
-                                            "user/pass combo invalid via AAF from " + req.getRemoteAddr()), 
+                                            "user/pass combo invalid via AAF from " + req.getRemoteAddr()),
                                             RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),true);
                                 } else {
                                     return new BasicHttpTafResp(aaf.access,bp.getName(),buildMsg(bp,req,
-                                            "user/pass combo invalid via AAF from " + req.getRemoteAddr() + " - Retry limit exceeded"), 
+                                            "user/pass combo invalid via AAF from " + req.getRemoteAddr() + " - Retry limit exceeded"),
                                             RESP.FAIL,resp,aaf.getRealm(),true);
                                 }
                             }
@@ -187,7 +187,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
         }
         return new BasicHttpTafResp(aaf.access,target,"Requesting HTTP Basic Authorization",RESP.TRY_AUTHENTICATING,resp,aaf.getRealm(),false);
     }
-    
+
     private String buildMsg(Principal pr, HttpServletRequest req, Object... msg) {
         StringBuilder sb = new StringBuilder();
         for (Object s : msg) {
@@ -205,7 +205,7 @@ public class AAFTaf<CLIENT> extends AbsUserCache<AAFPermission> implements HttpT
     }
 
 
-    
+
     public Resp revalidate(CachedPrincipal prin, Object state) {
         //  !!!! TEST THIS.. Things may not be revalidated, if not BasicPrincipal
         if (prin instanceof BasicPrincipal) {

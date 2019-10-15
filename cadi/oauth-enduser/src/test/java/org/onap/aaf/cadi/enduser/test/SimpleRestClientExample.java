@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,29 +39,29 @@ public class SimpleRestClientExample {
         try {
             // Note: Expect ClientFactory to be long-lived... do NOT create more than once.
             ClientFactory cf = new ClientFactory(args);
-            
-    
+
+
             String urlString = cf.getAccess().getProperty("myurl", null);
             if (urlString==null) {
                 System.out.println("Note: In your startup, add \"myurl=https://<aaf hello machine>:8130\" to command line\n\t"
-                        + "OR\n\t" 
+                        + "OR\n\t"
                         + " add -Dmyurl=https://<aaf hello machine>:8130 to VM Args\n\t"
                         + "where \"aaf hello machine\" is an aaf Installation you know about.");
             } else {
-                
+
                 SimpleRESTClient restClient = cf.simpleRESTClient(urlString,"org.osaaf.aaf");
 
                 /////////////////////////////////////////////////////////////
-                //  
+                //
                 // Creating Content for CREATE/UPDATE
                 //
                 /////////////////////////////////////////////////////////////
                 // Create an object that can be reusable IN THIS THREAD ONLY... Not Thread-safe on purpose
                 Input input = new SimpleRESTClient.Input();
-                
+
                 // Note: alternate use is to set the input object to an already created String
                 // Input input = new SimpleRESTClient.Input(aString);
-                
+
                 PrintWriter pw = input.writer();
                 pw.print("{\"something\": [");
                 for (int i=0;i<4;++i) {
@@ -73,16 +73,16 @@ public class SimpleRestClientExample {
                     pw.print('}');
                 }
                 pw.println("]}");
-                
+
                 // You can check or log the content
                 String content = input.toString();
                 System.out.println(content);
-                
-                // Good form for Writers is that you should close it... 
+
+                // Good form for Writers is that you should close it...
                 pw.close();
 
                 /////////////////////////////////////////////////////////////
-                //  
+                //
                 // CREATE/POST
                 //
                 /////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ public class SimpleRestClientExample {
 
 
                 /////////////////////////////////////////////////////////////
-                //  
+                //
                 // READ/GET
                 //
                 /////////////////////////////////////////////////////////////
@@ -110,24 +110,24 @@ public class SimpleRestClientExample {
                 System.out.println("-------- START REST READ/GET --------");
                 boolean expectException = false;
                 try {
-                    
+
                     // Call with no Queries
                     String rv = restClient.get("resthello/rest_id");
                     System.out.println(rv);
-                    
+
                     // Same call with "read" style
                     rv = restClient.read("resthello/rest_id");
                     System.out.println(rv);
-                    
-                    
+
+
                     // Call with Queries
                     rv = restClient.get("resthello/rest_id?perm=org.osaaf.people|*|read");
                     System.out.println(rv);
-                    
+
                     // Call setting ID from principal coming from Trans
                     // Pretend Transaction
                     HRequest req = new HRequest("demo@people.osaaf.org"); // Pretend Trans has Jonathan as Identity
-                    
+
                     // Call with RESTException, which allows obtaining HTTPCode and any Error message sent
                     rv = restClient.endUser(req.userPrincipal()).get("resthello/rest_id?perm=org.osaaf.people|*|read");
                     System.out.println(rv);
@@ -150,17 +150,17 @@ public class SimpleRestClientExample {
                 }
 
                 /////////////////////////////////////////////////////////////
-                //  
+                //
                 // UPDATE/PUT
                 //
                 /////////////////////////////////////////////////////////////
 
-                
+
                 // If you use "input" object again as a writer, you can clear it on the same thread, and go again
                 input.clear();
                 // Here we just set to a String, instead of Writing
                 input.set("{\"something\" : []}");
-                
+
                 System.out.println("-------- END REST UPDATE/PUT --------");
                 try {
                     String rv = restClient.update("resthello/rest_id", input);
@@ -175,7 +175,7 @@ public class SimpleRestClientExample {
                 }
 
                 /////////////////////////////////////////////////////////////
-                //  
+                //
                 // DELETE
                 //
                 /////////////////////////////////////////////////////////////
@@ -191,14 +191,14 @@ public class SimpleRestClientExample {
                 } finally {
                     System.out.println("-------- END REST DELETE --------");
                 }
-            }            
+            }
         } catch (CadiException | APIException e) {
             e.printStackTrace();
         }
     }
-    
-    private static class HRequest { 
-        
+
+    private static class HRequest {
+
         public HRequest(String fqi) {
             name = fqi;
         }
@@ -212,7 +212,7 @@ public class SimpleRestClientExample {
                 public String getName() {
                     return name;
                 }
-                
+
             };
         }
     }

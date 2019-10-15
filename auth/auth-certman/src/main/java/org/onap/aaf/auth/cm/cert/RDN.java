@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ public class RDN {
     public RDN(final String tagValue) throws CertException {
         String[] tv = Split.splitTrim('=',tagValue);
         switch(tv[0]) {
-            case "cn":case "CN":            aoi = BCStyle.CN; 
+            case "cn":case "CN":            aoi = BCStyle.CN;
             break;
             case "c":case "C":            aoi = BCStyle.C;
             break;
@@ -49,21 +49,21 @@ public class RDN {
             break;
             case "dc":case "DC":            aoi = BCStyle.DC;
             break;
-            case "gn":case "GN":            aoi = BCStyle.GIVENNAME; 
+            case "gn":case "GN":            aoi = BCStyle.GIVENNAME;
             break;
-            case "sn":case "SN":            aoi = BCStyle.SN; 
+            case "sn":case "SN":            aoi = BCStyle.SN;
             break;  // surname
             case "email":case "EMAIL":
             case "emailaddress":
             case "EMAILADDRESS":            aoi = BCStyle.EmailAddress;
             break; // should be SAN extension
-            case "initials":                aoi = BCStyle.INITIALS; 
-            break; 
-            case "pseudonym":            aoi = BCStyle.PSEUDONYM; 
+            case "initials":                aoi = BCStyle.INITIALS;
             break;
-            case "generationQualifier":    aoi = BCStyle.GENERATION; 
+            case "pseudonym":            aoi = BCStyle.PSEUDONYM;
             break;
-            case "serialNumber":            aoi = BCStyle.SERIALNUMBER; 
+            case "generationQualifier":    aoi = BCStyle.GENERATION;
+            break;
+            case "serialNumber":            aoi = BCStyle.SERIALNUMBER;
             break;
             default:
                 throw new CertException("Unknown ASN1ObjectIdentifier for " + tv[0] + " in " + tagValue);
@@ -71,7 +71,7 @@ public class RDN {
         tag = tv[0];
         value = tv[1];
     }
-    
+
     /**
      * Parse various forms of DNs into appropriate RDNs, which have the ASN1ObjectIdentifier
      * @param delim
@@ -109,7 +109,7 @@ public class RDN {
         }
         return lrnd;
     }
-    
+
     @Override
     public String toString() {
         return tag + '=' + value;

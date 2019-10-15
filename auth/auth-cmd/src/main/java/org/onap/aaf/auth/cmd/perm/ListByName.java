@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,16 +33,16 @@ import org.onap.aaf.misc.env.APIException;
 import aaf.v2_0.Perms;
 
 /**
- * 
+ *
  * @author Jonathan
  *
  */
 public class ListByName extends Cmd {
     private static final String HEADER = "List Child Permissions";
-    
+
     public ListByName(List parent) {
-        super(parent,"name", 
-                new Param("root perm name",true)); 
+        super(parent,"name",
+                new Param("root perm name",true));
     }
 
     public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
@@ -50,10 +50,10 @@ public class ListByName extends Cmd {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
                 String parentPerm=args[index];
-                
+
                 Future<Perms> fp = client.read(
-                        "/authz/perms/"+parentPerm+(aafcli.isDetailed()?"?ns":""), 
-                        getDF(Perms.class) 
+                        "/authz/perms/"+parentPerm+(aafcli.isDetailed()?"?ns":""),
+                        getDF(Perms.class)
                         );
                 return list(fp,HEADER,parentPerm);
             }

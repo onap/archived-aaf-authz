@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import org.onap.aaf.cadi.CadiException;
 
 /**
  * Read CSV file for various purposes
- * 
+ *
  * @author Instrumental(Jonathan)
  *
  */
@@ -46,26 +46,26 @@ public class CSV {
     private boolean processAll;
     private char delimiter = ',';
     private boolean go;
-    
+
     public CSV(Access access, File file) {
         this.access = access;
         csv = file;
         processAll = false;
         go = true;
     }
-    
+
     public CSV(Access access, String csvFilename) {
         this.access = access;
         csv = new File(csvFilename);
         processAll = false;
         go = true;
     }
-    
+
     public CSV setDelimiter(char delimiter) {
         this.delimiter = delimiter;
         return this;
     }
-    
+
     public String name() {
         return csv.getName();
     }
@@ -76,16 +76,16 @@ public class CSV {
     }
     /*
      * Create your code to accept the List<String> row.
-     * 
+     *
      * Your code may keep the List... CSV does not hold onto it.
-     * 
+     *
      * @author Instrumental(Jonathan)
      *
      */
     public interface Visitor {
         void visit(List<String> row) throws IOException, CadiException;
     }
-    
+
     public void visit(Visitor visitor) throws IOException, CadiException {
         BufferedReader br = new BufferedReader(new FileReader(csv));
         try {
@@ -165,7 +165,7 @@ public class CSV {
             br.close();
         }
     }
-    
+
     public Writer writer() throws FileNotFoundException {
         return new Writer(false);
     }
@@ -177,10 +177,10 @@ public class CSV {
     public interface RowSetter {
         public void row(Object ... objs);
     }
-    
+
     public static class Saver implements RowSetter {
         List<String> ls= new ArrayList<>();
-        
+
         @Override
         public void row(Object ... objs) {
             if(objs.length>0) {
@@ -197,7 +197,7 @@ public class CSV {
                 }
             }
         }
-        
+
         public List<String> asList() {
             List<String> rv = ls;
             ls = new ArrayList<>();
@@ -210,7 +210,7 @@ public class CSV {
         private Writer(final boolean append) throws FileNotFoundException {
             ps = new PrintStream(new FileOutputStream(csv,append));
         }
-        
+
         @Override
         public void row(Object ... objs) {
             if(objs.length>0) {
@@ -233,7 +233,7 @@ public class CSV {
                 ps.println();
             }
         }
-        
+
         private void print(String s) {
             boolean quote = s.matches(".*[,|\"].*");
             if(quote) {
@@ -246,7 +246,7 @@ public class CSV {
                 ps.append(s);
             }
 
-            
+
         }
         /**
          * Note: CSV files do not actually support Comments as a standard, but it is useful
@@ -257,32 +257,32 @@ public class CSV {
             ps.printf(comment,objs);
             ps.println();
         }
-        
+
         public void flush() {
             ps.flush();
         }
-        
+
         public void close() {
             flush();
             ps.close();
         }
-        
+
         public String toString() {
             return csv.getAbsolutePath();
         }
     }
-    
+
     /**
      * Provides a way to stop processing records from inside a Visit
      */
     public void stop() {
-    	go = false;
+        go = false;
     }
 
     public void delete() {
         csv.delete();
     }
-    
+
     public String toString() {
         return csv.getAbsolutePath();
     }

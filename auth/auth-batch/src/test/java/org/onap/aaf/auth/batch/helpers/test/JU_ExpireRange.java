@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,18 +35,18 @@ public class JU_ExpireRange {
     public void test() {
         ExpireRange expRange = new ExpireRange(new PropAccess());
         Date now = expRange.now();
-        
+
         Set<String> names=expRange.names();
         assertTrue(names.contains("OneMonth"));
         assertTrue(names.contains("OneWeek"));
         assertTrue(names.contains("Delete"));
         assertFalse(names.contains(null));
         assertFalse(names.contains("bogus"));
-        
+
         ExpireRange.Range r;
         GregorianCalendar gc = new GregorianCalendar();
         String[] all = new String[] {"ur","cred"};
-        
+
         // Test 3 weeks prior
         gc.setTime(now);
         gc.add(GregorianCalendar.WEEK_OF_MONTH,-3);
@@ -55,7 +55,7 @@ public class JU_ExpireRange {
             assertNotNull(r);
             assertEquals("Delete",r.name());
         }
-        
+
         // Test 1 week prior
         gc.setTime(now);
         gc.add(GregorianCalendar.WEEK_OF_MONTH,-1);
@@ -63,7 +63,7 @@ public class JU_ExpireRange {
             r = expRange.getRange(rs, gc.getTime());
             assertNull(r);
         }
-        
+
         // Test Today
         r = expRange.getRange("cred", now);
         assertNotNull(r);

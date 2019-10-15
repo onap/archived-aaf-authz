@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,20 +65,20 @@ public class JU_AAF_CM {
 
     @Mock
     AuthzEnv env;
-    
+
     BasicEnv baseEnv;
-    
+
     @Mock
     PropAccess access;
-    
+
     AuthzTransImpl1 trans;
-    
+
     AAF_CMImpl rosettaObj = null;
-    
+
     @Before
     public void setUp() {
         initMocks(this);
-        
+
         try {
             Mockito.doReturn(access).when(env).access();
             Mockito.doReturn("test.test").when(access).getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
@@ -95,7 +95,7 @@ public class JU_AAF_CM {
             Mockito.doReturn(trans).when(env).newTrans();
 //            Mockito.doReturn("test").when(trans).getProperty("cm_ca.props.baseSubject",null);
 //            Mockito.doReturn(Mockito.mock(TimeTaken.class)).when(trans).start("Clear Reset Deque",8);
-            
+
             Mockito.doReturn("TLSv1.1").when(access).getProperty("cadi_protocols","test");
             Mockito.doReturn("https://www.google.com").when(access).getProperty(Config.AAF_URL,null);
             Mockito.doReturn("test").when(env).getProperty(Config.AAF_ENV);
@@ -126,10 +126,10 @@ public class JU_AAF_CM {
             PowerMockito.mockStatic(FacadeFactory.class);
             FacadeFactory factObj = PowerMockito.mock(FacadeFactory.class);
             PowerMockito.when(factObj.v1_0(tempObj,trans, null,Data.TYPE.JSON)).thenReturn(facadeObj);
-            
+
 //            Mockito.doReturn(Mockito.mock(Mapper.class)).when(facadeObj).mapper();
 
-            
+
             rosettaObj = new AAF_CMImpl(env);
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -137,13 +137,13 @@ public class JU_AAF_CM {
             assertTrue(e instanceof NullPointerException);
         }
     }
-    
+
     @Test
     public void testTestCA() {
         CA obj = rosettaObj.getCA("props");
         assertTrue(obj instanceof CA);
     }
-    
+
 //    @Test
 //    public void testRoute() {
 //        try {
@@ -155,7 +155,7 @@ public class JU_AAF_CM {
 ////        System.out.println(obj);
 ////        assertTrue(obj instanceof CA);
 //    }
-    
+
     @Test
     public void testFilters() {
         try {
@@ -168,31 +168,31 @@ public class JU_AAF_CM {
         }
 //        assertTrue(obj instanceof CA);
     }
-    
+
     class AAF_CMImpl extends AAF_CM{
 
         public AAF_CMImpl(AuthzEnv env) throws Exception {
             super(env);
             // TODO Auto-generated constructor stub
         }
-        
+
         @Override
         public synchronized AAFConHttp aafCon() throws CadiException, LocatorException {
             return Mockito.mock(AAFConHttp.class);
         }
-        
+
         public CMService getService() {
             return Mockito.mock(CMService.class);
         }
-        
+
         @Override
         public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
-            
+
         }
     }
-    
-    
-    
+
+
+
     class AuthzTransImpl1 extends AuthzTransImpl{
 
         public AuthzTransImpl1(AuthzEnv env) {
@@ -204,22 +204,22 @@ public class JU_AAF_CM {
         protected TimeTaken newTimeTaken(String name, int flag, Object ... values) {
             // TODO Auto-generated method stub
             TimeTaken tt= new TimeTaken("nameTest", Env.XML) {
-                
+
                 @Override
                 public void output(StringBuilder sb) {
                     // TODO Auto-generated method stub
-                    
+
                 }
             };
             return tt;
         }
-        
+
         @Override
         public Metric auditTrail(int indent, StringBuilder sb, int ... flag) {
             return null;
         }
-        
+
     }
-    
+
 
 }

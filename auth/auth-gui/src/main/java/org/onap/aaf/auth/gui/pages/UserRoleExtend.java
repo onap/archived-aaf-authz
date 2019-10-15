@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,11 +54,11 @@ public class UserRoleExtend extends Page {
             public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                 final Slot sUser = gui.env.slot(NAME+".user");
                 final Slot sRole = gui.env.slot(NAME+".role");
-                
-                
+
+
                 cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
                     @Override
-                    public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {                        
+                    public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
                         final String user = trans.get(sUser, "");
                         final String role = trans.get(sRole, "");
 
@@ -87,12 +87,12 @@ public class UserRoleExtend extends Page {
                         } finally {
                             tt.done();
                         }
-                        
-                        
+
+
                     }
                 });
             }
-            
+
         });
     }
 }

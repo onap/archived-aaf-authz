@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,12 +67,12 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     public void details(boolean on) {
         details = on;
     }
-    
+
 
     public void setPreemptiveLur(Lur preemptive) {
         this.preemptiveLur = preemptive;
     }
-    
+
     protected abstract User<PERM> loadUser(Principal bait);
 
     @Override
@@ -92,9 +92,9 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
         return false;
     }
 
-    
+
     protected abstract boolean isCorrectPermType(Permission pond);
-    
+
     // This is where you build AAF CLient Code.  Answer the question "Is principal "bait" in the "pond"
     public boolean fish(Principal bait, Permission ... pond) {
         if (preemptiveLur!=null && preemptiveLur.handles(bait)) {
@@ -235,7 +235,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
             }
         }
     }
-    
+
     @Override
     public void remove(String user) {
         super.remove(user);
@@ -257,7 +257,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
     }
     /**
      * This special case minimizes loops, avoids multiple Set hits, and calls all the appropriate Actions found.
-     * 
+     *
      * @param bait
      * @param obj
      * @param type
@@ -279,7 +279,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
             }
         }
     }
-    
+
     public static interface Action<A> {
         public String getName();
         /**
@@ -288,7 +288,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
          */
         public boolean exec(A a);
     }
-    
+
     private class ReuseAAFPermission extends AAFPermission {
         public ReuseAAFPermission(String type, String instance) {
             super(type,instance,null,null);
@@ -297,9 +297,9 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
         public void setAction(String s) {
             action = s;
         }
-        
+
         /**
-         * This function understands that AAF Keys are hierarchical, :A:B:C, 
+         * This function understands that AAF Keys are hierarchical, :A:B:C,
          *  Cassandra follows a similar method, so we'll short circuit and do it more efficiently when there isn't a first hit
          * @return
          */

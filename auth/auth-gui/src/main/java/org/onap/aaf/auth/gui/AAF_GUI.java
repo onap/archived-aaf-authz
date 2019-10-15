@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -104,9 +104,9 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     public static final String HTTP_SERVLET_REQUEST = "HTTP_SERVLET_REQUEST";
     public static final int TIMEOUT = 60000;
     public static final String app = "AAF GUI";
-    
+
     // AAF API
-    
+
     // Certificate manager API
     public RosettaDF<Artifacts> artifactsDF;
     public RosettaDF<CertInfo>  certInfoDF;
@@ -114,7 +114,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     private final AAFConHttp cmCon;
     public final AAFConHttp aafCon;
     public final AAFLurPerm lur;
-    
+
     public final Slot slot_httpServletRequest;
     protected final String deployedVersion;
     private StaticSlot sThemeWebPath;
@@ -126,12 +126,12 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         sDefaultTheme = env.staticSlot(AAF_GUI_THEME);
         String defTheme = env.getProperty(AAF_GUI_THEME,"onap");
         env.put(sDefaultTheme, defTheme);
-        
+
         sThemeWebPath = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
         if(env.get(sThemeWebPath)==null) {
             env.put(sThemeWebPath,"theme");
         }
-        
+
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
         deployedVersion = app_version;
 
@@ -140,7 +140,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         cmCon =  new AAFConHttp(env.access(),aaf_url_cm);
         artifactsDF = env.newDataFactory(Artifacts.class);
         certInfoDF  = env.newDataFactory(CertInfo.class);
-        
+
 
         /////////////////////////
         // Screens
@@ -158,7 +158,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         Page roleDetail = new Display(this, GET, new RoleDetail(this, start, myRoles)).page();
                           new Display(this, POST, new RoleDetailAction(this,start,myRoles,roleDetail));
                           new Display(this, GET, new RoleHistory(this,start,myRoles,roleDetail));
-                            
+
         // MyNameSpace
         final Page myNamespaces = new Display(this, GET, new NssShow(this, start)).page();
         Page nsDetail  = new Display(this, GET, new NsDetail(this, start, myNamespaces)).page();
@@ -168,48 +168,48 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         Page artiShow  = new Display(this, GET, new CMArtifactShow(this, start, myNamespaces, nsDetail, crdDetail)).page();
         Page artiCForm = new Display(this, GET, new CMArtiChangeForm(this, start, myNamespaces, nsDetail, crdDetail,artiShow)).page();
                          new Display(this, POST, new CMArtiChangeAction(this, start,artiShow,artiCForm));
-                             
+
         // Password Change Screens
         final Page pwc = new Display(this, GET, new PassChangeForm(this, start,crdDetail)).page();
                          new Display(this, POST, new PassChangeAction(this, start, pwc));
-                         
+
         // Password Delete Screen
                          new Display(this, GET, new PassDeleteAction(this, start,crdDetail));
 
         // Validation Change Screens
         final Page validate = new Display(this, GET, new ApprovalForm(this, start)).page();
                               new Display(this, POST, new ApprovalAction(this, start, validate));
-                            
+
         // Onboard, Detailed Edit Screens
         final Page onb = new Display(this, GET, new NsInfoForm(this, start)).page();
                          new Display(this, POST, new NsInfoAction(this, start, onb));
 
         // Web Command Screens
         /* final Page webCommand =*/ new Display(this, GET, new WebCommand(this, start)).page();
-        
+
         // API Docs
         final Page apidocs = new Display(this, GET, new ApiDocs(this, start)).page();
                              new Display(this, GET, new ApiExample(this,start, apidocs)).page();
-        
+
         // Permission Grant Page
         final Page permGrant =     new Display(this, GET, new PermGrantForm(this, start)).page();
                                  new Display(this, POST, new PermGrantAction(this, start, permGrant)).page();
-                                 
+
         // Login Landing if no credentials detected
         final Page loginLanding = new Display(this, GET, new LoginLanding(this, start)).page();
                                   new Display(this, POST, new LoginLandingAction(this, start, loginLanding));
-                                  
+
         // User Role Request Extend and Remove
         new Display(this, GET, new UserRoleExtend(this, start,myRoles)).page();
         new Display(this, GET, new UserRoleRemove(this, start,myRoles)).page();
-        
+
         // See my Pending Requests
         final Page requestsShow = new Display(this, GET, new PendingRequestsShow(this, start)).page();
                                   new Display(this, GET, new RequestDetail(this, start, requestsShow));
-                                  
+
         // Command line Mechanism
         route(env, PUT, "/gui/cui", new CUI(this),"text/plain;charset=utf-8","*/*");
-        
+
         route(env, GET, "/gui/clear", new HttpCode<AuthzTrans, Void>(null, "Clear"){
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -226,8 +226,8 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
                 resp.sendRedirect("/gui/home");
             }
         }, "text/plain;charset=utf-8","*/*");
-        
-        ///////////////////////  
+
+        ///////////////////////
         // WebContent Handler
         ///////////////////////
         CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
@@ -237,11 +237,11 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         aafCon = aafCon();
         lur = aafCon.newLur();
     }
-    
+
     public<T> RosettaDF<T> getDF(Class<T> cls) throws APIException {
         return Cmd.getDF(env,cls);
     }
-    
+
     public void writeError(AuthzTrans trans, Future<?> fp, HTMLGen hgen, int indent) {
         if (hgen!=null) {
             String msg = aafCon.readableErrMsg(fp);
@@ -256,7 +256,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     public<RET> RET cmClientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
             return cmCon.hman().best(new HTransferSS(p,app, aafCon.securityInfo()), retryable);
     }
-    
+
     @Override
     public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
         try {

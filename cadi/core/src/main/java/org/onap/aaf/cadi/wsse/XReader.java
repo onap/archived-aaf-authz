@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,16 +34,16 @@ import javax.xml.stream.XMLStreamException;
 
 /**
  * XReader
- * This class works similarly as StAX, except StAX has more behavior than is needed.  That would be ok, but 
+ * This class works similarly as StAX, except StAX has more behavior than is needed.  That would be ok, but
  * StAX also was Buffering in their code in such as way as to read most if not all the incoming stream into memory,
  * defeating the purpose of pre-reading only the Header
- * 
+ *
  * This Reader does no back-tracking, but is able to create events based on syntax and given state only, leaving the
  * Read-ahead mode of the InputStream up to the other classes.
- * 
- * At this time, we only implement the important events, though if this is good enough, it could be expanded, perhaps to 
+ *
+ * At this time, we only implement the important events, though if this is good enough, it could be expanded, perhaps to
  * replace the original XMLReader from StAX.
- * 
+ *
  * @author Jonathan
  *
  */
@@ -53,18 +53,18 @@ public class XReader {
     private InputStream is;
     private ByteArrayOutputStream baos;
     private int state, count, last;
-    
+
     private Stack<Map<String,String>> nsses;
-    
+
     public XReader(InputStream is) {
         this.is = is;
         curr = another = null;
         baos = new ByteArrayOutputStream();
-        state = BEGIN_DOC; 
+        state = BEGIN_DOC;
         count = 0;
         nsses = new Stack<Map<String,String>>();
     }
-    
+
     public boolean hasNext() throws XMLStreamException {
         if (curr==null) {
             curr = parse();
@@ -78,7 +78,7 @@ public class XReader {
         return xe;
     }
 
-    // 
+    //
     // State Flags
     //
     // Note: The State of parsing XML can be complicated.  There are too many to cleanly keep in "booleans".  Additionally,
@@ -100,20 +100,20 @@ public class XReader {
     // useful combined Comment states
     private final static int IN_COMMENT=COMMENT|COMMENT_E|COMMENT_D1|COMMENT_D2;
     private final static int COMPLETE_COMMENT = COMMENT|COMMENT_E|COMMENT_D1|COMMENT_D2|COMMENT_D3|COMMENT_D4;
-    
-    
+
+
     private XEvent parse() throws XMLStreamException {
         Map<String,String> nss = nsses.isEmpty()?null:nsses.peek();
 
         XEvent rv;
-        if ((rv=another)!=null) { // "another" is a tag that may have needed to be created, but not 
+        if ((rv=another)!=null) { // "another" is a tag that may have needed to be created, but not
                                  // immediately returned.  Save for next parse.  If necessary, this could be turned into
                                  // a FIFO storage, but a single reference is enough for now.
             another = null;      // "rv" is now set for the Event, and will be returned.  Set to Null.
         } else {
             boolean go = true;
             int c=0;
-            
+
             try {
                 while (go && (c=is.read())>=0) {
                     ++count;
@@ -134,9 +134,9 @@ public class XReader {
                             String ns;
                             switch(t.state&(START_TAG|END_TAG)) {
                                 case START_TAG:
-                                        nss = getNss(nss,t);             // Only Start Tags might have NS Attributes   
-                                                                        // Get any NameSpace elements from tag.  If there are, nss will become 
-                                                                        // a new Map with all the previous NSs plus the new.  This provides 
+                                        nss = getNss(nss,t);             // Only Start Tags might have NS Attributes
+                                                                        // Get any NameSpace elements from tag.  If there are, nss will become
+                                                                        // a new Map with all the previous NSs plus the new.  This provides
                                                                         // scoping behavior when used with the Stack
                                     // drop through on purpose
                                 case END_TAG:
@@ -148,8 +148,8 @@ public class XReader {
                             if (ns==null)
                                 throw new XMLStreamException("Invalid Namespace Prefix at " + count);
                             go = false;
-                            switch(t.state) { // based on 
-                              case DOC_TYPE: 
+                            switch(t.state) { // based on
+                              case DOC_TYPE:
                                   rv = new XEvent.StartDocument();
                                   break;
                               case COMMENT:
@@ -168,14 +168,14 @@ public class XReader {
                                   if (last=='/')another = new XEvent.EndElement(ns,t.name);
                             }
                             if (cxe!=null) {     // if there is a Character Event, it actually should go first.  ow.
-                                another = rv;   // Make current Event the "another" or next event, and 
+                                another = rv;   // Make current Event the "another" or next event, and
                                 rv = cxe;        // send Character Event now
                             }
                             break;
                         case ' ':
                         case '\t':
                         case '\n':
-                            if ((state&BEGIN_DOC)==BEGIN_DOC) { // if Whitespace before doc, just ignore 
+                            if ((state&BEGIN_DOC)==BEGIN_DOC) { // if Whitespace before doc, just ignore
                                 break;
                             }
                             // fallthrough on purpose
@@ -190,17 +190,17 @@ public class XReader {
             } catch (IOException e) {
                 throw new XMLStreamException(e); // all errors parsing will be treated as XMLStreamErrors (like StAX)
             }
-            if (c==-1 && (state&BEGIN_DOC)==BEGIN_DOC) {                // Normally, end of stream is ok, however, we need to know if the 
-                throw new XMLStreamException("Premature End of File"); // document isn't an XML document, so we throw exception if it 
+            if (c==-1 && (state&BEGIN_DOC)==BEGIN_DOC) {                // Normally, end of stream is ok, however, we need to know if the
+                throw new XMLStreamException("Premature End of File"); // document isn't an XML document, so we throw exception if it
             }                                                           // hasn't yet been determined to be an XML Doc
         }
         return rv;
     }
-    
+
     /**
      * parseTag
-     * 
-     * Parsing a Tag is somewhat complicated, so it's helpful to separate this process from the 
+     *
+     * Parsing a Tag is somewhat complicated, so it's helpful to separate this process from the
      * higher level Parsing effort
      * @return
      * @throws IOException
@@ -213,7 +213,7 @@ public class XReader {
         int c, quote=0; // If "quote" is 0, then we're not in a quote.  We set ' (in pretag) or " in attribs accordingly to denote quoted
         String prefix=null,name=null,value=null;
         baos.reset();
-        
+
         while (go && (c=is.read())>=0) {
             ++count;
             if (quote!=0) { // If we're in a quote, we only end if we hit another quote of the same time, not preceded by \
@@ -225,7 +225,7 @@ public class XReader {
             } else if ((state&COMMENT)==COMMENT) { // similar to Quote is being in a comment
                 switch(c) {
                     case '-':
-                        switch(state) { // XML has a complicated Quote set... <!-- --> ... we keep track if each has been met with flags. 
+                        switch(state) { // XML has a complicated Quote set... <!-- --> ... we keep track if each has been met with flags.
                             case COMMENT|COMMENT_E:
                                 state|=COMMENT_D1;
                                 break;
@@ -259,7 +259,7 @@ public class XReader {
                 }
             } else { // Normal Tag Processing loop
                 switch(c) {
-                    case '?': 
+                    case '?':
                         switch(state & (QUESTION_F|QUESTION)) {  // Validate the state of Doc tag... <?xml ... ?>
                             case QUESTION_F:
                                 state |= DOC_TYPE;
@@ -273,7 +273,7 @@ public class XReader {
                         }
                         break;
                     case '!':
-                        if (last=='<') { 
+                        if (last=='<') {
                             state|=COMMENT|COMMENT_E; // likely a comment, continue processing in Comment Loop
                         }
                         baos.write(c);
@@ -321,7 +321,7 @@ public class XReader {
                         // Fallthrough ok
                     default:
                         baos.write(c);                    // write any unprocessed bytes into buffer
-                        
+
                 }
             }
             last = c;
@@ -338,12 +338,12 @@ public class XReader {
 
     /**
      * getNSS
-     * 
+     *
      * If the tag contains some Namespace attributes, create a new nss from the passed in one, copy all into it, then add
      * This provides Scoping behavior
-     * 
+     *
      * if Nss is null in the first place, create an new nss, so we don't have to deal with null Maps.
-     * 
+     *
      * @param nss
      * @param t
      * @return
@@ -374,10 +374,10 @@ public class XReader {
 
     /**
      * The result of the parseTag method
-     * 
+     *
      * Data is split up into prefix, name and value portions. "Tags" with Values that are inside a Tag are known in XLM
-     * as Attributes.  
-     * 
+     * as Attributes.
+     *
      * @author Jonathan
      *
      */
@@ -390,7 +390,7 @@ public class XReader {
             this.prefix = prefix;
             this.name = name;
             this.value = value;
-            attribs = null;  
+            attribs = null;
         }
 
         /**
@@ -404,7 +404,7 @@ public class XReader {
             }
             attribs.add(attrib);
         }
-        
+
         public String toString() {
             StringBuffer sb = new StringBuffer();
             if (prefix!=null) {

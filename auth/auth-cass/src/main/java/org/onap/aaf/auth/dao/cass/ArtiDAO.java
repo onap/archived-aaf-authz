@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,16 +43,16 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Row;
 
 /**
- * CredDAO manages credentials. 
+ * CredDAO manages credentials.
  * @author Jonathan
  * Date: 7/19/13
  */
 public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
     public static final String TABLE = "artifact";
-    
+
     private HistoryDAO historyDAO;
     private PSInfo psByMechID,psByMachine, psByNs;
-    
+
     public ArtiDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, ArtiDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -78,7 +78,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         public Date                      expires;
         public int                        renewDays;
         public Set<String>                sans;
-        
+
 //      // Getters
         public Set<String> type(boolean mutable) {
             if (type == null) {
@@ -104,7 +104,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             ArtifactLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             ArtifactLoader.deflt.unmarshal(this, toDIS(bb));
@@ -118,7 +118,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
     private static class ArtifactLoader extends Loader<Data> implements Streamer<Data>{
         public static final int MAGIC=95829343;
         public static final int VERSION=1;
-        public static final int BUFF_SIZE=48; // Note: 
+        public static final int BUFF_SIZE=48; // Note:
 
         public static final ArtifactLoader deflt = new ArtifactLoader(KEYLIMIT);
         public ArtifactLoader(int keylimit) {
@@ -225,10 +225,10 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         if (historyDAO==null) {
             historyDAO = new HistoryDAO(trans,this);
         }
-        
+
         String[] helpers = setCRUD(trans, TABLE, Data.class, ArtifactLoader.deflt);
 
-        psByMechID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE + 
+        psByMechID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE mechid = ?", new ArtifactLoader(1) {
             @Override
             protected void key(Data data, int idx, Object[] obj) {
@@ -236,7 +236,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             }
         },readConsistency);
 
-        psByMachine = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE + 
+        psByMachine = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE machine = ?", new ArtifactLoader(1) {
             @Override
             protected void key(Data data, int idx, Object[] obj) {
@@ -244,7 +244,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             }
         },readConsistency);
 
-        psByNs = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE + 
+        psByNs = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE ns = ?", new ArtifactLoader(1) {
             @Override
             protected void key(Data data, int idx, Object[] obj) {
@@ -253,8 +253,8 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         },readConsistency);
 
 }
-    
-    
+
+
     public Result<List<Data>> readByMechID(AuthzTrans trans, String mechid) {
         return psByMechID.read(trans, R_TEXT, new Object[]{mechid});
     }

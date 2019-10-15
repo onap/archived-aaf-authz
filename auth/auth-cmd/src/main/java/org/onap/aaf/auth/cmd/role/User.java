@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,10 +42,10 @@ import aaf.v2_0.UserRoleRequest;
 public class User extends Cmd {
     private final static String[] options = {"add","del","extend"};
     public User(Role parent) {
-        super(parent,"user", 
+        super(parent,"user",
                 new Param(optionsToString(options),true),
                 new Param("role",true),
-                new Param("id[,id]*",false)); 
+                new Param("id[,id]*",false));
     }
 
     @Override
@@ -60,9 +60,9 @@ public class User extends Cmd {
                 urr.setRole(args[idx++]);
                 // Set Start/End commands
                 setStartEnd(urr);
-                
+
                 Future<?> fp = null;
-                
+
                 String[] ids = args[idx++].split(",");
                 String verb=null,participle=null;
                 // You can request to be added or removed from role.
@@ -74,15 +74,15 @@ public class User extends Cmd {
                     switch(option) {
                         case 0:
                             fp = client.create(
-                                    "/authz/userRole", 
-                                    getDF(UserRoleRequest.class), 
+                                    "/authz/userRole",
+                                    getDF(UserRoleRequest.class),
                                     urr);
                             verb = "Added";
                             participle = "] to Role [" ;
                             break;
                         case 1:
                             fp = client.delete(
-                                    "/authz/userRole/"+urr.getUser()+'/'+urr.getRole(), 
+                                    "/authz/userRole/"+urr.getUser()+'/'+urr.getRole(),
                                     Void.class);
                             verb = "Removed";
                             participle = "] from Role [" ;
@@ -124,7 +124,7 @@ public class User extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
         detailLine(sb,indent,"Add OR Delete a User to/from a Role OR extend Expiration");

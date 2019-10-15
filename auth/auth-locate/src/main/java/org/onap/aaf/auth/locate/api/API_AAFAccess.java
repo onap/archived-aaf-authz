@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,22 +55,22 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
 public class API_AAFAccess {
-//    private static String service, version, envContext; 
+//    private static String service, version, envContext;
 
     private static final String GET_PERMS_BY_USER = "Get Perms by User";
     private static final String USER_HAS_PERM ="User Has Perm";
 //    private static final String USER_IN_ROLE ="User Has Role";
-    
+
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param gwAPI
      * @param facade
      * @throws Exception
      */
     public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
-        
-        
+
+
         gwAPI.route(HttpMethods.GET,"/authz/perms/user/:user",API.VOID,new LocateCode(facade,GET_PERMS_BY_USER, true) {
             @Override
             public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
@@ -90,7 +90,7 @@ public class API_AAFAccess {
                     } finally {
                         tt2.done();
                     }
-                    
+
                     if (d==null || d.data.isEmpty()) {
                         tt2 = trans.start("AAF Service Call",Env.REMOTE);
                         try {
@@ -136,7 +136,7 @@ public class API_AAFAccess {
 
         /**
          * Query User Has Perm is DEPRECATED
-         * 
+         *
          * Need to move towards NS declaration... is this even being used?
          * @deprecated
          */
@@ -169,8 +169,8 @@ public class API_AAFAccess {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 try {
-                    redirect(trans, req, resp, context, 
-                            gwAPI.getGUILocator(), 
+                    redirect(trans, req, resp, context,
+                            gwAPI.getGUILocator(),
                             "gui/"+pathParam(req,":path"));
                 } catch (LocatorException e) {
                     context.error(trans, resp, Result.ERR_BadData, e.getMessage());
@@ -184,8 +184,8 @@ public class API_AAFAccess {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 try {
-                    redirect(trans, req, resp, context, 
-                            gwAPI.getGUILocator(), 
+                    redirect(trans, req, resp, context,
+                            gwAPI.getGUILocator(),
                             pathParam(req,":path"));
                 } catch (LocatorException e) {
                     context.error(trans, resp, Result.ERR_BadData, e.getMessage());
@@ -195,7 +195,7 @@ public class API_AAFAccess {
             }
         });
     }
-    
+
     public static void initDefault(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
 
         /**
@@ -205,7 +205,7 @@ public class API_AAFAccess {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 try {
-                    redirect(trans, req, resp, context, 
+                    redirect(trans, req, resp, context,
                             gwAPI.getGUILocator(),
                             "login");
                 } catch (LocatorException e) {
@@ -216,7 +216,7 @@ public class API_AAFAccess {
             }
         });
 
-        
+
         /**
          * Default URL
          */
@@ -224,17 +224,17 @@ public class API_AAFAccess {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
                 try {
-                    redirect(trans, req, resp, context, 
-                            gwAPI.getGUILocator(), 
+                    redirect(trans, req, resp, context,
+                            gwAPI.getGUILocator(),
                             "gui/home");
                 } catch (Exception e) {
                     context.error(trans, resp, Result.ERR_General, e.getMessage());
                 }
             }
         });
-        
+
         /**
-         * Configuration 
+         * Configuration
          */
         gwAPI.route(HttpMethods.GET,"/configure/:id/:type",API.CONFIG,new LocateCode(facade,"Deliver Configuration Properties to AAF", true) {
             @Override
@@ -261,7 +261,7 @@ public class API_AAFAccess {
             if (loc.hasItems()) {
                 Item item = loc.best();
                 URI uri = loc.get(item);
-                StringBuilder redirectURL = new StringBuilder(uri.toString()); 
+                StringBuilder redirectURL = new StringBuilder(uri.toString());
                 redirectURL.append('/');
                 redirectURL.append(path);
                 String str = req.getQueryString();
@@ -282,7 +282,7 @@ public class API_AAFAccess {
     private static class User {
         public final int code;
         public final String resp;
-        
+
         public User(int code, String resp) {
             this.code = code;
             this.resp = resp;

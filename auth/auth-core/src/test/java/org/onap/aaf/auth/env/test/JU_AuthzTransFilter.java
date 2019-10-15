@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class JU_AuthzTransFilter {
     @Mock private TrustChecker tcMock;
     @Mock private AuthzTrans authzTransMock;
     @Mock private Object additionalTafLurs;
-    
+
     private PropAccess access;
 
     @Before
@@ -66,7 +66,7 @@ public class JU_AuthzTransFilter {
 
         when(envMock.access()).thenReturn(access);
     }
-    
+
     // TODO: These tests only work on the AT&T network. Fix them - Ian
     @Test
     public void testAuthenticated() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, CadiException {
@@ -80,7 +80,7 @@ public class JU_AuthzTransFilter {
 //        authenticatedMethod.setAccessible(true);
 //        authenticatedMethod.invoke(aTF, authzTransMock, null);
     }
-    
+
     @Test
     public void testTallyHo() throws CadiException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 //        Slot specialLogSlot = authzEnvMock.slot("SPECIAL_LOG_SLOT");
@@ -107,5 +107,5 @@ public class JU_AuthzTransFilter {
 //        when(authzTransMock.getUserPrincipal()).thenReturn(tPrin);
 //        tallyHoMethod.invoke(aTF, authzTransMock);
     }
-    
+
 }

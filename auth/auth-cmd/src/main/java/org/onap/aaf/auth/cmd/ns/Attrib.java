@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,24 +62,24 @@ public class Attrib extends BaseCmd<NS> {
         } else {
             value = "";
         }
-        
+
         return same(new Retryable<Integer>() {
             @Override
-            public Integer code(Rcli<?> client) throws CadiException, APIException {    
+            public Integer code(Rcli<?> client) throws CadiException, APIException {
                 Future<Void> fp = null;
                 String message;
                 switch(option) {
-                    case 0: 
+                    case 0:
                         fp = client.create(authzString+ns+atrributeString+key+'/'+value,Void.class);
                         message = String.format("Add Attrib %s=%s to %s",
                                 key,value,ns);
                         break;
-                    case 1: 
+                    case 1:
                         fp = client.update(authzString+ns+atrributeString+key+'/'+value);
                         message = String.format("Update Attrib %s=%s for %s",
                                 key,value,ns);
                         break;
-                    case 2: 
+                    case 2:
                         fp = client.delete(authzString+ns+atrributeString+key,Void.class);
                         message = String.format("Attrib %s deleted from %s",
                                 key,ns);
@@ -95,8 +95,8 @@ public class Attrib extends BaseCmd<NS> {
                     } else {
                         error(fp);
                     }
-                        
-                    return fp.code(); 
+
+                    return fp.code();
                 }
             }
         });

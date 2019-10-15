@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,18 +85,18 @@ public class TokenClient {
                 introspectDF = tkCon.env().newDataFactory(Introspect.class);
             }
         }
- 
+
     }
 
     public void client_id(String client_id) {
         this.client_id = client_id;
         default_scope = FQI.reverseDomain(client_id);
     }
-    
+
     public String client_id() {
         return client_id;
     }
-    
+
     /**
      * This scope based on client_id... the App configured for call
      * @return
@@ -121,9 +121,9 @@ public class TokenClient {
     /**
      * Note: OAuth2 provides for normal Authentication parameters when getting tokens.  Basic Auth is one such valid
      * way to get Credentials.  However, support is up to the OAuth2 Implementation
-     * 
+     *
      * This method is for setting an App's creds (client) to another App.
-     * 
+     *
      * @param client_id
      * @param client_secret
      * @throws IOException
@@ -170,13 +170,13 @@ public class TokenClient {
                         return con.x509Alias(client_id);// no password, assume Cert
                     } catch (APIException e) {
                         throw new CadiException(e);
-                    } 
-                }                
+                    }
+                }
             };
             authn_method = AUTHN_METHOD.client_credentials;
         }
     }
-    
+
     public void username(String username) {
         this.username = username;
     }
@@ -184,9 +184,9 @@ public class TokenClient {
     /**
      * Note: OAuth2 provides for normal Authentication parameters when getting tokens.  Basic Auth is one such valid
      * way to get Credentials.  However, support is up to the OAuth2 Implementation
-     * 
+     *
      * This method is for setting the End-User's Creds
-     * 
+     *
      * @param client_id
      * @param client_secret
      * @throws IOException
@@ -222,7 +222,7 @@ public class TokenClient {
             }
         }
     }
-    
+
     public void clearEndUser() {
         username = null;
         enc_password = null;
@@ -254,9 +254,9 @@ public class TokenClient {
     }
     /**
      * Get AuthToken
-     * @throws APIException 
-     * @throws CadiException 
-     * @throws LocatorException 
+     * @throws APIException
+     * @throws CadiException
+     * @throws LocatorException
      */
     public Result<TimedToken> getToken(final char kind, final String ... scopes) throws LocatorException, CadiException, APIException {
         final String scope = addScope(scopes);
@@ -270,14 +270,14 @@ public class TokenClient {
         if (ss==null) {
             throw new APIException("client_creds(...) must be set before obtaining Access Tokens");
         }
-        
+
         Result<TimedToken> rtt = factory.get(key,hash,new Loader<TimedToken>() {
             @Override
             public Result<TimedToken> load(final String key) throws APIException, CadiException, LocatorException {
                 final List<String> params = new ArrayList<>();
                 params.add(scope);
                 addSecurity(params,authn_method);
-            
+
                 final String paramsa[] = new String[params.size()];
                 params.toArray(paramsa);
                 Result<Token> rt = tkCon.best(new Retryable<Result<Token>>() {
@@ -292,7 +292,7 @@ public class TokenClient {
                         }
                     }
                 });
-                
+
                 if (rt.isOK()) {
                     try {
                         return Result.ok(rt.code,factory.putTimedToken(key,rt.value, hash));
@@ -326,7 +326,7 @@ public class TokenClient {
         }
         return Result.err(404,"Not Found");
     }
-    
+
     public Result<TimedToken> refreshToken(Token token) throws APIException, LocatorException, CadiException {
         if (ss==null) {
             throw new APIException("client_creds(...) must be set before obtaining Access Tokens");
@@ -336,7 +336,7 @@ public class TokenClient {
         addSecurity(params,AUTHN_METHOD.refresh_token);
         final String scope="scope="+token.getScope().replace(' ', '+');
         params.add(scope);
-    
+
         final String paramsa[] = new String[params.size()];
         params.toArray(paramsa);
         Result<Token> rt = tkCon.best(new Retryable<Result<Token>>() {
@@ -389,7 +389,7 @@ public class TokenClient {
             }
         );
     }
-    
+
     private String addScope(String[] scopes) {
         String rv = null;
         StringBuilder scope=null;
@@ -428,14 +428,14 @@ public class TokenClient {
                 // Nothing to do
                 break;
         }
-        
-        // Set Credentials appropriate 
+
+        // Set Credentials appropriate
         switch(authn_method) {
             case client_credentials:
                 if (client_id!=null) {
                     params.add("client_id="+client_id);
                 }
-        
+
                 if (enc_client_secret!=null) {
                     try {
                         params.add("client_secret="+URLEncoder.encode(new String(factory.symm.decode(enc_client_secret)),UTF_8));
@@ -443,7 +443,7 @@ public class TokenClient {
                         throw new APIException("Error Decrypting Password",e);
                     }
                 }
-                
+
                 if (username!=null) {
                     params.add("username="+username);
                 }
@@ -453,7 +453,7 @@ public class TokenClient {
                 if (client_id!=null) {
                     params.add("client_id="+client_id);
                 }
-        
+
                 if (enc_client_secret!=null) {
                     try {
                         params.add("client_secret="+URLEncoder.encode(new String(factory.symm.decode(enc_client_secret)),UTF_8));
@@ -467,7 +467,7 @@ public class TokenClient {
                 if (client_id!=null) {
                     params.add("client_id="+client_id);
                 }
-        
+
                 if (enc_client_secret!=null) {
                     try {
                         params.add("client_secret="+ URLEncoder.encode(new String(factory.symm.decode(enc_client_secret)),UTF_8));
@@ -478,7 +478,7 @@ public class TokenClient {
                 if (username!=null) {
                     params.add("username="+username);
                 }
-        
+
                 if (enc_password!=null) {
                     try {
                         params.add("password="+ URLEncoder.encode(new String(factory.symm.decode(enc_password)),UTF_8));
@@ -486,7 +486,7 @@ public class TokenClient {
                         throw new APIException("Error Decrypting Password",e);
                     }
                 }
-    
+
                 break;
             default:
                 // Nothing to do

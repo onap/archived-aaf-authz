@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class RoleDetailAction extends Page {
             new BreadCrumbs(breadcrumbs),
             new NamedCode(true,"content") {
                 final Slot sReq = gui.env.slot(AAF_GUI.HTTP_SERVLET_REQUEST);
-                
+
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -68,7 +68,7 @@ public class RoleDetailAction extends Page {
                             final HttpServletRequest req = trans.get(sReq, null);
                             final String role = getSingleParam(req,"role");
                             if (role==null) {
-                                hgen.text("Parameter 'role' is required").end(); 
+                                hgen.text("Parameter 'role' is required").end();
                             } else {
                                 // Run Validations
 //                                boolean fail;
@@ -81,7 +81,7 @@ public class RoleDetailAction extends Page {
                                             Map<String, String[]> pm = (Map<String, String[]>)req.getParameterMap();
                                             for (final Entry<String, String[]> es : pm.entrySet()) {
                                                 for (final String v : es.getValue()) {
-                                                    TimeTaken tt = null; 
+                                                    TimeTaken tt = null;
                                                     try {
                                                         switch(es.getKey()) {
                                                             case "desc": // Check box set
@@ -92,7 +92,7 @@ public class RoleDetailAction extends Page {
                                                                     RoleRequest rr = new RoleRequest();
                                                                     rr.setName(role);
                                                                     rr.setDescription(desc);
-                                                                    ltf.add(new TypedFuture(ActionType.desc, text, 
+                                                                    ltf.add(new TypedFuture(ActionType.desc, text,
                                                                             client.update("/authz/role",
                                                                                     gui.getDF(RoleRequest.class),rr
                                                                         )));
@@ -111,7 +111,7 @@ public class RoleDetailAction extends Page {
                                                                     rpr.setPerm(perm);
                                                                     rpr.setRole(role);
                                                                     ltf.add(new TypedFuture(ActionType.ungrant,text,
-                                                                            client.delete("/authz/role/" + role + "/perm", 
+                                                                            client.delete("/authz/role/" + role + "/perm",
                                                                                 gui.getDF(RolePermRequest.class),rpr
                                                                             )));
                                                                 } else {
@@ -142,7 +142,7 @@ public class RoleDetailAction extends Page {
                                                     }
                                                 }
                                             }
-                                            
+
                                             if (ltf.isEmpty()) {
                                                 hgen.p("No Changes");
                                             } else {
@@ -150,7 +150,7 @@ public class RoleDetailAction extends Page {
                                                     if (tf.future.get(5000)) {
                                                         hgen.p("<font color=\"green\"><i>Success</i>:</font> " + tf.text);
                                                     } else {
-                                                        // Note: if handling of special Error codes is required, use 
+                                                        // Note: if handling of special Error codes is required, use
                                                         // switch(tf.type) {
                                                         // }
                                                         hgen.p(tf.text);
@@ -172,13 +172,13 @@ public class RoleDetailAction extends Page {
                 }
             });
     }
-    
+
     enum ActionType {desc, ungrant, deleteUR, extendUR};
     private static class TypedFuture {
 //        public final ActionType type;
         public final Future<?> future;
         public final String text;
-        
+
         public TypedFuture(ActionType type, String text, Future<?> future) {
 //            this.type = type;
             this.future = future;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,9 +36,9 @@ import org.onap.aaf.auth.validation.Validator;
 /**
  * Validator
  * Consistently apply content rules for content (incoming)
- * 
- * Note: We restrict content for usability in URLs (because RESTful service), and avoid 
- * issues with Regular Expressions, and other enabling technologies. 
+ *
+ * Note: We restrict content for usability in URLs (because RESTful service), and avoid
+ * issues with Regular Expressions, and other enabling technologies.
  * @author Jonathan
  *
  */
@@ -57,13 +57,13 @@ public class ServiceValidator extends Validator {
         if (pd==null) {
             msg("Perm Data is null.");
         } else {
-            if(!pd.ns.contains("@")) { 
+            if(!pd.ns.contains("@")) {
                 ns(pd.ns);
             }
             permType(pd.type,pd.ns);
             permInstance(pd.instance);
             permAction(pd.action);
-            if (pd.roles!=null) { 
+            if (pd.roles!=null) {
                 for (String role : pd.roles) {
                     role(role);
                 }
@@ -86,7 +86,7 @@ public class ServiceValidator extends Validator {
         }
         return this;
     }
-    
+
     public ServiceValidator role(RoleDAO.Data pd) {
         if (pd==null) {
             msg("Role Data is null.");
@@ -151,14 +151,14 @@ public class ServiceValidator extends Validator {
             if (idx>0) {
                 str = str.substring(0,idx);
             }
-            
+
             if (org.supportsRealm(cd.id)) {
                 String resp = org.isValidID(trans, str);
                 if (isNew && (resp!=null && resp.length()>0)) {
                     msg(cd.id,str);
                 }
             }
-    
+
             if (cd.type==null) {
                 msg("Credential Type must be set");
             } else {
@@ -193,17 +193,17 @@ public class ServiceValidator extends Validator {
         ns(ns.name);
         for (String s : ns.admin) {
             if (nob(s,ID_CHARS)) {
-                msg("Admin [" + s + "] is invalid.");        
+                msg("Admin [" + s + "] is invalid.");
             }
-            
+
         }
         for (String s : ns.owner) {
             if (nob(s,ID_CHARS)) {
-                msg("Responsible [" + s + "] is invalid.");        
+                msg("Responsible [" + s + "] is invalid.");
             }
-            
+
         }
-        
+
         if (ns.attrib!=null) {
             for (Pair<String, String> at : ns.attrib) {
                 if (nob(at.x,NAME_CHARS)) {
@@ -221,14 +221,14 @@ public class ServiceValidator extends Validator {
 
     public ServiceValidator user_role(String user, UserRoleDAO.Data urdd) {
         role(user,urdd.role);
-        if(!urdd.role.startsWith(user)) { 
+        if(!urdd.role.startsWith(user)) {
             nullOrBlank("UserRole.ns",urdd.ns);
             nullOrBlank("UserRole.rname",urdd.rname);
         }
         return this;
     }
 
-    
+
     public ServiceValidator user_role(UserRoleDAO.Data urdd) {
         if (urdd==null) {
             msg("UserRole is null");

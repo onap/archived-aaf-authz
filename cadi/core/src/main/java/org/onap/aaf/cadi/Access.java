@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,8 @@ import java.util.Properties;
  * Various Environments require different logging mechanisms, or at least allow
  * for different ones. We need the Framework to be able to hook into any particular instance of logging
  * mechanism, whether it be a Logging Object within a Servlet Context, or a direct library like log4j.
- * This interface, therefore, allows maximum pluggability in a variety of different app styles.  
- *  
+ * This interface, therefore, allows maximum pluggability in a variety of different app styles.
+ *
  * @author Jonathan
  *
  */
@@ -39,15 +39,15 @@ public interface Access {
     public enum Level {
         DEBUG(0x1), INFO(0x10), AUDIT(0x100), WARN(0x2000), ERROR(0x4000), INIT(0x8000),TRACE(0x10000),NONE(0XFFFF);
         private final int bit;
-        
+
         Level(int ord) {
             bit = ord;
         }
-        
+
         public boolean inMask(int mask) {
             return (mask & bit) == bit;
         }
-        
+
         public int addToMask(int mask) {
             return mask | bit;
         }
@@ -89,8 +89,8 @@ public interface Access {
      * @param elements
      */
     public void printf(Level level, String fmt, Object ... elements);
-    
-    /** 
+
+    /**
      * Check if message will log before constructing
      * @param level
      * @return
@@ -98,24 +98,24 @@ public interface Access {
     public boolean willLog(Level level);
 
     /**
-     * Write the contents of an exception, followed by a variable list of Object's text via the 
+     * Write the contents of an exception, followed by a variable list of Object's text via the
      * toString() method with appropriate space, etc.
-     * 
+     *
      * The Loglevel is always "ERROR"
-     * 
+     *
      * @param elements
      */
     public void log(Exception e, Object ... elements);
-    
+
     /**
      * Set the Level to compare logging too
      */
     public void setLogLevel(Level level);
-        
+
     /**
      * It is important in some cases to create a class from within the same Classloader that created
      * Security Objects.  Specifically, it's pretty typical for Web Containers to separate classloaders
-     * so as to allow Apps with different dependencies. 
+     * so as to allow Apps with different dependencies.
      * @return
      */
     public ClassLoader classLoader();
@@ -127,7 +127,7 @@ public interface Access {
     public void load(InputStream is) throws IOException;
 
     /**
-     * if "anytext" is true, then decryption will always be attempted.  Otherwise, only if starts with 
+     * if "anytext" is true, then decryption will always be attempted.  Otherwise, only if starts with
      * Symm.ENC
      * @param encrypted
      * @param anytext

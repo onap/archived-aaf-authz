@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ public class JU_BaseDataFactory {
     public void setUp() throws Exception {
         initMocks(this);
     }
-    
+
     @Test
     public void testGenSchemaException() {
         Store env = Mockito.mock(Store.class);
@@ -45,7 +45,7 @@ public class JU_BaseDataFactory {
             assertTrue(e.getLocalizedMessage().contains("does not exist.  You can set this with"));
         }
     }
-    
+
     @Test
     public void testGenSchemaXsdException() {
         Store env = Mockito.mock(Store.class);
@@ -57,7 +57,7 @@ public class JU_BaseDataFactory {
             assertTrue(e.getLocalizedMessage().contains("for schema validation"));
         }
     }
-    
+
     @Test
     public void testGenSchemaNoException() {
         Store env = Mockito.mock(Store.class);
@@ -69,7 +69,7 @@ public class JU_BaseDataFactory {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testGetQName() {
         String[] schemaFIles = new String[] {"../../auth-client/src/main/xsd/aaf_2_0.xsd"};

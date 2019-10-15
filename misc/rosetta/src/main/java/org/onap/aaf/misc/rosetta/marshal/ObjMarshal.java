@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,23 +41,23 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
     // Note: Not Using List or ArrayList, because there is no "Peek" concept in their iterator.
     private Marshal<T>[] pml;
     private int end=0;
-    
+
     /**
      * @param pm
      */
     @SuppressWarnings("unchecked")
     protected void add(Marshal<T> pm) {
         if (pml==null) {
-            pml = new Marshal[Ladder.DEFAULT_INIT_SIZE]; 
+            pml = new Marshal[Ladder.DEFAULT_INIT_SIZE];
         } else if (end>pml.length) {
-            Object temp[] = pml; 
+            Object temp[] = pml;
             pml = new Marshal[pml.length+Ladder.DEFAULT_INIT_SIZE];
             System.arraycopy(temp, 0, pml, 0, pml.length);
         }
         pml[end]=pm;
         ++end;
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.misc.rosetta.Parse#parse(java.lang.Object, org.onap.aaf.misc.rosetta.Parsed)
      */
@@ -120,12 +120,12 @@ public abstract class ObjMarshal<T> extends Marshal<T> {
         public Marshal<T> peek() {
             return idx<0?null:pml[idx];
         }
-        
+
         @Override
         public void remove() {
             pml[idx]=null;
         }
-        
+
     }
 
 }

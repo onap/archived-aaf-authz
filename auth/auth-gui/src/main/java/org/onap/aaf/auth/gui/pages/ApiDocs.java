@@ -59,11 +59,11 @@ public class ApiDocs extends Page {
     private static final String fields[] = {};
     private static final String ERROR_LINK = "<a href=\"./example/"
             + "YXBwbGljYXRpb24vRXJyb3IranNvbg=="
-//            + Symm.base64noSplit().encode("application/Error+json") 
+//            + Symm.base64noSplit().encode("application/Error+json")
             + "\">JSON</a> "
             + "<a href=\"./example/"
             + "YXBwbGljYXRpb24vRXJyb3IreG1s"
-//            + Symm.base64noSplit().encode("application/Error+xml") 
+//            + Symm.base64noSplit().encode("application/Error+xml")
             + "\">XML</a> ";
 
 

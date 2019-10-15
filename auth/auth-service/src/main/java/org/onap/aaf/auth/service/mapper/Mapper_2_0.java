@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -103,7 +103,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     public Mapper_2_0(Question q) {
         this.q = q;
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.service.mapper.Mapper#ns(java.lang.Object, org.onap.aaf.auth.service.mapper.Mapper.Holder)
      */
@@ -116,7 +116,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         namespace.owner = from.getResponsible();
         namespace.description = from.getDescription();
         trans.checkpoint(namespace.name, Env.ALWAYS);
-        
+
         NsType nt = NsType.fromString(from.getType());
         if (nt.equals(NsType.UNKNOWN)) {
             String ns = namespace.name;
@@ -133,7 +133,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             }
         }
         namespace.type = nt.type;
-        
+
         return Result.ok(namespace);
     }
 
@@ -215,7 +215,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         } finally {
             tt.done();
         }
-         
+
         tt = trans.start("Sort Perms", Env.SUB);
         try {
             Collections.sort(perms, new Comparator<Perm>() {
@@ -230,14 +230,14 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
                         return instanceCompare;
                     }
                     return typeCompare;
-                }    
+                }
             });
         } finally {
             tt.done();
         }
         return Result.ok(to);
     }
-    
+
     @Override
     public Result<Perms> perms(AuthzTrans trans, List<PermDAO.Data> from, Perms to, String[] nss, boolean filter) {
         List<Perm> perms = to.getPerm();
@@ -268,7 +268,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         } finally {
             tt.done();
         }
-         
+
         tt = trans.start("Sort Perms", Env.SUB);
         try {
             Collections.sort(perms, new Comparator<Perm>() {
@@ -283,7 +283,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
                         return instanceCompare;
                     }
                     return typeCompare;
-                }    
+                }
             });
         } finally {
             tt.done();
@@ -297,7 +297,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         for (Perm p : perms.getPerm()) {
             Result<NsSplit> nss = q.deriveNsSplit(trans, p.getType());
             PermDAO.Data pd = new PermDAO.Data();
-            if (nss.isOK()) { 
+            if (nss.isOK()) {
                 pd.ns=nss.value.ns;
                 pd.type = nss.value.name;
                 pd.instance = p.getInstance();
@@ -313,12 +313,12 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         return Result.ok(lpd);
     }
 
-    
+
     @Override
     public Result<PermDAO.Data> permkey(AuthzTrans trans, Pkey from) {
         return q.permFrom(trans, from.getType(),from.getInstance(),from.getAction());
     }
-    
+
     @Override
     public Result<PermDAO.Data> permFromRPRequest(AuthzTrans trans, Request req) {
         RolePermRequest from = (RolePermRequest)req;
@@ -326,19 +326,19 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         if (perm==null)return Result.err(Status.ERR_NotFound, "Permission not found");
         Result<NsSplit> nss = q.deriveNsSplit(trans, perm.getType());
         PermDAO.Data pd = new PermDAO.Data();
-        if (nss.isOK()) { 
+        if (nss.isOK()) {
             pd.ns=nss.value.ns;
             pd.type = nss.value.name;
             pd.instance = from.getPerm().getInstance();
             pd.action = from.getPerm().getAction();
             trans.checkpoint(pd.fullPerm(), Env.ALWAYS);
-            
+
             String[] roles = {};
-            
+
             if (from.getRole() != null) {
                 roles = from.getRole().split(",");
             }
-            for (String role : roles) { 
+            for (String role : roles) {
                 pd.roles(true).add(role);
             }
             return Result.ok(pd);
@@ -346,13 +346,13 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             return Result.err(nss);
         }
     }
-    
+
     @Override
     public Result<RoleDAO.Data> roleFromRPRequest(AuthzTrans trans, Request req) {
         RolePermRequest from = (RolePermRequest)req;
         Result<NsSplit> nss = q.deriveNsSplit(trans, from.getRole());
         RoleDAO.Data rd = new RoleDAO.Data();
-        if (nss.isOK()) { 
+        if (nss.isOK()) {
             rd.ns = nss.value.ns;
             rd.name = nss.value.name;
             trans.checkpoint(rd.fullName(), Env.ALWAYS);
@@ -361,7 +361,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             return Result.err(nss);
         }
     }
-    
+
     @Override
     public Result<PermDAO.Data> perm(AuthzTrans trans, Request req) {
         PermRequest from = (PermRequest)req;
@@ -380,7 +380,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             return Result.ok(pd);
         }  else {
             Result<NsSplit> nss = q.deriveNsSplit(trans, from.getType());
-            if (nss.isOK()) { 
+            if (nss.isOK()) {
                 pd.ns=nss.value.ns;
                 pd.type = nss.value.name;
                 pd.instance = from.getInstance();
@@ -393,7 +393,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             }
         }
     }
-    
+
     @Override
     public Request ungrantRequest(AuthzTrans trans, String role, String type, String instance, String action) {
         RolePermRequest rpr = new RolePermRequest();
@@ -402,7 +402,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         pkey.setInstance(instance);
         pkey.setAction(action);
         rpr.setPerm(pkey);
-        
+
         rpr.setRole(role);
         return rpr;
     }
@@ -429,7 +429,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
      */
     @Override
     public Result<Roles> roles(AuthzTrans trans, List<RoleDAO.Data> from, Roles to, boolean filter) {
-        final boolean needNS = trans.requested(REQD_TYPE.ns); 
+        final boolean needNS = trans.requested(REQD_TYPE.ns);
         for (RoleDAO.Data frole : from) {
             // Only Add Data to view if User is allowed to see this Role
             if (!filter || q.mayUser(trans, trans.user(), frole,Access.read).isOK()) {
@@ -443,7 +443,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
                     Result<String[]> rpa = PermDAO.Data.decodeToArray(trans,q,p);
                     if (rpa.notOK())
                         return Result.err(rpa);
-                    
+
                     String[] pa = rpa.value;
                     Pkey pKey = new Pkey();
                     pKey.setType(pa[0]+'.'+pa[1]);
@@ -460,7 +460,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     /*
      * (non-Javadoc)
      * @see org.onap.aaf.auth.service.mapper.Mapper#users(java.util.Collection, java.lang.Object)
-     * 
+     *
      * Note: Prevalidate all data for permission to view
      */
     @Override
@@ -480,7 +480,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     /*
      * (non-Javadoc)
      * @see org.onap.aaf.auth.service.mapper.Mapper#users(java.util.Collection, java.lang.Object)
-     * 
+     *
      * Note: Prevalidate all data for permission to view
      */
     @Override
@@ -537,12 +537,12 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             }
             if (passwd != null) {
                 to.cred = ByteBuffer.wrap(passwd.getBytes());
-                to.type = CredDAO.RAW; 
+                to.type = CredDAO.RAW;
             } else {
                 to.type = CredDAO.NONE;
             }
         }
-            
+
         // Note: Ensure requested EndDate created will match Organization Password Rules
         //  P.S. Do not apply TempPassword rule here. Do that when you know you are doing a Create/Reset (see Service)
         to.expires = getExpires(trans.org(),Expiration.Password,base,from.getId());
@@ -550,7 +550,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
 
         return Result.ok(to);
     }
-    
+
     @Override
     public Result<Users> cred(List<CredDAO.Data> from, Users to) {
         List<User> cu = to.getUser();
@@ -564,7 +564,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         }
         return Result.ok(to);
     }
-    
+
     @Override
     public Result<Certs> cert(List<CertDAO.Data> from, Certs to) {
         List<Cert> lc = to.getCert();
@@ -572,7 +572,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             Cert cert = new Cert();
             cert.setId(fcred.id);
             cert.setX500(fcred.x500);
-            /**TODO - change Interface 
+            /**TODO - change Interface
              * @deprecated */
             cert.setFingerprint(fcred.serial.toByteArray());
             lc.add(cert);
@@ -583,15 +583,15 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     /**
      * Analyze whether Requests should be acted on now, or in the future, based on Start Date, and whether the requester
      * is allowed to change this value directly
-     * 
+     *
      * Returning Result.OK means it should be done in the future.
      * Returning Result.ACC_Now means to act on table change now.
      */
     @Override
-    public Result<FutureDAO.Data> future(AuthzTrans trans, String table, Request from, 
+    public Result<FutureDAO.Data> future(AuthzTrans trans, String table, Request from,
                 Bytification content, boolean enableApproval,  Memo memo, MayChange mc) {
         Result<?> rMayChange;
-        boolean needsAppr = enableApproval?trans.requested(REQD_TYPE.future):false; 
+        boolean needsAppr = enableApproval?trans.requested(REQD_TYPE.future):false;
         if (!needsAppr && (needsAppr = (rMayChange=mc.mayChange()).notOK())) {
             if (enableApproval) {
                 if (!trans.requested(AuthzTrans.REQD_TYPE.future)) {
@@ -601,16 +601,16 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
                 return Result.err(rMayChange);
             }
         }
-        GregorianCalendar now = new GregorianCalendar(); 
+        GregorianCalendar now = new GregorianCalendar();
         GregorianCalendar start = from.getStart()==null?now:from.getStart().toGregorianCalendar();
-        
+
         GregorianCalendar expires = trans.org().expiration(start, Expiration.Future);
         XMLGregorianCalendar xgc;
         if ((xgc=from.getEnd())!=null) {
             GregorianCalendar fgc = xgc.toGregorianCalendar();
             expires = expires.before(fgc)?expires:fgc; // Min of desired expiration, and Org expiration
         }
-        
+
         //TODO needs two answers from this.  What's the NSS, and may Change.
         FutureDAO.Data fto;
         if (start.after(now) || needsAppr ) {
@@ -669,7 +669,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             item.setUser(data.user);
             items.add(item);
         }
-        
+
         if (sort != 0) {
             TimeTaken tt = trans.start("Sort ", Env.SUB);
             try {
@@ -697,7 +697,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         }
         return err;
     }
-    
+
     @Override
     public Class<?> getClass(API api) {
         switch(api) {
@@ -753,17 +753,17 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             case ERROR: return (A)new Error();
             case API: return (A)new Api();
             case VOID: return null;
-            
+
             case APPROVALS:    return (A) new Approvals();
             case DELG_REQ: return (A) new DelgRequest();
         }
         return null;
     }
-    
+
     @SuppressWarnings("unchecked")
     /**
      * Get Typed Marshaler as they are defined
-     * 
+     *
      * @param api
      * @return
      */
@@ -799,7 +799,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
         }
         return Result.ok(apprs);
     }
-    
+
     @Override
     public Result<List<ApprovalDAO.Data>> approvals(Approvals apprs) {
         List<ApprovalDAO.Data>  lappr = new ArrayList<>();
@@ -815,7 +815,7 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
             ad.status=a.getStatus();
             ad.operation=a.getOperation();
             ad.memo=a.getMemo();
-            
+
             XMLGregorianCalendar xgc = a.getUpdated();
             if (xgc!=null)ad.updated=xgc.toGregorianCalendar().getTime();
             lappr.add(ad);
@@ -859,15 +859,15 @@ public class Mapper_2_0 implements Mapper<Nss, Perms, Pkey, Roles, Users, UserRo
     /*
      * We want "Expired" dates to start at a specified time set by the Organization, and consistent wherever
      * the date is created from.
-     */ 
+     */
     private Date getExpires(Organization org, Expiration exp, Request base, String id) {
         XMLGregorianCalendar end = base.getEnd();
         GregorianCalendar gc = end==null?new GregorianCalendar():end.toGregorianCalendar();
         GregorianCalendar orggc;
-        orggc = org.expiration(gc,exp,id); 
+        orggc = org.expiration(gc,exp,id);
 
         // We'll choose the lesser of dates to ensure Policy Compliance...
-    
+
         GregorianCalendar endgc = end==null||gc.after(orggc)?orggc:gc;
         // Allow the Organization to determine when official "day Start" begins, Specifically when to consider something Expired.
         endgc = Chrono.firstMomentOfDay(endgc);

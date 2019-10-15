@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class RadioCell extends AbsCell {
     private String[] attrs;
-    
+
     public RadioCell(String name, String radioClass, String value, String ... attributes) {
         attrs = new String[4 + attributes.length];
         attrs[0]="type=radio";
@@ -35,7 +35,7 @@ public class RadioCell extends AbsCell {
         System.arraycopy(attributes, 0, attrs, 4, attributes.length);
 
     }
-    
+
     @Override
     public void write(HTMLGen hgen) {
         hgen.tagOnly("input",attrs);

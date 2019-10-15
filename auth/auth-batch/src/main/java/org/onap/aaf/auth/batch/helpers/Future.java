@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ import com.datastax.driver.core.Statement;
 public class Future implements CacheChange.Data, Comparable<Future> {
     public static final Map<UUID,Future> data = new TreeMap<>();
     public static final Map<String,List<Future>> byRole = new TreeMap<>();
-    
+
     public final FutureDAO.Data fdd;
     public final String role; // derived
     private static final CacheChange<Future> cache = new CacheChange<>();
@@ -106,27 +106,27 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         }
         this.role = role;
     }
-    
+
     public final UUID id() {
         return fdd.id;
     }
-    
+
     public final String memo() {
         return fdd.memo;
     }
-    
+
     public final String target() {
         return fdd.target;
     }
-    
+
     public final Date start() {
         return fdd.start;
     }
-    
+
     public final Date expires() {
         return fdd.expires;
     }
-    
+
     public static void load(Trans trans, Session session, Creator<Future> creator) {
         load(trans,session,creator, f -> {
             data.put(f.fdd.id,f);
@@ -149,7 +149,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         } finally {
             tt.done();
         }
-        
+
         int count = 0;
         tt = trans.start("Process Futures", Env.SUB);
         try {
@@ -181,7 +181,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         }
         return rv;
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.helpers.CacheChange.Data#resetLocalData()
      */
@@ -207,7 +207,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     public static void resetLocalData() {
         cache.resetLocalData();
     }
-    
+
     public static int sizeForDeletion() {
         return cache.cacheSize();
     }
@@ -215,7 +215,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
     public static boolean pendingDelete(Future f) {
         return cache.contains(f);
     }
-    
+
     public static void row(CSV.Writer cw, Future f) {
         cw.row("future",f.fdd.id,f.fdd.target,f.fdd.expires,f.role,f.fdd.memo);
     }

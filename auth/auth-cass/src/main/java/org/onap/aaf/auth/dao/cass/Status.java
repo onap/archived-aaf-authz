@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import org.onap.aaf.auth.layer.Result;
 
 /**
  * Add additional Behavior for Specific Applications for Results
- * 
+ *
  * In this case, we add additional BitField information accessible by
  * method (
  * @author Jonathan
@@ -36,11 +36,11 @@ import org.onap.aaf.auth.layer.Result;
  * @param <RV>
  */
 public class Status<RV> extends Result<RV> {
-    
+
     // Jonathan 10/1/2013:  Initially, I used enum, but it's not extensible.
     public final static int ERR_NsNotFound = Result.ERR_General+1,
                             ERR_RoleNotFound = Result.ERR_General+2,
-                            ERR_PermissionNotFound = Result.ERR_General+3, 
+                            ERR_PermissionNotFound = Result.ERR_General+3,
                             ERR_UserNotFound = Result.ERR_General+4,
                             ERR_UserRoleNotFound = Result.ERR_General+5,
                             ERR_DelegateNotFound = Result.ERR_General+6,
@@ -51,9 +51,9 @@ public class Status<RV> extends Result<RV> {
                             ACC_Future = Result.ERR_General+11,
                             ERR_ChoiceNeeded = Result.ERR_General+12,
                             ERR_FutureNotRequested = Result.ERR_General+13;
-  
+
     /**
-     * Constructor for Result set. 
+     * Constructor for Result set.
      * @param data
      * @param status
      */
@@ -66,7 +66,7 @@ public class Status<RV> extends Result<RV> {
             case OK: return "OK";
             case ERR_NsNotFound: return "ERR_NsNotFound";
             case ERR_RoleNotFound: return "ERR_RoleNotFound";
-            case ERR_PermissionNotFound: return "ERR_PermissionNotFound"; 
+            case ERR_PermissionNotFound: return "ERR_PermissionNotFound";
             case ERR_UserNotFound: return "ERR_UserNotFound";
             case ERR_UserRoleNotFound: return "ERR_UserRoleNotFound";
             case ERR_DelegateNotFound: return "ERR_DelegateNotFound";
@@ -81,8 +81,8 @@ public class Status<RV> extends Result<RV> {
             case ERR_NotFound: return "ERR_NotFound";
             case ERR_ChoiceNeeded: return "ERR_ChoiceNeeded";
         }
-        //case ERR_General:   or unknown... 
+        //case ERR_General:   or unknown...
         return "ERR_General";
     }
-    
+
 }

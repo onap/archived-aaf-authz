@@ -86,7 +86,7 @@ public class JU_HClientHotPeerLocator {
 
         item = loc.first();
         loc.invalidate(item);
-        
+
         loc.invalidate(loc.bestClient());
         loc.invalidate(loc.get(loc.next(item)));
         loc.destroy();
@@ -106,13 +106,13 @@ public class JU_HClientHotPeerLocator {
         assertThat(alternate2, is("Alternate Client is " + goodURL2));
 
         outStream.reset();
-        
+
         loc.invalidate(loc.first());
 
         loc.destroy();
         loc.best();
     }
-    
+
     @Test
     public void hasNoItemTest() throws LocatorException {
         HClientHotPeerLocator loc;
@@ -134,7 +134,7 @@ public class JU_HClientHotPeerLocator {
         loc = new CoverageLocator(access, urlStr, 0, "38.627", "-90.199", ssMock);
         assertThat(loc._invalidate(null), is(nullValue()));
         loc._destroy(null);
-        
+
         loc._newClient("bad string");
     }
 

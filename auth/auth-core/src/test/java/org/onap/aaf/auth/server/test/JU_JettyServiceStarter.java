@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,18 +76,18 @@ public class JU_JettyServiceStarter {
     @Before
     public void setUp() throws OrganizationException, CadiException {
         Access access = mock(Access.class);
-        
+
         BasicEnv bEnv = mock(BasicEnv.class);
         Trans trans = mock(Trans.class);  //TODO: Fix this once Gabe has services running to see correct output without mock
         //TestService testService = new TestService(access, bEnv);
         //jss = new JettyServiceStarter<AuthzEnv,AuthzTrans>(testService);
     }
-    
+
 //    @Test
 //    public void netYetTested() {
 //        fail("Tests not yet implemented");
 //    }
-    
+
     @Test
     public void testPropertyAdjustment() {
         //jss._propertyAdjustment();

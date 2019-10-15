@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,22 +52,22 @@ import org.onap.aaf.misc.env.util.Split;
 
 /**
  * Create a new Transaction Object for each and every incoming Transaction
- * 
+ *
  * Attach to Request.  User "FilterHolder" mechanism to retain single instance.
- * 
+ *
  * TransFilter includes CADIFilter as part of the package, so that it can
  * set User Data, etc, as necessary.
- * 
+ *
  * @author Jonathan
  *
  */
 public abstract class TransFilter<TRANS extends TransStore> implements Filter {
     public static final String TRANS_TAG = "__TRANS__";
-    
+
     private CadiHTTPManip cadi;
 
     private final String[] no_authn;
-    
+
     public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
         cadi = new CadiHTTPManip(access, con, tc, additionalTafLurs);
         String no = access.getProperty(Config.CADI_NOAUTHN, null);
@@ -81,7 +81,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
-    
+
     protected Lur getLur() {
         return cadi.getLur();
     }
@@ -90,19 +90,19 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
     protected abstract TimeTaken start(TRANS trans);
     protected abstract void authenticated(TRANS trans, Principal p);
     protected abstract void tallyHo(TRANS trans, String target);
-    
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
-        
+
         TRANS trans = newTrans(req,res);
-        
+
         TimeTaken overall = start(trans);
         String target = "n/a";
         try {
             request.setAttribute(TRANS_TAG, trans);
-            
+
             if (no_authn!=null) {
                 for (String prefix : no_authn) {
                     if (req.getPathInfo().startsWith(prefix)) {
@@ -133,7 +133,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
             } finally {
                 security.done();
             }
-            
+
             if (r==RESP.IS_AUTHENTICATED) {
                 trans.checkpoint(resp.desc());
                 if (cadi.notCadi(cw, res)) {
@@ -141,7 +141,7 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
                 }
             } else {
                 //TODO this is a good place to check if too many checks recently
-                // Would need Cached Counter objects that are cleaned up on 
+                // Would need Cached Counter objects that are cleaned up on
                 // use
                 trans.checkpoint(resp.desc(),Env.ALWAYS);
                 if (resp.isFailedAttempt()) {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,7 +80,7 @@ public class DirectOAuthTAF implements HttpTaf {
                 String[] split = Split.split(',', alt_url);
                 int timeout = split.length>1?Integer.parseInt(split[1]):3000;
                 altIntrospectClient = tcf.newClient(split[0], timeout);
-                altIntrospectClient.client_creds(access.getProperty(Config.AAF_ALT_CLIENT_ID,null), 
+                altIntrospectClient.client_creds(access.getProperty(Config.AAF_ALT_CLIENT_ID,null),
                                            access.getProperty(Config.AAF_ALT_CLIENT_SECRET,null));
             } catch (GeneralSecurityException | IOException | LocatorException e) {
                 throw new CadiException(e);
@@ -125,7 +125,7 @@ public class DirectOAuthTAF implements HttpTaf {
                             password=s;
                         }
                         break;
-                    case "token": 
+                    case "token":
                         if (token!=null) { // Defined as both Bearer and Form Encoded - Error
                             return new OAuth2HttpTafResp(access, null, "Token Info found as both Bearer Token and Form Info", RESP.FAIL, resp, true);
                         }
@@ -136,12 +136,12 @@ public class DirectOAuthTAF implements HttpTaf {
                     // Ignore others
                 }
             }
-            
+
             if (client_id==null || client_secret==null) {
                 return new OAuth2HttpTafResp(access, null, "client_id and client_secret required", RESP.TRY_ANOTHER_TAF, resp, false);
             }
-            
-            if (token==null) { // No Token to work with, use only Client_ID and Client_Secret 
+
+            if (token==null) { // No Token to work with, use only Client_ID and Client_Secret
                 AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
 
                 if (directUserPass.validate(client_id, Type.PASSWORD, client_secret.getBytes(), trans)) {
@@ -166,8 +166,8 @@ public class DirectOAuthTAF implements HttpTaf {
                     return new OAuth2HttpTafResp(access,null,"OAuth client_id " + client_id + " not authenticated ",RESP.FAIL,resp,true);
                 }
             }
-        } 
-        
+        }
+
         // OK, have only a Token to validate
         if (token!=null) {
             AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
@@ -205,7 +205,7 @@ public class DirectOAuthTAF implements HttpTaf {
         public ServiceTPL(AuthzTrans atrans) {
             trans = atrans;
         }
-        
+
         @Override
         public org.onap.aaf.cadi.client.Result<TokenPerm> load(String accessToken, byte[] cred) throws APIException, CadiException, LocatorException {
             Result<Introspect> ri = oaFacade.mappedIntrospect(trans, accessToken);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,10 +62,10 @@ public class PendingRequestsShow extends Page {
     public static final String NAME = "MyRequests";
     private static final String[] FIELDS = new String[] {"as_user"}; // as_user Checked in Display
     private static final String AS_USER=NAME+".as_user";
-    
+
     public PendingRequestsShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env, NAME,HREF, FIELDS,
-            new BreadCrumbs(breadcrumbs), 
+            new BreadCrumbs(breadcrumbs),
             new TopOfPage(gui.env,true, "expedite"),
             new Table<AAF_GUI,AuthzTrans>("Pending Requests",gui.env.newTransNoAvg(),new Model(gui.env), "class=std")
         );
@@ -98,7 +98,7 @@ public class PendingRequestsShow extends Page {
                         .leaf("a","href=#expedite_directions","onclick=divVisibility('expedite_directions');")
                             .text("Click Here").end()
                         .divID("expedite_directions", "style=display:none");
-                    
+
                     hgen
                         .incr(HTMLGen.OL)
                         .incr(HTMLGen.LI)
@@ -120,7 +120,7 @@ public class PendingRequestsShow extends Page {
 
     /**
      * Implement the Table Content for Requests by User
-     * 
+     *
      * @author Jeremiah
      *
      */
@@ -137,7 +137,7 @@ public class PendingRequestsShow extends Page {
         public String[] headers() {
             return headers;
         }
-        
+
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final ArrayList<AbsCell[]> rv = new ArrayList<>();
@@ -163,12 +163,12 @@ public class PendingRequestsShow extends Page {
                                             return id1.timestamp()<=id2.timestamp()?1:-1;
                                         }
                                     });
-                                    
+
                                     String prevTicket = null;
                                     for (Approval a : approvals) {
                                         String approver = a.getApprover();
 //                                        String approverShort = approver.substring(0,approver.indexOf('@'));
-                                        
+
                                         AbsCell tsCell = null;
                                         String ticket = a.getTicket();
                                         if (ticket==null || ticket.equals(prevTicket)) {
@@ -180,7 +180,7 @@ public class PendingRequestsShow extends Page {
                                                     RequestDetail.HREF + "?ticket=" + ticket,false);
                                             prevTicket = ticket;
                                         }
-                                        
+
                                         AbsCell approverCell = new TextCell(approver);
                                         AbsCell[] sa = new AbsCell[] {
                                             tsCell,

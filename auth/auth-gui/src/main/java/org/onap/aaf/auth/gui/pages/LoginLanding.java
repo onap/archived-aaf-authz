@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,16 +42,16 @@ public class LoginLanding extends Page {
     static final String NAME = "Login";
     static final String fields[] = {"id","password","environment"};
     static final String envs[] = {"DEV","TEST","PROD"};
-    
+
     public LoginLanding(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env, NAME,HREF, fields, new NamedCode(true, "content") {
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                 hgen.leaf("p").text("No login credentials are found in your current session. " +
                          "Choose your preferred login option to continue.").end();
-                
+
                 Mark loginPaths = hgen.divID("Pages");
-                
+
                 cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
                     @Override
                     public void code(AAF_GUI authGUI, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
@@ -74,13 +74,13 @@ public class LoginLanding extends Page {
 //                    .incr("p", "id=tguard","style=display:none").text("this will redirect to tGuard login").end()
 //                hgen.leaf("a", "href=#","onclick=divVisibility('basicauth');").text("AAF Basic Auth").end();
                 hgen.end(loginPaths);
-                
+
 //                    hgen.incr("form","method=post","style=display:none","id=basicauth","gui/home?Authentication=BasicAuth");
 //                    Mark table = new Mark(TABLE);
 //                    hgen.incr(table);
 //                    cache.dynamic(hgen, new DynamicCode<HTMLGen, AuthGUI, AuthzTrans>() {
 //                        @Override
-//                        public void code(final AuthGUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    
+//                        public void code(final AuthGUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)
 //                                throws APIException, IOException {
 //                            hgen
 //                            .input(fields[0],"Username",true)
@@ -97,9 +97,9 @@ public class LoginLanding extends Page {
 //                        for (String env : envs) {
 //                            hgen.incr("option", "value="+env).text(env).end();
 //                        }
-//                        hgen            
-//                        .end(selectRow) 
-                            
+//                        hgen
+//                        .end(selectRow)
+
 //                        hgen.end();
 //                        }
 //                    });
@@ -107,7 +107,7 @@ public class LoginLanding extends Page {
 //                    hgen.tagOnly("input", "type=submit", "value=Submit")
 //                        .tagOnly("input", "type=reset", "value=Reset")
 //                    .end();
-            
+
 
             }
         });

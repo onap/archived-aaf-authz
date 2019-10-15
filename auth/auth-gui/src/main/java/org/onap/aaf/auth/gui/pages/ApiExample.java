@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 /**
  * Detail Page for Permissions
- * 
+ *
  * @author Jonathan
  *
  */
@@ -54,7 +54,7 @@ public class ApiExample extends Page {
                 new Model(NAME)
                 );
     }
-    
+
     private static class Model extends NamedCode {
         private static final String WITH_OPTIONAL_PARAMETERS = "\n\n////////////\n  Data with Optional Parameters \n////////////\n\n";
 
@@ -86,8 +86,8 @@ public class ApiExample extends Page {
                         } else {
                             fs2=null;
                         }
-                        
-                        
+
+
                         if (fp.get(5000)) {
                                 xgen.incr(HTMLGen.H1).text("Sample Code").end()
                                 .incr(HTMLGen.H5).text(typecode).end();
@@ -123,11 +123,11 @@ public class ApiExample extends Page {
                         tt.done();
                     }
                 }
-                    
+
             });
             xgen.end(inner);
         }
     }
 
-}        
+}
         

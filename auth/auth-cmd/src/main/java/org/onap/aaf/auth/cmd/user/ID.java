@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class ID extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException { 
+    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
         int idx = _idx;
         String key = args[idx++];
         final int option = whichOption(options,key);
@@ -55,7 +55,7 @@ public class ID extends Cmd {
         cr.setType(10);
         if (args.length>idx)
             cr.setEntry(args[idx]);
-        
+
         // Set Start/End commands
         setStartEnd(cr);
         Integer ret = same(new Retryable<Integer>() {
@@ -66,8 +66,8 @@ public class ID extends Cmd {
                 switch(option) {
                     case 0:
                         fp = client.create(
-                            CRED_PATH, 
-                            getDF(CredRequest.class), 
+                            CRED_PATH,
+                            getDF(CredRequest.class),
                             cr
                             );
                         verb = "Added ID [";
@@ -105,7 +105,7 @@ public class ID extends Cmd {
         if (ret==null)ret = -1;
         return ret;
     }
-    
+
     @Override
     public void detailedHelp(int _indent, StringBuilder sb) {
             int indent = _indent;

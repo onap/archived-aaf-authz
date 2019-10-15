@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class API_Mgmt {
 
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param authzAPI
      * @param facade
      * @throws Exception
@@ -73,14 +73,14 @@ public class API_Mgmt {
                 switch(r.status) {
                     case OK:
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
                 }
             }
         });
-        
+
         /**
          * Clear Cache
          */
@@ -94,7 +94,7 @@ public class API_Mgmt {
                     case OK:
                         trans.audit().log("Cache " + area + " has been cleared by "+trans.user());
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
-                        resp.setStatus(HttpStatus.OK_200); 
+                        resp.setStatus(HttpStatus.OK_200);
                         break;
                     default:
                         context.error(trans,resp,r);
@@ -127,7 +127,7 @@ public class API_Mgmt {
         });
 
         /**
-         * Deny an IP 
+         * Deny an IP
          */
         authzAPI.route(POST, "/mgmt/deny/ip/:ip", API.VOID, new Code(facade,"Deny IP",true) {
             @Override
@@ -140,17 +140,17 @@ public class API_Mgmt {
 
                         resp.setStatus(HttpStatus.CREATED_201);
                     } else {
-                        context.error(trans,resp,Result.err(Status.ERR_ConflictAlreadyExists, 
+                        context.error(trans,resp,Result.err(Status.ERR_ConflictAlreadyExists,
                                 ip + " is already being denied"));
                     }
                 } else {
                     trans.audit().log(trans.user(),"has attempted to deny",ip,"without authorization");
-                    context.error(trans,resp,Result.err(Status.ERR_Denied, 
+                    context.error(trans,resp,Result.err(Status.ERR_Denied,
                         trans.getUserPrincipal().getName() + " is not allowed to set IP Denial"));
                 }
             }
         });
-        
+
         /**
          * Stop Denying an IP
          */
@@ -164,19 +164,19 @@ public class API_Mgmt {
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.OK_200);
                     } else {
-                        context.error(trans,resp,Result.err(Status.ERR_NotFound, 
+                        context.error(trans,resp,Result.err(Status.ERR_NotFound,
                                 ip + " is not on the denial list"));
                     }
                 } else {
                     trans.audit().log(trans.user(),"has attempted to remove",ip," from being denied without authorization");
-                    context.error(trans,resp,Result.err(Status.ERR_Denied, 
+                    context.error(trans,resp,Result.err(Status.ERR_Denied,
                         trans.getUserPrincipal().getName() + " is not allowed to remove IP Denial"));
                 }
             }
         });
 
         /**
-         * Deny an ID 
+         * Deny an ID
          */
         authzAPI.route(POST, "/mgmt/deny/id/:id", API.VOID, new Code(facade,"Deny ID",true) {
             @Override
@@ -188,17 +188,17 @@ public class API_Mgmt {
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.CREATED_201);
                     } else {
-                        context.error(trans,resp,Result.err(Status.ERR_ConflictAlreadyExists, 
+                        context.error(trans,resp,Result.err(Status.ERR_ConflictAlreadyExists,
                                 id + " is already being denied"));
                     }
                 } else {
                     trans.audit().log(trans.user(),"has attempted to deny",id,"without authorization");
-                    context.error(trans,resp,Result.err(Status.ERR_Denied, 
+                    context.error(trans,resp,Result.err(Status.ERR_Denied,
                         trans.getUserPrincipal().getName() + " is not allowed to set ID Denial"));
                 }
             }
         });
-        
+
         /**
          * Stop Denying an ID
          */
@@ -212,19 +212,19 @@ public class API_Mgmt {
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.OK_200);
                     } else {
-                        context.error(trans,resp,Result.err(Status.ERR_NotFound, 
+                        context.error(trans,resp,Result.err(Status.ERR_NotFound,
                                 id + " is not on the denial list"));
                     }
                 } else {
                     trans.audit().log(trans.user(),"has attempted to remove",id," from being denied without authorization");
-                    context.error(trans,resp,Result.err(Status.ERR_Denied, 
+                    context.error(trans,resp,Result.err(Status.ERR_Denied,
                         trans.getUserPrincipal().getName() + " is not allowed to remove ID Denial"));
                 }
             }
         });
 
         /**
-         * Deny an ID 
+         * Deny an ID
          */
         authzAPI.route(POST, "/mgmt/log/id/:id", API.VOID, new Code(facade,"Special Log ID",true) {
             @Override
@@ -236,17 +236,17 @@ public class API_Mgmt {
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.CREATED_201);
                     } else {
-                        context.error(trans,resp,Result.err(Status.ERR_ConflictAlreadyExists, 
+                        context.error(trans,resp,Result.err(Status.ERR_ConflictAlreadyExists,
                                 id + " is already being special Logged"));
                     }
                 } else {
                     trans.audit().log(trans.user(),"has attempted to special Log",id,"without authorization");
-                    context.error(trans,resp,Result.err(Status.ERR_Denied, 
+                    context.error(trans,resp,Result.err(Status.ERR_Denied,
                         trans.getUserPrincipal().getName() + " is not allowed to set ID special Logging"));
                 }
             }
         });
-        
+
         /**
          * Stop Denying an ID
          */
@@ -260,12 +260,12 @@ public class API_Mgmt {
                         trans.checkpoint(SUCCESS,Trans.ALWAYS);
                         resp.setStatus(HttpStatus.OK_200);
                     } else {
-                        context.error(trans,resp,Result.err(Status.ERR_NotFound, 
+                        context.error(trans,resp,Result.err(Status.ERR_NotFound,
                                 id + " is not on the special Logging list"));
                     }
                 } else {
                     trans.audit().log(trans.user(),"has attempted to remove",id," from being special Logged without authorization");
-                    context.error(trans,resp,Result.err(Status.ERR_Denied, 
+                    context.error(trans,resp,Result.err(Status.ERR_Denied,
                         trans.getUserPrincipal().getName() + " is not allowed to remove ID special Logging"));
                 }
             }

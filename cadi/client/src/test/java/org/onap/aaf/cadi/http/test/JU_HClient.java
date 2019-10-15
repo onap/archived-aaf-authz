@@ -99,7 +99,7 @@ public class JU_HClient {
         HClientStub client;
         client = new HClientStub(ssMock, uri, 0, null);
         client.send();
-        
+
         client.setPathInfo("/pathinfo");
         client.send();
 
@@ -116,7 +116,7 @@ public class JU_HClient {
         client.setPayload(transferMock);
         client.send();
     }
-    
+
     @Test(expected = APIException.class)
     public void sendThrows1Test() throws APIException, LocatorException, URISyntaxException {
         HClientStub client = new HClientStub(ssMock, new URI("mailto:me@domain.com"), 0, null);

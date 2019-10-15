@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,16 +71,16 @@ public class JU_EpiTaf {
     }
 
     class TryAnotherTafResp implements TafResp {
-        @Override public boolean isValid() { return false; } 
-        @Override public String desc() { return null; } 
-        @Override public RESP isAuthenticated() { return RESP.TRY_ANOTHER_TAF; } 
-        @Override public RESP authenticate() throws IOException { return null; } 
-        @Override public TaggedPrincipal getPrincipal() { return null; } 
+        @Override public boolean isValid() { return false; }
+        @Override public String desc() { return null; }
+        @Override public RESP isAuthenticated() { return RESP.TRY_ANOTHER_TAF; }
+        @Override public RESP authenticate() throws IOException { return null; }
+        @Override public TaggedPrincipal getPrincipal() { return null; }
         @Override public String getTarget() {return "unknown";}
-        @Override public Access getAccess() { return null; } 
+        @Override public Access getAccess() { return null; }
         @Override public boolean isFailedAttempt() { return false; }
         @Override public float timing() { return 0; }
-        @Override public void timing(long start) {} 
+        @Override public void timing(long start) {}
         @Override public String taf() {return "JUnit";}
     }
 
@@ -89,16 +89,16 @@ public class JU_EpiTaf {
     }
 
     class TryAuthenticatingResp implements TafResp {
-        @Override public boolean isValid() { return false; } 
-        @Override public String desc() { return null; } 
-        @Override public RESP isAuthenticated() { return RESP.TRY_AUTHENTICATING; } 
-        @Override public RESP authenticate() throws IOException { return null; } 
-        @Override public TaggedPrincipal getPrincipal() { return null; } 
+        @Override public boolean isValid() { return false; }
+        @Override public String desc() { return null; }
+        @Override public RESP isAuthenticated() { return RESP.TRY_AUTHENTICATING; }
+        @Override public RESP authenticate() throws IOException { return null; }
+        @Override public TaggedPrincipal getPrincipal() { return null; }
         @Override public String getTarget() {return "unknown";}
-        @Override public Access getAccess() { return null; } 
-        @Override public boolean isFailedAttempt() { return false; } 
+        @Override public Access getAccess() { return null; }
+        @Override public boolean isFailedAttempt() { return false; }
         @Override public float timing() { return 0; }
-        @Override public void timing(long start) {} 
+        @Override public void timing(long start) {}
         @Override public String taf() {return "JUnit";}
     }
 

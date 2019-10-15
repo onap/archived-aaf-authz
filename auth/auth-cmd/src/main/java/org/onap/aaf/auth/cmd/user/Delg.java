@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,7 +62,7 @@ public class Delg extends BaseCmd<User> {
                 int idx = index;
                 DelgRequest dr = new DelgRequest();
                 setStartEnd(dr);
-        
+
                 int option= whichOption(options, args[idx++]);
                 String user = fullID(args[idx++]);
                 dr.setUser(user);
@@ -79,29 +79,29 @@ public class Delg extends BaseCmd<User> {
                         dr.setEnd(Chrono.timeStamp(date));
                     }
                 }
-        
+
                 Future<DelgRequest> fp;
                 RosettaDF<DelgRequest> df = getDF(DelgRequest.class);
                 String verb;
                 setQueryParamsOn(client);
 
                 switch(option) {
-                    case 0: 
+                    case 0:
                         fp = client.create(AUTHZ_DELG, df, dr);
                         verb = "Added";
                         break;
-                    case 1: 
-                        fp = client.update(AUTHZ_DELG, df, dr); 
+                    case 1:
+                        fp = client.update(AUTHZ_DELG, df, dr);
                         verb = "Updated";
                         break;
-                    case 2: 
-                        fp = client.delete(AUTHZ_DELG, df, dr); 
+                    case 2:
+                        fp = client.delete(AUTHZ_DELG, df, dr);
                         verb = "Deleted";
                         break;
                     default:
                         throw new CadiException("Bad Argument");
                 };
-                
+
                 if (fp.get(AAFcli.timeout())) {
                     pw().append("Delegate ");
                     pw().println(verb);

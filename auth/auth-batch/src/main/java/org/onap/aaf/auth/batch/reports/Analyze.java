@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,8 +75,8 @@ public class Analyze extends Batch {
     private static final int total=0;
     private static final int pending=1;
     private static final int approved=2;
-    
-    
+
+
     public static final String NEED_APPROVALS = "NeedApprovals";
     private static final String EXTEND = "Extend";
     private static final String EXPIRED_OWNERS = "ExpiredOwners";
@@ -92,11 +92,11 @@ public class Analyze extends Batch {
     private Range futureRange;
     private final String sdate;
     private LastNotified ln;
-    
+
     public Analyze(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
-        
+
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
             TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
@@ -105,13 +105,13 @@ public class Analyze extends Batch {
             } finally {
                 tt.done();
             }
-            
+
 
             minOwners=1;
 
-            // Create Intermediate Output 
+            // Create Intermediate Output
             writerList = new HashMap<>();
-            
+
             expireRange = new ExpireRange(trans.env().access());
             sdate = Chrono.dateOnlyStamp(now);
             for( List<Range> lr : expireRange.ranges.values()) {
@@ -130,7 +130,7 @@ public class Analyze extends Batch {
                     }
                 }
             }
-            
+
             // Setup New Approvals file
             futureRange = expireRange.newFutureRange();
             File file = new File(logDir(),NEED_APPROVALS + sdate +CSV);
@@ -138,14 +138,14 @@ public class Analyze extends Batch {
             needApproveCW = approveCSV.writer();
             needApproveCW.row(INFO,NEED_APPROVALS,sdate,1);
             writerList.put(NEED_APPROVALS,needApproveCW);
-            
+
             // Setup Extend Approvals file
             file = new File(logDir(),EXTEND + sdate +CSV);
             CSV extendCSV = new CSV(env.access(),file);
             extendCW = extendCSV.writer();
             extendCW.row(INFO,EXTEND,sdate,1);
             writerList.put(EXTEND,extendCW);
-            
+
             // Load full data of the following
             ln = new LastNotified(session);
 
@@ -158,17 +158,17 @@ public class Analyze extends Batch {
     protected void run(AuthzTrans trans) {
         TimeTaken tt;
         AuthzTrans noAvg = trans.env().newTransNoAvg();
-        
+
         ////////////////////
         // Load all Notifieds, and either add to local Data, or mark for Deletion.
         ln.loadAll(noAvg,expireRange.approveDelete,deleteCW);
-        
+
         // Hold Good Tickets to keyed User/Role for UserRole Step
         Map<String,Ticket> mur = new TreeMap<>();
 
         try {
             Approval.load(trans, session, Approval.v2_0_17);
-    
+
             ////////////////////
             final Map<UUID,Ticket> goodTickets = new TreeMap<>();
             tt = trans.start("Analyze Expired Futures",Trans.SUB);
@@ -193,7 +193,7 @@ public class Analyze extends Batch {
             } finally {
                 tt.done();
             }
-            
+
             Set<String> approvers = new TreeSet<>();
             tt = trans.start("Connect Approvals with Futures",Trans.SUB);
             try {
@@ -209,7 +209,7 @@ public class Analyze extends Batch {
                     } else {
                         // for users and approvers still valid
                         String user = appr.getUser();
-                        
+
                         if(org.isRevoked(noAvg, appr.getApprover())) {
                             deleteCW.comment("Approver ID is revoked");
                             Approval.row(deleteCW, appr);
@@ -225,16 +225,16 @@ public class Analyze extends Batch {
             } finally {
                 tt.done();
             }
-    
-            /* Run through all Futures, and see if 
+
+            /* Run through all Futures, and see if
              * 1) they have been executed (no longer valid)
-             * 2) The current Approvals indicate they can proceed 
+             * 2) The current Approvals indicate they can proceed
              */
             Map<String,Pending> pendingApprs = new HashMap<>();
             Map<String,Pending> pendingTemp = new HashMap<>();
-    
+
             String approver;
-            
+
             tt = trans.start("Analyze Good Tickets",Trans.SUB);
             try {
                 for(Ticket ticket : goodTickets.values()) {
@@ -244,7 +244,7 @@ public class Analyze extends Batch {
                             case "user_role":
                                 int state[][] = new int[3][3];
                                 int type;
-                                        
+
                                 for(Approval appr : ticket.approvals) {
                                     switch(appr.getType()) {
                                         case "owner":
@@ -276,13 +276,13 @@ public class Analyze extends Batch {
                                             ++state[type][unknown];
                                     }
                                 }
-                                
+
                                 // To Approve:
                                 // Always must have at least 1 owner
                                 if((state[owner][total]>0 && state[owner][approved]>0) &&
                                     // If there are no Supervisors, that's ok
-                                    (state[supervisor][total]==0 || 
-                                    // But if there is a Supervisor, they must have approved 
+                                    (state[supervisor][total]==0 ||
+                                    // But if there is a Supervisor, they must have approved
                                     (state[supervisor][approved]>0))) {
                                         UserRoleDAO.Data urdd = new UserRoleDAO.Data();
                                         try {
@@ -307,7 +307,7 @@ public class Analyze extends Batch {
                         }
                     } finally {
                         if("user_role".equals(ticket.f.fdd.target)) {
-                            String key = ticket.f.fdd.target_key; 
+                            String key = ticket.f.fdd.target_key;
                             if(key!=null) {
                                 mur.put(key, ticket);
                             }
@@ -319,7 +319,7 @@ public class Analyze extends Batch {
             }
             // Good Tickets no longer needed
             goodTickets.clear();
-    
+
             /**
              * Decide to Notify about Approvals, based on activity/last Notified
              */
@@ -328,11 +328,11 @@ public class Analyze extends Batch {
                 GregorianCalendar gc = new GregorianCalendar();
                 gc.add(GregorianCalendar.DAY_OF_WEEK, 5);
                 Date remind = gc.getTime();
-                
+
                 for(Entry<String, Pending> es : pendingApprs.entrySet()) {
                     Pending p = es.getValue();
-                    if(p.newApprovals() 
-                            || p.earliest() == LastNotified.NEVER // yes, equals. 
+                    if(p.newApprovals()
+                            || p.earliest() == LastNotified.NEVER // yes, equals.
                             || p.earliest().after(remind)) {
                         p.row(needApproveCW,es.getKey());
                     }
@@ -340,22 +340,22 @@ public class Analyze extends Batch {
             } finally {
                 tt.done();
             }
-            
+
             // clear out Approval Intermediates
             pendingTemp = null;
             pendingApprs = null;
         } finally {
         }
-            
+
         /**
-           Run through User Roles.  
+           Run through User Roles.
            Owners are treated specially in next section.
            Regular roles are checked against Date Ranges.  If match Date Range, write out to appropriate file.
-        */    
-        
+        */
+
         try {
             Role.load(trans, session);
-    
+
             try {
                 tt = trans.start("Analyze UserRoles, storing Owners",Trans.SUB);
                 Set<String> specialCommented = new HashSet<>();
@@ -391,7 +391,7 @@ public class Analyze extends Batch {
                                 return;
                             }
                             // Just let expired UserRoles sit until deleted
-                            if(futureRange.inRange(ur.expires())&&(!mur.containsKey(ur.user() + '|' + ur.role()))) {    
+                            if(futureRange.inRange(ur.expires())&&(!mur.containsKey(ur.user() + '|' + ur.role()))) {
                                     // Cannot just delete owners, unless there is at least one left. Process later
                                     if ("owner".equals(ur.rname())) {
                                         Set<UserRole> urs = owners.get(ur.role());
@@ -418,11 +418,11 @@ public class Analyze extends Batch {
                      tt.done();
                  }
                  mur.clear();
-                 
+
                 /**
                   Now Process Owners, one owner Role at a time, ensuring one is left,
-                  preferably a good one. If so, process the others as normal. 
-                  
+                  preferably a good one. If so, process the others as normal.
+
                   Otherwise, write to ExpiredOwners Report
                 */
                  tt = trans.start("Analyze Owners Separately",Trans.SUB);
@@ -432,7 +432,7 @@ public class Analyze extends Batch {
                         final CSV ownerCSV = new CSV(env.access(),file);
                         CSV.Writer expOwner = ownerCSV.writer();
                         expOwner.row(INFO,EXPIRED_OWNERS,sdate,2);
-    
+
                         try {
                             for (Set<UserRole> sur : owners.values()) {
                                 int goodOwners = 0;
@@ -441,7 +441,7 @@ public class Analyze extends Batch {
                                         ++goodOwners;
                                     }
                                 }
-        
+
                                 for (UserRole ur : sur) {
                                     if (goodOwners >= minOwners) {
                                         Range r = writeAnalysis(noAvg, ur);
@@ -473,14 +473,14 @@ public class Analyze extends Batch {
                 Role.clear();
                 UserRole.clear();
             }
-            
+
             /**
              * Check for Expired Credentials
              */
             try {
                  // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
                  Cred.load(trans, session);
-    
+
                 tt = trans.start("Analyze Expired Credentials",Trans.SUB);
                 try {
                     for (Cred cred : Cred.data.values()) {
@@ -509,7 +509,7 @@ public class Analyze extends Batch {
             } finally {
                 Cred.clear();
             }
-    
+
             ////////////////////
             tt = trans.start("Analyze Expired X509s",Trans.SUB);
             try {
@@ -529,7 +529,7 @@ public class Analyze extends Batch {
             noAvg.info().log(e);
         }
     }
- 
+
     private Approval findApproval(UserRole ur) {
         Approval existing = null;
         List<Approval> apprs = Approval.byUser.get(ur.user());
@@ -537,7 +537,7 @@ public class Analyze extends Batch {
             for(Approval appr : apprs) {
                 if(ur.role().equals(appr.getRole()) &&
                     appr.getMemo().contains(Chrono.dateOnlyStamp(ur.expires()))) {
-                        existing = appr; 
+                        existing = appr;
                 }
             }
         }
@@ -555,7 +555,7 @@ public class Analyze extends Batch {
             } catch (OrganizationException e) {
                 i=null;
             }
-            if(r.needsContact(lnd,i)) {                
+            if(r.needsContact(lnd,i)) {
                 CSV.Writer cw = writerList.get(r.name());
                 if(cw!=null) {
                     ur.row(cw,UserRole.UR);
@@ -564,7 +564,7 @@ public class Analyze extends Batch {
         }
         return r;
     }
-    
+
     private void writeAnalysis(AuthzTrans noAvg, Cred cred, Instance inst) {
         if(cred!=null && inst!=null) {
             Range r = expireRange.getRange("cred", inst.expires);
@@ -577,7 +577,7 @@ public class Analyze extends Batch {
                 } catch (OrganizationException e) {
                     i=null;
                 }
-                if(r.needsContact(lnd,i)) {                
+                if(r.needsContact(lnd,i)) {
                     CSV.Writer cw = writerList.get(r.name());
                     if(cw!=null) {
                         cred.row(cw,inst);
@@ -606,7 +606,7 @@ public class Analyze extends Batch {
             }
         }
     }
-    
+
     @Override
     protected void _close(AuthzTrans trans) {
         session.close();

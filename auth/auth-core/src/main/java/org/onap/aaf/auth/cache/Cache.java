@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.onap.aaf.misc.env.Trans;
 
 /**
  * Create and maintain a Map of Maps used for Caching
- * 
+ *
  * @author Jonathan
  *
  * @param <TRANS>
@@ -58,7 +58,7 @@ public class Cache<TRANS extends Trans, DATA> {
 
     /**
      * Dated Class - store any Data with timestamp
-     * 
+     *
      * @author Jonathan
      *
      */
@@ -66,7 +66,7 @@ public class Cache<TRANS extends Trans, DATA> {
         public Date timestamp;
         public List<?> data;
         private long expireIn;
-        
+
         public Dated(List<?> data, long expireIn) {
             timestamp = new Date(System.currentTimeMillis()+expireIn);
             this.data = data;
@@ -85,7 +85,7 @@ public class Cache<TRANS extends Trans, DATA> {
             timestamp = new Date(System.currentTimeMillis()+expireIn);
         }
     }
-    
+
     public static Map<String,Dated> obtain(String key) {
         Map<String, Dated> m = cacheMap.get(key);
         if (m==null) {
@@ -99,24 +99,24 @@ public class Cache<TRANS extends Trans, DATA> {
 
     /**
      * Clean will examine resources, and remove those that have expired.
-     * 
+     *
      * If "highs" have been exceeded, then we'll expire 10% more the next time.  This will adjust after each run
      * without checking contents more than once, making a good average "high" in the minimum speed.
-     * 
+     *
      * @author Jonathan
      *
      */
     private static final class Clean extends TimerTask {
         private final Env env;
         private Set<String> set;
-        
-        // The idea here is to not be too restrictive on a high, but to Expire more items by 
+
+        // The idea here is to not be too restrictive on a high, but to Expire more items by
         // shortening the time to expire.  This is done by judiciously incrementing "advance"
         // when the "highs" are exceeded.  This effectively reduces numbers of cached items quickly.
         private final int high;
         private long advance;
         private final long timeInterval;
-        
+
         public Clean(Env env, long cleanInterval, int highCount) {
             this.env = env;
             high = highCount;
@@ -124,7 +124,7 @@ public class Cache<TRANS extends Trans, DATA> {
             advance = 0;
             set = new HashSet<>();
         }
-        
+
         public synchronized void add(String key) {
             set.add(key);
         }
@@ -134,8 +134,8 @@ public class Cache<TRANS extends Trans, DATA> {
             int total = 0;
             // look at now.  If we need to expire more by increasing "now" by "advance"
             Date now = new Date(System.currentTimeMillis() + advance);
-            
-            
+
+
             for (String name : set) {
                 Map<String,Dated> map = cacheMap.get(name);
                 if (map==null) {
@@ -150,7 +150,7 @@ public class Cache<TRANS extends Trans, DATA> {
                     }
                 }
             }
-            
+
             if (count>0) {
                 env.debug().log("Cache removed",count,"expired Cached Elements out of", total);
             }
@@ -170,11 +170,11 @@ public class Cache<TRANS extends Trans, DATA> {
     public static synchronized void startCleansing(Env env, String ... keys) {
         if (cleanseTimer==null) {
             cleanseTimer = new Timer("Cache Cleanup Timer");
-            int cleanInterval = Integer.parseInt(env.getProperty(CACHE_CLEAN_INTERVAL,"60000")); // 1 minute clean cycles 
+            int cleanInterval = Integer.parseInt(env.getProperty(CACHE_CLEAN_INTERVAL,"60000")); // 1 minute clean cycles
             int highCount = Integer.parseInt(env.getProperty(CACHE_HIGH_COUNT,"5000"));
             cleanseTimer.schedule(clean = new Clean(env, cleanInterval, highCount), cleanInterval, cleanInterval);
         }
-        
+
         for (String key : keys) {
             clean.add(key);
         }
@@ -193,7 +193,7 @@ public class Cache<TRANS extends Trans, DATA> {
             public void run() {
                 Cache.stopTimer();
             }
-        }); 
+        });
     }
 
 }

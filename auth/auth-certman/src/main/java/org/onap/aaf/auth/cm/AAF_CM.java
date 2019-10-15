@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,12 +92,12 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     }
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-     * 
+     *
      * @param env
-     * @param si 
-     * @param dm 
-     * @param decryptor 
-     * @throws APIException 
+     * @param si
+     * @param dm
+     * @param decryptor
+     * @throws APIException
      */
     public AAF_CM(AuthzEnv env) throws Exception {
         super(env.access(),env);
@@ -109,7 +109,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         if (aafEnv==null) {
             throw new APIException("aaf_env needs to be set");
         }
-        
+
         // Check for allowing /tmp in Properties
         String allowTmp = env.getProperty(CM_ALLOW_TMP);
         if("true".equalsIgnoreCase(allowTmp)) {
@@ -132,7 +132,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
             String key = es.getKey().toString();
             if (key.startsWith(CA.CM_CA_PREFIX)) {
                 int idx = key.indexOf('.');
-                if (idx==key.lastIndexOf('.')) { // else it's a regular property 
+                if (idx==key.lastIndexOf('.')) { // else it's a regular property
                     env.log(Level.INIT, "Loading Certificate Authority Module: " + key.substring(idx+1));
                     String[] segs = Split.split(',', env.getProperty(key));
                     if (segs.length>0) {
@@ -149,7 +149,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
                         pinst[0]=env;
                         pinst[1]= key.substring(idx+1);
                         pinst[2]= aafEnv;
-                        pinst[3] = multiParams; 
+                        pinst[3] = multiParams;
                         try {
                             CA ca = cons.newInstance(pinst);
                             certAuths.put(ca.getName(),ca);
@@ -170,7 +170,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         }
         // note: Service knows how to shutdown Cluster on Shutdown, etc.  See Constructor
         facade1_0 = FacadeFactory.v1_0(this,trans, service,Data.TYPE.JSON);   // Default Facade
-        facade1_0_XML = FacadeFactory.v1_0(this,trans,service,Data.TYPE.XML); 
+        facade1_0_XML = FacadeFactory.v1_0(this,trans,service,Data.TYPE.XML);
 
 
         synchronized(env) {
@@ -194,19 +194,19 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     public CA getCA(String key) {
         return certAuths.get(key);
     }
-    
+
 
     /**
      * Setup XML and JSON implementations for each supported Version type
-     * 
+     *
      * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
      * to do Versions and Content switches
-     * 
+     *
      */
     public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
         String version = "1.0";
         // Get Correct API Class from Mapper
-        Class<?> respCls = facade1_0.mapper().getClass(api); 
+        Class<?> respCls = facade1_0.mapper().getClass(api);
         if (respCls==null) throw new Exception("Unknown class associated with " + api.getClass().getName() + ' ' + api.name());
         // setup Application API HTML ContentTypes for JSON and Route
         String application = applicationJSON(respCls, version);

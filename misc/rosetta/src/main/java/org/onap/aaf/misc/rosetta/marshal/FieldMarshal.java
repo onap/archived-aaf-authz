@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +32,11 @@ public abstract class FieldMarshal<T> extends Marshal<T> {
     public FieldMarshal(String name) {
         this.name = name;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     @Override
     public Parsed<State> parse(T t, Parsed<State> parsed) {
         parsed.state.ladder.push(DONE_ITERATOR);
@@ -55,5 +55,5 @@ public abstract class FieldMarshal<T> extends Marshal<T> {
      * @return
      */
     protected abstract boolean data(T t, StringBuilder sb);
-    
+
 }

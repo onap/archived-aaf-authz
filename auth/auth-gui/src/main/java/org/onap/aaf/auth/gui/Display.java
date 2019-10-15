@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,14 +45,14 @@ public class Display {
 
         /*
          * We handle all the "Form POST" calls here with a naming convention that allows us to create arrays from strings.
-         * 
-         * On the HTTP side, elements concatenate their name with their Index number (if multiple).  In this code, 
-         * we turn such names into arrays with same index number.  Then, we place them in the Transaction "Properties" so that 
+         *
+         * On the HTTP side, elements concatenate their name with their Index number (if multiple).  In this code,
+         * we turn such names into arrays with same index number.  Then, we place them in the Transaction "Properties" so that
          * it can be transferred to subclasses easily.
-         */ 
+         */
         if (meth.equals(HttpMethods.POST)) {
             // Here, we'll expect FORM URL Encoded Data, which we need to get from the body
-            gui.route(gui.env, meth, page.url(), 
+            gui.route(gui.env, meth, page.url(),
                 new HttpCode<AuthzTrans,AAF_GUI>(gui,page.name()) {
                     @Override
                     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -90,8 +90,8 @@ public class Display {
         } else {
             // Transfer whether Page shouldn't be cached to local Final var.
             final boolean no_cache = page.no_cache;
-            
-            gui.route(gui.env, meth, page.url(), 
+
+            gui.route(gui.env, meth, page.url(),
                 new HttpCode<AuthzTrans,AAF_GUI>(gui,page.name()) {
                     @Override
                     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -105,7 +105,7 @@ public class Display {
                             } else { // multi value
                                 String[] array = new String[30];
                                 String field=fields[i].substring(0, idx);
-                                
+
                                 for (Enumeration<String> mm = req.getParameterNames();mm.hasMoreElements();) {
                                     String key = mm.nextElement();
                                     if (key.startsWith(field)) {
@@ -127,7 +127,7 @@ public class Display {
                         }
                         page.replay(context,trans,resp.getOutputStream(),"general");
                     }
-                    
+
                     /**
                      * When the field is "as_user", make sure permission is granted
                      */
@@ -146,8 +146,8 @@ public class Display {
         }
 
     }
-    
-    public Page page() { 
+
+    public Page page() {
         return get;
     }
 }

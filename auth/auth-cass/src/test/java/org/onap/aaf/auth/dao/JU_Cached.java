@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,20 +59,20 @@ public class JU_Cached {
 
     @Mock
     CIDAO<AuthzTrans> cidaoATMock;
-    
+
     String name = "nameString";
 
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void testCachedIdx(){
         Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 1, 30000L);
         assertThat(cached.cacheIdx("1234567890"), is(0));
     }
-    
+
     @Test
     public void testInvalidate(){
         Cached<Trans, DataStub> cached = new Cached<Trans, DataStub>(ciDaoMock, name, 5, 30000L);
@@ -103,26 +103,26 @@ public class JU_Cached {
 //    Trans transMock;
 //    @Mock
 //    Getter<DAO> getterMock;
-//    
+//
 //    @Test
 //    public void testGet(){
 //        cached.get(transMock, name, getterMock);
 //        fail("not implemented");
 //    }
-//    
+//
 //    @SuppressWarnings("unchecked")
 //    public Result<List<DATA>> get(TRANS trans, String key, Getter<DATA> getter) {
 //        List<DATA> ld = null;
 //        Result<List<DATA>> rld = null;
-//        
+//
 //        int cacheIdx = cacheIdx(key);
 //        Map<String, Dated> map = ((Map<String,Dated>)cache[cacheIdx]);
-//        
+//
 //        // Check for saved element in cache
 //        Dated cached = map.get(key);
 //        // Note: These Segment Timestamps are kept up to date with DB
 //        Date dbStamp = info.get(trans, name,cacheIdx);
-//        
+//
 //        // Check for cache Entry and whether it is still good (a good Cache Entry is same or after DBEntry, so we use "before" syntax)
 //        if (cached!=null && dbStamp.before(cached.timestamp)) {
 //            ld = (List<DATA>)cached.data;

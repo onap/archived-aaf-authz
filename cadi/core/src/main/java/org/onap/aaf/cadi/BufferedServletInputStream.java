@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,21 +28,21 @@ import javax.servlet.ServletInputStream;
 
 /**
  * BufferedServletInputStream
- * 
+ *
  * There are cases in brain-dead middleware (SOAP) where they store routing information in the content.
- * 
+ *
  * In HTTP, this requires reading the content from the InputStream which, of course, cannot be re-read.
- * 
- * BufferedInputStream exists to implement the "Mark" protocols for Streaming, which will enable being 
+ *
+ * BufferedInputStream exists to implement the "Mark" protocols for Streaming, which will enable being
  * re-read.  Unfortunately, J2EE chose to require a "ServletInputStream" as an abstract class, rather than
- * an interface, which requires we create a delegating pattern, rather than the preferred inheriting pattern. 
- * 
+ * an interface, which requires we create a delegating pattern, rather than the preferred inheriting pattern.
+ *
  * Unfortunately, the standard "BufferedInputStream" cannot be used, because it simply creates a byte array
- * in the "mark(int)" method of that size.  This is not appropriate for this application, because the Header 
- * can be potentially huge, and if a buffer was allocated to accommodate all possibilities, the cost of memory 
+ * in the "mark(int)" method of that size.  This is not appropriate for this application, because the Header
+ * can be potentially huge, and if a buffer was allocated to accommodate all possibilities, the cost of memory
  * allocation would be too large for high performance transactions.
  *
- * 
+ *
  * @author Jonathan
  *
  */
@@ -50,7 +50,7 @@ public class BufferedServletInputStream extends ServletInputStream {
     private static final int NONE = 0;
     private static final int STORE = 1;
     private static final int READ = 2;
-    
+
     private InputStream is;
     private int state = NONE;
     private Capacitor capacitor;
@@ -81,7 +81,7 @@ public class BufferedServletInputStream extends ServletInputStream {
                         value = is.read();
                     }
             }
-        } 
+        }
         return value;
     }
 
@@ -113,7 +113,7 @@ public class BufferedServletInputStream extends ServletInputStream {
                         if (temp>0) { // watch for -1
                             count+=temp;
                         } else if (count<=0) {
-                            count = temp; // must account for Stream coming back -1  
+                            count = temp; // must account for Stream coming back -1
                         }
                     }
                     break;
@@ -134,9 +134,9 @@ public class BufferedServletInputStream extends ServletInputStream {
     public int available() throws IOException {
         int count = is.available();
         if (capacitor!=null)count+=capacitor.available();
-        return count;        
+        return count;
     }
-    
+
     /**
      * Return just amount buffered (for debugging purposes, mostly)
      * @return
@@ -156,7 +156,7 @@ public class BufferedServletInputStream extends ServletInputStream {
 
 
     /**
-     * Note: Readlimit is ignored in this implementation, because the need was for unknown buffer size which wouldn't 
+     * Note: Readlimit is ignored in this implementation, because the need was for unknown buffer size which wouldn't
      * require allocating and dumping huge chunks of memory every use, or risk overflow.
      */
     public synchronized void mark(int readlimit) {
@@ -174,10 +174,10 @@ public class BufferedServletInputStream extends ServletInputStream {
 
     /**
      * Reset Stream
-     * 
+     *
      * Calling this twice is not supported in typical Stream situations, but it is allowed in this service.  The caveat is that it can only reset
      * the data read in since Mark has been called.  The data integrity is only valid if you have not continued to read past what is stored.
-     *  
+     *
      */
     public synchronized void reset() throws IOException {
         switch(state) {
@@ -188,7 +188,7 @@ public class BufferedServletInputStream extends ServletInputStream {
             case READ:
                 capacitor.reset();
                 break;
-            case NONE: 
+            case NONE:
                 throw new IOException("InputStream has not been marked");
         }
     }

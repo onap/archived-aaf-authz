@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public class PropertyLocator implements Locator<URI> {
     }
     /**
      * comma delimited root url list
-     * 
+     *
      * @param locList
      * @throws LocatorException
      */
@@ -67,9 +67,9 @@ public class PropertyLocator implements Locator<URI> {
         }
         String[] locarray = Split.split(',',locList);
         List<URI> uriList = new ArrayList<>();
-        
+
         random = new SecureRandom();
-        
+
         for (int i=0;i<locarray.length;++i) {
             try {
                 int range = locarray[i].indexOf(":[");
@@ -234,7 +234,7 @@ public class PropertyLocator implements Locator<URI> {
             } else {
                 newCurrent = current;
             }
-    
+
             for (int i=0; i< end; ++i) {
                 if (newCurrent[i]==null){
                     newCurrent[i]=new PLItem(i);
@@ -257,14 +257,14 @@ public class PropertyLocator implements Locator<URI> {
     protected Socket createSocket() {
         return new Socket();
     }
-    
+
     private class PLItem implements Item {
         public int idx,order;
-        
+
         public PLItem(int i) {
             idx = order =i;
         }
-        
+
         public String toString() {
             return "Item: " + idx + " order: " + order;
         }
@@ -294,7 +294,7 @@ public class PropertyLocator implements Locator<URI> {
         }
         return sb.toString();
     }
-    
+
     public void destroy() {
     }
 }

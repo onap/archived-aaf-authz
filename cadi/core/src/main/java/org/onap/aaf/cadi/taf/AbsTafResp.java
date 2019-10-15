@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,9 @@ import org.onap.aaf.cadi.util.Timing;
 
 /**
  * AbsTafResp
- * 
+ *
  * Base class for TafResp (TAF Response Objects)
- * 
+ *
  * @author Jonathan
  *
  */
@@ -45,14 +45,14 @@ public abstract class AbsTafResp implements TafResp {
 
     /**
      * AbsTafResp
-     * 
+     *
      * Set and hold
      * Description (for logging)
      * Principal (as created by derived class)
      * Access (for access to underlying container, i.e. for Logging, auditing, ClassLoaders, etc)
-     *  
+     *
      * @param access
-     * @param tafname 
+     * @param tafname
      * @param principal
      * @param description
      */
@@ -63,17 +63,17 @@ public abstract class AbsTafResp implements TafResp {
         this.target = principal==null?"unknown":principal.getName();
         this.desc = description;
     }
-    
+
     /**
      * AbsTafResp
-     * 
+     *
      * Set and hold
      * Description (for logging)
      * Principal (as created by derived class)
      * Access (for access to underlying container, i.e. for Logging, auditing, ClassLoaders, etc)
-     *  
+     *
      * @param access
-     * @param tafname 
+     * @param tafname
      * @param principal
      * @param description
      */
@@ -87,7 +87,7 @@ public abstract class AbsTafResp implements TafResp {
 
     /**
      * isValid()
-     * 
+     *
      * Respond in the affirmative if the TAF was able to Authenticate
      */
     public boolean isValid() {
@@ -96,8 +96,8 @@ public abstract class AbsTafResp implements TafResp {
 
     /**
      * desc()
-     * 
-     * Respond with description of response as given by the TAF  
+     *
+     * Respond with description of response as given by the TAF
      */
     public String desc() {
         return desc;
@@ -105,11 +105,11 @@ public abstract class AbsTafResp implements TafResp {
 
     /**
      * isAuthenticated()
-     * 
+     *
      * Respond with the TAF's code of whether Authenticated, or suggested next steps
      * default is either IS_AUTHENTICATED, or TRY_ANOTHER_TAF.  The TAF can overload
      * and suggest others, such as "NO_FURTHER_PROCESSING", if it can detect that this
-     * is some sort of security breach (i.e. Denial of Service)  
+     * is some sort of security breach (i.e. Denial of Service)
      */
     public RESP isAuthenticated() {
         return principal==null?RESP.TRY_ANOTHER_TAF:RESP.IS_AUTHENTICATED;
@@ -117,9 +117,9 @@ public abstract class AbsTafResp implements TafResp {
 
     /**
      * getPrincipal()
-     * 
-     * Return the principal created by the TAF based on Authentication. 
-     * 
+     *
+     * Return the principal created by the TAF based on Authentication.
+     *
      * Returns "null" if Authentication failed (no principal)
      */
     public TaggedPrincipal getPrincipal() {
@@ -133,10 +133,10 @@ public abstract class AbsTafResp implements TafResp {
     public String getTarget() {
         return target;
     }
-    
+
     /**
      * getAccess()
-     * 
+     *
      * Get the Access object from the TAF, so that appropriate Logging, etc can be coordinated.
      */
     public Access getAccess() {
@@ -154,7 +154,7 @@ public abstract class AbsTafResp implements TafResp {
     public float timing() {
         return timing;
     }
-    
+
     @Override
     public void timing(final long start) {
         timing = Timing.millis(start);

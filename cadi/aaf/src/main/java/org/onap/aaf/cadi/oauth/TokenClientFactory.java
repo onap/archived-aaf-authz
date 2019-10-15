@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,18 +65,18 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
 
     private TokenClientFactory(Access pa) throws APIException, GeneralSecurityException, IOException, CadiException {
         super(pa, new RosettaEnv(pa.getProperties()),Token.class,"outgoing");
-        
+
         Map<String, String> aaf_urls = Agent.loadURLs(pa);
         alts = new TreeSet<>();
-        
+
         if (access.getProperty(Config.AAF_OAUTH2_TOKEN_URL,null)==null) {
             access.getProperties().put(Config.AAF_OAUTH2_TOKEN_URL, aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL)); // Default to AAF
         }
-        
+
         if (access.getProperty(Config.AAF_OAUTH2_INTROSPECT_URL,null)==null) {
             access.getProperties().put(Config.AAF_OAUTH2_INTROSPECT_URL, aaf_urls.get(Config.AAF_OAUTH2_INTROSPECT_URL)); // Default to AAF);
         }
-        
+
         for(String tag : new String[] {Config.AAF_ALT_OAUTH2_TOKEN_URL, Config.AAF_ALT_OAUTH2_INTROSPECT_URL}) {
             String value = access.getProperty(tag, null);
             if(value!=null) {
@@ -84,21 +84,21 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
                 alts.add(value);
             }
         }
-        
+
         symm = Symm.encrypt.obtain();
         hsi = SecurityInfoC.instance(access, HttpURLConnection.class);
     }
-    
+
     public synchronized static final TokenClientFactory instance(Access access) throws APIException, GeneralSecurityException, IOException, CadiException {
         if (instance==null) {
             instance = new TokenClientFactory(access);
         }
         return instance;
     }
-    
+
     /**
      * Pickup Timeout from Properties
-     * 
+     *
      * @param tagOrURL
      * @return
      * @throws CadiException
@@ -108,7 +108,7 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
     public<INTR> TokenClient newClient(final String tagOrURL) throws CadiException, LocatorException, APIException {
         return newClient(tagOrURL,Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF)));
     }
-    
+
     public<INTR> TokenClient newClient(final String tagOrURL, final int timeout) throws CadiException, LocatorException, APIException {
         AAFConHttp ach;
         if (tagOrURL==null) {
@@ -134,7 +134,7 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
         tci.client_creds(access);
         return tci;
     }
-    
+
     public TzClient newTzClient(final String locatorURL) throws CadiException, LocatorException {
         try {
             return new TzHClient(access,hsi,bestLocator(locatorURL));
@@ -180,7 +180,7 @@ public class TokenClientFactory extends Persist<Token,TimedToken> {
         put(key,tt);
         return tt;
     }
-    
+
     private static final Pattern locatePattern = Pattern.compile("https://.*/locate/.*");
     public Locator<URI> bestLocator(final String locatorURL ) throws LocatorException, URISyntaxException {
         if (locatorURL==null) {

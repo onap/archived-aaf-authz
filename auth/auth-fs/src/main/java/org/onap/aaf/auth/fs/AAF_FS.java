@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,8 +52,8 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
     public AAF_FS(final AuthzEnv env) throws IOException, CadiException {
         super(env.access(),env);
         try {
-            ///////////////////////  
-            // File Server 
+            ///////////////////////
+            // File Server
             ///////////////////////
             // creates StaticSlot, needed for CachingFileAccess, and sets to public Dir
             env.staticSlot(CachingFileAccess.CFA_WEB_PATH,"aaf_public_dir");
@@ -70,7 +70,7 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             e.printStackTrace();
         }
     }
-    
+
     private static class Redirect extends HttpCode<AuthzTrans, AAF_FS> {
         private final String url;
 
@@ -85,7 +85,7 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             resp.sendRedirect(url);
         }
     };
-    
+
     @Override
     public Filter[] _filters(Object ... additionalTafLurs) throws CadiException, LocatorException {
         // Note: No TAFs and Lurs on FileServer
@@ -101,7 +101,7 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             new RemoteRegistrant<AuthzEnv>(aafCon(),port)
         };
     }
-    
+
     public static void main(final String[] args) {
         try {
             Log4JLogIt logIt = new Log4JLogIt(args, "fs");

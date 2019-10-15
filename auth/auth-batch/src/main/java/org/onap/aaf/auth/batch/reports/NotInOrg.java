@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,20 +45,20 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 
 public class NotInOrg extends Batch {
-    
+
     private static final String NOT_IN_ORG = "NotInOrg";
     private static final String CSV = ".csv";
     private static final String INFO = "info";
     private Map<String, CSV.Writer> writerList;
-    private Map<String, CSV.Writer> whichWriter; 
+    private Map<String, CSV.Writer> whichWriter;
     private Date now;
     private Writer notInOrgW;
     private Writer notInOrgDeleteW;
-    
+
     public NotInOrg(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
-        
+
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
             TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
@@ -67,11 +67,11 @@ public class NotInOrg extends Batch {
             } finally {
                 tt.done();
             }
-            
+
             // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
             Cred.load(trans, session);
 
-            // Create Intermediate Output 
+            // Create Intermediate Output
             writerList = new HashMap<>();
             whichWriter = new TreeMap<>();
 
@@ -82,7 +82,7 @@ public class NotInOrg extends Batch {
             notInOrgW = csv.writer(false);
             notInOrgW.row(INFO,NOT_IN_ORG,Chrono.dateOnlyStamp(now),0);
             writerList.put(NOT_IN_ORG,notInOrgW);
-            
+
             // These will have been double-checked by the Organization, and can be deleted immediately.
             String fn = NOT_IN_ORG+"Delete";
             file = new File(logDir(),fn + sdate +CSV);
@@ -90,7 +90,7 @@ public class NotInOrg extends Batch {
             notInOrgDeleteW = csvDelete.writer(false);
             notInOrgDeleteW.row(INFO,fn,Chrono.dateOnlyStamp(now),0);
             writerList.put(NOT_IN_ORG,notInOrgW);
-            
+
         } finally {
             tt0.done();
         }
@@ -102,7 +102,7 @@ public class NotInOrg extends Batch {
             Map<String,Boolean> checked = new TreeMap<String, Boolean>();
             trans.info().log("Process Organization Identities");
             trans.info().log("User Roles");
-            
+
             final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
             UserRole.load(trans, session, UserRole.v2_0_11, ur -> {
                 try {
@@ -113,9 +113,9 @@ public class NotInOrg extends Batch {
                     trans.error().log(e, "Error Decrypting X509");
                 }
             });
-            
+
             trans.info().log("Checking for Creds without IDs");
-            
+
             for (Cred cred : Cred.data.values()) {
                 if(!check(transNoAvg,checked, cred.id)) {
                     CSV.Writer cw = whichWriter(transNoAvg, cred.id);
@@ -124,13 +124,13 @@ public class NotInOrg extends Batch {
                     }
                 }
             }
-            
+
         } catch (OrganizationException e) {
             trans.info().log(e);
         }
     }
-    
- 
+
+
     private Writer whichWriter(AuthzTrans transNoAvg, String id) {
         Writer w = whichWriter.get(id);
         if(w==null) {
@@ -146,7 +146,7 @@ public class NotInOrg extends Batch {
         Boolean rv = checked.get(id);
         if(rv==null) {
             if(isSpecial(id)) { // do not check against org... too important to delete.
-                return true; 
+                return true;
             }
             Organization org = trans.org();
             if(org != null) {
@@ -160,7 +160,7 @@ public class NotInOrg extends Batch {
         return rv;
     }
 
-    
+
     @Override
     protected void _close(AuthzTrans trans) {
         session.close();

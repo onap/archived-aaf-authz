@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,16 +45,16 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.config.SecurityInfo;
 
 public class JU_SecurityInfo {
-    
+
     private static PropAccess access;
-    
+
     private static final String keyStoreFileName = "src/test/resources/keystore.p12";
     private static final String keyStorePassword = "Password for the keystore";
     private static final String keyPassword = "Password for the key";
-        
+
     private static final String trustStoreFileName = "src/test/resources/truststore.jks";
     private static final String trustStorePasswd = "Password for the truststore";
-    
+
     @BeforeClass
     public static void setupOnce() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -65,7 +65,7 @@ public class JU_SecurityInfo {
         trustStore.load(null, null);
         trustStore.store(new FileOutputStream(trustStoreFileName), trustStorePasswd.toCharArray());
     }
-    
+
     @Before
     public void setup() throws IOException {
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
@@ -73,7 +73,7 @@ public class JU_SecurityInfo {
         access.setProperty(Config.CADI_KEYSTORE, keyStoreFileName);
         access.setProperty(Config.CADI_KEYSTORE_PASSWORD, access.encrypt(keyStorePassword));
         access.setProperty(Config.CADI_KEY_PASSWORD, access.encrypt(keyPassword));
-        
+
         access.setProperty(Config.CADI_TRUSTSTORE, trustStoreFileName);
         access.setProperty(Config.CADI_TRUSTSTORE_PASSWORD, access.encrypt(trustStorePasswd));
     }
@@ -97,7 +97,7 @@ public class JU_SecurityInfo {
         assertNotNull(si.getSSLSocketFactory());
         assertNotNull(si.getSSLContext());
         assertNotNull(si.getKeyManagers());
-        
+
         access.setProperty(Config.CADI_TRUST_MASKS, "123.123.123.123");
         si = new SecurityInfo(access);
     }
@@ -115,8 +115,8 @@ public class JU_SecurityInfo {
         @SuppressWarnings("unused")
         SecurityInfo si = new SecurityInfo(access);
     }
-    
-    
+
+
     @Test(expected = NumberFormatException.class)
     public void badTrustMaskTest() throws CadiException {
         access.setProperty(Config.CADI_TRUST_MASKS, "trustMask");

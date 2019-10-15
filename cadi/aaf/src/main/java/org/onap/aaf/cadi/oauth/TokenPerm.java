@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,23 +62,23 @@ public class TokenPerm extends Persisting<Introspect>{
         }
         scopes = ti.getScope();
     }
-    
+
     public List<AAFPermission> perms() {
         return perms;
     }
-    
+
     public String getClientId() {
         return introspect.getClientId();
     }
-    
+
     public String getUsername() {
         return introspect.getUsername();
     }
-    
+
     public String getToken() {
         return introspect.getAccessToken();
     }
-    
+
     public synchronized String getScopes() {
         return scopes;
     }
@@ -86,7 +86,7 @@ public class TokenPerm extends Persisting<Introspect>{
     public Introspect getIntrospect() {
         return introspect;
     }
-    
+
     // Direct Parse Perms into List
     public static class LoadPermissions {
         public List<AAFPermission> perms;
@@ -138,7 +138,7 @@ public class TokenPerm extends Persisting<Introspect>{
             }
         }
     }
-    
+
     // Gathering object for parsing objects, then creating AAF Permission
     private static class PermInfo {
         public String ns,type,instance,action;

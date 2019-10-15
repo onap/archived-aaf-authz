@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class Deny extends BaseCmd<Mgmt> {
         cmds.add(new DenySomething(this,"ip","ipv4or6[,ipv4or6]*"));
         cmds.add(new DenySomething(this,"id","identity[,identity]*"));
     }
-    
+
     public class DenySomething extends Cmd {
 
         private boolean isID;
@@ -84,7 +84,7 @@ public class Deny extends BaseCmd<Mgmt> {
                             pw().println(name + append + resp + " on " + client);
                             rv=fp.code();
                         } else {
-                            if (rv==409) { 
+                            if (rv==409) {
                                 rv = fp.code();
                             };
                             error(fp);

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ public class BatchDataView implements DataView {
     public Session getSession(AuthzTrans trans){
         return session;
     }
-    
+
     public Result<NsDAO.Data> ns(AuthzTrans trans, String id) {
         NS n;
         TimeTaken tt = trans.start("Get NS by ID %s", Trans.SUB, id);
@@ -66,14 +66,14 @@ public class BatchDataView implements DataView {
         } finally {
             tt.done();
         }
-        
+
         if(n==null || n.ndd==null) {
             return Result.err(Result.ERR_Backend,"Namespace '%s' does not exist", id);
         }
         return Result.ok(n.ndd);
     }
 
-    
+
     @Override
     public Result<RoleDAO.Data> roleByName(AuthzTrans trans, String name) {
         Role r = Role.byName.get(name);
@@ -116,22 +116,22 @@ public class BatchDataView implements DataView {
         StringBuilder sb = cqlBatch.inc();
         sb.append("DELETE from authz.future WHERE id = ");
         sb.append(fdd.id.toString());
-        return Result.ok(fdd);        
+        return Result.ok(fdd);
     }
-    
+
     @Override
     public Result<ApprovalDAO.Data> delete(AuthzTrans trans, ApprovalDAO.Data add) {
         StringBuilder sb = cqlBatch.inc();
         sb.append("DELETE from authz.approval WHERE id = ");
         sb.append(add.id.toString());
-        return Result.ok(add);        
+        return Result.ok(add);
     }
 
 
     @Override
     public Result<ApprovalDAO.Data> insert(AuthzTrans trans, ApprovalDAO.Data add) {
         StringBuilder sb = cqlBatch.inc();
-        sb.append("INSERT INTO authz.approval (id,approver,memo,operation,status,ticket,type,user) VALUES ("); 
+        sb.append("INSERT INTO authz.approval (id,approver,memo,operation,status,ticket,type,user) VALUES (");
         sb.append(add.id.toString());
         sb.append(COMMA_QUOTE);
         sb.append(add.approver);
@@ -154,7 +154,7 @@ public class BatchDataView implements DataView {
     @Override
     public Result<FutureDAO.Data> insert(AuthzTrans trans, FutureDAO.Data fdd) {
         StringBuilder sb = cqlBatch.inc();
-        sb.append("INSERT INTO authz.future (id,construct,expires,memo,start,target,target_key,target_date) VALUES ("); 
+        sb.append("INSERT INTO authz.future (id,construct,expires,memo,start,target,target_key,target_date) VALUES (");
         sb.append(fdd.id.toString());
         sb.append(',');
         fdd.construct.hasArray();
@@ -178,7 +178,7 @@ public class BatchDataView implements DataView {
         sb.append(QUOTE_PAREN_SEMI);
         return Result.ok(fdd);
     }
-    
+
     @Override
     public void flush() {
         cqlBatch.flush();

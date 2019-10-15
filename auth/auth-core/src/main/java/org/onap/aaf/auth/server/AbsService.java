@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     public final String app_name;
     public final String app_version;
     public final String ROOT_NS;
-    
+
     public AbsService(final Access access, final ENV env) throws CadiException {
         Define.set(access);
         ROOT_NS = Define.ROOT_NS();
@@ -70,14 +70,14 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             str = ROOT_NS + '.' + scomp[0];
         }
         app_name = str;
-        
+
         str = access.getProperty(Config.AAF_LOCATOR_VERSION, null);
         if(str==null) {
             str = Defaults.AAF_VERSION;
             env.setProperty(Config.AAF_LOCATOR_VERSION, str);
         }
         app_version = access.getProperty(Config.AAF_DEPLOYED_VERSION, str);
-        
+
         // Print Cipher Suites Available
         if (access.willLog(Level.DEBUG)) {
             SSLContext context;
@@ -99,7 +99,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             access.log(Level.DEBUG,sb);
         }
     }
-    
+
     public void setProtocol(String proto) {
         env.setProperty(Config.AAF_LOCATOR_PROTOCOL, proto);
     }
@@ -107,12 +107,12 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     public void setSubprotocol(String subproto) {
         env.setProperty(Config.AAF_LOCATOR_SUBPROTOCOL, subproto);
     }
-    
+
     protected abstract Filter[] _filters(Object ... additionalTafLurs) throws CadiException,  LocatorException;
-    
+
     /**
      * Overload this method to add new TAF or LURs
-     * 
+     *
      * @return
      * @throws CadiException
      * @throws LocatorException
@@ -134,11 +134,11 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             }
             return aafCon;
     }
-    
+
     /**
      * Allow to be over ridden for special cases
      * @return
-     * @throws LocatorException 
+     * @throws LocatorException
      */
         protected synchronized AAFConHttp _newAAFConHttp() throws CadiException, LocatorException {
             if (aafCon==null) {
@@ -147,12 +147,12 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             return aafCon;
 
         }
-    
+
     // This is a method, so we can overload for AAFAPI
     public String aaf_url() {
             return access.getProperty(Config.AAF_URL, null);
     }
-    
+
     public Rcli<?> client() throws CadiException {
         return aafCon.client();
     }
@@ -165,7 +165,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     public<RET> RET clientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
             return aafCon.hman().best(new HTransferSS(p,app_name, aafCon.securityInfo()), retryable);
     }
-    
+
     protected static final String loadFromArgOrSystem(final Properties props, final String tag, final String args[], final String def) {
         String tagEQ = tag + '=';
         String value;
@@ -177,11 +177,11 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         }
         // check System.properties
         value = System.getProperty(tag);
-        if (value!=null) { 
+        if (value!=null) {
             props.put(tag, value);
             return value;
         }
-        
+
         if (def!=null) {
             props.put(tag,def);
         }
