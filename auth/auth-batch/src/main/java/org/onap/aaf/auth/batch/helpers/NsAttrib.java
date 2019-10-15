@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,14 +50,14 @@ public class NsAttrib {
             return "select ns,key,value from authz.ns_attrib";
         }
     };
-    
-    
+
+
     public NsAttrib(String ns, String key, String value) {
         this.ns = ns;
         this.key = key;
         this.value = value;
     }
-    
+
    public static void load(Trans trans, Session session, Creator<NsAttrib> creator, Visitor<NsAttrib> visitor) {
         trans.info().log( "query: " + creator.select() );
         ResultSet results;

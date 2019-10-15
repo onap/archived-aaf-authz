@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,7 +63,7 @@ public class Approvals extends Batch {
     private final String sdate;
     private static final String CSV = ".csv";
     private static final String APPROVALS_NEW = "ApprovalsNew";
-    
+
     public Approvals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         now = new GregorianCalendar();
@@ -95,13 +95,13 @@ public class Approvals extends Batch {
                 trans.error().printf("CSV File %s does not exist",f.getAbsolutePath());
             }
         }
-        
+    
 
         File file = new File(logDir(),APPROVALS_NEW + sdate +CSV);
         CSV approveCSV = new CSV(env.access(),file);
         napproveCW = approveCSV.writer();
         napproveCW.row("info",APPROVALS_NEW,sdate,1);
-        
+    
     }
 
     @Override

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,11 +50,11 @@ import com.datastax.driver.core.Row;
 public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
     public static final String TABLE = "x509";
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
-    
+
     private HistoryDAO historyDAO;
     private CIDAO<AuthzTrans> infoDAO;
     private PSInfo psX500,psID;
-    
+
     public CertDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CertDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -66,10 +66,10 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
         infoDAO = ciDao;
         init(trans);
     }
-    
+
     public static final int KEYLIMIT = 2;
     public static class Data extends CacheableData implements Bytification {
-        
+    
         public String                    ca;
         public BigInteger                 serial;
         public String                      id;
@@ -82,14 +82,14 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
                 seg(cache,ca,serial)
             };
         }
-        
+    
         @Override
         public ByteBuffer bytify() throws IOException {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             CertLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             CertLoader.deflt.unmarshal(this, toDIS(bb));
@@ -133,7 +133,7 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
             obj[++idx] = data.x500;
             obj[++idx] = data.x509;
 
-            
+        
         }
 
         @Override
@@ -172,7 +172,7 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
             }
         }
     }
-    
+
     public Result<List<CertDAO.Data>> read(AuthzTrans trans, Object ... key) {
         // Translate BigInteger to Byte array for lookup
         return super.read(trans, key[0],ByteBuffer.wrap(((BigInteger)key[1]).toByteArray()));
@@ -194,9 +194,9 @@ public class CertDAO extends CassDAOImpl<AuthzTrans,CertDAO.Data> {
 
         psX500 = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE x500 = ?", CertLoader.deflt,readConsistency);
-        
-    }
     
+    }
+
     public Result<List<Data>> readX500(AuthzTrans trans, String x500) {
         return psX500.read(trans, R_TEXT, new Object[]{x500});
     }

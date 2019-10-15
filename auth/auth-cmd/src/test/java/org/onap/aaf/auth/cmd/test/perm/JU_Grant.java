@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ import org.onap.aaf.auth.cmd.test.HMangrStub;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Grant {
-    
+
     private static Grant grant;
 
     @Mock private SecuritySetter<HttpURLConnection> ssMock;
@@ -67,10 +67,10 @@ public class JU_Grant {
     @Mock private Future<String> futureMock;
 
     private PropAccess access;
-    private HMangrStub hman;    
+    private HMangrStub hman;
     private AuthzEnv aEnv;
     private AAFcli aafcli;
-    
+
     @Before
     public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
         MockitoAnnotations.initMocks(this);
@@ -94,20 +94,20 @@ public class JU_Grant {
     public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
         grant._exec(0, new String[] {"grant","type","instance","action","role"});
     }
-    
+
     @Test
     public void testExecSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
         when(futureMock.code()).thenReturn(202);
         grant._exec(0, new String[] {"grant","type","instance","action","role"});
 
     }
-    
+
     @Test
     public void testExecSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
         when(futureMock.get(any(Integer.class))).thenReturn(true);
         grant._exec(0, new String[] {"grant","type","instance","action","role"});
     }
-    
+
     @Test
     public void testDetailedHelp() {
         StringBuilder sb = new StringBuilder();

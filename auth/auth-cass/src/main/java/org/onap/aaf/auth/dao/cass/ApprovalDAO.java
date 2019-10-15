@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
     public static final String PENDING = "pending";
     public static final String DENIED = "denied";
     public static final String APPROVED = "approved";
-    
+
     private static final String TABLE = "approval";
     private static final String TABLELOG = "approved";
     private HistoryDAO historyDAO;
@@ -58,7 +58,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
     private PSInfo psByStatus;
 
     private static final int KEYLIMIT = 1;
-    
+
     public ApprovalDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, ApprovalDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         historyDAO = new HistoryDAO(trans, this);
@@ -83,14 +83,14 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
         public String operation;
         public Date updated;
     }
-    
+
     private static class ApprovalLoader extends Loader<Data> {
         public static final ApprovalLoader deflt = new ApprovalLoader(KEYLIMIT);
-        
+    
         public ApprovalLoader(int keylimit) {
             super(keylimit);
         }
-        
+    
         @Override
         public Data load(Data data, Row row) {
             data.id = row.getUUID(0);
@@ -125,8 +125,8 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
             obj[++idx]=data.memo;
             obj[++idx]=data.operation;
         }
-    }    
-    
+    }
+
     private void init(AuthzTrans trans) {
         String[] helpers = setCRUD(trans, TABLE, Data.class, ApprovalLoader.deflt,8);
         psByUser = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + ", WRITETIME(status) FROM " + TABLE + 
@@ -136,7 +136,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
                 obj[idx]=data.user;
             }
         }, readConsistency);
-        
+    
         psByApprover = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + ", WRITETIME(status) FROM " + TABLE + 
                 " WHERE approver = ?", new ApprovalLoader(1) {
             @Override
@@ -177,7 +177,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
         if (rs.notOK()) {
             return Result.err(rs);
         }
-        return Result.ok(data);    
+        return Result.ok(data);
     }
 
 
@@ -195,7 +195,7 @@ public class ApprovalDAO extends CassDAOImpl<AuthzTrans,ApprovalDAO.Data> {
 
     public Result<List<ApprovalDAO.Data>> readByStatus(AuthzTrans trans, String status) {
         return psByStatus.read(trans, R_TEXT, new Object[]{status});
-    }    
+    }
 
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.dao.CassDAOImpl#delete(com.att.inno.env.TransStore, java.lang.Object, boolean)

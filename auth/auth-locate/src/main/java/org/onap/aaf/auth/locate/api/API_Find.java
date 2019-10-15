@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,14 +39,14 @@ import org.onap.aaf.misc.env.util.Split;
 
 /**
  * API Apis.. using Redirect for mechanism
- * 
+ * <p>
  * @author Jonathan
  *
  */
 public class API_Find {
     /**
      * Normal Init level APIs
-     * 
+     * <p>
      * @param gwAPI
      * @param facade
      * @throws Exception
@@ -55,7 +55,7 @@ public class API_Find {
         ////////
         // Overall APIs
         ///////
-        
+    
         final LocateCode locationInfo = new LocateCode(facade,"Location Information", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -75,7 +75,7 @@ public class API_Find {
                 service=Define.varReplace(service);
                 Result<Void> r = context.getEndpoints(trans,resp,
                     req.getPathInfo(), // use as Key
-                    service,version,other                    
+                    service,version,other                
                 );
                 switch(r.status) {
                     case OK:
@@ -90,8 +90,8 @@ public class API_Find {
         gwAPI.route(HttpMethods.GET,"/locate/:service/:version",API.ENDPOINTS,locationInfo);
         gwAPI.route(HttpMethods.GET,"/locate/:service/:version/:other",API.ENDPOINTS,locationInfo);
         gwAPI.route(HttpMethods.GET,"/locate/:service",API.ENDPOINTS,locationInfo);
-        
-        
+    
+    
         gwAPI.route(HttpMethods.GET,"/download/agent", API.VOID, new LocateCode(facade,"Redirect to latest Agent",false) {
             @Override
             public void handle(AuthzTrans arg0, HttpServletRequest arg1, HttpServletResponse arg2) throws Exception {

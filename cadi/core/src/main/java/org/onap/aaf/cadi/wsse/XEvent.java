@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,12 +26,12 @@ import javax.xml.stream.events.XMLEvent;
 
 /**
  * XEvent
- * 
+ * <p>
  * This mechanism mimics a minimal portion of StAX "XMLEvent", enough to work with minimal XReader.
- * 
+ * <p>
  * We implement the same interface, as much as minimally necessary, as XMLEvent for these small usages so as to
  * be interchangeable in the future, if so desired
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -58,7 +58,7 @@ public abstract class XEvent {
         public NamedXEvent(QName qname) {
             this.qname = qname;
         }
-        
+    
         public QName getName() {
             return qname;
         }
@@ -79,7 +79,7 @@ public abstract class XEvent {
         public EndElement(String ns, String tag) {
             super(new QName(ns,tag));
         }
-        
+    
         @Override
         public int getEventType() {
             return XMLEvent.END_ELEMENT;
@@ -101,14 +101,14 @@ public abstract class XEvent {
             return data;
         }
     }
-    
+
     public static class StartDocument extends XEvent {
 
         @Override
         public int getEventType() {
             return XMLEvent.START_DOCUMENT;
         }
-        
+    
     }
 
     public static class EndDocument extends XEvent {
@@ -117,7 +117,7 @@ public abstract class XEvent {
         public int getEventType() {
             return XMLEvent.END_DOCUMENT;
         }
-        
+    
     }
     public static class Comment extends XEvent {
         public final String value;
@@ -129,7 +129,7 @@ public abstract class XEvent {
         public int getEventType() {
             return XMLEvent.COMMENT;
         }
-    
+
     }
 
 }

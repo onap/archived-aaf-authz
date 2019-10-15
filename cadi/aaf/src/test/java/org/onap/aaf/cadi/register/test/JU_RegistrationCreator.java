@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public class JU_RegistrationCreator {
         pa.setProperty(Config.CADI_LATITUDE, "32.7");
         pa.setProperty(Config.CADI_LONGITUDE, "-72.0");
         pa.setProperty(Config.AAF_LOCATOR_NAME, "");
-        
+    
         try {
             String hostname = Inet4Address.getLocalHost().getHostName();
             String entry = "";
@@ -82,7 +82,7 @@ public class JU_RegistrationCreator {
                 assertEquals(protocol,me.getProtocol());
                 assertEquals(0,me.getSpecialPorts().size());
             }
-            
+        
             pa.setProperty(Config.AAF_LOCATOR_ENTRIES, "service");
             rc = new RegistrationCreator(pa);
             for(MgmtEndpoint me : rc.create(port).getMgmtEndpoint()) {
@@ -141,7 +141,7 @@ public class JU_RegistrationCreator {
             pa.setProperty(Config.AAF_LOCATOR_CONTAINER_NS+DOT_OOM, "onap");
             String k8s_public_hostname="k8s.public.com";
             int public_port = 30001;
-            
+        
             pa.setProperty(Config.AAF_LOCATOR_PUBLIC_FQDN,k8s_public_hostname);
             pa.setProperty(Config.AAF_LOCATOR_PUBLIC_PORT+DOT_OOM,Integer.toString(public_port));
             pa.setProperty(Config.AAF_LOCATOR_APP_NS, Config.AAF_ROOT_NS_DEF);
@@ -173,7 +173,7 @@ public class JU_RegistrationCreator {
         } catch (CadiException | UnknownHostException e) {
             Assert.fail(e.getMessage());
         }
-        
+    
 
     }
 

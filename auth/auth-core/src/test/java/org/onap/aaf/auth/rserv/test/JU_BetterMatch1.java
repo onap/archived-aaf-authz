@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ public class JU_BetterMatch1 {
         assertFalse(bm.match("/req/1.0.0/wilma/bambam"));
         assertFalse(bm.match("/not/valid/234"));
         assertFalse(bm.match(""));
-        
+    
         TimeTaken tt = trans.start("A", Env.SUB);
         TimeTaken tt2;
         int i = 0;
@@ -62,8 +62,8 @@ public class JU_BetterMatch1 {
         } finally {
             tt.done();
         }
-        
     
+
         tt = trans.start("B", Env.SUB);
         i = 0;
         try {
@@ -84,9 +84,9 @@ public class JU_BetterMatch1 {
             assertFalse(bm.match("/req/1.0.0/urn:fsdb,1.0,req,newreq/0x12345/xyx"));
         } finally {
             tt2.done();
-            tt.done();    
+            tt.done();
         }
-        
+    
         tt = trans.start("C", Env.SUB);
         i = 0;
         try {
@@ -94,12 +94,12 @@ public class JU_BetterMatch1 {
             bm = new Match(url+":urn*");
             tt2 = trans.start(Integer.toString(++i), Env.SUB);
             String value = "urn:fsdb,1.0,req,newreq/0x12345";
-            
+        
             assertTrue(bm.match(url+value));
             assertEquals("urn:fsdb,1.0,req,newreq/0x12345",bm.param(url+value, ":urn"));
         } finally {
             tt2.done();
-            tt.done();    
+            tt.done();
         }
 
         tt = trans.start("D", Env.SUB);
@@ -113,7 +113,7 @@ public class JU_BetterMatch1 {
             assertFalse(bm.match("/req/1.0.0/urn:fsdb,1.0,req,newreq/"));
         } finally {
             tt2.done();
-            tt.done();    
+            tt.done();
         }
 
         tt = trans.start("E", Env.SUB);
@@ -130,7 +130,7 @@ public class JU_BetterMatch1 {
             assertTrue(bm.match("this/1.0.0/urn:fsdb,1.0,req,newreq/0x12345/"));
         } finally {
             tt2.done();
-            tt.done();    
+            tt.done();
         }
 
         tt = trans.start("F", Env.SUB);
@@ -141,20 +141,20 @@ public class JU_BetterMatch1 {
             assertTrue(bm.match("whatever/this"));
         } finally {
             tt2.done();
-            tt.done();    
+            tt.done();
         }
-        
+    
         StringBuilder sb = new StringBuilder();
         trans.auditTrail(0, sb);
         //System.out.println(sb);
-        
-    }
     
+    }
+
     @Test
     public void specialTest() {
         Match match = new Match("/sample");
         assertTrue(match.match("/sample"));
-        
+    
         match = new Match("/lpeer//lpeer/:key/:item*");
         assertTrue(match.match("/lpeer//lpeer/x/y"));
         assertFalse(match.match("/lpeer/x/lpeer/x/y"));

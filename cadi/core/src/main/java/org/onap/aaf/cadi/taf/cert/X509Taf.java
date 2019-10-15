@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,7 @@ public class X509Taf implements HttpTaf {
             throw new RuntimeException("X.509 and SHA-256 are required for X509Taf",e);
         }
     }
-    
+
     public X509Taf(Access access, Lur lur, CertIdentity ... cis) throws CertificateException, NoSuchAlgorithmException, CadiException {
         this.access = access;
         env = access.getProperty(Config.AAF_ENV,null);
@@ -103,7 +103,7 @@ public class X509Taf implements HttpTaf {
         } catch (Exception e) {
             certIdents = cis;
         }
-        
+    
         si = new SecurityInfo(access);
     }
 
@@ -141,7 +141,7 @@ public class X509Taf implements HttpTaf {
                     int end = 1;
                     int comma;
                     int length = subject.length();
-                    
+                
                     compare:
                     while(start<length) {
                         while(Character.isWhitespace(subject.charAt(start))) {
@@ -184,7 +184,7 @@ public class X509Taf implements HttpTaf {
             } else {
                 access.log(Level.DEBUG,"There is no client certificate on the transaction");
             }
-        
+    
 
             byte[] array = null;
             byte[] certBytes = null;
@@ -213,7 +213,7 @@ public class X509Taf implements HttpTaf {
                                 Symm.base64noSplit.decode(bais, baos, 5);
                                 certBytes = baos.toByteArray();
                                 cert = getCert(certBytes);
-                                
+                            
                                 /** 
                                  * Identity from CERT if well know CA and specific encoded information
                                  */
@@ -226,7 +226,7 @@ public class X509Taf implements HttpTaf {
                                 String data = req.getHeader("Data"); 
         //                                    if (data==null) 
         //                                        return new X509HttpTafResp(access, null, "No signed Data to validate with X509 Certificate", RESP.TRY_ANOTHER_TAF);
-        
+    
                                 // Note: Data Pos shows is "<signatureType> <data>"
         //                                    int dataPos = (stuff.indexOf(' ')); // determine what is Algorithm
                                 // Get Signature 
@@ -235,7 +235,7 @@ public class X509Taf implements HttpTaf {
                                 Symm.base64noSplit.decode(bais, baos);
                                 array = baos.toByteArray();
         //                                    Signature sig = Signature.getInstance(stuff.substring(0, dataPos)); // get Algorithm from first part of Signature
-                                
+                            
                                 Signature sig = Signature.getInstance(cert.getSigAlgName()); 
                                 sig.initVerify(cert.getPublicKey());
                                 sig.update(data.getBytes());
@@ -254,16 +254,16 @@ public class X509Taf implements HttpTaf {
                 if (cert==null) {
                     return new X509HttpTafResp(access, null, "No Certificate Info on Transaction", RESP.TRY_ANOTHER_TAF);
                 }
-                
+            
                 // A cert has been found, match Identify
                 TaggedPrincipal prin=null;
-                
+            
                 for (int i=0;prin==null && i<certIdents.length;++i) {
                     if ((prin=certIdents[i].identity(req, cert, certBytes))!=null) {
                         responseText = prin.getName() + " matches Certificate " + cert.getSubjectX500Principal().getName() + responseText;
                     }
                 }
-    
+
                 // if Principal is found, check for "AS_USER" and whether this entity is trusted to declare
                 if (prin!=null) {
                     // Note: Tag for Certs is Fingerprint, but that takes computation... leaving off
@@ -275,9 +275,9 @@ public class X509Taf implements HttpTaf {
                 }
             }
         } catch (Exception e) {
-            return new X509HttpTafResp(access, null, e.getMessage(), RESP.TRY_ANOTHER_TAF);    
+            return new X509HttpTafResp(access, null, e.getMessage(), RESP.TRY_ANOTHER_TAF);
         }
-    
+
         return new X509HttpTafResp(access, null, "Certificate cannot be used for authentication", RESP.TRY_ANOTHER_TAF);
     }
 
@@ -289,7 +289,7 @@ public class X509Taf implements HttpTaf {
     public void add(BasicHttpTaf bht) {
         this.bht = bht;
     }
-    
+
     public CredVal getCredVal(final String key) {
         if (bht==null) {
             return null;

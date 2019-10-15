@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,16 +55,16 @@ public class JU_User {
 
     @Mock
     private Principal principal;
-    
+
     @Mock
     private LocalPermission permission;
     @Mock
     private LocalPermission permission2;
-    
+
     @Before
     public void setup() throws NoSuchFieldException, SecurityException {
         MockitoAnnotations.initMocks(this);
-        
+    
         when(principal.getName()).thenReturn("Principal");
 
         when(permission.getKey()).thenReturn("NewKey");
@@ -98,7 +98,7 @@ public class JU_User {
         assertThat((int)count_field.get(user), is(0));
         assertThat(user.getCred(), is(cred.getBytes()));
     }
-    
+
     @Test
     public void constructorPrincipalIntervalTest() throws IllegalArgumentException, IllegalAccessException {
         User<Permission> user = new User<Permission>(principal, 61 * SECOND);
@@ -133,7 +133,7 @@ public class JU_User {
         user.resetCount();
         assertThat((int)count_field.get(user), is(0));
     }
-    
+
     @Test
     public void permTest() throws InterruptedException, IllegalArgumentException, IllegalAccessException {
         User<Permission> user = new User<Permission>(principal);
@@ -155,32 +155,32 @@ public class JU_User {
         assertTrue(user.permsUnloaded());
         assertTrue(user.noPerms());
     }
-    
+
     @Test
     public void addValuesToNewMapTest() {
         User<Permission> user = new User<Permission>(principal);
         Map<String, Permission> newMap = new HashMap<>();
-        
+    
         assertFalse(user.contains(permission));
-        
+    
         user.add(newMap, permission);
         user.setMap(newMap);
-        
+    
         assertTrue(user.contains(permission));
-        
+    
         List<Permission> sink = new ArrayList<>();
         user.copyPermsTo(sink);
-        
+    
         assertThat(sink.size(), is(1));
         assertTrue(sink.contains(permission));
-        
+    
         assertThat(user.toString(), is("Principal|:NewKey"));
 
         user.add(newMap, permission2);
         user.setMap(newMap);
         assertFalse(user.contains(permission2));
-        
+    
         assertThat(user.toString(), is("Principal|:NewKey2,NewKey"));
     }
-    
+
 }

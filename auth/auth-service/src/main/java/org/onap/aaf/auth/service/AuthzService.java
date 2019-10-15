@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,12 +33,12 @@ import org.onap.aaf.auth.service.mapper.Mapper;
 
 public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> {
     public Mapper<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERTS,KEYS,REQUEST,HISTORY,ERR,APPROVALS> mapper();
-    
+
 /***********************************
  * NAMESPACE 
  ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param ns
@@ -49,15 +49,15 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> createNS(AuthzTrans trans, REQUEST request, NsType type);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @return
      */
     public Result<Void> addAdminNS(AuthzTrans trans, String ns, String id);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @return
@@ -65,7 +65,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> delAdminNS(AuthzTrans trans, String ns, String id);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param id
@@ -74,7 +74,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> addResponsibleNS(AuthzTrans trans, String ns, String id);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param id
@@ -83,7 +83,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> delResponsibleNS(AuthzTrans trans, String ns, String id);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param key
@@ -93,7 +93,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> createNsAttrib(AuthzTrans trans, String ns, String key, String value);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param key
@@ -103,7 +103,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<?> updateNsAttrib(AuthzTrans trans, String ns, String key, String value);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param key
@@ -112,7 +112,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> deleteNsAttrib(AuthzTrans trans, String ns, String key);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param key
@@ -122,23 +122,23 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
 
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @return
      */
     public Result<NSS> getNSbyName(AuthzTrans trans, String ns, boolean full);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
      */
     public Result<NSS> getNSbyAdmin(AuthzTrans trans, String user, boolean full);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -146,7 +146,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<NSS> getNSbyResponsible(AuthzTrans trans, String user, boolean full);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -154,7 +154,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<NSS> getNSbyEither(AuthzTrans trans, String user, boolean full);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param parent
      * @return
@@ -162,15 +162,15 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<NSS> getNSsChildren(AuthzTrans trans, String parent);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param req
      * @return
      */
     public Result<Void> updateNsDescription(AuthzTrans trans, REQUEST req);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param user
@@ -183,7 +183,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
  * PERM 
  ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param rreq
      * @return
@@ -191,18 +191,18 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @throws MappingException
      */
     public Result<Void> createPerm(AuthzTrans trans, REQUEST rreq);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param childPerm
      * @return
      * @throws DAOException 
      */
     public Result<PERMS> getPermsByType(AuthzTrans trans, String perm);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param type
      * @param instance
@@ -223,7 +223,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
 
     /**
      * Gets all the permissions for a user across all the roles it is assigned to, filtered by NS (Scope)
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param scopes
@@ -234,11 +234,11 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
 
     /**
      * Gets all the permissions for a user across all the roles it is assigned to
-     * 
+     * <p>
      * Add AAF Perms representing the "MayUser" calls if
      *     1) Allowed
      *  2) User has equivalent permission
-     *     
+     * <p>
      * @param userName
      * @return
      * @throws Exception 
@@ -247,17 +247,17 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<PERMS> getPermsByUser(AuthzTrans trans, PERMS perms, String userName);
 
     /**
-     * 
+     * <p>
      * Gets all the permissions for a user across all the roles it is assigned to
-     * 
+     * <p>
      * @param roleName
      * @return
      * @throws Exception
      */
     public Result<PERMS> getPermsByRole(AuthzTrans trans, String roleName);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @return
@@ -266,7 +266,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
 
     /**
      * rename permission
-     * 
+     * <p>
      * @param trans
      * @param rreq
      * @param isRename
@@ -276,25 +276,25 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @return
      */
     public Result<Void> renamePerm(AuthzTrans trans, REQUEST rreq, String origType, String origInstance, String origAction);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param req
      * @return
      */
     public Result<Void> updatePermDescription(AuthzTrans trans, REQUEST req);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param from
      * @return
      */
     public Result<Void> resetPermRoles(AuthzTrans trans, REQUEST from);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param from
      * @return
@@ -303,7 +303,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> deletePerm(AuthzTrans trans, REQUEST from);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param perm
@@ -318,7 +318,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
  * ROLE 
  ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param role
@@ -330,7 +330,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> createRole(AuthzTrans trans, REQUEST req);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param role
      * @return
@@ -338,7 +338,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<ROLES> getRolesByName(AuthzTrans trans, String role);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -347,7 +347,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<ROLES> getRolesByUser(AuthzTrans trans, String user);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -355,7 +355,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<ROLES> getRolesByNS(AuthzTrans trans, String user);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param name
      * @return
@@ -363,7 +363,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<ROLES> getRolesByNameOnly(AuthzTrans trans, String name);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param type
      * @param instance
@@ -373,25 +373,25 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<ROLES> getRolesByPerm(AuthzTrans trans, String type, String instance, String action);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param req
      * @return
      */
     public Result<Void> updateRoleDescription(AuthzTrans trans, REQUEST req);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param rreq
      * @return
      * @throws DAOException
      */
     public Result<Void> addPermToRole(AuthzTrans trans, REQUEST rreq);
-    
-    
+
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param rreq
      * @return
@@ -411,7 +411,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> delPermFromRole(AuthzTrans trans, String role, String type, String instance, String action);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param role
@@ -422,7 +422,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> deleteRole(AuthzTrans trans, String role);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param req
      * @return
@@ -434,7 +434,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
  ***********************************/
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param from
      * @return
@@ -442,7 +442,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     Result<Void> createUserCred(AuthzTrans trans, REQUEST from);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param from
      * @return
@@ -450,7 +450,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     Result<Void> resetUserCred(AuthzTrans trans, REQUEST from);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param from
      * @param days
@@ -459,15 +459,15 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     Result<Void> extendUserCred(AuthzTrans trans, REQUEST from, String days);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @return
      */
     public Result<USERS> getCredsByNS(AuthzTrans trans, String ns);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param id
      * @return
@@ -475,7 +475,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<USERS> getCredsByID(AuthzTrans trans, String id);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param req
      * @param id
@@ -484,15 +484,15 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<CERTS> getCertInfoByID(AuthzTrans trans, HttpServletRequest req, String id);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param credReq
      * @return
      */
     public Result<Void> deleteUserCred(AuthzTrans trans, REQUEST credReq);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -501,15 +501,15 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Date> doesCredentialMatch(AuthzTrans trans, REQUEST credReq);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param basicAuth
      * @return
      */
     public Result<Date> validateBasicAuth(AuthzTrans trans, String basicAuth);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param role
      * @return
@@ -517,7 +517,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<USERS> getUsersByRole(AuthzTrans trans, String role);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param role
      * @return
@@ -525,7 +525,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<USERS> getUserInRole(AuthzTrans trans, String user, String role);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param type
      * @param instance
@@ -533,15 +533,15 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @return
      */
     public Result<USERS> getUsersByPermission(AuthzTrans trans,String type, String instance, String action);
-    
-    
+
+
 
 
 /***********************************
  * USER-ROLE 
  ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param request
@@ -551,7 +551,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> createUserRole(AuthzTrans trans, REQUEST request);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param role
      * @return
@@ -559,7 +559,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<USERROLES> getUserRolesByRole(AuthzTrans trans, String role);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param role
      * @return
@@ -570,9 +570,9 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * Note: Removed "resetRolesForUsers" because it was too dangerous, and
      *       removed "resetUsersForRoles" because it was being misused.
      */
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param role
@@ -582,7 +582,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     String role);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param usr
@@ -596,9 +596,9 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
 
 /***********************************
  * HISTORY 
- ***********************************/    
+ ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param yyyymm
@@ -607,7 +607,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<HISTORY> getHistoryByUser(AuthzTrans trans, String user, int[] yyyymm, int sort);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param subj
      * @param yyyymm
@@ -617,7 +617,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<HISTORY> getHistoryByRole(AuthzTrans trans, String subj, int[] yyyymm, int sort);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param subj
      * @param yyyymm
@@ -627,7 +627,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<HISTORY> getHistoryByPerm(AuthzTrans trans, String subj, int[] yyyymm, int sort);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param subj
      * @param yyyymm
@@ -637,7 +637,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<HISTORY> getHistoryByNS(AuthzTrans trans, String subj, int[] yyyymm, int sort);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param target
      * @param yyyymm
@@ -650,25 +650,25 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
  * DELEGATE 
  ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param delegates
      * @return
      * @throws Exception
      */
     public Result<Void> createDelegate(AuthzTrans trans, REQUEST reqDelegate);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param delegates
      * @return
      * @throws Exception
      */
     public Result<Void> updateDelegate(AuthzTrans trans, REQUEST reqDelegate);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param userName
      * @param delegate
@@ -676,9 +676,9 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
      * @throws Exception
      */
     public Result<Void> deleteDelegate(AuthzTrans trans, REQUEST reqDelegate);
-    
+
     /**
-     * 
+     * <p>
      * @param trans
      * @param userName
      * @return
@@ -686,17 +686,17 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> deleteDelegate(AuthzTrans trans, String userName);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
      * @throws Exception
      */
     public Result<DELGS> getDelegatesByUser(AuthzTrans trans, String user);
-    
+
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param delegate
      * @return
@@ -707,7 +707,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
  * APPROVAL 
  ***********************************/
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @param approver
@@ -717,7 +717,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> updateApproval(AuthzTrans trans, APPROVALS approvals);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -725,7 +725,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<APPROVALS> getApprovalsByUser(AuthzTrans trans, String user);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param ticket
      * @return
@@ -733,7 +733,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<APPROVALS> getApprovalsByTicket(AuthzTrans trans, String ticket);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param approver
      * @return
@@ -741,7 +741,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<APPROVALS> getApprovalsByApprover(AuthzTrans trans, String approver);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param cname
      * @return
@@ -749,7 +749,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> cacheClear(AuthzTrans trans, String cname);
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param cname
      * @param segment
@@ -758,7 +758,7 @@ public interface AuthzService<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DELGS,CERT
     public Result<Void> cacheClear(AuthzTrans trans, String cname, int[] segment);
 
     /**
-     * 
+     * <p>
      * @param trans
      */
     public void dbReset(AuthzTrans trans);

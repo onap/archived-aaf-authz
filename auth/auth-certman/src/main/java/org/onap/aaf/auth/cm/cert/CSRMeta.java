@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -90,15 +90,15 @@ public class CSRMeta {
         }
         return name;
     }
-    
-    
+
+
     public PKCS10CertificationRequest  generateCSR(Trans trans) throws IOException, CertException {
         PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(x500Name(),keypair(trans).getPublic());
         if (challenge!=null) {
             DERPrintableString password = new DERPrintableString(challenge);
             builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_challengePassword, password);
         }
-        
+    
         int plus = email==null?0:1;
         if (!sanList.isEmpty()) {
             GeneralName[] gna = new GeneralName[sanList.size()+plus];
@@ -107,7 +107,7 @@ public class CSRMeta {
                 gna[++i]=new GeneralName(GeneralName.dNSName,s);
             }
             gna[++i]=new GeneralName(GeneralName.rfc822Name,email);
-            
+        
             builder.addAttribute(
                     PKCSObjectIdentifiers.pkcs_9_at_extensionRequest,
                     new Extensions(new Extension[] {
@@ -122,7 +122,7 @@ public class CSRMeta {
             throw new CertException(e);
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     public static void dump(PKCS10CertificationRequest csr) {
          Attribute[] certAttributes = csr.getAttributes();
@@ -152,7 +152,7 @@ public class CSRMeta {
                  }
          }
     }
-    
+
     public X509Certificate initialConversationCert(Trans trans) throws CertificateException, OperatorCreationException {
         GregorianCalendar gc = new GregorianCalendar();
         Date start = gc.getTime();
@@ -209,15 +209,15 @@ public class CSRMeta {
     public void environment(String env) {
         environment = env;
     }
-    
+
     /**
-     * 
+     * <p>
      * @return
      */
     public String environment() {
         return environment;
     }
-    
+
     /**
      * @return the mechID
      */
@@ -263,5 +263,5 @@ public class CSRMeta {
     public void challenge(String challenge) {
         this.challenge = challenge;
     }
-    
+
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ public class API_NS {
     public static void init(AAF_Service authzAPI, AuthzFacade facade) throws Exception {
         /**
          * puts a new Namespace in Authz DB
-         * 
+         * <p>
          * TESTCASES: TC_NS1, TC_NSdelete1
          */
         authzAPI.route(POST,"/authz/ns",API.NS_REQ, new Code(facade,"Create a Namespace",true) {
@@ -58,7 +58,7 @@ public class API_NS {
                             HttpServletResponse resp) throws Exception {
                         NsType nst = NsType.fromString(req.getParameter("type"));
                         Result<Void> r = context.requestNS(trans, req, resp,nst);
-                            
+                        
                         switch(r.status) {
                             case OK:
                                 resp.setStatus(HttpStatus.CREATED_201); 
@@ -72,10 +72,10 @@ public class API_NS {
                     }
                 }
         );
-        
+    
         /**
          * removes a Namespace from Authz DB
-         * 
+         * <p>
          * TESTCASES: TC_NS1, TC_NSdelete1
          */
         authzAPI.route(DELETE,"/authz/ns/:ns",API.VOID, new Code(facade,"Delete a Namespace",true) {
@@ -98,7 +98,7 @@ public class API_NS {
 
         /**
          * Add an Admin in NS in Authz DB
-         * 
+         * <p>
          * TESTCASES: TC_NS1
          */
         authzAPI.route(POST,"/authz/ns/:ns/admin/:id",API.VOID, new Code(facade,"Add an Admin to a Namespace",true) {
@@ -121,10 +121,10 @@ public class API_NS {
                 }
             }
         );
-    
+
         /**
          * Removes an Admin from Namespace in Authz DB
-         * 
+         * <p>
          * TESTCASES: TC_NS1
          */
         authzAPI.route(DELETE,"/authz/ns/:ns/admin/:id",API.VOID, new Code(facade,"Remove an Admin from a Namespace",true) {
@@ -147,7 +147,7 @@ public class API_NS {
 
     /**
      * Add an Admin in NS in Authz DB
-     * 
+     * <p>
      * TESTCASES: TC_NS1
      */
         authzAPI.route(POST,"/authz/ns/:ns/responsible/:id",API.VOID, new Code(facade,"Add a Responsible Identity to a Namespace",true) {
@@ -173,7 +173,7 @@ public class API_NS {
 
 
         /**
-         * 
+         * <p>
          */
         authzAPI.route(GET,"/authz/nss/:id",API.NSS, new Code(facade,"Return Information about Namespaces", true) {
             @Override
@@ -191,8 +191,8 @@ public class API_NS {
                     }
                 }
             }
-        );    
-        
+        );
+    
         /**
          * Get all Namespaces where user is an admin
          */
@@ -213,7 +213,7 @@ public class API_NS {
                 }
             }
         );
-        
+    
         /**
          * Get all Namespaces where user is a responsible party
          */
@@ -286,7 +286,7 @@ public class API_NS {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.updateNsDescription(trans, req, resp);
                 switch(r.status) {
                     case OK: 
@@ -296,11 +296,11 @@ public class API_NS {
                         context.error(trans,resp,r);
                 }
             }
-        });    
-    
+        });
+
         /**
          * Removes an Owner from Namespace in Authz DB
-         * 
+         * <p>
          * TESTCASES: TC_NS1
          */
         authzAPI.route(DELETE,"/authz/ns/:ns/responsible/:id",API.VOID, new Code(facade,"Remove a Responsible Identity from Namespace",true) {
@@ -371,7 +371,7 @@ public class API_NS {
                 }
             }
         );
-        
+    
         authzAPI.route(DELETE,"/authz/ns/:ns/attrib/:key",API.VOID, new Code(facade,"delete an Attribute from a Namespace",true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -390,6 +390,6 @@ public class API_NS {
         );
 
     }
-    
-    
+
+
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,12 +57,12 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             if (fks.exists()) {
                 File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
                 fks.renameTo(backup);
-            }    
+            }
 
             // Get the Cert(s)... Might include Trust store
             Collection<? extends Certificate> certColl = Factory.toX509Certificate(certInfo.getCerts());
             // find where the trusts end in 1.0 API
-        
+    
             X509Certificate x509;
             List<X509Certificate> chainList = new ArrayList<>();
             Set<X509Certificate> caSet = new HashSet<>();
@@ -103,7 +103,7 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
             props.add(Config.CADI_KEYSTORE_PASSWORD+'_'+ext,encP);
             char[] keystorePassArray = keystorePass.toCharArray();
             jks.load(null,keystorePassArray); // load in
-            
+        
             // Add Private Key/Cert Entry for App
             // Note: Java SSL security classes, while having a separate key from keystore,
             // is documented to not actually work. 
@@ -119,10 +119,10 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 //                // Friendly Name
 //                attribs.add(new PKCS12Attribute("1.2.840.113549.1.9.20", arti.getNs()));
 //            } 
-//            
+//        
             KeyStore.ProtectionParameter protParam = 
                     new KeyStore.PasswordProtection(keyPass.toCharArray());
-            
+        
             Certificate[] trustChain = new Certificate[chainList.size()];
             chainList.toArray(trustChain);
             KeyStore.PrivateKeyEntry pkEntry = 
@@ -132,24 +132,24 @@ public class PlaceArtifactInKeystore extends ArtifactDir {
 
             // Write out
             write(fks,Chmod.to644,jks,keystorePassArray);
-            
+        
             // Change out to TrustStore
             // NOTE: PKCS12 does NOT support Trusted Entries.  Put in JKS Always
             fks = new File(dir,arti.getNs()+".trust.jks");
             if (fks.exists()) {
                 File backup = File.createTempFile(fks.getName()+'.', ".backup",dir);
                 fks.renameTo(backup);
-            }    
+            }
 
             jks = KeyStore.getInstance(Agent.JKS);
-            
+        
             // Set Truststore Password
             props.add(Config.CADI_TRUSTSTORE,fks.getAbsolutePath());
             String trustStorePass = Symm.randomGen(Agent.PASS_SIZE);
             props.addEnc(Config.CADI_TRUSTSTORE_PASSWORD,trustStorePass);
             char[] truststorePassArray = trustStorePass.toCharArray();
             jks.load(null,truststorePassArray); // load in
-            
+        
             // Add Trusted Certificates, but PKCS12 doesn't support
             Certificate[] trustCAs = new Certificate[caSet.size()];
             caSet.toArray(trustCAs);

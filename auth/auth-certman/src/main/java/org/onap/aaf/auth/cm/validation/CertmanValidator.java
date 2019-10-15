@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.onap.aaf.auth.validation.Validator;
 /**
  * Validator
  * Consistently apply content rules for content (incoming)
- * 
+ * <p>
  * Note: We restrict content for usability in URLs (because RESTful service), and avoid 
  * issues with Regular Expressions, and other enabling technologies. 
  * @author Jonathan
@@ -49,12 +49,12 @@ public class CertmanValidator extends Validator{
     private static final String IS_NULL = " is null.";
     private static final String ARTIFACTS_MUST_HAVE_AT_LEAST = "Artifacts must have at least ";
     private static final Pattern ALPHA_NUM = Pattern.compile("[a-zA-Z0-9]*");
-    
+
     private static boolean disallowTmp = true;
     public static void allowTmp() {
         disallowTmp=false;
     }
-    
+
     public CertmanValidator nullBlankMin(String name, List<String> list, int min) {
         if (list==null) {
             msg(name + IS_NULL);
@@ -97,7 +97,7 @@ public class CertmanValidator extends Validator{
         }
         return this;
     }
-    
+
     private CertmanValidator allRequired(Data a) {
         if (a==null) {
             msg("Artifact is null.");

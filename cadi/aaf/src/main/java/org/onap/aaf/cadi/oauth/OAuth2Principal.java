@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,17 +26,17 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 public class OAuth2Principal extends TaggedPrincipal {
     private TokenPerm tp;
 //    private byte[] hash; // hashed cred for disk validation
-    
+
     public OAuth2Principal(TokenPerm tp, byte[] hash) {
         this.tp = tp;
 //        this.hash = hash;
     }
-    
+
     @Override
     public String getName() {
         return tp.getUsername();
     }
-    
+
     public TokenPerm tokenPerm() {
         return tp;
     }
@@ -50,5 +50,5 @@ public class OAuth2Principal extends TaggedPrincipal {
     public String personalName() {
         return tp.getUsername();
     }
-    
+
 }

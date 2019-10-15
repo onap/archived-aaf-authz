@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ public class Report {
     String[] names;
     private int iterations;
     private int count;
-    
+
     public Report(int iters, String ... names) {
         iterations = iters;
         buckets = new float[names.length];
@@ -41,7 +41,7 @@ public class Report {
         total=0;
         count = 0;
     }
-    
+
     public void glean(Trans trans, int ... type) {
         Metric m = trans.auditTrail(0, null, type);
         total+=m.total;
@@ -50,12 +50,12 @@ public class Report {
             buckets[b]+=m.buckets[b];
         }
     }
-    
+
     public boolean go() {
         return ++count<iterations;
     }
-    
-    
+
+
     public void report(Writer sbw) throws IOException {
         sbw.append("\n"+count + " entries, Total Time: " + total + "ms, Avg Time: " + total/count + "ms\n");
         int min = Math.min(buckets.length, names.length);

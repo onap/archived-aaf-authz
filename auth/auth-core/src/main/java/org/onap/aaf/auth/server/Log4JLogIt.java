@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 public class Log4JLogIt implements LogIt {
     protected static final String AAF_LOG4J_PREFIX = "aaf_log4j_prefix";
     // Log4j does it's own date.  Can't apparently turn it off.
-    
+
     private final String service;
     private final String audit;
     private final String init;
@@ -74,13 +74,13 @@ public class Log4JLogIt implements LogIt {
             laudit = Logger.getLogger(audit);
             linit = Logger.getLogger(init);
             ltrace = Logger.getLogger(trace);
-    
+
             lfn.configure(etc_dir,propsFile, log_level);
         } catch (IOException e) {
             throw new APIException(e);
         }
     }
-    
+
     private static final String getArgOrVM(final String tag, final String args[], final String def) {
         String tagEQ = tag + '=';
         String value;
@@ -94,7 +94,7 @@ public class Log4JLogIt implements LogIt {
         if (value!=null) { 
             return value;
         }
-        
+    
         return def;
     }
 
@@ -127,7 +127,7 @@ public class Log4JLogIt implements LogIt {
             default:
                 lservice.info(PropAccess.buildMsg(service, Chrono.utcFmt, level, elements));
                 break;
-        
+    
         }
 
     }

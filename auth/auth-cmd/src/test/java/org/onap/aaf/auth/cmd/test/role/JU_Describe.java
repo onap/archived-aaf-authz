@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,15 +50,15 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Describe {
-    
+
     private static Describe desc;
     PropAccess prop;
     AuthzEnv aEnv;
     Writer wtr;
     Locator<URI> loc;
-    HMangr hman;    
+    HMangr hman;
     AAFcli aafcli;
-    
+
     @Before
     public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
         prop = new PropAccess();
@@ -66,12 +66,12 @@ public class JU_Describe {
         wtr = mock(Writer.class);
         loc = mock(Locator.class);
         SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-        hman = new HMangr(aEnv, loc);    
+        hman = new HMangr(aEnv, loc);
         aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
         Role role = new Role(aafcli);
         desc = new Describe(role);
     }
-    
+
     @Test
     public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
         Item value = mock(Item.class);
@@ -84,9 +84,9 @@ public class JU_Describe {
 //        HRcli hcli = new HRcli(hman, uri, item, secSet);
 //        String[] strArr = {"add","upd","del","add","upd","del"};
 //        desc._exec(0, strArr);
-        
-    }
     
+    }
+
     @Test
     public void detailedHelp() {
         boolean hasNoError = true;

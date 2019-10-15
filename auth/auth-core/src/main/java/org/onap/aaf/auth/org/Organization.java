@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,9 +32,9 @@ import org.onap.aaf.auth.env.AuthzTrans;
 
 /**
  * Organization
- * 
+ * <p>
  * There is Organizational specific information required which we have extracted to a plugin
- * 
+ * <p>
  * It supports using Company Specific User Directory lookups, as well as supporting an
  * Approval/Validation Process to simplify control of Roles and Permissions for large organizations
  * in lieu of direct manipulation by a set of Admins. 
@@ -90,7 +90,7 @@ public interface Organization {
      * @return
      */
     public String getRealm();
-    
+
     public boolean supportsRealm(String user);
 
     public void addSupportedRealm(String r);
@@ -99,31 +99,31 @@ public interface Organization {
 
     /**
      * Get Identity information based on userID
-     * 
+     * <p>
      * @param id
      * @return
      */
     public Identity getIdentity(AuthzTrans trans, String id) throws OrganizationException;
-    
+
     /**
      * Is Revoked
-     * 
+     * <p>
      * Deletion of an Identity that has been removed from an Organization can be dangerous.  Mistakes may have been made 
      * in the Organization side, a Feed might be corrupted, an API might not be quite right.  
-     * 
+     * <p>
      * The implementation of this method can use a double check of some sort, such as comparison of missing ID in Organization
      * feed with a "Deleted ID" feed.  
-     * 
+     * <p>
      */
     public boolean isRevoked(AuthzTrans trans, String id);
 
 
     /**
      * Does the ID pass Organization Standards
-     * 
+     * <p>
      * Return a Blank (empty) String if empty, otherwise, return a "\n" separated list of 
      * reasons why it fails
-     * 
+     * <p>
      * @param id
      * @return
      */
@@ -149,7 +149,7 @@ public interface Organization {
     public String[] getPasswordRules();
 
     /**
-     * 
+     * <p>
      * @param id
      * @return
      */
@@ -198,7 +198,7 @@ public interface Organization {
         ERR_UserNotExist,
         ERR_NotificationFailure,
         };
-        
+    
     public enum Expiration {
         Password,
         TempPassword, 
@@ -207,7 +207,7 @@ public interface Organization {
         UserDelegate, 
         ExtendPassword
     }
-    
+
     public enum Policy {
         CHANGE_JOB, 
         LEFT_COMPANY, 
@@ -218,10 +218,10 @@ public interface Organization {
         MAY_EXTEND_CRED_EXPIRES,
         MAY_APPLY_DEFAULT_REALM
     }
-    
+
     /**
      * Notify a User of Action or Info
-     * 
+     * <p>
      * @param type
      * @param url
      * @param users (separated by commas)
@@ -233,7 +233,7 @@ public interface Organization {
 
     /**
      * (more) generic way to send an email
-     * 
+     * <p>
      * @param toList
      * @param ccList
      * @param subject
@@ -245,36 +245,36 @@ public interface Organization {
 
     /**
      * whenToValidate
-     * 
+     * <p>
      * Authz support services will ask the Organization Object at startup when it should
      * kickoff Validation processes given particular types. 
-     * 
+     * <p>
      * This allows the Organization to express Policy
-     * 
+     * <p>
      * Turn off Validation behavior by returning "null"
-     * 
+     * <p>
      */
     public Date whenToValidate(Notify type, Date lastValidated);
 
-    
+
     /**
      * Expiration
-     * 
+     * <p>
      * Given a Calendar item of Start (or now), set the Expiration Date based on the Policy
      * based on type.
-     * 
+     * <p>
      * For instance, "Passwords expire in 3 months"
-     * 
+     * <p>
      * The Extra Parameter is used by certain Orgs.
-     * 
+     * <p>
      * For Password, the extra is UserID, so it can check the User Type
-     * 
+     * <p>
      * @param gc
      * @param exp
      * @return
      */
     public GregorianCalendar expiration(GregorianCalendar gc, Expiration exp, String ... extra);
-    
+
     /**
      * Get Email Warning timing policies
      * @return
@@ -282,7 +282,7 @@ public interface Organization {
     public EmailWarnings emailWarningPolicy();
 
     /**
-     * 
+     * <p>
      * @param trans
      * @param user
      * @return
@@ -295,23 +295,23 @@ public interface Organization {
      * 2 = expects both self and immediate responsible party
      * 3 = expects self, immediate report and any higher that the Organization wants to escalate to in the
      *     hierarchy.
-     *     
+     * <p>
      * Note: this is used to notify of imminent danger of Application's Cred or Role expirations.
      */
     public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException ;
-    
+
 
     /*
-     * 
+     * <p>
      * @param user
      * @param type
      * @param users
      * @return
     public Response notifyRequest(AuthzTrans trans, String user, Approval type, List<User> approvers);
     */
-    
+
     /**
-     * 
+     * <p>
      * @return
      */
     public String getApproverType();
@@ -319,7 +319,7 @@ public interface Organization {
     /*
      * startOfDay - define for company what hour of day business starts (specifically for password and other expiration which
      *   were set by Date only.)
-     *    
+     *
      * @return
      */
     public int startOfDay();
@@ -333,7 +333,7 @@ public interface Organization {
      * @return
      */
     public boolean canHaveMultipleCreds(String id);
-    
+
     boolean isTestEnv();
 
     public void setTestMode(boolean dryRun);
@@ -355,27 +355,27 @@ public interface Organization {
             public String mayOwn() {
                 return N_A; // negative case
             }
-            
+        
             @Override
             public boolean isFound() {
                 return false;
             }
-            
+        
             @Override
             public String id() {
                 return N_A;
             }
-            
+        
             @Override
             public String fullID() {
                 return N_A;
             }
-            
+        
             @Override
             public String email() {
                 return N_A;
             }
-            
+        
             @Override
             public List<String> delegate() {
                 return nullUser;
@@ -406,12 +406,12 @@ public interface Organization {
         public String getName() {
             return N_A;
         }
-    
+
         @Override
         public String getRealm() {
             return N_A;
         }
-    
+
         @Override
         public boolean supportsRealm(String r) {
             return false;
@@ -425,87 +425,87 @@ public interface Organization {
         public String getDomain() {
             return N_A;
         }
-    
+
         @Override
         public Identity getIdentity(AuthzTrans trans, String id) {
             return nullIdentity;
         }
-    
+
         @Override
         public String isValidID(final AuthzTrans trans, String id) {
             return N_A;
         }
-    
+
         @Override
         public String isValidPassword(final AuthzTrans trans, final String user, final String password, final String... prev) {
             return N_A;
         }
-    
+
         @Override
         public Set<String> getIdentityTypes() {
             return nullStringSet;
         }
-    
+
         @Override
         public Response notify(AuthzTrans trans, Notify type, String url,
                 String[] users, String[] ccs, String summary, Boolean urgent) {
             return Response.ERR_NotImplemented;
         }
-    
+
         @Override
         public int sendEmail(AuthzTrans trans, List<String> toList, List<String> ccList,
                 String subject, String body, Boolean urgent) throws OrganizationException {
             return 0;
         }
-    
+
         @Override
         public Date whenToValidate(Notify type, Date lastValidated) {
             return gc.getTime();
         }
-    
+
         @Override
         public GregorianCalendar expiration(GregorianCalendar gc,
                 Expiration exp, String... extra) {
             return gc;
         }
-    
+
         @Override
         public List<Identity> getApprovers(AuthzTrans trans, String user)
                 throws OrganizationException {
             return nullList;
         }
-    
+
         @Override
         public String getApproverType() {
             return "";
         }
-    
+
         @Override
         public int startOfDay() {
             return 0;
         }
-    
+
         @Override
         public boolean canHaveMultipleCreds(String id) {
             return false;
         }
-    
+
         @Override
         public boolean isValidCred(final AuthzTrans trans, final String id) {
             return false;
         }
-    
+
         @Override
         public String validate(AuthzTrans trans, Policy policy, Executor executor, String ... vars)
                 throws OrganizationException {
             return "Null Organization rejects all Policies";
         }
-    
+
         @Override
         public boolean isTestEnv() {
             return false;
         }
-    
+
         @Override
         public void setTestMode(boolean dryRun) {
         }
@@ -519,24 +519,24 @@ public interface Organization {
                 {
                     return 604800000L; // 7 days in millis 1000 * 86400 * 7
                 }
-                
+            
                 @Override
                 public long roleEmailInterval()
                 {
                     return 604800000L; // 7 days in millis 1000 * 86400 * 7
                 }
-                
+            
                 @Override
                 public long apprEmailInterval() {
                     return 259200000L; // 3 days in millis 1000 * 86400 * 3
                 }
-                
+            
                 @Override
                 public long  credExpirationWarning()
                 {
                     return( 2592000000L ); // One month, in milliseconds 1000 * 86400 * 30  in milliseconds
                 }
-                
+            
                 @Override
                 public long roleExpirationWarning()
                 {
@@ -550,7 +550,7 @@ public interface Organization {
                 }
 
             };
-            
+        
 
         }
 
@@ -558,7 +558,7 @@ public interface Organization {
         public String[] getPasswordRules() {
             return nullStringArray; 
         }
-        
+    
         @Override
         public boolean isRevoked(AuthzTrans trans, String id) {
             // provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.

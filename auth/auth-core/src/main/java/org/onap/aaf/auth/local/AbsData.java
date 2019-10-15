@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,21 +55,21 @@ public abstract class AbsData implements Iterable<String> {
         this.fieldOffset = fieldOffset;
         idxf = new File(dir,name.concat(".idx"));
         lockf = new File(dir,name.concat(".lock"));
-        
-        
+    
+    
         data = new DataFile(dataf,"r");
         ti = new TextIndex(idxf);
         skipLines=0;
     }
-    
+
     public void skipLines(int lines) {
         skipLines=lines;
     }
-    
+
     public String name() {
         return name;
     }
-    
+
     public void open(AuthzTrans trans, long timeout) throws IOException {
         TimeTaken tt = trans.start("Open Data File", Env.SUB);
         boolean first = true;
@@ -103,12 +103,12 @@ public abstract class AbsData implements Iterable<String> {
                     throw e;
                 }
                 ti.open();
-            
+        
         } finally {
             tt.done();
         }
     }
-    
+
     private synchronized void ensureIdxGood(AuthzTrans trans) throws IOException {
         if (!idxf.exists() || idxf.length()==0 || dataf.lastModified()>idxf.lastModified()) {
             trans.warn().log(idxf.getAbsolutePath(),"is missing, empty or out of date, creating");
@@ -129,7 +129,7 @@ public abstract class AbsData implements Iterable<String> {
         ti.close();
         data.close();
     }
-    
+
     public class Reuse {
         public Token tokenData;
         private Field fieldData;
@@ -138,7 +138,7 @@ public abstract class AbsData implements Iterable<String> {
             tokenData = data.new Token(size);
             fieldData = tokenData.new Field(delim);
         }
-        
+    
         public void reset() {
             getFieldData().reset();
         }
@@ -151,7 +151,7 @@ public abstract class AbsData implements Iterable<String> {
         public String next() {
             return getFieldData().next();
         }
-        
+    
         public String at(int field) {
             return getFieldData().at(field);
         }
@@ -164,7 +164,7 @@ public abstract class AbsData implements Iterable<String> {
             return fieldData;
         }
     }
-    
+
     public Reuse reuse() {
         return new Reuse(maxLineSize,delim);
     }
@@ -172,7 +172,7 @@ public abstract class AbsData implements Iterable<String> {
     public Iter iterator() {
         return new Iter();
     }
-    
+
     public class Iter implements Iterator<String> {
         private Reuse reuse;
         private org.onap.aaf.auth.local.TextIndex.Iter tii;

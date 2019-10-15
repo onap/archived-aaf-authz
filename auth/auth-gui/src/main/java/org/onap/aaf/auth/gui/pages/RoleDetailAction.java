@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class RoleDetailAction extends Page {
             new BreadCrumbs(breadcrumbs),
             new NamedCode(true,"content") {
                 final Slot sReq = gui.env.slot(AAF_GUI.HTTP_SERVLET_REQUEST);
-                
+            
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -142,7 +142,7 @@ public class RoleDetailAction extends Page {
                                                     }
                                                 }
                                             }
-                                            
+                                        
                                             if (ltf.isEmpty()) {
                                                 hgen.p("No Changes");
                                             } else {
@@ -172,13 +172,13 @@ public class RoleDetailAction extends Page {
                 }
             });
     }
-    
+
     enum ActionType {desc, ungrant, deleteUR, extendUR};
     private static class TypedFuture {
 //        public final ActionType type;
         public final Future<?> future;
         public final String text;
-        
+    
         public TypedFuture(ActionType type, String text, Future<?> future) {
 //            this.type = type;
             this.future = future;

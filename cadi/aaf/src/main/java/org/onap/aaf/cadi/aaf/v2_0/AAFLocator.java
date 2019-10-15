@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
                 env = new RosettaEnv(access.getProperties());
             }
         }
-        
+    
         int connectTimeout = Integer.parseInt(si.access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
         try {
             String[] path = Split.split('/',locatorURI.getPath());
@@ -86,32 +86,32 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
                 client = new HClient(si.defSS, locatorURI, connectTimeout);
             }
             epsDF = env.newDataFactory(Endpoints.class);
-            
+        
         } catch (APIException /*| URISyntaxException*/ e) {
             throw new LocatorException(e);
         }
         lclient = new HClient(si.defSS, locatorURI, connectTimeout);
-        
+    
         if(si.access.willLog(Access.Level.DEBUG)) {
             si.access.log(Access.Level.DEBUG, "Root URI:",client.getURI());
         }
-        
+    
         String dnsString;
         if(locatorURI.getPort()<0) {
-        	dnsString=locatorURI.getScheme() + "://" + locatorURI.getHost();
+            dnsString=locatorURI.getScheme() + "://" + locatorURI.getHost();
         } else {
-        	dnsString=locatorURI.getScheme() + "://" +locatorURI.getHost()+':'+locatorURI.getPort();
+            dnsString=locatorURI.getScheme() + "://" +locatorURI.getHost()+':'+locatorURI.getPort();
         }
         if(dnsString.contains("null")) { // for Testing Purposes, mostly.
-        	locatorLocator = null;
+            locatorLocator = null;
         } else {
-	        locatorLocator = new DNSLocator(access, dnsString);
-	        if(locatorLocator.hasItems()) {
-	        	locatorItem = locatorLocator.best();
-	        } else {
-	        	// For when DNS doesn't work, including some K8s Installations
-				locatorLocator = new SingleEndpointLocator(dnsString);
-	        }
+            locatorLocator = new DNSLocator(access, dnsString);
+            if(locatorLocator.hasItems()) {
+                locatorItem = locatorLocator.best();
+            } else {
+                // For when DNS doesn't work, including some K8s Installations
+                locatorLocator = new SingleEndpointLocator(dnsString);
+            }
         }
     }
 
@@ -129,7 +129,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     }
 
     protected final int maxIters() {
-    	
+
         return locatorLocator.size();
     }
 
@@ -166,7 +166,7 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
                 for (Endpoint endpoint : fr.value.getEndpoint()) {
                     epl.add(new EP(endpoint,latitude,longitude));
                 }
-                
+            
                 Collections.sort(epl);
                 replace(epl);
                 return true;
@@ -186,9 +186,9 @@ public class AAFLocator extends AbsAAFLocator<BasicTrans>  {
     protected URI getURI() {
         return client.getURI();
     }
-    
+
     protected HClient createClient(SecuritySetter<HttpURLConnection> ss, URI uri, int connectTimeout) throws LocatorException {
         return new HClient(ss, uri, connectTimeout);
     }
-    
+
 }

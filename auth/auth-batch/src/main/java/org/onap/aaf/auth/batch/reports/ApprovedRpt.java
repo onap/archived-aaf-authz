@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,18 +49,18 @@ import com.datastax.driver.core.Statement;
 
 
 public class ApprovedRpt extends Batch {
-    
+
     private static final String APPR_RPT = "ApprovedRpt";
     private static final String CSV = ".csv";
     private Date now;
     private Writer approvedW;
     private CSV historyR;
     private static String yr_mon;
-    
+
     public ApprovedRpt(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
-        
+    
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
 //            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
@@ -69,15 +69,15 @@ public class ApprovedRpt extends Batch {
 //            } finally {
 //                tt.done();
 //            }
-            
+        
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
             File file = new File(logDir(),APPR_RPT + sdate +CSV);
             CSV csv = new CSV(env.access(),file);
             approvedW = csv.writer(false);
-            
+        
             historyR = new CSV(env.access(),args()[1]).setDelimiter('|');
-            
+        
             yr_mon = args()[0];
         } finally {
             tt0.done();
@@ -86,7 +86,7 @@ public class ApprovedRpt extends Batch {
 
     @Override
     protected void run(AuthzTrans trans) {
-        try {          
+        try {      
 //            ResultSet results;
 //            Statement stmt = new SimpleStatement( "select dateof(id), approver, status, user, type, memo from authz.approved;" );
 //            results = session.execute(stmt);
@@ -132,15 +132,15 @@ public class ApprovedRpt extends Batch {
                     }
                 }
             });
-            
+        
         } catch (Exception e) {
             trans.info().log(e);
         }
     }
-    
+
     private void write(String a_or_d, List<String> row) {
         String[] target = Split.splitTrim('|', row.get(4));
-        
+    
         if(target.length>1) {
             UUID id = UUID.fromString(row.get(0));
             Date date = Chrono.uuidToDate(id);
@@ -166,7 +166,7 @@ public class ApprovedRpt extends Batch {
             }
         }
 
-        
+    
     }
 
 }

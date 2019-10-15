@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,9 +38,9 @@ public class X509ChainWithIssuer extends X509andChain {
 
     public X509ChainWithIssuer(X509ChainWithIssuer orig, X509Certificate x509) {
         super(x509,orig.trustChain);
-        issuerDN=orig.issuerDN;        
+        issuerDN=orig.issuerDN;    
     }
-    
+
     public X509ChainWithIssuer(final List<? extends Reader> rdrs) throws IOException, CertException {
         // Trust Chain.  Last one should be the CA
         Collection<? extends Certificate> certs;
@@ -49,7 +49,7 @@ public class X509ChainWithIssuer extends X509andChain {
             if (rdr==null) { // cover for badly formed array
                 continue;
             }
-            
+        
             byte[] bytes = Factory.decode(rdr,null);
             try {
                 certs = Factory.toX509Certificate(bytes);
@@ -70,7 +70,7 @@ public class X509ChainWithIssuer extends X509andChain {
             }
         }
     }
-    
+
     public X509ChainWithIssuer(Certificate[] certs) throws IOException, CertException {
         X509Certificate x509;
         for (int i=certs.length-1; i>=0; --i) {

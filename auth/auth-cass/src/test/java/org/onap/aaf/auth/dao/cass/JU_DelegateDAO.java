@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ public class JU_DelegateDAO {
     AuthzTrans trans;
     @Mock
     Cluster cluster;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -65,27 +65,27 @@ public class JU_DelegateDAO {
     @Test
     public void testReadByDelegate() {
         DelegateDAO daoObj = new DelegateDAO(trans, cluster, "test");
-        
+    
         PSInfo psObj = Mockito.mock(PSInfo.class);
         setPsDelegate(daoObj, psObj, "psByDelegate");
-        
+    
         Result<List<DelegateDAO.Data>>  rs1 = new Result<List<DelegateDAO.Data>>(null,0,"test",new String[0]);
         Mockito.doReturn(rs1).when(psObj).read(trans, "DelegateDAO READ", new Object[]{"test"});
-        
+    
         daoObj.readByDelegate(trans, "test");
     }
-    
+
     public void setPsDelegate(DelegateDAO delegateDAOObj, PSInfo psInfoObj, String fieldName) {
         Field nsDaoField;
         try {
             nsDaoField = DelegateDAO.class.getDeclaredField(fieldName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(delegateDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -98,13 +98,13 @@ public class JU_DelegateDAO {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testSecondConstructor() {
         AbsCassDAO absDAO = Mockito.mock(AbsCassDAO.class);
 
         DelegateDAO daoObj = new DelegateDAO(trans, absDAO);
-        
+    
     }
 
     @Test
@@ -117,13 +117,13 @@ public class JU_DelegateDAO {
                 break;
             }
         }
-        
+    
         Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
         try {
             Object obj = constructor.newInstance(1);
             Method innnerClassMtd;
-                
+            
             DelegateDAO.Data data  = new DelegateDAO.Data();
             Row row = Mockito.mock(Row.class);
             ByteBuffer bbObj = ByteBuffer.allocateDirect(10);
@@ -132,16 +132,16 @@ public class JU_DelegateDAO {
             bbObj.put(1, new Byte("1"));
             bbObj.put(2, new Byte("2"));
             Mockito.doReturn(bbObj).when(row).getBytesUnsafe(1);
-            
+        
             innnerClassMtd = innerClass.getMethod("load", new Class[] {DelegateDAO.Data.class, Row.class});
             innnerClassMtd.invoke(obj, new Object[] {data, row});
-            
+        
             innnerClassMtd = innerClass.getDeclaredMethod("key", new Class[] {DelegateDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test"} });
-//            
+//        
             innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {DelegateDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
-            
+        
 //            DataOutputStream dos = new DataOutputStream(new FileOutputStream("JU_DelegateDAOTest.java"));
 //            innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {DelegateDAO.Data.class, DataOutputStream.class });
 //            innnerClassMtd.invoke(obj, new Object[] {data, dos });
@@ -149,7 +149,7 @@ public class JU_DelegateDAO {
 //            DataInputStream dis = new DataInputStream(new FileInputStream("JU_DelegateDAOTest.java"));
 //            innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {DelegateDAO.Data.class, DataInputStream.class });
 //            innnerClassMtd.invoke(obj, new Object[] {data, dis });
-            
+        
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -170,7 +170,7 @@ public class JU_DelegateDAO {
             e.printStackTrace();
         } 
     }
-    
+
     @Test
     public void testData(){
         DelegateDAO.Data data  = new DelegateDAO.Data();
@@ -184,5 +184,5 @@ public class JU_DelegateDAO {
             e.printStackTrace();
         }
     }
-    
+
 }

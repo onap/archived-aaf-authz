@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -232,7 +232,7 @@ public class AAFcli {
                     continue;
                     // Sleep, typically for reports, to allow DB to update
                     // Milliseconds
-                    
+                
                 } else if ("sleep".equalsIgnoreCase(largs[idx])) {
                     Integer t = Integer.parseInt(largs[++idx]);
                     pw.println("sleep " + t);
@@ -299,7 +299,7 @@ public class AAFcli {
                 }
 
             } 
-            
+        
             if ("REQUEST".equalsIgnoreCase(largs[idx])) {
                 request=true;
                 ++idx;
@@ -416,7 +416,7 @@ public class AAFcli {
         System.out.println("For instance, C-b means hold ctrl key and press b, M-b means hold alt and press b\n");
 
         System.out.println("Basic Keybindings:");
-        System.out.println("\tC-l - clear screen");        
+        System.out.println("\tC-l - clear screen");    
         System.out.println("\tC-a - beginning of line");
         System.out.println("\tC-e - end of line");
         System.out.println("\tC-b - backward character (left arrow also works)");
@@ -441,7 +441,7 @@ public class AAFcli {
      */
     public static void main(String[] args) {
         int rv = 0;
-        
+    
         try {
             AAFSSO aafsso = new AAFSSO(args);
             String noexit = aafsso.access().getProperty("no_exit");
@@ -451,7 +451,7 @@ public class AAFcli {
                 if (aafsso.ok()) {
                     Define.set(access);
                     AuthzEnv env = new AuthzEnv(access);
-                    
+                
                     Reader rdr = null;
                     boolean exitOnFailure = true;
                     /*
@@ -489,15 +489,15 @@ public class AAFcli {
                             sb.append(args[i]);
                         }
                     }
-                    
+                
                     AAFConHttp aafcon = new AAFConHttp(access);
-//                    
+//                
 //                    SecurityInfoC<?> si = aafcon.securityInfo();
 //                    Locator<URI> loc;
-                    
+                
                     aafsso.setLogDefault();
                     aafsso.setStdErrDefault();
-    
+
                     // Note, with AAF Locator, this may not longer be necessary 3/2018 Jonathan
                     if (!aafsso.loginOnly()) {
 //                        try {
@@ -509,15 +509,15 @@ public class AAFcli {
 //                            // Other Access is done writing to StdOut and StdErr, reset Std out
 //                            aafsso.setLogDefault();
 //                        }
-    
+
                         TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CONN_TIMEOUT, Config.AAF_CONN_TIMEOUT_DEF));
 //                        HMangr hman = new HMangr(access, loc).readTimeout(TIMEOUT).apiVersion(Config.AAF_DEFAULT_API_VERSION);
-                        
+                    
                         if (access.getProperty(Config.AAF_DEFAULT_REALM)==null) {
                             access.setProperty(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
                             aafsso.addProp(Config.AAF_DEFAULT_REALM, "people.osaaf.org");
                         }
-            
+        
                         AAFcli aafcli = new AAFcli(access,env, new OutputStreamWriter(System.out),  
                                 aafcon.hman(), aafcon.securityInfo(), aafcon.securityInfo().defSS);
 //                            new HBasicAuthSS(si,aafsso.user(), access.decrypt(aafsso.enc_pass(),false)));
@@ -540,15 +540,15 @@ public class AAFcli {
                                 System.out.println("Type 'help' for short help or 'help -d' for detailed help with aafcli commands");
                                 System.out.println("Type '?' for help with command line editing");
                                 System.out.println("Type 'q', 'quit', or 'exit' to quit aafcli\n");
-            
+        
                                 ConsoleReader reader = new ConsoleReader();
                                 try {
                                     reader.setPrompt("aafcli > ");
-                
+            
                                     String line;
                                     while ((line = reader.readLine()) != null) {
                                         showDetails = (line.contains("-d"));
-                
+            
                                         if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q") || line.equalsIgnoreCase("exit")) {
                                             break;
                                         } else if (line.equalsIgnoreCase("--help -d") || line.equalsIgnoreCase("help -d") 
@@ -592,10 +592,10 @@ public class AAFcli {
                                 }
                                 rv = aafcli.eval(sb.toString()) ? 0 : 1;
                             }
-                            
+                        
                         } finally {
                             aafcli.close();
-            
+        
                             // Don't close if No Reader, or it's a Reader of Standard In
                             if (rdr != null && !(rdr instanceof InputStreamReader)) {
                                 rdr.close();
@@ -629,7 +629,7 @@ public class AAFcli {
     public boolean isTest() {
         return AAFcli.isTest;
     }
-    
+
     public boolean isDetailed() {
         return AAFcli.showDetails;
     }

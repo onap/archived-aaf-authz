@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ import org.onap.aaf.cadi.util.FixURIinfo;
 import org.onap.aaf.misc.env.APIException;
 
 public class TestConnectivity {
-    
+
     private static Map<String, String> aaf_urls;
 
 
@@ -72,7 +72,7 @@ public class TestConnectivity {
             try {
                 SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
                 aaf_urls = Agent.loadURLs(access);
-                
+            
                 List<SecuritySetter<HttpURLConnection>> lss = loadSetters(access,si);
                 /////////
                 String directAAFURL = aaf_urls.get(Config.AAF_URL);
@@ -80,14 +80,14 @@ public class TestConnectivity {
                     print(true,"Test Connections by non-located aaf_url");
                     Locator<URI> locator = new SingleEndpointLocator(directAAFURL);
                     connectTest(locator,new URI(directAAFURL));
-                    
+                
                     SecuritySetter<HttpURLConnection> ss = si.defSS;
                     permTest(locator,ss);
                 } else {
                     /////////
                     print(true,"Test Connections driven by AAFLocator");
                     String serviceURI = aaf_urls.get(Config.AAF_URL);
-    
+
                     for (String url : new String[] {
                             serviceURI,
                             aaf_urls.get(Config.AAF_OAUTH2_TOKEN_URL),
@@ -127,7 +127,7 @@ public class TestConnectivity {
                         System.out.println("No User/Password to test");
                     }
                 }
-                
+            
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             } finally {
@@ -135,14 +135,14 @@ public class TestConnectivity {
             }
         }
     }
-    
+
 
     private static List<SecuritySetter<HttpURLConnection>> loadSetters(PropAccess access, SecurityInfoC<HttpURLConnection> si)  {
         print(true,"Load Security Setters from Configuration Information");
         String user = access.getProperty(Config.AAF_APPID);
 
         ArrayList<SecuritySetter<HttpURLConnection>> lss = new ArrayList<>();
-        
+    
 
         try {
             HBasicAuthSS hbass = new HBasicAuthSS(si,true);
@@ -177,7 +177,7 @@ public class TestConnectivity {
         } catch (Exception e) {
             access.log(Level.INFO, "AAF OAUTH2 Security Setter constructor threw exception: \"",e.getMessage(),"\". AAF OAUTH2 tests will not be conducted... Continuing");
         }
-        
+    
         tokenURL = access.getProperty(Config.AAF_ALT_OAUTH2_TOKEN_URL);
         if (tokenURL==null) {
             access.log(Level.INFO, "AAF Alternative OAUTH2 requires",Config.AAF_ALT_OAUTH2_TOKEN_URL, "OAuth2 tests to", tokenURL, "will not be conducted... Continuing");
@@ -190,7 +190,7 @@ public class TestConnectivity {
                 access.log(Level.INFO, "ALT OAUTH2 Security Setter constructor threw exception: \"",e.getMessage(),"\". ALT OAuth2 tests to", tokenURL, " will not be conducted... Continuing");
             }
         }
-        
+    
         return lss;
     }
 
@@ -270,11 +270,11 @@ public class TestConnectivity {
             String pathInfo = "/authz/perms/user/"+user;
             client.setPathInfo(pathInfo);
             System.out.println(pathInfo);
-            
+        
             client.send();
             Future<String> future = client.futureReadString();
             if (future.get(7000)) {
-                System.out.println(future.body());    
+                System.out.println(future.body());
             } else {
                 if (future.code()==401 && ss instanceof HX509SS) {
                     System.out.println("  Authentication denied with 401 for Certificate.\n\t"
@@ -298,11 +298,11 @@ public class TestConnectivity {
             client.setPathInfo("/authn/basicAuth");
             client.addHeader("Accept", "text/plain");
             client.send();
+
     
-        
             Future<String> future = client.futureReadString();
             if (future.get(7000)) {
-                System.out.println("BasicAuth Validated");    
+                System.out.println("BasicAuth Validated");
             } else {
                 System.out.println("Failure " + future.code() + ":" + future.body());
             }

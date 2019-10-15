@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,11 +47,11 @@ public class JU_Saved<b> {
         JaxInfo ji = JaxInfo.build(LargerData.class);
         OutXML xml = new OutXML(ji);;
         OutJson json = new OutJson();
-        
+    
         Saved saved = new Saved();
-        
+    
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         Trans trans;
         Report report = new Report(ITERATIONS,"Save","Dump","XML ","JSON");
         do {
@@ -67,7 +67,7 @@ public class JU_Saved<b> {
 
 //            sbw.append("==== Start Direct Raw =====\n");
 //            new OutRaw().extract(new StringReader(JU_FromJSON.str), sbw, inJSON);
-//            
+//        
 //            sbw.append("==== Start Raw from Saved =====\n");
 //            new OutRaw().extract(null,sbw,saved);
 
@@ -78,7 +78,7 @@ public class JU_Saved<b> {
             } finally {
                 tt.done();
             }
-            
+        
             sbw.append("\n==== Start XML =====\n");
             tt = trans.start("XML", 3);
             try {
@@ -86,7 +86,7 @@ public class JU_Saved<b> {
             } finally {
                 tt.done();
             }
-            
+        
             sbw.append("\n==== Start JSON =====\n");
             tt = trans.start("JSON", 4);
             try {
@@ -96,7 +96,7 @@ public class JU_Saved<b> {
             }
             report.glean(trans,1,2,3,4);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
 

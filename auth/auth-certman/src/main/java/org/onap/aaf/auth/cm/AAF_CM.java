@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,7 +92,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     }
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-     * 
+     * <p>
      * @param env
      * @param si 
      * @param dm 
@@ -109,7 +109,7 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
         if (aafEnv==null) {
             throw new APIException("aaf_env needs to be set");
         }
-        
+    
         // Check for allowing /tmp in Properties
         String allowTmp = env.getProperty(CM_ALLOW_TMP);
         if("true".equalsIgnoreCase(allowTmp)) {
@@ -194,14 +194,14 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
     public CA getCA(String key) {
         return certAuths.get(key);
     }
-    
+
 
     /**
      * Setup XML and JSON implementations for each supported Version type
-     * 
+     * <p>
      * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
      * to do Versions and Content switches
-     * 
+     * <p>
      */
     public void route(HttpMethods meth, String path, API api, Code code) throws Exception {
         String version = "1.0";

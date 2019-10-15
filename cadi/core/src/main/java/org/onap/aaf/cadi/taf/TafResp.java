@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 
 /**
  * Response from Taf objects, which inform users what has happened and/or what should be done
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -48,19 +48,19 @@ public interface TafResp {
 //        public static final int HTTP_REDIRECT_INVOKED = 11;
         HTTP_REDIRECT_INVOKED,
         HAS_PROCESSED};
-    
+
     /**
      * Basic success check
      * @return
      */
     public boolean isValid();
-    
+
     /**
      *  String description of what has occurred (for logging/exceptions)
      * @return
      */
     public String desc();
-    
+
     /**
      * Check Response
      * @return
@@ -69,7 +69,7 @@ public interface TafResp {
 
     /**
      * Authenticate, returning FAIL or Other Valid indication
-     * 
+     * <p>
      * HTTP implementations should watch for "HTTP_REDIRECT_INVOKED", and end the HTTP call appropriately.
      * @return
      * @throws CadiException 
@@ -81,7 +81,7 @@ public interface TafResp {
      * @return
      */
     public TaggedPrincipal getPrincipal();
-    
+
     /** Target - when Authentication Fails, need to know what ID was being attempted
      * @return
      */
@@ -91,12 +91,12 @@ public interface TafResp {
      * get the Access object which created this object, allowing the responder to appropriate Log, etc
      */
     public Access getAccess();
-    
+
     /**
      * Be able to check if part of a Failed attempt
      */
     public boolean isFailedAttempt();
-    
+
     /**
      * report how long this took
      * @return
@@ -108,7 +108,7 @@ public interface TafResp {
      * @param start
      */
     void timing(long start);
-    
+
     /**
      * Support Taf Name
      */

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,17 +45,17 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 @RunWith(MockitoJUnitRunner.class) 
 public class JU_StoreImplTest {
-    
+
     @Mock
     QName qname;
-    
+
     @Mock
     Env env;
-    
+
     TimeTaken tt,ttstringify;
-    
+
     LogTarget logT;
-    
+
     @Before
     public void setUp() {
         initMocks(this);
@@ -72,36 +72,36 @@ public class JU_StoreImplTest {
         bdfObj = new StoreImpl("");
         bdfObj.propsFromArgs(null, new String[] {"test"});
         bdfObj.propsFromArgs("test", new String[] {"test","te=st","test=1"});
-        
-    }
     
+    }
+
     @Test
     public void testMorePropsConstructor() {
         Properties props = Mockito.mock(Properties.class);
         new StoreImpl(null,props);
         StoreImpl bdfObj = new StoreImpl("test",props);
     }
-    
+
     @Test
     public void testMorePropsFileNOtExists() {
         Properties props = Mockito.mock(Properties.class);
         Mockito.doReturn("test").when(props).getProperty("test");
         StoreImpl bdfObj = new StoreImpl("test",props);
     }
-    
+
     @Test
     public void testMorePropsExists() {
         Properties props = Mockito.mock(Properties.class);
         Mockito.doReturn(System.getProperty("user.dir")+"/src/test/java/org/onap/aaf/misc/env/JU_StoreImplTest.java").when(props).getProperty("test");
         StoreImpl bdfObj = new StoreImpl("test",props);
     }
-    
+
     @Test
     public void testNewTransState() {
         StoreImpl bdfObj = new StoreImpl(null, new String[] {});
         bdfObj.newTransState();
     }
-    
+
     @Test
     public void testSlot() {
         StoreImpl bdfObj = new StoreImpl("test", new String[] {});
@@ -110,35 +110,35 @@ public class JU_StoreImplTest {
         slot = bdfObj.slot("test");
         assertEquals(slot.toString(),"test=1");
     }
-    
+
     @Test
     public void testExistingSlot() {
         StoreImpl bdfObj = new StoreImpl("test", new String[] {"test","test=1"});
         Slot retVal = bdfObj.existingSlot("test");
         assertNull(retVal);
     }
-    
+
     @Test
     public void testExistingSlotNames() {
         StoreImpl bdfObj = new StoreImpl("test", new String[] {"test","test=1"});
         List<String> retVal = bdfObj.existingSlotNames();
         assertTrue(retVal.size()==0);
     }
-    
+
     @Test
     public void testGet() {
         StoreImpl bdfObj = new StoreImpl("test", new String[] {"test","test=1"});
         Object retVal = bdfObj.get(new StaticSlot(1,"test"),qname);
         assertTrue(retVal instanceof QName);
     }
-    
+
     @Test
     public void testGetSlot() {
         StoreImpl bdfObj = new StoreImpl("test", new String[] {"test","test=1"});
         Object retVal = bdfObj.get(new StaticSlot(1,"test"));
         assertNull(retVal);
     }
-    
+
     @Test
     public void testExistingStaticSlotNames() {
         StoreImpl bdfObj = new StoreImpl("test", new String[] {"test","test=1"});

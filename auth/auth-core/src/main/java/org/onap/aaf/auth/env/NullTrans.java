@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,13 +42,13 @@ import org.onap.aaf.misc.env.TimeTaken;
  */
 public class NullTrans implements AuthzTrans {
     private static final AuthzTrans singleton = new NullTrans();
-    
+
     public static final AuthzTrans singleton() {
         return singleton;
     }
 
     private Date now;
-    
+
     public void checkpoint(String text) {}
     public void checkpoint(String text, int additionalFlag) {}
     public Metric auditTrail(int indent, StringBuilder sb, int... flag) {return null;}
@@ -144,7 +144,7 @@ public class NullTrans implements AuthzTrans {
     public HttpServletResponse hresp() {
          return null;
     }
-    
+
 
     @Override
     public String user() {
@@ -159,7 +159,7 @@ public class NullTrans implements AuthzTrans {
     @Override
     public void setUser(TaggedPrincipal p) {
     }
-    
+
     @Override
     public String ip() {
         return null;
@@ -209,7 +209,7 @@ public class NullTrans implements AuthzTrans {
 
     @Override
     public Lur getLur() {
-    	return null;
+        return null;
     }
 
     @Override

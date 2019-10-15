@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -97,7 +97,7 @@ public class JU_Passwords {
         assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou2", "Pilgrim"),"");
         assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou!", "Pilgrim"),"");
         assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "newyou!", "Pilgrim"),"");
-        
+    
         // Don't accept just letters, Numbers or Special Chars, or without ANY letters
         assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newyouA", "Pilgrim"),"");
         assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "NEWYOU", "Pilgrim"),"");
@@ -120,7 +120,7 @@ public class JU_Passwords {
         // Solid
         assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
 
-        
+    
     }
 
 }

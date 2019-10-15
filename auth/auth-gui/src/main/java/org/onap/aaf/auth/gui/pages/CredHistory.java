@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ public class CredHistory extends Page {
     static final String HREF = "/gui/credHistory";
     static final String FIELDS[] = {"user","dates"};
 
-    
+
     public CredHistory(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, FIELDS,
             new BreadCrumbs(breadcrumbs),
@@ -74,24 +74,24 @@ public class CredHistory extends Page {
                         @Override
                         public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
                             String obUser = trans.get(user, null);
-                            
+                        
                             // Use Javascript to make the table title more descriptive
                             hgen.js()
                             .text("var caption = document.querySelector(\".title\");")
-                            .text("caption.innerHTML='History for User [ " + obUser + " ]';")                        
+                            .text("caption.innerHTML='History for User [ " + obUser + " ]';")                    
                             .done();
-                            
+                        
                             // Use Javascript to change Link Target to our last visited Detail page
                             String lastPage = CredDetail.HREF + "?role=" + obUser;
                             hgen.js()
-                                .text("alterLink('roledetail', '"+lastPage + "');")                            
+                                .text("alterLink('roledetail', '"+lastPage + "');")                        
                                 .done();
-                            
+                        
                             hgen.br();
                             hgen.leaf("a", "href=#advanced_search","onclick=divVisibility('advanced_search');","class=greenbutton").text("Advanced Search").end()
                                 .divID("advanced_search", "style=display:none");
                             hgen.incr("table");
-                                
+                            
                             addDateRow(hgen,"Start Date");
                             addDateRow(hgen,"End Date");
                             hgen.incr("tr").incr("td");
@@ -106,9 +106,9 @@ public class CredHistory extends Page {
             }
 
             );
-        
-    }
     
+    }
+
     private static void addDateRow(HTMLGen hgen, String s) {
         hgen
             .incr("tr")
@@ -134,11 +134,11 @@ public class CredHistory extends Page {
                     "placeholder=Year").end()
             .end();
     }
-    
-    
+
+
     /**
      * Implement the Table Content for History
-     * 
+     * <p>
      * @author Jonathan
      *
      */
@@ -146,25 +146,25 @@ public class CredHistory extends Page {
         private static final String[] headers = new String[] {"Date","User","Memo"};
         private Slot user;
         private Slot dates;
-        
+    
         public Model(AuthzEnv env) {
             user = env.slot(NAME+".user");
             dates = env.slot(NAME+".dates");
         }
-        
+    
         @Override
         public String[] headers() {
             return headers;
         }
-        
+    
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String oName = trans.get(user,null);
             final String oDates = trans.get(dates,null);
-            
+        
             Cells rv = Cells.EMPTY;
             if (oName!=null) {
-                
+            
                 try {
                     rv = gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Cells>() {
                         @Override
@@ -181,14 +181,14 @@ public class CredHistory extends Page {
                                     tt.done();
                                     tt = trans.start("Load History Data", Env.SUB);
                                     List<Item> histItems = fh.value.getItem();
-                                    
+                                
                                     java.util.Collections.sort(histItems, new Comparator<Item>() {
                                         @Override
                                         public int compare(Item o1, Item o2) {
                                             return o2.getTimestamp().compare(o1.getTimestamp());
                                         }
                                     });
-                                    
+                                
                                     for (Item i : histItems) {
                                         String user = i.getUser();
                                         AbsCell userCell = new TextCell(user);
@@ -209,7 +209,7 @@ public class CredHistory extends Page {
                                 }
                             } finally {
                                 tt.done();
-                            }    
+                            }
                             return new Cells(rv,msg);
                         }
                     });

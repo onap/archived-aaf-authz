@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ import org.onap.aaf.cadi.util.JsonOutputStream;
 
 /**
  * A Class to run on command line to determine suitability of environment for certain TAFs.
- *  * 
+ *  * <p>
  * @author Jonathan
  *
  */
@@ -104,7 +104,7 @@ public class CmdLine {
                     }
                     System.out.flush();
                     */
-                     
+                 
                 } catch (IOException e) {
                     System.err.println("Cannot digest password");
                     System.err.println("   \""+ e.getMessage() + '"');
@@ -280,7 +280,7 @@ public class CmdLine {
                     System.err.println("Cannot create a key " + args[0]);
                     System.err.println("   \""+ e.getMessage() + '"');
                 }
-            
+        
             } else if ("passgen".equalsIgnoreCase(args[0])) {
                 int numDigits;
                 if (args.length <= 1) {
@@ -315,7 +315,7 @@ public class CmdLine {
                         if (noSpecial) {
                             noSpecial = "+!@#$%^&*(){}[]?:;,.".indexOf(c)<0;
                         } 
-                        
+                    
                         missingChars = (noLower || noUpper || noDigits || noSpecial);
                     }
                 } while (missingChars || repeatingChars);
@@ -349,9 +349,9 @@ public class CmdLine {
             System.exit(1);
         }
     }
-    
+
     public static void setSystemExit(boolean shouldExit) {
         systemExit = shouldExit;
     }
-    
+
 }

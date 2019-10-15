@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class DataFile {
     public MappedByteBuffer mapBuff;
     private final File file;
     private final String access;
-    
+
     public DataFile(File file, String access)  {
         this.file = file;
         this.access = access;
@@ -73,21 +73,21 @@ public class DataFile {
         }
         return len<0?0:len;
     }
-    
+
     public class Token {
         private byte[] buff;
         int pos, next, end;
-        
+    
         public Token(int size) {
             buff = new byte[size];
             pos = next = end = 0;
         }
-        
+    
         public boolean pos(int to) {
             pos = next = to;
             return (end=load(this))>0;
         }
-        
+    
         public boolean nextLine() {
             end = load(this);
             pos = next;
@@ -100,7 +100,7 @@ public class DataFile {
             }
             return false;
         }
-        
+    
         public IntBuffer getIntBuffer() {
             return ByteBuffer.wrap(buff).asIntBuffer();
         }
@@ -108,7 +108,7 @@ public class DataFile {
         public String toString() {
             return new String(buff,0,end);
         }
-        
+    
         public class Field {
             char delim;
             int idx;
@@ -119,12 +119,12 @@ public class DataFile {
                 idx = 0;
                 bb = null;
             }
-            
+        
             public Field reset() {
                 idx = 0;
                 return this;
             }
-            
+        
             public String next() {
                 if (idx>=end)return null;
                 int start = idx;
@@ -134,7 +134,7 @@ public class DataFile {
                     if (c=='\r')endStr=idx;
                     ++idx;
                 }
-                
+            
                 if (endStr<0) {
                     endStr=idx-start;
                 } else {
@@ -157,7 +157,7 @@ public class DataFile {
                 }
                 return new String(buff,start,(idx-start-(c=='\r'?1:0)));
             }
-            
+        
             public String atToEnd(int fieldOffset) {
                 int start;
                 byte c=0;
@@ -169,7 +169,7 @@ public class DataFile {
                         start = idx+1;
                     }
                 }
-                
+            
                 for (; idx<end && idx<buff.length && (c=buff[idx])!='\n'; ++idx) {
                     ++idx;
                 }
@@ -186,5 +186,5 @@ public class DataFile {
     public File file() {
         return file;
     }
-    
+
 }

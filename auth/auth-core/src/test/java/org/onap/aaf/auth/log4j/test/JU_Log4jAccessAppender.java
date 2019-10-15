@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,26 +40,26 @@ public class JU_Log4jAccessAppender {
 
     @Mock
     Access access;
-    
+
     @Before
     public void setUp() {
         initMocks(this);
     }
-    
+
     @Test
     public void testRequiresLayout() {
         Log4JAccessAppender log4jObj = new Log4JAccessAppender(access);
         boolean retObj = log4jObj.requiresLayout();
         assertFalse(retObj);
     }
-    
+
     @Test
     public void testClose() {
         Log4JAccessAppender log4jObj = new Log4JAccessAppender(access);
         log4jObj.close();
-        
-    }
     
+    }
+
     @Test
     public void testAppend() {
         Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
@@ -71,7 +71,7 @@ public class JU_Log4jAccessAppender {
         event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.ALL,"test",Thread.currentThread().getName(),null,null,null,null);
         log4jObj.append(event);
     }
-    
+
     @Test
     public void testAppendWARN() {
         Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
@@ -79,7 +79,7 @@ public class JU_Log4jAccessAppender {
         LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.WARN,"test",Thread.currentThread().getName(),null,null,null,null);
         log4jObj.append(event);
     }
-    
+
     @Test
     public void testAppendINFO() {
         Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
@@ -87,7 +87,7 @@ public class JU_Log4jAccessAppender {
         LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.INFO,"test",Thread.currentThread().getName(),null,null,null,null);
         log4jObj.append(event);
     }
-    
+
     @Test
     public void testAppendWTrace() {
         Log4jAccessAppenderImpl log4jObj = new Log4jAccessAppenderImpl(access);
@@ -95,18 +95,18 @@ public class JU_Log4jAccessAppender {
         LoggingEvent event=new LoggingEvent("com.chililog.server.engine",Logger.getLogger(Log4JAccessAppender.class),(new Date()).getTime(),Level.TRACE,"test",Thread.currentThread().getName(),null,null,null,null);
         log4jObj.append(event);
     }
-    
+
     class Log4jAccessAppenderImpl extends Log4JAccessAppender{
 
         public Log4jAccessAppenderImpl(Access access) {
             super(access);
             // TODO Auto-generated constructor stub
         }
-        
+    
         @Override
         protected void append(LoggingEvent event) {
             super.append(event);
         }
-        
+    
     }
 }

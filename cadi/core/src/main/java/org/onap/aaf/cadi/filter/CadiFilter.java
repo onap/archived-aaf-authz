@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,16 +52,16 @@ import org.onap.aaf.cadi.util.Timing;
 
 /**
  * CadiFilter
- * 
+ * <p>
  * This class implements Servlet Filter, and ties together CADI implementations
- * 
+ * <p>
  * This class can be used in a standard J2EE Servlet manner.  Optimal usage is for POJO operations, where
  * one can enforce this Filter being first and primary.  Depending on the Container, it 
  * may be more effective, in some cases, to utilize features that allow earlier determination of 
  * AUTHN (Authorization).  An example would be "Tomcat Valve".  These implementations, however, should
  * be modeled after the "init" and "doFilter" functions, and be kept up to date as this class changes.
- * 
- * 
+ * <p>
+ * <p>
  * @author Jonathan
  *
  */
@@ -73,18 +73,18 @@ public class CadiFilter implements Filter {
     private Object[] additionalTafLurs;
     private SideChain sideChain;
     private static int count=0;
-    
+
     public Lur getLur() {
         return httpChecker.getLur();
     }
-    
+
     /**
      * Construct a viable Filter
-     * 
+     * <p>
      * Due to the vagaries of many containers, there is a tendency to create Objects and call "Init" on 
      * them at a later time.  Therefore, this object creates with an object that denies all access
      * until appropriate Init happens, just in case the container lets something slip by in the meantime.
-     * 
+     * <p>
      */
     public CadiFilter() {
         additionalTafLurs = CadiHTTPManip.noAdditional;
@@ -92,7 +92,7 @@ public class CadiFilter implements Filter {
 
     /**
      * This constructor to be used when directly constructing and placing in HTTP Engine
-     * 
+     * <p>
      * @param access
      * @param moreTafLurs
      * @throws ServletException 
@@ -120,7 +120,7 @@ public class CadiFilter implements Filter {
 
     /**
      * Init
-     * 
+     * <p>
      * Standard Filter "init" call with FilterConfig to obtain properties.  POJOs can construct a
      * FilterConfig with the mechanism of their choice, and standard J2EE Servlet engines utilize this
      * mechanism already.
@@ -132,11 +132,11 @@ public class CadiFilter implements Filter {
         if (access==null) {
             access = sca;
         }
-        
+    
         // Set Protected getter with base Access, for internal class instantiations
         init(new FCGet(access, sca.context(), filterConfig));
     }
-    
+
 
     @SuppressWarnings("unchecked")
     protected void init(Get getter) throws ServletException {
@@ -154,7 +154,7 @@ public class CadiFilter implements Filter {
        } catch (Exception e) {
            access.log(Level.INIT, "AAFTrustChecker cannot be loaded",e.getMessage());
        }
-       
+   
        try {
            Class<Filter> cf=null;
            try {
@@ -167,7 +167,7 @@ public class CadiFilter implements Filter {
            access.log(Level.INIT, "AAFTrustChecker cannot be loaded",e.getMessage());
        }
 
-        
+    
         // Synchronize, because some instantiations call init several times on the same object
         // In this case, the epiTaf will be changed to a non-NullTaf, and thus not instantiate twice.
         synchronized(CadiHTTPManip.noAdditional /*will always remain same Object*/) {
@@ -194,7 +194,7 @@ public class CadiFilter implements Filter {
                     pathExceptions = str.split("\\s*:\\s*");
                 }
             }
-    
+
             /* 
              * SETUP Permission Converters... those that can take Strings from a Vendor Product, and convert to appropriate AAF Permissions
              */
@@ -252,7 +252,7 @@ public class CadiFilter implements Filter {
 
     /**
      * doFilter
-     * 
+     * <p>
      * This is the standard J2EE invocation.  Analyze the request, modify response as necessary, and
      * only call the next item in the filterChain if request is suitably Authenticated.
      */
@@ -317,7 +317,7 @@ public class CadiFilter implements Filter {
         }
         return false;
     }
-    
+
     /**
      * Get Converter by Path
      */
@@ -332,7 +332,7 @@ public class CadiFilter implements Filter {
         }
         return NullPermConverter.singleton();
     }
-    
+
     /**
      * store PermConverters by Path prefix
      * @author Jonathan

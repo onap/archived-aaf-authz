@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ public class Saved extends Out implements Parse<Reader, State>{
     private Content content[];
     private int idx;
     private boolean append = false;
-    
+
     /**
      * Read from Parsed Stream and save
      */
@@ -59,7 +59,7 @@ public class Saved extends Out implements Parse<Reader, State>{
                 content[idx]=null;
             } while (--idx>=0);
         }
-        
+    
         // Note: idx needs to be -1 on initialization and no appendages
         while ((p = parser.parse(in,p.reuse())).valid()) {
             if (!(append && (p.event==START_DOC || p.event==END_DOC))) { // skip any start/end of document in appendages
@@ -72,7 +72,7 @@ public class Saved extends Out implements Parse<Reader, State>{
             }
         }
     }
-    
+
     // @Override
     public Parsed<State> parse(Reader ignore, Parsed<State> parsed) throws ParseException {
         int i;
@@ -113,14 +113,14 @@ public class Saved extends Out implements Parse<Reader, State>{
     public static class State {
         public int count = 0;
     }
-    
+
     public static class Content {
         private boolean isString;
         private char event;
         private String name;
         private List<Prop> props;
         private String str;
-        
+    
         public Content(Parsed<?> p) {
             isString = p.isString;
             event = p.event;
@@ -137,7 +137,7 @@ public class Saved extends Out implements Parse<Reader, State>{
             if (str!=null)
                 p.sb.append(str);
         }
-        
+    
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(event);
@@ -161,7 +161,7 @@ public class Saved extends Out implements Parse<Reader, State>{
             return sb.toString();
         }
     }
-    
+
     //// @Override
     public Parsed<State> newParsed() {
         Parsed<State> ps = new Parsed<State>(new State());
@@ -184,7 +184,7 @@ public class Saved extends Out implements Parse<Reader, State>{
     public TimeTaken start(Env env) {
         return env.start(ROSETTA_SAVED, 0);
     }
-    
+
     @Override
     public String logName() {
         return ROSETTA_SAVED;

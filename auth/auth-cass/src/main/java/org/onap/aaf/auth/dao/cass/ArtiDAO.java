@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,10 +49,10 @@ import com.datastax.driver.core.Row;
  */
 public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
     public static final String TABLE = "artifact";
-    
+
     private HistoryDAO historyDAO;
     private PSInfo psByMechID,psByMachine, psByNs;
-    
+
     public ArtiDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, ArtiDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -78,7 +78,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         public Date                      expires;
         public int                        renewDays;
         public Set<String>                sans;
-        
+    
 //      // Getters
         public Set<String> type(boolean mutable) {
             if (type == null) {
@@ -104,7 +104,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
             ArtifactLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             ArtifactLoader.deflt.unmarshal(this, toDIS(bb));
@@ -225,7 +225,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         if (historyDAO==null) {
             historyDAO = new HistoryDAO(trans,this);
         }
-        
+    
         String[] helpers = setCRUD(trans, TABLE, Data.class, ArtifactLoader.deflt);
 
         psByMechID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE + 
@@ -253,8 +253,8 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         },readConsistency);
 
 }
-    
-    
+
+
     public Result<List<Data>> readByMechID(AuthzTrans trans, String mechid) {
         return psByMechID.read(trans, R_TEXT, new Object[]{mechid});
     }

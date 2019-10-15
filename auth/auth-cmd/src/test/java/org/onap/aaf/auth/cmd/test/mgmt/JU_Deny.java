@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,14 +59,14 @@ import java.net.URISyntaxException;
 import org.junit.Test;
 
 public class JU_Deny {
-    
+
     Deny deny;
     DenySomething denyS;
     PropAccess prop;
     AuthzEnv aEnv;
     Writer wtr;
     Locator<URI> loc;
-    HMangr hman;    
+    HMangr hman;
     AAFcli aafcli;
 
     @Before
@@ -76,15 +76,15 @@ public class JU_Deny {
         wtr = mock(Writer.class);
         loc = mock(Locator.class);
         SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-//        hman = new HMangr(aEnv, loc);    
+//        hman = new HMangr(aEnv, loc);
 //        aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
 //        Mgmt mgmt = new Mgmt(aafcli);
 //        deny = new Deny(mgmt);
         //denyS = deny.new DenySomething(deny,"ip","ipv4or6[,ipv4or6]*");
 
     }
-    
-    
+
+
 
     @Test
     public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -99,10 +99,10 @@ public class JU_Deny {
 
 //        String[] strArr = {"add","del", "add","del"};
 //        deny._exec(0, strArr);
-//        
+//    
 //        String[] strArr1 = {"del", "add","del"};
 //        deny._exec(0, strArr1);
-        
+    
     }
 
 }

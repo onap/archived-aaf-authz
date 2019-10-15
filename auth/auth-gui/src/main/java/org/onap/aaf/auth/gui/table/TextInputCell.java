@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 public class TextInputCell extends AbsCell {
     private static final String[] NULL_ATTRS=new String[0];
     private String[] attrs;
-    
+
     public TextInputCell(String name, String textClass, String value, String ... attributes) {
         attrs = new String[5 + attributes.length];
         attrs[0]="type=text";
@@ -41,12 +41,12 @@ public class TextInputCell extends AbsCell {
         attrs[4]="style=font-size:100%;";
         System.arraycopy(attributes, 0, attrs, 5, attributes.length);
     }
-    
+
     @Override
     public void write(HTMLGen hgen) {
         hgen.tagOnly("input",attrs);
     }
-    
+
     @Override
     public String[] attrs() {
         return NULL_ATTRS;

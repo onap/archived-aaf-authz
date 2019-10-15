@@ -122,7 +122,7 @@ public class JU_AES {
 
         CipherInputStream cisEncrypt;
         CipherInputStream cisDecrypt;
-        
+    
         // Test CipherInputStream
         baisEncrypt = new ByteArrayInputStream(orig.getBytes());
         cisEncrypt = aes.inputStream(baisEncrypt, true);
@@ -157,7 +157,7 @@ public class JU_AES {
 
         CipherOutputStream cosEncrypt;
         CipherOutputStream cosDecrypt;
-        
+    
         // Test CipherOutputStream
         baisEncrypt = new ByteArrayInputStream(orig.getBytes());
         baosEncrypt = new ByteArrayOutputStream();
@@ -191,5 +191,5 @@ public class JU_AES {
             os.write(buffer, 0, len);
         }
     }
-    
+
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,8 +67,8 @@ public class ApprovalForm extends Page {
     static final String NAME="Approvals";
     static final String HREF = "/gui/approve";
     static final String[] FIELDS = new String[] {"line[]","user","delegate_of","as_user"};
-    
-    
+
+
     public ApprovalForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, FIELDS,
 
@@ -106,38 +106,38 @@ public class ApprovalForm extends Page {
                 }
             });
     }
-    
+
     /**
      * Implement the Table Content for Approvals
-     * 
+     * <p>
      * @author Jonathan
      *
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         //TODO come up with a generic way to do ILM Info (people page)
 //        private static final String TODO_ILM_INFO = "TODO: ILM Info";
-        
-        
+    
+    
         private static final String[] headers = new String[] {"Identity","Request","Approve","Deny"};
         private Slot sUser;
         private Slot sAsDelegate;
         private Slot sAsUser;
-        
+    
         public Model(AuthzEnv env) {
             sUser = env.slot(NAME+".user");
             sAsDelegate = env.slot(NAME+".delegate_of");
             sAsUser = env.slot(NAME + ".as_user");
         }
-        
+    
         @Override
         public String[] headers() {
             return headers;
         }
-        
+    
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String userParam = trans.get(sUser, null);
-            
+        
             final String asDelegate = trans.get(sAsDelegate, null);
             final String approver;
             if(asDelegate==null) {
@@ -145,7 +145,7 @@ public class ApprovalForm extends Page {
             } else {
                 approver = asDelegate;
             }
-             
+         
             ArrayList<AbsCell[]> rv = new ArrayList<>();
             String msg = null;
             TimeTaken tt = trans.start("AAF Get Approvals for Approver",Env.REMOTE);
@@ -158,7 +158,7 @@ public class ApprovalForm extends Page {
                         Future<Approvals> fa = client.read("/authz/approval/approver/"+approver,gui.getDF(Approvals.class));
                         int numLeft = 0;
                         if (fa.get(AAF_GUI.TIMEOUT)) {
-                            
+                        
                             if (fa.value!=null) {
                                 for (Approval appr : fa.value.getApprovals()) {
                                     if ("pending".equals(appr.getStatus())) {
@@ -170,10 +170,10 @@ public class ApprovalForm extends Page {
                                     }
                                 }
                             }
-                            
+                        
                             String prevApprover = null;
                             int overallIndex = 0;
-                                
+                            
                             for (Approval appr : pendingApprovals) {
                                 String currApprover = appr.getApprover();
                                 if (!currApprover.equals(prevApprover)) {
@@ -186,7 +186,7 @@ public class ApprovalForm extends Page {
                         return numLeft;
                     }
                 });
-                
+            
                 if (!pendingApprovals.isEmpty()) {
                     // Only add select all links if we have approvals
                     AbsCell[] selectAllRow = new AbsCell[] {
@@ -197,14 +197,14 @@ public class ApprovalForm extends Page {
                         };
                     rv.add(selectAllRow);
                 }
-                        
+                    
                 int line=-1;
-                
+            
                 while (!beginIndicesPerApprover.isEmpty()) {
                     int beginIndex = beginIndicesPerApprover.remove(0);
                     int endIndex = (beginIndicesPerApprover.isEmpty()?pendingApprovals.size():beginIndicesPerApprover.get(0));
                     List<Approval> currApproverList = pendingApprovals.subList(beginIndex, endIndex);
-                    
+                
                     Identity iapprover = trans.org().getIdentity(trans,currApproverList.get(0).getApprover());
                     if(iapprover==null) {
                         rv.add(new AbsCell[] {
@@ -213,7 +213,7 @@ public class ApprovalForm extends Page {
                         });
                     } else {
                         if (!iapprover.fullID().equals(trans.user())) {
-                        
+                    
                             AbsCell[] approverHeader;
     //                        if (domainOfUser.equals(domainOfApprover)) {
     //                            approverHeader = new AbsCell[] { 
@@ -231,7 +231,7 @@ public class ApprovalForm extends Page {
     //                        }
                             rv.add(approverHeader);
                         }
-                        
+                    
                         // Sort by User Requesting
                         Collections.sort(currApproverList, new Comparator<Approval>() {
                             @Override
@@ -239,14 +239,14 @@ public class ApprovalForm extends Page {
                                 return a1.getUser().compareTo(a2.getUser());
                             }
                         });
-                        
+                    
                         String prevUser = null;
                         boolean userOK=true;
                         for (Approval appr : currApproverList) {
                             if (++line<MAX_LINE) { // limit number displayed at one time.
                                 AbsCell userCell;
                                 String user = appr.getUser();
-                                
+                            
                                 if (user.equals(prevUser)) {
                                     userCell = AbsCell.Null; 
                                 } else if (user.endsWith(trans.org().getRealm())){
@@ -266,7 +266,7 @@ public class ApprovalForm extends Page {
                                                 if (managedBy==null) {
                                                     title ="Identity: " + au.type();
                                                 } else {
-                                                    title="Sponsor: " + managedBy.fullName();                                                
+                                                    title="Sponsor: " + managedBy.fullName();                                            
                                                 }
                                                 userCell = new TextToolTipCell(au.fullID(),title);
                                             }
@@ -280,7 +280,7 @@ public class ApprovalForm extends Page {
     //                                    TODO_ILM_INFO+user.substring(0, user.length()-domainOfApprover.length()),
     //                                    true,
     //                                    title);
-                                    
+                                
                                 } else {
                                     userCell = new TextCell(user);
                                 }

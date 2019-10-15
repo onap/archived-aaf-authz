@@ -54,19 +54,19 @@ import static org.mockito.Mockito.*;
 import org.junit.Test;
 
 public class JU_List {
-    
+
     List list;
     AAFcli aafcli;
     User user;
-    
+
     private class NssStub extends Nss {
-        public void addNs(Nss.Ns ns) {    
+        public void addNs(Nss.Ns ns) {
             if (this.ns == null) {
                 this.ns = new ArrayList<>();
             }
             this.ns.add(ns);
         }
-        
+    
         private class NsStub extends Ns{
             public void addAttrib(Nss.Ns.Attrib attrib) {
                 if ( this.attrib == null) {
@@ -74,14 +74,14 @@ public class JU_List {
                 }
                 this.attrib.add(attrib);
             }
-            
+        
             public void addResponsible(String str) {
                 if (this.responsible == null) {
                     this.responsible = new ArrayList<>();
                 }
                 this.responsible.add(str);
             }
-            
+        
             public void addAdmin(String str) {
                 if (this.admin == null) {
                     this.admin = new ArrayList<>();
@@ -89,12 +89,12 @@ public class JU_List {
                 this.admin.add(str);
             }
         }
-        
-        
-        
-        
-    }
     
+    
+    
+    
+    }
+
 
     @Before
     public void setUp() throws APIException, LocatorException, CadiException {
@@ -102,14 +102,14 @@ public class JU_List {
         AuthzEnv aEnv = new AuthzEnv();
         Writer wtr = mock(Writer.class);
         Locator loc = mock(Locator.class);
-        HMangr hman = new HMangr(aEnv, loc);        
+        HMangr hman = new HMangr(aEnv, loc);    
         aafcli = new AAFcli(prop, aEnv, wtr, hman, null, null);
         user = new User();
         NS ns = new NS(aafcli);
-        
+    
         list = new List(ns);
     }
-    
+
     @Test
     public void testReport() throws Exception {
         Future<Nss> fu = mock(Future.class);
@@ -124,10 +124,10 @@ public class JU_List {
         nssStub.addNs(nsStub);
         fu.value = nssStub;
         aafcli.eval("DETAILS @[ 123");
-        
+    
         list.report(fu, "test");
     }
-    
+
     @Test
     public void testGetType() {
         Assert.assertEquals("n/a", list.getType(user));
@@ -140,5 +140,5 @@ public class JU_List {
         user.setType(200);
         Assert.assertEquals("x509", list.getType(user));
     }
-    
+
 }

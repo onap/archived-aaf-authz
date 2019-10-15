@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ import aaf.v2_0.Role;
 import aaf.v2_0.Roles;
 
 public class NsDetail extends Page {
-    
+
     public static final String HREF = "/gui/nsdetail";
     public static final String NAME = "NsDetail";
     public static enum NS_FIELD { OWNERS, ADMINS, ROLES, PERMISSIONS, CREDS};
@@ -85,7 +85,7 @@ public class NsDetail extends Page {
 
     /**
      * Implement the table content for Namespace Detail
-     * 
+     * <p>
      * @author Jeremiah
      *
      */
@@ -123,11 +123,11 @@ public class NsDetail extends Page {
                             tt.done();
                             try {
 //                                TimeTaken tt = trans.start("Load Data", Env.SUB);
-                                
+                            
                                 for (Ns n : fn.value.getNs()) {
                                     String desc = (n.getDescription()!=null?n.getDescription():BLANK);
                                     rv.add(new AbsCell[]{new TextCell("Description:"),new TextCell(desc)});
-                                    
+                                
                                     addField(trans, nsName, rv, n.getAdmin(), NS_FIELD.ADMINS);
                                     addField(trans, nsName, rv, n.getResponsible(), NS_FIELD.OWNERS);
 
@@ -138,8 +138,8 @@ public class NsDetail extends Page {
                                             new TextCell("Credentials"),
                                             new TextCell(sw.toString())
                                         });
-                                    
-            
+                                
+        
                                     Future<Roles> fr = client.read(
                                                     "/authz/roles/ns/"+nsName, 
                                                     gui.getDF(Roles.class)
@@ -151,14 +151,14 @@ public class NsDetail extends Page {
                                         }
                                     }
                                     addField(trans, nsName, rv, roles, NS_FIELD.ROLES);
-                                    
-                                    
+                                
+                                
                                     Future<Perms> fp = client.read(
                                                     "/authz/perms/ns/"+nsName, 
                                                     gui.getDF(Perms.class)
                                                     );
                                     List<String> perms = new ArrayList<>();
-            
+        
                                     if (fp.get(AAFcli.timeout())) {
                                         for (Perm p : fp.value.getPerm()) {
                                             perms.add(p.getType() + "|" + p.getInstance() + "|" + p.getAction());
@@ -222,7 +222,7 @@ public class NsDetail extends Page {
                                 + "?type=" + fields[0].trim()
                                 + "&amp;instance=" + fields[1].trim()
                                 + "&amp;action=" + fields[2].trim();
-                        
+                    
                         rv.add(new AbsCell[] {
                                 label, 
                                 new TextCell(perm,"style=width:60%;"),
@@ -239,6 +239,6 @@ public class NsDetail extends Page {
             String sField = field.toString();
             return sField.substring(0, 1).toUpperCase() + sField.substring(1).toLowerCase();
         }
-    
+
     }
 }

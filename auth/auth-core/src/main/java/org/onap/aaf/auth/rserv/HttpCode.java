@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,13 +28,13 @@ import org.onap.aaf.misc.env.Trans;
 
 /**
  * HTTP Code element, which responds to the essential "handle Method".
- * 
+ * <p>
  * Use Native HttpServletRe[quest|sponse] calls for questions like QueryParameters (getParameter, etc)
- * 
+ * <p>
  * Use local "pathParam" method to obtain in an optimized manner the path parameter, which must be interpreted by originating string
- * 
+ * <p>
  * i.e. my/path/:id/:other/*
- * 
+ * <p>
  * @author Jonathan
  *
  * @param <TRANS>
@@ -45,14 +45,14 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
     private String desc;
     protected String [] roles;
     private boolean all;
-    
+
     // Package by design... Set by Route when linked
     Match match;
-    
+
     public HttpCode(CONTEXT context, String description, String ... roles) {
         this.context = context;
         desc = description;
-        
+    
         // Evaluate for "*" once...
         all = false;
         for (String srole : roles) {
@@ -63,16 +63,16 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
         }
         this.roles = all?null:roles;
     }
-    
+
     public abstract void handle(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws Exception;
-    
+
     public String desc() {
         return desc;
     }
-    
+
     /**
      * Get the variable element out of the Path Parameter, as set by initial Code
-     * 
+     * <p>
      * @param req
      * @param key
      * @return
@@ -92,12 +92,12 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
     }
 
     // Note: get Query Params from Request
-    
+
     /**
      * Check for Authorization when set.
-     * 
+     * <p>
      * If no Roles set, then accepts all users
-     * 
+     * <p>
      * @param req
      * @return
      */
@@ -110,11 +110,11 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
         }
         return false;
     }
-    
+
     public boolean no_cache() {
         return false;
     }
-    
+
     public String toString() {
         return desc;
     }

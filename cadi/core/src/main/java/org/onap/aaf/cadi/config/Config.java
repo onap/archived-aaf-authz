@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ import org.onap.aaf.cadi.util.Split;
 /**
  * Create a Consistent Configuration mechanism, even when configuration styles are as vastly different as
  * Properties vs JavaBeans vs FilterConfigs...
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -110,16 +110,16 @@ public class Config {
     public static final String CADI_PROTOCOLS = "cadi_protocols";
     public static final String CADI_NOAUTHN = "cadi_noauthn";
     public static final String CADI_LOC_LIST = "cadi_loc_list";
-    
+
     // Special Behaviors
     public static final String CADI_BATH_CONVERT = "cadi_bath_convert";
     public static final String CADI_API_ENFORCEMENT = "cadi_api_enforcement";
     public static final String CADI_ADD_TAFS = "cadi_add_tafs";
     public static final String CADI_ADD_LURS = "cadi_add_lurs";
-    
+
     public static final String CADI_USER_CHAIN_TAG = "cadi_user_chain";
     public static final String CADI_USER_CHAIN = "USER_CHAIN";
-    
+
     public static final String CADI_OAUTH2_URL="cadi_oauth2_url";
     public static final String CADI_TOKEN_DIR = "cadi_token_dir";
 
@@ -133,20 +133,20 @@ public class Config {
             + "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,TLS_ECDHE_RSA_WITH_RC4_128_SHA,TLS_ECDH_ECDSA_WITH_RC4_128_SHA,"
             + "TLS_ECDH_RSA_WITH_RC4_128_SHA,TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,"
             + "TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA,TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA,TLS_EMPTY_RENEGOTIATION_INFO_SCSV";
-             
+         
 
     public static final String LOCALHOST_ALLOW = "localhost_allow";
     public static final String LOCALHOST_DENY = "localhost_deny";
-    
+
     public static final String BASIC_REALM = "basic_realm";  // what is sent to the client 
     public static final String BASIC_WARN = "basic_warn";  // Warning of insecure channel 
     public static final String USERS = "local_users";
     public static final String GROUPS = "local_groups";
     public static final String WRITE_TO = "local_writeto"; // dump RBAC to local file in Tomcat Style (some apps use)
-    
+
     public static final String OAUTH_CLIENT_ID="client_id";
     public static final String OAUTH_CLIENT_SECRET="client_secret";
-    
+
     public static final String AAF_ENV = "aaf_env";
     public static final String AAF_ROOT_NS = "aaf_root_ns";
     public static final String AAF_ROOT_NS_DEF = "org.osaaf.aaf";
@@ -181,7 +181,7 @@ public class Config {
     public static final String AAF_LOCATOR_PUBLIC_PORT = "aaf_locator_public_port";
     public static final String AAF_LOCATOR_PUBLIC_FQDN = "aaf_locator_public_fqdn";
     public static final String AAF_LOCATOR_PUBLIC_NAME = "aaf_locator_public_name";
-    
+
     // AAF Service will write to the Audit Log if a past due AAF stored Password
     // is being used within # of days specified.
     public static final String AAF_CRED_WARN_DAYS="aaf_cred_warn_days";
@@ -196,7 +196,7 @@ public class Config {
     public static final String AAF_CONN_TIMEOUT_DEF = "3000";
     public static final String AAF_CONN_IDLE_TIMEOUT = "aaf_conn_idle_timeout"; // only for Direct Jetty Access.
     public static final String AAF_CONN_IDLE_TIMEOUT_DEF = "10000"; // only for Direct Jetty Access.
-     
+ 
     // Default Classes: These are for Class loading to avoid direct compile links
     public static final String AAF_TAF_CLASS_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFTaf";
     public static final String AAF_LOCATOR_CLASS_DEF = "org.onap.aaf.cadi.aaf.v2_0.AAFLocator";
@@ -212,7 +212,7 @@ public class Config {
     public static final String AAF_CLEAN_INTERVAL_DEF = "30000"; // Default is 30 seconds
     public static final String AAF_REFRESH_TRIGGER_COUNT = "aaf_refresh_trigger_count";
     public static final String AAF_REFRESH_TRIGGER_COUNT_DEF = "3"; // Default is 10 mins
-    
+
     public static final String AAF_HIGH_COUNT = "aaf_high_count";
     public static final String AAF_HIGH_COUNT_DEF = "1000"; // Default is 1000 entries
     public static final String AAF_PERM_MAP = "aaf_perm_map";
@@ -300,9 +300,9 @@ public class Config {
         // IMPORTANT!  Don't attempt to load AAF Connector if there is no AAF URL
         String aafURL = logProp(rph, AAF_URL,null);
         if (!hasDirectAAF && aafcon==null && aafURL!=null) {
-            aafcon = loadAAFConnector(si, aafURL);    
+            aafcon = loadAAFConnector(si, aafURL);
         }
-        
+    
         HttpTaf taf;
         // Setup Host, in case Network reports an unusable Hostname (i.e. VTiers, VPNs, etc)
         String hostname = logProp(access, HOSTNAME,null);
@@ -313,7 +313,7 @@ public class Config {
                 throw new CadiException("Unable to determine Hostname",e1);
             }
         }
-        
+    
         access.log(Level.INIT, "Hostname set to",hostname);
         // Get appropriate TAFs
         ArrayList<Priori<HttpTaf>> htlist = new ArrayList<>();
@@ -355,7 +355,7 @@ public class Config {
         } else {
             access.log(Level.INIT,"Certificate Authorization not enabled");
         }
-        
+    
         /////////////////////////////////////////////////////
         // Configure Basic Auth (local content)
         /////////////////////////////////////////////////////
@@ -406,7 +406,7 @@ public class Config {
                 } else {
                     access.log(Level.INIT,"Local Basic Authorization is disabled.  Enable by setting basicRealm=<appropriate realm, i.e. my.att.com>");
                 }
-            
+        
                 /////////////////////////////////////////////////////
                 // Configure AAF Driven Basic Auth
                 /////////////////////////////////////////////////////
@@ -447,7 +447,7 @@ public class Config {
                     }
                 }
             }
-            
+        
             /////////////////////////////////////////////////////
             // Configure OAuth TAF
             /////////////////////////////////////////////////////
@@ -490,7 +490,7 @@ public class Config {
                     access.log(Level.INIT,"OAuth TAF is not configured");
                 }
             }
-    
+
             /////////////////////////////////////////////////////
             // Adding BasicAuth (AAF) last, after other primary Cookie Based
             // Needs to be before Cert... see below
@@ -498,7 +498,7 @@ public class Config {
             if (aaftaf!=null) {
                 htlist.add(new Priori<HttpTaf>(aaftaf,40));
             }
-        }    
+        }
 
         /////////////////////////////////////////////////////
         // Any Additional Tafs passed in Constructor
@@ -534,7 +534,7 @@ public class Config {
                 }
             }
         }
-        
+    
         // Add BasicAuth, if any, to x509Taf
         if (x509TAF!=null) {
             for ( Priori<HttpTaf> ht : htlist) {
@@ -543,12 +543,12 @@ public class Config {
                 }
             }
         }
-        
+    
         /////////////////////////////////////////////////////
         // Additional TAFs by Plugin
         /////////////////////////////////////////////////////
         Priori.add(access, CADI_ADD_TAFS, htlist);
-        
+    
         /////////////////////////////////////////////////////
         // Create EpiTaf from configured TAFs
         /////////////////////////////////////////////////////
@@ -571,17 +571,17 @@ public class Config {
             access.log(Level.INIT, sb);
 
             Locator<URI> locator = loadLocator(si, aafURL);
-            
+        
             taf = new HttpEpiTaf(access,locator, tc, htarray); // ok to pass locator == null
             String level = logProp(access, CADI_LOGLEVEL, null);
             if (level!=null) {
                 access.setLogLevel(Level.valueOf(level));
             }
         }
-        
+    
         return taf;
     }
-    
+
     public static String logProp(RegistrationPropHolder rph, String tag, String def) {
         String rv = rph.access().getProperty(tag, def);
         if (rv == null) {
@@ -591,9 +591,9 @@ public class Config {
             rph.access().log(Level.INIT,tag,"is set to",rv);
         }
         return rv;
-        
-    }
     
+    }
+
     public static String logProp(Access access,String tag, String def) {
         String rv = access.getProperty(tag, def);
         if (rv == null) {
@@ -603,7 +603,7 @@ public class Config {
         }
         return rv;
     }
-    
+
     public static Lur configLur(SecurityInfoC<HttpURLConnection> si, Connector con, Object ... additionalTafLurs) throws CadiException {
         Access access = si.access;
         RegistrationPropHolder rph;
@@ -614,7 +614,7 @@ public class Config {
         }
 
         List<Priori<Lur>> lurs = new ArrayList<>();
-        
+    
         /////////////////////////////////////////////////////
         // Configure a Local Property Based RBAC/LUR
         /////////////////////////////////////////////////////
@@ -625,7 +625,7 @@ public class Config {
             if (groups!=null || users!=null) {
                 LocalLur ll = new LocalLur(access, users, groups);  // note b64==null is ok.. just means no encryption.
                 lurs.add(new Priori<Lur>(ll,10));
-                
+            
                 String writeto = access.getProperty(WRITE_TO,null);
                 if (writeto!=null) {
                     String msg = UsersDump.updateUsers(writeto, ll);
@@ -703,7 +703,7 @@ public class Config {
                                 if (aafAbsAAFCon!=null) {
                                     Method mNewLur = aafAbsAAFCon.getMethod("newLur");
                                     Object aaflur = mNewLur.invoke(aafcon);
-                
+            
                                     if (aaflur==null) {
                                         access.log(Level.INIT,"ERROR! AAF LUR Failed construction.  NOT Configured");
                                     } else {
@@ -740,7 +740,7 @@ public class Config {
         /////////////////////////////////////////////////////
         // Additional LURs by Plugin
         /////////////////////////////////////////////////////
-        Priori.add(access, CADI_ADD_LURS, lurs);       
+        Priori.add(access, CADI_ADD_LURS, lurs);   
 
         /////////////////////////////////////////////////////
         // Return a Lur based on how many there are... 
@@ -770,7 +770,7 @@ public class Config {
                 return new EpiLur(la);
         }
     }
-    
+
     private static boolean hasDirect(String simpleClassName, Object[] additionalTafLurs) {
         if (additionalTafLurs!=null) {
             for (Object tf : additionalTafLurs) {
@@ -922,7 +922,7 @@ public class Config {
                     locator = (Locator<URI>)cnst.newInstance(new Object[] {si,locatorURI});
                     int port = fui.getPort();
                     String portS = port<0?"":(":"+port);
-                    
+                
                     access.log(Level.INFO, "AAFLocator enabled using " + locatorURI.getScheme() +"://"+fui.getHost() + portS);
                 } else {
                     access.log(Level.INFO, "AAFLocator enabled using preloaded " + locator.getClass().getSimpleName());
@@ -943,7 +943,7 @@ public class Config {
     public static String getDefaultRealm() {
         return defaultRealm;
     }
-    
+
     public static String getAAFLocateUrl(Access access) {
         String rv = null;
         String cont = access.getProperty(AAF_LOCATOR_CONTAINER,null);
@@ -959,7 +959,7 @@ public class Config {
     private static class Priori<T> implements Comparable<Priori<T>> {
         public final T t;
         public final int priority;
-        
+    
         public Priori(final T t, final int priority) {
             this.t = t;
             this.priority = priority;
@@ -997,7 +997,7 @@ public class Config {
                                 access.printf(Level.ERROR, "%s format is <classname>,priority[;...]\n",CADI_ADD_TAFS);
                             }
                     }
-                    
+                
                     if(clssn!=null) {
                         Class<?> cls = loadClass(access, clssn);
                         if(cls!=null) {
@@ -1009,7 +1009,7 @@ public class Config {
                                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                                     String hostname = access.getProperty(Config.HOSTNAME,null);
                                     if(hostname==null) {
-                                        access.printf(Level.ERROR, "%s cannot be constructed on this machine.  Set valid 'hostname' in your properties\n",clssn);    
+                                        access.printf(Level.ERROR, "%s cannot be constructed on this machine.  Set valid 'hostname' in your properties\n",clssn);
                                     } else {
                                         access.printf(Level.ERROR, "%s cannot be constructed on %s with Access.\n",clssn, hostname);
                                     }

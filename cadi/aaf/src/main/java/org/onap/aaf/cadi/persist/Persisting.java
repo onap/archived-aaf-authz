@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class Persisting<T> implements Persistable<T> {
     private T t;
     private Path path;
     private Persist<T, ?> persist;
-    
+
     public Persisting(Persist<T,?> p, T t, long expiresSecsFrom1970, byte[] hash, Path path) {
         persist = p;
         this.t=t;

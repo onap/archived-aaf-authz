@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,9 +41,9 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListByNS {
-    
+
     private static ListByNS lsByNS;
-    
+
     @BeforeClass
     public static void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
         AAFcli cli = JU_AAFCli.getAAfCli();
@@ -51,7 +51,7 @@ public class JU_ListByNS {
         List ls = new List(role);
         lsByNS = new ListByNS(ls);
     }
-    
+
 //    @Test
 //    public void exec() {
 //        try {
@@ -67,7 +67,7 @@ public class JU_ListByNS {
 //            e.printStackTrace();
 //        }
 //    }
-    
+
     @Test
     public void detailedHelp() {
         boolean hasNoError = true;

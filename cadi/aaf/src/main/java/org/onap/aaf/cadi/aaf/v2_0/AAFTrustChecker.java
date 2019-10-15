@@ -101,7 +101,7 @@ public class AAFTrustChecker implements TrustChecker {
         if (user_info == null) {
             return tresp;
         }
-        
+    
         tresp.getAccess().log(Level.DEBUG, user_info);
 
         String[] info = Split.split(',', user_info);

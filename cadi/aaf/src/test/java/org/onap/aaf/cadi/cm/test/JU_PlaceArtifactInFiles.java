@@ -78,7 +78,7 @@ public class JU_PlaceArtifactInFiles {
         assertThat(placer._place(transMock, certInfoMock, artiMock), is(true));
         assertThat(new File(dirName + '/' + nsName + ".crt").exists(), is(true));
         assertThat(new File(dirName + '/' + nsName + ".key").exists(), is(true));
-        
+    
         when(certInfoMock.getCerts()).thenReturn(null);
         try {
             placer._place(transMock, certInfoMock, artiMock);

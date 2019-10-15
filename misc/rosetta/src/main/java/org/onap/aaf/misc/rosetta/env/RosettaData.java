@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class RosettaData<T> implements Data<T>{
     private boolean options[] = new boolean[] {false, false};
     // Temp Storage of XML.  Only when we must use JAXB to read in Objects
     private String xml,json;
-    
+
     // package on purpose
     RosettaData(Env env, RosettaDF<T> rosettaDF) {
         df = rosettaDF;
@@ -57,7 +57,7 @@ public class RosettaData<T> implements Data<T>{
         inType = df.getInType();
         outType = df.getOutType(); // take defaults
     }
-    
+
     //Added for junits
     void setSaved(Saved saved) {
         this.saved = saved;
@@ -68,7 +68,7 @@ public class RosettaData<T> implements Data<T>{
         inType = rosettaType;
         return this;
     }
-    
+
 //    // @Override
     public RosettaData<T> out(TYPE rosettaType) {
         outType = rosettaType;
@@ -89,7 +89,7 @@ public class RosettaData<T> implements Data<T>{
         }
         return this;
     }
-    
+
     // @Override
     public RosettaData<T> load(InputStream is) throws APIException {
         Parse<Reader,?> in = df.getIn(inType);
@@ -119,7 +119,7 @@ public class RosettaData<T> implements Data<T>{
                     json = str;
                     break;
                 default:
-                    
+                
                 }
         } catch (Exception e) {
             throw new APIException(e);
@@ -152,7 +152,7 @@ public class RosettaData<T> implements Data<T>{
     public Saved getEvents() {
         return saved;
     }
-    
+
     // @Override
     public T asObject() throws APIException {
         Out out = df.getOut(TYPE.XML);
@@ -236,18 +236,18 @@ public class RosettaData<T> implements Data<T>{
         }
         return this;
     }
-    
+
     // @Override
     public Class<T> getTypeClass() {
         return df.getTypeClass();
     }
 
     private static final boolean[] emptyOption = new boolean[0];
-    
+
     public void direct(InputStream is, OutputStream os) throws APIException, IOException {
         direct(is,os,emptyOption);
     }
-    
+
     public void direct(Reader reader, Writer writer, boolean ... options) throws APIException, IOException {
         Parse<Reader,?> in = df.getIn(inType);
         Out out = df.getOut(outType);
@@ -302,7 +302,7 @@ public class RosettaData<T> implements Data<T>{
         }
     }
 
-    
+
     public void direct(InputStream is, OutputStream os, boolean ... options) throws APIException, IOException {
         direct(new InputStreamReader(is),new OutputStreamWriter(os), options);
     }

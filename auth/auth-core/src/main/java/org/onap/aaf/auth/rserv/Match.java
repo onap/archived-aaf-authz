@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import java.util.Set;
  * This path matching algorithm avoids using split strings during the critical transactional run-time.  By pre-analyzing the
  * content at "set Param" time, and storing data in an array-index model which presumably is done once and at the beginning, 
  * we can match in much less time when it actually counts.
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -39,13 +39,13 @@ public class Match {
     private Integer vars[];
     private boolean wildcard;
 
-    
+
     /*
      * These two methods are pairs of searching performance for variables Spark Style.
      * setParams evaluates the target path, and sets a HashMap that will return an Integer.
      * the Keys are both :key and key so that there will be no string operations during
      * a transaction
-     * 
+     * <p>
      * For the Integer, if the High Order is 0, then it is just one value.  If High Order >0, then it is 
      * a multi-field option, i.e. ending with a wild-card.
      */
@@ -56,7 +56,7 @@ public class Match {
             String[] pa = path.split("/");
             values = new byte[pa.length][];
             vars = new Integer[pa.length];
-            
+        
             int val = 0;
             String key;
             for (int i=0;i<pa.length && !wildcard;++i) {
@@ -96,14 +96,14 @@ public class Match {
     /*
      * This is the second of the param evaluation functions.  First, we look up to see if there is
      * any reference by key in the params Map created by the above.
-     * 
+     * <p>
      * The resulting Integer, if not null, is split high/low order into start and end.
      * We evaluate the string for '/', rather than splitting into  String[] to avoid the time/mem needed
      * We traverse to the proper field number for slash, evaluate the end (whether wild card or no), 
      * and return the substring.  
-     * 
+     * <p>
      * The result is something less than .003 milliseconds per evaluation
-     * 
+     * <p>
      */
     public String param(String path,String key) {
         Integer val = params.get(key); // :key or key
@@ -131,7 +131,7 @@ public class Match {
         }
         return null;
     }
-    
+
     public boolean match(String path) {
         if (path==null|| path.length()==0 || "/".equals(path) ) {
             if (values==null)return true;
@@ -140,7 +140,7 @@ public class Match {
                 case 1: return values[0].length==0;
                 default: return false;
             }
-        }            
+        }        
         boolean rv = true;
         byte[] pabytes = path.getBytes();
         int field=0;
@@ -169,7 +169,7 @@ public class Match {
                         ++j;
                     }
                 }
-                
+            
                 if (k==lastByte && pabytes[k-1]!='/')++field;
                 if (k>i)i=k-1; // if we've incremented, have to accommodate the outer for loop incrementing as well
                 fieldMatched = false; // reset
@@ -204,7 +204,7 @@ public class Match {
         if (field!=lastField || pabytes.length!=lastByte) rv = false; // have we matched all the fields and all the bytes?
         return rv;
     }
-    
+
     public Set<String> getParamNames() {
         return params.keySet();
     }

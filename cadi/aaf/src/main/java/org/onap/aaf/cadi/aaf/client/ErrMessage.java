@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,16 +34,16 @@ import aaf.v2_0.Error;
 
 public class ErrMessage {
     private RosettaDF<Error> errDF;
-    
+
     public ErrMessage(RosettaEnv env) throws APIException {
         errDF = env.newDataFactory(Error.class);
     }
 
     /**
      * AT&T Requires a specific Error Format for RESTful Services, which AAF complies with.
-     * 
+     * <p>
      * This code will create a meaningful string from this format. 
-     * 
+     * <p>
      * @param ps
      * @param df
      * @param r
@@ -54,12 +54,12 @@ public class ErrMessage {
         Error err = errDF.newData().in(TYPE.JSON).load(attErrJson).asObject();
         ps.println(toMsg(sb,err));
     }
-    
+
     /**
      * AT&T Requires a specific Error Format for RESTful Services, which AAF complies with.
-     * 
+     * <p>
      * This code will create a meaningful string from this format. 
-     * 
+     * <p>
      * @param sb
      * @param df
      * @param r
@@ -68,11 +68,11 @@ public class ErrMessage {
     public StringBuilder toMsg(StringBuilder sb,  String attErrJson) throws APIException {
         return toMsg(sb,errDF.newData().in(TYPE.JSON).load(attErrJson).asObject());
     }
-    
+
     public StringBuilder toMsg(Future<?> future) {
         return toMsg(new StringBuilder(),future);
     }
-    
+
     public StringBuilder toMsg(StringBuilder sb, Future<?> future) {
         try {
             toMsg(sb,errDF.newData().in(TYPE.JSON).load(future.body()).asObject());
@@ -93,7 +93,7 @@ public class ErrMessage {
         Vars.convert(sb, err.getText(),vars);
         return sb;
     }
-    
+
     public Error getError(Future<?> future) throws APIException {
         return errDF.newData().in(TYPE.JSON).load(future.body()).asObject();
     }

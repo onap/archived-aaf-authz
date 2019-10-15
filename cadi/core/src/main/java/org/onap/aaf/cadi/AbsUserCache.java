@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,11 +39,11 @@ import org.onap.aaf.cadi.principal.CachedBasicPrincipal;
 
 /**
  * Implement Fast lookup and Cache for Local User Info
- * 
+ * <p>
  * Include ability to add and remove Users
- * 
+ * <p>
  * Also includes a Timer Thread (when necessary) to invoke cleanup on expiring Credentials
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -57,10 +57,10 @@ public abstract class AbsUserCache<PERM extends Permission> {
     private final Map<String, User<PERM>> userMap;
     private static final Map<String, Miss> missMap = new TreeMap<>();
     private final Symm missEncrypt;
-    
+
     private Clean clean;
     protected Access access;
-    
+
     protected AbsUserCache(Access access, long cleanInterval, int highCount, int usageCount) {
         this.access = access;
         Symm s;
@@ -72,29 +72,29 @@ public abstract class AbsUserCache<PERM extends Permission> {
             s = Symm.base64noSplit;
         }
         missEncrypt = s;
-        
+    
         userMap = new ConcurrentHashMap<>();
 
-        
+    
         if (cleanInterval>0) {
             cleanInterval = Math.max(MIN_INTERVAL, cleanInterval);
             synchronized(AbsUserCache.class) { // Lazy instantiate.. in case there is no cleanup needed
                 if (timer==null) {
                     timer = new Timer("CADI Cleanup Timer",true);
                 }
-                
+            
                 timer.schedule(clean = new Clean(access, cleanInterval, highCount, usageCount), cleanInterval, cleanInterval);
                 access.log(Access.Level.INIT, "Cleaning Thread initialized with interval of",cleanInterval, "ms and max objects of", highCount);
             }
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public AbsUserCache(AbsUserCache<PERM> cache) {
         this.access = cache.access;
         userMap = cache.userMap;
         missEncrypt = cache.missEncrypt;
-        
+    
         synchronized(AbsUserCache.class) {
             if (cache.clean!=null && cache.clean.lur==null && this instanceof CachingLur) {
                 cache.clean.lur=(CachingLur<PERM>)this;
@@ -104,9 +104,9 @@ public abstract class AbsUserCache<PERM extends Permission> {
 
     protected void setLur(CachingLur<PERM> lur) {
         if (clean!=null)clean.lur = lur;
-        
-    }
     
+    }
+
     protected void addUser(User<PERM> user) {
         Principal p = user.principal;
         String key;
@@ -132,12 +132,12 @@ public abstract class AbsUserCache<PERM extends Permission> {
     protected void addUser(String key, User<PERM> user) {
         userMap.put(key, user);
     }
-    
+
     /**
      * Add miss to missMap.  If Miss exists, or too many tries, returns false.
-     * 
+     * <p>
      * otherwise, returns true to allow another attempt.
-     * 
+     * <p>
      * @param key
      * @param bs
      * @return
@@ -182,11 +182,11 @@ public abstract class AbsUserCache<PERM extends Permission> {
         }
         return u;
     }
-    
+
     protected User<PERM> getUser(CachedBasicPrincipal cbp) {
         return getUser(cbp.getName(), cbp.getCred());
     }
-    
+
     protected User<PERM> getUser(String user, byte[] cred) {
         User<PERM> u;
         String key=null;
@@ -207,7 +207,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
         }
         return u;
     }
-    
+
     /**
      * Removes User from the Cache
      * @param user
@@ -215,10 +215,10 @@ public abstract class AbsUserCache<PERM extends Permission> {
     protected void remove(User<PERM> user) {
         userMap.remove(user.principal.getName());
     }
-    
+
     /**
      * Removes user from the Cache
-     * 
+     * <p>
      * @param user
      */
     public void remove(String user) {
@@ -227,14 +227,14 @@ public abstract class AbsUserCache<PERM extends Permission> {
             access.log(Level.INFO, user,"removed from Client Cache by Request");
         }
     }
-    
+
     /**
      * Clear all Users from the Client Cache
      */
     public void clearAll() {
         userMap.clear();
     }
-    
+
     public final List<DumpInfo> dumpInfo() {
         List<DumpInfo> rv = new ArrayList<>();
         for (User<PERM> user : userMap.values()) {
@@ -249,10 +249,10 @@ public abstract class AbsUserCache<PERM extends Permission> {
     public boolean handlesExclusively(Permission ... pond) {
         return false;
     }
-    
+
     /**
      * Container calls when cleaning up... 
-     * 
+     * <p>
      * If overloading in Derived class, be sure to call "super.destroy()"
      */
     public void destroy() {
@@ -261,8 +261,8 @@ public abstract class AbsUserCache<PERM extends Permission> {
             timer.cancel();
         }
     }
-    
-    
+
+
 
     // Simple map of Group name to a set of User Names
     //    private Map<String, Set<String>> groupMap = new HashMap<>();
@@ -273,26 +273,26 @@ public abstract class AbsUserCache<PERM extends Permission> {
     public final class DumpInfo {
         public String user;
         public List<String> perms;
-        
+    
         public DumpInfo(User<PERM> user) {
             this.user = user.principal.getName();
             perms = new ArrayList<>(user.perms.keySet());
         }
     }
-    
+
     /**
      * Clean will examine resources, and remove those that have expired.
-     * 
+     * <p>
      * If "highs" have been exceeded, then we'll expire 10% more the next time.  This will adjust after each run
      * without checking contents more than once, making a good average "high" in the minimum speed.
-     * 
+     * <p>
      * @author Jonathan
      *
      */
     private final class Clean extends TimerTask {
         private final Access access;
         private CachingLur<PERM> lur;
-        
+    
         // The idea here is to not be too restrictive on a high, but to Expire more items by 
         // shortening the time to expire.  This is done by judiciously incrementing "advance"
         // when the "highs" are exceeded.  This effectively reduces numbers of cached items quickly.
@@ -300,7 +300,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
         private long advance;
         private final long timeInterval;
         private final int usageTriggerCount;
-        
+    
         public Clean(Access access, long cleanInterval, int highCount, int usageTriggerCount) {
             this.access = access;
             lur = null;
@@ -342,7 +342,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
                                     }
                                 }
                             }
-                        
+                    
                             if (!removed && lur!=null && user.permExpires<= now ) {
                                 if (lur.reload(user).equals(Resp.REVALIDATED)) {
                                     user.renewPerm();
@@ -354,7 +354,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
                             if (touched) {
                                 ++renewed;
                             }
-    
+
                         } else {
                             if (user.permExpired()) {
                                 remove(user);
@@ -362,7 +362,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
                             }
                         }
                 }
-                
+            
                 // Clean out Misses
                 int missTotal = missMap.keySet().size();
                 int miss = 0;
@@ -385,12 +385,12 @@ public abstract class AbsUserCache<PERM extends Permission> {
                         }
                     }
                 }
-                
+            
                 if (count+renewed+miss>0) {
                     access.log(Level.INFO, (lur==null?"Cache":lur.getClass().getSimpleName()), "removed",count,
                         "and renewed",renewed,"expired Permissions out of", total,"and removed", miss, "password misses out of",missTotal);
                 }
-    
+
                 // If High (total) is reached during this period, increase the number of expired services removed for next time.
                 // There's no point doing it again here, as there should have been cleaned items.
                 if (total>high) {
@@ -421,15 +421,15 @@ public abstract class AbsUserCache<PERM extends Permission> {
         private long tries;
 
         private final String name;
-        
+    
         public Miss(final byte[] first, final long timeInterval, final String name) {
             timestamp = System.currentTimeMillis() + timeInterval;
             this.timetolive = timeInterval;
             tries = 0L;
             this.name = name;
         }
-        
-        
+    
+    
         public synchronized boolean mayContinue() {
             long ts = System.currentTimeMillis(); 
             if (ts>timestamp) {
@@ -440,9 +440,9 @@ public abstract class AbsUserCache<PERM extends Permission> {
             }
             return true;
         }
-        
-    }
     
+    }
+
     /**
      * Report on state
      */
@@ -453,7 +453,7 @@ public abstract class AbsUserCache<PERM extends Permission> {
                 "\n  Misses Saved: " +
                 missMap.size() +
                 '\n';
-                
+            
     }
 
     public void clear(Principal p, StringBuilder sb) {

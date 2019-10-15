@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,13 +37,13 @@ import javax.xml.stream.XMLStreamException;
  * This class works similarly as StAX, except StAX has more behavior than is needed.  That would be ok, but 
  * StAX also was Buffering in their code in such as way as to read most if not all the incoming stream into memory,
  * defeating the purpose of pre-reading only the Header
- * 
+ * <p>
  * This Reader does no back-tracking, but is able to create events based on syntax and given state only, leaving the
  * Read-ahead mode of the InputStream up to the other classes.
- * 
+ * <p>
  * At this time, we only implement the important events, though if this is good enough, it could be expanded, perhaps to 
  * replace the original XMLReader from StAX.
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -53,9 +53,9 @@ public class XReader {
     private InputStream is;
     private ByteArrayOutputStream baos;
     private int state, count, last;
-    
+
     private Stack<Map<String,String>> nsses;
-    
+
     public XReader(InputStream is) {
         this.is = is;
         curr = another = null;
@@ -64,7 +64,7 @@ public class XReader {
         count = 0;
         nsses = new Stack<Map<String,String>>();
     }
-    
+
     public boolean hasNext() throws XMLStreamException {
         if (curr==null) {
             curr = parse();
@@ -100,8 +100,8 @@ public class XReader {
     // useful combined Comment states
     private final static int IN_COMMENT=COMMENT|COMMENT_E|COMMENT_D1|COMMENT_D2;
     private final static int COMPLETE_COMMENT = COMMENT|COMMENT_E|COMMENT_D1|COMMENT_D2|COMMENT_D3|COMMENT_D4;
-    
-    
+
+
     private XEvent parse() throws XMLStreamException {
         Map<String,String> nss = nsses.isEmpty()?null:nsses.peek();
 
@@ -113,7 +113,7 @@ public class XReader {
         } else {
             boolean go = true;
             int c=0;
-            
+        
             try {
                 while (go && (c=is.read())>=0) {
                     ++count;
@@ -196,10 +196,10 @@ public class XReader {
         }
         return rv;
     }
-    
+
     /**
      * parseTag
-     * 
+     * <p>
      * Parsing a Tag is somewhat complicated, so it's helpful to separate this process from the 
      * higher level Parsing effort
      * @return
@@ -213,7 +213,7 @@ public class XReader {
         int c, quote=0; // If "quote" is 0, then we're not in a quote.  We set ' (in pretag) or " in attribs accordingly to denote quoted
         String prefix=null,name=null,value=null;
         baos.reset();
-        
+    
         while (go && (c=is.read())>=0) {
             ++count;
             if (quote!=0) { // If we're in a quote, we only end if we hit another quote of the same time, not preceded by \
@@ -321,7 +321,7 @@ public class XReader {
                         // Fallthrough ok
                     default:
                         baos.write(c);                    // write any unprocessed bytes into buffer
-                        
+                    
                 }
             }
             last = c;
@@ -338,12 +338,12 @@ public class XReader {
 
     /**
      * getNSS
-     * 
+     * <p>
      * If the tag contains some Namespace attributes, create a new nss from the passed in one, copy all into it, then add
      * This provides Scoping behavior
-     * 
+     * <p>
      * if Nss is null in the first place, create an new nss, so we don't have to deal with null Maps.
-     * 
+     * <p>
      * @param nss
      * @param t
      * @return
@@ -374,10 +374,10 @@ public class XReader {
 
     /**
      * The result of the parseTag method
-     * 
+     * <p>
      * Data is split up into prefix, name and value portions. "Tags" with Values that are inside a Tag are known in XLM
      * as Attributes.  
-     * 
+     * <p>
      * @author Jonathan
      *
      */
@@ -404,7 +404,7 @@ public class XReader {
             }
             attribs.add(attrib);
         }
-        
+    
         public String toString() {
             StringBuffer sb = new StringBuffer();
             if (prefix!=null) {

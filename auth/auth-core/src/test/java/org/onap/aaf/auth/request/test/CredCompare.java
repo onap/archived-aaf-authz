@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ public class CredCompare extends RosettaCompare<CredRequest>  {
     public CredCompare() {
         super(CredRequest.class);
     }
-    
+
     public static CredRequest create() {
         CredRequest rr = new CredRequest();
         String in = instance();
@@ -46,7 +46,7 @@ public class CredCompare extends RosettaCompare<CredRequest>  {
         rr.setEnd(Chrono.timeStamp(gc));
         return rr;
     }
-    
+
     @Override
     public void compare(CredRequest t1, CredRequest t2) {
         assertEquals(t1.getId(),t2.getId());

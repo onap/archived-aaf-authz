@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import aaf.v2_0.CredRequest;
 public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
     private AAFCon<CLIENT> con;
     private String realm;
-    
+
     /**
      * Configure with Standard AAF properties, Stand alone
      * @param con
@@ -58,10 +58,10 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         super(cache);
         this.con = con;
     }
-    
+
     /**
      * Return Native Realm of AAF Instance.
-     * 
+     * <p>
      * @return
      */
     public String getRealm() {
@@ -70,19 +70,19 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 
     /**
      * Returns null if ok, or an Error String;
-     * 
+     * <p>
      * Convenience function.  Passes "null" for State object
      */
     public String validate(String user, String password) throws IOException {
         return validate(user,password,null);
     }
-    
+
     /**
      * Returns null if ok, or an Error String;
-     * 
+     * <p>
      * For State Object, you may put in HTTPServletRequest or AuthzTrans, if available.  Otherwise,
      * leave null
-     * 
+     * <p>
      * @param user
      * @param password
      * @return
@@ -125,7 +125,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
                 return "AAFAuthn doesn't handle Principal " + user;
         }
     }
-    
+
     private class AAFCachedPrincipal extends ConfigPrincipal implements CachedPrincipal {
         private long expires;
         private long timeToLive;
@@ -140,10 +140,10 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
             try {
                 Miss missed = missed(getName(),getCred());
                 if (missed==null || missed.mayContinue()) {
-                	CredRequest cr = new CredRequest();
-                	cr.setId(getName());
-                	cr.setPassword(new String(getCred()));
-                	Future<String> fp = con.client().readPost("/authn/validate", con.credReqDF, cr);
+                    CredRequest cr = new CredRequest();
+                    cr.setId(getName());
+                    cr.setPassword(new String(getCred()));
+                    Future<String> fp = con.client().readPost("/authn/validate", con.credReqDF, cr);
                     //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
                     //Future<String> fp = client.read(
                     //        "/authn/basicAuth",

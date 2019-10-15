@@ -6,9 +6,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.onap.aaf.cadi.util.Vars;
 
 public class JU_Vars {
-    
+
     @Test
     public void coverage() {
         @SuppressWarnings("unused")
@@ -70,7 +70,7 @@ public class JU_Vars {
         assertEquals(str,Vars.convert(holder,bstr="set %s to %s", "a","b"));
         assertEquals("set a to b",holder.toString());
         assertEquals(str,Vars.convert(null,bstr, "a","b"));
-        
+    
         holder.setLength(0);
         assertEquals(str = "%1=%2",Vars.convert(holder,str, "a","b"));
         assertEquals("a=b",holder.toString());
@@ -79,7 +79,7 @@ public class JU_Vars {
         assertEquals(str,Vars.convert(holder,bstr="%s=%s", "a","b"));
         assertEquals("a=b",holder.toString());
         assertEquals(str,Vars.convert(null,bstr, "a","b"));
-        
+    
         holder.setLength(0);
         assertEquals(str = "%1%2",Vars.convert(holder,str, "a","b"));
         assertEquals("ab",holder.toString());
@@ -107,7 +107,7 @@ public class JU_Vars {
         assertEquals(str=" %1%2%3 ",Vars.convert(holder,bstr = " %s%s%s ", "a","b","c","d","e","f","g","h","i","j"));
         assertEquals(" abc ",holder.toString());
         assertEquals(str,Vars.convert(null,bstr, "a","b","c","d","e","f","g","h","i","j"));
-        
+    
 
         holder.setLength(0);
         assertEquals(str = "set %1 to %2",Vars.convert(holder,str, "Something much","larger"));
@@ -122,8 +122,8 @@ public class JU_Vars {
         assertEquals(str = "Text without Vars",Vars.convert(holder,str));
         assertEquals(str,holder.toString());
         assertEquals(str = "Text without Vars",Vars.convert(null,str));
+
     
-        
         holder.setLength(0);
         assertEquals(str = "Not %1 Enough %2 Vars %3",Vars.convert(holder,str, "a","b"));
         assertEquals("Not a Enough b Vars ",holder.toString());
@@ -143,7 +143,7 @@ public class JU_Vars {
         str = "%1 !@#$%^*()-+?/,:;.";
         assertEquals(str,Vars.convert(holder,bstr, "Not Acceptable"));
         assertEquals("Not Acceptable !@#$%^*()-+?/,:;.",holder.toString());
-        assertEquals(str ,Vars.convert(null,bstr, "Not Acceptable"));    
+        assertEquals(str ,Vars.convert(null,bstr, "Not Acceptable"));
     }
-    
+
 }

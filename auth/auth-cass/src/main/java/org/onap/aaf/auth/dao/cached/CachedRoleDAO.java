@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
                 return dao.readNS(trans, ns);
             }
         };
-        
+    
         Result<List<Data>> lurd = get(trans, ns, getter);
         if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,"No Role found");
@@ -57,7 +57,7 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
                 return dao().readName(trans, name);
             }
         };
-        
+    
         Result<List<Data>> lurd = get(trans, name, getter);
         if (lurd.isOK() && lurd.isEmpty()) {
             return Result.err(Status.ERR_RoleNotFound,"No Role found");
@@ -87,10 +87,10 @@ public class CachedRoleDAO extends CachedDAO<AuthzTrans,RoleDAO, RoleDAO.Data> {
         invalidate(trans, rd);
         return rv;
     }
-    
+
     /**
      * Add description to this role
-     * 
+     * <p>
      * @param trans
      * @param ns
      * @param name

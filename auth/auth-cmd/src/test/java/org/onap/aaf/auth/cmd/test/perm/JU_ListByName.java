@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,15 +58,15 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ListByName {
-    
+
     private static ListByName lsByName;
     PropAccess prop;
     AuthzEnv aEnv;
     Writer wtr;
     Locator<URI> loc;
-    HMangr hman;    
+    HMangr hman;
     AAFcli aafcli;
-    
+
     @Before
     public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
         prop = new PropAccess();
@@ -74,14 +74,14 @@ public class JU_ListByName {
         wtr = mock(Writer.class);
         loc = mock(Locator.class);
         SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-        hman = new HMangr(aEnv, loc);    
+        hman = new HMangr(aEnv, loc);
         aafcli = new AAFcli(prop, aEnv, wtr, hman, null, secSet);
         Role role = new Role(aafcli);
         Perm perm = new Perm(role);
         List ls = new List(perm);
         lsByName = new ListByName(ls);
     }
-    
+
     @Test
     public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
         Item value = mock(Item.class);
@@ -96,7 +96,7 @@ public class JU_ListByName {
         //lsByName._exec(0, strArr);
 
     }
-    
+
     @Test
     public void testDetailedHelp() {
         StringBuilder sb = new StringBuilder();

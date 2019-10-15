@@ -53,32 +53,32 @@ import org.onap.aaf.cadi.oauth.TzHClient;
 import org.onap.aaf.misc.env.APIException;
 
 public class JU_TzHClient {
-    
+
     @Mock private Retryable<Integer> retryableMock;
     @Mock private TimedToken tokenMock;
     @Mock private SecurityInfoC<HttpURLConnection> siMock;
     @Mock private Locator<URI> locMock;
     @Mock private Item itemMock;
     @Mock private Rcli<HttpURLConnection> clientMock;
-    
+
     private PropAccess access;
-    
+
     private ByteArrayOutputStream errStream;
-    
+
     private final static String client_id = "id";
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
         access.setProperty(Config.CADI_LATITUDE, "38.62");  // St Louis approx lat
         access.setProperty(Config.CADI_LONGITUDE, "90.19");  // St Louis approx long
-    	//access.setProperty("tag", "http://aaf.something.com");
-    	
+        //access.setProperty("tag", "http://aaf.something.com");
+
         errStream = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errStream));
     }
-    
+
     @After
     public void tearDown() {
         System.setErr(System.err);

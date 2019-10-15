@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,17 +66,17 @@ public class JU_DirectCertIdentity {
         try {
             Principal p = directCertIdentity.identity(req, cert, _certBytes);
             assertEquals(((p) == null), true);
-            
+        
             cert = Mockito.mock(X509Certificate.class);
             Mockito.when(cert.getEncoded()).thenReturn(new byte[128]);
-            
+        
             Result<List<CertDAO.Data>> rs = new Result<List<CertDAO.Data>>(null, 1, "test", new Object[0]);
-            
+        
             CachedCertDAO cacheDao = Mockito.mock(CachedCertDAO.class);
             Mockito.when(cacheDao.read(Mockito.any(AuthzTrans.class),Mockito.any(Object[].class))).thenReturn(rs);
             DirectCertIdentity.set(cacheDao);
             p = directCertIdentity.identity(req, cert, _certBytes);
-            
+        
             _certBytes = new byte[128];
             List<CertDAO.Data> dataAL = new ArrayList<>();
             CertDAO.Data data = new CertDAO.Data();
@@ -86,7 +86,7 @@ public class JU_DirectCertIdentity {
             DirectCertIdentity.set(cacheDao);
             p = directCertIdentity.identity(req, cert, _certBytes);
             assertTrue(p.toString().contains("X509 Authentication for null"));
-            
+        
             cert = null;
             directCertIdentity.identity(req, cert, _certBytes);
         } catch (CertificateException e) {

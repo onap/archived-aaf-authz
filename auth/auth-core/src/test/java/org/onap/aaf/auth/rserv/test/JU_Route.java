@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,20 +37,20 @@ public class JU_Route {
     HttpCode httpCode;
     HttpMethods httpMethod;
     Trans trans;
-    
+
     @Before
     public void setUp() {        //TODO: AAF-111 complete when actual input is provided
         //httpMethod = Matchers.any(HttpMethods.class);
         //when(httpMethod.name()).thenReturn("test");
     //    route = new Route(null,"path/to/place");
     }
-    
-    
+
+
     @Test
     public void testAdd() {
     //    route.add(httpCode, "path/to/place");
     }
-    
+
     @Test
     public void testStart() {
     //    trans = mock(Trans.class);

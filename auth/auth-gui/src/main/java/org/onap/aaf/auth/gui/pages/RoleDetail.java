@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,7 +63,7 @@ import aaf.v2_0.UserRoles;
 
 /**
  * Detail Page for Permissions
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -82,7 +82,7 @@ public class RoleDetail extends Page {
 
     /**
      * Implement the table content for Permissions Detail
-     * 
+     * <p>
      * @author Jonathan
      *
      */
@@ -116,7 +116,7 @@ public class RoleDetail extends Page {
                 return;
             }
 
-        
+    
             try { 
                 gui.clientAsUser(trans.getUserPrincipal(), new Retryable<Boolean>() {
                     @Override
@@ -134,7 +134,7 @@ public class RoleDetail extends Page {
                                     trans.put(sMayWrite,mayWrite);
                                     Boolean mayApprove = trans.fish(new AAFPermission(role.getNs(),ACCESS,":role:"+role.getName(),"approve"));
                                     trans.put(sMayApprove, mayApprove);
-                                    
+                                
                                     if (mayWrite || mayApprove) {
                                         Mark js = new Mark();
                                         Mark fn = new Mark();
@@ -153,7 +153,7 @@ public class RoleDetail extends Page {
                                                 "dcb.checked= (d.orig != d.value)"
                                             ).end(fn)
                                             .end(js);
-    
+
                                         Mark mark = new Mark();
                                         hgen.incr(mark,"form","method=post");
                                         trans.put(sMark, mark);
@@ -163,7 +163,7 @@ public class RoleDetail extends Page {
                                 trans.error().printf("Error calling AAF for Roles in GUI, Role Detail %d: %s",fr.code(),fr.body());
                                 return false;
                             }
-                            
+                        
                             if (fur.get(AAF_GUI.TIMEOUT)) {
                                 trans.put(sUserRole, fur.value.getUserRole());
                             } else {
@@ -187,7 +187,7 @@ public class RoleDetail extends Page {
             final String pRole = trans.get(sRoleName, null);
             final Role role = trans.get(sRole,null);
             ArrayList<AbsCell[]> rv = new ArrayList<>();
-            
+        
             if (role!=null) {
                 boolean mayWrite = trans.get(sMayWrite, false);
                 boolean mayApprove = trans.get(sMayApprove, false);
@@ -241,7 +241,7 @@ public class RoleDetail extends Page {
                         }
                     }
                 }
-                        
+                    
                 if (mayApprove) {
                     rv.add(AbsCell.HLINE);
 
@@ -256,7 +256,7 @@ public class RoleDetail extends Page {
                     if (userroles!=null) {
                         for (UserRole ur : userroles) {
                             String tag = "userrole";
-                            
+                        
                             rv.add(new AbsCell[] {
                                 AbsCell.Null,
                                 new CheckBoxCell(tag+".delete", ur.getUser()),
@@ -267,7 +267,7 @@ public class RoleDetail extends Page {
                         }
                     }
                 }
-                        
+                    
                 // History 
                 rv.add(new AbsCell[] {
                         new RefCell("See History",RoleHistory.HREF + "?role=" + pRole,false,"class=greenbutton")
@@ -299,5 +299,5 @@ public class RoleDetail extends Page {
 
         }
     }
-}        
+}    
         

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -171,7 +171,7 @@ public class OutJson extends Out {
                 }
                 afterName = 0;
             }
-            
+        
             if (ipw!=null) {
                 switch(p.event) {
                     case '[':
@@ -206,7 +206,7 @@ public class OutJson extends Out {
             }
         }
 
-        
+    
     }
 
     @Override
@@ -217,11 +217,11 @@ public class OutJson extends Out {
     private static class LevelStack {
         public boolean printObjectName=false;
         private boolean first_n_List=true;
-        
+    
         public LevelStack(boolean printObjectName) {
             this.printObjectName = printObjectName;
         }
-        
+    
         public char listItem() {
             if (first_n_List) {
                 first_n_List=false;

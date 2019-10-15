@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,43 +56,43 @@ import locate.v1_0.Endpoint;
 import locate.v1_0.Endpoints;
 
 public class JU_AAFLocator {
-    
+
     @Mock private HClient clientMock;
     @Mock private Future<Endpoints> futureMock;
     @Mock private Endpoints endpointsMock;
-    
+
     private PropAccess access;
-    
+
     private ByteArrayOutputStream errStream;
-    
+
     private static final String uriString = "https://example.com";
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        
+    
         doReturn(futureMock).when(clientMock).futureRead((RosettaDF<?>)any(), eq(TYPE.JSON));
         when(clientMock.timeout()).thenReturn(1);
         when(clientMock.getURI()).thenReturn(new URI(uriString));
         when(futureMock.get(1)).thenReturn(true);
-        
+    
         futureMock.value = endpointsMock;
         List<Endpoint> endpoints = new ArrayList<>();
         endpoints.add(new Endpoint());
         when(endpointsMock.getEndpoint()).thenReturn(endpoints);
 
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
-        
+    
         errStream = new ByteArrayOutputStream();
 
         System.setErr(new PrintStream(errStream));
     }
-    
+
     @After
     public void tearDown() {
         System.setErr(System.err);
     }
-    
+
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         Field field = SecurityInfoC.class.getDeclaredField("sicMap");

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
     public static final String SPECIAL_LOG_SLOT = "SPECIAL_LOG_SLOT";
 
     public static final int BUCKETSIZE = 2;
-    
+
     public AuthzTransFilter(AuthzEnv env, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
         super(env.access(),con, tc, additionalTafLurs);
         this.env = env;
@@ -61,7 +61,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             specialLogSlot = env.slot(SPECIAL_LOG_SLOT);
         }
     }
-    
+
     @Override
     protected AuthzTrans newTrans(HttpServletRequest req, HttpServletResponse resp) {
         AuthzTrans at = env.newTrans();
@@ -87,7 +87,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
     protected void tallyHo(AuthzTrans trans, String target) {
         Boolean b = trans.get(specialLogSlot, false);
         LogTarget lt = b?trans.warn():trans.debug();
-        
+    
         if (lt.isLoggable()) {
             // Transaction is done, now post full Audit Trail
             StringBuilder sb = new StringBuilder("AuditTrail\n");
@@ -100,7 +100,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             for (int i=0;i<serviceMetric.buckets.length;++i) {
                 serviceMetric.buckets[i]+=m.buckets[i];
             }
-            
+        
             Long tsi;
             if ((tsi=trans.get(transIDslot, null))!=null) {
                 sb.append("  TraceID=");
@@ -125,7 +125,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
             for (int i=0;i<serviceMetric.buckets.length;++i) {
                 serviceMetric.buckets[i]+=m.buckets[i];
             }
-            
+        
             StringBuilder sb = new StringBuilder();
             sb.append("user=");
             Principal p = trans.getUserPrincipal();
@@ -184,7 +184,7 @@ public class AuthzTransFilter extends TransFilter<AuthzTrans> {
                 }
                 sb.append('"');
             }
-            
+        
             lt.log(sb);
         }
     }

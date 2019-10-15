@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,11 +56,11 @@ public class Extend extends Batch {
     private List<File> extFiles;
     private final int extendBy;
     private int gcType;
-    
+
     public Extend(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
-        
+    
         noAvg = env.newTransNoAvg();
         noAvg.setUser(new BatchPrincipal("Extend"));
 
@@ -80,7 +80,7 @@ public class Extend extends Batch {
 
         gcType = GregorianCalendar.WEEK_OF_YEAR;
         int weeks = 4;
-        
+    
         Set<String> cmd = new HashSet<>();
         for(int i=0; i< args().length;++i) {
             if("-weeks".equals(args()[i])) {
@@ -91,7 +91,7 @@ public class Extend extends Batch {
                 cmd.add(args()[i]);
             }
         }
-        
+    
         if(weeks<1 || weeks > 24) {
             throw new APIException("Invalid --weeks");
         }
@@ -107,7 +107,7 @@ public class Extend extends Batch {
                 extFiles.add(new File(logDir, fn));
             }
         }
-        
+    
         // Load Cred.  We don't follow Visitor, because we have to gather up everything into Identity Anyway
         // to find the last one.
     }
@@ -199,12 +199,12 @@ public class Extend extends Batch {
                 e.printStackTrace();
             }
         }
-        
+    
         // Cleanup, if required.
         cqlBatch.execute(dryRun);
 
     }
-    
+
     @Override
     protected void _close(AuthzTrans trans) {
         trans.info().log("End " + this.getClass().getSimpleName() + " processing" );

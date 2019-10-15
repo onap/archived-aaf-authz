@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,9 +52,9 @@ public class DenialOfServiceTaf implements HttpTaf {
     private Access access;
     private final TafResp puntNotDenied;
     private static File dosIP, dosID;
-    
+
     /**
-     * 
+     * <p>
      * @param hostname
      * @param prod
      * @throws CadiException
@@ -84,7 +84,7 @@ public class DenialOfServiceTaf implements HttpTaf {
                 return respDenyIP(access,ip);
             }
         }
-        
+    
         // Note:  Can't process Principal, because this is the first TAF, and no Principal is created.
         // Other TAFs use "isDenied()" on this Object to validate.
         return puntNotDenied;
@@ -105,7 +105,7 @@ public class DenialOfServiceTaf implements HttpTaf {
         }
         return null;
     }
-    
+
     /**
      *  
      */
@@ -119,7 +119,7 @@ public class DenialOfServiceTaf implements HttpTaf {
     /**
      * Return of "True" means IP has been added.
      * Return of "False" means IP already added.
-     * 
+     * <p>
      * @param ip
      * @return
      */
@@ -138,7 +138,7 @@ public class DenialOfServiceTaf implements HttpTaf {
         }
         return rv;
     }
-    
+
     private static void writeIP() {
         if (dosIP!=null && deniedIP!=null) {
             if (deniedIP.isEmpty()) {
@@ -162,7 +162,7 @@ public class DenialOfServiceTaf implements HttpTaf {
             }
         }
     }
-    
+
     private static void readIP() {
         if (dosIP!=null && dosIP.exists()) {
             BufferedReader br;
@@ -190,7 +190,7 @@ public class DenialOfServiceTaf implements HttpTaf {
     /**
      * Return of "True" means IP has was removed.
      * Return of "False" means IP wasn't being denied.
-     * 
+     * <p>
      * @param ip
      * @return
      */
@@ -208,7 +208,7 @@ public class DenialOfServiceTaf implements HttpTaf {
     /**
      * Return of "True" means ID has been added.
      * Return of "False" means ID already added.
-     * 
+     * <p>
      * @param ip
      * @return
      */
@@ -262,7 +262,7 @@ public class DenialOfServiceTaf implements HttpTaf {
                     if (deniedID==null) {
                         deniedID=new HashMap<>();
                     }
-                    
+                
                     String line;
                     while ((line=br.readLine())!=null) {
                         deniedID.put(line, new Counter(line));
@@ -279,7 +279,7 @@ public class DenialOfServiceTaf implements HttpTaf {
     /**
      * Return of "True" means ID has was removed.
      * Return of "False" means ID wasn't being denied.
-     * 
+     * <p>
      * @param ip
      * @return
      */
@@ -294,7 +294,7 @@ public class DenialOfServiceTaf implements HttpTaf {
         }
         return false;
     }
-    
+
     public List<String> report() {
         int initSize = 0;
         if (deniedIP!=null)initSize+=deniedIP.size();
@@ -312,24 +312,24 @@ public class DenialOfServiceTaf implements HttpTaf {
         }
         return al;
     }
-    
+
     public static class Counter {
         private final String name; 
         private int count = 0;
         private Date first;
         private long last; // note, we use "last" as long, to avoid popping useless dates on Heap.
-        
+    
         public Counter(String name) {
             this.name = name;
             first = null;
             last = 0L;
             count = 0;
         }
-        
+    
         public String getName() {
             return name;
         }
-        
+    
         public int getCount() {
             return count;
         }
@@ -337,7 +337,7 @@ public class DenialOfServiceTaf implements HttpTaf {
         public long getLast() {
             return last;
         }
-        
+    
         /*
          * Only allow Denial of ServiceTaf to increment
          */
@@ -348,7 +348,7 @@ public class DenialOfServiceTaf implements HttpTaf {
                 first = new Date(last);
             }
         }
-        
+    
         public String toString() {
             if (count==0) 
                 return name + " is on the denied list, but has not attempted Access"; 
@@ -367,7 +367,7 @@ public class DenialOfServiceTaf implements HttpTaf {
     public static TafResp respDenyID(Access access, String identity) {
         return new DenialOfServiceTafResp(access, RESP.NO_FURTHER_PROCESSING, identity + " is on the Identity Denial list");
     }
-    
+
     public static TafResp respDenyIP(Access access, String ip) {
         return new DenialOfServiceTafResp(access, RESP.NO_FURTHER_PROCESSING, ip + " is on the IP Denial list");
     }

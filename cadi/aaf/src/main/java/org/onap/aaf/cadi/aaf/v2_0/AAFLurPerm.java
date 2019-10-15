@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,11 +52,11 @@ import aaf.v2_0.Perms;
 
 /**
  * Use AAF Service as Permission Service.
- * 
+ * <p>
  * This Lur goes after AAF Permissions, which are elements of Roles, not the Roles themselves.
- * 
+ * <p>
  * If you want a simple Role Lur, use AAFRoleLur
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -84,7 +84,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
         super(con,auc);
         attachOAuth2(con);
     }
-    
+
     private void attachOAuth2(AAFCon<?> con) throws APIException {
         String oauth2_url;
         Class<?> tmcls = Config.loadClass(access,"org.osaaf.cadi.oauth.TokenMgr");
@@ -113,7 +113,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
         final Holder<Float> remote = new Holder<Float>(0f);
 
         final boolean[] success = new boolean[]{false};
-        
+    
         try {
             return aaf.best(new Retryable<User<AAFPermission>>() {
                 @Override
@@ -125,7 +125,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                         sb.append("?force");
                     }
                     Future<Perms> fp = client.read(sb.toString(),aaf.permsDF);
-                    
+                
                     // In the meantime, lookup User, create if necessary
                     User<AAFPermission> user = getUser(principal);
                     Principal p;
@@ -139,11 +139,11 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                     } else {
                         p = principal;
                     }
-                    
+                
                     if (user==null) {
                         addUser(user = new User<AAFPermission>(p,aaf.userExpires)); // no password
                     }
-                    
+                
                     // OK, done all we can, now get content
                     boolean ok = fp.get(aaf.timeout);
                     remote.set(Timing.millis(remoteStart));
@@ -199,7 +199,7 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                             "/authz/perms/user/"+name,
                             aaf.permsDF
                             );
-                    
+                
                     // OK, done all we can, now get content
                     boolean ok = fp.get(aaf.timeout);
                     remote.set(Timing.millis(remoteStart));
@@ -258,5 +258,5 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
                 return new LocalPermission(p);
         }
     }
-    
+
 }

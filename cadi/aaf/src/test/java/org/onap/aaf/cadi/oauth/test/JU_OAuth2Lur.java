@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,17 +42,17 @@ import org.onap.aaf.cadi.oauth.TokenPerm;
 import org.onap.aaf.cadi.principal.BearerPrincipal;
 
 public class JU_OAuth2Lur {
-    
+
     private List<AAFPermission> aafPerms;
     private List<Permission> perms;
-    
+
     @Mock private TokenMgr tmMock;
     @Mock private AAFPermission pondMock;
     @Mock private Principal princMock;
     @Mock private OAuth2Principal oauthPrincMock;
     @Mock private BearerPrincipal bearPrincMock;
     @Mock private TokenPerm tpMock;
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -66,10 +66,10 @@ public class JU_OAuth2Lur {
 
         assertThat(lur.fish(princMock, pondMock), is(false));
         assertThat(lur.fish(oauthPrincMock, pondMock), is(false));
-        
+    
         when(oauthPrincMock.tokenPerm()).thenReturn(tpMock);
         assertThat(lur.fish(oauthPrincMock, pondMock), is(false));
-        
+    
         aafPerms = new ArrayList<>();
         aafPerms.add(pondMock);
         aafPerms.add(pondMock);
@@ -84,9 +84,9 @@ public class JU_OAuth2Lur {
 
         when(oauthPrincMock.tokenPerm()).thenReturn(null);
         lur.fishAll(oauthPrincMock, perms);
-        
+    
         assertThat(lur.handlesExclusively(pondMock), is(false));
-        
+    
         assertThat(lur.handles(null), is(false));
         assertThat(lur.handles(princMock), is(false));
         assertThat(lur.handles(bearPrincMock), is(false));

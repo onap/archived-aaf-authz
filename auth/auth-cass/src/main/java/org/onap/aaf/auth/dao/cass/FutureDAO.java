@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import com.datastax.driver.core.Row;
 /**
  * FutureDAO stores Construction information to create 
  * elements at another time.
- * 
+ * <p>
  * @author Jonathan
  * 8/20/2013
  */
@@ -152,7 +152,7 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
             return Result.err(rs);
         }
         wasModified(trans, CRUD.create, data, null, id);
-        return Result.ok(data);    
+        return Result.ok(data);
     }
 
     /**
@@ -172,10 +172,10 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
         hd.target = TABLE;
         hd.subject = subject?override[1]:"";
         hd.memo = memo?String.format("%s by %s", override[0], hd.user):data.memo;
-    
+
         if (historyDAO.create(trans, hd).status!=Status.OK) {
             trans.error().log("Cannot log to History");
         }
     }
-    
+
 }

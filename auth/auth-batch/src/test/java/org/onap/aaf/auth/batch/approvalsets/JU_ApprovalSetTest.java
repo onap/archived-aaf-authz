@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,20 +55,20 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
 public class JU_ApprovalSetTest {
-    
+
     @Mock
     AuthzTrans trans;
     @Mock
     Cluster cluster;
     @Mock
     PropAccess access;
-    
+
     @Mock
     ApprovalSet actionObj;
 
     @Mock
     DataView dv;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -82,7 +82,7 @@ public class JU_ApprovalSetTest {
             Mockito.doReturn(Mockito.mock(TimeTaken.class)).when(trans).start(Mockito.anyString(),Mockito.anyInt());
             Mockito.doReturn(sessionObj).when(cluster).connect("authz");
             Mockito.doReturn(psObj).when(sessionObj).prepare(Mockito.anyString());
-            
+        
             Mockito.doReturn(Mockito.mock(ColumnDefinitions.class)).when(psObj).getVariables();
             Mockito.doReturn(Mockito.mock(PreparedId.class)).when(psObj).getPreparedId();
             Mockito.doReturn(Mockito.mock(Properties.class)).when(access).getProperties();
@@ -95,23 +95,23 @@ public class JU_ApprovalSetTest {
             e.printStackTrace();
         }
    }
-    
+
     @Test
     public void testPuntDate() {
         actionObj.write(trans);
         ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
-        
+    
         Result<FutureDAO.Data> rs1 = new Result<FutureDAO.Data>(null,0,"test",new Object[0]);
         Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(FutureDAO.Data.class));
         Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
         actionObj.ladd.add(dataObj);
         Result<Void> retVal = actionObj.write(trans);
-        
+    
         rs1 = new Result<FutureDAO.Data>(null,1,"test",new Object[0]);
         Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
         retVal = actionObj.write(trans);
         assertTrue("Security - test".equals(retVal.details));
-        
+    
         actionObj.ladd.add(dataObj);
         retVal = actionObj.write(trans);
         assertTrue(retVal.details.contains("Security - test"));
@@ -119,32 +119,32 @@ public class JU_ApprovalSetTest {
         Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(FutureDAO.Data.class));
         retVal = actionObj.write(trans);
         assertTrue(retVal.details.contains("Security - test"));
-        
+    
         actionObj.setConstruct(null);
         actionObj.setExpires(new GregorianCalendar());
         actionObj.setMemo("");
         actionObj.ladd = null;
         actionObj.write(trans);
     }
-    
+
     @Test
     public void testHasApprovals() {
         assertFalse(actionObj.hasApprovals());
-        
+    
         ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
         actionObj.ladd.add(dataObj);
         assertTrue(actionObj.hasApprovals());
     }
-    
+
     @Test
     public void testApprovers() {
         Set<String> retVal = actionObj.approvers();
         assertTrue(retVal.size() == 0);
-        
+    
         ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
         actionObj.ladd.add(dataObj);
         retVal = actionObj.approvers();
         assertTrue(retVal.size() == 1);
-        
+    
     }
 }

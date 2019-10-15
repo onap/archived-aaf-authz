@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,14 +44,14 @@ public class Define {
         }
         return ROOT_NS;
     }
-    
+
     public static String ROOT_COMPANY() {
         if (ROOT_NS==null) {
             throw new RuntimeException(Define.class.getName() + MSG);
         }
         return ROOT_COMPANY;
     }
-    
+
     public static void set(Access access) throws CadiException {
         ROOT_NS = access.getProperty(Config.AAF_ROOT_NS,"org.osaaf.aaf");
         ROOT_COMPANY = access.getProperty(Config.AAF_ROOT_COMPANY,null);
@@ -63,7 +63,7 @@ public class Define {
                 throw new CadiException(Config.AAF_ROOT_COMPANY + " or " + Config.AAF_ROOT_NS + " property with 3 positions is required.");
             }
         }
-        
+    
         for ( Entry<Object, Object> es : access.getProperties().entrySet()) {
             if (es.getKey().toString().startsWith(ROOT_NS_TAG_DOT)) {
                 access.getProperties().setProperty(es.getKey().toString(),varReplace(es.getValue().toString()));
@@ -90,7 +90,7 @@ public class Define {
     public static boolean isInitialized() {
         return initialized;
     }
-    
+
     public static String getCredType(int type) {
         switch(type) {
             case 0:      return "NoCrd";
@@ -102,5 +102,5 @@ public class Define {
                 return "n/a";
         }
     }
-    
+
 }

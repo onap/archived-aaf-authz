@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,22 +79,22 @@ public class LocalCA extends CA {
                 KeyPurposeId.id_kp_serverAuth, // WebServer
                 KeyPurposeId.id_kp_clientAuth // WebClient
                 };
-    
+
     private final PrivateKey caKey;
     private final X500Name issuer;
     private BigInteger serial;
     private final X509ChainWithIssuer x509cwi; // "Cert" is CACert
-    
-    
+
+
     public LocalCA(Access access, final String name, final String env, final String[][] params) throws IOException, CertException {
         super(access, name, env);
-    
+
         serial = new BigInteger(64,new SecureRandom());
 
         if (params.length<1 || params[0].length<2) {
             throw new IOException("LocalCA expects cm_ca.<ca name>=org.onap.aaf.auth.cm.ca.LocalCA,<full path to key file>[;<Full Path to Trust Chain, ending with actual CA>]+");
         }
-        
+    
         // Read in the Private Key
         String configured;
         File f = new File(params[0][0]);
@@ -145,7 +145,7 @@ public class LocalCA extends CA {
                     } else {
                         throw new CertException("Unknown Keystore type from filename " + fileName);
                     }
-                    
+                
                     KeyStore.ProtectionParameter keyPass;
 
                     try {
@@ -174,7 +174,7 @@ public class LocalCA extends CA {
                     }
                     PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry)entry;
                     caKey = privateKeyEntry.getPrivateKey();
-                    
+                
                     x509cwi = new X509ChainWithIssuer(privateKeyEntry.getCertificateChain());
                     configured =  "keystore \"" + fileName + "\", alias " + params[0][1];
                 } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableEntryException e) {
@@ -184,7 +184,7 @@ public class LocalCA extends CA {
         } else {
             throw new CertException("Private Key, " + f.getPath() + ", does not exist");
         }
-        
+    
         X500NameBuilder xnb = new X500NameBuilder();
         List<RDN> rp = RDN.parse(',', x509cwi.getIssuerDN());
         Collections.reverse(rp);
@@ -209,12 +209,12 @@ public class LocalCA extends CA {
         TimeTaken tt = trans.start("Create/Sign Cert",Env.SUB);
         try {
             BigInteger bi;
-            
+        
             synchronized(ONE) {
                 bi = serial;
                 serial = serial.add(ONE);
             }
-                
+            
             RSAPublicKey rpk = (RSAPublicKey)csrmeta.keypair(trans).getPublic();
             X509v3CertificateBuilder xcb = new X509v3CertificateBuilder(
                     issuer,
@@ -250,8 +250,8 @@ public class LocalCA extends CA {
                             false, new GeneralNames(sans))
 //                    .addExtension(MiscObjectIdentifiers.netscape, true, new NetscapeCertType(
 //                            NetscapeCertType.sslClient|NetscapeCertType.sslClient))
-                    ;                    
-    
+                    ;                
+
             x509 = new JcaX509CertificateConverter().getCertificate(
                     xcb.build(BCFactory.contentSigner(caKey)));
         } catch (GeneralSecurityException|OperatorCreationException e) {
@@ -259,7 +259,7 @@ public class LocalCA extends CA {
         } finally {
             tt.done();
         }
-        
+    
         return new X509andChain(x509,x509cwi.trustChain);
     }
 

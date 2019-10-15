@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ public class JU_ServletContextAccess {
 
     private FilterConfig filter_mock;
     Enumeration<String> enumeration;
-    
+
     private class CustomEnumeration implements Enumeration<String> {
         private int idx = 0;
         private final String[] elements = {"This", "is", "a", "test"};
@@ -70,7 +70,7 @@ public class JU_ServletContextAccess {
         filter_mock = mock(FilterConfig.class);
         when(filter_mock.getInitParameterNames()).thenReturn(enumeration);
     }
-    
+
 
     @Test
     public void logTest() throws Exception {

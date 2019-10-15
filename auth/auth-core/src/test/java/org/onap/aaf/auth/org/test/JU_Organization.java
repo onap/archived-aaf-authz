@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,9 +51,9 @@ public class JU_Organization {
         gc = new GregorianCalendar(1900, 1, 1);
         trans = mock(AuthzTrans.class);
     }
-    
+
     @Test
-    public void test() throws OrganizationException {        
+    public void test() throws OrganizationException {    
         //tests for Org null
         Assert.assertEquals("n/a",Organization.NULL.getName());
         Assert.assertEquals("n/a",Organization.NULL.getDomain());
@@ -74,9 +74,9 @@ public class JU_Organization {
         Assert.assertEquals("Null Organization rejects all Policies",Organization.NULL.validate(trans, Policy.CHANGE_JOB, null, null));
         Assert.assertFalse(Organization.NULL.isTestEnv());
         Organization.NULL.setTestMode(true);
-        
+    
         //tests for org emailWarnings
-        Assert.assertTrue(Organization.NULL.emailWarningPolicy() instanceof EmailWarnings);    
+        Assert.assertTrue(Organization.NULL.emailWarningPolicy() instanceof EmailWarnings);
         Assert.assertEquals(604800000L, Organization.NULL.emailWarningPolicy().credEmailInterval());
         Assert.assertEquals(604800000L, Organization.NULL.emailWarningPolicy().roleEmailInterval());
         Assert.assertEquals(259200000L, Organization.NULL.emailWarningPolicy().apprEmailInterval());

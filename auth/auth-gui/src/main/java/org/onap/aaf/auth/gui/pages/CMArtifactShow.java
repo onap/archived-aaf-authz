@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,7 +63,7 @@ import certman.v1_0.Artifacts.Artifact;
 import certman.v1_0.CertInfo;
 
 public class CMArtifactShow extends Page {
-    
+
     public static final String HREF = "/gui/cmarti";
     public static final String NAME = "ArtifactsShow";
     private static ArtiTable arti;
@@ -79,7 +79,7 @@ public class CMArtifactShow extends Page {
         // Setting so we can get access to HTMLGen clone and Slots
         arti.set(this,slotCode);
     }
-    
+
     private static class ArtiTable extends Table<AAF_GUI, AuthzTrans> {
         private static Model model;
         private SlotCode<AuthzTrans> sc;
@@ -108,13 +108,13 @@ public class CMArtifactShow extends Page {
                         }
                     },"class=std");
         }
-        
+    
 
         public void set(CMArtifactShow cmArtifactShow, SlotCode<AuthzTrans> sc) {
             this.sc = sc;
             model.set(cmArtifactShow,sc);
         }
-        
+    
         @Override
         protected String title(AuthzTrans trans) {
             StringBuilder sb = new StringBuilder("X509 Certificates");
@@ -132,7 +132,7 @@ public class CMArtifactShow extends Page {
     }
     /**
      * Implement the table content for Cred Detail
-     * 
+     * <p>
      * @author Jeremiah
      *
      */
@@ -151,7 +151,7 @@ public class CMArtifactShow extends Page {
         public String[] headers() {
             return headers;
         }
-        
+    
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             String str = sc.get(trans,Params.id, null);
@@ -167,7 +167,7 @@ public class CMArtifactShow extends Page {
                     public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
                         Future<CertInfo>  fuCI = client.read("/cert/id/"+id,gui.certInfoDF);
                         Future<Artifacts> fuArt = client.read("/cert/artifacts?mechid="+id, gui.artifactsDF);
-                        
+                    
                         X509Certificate[] lc;
                         if (fuCI.get(AAFcli.timeout())) {
                             TimeTaken tt1 = trans.start("x509Certificate", Env.SUB);
@@ -247,5 +247,5 @@ public class CMArtifactShow extends Page {
         }
 
     }
-    
+
 }

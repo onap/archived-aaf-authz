@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,13 +45,13 @@ public interface AuthzTrans extends TransStore {
     public abstract AuthzTrans set(HttpServletRequest req, HttpServletResponse resp);
 
     public abstract HttpServletRequest hreq();
-    
+
     public abstract HttpServletResponse hresp();
 
     public abstract String user();
 
     public abstract void setUser(TaggedPrincipal p);
-    
+
     public abstract TaggedPrincipal getUserPrincipal();
 
     public abstract String ip();
@@ -63,27 +63,27 @@ public interface AuthzTrans extends TransStore {
     public abstract String path();
 
     public abstract String agent();
-    
+
     public abstract AuthzEnv env();
 
     public abstract void setLur(Lur lur);
-    
+
     public abstract Lur getLur();
 
     public abstract boolean fish(Permission ... p);
-    
+
     public abstract Organization org();
 
     public abstract boolean requested(REQD_TYPE requested);
-    
+
     public void requested(REQD_TYPE requested, boolean b);
-    
+
     public abstract void logAuditTrail(LogTarget lt);
-    
+
     public abstract Date now();
-    
+
     public abstract void setTag(String tag);
-    
+
     public abstract String getTag();
 
     public abstract void clearCache();

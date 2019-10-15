@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
     public JettyServiceStarter(final AbsService<ENV,TRANS> service, boolean secure) throws OrganizationException {
         super(service, secure);
     }
-    
+
     @Override
     public void _propertyAdjustment() {
 //        System.setProperty("com.sun.management.jmxremote.port", "8081");
@@ -72,7 +72,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                 props.put(Config.CADI_PROTOCOLS, httpproto);
             }
         }
-    
+
         if ("1.7".equals(System.getProperty("java.specification.version")) && (httpproto==null || (httpproto instanceof String && ((String)httpproto).contains("TLSv1.2")))) {
             System.setProperty(Config.HTTPS_CIPHER_SUITES, Config.HTTPS_CIPHER_SUITES_DEFAULT);
         }
@@ -84,7 +84,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         final String keystore = access().getProperty(Config.CADI_KEYSTORE, null);
         final int IDLE_TIMEOUT = Integer.parseInt(access().getProperty(Config.AAF_CONN_IDLE_TIMEOUT, Config.AAF_CONN_IDLE_TIMEOUT_DEF));
         Server server = new Server();
-        
+    
         ServerConnector conn;
         String protocol;
         if (!secure || keystore==null) {
@@ -92,7 +92,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             protocol = "http";
         } else {
             protocol = "https";
-            
+        
 
             String keystorePassword = access().getProperty(Config.CADI_KEYSTORE_PASSWORD, null);
             if (keystorePassword==null) {
@@ -104,7 +104,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             sslContextFactory.setKeyStorePassword(temp=access().decrypt(keystorePassword, true)); // don't allow unencrypted
             sslContextFactory.setKeyManagerPassword(temp);
             temp=null; // don't leave lying around
-            
+        
             String truststore = access().getProperty(Config.CADI_TRUSTSTORE, null);
             if (truststore!=null) {
                 String truststorePassword = access().getProperty(Config.CADI_TRUSTSTORE_PASSWORD, null);
@@ -119,10 +119,10 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             service.setSubprotocol(subprotocols);
             final String[] protocols = Split.splitTrim(',', subprotocols);
             sslContextFactory.setIncludeProtocols(protocols);
-            
+        
             // Want to use Client Certificates, if they exist.
             sslContextFactory.setWantClientAuth(true);
-            
+        
             // Optional future checks.
             //   sslContextFactory.setValidateCerts(true);
             //     sslContextFactory.setValidatePeerCerts(true);
@@ -132,13 +132,13 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             if (certAlias!=null) {
                 sslContextFactory.setCertAlias(certAlias);
             }
-            
+        
             HttpConfiguration httpConfig = new HttpConfiguration();
             httpConfig.setSecureScheme(protocol);
             httpConfig.setSecurePort(port);
             httpConfig.addCustomizer(new SecureRequestCustomizer());
             //  httpConfig.setOutputBufferSize(32768);  Not sure why take this setting
-            
+        
             conn = new ServerConnector(server,
                 new SslConnectionFactory(sslContextFactory,HttpVersion.HTTP_1_1.asString()),
                     new HttpConnectionFactory(httpConfig)
@@ -146,22 +146,22 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         }
         service.setProtocol(protocol);
 
-        
+    
         // Setup JMX 
         // TODO trying to figure out how to set up/log ports
 //        MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 //        MBeanContainer mbContainer=new MBeanContainer(mbeanServer);
 //        server.addEventListener(mbContainer);
 //        server.addBean(mbContainer);
-        
+    
         // Add loggers MBean to server (will be picked up by MBeanContainer above)
 //        server.addBean(Log.getLog());
-    
+
         conn.setHost(hostname);
         conn.setPort(port);
         conn.setIdleTimeout(IDLE_TIMEOUT);
         server.addConnector(conn);
-        
+    
         server.setHandler(new AbstractHandler() {
                 private FilterChain fc = buildFilterChain(service,new FilterChain() {
                     @Override
@@ -169,7 +169,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                         rserv.service(req, resp);
                     }
                 });
-                
+            
                 @Override
                 public void handle(String target, Request baseRequest, HttpServletRequest hreq, HttpServletResponse hresp) throws IOException, ServletException {
                     try {
@@ -182,7 +182,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                 }
             }
         );
-        
+    
         try {
             access().printf(Level.INIT, "Starting service on %s:%d (%s)",hostname,port,InetAddress.getByName(hostname).getHostAddress());
             server.start();
@@ -204,7 +204,7 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                 access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.app_name);
             }
             access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
-            
+        
             rserv.postStartup(hostname, port);
         } catch (Exception e) {
             access().log(e,"Error registering " + service.app_name);
@@ -225,15 +225,15 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
         }
         return fc;
     }
-    
+
     private class FCImpl implements FilterChain {
         private Filter f;
         private FilterChain next;
-        
+    
         public FCImpl(final Filter f, final FilterChain fc) {
             this.f=f;
             next = fc;
-            
+        
         }
         @Override
         public void doFilter(ServletRequest req, ServletResponse resp) throws IOException, ServletException {

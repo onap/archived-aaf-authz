@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -99,11 +99,11 @@ public class RegistrationPropHolder {
             }
         }
         default_name = container_public_name;
-        
+    
         if(firstlog) {
             access.printf(Level.INIT, REGI,"default_name",default_name);
         }
-        
+    
         latitude=null;
         String slatitude = access.getProperty(Config.CADI_LATITUDE, null);
         if(slatitude == null) {
@@ -138,7 +138,7 @@ public class RegistrationPropHolder {
                 }
             }
         }
-        
+    
         default_fqdn = access.getProperty(Config.AAF_LOCATOR_FQDN, hostname);
         if(firstlog) {
             access.printf(Level.INIT, REGI,"default_fqdn",default_fqdn);
@@ -157,7 +157,7 @@ public class RegistrationPropHolder {
         errs.append('\n');
         errs.append(propname);
         errs.append(" must be defined.");
-        
+    
     }
 
     public String getEntryFQDN(final String entry, final String dot_le) {
@@ -169,7 +169,7 @@ public class RegistrationPropHolder {
         }
         return replacements("RegistrationPropHolder.getEntryFQDN",str,entry,dot_le);
     }
-    
+
     public String getEntryName(final String entry, final String dot_le) {
         String str;
         if(dot_le.isEmpty()) {
@@ -179,7 +179,7 @@ public class RegistrationPropHolder {
         }
         return replacements("RegistrationPropHolder.getEntryName",str,entry,dot_le);
     }
-    
+
     public String getPublicEntryName(final String entry, final String dot_le) {
         String str = access.getProperty(Config.AAF_LOCATOR_PUBLIC_NAME+dot_le, null);
         if(str==null) {
@@ -190,8 +190,8 @@ public class RegistrationPropHolder {
         }
         return replacements("RegistrationPropHolder.getEntryName",str,entry,dot_le);
     }
-    
-    
+
+
     private String getNS(String dot_le) {
         String ns;
         ns = access.getProperty(Config.AAF_LOCATOR_APP_NS+dot_le,null);
@@ -201,7 +201,7 @@ public class RegistrationPropHolder {
         return ns;
     }
 
-    
+
     public String replacements(final String fromCode, final String source, final String name, final String _dot_le) {
         if(source == null) {
             return "";
@@ -238,7 +238,7 @@ public class RegistrationPropHolder {
                         value = value.replace("http://AAF_LOCATE_URL/", str);
                     } else {
                         value = value.replace("https://AAF_LOCATE_URL/", str);
-                        
+                    
                     }
                 }
             }
@@ -252,14 +252,14 @@ public class RegistrationPropHolder {
                 value = value.replace("%CNS"+'.', str);
             }
             value = value.replace("%CNS", str);
-            
+        
             str = access.getProperty(Config.AAF_LOCATOR_CONTAINER+dot_le,default_container);
             if(str.isEmpty()) {
                 value = value.replace("%C"+'.', str);
             }
             value = value.replace("%C", str);
         }
-        
+    
         if(value.indexOf("%NS")>=0) {
             str = getNS(dot_le);
             if(str==null || str.isEmpty()) {
@@ -280,7 +280,7 @@ public class RegistrationPropHolder {
             }
         }
 
-        
+    
         if(value.indexOf('%')>=0) {
             // These shouldn't be expected to have dot elements
             if(name!=null) {
@@ -299,7 +299,7 @@ public class RegistrationPropHolder {
 
         return value;
     }
-    
+
     public int getEntryPort(final String dot_le) {
         return public_port!=null && dot_le.isEmpty()?
                 public_port:

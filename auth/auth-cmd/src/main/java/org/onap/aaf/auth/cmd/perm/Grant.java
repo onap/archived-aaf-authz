@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ import aaf.v2_0.Pkey;
 import aaf.v2_0.RolePermRequest;
 
 /**
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -63,7 +63,7 @@ public class Grant extends Cmd {
                 int idx = index;
                 String action = args[idx++];
                 int option = whichOption(options, action);
-        
+    
                 RolePermRequest rpr = new RolePermRequest();
                 Pkey pk = new Pkey();
                 pk.setType(args[idx++]);
@@ -71,9 +71,9 @@ public class Grant extends Cmd {
                 pk.setAction(args[idx++]);
                 rpr.setPerm(pk);
                 setStartEnd(rpr);
-                
+            
                 Future<RolePermRequest> frpr = null;
-        
+    
                 String[] roles = args[idx++].split(",");
                 String strA;
                 String strB;
@@ -111,7 +111,7 @@ public class Grant extends Cmd {
                         } else {
                             error(frpr);
                             idx=Integer.MAX_VALUE;
-                        }            
+                        }        
                     }
                 }
                 return frpr==null?0:frpr.code();

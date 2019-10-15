@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,12 +38,12 @@ import org.onap.aaf.misc.env.TransStore;
 
 /**
  * Create a new Transaction Object for each and every incoming Transaction
- * 
+ * <p>
  * Attach to Request.  User "FilterHolder" mechanism to retain single instance.
- * 
+ * <p>
  * TransFilter includes CADIFilter as part of the package, so that it can
  * set User Data, etc, as necessary.
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -51,14 +51,14 @@ public abstract class TransOnlyFilter<TRANS extends TransStore> implements Filte
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
-    
+
 
 
     protected abstract TRANS newTrans(HttpServletRequest req, HttpServletResponse resp);
     protected abstract TimeTaken start(TRANS trans);
     protected abstract void authenticated(TRANS trans, TaggedPrincipal p);
     protected abstract void tallyHo(TRANS trans);
-    
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         TRANS trans = newTrans((HttpServletRequest)request,(HttpServletResponse)response);

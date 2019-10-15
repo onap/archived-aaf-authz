@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ public class JU_Stream2Obj {
         <value>value_2</value>
       </base>
     </root>
-    
+
     {"base":[{"__extension":"derivedA","name":"myDerivedA_1","num":1432,"shortName":"mda_1","value":["value_1","value_2"]}]}
     */
 
@@ -69,7 +69,7 @@ public class JU_Stream2Obj {
         da.setShortName("mda_1");
         da.getValue().add("value_1");
         da.getValue().add("value_2");
-        
+    
         Root root = new Root();
         root.getBase().add(da);
 
@@ -80,10 +80,10 @@ public class JU_Stream2Obj {
         da.getValue().add("value_2.1");
         da.getValue().add("value_2.2");
         root.getBase().add(da);
-        
+    
         EnvJAXB env = new BasicEnv();
         DataFactory<Root> rootDF = env.newDataFactory(Root.class);
-        
+    
         String xml = rootDF.newData(env).out(Data.TYPE.XML).load(root).option(Data.PRETTY).asString();
         System.out.println(xml);
 
@@ -95,21 +95,21 @@ public class JU_Stream2Obj {
         out.extract(new StringReader(xml), sw, in);
         System.out.println(sw.toString());
 
-        
+    
         out = new OutJson();
 
         sw = new StringWriter();
         out.extract(new StringReader(xml), sw, in);
         String json;
         System.out.println(json = sw.toString());
-        
+    
         in = new InJson();
         out = new OutRaw();
 
         sw = new StringWriter();
         out.extract(new StringReader(json), sw, in);
         System.out.println(sw.toString());
-        
+    
         out = new OutXML(inXML);
 
         sw = new StringWriter();

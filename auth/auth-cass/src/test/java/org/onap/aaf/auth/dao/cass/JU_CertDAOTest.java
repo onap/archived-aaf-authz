@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,7 +66,7 @@ public class JU_CertDAOTest {
     AuthzEnv env;
     @Mock
     LogTarget logTarget;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -79,7 +79,7 @@ public class JU_CertDAOTest {
         Mockito.doReturn("100").when(trans).getProperty(Config.CADI_LONGITUDE);
         Mockito.doReturn(session).when(cluster).connect("test");
     }
-    
+
     @Test
     public void testInit() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -92,7 +92,7 @@ public class JU_CertDAOTest {
         PSInfo createPS = Mockito.mock(PSInfo.class);
         Result<ResultSet> rs = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs).when(createPS).exec(trans, "CertDAOImpl CREATE", data);
-        
+    
         CertDAOImpl daoObj=null;
         try {
             daoObj = new CertDAOImpl(trans, cluster, "test",data, createPS);
@@ -102,17 +102,17 @@ public class JU_CertDAOTest {
         }
 
     }
-    
+
     @Test
     public void testCertLoader(){
-        
+    
         Class<?> innerClass = CertDAO.class.getDeclaredClasses()[0];
         Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
         try {
             Object obj = constructor.newInstance(1);
             Method innnerClassMtd;
-                
+            
             CertDAO.Data data  = new CertDAO.Data();
             Row row = Mockito.mock(Row.class);
             ByteBuffer bbObj = ByteBuffer.allocateDirect(10);
@@ -121,16 +121,16 @@ public class JU_CertDAOTest {
             bbObj.put(1, new Byte("1"));
             bbObj.put(2, new Byte("2"));
             Mockito.doReturn(bbObj).when(row).getBytesUnsafe(1);
-            
+        
             innnerClassMtd = innerClass.getMethod("load", new Class[] {CertDAO.Data.class, Row.class});
             innnerClassMtd.invoke(obj, new Object[] {data, row});
-            
+        
             innnerClassMtd = innerClass.getDeclaredMethod("key", new Class[] {CertDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test"} });
-//            
+//        
             innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {CertDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
-            
+        
 //            DataInputStream in  = Mockito.mock(DataInputStream.class);
 ////            Mockito.doReturn(100).when(in).read();
 ////            Mockito.doReturn(100).when(in).readInt();
@@ -156,7 +156,7 @@ public class JU_CertDAOTest {
             e.printStackTrace();
         } 
     }
-    
+
     @Test
     public void testWasMOdified() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -168,14 +168,14 @@ public class JU_CertDAOTest {
         Mockito.doNothing().when(tt).done();
         CertDAO.Data data  = new CertDAO.Data();
         PSInfo createPS = Mockito.mock(PSInfo.class);
-        
+    
         HistoryDAO historyDAO = Mockito.mock(HistoryDAO.class);
         Result<ResultSet> rs1 = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+    
         CacheInfoDAO cacheInfoDAO = Mockito.mock(CacheInfoDAO.class);
         Mockito.doReturn(rs1).when(cacheInfoDAO).touch(trans, CertDAO.TABLE, new int[1]);
-        
+    
         CertDAO daoObj = null;
         try {
             daoObj = new CertDAO(trans, historyDAO, cacheInfoDAO);
@@ -183,21 +183,21 @@ public class JU_CertDAOTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test"});
-        
+    
         rs1 = new Result<ResultSet>(null,1,"test",new String[0]);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+    
         Mockito.doReturn(rs1).when(cacheInfoDAO).touch(trans, CertDAO.TABLE, new int[1]);
-        
+    
         try {
             daoObj = new CertDAO(trans, historyDAO, cacheInfoDAO);
         } catch (APIException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test"});
 
         daoObj.wasModified(trans, CRUD.delete, data, new String[] {"test"});
@@ -205,7 +205,7 @@ public class JU_CertDAOTest {
         daoObj.wasModified(trans, CRUD.delete, data, new String[] {"test", "test"});
         daoObj.wasModified(trans, CRUD.delete, data, new String[] {null});
         daoObj.wasModified(trans, CRUD.delete, data, new String[] {});
-        
+    
         try {
             CertDAO.Data data1  = Mockito.mock(CertDAO.Data.class);
             Mockito.doThrow(new IOException()).when(data1).bytify();
@@ -216,7 +216,7 @@ public class JU_CertDAOTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testRead() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -235,14 +235,14 @@ public class JU_CertDAOTest {
         Mockito.doNothing().when(tt).done();
         CertDAO.Data data  = new CertDAO.Data();
         PSInfo createPS = Mockito.mock(PSInfo.class);
-        
+    
         HistoryDAO historyDAO = Mockito.mock(HistoryDAO.class);
         Result<ResultSet> rs1 = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+    
         CacheInfoDAO cacheInfoDAO = Mockito.mock(CacheInfoDAO.class);
         Mockito.doReturn(rs1).when(cacheInfoDAO).touch(trans, CertDAO.TABLE, new int[1]);
-        
+    
         CertDAOImpl daoObj = null;
         try {
             daoObj = new CertDAOImpl(trans, historyDAO, cacheInfoDAO, createPS);
@@ -250,15 +250,15 @@ public class JU_CertDAOTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         daoObj.read(trans, new Object[] {"test", BigInteger.ONE});
         Field cbField;
         try {
             cbField = CassAccess.class.getDeclaredField("cb");
-            
+        
             cbField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             cbField.set(null, null);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -270,15 +270,15 @@ public class JU_CertDAOTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         daoObj.readX500(trans, "test");
-        
+    
         try {
             cbField = CassAccess.class.getDeclaredField("cb");
-            
+        
             cbField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             cbField.set(null, null);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -290,11 +290,11 @@ public class JU_CertDAOTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        daoObj.readID(trans, "test");    
+    
+        daoObj.readID(trans, "test");
     }
 
-    
+
     @Test
     public void testSecondConstructor() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -328,24 +328,24 @@ class CertDAOImpl extends CertDAO{
 //        setPs(this, createPS, "psByStatus");
 //        setSession(this, Mockito.mock(Session.class));
     }
-    
+
     public CertDAOImpl(AuthzTrans trans, HistoryDAO historyDAO, CacheInfoDAO cacheInfoDAO,PSInfo readPS  ) throws APIException, IOException {
         super(trans, historyDAO, cacheInfoDAO);
         this.readPS = readPS;
     }
-    
+
 
     public void setPs(CertDAOImpl CertDAOObj, PSInfo psInfoObj, String methodName) {
         Field nsDaoField;
         try {
             nsDaoField = CertDAO.class.getDeclaredField(methodName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(CertDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -359,12 +359,12 @@ class CertDAOImpl extends CertDAO{
         }
     }
 
-    
+
     public void setSession(CertDAOImpl CertDAOObj, Session session) {
         Field nsDaoField;
         try {
             nsDaoField = AbsCassDAO.class.getDeclaredField("session");
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -382,5 +382,5 @@ class CertDAOImpl extends CertDAO{
             e.printStackTrace();
         }
     }
-    
+
 }

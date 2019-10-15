@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,21 +46,21 @@ import org.onap.aaf.cadi.CadiException;
 @RunWith(MockitoJUnitRunner.class) 
 public class JU_CassExecutor {
 
-    
-    
+
+
     private static final Object NO_PARAM = new Object[0];
 
     @Mock
     AuthzTransImpl trans;
-    
+
     @Mock
     Question q;
-    
+
     @Mock
     Access access;
-    
+
     Function f;
-    
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
@@ -74,36 +74,36 @@ public class JU_CassExecutor {
         }
         f =new Function(trans, q);
     }
-    
+
     @Test
     public void testHasPermission() {
-        
+    
         CassExecutor cassExecutorObj =new CassExecutor(trans, f);
         Mockito.doReturn(false).when(q).isGranted(trans, "","","","","");
         boolean retVal = cassExecutorObj.hasPermission("", "", "", "", "");
 //        System.out.println(retVal);
         assertFalse(retVal);
-    }    
-    
+    }
+
     @Test
     public void testInRole() {
-        
+    
         CassExecutor cassExecutorObj =new CassExecutor(trans, f);
         Result<NsSplit> retVal1 = new Result<NsSplit>(null,1,"",NO_PARAM);
         Mockito.doReturn(retVal1).when(q).deriveNsSplit(trans, "test");
-        
+    
         boolean retVal = cassExecutorObj.inRole("test");
 //        System.out.println(retVal);
         assertFalse(retVal);
     }
-    
+
     @Test
     public void testNamespace() {
         f =new Function(trans, q);
         CassExecutor cassExecutorObj =new CassExecutor(trans, f);
         Result<Data> retVal1 = new Result<Data>(null,1,"",NO_PARAM);
         Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
-        
+    
         String retVal="";
         try {
             retVal = cassExecutorObj.namespace();
@@ -114,7 +114,7 @@ public class JU_CassExecutor {
         System.out.println(retVal);
 //        assertFalse(retVal);
     }
-    
+
     @Test
     public void testId() {
         Mockito.doReturn("").when(trans).user();
@@ -122,7 +122,7 @@ public class JU_CassExecutor {
         String retVal = cassExecutorObj.id();
         assertEquals("", retVal);
     }
-    
+
     @Test
     public void testNamespaceSuccess() {
         Mockito.doAnswer(new Answer<Object>() {
@@ -139,8 +139,8 @@ public class JU_CassExecutor {
         CassExecutor cassExecutorObj =new CassExecutor(trans, f);
         Result<Data> retVal1 = new Result<Data>(null,0,"",NO_PARAM);
         Mockito.doReturn(retVal1).when(q).validNSOfDomain(trans, null);
-        
-        
+    
+    
 //        String retVal="";
         try {
             /*retVal =*/ cassExecutorObj.namespace();
@@ -152,5 +152,5 @@ public class JU_CassExecutor {
 //        System.out.println(retVal);
 //        assertFalse(retVal);
     }
-    
+
 }

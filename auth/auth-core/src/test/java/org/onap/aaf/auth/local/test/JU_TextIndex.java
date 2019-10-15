@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,20 +63,20 @@ public class JU_TextIndex {
     DataFile datafile;
     @Mock
     File file;
-    
+
     private class AbsDataStub extends AbsData {
 
-        
+    
         public AbsDataStub(File dataf, char sepChar, int maxLineSize, int fieldOffset) {
             super(dataf, sepChar, maxLineSize, fieldOffset);
             // TODO Auto-generated constructor stub
-            
-        }
         
-    }
+        }
     
+    }
+
     @Before
-    public void setUp() throws IOException{    
+    public void setUp() throws IOException{
         char character = 'x';
         String filePath = "test/output_key";
         File keyfile = new File(filePath);
@@ -87,31 +87,31 @@ public class JU_TextIndex {
             w.write("a\nsdfasdfxasdf" + i + "\n");
         }
         w.close();
-        
+    
         datafile = new DataFile(keyfile, "r");
         datafile.open();
         datafile = new DataFile(keyfile, "rws");// "S" for synchronized
         datafile.open();
-        
+    
         trans = mock(Trans.class);
         TimeTaken ttMock = mock(TimeTaken.class);
         TimeTaken ttMock1 = mock(TimeTaken.class);
         when(trans.start("Open Files", Env.SUB)).thenReturn(ttMock);
         when(trans.start("Read", Env.SUB)).thenReturn(ttMock);
-        textIndex = new TextIndex(keyfile);    
+        textIndex = new TextIndex(keyfile);
         textIndex.close();
         textIndex.open();
         //textIndex.create(trans, datafile, 4, character, 2, 0);    //TODO: AAF-111 once actual input is aquired
         keyfile.delete();
-        
+    
         iter = textIndex.new Iter();
     }
-    
+
     @Test
     public void testClose() throws IOException {
         textIndex.close();
     }
-    
+
     @Test
     public void testFind() throws IOException {
         char character = 'x';
@@ -121,13 +121,13 @@ public class JU_TextIndex {
         Reuse reuse = ads.reuse();
         textIndex.find("a", reuse , 0);
     }
-    
+
     @Test
     public void testIterNext() {
         iter.next();
         iter.hasNext();
     }
-    
+
     @Test
     public void testIdx() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         TextIndex outerObject = new TextIndex(file);

@@ -31,7 +31,7 @@ import org.mockito.MockitoAnnotations;
 public class JU_BufferedCadiWrap {
     @Mock
     private HttpServletRequest request;
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);

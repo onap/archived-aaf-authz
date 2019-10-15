@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ public class Namespace implements Bytification {
     public Integer type;
     public String parent;
     public Namespace() {}
-    
+
     public Namespace(NsDAO.Data ndd) {
         name = ndd.name;
         description = ndd.description;
@@ -62,7 +62,7 @@ public class Namespace implements Bytification {
             }
         }
     }
-    
+
     public Namespace(NsDAO.Data ndd,List<String> owner, List<String> admin) {
         name = ndd.name;
         this.owner = owner;
@@ -108,7 +108,7 @@ public class Namespace implements Bytification {
         DataInputStream is = CassDAOImpl.toDIS(bb);
         /*int version = */Loader.readHeader(is,MAGIC,VERSION);
         // If Version Changes between Production runs, you'll need to do a switch Statement, and adequately read in fields
-        
+    
         byte[] buff = new byte[BUFF_SIZE];
         name = Loader.readString(is, buff);
         type = is.readInt();
@@ -116,7 +116,7 @@ public class Namespace implements Bytification {
         owner = Loader.readStringList(is,buff);
         description = Loader.readString(is,buff);
         parent = Loader.readString(is,buff);
-        
+    
     }
 
     /* (non-Javadoc)
@@ -126,7 +126,7 @@ public class Namespace implements Bytification {
     public int hashCode() {
         return name.hashCode();
     }
-    
+
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

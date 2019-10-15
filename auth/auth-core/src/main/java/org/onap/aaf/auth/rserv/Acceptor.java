@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import org.onap.aaf.misc.env.Trans;
 
 /**
  * Find Acceptable Paths and place them where TypeCode can evaluate.
- * 
+ * <p>
  * If there are more than one, TypeCode will choose based on "q" value
  * @author Jonathan
  *
@@ -38,12 +38,12 @@ import org.onap.aaf.misc.env.Trans;
 class Acceptor<TRANS extends Trans>  {
     private List<Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>>> types;
     List<Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>>> acceptable;
-    
+
     public Acceptor(List<Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>>> types) {
         this.types = types;
         acceptable = new ArrayList<>();
     }
-    
+
     private boolean eval(HttpCode<TRANS,?> code, String str, List<String> props) {
 //        int plus = str.indexOf('+');
 //        if (plus<0) {
@@ -67,7 +67,7 @@ class Acceptor<TRANS extends Trans>  {
 //            String nstr;
 //            while (prev!=0) {
 //                nstr = first + (plus<0?str.substring(prev):str.substring(prev,plus));
-//                
+//            
 //                for (Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> type : types) {
 //                    if (type.x.equals(nstr)) {
 //                        acceptable.add(type);
@@ -115,7 +115,7 @@ class Acceptor<TRANS extends Trans>  {
 
     /**
      * parse 
-     * 
+     * <p>
      * Note: I'm processing by index to avoid lots of memory creation, which speeds things
      * up for this time critical section of code. 
      * @param code
@@ -124,7 +124,7 @@ class Acceptor<TRANS extends Trans>  {
      */
     protected boolean parse(HttpCode<TRANS, ?> code, String cntnt) {
         byte bytes[] = cntnt.getBytes();
-        
+    
         int cis,cie=-1,cend;
         int sis,sie,send;
         String name;
@@ -133,7 +133,7 @@ class Acceptor<TRANS extends Trans>  {
             // Clear these in case more than one Semi
             props.clear(); // on loop, do not want mixed properties
             name=null;
-            
+        
             cis = cie+1; // find comma start
             while (cis<bytes.length && Character.isSpaceChar(bytes[cis]))++cis;
             cie = cntnt.indexOf(',',cis); // find comma end
@@ -143,7 +143,7 @@ class Acceptor<TRANS extends Trans>  {
             sie=cis-1; 
             do {
                 sis = sie+1;  // semi start is one after previous end
-                while (sis<bytes.length && Character.isSpaceChar(bytes[sis]))++sis;    
+                while (sis<bytes.length && Character.isSpaceChar(bytes[sis]))++sis;
                 sie = cntnt.indexOf(';',sis);
                 send = sie>cend || sie<0?cend:sie;  // if the Semicolon is after the comma, or non-existent, use comma end, else keep
                 while (send>sis && Character.isSpaceChar(bytes[send-1]))--send;
@@ -165,5 +165,5 @@ class Acceptor<TRANS extends Trans>  {
         } while (cie>=0); // loop to next comma
         return false; // didn't get even one match
     }
-    
+
 }

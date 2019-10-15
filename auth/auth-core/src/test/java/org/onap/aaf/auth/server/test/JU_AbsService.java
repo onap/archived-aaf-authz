@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,9 +63,9 @@ import java.security.Principal;
 import javax.servlet.Filter;
 
 public class JU_AbsService {
-    
+
     ByteArrayOutputStream outStream;
-    
+
     private class AbsServiceStub extends AbsService {
 
         public AbsServiceStub(Access access, BasicEnv env) throws CadiException {
@@ -84,31 +84,31 @@ public class JU_AbsService {
             // TODO Auto-generated method stub
             return null;
         }
-    
+
     }
-    
+
     @Before
     public void setUp() {
         outStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outStream));
     }
-    
+
     @After
     public void tearDown() {
         System.setOut(System.out);
     }
-    
+
     @Test
     public void testStub() throws CadiException {
         BasicEnv bEnv = new BasicEnv();
         PropAccess prop = new PropAccess();
-        
+    
         prop.setProperty(Config.AAF_LOCATOR_ENTRIES, "te.st");
         prop.setProperty(Config.AAF_LOCATOR_VERSION, "te.st");
         prop.setLogLevel(Level.DEBUG);
         AbsServiceStub absServiceStub = new AbsServiceStub(prop, bEnv);    //Testing other branches requires "fails" due to exception handling, will leave that off for now.
     }
-    
+
 }
 
 

@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ public class JU_ConfigPrincipal {
     private final String b64encoded = "VXNlcjpwYXNz";
 
     private Field content_field;
-    
+
     @Before
     public void setup() throws NoSuchFieldException {
         content_field = ConfigPrincipal.class.getDeclaredField("content");
@@ -50,7 +50,7 @@ public class JU_ConfigPrincipal {
     @Test
     public void testConfigPrincipalStringString() throws IOException, IllegalArgumentException, IllegalAccessException {
         ConfigPrincipal p =  new ConfigPrincipal(name, pass);
-        
+    
         assertThat(p.getName(), is(name));
         assertThat(p.toString(), is(name));
         assertThat(p.getCred(), is(pass.getBytes()));
@@ -65,7 +65,7 @@ public class JU_ConfigPrincipal {
     @Test
     public void testConfigPrincipalStringByteArray() throws IOException, IllegalArgumentException, IllegalAccessException {
         ConfigPrincipal p =  new ConfigPrincipal(name, pass.getBytes());
-        
+    
         assertThat(p.getName(), is(name));
         assertThat(p.toString(), is(name));
         assertThat(p.getCred(), is(pass.getBytes()));
@@ -76,5 +76,5 @@ public class JU_ConfigPrincipal {
         // One more time for coverage purposes
         assertThat(p.getAsBasicAuthHeader(), is("Basic " + b64encoded));
     }
-    
+
 }

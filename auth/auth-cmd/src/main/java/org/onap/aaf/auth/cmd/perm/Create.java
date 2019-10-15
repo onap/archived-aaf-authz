@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import aaf.v2_0.PermRequest;
 import aaf.v2_0.RoleRequest;
 
 /**
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -64,7 +64,7 @@ public class Create extends Cmd {
                 String[] roles = roleCommas==null?null:roleCommas.split("\\s*,\\s*");
                 boolean force = aafcli.forceString()!=null;
                 int rv;
-                
+            
                 if (roles!=null && force) { // Make sure Roles are Created
                     RoleRequest rr = new RoleRequest();
                     for (String role : roles) {
@@ -114,11 +114,11 @@ public class Create extends Cmd {
                                     case 201:
                                     case 409:break;
                                     default: 
-                                        
+                                    
                                 }
                             }
                         }
-                        
+                    
                         try {
                             if (201!=(rv=((Perm)parent)._exec(0, 
                                     new String[] {"grant",pr.getType(),pr.getInstance(),pr.getAction(),roleCommas}))) {
@@ -144,7 +144,7 @@ public class Create extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int _indent, StringBuilder sb) {
             int indent = _indent;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,14 +47,14 @@ import org.onap.aaf.cadi.util.Chmod;
  * AES Class wraps Cipher AES, 128
  * NOTE: While not explicitly stated in JavaDocs, Ciphers AND SecretKeySpecs are NOT ThreadSafe
  * Ciphers take time to create, therefore, we have pooled them.
- * 
+ * <p>
  * @author Jonathan
  *
  */
 public class AES implements Encryption {
     public static final String AES = AES.class.getSimpleName();
     public static final int AES_KEY_SIZE = 128; // 256 isn't supported on all JDKs.
-        
+    
     private SecretKeySpec aeskeySpec;
 
     public static SecretKey newKey() throws NoSuchAlgorithmException {
@@ -66,7 +66,7 @@ public class AES implements Encryption {
     public AES(byte[] aeskey, int offset, int len){
         aeskeySpec = new SecretKeySpec(aeskey,offset,len,AES);
     }
-    
+
     public byte[] encrypt(byte[] in) throws CadiException {
         try {
             Cipher c = Cipher.getInstance(AES);
@@ -76,7 +76,7 @@ public class AES implements Encryption {
             throw new CadiException(e);
         }
     }
-    
+
     public byte[] decrypt(byte[] in) throws CadiException {
         try {
             Cipher c = Cipher.getInstance(AES);
@@ -86,7 +86,7 @@ public class AES implements Encryption {
             throw new CadiException(e);
         }
     }
-    
+
     public void save(File keyfile) throws IOException {
         FileOutputStream fis = new FileOutputStream(keyfile);
         try {
@@ -112,7 +112,7 @@ public class AES implements Encryption {
             return null;  // should never get here.
         }
     }
-    
+
     public CipherInputStream inputStream(InputStream is, boolean encrypt) {
         try {
             Cipher c = Cipher.getInstance(AES);

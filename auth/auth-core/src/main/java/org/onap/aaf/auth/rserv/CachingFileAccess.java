@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ import org.onap.aaf.misc.env.Store;
 import org.onap.aaf.misc.env.Trans;
 /*
  * CachingFileAccess
- * 
+ * <p>
  * Author: Jonathan Gathman, Gathsys 2010
  *  
  */
@@ -71,7 +71,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             }
         }
     }
-    
+
     private static String MAX_AGE = "max-age=3600"; // 1 hour Caching
     private final Map<String,String> typeMap;
     private final NavigableMap<String,Content> content;
@@ -99,7 +99,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     // It's purpose is to protect, to some degree the command, even though it is HTTP, allowing 
     // local batch files to, for instance, clear caches on resetting of files.
     private String clear_command;
-    
+
     public CachingFileAccess(EnvJAXB env, String ... args) throws IOException {
         super(null,"Caching File Access");
         setEnv(env,args);
@@ -130,16 +130,16 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         typeMap.put("class", "application/java");
         typeMap.put("props", "text/plain");
         typeMap.put("jks", "application/octet-stream");
-        
+    
         // Fonts
         typeMap.put("ttf","font/ttf");
         typeMap.put("woff","font/woff");
         typeMap.put("woff2","font/woff2");
 
-        
+    
         timer = new Timer("Caching Cleanup",true);
         timer.schedule(new Cleanup(content,500),60000,60000);
-        
+    
         // Property params
         web_path = env.get(env.staticSlot(CFA_WEB_PATH));
         env.init().log("CachingFileAccess path: " + new File(web_path).getCanonicalPath());
@@ -150,18 +150,18 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         } else {
           checkInterval=Long.parseLong((String)obj);
         }
-        
+    
         obj = env.get(env.staticSlot(CFA_MAX_SIZE), 512000);    // Default is max file 500k
         if (obj instanceof Integer) {
           maxItemSize=(Integer)obj;
         } else {
           maxItemSize =Integer.parseInt((String)obj);
         }
-              
+          
          clear_command = env.getProperty(CFA_CLEAR_COMMAND,null);
     }
 
-    
+
 
     @Override
     public void handle(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -190,12 +190,12 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     public String webPath() {
         return web_path;
     }
-    
+
     /**
      * Reset the Cleanup size and interval
-     * 
+     * <p>
      * The size and interval when started are 500 items (memory size unknown) checked every minute in a background thread.
-     * 
+     * <p>
      * @param size
      * @param interval
      */
@@ -204,13 +204,13 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         timer = new Timer();
         timer.schedule(new Cleanup(content,size), interval, interval);
     }
-    
 
-    
+
+
     /**
      * Load a file, first checking cache
-     * 
-     * 
+     * <p>
+     * <p>
      * @param logTarget - logTarget can be null (won't log)
      * @param dataRoot - data root storage directory
      * @param key - relative File Path
@@ -245,11 +245,11 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                 }
             }
         }
-        if (c==null) {    
+        if (c==null) {
             if (logTarget!=null) {
                 logTarget.log("File Read: ",key);
             }
-            
+        
             if (f==null){
                 f = new File(fileName);
             }
@@ -266,7 +266,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                         c = new CachedContent(f);
                         cacheMe = checkInterval>0;
                     }
-                    
+                
                     if (mediaType==null) { // determine from file Ending
                         int idx = key.lastIndexOf('.');
                         String subkey = key.substring(++idx);
@@ -279,9 +279,9 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                         c.contentType=mediaType;
                         c.attachmentOnly = false;
                     }
-                    
+                
                     c.date = f.lastModified();
-                    
+                
                     if (cacheMe) {
                         content.put(key, c);
                     }
@@ -297,14 +297,14 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         c.access = systime;
         return c;
     }
-    
+
 
     public void invalidate(String key) {
         content.remove(key);
     }
-    
+
     private static final Content NULL=new Content() {
-        
+    
         @Override
         public void setHeader(HttpServletResponse resp) {
             resp.setStatus(404/*NOT_FOUND_404*/);
@@ -318,22 +318,22 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         @Override
         public void write(OutputStream os) throws IOException {
         }
-        
+    
     };
 
     private static abstract class Content {
         private long date;   // date of the actual artifact (i.e. File modified date)
         private long access; // last accessed
-        
+    
         protected String  contentType;
         protected boolean attachmentOnly;
-        
+    
         public void setHeader(HttpServletResponse resp) {
             resp.setStatus(200/*OK_200*/);
             resp.setHeader("Content-Type",contentType);
             resp.setHeader("Cache-Control", MAX_AGE);
         }
-        
+    
         public abstract void write(Writer writer) throws IOException;
         public abstract void write(OutputStream os) throws IOException;
 
@@ -344,11 +344,11 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         public DirectFileContent(File f) {
             file = f;
         }
-        
+    
         public String toString() {
             return file.getName();
         }
-        
+    
         public void write(Writer writer) throws IOException {
             FileReader fr = new FileReader(file);
             char[] buff = new char[1024];
@@ -387,7 +387,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 
         public DirectoryContent(File directory, boolean isRoot) {
             notRoot = !isRoot;
-        
+    
             files = directory.listFiles();
             Arrays.sort(files,new Comparator<File>() {
                 @Override
@@ -399,7 +399,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                         // if numbers, are the numbers in the same start position
                         int i1 = m1.start();
                         int i2 = m2.start();
-                        
+                    
                         // If same start position and the text is the same, then reverse sort
                         if (i1==i2 && f1.getName().startsWith(f2.getName().substring(0,i1))) {
                             // reverse sort files that start similarly, but have numbers in them
@@ -408,14 +408,14 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                     }
                     return f1.compareTo(f2);
                 }
-                
+            
             });
             name = directory.getName();
             attachmentOnly = false;
             contentType = "text/html";
         }
-        
     
+
         @Override
         public void write(Writer w) throws IOException {
             w.append(H1);
@@ -435,19 +435,19 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             w.append(F);
             w.flush();
         }
-    
+
         @Override
         public void write(OutputStream os) throws IOException {
             write(new OutputStreamWriter(os));
         }
-    
+
     }
 
     private static class CachedContent extends Content {
         private byte[] data;
         private int end;
         private char[] cdata; 
-        
+    
         public CachedContent(File f) throws IOException {
             // Read and Cache
             ByteBuffer bb = ByteBuffer.allocate((int)f.length());
@@ -462,11 +462,11 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             end = bb.position();
             cdata=null;
         }
-        
+    
         public String toString() {
             return Arrays.toString(data);
         }
-        
+    
         public void write(Writer writer) throws IOException {
             synchronized(this) {
                 // do the String Transformation once, and only if actually used
@@ -495,24 +495,24 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     private static class Cleanup extends TimerTask {
         private int maxSize;
         private NavigableMap<String, Content> content;
-        
+    
         public Cleanup(NavigableMap<String, Content> content, int size) {
             maxSize = size;
             this.content = content;
         }
-        
+    
         private class Comp implements Comparable<Comp> {
             public Map.Entry<String, Content> entry;
-            
+        
             public Comp(Map.Entry<String, Content> en) {
                 entry = en;
             }
-            
+        
             @Override
             public int compareTo(Comp o) {
                 return (int)(entry.getValue().access-o.entry.getValue().access);
             }
-            
+        
         }
         @SuppressWarnings("unchecked")
         @Override

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,24 +61,24 @@ public class JU_Rcli {
     @Mock HttpServletRequest reqMock;
     @Mock HttpServletResponse respMock;
     @Mock ServletInputStream isMock;
-    
+
     private final static String uriString = "example.com";
     private final static String apiVersion = "v1.0";
     private final static String contentType = "contentType";
-    
+
     private static URI uri;
     private static Enumeration<String> enumeration;
 
     private Client client;
-    
+
     @Before
     public void setup() throws URISyntaxException, IOException {
         MockitoAnnotations.initMocks(this);
-        
+    
         when(dfMock.getTypeClass()).thenReturn(HttpURLConnection.class);
         when(dfMock.newData()).thenReturn(dataMock);
         when(dataMock.out((TYPE) any())).thenReturn(dataMock);
-        
+    
         when(reqMock.getInputStream()).thenReturn(isMock);
         when(isMock.read((byte[]) any())).thenReturn(-1);
 
@@ -86,7 +86,7 @@ public class JU_Rcli {
         enumeration = new CustomEnumeration();
         client = new Client();
     }
-    
+
     @Test
     public void createTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
@@ -112,7 +112,7 @@ public class JU_Rcli {
         rcli.create("No question mark", contentType);
         rcli.create("question?mark", contentType);
     }
-    
+
     @Test
     public void postFormTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
@@ -121,7 +121,7 @@ public class JU_Rcli {
         rcli.postForm(null, dfMock);
         rcli.postForm("No question mark", dfMock);
         rcli.postForm("question?mark", dfMock);
-        
+    
         rcli.type(Data.TYPE.JSON);
         rcli.postForm("question?mark", dfMock);
 
@@ -145,7 +145,7 @@ public class JU_Rcli {
 
         rcli.readPost("First string", "Second string");
     }
-    
+
     @Test
     public void readTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
@@ -189,7 +189,7 @@ public class JU_Rcli {
         when(reqMock.getRequestURI()).thenReturn(uriString);
         when(reqMock.getHeaderNames()).thenReturn(enumeration);
         rcli.transfer(reqMock, respMock, "string", 200);
-        
+    
         // coverage...
         when(reqMock.getMethod()).thenReturn("GET");
         rcli.transfer(reqMock, respMock, "string", 200);
@@ -207,13 +207,13 @@ public class JU_Rcli {
     public void accessorMutatorTest() throws URISyntaxException {
         RcliStub rcli = new RcliStub();
         Rcli<?> rcliClone = rcli.forUser(null);
-        
+    
         rcli = new RcliStub(uri);
         assertThat(rcli.toString(), is(uriString));
         assertThat(rcli.getURI(), is(uri));
         assertThat(rcli.getReadTimeout(), is(5000));
         assertThat(rcli.getConnectionTimeout(), is(3000));
-        
+    
         rcli.connectionTimeout(3001);
         assertThat(rcli.getConnectionTimeout(), is(3001));
         rcli.readTimeout(5001);
@@ -224,7 +224,7 @@ public class JU_Rcli {
         assertThat(rcli.typeString(HttpURLConnection.class), is("application/HttpURLConnection+xml;version=" + apiVersion));
         rcli.apiVersion(null);
         assertThat(rcli.typeString(HttpURLConnection.class), is("application/HttpURLConnection+xml"));
-        
+    
         rcliClone = rcli.forUser(null);
         assertThat(rcliClone.toString(), is(uriString));
     }
@@ -240,7 +240,7 @@ public class JU_Rcli {
         public int getReadTimeout() { return readTimeout; }
         public int getConnectionTimeout() { return connectionTimeout; }
     }
-    
+
     private class CustomEnumeration implements Enumeration<String> {
         private int idx = 0;
         private final String[] elements = {"This", "is", "a", "test"};
@@ -276,7 +276,7 @@ public class JU_Rcli {
         @Override public <T> Future<T> future(T t) { return null; } 
         @Override public Future<Void> future(HttpServletResponse resp, int expected) throws APIException { return null; } 
     }
-    
+
     //private class FutureStub implements Future<String> {
     //}
 }

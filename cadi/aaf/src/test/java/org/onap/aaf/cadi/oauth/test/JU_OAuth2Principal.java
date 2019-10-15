@@ -35,16 +35,16 @@ import org.onap.aaf.cadi.oauth.TokenPerm;
 public class JU_OAuth2Principal {
 
     @Mock TokenPerm tpMock;
-    
-    
+
+
     private static final String username = "username";
-    
+
     private static final byte[] hash = "hashstring".getBytes();
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        
+    
         when(tpMock.getUsername()).thenReturn(username);
     }
 

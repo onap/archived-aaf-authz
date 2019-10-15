@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public class HMangr {
     private int readTimeout, connectionTimeout;
     public final Locator<URI> loc;
     private Access access;
-    
+
     public HMangr(Access access, Locator<URI> loc) throws LocatorException {
         readTimeout = 10000;
         connectionTimeout=3000;
@@ -60,9 +60,9 @@ public class HMangr {
     /**
      * Reuse the same service.  This is helpful for multiple calls that change service side cached data so that 
      * there is not a speed issue.
-     * 
+     * <p>
      * If the service goes down, another service will be substituted, if available.
-     * 
+     * <p>
      * @param access
      * @param loc
      * @param ss
@@ -107,7 +107,7 @@ public class HMangr {
                 } else {
                     client.setSecuritySetter(ss);
                 }
-                
+            
                 retry = false;
                 try {
                     ret = retryable.code(client);
@@ -155,8 +155,8 @@ public class HMangr {
         }
         return ret;
     }
-    
-    
+
+
     public<RET> RET best(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable) throws LocatorException, CadiException, APIException {
         retryable.item(loc.best());
         return same(ss,retryable);
@@ -168,7 +168,7 @@ public class HMangr {
     public<RET> RET all(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify) throws LocatorException, CadiException, APIException {
         return call(ss,retryable,notify,null);
     }
-    
+
     public <RET> RET allExcept(SecuritySetter<HttpURLConnection> ss, Retryable<RET> retryable,boolean notify, String selfHost) throws LocatorException, CadiException, APIException {
         return call(ss,retryable,notify,selfHost);
     }
@@ -211,12 +211,12 @@ public class HMangr {
                 access.log(Level.ERROR,"Connection to",uri,"refused during call to all services");
             }
         }
-            
+        
         if (ret == null && notify) 
             throw new LocatorException("No available clients to call");
         return ret;
     }
-    
+
 
     public void close() {
         // TODO Anything here?
@@ -230,7 +230,7 @@ public class HMangr {
     public int readTimeout() {
         return readTimeout;
     }
-    
+
     public void connectionTimeout(int t) {
         connectionTimeout = t;
     }

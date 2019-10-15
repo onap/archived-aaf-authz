@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,10 +26,10 @@ import org.onap.aaf.cadi.taf.TafResp;
 
 /**
  * TAF - Transmutative Assertion Framework.  
- * 
+ * <p>
  * This main Interface embodies the essential of the assertion, where a number of different TAFs might be used to authenticate
  * and that authentication to be recognized through other elements.
- * 
+ * <p>
  * Concept by Robert Garskof.  Implemented by Jonathan Gathman
  *  
  * @author Jonathan
@@ -44,14 +44,14 @@ public interface Taf {
      * Star Trek), we (starting with Robert Garskof) use the terms "Carbon Based Life Form" (CBLF) for mechanisms with people at the end of them, or 
      * "Silicon Based Life Forms" (SBLF) to indicate machine only interactions.  I have added "LFN" for (Life-Form Neutral) to aid identifying
      * processes for which it doesn't matter whether there is a human at the immediate end of the chain, or cannot be determined mechanically.  
-     * 
+     * <p>
      * The variable parameter is not necessarily ideal, but with too many unknown Tafs to be created, flexibility,
      * is unfortunately required at this point.  Future versions could lock this down more.  Jonathan 10/18/2012
-     * 
+     * <p>
      * @param lifeForm
      * @param info
      * @return
      */
     public TafResp validate(LifeForm reading, String ... info);
-    
+
 }

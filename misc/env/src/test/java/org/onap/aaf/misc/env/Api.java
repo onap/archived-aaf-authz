@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -170,7 +170,7 @@ public class Api {
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         * 
          */
         public String getMeth() {
             return meth;
@@ -182,7 +182,7 @@ public class Api {
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         * 
          */
         public void setMeth(String value) {
             this.meth = value;
@@ -194,7 +194,7 @@ public class Api {
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         * 
          */
         public String getPath() {
             return path;
@@ -206,7 +206,7 @@ public class Api {
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         * 
          */
         public void setPath(String value) {
             this.path = value;
@@ -247,7 +247,7 @@ public class Api {
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         * 
          */
         public String getDesc() {
             return desc;
@@ -259,7 +259,7 @@ public class Api {
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         * 
          */
         public void setDesc(String value) {
             this.desc = value;

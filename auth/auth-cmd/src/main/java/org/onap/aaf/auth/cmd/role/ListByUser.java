@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ import aaf.v2_0.UserRoles;
  */
 public class ListByUser extends Cmd {
     private static final String HEADER = "List Roles for User ";
-    
+
     public ListByUser(List parent) {
         super(parent,"user", 
                 new Param("id",true),
@@ -60,7 +60,7 @@ public class ListByUser extends Cmd {
     @Override
     public int _exec( int idx, final String ... args) throws CadiException, APIException, LocatorException {
         final String user=fullID(args[idx]);
-        
+    
 
         return same(new Retryable<Integer>() {
             @Override
@@ -120,14 +120,14 @@ public class ListByUser extends Cmd {
                         lr.add(r);
                     }
                 }
-                
-                
+            
+            
                 ((List)parent).report(roles,perms,urs,HEADER,user);
                 return code;
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
         detailLine(sb,indent,HEADER);

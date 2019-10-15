@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public abstract class CA {
 
     public static final Set<String> EMPTY = Collections.unmodifiableSet(new HashSet<>());
 
-    
+
     private final String name;
     private final String env;
     private MessageDigest messageDigest;
@@ -80,9 +80,9 @@ public abstract class CA {
             throw new CertException(prefix + ".perm_type" + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
         }
         caIssuerDNs = Split.splitTrim(':', access.getProperty(Config.CADI_X509_ISSUERS, null));
-        
+    
         String tag = CA.CM_CA_PREFIX+caName+CA.CM_CA_BASE_SUBJECT;
-        
+    
         String fields = access.getProperty(tag, null);
         if (fields==null) {
             throw new CertException(tag + MUST_EXIST_TO_CREATE_CSRS_FOR + caName);
@@ -94,7 +94,7 @@ public abstract class CA {
                 throw new CertException("email address is not allowed in " + CM_CA_BASE_SUBJECT);
             }
         }
-        
+    
         idDomains = new ArrayList<>();
         StringBuilder sb = null;
         for (String s : Split.splitTrim(',', access.getProperty(CA.CM_CA_PREFIX+caName+".idDomains", ""))) {
@@ -111,7 +111,7 @@ public abstract class CA {
         if (sb!=null) {
             access.printf(Level.INIT, "CA '%s' supports Personal Certificates for %s", caName, sb);
         }
-        
+    
         String dataDir = access.getProperty(CM_PUBLIC_DIR,null);
         if (dataDir!=null) {
             File data = new File(dataDir);
@@ -132,7 +132,7 @@ public abstract class CA {
                             FileInputStream fis = new FileInputStream(crt);
                             try {
                                 int read = fis.read(bytes);
-                                if (read>0) {    
+                                if (read>0) {
                                     addTrustedCA(new String(bytes));
                                 }
                             } finally {
@@ -166,7 +166,7 @@ public abstract class CA {
             caIssuerDNs = newsa;
         }
     }
-    
+
     protected synchronized void addTrustedCA(final String crtString) {
         String crt;
         if (crtString.endsWith("\n")) {
@@ -185,19 +185,19 @@ public abstract class CA {
         temp[trustedCAs.length]=crt;
         trustedCAs = temp;
     }
-    
+
     public String[] getCaIssuerDNs() {
         return caIssuerDNs;
     }
-    
+
     public String[] getTrustedCAs() {
         return trustedCAs;
     }
-    
+
     public boolean shouldAddEnvTag() {
         return env_tag; 
     }
-    
+
     public String getEnv() {
         return env;
     }
@@ -213,16 +213,16 @@ public abstract class CA {
     public String getName() {
         return name;
     }
-    
-    
+
+
     public String getPermNS() {
         return permNS;
     }
-    
+
     public String getPermType() {
         return permType;
     }
-    
+
     public abstract X509andChain sign(Trans trans, CSRMeta csrmeta) throws IOException, CertException;
 
     /* (non-Javadoc)

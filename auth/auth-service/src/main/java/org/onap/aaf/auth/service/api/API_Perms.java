@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,7 +52,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 String scopes = req.getParameter("scopes");
                 Result<Void> r;
                 if (scopes==null) {
@@ -70,7 +70,7 @@ public class API_Perms {
             }
 
         });
-        
+    
         /** 
          *  gets all permissions by user name
          */
@@ -79,7 +79,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getPermsByUserWithAAFQuery(trans, req, resp, pathParam(req, "user"));
                 switch(r.status) {
                     case OK: 
@@ -104,7 +104,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.createPerm(trans, req, resp);
                 switch(r.status) {
                     case OK: 
@@ -124,7 +124,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getPermsByName(trans, resp, 
                         pathParam(req, "type"),
                         URLDecoder.decode(pathParam(req, "instance"),Config.UTF_8),
@@ -139,7 +139,7 @@ public class API_Perms {
             }
 
         });
-        
+    
         /** 
          *  get children of Permission
          */
@@ -148,7 +148,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getPermsByType(trans, resp, pathParam(req, "type"));
                 switch(r.status) {
                     case OK: 
@@ -161,7 +161,7 @@ public class API_Perms {
 
         });
 
-        
+    
         /**
          * gets all permissions by role name
          */
@@ -170,7 +170,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getPermsForRole(trans, resp, pathParam(req, "role"));
                 switch(r.status) {
                     case OK: 
@@ -190,7 +190,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getPermsByNS(trans, resp, pathParam(req, "ns"));
                 switch(r.status) {
                     case OK: 
@@ -201,7 +201,7 @@ public class API_Perms {
                 }
             }
         });
-        
+    
         /**
          * Set a perm's description
          */
@@ -211,7 +211,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.updatePermDescription(trans, req, resp);
                 switch(r.status) {
                     case OK: 
@@ -221,8 +221,8 @@ public class API_Perms {
                         context.error(trans,resp,r);
                 }
             }
-        });    
-        
+        });
+    
         /**
          * Update a permission with a rename
          */
@@ -231,7 +231,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.renamePerm(trans, req, resp, 
                         pathParam(req, "type"), 
                         URLDecoder.decode(pathParam(req, "instance"),Config.UTF_8), 
@@ -244,8 +244,8 @@ public class API_Perms {
                         context.error(trans,resp,r);
                 }
             }
-        });    
-        
+        });
+    
         /**
          * Delete a Permission
          */
@@ -254,7 +254,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.deletePerm(trans,req, resp);
                 switch(r.status) {
                     case OK: 
@@ -266,8 +266,8 @@ public class API_Perms {
             }
         });
 
-        
-        
+    
+    
 
         /**
          * Delete a Permission
@@ -277,7 +277,7 @@ public class API_Perms {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.deletePerm(trans, resp,
                         pathParam(req, ":name"),
                         pathParam(req, ":type"),

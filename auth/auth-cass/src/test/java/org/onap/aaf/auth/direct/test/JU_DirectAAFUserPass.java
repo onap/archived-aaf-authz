@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,71 +49,71 @@ public class JU_DirectAAFUserPass {
 
     @Mock
     Question question;
-    
+
     @Mock
     AuthzEnv env;
-    
+
     @Mock
     AuthzTrans trans;
-    
+
     @Mock
     HttpServletRequest request;
-    
-    
+
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
         when(env.warn()).thenReturn(new LogTarget() {
-            
+        
             @Override
             public void printf(String fmt, Object... vars) {}
-            
+        
             @Override
             public void log(Throwable e, Object... msgs) {
                 e.getMessage();
                 e.printStackTrace();
                 msgs.toString();
-                
-            }
             
+            }
+        
             @Override
             public void log(Object... msgs) {
             }
-            
+        
             @Override
             public boolean isLoggable() {
-                
+            
                 return true;
             }
         });
         when(env.error()).thenReturn(new LogTarget() {
-            
+        
             @Override
             public void printf(String fmt, Object... vars) {}
-            
+        
             @Override
             public void log(Throwable e, Object... msgs) {
                 e.getMessage();
                 e.printStackTrace();
                 msgs.toString();
-                
-            }
             
+            }
+        
             @Override
             public void log(Object... msgs) {
             }
-            
+        
             @Override
             public boolean isLoggable() {
-                
+            
                 return true;
             }
         });
     }
-    
+
     @Test
     public void testUserPass() {
-        
+    
         DirectAAFUserPass aafLocatorObj=null;
         aafLocatorObj = new DirectAAFUserPass(env, question);
         Result<Date> retVal1 = new Result<Date>(null,0,"",new String[0]);
@@ -124,13 +124,13 @@ public class JU_DirectAAFUserPass {
             e.printStackTrace();
         }
         boolean retVal = aafLocatorObj.validate(null, null, null, null);
-        
-        assertFalse(retVal);
-    }    
     
+        assertFalse(retVal);
+    }
+
     @Test
     public void testUserPassStateisRequest() {
-        
+    
         DirectAAFUserPass aafLocatorObj=null;
         aafLocatorObj = new DirectAAFUserPass(env, question);
         Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
@@ -141,14 +141,14 @@ public class JU_DirectAAFUserPass {
             e.printStackTrace();
         }
         boolean retVal = aafLocatorObj.validate(null, null, null, request);
-        
+    
 //        System.out.println(retVal);
         assertFalse(retVal);
     }
-    
+
     @Test
     public void testUserPassStateNotNull() {
-        
+    
         DirectAAFUserPass aafLocatorObj=null;
         aafLocatorObj = new DirectAAFUserPass(env, question);
         Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
@@ -159,14 +159,14 @@ public class JU_DirectAAFUserPass {
             e.printStackTrace();
         }
         boolean retVal = aafLocatorObj.validate(null, null, null, "test");
-        
+    
 //        System.out.println(retVal);
         assertFalse(retVal);
     }
-    
+
     @Test
     public void testUserPassTransChk() {
-        
+    
         DirectAAFUserPass aafLocatorObj=null;
         aafLocatorObj = new DirectAAFUserPass(env, question);
         Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
@@ -177,14 +177,14 @@ public class JU_DirectAAFUserPass {
             e.printStackTrace();
         }
         boolean retVal = aafLocatorObj.validate(null, null, null, trans);
-        
+    
 //        System.out.println(retVal);
         assertFalse(retVal);
     }
-    
+
     @Test
     public void testUserPassTransIpNotNull() {
-        
+    
         DirectAAFUserPass aafLocatorObj=null;
         aafLocatorObj = new DirectAAFUserPass(env, question);
         Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
@@ -196,14 +196,14 @@ public class JU_DirectAAFUserPass {
             e.printStackTrace();
         }
         boolean retVal = aafLocatorObj.validate(null, null, null, trans);
-        
+    
 //        System.out.println(retVal);
         assertFalse(retVal);
     }
-    
+
     @Test
     public void testUserExceptionChk() {
-        
+    
         DirectAAFUserPass aafLocatorObj=null;
         aafLocatorObj = new DirectAAFUserPass(env, question);
         Result<Date> retVal1 = new Result<Date>(null,1,"",new String[0]);
@@ -215,9 +215,9 @@ public class JU_DirectAAFUserPass {
 //            e.printStackTrace();
         }
         boolean retVal = aafLocatorObj.validate(null, null, null, trans);
-        
+    
 //        System.out.println(retVal);
         assertFalse(retVal);
     }
-    
+
 }

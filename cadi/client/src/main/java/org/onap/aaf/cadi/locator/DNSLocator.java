@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import org.onap.aaf.cadi.LocatorException;
 public class DNSLocator implements SizedLocator<URI> {
     private static enum Status {UNTRIED, OK, INVALID, SLOW};
     private static final int CHECK_TIME = 3000;
-    
+
     private String host, protocol;
     private Access access;
     private Host[] hosts;
@@ -41,7 +41,7 @@ public class DNSLocator implements SizedLocator<URI> {
     private String suffix;
 
     private int size = 1; // initial, until refreshed.
-    
+
     public DNSLocator(Access access, String protocol, String host, String range) {
         this.host = host;
         this.protocol = protocol;
@@ -164,7 +164,7 @@ public class DNSLocator implements SizedLocator<URI> {
         }
         return false;
     }
-    
+
     private String parseHostAndPorts(String aaf_locate, int _start, int defaultPort) throws LocatorException {
         int slash, start;
         int colon = aaf_locate.indexOf(':',_start);
@@ -193,7 +193,7 @@ public class DNSLocator implements SizedLocator<URI> {
                 if(slash>=0) {
                     suffix = aaf_locate.substring(slash);
                 }
-                
+            
             } else {
                 slash = aaf_locate.indexOf('/', start);
                 if (slash == start) {
@@ -211,7 +211,7 @@ public class DNSLocator implements SizedLocator<URI> {
             host = slash<_start?aaf_locate.substring(_start):aaf_locate.substring(_start,slash);
             startPort = endPort = defaultPort;
         }
-        
+    
         return host;
     }
 
@@ -219,18 +219,18 @@ public class DNSLocator implements SizedLocator<URI> {
         private URI uri;
         private InetAddress ia;
         private Status status;
-        
+    
         public Host(InetAddress inetAddress, int port, String suffix) throws URISyntaxException {
             ia = inetAddress;
             uri = new URI(protocol,null,inetAddress.getCanonicalHostName(),port,suffix,null,null);
             status = Status.UNTRIED;
         }
-        
+    
         public String toString() {
             return uri.toString() + " - " + status.name();
         }
     }
-    
+
     private class DLItem implements Item {
         public DLItem(int i) {
             cnt = i;
@@ -238,7 +238,7 @@ public class DNSLocator implements SizedLocator<URI> {
 
         private int cnt;
     }
-    
+
     public void destroy() {}
 
     public int size() {

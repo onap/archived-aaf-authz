@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,11 +94,11 @@ public class Agent {
     public static final String PKCS12 = "pkcs12";
     public static final String JKS = "jks";
     private static final String SCRIPT="script";
-    
+
     private static final String CM_VER = "1.0";
     public static final int PASS_SIZE = 24;
     private static int TIMEOUT;
-    
+
     private static RosettaDF<CertificateRequest> reqDF;
     private static RosettaDF<CertInfo> certDF;
     private static RosettaDF<Artifacts> artifactsDF;
@@ -107,10 +107,10 @@ public class Agent {
     private static ErrMessage errMsg;
     private static Map<String,PlaceArtifact> placeArtifact;
     private static RosettaEnv env;
-    
+
     private static boolean doExit;
     private static AAFCon<?> aafcon;
-    
+
     private static List<String> CRED_TAGS = Arrays.asList(new String[] {
             Config.CADI_KEYFILE,
             Config.AAF_APPID, Config.AAF_APPPASS,
@@ -150,7 +150,7 @@ public class Agent {
             try {
                 AAFSSO aafsso=null;
                 PropAccess access=null; 
-                
+            
                 String hasEtc = null;
                 for(String a : args) {
                     if(a.startsWith(Config.CADI_PROP_FILES)) {
@@ -165,7 +165,7 @@ public class Agent {
                         configNoPasswd=true;
                     }
                 }
-                
+            
                 if(access==null) {
                     if(args.length>1 && args[1].contains("@")) {
                         String domain = FQI.reverseDomain(args[1]);
@@ -183,7 +183,7 @@ public class Agent {
                         }
                     } 
                 }
-                
+            
                 if(access==null) {
                     for(Entry<Object, Object> es : System.getProperties().entrySet()) {
                         if(Config.CADI_PROP_FILES.equals(es.getKey())) {
@@ -213,7 +213,7 @@ public class Agent {
                                 if (args.length>1) {
                                     if (!args[0].equals("keypairgen")) {
                                         props.put(Config.AAF_APPID, args[1]);
-                                    }    
+                                    }
                                 }
                                 return props;
                             }
@@ -221,7 +221,7 @@ public class Agent {
                         access = aafsso.access();
                     }
                 }
-                    
+                
                 if (aafsso!=null && aafsso.loginOnly()) {
                     aafsso.setLogDefault();
                     aafsso.writeFiles();
@@ -239,7 +239,7 @@ public class Agent {
                             access.setProperty(p.substring(0,eq), p.substring(eq+1));
                         }
                     }
-                    
+                
                     if (cmds.size()==0) {
                         if (aafsso!=null) {
                             aafsso.setLogDefault();
@@ -262,28 +262,28 @@ public class Agent {
                         System.out.println("     ** Type with no params for Tool Help");
                         System.out.println("     ** If using with Agent, preface with \"cadi\"");
                         System.out.println("   cadi <cadi tool params, see -?>");
-                        
+                    
                         if (doExit) {
                             System.exit(1);
                         }
                     }
-                    
-                    TIMEOUT = Integer.parseInt(env.getProperty(Config.AAF_CONN_TIMEOUT, "5000"));
                 
+                    TIMEOUT = Integer.parseInt(env.getProperty(Config.AAF_CONN_TIMEOUT, "5000"));
+            
                     reqDF = env.newDataFactory(CertificateRequest.class);
                     artifactsDF = env.newDataFactory(Artifacts.class);
                     certDF = env.newDataFactory(CertInfo.class);
                     configDF = env.newDataFactory(Configuration.class);
                     permDF = env.newDataFactory(Perms.class);
                     errMsg = new ErrMessage(env);
-        
+    
                     placeArtifact = new HashMap<>();
                     placeArtifact.put(JKS, new PlaceArtifactInKeystore(JKS));
                     placeArtifact.put(PKCS12, new PlaceArtifactInKeystore(PKCS12));
                     placeArtifact.put(FILE, new PlaceArtifactInFiles());
                     placeArtifact.put(PRINT, new PlaceArtifactOnStream(System.out));
                     placeArtifact.put(SCRIPT, new PlaceArtifactScripts());
-                    
+                
                     Trans trans = env.newTrans();
                     String token;
                     if ((token=access.getProperty("oauth_token"))!=null) {
@@ -294,13 +294,13 @@ public class Agent {
                         // show Std out again
                             aafsso.setLogDefault();
                             aafsso.setStdErrDefault();
-                            
+                        
                             /*urls=*/loadURLs(access);
                             aafsso.writeFiles();
                         }
-    
-                        
-    
+
+                    
+
                         String cmd = cmds.removeFirst();
                         switch(cmd) {
                             case "place":
@@ -457,7 +457,7 @@ public class Agent {
             }
             return alias!=null?alias:AAFSSO.cons.readLine("AppID: ");
         }
-        return cmds.removeFirst();    
+        return cmds.removeFirst();
     }
 
     private static String machine(Deque<String> cmds) throws UnknownHostException {
@@ -489,7 +489,7 @@ public class Agent {
         arti.setMechid(mechID!=null?mechID:AAFSSO.cons.readLine("AppID: "));
         arti.setMachine(machine!=null?machine:AAFSSO.cons.readLine("Machine (%s): ",InetAddress.getLocalHost().getHostName()));
         arti.setCa(AAFSSO.cons.readLine("CA: (%s): ","aaf"));
-        
+    
         String resp = AAFSSO.cons.readLine("Types [file,pkcs12,jks,script] (%s): ", PKCS12);
         for (String s : Split.splitTrim(',', resp)) {
             arti.getType().add(s);
@@ -506,7 +506,7 @@ public class Agent {
         arti.setOsUser(AAFSSO.cons.readLine("OS User (%s): ", System.getProperty("user.name")));
         arti.setRenewDays(Integer.parseInt(AAFSSO.cons.readLine("Renewal Days (%s):", "30")));
         arti.setNotification(toNotification(AAFSSO.cons.readLine("Notification (mailto owner):", "")));
-        
+    
         TimeTaken tt = trans.start("Create Artifact", Env.REMOTE);
         try {
             Future<Artifacts> future = aafcon.client(CM_VER).create("/cert/artifacts", artifactsDF, artifacts);
@@ -531,7 +531,7 @@ public class Agent {
         }
         return notification;
     }
-    
+
 
     private static void readArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
         String mechID = fqi(cmds);
@@ -541,7 +541,7 @@ public class Agent {
         try {
             Future<Artifacts> future = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF,"Authorization","Bearer " + trans.getProperty("oauth_token"));
-    
+
             if (future.get(TIMEOUT)) {
                 boolean printed = false;
                 for (Artifact a : future.value.getArtifact()) {
@@ -574,7 +574,7 @@ public class Agent {
             tt.done();
         }
     }
-    
+
     private static void copyArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
         String mechID = fqi(cmds);
         String machine = machine(cmds);
@@ -586,7 +586,7 @@ public class Agent {
             try {
                 Future<Artifacts> future = aafcon.client(CM_VER)
                         .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
-            
+        
                 if (future.get(TIMEOUT)) {
                     boolean printed = false;
                     for (Artifact a : future.value.getArtifact()) {
@@ -599,7 +599,7 @@ public class Agent {
                                 trans.error().printf("Call to AAF Certman failed, %s",
                                     errMsg.toMsg(fup));
                             }
-    
+
                             printed = true;
                         }
                     }
@@ -623,13 +623,13 @@ public class Agent {
         try {
             Future<Artifacts> fread = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
-    
+
             if (fread.get(TIMEOUT)) {
                 Artifacts artifacts = new Artifacts();
                 for (Artifact a : fread.value.getArtifact()) {
                     Artifact arti = new Artifact();
                     artifacts.getArtifact().add(arti);
-                    
+                
                     AAFSSO.cons.printf("For %s on %s\n", a.getMechid(),a.getMachine());
                     arti.setMechid(a.getMechid());
                     arti.setMachine(a.getMachine());
@@ -641,7 +641,7 @@ public class Agent {
                         else{sb.append(',');}
                         sb.append(t);
                     }
-    
+
                     String resp = AAFSSO.cons.readLine("Types [file,jks,pkcs12] (%s): ", sb);
                     for (String s : Split.splitTrim(',', resp)) {
                         arti.getType().add(s);
@@ -657,7 +657,7 @@ public class Agent {
                     arti.setOsUser(AAFSSO.cons.readLine("OS User (%s): ", a.getOsUser()));
                     arti.setRenewDays(Integer.parseInt(AAFSSO.cons.readLine("Renew Days (%s):", a.getRenewDays())));
                     arti.setNotification(toNotification(AAFSSO.cons.readLine("Notification (%s):", a.getNotification())));
-    
+
                 }
                 if (artifacts.getArtifact().size()==0) {
                     AAFSSO.cons.printf("Artifact for %s %s does not exist", mechID, machine);
@@ -678,16 +678,16 @@ public class Agent {
             tt.done();
         }
     }
-    
+
     private static void deleteArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
         String mechid = fqi(cmds);
         String machine = machine(cmds);
-        
+    
         TimeTaken tt = trans.start("Delete Artifact", Env.REMOTE);
         try {
             Future<Void> future = aafcon.client(CM_VER)
                     .delete("/cert/artifacts/"+mechid+"/"+machine,"application/json" );
-    
+
             if (future.get(TIMEOUT)) {
                 trans.info().printf("Call to AAF Certman successful %s, %s",mechid,machine);
             } else {
@@ -699,7 +699,7 @@ public class Agent {
         }
     }
 
-    
+
 
     private static boolean placeCerts(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
         boolean rv = false;
@@ -713,7 +713,7 @@ public class Agent {
         } else {
             key = machine;
         }
-        
+    
         TimeTaken tt = trans.start("Place Artifact", Env.REMOTE);
         try {
             Future<Artifacts> acf = aafcon.client(CM_VER)
@@ -761,7 +761,7 @@ public class Agent {
         }
         return rv;
     }
-    
+
     private static void notifyPlaced(Artifact a, boolean rv) {
     }
 
@@ -809,11 +809,11 @@ public class Agent {
                             } finally {
                                 fis.close();
                             }
-                            
+                        
                             File f = new File(dir,a.getNs()+".keyfile");
                             if (f.exists()) {
                                 Symm symm = ArtifactDir.getSymm(f);
-                                
+                            
                                 for (Iterator<Entry<Object,Object>> iter = props.entrySet().iterator(); iter.hasNext();) {
                                     Entry<Object,Object> en = iter.next();
                                     if (en.getValue().toString().startsWith("enc:")) {
@@ -835,13 +835,13 @@ public class Agent {
         }
 
     }
-    
+
     private static void keypairGen(final Trans trans, final PropAccess access, final Deque<String> cmds) throws IOException {
         final String fqi = fqi(cmds);
         final String ns = FQI.reverseDomain(fqi);
         File dir = new File(access.getProperty(Config.CADI_ETCDIR,".")); // default to current Directory
         File f = new File(dir,ns+".key");
-        
+    
         if (f.exists()) {
             String line = AAFSSO.cons.readLine("%s exists. Overwrite? (y/n): ", f.getCanonicalPath());
             if (!"Y".equalsIgnoreCase(line)) {
@@ -849,7 +849,7 @@ public class Agent {
                 return;
             }
         }
-        
+    
         KeyPair kp = Factory.generateKeyPair(trans);
         ArtifactDir.write(f, Chmod.to400, Factory.toString(trans, kp.getPrivate()));
         System.out.printf("Wrote %s\n", f.getCanonicalFile());
@@ -858,7 +858,7 @@ public class Agent {
         ArtifactDir.write(f, Chmod.to644, Factory.toString(trans, kp.getPublic()));
         System.out.printf("Wrote %s\n", f.getCanonicalFile());
     }
-    
+
     private static void config(Trans trans, PropAccess propAccess, String[] args, Deque<String> cmds) throws Exception {
         TimeTaken tt = trans.start("Get Configuration", Env.REMOTE);
         try {
@@ -880,7 +880,7 @@ public class Agent {
             for (String tag : LOC_TAGS) {
                 loc.add(tag, getProperty(propAccess, trans, false, tag, "%s: ",tag));
             }
-            
+        
             String keyfile = cred.getKeyPath();
             if(keyfile!=null) {
                 File fkeyfile = new File(keyfile);
@@ -901,13 +901,13 @@ public class Agent {
                     }
                 }
             }
-            
+        
             // load all properties that are already setup.
             Map<String, String> aaf_urls = loadURLs(propAccess);
             for(Entry<String, String> es : aaf_urls.entrySet()) {
                 app.add(es.getKey(), es.getValue());
             }
-            
+        
             app.add(Config.AAF_LOCATE_URL, Config.getAAFLocateUrl(propAccess));
             app.add(Config.AAF_ENV,propAccess, "DEV");
             String release = propAccess.getProperty(Config.AAF_DEPLOYED_VERSION);
@@ -923,7 +923,7 @@ public class Agent {
                     app.add(key, aaf_loc_prop.getValue().toString());
                 }
             }
-            
+        
             app.add(Config.AAF_APPID, fqi);
 
             String cts = propAccess.getProperty(Config.CADI_TRUSTSTORE);
@@ -950,7 +950,7 @@ public class Agent {
                                 throw new CadiException(cts + " does not exist");
                             }
                         }
-                        
+                    
                     }
                     if (!newTruststore.exists() && origTruststore.exists()) {
                         Files.copy(origTruststore.toPath(), newTruststore.toPath());
@@ -960,7 +960,7 @@ public class Agent {
                 System.out.println("New Truststore is " + newTruststore);
                 cred.add(Config.CADI_TRUSTSTORE, newTruststore.getCanonicalPath());
                 cred.add(Config.CADI_TRUSTSTORE_PASSWORD, "changeit" /* Java default */);
-                    
+                
                 String cpf = propAccess.getProperty(Config.CADI_PROP_FILES);
                 if (cpf!=null){
                     String[] propFiles = Split.splitTrim(File.pathSeparatorChar, cpf); 
@@ -1010,7 +1010,7 @@ public class Agent {
                     }
                 }
             }
-            
+        
             PropHolder.writeAll();
         } finally {
             tt.done();
@@ -1062,7 +1062,7 @@ public class Agent {
 
     /**
      * Check returns Error Codes, so that Scripts can know what to do
-     * 
+     * <p>
      *   0 - Check Complete, nothing to do
      *   1 - General Error
      *   2 - Error for specific Artifact - read check.msg
@@ -1078,10 +1078,10 @@ public class Agent {
         int exitCode=1;
         String mechID = fqi(cmds);
         String machine = machine(cmds);
-        
+    
         TimeTaken tt = trans.start("Check Certificate", Env.REMOTE);
         try {
-        
+    
             Future<Artifacts> acf = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
             if (acf.get(TIMEOUT)) {
@@ -1102,10 +1102,10 @@ public class Agent {
                             } finally {
                                 fis.close();
                             }
-                            
-                            String prop;                        
+                        
+                            String prop;                    
                             File f;
-    
+
                             if ((prop=trans.getProperty(Config.CADI_KEYFILE))==null ||
                                 !(f=new File(prop)).exists()) {
                                     trans.error().printf("Keyfile must exist to check Certificates for %s on %s",
@@ -1120,7 +1120,7 @@ public class Agent {
                                     Symm symm = ArtifactDir.getSymm(f);
 
                                     KeyStore ks = KeyStore.getInstance("JKS");
-                                    
+                                
                                     fis = new FileInputStream(ksf);
                                     try {
                                         ks.load(fis,symm.depass(ksps).toCharArray());
@@ -1169,7 +1169,7 @@ public class Agent {
                                         }
                                     }
                                 }
-                                
+                            
                             }
                         }
                     }
@@ -1185,7 +1185,7 @@ public class Agent {
     }
 
 }
-            
         
+    
 
 

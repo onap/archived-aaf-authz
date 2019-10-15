@@ -3,15 +3,15 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
- * 
+ * <p>
  * Modifications Copyright (C) 2018 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class PropAccess implements Access {
         logIt = new StreamLogIt(System.out);
         init(null);
     }
-    
+
     /**
      * This Constructor soly exists to instantiate Servlet Context Based Logging that will call "init" later.
      * @param sc
@@ -68,29 +68,29 @@ public class PropAccess implements Access {
         logIt = new StreamLogIt(System.out);
         props = new Properties();
     }
-    
+
     public PropAccess(String ... args) {
         this(System.out,args);
     }
-    
+
     public PropAccess(PrintStream ps, String[] args) {
         logIt = new StreamLogIt(ps==null?System.out:ps);
         init(logIt,args);
     }
-    
+
     public PropAccess(LogIt logit, String[] args) {
         init(logit, args);
     }
-    
+
     public PropAccess(Properties p) {
         this(System.out,p);
     }
-    
+
     public PropAccess(PrintStream ps, Properties p) {
         logIt = new StreamLogIt(ps==null?System.out:ps);
         init(p);
     }
-    
+
     protected void init(final LogIt logIt, final String[] args) {
         this.logIt = logIt;
         Properties nprops=new Properties();
@@ -102,7 +102,7 @@ public class PropAccess implements Access {
         }
         init(nprops);
     }
-    
+
     public static SimpleDateFormat newISO8601() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     }
@@ -110,7 +110,7 @@ public class PropAccess implements Access {
     protected synchronized void init(Properties p) {
         // Make sure these two are set before any changes in Logging
         name = "cadi";
-        
+    
         props = new Properties();
         // First, load related System Properties
         for (Entry<Object,Object> es : System.getProperties().entrySet()) {
@@ -119,18 +119,18 @@ public class PropAccess implements Access {
                 if (key.startsWith(start)) {
                     props.put(key, es.getValue());
                 }
-            }            
+            }        
         }
         // Second, overlay or fill in with Passed in Props
         if (p!=null) {
             props.putAll(p);
         }
-        
+    
         // Preset LogLevel
         String sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
         // Third, load any Chained Property Files
         load(props.getProperty(Config.CADI_PROP_FILES));
-        
+    
         if(sLevel==null) { // if LogLev wasn't set before, check again after Chained Load
             sLevel = props.getProperty(Config.CADI_LOGLEVEL); 
             if (sLevel==null) {
@@ -149,13 +149,13 @@ public class PropAccess implements Access {
                 System.exit(1);
             }
         }
-        
-        name = props.getProperty(Config.CADI_LOGNAME, name);
-        
-        SecurityInfo.setHTTPProtocols(this);
-        
-    }
     
+        name = props.getProperty(Config.CADI_LOGNAME, name);
+    
+        SecurityInfo.setHTTPProtocols(this);
+    
+    }
+
    
     private void load(String cadi_prop_files) {
         if (cadi_prop_files==null) {
@@ -163,7 +163,7 @@ public class PropAccess implements Access {
         }
         String prevKeyFile = props.getProperty(Config.CADI_KEYFILE);
 
-        
+    
         for(String filename : Split.splitTrim(File.pathSeparatorChar, cadi_prop_files)) {
             Properties fileProps = new Properties();
             File file = new File(filename);
@@ -208,7 +208,7 @@ public class PropAccess implements Access {
                 printf(Level.WARN,"Warning: recursive CADI Property %s does not exist",file.getAbsolutePath());
             }
         }
-        
+    
         // Trim 
         for (Entry<Object, Object> es : props.entrySet()) {
             Object value = es.getValue();
@@ -237,7 +237,7 @@ public class PropAccess implements Access {
 
             prevKeyFile=newKeyFile;
         }
-        
+    
         String loglevel = props.getProperty(Config.CADI_LOGLEVEL);
         if (loglevel!=null) {
             try {
@@ -247,7 +247,7 @@ public class PropAccess implements Access {
             }
         }
     }
-    
+
     @Override
     public void load(InputStream is) throws IOException {
         props.load(is);
@@ -264,7 +264,7 @@ public class PropAccess implements Access {
     public StringBuilder buildMsg(Level level, Object[] elements) {
         return buildMsg(name,iso8601,level,elements);
     }
-    
+
     /*
      * Need to pass in DateFormat per thread, because not marked as thread safe
      */
@@ -298,7 +298,7 @@ public class PropAccess implements Access {
         }
         return sb;
     }
-    
+
     private static boolean write(boolean first, StringBuilder sb, Object[] elements) {
         String s;
         for (Object o : elements) {
@@ -374,7 +374,7 @@ public class PropAccess implements Access {
             ? symm.depass(encrypted)
             : encrypted;
     }
-    
+
     public String encrypt(String unencrypted) throws IOException {
         return Symm.ENC+symm.enpass(unencrypted);
     }
@@ -385,7 +385,7 @@ public class PropAccess implements Access {
     public String getProperty(String tag) {
         return props.getProperty(tag);
     }
-    
+
 
     public Properties getProperties() {
         return props;
@@ -410,10 +410,10 @@ public class PropAccess implements Access {
     public interface LogIt {
         public void push(Level level, Object ... elements) ;
     }
-    
+
     private class StreamLogIt implements LogIt {
         private PrintStream ps;
-        
+    
         public StreamLogIt(PrintStream ps) {
             this.ps = ps;
         }

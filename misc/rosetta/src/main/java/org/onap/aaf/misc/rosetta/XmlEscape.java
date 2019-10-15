@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import java.util.TreeMap;
 
 public class XmlEscape {
     private XmlEscape() {}
-    
+
     private static final TreeMap<String,Integer> charMap; // see initialization at end
     private static final TreeMap<Integer,String> intMap; // see initialization at end
 
@@ -53,19 +53,19 @@ public class XmlEscape {
                     break;
                 }
             }
-            
-            
+        
+        
         } catch (IOException e) {
             throw new ParseException(e);
         }
     }
-    
+
     public static void xmlEscape(StringBuilder sb, int chr) {
         sb.append('&');
         sb.append(intMap.get(chr));
         sb.append(';');
     }
-    
+
     public static String convert(StringBuilder insb) {
         int idx, ch;
         StringBuilder sb=null;
@@ -77,9 +77,9 @@ public class XmlEscape {
                 break;
             }
         }
-        
+    
         if (sb==null)return insb.toString();
-            
+        
         for (int i=idx;i<insb.length();++i) {
             ch = insb.charAt(i);
             if (ch<160) {
@@ -361,7 +361,7 @@ public class XmlEscape {
         charMap.put("clubs",9827);
         charMap.put("hearts",9829);
         charMap.put("diams",9830);
-        
+    
         for ( Entry<String, Integer> es: charMap.entrySet()) {
             if (es.getValue()>=160); // save small space... note that no longer has amp, etc.
             intMap.put(es.getValue(), es.getKey());

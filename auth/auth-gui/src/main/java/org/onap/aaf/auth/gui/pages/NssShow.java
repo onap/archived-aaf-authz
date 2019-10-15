@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ public class NssShow extends Page {
                 new Table<AAF_GUI,AuthzTrans>("Namespaces I own",gui.env.newTransNoAvg(),new Model(false,"Owner",gui.env),
                         "class=std", "style=display: inline-block; width: 45%; margin: 10px;"));
     }
-    
+
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         private String[] headers;
         private String privilege = null;
@@ -80,7 +80,7 @@ public class NssShow extends Page {
         public String[] headers() {
             return headers;
         }
-        
+    
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             ArrayList<AbsCell[]> rv = new ArrayList<>();
@@ -120,7 +120,7 @@ public class NssShow extends Page {
                     tt.done();
                 }
             }
-            
+        
             if (nss!=null) {
                 for (Ns n : nss) {
                     if ((isAdmin && !n.getAdmin().isEmpty())
@@ -137,6 +137,6 @@ public class NssShow extends Page {
             return new Cells(rv,null);
         }
     }
-    
+
 
 }

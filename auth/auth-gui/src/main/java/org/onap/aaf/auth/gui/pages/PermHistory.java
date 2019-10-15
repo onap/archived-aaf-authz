@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class PermHistory extends Page {
     static final String NAME="PermHistory";
     static final String HREF = "/gui/permHistory";
     static final String FIELDS[] = {"type","instance","action","dates"};
-    
+
     public PermHistory(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, FIELDS,
             new BreadCrumbs(breadcrumbs),
@@ -77,26 +77,26 @@ public class PermHistory extends Page {
                             String type = trans.get(sType, null);
                             String instance = trans.get(sInstance,null);
                             String action = trans.get(sAction,null);
-                            
+                        
                             // Use Javascript to make the table title more descriptive
                             hgen.js()
                             .text("var caption = document.querySelector(\".title\");")
-                            .text("caption.innerHTML='History for Permission [ " + type + " ]';")                        
+                            .text("caption.innerHTML='History for Permission [ " + type + " ]';")                    
                             .done();
-                            
+                        
                             // Use Javascript to change Link Target to our last visited Detail page
                             String lastPage = PermDetail.HREF + "?type=" + type
                                     + "&instance=" + instance
                                     + "&action=" + action;
                             hgen.js()
-                                .text("alterLink('permdetail', '"+lastPage + "');")                            
+                                .text("alterLink('permdetail', '"+lastPage + "');")                        
                                 .done();
-                            
+                        
                             hgen.br();
                             hgen.leaf("a", "href=#advanced_search", "onclick=divVisibility('advanced_search');","class=greenbutton").text("Advanced Search").end()
                                 .divID("advanced_search", "style=display:none");
                             hgen.incr("table");
-                                
+                            
                             addDateRow(hgen,"Start Date");
                             addDateRow(hgen,"End Date");
                             hgen.incr("tr").incr("td");
@@ -113,9 +113,9 @@ public class PermHistory extends Page {
             }
 
             );
-        
-    }
     
+    }
+
     private static void addDateRow(HTMLGen hgen, String s) {
         hgen
             .incr("tr")
@@ -141,10 +141,10 @@ public class PermHistory extends Page {
                     "placeholder=Year").end()
             .end();
     }
-    
+
     /**
      * Implement the Table Content for History
-     * 
+     * <p>
      * @author Jeremiah
      *
      */
@@ -152,26 +152,26 @@ public class PermHistory extends Page {
         private static final String[] headers = new String[] {"Date","User","Memo"};
         private Slot sType;
         private Slot sDates;
-        
+    
         public Model(AuthzEnv env) {
             sType = env.slot(NAME+".type");
             sDates = env.slot(NAME+".dates");
         }
-        
+    
         @Override
         public String[] headers() {
             return headers;
         }
-        
+    
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             final String oName = trans.get(sType,null);
             final String oDates = trans.get(sDates,null);
-            
+        
             if (oName==null) {
                 return Cells.EMPTY;
             }
-            
+        
             final ArrayList<AbsCell[]> rv = new ArrayList<>();
             String msg = null;
             try {
@@ -187,20 +187,20 @@ public class PermHistory extends Page {
                                 "/authz/hist/perm/"+oName,
                                 gui.getDF(History.class)
                                 );
-                            
-                            
+                        
+                        
                             if (fh.get(AAF_GUI.TIMEOUT)) {
                                 tt.done();
                                 tt = trans.start("Load History Data", Env.SUB);
                                 List<Item> histItems = fh.value.getItem();
-                                
+                            
                                 java.util.Collections.sort(histItems, new Comparator<Item>() {
                                     @Override
                                     public int compare(Item o1, Item o2) {
                                         return o2.getTimestamp().compare(o1.getTimestamp());
                                     }
                                 });
-                                
+                            
                                 for (Item i : histItems) {
                                     String user = i.getUser();
                                     AbsCell userCell = new TextCell(user);
@@ -211,7 +211,7 @@ public class PermHistory extends Page {
                                             new TextCell(memo)
                                     });
                                 }
-                                
+                            
                             } else {
                                 if (fh.code()==403) {
                                     rv.add(new AbsCell[] {new TextCell("You may not view History of Permission [" + oName + "]", "colspan = 3", "class=center")});
@@ -226,7 +226,7 @@ public class PermHistory extends Page {
                         return null;
                     }
                 });
-                
+            
             } catch (Exception e) {
                 trans.error().log(e);
             }

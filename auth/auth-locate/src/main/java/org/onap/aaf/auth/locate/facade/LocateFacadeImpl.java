@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ import locate_local.v1_0.Api;
 
 /**
  * AuthzFacade
- * 
+ * <p>
  * This Service Facade encapsulates the essence of the API Service can do, and provides
  * a single created object for elements such as RosettaDF.
  *
@@ -76,10 +76,10 @@ import locate_local.v1_0.Api;
  *         a) In the future, we may support multiple Response Formats, aka JSON or XML, based on User Request.
  * 4) Log Service info, warnings and exceptions as necessary
  * 5) When asked by the API layer, this will create and write Error content to the OutputStream
- * 
+ * <p>
  * Note: This Class does NOT set the HTTP Status Code.  That is up to the API layer, so that it can be 
  * clearly coordinated with the API Documentation
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -105,14 +105,14 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
         (mepDF                = env.newDataFactory(mapper().getClass(API.MGMT_ENDPOINTS))).in(dataType).out(dataType);
         (confDF                = env.newDataFactory(mapper().getClass(API.CONFIG))).in(dataType).out(dataType);
     }
-    
+
     public Mapper<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURATION,ERROR> mapper() {
         return service.mapper();
     }
-        
+    
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#error(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, int)
-     * 
+     * <p>
      * Note: Conforms to AT&T TSS RESTful Error Structure
      */
     @Override
@@ -128,7 +128,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
         }
         error(trans, response, result.status,msg,detail);
     }
-        
+    
     @Override
     public void error(AuthzTrans trans, HttpServletResponse response, int status, String msg, String ... _detail) {
             String[] detail = _detail;
@@ -153,7 +153,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
                 detail[0] = "Forbidden";
                 response.setStatus(/*httpstatus=*/403);
                 break;
-                
+            
             case 404:
             case ERR_NotFound:
                 msgId = "SVC1404";
@@ -167,21 +167,21 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
                 detail[0] = "Not Acceptable";
                 response.setStatus(/*httpstatus=*/406);
                 break;
-                
+            
             case 409:
             case ERR_ConflictAlreadyExists:
                 msgId = "SVC1409";
                 detail[0] = "Conflict Already Exists";
                 response.setStatus(/*httpstatus=*/409);
                 break;
-            
+        
             case 501:
             case ERR_NotImplemented:
                 msgId = "SVC1501";
                 detail[0] = "Not Implemented"; 
                 response.setStatus(/*httpstatus=*/501);
                 break;
-                
+            
             default:
                 msgId = "SVC1500";
                 detail[0] = "General Service Error";
@@ -204,12 +204,12 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
                 em = mapper().errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }
             errDF.newData(trans).load(em).to(response.getOutputStream());
-            
+        
         } catch (Exception e) {
             trans.error().log(e,"unable to send response for",msg);
         }
     }
-    
+
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#getAPI(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse)
      */
@@ -256,7 +256,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
             tt.done();
         }
     }
-    
+
     public final static String API_EXAMPLE = "apiExample";
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#getAPIExample(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, java.lang.String)
@@ -413,7 +413,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
             return Result.err(e);
         } finally {
             tt.done();
-        }    
+        }
     }
-    
+
 }

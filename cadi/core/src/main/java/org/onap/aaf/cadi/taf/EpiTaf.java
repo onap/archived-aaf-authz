@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,21 +26,21 @@ import org.onap.aaf.cadi.Taf;
 
 /**
  * EpiTAF
- * 
+ * <p>
  * Short for "Epic TAF". Be able to run through a series of TAFs to obtain the validation needed.
- * 
+ * <p>
  * OK, the name could probably be better as "Tafs", like it was originally, but the pun was too
  * irresistible for this author to pass up.
- * 
+ * <p>
  * @author Jonathan
  *
  */
 public class EpiTaf implements Taf {
     private Taf[] tafs;
-    
+
     /**
      * EpiTaf constructor
-     * 
+     * <p>
      * Construct the EpiTaf from variable TAF parameters
      * @param tafs
      * @throws CadiException
@@ -52,13 +52,13 @@ public class EpiTaf implements Taf {
 
     /**
      * validate
-     * 
+     * <p>
      * Respond with the first TAF to authenticate user based on variable info and "LifeForm" (is it 
      * a human behind an interface, or a server behind a protocol).
-     * 
+     * <p>
      * If there is no TAF that can authenticate, respond with the first TAF that suggests it can
      * establish an Authentication conversation (TRY_AUTHENTICATING).
-     * 
+     * <p>
      * If no TAF declares either, respond with NullTafResp (which denies all questions)
      */
     public TafResp validate(LifeForm reading, String... info) {

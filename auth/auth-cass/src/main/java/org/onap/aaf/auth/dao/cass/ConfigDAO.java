@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ public class ConfigDAO extends CassDAOImpl<AuthzTrans,ConfigDAO.Data> {
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
     public static final int KEYLIMIT = 2;
     private PSInfo psName;
-    
+
     public ConfigDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, ConfigDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE_NAME, readConsistency(trans,TABLE_NAME), writeConsistency(trans,TABLE_NAME));
         init(trans);
@@ -113,14 +113,14 @@ public class ConfigDAO extends CassDAOImpl<AuthzTrans,ConfigDAO.Data> {
             data.value = readString(is,buff);
         }
     }
-    
+
     private void init(AuthzTrans trans) throws APIException, IOException {
         String[] helpers = setCRUD(trans, TABLE_NAME, Data.class, ConfigLoader.deflt);
 
         psName = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE_NAME +
                 " WHERE name = ?", ConfigLoader.deflt,readConsistency);
     }
-    
+
 
     /**
      * Log Modification statements to History
@@ -133,7 +133,7 @@ public class ConfigDAO extends CassDAOImpl<AuthzTrans,ConfigDAO.Data> {
     protected void wasModified(AuthzTrans trans, CRUD modified, Data data, String ... override) {
         // not an auditable table.
     }
-    
+
     public Result<List<Data>> readName(AuthzTrans trans, String name) {
         return psName.read(trans, R_TEXT, new Object[]{name});
     }

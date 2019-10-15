@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ public class InXML implements Parse<Reader, State> {
     public InXML(JaxInfo jaxInfo) {
         this.jaxInfo = jaxInfo;
     }
-    
+
     public InXML(Class<?> cls, String ... rootNs) throws SecurityException, NoSuchFieldException, ClassNotFoundException, ParseException {
         jaxInfo = JaxInfo.build(cls,rootNs);
     }
@@ -49,7 +49,7 @@ public class InXML implements Parse<Reader, State> {
     // @Override
     public Parsed<State> parse(Reader r, Parsed<State> parsed) throws ParseException {
         State state = parsed.state;
-        
+    
         // OK, before anything else, see if there is leftover processing, if so, do it!
         if (state.unevaluated!=null) {
             DerTag dt = state.unevaluated;
@@ -71,7 +71,7 @@ public class InXML implements Parse<Reader, State> {
 
         StringBuilder sb = parsed.sb, tempSB = new StringBuilder();
         boolean go = true;
-        
+    
         try {
             while (go && (ch=r.read())>=0) {
                 c = (char)ch;
@@ -119,28 +119,28 @@ public class InXML implements Parse<Reader, State> {
             throw new ParseException(e);
         }
     }
-    
+
     public static final class DerTag {
         public String name;
         public boolean isEndTag;
         public List<Prop> props;
         private boolean isXmlInfo;
         //private String ns; 
-        
+    
         public DerTag() {
             name=null;
             isEndTag = false;
             props = null;
             isXmlInfo = false;
         }
-        
+    
         public DerTag parse(Reader r, StringBuilder sb) throws ParseException {
             int ch;
             char c;
             boolean inQuotes = false, escaped = false;
             boolean go = true;
             String tag = null;
-            
+        
             try {
                 if ((ch = r.read())<0) throw new ParseException("Reader content ended before complete");
                 if (ch=='?') {
@@ -210,7 +210,7 @@ public class InXML implements Parse<Reader, State> {
                 }
             }
         }
-        
+    
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(isEndTag?"End":"Start");
@@ -227,7 +227,7 @@ public class InXML implements Parse<Reader, State> {
             return sb.toString();
         }
     }
-    
+
     private static class ArrayState {
         public boolean firstObj = true;
         public boolean didNext = false;
@@ -244,7 +244,7 @@ public class InXML implements Parse<Reader, State> {
             unevaluated = null;
             attribs = null;;
         }
-        
+    
         public boolean hasAttributes() {
             return attribs!=null && idx<attribs.size();
         }
@@ -256,7 +256,7 @@ public class InXML implements Parse<Reader, State> {
             }
             attribs.add(prop);
         }
-        
+    
         public Prop pop() {
             Prop rv = null;
             if (attribs!=null) {
@@ -266,18 +266,18 @@ public class InXML implements Parse<Reader, State> {
             return rv;
         }
     }
-    
+
     private static abstract class GreatExpectations {
         protected JaxInfo ji;
         protected GreatExpectations prev;
         private Map<String,String> ns;
-        
+    
         public GreatExpectations(State state, JaxInfo curr, GreatExpectations prev, DerTag derTag) throws ParseException {
             this.prev = prev;
             ns = null;
             ji = getDerived(state, curr,derTag);
         }
-        
+    
         public abstract boolean eval(Parsed<State> parsed, DerTag derTag) throws ParseException;
 
         // Recursively look back for any namespaces
@@ -301,9 +301,9 @@ public class InXML implements Parse<Reader, State> {
 
         private JaxInfo getDerived(State state, JaxInfo ji, DerTag derTag) throws ParseException {
             if (derTag==null)return ji;
-            
+        
             List<Prop> props = derTag.props;
-            
+        
             Prop derived = null;
             if (props!=null) {
                 // Load Namespaces (if any)
@@ -339,13 +339,13 @@ public class InXML implements Parse<Reader, State> {
             return derived==null?ji:ji.getDerived(derived.value);
         }
     }
-    
+
     private static class RootExpectations extends GreatExpectations {
-        
+    
         public RootExpectations(State state, JaxInfo curr, GreatExpectations prev) throws ParseException {
             super(state,curr,prev, null);
         }
-        
+    
         // @Override
         public boolean eval(Parsed<State> parsed, DerTag derTag) throws ParseException {
             if (derTag.isXmlInfo) {
@@ -357,13 +357,13 @@ public class InXML implements Parse<Reader, State> {
                 } else {
                     //parsed.name = derTag.name;
                     parsed.event = START_OBJ;
-                    parsed.state.greatExp = new ObjectExpectations(parsed.state,ji, this, false, derTag);    
+                    parsed.state.greatExp = new ObjectExpectations(parsed.state,ji, this, false, derTag);
                 }
             }
             return false;
         }
     }
-    
+
     private static class ObjectExpectations extends GreatExpectations {
         private boolean printName;
 
@@ -413,7 +413,7 @@ public class InXML implements Parse<Reader, State> {
             return false;
         }
     }
-    
+
     private static class LeafExpectations extends GreatExpectations {
         public LeafExpectations(State state, JaxInfo curr, GreatExpectations prev) throws ParseException {
             super(state, curr, prev, null);
@@ -429,7 +429,7 @@ public class InXML implements Parse<Reader, State> {
                 throw new ParseException("Expected </" + ji.name + '>');
             }
             return false;
-        }        
+        }    
     }
 
     private static class ArrayExpectations extends GreatExpectations {
@@ -473,7 +473,7 @@ public class InXML implements Parse<Reader, State> {
                 parsed.state.arrayInfo.pop();
             }
             return false;
-        }        
+        }    
     }
     // @Override
     public Parsed<State> newParsed() throws ParseException {
@@ -484,5 +484,5 @@ public class InXML implements Parse<Reader, State> {
     public TimeTaken start(Env env) {
         return env.start("Rosetta XML In", Env.XML);
     }
-    
+
 }

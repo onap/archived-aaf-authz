@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -72,7 +72,7 @@ public class Cred extends Cmd {
         if (args.length>idx) {
             cr.setEntry(args[idx]);
         }
-        
+    
         // Set Start/End commands
         setStartEnd(cr);
         Integer ret = same(new Retryable<Integer>() {
@@ -129,7 +129,7 @@ public class Cred extends Cmd {
                     Error err = em.getError(fp);
                     String text = err.getText();
                     List<String> vars = err.getVariables();
-                    
+                
                     // IMPORTANT! We do this backward, because it is looking for string
                     // %1 or %13.  If we replace %1 first, that messes up %13
                     for(int i=vars.size()-1;i>0;--i) {
@@ -153,7 +153,7 @@ public class Cred extends Cmd {
         }
         return ret;
     }
-    
+
     @Override
     public void detailedHelp(int indentVar, StringBuilder sb) {
             int indent = indentVar;
@@ -169,7 +169,7 @@ public class Cred extends Cmd {
         sb.append('\n');
         detailLine(sb,indent,"NOTE: AAF does support multiple creds with the same ID. Check with your org if you");
         detailLine(sb,indent+2,"have this implemented. (For example, this is implemented for MechIDs at AT&T)");
-        sb.append('\n');            
+        sb.append('\n');        
         detailLine(sb,indent,"*NOTE: com.att.csp is a reserved Domain for Global Sign On");
 
         detailLine(sb,indent,"Delegates can be listed by the User or by the Delegate");

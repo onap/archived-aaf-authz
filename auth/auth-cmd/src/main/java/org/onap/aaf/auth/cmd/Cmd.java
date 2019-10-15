@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public abstract class Cmd {
 
     public static final String STARTDATE = "startdate";
     public static final String ENDDATE = "enddate";
-    
+
     private String name;
     private final Param[] params;
     private int required;
@@ -104,7 +104,7 @@ public abstract class Cmd {
                 ++required;
             }
         }
-        
+    
         String temp = access.getProperty(Config.AAF_DEFAULT_REALM,null);
         if (temp!=null && !temp.startsWith("@")) {
             defaultRealm = '@' + temp;
@@ -112,16 +112,16 @@ public abstract class Cmd {
             defaultRealm="<Set Default Realm>";
         }
     }
-    
+
     public final int exec(int idx, String ... args) throws CadiException, APIException, LocatorException {
         if (args.length-idx<required) {
             throw new CadiException(build(new StringBuilder("Too few args: "),null).toString());
         }
         return _exec(idx,args);
     }
-    
+
     protected abstract int _exec(int idx, final String ... args) throws CadiException, APIException, LocatorException;
-    
+
     public void detailedHelp(int indent,StringBuilder sb) {
     }
 
@@ -179,7 +179,7 @@ public abstract class Cmd {
             sb.append(p.tag);
             sb.append(p.required?"> ": "] ");
         }
-        
+    
         boolean first = true;
         for (Cmd child : children) {
             if (!(child instanceof DeprecatedCMD)) {
@@ -222,7 +222,7 @@ public abstract class Cmd {
         }
         return sb;
     }
-    
+
     protected void error(Future<?> future) {
         StringBuilder sb = new StringBuilder("Failed");
         String desc = future.body();
@@ -275,7 +275,7 @@ public abstract class Cmd {
         pw().println(sb);
     }
 
-    
+
     private void withCode(StringBuilder sb, Integer code) {
         sb.append(" with code ");
         sb.append(code);
@@ -303,7 +303,7 @@ public abstract class Cmd {
         if ((str = access.getProperty(Cmd.STARTDATE,null))!=null) {
             req.setStart(Chrono.timeStamp(Date.valueOf(str)));
         }
-        
+    
         if ((str = access.getProperty(Cmd.ENDDATE,null))!=null) {
             req.setEnd(Chrono.timeStamp(Date.valueOf(str)));
         }
@@ -311,7 +311,7 @@ public abstract class Cmd {
 
     /**
      * For Derived classes, who have ENV in this parent
-     * 
+     * <p>
      * @param cls
      * @return
      * @throws APIException
@@ -349,17 +349,17 @@ public abstract class Cmd {
                 pw().print('-');
             }
             pw().println();
-                                
+                            
             pw().format(hformat,"Date","Table","User","Memo");
             for (int i=0;i<lineLength;++i) {
                 pw().print('-');
             }
             pw().println();
-    
+
             // Save Server time by Sorting locally
             List<Item> items = history.getItem();
             java.util.Collections.sort(items, (Comparator<Item>) (o1, o2) -> o2.getTimestamp().compare(o1.getTimestamp()));
-            
+        
             for (History.Item item : items) {
                 GregorianCalendar gc = item.getTimestamp().toGregorianCalendar();
                 pw().format(hformat,
@@ -370,7 +370,7 @@ public abstract class Cmd {
             }
         }
     }
-    
+
     /**
      * Turn String Array into a | delimited String
      * @param options
@@ -389,12 +389,12 @@ public abstract class Cmd {
         }
         return sb.toString();
     }
-    
+
     /**
      * return which index number the Option matches.
-     * 
+     * <p>
      * throws an Exception if not part of this Option Set
-     * 
+     * <p>
      * @param options
      * @param test
      * @return
@@ -420,9 +420,9 @@ public abstract class Cmd {
             retryable.item(aafcli.prevCall.item());
             retryable.lastClient=aafcli.prevCall.lastClient;
         }
-        
+    
         RET ret = aafcli.hman.same(aafcli.ss,retryable);
-        
+    
         // Store last call in AAFcli, because Cmds are all different instances.
         aafcli.prevCall = retryable;
         return ret;
@@ -445,7 +445,7 @@ public abstract class Cmd {
     public String getName() {
         return name;
     }
-    
+
     public void reportHead(String ... str) {
         pw().println();
         boolean first = true;
@@ -467,7 +467,7 @@ public abstract class Cmd {
         pw().println();
         reportLine();
     }
-    
+
     public String reportColHead(String format, String ...  args) {
         pw().format(format,(Object[])args);
         reportLine();
@@ -480,7 +480,7 @@ public abstract class Cmd {
         }
         pw().println();
     }
-    
+
     protected void setQueryParamsOn(Rcli<?> rcli) {
         StringBuilder sb=null;
         String force;

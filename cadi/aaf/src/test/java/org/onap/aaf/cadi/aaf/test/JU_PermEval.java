@@ -211,7 +211,7 @@ public class JU_PermEval {
         @SuppressWarnings("unused")
         PermEval pe = new PermEval();
     }
-    
+
     @Test
     public void pathTest() {
         assertTrue(PermEval.evalInstance("/","/"));

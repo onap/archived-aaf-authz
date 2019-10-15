@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,12 +40,12 @@ public class JU_Mask {
         InetAddress ia = InetAddress.getByName("192.168.0.0");
         NetMask mask = new NetMask(ia.getAddress());
         assertTrue(mask.isInNet(ia.getAddress()));
-        
+    
         mask = new NetMask("192.168.1/24");
         assertTrue(mask.isInNet("192.168.1.20"));
         assertTrue(mask.isInNet("192.168.1.255"));
         assertFalse(mask.isInNet("192.168.2.20"));
-        
+    
         mask = new NetMask("192.168.1/31");
         assertFalse(mask.isInNet("192.168.2.20"));
         assertFalse(mask.isInNet("192.168.1.20"));
@@ -56,10 +56,10 @@ public class JU_Mask {
         assertTrue(mask.isInNet("192.168.1.1"));
         assertTrue(mask.isInNet("192.1.1.1"));
         assertFalse(mask.isInNet("193.168.1.1"));
-        
+    
         mask = new NetMask("/0");
         assertTrue(mask.isInNet("193.168.1.1"));
-        
+    
         String msg = "Should throw " + MaskFormatException.class.getSimpleName();
         try {
             mask = new NetMask("256.256.256.256");

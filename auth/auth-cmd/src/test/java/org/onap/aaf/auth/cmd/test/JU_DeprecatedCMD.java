@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * * <p>
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * * <p>
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ public class JU_DeprecatedCMD {
 
     CmdStub cmd;
     AAFcli cli;
-    
+
     private class CmdStub extends Cmd {
 
         public CmdStub(AAFcli aafcli, String name, Param[] params) {
@@ -62,14 +62,14 @@ public class JU_DeprecatedCMD {
             // TODO Auto-generated method stub
             return 0;
         }
-        
-    }
     
+    }
+
     @Test
     public void testExec() throws CadiException, APIException, LocatorException, GeneralSecurityException, IOException {
         cli = JU_AAFCli.getAAfCli();
         Param[] param = new Param[] {new Param("name",true)};
-        
+    
         cmd = new CmdStub(cli,"test", param);
         DeprecatedCMD deprecatedcmd = new DeprecatedCMD(cmd,"test", "test");
         deprecatedcmd._exec(0, "test");

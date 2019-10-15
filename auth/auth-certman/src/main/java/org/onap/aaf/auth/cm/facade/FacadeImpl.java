@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ import org.onap.aaf.misc.rosetta.env.RosettaData;
 
 /**
  * AuthzFacade
- * 
+ * <p>
  * This Service Facade encapsulates the essence of the API Service can do, and provides
  * a single created object for elements such as RosettaDF.
  *
@@ -70,10 +70,10 @@ import org.onap.aaf.misc.rosetta.env.RosettaData;
  *         a) In the future, we may support multiple Response Formats, aka JSON or XML, based on User Request.
  * 4) Log Service info, warnings and exceptions as necessary
  * 5) When asked by the API layer, this will create and write Error content to the OutputStream
- * 
+ * <p>
  * Note: This Class does NOT set the HTTP Status Code.  That is up to the API layer, so that it can be 
  * clearly coordinated with the API Documentation
- * 
+ * <p>
  * @author Jonathan
  *
  */
@@ -120,14 +120,14 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             voidResp = "application/Void+json;charset=utf-8;version=1.0,application/json;version=1.0,*/*";
         }
     }
-    
+
     public Mapper<REQ,CERT,ARTIFACTS,ERROR> mapper() {
         return mapper;
     }
-    
+
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#error(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, int)
-     * 
+     * <p>
      * Note: Conforms to AT&T TSS RESTful Error Structure
      */
     @Override
@@ -136,7 +136,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 result.details==null?"":result.details.trim(),
                 result.variables==null?Result.EMPTY_VARS:result.variables);
     }
-        
+    
     @Override
     public void error(AuthzTrans trans, HttpServletResponse response, int status, final String _msg, final Object ... _detail) {
         String msgId;
@@ -158,7 +158,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 prefix = "Forbidden";
                 response.setStatus(/*httpstatus=*/403);
                 break;
-                
+            
             case 404:
             case ERR_NotFound:
                 msgId = "SVC1404";
@@ -172,21 +172,21 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 prefix = "Not Acceptable";
                 response.setStatus(/*httpstatus=*/406);
                 break;
-                
+            
             case 409:
             case ERR_ConflictAlreadyExists:
                 msgId = "SVC1409";
                 prefix = "Conflict Already Exists";
                 response.setStatus(/*httpstatus=*/409);
                 break;
-            
+        
             case 501:
             case ERR_NotImplemented:
                 msgId = "SVC1501";
                 prefix = "Not Implemented"; 
                 response.setStatus(/*httpstatus=*/501);
                 break;
-                
+            
 
             default:
                 msgId = "SVC1500";
@@ -210,7 +210,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 em = mapper().errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }
             errDF.newData(trans).load(em).to(response.getOutputStream());
-            
+        
         } catch (Exception e) {
             trans.error().log(e,"unable to send response for",_msg);
         }
@@ -256,12 +256,12 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 trans.error().log("Invalid Input",IN,REQUEST_CERT);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
-            
+        
             Result<CertResp> rcr = service.requestCert(trans,mapper.toReq(trans,request), ca);
             if (rcr.notOK()) {
                 return Result.err(rcr);
             }
-            
+        
             Result<CERT> rc = mapper.toCert(trans, rcr, withTrust);
             if (rc.status == OK) {
                 RosettaData<CERT> data = certDF.newData(trans).load(rc.value);
@@ -279,7 +279,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             tt.done();
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.cm.facade.Facade#requestPersonalCert(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, boolean)
      */
@@ -300,7 +300,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 trans.error().log("Invalid Input",IN,RENEW_CERT);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
-            
+        
             Result<CertResp> rcr = service.renewCert(trans,mapper.toRenew(trans,request));
             Result<CERT> rc = mapper.toCert(trans, rcr, withTrust);
 
@@ -333,7 +333,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 trans.error().log("Invalid Input",IN,DROP_CERT);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
-            
+        
             Result<Void> rv = service.dropCert(trans,mapper.toDrop(trans, request));
             if (rv.status == OK) {
                 setContentType(resp, certRequestDF.getOutType());
@@ -387,7 +387,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 trans.error().log("Invalid Input",IN,CREATE_ARTIFACTS);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
-            
+        
             return service.createArtifact(trans,mapper.toArtifact(trans,arti));
         } catch (Exception e) {
 
@@ -405,7 +405,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             String mechid = req.getParameter("mechid");
             String machine = req.getParameter("machine");
             String ns = req.getParameter("ns");
-            
+        
             Result<ARTIFACTS> ra;
             if ( machine !=null && mechid == null) {
                 ra = mapper.fromArtifacts(service.readArtifactsByMachine(trans, machine));
@@ -422,7 +422,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
             } else {
                 ra = Result.err(Status.ERR_BadData,"Invalid request inputs");
             }
-            
+        
             if (ra.isOK()) {
                 RosettaData<ARTIFACTS> data = artiDF.newData(trans).load(ra.value);
                 data.to(resp.getOutputStream());
@@ -477,7 +477,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 trans.error().log("Invalid Input",IN,UPDATE_ARTIFACTS);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
-            
+        
             return service.updateArtifact(trans,mapper.toArtifact(trans,arti));
         } catch (Exception e) {
             trans.error().log(e,IN,UPDATE_ARTIFACTS);
@@ -499,7 +499,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 trans.error().log("Invalid Input",IN,DELETE_ARTIFACTS);
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
-            
+        
             Result<Void> rv = service.deleteArtifact(trans,mapper.toArtifact(trans,arti));
             if (rv.status == OK) {
                 setContentType(resp, artiDF.getOutType());

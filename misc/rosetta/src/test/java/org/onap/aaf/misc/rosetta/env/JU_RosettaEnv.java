@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class JU_RosettaEnv {
     public void setUp() {
         initMocks(this);
     }
-    
+
     @Test
     public void testNewDataFactoryClass() {
         RosettaEnv rosettaObj = new RosettaEnv();
@@ -57,7 +57,7 @@ public class JU_RosettaEnv {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testNewDataFactorySchema() {
         RosettaEnv rosettaObj = new RosettaEnv(Mockito.mock(Applet.class),"test");
@@ -69,7 +69,7 @@ public class JU_RosettaEnv {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testNewDataFactoryQname() {
         RosettaEnv rosettaObj = new RosettaEnv(new String[] {"test"});
@@ -82,7 +82,7 @@ public class JU_RosettaEnv {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testNewDataFactoryQnameSchema() {
         RosettaEnv rosettaObj = new RosettaEnv("test", new String[] {"test"});

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,19 +40,19 @@ import org.onap.aaf.misc.env.Trans;
 
 public class TextIndex {
     private static final int REC_SIZE=8;
-    
+
     private File file;
     private DataFile dataFile=null;
-    
+
     public TextIndex(File theFile) {
         file = theFile;
     }
-    
+
     public void open() throws IOException {
         dataFile = new DataFile(file,"r");
         dataFile.open();
     }
-    
+
     public void close() throws IOException {
         if (dataFile!=null) {
             dataFile.close();
@@ -63,7 +63,7 @@ public class TextIndex {
     public int find(Object key, AbsData.Reuse reuse, int offset) throws IOException {
         return find(key,reuse.tokenData,reuse.getFieldData(),offset);
     }
-    
+
     public int find(Object key, DataFile.Token dtok, Field df, int offset) throws IOException {
         if (dataFile==null) {
             throw new IOException("File not opened");
@@ -88,7 +88,7 @@ public class TextIndex {
                 break;
             }
         }
-        
+    
         List<Integer> entries = new ArrayList<>();
         for (int i=min;i<=max;++i) {
             ttok.pos(i*REC_SIZE);
@@ -100,7 +100,7 @@ public class TextIndex {
                 break;
             }
         }
-        
+    
         for (Integer i : entries) {
             dtok.pos(i);
             if (df.at(offset).equals(key)) {
@@ -109,7 +109,7 @@ public class TextIndex {
         }
         return -1;
     }
-    
+
 
     /*
      * Have to change Bytes into a Long, to avoid the inevitable signs in the Hash
@@ -123,10 +123,10 @@ public class TextIndex {
         }
         return rv;
     }
-    
+
     public void create(final Trans trans,final DataFile data, int maxLine, char delim, int fieldOffset, int skipLines) throws IOException {
         FileChannel fos;
-        
+    
         List<Idx> list = new LinkedList<>(); // Some hashcodes will double... DO NOT make a set
         TimeTaken tt2 = trans.start("Open Files", Env.SUB);
         RandomAccessFile raf=null;
@@ -138,12 +138,12 @@ public class TextIndex {
             } finally {
                 tt2.done();
             }
-            
+        
             try {
-                
+            
                 Token t = data.new Token(maxLine);  
                 Field f = t.new Field(delim);
-                
+            
                 int count = 0;
                 if (skipLines>0) {
                     trans.info().log("Skipping",skipLines,"line"+(skipLines==1?" in":"s in"),data.file().getName());
@@ -191,7 +191,7 @@ public class TextIndex {
             }
         }
     }
-    
+
     public class Iter {
         private int idx;
         private Token t;
@@ -210,7 +210,7 @@ public class TextIndex {
                 end = -1L;
             }
         }
-        
+    
         public int next() {
             t.pos(idx);
             ib.clear();
@@ -224,14 +224,14 @@ public class TextIndex {
             return idx<end;
         }
     }
-    
+
     private static class Idx implements Comparable<Idx> {
         public int hash, pos;
         public Idx(Object obj, int pos) {
             hash = obj.hashCode();
             this.pos = pos;
         }
-        
+    
         @Override
         public int compareTo(Idx ib) {
             long a = hashToLong(hash);

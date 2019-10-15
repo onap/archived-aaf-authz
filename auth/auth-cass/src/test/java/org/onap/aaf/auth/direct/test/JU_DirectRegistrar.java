@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -74,12 +74,12 @@ public class JU_DirectRegistrar {
             Mockito.doReturn(rs).when(ldao).update(Mockito.any(), Mockito.any());
             registrarObj = new DirectRegistrar(access, ldao, 9080);
 
-        
+    
             org.onap.aaf.auth.layer.Result<Void> retVal1 = new Result<Void>(null, 0, "test", new Object[0]);
             Mockito.doReturn(trans).when(env).newTransNoAvg();
             // Mockito.doReturn(retVal1).when(ldao).update(trans,locate);
             registrarObj.update(env);
-    
+
             rs = new org.onap.aaf.auth.layer.Result<Void>(null, 1, "test", new Object[0]);
             Mockito.doReturn(rs).when(ldao).update(Mockito.any(), Mockito.any());
             registrarObj = new DirectRegistrar(access, ldao, 9080);
@@ -100,7 +100,7 @@ public class JU_DirectRegistrar {
             Mockito.doReturn("20").when(access).getProperty(Config.AAF_LOCATOR_CONTAINER, "");
             Mockito.doReturn("20,test,test").when(access).getProperty(Config.AAF_LOCATOR_ENTRIES, "");
             registrarObj = new DirectRegistrar(access, ldao, 9080);
-            
+        
             org.onap.aaf.auth.layer.Result<Void> rs = new org.onap.aaf.auth.layer.Result<Void>(null, 1, "test", new Object[0]);
             Mockito.doReturn(rs).when(ldao).delete(Mockito.any(), Mockito.any(), Mockito.anyBoolean());
         } catch (CadiException e) {

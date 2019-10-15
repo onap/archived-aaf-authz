@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class Approval implements CacheChange.Data  {
     public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
     public static List<Approval> list = new LinkedList<>();
     private static final CacheChange<Approval> cache = new CacheChange<>();
-    
+
     public final ApprovalDAO.Data add;
     private String role;
 
@@ -109,7 +109,7 @@ public class Approval implements CacheChange.Data  {
             }
         }
     };
-    
+
     public Approval(UUID id, UUID ticket, String approver,// Date last_notified, 
             String user, String memo, String operation, String status, String type, long updated) {
         add = new ApprovalDAO.Data();
@@ -124,7 +124,7 @@ public class Approval implements CacheChange.Data  {
         add.updated = new Date(updated);
         role = roleFromMemo(memo);
     }
-    
+
     public static String roleFromMemo(String memo) {
         if (memo==null) {
             return null;
@@ -156,31 +156,31 @@ public class Approval implements CacheChange.Data  {
     public static int load(Trans trans, Session session, Creator<Approval> creator, Visitor<Approval> visitor) {
         int count = 0;
         try {
-            count+=call(trans,session,creator.query(null), creator, visitor);
+            count += call(trans,session,creator.query(null), creator, visitor);
         } finally {
             trans.info().log("Found",count,"Approval Records");
         }
         return count;
     }
-    
+
     public static int load(Trans trans, Session session, Creator<Approval> creator ) {
         int count = 0;
         try {
-            count+=call(trans,session,creator.query(null), creator, FullLoad);
+            count += call(trans,session,creator.query(null), creator, FullLoad);
         } finally {
             trans.info().log("Found",count,"Approval Records");
         }
         return count;
     }
-    
+
     public static int loadUsers(Trans trans, Session session, Set<String> users, Visitor<Approval> visitor) {
         int total = 0;
         for(String user : users) {
-            total+=call(trans,session,String.format("%s WHERE user='%s';",v2_0_17.select(), user),v2_0_17,visitor);
+            total += call(trans,session,String.format("%s WHERE user='%s';",v2_0_17.select(), user),v2_0_17,visitor);
         }
         return total;
     }
-    
+
     public static void row(CSV.RowSetter crs, Approval app) {
         crs.row("approval",app.add.id,app.add.ticket,app.add.user,app.role,app.add.memo);
     }
@@ -201,14 +201,14 @@ public class Approval implements CacheChange.Data  {
             tt.done();
         }
     }
-    
+
     @Override
     public void expunge() {
         List<Approval> la = byApprover.get(getApprover());
         if (la!=null) {
             la.remove(this);
         }
-        
+    
         la = byUser.get(getUser());
         if (la!=null) {
             la.remove(this);
@@ -288,11 +288,11 @@ public class Approval implements CacheChange.Data  {
         add.ticket=null;
         add.status="lapsed";
     }
-    
+
     public String getRole() {
         return role;
     }
-    
+
     public String toString() {
         return getUser() + ' ' + getMemo();
     }
@@ -310,12 +310,12 @@ public class Approval implements CacheChange.Data  {
             }
         }
     }
-    
+
 
     public static void resetLocalData() {
         cache.resetLocalData();
     }
-    
+
     public static int sizeForDeletion() {
         return cache.cacheSize();
     }

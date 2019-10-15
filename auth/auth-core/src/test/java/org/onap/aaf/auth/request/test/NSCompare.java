@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ * <p>
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ public class NSCompare extends RosettaCompare<NsRequest>  {
     public NSCompare() {
         super(NsRequest.class);
     }
-    
+
     public static NsRequest create() {
         NsRequest nsr = new NsRequest();
         String in = instance();
@@ -51,7 +51,7 @@ public class NSCompare extends RosettaCompare<NsRequest>  {
         nsr.setEnd(Chrono.timeStamp(gc));
         return nsr;
     }
-    
+
     @Override
     public void compare(NsRequest t1, NsRequest t2) {
         assertEquals(t1.getName(),t2.getName());
