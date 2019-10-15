@@ -20,7 +20,6 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
-import org.onap.aaf.cadi.Access;
 import org.onap.aaf.misc.env.LogTarget;
 
 import com.datastax.driver.core.ResultSet;
@@ -68,7 +67,7 @@ public class CQLBatch {
                     } catch (InterruptedException e) {
                         // PER ORACLE, this isn't actually needed, but Sonar idiocy
                         // requires something or flags as error.
-                        return null;
+                        Thread.currentThread().interrupt();
                     }
                 }
                 last = System.currentTimeMillis() + sleep;
@@ -90,7 +89,7 @@ public class CQLBatch {
                     } catch (InterruptedException e) {
                         // PER ORACLE, this isn't actually needed, but Sonar idiocy
                         // requires something or flags as error.
-                        return null;
+                        Thread.currentThread().interrupt();
                     }
                 }
                 last = System.currentTimeMillis() + sleep;
