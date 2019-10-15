@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,29 +29,29 @@ import org.onap.aaf.auth.local.DataFile.Token.Field;
 
 /*
  * Example User Data file, which can be modified for many different kinds of Data Feeds.
- * 
+ *
  * Note: This has shown to be extremely effective in AT&T, an acknowledged very large organizations, 
  *          because there is no need to synchronize records.  AAF simply receives a Data Feed in Organization
  *          defined intervals.  (You might want to check for validity, such as size, etc), then is copied into
  *          Data Directory.  You will want to do so first creating a "lock" file.  Assuming the File name is "users.dat",
  *          the Lock File is "users.lock".  
- * 
+ *
  *          After the movement of the Datafile into place, it is best to remove the Index File, then remove the lock file.
- * 
+ *
  *          Note, Any AAF Programs needing this data WILL wait on the Lock file, so you should get fresh Data files
  *       in a "stage" directory, from WEB, or wherever, and then, after it is correct, do the following as fast as feasible.
- *       
+ *   
  *           a) lock
  *          b) copy from stage
  *          c) remove idx
  *          d) unlock
- * 
+ *
  *          If the Index File is either non-existent or out of date from the Data File, it will be reindexed, which
  *          has proven to be a very quick function, even with large numbers of entries.
- * 
+ *
  * This Sample Feed is set for a file with delimiter of "|".  512 is maximum expected line length. The "0" is the
  *       field offset for the "key" to the record,  which, for user, should be the unique Organization Identity.
- *       
+ *   
  */
 public class Identities extends AbsData {
     public final static Data NO_DATA = new Data();

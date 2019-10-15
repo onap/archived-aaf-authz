@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,9 +39,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -70,8 +70,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -84,25 +84,25 @@ public class Api {
 
     /**
      * Gets the value of the route property.
-     * 
-     * <p>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the route property.
-     * 
-     * <p>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRoute().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Api.Route }
-     * 
-     * 
+     *
+     *
      */
     public List<Api.Route> getRoute() {
         if (route == null) {
@@ -114,9 +114,9 @@ public class Api {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -135,8 +135,8 @@ public class Api {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -166,11 +166,11 @@ public class Api {
 
         /**
          * Gets the value of the meth property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getMeth() {
             return meth;
@@ -178,11 +178,11 @@ public class Api {
 
         /**
          * Sets the value of the meth property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setMeth(String value) {
             this.meth = value;
@@ -190,11 +190,11 @@ public class Api {
 
         /**
          * Gets the value of the path property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getPath() {
             return path;
@@ -202,11 +202,11 @@ public class Api {
 
         /**
          * Sets the value of the path property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setPath(String value) {
             this.path = value;
@@ -214,25 +214,25 @@ public class Api {
 
         /**
          * Gets the value of the param property.
-         * 
-         * <p>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the param property.
-         * 
-         * <p>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getParam().add(newItem);
          * </pre>
-         * 
-         * 
-         * <p>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link String }
-         * 
-         * 
+         *
+         *
          */
         public List<String> getParam() {
             if (param == null) {
@@ -243,11 +243,11 @@ public class Api {
 
         /**
          * Gets the value of the desc property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getDesc() {
             return desc;
@@ -255,11 +255,11 @@ public class Api {
 
         /**
          * Sets the value of the desc property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setDesc(String value) {
             this.desc = value;
@@ -267,25 +267,25 @@ public class Api {
 
         /**
          * Gets the value of the comments property.
-         * 
-         * <p>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the comments property.
-         * 
-         * <p>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getComments().add(newItem);
          * </pre>
-         * 
-         * 
-         * <p>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link String }
-         * 
-         * 
+         *
+         *
          */
         public List<String> getComments() {
             if (comments == null) {
@@ -296,25 +296,25 @@ public class Api {
 
         /**
          * Gets the value of the contentType property.
-         * 
-         * <p>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the contentType property.
-         * 
-         * <p>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getContentType().add(newItem);
          * </pre>
-         * 
-         * 
-         * <p>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link String }
-         * 
-         * 
+         *
+         *
          */
         public List<String> getContentType() {
             if (contentType == null) {
@@ -325,7 +325,7 @@ public class Api {
 
         /**
          * Gets the value of the expected property.
-         * 
+         *
          */
         public int getExpected() {
             return expected;
@@ -333,7 +333,7 @@ public class Api {
 
         /**
          * Sets the value of the expected property.
-         * 
+         *
          */
         public void setExpected(int value) {
             this.expected = value;
@@ -341,25 +341,25 @@ public class Api {
 
         /**
          * Gets the value of the explicitErr property.
-         * 
-         * <p>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the explicitErr property.
-         * 
-         * <p>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getExplicitErr().add(newItem);
          * </pre>
-         * 
-         * 
-         * <p>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link Integer }
-         * 
-         * 
+         *
+         *
          */
         public List<Integer> getExplicitErr() {
             if (explicitErr == null) {

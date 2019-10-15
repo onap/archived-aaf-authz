@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,11 +37,11 @@ import locate.v1_0.MgmtEndpoints;
 
 public class RegistrationCreator {
     private Access access;
-    
+
     public RegistrationCreator(Access access) {
         this.access = access;
     }
-    
+
     public MgmtEndpoints create(final int port) throws CadiException {
         MgmtEndpoints me = new MgmtEndpoints();
         List<MgmtEndpoint> lme = me.getMgmtEndpoint();
@@ -52,9 +52,9 @@ public class RegistrationCreator {
             String dot_le;
             String version=null;
             String defProtocol="https";
-            
+        
             RegistrationPropHolder ph = new RegistrationPropHolder(access, port);
-            
+        
             String firstPrivateHostname = null;
             // Now, loop through by Container
             for(String le : Split.splitTrim(',', ph.lcontainer)) {
@@ -72,7 +72,7 @@ public class RegistrationCreator {
                         locate.setProtocol(defProtocol = access.getProperty(Config.AAF_LOCATOR_PROTOCOL,defProtocol));
                         List<String> ls = locate.getSubprotocol();
                         for(String sp : Split.splitTrim(',', access.getProperty(Config.AAF_LOCATOR_SUBPROTOCOL,""))) {
-                            ls.add(sp);    
+                            ls.add(sp);
                         }
                         locate.setLatitude(ph.latitude);
                         locate.setLongitude(ph.longitude);
@@ -80,27 +80,27 @@ public class RegistrationCreator {
                     } else {
                         locate = copy(defData);
                     }
-                    
+                
                     locate.setName(ph.getEntryName(entry,dot_le));
                     /* Cover the situation where there is a Container, and multiple locator Entries,
                      * the first of which is the only real private FQDN
                      * example: oauth
                      *      aaf_locator_entries=oauth,token,introspect
-                     *      
+                     *  
                      *      Entries for token and introspect, but they point to oauth service.
                      */
                     String locateHostname;
-                    if(le.isEmpty()) {                
+                    if(le.isEmpty()) {            
                         locateHostname=ph.getEntryFQDN(entry, dot_le);
                     } else if(firstPrivateHostname==null) {
                         firstPrivateHostname=locateHostname=ph.getEntryFQDN(entry, dot_le);
                     } else {
                         locateHostname=firstPrivateHostname;
                     }
-                    
+                
                     locate.setHostname(locateHostname);
                     locate.setPort(ph.getEntryPort(dot_le));
-                    
+                
                     String specificVersion = access.getProperty(Config.AAF_LOCATOR_VERSION + dot_le,null);
                     if(specificVersion == null && locate == defData) {
                         specificVersion = version;
@@ -142,13 +142,13 @@ public class RegistrationCreator {
         } catch (NumberFormatException | UnknownHostException e) {
             throw new CadiException("Error extracting Data from Properties for Registrar",e);
         }
-        
+    
         if(access.willLog(Level.INFO)) {
             access.log(Level.INFO, print(new StringBuilder(),me.getMgmtEndpoint()));
         }
         return me;
     }
-    
+
     /*
      * Find the best version between Actual Interface and Deployed version
      */
@@ -165,8 +165,8 @@ public class RegistrationCreator {
                     break;
                 }
             }
-        }    
-        
+        }
+    
         if(sb.length()==0 && deploy.length>i) {
             s=deploy[i];
             for(int j=0;j<s.length();++j) {
@@ -177,7 +177,7 @@ public class RegistrationCreator {
                 }
             }
         }
-        
+    
         return sb.length()==0?0:Integer.parseInt(sb.toString());
     }
 
@@ -242,7 +242,7 @@ public class RegistrationCreator {
             out.append(s);
         }
     }
-    
+
     private MgmtEndpoint copy(MgmtEndpoint mep) {
         MgmtEndpoint out = new MgmtEndpoint();
         out.setName(mep.getName());

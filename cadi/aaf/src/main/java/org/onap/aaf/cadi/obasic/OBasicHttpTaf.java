@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,29 +55,29 @@ import org.onap.aaf.misc.env.util.Pool.Pooled;
 
 /**
  * BasicHttpTaf
- * 
+ *
  * This TAF implements the "Basic Auth" protocol.  
- * 
+ *
  * WARNING! It is true for any implementation of "Basic Auth" that the password is passed unencrypted.  
  * This is because the expectation, when designed years ago, was that it would only be used in 
  * conjunction with SSL (https).  It is common, however, for users to ignore this on the assumption that
  * their internal network is secure, or just ignorance.  Therefore, a WARNING will be printed
  * when the HTTP Channel is not encrypted (unless explicitly turned off).
- * 
+ *
  * @author Jonathan
  *
  */
 public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
     private final String realm;
     private final CredVal rbac;
-    
-    
+
+
     public OBasicHttpTaf(final PropAccess access, final CredVal rbac, final String realm, final String token_url, final String introspect_url) throws CadiException {
         super(access, token_url,introspect_url);
         this.rbac = rbac;
         this.realm = realm;
     }
-    
+
     /**
      * Note: BasicHttp works for either Carbon Based (Humans) or Silicon Based (machine) Lifeforms.  
      * @see Taf
@@ -150,13 +150,13 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
                 }
             } finally {
                 pclient.done();
-            }                
+            }            
         } catch (APIException | CadiException | LocatorException | NoSuchAlgorithmException e) {
             access.log(e, ERROR_GETTING_TOKEN_CLIENT);
             return new BasicHttpTafResp(access,user,ERROR_GETTING_TOKEN_CLIENT,RESP.TRY_ANOTHER_TAF,resp,realm,false);
         }
     }
-    
+
     protected String buildMsg(Principal pr, HttpServletRequest req, Object ... msg) {
         StringBuilder sb = new StringBuilder();
         if (pr!=null) {
@@ -189,7 +189,7 @@ public class OBasicHttpTaf extends AbsOTafLur implements HttpTaf {
 //        }
         return Resp.NOT_MINE;
     }
-    
+
     public String toString() {
         return "Basic Auth enabled on realm: " + realm;
     }

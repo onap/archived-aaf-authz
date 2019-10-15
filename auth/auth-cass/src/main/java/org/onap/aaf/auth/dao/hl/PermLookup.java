@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import org.onap.aaf.auth.layer.Result;
 /**
  * PermLookup is a Storage class for the various pieces of looking up Permission 
  * during Transactions to avoid duplicate processing
- * 
+ *
  * @author Jonathan
  *
  */
@@ -53,9 +53,9 @@ public class PermLookup {
     private Result<List<RoleDAO.Data>> roles = null;
     private Result<Set<String>> permNames = null;
     private Result<List<PermDAO.Data>> perms = null;
-    
+
     private PermLookup() {}
-    
+
     public static PermLookup get(AuthzTrans trans, Question q, String user) {
         PermLookup lp=null;
         Map<String, PermLookup> permMap = trans.get(Question.PERMS, null);
@@ -74,7 +74,7 @@ public class PermLookup {
         }
         return lp;
     }
-    
+
     public Result<List<UserRoleDAO.Data>> getUserRoles() {
         if (userRoles==null) {
             userRoles = q.userRoleDAO().readByUser(trans,user);
@@ -143,7 +143,7 @@ public class PermLookup {
             return permNames;
         }
     }
-    
+
     public Result<List<PermDAO.Data>> getPerms(boolean lookup) {
         if (perms==null) {
             // Note: It should be ok for a Valid user to have no permissions -
@@ -156,7 +156,7 @@ public class PermLookup {
                         Map<String,PermDAO.Data> mspdd = new TreeMap<>();
                         Result<String[]> ap = PermDAO.Data.decodeToArray(trans, q, perm);
                         if (ap.isOK()) {
-                             
+                         
                             Result<List<PermDAO.Data>> rlpd = q.permDAO().read(perm,trans,ap.value);
                             if (rlpd.isOKhasData()) {
                                 for (PermDAO.Data pData : rlpd.value) {
@@ -174,7 +174,7 @@ public class PermLookup {
                                                     pdd.description = pData.description;
                                                     lpdd.add(pdd);
                                                 }
-                                                pdd.roles(true).add(pdr);    
+                                                pdd.roles(true).add(pdr);
                                                 break;
                                             }
                                         }

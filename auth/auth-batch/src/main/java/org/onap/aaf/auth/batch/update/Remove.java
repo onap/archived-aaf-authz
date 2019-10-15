@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,8 +77,6 @@ public class Remove extends Batch {
                 tt2.done();
             }
             cqlBatch = new CQLBatch(noAvg.info(),session); 
-
-
         } finally {
             tt0.done();
         }
@@ -140,7 +138,7 @@ public class Remove extends Batch {
                                         ur.set(true);
                                     }
                                     //TODO If deleted because Role is no longer there, double check...
-                                    
+                                
                                     UserRole.batchDelete(cbl.inc(),row);
                                     hdd.target=UserRoleDAO.TABLE; 
                                     hdd.subject=UserRole.histSubject(row);

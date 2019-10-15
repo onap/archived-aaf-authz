@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,14 @@ import org.onap.aaf.misc.env.Trans;
 
 /**
  * A Class to hold Service "ContentTypes", and to match incoming "Accept" types from HTTP.
- * 
+ *
  * This is a multi-use class built to use the same Parser for ContentTypes and Accept.
- * 
+ *
  * Thus, you would create and use "Content.Type" within your service, and use it to match
  * Accept Strings.  What is returned is an Integer (for faster processing), which can be
  * used in a switch statement to act on match different Actions.  The server should
  * know which behaviors match.
- * 
+ *
  * "bestMatch" returns an integer for the best match, or -1 if no matches.
  *
  * @author Jonathan
@@ -50,15 +50,15 @@ public abstract class Content<TRANS extends Trans> {
     /**
      * Parse a Content-Type/Accept.  As found, call "types" and "props", which do different
      * things depending on if it's a Content-Type or Accepts. 
-     * 
+     *
      * For Content-Type, it builds a tree suitable for Comparison
      * For Accepts, it compares against the tree, and builds an acceptable type list
-     * 
+     *
      * Since this parse code is used for every incoming HTTP transaction, I have removed the implementation
      * that uses String.split, and replaced with integers evaluating the Byte array.  This results
      * in only the necessary strings created, resulting in 1/3 better speed, and less 
      * Garbage collection.
-     * 
+     *
      * @param trans
      * @param code
      * @param cntnt
@@ -111,5 +111,5 @@ public abstract class Content<TRANS extends Trans> {
         } while (cie>=0);
         return contType && contProp; // for use in finds, True if a type found AND all props matched
     }
-    
+
 }

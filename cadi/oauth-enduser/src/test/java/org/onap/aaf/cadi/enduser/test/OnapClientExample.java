@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ public class OnapClientExample {
 
     public final static void main(final String args[]) {
         // These Objects are expected to be Long-Lived... Construct once
-        
+    
         // Property Access
         // This method will allow you to set "cadi_prop_files" (or any other property) on Command line 
         access = new PropAccess(args);
@@ -65,16 +65,16 @@ public class OnapClientExample {
         try {
             Map<String, String> aaf_urls = Agent.loadURLs(access);
             Agent.fillMissing(access, aaf_urls);
-        
+    
             // Token aware Client Factory
             tcf = TokenClientFactory.instance(access);
         } catch (APIException | GeneralSecurityException | IOException | CadiException e1) {
             access.log(e1, "Unable to setup OAuth Client Factory, Fail Fast");
             System.exit(1);
         }
-        
+    
         final int CALL_TIMEOUT = Integer.parseInt(access.getProperty(Config.AAF_CALL_TIMEOUT,Config.AAF_CALL_TIMEOUT_DEF));
-        
+    
         try {
             //////////////////////////////////////////////////////////////////////
             // Scenario 1:
@@ -84,7 +84,7 @@ public class OnapClientExample {
             //   In this example, it is AAF, but it can be the Alternate OAuth
 
             TokenClient tc = tcf.newClient(Config.AAF_OAUTH2_TOKEN_URL); // can set your own timeout here (url, timeoutMilliseconds)
-            
+        
             // Here's a trick to get the namespace out of a Fully Qualified AAF Identity (your MechID)
             String ns = FQI.reverseDomain(tc.client_id());
             System.out.printf("\nNote: The AAF Namespace of FQI (Fully Qualified Identity) %s is %s\n\n",tc.client_id(), ns);
@@ -92,17 +92,17 @@ public class OnapClientExample {
             // Now, we can get a Token.  Note: for "scope", use AAF Namespaces to get AAF Permissions embedded in
             // Note: getToken checks if Token is expired, if so, then refreshes before handing back.
             Result<TimedToken> rtt = tc.getToken(ns,"org.onap.test"); // get multiple scopes
-            
+        
             // Note: you can clear a Token's Disk/Memory presence by
             //  1) removing the Token from the "token/outgoing" directory on the O/S
             //  2) programmatically by calling "clearToken" with exact params as "getToken", when it has the same credentials set
             //       tc.clearToken("org.onap.aaf","org.onap.test");
-            
+        
             // Result Object can be queried for success
             if (rtt.isOK()) {
                 TimedToken token = rtt.value;
                 print(token); // Take a look at what's in a Token
-                
+            
                 // Use this Token in your client calls with "Tokenized Client" (TzClient)
                 // These should NOT be used cross thread.
                 // Get Hello Service URL... roll your own in your own world.
@@ -111,7 +111,7 @@ public class OnapClientExample {
 
                 TzClient helloClient = tcf.newTzClient(endServicesURL);
                 helloClient.setToken(tc.client_id(), token);
-                
+            
                 // This client call style, "best" call with "Retryable" inner class covers finding an available Service 
                 // (when Multi-services exist) for the best service, based (currently) on distance.
                 //
@@ -129,14 +129,14 @@ public class OnapClientExample {
                             return future.value;
                         } else {
                             throw new APIException(future.code()  + future.body());
-                        }                    
+                        }                
                     }
                 });
-                
+            
                 // You want to do something with returned value.  Here, we say "hello"
                 System.out.printf("\nPositive Response from Hello: %s\n",rv);
-                
-                
+            
+            
                 //////////////////////////////////////////////////////////////////////
                 // Scenario 2:
                 // As a Service, read Introspection information as proof of Authenticated Authorization
@@ -160,12 +160,12 @@ public class OnapClientExample {
             } else {
                 access.printf(Level.ERROR, "Unable to obtain OAuth Token: %d %s\n",rtt.code,rtt.error);
             }
-            
+        
         } catch (CadiException | LocatorException | APIException | IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     /////////////////////////////////////////////////////////////
     // Examples of Object Access
     /////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ public class OnapClientExample {
         t.getScope(),
         t.getRefreshToken());
     }
-    
+
     private static void print(Introspect ti) {
         if (ti==null || ti.getClientId()==null) {
             System.out.println("Empty Introspect");
@@ -205,7 +205,7 @@ public class OnapClientExample {
         Chrono.timeStamp(exp),
         ti.getScope(),
         ti.getContent()==null?"":ti.getContent());
-        
+    
         System.out.println();
     }
 

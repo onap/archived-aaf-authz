@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,8 +50,8 @@ import junit.framework.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
     @Mock 
-    private Result<CredDAO.Data> rcdd;    
-    
+    private Result<CredDAO.Data> rcdd;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -110,7 +110,7 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
         when(orgIdentity.isFound()).thenReturn(true);
         String ns = "org.onap.sample";
         when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
-        
+    
         CredDAO.Data cdd = credDataFound(cr,100);
         when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(cdd));
         when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(listOf(cdd)));
@@ -126,7 +126,7 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
         cr.setType(CredDAO.RAW);
         return cr;
     }
-    
+
    private CredDAO.Data credDataFound(CredRequest cr, int days) {
         CredDAO.Data cdd = new CredDAO.Data();
         cdd.id = cr.getId();
@@ -144,5 +144,5 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
         cdd.expires = gc.getTime();
         return cdd;
     }
-    
+
 }

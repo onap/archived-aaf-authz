@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ import aaf.v2_0.Perms;
 
 /**
  * Detail Page for Permissions
- * 
+ *
  * @author Jonathan
  *
  */
@@ -71,7 +71,7 @@ public class PermDetail extends Page {
 
     /**
      * Implement the table content for Permissions Detail
-     * 
+     *
      * @author Jonathan
      *
      */
@@ -91,7 +91,7 @@ public class PermDetail extends Page {
             v.permTypeWithUser(trans.user(),pType)
              .permInstance(pInstance)
              .permAction(pAction);
-            
+        
             if (v.err()) {
                 trans.warn().printf("Error in PermDetail Request: %s", v.errs());
                 return Cells.EMPTY;
@@ -107,7 +107,7 @@ public class PermDetail extends Page {
                         TimeTaken tt = trans.start("AAF Perm Details",Env.REMOTE);
                         try {
                             Future<Perms> fp= client.read("/authz/perms/"+pType + '/' + pInstance + '/' + pAction,gui.getDF(Perms.class));
-                    
+                
                             if (fp.get(AAF_GUI.TIMEOUT)) {
                                 tt.done();
                                 tt = trans.start("Load Data", Env.SUB);
@@ -134,7 +134,7 @@ public class PermDetail extends Page {
                                 }
                                 String historyLink = PermHistory.HREF 
                                         + "?type=" + pType + "&instance=" + pInstance + "&action=" + pAction;
-                                
+                            
                                 rv.add(new AbsCell[] {new RefCell("See History",historyLink,false,"class=greenbutton")});
                             } else {
                                 rv.add(new AbsCell[] {new TextCell(
@@ -156,5 +156,5 @@ public class PermDetail extends Page {
             return new Cells(rv,null);
         }
     }
-}        
+}    
         

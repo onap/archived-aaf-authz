@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,7 +49,7 @@ import org.onap.aaf.misc.rosetta.env.RosettaDF;
 /**
  * Low Level Http Client Mechanism. Chances are, you want the high level "HRcli"
  * for Rosetta Object Translation
- * 
+ *
  * @author Jonathan
  *
  */
@@ -89,7 +89,7 @@ public class HClient implements EClient<HttpURLConnection> {
     public void setPayload(Transfer transfer) {
         this.transfer = transfer;
     }
-    
+
     @Override
     public void addHeader(String tag, String value) {
         if (headers == null)
@@ -136,7 +136,7 @@ public class HClient implements EClient<HttpURLConnection> {
                 ss.setSecurity(huc); 
             }
             if (headers != null)
-                for (Header d : headers) {                    
+                for (Header d : headers) {                
                     huc.addRequestProperty(d.tag, d.value);
                 }
             huc.setDoInput(true);
@@ -164,11 +164,11 @@ public class HClient implements EClient<HttpURLConnection> {
             pathinfo = query = fragment = "";
         }
     }
-    
+
     public URI getURI() {
         return uri;
     }
-    
+
     public void setURI(URI uri) {
         this.uri = uri;
     }
@@ -176,7 +176,7 @@ public class HClient implements EClient<HttpURLConnection> {
     public int timeout() {
         return connectTimeout;
     }
-    
+
     protected HttpURLConnection getConnection(URI uri, StringBuilder pi) throws IOException, URISyntaxException {
         URL url = new URI(
                 uri.getScheme(), 
@@ -186,21 +186,21 @@ public class HClient implements EClient<HttpURLConnection> {
                 fragment).toURL();
         return (HttpURLConnection) url.openConnection();
     }
-    
+
      public abstract class HFuture<T> extends Future<T> {
         protected HttpURLConnection huc;
         protected int respCode;
         protected IOException exception;
         protected StringBuilder errContent;
-    
+
         public HFuture(final HttpURLConnection huc) {
             this.huc = huc;
         }
-    
+
         protected boolean evalInfo(HttpURLConnection huc) throws APIException, IOException{
             return respCode == 200;
         };
-    
+
         @Override
         public final boolean get(int timeout) throws CadiException {
             try {
@@ -219,7 +219,7 @@ public class HClient implements EClient<HttpURLConnection> {
                 close();
             }
         }
-    
+
         private void extractError() {
             InputStream is = huc.getErrorStream();
             try {
@@ -237,7 +237,7 @@ public class HClient implements EClient<HttpURLConnection> {
                 exception = e;
             }
         }
-    
+
         // Typically only used by Read
         public StringBuilder inputStreamToString(InputStream is) {
             // Avoids Carriage returns, and is reasonably efficient, given
@@ -260,26 +260,26 @@ public class HClient implements EClient<HttpURLConnection> {
                 return null;
             }
         }
-    
-    
+
+
         @Override
         public int code() {
             return respCode;
         }
-    
+
         public HttpURLConnection huc() {
             return huc;
         }
-    
+
         public IOException exception() {
             return exception;
         }
-    
+
         @Override
         public String header(String tag) {
             return huc.getHeaderField(tag);
         }
-    
+
         public void close() {
             if (huc!=null) {
                 huc.disconnect();
@@ -436,12 +436,12 @@ public class HClient implements EClient<HttpURLConnection> {
             this.tag = t;
             this.value = v;
         }
-        
+    
         public String toString() {
             return tag + '=' + value;
         }
     }
-    
+
     public String toString() {
         return "HttpURLConnection Client configured to " + uri.toString();
     }

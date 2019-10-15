@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,14 +34,14 @@ public enum NsType {
         APP (3), 
         STACKED_APP (10), 
         STACK (11);
-        
+    
         public final int type;
         private NsType(int t) {
             type = t;
         }
         /**
          * This is not the Ordinal, but the Type that is stored in NS Tables
-         * 
+         *
          * @param t
          * @return
          */
@@ -53,7 +53,7 @@ public enum NsType {
             }
             return UNKNOWN;
         }
-        
+    
         /**
          * Use this one rather than "valueOf" to avoid Exception
          * @param s
@@ -70,5 +70,5 @@ public enum NsType {
             return UNKNOWN;
         }
 
-        
+    
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,31 +26,31 @@ import org.onap.aaf.misc.env.util.Split;
 public class GreatCircle {
     // Note: multiplying by this constant is faster than calling Math equivalent function 
     private static final double DEGREES_2_RADIANS = Math.PI/180.0;
-    
+
     public static final double DEGREES_2_NM = 60;
     public static final double DEGREES_2_KM = DEGREES_2_NM * 1.852; // 1.852 is exact ratio per 1929 Standard Treaty, adopted US 1954
     public static final double DEGREES_2_MI = DEGREES_2_NM * 1.1507795; 
-    
+
     /**
-     * 
+     *
      * Calculate the length of an arc on a perfect sphere based on Latitude and Longitudes of two points
      *    Parameters are in Degrees (i.e. the coordinate system you get from GPS, Mapping WebSites, Phones, etc)
-     *    
+     *
      *         L1 = Latitude of point A
      *      G1 = Longitude of point A
      *         L2 = Latitude of point B
      *      G2 = Longitude of point B
-     *      
+     *  
      *      d  = acos (sin(L1)*sin(L2) + cos(L1)*cos(L2)*cos(G1 - G2))
-     * 
+     *
         * Returns answer in Degrees
-        * 
+        *
      * Since there are 60 degrees per nautical miles, you can convert to NM by multiplying by 60
-     * 
+     *
      * Essential formula from a Princeton website, the "Law of Cosines" method.  
-     * 
+     *
      * Refactored cleaned up for speed Jonathan 3/8/2013
-     * 
+     *
      * @param latA
      * @param lonA
      * @param latB
@@ -71,14 +71,14 @@ public class GreatCircle {
             )
             / DEGREES_2_RADIANS;
     }
-    
+
     /** 
      * Convert from "Lat,Long Lat,Long" String format
      *              "Lat,Long,Lat,Long" Format
      *           or all four entries "Lat Long Lat Long"
-     * 
+     *
      * (Convenience function)
-     * 
+     *
      * Since Distance is positive, a "-1" indicates an error in String formatting
      */
     public static double calc(String ... coords) {
@@ -111,7 +111,7 @@ public class GreatCircle {
                     Double.parseDouble(coords[2]),
                     Double.parseDouble(coords[3])
                     );
-                
+            
             default:
                 return -1;
             }
@@ -169,16 +169,16 @@ public class GreatCircle {
 //    alon *= DEGREES_2_RADIANS;
 //    blat *= DEGREES_2_RADIANS;
 //    blon *= DEGREES_2_RADIANS;
-//    
+//
 //    // Reused values
 //    double cosAlat,cosBlat;
-//    
+//
 //    return Math.acos(
 //        ((cosAlat=Math.cos(alat))*Math.cos(alon)*(cosBlat=Math.cos(blat))*Math.cos(blon)) +
 //        (cosAlat*Math.sin(alon)*cosBlat*Math.sin(blon)) +
 //        (Math.sin(alat)*Math.sin(blat))
 //        )/DEGREES_2_RADIANS;
-//    
+//
 //}
 
 /*

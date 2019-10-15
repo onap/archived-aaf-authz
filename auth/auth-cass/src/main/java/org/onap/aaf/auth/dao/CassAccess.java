@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -93,7 +93,7 @@ public class CassAccess {
                     cb.withCredentials(str, env.decryptor().decrypt(epass));
                 }
             }
-    
+
             str = env.getProperty(pre+CASSANDRA_RESET_EXCEPTIONS,env.getProperty(CASSANDRA_RESET_EXCEPTIONS,null));
             if (str!=null) {
                 env.init().log("Cass ResetExceptions = ",str );
@@ -101,7 +101,7 @@ public class CassAccess {
                     resetExceptions.add(new Resettable(env,ex));
                 }
             }
-    
+
             str = env.getProperty(Config.CADI_LATITUDE);
             Double lat = str!=null && !str.isEmpty()?Double.parseDouble(str):null;
             str = env.getProperty(Config.CADI_LONGITUDE);
@@ -109,9 +109,9 @@ public class CassAccess {
             if (lat == null || lon == null) {
                 throw new APIException(Config.CADI_LATITUDE + " and/or " + Config.CADI_LONGITUDE + " are not set");
             }
-            
+        
             env.init().printf("Service Latitude,Longitude = %f,%f",lat,lon);
-            
+        
             str = env.getProperty(pre+CASSANDRA_CLUSTERS,env.getProperty(CASSANDRA_CLUSTERS,"localhost"));
             env.init().printf("Cass Clusters = '%s'\n",str );
             String[] machs = Split.split(',', str);
@@ -124,7 +124,7 @@ public class CassAccess {
                 if (minfo.length>0) {
                     cpoints[i]=minfo[0];
                 }
-                
+            
                 if (minfo.length>3) {
                     if (minfo[1].equals(bestDC)) {
                         ++numInBestDC;
@@ -143,9 +143,9 @@ public class CassAccess {
                     }
                 }
             }
-            
+        
             cb.addContactPoints(cpoints);
-            
+        
             if (bestDC!=null) {
                 // 8/26/2016 Management has determined that Accuracy is preferred over speed in bad situations
                 // Local DC Aware Load Balancing appears to have the highest normal performance, with the best
@@ -166,11 +166,11 @@ public class CassAccess {
         cb.withSocketOptions(new SocketOptions().setReadTimeoutMillis(6500000));
         return cb.build();
     }
-    
+
     private static class Resettable {
         private Class<? extends Exception> cls;
         private List<String> messages;
-        
+    
         @SuppressWarnings("unchecked")
         public Resettable(Env env, String propData) throws APIException {
             if (propData!=null && propData.length()>1) {
@@ -195,7 +195,7 @@ public class CassAccess {
                 }
             }
         }
-        
+    
         public boolean matches(Exception ex) {
             if (ex.getClass().equals(cls)) {
                 if (messages!=null) {
@@ -210,7 +210,7 @@ public class CassAccess {
             return false;
         }
     }
-    
+
     public static final boolean isResetException(Exception e) {
         if (e==null) {
             return true;

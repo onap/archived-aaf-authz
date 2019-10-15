@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -134,7 +134,7 @@ import org.onap.aaf.misc.env.util.Chrono;
          }
 
          urgent = false;
-         
+     
          sb.setLength(0);
          fhh = new File(footer_html);
          if(!fhh.exists()) {
@@ -155,7 +155,7 @@ import org.onap.aaf.misc.env.util.Chrono;
          noAvg = trans.env().newTransNoAvg();
          cqlBatch = new CQLBatch(noAvg.debug(),session); 
           cbl = new CQLBatchLoop(cqlBatch,50,dryRun);
-         
+     
           lastN = new LastNotified(session);
      }
 
@@ -219,14 +219,14 @@ import org.onap.aaf.misc.env.util.Chrono;
                      e.printStackTrace();
                  }
 
-             }    
+             }
 
              // now create Notification
              for(NotifyBody nb : NotifyBody.getAll()) {
                  int count = notify(noAvg, nb);
                  trans.info().printf("Emailed %d for %s",count,nb.name());
              }
-             
+         
              //
              // Do Pending Approval Notifies. We do this separately, because we are consolidating
              // all the new entries, etc.
@@ -238,7 +238,7 @@ import org.onap.aaf.misc.env.util.Chrono;
                      csvList.add(new CSV(access,f));
                  }
              }
-             
+         
              Map<String,Pending> mpending = new TreeMap<>();
              Holder<Integer> count = new Holder<>(0);
              for(CSV approveCSV : csvList) {
@@ -272,23 +272,23 @@ import org.onap.aaf.misc.env.util.Chrono;
                 }
             }
             trans.info().printf("Read %d Reminder Rows", count.get());
-            
+        
             NotifyPendingApprBody npab = new NotifyPendingApprBody(access);
 
             GregorianCalendar gc = new GregorianCalendar();
             gc.add(GregorianCalendar.DAY_OF_MONTH, 7); // Get from INFO?
             Date oneWeek = gc.getTime();
             CSV.Saver rs = new CSV.Saver();
-            
+        
             TimeTaken tt = trans.start("Obtain Last Notifications for Approvers", Trans.SUB);
             try {
                 lastN.add(mpending.keySet());
             } finally {
                 tt.done();
             }
-            
+        
             Pending p;
-            
+        
             tt = trans.start("Notify for Pending", Trans.SUB);
             List<String> idList = new ArrayList<>();
             String id;
@@ -336,7 +336,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 
          String run = nb.type()+nb.name();
          String test = dryRun?run:null;
-         
+     
          ONE_EMAIL:
          for(String id : nb.users()) {
              toList.clear();

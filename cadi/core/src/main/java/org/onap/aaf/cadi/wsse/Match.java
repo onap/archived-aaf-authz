@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,16 +28,16 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * Match Class allows you to build an automatic Tree of StAX (or StAX like) 
  * Objects for frequent use.
- * 
+ *
  * OBJECT is a type which you which to do some end Actions on, similar to a Visitor pattern, see Action
- * 
+ *
  * Note: We have implemented with XReader and XEvent, rather than StAX for performance reasons.
- * 
+ *
  * @see Action
  * @see Match
  * @see XEvent
  * @see XReader
- * 
+ *
  * @author Jonathan
  *
  * @param <OUTPUT>
@@ -50,7 +50,7 @@ public class Match<OUTPUT> {
     private Action<OUTPUT> action = null;
     private boolean stopAfter;
     private boolean exclusive;
-    
+
 
     @SafeVarargs
     public Match(String ns, String name, Match<OUTPUT> ... next) {
@@ -61,7 +61,7 @@ public class Match<OUTPUT> {
             if (!m.stopAfter)m.prev = this;
         }
     }
-    
+
     public Match<OUTPUT> onMatch(OUTPUT output, XReader reader) throws XMLStreamException {
         while (reader.hasNext()) {
             XEvent event = reader.nextEvent();
@@ -111,10 +111,10 @@ public class Match<OUTPUT> {
         stopAfter = true;
         return this;
     }
-    
+
     /**
      * Mark that this Object MUST be matched at this level or stop parsing and end
-     * 
+     *
      * @param action
      * @return
      */

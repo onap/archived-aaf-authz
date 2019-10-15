@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import aaf.v2_0.History;
  */
 public class ListActivity extends Cmd {
     private static final String HEADER = "List Activity of Namespace";
-    
+
     public ListActivity(List parent) {
         super(parent,"activity", 
                 new Param("ns-name",true));
@@ -50,7 +50,7 @@ public class ListActivity extends Cmd {
     public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
             int idx = _idx;
         final String ns = args[idx++];
-        
+    
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
@@ -58,7 +58,7 @@ public class ListActivity extends Cmd {
                         "/authz/hist/ns/"+ns, 
                         getDF(History.class)
                         );
-    
+
                 if (fp.get(AAFcli.timeout())) {
                     activity(fp.value, HEADER + " [ " + ns + " ]");
                 } else {
@@ -68,7 +68,7 @@ public class ListActivity extends Cmd {
             }
         });
     }
-    
+
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
         detailLine(sb,indent,HEADER);

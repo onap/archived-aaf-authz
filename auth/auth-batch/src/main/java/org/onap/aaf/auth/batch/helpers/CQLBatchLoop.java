@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ package org.onap.aaf.auth.batch.helpers;
 
 public class CQLBatchLoop {
     private static final int MAX_CHARS = (50 * 1024)/2;
-    
+
     private final CQLBatch cqlBatch;
     private final int maxBatch;
     private final StringBuilder sb;
@@ -52,17 +52,17 @@ public class CQLBatchLoop {
     /**
      * Assume this is another line in the Batch
      * @return
-     */	
+     */
     public StringBuilder inc() {
-        if((i>=maxBatch || current.length()+sb.length()>MAX_CHARS)&&(i>0)) {
-            
-        	    cqlBatch.execute(dryRun);
+        if((i>=maxBatch || current.length() + sb.length() > MAX_CHARS) && (i > 0)) {
+        
+                cqlBatch.execute(dryRun);
                 i = -1;
                 incBatch();
     }
-        if(i<0) {
+        if(i < 0) {
             cqlBatch.begin();
-            i=0;
+            i = 0;
         }
         if(current.length() > MAX_CHARS) {
             cqlBatch.singleExec(current, dryRun);
@@ -74,23 +74,23 @@ public class CQLBatchLoop {
         ++total;
         return current;
     }
-    
+
     /**
      * Close up when finished.
      */
     public void flush() {
-        if(current.length()+sb.length()>MAX_CHARS) {
-            if(i>0) {
+        if(current.length() + sb.length() > MAX_CHARS) {
+            if(i > 0) {
                 cqlBatch.execute(dryRun);
                 incBatch();
             }
-            if(current.length()>0) {
+            if(current.length() > 0) {
                 cqlBatch.singleExec(current, dryRun);
                 current.setLength(0);
                 incBatch();
             }
         } else {
-            if(i<0) {
+            if(i < 0) {
                 cqlBatch.begin();
             }
             sb.append(current);
@@ -98,14 +98,14 @@ public class CQLBatchLoop {
             cqlBatch.execute(dryRun);
             incBatch();
         }
-        i=-1;
+        i = -1;
     }
 
     private void incBatch() {
         ++batches;
         if(showProgress) {
             System.out.print('.');
-            if(batches%70==0) {
+            if(batches%70 == 0) {
                 System.out.println();
             } 
         }
@@ -114,7 +114,7 @@ public class CQLBatchLoop {
     public int total() {
         return total;
     }
-    
+
     public int batches() {
         return batches;
     }
@@ -124,7 +124,7 @@ public class CQLBatchLoop {
         batches = 0;
         i = -1;
     }
-    
+
     public String toString() {
         return cqlBatch.toString();
     }

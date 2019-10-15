@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import aafoauth.v2_0.Token;
  *   create a date from time of Creation, which works with local code.
  *   
  * We create a Derived class, so that it can be used as is the originating Token type.
- * 
+ *
  * "expired" is local computer time 
  * @author Jonathan
  *
@@ -51,7 +51,7 @@ public class TimedToken extends Token implements Persistable<Token> {
     public TimedToken(Persist<Token,?> p, Token t, byte[] hash, Path path){
         this(p,t,t.getExpiresIn()+(System.currentTimeMillis()/1000),hash, path);
     }
-    
+
     public TimedToken(Persist<Token,?> p, Token t, long expires_secsFrom1970, byte[] hash, Path path) {
         cacheable = new Persisting<Token>(p, t,expires_secsFrom1970, hash, path);
         accessToken=t.getAccessToken();

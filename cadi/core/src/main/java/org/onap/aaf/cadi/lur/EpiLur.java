@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,25 +32,25 @@ import org.onap.aaf.cadi.Permission;
 
 /**
  * EpiLUR
- * 
+ *
  * Short for "Epic LUR". Be able to run through a series of LURs to obtain the validation needed.
- * 
+ *
  * The pun is better for the other pattern... "TAF" (aka EpiTaf), but it's still the larger picture of 
  * LURs that will be accomplished.
- * 
+ *
  * FYI, the reason we separate LURs, rather than combine, is that Various User Repository Resources have
  * different Caching requirements.  For instance, the Local User Repo (with stand alone names), never expire, but might be
  * refreshed with a change in Configuration File, while the Remote Service based LURs will need to expire at prescribed intervals 
- * 
+ *
  * @author Jonathan
  *
  */
 public final class EpiLur implements Lur {
     private final Lur[] lurs;
-    
+
     /**
      * EpiLur constructor
-     * 
+     *
      * Construct the EpiLur from variable TAF parameters
      * @param lurs
      * @throws CadiException
@@ -102,7 +102,7 @@ public final class EpiLur implements Lur {
     public boolean handlesExclusively(Permission ... pond) {
         return false;
     }
-    
+
     /**
      * Get Lur for index.  Returns null if out of range
      * @param idx
@@ -131,7 +131,7 @@ public final class EpiLur implements Lur {
             }
         }
     }
-    
+
     public Lur subLur(Class<? extends Lur> cls ) {
         for (Lur l : lurs) {
             if (l.getClass().isAssignableFrom(cls)) {
@@ -155,7 +155,7 @@ public final class EpiLur implements Lur {
             lur.clear(p, report);
         }
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Lur lur : lurs) {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,9 +25,9 @@ package org.onap.aaf.misc.rosetta;
 /**
  * A Ladder is a Stack like Storage Class, but where you can ascend and descend while
  * the elements exists.
- * 
+ *
  * Like an extension ladder, you can make taller as you go
- * 
+ *
  * @author Jonathan
  *
  */
@@ -52,16 +52,16 @@ public class Ladder<T> {
     public void bottom() {
         rung = 0;
     }
-    
+
     public void top() {
         rung = struts.length-1;
         while (rung>0 && struts[rung]==null)--rung;
     }
-    
+
     public int howHigh() {
         return rung;
     }
-    
+
     public void jumpTo(int rung) {
         if (rung>=struts.length) {
             Object[] temp = new Object[init_size*((rung/init_size)+1)];
@@ -70,17 +70,17 @@ public class Ladder<T> {
         }
         this.rung = rung;
     }
-    
+
     public int height() {
         return struts.length;
     }
-    
+
     public void cutTo(int rungs) {
         Object[] temp = new Object[rungs];
         System.arraycopy(struts, 0, temp, 0, Math.min(rungs, struts.length));
         struts = temp;
     }
-    
+
     public void ascend() {
         ++rung;
         if (rung>=struts.length) {
@@ -89,20 +89,20 @@ public class Ladder<T> {
             struts = temp;
         }
     }
-    
+
     public void descend() {
         --rung;
     }
-    
+
     @SuppressWarnings("unchecked")
     public T peek() {
         return (T)struts[rung];
     }
-    
+
     public void push(T t) {
         struts[rung]=t;
     }
-    
+
     @SuppressWarnings("unchecked")
     public T pop() {
         T t = (T)struts[rung];

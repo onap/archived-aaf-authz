@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import aaf.v2_0.UserRoleRequest;
 
 /**
  * p
- * 
+ *
  * @author Jonathan
  *
  */
@@ -65,7 +65,7 @@ public class Role extends Cmd {
                 Future<?> fp = null;
 
                 if (args.length < 5) {
-                    throw new CadiException(build(new StringBuilder("Too few args: "), null).toString());                        
+                    throw new CadiException(build(new StringBuilder("Too few args: "), null).toString());                    
                 }
                 String[] roles = args[idx++].split(",");
                 for (String role : roles) {

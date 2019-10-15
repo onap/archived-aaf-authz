@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@ import org.onap.aaf.misc.env.Trans;
 public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<TRANS,DATA> {
     // Java does not allow creation of Arrays with Generics in them...
     protected final CIDAO<TRANS> info;
-    
+
     private static Timer infoTimer;
     private Object cache[];
     public final int segSize;
@@ -73,7 +73,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
         }
         return h%segSize;
     }
-    
+
     public void add(String key, List<DATA> data) {
         @SuppressWarnings("unchecked")
         Map<String,Dated> map = ((Map<String,Dated>)cache[cacheIdx(key)]);
@@ -105,21 +105,21 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
     public interface Getter<D> {
         public abstract Result<List<D>> get();
     };
-    
+
     // TODO utilize Segmented Caches, and fold "get" into "reads"
     @SuppressWarnings("unchecked")
     public Result<List<DATA>> get(TRANS trans, String key, Getter<DATA> getter) {
         List<DATA> ld = null;
         Result<List<DATA>> rld = null;
-        
+    
         int cacheIdx = cacheIdx(key);
         Map<String, Dated> map = ((Map<String,Dated>)cache[cacheIdx]);
-        
+    
         // Check for saved element in cache
         Dated cached = map.get(key);
         // Note: These Segment Timestamps are kept up to date with DB
         Date dbStamp = info.get(trans, name,cacheIdx);
-        
+    
         // Check for cache Entry and whether it is still good (a good Cache Entry is same or after DBEntry, so we use "before" syntax)
         if (cached!=null && dbStamp!=null && dbStamp.before(cached.timestamp)) {
             ld = (List<DATA>)cached.data;
@@ -154,7 +154,7 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
             infoTimer.schedule(new Refresh(env,cidao, minRefresh), 1000, minRefresh); // note: Refresh from DB immediately
         }
     }
-    
+
     public static void stopTimer() {
         Cache.stopTimer();
         if (infoTimer!=null) {
@@ -162,21 +162,21 @@ public class Cached<TRANS extends Trans, DATA extends Cacheable> extends Cache<T
             infoTimer = null;
         }
     }
-    
+
     private static final class Refresh extends TimerTask {
         private static final int MAXREFRESH = 2*60*10000; // 20 mins
         private AuthzEnv env;
         private CIDAO<AuthzTrans> cidao;
         private int minRefresh;
         private long lastRun;
-        
+    
         public Refresh(AuthzEnv env, CIDAO<AuthzTrans> cidao, int minRefresh) {
             this.env = env;
             this.cidao = cidao;
             this.minRefresh = minRefresh;
             lastRun = System.currentTimeMillis()-MAXREFRESH-1000;
         }
-        
+    
         @Override
         public void run() {
             // Evaluate whether to refresh based on transaction rate

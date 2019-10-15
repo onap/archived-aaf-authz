@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,14 +46,14 @@ public class LocateServiceImpl<IN,OUT,ERROR>
         protected LocateDAO locateDAO;
         private ConfigDAO configDAO;
         private boolean permToRegister;
-    
+
         public LocateServiceImpl(AuthzTrans trans, AAF_Locate locate, Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper){
             this.mapper = mapper;
             this.locateDAO = locate.locateDAO;
             this.configDAO = locate.configDAO;
             permToRegister = false; //TODO Setup a Configuration for this
         }
-        
+    
         public Mapper<IN,OUT,Endpoints,MgmtEndpoints,Configuration,ERROR> mapper() {return mapper;}
 
         @Override
@@ -80,7 +80,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                         if(denied==null) {
                             denied = new StringBuilder("May not register service(s):");
                         }
-                        
+                    
                         denied.append("\n\t");
                         denied.append(p.getKey());
                         denied.append(')');
@@ -118,7 +118,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
                          if(denied==null) {
                              denied = new StringBuilder("May not deregister service(s):");
                          }
-                         
+                     
                          denied.append("\n\t");
                          denied.append(p.getKey());
                          denied.append(')');
@@ -140,7 +140,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
         /////   ADDED v1_1
         /* (non-Javadoc)
          * @see org.onap.aaf.auth.locate.service.LocateService#getConfig(org.onap.aaf.auth.env.AuthzTrans, java.lang.String, java.lang.String)
-         * 
+         *
          * Note: "id" is put in, in case we need to filter, or direct data change in the future by Permission
          */
         @Override
@@ -149,7 +149,7 @@ public class LocateServiceImpl<IN,OUT,ERROR>
             Configuration c = new Configuration();
             c.setName(type);
             Props p;
-            
+        
             if (dr.isOKhasData()) {
                 for (ConfigDAO.Data data : dr.value) {
                     p = new Props();

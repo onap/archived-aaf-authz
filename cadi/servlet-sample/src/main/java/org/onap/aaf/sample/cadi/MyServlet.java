@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,15 +40,15 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
 //    @RolesAllowed({"com.att.aaf.myPerm|myInstance|myAction"})
     public class MyServlet implements Servlet {
         private ServletConfig servletConfig;
-    
+
         public void init(ServletConfig config) throws ServletException {
             servletConfig = config;
         }
-    
+
         public ServletConfig getServletConfig() {
             return servletConfig;
         }
-    
+
         public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
             HttpServletRequest request;
             try {
@@ -56,10 +56,10 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
             } catch (ClassCastException e) {
                 throw new ServletException("Only serving HTTP today",e);
             }
-            
+        
             res.getOutputStream().println("<html><header><title>CSP Servlet Test</title></header><body><h1>You're good to go!</h1><pre>" +
                     request.getUserPrincipal());
-            
+        
             String perm = request.getParameter("PERM");
             if (perm!=null) {
                 if (request.isUserInRole(perm)) {
@@ -76,7 +76,7 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
                     }
                 }
             }
-            
+        
             // You can get the working AAFCon from Trans
             AAFCon<?> aafcon = AAFCon.obtain(req);
             if (aafcon!=null) {
@@ -115,13 +115,13 @@ import org.onap.aaf.cadi.principal.TaggedPrincipal;
                 res.getOutputStream().println("No AAFCon instantiated");
             }
             res.getOutputStream().print("</pre></body></html>");
-            
+        
         }
-    
+
         public String getServletInfo() {
             return "MyServlet";
         }
-    
+
         public void destroy() {
         }
     }

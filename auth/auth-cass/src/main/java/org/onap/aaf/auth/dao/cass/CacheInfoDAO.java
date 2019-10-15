@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,7 +69,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     public static final Map<String,Date[]> info = new ConcurrentHashMap<>();
 
     private static CacheUpdate cacheUpdate;
-    
+
     // Hold current time stamps from Tables
     private final Date startTime;
     private final boolean cacheNotify;
@@ -79,7 +79,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     // Data Definition, matches Cassandra DM
     //////////////////////////////////////////
     private static final int KEYLIMIT = 2;
-    
+
     public CacheInfoDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CacheInfoDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE,readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         startTime = new Date();
@@ -124,11 +124,11 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
 
     private static class InfoLoader extends Loader<Data> {
         public static final InfoLoader dflt = new InfoLoader(KEYLIMIT);
-        
+    
         public InfoLoader(int keylimit) {
             super(keylimit);
         }
-        
+    
         @Override
         public Data load(Data data, Row row) {
             // Int more efficient
@@ -151,7 +151,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             obj[idx]=data.touched;
         }
     }
-    
+
     public static synchronized <T extends Trans> void startUpdate(AuthzEnv env, HMangr hman, SecuritySetter<HttpURLConnection> ss, String ip, int port) {
         if (cacheUpdate==null) {
             cacheUpdate = new CacheUpdate(env,hman,ss, ip,port);
@@ -176,15 +176,15 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         private SecuritySetter<HttpURLConnection> ss;
         private final String authority;
         public boolean go = true;
-        
+    
         public CacheUpdate(AuthzEnv env, HMangr hman, SecuritySetter<HttpURLConnection> ss, String ip, int port) {
             this.env = env;
             this.hman = hman;
             this.ss = ss;
-            
+        
             this.authority = ip+':'+port;
         }
-        
+    
         private static class Transfer {
             public String table;
             public int segs[];
@@ -198,7 +198,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             private AuthzTrans trans;
             private String type;
             private String segs;
-            
+        
             public CacheClear(AuthzTrans trans) {
                 this.trans = trans;
             }
@@ -207,7 +207,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                 type = es.getKey();
                 segs = es.getValue().toString();
             }
-            
+        
         @Override
             public Integer code(Rcli<?> client) throws APIException, CadiException {
                 URI to = client.getURI();
@@ -222,11 +222,11 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                 return total;
             }
         }
-        
+    
         private class IntHolder {
             private int[] raw;
             HashSet<Integer> set;
-            
+        
             public IntHolder(int ints[]) {
                 raw = ints;
                 set = null;
@@ -234,7 +234,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             public void add(int[] ints) {
                 if (set==null) {
                     set = new HashSet<>();
-                    
+                
                     for (int i=0;i<raw.length;++i) {
                         set.add(raw[i]);
                     }
@@ -270,7 +270,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                 return sb.toString();
             }
         }
-        
+    
         @Override
         public void run() {
             do {
@@ -279,7 +279,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
                     if (data==null) {
                         continue;
                     }
-                    
+                
                     int count = 0;
                     CacheClear cc = null;
                     Map<String,IntHolder> gather = null;
@@ -354,7 +354,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.dao.cass.CIDAO#touch(org.onap.aaf.auth.env.test.AuthzTrans, java.lang.String, int)
      */
-    
+
     @Override
     public Result<Void> touch(AuthzTrans trans, String name, int ... seg) {
         /////////////
@@ -389,7 +389,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             sb.append(name);
             sb.append("' AND seg = ");
             sb.append(s);
-            sb.append(";\n");    
+            sb.append(";\n");
             if (first) {
                 first =false;
             } else {
@@ -425,7 +425,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         } finally {
             tt.done();
         }
-        
+    
         String lastName = null;
         Date[] dates = null;
         for (Row row : rs.all()) {
@@ -451,7 +451,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         }
         return Result.ok();
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.dao.cass.CIDAO#get(java.lang.String, int)
      */

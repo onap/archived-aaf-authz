@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ import org.onap.aaf.misc.env.APIException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_Delg {
-    
+
     private static User testUser;
     private static Delg delg;
     User user;
@@ -65,7 +65,7 @@ public class JU_Delg {
     AuthzEnv aEnv;
     Writer wtr;
     Locator<URI> loc;
-    HMangr hman;    
+    HMangr hman;
     AAFcli aafcli;
 
     @Before
@@ -75,12 +75,12 @@ public class JU_Delg {
         wtr = mock(Writer.class);
         loc = mock(Locator.class);
         SecuritySetter<HttpURLConnection> secSet = mock(SecuritySetter.class);
-        hman = mock(HMangr.class); //new HMangr(aEnv, loc);    
+        hman = mock(HMangr.class); //new HMangr(aEnv, loc);
         aafcli = mock(AAFcli.class);//new AAFcli(prop, aEnv, wtr, hman, null, secSet);
 //        user = mock(User.class); //new User(aafcli);
 //        delg = new Delg(user);
     }
-    
+
     @Test
     public void testExec() throws APIException, LocatorException, CadiException, URISyntaxException {
         Item value = mock(Item.class);
@@ -93,19 +93,19 @@ public class JU_Delg {
         HRcli hcli = new HRcli(hman, uri, item, secSet);
         String[] strArr = {"add","upd","del"};
 //        delg._exec(0, strArr);
-        
+    
         String[] strArr1 = {"upd","del","add"};
 //        delg._exec(0, strArr1);
-        
+    
         String[] strArr2 = {"del","add"};
 //        delg._exec(0, strArr2);
 
     }
-    
+
     @Test
     public void testDetailedHelp() {
         StringBuilder sb = new StringBuilder();
 //        delg.detailedHelp(0, sb);
     }
-    
+
 }

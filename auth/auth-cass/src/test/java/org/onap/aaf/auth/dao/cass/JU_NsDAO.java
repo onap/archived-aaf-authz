@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,7 +76,7 @@ public class JU_NsDAO {
     Session session;
     @Mock
     ResultSet rs;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -105,18 +105,18 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
     }
-    
+
     public void setPsByStartAndTarget(NsDAO NsDAOObj, PSInfo psInfoObj, String fieldName) {
         Field nsDaoField;
         try {
             nsDaoField = NsDAO.class.getDeclaredField(fieldName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(NsDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -129,7 +129,7 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testWasMOdified() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -141,13 +141,13 @@ public class JU_NsDAO {
         Mockito.doReturn(Mockito.mock(LogTarget.class)).when(trans).error();
         Mockito.doNothing().when(tt).done();
         NsDAO.Data data  = new NsDAO.Data();
-        
+    
         HistoryDAO historyDAO = Mockito.mock(HistoryDAO.class);
         Result<ResultSet> rs1 = new Result<ResultSet>(null,0,"test",new Object[0]);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
         CacheInfoDAO cacheInfoDAO = Mockito.mock(CacheInfoDAO.class);
         Mockito.doReturn(rs1).when(cacheInfoDAO).touch(Mockito.any(), Mockito.anyString(), Mockito.anyInt());
-        
+    
         NsDAO daoObj = null;
         try {
             daoObj = new NsDAO(trans, historyDAO, cacheInfoDAO);
@@ -156,17 +156,17 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test"});
-        
+    
         daoObj.wasModified(trans, CRUD.create, data, new String[] {});
         daoObj.wasModified(trans, CRUD.create, data, new String[] {null});
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test",null});
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test","test"});
-        
+    
         rs1 = new Result<ResultSet>(null,1,"test",new Object[0]);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test","test"});
     }
-    
+
     @Test
     public void testSecondConstructor() {
         HistoryDAO historyDAO = Mockito.mock(HistoryDAO.class);
@@ -178,7 +178,7 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
     }
 
     @Test
@@ -191,15 +191,15 @@ public class JU_NsDAO {
                 break;
             }
         }
-        
+    
         Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
-        
+    
         try {
-            
+        
             Object obj = constructor.newInstance(1);
             Method innnerClassMtd;
-                
+            
             NsDAO.Data data  = new NsDAO.Data();
             Row row = Mockito.mock(Row.class);
             ByteBuffer bbObj = ByteBuffer.allocateDirect(10);
@@ -208,16 +208,16 @@ public class JU_NsDAO {
             bbObj.put(1, new Byte("1"));
             bbObj.put(2, new Byte("2"));
             Mockito.doReturn(bbObj).when(row).getBytesUnsafe(1);
-            
+        
             innnerClassMtd = innerClass.getMethod("load", new Class[] {NsDAO.Data.class, Row.class});
             innnerClassMtd.invoke(obj, new Object[] {data, row});
-            
+        
             innnerClassMtd = innerClass.getDeclaredMethod("key", new Class[] {NsDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test"} });
-//            
+//        
             innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {NsDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
-            
+        
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
             innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {NsDAO.Data.class, DataOutputStream.class });
@@ -227,7 +227,7 @@ public class JU_NsDAO {
             DataInputStream dis = new DataInputStream(bais);
             innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {NsDAO.Data.class, DataInputStream.class });
             innnerClassMtd.invoke(obj, new Object[] {data, dis });
-            
+        
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -267,7 +267,7 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
         Mockito.doReturn("test user").when(trans).user();
-        
+    
         Result<NsDAO.Data> retVal = daoObj.create(trans,data);
         assertTrue(retVal.status == 4);
 
@@ -278,7 +278,7 @@ public class JU_NsDAO {
         data.parent = "parent";
         data.attrib = new HashMap<>();
         data.attrib.put("test", "test");
-        
+    
         Field cbField;
         Mockito.doReturn(rs1).when(cacheInfoDAO).touch(Mockito.any(), Mockito.anyString(), Mockito.anyInt());
         try {
@@ -295,10 +295,10 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         retVal = daoObj.create(trans,data);
         assertTrue(retVal.status == 9);
-        
+    
         Field owningField;
         Mockito.doReturn(rs1).when(cacheInfoDAO).touch(Mockito.any(), Mockito.anyString(), Mockito.anyInt());
         try {
@@ -317,9 +317,9 @@ public class JU_NsDAO {
         }
         retVal = daoObj.create(trans,data);
         assertTrue(retVal.status == 0);
-        
-    }
     
+    }
+
     @Test
     public void testUpdate() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -340,7 +340,7 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
         Mockito.doReturn("test user").when(trans).user();
-        
+    
         Result<Void> retVal = daoObj.update(trans,data);
         assertTrue(retVal.status == 4);
 
@@ -367,10 +367,10 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         retVal = daoObj.update(trans,data);
         assertTrue(retVal.status == 0);
-        
+    
         ResultSet rsMock = Mockito.mock(ResultSet.class);
         Iterator<Row> iteMock = Mockito.mock(Iterator.class);
         Mockito.doReturn(iteMock).when(rsMock).iterator();
@@ -382,7 +382,7 @@ public class JU_NsDAO {
         retVal = daoObj.update(trans,data);
         assertTrue(retVal.status == 0);
     }
-    
+
     @Test
     public void testRead() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -408,7 +408,7 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
         Mockito.doReturn("test user").when(trans).user();
-        
+    
         Result<List<Data>> retVal = daoObj.read(trans,data);
         assertTrue(retVal.status == 0);
 
@@ -436,7 +436,7 @@ public class JU_NsDAO {
         assertTrue(retVal.status == 0);
 
     }
-    
+
     @Test
     public void testReadByObject() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -462,7 +462,7 @@ public class JU_NsDAO {
             e.printStackTrace();
         }
         Mockito.doReturn("test user").when(trans).user();
-        
+    
         Result<List<Data>> retVal = daoObj.read(trans,new Object[] {});
         assertTrue(retVal.status == 0);
 
@@ -490,7 +490,7 @@ public class JU_NsDAO {
         assertTrue(retVal.status == 0);
 
     }
-    
+
     @Test
     public void testDelete() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -533,7 +533,7 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Result<Void> retVal = daoObj.delete(trans,data, false);
         assertTrue(retVal.status == 0);
 
@@ -541,12 +541,12 @@ public class JU_NsDAO {
         dataAL.add(data);
         rs1 = new Result<List<Data>>(dataAL,0,"test",new Object[0]);
         Mockito.doReturn(rs1).when(psObj).read(trans, "NsDAOImpl READ", data);
-        
+    
         retVal = daoObj.delete(trans,data, false);
         assertTrue(retVal.status == 0);
 
     }
-    
+
     @Test
     public void testReadNsByAttrib() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -560,7 +560,7 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
@@ -572,7 +572,7 @@ public class JU_NsDAO {
         Mockito.doReturn(rs1).when(psObj).read(trans, "NsDAOImpl READ", data);
         Mockito.doReturn(rs1).when(psObj).exec(trans, "NsDAOImpl DELETE", data);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+    
         Mockito.doReturn("test user").when(trans).user();
         Field cbField;
         try {
@@ -589,10 +589,10 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Result<Set<String>> retVal = daoObj.readNsByAttrib(trans,"test");
         assertTrue(retVal.status == 0);
-        
+    
         ResultSet rsMock = Mockito.mock(ResultSet.class);
         Iterator<Row> iteMock = Mockito.mock(Iterator.class);
         Mockito.doReturn(iteMock).when(rsMock).iterator();
@@ -619,7 +619,7 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
@@ -631,7 +631,7 @@ public class JU_NsDAO {
         Mockito.doReturn(rs1).when(psObj).read(trans, "NsDAOImpl READ", data);
         Mockito.doReturn(rs1).when(psObj).exec(trans, "NsDAOImpl DELETE", data);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+    
         Mockito.doReturn("test user").when(trans).user();
         Field cbField;
         try {
@@ -648,11 +648,11 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Result<Void> retVal = daoObj.attribAdd(trans, "test", "test", "test");
         assertTrue(retVal.status == 0);
     }
-    
+
     @Test
     public void testAttribRemove() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -666,7 +666,7 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
@@ -678,7 +678,7 @@ public class JU_NsDAO {
         Mockito.doReturn(rs1).when(psObj).read(trans, "NsDAOImpl READ", data);
         Mockito.doReturn(rs1).when(psObj).exec(trans, "NsDAOImpl DELETE", data);
         Mockito.doReturn(rs1).when(historyDAO).create(Mockito.any(), Mockito.any());
-        
+    
         Mockito.doReturn("test user").when(trans).user();
         Field cbField;
         try {
@@ -695,11 +695,11 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Result<Void> retVal = daoObj.attribRemove(trans, "test", "test");
         assertTrue(retVal.status == 0);
     }
-    
+
     @Test
     public void testAddDescription() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -713,7 +713,7 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"100");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_PORT,"9042");
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,"100");
@@ -744,11 +744,11 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Result<Void> retVal = daoObj.addDescription(trans, "test", "test");
         assertTrue(retVal.status == 0);
     }
-    
+
     @Test
     public void testGetChildren() {
         PSInfo psObj = Mockito.mock(PSInfo.class);
@@ -761,11 +761,11 @@ public class JU_NsDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         Result<List<Data>> retVal = daoObj.getChildren(trans, "test");
         assertNull(retVal);
     }
-    
+
     @Test
     public void testData() {
         NsDAO.Data data = new NsDAO.Data();
@@ -778,10 +778,10 @@ public class JU_NsDAO {
         data.attrib(false);
         data.attrib = new ConcurrentHashMap<>();
         data.attrib(true);
-        
+    
         data.name="123";
         data.split("test");
-        
+    
         data.toString();
     }
 
@@ -789,12 +789,12 @@ public class JU_NsDAO {
 
 class NsDAOImpl extends NsDAO{
 
-    
+
 //    public NsDAOImpl(AuthzTrans trans, HistoryDAO historyDAO,PSInfo readPS  ) throws APIException, IOException {
 //        super(trans, historyDAO);
 //        setSession(this, Mockito.mock(Session.class));
 //    }
-    
+
 
     public NsDAOImpl(AuthzTrans trans, Cluster cluster, String keySpace, Session session)throws APIException, IOException {
         super(trans, cluster, keySpace);
@@ -816,13 +816,13 @@ class NsDAOImpl extends NsDAO{
         Field nsDaoField;
         try {
             nsDaoField = NsDAO.class.getDeclaredField(methodName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(NsDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -840,13 +840,13 @@ class NsDAOImpl extends NsDAO{
         Field nsDaoField;
         try {
             nsDaoField = CassDAOImpl.class.getDeclaredField(methodName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(NsDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -863,13 +863,13 @@ class NsDAOImpl extends NsDAO{
         Field nsDaoField;
         try {
             nsDaoField = AbsCassDAO.class.getDeclaredField("session");
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(approvalDaoObj, session);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block

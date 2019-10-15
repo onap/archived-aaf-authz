@@ -57,11 +57,11 @@ public class JU_LogFileNamerTest {
         try {
             LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "log");
             assertEquals(logFileNamer, logFileNamer.noPID());
-    
+
             logFileNamer.setAppender(name);
             assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
                 dir.getCanonicalFile() + File.separator + "log-" + name + ".log");
-    
+
             logFileNamer.setAppender(name);
             assertEquals(System.getProperty("LOG4J_FILENAME_Append"),
                 dir.getCanonicalFile() + File.separator + "log-" + name + ".0.log");
@@ -76,11 +76,11 @@ public class JU_LogFileNamerTest {
         try {
             LogFileNamer logFileNamer = new LogFileNamer(dir.getCanonicalPath(), "");
             assertEquals(logFileNamer, logFileNamer.noPID());
-    
+
             logFileNamer.setAppender(name);
             assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
                 dir.getCanonicalPath() + File.separator + name + ".log");
-    
+
             logFileNamer.setAppender(name);
             assertEquals(System.getProperty("LOG4J_FILENAME_Different"),
                 dir.getCanonicalPath() + File.separator + name + ".0.log");

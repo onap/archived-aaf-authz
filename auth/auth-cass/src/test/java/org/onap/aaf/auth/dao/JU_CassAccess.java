@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ import com.datastax.driver.core.Cluster.Builder;
 @RunWith(PowerMockRunner.class)
 public class JU_CassAccess {
     CassAccess cassAccess;
-    
+
     public static final String KEYSPACE = "authz";
     public static final String CASSANDRA_CLUSTERS = "cassandra.clusters";
     public static final String CASSANDRA_CLUSTERS_PORT = "cassandra.clusters.port";
@@ -58,7 +58,7 @@ public class JU_CassAccess {
     @Mock
     Env envMock;
     String prefix=null;
-    
+
     @Before
     public void setUp(){
         cassAccess = new CassAccess();
@@ -68,7 +68,7 @@ public class JU_CassAccess {
 //    @Test(expected=APIException.class)
 //    public void testCluster() throws APIException, IOException {
 ////        cassAccess.cluster(envMock, prefix);
-//        
+//    
 //    }
 
 }

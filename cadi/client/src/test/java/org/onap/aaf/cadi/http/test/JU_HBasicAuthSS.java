@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,23 +39,23 @@ import org.onap.aaf.cadi.http.HSecurityInfoInit;
 import org.onap.aaf.cadi.principal.BasicPrincipal;
 
 public class JU_HBasicAuthSS {
-    
+
     @Mock
     BasicPrincipal bpMock;
-    
+
     private SecurityInfoC<HttpURLConnection> si;
     private PropAccess access;
-    
+
     private final static String id = "id";
     private final static String password = "password";
-    
+
     @Before
     public void setup() throws CadiException, IOException {
         MockitoAnnotations.initMocks(this);
-        
+    
         when(bpMock.getName()).thenReturn(id);
         when(bpMock.getCred()).thenReturn(password.getBytes());
-        
+    
         access = new PropAccess(new PrintStream(new ByteArrayOutputStream()), new String[0]);
         access.setProperty(Config.AAF_APPID, id);
         access.setProperty(Config.AAF_APPPASS, access.encrypt(password));
@@ -68,7 +68,7 @@ public class JU_HBasicAuthSS {
         // All the constructors accomplish the same thing
         @SuppressWarnings("unused")
         HBasicAuthSS auth = new HBasicAuthSS(si);
-        
+    
         // TODO: While these test _should_ pass, and they _do_ pass on my local machine, they won't
         //       pass when then onap jobbuilder runs them. Good luck!
 //        assertThat(auth.getID(), is(id));
@@ -84,10 +84,10 @@ public class JU_HBasicAuthSS {
 
         auth = new HBasicAuthSS(bpMock, si);
 //        assertThat(auth.getID(), is(id));
-        
+    
         auth = new HBasicAuthSS(bpMock, si, false);
 //        assertThat(auth.getID(), is(id));
-        
+    
         auth = new HBasicAuthSS(bpMock, si, true);
 //        assertThat(auth.getID(), is(id));
     }

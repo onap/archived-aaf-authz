@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,21 +53,21 @@ public class JU_DirectAAFLocator {
 
     @Mock
     LocateDAO ldao;
-    
+
     @Mock
     AuthzEnv env;
-    
+
     @Mock
     AuthzTrans trans;
-    
+
     @Mock
     PropAccess access;
-    
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
     }
-    
+
     @Test
     public void testConstructorVersionExcpetion() {
         Mockito.doReturn(access).when(env).access();
@@ -97,7 +97,7 @@ public class JU_DirectAAFLocator {
             assertEquals("Invalid Version String: 20.20.20.test", e.getMessage());
         }
     }
-    
+
     @Test
     public void testConstructorExcpetion() {
         Mockito.doReturn(access).when(env).access();
@@ -112,7 +112,7 @@ public class JU_DirectAAFLocator {
 //            System.out.println(e.getMessage());
         }
     }
-    
+
     // NOTE: These mocks to not well represent the DirectAAFLocator Class.
     @Test
     public void testConstructorUriExcpetion() {
@@ -133,7 +133,7 @@ public class JU_DirectAAFLocator {
 
     @Test
     public void testRefresh() {
-        
+    
         DirectAAFLocator aafLocatorObj=null;
         PropAccess access = Mockito.mock(PropAccess.class);
         Mockito.doReturn(access).when(env).access();
@@ -150,7 +150,7 @@ public class JU_DirectAAFLocator {
             e.printStackTrace();
         }
         Result<List<Data>> retVal1 = new Result<List<Data>>(null,0,"",new Object[0]);
-        
+    
         Data data= new Data();
         data.major=30;
         data.minor=30;
@@ -158,16 +158,16 @@ public class JU_DirectAAFLocator {
         data.pkg=30;
         retVal1.value = new ArrayList<Data>();
         retVal1.value.add(data);
-        
+    
         Mockito.doReturn(retVal1).when(ldao).readByName(trans,"test");
         boolean retVal = aafLocatorObj.refresh();
 //        System.out.println(retVal);
         assertTrue(retVal);
-    }    
-    
+    }
+
     @Test
     public void testRefreshNOK() {
-        
+    
         DirectAAFLocator aafLocatorObj=null;
         PropAccess access = Mockito.mock(PropAccess.class);
         Mockito.doReturn(access).when(env).access();
@@ -184,11 +184,11 @@ public class JU_DirectAAFLocator {
             e.printStackTrace();
         }
         Result<List<Data>> retVal1 = new Result<List<Data>>(null,1,"",new String[0]);
-        
+    
         Mockito.doReturn(retVal1).when(ldao).readByName(trans,"test");
         boolean retVal = aafLocatorObj.refresh();
 //        System.out.println(retVal);
         assertFalse(retVal);
-    }    
-    
+    }
+
 }

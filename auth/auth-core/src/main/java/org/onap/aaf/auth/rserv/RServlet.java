@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,19 +59,19 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
         r.add(code,moreTypes);
         env.init().log(r.report(code),code);
     }
-    
+
     @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
-        
+    
         @SuppressWarnings("unchecked")
         TRANS trans = (TRANS)req.getAttribute(TransFilter.TRANS_TAG);
         if (trans==null) {
             response.setStatus(404); // Not Found, because it didn't go through TransFilter
             return;
         }
-        
+    
         Route<TRANS> route;
         HttpCode<TRANS,?> code=null;
         String ct = req.getContentType();
@@ -93,7 +93,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
         } finally {
             tt.done();
         }
-        
+    
         if (route!=null && code!=null) {
             StringBuilder sb = new StringBuilder(72);
             sb.append(route.auditText);
@@ -119,7 +119,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
             }
         }
     }
-    
+
     @Override
     public String getServletInfo() {
         return "RServlet for Jetty";

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,10 +39,10 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 /**
  * AuthzEnv is the Env tailored to Authz Service
- * 
+ *
  * Most of it is derived from RosettaEnv, but it also implements Access, which
  * is an Interface that Allows CADI to interact with Container Logging
- * 
+ *
  * @author Jonathan
  *
  */
@@ -65,13 +65,13 @@ public class AuthzEnv extends RosettaEnv implements Access {
         super();
         _init(new PropAccess(props));
     }
-    
+
 
     public AuthzEnv(PropAccess pa) {
         super();
         _init(pa);
     }
-    
+
     private final void _init(PropAccess pa) { 
         access = pa;
         times = new long[20];
@@ -85,16 +85,16 @@ public class AuthzEnv extends RosettaEnv implements Access {
         debug = new AccessLogTarget(access, Level.DEBUG);
         trace = new AccessLogTarget(access, Level.TRACE);
     }
-    
+
     private class AccessLogTarget implements LogTarget {
         private final Level level;
         private final Access access;
-        
+    
         public AccessLogTarget(final Access access, final Level level) {
             this.level = level;
             this.access = access;
         }
-        
+    
         @Override
         public void log(Object... msgs) {
             access.log(level, msgs);
@@ -117,7 +117,7 @@ public class AuthzEnv extends RosettaEnv implements Access {
         public void printf(String fmt, Object... vars) {
             access.printf(level, fmt, vars);
         }
-        
+    
     }
     @Override
     public AuthzTransImpl newTrans() {
@@ -161,7 +161,7 @@ public class AuthzEnv extends RosettaEnv implements Access {
 
         return count==0?300000L:pot/count; // Return Weighted Avg, or 5 mins, if none avail.
     }
-    
+
     @Override
     public ClassLoader classLoader() {
         return getClass().getClassLoader();
@@ -199,7 +199,7 @@ public class AuthzEnv extends RosettaEnv implements Access {
     public void setLogLevel(Level level) {
         access.setLogLevel(level);
     }
-    
+
     private static final byte[] ENC="enc:".getBytes();
     public String decrypt(String encrypted, final boolean anytext) throws IOException {
         if (encrypted==null) {
@@ -237,7 +237,7 @@ public class AuthzEnv extends RosettaEnv implements Access {
                             return "";
                         }
                     }
-    
+
                 };
             }
             return decryptor.decrypt(encrypted);
@@ -290,5 +290,5 @@ public class AuthzEnv extends RosettaEnv implements Access {
     public Properties getProperties() {
         return access.getProperties();
     };
-    
+
 }

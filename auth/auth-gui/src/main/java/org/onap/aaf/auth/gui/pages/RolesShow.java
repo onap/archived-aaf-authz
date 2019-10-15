@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,14 +51,14 @@ import aaf.v2_0.UserRoles;
 
 /**
  * Page content for My Roles
- * 
+ *
  * @author Jonathan
  *
  */
 public class RolesShow extends Page {
     public static final String HREF = "/gui/myroles";
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd";
-    
+
     public RolesShow(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env, "MyRoles",HREF, NO_FIELDS,
             new BreadCrumbs(breadcrumbs), 
@@ -67,7 +67,7 @@ public class RolesShow extends Page {
 
     /**
      * Implement the Table Content for Permissions by User
-     * 
+     *
      * @author Jonathan
      *
      */
@@ -81,7 +81,7 @@ public class RolesShow extends Page {
         public String[] headers() {
             return headers;
         }
-        
+    
         @Override
         public Cells get(final AuthzTrans trans, final AAF_GUI gui) {
             Cells rv = Cells.EMPTY;
@@ -107,7 +107,7 @@ public class RolesShow extends Page {
                                                     UserRoleRemove.HREF+USER +trans.user()+ROLE+u.getRole(),
                                                     false,
                                                     new String[]{CLASS_EXPIRED})
-                                                        
+                                                    
                                             };
                                             rv.add(sa);
                                     } else {
@@ -124,7 +124,7 @@ public class RolesShow extends Page {
                                             rv.add(sa);
                                     }
                             }
-                            
+                        
                         } finally {
                             tt.done();
                         }

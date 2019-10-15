@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,13 +55,13 @@ public class JU_AuthzTransImpl {
     @Mock
     AuthzEnv authzEnvMock;
     AuthzTransImpl trans1;
-    
+
     private Organization org=null;
     private AuthzTransImpl mockAuthzTransImpl;
     private static HttpServletRequest req;
     private static HttpServletResponse res;
     private Lur lur1 = mock(Lur.class);
-    
+
     @Before
     public void setUp(){
         authzTransImpl = new AuthzTransImpl(authzEnvMock);
@@ -71,9 +71,9 @@ public class JU_AuthzTransImpl {
         when(req.getParameter("request")).thenReturn("NotNull");
         authzTransImpl.set(req,res);
         when(req.getParameter("request")).thenReturn("");
-        authzTransImpl.set(req,res);    
+        authzTransImpl.set(req,res);
     }
-    
+
     @Test
     public void testOrg() {
         Organization result=null;
@@ -82,15 +82,15 @@ public class JU_AuthzTransImpl {
         //result = OrganizationFactory.obtain(authzTransImpl.env(), authzTransImpl.user());
         authzTransImpl.org();
         //when(test).thenReturn(null);
-        //assertTrue(true);    
+        //assertTrue(true);
     }
-    
+
     @Mock
     LogTarget logTargetMock;
-    
+
     @Test
     public void testLogAuditTrail(){
-        
+    
         when(logTargetMock.isLoggable()).thenReturn(false);
         authzTransImpl.logAuditTrail(logTargetMock);
         when(logTargetMock.isLoggable()).thenReturn(true);
@@ -98,7 +98,7 @@ public class JU_AuthzTransImpl {
         //when(logTargetMock.isLoggable()).thenReturn(true);//TODO: Figure this out
         //authzTransImpl.logAuditTrail(logTargetMock);
     }
-    
+
 //    @Test                            //TODO:Fix this AAF-111
 //    public void testSetUser() {
 //        Principal user = mock(Principal.class);
@@ -107,7 +107,7 @@ public class JU_AuthzTransImpl {
 //        String username = user1.getName();
 //        Assert.assertNotNull(user1);
 //    }
-    
+
 //    @Test                            //TODO:Fix this AAF-111
 //    public void testUser() {
 //        Assert.assertEquals("n/a", authzTransImpl.user());
@@ -117,7 +117,7 @@ public class JU_AuthzTransImpl {
 //        authzTransImpl.setUser(user);
 //        Assert.assertEquals("name", authzTransImpl.user());
 //    }
-//    
+//
     @Test
     public void testRequested() {
         REQD_TYPE user = REQD_TYPE.move;
@@ -134,10 +134,10 @@ public class JU_AuthzTransImpl {
         when(req.getParameter(user1.name())).thenReturn("test");
         authzTransImpl.requested(user,false);
         */
-        
-        
-    }
     
+    
+    }
+
     @Test
     public void testFish() {
         mockAuthzTransImpl = mock(AuthzTransImpl.class);
@@ -149,7 +149,7 @@ public class JU_AuthzTransImpl {
         authzTransImpl.setLur(lur1);
         authzTransImpl.fish(p);
     }
-    
+
     @Test
     public void testSetVariables() { //TODO: refactor this better
         Assert.assertNull(authzTransImpl.agent());
@@ -160,12 +160,12 @@ public class JU_AuthzTransImpl {
         Assert.assertNull(authzTransImpl.getUserPrincipal());
         Assert.assertNotNull(authzTransImpl.user());
     }
-    
+
     @Test
     public void testNow() {
         Date date = authzTransImpl.now();
         Assert.assertEquals(date,authzTransImpl.now());
         when(authzTransImpl.now()).thenReturn(null);
     }
-    
+
 }

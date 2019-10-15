@@ -114,7 +114,7 @@ public class JU_PlaceArtifactInKeystore {
 
         // coverage
         assertThat(placer.place(transMock, certInfoMock, artiMock, "machine"), is(true));
-        
+    
         when(certInfoMock.getCerts()).thenReturn(null);
         try {
             placer._place(transMock, certInfoMock, artiMock);

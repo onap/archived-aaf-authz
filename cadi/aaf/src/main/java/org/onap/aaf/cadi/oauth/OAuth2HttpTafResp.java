@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ public class OAuth2HttpTafResp extends AbsTafResp implements TafResp {
     private HttpServletResponse httpResp;
     private RESP status;
     private final boolean wasFailed;
-    
+
     public OAuth2HttpTafResp(Access access, OAuth2Principal principal, String desc, RESP status, HttpServletResponse resp, boolean wasFailed) {
         super(access,tafName, principal, desc);
         httpResp = resp;
@@ -51,7 +51,7 @@ public class OAuth2HttpTafResp extends AbsTafResp implements TafResp {
     }
 
     public RESP authenticate() throws IOException {
-        httpResp.setStatus(401); // Unauthorized    
+        httpResp.setStatus(401); // Unauthorized
         return RESP.HTTP_REDIRECT_INVOKED;
     }
 

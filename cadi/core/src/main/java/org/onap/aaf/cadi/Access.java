@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,15 +39,15 @@ public interface Access {
     public enum Level {
         DEBUG(0x1), INFO(0x10), AUDIT(0x100), WARN(0x2000), ERROR(0x4000), INIT(0x8000),TRACE(0x10000),NONE(0XFFFF);
         private final int bit;
-        
+    
         Level(int ord) {
             bit = ord;
         }
-        
+    
         public boolean inMask(int mask) {
             return (mask & bit) == bit;
         }
-        
+    
         public int addToMask(int mask) {
             return mask | bit;
         }
@@ -89,7 +89,7 @@ public interface Access {
      * @param elements
      */
     public void printf(Level level, String fmt, Object ... elements);
-    
+
     /** 
      * Check if message will log before constructing
      * @param level
@@ -100,18 +100,18 @@ public interface Access {
     /**
      * Write the contents of an exception, followed by a variable list of Object's text via the 
      * toString() method with appropriate space, etc.
-     * 
+     *
      * The Loglevel is always "ERROR"
-     * 
+     *
      * @param elements
      */
     public void log(Exception e, Object ... elements);
-    
+
     /**
      * Set the Level to compare logging too
      */
     public void setLogLevel(Level level);
-        
+    
     /**
      * It is important in some cases to create a class from within the same Classloader that created
      * Security Objects.  Specifically, it's pretty typical for Web Containers to separate classloaders

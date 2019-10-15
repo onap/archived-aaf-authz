@@ -57,7 +57,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     // CACHE Calling
     private static final String LOG_FMT = "%s UserRole - %s: %s-%s (%s, %s) expiring %s";
     private static final String REPLAY_FMT = "%s|%s|%s|%s|%s\n";
-    private static final String DELETE_FMT = "# %s\n"+ REPLAY_FMT;
+    private static final String DELETE_FMT = "# %s\n" + REPLAY_FMT;
 
     private static final List<UserRole> data = new ArrayList<>();
     private static final SortedMap<String,List<UserRole>> byUser = new TreeMap<>();
@@ -81,7 +81,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         }
     };
 
-    public UserRole(String user, String ns, String rname, Date expires) {    
+    public UserRole(String user, String ns, String rname, Date expires) {
         urdd = new UserRoleDAO.Data();
         urdd.user = user;
         urdd.role = ns + '.' + rname;
@@ -114,7 +114,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     public static void load(Trans trans, Session session, Creator<UserRole> creator) {
         load(trans,session,creator,null,new DataLoadVisitor());
     }
-    
+
     public static void load(Trans trans, Session session, Creator<UserRole> creator, Visitor<UserRole> visitor ) {
         load(trans,session,creator,null,visitor);
     }
@@ -122,9 +122,9 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     public static void loadOneRole(Trans trans, Session session, Creator<UserRole> creator, String role, Visitor<UserRole> visitor) {
         load(trans,session,creator,"role='" + role +"' ALLOW FILTERING;",visitor);
     }
-    
+
     public static void loadOneUser(Trans trans, Session session, Creator<UserRole> creator, String user, Visitor<UserRole> visitor ) {
-        load(trans,session,creator,"user='"+ user +'\'',visitor);
+        load(trans,session,creator,"user='" + user + '\'',visitor);
     }
 
     public static void load(Trans trans, CSV csv, Creator<UserRole> creator, Visitor<UserRole> visitor) throws IOException, CadiException {
@@ -134,7 +134,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
                 new Date(Long.parseLong(row.get(6)))))
         );
     }
-    
+
     private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
         String query = creator.query(where);
         trans.debug().log( "query: " + query );
@@ -189,30 +189,30 @@ public class UserRole implements Cloneable, CacheChange.Data  {
             lur.add(ur);
         }
     }
-    
+
     public int totalLoaded() {
         return totalLoaded;
     }
-    
+
     public int deleted() {
         return deleted;
     }
-    
+
     @Override
     public void expunge() {
         data.remove(this);
-        
+    
         List<UserRole> lur = byUser.get(urdd.user);
         if (lur!=null) {
             lur.remove(this);
         }
-    
+
         lur = byRole.get(urdd.role);
         if (lur!=null) {
             lur.remove(this);
         }
     }
-    
+
     public static void setDeleteStream(PrintStream ds) {
         urDelete = ds;
     }
@@ -238,27 +238,27 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     public UserRoleDAO.Data urdd() {
         return urdd;
     }
-    
+
     public String user() {
         return urdd.user;
     }
-    
+
     public String role() {
         return urdd.role;
     }
-    
+
     public String ns() {
         return urdd.ns;
     }
-    
+
     public String rname() {
         return urdd.rname;
     }
-    
+
     public Date expires() {
         return urdd.expires;
     }
-    
+
     public void expires(Date time) {
         urdd.expires = time;
     }
@@ -296,7 +296,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         cache.delayedDelete(this);
         ++deleted;
     }
-    
+
 
     /**
      * Calls expunge() for all deleteCached entries
@@ -304,7 +304,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     public static void resetLocalData() {
         cache.resetLocalData();
     }
-    
+
     public void row(final CSV.Writer csvw, String tag) {
         csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime());
     }
@@ -312,7 +312,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     public void row(final CSV.Writer csvw, String tag, String reason) {
         csvw.row(tag,user(),role(),ns(),rname(),Chrono.dateOnlyStamp(expires()),expires().getTime(),reason);
     }
-    
+
     public static Data row(List<String> row) {
         Data data = new Data();
         data.user = row.get(1);
@@ -350,7 +350,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         sb.append(role());
         sb.append("';\n");
     }
-    
+
     public void batchUpdateExpires(StringBuilder sb) {
         sb.append("UPDATE authz.user_role SET expires='");
         sb.append(Chrono.dateTime(expires()));
@@ -373,7 +373,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
     }
 
     public static String histSubject(List<String> row) {
-        return row.get(1) + '|' + row.get(2);    
+        return row.get(1) + '|' + row.get(2);
     }
 
     public static void clear() {
@@ -381,6 +381,6 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         byUser.clear();
         byRole.clear();
         cache.resetLocalData();
-        
+    
     }
 }

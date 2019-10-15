@@ -7,9 +7,9 @@
 * * Licensed under the Apache License, Version 2.0 (the "License");
 * * you may not use this file except in compliance with the License.
 * * You may obtain a copy of the License at
-* * 
+* *
 *  *      http://www.apache.org/licenses/LICENSE-2.0
-* * 
+* *
 *  * Unless required by applicable law or agreed to in writing, software
 * * distributed under the License is distributed on an "AS IS" BASIS,
 * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,7 +58,7 @@ public class JU_WSSEParser {
 //            System.out.println("CadiWrap credentials are: " + bc.getUser() + ", " + password);
 //            assertEquals("some_user", bc.getUser());
 //            assertEquals("some_password", password);
-//            
+//        
 //        } finally {
 //            fis.close();
 //        }
@@ -78,7 +78,7 @@ public class JU_WSSEParser {
 //            System.out.println("CadiWrap credentials are: " + bc.getUser() + ", " + password);
 //            assertEquals("none", bc.getUser());
 //            assertEquals("none", password);
-//            
+//        
 //        } finally {
 //            fis.close();
 //        }
@@ -121,8 +121,8 @@ public class JU_WSSEParser {
 //
 //        e = wp.parse(bc, new ByteArrayInputStream("".getBytes())); // empty
 //        assertNotNull(e);
-//        
-//        
+//    
+//    
 //        long start, count = 0L;
 //        int iter = 30000;
 //        File f = new File("test/CBUSevent.xml");
@@ -146,9 +146,9 @@ public class JU_WSSEParser {
 //        }
 //        float ms = count/1000000f;
 //        System.out.println("Executed " + iter + " WSSE reads from Memory Stream in " + ms + "ms.  " + ms/iter + "ms per trans");
-//        
+//    
 //        // SPECIFIC ISSUES
-//        
+//    
 //        fis = new FileInputStream("test/error2013_04_23.xml");
 //        try {
 //            bc.setCred(null);

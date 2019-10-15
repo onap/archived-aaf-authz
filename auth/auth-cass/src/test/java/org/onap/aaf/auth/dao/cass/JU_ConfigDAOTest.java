@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,7 +73,7 @@ public class JU_ConfigDAOTest {
     AuthzEnv env;
     @Mock
     LogTarget logTarget;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -86,7 +86,7 @@ public class JU_ConfigDAOTest {
         Mockito.doReturn("100").when(trans).getProperty(Config.CADI_LONGITUDE);
         Mockito.doReturn(session).when(cluster).connect("test");
     }
-    
+
     @Test
     public void testInit() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -99,7 +99,7 @@ public class JU_ConfigDAOTest {
         PSInfo createPS = Mockito.mock(PSInfo.class);
         Result<ResultSet> rs = new Result<ResultSet>(null,0,"test",new String[0]);
         Mockito.doReturn(rs).when(createPS).exec(trans, "ConfigDAOImpl CREATE", data);
-        
+    
         ConfigDAO daoObj=null;
         try {
             daoObj = new ConfigDAO(trans, cluster, "test");
@@ -109,17 +109,17 @@ public class JU_ConfigDAOTest {
         }
 
     }
-    
+
     @Test
     public void testConfigLoader(){
-        
+    
         Class<?> innerClass = ConfigDAO.class.getDeclaredClasses()[0];
         Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
         try {
             Object obj = constructor.newInstance(1);
             Method innnerClassMtd;
-                
+            
             ConfigDAO.Data data  = new ConfigDAO.Data();
             Row row = Mockito.mock(Row.class);
             ByteBuffer bbObj = ByteBuffer.allocateDirect(10);
@@ -128,16 +128,16 @@ public class JU_ConfigDAOTest {
             bbObj.put(1, new Byte("1"));
             bbObj.put(2, new Byte("2"));
             Mockito.doReturn(bbObj).when(row).getBytesUnsafe(1);
-            
+        
             innnerClassMtd = innerClass.getMethod("load", new Class[] {ConfigDAO.Data.class, Row.class});
             innnerClassMtd.invoke(obj, new Object[] {data, row});
-            
+        
             innnerClassMtd = innerClass.getDeclaredMethod("key", new Class[] {ConfigDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test"} });
-//            
+//        
             innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {ConfigDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test"} });
-            
+        
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
             innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {ConfigDAO.Data.class, DataOutputStream.class });
@@ -147,7 +147,7 @@ public class JU_ConfigDAOTest {
             DataInputStream dis = new DataInputStream(bais);
             innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {ConfigDAO.Data.class, DataInputStream.class });
             innnerClassMtd.invoke(obj, new Object[] {data, dis });
-            
+        
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -168,7 +168,7 @@ public class JU_ConfigDAOTest {
             e.printStackTrace();
         } 
     }
-    
+
     @Test
     public void testWasMOdified() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -180,7 +180,7 @@ public class JU_ConfigDAOTest {
         Mockito.doNothing().when(tt).done();
         ConfigDAO.Data data  = new ConfigDAO.Data();
         PSInfo createPS = Mockito.mock(PSInfo.class);
-        
+    
         ConfigDAO daoObj = null;
         try {
             daoObj = new ConfigDAO(trans, cluster, "test");
@@ -188,13 +188,13 @@ public class JU_ConfigDAOTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test"});
+
     
-        
-        
+    
     }
-    
+
     @Test
     public void testRead() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -210,9 +210,9 @@ public class JU_ConfigDAOTest {
         Mockito.doReturn("100").when(trans).getProperty(CassAccess.CASSANDRA_CLUSTERS_USER_NAME,null);
         Mockito.doReturn(Mockito.mock(Decryptor.class)).when(trans).decryptor();
         Mockito.doNothing().when(tt).done();
-        
+    
         Result<List<Data>>  rs1 = new Result<List<Data>>(null,0,"test",new String[0]);
-        
+    
 
         PSInfo psObj = Mockito.mock(PSInfo.class);
         ConfigDAOImpl daoObj = null;
@@ -224,12 +224,12 @@ public class JU_ConfigDAOTest {
         }
         Mockito.doReturn(rs1).when(psObj).read(trans, "ConfigDAO READ", new Object[]{"test"});
         daoObj.readName(trans, "test");
-        
-        
+    
+    
     }
 
-    
-    
+
+
     @Test
     public void testSecondConstructor() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -252,24 +252,24 @@ public class JU_ConfigDAOTest {
 
 class ConfigDAOImpl extends ConfigDAO{
 
-    
+
     public ConfigDAOImpl(AuthzTrans trans, Cluster cluster, String keyspace,PSInfo readPS  ) throws APIException, IOException {
         super(trans, cluster, keyspace);
         setPs(this, readPS, "psName");
     }
-    
+
 
     public void setPs(ConfigDAOImpl ConfigDAOObj, PSInfo psInfoObj, String methodName) {
         Field nsDaoField;
         try {
             nsDaoField = ConfigDAO.class.getDeclaredField(methodName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(ConfigDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -283,12 +283,12 @@ class ConfigDAOImpl extends ConfigDAO{
         }
     }
 
-    
+
     public void setSession(ConfigDAOImpl ConfigDAOObj, Session session) {
         Field nsDaoField;
         try {
             nsDaoField = AbsCassDAO.class.getDeclaredField("session");
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -306,5 +306,5 @@ class ConfigDAOImpl extends ConfigDAO{
             e.printStackTrace();
         }
     }
-    
+
 }

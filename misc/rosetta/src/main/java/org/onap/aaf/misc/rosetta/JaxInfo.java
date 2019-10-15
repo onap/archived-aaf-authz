@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ public class JaxInfo {
     public static final int DATA = 0;
     public static final int ARRAY = 1;
     public static final int OBJECT = 2;
-    
+
     public final String name;
     public final Class<?> clss;
     public Map<String, JaxInfo> extensions; // Classes, which might be found at runtime, that extend this class.  Lazy Instantiation
@@ -50,7 +50,7 @@ public class JaxInfo {
     public final boolean nillable;
     public String ns;
     public boolean isObject() {return members!=null;}
-    
+
     private JaxInfo(String n, String ns, Class<?> c, JaxInfo[] members, boolean string, boolean array, boolean required, boolean nillable) {
         name = n;
         this.ns = ns;
@@ -62,14 +62,14 @@ public class JaxInfo {
         this.nillable = nillable;
         extensions = null;
     }
-    
+
 
     public int getType() {
         if (isArray)return ARRAY;
         else if (members!=null)return OBJECT;
         return DATA;
     }
-    
+
     public JaxInfo getDerived(String derivedName) {
         JaxInfo derived;
         // Lazy Instantiation
@@ -79,7 +79,7 @@ public class JaxInfo {
         } else {
             derived = extensions.get(derivedName);
         }
-        
+    
         if (derived == null) {
             //TODO for the moment, Classes are in same package
             Package pkg = clss.getPackage();
@@ -103,7 +103,7 @@ public class JaxInfo {
 
     /**
      * Build up JAXB Information (recursively)
-     * 
+     *
      * @param cls
      * @param rootNns
      * @return
@@ -117,7 +117,7 @@ public class JaxInfo {
     }
     /**
      * Build up JAXB Information (recursively)
-     * 
+     *
      * @param cls
      * @param rootNns
      * @return
@@ -151,10 +151,10 @@ public class JaxInfo {
                 }
             }
         }
-        
+    
         return new JaxInfo(name,defaultNS, cls,buildFields(cls,defaultNS),false,false,false,false);
     }
-    
+
     // Build up the name and members of this particular class
     // This is recursive, if a member is a JAXB Object as well.
     private static JaxInfo[] buildFields(Class<?> clazz, String defaultNS) throws SecurityException, NoSuchFieldException, ClassNotFoundException {
@@ -168,12 +168,12 @@ public class JaxInfo {
                 if ("".equals(field)) break; // odd bug.  "" returned when no fields exist, rather than empty array
                 Field rf = cls.getDeclaredField(field);
                 Class<?> ft = rf.getType();
-                
+            
                 boolean required = false;
                 boolean nillable = false;
                 String xmlName = field;
                 String namespace = defaultNS;
-                
+            
                 XmlElement xe = rf.getAnnotation(XmlElement.class);
                 if (xe!=null) {
                     xmlName=xe.name();

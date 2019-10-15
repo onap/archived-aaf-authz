@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ public class LoginLandingAction extends Page {
             new NamedCode(true,"content") {
                 final Slot sID = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[0]);
 //                final Slot sPassword = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[1]);
-                
+            
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -52,11 +52,11 @@ public class LoginLandingAction extends Page {
 
                             hgen.p("User: "+username);
                             hgen.p("Pass: ********");
-                            
+                        
                             // TODO: clarification from JG
                             // put in request header?
                             // then pass through authn/basicAuth call?
-                            
+                        
                         }
                     });
                 }

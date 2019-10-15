@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,9 +94,9 @@ public abstract class Rcli<CT> {
         rv.apiVersion = apiVersion;
         return rv;
     }
-    
+
     protected abstract Rcli<CT> clone(URI uri, SecuritySetter<CT> ss);
-    
+
     public abstract void invalidate() throws CadiException;
 
     public Rcli<CT> readTimeout(int millis) {
@@ -118,7 +118,7 @@ public abstract class Rcli<CT> {
         this.apiVersion = apiVersion;
         return this;
     }
-    
+
     public boolean isApiVersion(String prospective) {
         return apiVersion.equals(prospective);
     }
@@ -294,7 +294,7 @@ public abstract class Rcli<CT> {
 
     /**
      * Read String, using POST for keyInfo
-     * 
+     *
      * @param pathinfo
      * @param df
      * @param t
@@ -335,7 +335,7 @@ public abstract class Rcli<CT> {
      */
     public<T,R> Future<R> readPost(String pathinfo, final RosettaDF<T> df, final T t, final RosettaDF<R> resp) throws APIException, CadiException {
         final ParsePath pp = new ParsePath(pathinfo);
-        
+    
         EClient<CT> client = client();
         client.setMethod(POST);
         client.addHeader(CONTENT_TYPE,typeString(df.getTypeClass()));
@@ -371,11 +371,11 @@ public abstract class Rcli<CT> {
 
     public Future<String> read(String pathinfo, String accept, String ... headers) throws APIException, CadiException {
         final ParsePath pp = new ParsePath(pathinfo);
-    
+
         EClient<CT> client = client();
         client.setMethod(GET);
         client.addHeader(ACCEPT, accept);
-        
+    
         for (int i=1;i<headers.length;i=i+2) {
             client.addHeader(headers[i-1],headers[i]);
         }
@@ -416,7 +416,7 @@ public abstract class Rcli<CT> {
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
         client.setFragment(pp.frag());
-        
+    
         client.setPayload(null);
         client.send();
         return client.futureRead(df,type);
@@ -430,7 +430,7 @@ public abstract class Rcli<CT> {
         client.addHeader(ACCEPT, typeString(cls));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());        
+        client.setFragment(pp.frag());    
 
         client.setPayload(null);
         client.send();
@@ -445,7 +445,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE,contentType);
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());        
+        client.setFragment(pp.frag());    
         client.setPayload(new EClient.Transfer() {
             @Override
             public void transfer(OutputStream os) throws IOException, APIException {
@@ -455,16 +455,16 @@ public abstract class Rcli<CT> {
         client.send();
         return client.future(t);
     }
-    
+
     public<T> Future<String> updateRespondString(String pathinfo, final RosettaDF<T> df, final T t) throws APIException, CadiException {
         final ParsePath pp = new ParsePath(pathinfo);
-        
+    
         EClient<CT> client = client();
         client.setMethod(PUT);
         client.addHeader(CONTENT_TYPE, typeString(df.getTypeClass()));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());        
+        client.setFragment(pp.frag());    
 
         client.setPayload(new EClient.Transfer() {
             @Override
@@ -476,7 +476,7 @@ public abstract class Rcli<CT> {
         client.send();
         return client.futureReadString();
     }
-    
+
     public Future<String> update(String pathinfo, String contentType, EClient.Transfer content) throws APIException, CadiException {
         final ParsePath pp = new ParsePath(pathinfo);
 
@@ -502,8 +502,8 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, typeString(df.getTypeClass()));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
-        
+        client.setFragment(pp.frag());
+    
         client.setPayload(new EClient.Transfer() {
             @Override
             public void transfer(OutputStream os) throws IOException, APIException {
@@ -513,16 +513,16 @@ public abstract class Rcli<CT> {
         client.send();
         return client.future(t);
     }
-    
+
     public<T> Future<T> update(String pathinfo, Class<?> cls, final RosettaDF<T> df, final T t) throws APIException, CadiException {
         final ParsePath pp = new ParsePath(pathinfo);
-        
+    
         EClient<CT> client = client();
         client.setMethod(PUT);
         client.addHeader(CONTENT_TYPE, typeString(cls));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
 
         client.setPayload(new EClient.Transfer() {
             @Override
@@ -533,7 +533,7 @@ public abstract class Rcli<CT> {
         client.send();
         return client.future(t);
     }
-    
+
 
 
     /**
@@ -553,7 +553,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, typeString(Void.class));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
 
 //        client.setPayload(new EClient.Transfer() {
 //            @Override
@@ -563,7 +563,7 @@ public abstract class Rcli<CT> {
         client.send();
         return client.future(null);
     }
-    
+
 
     public<T> Future<T> delete(String pathinfo, String contentType, final RosettaDF<T> df, final T t) throws APIException, CadiException {
         final ParsePath pp = new ParsePath(pathinfo);
@@ -573,7 +573,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, contentType);
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
 
         client.setPayload(new EClient.Transfer() {
             @Override
@@ -593,7 +593,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, typeString(cls));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
         client.setPayload(new EClient.Transfer() {
             @Override
             public void transfer(OutputStream os) throws IOException, APIException {
@@ -612,7 +612,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, typeString(df.getTypeClass()));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
         client.setPayload(new EClient.Transfer() {
             @Override
             public void transfer(OutputStream os) throws IOException, APIException {
@@ -633,7 +633,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, typeString(cls));
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
 
         client.setPayload(null);
         client.send();
@@ -648,7 +648,7 @@ public abstract class Rcli<CT> {
         client.addHeader(CONTENT_TYPE, contentType);
         client.setPathInfo(pp.path());
         client.setQueryParams(pp.query());
-        client.setFragment(pp.frag());    
+        client.setFragment(pp.frag());
 
         client.setPayload(null);
         client.send();
@@ -727,7 +727,7 @@ public abstract class Rcli<CT> {
                 }
             }
         }
-        
+    
         public String path() {
             if (query>=0) {
                 if (pound>=0) {
@@ -740,11 +740,11 @@ public abstract class Rcli<CT> {
                 return path;
             }
         }
-        
+    
         public String query() {
             return queryParams;
         }
-        
+    
         public String frag() {
             if (pound>=0) {
                 return path.substring(pound+1);

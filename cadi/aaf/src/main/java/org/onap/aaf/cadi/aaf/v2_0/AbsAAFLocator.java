@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -111,7 +111,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             this.version = (split.length > 1) ? split[1] : access.getProperty(Config.AAF_API_VERSION,Config.AAF_DEFAULT_API_VERSION);
         }
     }
-    
+
     /**
      * This is the way to setup specialized AAFLocators ahead of time.
      * @param preload
@@ -119,7 +119,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     public static void setCreator(LocatorCreator lc) {
         locatorCreator = lc; 
     }
-        
+    
     public static Locator<URI> create(final String name, final String version) throws LocatorException {
         if(locatorCreator==null) {
             throw new LocatorException("LocatorCreator is not set");
@@ -142,7 +142,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             return locatorURI.toString();
         }
     }
-    
+
     /**
      * Setting "self" excludes this service from the list.  Critical for contacting peers. 
      */
@@ -161,7 +161,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     protected final synchronized void replace(List<EP> list) {
         epList = list;
     }
-    
+
     /**
      * Call _refresh as needed during calls, but actual refresh will not occur if there
      * are existing entities or if it has been called in the last 10 (settable) seconds.  
@@ -237,9 +237,9 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     public Item best() throws LocatorException {
         if (!hasItems()) {
             throw new LocatorException(String.format("No Entries found for '%s/%s:%s'",
-            		(aaf_locator_uri==null?aaf_locator_host:aaf_locator_uri.toString()),
-            		name,
-            		version));
+                    (aaf_locator_uri==null?aaf_locator_host:aaf_locator_uri.toString()),
+                    name,
+                    version));
         }
         List<EP> lep = new ArrayList<>();
         EP first = null;
@@ -274,7 +274,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
                 } else {
                     return new AAFLItem(iter,lep.get(i));
                 }
-            
+        
         }
     }
 
@@ -291,7 +291,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         private final Object[] epa;
         private final List<EP> epList;
         private int idx;
-        
+    
         public EPIterator(Object[] epa, List<EP> epList) {
             this.epa = epa;
             this.epList = epList;
@@ -332,7 +332,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
             }
         }
     }
-    
+
     @Override
     public Item first()  {
         Iterator<EP> iter = getIterator();
@@ -370,18 +370,18 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         }
         return null;
     }
-    
+
     protected static class AAFLItem implements Item {
             private Iterator<EP> iter;
             private URI uri;
             private EP ep;
-    
+
             public AAFLItem(Iterator<EP> iter, EP ep) {
                 this.iter = iter;
                 this.ep = ep;
                 uri = ep.uri;
             }
-            
+        
             private static EP next(Iterator<EP> iter) {
                 EP ep=null;
                 while (iter.hasNext() && (ep==null || !ep.valid)) {
@@ -389,7 +389,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
                 }
                 return ep;
             }
-            
+        
             public String toString() {
                 return ep==null?"Locator Item Invalid":ep.toString();
             }
@@ -399,7 +399,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
         private URI uri;
         private final double distance;
         private boolean valid;
-        
+    
         public EP(final Endpoint ep, double latitude, double longitude) throws URISyntaxException {
             uri = new URI(ep.getProtocol(),null,ep.getHostname(),ep.getPort(),null,null,null);
             distance = GreatCircle.calc(latitude, longitude, ep.getLatitude(), ep.getLongitude());
@@ -420,13 +420,13 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
                 return 0;
             }
         }
-        
+    
         @Override
         public String toString() {
             return distance + ": " + uri + (valid?" valid":" invalidate");
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.cadi.Locator#destroy()
      */
@@ -434,7 +434,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     public void destroy() {
         // Nothing to do
     }
-    
+
     @Override
     public String toString() {
         return "AAFLocator for " + name + " on " + getURI();

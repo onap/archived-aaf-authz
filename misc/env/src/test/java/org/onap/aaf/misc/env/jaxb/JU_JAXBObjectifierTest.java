@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,17 +43,17 @@ public class JU_JAXBObjectifierTest {
 
     @Mock
     JAXBumar jumar;
-    
+
     @Mock
     Schema schema;
-    
+
     @Mock
     Env env;
-    
+
     TimeTaken tt,ttObjectify;
-    
+
     LogTarget logT;
-    
+
     @Before
     public void setUp() {
         initMocks(this);
@@ -78,9 +78,9 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testObjectifyException() {
         JAXBObjectifier<?> bdfObj = null;
@@ -94,9 +94,9 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testObjectifyRdr() {
         JAXBObjectifier<?> bdfObj = null;
@@ -111,9 +111,9 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testObjectifyRdrException() {
         JAXBObjectifier<?> bdfObj = null;
@@ -128,9 +128,9 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testObjectifyIs() {
         JAXBObjectifier<?> bdfObj = null;
@@ -144,9 +144,9 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testObjectifyIsException() {
         JAXBObjectifier<?> bdfObj = null;
@@ -161,9 +161,9 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testEmptyMethods() {
         JAXBObjectifier<?> bdfObj = null;
@@ -177,9 +177,9 @@ public class JU_JAXBObjectifierTest {
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("Test Exception"));
         } 
-        
-    }
     
+    }
+
     @Test
     public void testNewInstance() {
         JAXBObjectifier<?> bdfObj = null;
@@ -187,7 +187,7 @@ public class JU_JAXBObjectifierTest {
             bdfObj = new JAXBObjectifier(jumar);
             Object retVal = bdfObj.newInstance();
             Mockito.doThrow(new IllegalAccessException("Test Exception")).when(jumar).newInstance();
-            
+        
         } catch (IllegalAccessException e) {
             assertEquals("Test Exception", e.getLocalizedMessage());
         } catch (APIException e) {
@@ -197,7 +197,7 @@ public class JU_JAXBObjectifierTest {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testNewInstanceException() {
         JAXBObjectifier<?> bdfObj = null;
@@ -213,6 +213,6 @@ public class JU_JAXBObjectifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+    
     }
 }

@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,13 +60,13 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     public static final int BASIC_AUTH_SHA256 = 2;
     public static final int CERT_SHA256_RSA =200;
     public static final SecureRandom srand = new SecureRandom();
-    
+
     private HistoryDAO historyDAO;
     private CIDAO<AuthzTrans> infoDAO;
     private PSInfo psNS;
     private PSInfo psID;
     private PSInfo psIDBath;
-    
+
     public CredDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, CredDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -81,7 +81,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
 
     public static final int KEYLIMIT = 3;
     public static class Data extends CacheableData implements Bytification {
-        
+    
         public String                   id;
         public Integer                  type;
         public Date                     expires;
@@ -98,14 +98,14 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
                 seg(cache,id) // cache is for all entities
             };
         }
-        
+    
         @Override
         public ByteBuffer bytify() throws IOException {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             CredLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             CredLoader.deflt.unmarshal(this, toDIS(bb));
@@ -132,10 +132,10 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             data.type = row.getInt(1);    // NOTE: in datastax driver,  If the int value is NULL, 0 is returned!
             data.expires = row.getTimestamp(2);
             data.other = row.getInt(3);
-            data.ns = row.getString(4);     
+            data.ns = row.getString(4); 
             data.tag = row.getString(5);
             data.notes = row.getString(6);
-            data.cred = row.getBytesUnsafe(7);            
+            data.cred = row.getBytesUnsafe(7);        
             return data;
         }
 
@@ -163,7 +163,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         public void marshal(Data data, DataOutputStream os) throws IOException {
             writeHeader(os,MAGIC,VERSION);
             writeString(os, data.id);
-            os.writeInt(data.type);    
+            os.writeInt(data.type);
             os.writeLong(data.expires==null?-1:data.expires.getTime());
             os.writeInt(data.other==null?0:data.other);
             writeString(os, data.ns);
@@ -185,14 +185,14 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
             byte[] buff = new byte[BUFF_SIZE];
             data.id = readString(is,buff);
             data.type = is.readInt();
-            
+        
             long l = is.readLong();
             data.expires = l<0?null:new Date(l);
             data.other = is.readInt();
             data.ns = readString(is,buff);
             data.tag = readString(is,buff);
             data.notes = readString(is,buff);
-            
+        
             int i = is.readInt();
             data.cred=null;
             if (i>=0) {
@@ -213,16 +213,16 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         if (infoDAO==null) {
             infoDAO = new CacheInfoDAO(trans,this);
         }
-        
+    
 
         String[] helpers = setCRUD(trans, TABLE, Data.class, CredLoader.deflt);
-        
+    
         psNS = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE ns = ?", CredLoader.deflt,readConsistency);
-        
+    
         psID = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE id = ?", CredLoader.deflt,readConsistency);
-        
+    
         // NOTE: (type) in ((1),(2)) is valid for Cass 2.1.14.  After 2.1.14, more obvious
         // syntax of type in (1,2) is available
         // ALSO, 1 & 2 STAND FOR BASIC_AUTH (MD5) AND BASIC_AUTH_SHA256(with salt).
@@ -232,7 +232,7 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
         psIDBath = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE id = ? and (type) in ((1),(2))", CredLoader.deflt,readConsistency);
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.dao.CassDAOImpl#create(org.onap.aaf.misc.env.TransStore, java.lang.Object)
      */
@@ -252,11 +252,11 @@ public class CredDAO extends CassDAOImpl<AuthzTrans,CredDAO.Data> {
     public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
         return psNS.read(trans, R_TEXT, new Object[]{ns});
     }
-    
+
     public Result<List<Data>> readID(AuthzTrans trans, String id) {
         return psID.read(trans, R_TEXT, new Object[]{id});
     }
-    
+
     public Result<List<Data>> readIDBAth(AuthzTrans trans, String id) {
         return psIDBath.read(trans, R_TEXT, new Object[] {id});
     }

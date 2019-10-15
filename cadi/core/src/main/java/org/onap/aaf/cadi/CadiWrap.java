@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,12 +41,12 @@ import org.onap.aaf.cadi.util.Timing;
 /**
  * Inherit the HttpServletRequestWrapper, which calls methods of delegate it's created with, but
  * overload the key security mechanisms with CADI mechanisms
- * 
+ *
  * This works with mechanisms working strictly with HttpServletRequest (i.e. Servlet Filters)
- * 
+ *
  * Specialty cases, i.e. Tomcat, which for their containers utilize their own mechanisms and Wrappers, you may
  * need something similar.  See AppServer specific code (i.e. tomcat) for these.
- * 
+ *
  * @author Jonathan
  *
  */
@@ -57,7 +57,7 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     private byte[] password;
     private PermConverter pconv;
     private Access access; 
-    
+
     /**
      * Standard Wrapper constructor for Delegate pattern
      * @param request
@@ -100,23 +100,23 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     public Principal getUserPrincipal() {
         return principal;
     }
-    
+
     /**
      * This is the key API call for AUTHZ in J2EE.  Given a Role (String passed in), is the user
      * associated with this HTTP Transaction allowed to function in this Role?
-     * 
+     *
      * For CADI, we pass the responsibility for determining this to the "LUR", which may be
      * determined by the Enterprise.
-     * 
+     *
      * Note: Role check is also done in "CadiRealm" in certain cases...
-     * 
+     *
      *
      */
     @Override
     public boolean isUserInRole(String perm) {
         return perm==null?false:checkPerm(access,"isUserInRole",principal,pconv,lur,perm);
     }
-    
+
     public static boolean checkPerm(Access access, String caller, Principal principal, PermConverter pconv, Lur lur, String perm) {
         if (principal== null) {
             access.log(Level.AUDIT,caller, "No Principal in Transaction");
@@ -148,7 +148,7 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     }
     /**
      * Allow setting of tafResp and lur after construction
-     * 
+     *
      * This can happen if the CadiWrap is constructed in a Valve other than CadiValve
      */
     public void set(TafResp tafResp, Lur lur) {
@@ -175,12 +175,12 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
     public void setCred(byte[] passwd) {
         password = passwd;
     }
-    
+
     public CadiWrap setPermConverter(PermConverter pc) {
         pconv = pc;
         return this;
     }
-    
+
     // Add a feature
     public void invalidate(String id) {
         if (lur instanceof EpiLur) {
@@ -189,11 +189,11 @@ public class CadiWrap extends HttpServletRequestWrapper implements HttpServletRe
             ((CachingLur<?>)lur).remove(id);
         }
     }
-    
+
     public Lur getLur() {
         return lur;
     }
-    
+
     public Access access() {
         return access;
     }

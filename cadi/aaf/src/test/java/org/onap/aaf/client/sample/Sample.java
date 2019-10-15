@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ public class Sample {
     final private AAFConHttp aafcon;
     final private AAFLurPerm aafLur;
     final private AAFAuthn<?> aafAuthn;
-    
+
     /**
      * This method is to emphasize the importance of not creating the AAFObjects over and over again.
      * @return
@@ -58,7 +58,7 @@ public class Sample {
         aafLur = aafcon.newLur();
         aafAuthn = aafcon.newAuthn(aafLur);
     }
-    
+
     /**
      * Checking credentials outside of HTTP/S presents fewer options initially. There is not, for instance,
      * the option of using 2-way TLS HTTP/S. 
@@ -76,7 +76,7 @@ public class Sample {
              UnAuthPrincipal means that it is not coming from the official Authorization chain.
              This is useful for Security Plugins which don't use Principal as the tie between
              Authentication and Authorization
-            
+        
              You can also use this if you want to check Authorization without actually Authenticating, as may
              be the case with certain Onboarding Tooling.
             */
@@ -85,17 +85,17 @@ public class Sample {
             System.out.printf("Failure: %s\n",ok);
             return null;
         }
-        
+    
 
     }
 
     /**
      * An example of looking for One Permission within all the permissions user has.  CADI does cache these,
      * so the call is not expensive.
-     * 
+     *
      * Note: If you are using "J2EE" (Servlets), CADI ties this function to the method: 
      *    HttpServletRequest.isUserInRole(String user)
-     *    
+     *
      *  The J2EE user can expect that his servlet will NOT be called without a Validated Principal, and that
      *  "isUserInRole()" will validate if the user has the Permission designated.
      *  
@@ -103,14 +103,14 @@ public class Sample {
     public boolean oneAuthorization(Principal fqi, Permission p) {
         return aafLur.fish(fqi, p);
     }
-    
+
     public List<Permission> allAuthorization(Principal fqi) {
         List<Permission> pond = new ArrayList<>();
         aafLur.fishAll(fqi, pond);
         return pond;
     }
-    
-    
+
+
     public static void main(String[] args) {
         // Note: you can pick up Properties from Command line as well as VM Properties
         // Code "user_fqi=... user_pass=..." (where user_pass can be encrypted) in the command line for this sample.
@@ -120,29 +120,29 @@ public class Sample {
             /*
              * NOTE:  Do NOT CREATE new aafcon, aafLur and aafAuthn each transaction.  They are built to be
              * reused!
-             * 
+             *
              * This is why this code demonstrates "Sample" as a singleton.
              */
             singleton = new Sample(myAccess);
             String user = myAccess.getProperty("user_fqi");
             String pass= myAccess.getProperty("user_pass");
-            
+        
             if (user==null || pass==null) {
                 System.err.println("This Sample class requires properties user_fqi and user_pass");
             } else {
                 pass =  myAccess.decrypt(pass, false); // Note, with "false", decryption will only happen if starts with "enc:"
                 // See the CODE for Java Methods used
                 Principal fqi = Sample.singleton().checkUserPass(user,pass);
-                
+            
                 if (fqi==null) {
                     System.out.println("OK, normally, you would cease processing for an "
                             + "unauthenticated user, but for the purpose of Sample, we'll keep going.\n");
                     fqi=new UnAuthPrincipal(user);
                 }
-                
+            
                 // AGAIN, NOTE: If your client fails Authentication, the right behavior 99.9%
                 // of the time is to drop the transaction.  We continue for sample only.
-                
+            
                 // note, default String for perm
                 String permS = myAccess.getProperty("perm","org.osaaf.aaf.access|*|read");
                 String[] permA = Split.splitTrim('|', permS);
@@ -155,8 +155,8 @@ public class Sample {
                         System.out.printf("%s does NOT have %s\n",fqi.getName(),permS);
                     }
                 }
-                
-                
+            
+            
                 // Another form, you can get ALL permissions in a list
                 // See the CODE for Java Methods used
                 List<Permission> permL = singleton().allAuthorization(fqi);

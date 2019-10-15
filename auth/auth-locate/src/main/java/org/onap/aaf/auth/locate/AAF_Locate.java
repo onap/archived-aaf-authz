@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -81,10 +81,10 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     public final ConfigDAO configDAO;
     private Locator<URI> dal;
 
-    
+
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
-     * 
+     *
      * @param env
      * @param si 
      * @param dm 
@@ -93,7 +93,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
      */
     public AAF_Locate(final AuthzEnv env) throws Exception {
         super(env.access(), env);
-        
+    
         expireIn = Long.parseLong(env.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF));
 
         // Initialize Facade for all uses
@@ -129,7 +129,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         API_AAFAccess.init(this,facade);
         API_Find.init(this, facade);
         API_Proxy.init(this, facade);
-        
+    
         ////////////////////////////////////////////////////////////////////////
         // Management APIs
         ////////////////////////////////////////////////////////////////////////
@@ -143,16 +143,16 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         // Default Function
         ////////////////////////////////////////////////////////////////////////
         API_AAFAccess.initDefault(this,facade);
-        
+    
     }
 
-    
+
     /**
      * Setup XML and JSON implementations for each supported Version type
-     * 
+     *
      * We do this by taking the Code passed in and creating clones of these with the appropriate Facades and properties
      * to do Versions and Content switches
-     * 
+     *
      */
     public void route(HttpMethods meth, String path, API api, LocateCode code) throws Exception {
         String version = "1.0";
@@ -166,10 +166,10 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         // setup Application API HTML ContentTypes for XML and Route
         application = applicationXML(respCls, version);
         route(env,meth,path,code.clone(facade_1_1_XML,false),application,"text/xml;version="+version);
-        
+    
         // Add other Supported APIs here as created
     }
-    
+
     public void routeAll(HttpMethods meth, String path, API api, LocateCode code){
         route(env,meth,path,code,""); // this will always match
     }

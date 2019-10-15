@@ -39,9 +39,9 @@ public abstract class TaggedPrincipal implements Principal {
     public interface TagLookup {
         public String lookup() throws CadiException;
     }
-    
+
     private TagLookup tagLookup;
-    
+
     public void setTagLookup(TagLookup tl) {
         tagLookup = tl;
     }

@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,12 +65,12 @@ public class JU_Describe {
     @Mock private Future<String> futureMock;
 
     private PropAccess access;
-    private HMangrStub hman;    
+    private HMangrStub hman;
     private AuthzEnv aEnv;
     private AAFcli aafcli;
-    
+
     private Describe desc;
-    
+
     @Before
     public void setUp () throws NoSuchFieldException, SecurityException, Exception, IllegalAccessException {
         MockitoAnnotations.initMocks(this);
@@ -89,24 +89,24 @@ public class JU_Describe {
 
         desc = new Describe(perm);
     }
-    
+
     @Test
     public void testExecError() throws APIException, LocatorException, CadiException, URISyntaxException {
         desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
     }
-    
+
     @Test
     public void testExecSuccess1() throws APIException, LocatorException, CadiException, URISyntaxException {
         when(futureMock.code()).thenReturn(202);
         desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
     }
-    
+
     @Test
     public void testExecSuccess2() throws APIException, LocatorException, CadiException, URISyntaxException {
         when(futureMock.get(any(Integer.class))).thenReturn(true);
         desc._exec(0, new String[] {"grant","ungrant","setTo","grant","ungrant","setTo"});
     }
-    
+
     @Test
     public void testDetailedHelp() {
         StringBuilder sb = new StringBuilder();

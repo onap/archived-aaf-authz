@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,10 +48,10 @@ public class API_Hello {
 
     // Hide Public Constructor
     private API_Hello() {}
-    
+
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param oauthHello
      * @param facade
      * @throws Exception
@@ -60,7 +60,7 @@ public class API_Hello {
         ////////
         // Simple "GET" API
         ///////
-        
+    
         oauthHello.route(HttpMethods.GET,"/hello/:perm*",API.TOKEN,new HttpCode<AuthzTrans, AAF_Hello>(oauthHello,"Hello OAuth"){
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -86,7 +86,7 @@ public class API_Hello {
                     os.print(')');
                 }
                 os.println();
-                
+            
                 trans.info().printf("Said 'Hello' to %s, Authentication type: %s",trans.getUserPrincipal().getName(),trans.getUserPrincipal().getClass().getSimpleName());
             }
         }); 
@@ -148,7 +148,7 @@ public class API_Hello {
                 trans.info().printf("Said 'RESTful Hello' to %s, Authentication type: %s",trans.getUserPrincipal().getName(),trans.getUserPrincipal().getClass().getSimpleName());
             }
         },APPLICATION_JSON); 
-        
+    
         ////////////////
         // UPDATE/PUT
         ////////////////

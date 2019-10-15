@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ public class MultiCompare extends RosettaCompare<MultiRequest>  {
     public MultiCompare() {
         super(MultiRequest.class);
     }
-    
+
     @Override
     public MultiRequest newOne() {
         MultiRequest multi = new MultiRequest();
@@ -50,19 +50,19 @@ public class MultiCompare extends RosettaCompare<MultiRequest>  {
         multi.getUserRoleRequest().add(UserRoleCompare.create());
         multi.getRolePermRequest().add(RolePermCompare.create());
         multi.getRolePermRequest().add(RolePermCompare.create());
-        
-        
+    
+    
         GregorianCalendar gc = new GregorianCalendar();
         multi.setStart(Chrono.timeStamp(gc));
         gc.add(GregorianCalendar.MONTH, 1);
         multi.setEnd(Chrono.timeStamp(gc));
         return multi;
     }
-    
+
     public void compare(MultiRequest t1, MultiRequest t2) {
         new NSCompare().compare(t1.getNsRequest(), t2.getNsRequest());
         // Will have to find by key for others.
-        
+    
         assertEquals(t1.getStart(),t2.getStart());
         assertEquals(t1.getEnd(),t2.getEnd());
     }

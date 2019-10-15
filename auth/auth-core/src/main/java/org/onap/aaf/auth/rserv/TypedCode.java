@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,10 +61,10 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
         public TypedCode() {
             types = new ArrayList<>();
         }
-        
+    
         /**
          * Construct Typed Code based on ContentType parameters passed in
-         * 
+         *
          * @param code
          * @param others
          * @return
@@ -81,10 +81,10 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                 sb.append(str);
             }
             parse(code, sb.toString());
-            
+        
             return this;
         }
-        
+    
         @Override
         protected Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> types(HttpCode<TRANS,?> code, String str) {
             Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String, Object>>>> type = null;
@@ -127,7 +127,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             }
             return type.y.y.add(new Pair<String,Object>(tag,"version".equals(tag)?new Version(value):value));
         }
-        
+    
         public Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> prep(TRANS trans, String compare){
             Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> c,rv=null;
             if (types.size()==1 && "".equals((c=types.get(0)).x)) { // if there are no checks for type, skip
@@ -146,7 +146,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                     }
                     if (accepted) {
                         switch(acc.acceptable.size()) {
-                            case 0:    
+                            case 0:
 //                                // TODO best Status Code?
 //                                resp.setStatus(HttpStatus.NOT_ACCEPTABLE_406);
                                 break;
@@ -177,14 +177,14 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             }
             return rv;
         }
-        
+    
         /**
          * Print on String Builder content related to specific Code
-         * 
+         *
          * This is for Reporting and Debugging purposes, so the content is not cached.
-         * 
+         *
          * If code is "null", then all content is matched
-         * 
+         *
          * @param code
          * @return
          */
@@ -211,7 +211,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             }
             return sb;
         }
-        
+    
         public List<Pair<String, Object>> getContent(HttpCode<TRANS,?> code) {
             for (Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> pair : types) {
                 if (pair.y.x == code) {
@@ -220,17 +220,17 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             }
             return null;
         }
-    
+
         public String toString() {
             return relatedTo(null,new StringBuilder()).toString();
         }
-        
+    
         public void api(RouteReport tr) {
             // Need to build up a map, because Prop entries can be in several places.
             HashMap<HttpCode<?,?>,StringBuilder> psb = new HashMap<>();
             StringBuilder temp;
             tr.desc = null;
-            
+        
             // Read through Code/TypeCode trees for all accepted Typecodes
             for (Pair<String, Pair<HttpCode<TRANS, ?>, List<Pair<String, Object>>>> tc : types) {
                 // If new, then it's new Code set, create prefix content
@@ -253,7 +253,7 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                 }
             }
             // Gather all ContentType possibilities for the same code together
-            
+        
             for (StringBuilder sb : psb.values()) {
                 tr.contextTypes.add(sb.toString());
             }
@@ -265,5 +265,5 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             }
             return null;
         }
-        
+    
     }

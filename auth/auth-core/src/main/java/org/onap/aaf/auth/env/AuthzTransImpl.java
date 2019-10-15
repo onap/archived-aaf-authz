@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         hreq = req;
         hresp = resp;
         user = (TaggedPrincipal)req.getUserPrincipal();
-        
+    
         for (REQD_TYPE rt : REQD_TYPE.values()) {
             requested(rt,req);
         }
@@ -73,7 +73,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         org=null;
         return this;
     }
-    
+
     @Override
     public HttpServletRequest hreq() {
         return hreq;
@@ -96,7 +96,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     public String user() {
         return user==null?N_A:user.getName();
     }
-    
+
     /**
      * @see org.onap.aaf.auth.env.test.AuthTrans#getUserPrincipal()
      */
@@ -150,12 +150,12 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     public AuthzEnv env() {
         return (AuthzEnv)delegate;
     }
-    
+
     @Override
     public boolean requested(REQD_TYPE requested) {
         return (mask&requested.bit)==requested.bit;
     }
-    
+
     public void requested(REQD_TYPE requested, boolean b) {
         if (b) {
             mask|=requested.bit;
@@ -163,7 +163,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
             mask&=~requested.bit;
         }
     }
-    
+
     private void requested(REQD_TYPE reqtype, HttpServletRequest req) {
         String p = req.getParameter(reqtype.name());
         if (p!=null) {
@@ -175,12 +175,12 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
     public void setLur(Lur lur) {
         this.lur = lur;
     }
-    
+
     @Override
     public Lur getLur() {
-    	return lur;
+        return lur;
     }
-    
+
     @Override
     public boolean fish(Permission ... pond) {
         if (lur!=null) {
@@ -188,7 +188,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.env.test.AuthzTrans#org()
      */
@@ -200,7 +200,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
                     org = Organization.NULL;
                 }
             } catch (Exception e) {
-                
+            
                 org = Organization.NULL;
             }
         } 
@@ -229,7 +229,7 @@ public class AuthzTransImpl extends BasicTrans implements AuthzTrans {
         }
         return now;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.onap.aaf.auth.env.AuthzTrans#setTag(java.lang.String)

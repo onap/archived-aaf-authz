@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ public class Registrar<ENV extends BasicEnv> {
         erroringTimer = null;
         timer = new Timer(REGISTRAR,true);
         timer.schedule(new RegistrationTimerTask(env), START, INTERVAL); 
-        
+    
         if (shutdownHook) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
@@ -53,7 +53,7 @@ public class Registrar<ENV extends BasicEnv> {
             });
         }
     }
-    
+
     private class RegistrationTimerTask extends TimerTask {
         private final ENV env;
         public RegistrationTimerTask(ENV env) {
@@ -82,11 +82,11 @@ public class Registrar<ENV extends BasicEnv> {
             }
         }
     }
-    
+
     public void register(Registrant<ENV> r) {
         registrants.addLast(r);
     }
-    
+
     public void deregister(Registrant<ENV> r) {
         registrants.remove(r);
     }

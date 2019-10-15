@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@
  * ============LICENSE_END====================================================
  *
  */
+
 package org.onap.aaf.misc.env.jaxb;
 
 import static org.junit.Assert.assertEquals;
@@ -44,17 +45,17 @@ public class JU_JAXBStringifierTest {
 
     @Mock
     JAXBmar jumar;
-    
+
     @Mock
     QName qname;
-    
+
     @Mock
     Env env;
-    
+
     TimeTaken tt,ttstringify;
-    
+
     LogTarget logT;
-    
+
     @Before
     public void setUp() {
         initMocks(this);
@@ -79,9 +80,9 @@ public class JU_JAXBStringifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void teststringifyWriter() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -96,9 +97,9 @@ public class JU_JAXBStringifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void teststringifyWriterException() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -113,9 +114,9 @@ public class JU_JAXBStringifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void teststringifyOs() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -129,9 +130,9 @@ public class JU_JAXBStringifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void teststringifyOsException() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -146,9 +147,9 @@ public class JU_JAXBStringifierTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-        
-    }
     
+    }
+
     @Test
     public void testEmptyMethods() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -162,9 +163,9 @@ public class JU_JAXBStringifierTest {
         } catch (APIException e) {
             assertTrue(e.getMessage().contains("Test Exception"));
         } 
-        
-    }
     
+    }
+
     @Test
     public void testPretty() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -173,7 +174,7 @@ public class JU_JAXBStringifierTest {
         Object retVal = bdfObj.pretty(true);
         assertTrue(retVal instanceof JAXBStringifier);
     }
-    
+
     @Test
     public void testNewInstanceException() {
         JAXBStringifier<JAXBmar> bdfObj = null;
@@ -181,6 +182,6 @@ public class JU_JAXBStringifierTest {
         Mockito.doReturn(jumar).when(jumar).asFragment(true);
         Object retVal = bdfObj.asFragment(true);
         assertTrue(retVal instanceof JAXBStringifier);
-        
+    
     }
 }

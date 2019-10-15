@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,11 +42,11 @@ import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.misc.env.impl.BasicEnv;
 
 public class JU_AbsServiceStarter {
-    
+
     ByteArrayOutputStream outStream;
     AbsServiceStub absServiceStub;
     AbsServiceStarterStub absServiceStarterStub;
-    
+
     private class AbsServiceStarterStub extends AbsServiceStarter {
 
         public AbsServiceStarterStub(AbsService service, boolean secure) {
@@ -57,16 +57,16 @@ public class JU_AbsServiceStarter {
         @Override
         public void _start(RServlet rserv) throws Exception {
             // TODO Auto-generated method stub
-            
+        
         }
 
         @Override
         public void _propertyAdjustment() {
             // TODO Auto-generated method stub
-            
+        
         }
     }
-    
+
     private class AbsServiceStub extends AbsService {
 
         public AbsServiceStub(Access access, BasicEnv env) throws CadiException {
@@ -85,40 +85,40 @@ public class JU_AbsServiceStarter {
             // TODO Auto-generated method stub
             return null;
         }
-    
+
     }
-    
+
     @Before
     public void setUp() {
         outStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outStream));
     }
-    
+
     @After
     public void tearDown() {
         System.setOut(System.out);
     }
-    
-    
+
+
     @Test
     public void testStub() throws CadiException {
         BasicEnv bEnv = new BasicEnv();
         PropAccess prop = new PropAccess();
-        
+    
         prop.setProperty(Config.AAF_LOCATOR_ENTRIES, "te.st");
         prop.setProperty(Config.AAF_LOCATOR_VERSION, "te.st");
         prop.setLogLevel(Level.DEBUG);
         absServiceStub = new AbsServiceStub(prop, bEnv);
-        
+    
         absServiceStarterStub = new AbsServiceStarterStub(absServiceStub,true);
     }
-    
+
 //    @Test
 //    public void testStart() throws Exception {
 //        absServiceStarterStub.env();
 //        absServiceStarterStub.start();
 //    }
-    
+
 }
 
 

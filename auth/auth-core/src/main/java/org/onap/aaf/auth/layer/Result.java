@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  * It would be nice if Java Enums were extensible, but they're not.
- * 
+ *
  * @author Jonathan
  *
  */
@@ -47,12 +47,12 @@ public class Result<RV> {
                             ERR_ActionNotCompleted         = 8,
                             ERR_Backend                    = 9,
                             ERR_General                    = 20;
-                            
+                        
     public RV value;
     public final int status;
     public final String details;
     public final Object[] variables;
-    
+
     public Result(RV value, int status, String details, Object ... variables) {
         this.value = value;
         if (value==null) {
@@ -66,12 +66,12 @@ public class Result<RV> {
             this.variables=variables;
         }
     }
-    
+
     /**
      * Create a Result class with "OK" status and "Success" for details
-     * 
+     *
      * This is the easiest to use
-     * 
+     *
      * @param value
      * @param status
      * @return
@@ -135,7 +135,7 @@ public class Result<RV> {
 //    public static<R> Result<R> err(int status, String details) {
 //        return new Result<R>(null,status,details,null);
 //    }
-    
+
     /**
      * Create a Status (usually non OK, with a details statement and variables supported
      * @param status
@@ -189,10 +189,10 @@ public class Result<RV> {
 
     private static final int PARTIAL_CONTENT = 0x001;
     private static final int EMPTY_LIST = 0x002;
-    
+
     /**
      * AAF Specific problems, etc 
-     * 
+     *
      * @author Jonathan
      *
      */
@@ -227,7 +227,7 @@ public class Result<RV> {
 
     /**
      * When Result is a List, you can check here to see if it's empty instead of looping
-     * 
+     *
      * @return
      */
     public boolean isEmpty() {
@@ -237,7 +237,7 @@ public class Result<RV> {
     /**
      * A common occurrence is that data comes back, but list is empty.  If set, you can skip looking
      * at list at the outset.
-     * 
+     *
      * @param emptyList
      * @return
      */
@@ -250,7 +250,7 @@ public class Result<RV> {
         return this;
     }
 
-    
+
     /** 
      * Convenience function.  Checks OK, and also if List is not Empty
      * Not valid if Data is not a List
@@ -307,7 +307,7 @@ public class Result<RV> {
             return sb.toString();
         }
     }
-    
+
     public String errorString() {
         StringBuilder sb = new StringBuilder();
         switch(status) {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,12 +51,12 @@ import com.datastax.driver.core.Row;
 public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
     public static final String TABLE = "oauth_token";
     private AbsCassDAO<AuthzTrans, Data>.PSInfo psByUser;
-    
+
     public OAuthTokenDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, OAuthTokenDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
     }
-    
+
     public OAuthTokenDAO(AuthzTrans trans, AbsCassDAO<AuthzTrans,?> aDao) {
             super(trans, OAuthTokenDAO.class.getSimpleName(),aDao, Data.class, TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
             init(trans);
@@ -93,7 +93,7 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
             OAuthLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             OAuthLoader.deflt.unmarshal(this, toDIS(bb));
@@ -108,12 +108,12 @@ public class OAuthTokenDAO extends CassDAOImpl<AuthzTrans,OAuthTokenDAO.Data> {
         public static final int MAGIC=235677843;
             public static final int VERSION=1;
             public static final int BUFF_SIZE=96; // Note: only used when  
-    
+
             public static final OAuthLoader deflt = new OAuthLoader(KEYLIMIT);
             public OAuthLoader(int keylimit) {
                 super(keylimit);
             }
-    
+
             @Override
         public Data load(Data data, Row row) {
             data.id = row.getString(0);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ import aaf.v2_0.Users;
  */
 public class ListByName extends Cmd {
     private static final String HEADER="List Namespaces by Name";
-    
+
     public ListByName(List parent) {
         super(parent,"name", 
                 new Param("ns-name",true));
@@ -84,7 +84,7 @@ public class ListByName extends Cmd {
                 } else if (fn.code()==404) {
                     ((List)parent).report(null,HEADER,ns);
                     return 200;
-                } else {    
+                } else {
                     error(fn);
                 }
                 return fn.code();

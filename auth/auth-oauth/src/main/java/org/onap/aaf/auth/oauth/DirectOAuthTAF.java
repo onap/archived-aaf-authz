@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -136,11 +136,11 @@ public class DirectOAuthTAF implements HttpTaf {
                     // Ignore others
                 }
             }
-            
+        
             if (client_id==null || client_secret==null) {
                 return new OAuth2HttpTafResp(access, null, "client_id and client_secret required", RESP.TRY_ANOTHER_TAF, resp, false);
             }
-            
+        
             if (token==null) { // No Token to work with, use only Client_ID and Client_Secret 
                 AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
 
@@ -167,7 +167,7 @@ public class DirectOAuthTAF implements HttpTaf {
                 }
             }
         } 
-        
+    
         // OK, have only a Token to validate
         if (token!=null) {
             AuthzTrans trans = (AuthzTrans)req.getAttribute(TransFilter.TRANS_TAG);
@@ -205,7 +205,7 @@ public class DirectOAuthTAF implements HttpTaf {
         public ServiceTPL(AuthzTrans atrans) {
             trans = atrans;
         }
-        
+    
         @Override
         public org.onap.aaf.cadi.client.Result<TokenPerm> load(String accessToken, byte[] cred) throws APIException, CadiException, LocatorException {
             Result<Introspect> ri = oaFacade.mappedIntrospect(trans, accessToken);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ public class OutXML extends Out{
     private static final String XMLNS_XSI = "xmlns:xsi";
     public static final String XML_INFO = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"; 
     public static final String XML_SCHEMA_INSTANCE = "http://www.w3.org/2001/XMLSchema-instance";
-    
+
     private String root;
     private List<Prop> props;
 
@@ -49,27 +49,27 @@ public class OutXML extends Out{
                 props.add(new Prop(tv[0],tv[1]));
         }
     }
-    
+
     public OutXML(JaxInfo jaxInfo) {
         this(jaxInfo.name,genNS(jaxInfo));
     }
-    
+
     public OutXML(InXML inXML) {
         this(inXML.jaxInfo.name,genNS(inXML.jaxInfo));
     }
-    
+
     private static String[] genNS(JaxInfo jaxInfo) {
         return new String[] {"xmlns=" + jaxInfo.ns};
     }
-    
-    
+
+
     @Override
     public<IN,S> void extract(IN in, Writer writer, Parse<IN,S> prs, boolean ... options) throws IOException, ParseException {
         Parsed<S> p = prs.newParsed();
         Stack<Level> stack = new Stack<Level>();
         // If it's an IndentPrintWriter, it is pretty printing.
         boolean pretty = (options.length>0&&options[0]);
-    
+
         IndentPrintWriter ipw;
         if (pretty) {
             if (writer instanceof IndentPrintWriter) {
@@ -141,13 +141,13 @@ public class OutXML extends Out{
         writer.append(level.sbw.getBuffer());
         writer.flush();
     }
-    
+
     private class Level {
         public final StringBuilderWriter sbw;
         public String multi;
         private Level prev;
         private Map<String,String> nses;
-        
+    
         public Level(Level level) {
             sbw = new StringBuilderWriter();
             multi = null;
@@ -162,18 +162,18 @@ public class OutXML extends Out{
                 String v = nses.get(ns);
                 return value.equals(v); // note: accomodates not finding NS as well
             }
-            
+        
             if (create && !rv) {
                 if (nses == null) nses = new HashMap<>();
                 nses.put(ns, value);
             }
             return rv;
         }
-        
-        
-        
-    }
     
+    
+    
+    }
+
     private boolean tag(Writer fore, Writer aft, boolean pretty, boolean returns, String tag, String data) throws IOException {
         fore.append('<');
         fore.append(tag);
@@ -188,7 +188,7 @@ public class OutXML extends Out{
         if (pretty)aft.append('\n');
         return data==null;
     }
-    
+
     private void attrib(Writer fore, boolean pretty, String tag, String value, Level level) throws IOException {
         String realTag = tag.startsWith("__")?tag.substring(2):tag; // remove __
         if (realTag.equals(Parsed.EXTENSION_TAG)) { // Convert Derived name into XML defined Inheritance

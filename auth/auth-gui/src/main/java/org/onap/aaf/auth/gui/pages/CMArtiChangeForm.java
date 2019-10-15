@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,18 +55,18 @@ import certman.v1_0.Artifacts.Artifact;
 public class CMArtiChangeForm extends Page {
     private static final String COPY_ARTIFACT = "copyArtifact";
     private static final String DELETE_ARTIFACT = "deleteArtifact";
-    
+
     // Package on purpose
     static final String HREF = "/gui/artichange";
     static final String NAME = "ArtifactChange";
     static final String fields[] = {"id","machine","ns","directory","ca","osuser","renewal","notify","cmd","others","types[]","sans"};
-    
+
     static final String types[] = {"pkcs12","jks","file","script"};
     static final String UPDATE = "Update";
     static final String CREATE = "Create";
     static final String COPY = "Copy";
     static final String DELETE = "Delete";
-    
+
     public CMArtiChangeForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, fields,
             new BreadCrumbs(breadcrumbs),
@@ -74,7 +74,7 @@ public class CMArtiChangeForm extends Page {
             private final Slot sID = gui.env.slot(CMArtiChangeForm.NAME+'.'+CMArtiChangeForm.fields[0]);
             private final Slot sMach = gui.env.slot(CMArtiChangeForm.NAME+'.'+CMArtiChangeForm.fields[1]);
             private final Slot sNS = gui.env.slot(CMArtiChangeForm.NAME+'.'+CMArtiChangeForm.fields[2]);
-            
+        
             @Override
             public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                 Mark js = new Mark();
@@ -121,7 +121,7 @@ public class CMArtiChangeForm extends Page {
                 hgen.leaf(HTMLGen.TITLE).text("Certificate Artifact Form").end();
                 Mark form = new Mark();
                 hgen.incr(form, "form","action="+HREF,"method=post");
-                
+            
                 cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
                     @Override
                     public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
@@ -199,7 +199,7 @@ public class CMArtiChangeForm extends Page {
                                     }
                                     sb.append(s);
                                 }
-                                
+                            
                                 hgen.text("IPs allowed, separated by commas.").end()
                                     .input(fields[11], "SANs", false, "value="+(sb==null?"":sb.toString()),"style=width:130%;");
 //                            }
@@ -215,7 +215,7 @@ public class CMArtiChangeForm extends Page {
                             for (int i=0;i<types.length;++i) {
                                 hgen.leaf("input","type=checkbox","name=types."+i,arti.getType().contains(types[i])?"checked":"").text(types[i]).end().br();
                             }
-                            
+                        
                             Mark tr = new Mark();
                             hgen.incr(tr,HTMLGen.TR).incr(HTMLGen.TD,"id=trcopy")
                                     .leaf("input","id=cbcopy","type=checkbox","onclick="+COPY_ARTIFACT+"()").text("Copy Artifact").end(2)
@@ -228,10 +228,10 @@ public class CMArtiChangeForm extends Page {
                                 .leaf("input","id=cbdelete","type=checkbox","onclick="+DELETE_ARTIFACT+"()",delete?"style:display:none;":"").text("Delete Artifact").end(2)
                                 .end(tr);
                             hgen.end(table);
-                            
+                        
                             hgen.tagOnly("input","id="+fields[8],"name="+fields[8],"value="+submitText,"style=display:none;");
                             hgen.tagOnly("input","id=theButton","type=submit", "orig="+submitText,"value="+submitText);
-                            
+                        
                         } catch (CadiException | LocatorException | OrganizationException e) {
                             throw new APIException(e);
                         }
@@ -241,6 +241,6 @@ public class CMArtiChangeForm extends Page {
                 hgen.end(form);
                 }
             });
-        
+    
     }
 }

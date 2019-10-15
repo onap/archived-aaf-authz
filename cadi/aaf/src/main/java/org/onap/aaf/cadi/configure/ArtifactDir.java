@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,11 +42,11 @@ public abstract class ArtifactDir implements PlaceArtifact {
 
     protected static final String C_R = "\n";
     protected File dir;
-    
+
     // This checks for multiple passes of Dir on the same objects.  Run clear after done.
     protected final static Map<String,Object> processed = new HashMap<>();
     private static final Map<String, Symm> symms = new HashMap<>();
-    
+
     /**
      * Note:  Derived Classes should ALWAYS call "super.place(cert,arti)" first, and 
      * then "placeProperties(arti)" just after they implement
@@ -54,7 +54,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
     @Override
     public final boolean place(Trans trans, CertInfo certInfo, Artifact arti, String machine) throws CadiException {
         validate(arti);
-        
+    
         try {
             PropHolder cred = PropHolder.get(arti,"cred.props");
 
@@ -67,7 +67,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
                         throw new CadiException("Could not create " + dir);
                     }
                 }
-                
+            
                 // Obtain Issuers
                 boolean first = true;
                 StringBuilder issuers = new StringBuilder();
@@ -83,9 +83,9 @@ public abstract class ArtifactDir implements PlaceArtifact {
 
                 cred.addEnc("Challenge", certInfo.getChallenge());
             }
-                
-            _place(trans, certInfo,arti);
             
+            _place(trans, certInfo,arti);
+        
             processed.put("dir",dir);
 
         } catch (Exception e) {
@@ -106,7 +106,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
     public static void write(File f, Chmod c, String ... data) throws IOException {
         System.out.println("Writing file " + f.getCanonicalPath());
         f.setWritable(true,true);
-        
+    
         FileOutputStream fos = new FileOutputStream(f);
         PrintStream ps = new PrintStream(fos);
         try {
@@ -122,7 +122,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
     public static void write(File f, Chmod c, byte[] bytes) throws IOException {
         System.out.println("Writing file " + f.getCanonicalPath());
         f.setWritable(true,true);
-        
+    
         FileOutputStream fos = new FileOutputStream(f);
         try {
             fos.write(bytes);
@@ -131,11 +131,11 @@ public abstract class ArtifactDir implements PlaceArtifact {
             c.chmod(f);
         }
     }
-    
+
     public static void write(File f, Chmod c, KeyStore ks, char[] pass ) throws IOException, CadiException {
         System.out.println("Writing file " + f.getCanonicalPath());
         f.setWritable(true,true);
-        
+    
         FileOutputStream fos = new FileOutputStream(f);
         try {
             ks.store(fos, pass);
@@ -174,7 +174,7 @@ public abstract class ArtifactDir implements PlaceArtifact {
             }
             sb.append("File Artifacts require an AAF Namespace");
         }
-        
+    
         if (sb.length()>0) {
             throw new CadiException(sb.toString());
         }

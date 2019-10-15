@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,18 +58,18 @@ public class JU_FromJSON {
         new OutRaw().extract(new StringReader(str),sbw,inJSON);
         System.out.println(sbw.getBuffer());
     }
-    
+
     @Test
     public void parseJSON2Dump() throws Exception {
         System.out.println("*** PARSE JSON -> Dump ***");
         System.out.println(str);
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         new OutDump().extract(new StringReader(str), sbw, inJSON);
-        
+    
         System.out.println(sbw.getBuffer());
     }
-    
+
     @Test
     public void nonprettyJSON() throws Exception {
         System.out.println("*** JSON -> (Intermediate Stream) -> Non-pretty JSON ***");
@@ -91,21 +91,21 @@ public class JU_FromJSON {
             }
             report.glean(trans,Env.JSON);
         } while (report.go());
-        
+    
         String result = sbw.toString();
         System.out.println(result);
         Assert.assertEquals(result, str);
         report.report(sbw);
         System.out.println(sbw.toString());
     }
-    
+
     @Test
     public void parseJSON2JSON() throws Exception {
         System.out.println("*** JSON -> (Intermediate Stream) -> Pretty JSON ***");
         System.out.println(str);
 
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         Out jout = new OutJson();
         Trans trans;
         Report report = new Report(ITERATIONS,"JSON");
@@ -121,7 +121,7 @@ public class JU_FromJSON {
             }
             report.glean(trans,Env.JSON);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
     }
@@ -132,7 +132,7 @@ public class JU_FromJSON {
         System.out.println(str);
 
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         Out xout = new OutXML("LargerData","xmlns=urn:s:xsd");
         Trans trans;
         Report report = new Report(ITERATIONS,"JSON");
@@ -148,7 +148,7 @@ public class JU_FromJSON {
             }
             report.glean(trans,Env.JSON);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
     }
@@ -160,7 +160,7 @@ public class JU_FromJSON {
 
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
         IndentPrintWriter ipw = new IndentPrintWriter(sbw);
-        
+    
         Out xout = new OutXML("LargerData","xmlns=urn:s:xsd");
         Trans trans;
         Report report = new Report(ITERATIONS,"JSON");
@@ -176,12 +176,12 @@ public class JU_FromJSON {
             }
             report.glean(trans,Env.JSON);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
     }
+
     
-        
     @Test
     public void jaxbObj2XML() throws Exception {
         System.out.println("*** JAXB Object -> XML ***");
@@ -200,7 +200,7 @@ public class JU_FromJSON {
         sd.getItem().add("Item 2.2");
         ld.getSampleData().add(sd);
         ld.setFluff("MyFluff");
-        
+    
         JAXBmar jaxBmar = new JAXBmar(LargerData.class);
         //jaxBmar.asFragment(true);
         //jaxBmar.pretty(true);
@@ -219,7 +219,7 @@ public class JU_FromJSON {
             }
             report.glean(trans,Env.XML);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
     }
@@ -242,7 +242,7 @@ public class JU_FromJSON {
         sd.getItem().add("Item 2.2");
         ld.getSampleData().add(sd);
         ld.setFluff("MyFluff");
-        
+    
         JAXBmar jaxBmar = new JAXBmar(LargerData.class);
         //jaxBmar.asFragment(true);
         jaxBmar.pretty(true);

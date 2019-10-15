@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +61,7 @@ import aaf.v2_0.Perms;
 
 /**
  * AuthzFacade
- * 
+ *
  * This Service Facade encapsulates the essence of the API Service can do, and provides
  * a single created object for elements such as RosettaDF.
  *
@@ -72,10 +72,10 @@ import aaf.v2_0.Perms;
  *         a) In the future, we may support multiple Response Formats, aka JSON or XML, based on User Request.
  * 4) Log Service info, warnings and exceptions as necessary
  * 5) When asked by the API layer, this will create and write Error content to the OutputStream
- * 
+ *
  * Note: This Class does NOT set the HTTP Status Code.  That is up to the API layer, so that it can be 
  * clearly coordinated with the API Documentation
- * 
+ *
  * @author Jonathan
  *
  */
@@ -88,7 +88,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
     private final RosettaDF<ERROR> errDF;
     public final RosettaDF<Perms> permsDF;
     private final Mapper<TOKEN_REQ, TOKEN, INTROSPECT, ERROR> mapper;
-    
+
     public OAFacadeImpl(AAF_OAuth api,
                       OAuthService service, 
                       Mapper<TOKEN_REQ,TOKEN,INTROSPECT,ERROR> mapper,
@@ -102,13 +102,13 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
         (permsDF         = env.newDataFactory(Perms.class)).in(dataType).out(dataType);
         (errDF             = env.newDataFactory(mapper.getClass(API.ERROR))).in(dataType).out(dataType);
     }
-    
+
     ///////////////////////////
     // Tokens
     ///////////////////////////
     public static final String CREATE_TOKEN = "createToken";
     public static final String INTROSPECT = "introspect";
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.oauth.facade.OAFacade#getToken(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, org.onap.aaf.auth.oauth.service.OAuthAPI)
      */
@@ -189,7 +189,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
                     token = req.getParameter("token"); 
                 }
             }
-            
+        
             if (token==null) {
                 token = req.getParameter("access_token");
                 if (token==null || token.isEmpty()) {
@@ -226,11 +226,11 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
             tt.done();
         }
     }
-    
+
 
     /* (non-Javadoc)
      * @see com.att.authz.facade.AuthzFacade#error(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletResponse, int)
-     * 
+     *
      * Note: Conforms to AT&T TSS RESTful Error Structure
      */
     @Override
@@ -239,7 +239,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
                 result.details==null?"":result.details.trim(),
                 result.variables==null?Result.EMPTY_VARS:result.variables);
     }
-        
+    
     @Override
     public void error(AuthzTrans trans, HttpServletResponse response, int status, final String _msg, final Object ... _detail) {
         String msgId;
@@ -261,7 +261,7 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
                 prefix = "Forbidden";
                 response.setStatus(/*httpstatus=*/403);
                 break;
-                
+            
             case 404:
             case ERR_NotFound:
                 msgId = "SVC1404";
@@ -275,21 +275,21 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
                 prefix = "Not Acceptable";
                 response.setStatus(/*httpstatus=*/406);
                 break;
-                
+            
             case 409:
             case ERR_ConflictAlreadyExists:
                 msgId = "SVC1409";
                 prefix = "Conflict Already Exists";
                 response.setStatus(/*httpstatus=*/409);
                 break;
-            
+        
             case 501:
             case ERR_NotImplemented:
                 msgId = "SVC1501";
                 prefix = "Not Implemented"; 
                 response.setStatus(/*httpstatus=*/501);
                 break;
-                
+            
 
             default:
                 msgId = "SVC1500";
@@ -313,16 +313,16 @@ public abstract class OAFacadeImpl<TOKEN_REQ,TOKEN,INTROSPECT,ERROR>
                 em = mapper.errorFromMessage(holder, msgId, "Server had an issue processing this request");
             }
             errDF.newData(trans).load(em).to(response.getOutputStream());
-            
+        
         } catch (Exception e) {
             trans.error().log(e,"unable to send response for",_msg);
         }
     }
-    
+
     public Mapper<TOKEN_REQ,TOKEN,INTROSPECT,ERROR> mapper() {
         return mapper;
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.auth.oauth.facade.OAFacade#service()
      */

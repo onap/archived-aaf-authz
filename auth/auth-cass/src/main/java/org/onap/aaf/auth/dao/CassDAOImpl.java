@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,7 +62,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
     protected final String U_TEXT = getClass().getSimpleName() + " UPDATE";
     protected final String D_TEXT = getClass().getSimpleName() + " DELETE";
     private String table;
-    
+
     protected final ConsistencyLevel readConsistency;
     protected final ConsistencyLevel writeConsistency;
 
@@ -71,7 +71,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
     protected PSInfo updatePS;
     protected PSInfo deletePS;
     protected boolean async=false;
-    
+
     // Setteable only by CachedDAO
     protected Cached<?, ?> cache;
 
@@ -89,7 +89,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
         readConsistency = read;
         writeConsistency = write;
     }
-    
+
     /**
      * A Constructor to share Session with other DAOs.
      *
@@ -113,18 +113,18 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
     public final String[] setCRUD(TRANS trans, String table, Class<?> dc,Loader<DATA> loader) {
         return setCRUD(trans, table, dc, loader, -1);
     }
-    
+
     public final String[] setCRUD(TRANS trans, String table, Class<?> dc,Loader<DATA> loader, int max) {
                 Field[] fields = dc.getDeclaredFields();
                 int end = max>=0 && max<fields.length?max:fields.length;
                 // get keylimit from a non-null Loader
                 int keylimit = loader.keylimit();
-            
+        
                 StringBuilder sbfc = new StringBuilder();
                 StringBuilder sbq = new StringBuilder();
                 StringBuilder sbwc = new StringBuilder();
                 StringBuilder sbup = new StringBuilder();
-            
+        
                 if (keylimit>0) {
                     for (int i=0;i<end;++i) {
                         if (i>0) {
@@ -148,18 +148,18 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
                             sbwc.append("=?");
                         }
                     }
-            
+        
                     createPS = new PSInfo(trans, "INSERT INTO " + table + " ("+ sbfc +") VALUES ("+ sbq +");",loader,writeConsistency);
-            
+        
                     readPS = new PSInfo(trans, SELECT_SP + sbfc + " FROM " + table + WHERE + sbwc + ';',loader,readConsistency);
-            
+        
                     // Note: UPDATES can't compile if there are no fields besides keys... Use "Insert"
                     if (sbup.length()==0) {
                         updatePS = createPS; // the same as an insert
                     } else {
                         updatePS = new PSInfo(trans, UPDATE_SP + table + " SET " + sbup + WHERE + sbwc + ';',loader,writeConsistency);
                     }
-            
+        
                     deletePS = new PSInfo(trans, "DELETE FROM " + table + WHERE + sbwc + ';',loader,writeConsistency);
                 }
                 return new String[] {sbfc.toString(), sbq.toString(), sbup.toString(), sbwc.toString()};
@@ -191,7 +191,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
         }
     }
 
-    
+
     /**
      * Given a DATA object, extract the individual elements from the Data into an Object Array for the
      * execute element.
@@ -231,7 +231,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
         }
         return readPS.read(trans, R_TEXT, key);
     }
-    
+
     public Result<DATA> readPrimKey(TRANS trans, Object ... key) {
         if (readPS==null) {
             return Result.err(Result.ERR_NotImplemented,READ_IS_DISABLED,getClass().getSimpleName());
@@ -267,7 +267,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
                 return Result.err(rs);
             }
         }
-        
+    
         wasModified(trans, CRUD.update, data);
         return Result.ok();
     }
@@ -316,7 +316,7 @@ public class CassDAOImpl<TRANS extends TransStore,DATA> extends AbsCassDAO<TRANS
         }
         return Result.ok();
     }
-    
+
     public final Object[] keyFrom(DATA data) {
         return createPS.keyFrom(data);
     }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,11 +30,11 @@ import org.onap.aaf.misc.env.Trans;
 
 /**
  * CachedDAO
- * 
+ *
  * Cache the response of "get" of any DAO.  
- * 
+ *
  * For simplicity's sake, at this time, we only do this for single Object keys  
- * 
+ *
  * @author Jonathan
  *
  * @param <DATA>
@@ -42,12 +42,12 @@ import org.onap.aaf.misc.env.Trans;
 public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extends Cacheable> 
         extends Cached<TRANS,DATA> implements DAO_RO<TRANS,DATA>{
 //    private final String dirty_str; 
-    
+
     private final D dao;
 
     public CachedDAO(D dao, CIDAO<TRANS> info, int segsize, long expireIn) {
         super(info, dao.table(), segsize, expireIn);
-        
+    
         // Instantiate a new Cache per DAO name (so separate instances use the same cache) 
         this.dao = dao;
         //read_str = "Cached READ for " + dao.table();
@@ -56,7 +56,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
             ((CassDAOImpl<?,?>)dao).cache = this;
         }
     }
-    
+
     public static<T extends Trans, DA extends DAO<T,DT>, DT extends Cacheable> 
             CachedDAO<T,DA,DT> create(DA dao, CIDAO<T> info, int segsize, long expireIn) {
         return new CachedDAO<T,DA,DT>(dao,info, segsize, expireIn);
@@ -68,7 +68,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         list.add(data);
         super.add(key,list);
     }
-    
+
 //    public void invalidate(TRANS trans, Object ... objs)  {
 //        TimeTaken tt = trans.start(dirty_str, Env.SUB);
 //        try {
@@ -122,7 +122,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
             this.dao = dao;
             this.objs = objs;
         }
-        
+    
         /**
          * Separated into single call for easy overloading
          * @return
@@ -130,7 +130,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         public Result<List<DATA>> call() {
             return dao.read(trans, objs);
         }
-        
+    
         @Override
         public final Result<List<DATA>> get() {
             return call();
@@ -169,7 +169,7 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
 //        }
 //        return getter.result;
     }
-    
+
     @Override
     public Result<List<DATA>> read(TRANS trans, DATA data) {
         return read(trans,dao.keyFrom(data));
@@ -202,24 +202,24 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         data.invalidate(this);
         return rv;
     }
-    
+
     @Override
     public void close(TRANS trans) {
         if (dao!=null) {
             dao.close(trans);
         }
     }
-    
+
 
     @Override
     public String table() {
         return dao.table();
     }
-    
+
     public D dao() {
         return dao;
     }
-    
+
     public void invalidate(TRANS trans, DATA data) {
         if (info.touch(trans, dao.table(),data.invalidate(this)).notOK()) {
         trans.error().log("Cannot touch CacheInfo for Role");

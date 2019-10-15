@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.onap.aaf.misc.env.util.Split;
 /**
  * A Class that understands the AAF format of Permission (name/type/action)
  *  or String "name|type|action"
- * 
+ *
  * @author Jonathan
  *
  */
@@ -38,7 +38,7 @@ public class AAFPermission implements Permission {
     private static final List<String> NO_ROLES;
     protected String ns,type,instance,action,key;
     private List<String> roles;
-    
+
     static {
         NO_ROLES = new ArrayList<>();
     }
@@ -71,15 +71,15 @@ public class AAFPermission implements Permission {
         }
         this.roles = roles==null?NO_ROLES:roles;
     }
-    
+
     /**
      * Match a Permission
      * if Permission is Fielded type "Permission", we use the fields
      * otherwise, we split the Permission with '|'
-     * 
+     *
      * when the type or action starts with REGEX indicator character ( ! ),
      * then it is evaluated as a regular expression.
-     * 
+     *
      * If you want a simple field comparison, it is faster without REGEX
      */
     public boolean match(Permission p) {
@@ -157,15 +157,15 @@ public class AAFPermission implements Permission {
     public String getFullType() {
         return ns + '.' + type;
     }
-    
+
     public String getInstance() {
         return instance;
     }
-    
+
     public String getAction() {
         return action;
     }
-    
+
     public String getKey() {
         return key;
     }

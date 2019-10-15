@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ package org.onap.aaf.cadi.principal;
 public class OAuth2FormPrincipal extends TaggedPrincipal {
     private final String username;
     private final String client_id;
-    
+
     /*
      * Note: client_id and username might be the same, if only authenticating the Client_ID
      */
@@ -32,12 +32,12 @@ public class OAuth2FormPrincipal extends TaggedPrincipal {
         this.username = username;
         this.client_id = client_id; 
     }
-    
+
     @Override
     public String getName() {
         return username;
     }
-    
+
     public String client_id() {
         return client_id;
     }

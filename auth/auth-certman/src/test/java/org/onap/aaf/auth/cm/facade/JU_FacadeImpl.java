@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ import org.onap.aaf.misc.env.TimeTaken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> {
-    
+
     private static AuthzTrans trans;
     private static HttpServletResponse resp;
     private static AAF_CM certman;
@@ -62,10 +62,10 @@ public class JU_FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> {
     private Mapper<REQ,CERT,ARTIFACTS,ERROR> mapper;
     private Data.TYPE dataType;
     private static AuthzEnv env;
-    
+
     private static FacadeImpl fImpl;
     private static HttpServletRequest req;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         fImpl = mock(FacadeImpl.class);
@@ -76,111 +76,111 @@ public class JU_FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> {
         Result<Void> rvd = (Result) mock(Result.class);
         trans = mock(AuthzTrans.class);
         when(trans.error()).thenReturn(new LogTarget() {
-            
+        
             @Override
             public void printf(String fmt, Object... vars) {}
-            
+        
             @Override
             public void log(Throwable e, Object... msgs) {
                 e.getMessage();
                 //e.printStackTrace();
                 msgs.toString();
-                
-            }
             
+            }
+        
             @Override
             public void log(Object... msgs) {
             }
-            
+        
             @Override
             public boolean isLoggable() {
-                
+            
                 return false;
             }
         });
         when(trans.start(Mockito.anyString(), Mockito.anyInt())).thenReturn(new TimeTaken("Now", 1) {
-            
+        
             @Override
             public void output(StringBuilder sb) {
-                
+            
             }
         });
         when(fImpl.check(Mockito.any(AuthzTrans.class), Mockito.any(HttpServletResponse.class), Mockito.anyString())).thenReturn(rvd);
         when(resp.getOutputStream()).thenReturn(new ServletOutputStream() {
-            
+        
             @Override
             public void write(int b) throws IOException {
-                
-                
+            
+            
             }
         });
-        
-    }
     
+    }
+
     @Test
     public void check() throws IOException {
         AAFPermission ap = new AAFPermission("str0","str1","str3","str2");
         String perms = ap.getInstance();
         assertNotNull(hImpl.check(trans, resp, perms));
     }
-    
+
     @Test
     public void checkNull() throws IOException {
         AAFPermission ap = new AAFPermission(null,null,"Str3","str2");
         String perms = ap.getInstance();
         assertNotNull(hImpl.check(trans, resp, perms));
     }
-    
+
     @Test
     public void checkTwoNull() throws IOException {
         AAFPermission ap = new AAFPermission(null,null,null,"str2");
         String perms = ap.getInstance();
         assertNotNull(fImpl.check(trans, resp, perms));
     }
-    
+
     @Test
     public void checkAllNull() throws IOException {
         AAFPermission ap = new AAFPermission(null,null,null,null);
         String perms = ap.getInstance();
         assertNotNull(fImpl.check(trans, resp, perms));
     }
-    
+
     @Test
     public void checkTrans_null() throws IOException {
         AAFPermission ap = new AAFPermission("str0","str1","str3","str2");
         String perms = ap.getInstance();
         assertNotNull(hImpl.check(null, resp, perms));
     }
-    
+
     @Test
     public void checkRespNull() throws IOException {
         AAFPermission ap = new AAFPermission("str0","str1","str3","str2");
         String perms = ap.getInstance();
         assertNotNull(hImpl.check(trans, null, perms));
     }
-    
+
     @Test
-    public void requestCert() {        
+    public void requestCert() {    
         assertNotNull(hImpl.requestCert(trans, req, resp, null));
     }
-    
+
     @Test
-    public void renewCert() {        
+    public void renewCert() {    
         assertNotNull(hImpl.renewCert(trans, req, resp, true));
     }
-    
+
     @Test
-    public void dropCert() {        
+    public void dropCert() {    
         assertNotNull(hImpl.renewCert(trans, req, resp, true));
     }
-    
+
     @Test
-    public void createArtifacts() {        
+    public void createArtifacts() {    
         assertNotNull(hImpl.createArtifacts(trans, req, resp));
     }
-    
+
     @Test
-    public void readArtifacts() {        
+    public void readArtifacts() {    
         assertNotNull(hImpl.readArtifacts(trans, req, resp));
     }
 }

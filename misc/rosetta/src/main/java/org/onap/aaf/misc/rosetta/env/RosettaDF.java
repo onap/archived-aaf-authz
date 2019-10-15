@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,18 +56,18 @@ import org.onap.aaf.misc.rosetta.ParseException;
 import org.onap.aaf.misc.rosetta.marshal.DocMarshal;
 
 public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
-    
+
     static InJson inJSON = new InJson();
     InXML  inXML;
 
     static OutJson outJSON = new OutJson();
     OutXML outXML;
     static OutRaw outRAW = new OutRaw();
-    
+
     // Temporary until we write JAXB impl...
     JAXBmar jaxMar;
     JAXBumar jaxUmar;
-    
+
     private Parse<Reader,?> defaultIn;
     private Out defaultOut;
     private RosettaEnv env;
@@ -75,7 +75,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
     private TYPE outType;
     private int defOption;
     Marshal<T> marshal = null;
-    
+
 
     /**
      * Private constructor to setup Type specific data manipulators
@@ -98,7 +98,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
         jaxMar = new JAXBmar(rootNs==null?null:new QName("xmlns",rootNs),cls);
         // Note: JAXBumar sets schema to null if not exists
         jaxUmar = new JAXBumar(schema, cls);
-        
+    
         defaultIn = inXML = new InXML(ji);
         defaultOut = outXML = new OutXML(ji);
         inType=outType=Data.TYPE.XML;
@@ -107,11 +107,11 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
             throw new APIException(e);
         }
     }
-    
+
 
     // @Override
     public RosettaData<T> newData() {
-        RosettaData<T> data = new RosettaData<T>(env, this)            
+        RosettaData<T> data = new RosettaData<T>(env, this)        
             .in(inType)
             .out(outType)
             .option(defOption);
@@ -141,7 +141,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
 
     /**
      * If exists, first option is "Pretty", second is "Fragment"
-     * 
+     *
      * @param options
      * @return
      */
@@ -150,7 +150,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
         defaultOut = getOut(type==Data.TYPE.DEFAULT?Data.TYPE.JSON:type);
         return this;
     }
-    
+
     public Parse<Reader,?> getIn(Data.TYPE type) {
         switch(type) {
             case DEFAULT:
@@ -163,7 +163,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
                 return defaultIn;
         }
     }
-    
+
     public Out getOut(Data.TYPE type) {
         switch(type) {
             case DEFAULT:
@@ -178,7 +178,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
                 return defaultOut;
         }
     }
-    
+
     public int logType(org.onap.aaf.misc.env.Data.TYPE ot) {
         switch(ot) {
             case JSON:
@@ -204,15 +204,15 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
 
     public RosettaDF<T> option(int option) {
         defOption = option;
-        
+    
         return this;
     }
 
     /**
      * Assigning Root Marshal Object
-     * 
+     *
      * Will wrap with DocMarshal Object if not already
-     * 
+     *
      * @param marshal
      * @return
      */
@@ -224,7 +224,7 @@ public class RosettaDF<T> extends BaseDataFactory implements DataFactory<T>  {
         }
         return this;
     }
-    
+
     public void direct(Trans trans, T t, OutputStream os, boolean ... options) throws APIException, IOException {
         Out out = getOut(outType);
         TimeTaken tt = trans.start(out.logName(),logType(outType)); // determine from Out.. without dependency on Env?

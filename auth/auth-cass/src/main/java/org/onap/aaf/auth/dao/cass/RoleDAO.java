@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
 
     public static final String TABLE = "role";
     public static final int CACHE_SEG = 0x40; // yields segment 0x0-0x3F
-    
+
     private final HistoryDAO historyDAO;
     private final CacheInfoDAO infoDAO;
 
@@ -96,15 +96,15 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
             }
             return perms;
         }
-        
+    
         public static Data create(NsDAO.Data ns, String name) {
-            NsSplit nss = new NsSplit(ns,name);        
+            NsSplit nss = new NsSplit(ns,name);    
             RoleDAO.Data rv = new Data();
             rv.ns = nss.ns;
             rv.name=nss.name;
             return rv;
         }
-        
+    
         public String fullName() {
             StringBuilder sb = new StringBuilder();
             if(ns==null) {
@@ -116,14 +116,14 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
             sb.append(name);
             return sb.toString();
         }
-        
+    
         public String encode() {
             return ns + '|' + name;
         }
-        
+    
         /**
          * Decode Perm String, including breaking into appropriate Namespace
-         * 
+         *
          * @param trans
          * @param q
          * @param r
@@ -171,7 +171,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
 
         /**
          * Decode Perm String, including breaking into appropriate Namespace
-         * 
+         *
          * @param trans
          * @param q
          * @param p
@@ -189,7 +189,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
             }
             return Result.ok(ss);
         }
-        
+    
         @Override
         public int[] invalidate(Cached<?,?> cache) {
             return new int[] {
@@ -205,7 +205,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
             RoleLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             RoleLoader.deflt.unmarshal(this, toDIS(bb));
@@ -223,11 +223,11 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         public static final int BUFF_SIZE=96;
 
         public static final RoleLoader deflt = new RoleLoader(KEYLIMIT);
-        
+    
         public RoleLoader(int keylimit) {
             super(keylimit);
         }
-        
+    
         @Override
         public Data load(Data data, Row row) {
             // Int more efficient
@@ -275,7 +275,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
 
     private void init(AuthzTrans trans) {
         String[] helpers = setCRUD(trans, TABLE, Data.class, RoleLoader.deflt);
-        
+    
         psNS = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE ns = ?", new RoleLoader(1),readConsistency);
 
@@ -293,7 +293,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
                 obj[++idx]=data.name + DOT_PLUS_ONE;
             }
         },readConsistency);
-        
+    
     }
 
     public Result<List<Data>> readNS(AuthzTrans trans, String ns) {
@@ -314,7 +314,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
 
     /**
      * Add a single Permission to the Role's Permission Collection
-     * 
+     *
      * @param trans
      * @param role
      * @param perm
@@ -351,7 +351,7 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         // Note: Prepared Statements for Collection updates aren't supported
 
         String pencode = perm.encode();
-        
+    
         //ResultSet rv =
         try {
             getSession(trans).execute(UPDATE_SP + TABLE + " SET perms = perms - {'" + 
@@ -366,10 +366,10 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         wasModified(trans, CRUD.update, role, "Removed permission " + pencode + " from role " + role.fullName() );
         return Result.ok();
     }
-    
+
     /**
      * Add description to role
-     * 
+     *
      * @param trans
      * @param ns
      * @param name
@@ -391,8 +391,8 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         wasModified(trans, CRUD.update, data, "Added description " + description + " to role " + data.fullName(), null );
         return Result.ok();
     }
-    
-    
+
+
     /**
      * Log Modification statements to History
      * @param modified           which CRUD action was done
@@ -426,5 +426,5 @@ public class RoleDAO extends CassDAOImpl<AuthzTrans,RoleDAO.Data> {
         }
     }
 
-    
+
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +64,7 @@ public class SecurityInfo {
     private static final String LOADED_FROM_SYSTEM_PROPERTIES = "%s loaded from System Properties";
 
     public static final String SSL_KEY_MANAGER_FACTORY_ALGORITHM;
-    
+
     private SSLSocketFactory socketFactory;
     private X509KeyManager[] x509KeyManager;
     private X509TrustManager[] x509TrustManager;
@@ -83,21 +83,21 @@ public class SecurityInfo {
             SSL_KEY_MANAGER_FACTORY_ALGORITHM = "SunX509";
         }
     }
-    
+
 
     public SecurityInfo(final Access access) throws CadiException {
         String msgHelp = "";
         try {
             this.access = access;
             // reuse DME2 Properties for convenience if specific Properties don't exist
-            
+        
             String str = access.getProperty(Config.CADI_ALIAS, null);
             if(str==null || str.isEmpty()) {
                 defaultAlias = null;
             } else {
                 defaultAlias = str;
             }
-            
+        
             str = access.getProperty(Config.CADI_CLIENT_ALIAS, null);
             if(str==null) {
                 defaultClientAlias = defaultAlias;
@@ -110,17 +110,17 @@ public class SecurityInfo {
 
             msgHelp = String.format(INITIALIZING_ERR_FMT,"Keystore", access.getProperty(Config.CADI_KEYSTORE, ""));
             initializeKeyManager();
-            
+        
             msgHelp = String.format(INITIALIZING_ERR_FMT,"Truststore", access.getProperty(Config.CADI_TRUSTSTORE, ""));
             initializeTrustManager();
-            
+        
 
             msgHelp = String.format(INITIALIZING_ERR_FMT,"Trustmasks", access.getProperty(Config.CADI_TRUST_MASKS, ""));
             initializeTrustMasks();
 
             msgHelp = String.format(INITIALIZING_ERR_FMT,"HTTP Protocols", "access properties");
             setHTTPProtocols(access);
-            
+        
             msgHelp = String.format(INITIALIZING_ERR_FMT,"Context", "TLS");
             context = SSLContext.getInstance("TLS");
             context.init(x509KeyManager, x509TrustManager, null);
@@ -197,7 +197,7 @@ public class SecurityInfo {
             hsuc.setHostnameVerifier(maskHV);
         }
     }
-    
+
     protected void initializeKeyManager() throws CadiException, IOException, NoSuchAlgorithmException, KeyStoreException, CertificateException, UnrecoverableKeyException {
         String keyStore = access.getProperty(Config.CADI_KEYSTORE, null);
         if(keyStore==null) {
@@ -240,7 +240,7 @@ public class SecurityInfo {
                 }
             }
         }
-        
+    
         StringBuilder sb = null;
         for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
             if (keyManager instanceof X509KeyManager) {
@@ -263,12 +263,12 @@ public class SecurityInfo {
         }
         x509KeyManager = new X509KeyManager[keyManagers.size()];
         keyManagers.toArray(x509KeyManager);
-        
+    
         if(sb!=null) {
             access.log(Level.INIT, sb);
         }
     }
-    
+
     private void x509Info(StringBuilder sb, X509Certificate[] chain) {
         if(chain!=null) {
             int i=0;
@@ -328,7 +328,7 @@ public class SecurityInfo {
             }
         }
     }
-    
+
     protected void initializeTrustMasks() throws AccessException {
         String tips = access.getProperty(Config.CADI_TRUST_MASKS, null);
         if (tips == null) {
@@ -345,7 +345,7 @@ public class SecurityInfo {
                 throw new AccessException("Invalid IP Mask in " + Config.CADI_TRUST_MASKS, e);
             }
         }
-    
+
         final HostnameVerifier origHV = HttpsURLConnection.getDefaultHostnameVerifier();
         maskHV = new HostnameVerifier() {
             @Override
@@ -366,5 +366,5 @@ public class SecurityInfo {
         };
         HttpsURLConnection.setDefaultHostnameVerifier(maskHV);
     }
-    
+
 }

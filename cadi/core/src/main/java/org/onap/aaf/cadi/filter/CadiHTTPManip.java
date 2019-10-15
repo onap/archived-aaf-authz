@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,10 +47,10 @@ import org.onap.aaf.cadi.util.UserChainManip;
 /**
  * Encapsulate common HTTP Manipulation Behavior.  It will appropriately set
  * HTTPServletResponse for Redirect or Forbidden, as needed.
- * 
+ *
  * Further, this is useful, because it avoids multiple creates of Connections, where some Filters
  * are created and destroyed regularly.
- * 
+ *
  * @author Jonathan
  *
  */
@@ -73,7 +73,7 @@ public class CadiHTTPManip {
     private CredVal up;
     private Lur lur;
     private String thisPerm,companyPerm,aaf_id;
-    
+
     public static final Object[] noAdditional = new Object[0]; // CadiFilter can be created each call in some systems
 
 
@@ -82,7 +82,7 @@ public class CadiHTTPManip {
             this.access = access;
 //            Get getter = new AccessGetter(access);
             Config.setDefaultRealm(access);
-    
+
             aaf_id = access.getProperty(Config.CADI_ALIAS,access.getProperty(Config.AAF_APPID, null));
             if (aaf_id==null) {
                 access.printf(Level.INIT, "%s is not set. %s can be used instead",Config.AAF_APPID,Config.CADI_ALIAS);
@@ -107,9 +107,9 @@ public class CadiHTTPManip {
             }
             SecurityInfoC<HttpURLConnection> si;
             si = SecurityInfoC.instance(access, HttpURLConnection.class);
-            
+        
             lur = Config.configLur(si, con, additionalTafLurs);
-            
+        
             tc.setLur(lur);
             if (lur instanceof EpiLur) {
                 up = ((EpiLur)lur).getUserPassImpl();
@@ -161,12 +161,12 @@ public class CadiHTTPManip {
                         hreq.getRemotePort(),NO_TAF_WILL_AUTHORIZE,tresp.desc());
                 hresp.sendError(403, ACCESS_DENIED); // FORBIDDEN
         }
-        
+    
         return tresp;
     }
-    
+
     public boolean notCadi(CadiWrap req, HttpServletResponse resp) {
-        
+    
         String pathInfo = req.getPathInfo();
         if (METH.equalsIgnoreCase(req.getMethod()) && pathInfo!=null && pathInfo.contains(CADI)) {
             if (req.getUser().equals(aaf_id) || req.isUserInRole(thisPerm) || req.isUserInRole(companyPerm)) {
@@ -201,11 +201,11 @@ public class CadiHTTPManip {
         }
         return true;
     }
-    
+
     public Lur getLur() {
         return lur;
     }
-    
+
     public void destroy() {
         access.log(Level.INFO,"CadiHttpChecker destroyed.");
         if (lur!=null) {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,47 +50,47 @@ public class JU_CachedUserRoleDAO {
 
     @Mock
     UserRoleDAO dao;
-    
+
     @Mock
     CIDAO<AuthzTrans> info;
-    
+
     @Mock
     AuthzTransImpl trans;
-    
+
     @Mock
     RoleDAO.Data data;
-    
+
     @Mock
     PermDAO.Data permData;
-    
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
         when(trans.debug()).thenReturn(new LogTarget() {
-            
+        
             @Override
             public void printf(String fmt, Object... vars) {}
-            
+        
             @Override
             public void log(Throwable e, Object... msgs) {
                 e.getMessage();
                 e.printStackTrace();
                 msgs.toString();
-                
-            }
             
+            }
+        
             @Override
             public void log(Object... msgs) {
             }
-            
+        
             @Override
             public boolean isLoggable() {
-                
+            
                 return true;
             }
         });
     }
-    
+
     private class TaggedPrincipalStub extends TaggedPrincipal {
         String name="TaggedPrincipalStub";
         public TaggedPrincipalStub() { super(); }
@@ -98,7 +98,7 @@ public class JU_CachedUserRoleDAO {
         @Override public String getName() { return name; }
         @Override public String tag() { return null; }
     }
-    
+
     @Test
     public void testReadName() {
         CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10L);
@@ -109,8 +109,8 @@ public class JU_CachedUserRoleDAO {
         //System.out.println(retVal.status);
         //retVal.status = 0;
         assertEquals("25", Integer.toString(retVal.status));
-    }    
-    
+    }
+
     @Test
     public void testReadNameUser() {
         CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10L);
@@ -122,7 +122,7 @@ public class JU_CachedUserRoleDAO {
                 Object o=null;
                 return (T)o;
             }
-            
+        
         };
         transTemp.setUser(new TaggedPrincipalStub());
         Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
@@ -132,7 +132,7 @@ public class JU_CachedUserRoleDAO {
 //        System.out.println(retVal.status);
         assertEquals("1", Integer.toString(retVal.status));
     }
-    
+
     @Test
     public void testReadByRoleSuccess() {
         CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 0);//Mockito.mock(CachedRoleDAO.class);//
@@ -142,7 +142,7 @@ public class JU_CachedUserRoleDAO {
         Result<List<Data>> retVal = roleDaoObj.readByRole(trans, "");
         //System.out.println(retVal.status);
         assertEquals("1", Integer.toString(retVal.status));
-    }    
+    }
     @Test
     public void testReadByRoleFailure() {
         CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 0);//Mockito.mock(CachedRoleDAO.class);//
@@ -153,7 +153,7 @@ public class JU_CachedUserRoleDAO {
         //System.out.println(retVal.status);
         assertEquals("25", Integer.toString(retVal.status));
     }
-    
+
     @Test
     public void testReadUserInRole() {
         CachedUserRoleDAO roleDaoObj =new CachedUserRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
@@ -165,7 +165,7 @@ public class JU_CachedUserRoleDAO {
                 Object o=null;
                 return (T)o;
             }
-            
+        
         };
         transTemp.setUser(new TaggedPrincipalStub());
         Mockito.doReturn(retVal1).when(info).touch(trans, null,null);
@@ -175,6 +175,6 @@ public class JU_CachedUserRoleDAO {
         //System.out.println(retVal.status);
         assertEquals("25", Integer.toString(retVal.status));
     }
-    
+
 
 }

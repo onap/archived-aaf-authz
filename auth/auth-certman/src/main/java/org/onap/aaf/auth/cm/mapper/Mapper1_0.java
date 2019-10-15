@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ import certman.v1_0.CertificateRequest;
 
 
 public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
-    
+
     @Override
     public Class<?> getClass(API api) {
         switch(api) {
@@ -233,7 +233,7 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             data.ns = trim(arti.getNs());
             data.renewDays = arti.getRenewDays();
             data.notify = trim(arti.getNotification());
-            
+        
             // Ignored on way in for create/update
             data.sponsor = (arti.getSponsor());
             if(arti.getSans()!=null) {
@@ -279,8 +279,8 @@ public class Mapper1_0 implements Mapper<BaseRequest,CertInfo,Artifacts,Error> {
             return Result.err(lArtiDAO);
         }
     }
-    
-    
+
+
 
     private String trim(String s) {
         if(s==null) {

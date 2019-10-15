@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,11 +39,11 @@ import org.onap.aaf.cadi.filter.RolesAllowed;
 
 /**
  * MiniJASPIWrap
- * 
+ *
  * Support the ability to check JASPI Annotation Style Authorizations.
- * 
+ *
  * This can be a clean way to enforce API Authorization without mistakes in code.
- * 
+ *
  * @author JonathanGathman
  *
  */
@@ -67,7 +67,7 @@ public class MiniJASPIWrap extends ServletHolder {
 
     /**
      * handle
-     * 
+     *
      * When utilized, this class authorizes the transaction by first calling the standard J2EE API call
      * "isUserInRole" with the role(s) found in the class Annotations (JASPI Style) 
      */
@@ -77,7 +77,7 @@ public class MiniJASPIWrap extends ServletHolder {
             super.handle(baseRequest, request, response);
         } else { // Validate
             try {
-                
+            
                 HttpServletRequest hreq = (HttpServletRequest)request;
                 boolean proceed = false;
                 for (String role : rolesAllowed.value()) {
@@ -95,7 +95,7 @@ public class MiniJASPIWrap extends ServletHolder {
             } catch (ClassCastException e) {
                 throw new ServletException("JASPIWrap only supports HTTPServletRequest/HttpServletResponse");
             }
-        }        
+        }    
     }
 
 }

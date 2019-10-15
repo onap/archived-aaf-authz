@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import org.onap.aaf.misc.env.Slot;
 
 /**
  * API Apis.. using Redirect for mechanism
- * 
+ *
  * @author Jonathan
  *
  */
@@ -46,7 +46,7 @@ public class API_Cert {
 
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param aafCM
      * @param facade
      * @throws Exception
@@ -54,7 +54,7 @@ public class API_Cert {
     public static void init(final AAF_CM aafCM) throws Exception {
         // Check for Created Certificate Authorities in TRANS
         sCertAuth = aafCM.env.slot(CERT_AUTH);
-        
+    
         ////////
         // Overall APIs
         ///////
@@ -76,7 +76,7 @@ public class API_Cert {
                 }
             }
         });
-        
+    
         aafCM.route(HttpMethods.GET,"/cert/:ca/personal",API.CERT,new Code(aafCM,"Request Personal Certificate") {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -96,9 +96,9 @@ public class API_Cert {
             }
         });
 
-        
+    
         /**
-         * 
+         *
          */
         aafCM.route(HttpMethods.GET, "/cert/may/:perm", API.VOID, new Code(aafCM,"Check Permission") {
             @Override
@@ -117,7 +117,7 @@ public class API_Cert {
          * Get Cert by ID and Machine 
          */
 
-        
+    
         /**
          * Get Certs by ID
          */
@@ -133,10 +133,10 @@ public class API_Cert {
             }
         });
 
-        
+    
         /**
          * Get Certs by Machine
          */
-        
+    
     }
 }

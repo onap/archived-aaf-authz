@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class List extends BaseCmd<Role> {
         cmds.add(new ListByPerm(this));
         cmds.add(new ListActivity(this));
     }
-    
+
     // Package Level on purpose
     abstract class ListRoles extends Retryable<Integer> {
         protected int list(Future<Roles> fr,Rcli<?> client, String header) throws APIException, CadiException {
@@ -93,7 +93,7 @@ public class List extends BaseCmd<Role> {
     private static final String roleExpiredFormat = "%-53s !!! EXPIRED !!! %s\n";
     private static final String permFormat = "   %-30s %-30s %-15s\n";
 
-    
+
     private static final Comparator<aaf.v2_0.Role> roleCompare = new Comparator<aaf.v2_0.Role>() {
         @Override
         public int compare(aaf.v2_0.Role a, aaf.v2_0.Role b) {

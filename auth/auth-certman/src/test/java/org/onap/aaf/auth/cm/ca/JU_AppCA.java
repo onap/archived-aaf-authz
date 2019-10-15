@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,23 +61,23 @@ import org.onap.aaf.misc.env.Trans;
 //TODO: Gabe [JUnit] Import does not exist
 @RunWith(MockitoJUnitRunner.class)
 public class JU_AppCA {
-    
+
     @Mock
     private static CachedCertDAO certDAO;
-    
+
     @Mock
     private static HttpServletRequest req;
-    
+
     @Mock
     private static CSRMeta csrMeta;
-    
+
     static Trans trans;
-    
+
     static X509andChain cert1;
     static byte [] name = {1,23,4,54,6,56};
-    
+
     private static LocalCA localCA;
-    
+
     @BeforeClass
     public static void setUp() throws CertificateException, CertException, IOException {
         String str = "core java api";
@@ -86,196 +86,196 @@ public class JU_AppCA {
         req = mock(HttpServletRequest.class);
         localCA = mock(LocalCA.class);
         X509Certificate cert = new X509Certificate() {
-            
+        
             @Override
             public boolean hasUnsupportedCriticalExtension() {
                 return false;
             }
-            
+        
             @Override
             public Set<String> getNonCriticalExtensionOIDs() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public byte[] getExtensionValue(String oid) {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public Set<String> getCriticalExtensionOIDs() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public void verify(PublicKey key, String sigProvider) throws CertificateException, NoSuchAlgorithmException,
                     InvalidKeyException, NoSuchProviderException, SignatureException {
-                 
-                
-            }
+             
             
+            }
+        
             @Override
             public void verify(PublicKey key) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException,
                     NoSuchProviderException, SignatureException {
-                 
-                
-            }
+             
             
+            }
+        
             @Override
             public String toString() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public PublicKey getPublicKey() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public byte[] getEncoded() throws CertificateEncodingException {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public int getVersion() {
-                 
+             
                 return 0;
             }
-            
+        
             @Override
             public byte[] getTBSCertificate() throws CertificateEncodingException {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public boolean[] getSubjectUniqueID() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public Principal getSubjectDN() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public byte[] getSignature() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public byte[] getSigAlgParams() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public String getSigAlgOID() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public String getSigAlgName() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public BigInteger getSerialNumber() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public Date getNotBefore() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public Date getNotAfter() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public boolean[] getKeyUsage() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public boolean[] getIssuerUniqueID() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public Principal getIssuerDN() {
-                 
+             
                 return null;
             }
-            
+        
             @Override
             public int getBasicConstraints() {
-                 
+             
                 return 0;
             }
-            
+        
             @Override
             public void checkValidity(Date date) throws CertificateExpiredException, CertificateNotYetValidException {
-                 
-                
-            }
+             
             
+            }
+        
             @Override
             public void checkValidity() throws CertificateExpiredException, CertificateNotYetValidException {
-                
+            
             }
         };
         X509andChain xac = new X509andChain(cert, new ArrayList<>());
         when(localCA.sign(Mockito.any(Trans.class), Mockito.any(CSRMeta.class))).thenReturn(xac);
         certDAO = mock(CachedCertDAO.class, CALLS_REAL_METHODS);
     }
-    
+
     @Test
     public void identity_True() throws CertificateException, IOException, CertException {
         assertNotNull(localCA.sign(trans, csrMeta));
     }
-    
-    
+
+
     @Test
     public void identityNull() throws CertificateException {
         try {
             assertNotNull(localCA.sign(null, csrMeta));
         } catch (IOException e) {
-        
+    
             e.printStackTrace();
         } catch (CertException e) {
-            
+        
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void identityBothNull() throws CertificateException {
         try {
             assertNotNull(localCA.sign(null, null));
         } catch (IOException e) {
-        
+    
             e.printStackTrace();
         } catch (CertException e) {
-            
+        
             e.printStackTrace();
         }
     }

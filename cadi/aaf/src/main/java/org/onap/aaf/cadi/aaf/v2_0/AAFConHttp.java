@@ -7,9 +7,9 @@ r * ============LICENSE_START===================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -82,7 +82,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
         super(access,tag,si);
         hman = new HMangr(access, locator);
     }
-    
+
     private AAFConHttp(AAFCon<HttpURLConnection> aafcon, String url) throws LocatorException {
         super(aafcon);
         si=aafcon.si;
@@ -135,7 +135,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
             throw new CadiException(e);
         }
     }
-    
+
     @Override
     public Rcli<HttpURLConnection> rclient(Locator<URI> loc, SecuritySetter<HttpURLConnection> ss) throws CadiException {
         try {
@@ -149,7 +149,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
     public AbsTransferSS<HttpURLConnection> transferSS(TaggedPrincipal principal) {
         return new HTransferSS(principal, app,si);
     }
-    
+
     /* (non-Javadoc)
      * @see org.onap.aaf.cadi.aaf.v2_0.AAFCon#basicAuthSS(java.security.Principal)
      */

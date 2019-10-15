@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class NsInfoAction extends Page {
                 final Slot sPassword = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[2]);
                 final Slot sPassword2 = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[3]);
                 final Slot startDate = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[4]);
-                
+            
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -65,10 +65,10 @@ public class NsInfoAction extends Page {
                             String currPass = trans.get(sCurrPass,null);
                             final String password = trans.get(sPassword,null);
                             String password2 = trans.get(sPassword2,null);
-                            
+                        
                             // Run Validations
                             boolean fail = true;
-                            
+                        
                             if (id==null || id.indexOf('@')<=0) {
                                 hgen.p("Data Entry Failure: Please enter a valid ID, including domain.");
                             } else if (password == null || password2 == null || currPass == null) {
@@ -114,13 +114,13 @@ public class NsInfoAction extends Page {
                                                                 throw new CadiException(e);
                                                             }
                                                         }
-                                                        
+                                                    
                                                         fcr = client.create(
                                                                 "/authn/cred",
                                                                 gui.getDF(CredRequest.class),
                                                                 cred
                                                                 );
-                    
+                
                                                         if (fcr.get(5000)) {
                                                             // Do Remote Call
                                                             hgen.p("New Password has been added.");

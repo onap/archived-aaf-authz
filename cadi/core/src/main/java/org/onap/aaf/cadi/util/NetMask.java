@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ package org.onap.aaf.cadi.util;
 
 /* 
  * NetMask - a class to quickly validate whether a given IP is part of a mask, as defined by bytes or standard String format.
- * 
+ *
  * Needs the IPV6 Mask Builder. 
  */
 public class NetMask {
@@ -32,16 +32,16 @@ public class NetMask {
     public NetMask(byte[] inBytes) {
         mask = derive(inBytes);
     }
-    
+
     public NetMask(String string) throws MaskFormatException {
         mask = derive(string,true);
     }
-    
+
     public boolean isInNet(byte[] inBytes) {
         long addr = derive(inBytes);
         return (mask & addr) == addr;
     }
-    
+
     public boolean isInNet(String str) {
         long addr;
         try {

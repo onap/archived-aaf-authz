@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,7 +52,7 @@ public class HelloTester {
                 SecurityInfoC<HttpURLConnection> si = SecurityInfoC.instance(access, HttpURLConnection.class);
                 AAFLocator loc = new AAFLocator(si,new URI(uriPrefix+"/locate/"+Define.ROOT_NS()+".hello:1.0"));
                 AAFConHttp aafcon = new AAFConHttp(access,loc,si);
-                
+            
                 //
                 String pathinfo = "/hello";
                 final int iterations = Integer.parseInt(access.getProperty("iterations","5"));
@@ -68,7 +68,7 @@ public class HelloTester {
                                 System.err.println("Ooops, missed one: " + fs.code() + ": " + fs.body());
                             }
                             return null;
-    
+
                         }
                     });
                     Thread.sleep(500L);

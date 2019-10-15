@@ -75,7 +75,7 @@ public class JU_SecurityInfoC {
 //        SecurityInfoC<HttpURLConnection> siClone = SecurityInfoC.instance(new PropAccess(), HttpURLConnection.class);
 //        assertThat(siClone, is(si));
 //    }
-    
+
     @Test
     public void setTest() throws MalformedURLException, CadiException {
         SecurityInfoC<HttpURLConnectionStub> si = SecurityInfoC.instance(new PropAccess(), HttpURLConnectionStub.class);

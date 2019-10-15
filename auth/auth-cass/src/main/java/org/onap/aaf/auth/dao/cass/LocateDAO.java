@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ import com.datastax.driver.core.Row;
 public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
     public static final String TABLE = "locate";
     private AbsCassDAO<AuthzTrans, Data>.PSInfo psName;
-    
+
     public LocateDAO(AuthzTrans trans, Cluster cluster, String keyspace) throws APIException, IOException {
         super(trans, LocateDAO.class.getSimpleName(),cluster, keyspace, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -61,10 +61,10 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
         super(trans, LocateDAO.class.getSimpleName(), adao, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
     }
-    
+
     public static final int KEYLIMIT = 3;
     public static class Data implements Bytification {
-        
+    
         public String                    name;
         public String                    hostname;
         public int                        port;
@@ -87,14 +87,14 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             }
             return subprotocol;
         }
-        
+    
         @Override
         public ByteBuffer bytify() throws IOException {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             LocateLoader.deflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             LocateLoader.deflt.unmarshal(this, toDIS(bb));
@@ -123,7 +123,7 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
         public static final int MAGIC=85102934;
             public static final int VERSION=1;
             public static final int BUFF_SIZE=48; // Note: 
-    
+
             public static final LocateLoader deflt = new LocateLoader(KEYLIMIT);
             public LocateLoader(int keylimit) {
             super(keylimit);
@@ -188,7 +188,7 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
                     writeString(os,s);
                 }
             }
-            
+        
             writeString(os,data.port_key==null?"":data.port_key.toString());
         }
 
@@ -207,7 +207,7 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             data.latitude = is.readFloat();
             data.longitude = is.readFloat();
             data.protocol = readString(is,buff);
-            
+        
             int size = is.readInt();
             data.subprotocol = new HashSet<>(size);
             for (int i=0;i<size;++i) {
@@ -221,7 +221,7 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
             }
         }
     }
-    
+
     public Result<List<LocateDAO.Data>> readByName(AuthzTrans trans, String service) {
             return psName.read(trans, "Read By Name", new Object[] {service});
     }
@@ -235,7 +235,7 @@ public class LocateDAO extends CassDAOImpl<AuthzTrans,LocateDAO.Data> {
         psName = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +
                 " WHERE name = ?", new LocateLoader(1),readConsistency);
     }
-    
+
     /**
      * Log Modification statements to History
      *

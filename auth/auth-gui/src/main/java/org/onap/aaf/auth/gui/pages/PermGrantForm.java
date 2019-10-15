@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ public class PermGrantForm extends Page {
     static final String HREF = "/gui/permgrant";
     static final String NAME = "Permission Grant";
     static final String fields[] = {"type","instance","action","role"};
-    
+
     public PermGrantForm(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env,NAME,HREF, fields,
             new BreadCrumbs(breadcrumbs),
@@ -72,7 +72,7 @@ public class PermGrantForm extends Page {
                 cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
                     @Override
                     public void code(final AAF_GUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)    throws APIException, IOException {
-                        
+                    
                         Mark copyRoleJS = new Mark();
                         hgen.js(copyRoleJS);
                         hgen.text("function copyRole(role) {");
@@ -81,7 +81,7 @@ public class PermGrantForm extends Page {
                         hgen.text("txtRole.value=role;");
                         hgen.text("}");
                         hgen.end(copyRoleJS);
-                        
+                    
                         String typeValue = trans.get(type, "");
                         String instanceValue = trans.get(instance, "");
                         String actionValue = trans.get(action, "");
@@ -91,7 +91,7 @@ public class PermGrantForm extends Page {
                         .input(fields[0],"Perm Type",true,"value="+typeValue,"disabled")
                         .input(fields[1],"Perm Instance",true,"value="+instanceValue,"disabled")
                         .input(fields[2],"Perm Action",true,"value="+actionValue,"disabled");
-                        
+                    
                         // select & options are not an input type, so we must create table row & cell tags
                         Mark selectRow = new Mark();
                         hgen
@@ -106,7 +106,7 @@ public class PermGrantForm extends Page {
                             hgen.incr("option", "value="+role).text(role).end();
                         }
                         hgen
-                        .incr("option", "value=").text("Other").end()                    
+                        .incr("option", "value=").text("Other").end()                
                         .end(selectRow);
                         if (roleValue==null) {
                             hgen.input(fields[3],"Role", true, "placeholder=or type a role here");
@@ -123,7 +123,7 @@ public class PermGrantForm extends Page {
             }
         });
     }
-        
+    
     private static List<String> getMyRoles(final AAF_GUI gui, final AuthzTrans trans) {
         final List<String> myRoles = new ArrayList<>();
         try {

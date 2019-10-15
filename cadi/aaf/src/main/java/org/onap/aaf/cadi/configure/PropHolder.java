@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,7 +71,7 @@ public class PropHolder {
         } 
         return ph;
     }
-    
+
     private PropHolder(File dir, File file, File keyfile) throws IOException {
         this.dir = dir;
         this.file = file;
@@ -79,11 +79,11 @@ public class PropHolder {
         symm = null;
         props = new TreeMap<>();
     }
-    
+
     public String getPath() {
         return file.getAbsolutePath();
     }
-    
+
     public File getDir() {
         return dir;
     }
@@ -125,7 +125,7 @@ public class PropHolder {
         }
         addEnc(tag,pwd);
     }
-    
+
     public void write() throws IOException {
         if (props.size()==0) {
             return;
@@ -138,7 +138,7 @@ public class PropHolder {
         } else {
             System.out.println("Creating new " + file.getCanonicalPath());
         }
-        
+    
         // Append if not first
         PrintWriter pw = new PrintWriter(new FileWriter(file));
         try {
@@ -157,7 +157,7 @@ public class PropHolder {
                 pw.print('#');
             }
             pw.println();
-            
+        
              for (Map.Entry<String,String> me : props.entrySet()) {
                 String key = me.getKey();
                     pw.print(key);
@@ -169,13 +169,13 @@ public class PropHolder {
         }
         Chmod.to644.chmod(file);
     }
-    
+
     public static void writeAll() throws IOException {
         for(PropHolder ph : propHolders.values()) {
             ph.write();
         }
     }
-    
+
     @Override
     public String toString() {
         return file.getAbsolutePath() + ": " + props;

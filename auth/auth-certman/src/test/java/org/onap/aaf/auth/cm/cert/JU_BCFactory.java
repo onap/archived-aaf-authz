@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,19 +48,19 @@ import org.onap.aaf.misc.env.Trans;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JU_BCFactory {
-    
+
     private static BCFactory bcFactory = new BCFactory();
-    
+
     private static BCFactory bcFact;
-    
+
     private static PrivateKey pk;
-    
-    
+
+
     private static Trans trans;
-    
-    
+
+
     private static PKCS10CertificationRequest req;
-    
+
     @BeforeClass
     public static void setUp() throws IOException {
         pk = new XYZKey();
@@ -68,29 +68,29 @@ public class JU_BCFactory {
         req = mock(PKCS10CertificationRequest.class);
         when(req.getEncoded()).thenReturn(new byte[1]);
         when(trans.start(Mockito.anyString(), Mockito.anyInt())).thenReturn(new TimeTaken(null, 0) {
-            
+        
             @Override
             public void output(StringBuilder sb) {
                 // TODO Auto-generated method stub
-                
+            
             }
         });
         bcFact = mock(BCFactory.class);
     }
-    
+
     @Test
     public void toStrin() throws OperatorCreationException, IOException, CertException {
         assertNotNull(bcFactory.toString(req));
     }
-    
+
     @Test
     public void toStrinMoc() throws OperatorCreationException, IOException, CertException {
         assertNotNull(bcFact.toString(req));
     }
-    
+
     @Rule
     public ExpectedException thrown= ExpectedException.none();
-    
+
     @Test
     public void toCSR()  {
         try {
@@ -100,11 +100,11 @@ public class JU_BCFactory {
             e.printStackTrace();
         }
     }
-    
+
 }
 
 class XYZKey implements Key, PublicKey, PrivateKey {
-    
+
     int rotValue;
     public XYZKey() {
         rotValue = 1200213;

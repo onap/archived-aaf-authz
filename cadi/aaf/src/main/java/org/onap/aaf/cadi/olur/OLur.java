@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,7 +80,7 @@ public class OLur extends AbsOTafLur implements Lur {
                     }
                     String[] scopes = new String[scopeSet.size()];
                     scopeSet.toArray(scopes);
-                    
+                
                     Result<TimedToken> rtt = tc.getToken(Kind.getKind(bait),scopes);
                     if (rtt.isOK()) {
                         Result<TokenPerm> rtp = tkMgr.get(rtt.value.getAccessToken(), bait.getName().getBytes());
@@ -95,18 +95,18 @@ public class OLur extends AbsOTafLur implements Lur {
                 access.log(e, "Unable to Get a Token");
             }
         }
-        
+    
         boolean rv = false;
         if (tp!=null) {
             if (tkMgr.access.willLog(Level.DEBUG)) {
                 StringBuilder sb = new StringBuilder("AAF Permissions for user ");
                 sb.append(bait.getName());
-                sb.append(", from token ");            
+                sb.append(", from token ");        
                 sb.append(tp.get().getAccessToken());
                 for (AAFPermission p : tp.perms()) {
                     sb.append("\n\t[");
                     sb.append(p.getNS());
-                    sb.append(']');                    
+                    sb.append(']');                
                     sb.append(p.getType());
                     sb.append('|');
                     sb.append(p.getInstance());
@@ -139,7 +139,7 @@ public class OLur extends AbsOTafLur implements Lur {
             for (AAFPermission p : ((OAuth2Principal)bait).tokenPerm().perms()) {
                 permissions.add(p);
             }
-        }        
+        }    
     }
 
     /* (non-Javadoc)

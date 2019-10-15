@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,11 +40,11 @@ public class HRenewingTokenSS extends HAuthorizationHeader {
     private final TokenClient tc;
     private final String[] scopes;
     private final String tokenURL;
-    
+
     public HRenewingTokenSS(final PropAccess access, final String tokenURL, final String ... nss) throws CadiException, IOException, GeneralSecurityException {
         this(access,SecurityInfoC.instance(access, HttpURLConnection.class),tokenURL,nss);
     }
-    
+
     public HRenewingTokenSS(final PropAccess access, final SecurityInfoC<HttpURLConnection> si, final String tokenURL, final String ... nss) throws CadiException, IOException, GeneralSecurityException {
         super(si,null,null/*Note: HeadValue overloaded */);
         this.tokenURL = tokenURL;
@@ -62,7 +62,7 @@ public class HRenewingTokenSS extends HAuthorizationHeader {
                     }
                 }
                 if (hasDefault) {
-                    scopes=nss;        
+                    scopes=nss;    
                 } else {
                     String[] nssPlus = new String[nss.length+1];
                     nssPlus[0]=defaultNS;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@ public class API_Roles {
                             HttpServletRequest req, 
                             HttpServletResponse resp) throws Exception {
                         Result<Void> r = context.createRole(trans, req, resp);
-                            
+                        
                         switch(r.status) {
                             case OK:
                                 resp.setStatus(HttpStatus.CREATED_201); 
@@ -77,7 +77,7 @@ public class API_Roles {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getRolesByName(trans, resp, pathParam(req, "role"));
                 switch(r.status) {
                     case OK: 
@@ -99,7 +99,7 @@ public class API_Roles {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getRolesByUser(trans, resp, pathParam(req, "name"));
                 switch(r.status) {
                     case OK: 
@@ -120,7 +120,7 @@ public class API_Roles {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getRolesByNS(trans, resp, pathParam(req, "ns"));
                 switch(r.status) {
                     case OK: 
@@ -150,7 +150,7 @@ public class API_Roles {
                 }
             }
         });
-        
+    
         /**
          * Deletes a Role from Authz DB by Object
          */
@@ -161,7 +161,7 @@ public class API_Roles {
                         HttpServletRequest req, 
                         HttpServletResponse resp) throws Exception {
                     Result<Void> r = context.deleteRole(trans, req, resp);
-                    
+                
                     switch(r.status) {
                         case OK:
                             resp.setStatus(HttpStatus.OK_200); 
@@ -170,12 +170,12 @@ public class API_Roles {
                             context.error(trans,resp,r);
                     }
                 }
-            
+        
             }
         );
-    
 
-        
+
+    
         /**
          * Deletes a Role from Authz DB by Key
          */
@@ -186,7 +186,7 @@ public class API_Roles {
                         HttpServletRequest req, 
                         HttpServletResponse resp) throws Exception {
                     Result<Void> r = context.deleteRole(trans, resp, pathParam(req,":role"));
-                        
+                    
                     switch(r.status) {
                         case OK:
                             resp.setStatus(HttpStatus.OK_200); 
@@ -195,10 +195,10 @@ public class API_Roles {
                             context.error(trans,resp,r);
                     }
                 }
-            
+        
             }
         );
-    
+
 
         /**
          * Add a Permission to a Role (Grant)
@@ -209,9 +209,9 @@ public class API_Roles {
                         AuthzTrans trans,
                         HttpServletRequest req, 
                         HttpServletResponse resp) throws Exception {
-                    
+                
                     Result<Void> r = context.addPermToRole(trans, req, resp);
-                        
+                    
                     switch(r.status) {
                         case OK:
                             resp.setStatus(HttpStatus.CREATED_201); 
@@ -222,7 +222,7 @@ public class API_Roles {
                 }
             }
         );
-        
+    
         /**
          * Get all Roles by Permission
          */
@@ -231,7 +231,7 @@ public class API_Roles {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getRolesByPerm(trans, resp, 
                         pathParam(req, "type"),
                         URLDecoder.decode(pathParam(req, "instance"),Config.UTF_8),
@@ -245,7 +245,7 @@ public class API_Roles {
                 }
             }
         });
-        
+    
         /**
          * Set a role's description
          */
@@ -255,7 +255,7 @@ public class API_Roles {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.updateRoleDescription(trans, req, resp);
                 switch(r.status) {
                     case OK: 
@@ -265,8 +265,8 @@ public class API_Roles {
                         context.error(trans,resp,r);
                 }
             }
-        });    
-        
+        });
+    
         /**
          * Set a permission's roles to roles given
          */
@@ -276,7 +276,7 @@ public class API_Roles {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.resetPermRoles(trans, req, resp);
                 switch(r.status) {
                     case OK: 
@@ -286,8 +286,8 @@ public class API_Roles {
                         context.error(trans,resp,r);
                 }
             }
-        });    
-        
+        });
+    
         /**
          * Delete a Permission from a Role
          * With multiple perms
@@ -299,7 +299,7 @@ public class API_Roles {
                     HttpServletRequest req, 
                     HttpServletResponse resp) throws Exception {
                 Result<Void> r = context.delPermFromRole(trans, req, resp);
-                    
+                
                 switch(r.status) {
                     case OK:
                         resp.setStatus(HttpStatus.OK_200); 
@@ -325,7 +325,7 @@ public class API_Roles {
                         pathParam(req,":type"),
                         pathParam(req,":instance"),
                         pathParam(req,":action"));
-                    
+                
                 switch(r.status) {
                     case OK:
                         resp.setStatus(HttpStatus.OK_200); 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -79,11 +79,11 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
                 throw new CadiException(e);
             }
         }
-        
+    
         RegistrationCreator rcreator = new RegistrationCreator(access);
         meps = rcreator.create(port);
     }
-    
+
 
 
     @Override
@@ -103,7 +103,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
                 access.log(e, "Error registering service to AAF Locator");
                 return Result.err(503,e.getMessage());
             }
-            
+        
         } catch (CadiException e) {
             return Result.err(503,e.getMessage());
         }
@@ -125,7 +125,7 @@ public class RemoteRegistrant<ENV extends BasicEnv> implements Registrant<ENV> {
                 access.log(e, "Error deregistering service on AAF Locator");
                 return Result.err(503,e.getMessage());
             }
-            
+        
         } catch (CadiException e) {
             return Result.err(503,e.getMessage());
         }

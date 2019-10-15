@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ public class Rename extends Cmd {
                 new Param("new action", true)
                 );
     }
-    
+
     @Override
     public int _exec(final int index, final String ... args) throws CadiException, APIException, LocatorException {
         return same(new Retryable<Integer>() {
@@ -60,13 +60,13 @@ public class Rename extends Cmd {
                 String origType = args[idx++];
                 String origInstance = args[idx++];
                 String origAction = args[idx++];
-                
+            
                 //Create new permission
                 PermRequest pr = new PermRequest();
                 pr.setType(args[idx++]);
                 pr.setInstance(args[idx++]);
                 pr.setAction(args[idx++]);
-                
+            
                 // Set Start/End commands
                 setStartEnd(pr);
                 try {
@@ -96,9 +96,9 @@ public class Rename extends Cmd {
                 }
             }
         });
-        
-    }
     
+    }
+
     @Override
     public void detailedHelp(int indent, StringBuilder sb) {
         detailLine(sb,indent,"Rename a Permission from:");

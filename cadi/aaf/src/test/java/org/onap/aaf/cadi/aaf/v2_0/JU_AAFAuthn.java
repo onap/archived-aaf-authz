@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,13 +42,13 @@ public class JU_AAFAuthn {
 
     @Mock
     AAFCon con;
-    
+
     @Mock
     AbsUserCache<AAFPermission> cache;
-    
+
     @Mock
     PropAccess propaccess;
-    
+
     @Before
     public void setUp() {
         initMocks(this);
@@ -60,7 +60,7 @@ public class JU_AAFAuthn {
         String realm = authnObj.getRealm();
         assertNull(realm);
     }
-    
+
     @Test
     public void testValidateFailure() {
         AAFAuthnImplWithGetUserNull authnObj = new AAFAuthnImplWithGetUserNull(con, cache);
@@ -74,7 +74,7 @@ public class JU_AAFAuthn {
             assertNull( e.getLocalizedMessage());
         }
     }
-    
+
     @Test
     public void testValidate() {
         AAFAuthnImpl authnObj = new AAFAuthnImpl(con);
@@ -93,7 +93,7 @@ public class JU_AAFAuthn {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testValidateRevalidate() {
         AAFAuthnImpl authnObj = new AAFAuthnImpl(con);
@@ -113,7 +113,7 @@ public class JU_AAFAuthn {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testValidateValidUser() {
         AAFAuthnImplWithGetUser authnObj = new AAFAuthnImplWithGetUser(con);
@@ -127,7 +127,7 @@ public class JU_AAFAuthn {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testValidateValidUserNull() {
         AAFAuthnImplWithGetUserNull authnObj = new AAFAuthnImplWithGetUserNull(con);
@@ -147,48 +147,48 @@ public class JU_AAFAuthn {
             this.access = propaccess;
             // TODO Auto-generated constructor stub
         }
-        
+    
         AAFAuthnImpl(AAFCon con, AbsUserCache cache) {
             super(con, cache);
             this.access = propaccess;
             // TODO Auto-generated constructor stub
         }
-        
-        
-    }
     
+    
+    }
+
     class AAFAuthnImplWithGetUser extends AAFAuthn{
         AAFAuthnImplWithGetUser(AAFCon con) {
             super(con);
             this.access = propaccess;
             // TODO Auto-generated constructor stub
         }
-        
+    
         AAFAuthnImplWithGetUser(AAFCon con, AbsUserCache cache) {
             super(con, cache);
             this.access = propaccess;
             // TODO Auto-generated constructor stub
         }
-        
+    
         @Override
         protected User getUser(String user, byte[] cred) {
             return new User<>("test",new byte[] {});
         }
     }
-    
+
     class AAFAuthnImplWithGetUserNull extends AAFAuthn{
         AAFAuthnImplWithGetUserNull(AAFCon con) {
             super(con);
             this.access = propaccess;
             // TODO Auto-generated constructor stub
         }
-        
+    
         AAFAuthnImplWithGetUserNull(AAFCon con, AbsUserCache cache) {
             super(con, cache);
             this.access = propaccess;
             // TODO Auto-generated constructor stub
         }
-        
+    
         @Override
         protected User getUser(String user, byte[] cred) {
             User user1 = null;

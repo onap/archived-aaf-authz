@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ public class BasicHttpTafResp extends AbsTafResp implements TafResp {
     private String realm;
     private RESP status;
     private final boolean wasFailed;
-    
+
     public BasicHttpTafResp(Access access, TaggedPrincipal principal, String description, RESP status, HttpServletResponse resp, String realm, boolean wasFailed) {
         super(access, tafName, principal, description);
         httpResp = resp;
@@ -54,7 +54,7 @@ public class BasicHttpTafResp extends AbsTafResp implements TafResp {
     }
 
     public RESP authenticate() throws IOException {
-        httpResp.setStatus(401); // Unauthorized    
+        httpResp.setStatus(401); // Unauthorized
         httpResp.setHeader("WWW-Authenticate", "Basic realm=\""+realm+'"');
         return RESP.HTTP_REDIRECT_INVOKED;
     }

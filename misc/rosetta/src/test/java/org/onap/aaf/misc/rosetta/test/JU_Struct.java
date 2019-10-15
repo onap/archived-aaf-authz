@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ public class JU_Struct {
                                         "</SampleData>\n" +
                                         "<fluff>MyFluff</fluff>\n" +
                                     "</LargerData>\n";
-    
+
 //    @Test
 //    public void test2() throws Exception  {
 //
@@ -50,20 +50,20 @@ public class JU_Struct {
 //        sd.setDate(new Date().getTime());
 //        sd.setId("myId");
 //        sd.getItem().add("Item 1.1");
-//        
+//    
 //        InObj<SampleData> inObj = new InObj<SampleData>(SampleData.class);
 //
 //        JaxSet<SampleData> jaxSet = JaxSet.get(SampleData.class);
 //         Setter<SampleData> setter = jaxSet.setter("id");
 //         setter.set(sd, "Your ID");
-//         
+//     
 //         for (Entry<String, Getter<SampleData>> es : jaxSet.getters()) {
 //             System.out.print(es.getKey());
 //             System.out.print(' ');
 //             System.out.println(es.getValue().get(sd));
 //         }
 //    }
-    
+
     @Test
     public void test() throws Exception  {
         JaxInfo ji = JaxInfo.build(LargerData.class);

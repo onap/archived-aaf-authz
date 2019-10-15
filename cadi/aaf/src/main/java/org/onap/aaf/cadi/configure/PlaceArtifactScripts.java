@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
             }  else {
                 email=arti.getOsUser() + '\n';
             }
-            
+        
             StringBuilder classpath = new StringBuilder();
             boolean first = true;
             for (String pth : Split.split(File.pathSeparatorChar, System.getProperty("java.class.path"))) {
@@ -59,7 +59,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
                 File f = new File(pth);
                 classpath.append(f.getCanonicalPath().replaceAll("[0-9]+\\.[0-9]+\\.[0-9]+",Defaults.AAF_VERSION+".*"));
             }
-            
+        
             write(f1,Chmod.to644,
                     "#!/bin/bash " + f1.getCanonicalPath()+'\n',
                     "# Certificate Manager Check Script\n",
@@ -80,7 +80,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
                     "fi\n",
                     checkScript
                     );
-            
+        
             // Setup check.sh script
             File f2 = new File(dir,arti.getNs()+".crontab.sh");
             write(f2,Chmod.to644,
@@ -100,7 +100,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
         }
         return true;
     }
-    
+
     /**
      * Note: java.home gets Absolute Path of Java, where we probably want soft links from 
      * JAVA_HOME
@@ -150,7 +150,7 @@ public class PlaceArtifactScripts extends ArtifactDir {
             "    ;;\n" +
             " esac\n\n" +
             " # Note: make sure to cover this sripts' exit Code\n";
-    
+
     private final static String cronScript = 
             "crontab -l | sed -n \"/#### BEGIN $CF/,/END $CF ####/!p\" > $TFILE\n" +
             "# Note: Randomize Minutes (0-60) and hours (1-4)\n" +

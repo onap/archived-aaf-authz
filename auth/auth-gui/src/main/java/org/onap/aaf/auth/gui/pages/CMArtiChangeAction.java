@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,7 +67,7 @@ public class CMArtiChangeAction extends Page {
                 final Slot sOther = gui.env.slot(CMArtiChangeForm.NAME+'.'+CMArtiChangeForm.fields[9]);
                 final Slot sType = gui.env.slot(CMArtiChangeForm.NAME+'.'+CMArtiChangeForm.fields[10]);
                 final Slot sSans = gui.env.slot(CMArtiChangeForm.NAME+'.'+CMArtiChangeForm.fields[11]);
-                
+            
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -83,7 +83,7 @@ public class CMArtiChangeAction extends Page {
                                     arti.getSans().add(s);
                                 }
                             }
-                            
+                        
                             // These checks to not apply to deletions
                             if(!CMArtiChangeForm.DELETE.equals(trans.get(sCmd, ""))) {
                                 // Disallow IP entries, except by special Permission
@@ -105,9 +105,9 @@ public class CMArtiChangeAction extends Page {
                                         return;
                                     }
                                 }
-                                
-                            }
                             
+                            }
+                        
                             arti.setMechid((String)trans.get(sID,null));
                             arti.setMachine(machine);
                             arti.setNs((String)trans.get(sNS,null));
@@ -128,7 +128,7 @@ public class CMArtiChangeAction extends Page {
                                 hgen.p("Data Entry Failure: Please enter a valid ID, including domain.");
                             // VALIDATE OTHERS?
                             } else { // everything else is checked by Server
-                                
+                            
                                 try {
                                     final Artifacts artifacts = new Artifacts();
                                     artifacts.getArtifact().add(arti);
@@ -221,7 +221,7 @@ public class CMArtiChangeAction extends Page {
                                 hgen.p("Unknown Error");
                                 e.printStackTrace();
                             }
-                                
+                            
                         }
                         hgen.br();
                     }

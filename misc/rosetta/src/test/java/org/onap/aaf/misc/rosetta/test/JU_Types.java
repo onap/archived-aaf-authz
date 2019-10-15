@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,18 +55,18 @@ public class JU_Types {
     public void single() throws Exception {
         Single single = setSData();
         SingleMarshal psingle = new SingleMarshal();
-        
+    
         OutRaw raw = new OutRaw();
         OutJson json = new OutJson();
         OutXML xml = new OutXML("Single","xmlns=urn:types:xsd");
-        
-        
+    
+    
         System.out.println("===== RAW =====");
         raw.extract(single, System.out, psingle);
 
         System.out.println("\n===== JSON =====");
         json.extract(single, System.out, psingle);
-        
+    
         System.out.println("\n\n===== Pretty JSON =====");
         json.extract(single, System.out, psingle, true);
 
@@ -92,7 +92,7 @@ public class JU_Types {
 //        xml.extract(single, sw, psingle, true);
         news = jumar.unmarshal(env.info(), sw.toString());
         System.out.println(sw.toString());
-        
+    
         String sample = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "\n<ns2:urn.types.xsd xmlns:ns2=\"Single\" xmlns=\"urn:types:xsd\">"
                 + "\n<str>MyString</str>"
@@ -110,7 +110,7 @@ public class JU_Types {
         System.out.println(news.getDatetime());
 
     }
-    
+
     @Test
     public void multi() throws Exception {
         OutRaw raw = new OutRaw();
@@ -119,7 +119,7 @@ public class JU_Types {
 
         Multi multi = new Multi();
         MultiMarshal pmulti = new MultiMarshal();
-    
+
         for (int i=0;i<10;++i) {
             System.out.println("===== Multi Iteration " + i + " =====");
             if (i>0) {
@@ -127,16 +127,16 @@ public class JU_Types {
             }
             System.out.println("  ===== RAW =====");
             raw.extract(multi, System.out, pmulti);
-            
+        
             System.out.println("\n  ===== JSON =====");
             json.extract(multi, System.out, pmulti);
-            
+        
             System.out.println("\n\n  ===== Pretty JSON =====");
             json.extract(multi, System.out, pmulti, true);
-    
+
             System.out.println("\n\n  ===== XML =====");
             xml.extract(multi, System.out, pmulti,false);
-    
+
             System.out.println("\n\n  ===== Pretty XML =====");
             xml.extract(multi, System.out, pmulti, true);
         }
@@ -150,7 +150,7 @@ public class JU_Types {
 
         Multi multi = new Multi();
         DocMarshal<Multi> doc = DocMarshal.root(new MultiMarshal());
-    
+
         for (int i=0;i<3;++i) {
             System.out.println("===== Multi Iteration " + i + " =====");
             if (i>0) {
@@ -158,16 +158,16 @@ public class JU_Types {
             }
             System.out.println("  ===== RAW =====");
             raw.extract(multi, System.out, doc);
-            
+        
             System.out.println("\n  ===== JSON =====");
             json.extract(multi, System.out, doc);
-            
+        
             System.out.println("\n\n  ===== Pretty JSON =====");
             json.extract(multi, System.out, doc, true);
-    
+
             System.out.println("\n\n  ===== XML =====");
             xml.extract(multi, System.out, doc,false);
-    
+
             System.out.println("\n\n  ===== Pretty XML =====");
             xml.extract(multi, System.out, doc, true);
         }
@@ -179,16 +179,16 @@ public class JU_Types {
 //        Saved saved = new Saved();
 //        saved.extract(in, ignore, parser, options);
 //    }
-    
+
     @Test
     public void df() throws Exception {
         RosettaEnv env = new RosettaEnv();
         RosettaDF<Multi> df = env.newDataFactory(Multi.class);
         df.out(TYPE.JSON).option(Data.PRETTY);
-        
+    
         Multi multi = new Multi();
         multi.getSingle().add(setSData());
-        
+    
 
         System.out.println("========== Original loading");
         Trans trans = env.newTrans();
@@ -199,7 +199,7 @@ public class JU_Types {
         }
         trans = env.newTrans();
         data = df.newData(trans);
-        
+    
         int iters = 10000;
         for (int i=0;i<iters;++i) {
             data.load(multi);
@@ -220,14 +220,14 @@ public class JU_Types {
         }
         trans = env.newTrans();
         data = df.newData(trans);
-        
+    
         for (int i=0;i<iters;++i) {
             data.load(multi);
         }
         metrics = trans.auditTrail(0, null,Env.JSON,Env.XML);
         System.out.println(data.asString());
         System.out.println(metrics.total/iters + "ms avg");
-        
+    
         // Assert.assertEquals(first, second);
 
         System.out.println("========== Direct Object to JSON String");
@@ -246,13 +246,13 @@ public class JU_Types {
             sbw.reset();
             data.direct(multi, sbw, true);
         }
-        
+    
         metrics = trans.auditTrail(0, null,Env.JSON,Env.XML);
         System.out.println(sbw.toString());
         System.out.println(metrics.total/iters + "ms avg");
-        
-    }
     
+    }
+
     private Single setSData() {
         Single s = new Single();
         s.setStr("MyString");
@@ -274,19 +274,19 @@ public class JU_Types {
 //        Out jout = new OutJson();
 //
 ////        go(jin, jout, "{\"id\":\"Me, Myself\",\"date\":1353094689100}");
-//            
+//        
 //    }
-    
-    
+
+
     /*
     private void go(Parse<Reader,?> in, Out out, String str) throws IOException, ParseException {
-        
+    
         System.out.println(str);
         StringWriter sw = new StringWriter(1024);
         out.extract(new StringReader(str), sw, in);
         System.out.println(sw);
         String result = sw.toString();
-        
+    
         if (!result.equals(str)) {
             sw.getBuffer().setLength(0);
             new OutRaw().extract(new StringReader(str), sw, in);

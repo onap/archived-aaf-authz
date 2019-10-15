@@ -48,7 +48,7 @@ public class DefaultOrg implements Organization {
     final String domain;
     final String atDomain;
     final String realm;
-    
+
     private final String root_ns;
 
     private final String NAME;
@@ -65,7 +65,7 @@ public class DefaultOrg implements Organization {
         atDomain = '@'+domain;
         NAME=env.getProperty(realm + ".name","Default Organization");
         root_ns = env.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF);
-        
+    
         try {
             String defFile;
             String temp=env.getProperty(defFile = (getClass().getName()+".file"));
@@ -84,7 +84,7 @@ public class DefaultOrg implements Organization {
                         }
                         fIdentities.createNewFile();
                     }
-                    
+                
                 }
             } else {
                 fIdentities = new File(temp);
@@ -122,7 +122,7 @@ public class DefaultOrg implements Organization {
             } else {
                 revoked = null;
             }
-            
+        
         } catch (IOException e) {
             throw new OrganizationException(e);
         }

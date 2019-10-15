@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,15 +35,15 @@ public abstract class NotifyCredBody extends NotifyBody {
 
     private final String explanation;
     private final String instruction;
-     
+ 
     public NotifyCredBody(Access access, String name) {
         super(access,"cred",name);
-        
+    
         // Default
         explanation = "The following Credentials that you are responsible for "
                 + "are expiring on the dates shown. <br><br>"
                 ;
-                
+            
         instruction = "<br><h3>Instructions for 'Password':</h3><ul>" 
                 + "<li><b><i>Click</i></b> on the Fully Qualified ID to ADD a new Password</li>"
                 + "<li><b>REMEMBER!</b> You are not finished until you <ol>"
@@ -52,7 +52,7 @@ public abstract class NotifyCredBody extends NotifyBody {
                 + "<li>IF there is a WARNING, click the link for more information</li>"
                 + "</ul>";
     }
-    
+
     /**
      * Default Dynamic Text.  Override is expected
      * @return
@@ -67,15 +67,15 @@ public abstract class NotifyCredBody extends NotifyBody {
         print(sb,indent,dynamic());
         println(sb,indent,instruction);
         println(sb,indent,"<table>");
-        indent+=2;
+        indent += 2;
         println(sb,indent,"<tr>");
-        indent+=2;
+        indent += 2;
         println(sb,indent,"<th>Fully Qualified ID</th>");
         println(sb,indent,"<th>Unique ID</th>");
         println(sb,indent,"<th>Type</th>");
         println(sb,indent,"<th>Expires</th>");
         println(sb,indent,"<th>Warnings</th>");
-        indent-=2;
+        indent -= 2;
         println(sb,indent,"</tr>");
         String theid;
         String type;
@@ -97,13 +97,13 @@ public abstract class NotifyCredBody extends NotifyBody {
                     type = "Unknown, see AAF GUI";
                     break;
             }
-            theid = "<a href=\""+n.guiURL+"/creddetail?ns="+row.get(2)+"\">"+theid+"</a>";
+            theid = "<a href=\"" + n.guiURL + "/creddetail?ns=" + row.get(2) + "\">" + theid + "</a>";
             gc.setTimeInMillis(Long.parseLong(row.get(5)));
             expires = Chrono.niceUTCStamp(gc);
             info = row.get(6);
             //TODO get Warnings 
             warnings = "";
-            
+        
             println(sb,indent,"<tr>");
             indent+=2;
             printCell(sb,indent,theid);
@@ -116,10 +116,10 @@ public abstract class NotifyCredBody extends NotifyBody {
         }
         indent-=2;
         println(sb,indent,"</table>");
-        
+    
         return true;
     }
-    
+
     @Override
     public void record(AuthzTrans trans, StringBuilder query, String id, List<String> notified, LastNotified ln) {
         for(List<String> row : rows.get(id)) {

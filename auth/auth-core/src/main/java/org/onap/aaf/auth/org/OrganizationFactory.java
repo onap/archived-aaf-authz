@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,10 +36,10 @@ import org.onap.aaf.misc.env.impl.BasicEnv;
 
 /**
  * Organization Plugin Mechanism
- * 
+ *
  * Define a NameSpace for the company (i.e. com.att), and put in Properties as 
  * "Organization.[your NS" and assign the supporting Class.  
- * 
+ *
  * Example:
  * Organization.com.att=org.onap.aaf.auth.org.test.att.ATT
  *
@@ -53,7 +53,7 @@ public class OrganizationFactory {
     public static Organization init(BasicEnv env) throws OrganizationException {
         int idx = ORGANIZATION_DOT.length();
         Organization org,firstOrg = null;
-        
+    
         for (Entry<Object, Object> es : env.getProperties().entrySet()) {
             String key = es.getKey().toString();
             if (key.startsWith(ORGANIZATION_DOT)) {
@@ -138,7 +138,7 @@ public class OrganizationFactory {
                 }
             }
         }
-        
+    
         return org;
     }
 

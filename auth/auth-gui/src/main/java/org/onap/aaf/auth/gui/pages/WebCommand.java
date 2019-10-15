@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,7 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class WebCommand extends Page {
     public static final String HREF = "/gui/cui";
-    
+
     public WebCommand(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env, "Web Command Client",HREF, NO_FIELDS,
                 new BreadCrumbs(breadcrumbs),
@@ -54,11 +54,11 @@ public class WebCommand extends Page {
                     .end()
                     .text(". Type 'help' below for a list of AAF commands")
                     .end()
-                    
-                    .divID("console_and_options");
-                hgen.divID("console_area");                
-                hgen.end(); //console_area
                 
+                    .divID("console_and_options");
+                hgen.divID("console_area");            
+                hgen.end(); //console_area
+            
                 hgen.divID("options_link", "class=closed");
                 cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI,AuthzTrans>() {
                     @Override
@@ -66,9 +66,9 @@ public class WebCommand extends Page {
                             throws APIException, IOException {
                         String image_root = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
                         hgen.img(image_root + "/options_down.png", "onclick=handleDivHiding('options',this);", 
-                                "id=options_img", "alt=Options", "title=Options")                    
+                                "id=options_img", "alt=Options", "title=Options")                
                             .end(); //options_link
-                        
+                    
                         hgen.divID("options");
 
                         switch(browser(trans,trans.env().slot(getBrowserType()))) {
@@ -88,18 +88,18 @@ public class WebCommand extends Page {
                                 "id=details_img", "alt=Turn on/off details mode", "title=Turn on/off details mode");
                         xgen.img(image_root+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
                                 "id=maximize_img", "alt=Maximize Console Window", "title=Maximize Console Window");
-                    }    
+                    }
                 });
                 hgen.divID("text_slider");
                 hgen.tagOnly("input", "type=button", "class=change_font", "onclick=buttonChangeFontSize('dec')", "value=-")
                     .tagOnly("input", "id=text_size_slider", "type=range", "min=75", "max=200", "value=100", 
                         "oninput=changeFontSize(this.value)", "onchange=changeFontSize(this.value)", "title=Change Text Size")
-                    .tagOnly("input", "type=button", "class=change_font", "onclick=buttonChangeFontSize('inc')", "value=+")                
+                    .tagOnly("input", "type=button", "class=change_font", "onclick=buttonChangeFontSize('inc')", "value=+")            
                     .end(); //text_slider
 
                 hgen.end(); //options
                 hgen.end(); //console_and_options
-                
+            
                 hgen.divID("input_area");
                 hgen.tagOnly("input", "type=text", "id=command_field", 
                         "autocomplete=off", "autocorrect=off", "autocapitalize=off", "spellcheck=false",
@@ -114,8 +114,8 @@ public class WebCommand extends Page {
                     .text("moveCommandToDiv();")
                     .text("printResponse(resp);") 
                     .text("}");
-                hgen.end(callCUI);    
-            
+                hgen.end(callCUI);
+        
             }
         });
 

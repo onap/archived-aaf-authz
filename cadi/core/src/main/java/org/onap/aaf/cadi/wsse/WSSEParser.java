@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,15 +30,15 @@ import org.onap.aaf.cadi.BasicCred;
 
 /**
  * WSSE Parser
- * 
+ *
  * Read the User and Password from WSSE Formatted SOAP Messages 
- * 
+ *
  * This class uses StAX so that processing is stopped as soon as the Security User/Password are read into BasicCred, or the Header Ends
- * 
+ *
  * This class is intended to be created once (or very few times) and reused as much as possible.
- * 
+ *
  * It is as thread safe as StAX parsing is.
- * 
+ *
  * @author Jonathan
  */
 public class WSSEParser {
@@ -71,7 +71,7 @@ public class WSSEParser {
             ).exclusive()// Envelope must match Header, and no other.  FYI, Body comes after Header short circuits (see above), so it's ok
         ).exclusive(); // root must be Envelope
     }
-    
+
     public XMLStreamException parse(BasicCred bc, InputStream is) {
         try {
             parseTree.onMatch(bc, new XReader(is));

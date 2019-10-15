@@ -68,7 +68,7 @@ public class JU_DenialOfServiceTaf {
     private File dosIDFile;
     private File dosDir;
     private final String dosDirName = "test";
-    
+
     private final String id1 = "id1";
     private final String id2 = "id2";
 

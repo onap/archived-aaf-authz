@@ -104,14 +104,14 @@ public class JU_LocalLur {
         info = lur.dumpInfo();
         assertThat(info.size(), is(1));
         assertThat(info.get(0).user, is("user1@domain"));
-        
+    
         when(permMock.getKey()).thenReturn("groupA");
         assertThat(lur.handlesExclusively(permMock), is(true));
         when(permMock.getKey()).thenReturn("groupB");
         assertThat(lur.handlesExclusively(permMock), is(false));
-        
+    
         assertThat(lur.fish(null, null), is(false));
-        
+    
         Principal princ = new ConfigPrincipal("user1@localized", encrypted);
 
         lur = new LocalLur(access, "user1@localized%" + password + ":groupA", null);
@@ -124,9 +124,9 @@ public class JU_LocalLur {
 
         princ = new ConfigPrincipal("user1@localized", "badpass");
         assertThat(lur.fish(princ, lur.createPerm("groupB")), is(false));
-        
+    
         assertThat(lur.handles(null), is(false));
-        
+    
         lur.fishAll(null,  null);
 
         List<Permission> perms = new ArrayList<>();
@@ -136,7 +136,7 @@ public class JU_LocalLur {
         lur.fishAll(princ, perms);
         princ = new ConfigPrincipal("user1@localized", "badpass");
         lur.fishAll(princ, perms);
-        
+    
         assertThat(lur.validate(null, null, null, null), is(false));
         assertThat(lur.validate("user", null, "badpass".getBytes(), null), is(false));
         assertThat(lur.validate("user1@localized", null, encrypted.getBytes(), null), is(false));

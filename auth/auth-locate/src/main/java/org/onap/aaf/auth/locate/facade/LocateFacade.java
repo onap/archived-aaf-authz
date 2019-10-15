@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public interface LocateFacade {
     void error(AuthzTrans trans, HttpServletResponse response, Result<?> result);
 
     /**
-     * 
+     *
      * @param trans
      * @param response
      * @param status
@@ -54,7 +54,7 @@ public interface LocateFacade {
 
 
     /**
-     * 
+     *
      * @param trans
      * @param resp
      * @param rservlet
@@ -63,7 +63,7 @@ public interface LocateFacade {
     public Result<Void> getAPI(AuthzTrans trans, HttpServletResponse resp, RServlet<AuthzTrans> rservlet);
 
     /**
-     * 
+     *
      * @param trans
      * @param resp
      * @param typeCode
@@ -73,7 +73,7 @@ public interface LocateFacade {
     public abstract Result<Void> getAPIExample(AuthzTrans trans, HttpServletResponse resp, String typeCode, boolean optional);
 
     /**
-     * 
+     *
      * @param trans
      * @param resp
      * @param service
@@ -86,7 +86,7 @@ public interface LocateFacade {
             String service, String version, String other);
 
     /**
-     * 
+     *
      * @param trans
      * @param req
      * @param resp
@@ -95,7 +95,7 @@ public interface LocateFacade {
     public abstract Result<Void> putMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
     /**
-     * 
+     *
      * @param trans
      * @param req
      * @param resp
@@ -104,7 +104,7 @@ public interface LocateFacade {
     public abstract Result<Void> removeMgmtEndpoints(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp);
 
     /**
-     * 
+     *
      * @param trans
      * @param req
      * @param resp

@@ -55,7 +55,7 @@ public class JU_ArtifactDir {
     @Mock private Trans transMock;
     @Mock private CertInfo certInfoMock;
     @Mock private Artifact artiMock;
-    
+
     private static final String dirName = "src/test/resources/artifacts";
     private static final String nsName = "org.onap.test";
     private static final String luggagePassword = "12345";  // That's the stupidest combination I've ever heard in my life
@@ -65,17 +65,17 @@ public class JU_ArtifactDir {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        
+    
         issuers = new ArrayList<>();
         issuers.add("issuer1");
         issuers.add("issuer2");
     }
-    
+
     @After
     public void tearDown() {
         ArtifactDir.clear();
     }
-    
+
     @AfterClass
     public static void tearDownOnce() {
         cleanup();
@@ -91,7 +91,7 @@ public class JU_ArtifactDir {
         } catch (CadiException e) {
             assertThat(e.getMessage(), is("File Artifacts require a path\nFile Artifacts require an AAF Namespace"));
         }
-        
+    
         when(artiMock.getDir()).thenReturn(dirName);
         try {
             artiDir.place(transMock, certInfoMock, artiMock, "machine");
@@ -99,12 +99,12 @@ public class JU_ArtifactDir {
         } catch (CadiException e) {
             assertThat(e.getMessage(), is("File Artifacts require an AAF Namespace"));
         }
-        
+    
         when(artiMock.getNs()).thenReturn(nsName);
         when(certInfoMock.getCaIssuerDNs()).thenReturn(issuers);
         when(certInfoMock.getChallenge()).thenReturn(luggagePassword);
         artiDir.place(transMock, certInfoMock, artiMock, "machine");
-        
+    
         File writableFile = new File(dirName + '/' + nsName + "writable.txt");
         ArtifactDir.write(writableFile, Chmod.to755, "first data point", "second data point");
         try {
@@ -112,17 +112,17 @@ public class JU_ArtifactDir {
             fail("Should've thrown an exception");
         } catch (NullPointerException e) {
         }
-        
+    
         KeyStore ks = KeyStore.getInstance(Agent.PKCS12);
         try {
             ArtifactDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
             fail("Should've thrown an exception");
         } catch (CadiException e) {
         }
-        
+    
         ks.load(null, null);
         ArtifactDir.write(writableFile, Chmod.to755, ks, luggagePassword.toCharArray());
-        
+    
         ArtifactDirStud artiDir2 = new ArtifactDirStud();
         artiDir2.place(transMock, certInfoMock, artiMock, "machine");
 
@@ -131,7 +131,7 @@ public class JU_ArtifactDir {
 
         ArtifactDir.clear();
         artiDir.place(transMock, certInfoMock, artiMock, "machine");
-    
+
     }
 
     public void throwsTest() throws CadiException {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,7 +63,7 @@ public class JU_OAuthTokenDAO {
     AuthzTrans trans;
     @Mock
     Cluster cluster;
-    
+
     @Before
     public void setUp() throws APIException, IOException {
         initMocks(this);
@@ -77,27 +77,27 @@ public class JU_OAuthTokenDAO {
     @Test
     public void testReadByUser() {
         OAuthTokenDAO daoObj = new OAuthTokenDAO(trans, cluster, "test");
-        
+    
         PSInfo psObj = Mockito.mock(PSInfo.class);
         setPsByStartAndTarget(daoObj, psObj, "psByUser");
-        
+    
         Result<List<OAuthTokenDAO.Data>>  rs1 = new Result<List<OAuthTokenDAO.Data>>(null,0,"test",new String[0]);
         Mockito.doReturn(rs1).when(psObj).read(trans, "OAuthTokenDAO READ", new Object[]{"test"});
-        
+    
         daoObj.readByUser(trans, "test");
     }
-    
+
     public void setPsByStartAndTarget(OAuthTokenDAO OAuthTokenDAOObj, PSInfo psInfoObj, String fieldName) {
         Field nsDaoField;
         try {
             nsDaoField = OAuthTokenDAO.class.getDeclaredField(fieldName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(OAuthTokenDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -110,7 +110,7 @@ public class JU_OAuthTokenDAO {
             e.printStackTrace();
         }
     }
-    
+
     @Test
     public void testWasMOdified() {
         TimeTaken tt = Mockito.mock(TimeTaken.class);
@@ -126,15 +126,15 @@ public class JU_OAuthTokenDAO {
         OAuthTokenDAO daoObj = null;
         daoObj = new OAuthTokenDAO(trans, cluster, "test" );
         daoObj.wasModified(trans, CRUD.create, data, new String[] {"test"});
-        
-    }
     
+    }
+
     @Test
     public void testSecondConstructor() {
         AbsCassDAO absCassDAO = Mockito.mock(AbsCassDAO.class);
 
         OAuthTokenDAO daoObj = new OAuthTokenDAO(trans, absCassDAO);
-        
+    
     }
 
     @Test
@@ -149,15 +149,15 @@ public class JU_OAuthTokenDAO {
         data.scopes(false);
         data.scopes = new ConcurrentHashSet<>();
         data.scopes(true);
-        
+    
         data.expires = new Date();
         data.user="test";
         data.id="id";
         data.toString();
-        
+    
         data.active=true;
         data.toString();
-        
+    
         try {
             ByteBuffer bb = data.bytify();
             data.reconstitute(bb);
@@ -176,15 +176,15 @@ public class JU_OAuthTokenDAO {
                 break;
             }
         }
-        
+    
         Constructor<?> constructor = innerClass.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
-        
+    
         try {
-            
+        
             Object obj = constructor.newInstance(1);
             Method innnerClassMtd;
-                
+            
             OAuthTokenDAO.Data data  = new OAuthTokenDAO.Data();
             Row row = Mockito.mock(Row.class);
             ByteBuffer bbObj = ByteBuffer.allocateDirect(10);
@@ -193,16 +193,16 @@ public class JU_OAuthTokenDAO {
             bbObj.put(1, new Byte("1"));
             bbObj.put(2, new Byte("2"));
             Mockito.doReturn(bbObj).when(row).getBytesUnsafe(1);
-            
+        
             innnerClassMtd = innerClass.getMethod("load", new Class[] {OAuthTokenDAO.Data.class, Row.class});
             innnerClassMtd.invoke(obj, new Object[] {data, row});
-            
+        
             innnerClassMtd = innerClass.getDeclaredMethod("key", new Class[] {OAuthTokenDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test"} });
-//            
+//        
             innnerClassMtd = innerClass.getDeclaredMethod("body", new Class[] {OAuthTokenDAO.Data.class, Integer.TYPE, Object[].class });
             innnerClassMtd.invoke(obj, new Object[] {data, 1, new Object[] {"test","test","test","test","test","test","test","test","test","test","test","test"} });
-            
+        
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
             innnerClassMtd = innerClass.getDeclaredMethod("marshal", new Class[] {OAuthTokenDAO.Data.class, DataOutputStream.class });
@@ -212,7 +212,7 @@ public class JU_OAuthTokenDAO {
             DataInputStream dis = new DataInputStream(bais);
             innnerClassMtd = innerClass.getDeclaredMethod("unmarshal", new Class[] {OAuthTokenDAO.Data.class, DataInputStream.class });
             innnerClassMtd.invoke(obj, new Object[] {data, dis });
-            
+        
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -233,29 +233,29 @@ public class JU_OAuthTokenDAO {
             e.printStackTrace();
         } 
     }
-    
+
 }
 
 class OAuthTokenDAOImpl extends OAuthTokenDAO{
 
-    
+
     public OAuthTokenDAOImpl(AuthzTrans trans, HistoryDAO historyDAO,PSInfo readPS  ) throws APIException, IOException {
         super(trans, historyDAO);
         setPs(this, readPS, "createPS");
     }
-    
+
 
     public void setPs(OAuthTokenDAOImpl OAuthTokenDAOObj, PSInfo psInfoObj, String methodName) {
         Field nsDaoField;
         try {
             nsDaoField = CassDAOImpl.class.getDeclaredField(methodName);
-            
+        
             nsDaoField.setAccessible(true);
             // remove final modifier from field
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
 //            modifiersField.setInt(nsDaoField, nsDaoField.getModifiers() & ~Modifier.FINAL);
-            
+        
             nsDaoField.set(OAuthTokenDAOObj, psInfoObj);
         } catch (NoSuchFieldException | SecurityException e) {
             // TODO Auto-generated catch block
@@ -268,5 +268,5 @@ class OAuthTokenDAOImpl extends OAuthTokenDAO{
             e.printStackTrace();
         }
     }
-    
+
 }

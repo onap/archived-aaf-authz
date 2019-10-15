@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ public class PassChangeAction extends Page {
                 final Slot sPassword2 = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[3]);
                 final Slot startDate = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[4]);
                 final Slot sNS = gui.env.slot(PassChangeForm.NAME+'.'+PassChangeForm.fields[5]);
-                
+            
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
@@ -76,10 +76,10 @@ public class PassChangeAction extends Page {
                             final String password = trans.get(sPassword,null);
                             final String password2 = trans.get(sPassword2,null);
                             final String ns = trans.get(sNS, null);
-                            
+                        
                             // Run Validations
                             boolean fail = true;
-                            
+                        
                             if (id==null || id.indexOf('@')<=0) {
                                 hgen.p("Data Entry Failure: Please enter a valid ID, including domain.");
                             } else if (password == null || password2 == null) {
@@ -169,7 +169,7 @@ public class PassChangeAction extends Page {
                                                             throw new CadiException(e);
                                                         }
                                                     }
-                                                    
+                                                
                                                     Future<CredRequest> fcr = gui.clientAsUser(trans.getUserPrincipal()).create("/authn/cred",gui.getDF(CredRequest.class),cred);
                                                     if (fcr.get(AAFcli.timeout())) {
                                                         // Do Remote Call
@@ -185,13 +185,13 @@ public class PassChangeAction extends Page {
                                             } 
                                             return fail;
                                         }
-                                        
+                                    
                                     });
                             } catch (Exception e) {
                                 hgen.p("Unknown Error");
                                 e.printStackTrace();
                             }
-                                
+                            
                         }
                         hgen.br();
                         if (fail) {

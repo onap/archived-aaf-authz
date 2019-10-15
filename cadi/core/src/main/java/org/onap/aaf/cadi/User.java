@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.onap.aaf.cadi.lur.LocalPermission;
 
 /**
  * Class to hold info from the User Perspective.
- * 
+ *
  * @author Jonathan
  *
  */
@@ -44,7 +44,7 @@ public final class User<PERM extends Permission> {
     long permExpires;
     private final long interval;
     int count;
-    
+
     // Note: This should only be used for Local RBAC (in memory)
     public User(Principal principal) {
         this.principal = principal;
@@ -86,15 +86,15 @@ public final class User<PERM extends Permission> {
         count = 0;
         renewPerm();
     }
-    
+
     public void renewPerm() {
         permExpires = System.currentTimeMillis()+interval;
     }
-    
+
     public long permExpires() {
         return permExpires;
     }
-    
+
     public boolean permExpired() {
         return System.currentTimeMillis() > permExpires;
     }
@@ -102,7 +102,7 @@ public final class User<PERM extends Permission> {
     public boolean noPerms() {
         return perms==null || perms==NULL_MAP || perms.values().size()==0; 
     }
-    
+
     public synchronized void setNoPerms() {
         perms=NULL_MAP;
         renewPerm();
@@ -115,11 +115,11 @@ public final class User<PERM extends Permission> {
     public synchronized void incCount() {
         ++count;
     }
-    
+
     public synchronized void resetCount() {
         count=0;
     }
-    
+
     public Map<String,Permission> newMap() {
         return new ConcurrentHashMap<>();
     }
@@ -146,11 +146,11 @@ public final class User<PERM extends Permission> {
         }
         return false;
     }
-    
+
     public void copyPermsTo(List<Permission> sink) {
         sink.addAll(perms.values());
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(principal.getName());

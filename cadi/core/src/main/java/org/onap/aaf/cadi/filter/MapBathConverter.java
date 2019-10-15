@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,11 +49,11 @@ import org.onap.aaf.cadi.util.CSV.Visitor;
  * because some passwords are simply not acceptable for AAF, (too easy, for instance), and it is
  * not feasible to break Organization Password rules for a Migration.  Therefore, this method 
  * should not considered something that is in any way a permanent
- * 
+ *
 
- * 
+ *
  * It goes without saying that any file with the password conversion should be protected by "400", etc.
- * 
+ *
  * @author Instrumental (Jonathan)
  *
  */
@@ -110,7 +110,7 @@ public class MapBathConverter {
             }
         });
     }
-    
+
     private static String idFromBasic(String bath, Holder<String> hpass) throws IOException, CadiException {
         if(bath.startsWith(BASIC)) {
             String cred = Symm.base64noSplit.decode(bath.substring(6));
@@ -129,7 +129,7 @@ public class MapBathConverter {
 
     /**
      * use to instantiate entries 
-     * 
+     *
      * @return
      */
     public Map<String,String> map() {

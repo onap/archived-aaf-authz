@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,47 +47,47 @@ public class JU_CachedRoleDAO {
 
     @Mock
     RoleDAO dao;
-    
+
     @Mock
     CIDAO<AuthzTrans> info;
-    
+
     @Mock
     AuthzTransImpl trans;
-    
+
     @Mock
     RoleDAO.Data data;
-    
+
     @Mock
     PermDAO.Data permData;
-    
+
     @Before
     public void setUp() throws Exception {
         initMocks(this);
         when(trans.debug()).thenReturn(new LogTarget() {
-            
+        
             @Override
             public void printf(String fmt, Object... vars) {}
-            
+        
             @Override
             public void log(Throwable e, Object... msgs) {
                 e.getMessage();
                 e.printStackTrace();
                 msgs.toString();
-                
-            }
             
+            }
+        
             @Override
             public void log(Object... msgs) {
             }
-            
+        
             @Override
             public boolean isLoggable() {
-                
+            
                 return true;
             }
         });
     }
-    
+
     @Test
     public void testReadNameSuccess() {
         CachedRoleDAO roleDaoObj =new CachedRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
@@ -99,8 +99,8 @@ public class JU_CachedRoleDAO {
 //        System.out.println(retVal.status);
         //retVal.status = 0;
         assertEquals("1", Integer.toString(retVal.status));
-    }    
-    
+    }
+
     @Test
     public void testReadNameFailure() {
         CachedRoleDAO roleDaoObj =new CachedRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
@@ -120,7 +120,7 @@ public class JU_CachedRoleDAO {
         Result<List<Data>> retVal = roleDaoObj.readNS(trans, "");
 //        System.out.println(retVal.status);
         assertEquals("1", Integer.toString(retVal.status));
-    }    
+    }
     @Test
     public void testReadNSFailure() {
         CachedRoleDAO roleDaoObj =new CachedRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
@@ -131,7 +131,7 @@ public class JU_CachedRoleDAO {
 //        System.out.println(retVal.status);
         assertEquals("22", Integer.toString(retVal.status));
     }
-    
+
     @Test
     public void testReadChildren() {
         CachedRoleDAO roleDaoObj =new CachedRoleDAO(dao,info, 10);//Mockito.mock(CachedRoleDAO.class);//
@@ -141,7 +141,7 @@ public class JU_CachedRoleDAO {
         //System.out.println(retVal.status);
         assertEquals("0", Integer.toString(retVal.status));
     }
-    
+
     @Test
     public void testAddPerm() {
         CachedRoleDAO roleDaoObj =new CachedRoleDAO(dao,info, 10);
@@ -151,7 +151,7 @@ public class JU_CachedRoleDAO {
         Result<Void> retVal = roleDaoObj.addPerm(trans, data, permData);
         assertEquals("testAddPerm", retVal.toString());
     }
-    
+
     @Test
     public void testDelPerm() {
         CachedRoleDAO roleDaoObj =new CachedRoleDAO(dao,info, 10);

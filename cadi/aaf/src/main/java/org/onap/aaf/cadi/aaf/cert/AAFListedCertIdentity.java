@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,14 +57,14 @@ import aaf.v2_0.Users.User;
 public class AAFListedCertIdentity implements CertIdentity {
     //TODO should 8 hours be configurable? 
     private static final long EIGHT_HOURS = 1000*60*60*8L; 
-            
+        
     private static Map<ByteArrayHolder,String> certs = null;
-    
+
     // Did this to add other Trust Mechanisms
     // Trust mechanism set by Property: 
     private static final String[] authMechanisms = new String[] {"tguard","basicAuth","csp"};
     private static String[] certIDs;
-    
+
     private static Map<String,Set<String>> trusted =null;
 
     public AAFListedCertIdentity(Access access, AAFCon<?> aafcon) throws APIException {
@@ -86,7 +86,7 @@ public class AAFListedCertIdentity implements CertIdentity {
     public static Set<String> trusted(String authMech) {
         return trusted.get(authMech);
     }
-    
+
     public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert,    byte[] certBytes) throws CertificateException {
         if (cert==null && certBytes==null)return null;
         if (certBytes==null)certBytes = cert.getEncoded();
@@ -107,14 +107,14 @@ public class AAFListedCertIdentity implements CertIdentity {
             return Hash.compareTo(ba, b.ba);
         }
     }
-    
+
     private class CertUpdate extends TimerTask {
 
         private AAFCon<?> aafcon;
         public CertUpdate(AAFCon<?> con) {
             aafcon = con;
         }
-        
+    
         @Override
         public void run() {
             try {
@@ -142,9 +142,9 @@ public class AAFListedCertIdentity implements CertIdentity {
                     } else {
                         aafcon.access.log(Level.WARN, "Could not get Users in Perm com.att.trust|tguard|authenticate",fusr.code(),fusr.body());
                     }
-                    
-                }
                 
+                }
+            
                 for (String u : userLookup) {
                     Future<Certs> fc = aafcon.client().read("/authn/cert/id/"+u, Certs.class, aafcon.certsDF);
                     XMLGregorianCalendar now = Chrono.timeStamp();

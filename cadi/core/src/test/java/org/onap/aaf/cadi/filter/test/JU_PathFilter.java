@@ -48,16 +48,16 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.filter.PathFilter;
 
 public class JU_PathFilter {
-    
+
     private PropAccess access;
-    
+
     @Mock private FilterConfig filterConfigMock;
     @Mock private ServletContext contextMock;
     @Mock private HttpServletRequest reqMock;
     @Mock private HttpServletResponse respMock;
     @Mock private FilterChain chainMock;
     @Mock private Principal princMock;
-    
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -77,28 +77,28 @@ public class JU_PathFilter {
         } catch (ServletException e) {
             assertThat(e.getMessage(), is("PathFilter - pathfilter_ns is not set"));
         }
-        
+    
         when(contextMock.getAttribute(Config.PATHFILTER_NS)).thenReturn(5);
         when(contextMock.getAttribute(Config.PATHFILTER_STACK)).thenReturn(5);
         when(contextMock.getAttribute(Config.PATHFILTER_URLPATTERN)).thenReturn(5);
         when(contextMock.getAttribute(Config.PATHFILTER_NOT_AUTHORIZED_MSG)).thenReturn(5);
         pathFilter.init(filterConfigMock);
-        
+    
         pathFilter.doFilter(reqMock, respMock, chainMock);
 
         when(reqMock.isUserInRole(anyString())).thenReturn(true);
         pathFilter.doFilter(reqMock, respMock, chainMock);
-        
+    
         pathFilter.destroy();
 
         pathFilter = new PathFilter();
         pathFilter.init(filterConfigMock);
-        
+    
         pathFilter.doFilter(reqMock, respMock, chainMock);
 
         when(reqMock.isUserInRole(anyString())).thenReturn(false);
         pathFilter.doFilter(reqMock, respMock, chainMock);
-        
+    
         pathFilter.destroy();
     }
 

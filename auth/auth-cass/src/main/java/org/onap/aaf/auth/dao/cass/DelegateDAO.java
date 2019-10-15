@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
     public static final String TABLE = "delegate";
     private PSInfo psByDelegate;
     private static final int KEYLIMIT = 1;
-    
+
     public DelegateDAO(AuthzTrans trans, Cluster cluster, String keyspace) {
         super(trans, DelegateDAO.class.getSimpleName(),cluster,keyspace,Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
@@ -57,8 +57,8 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
         super(trans, DelegateDAO.class.getSimpleName(),aDao,Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         init(trans);
     }
-    
-    
+
+
     public static class Data implements Bytification {
         public String user;
         public String delegate;
@@ -70,13 +70,13 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
             DelegateLoader.dflt.marshal(this,new DataOutputStream(baos));
             return ByteBuffer.wrap(baos.toByteArray());
         }
-        
+    
         @Override
         public void reconstitute(ByteBuffer bb) throws IOException {
             DelegateLoader.dflt.unmarshal(this, toDIS(bb));
         }
     }
-    
+
     private static class DelegateLoader extends Loader<Data> implements Streamer<Data>{
         public static final int MAGIC=0xD823ACF2;
         public static final int VERSION=1;
@@ -87,7 +87,7 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
         public DelegateLoader(int keylimit) {
             super(keylimit);
         }
-        
+    
         @Override
         public Data load(Data data, Row row) {
             data.user = row.getString(0);
@@ -126,8 +126,8 @@ public class DelegateDAO extends CassDAOImpl<AuthzTrans, DelegateDAO.Data> {
             data.delegate = readString(is,buff);
             data.expires = new Date(is.readLong());
         }
-    }    
-    
+    }
+
     private void init(AuthzTrans trans) {
         String[] helpers = setCRUD(trans, TABLE, Data.class, DelegateLoader.dflt);
         psByDelegate = new PSInfo(trans, SELECT_SP + helpers[FIELD_COMMAS] + " FROM " + TABLE +

@@ -7,9 +7,9 @@
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
- * * 
+ * *
  *  *      http://www.apache.org/licenses/LICENSE-2.0
- * * 
+ * *
  *  * Unless required by applicable law or agreed to in writing, software
  * * distributed under the License is distributed on an "AS IS" BASIS,
  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,8 +41,8 @@ import java.util.Properties;
 public class JU_PropAccess {
     // Note: We can't actually get coverage of the protected constructor - 
     // that will be done later, when testing the child class "ServletContextAccess"
-    
-    
+
+
     @Test
     public void ConstructorTest() throws Exception {
         PropAccess prop = new PropAccess();
@@ -82,7 +82,7 @@ public class JU_PropAccess {
         ByteArrayInputStream bais = new ByteArrayInputStream(new byte[0]);
         pa.load(bais);
     }
-    
+
     @Test
     public void specialConversionsTest() throws Exception {
         // Coverage tests

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ public class UserRoleCompare extends RosettaCompare<UserRoleRequest>  {
     public UserRoleCompare() {
         super(UserRoleRequest.class);
     }
-    
+
     public static UserRoleRequest create() {
         UserRoleRequest urr = new UserRoleRequest();
         String in = instance();
@@ -45,7 +45,7 @@ public class UserRoleCompare extends RosettaCompare<UserRoleRequest>  {
         urr.setEnd(Chrono.timeStamp(gc));
         return urr;
     }
-    
+
     @Override
     public void compare(UserRoleRequest t1, UserRoleRequest t2) {
         assertEquals(t1.getUser(),t2.getUser());

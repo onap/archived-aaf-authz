@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,8 @@ import org.onap.aaf.cadi.Access.Level;
 
 public interface Get {
     public String get(String name, String def, boolean print);
-    
-    
+
+
     /**
      * A class for Getting info out of "JavaBean" format
      * @author Jonathan
@@ -40,14 +40,14 @@ public interface Get {
         private Class<?> bc;
         private Class<?>[] params;
         private Object[] args;
-        
+    
         public Bean(Object bean) {
             this.bean = bean;
             bc = bean.getClass();
             params = new Class<?>[0]; // note, this will allow to go out of scope after config
             args = new Object[0];
         }
-        
+    
         public String get(String name, String def, boolean print) {
             String str = null;
             String gname = "get"+Character.toUpperCase(name.charAt(0))+name.substring(1);
@@ -57,7 +57,7 @@ public interface Get {
                 str = obj==null?null:obj.toString(); // easy string convert... 
             } catch (Exception e) {
             }
-            
+        
             // Take def if nothing else
             if (str==null) {
                 str = def;

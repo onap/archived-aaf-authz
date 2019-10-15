@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,9 @@ package org.onap.aaf.misc.rosetta;
 
 public class Parsed<S> {
     public static final String EXTENSION_TAG="extension";
-    
+
     public boolean isString;
-    
+
     public StringBuilder sb;
     public char event;
     public String name;
@@ -48,7 +48,7 @@ public class Parsed<S> {
     public boolean valid() {
         return event!=Parse.NONE;
     }
-    
+
     public Parsed<S> reuse() {
         isString=false;
         sb.setLength(0);
@@ -70,7 +70,7 @@ public class Parsed<S> {
     public boolean hasData() {
         return sb.length()>0;
     }
-    
+
     public String toString() {
         StringBuilder sb2 = new StringBuilder();
         if (event<40)sb2.append((int)event);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
     public static RosettaDF<Introspect> introspectDF;
 
     private final TokenPermLoader tpLoader;
-    
+
     private TokenMgr(PropAccess access, String tokenURL, String introspectURL) throws APIException, CadiException {
         super(access,new RosettaEnv(access.getProperties()),Introspect.class,"introspect");
         synchronized(access) {
@@ -99,7 +99,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
         }
         return tm;
     }
-    
+
     public Result<OAuth2Principal> toPrincipal(final String accessToken, final byte[] hash) throws APIException, CadiException, LocatorException {
         Result<TokenPerm> tp = get(accessToken, hash, new Loader<TokenPerm>() {
             @Override
@@ -117,14 +117,14 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
             return Result.err(tp);
         }
     }
-    
+
     public Result<TokenPerm> get(final String accessToken, final byte[] hash) throws APIException, CadiException, LocatorException {
         return get(accessToken,hash,new Loader<TokenPerm>() {
             @Override
             public Result<TokenPerm> load(String key) throws APIException, CadiException, LocatorException {
                 return tpLoader.load(key,hash);
             }
-            
+        
         });
 //        return tpLoader.load(accessToken,hash);
     }
@@ -132,7 +132,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
     public interface TokenPermLoader{
         public Result<TokenPerm> load(final String accessToken, final byte[] cred) throws APIException, CadiException, LocatorException;
     }
-    
+
     private class RemoteTokenPermLoader implements TokenPermLoader {
         private TokenClientFactory tcf;
         private TokenClient tokenCL, introCL;
@@ -154,7 +154,7 @@ public class TokenMgr extends Persist<Introspect, TokenPerm> {
                 throw new CadiException(e);
             }
         }
-         
+     
         public Result<TokenPerm> load(final String accessToken, final byte[] cred) throws APIException, CadiException, LocatorException {
             long start = System.currentTimeMillis();
             try {

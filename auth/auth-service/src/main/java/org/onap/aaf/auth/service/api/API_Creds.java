@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,9 +61,9 @@ public class API_Creds {
     // needed to validate Creds even when already Authenticated x509
     /**
      * TIME SENSITIVE APIs
-     * 
+     *
      * These will be first in the list
-     * 
+     *
      * @param env
      * @param authzAPI
      * @param facade
@@ -73,7 +73,7 @@ public class API_Creds {
     public static void timeSensitiveInit(Env env, AAF_Service authzAPI, AuthzFacade facade, final DirectAAFUserPass directAAFUserPass) throws Exception {
         /**
          * Basic Auth, quick Validation
-         * 
+         *
          * Responds OK or NotAuthorized
          */
         authzAPI.route(env, HttpMethods.GET, "/authn/basicAuth", new Code(facade,"Is given BasicAuth valid?",true) {
@@ -133,7 +133,7 @@ public class API_Creds {
                 }
             }
         },"text/plain","*/*","*");
-        
+    
         /** 
          *  returns whether a given Credential is valid
          */
@@ -144,14 +144,14 @@ public class API_Creds {
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
                 // will be a valid Entity.  Do we need to add permission
-            	//if(trans.fish("ns","password","request")) or the like
+                //if(trans.fish("ns","password","request")) or the like
                 Result<Date> r = context.doesCredentialMatch(trans, req, resp);
                 if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
                 } else {
                     // For Security, we don't give any info out on why failed, other than forbidden
                     // Can't do "401", because that is on the call itself
-                	// 403 Implies you MAY NOT Ask.
+                    // 403 Implies you MAY NOT Ask.
                     resp.setStatus(HttpStatus.NOT_ACCEPTABLE_406);
                 }
             }
@@ -166,7 +166,7 @@ public class API_Creds {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getCertInfoByID(trans, req, resp, pathParam(req,":id") );
                 if (r.isOK()) {
                         resp.setStatus(HttpStatus.OK_200); 
@@ -181,10 +181,10 @@ public class API_Creds {
 
 
     }
-    
+
     /**
      * Normal Init level APIs
-     * 
+     *
      * @param authzAPI
      * @param facade
      * @throws Exception
@@ -195,7 +195,7 @@ public class API_Creds {
          */
         authzAPI.route(POST,"/authn/cred",API.CRED_REQ,new Code(facade,"Add a New ID/Credential", true) {
             @Override
-            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {                
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {            
                 Result<Void> r = context.createUserCred(trans, req);
                 if (r.isOK()) {
                     resp.setStatus(HttpStatus.CREATED_201);
@@ -204,7 +204,7 @@ public class API_Creds {
                 }
             }
         });
-        
+    
         /** 
          *  gets all credentials by Namespace
          */
@@ -214,7 +214,7 @@ public class API_Creds {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getCredsByNS(trans, resp, pathParam(req, "ns"));
                 if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200); 
@@ -224,7 +224,7 @@ public class API_Creds {
             }
 
         });
-        
+    
         /** 
          *  gets all credentials by ID
          */
@@ -234,7 +234,7 @@ public class API_Creds {
                     AuthzTrans trans, 
                     HttpServletRequest req,
                     HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.getCredsByID(trans, resp, pathParam(req, "id"));
                 if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200); 
@@ -252,7 +252,7 @@ public class API_Creds {
         authzAPI.route(PUT,"/authn/cred",API.CRED_REQ,new Code(facade,"Update an ID/Credential", true) {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-                
+            
                 Result<Void> r = context.changeUserCred(trans, req);
                 if (r.isOK()) {
                     resp.setStatus(HttpStatus.OK_200);
@@ -266,7 +266,7 @@ public class API_Creds {
          * Extend ID/Credential
          * This behavior will accelerate getting out of P1 outages due to ignoring renewal requests, or
          * other expiration issues.
-         * 
+         *
          * Scenario is that people who are solving Password problems at night, are not necessarily those who
          * know what the passwords are supposed to be.  Also, changing Password, without changing Configurations
          * using that password only exacerbates the P1 Issue.

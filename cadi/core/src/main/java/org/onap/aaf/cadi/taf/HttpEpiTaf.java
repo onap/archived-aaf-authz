@@ -181,7 +181,7 @@ public class HttpEpiTaf implements HttpTaf {
         }
         return Resp.NOT_MINE;
     }
-    
+
     private void addToLog(List<TafResp> log, final TafResp tresp, final long start) {
         if (log == null) {
             return;
@@ -189,7 +189,7 @@ public class HttpEpiTaf implements HttpTaf {
         tresp.timing(start);
         log.add(tresp);
     }
-    
+
     private void printLog(List<TafResp> log) {
         if (log == null) {
             return;

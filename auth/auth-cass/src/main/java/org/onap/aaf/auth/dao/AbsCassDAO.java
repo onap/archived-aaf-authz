@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,7 +76,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
     private static final Deque<ResetRequest> resetDeque = new ConcurrentLinkedDeque<ResetRequest>();
     private static boolean resetTrigger = false;
     private static long nextAvailableReset = 0;
-    
+
     public AbsCassDAO(TRANS trans, String name, Cluster cluster, String keyspace, Class<DATA> dataClass) {
         this.name = name;
         this.cluster = cluster;
@@ -95,7 +95,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
         owningDAO = aDao;
         this.dataClass = dataClass;
     }
-    
+
 // Not used since 2015
 //    public static void setSessionSlot(Slot slot) {
 //        sessionSlot = slot;
@@ -117,7 +117,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 
         /**
          * Create a PSInfo and create Prepared Statement
-         * 
+         *
          * @param trans
          * @param theCQL
          * @param loader
@@ -137,7 +137,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
             } else {
                 crud = CRUD.read;
             }
-            
+        
             int idx = 0, count=0;
             while ((idx=cql.indexOf('?',idx))>=0) {
                 ++idx;
@@ -145,11 +145,11 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
             }
             size=count;
         }
-        
+    
         public synchronized void reset() {
             ps = null;
         }
-        
+    
         private synchronized BoundStatement ps(TransStore trans) throws APIException, IOException {
             /* From Datastax
                 You should prepare only once, and cache the PreparedStatement in your application (it is thread-safe). 
@@ -173,7 +173,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 
         /**
          * Execute a Prepared Statement by extracting from DATA object
-         * 
+         *
          * @param trans
          * @param text
          * @param data
@@ -194,7 +194,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 
         /**
          * Execute a Prepared Statement on Object[] key
-         * 
+         *
          * @param trans
          * @param text
          * @param objs
@@ -211,15 +211,15 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
                 tt.done();
             }
         }
-        
+    
         /* 
          * Note:
-         * 
+         *
          */
 
         /**
          * Execute a Prepared Statement by extracting from DATA object
-         * 
+         *
          * @param trans
          * @param text
          * @param data
@@ -254,7 +254,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 
         /**
          * Execute a Prepared Statement on Object[] key
-         * 
+         *
          * @param trans
          * @param text
          * @param objs
@@ -281,11 +281,11 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
          */
         public Result<List<DATA>> read(TRANS trans, String text, Object[] key) {
             TimeTaken tt = trans.start(text,Env.REMOTE);
-            
+        
             ResultSet rs;
             try {
                 rs = getSession(trans).execute(key==null?ps(trans):ps(trans).bind(key));
-/// TEST CODE for Exception                
+/// TEST CODE for Exception            
 //                boolean force = true; 
 //                if (force) {
 //                    Map<InetSocketAddress, Throwable> misa = new HashMap<>();
@@ -301,14 +301,14 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
             } finally {
                 tt.done();
             }
-            
+        
             return extract(loader,rs,null /*let Array be created if necessary*/,dflt);
         }
-        
+    
         public Result<List<DATA>> read(TRANS trans, String text, DATA data) {
             return read(trans,text, loader.extract(data, size, crud));
         }
-        
+    
         public Object[] keyFrom(DATA data) {
             return loader.extract(data, size, CRUD.delete); // Delete is key only
         }
@@ -339,7 +339,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
         } else {
             DATA d;
             List<DATA> data = indata==null?new ArrayList<>(rows.size()):indata;
-            
+        
             for (Row row : rows) {
                 try {
                     d = loader.load(dataClass.newInstance(),row);
@@ -353,7 +353,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
             return Result.ok(data);
         }
     }
-    
+
     private static final String NEW_CASSANDRA_SESSION_CREATED = "New Cassandra Session Created";
     private static final String NEW_CASSANDRA_CLUSTER_OBJECT_CREATED = "New Cassandra Cluster Object Created";
     private static final String NEW_CASSANDRA_SESSION = "New Cassandra Session";
@@ -363,14 +363,14 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
         //package on purpose
         Session session;
         long timestamp;
-        
+    
         public ResetRequest(Session session) {
             this.session = session;
             timestamp = System.currentTimeMillis();
         }
     }
 
-    
+
     public static final void primePSIs(TransStore trans) throws APIException, IOException {
         for (AbsCassDAO<? extends TransStore, ?>.PSInfo psi : psinfos) {
             if (psi.ps==null) {
@@ -378,7 +378,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
             }
         }
     }
-    
+
     public final Session getSession(TransStore trans) throws APIException, IOException {
         // SessionFilter unused since 2015
         // Try to use Trans' session, if exists
@@ -388,12 +388,12 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 //                return sess;
 //            }
 //        }
-        
+    
         // If there's an owning DAO, use it's session
         if (owningDAO!=null) { 
             return owningDAO.getSession(trans);
         }
-        
+    
         // OK, nothing else works... get our own.
         if (session==null || resetTrigger) {
             Cluster tempCluster = null;
@@ -414,7 +414,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
                             }
                         }
                     }
-    
+
                     if (reset || session == null) {
                         TimeTaken tt = trans.start(NEW_CASSANDRA_SESSION, Env.SUB);
                         try {
@@ -458,7 +458,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
         }
         return session;
     }
-    
+
     public final boolean reportPerhapsReset(TransStore trans, Exception e) {
         if (owningDAO!=null) {
             return owningDAO.reportPerhapsReset(trans, e);
@@ -494,7 +494,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 
     protected void wasModified(TRANS trans, CRUD modified, DATA data, String ... override) {
     }
-    
+
     protected interface Accept<DATA> {
         public boolean ok(DATA data);
     }

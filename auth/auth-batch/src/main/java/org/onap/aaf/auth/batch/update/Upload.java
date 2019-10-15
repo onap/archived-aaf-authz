@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,7 @@ public class Upload extends Batch {
     public Upload(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
         trans.info().log("Starting Connection Process");
-        
+    
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
             TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
@@ -62,9 +62,9 @@ public class Upload extends Batch {
             } finally {
                 tt.done();
             }
-            
+        
             cqlBatch = new CQLBatch(LogTarget.NULL,session);
-            
+        
             feeds=new HashMap<>();
             new Feed(feeds,"ns",1,"name,description,parent,scope=int,type=int",300);
             new Feed(feeds,"notified",3,"user,target,key,last",300);
@@ -114,7 +114,7 @@ public class Upload extends Batch {
                 trans.info().log(msg);
                 System.out.println(msg);
                 CQLBatchLoop cbl = new CQLBatchLoop(cqlBatch,feed.batchSize,dryRun).showProgress();
-                
+            
                 try {
                     if(file.exists()) {
                         CSV csv = new CSV(trans.env().access(),file).setDelimiter('|');
@@ -135,7 +135,7 @@ public class Upload extends Batch {
             }
         }
     }
-    
+
     @Override
     protected void _close(AuthzTrans trans) {
         session.close();
@@ -162,7 +162,7 @@ public class Upload extends Batch {
             }
             feeds.put(feed,this);
         }
-        
+    
         public String getName() {
             return name;
         }
@@ -198,7 +198,7 @@ public class Upload extends Batch {
                             break;
                           default:
                             values.append('\'');
-                            values.append(value.replaceAll("'","''"));                            
+                            values.append(value.replaceAll("'","''"));                        
                             values.append('\'');
                         }
                     } else switch(type) {
@@ -210,7 +210,7 @@ public class Upload extends Batch {
                             default:
                                 values.append(value);
                                 break;
-                                
+                            
                     }
                 }
             }

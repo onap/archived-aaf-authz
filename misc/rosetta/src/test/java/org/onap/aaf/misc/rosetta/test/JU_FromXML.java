@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ import s.xsd.LargerData;
 public class JU_FromXML {
     private static int ITERATIONS = 1;
         ;
-    
+
     private final static String xml = 
     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
     "<LargerData xmlns=\"urn:s:xsd\">\n" +
@@ -63,21 +63,21 @@ public class JU_FromXML {
     "   </SampleData>\n" +
     "   <fluff>MyFluff</fluff>\n" +
     "</LargerData>\n";
-    
-    
+
+
     @Test
     public void test() throws Exception {
         InXML inXML = new InXML(LargerData.class);
-        
+    
         System.out.println(xml);
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         Reader rdr = new StringReader(xml);
-        
+    
         new OutRaw().extract(rdr, sbw, inXML);
         System.out.println(sbw.getBuffer());
     }
-    
+
 
     @Test
     public void xml2JSON() throws Exception {
@@ -86,7 +86,7 @@ public class JU_FromXML {
         InXML inXML = new InXML(LargerData.class);
 
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         Trans trans;
         Report report = new Report(ITERATIONS,"XML");
         do {
@@ -101,7 +101,7 @@ public class JU_FromXML {
             }
             report.glean(trans,Env.XML);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
     }
@@ -113,7 +113,7 @@ public class JU_FromXML {
         InXML inXML = new InXML(LargerData.class);
 
         StringBuilderWriter sbw = new StringBuilderWriter(1024);
-        
+    
         Trans trans;
         Report report = new Report(ITERATIONS,"XML");
         do {
@@ -128,23 +128,23 @@ public class JU_FromXML {
             }
             report.glean(trans,Env.XML);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());
     }
-    
-    
+
+
     @Test
     public void warmup() throws Exception {
         if (ITERATIONS>20) {
             System.out.println("*** Warmup JAXB ***");
-            
+        
             JAXBumar jaxbUmar = new JAXBumar(LargerData.class);
             JAXBmar jaxBmar = new JAXBmar(LargerData.class);
             //jaxBmar.asFragment(true);
             //jaxBmar.pretty(true);
             StringBuilderWriter sbw = new StringBuilderWriter(1024);
-    
+
 
             LargerData ld;
             Trans trans;
@@ -171,7 +171,7 @@ public class JU_FromXML {
                 }
                 report.glean(trans,Env.XML);
             } while (report.go());
-            
+        
             report.report(sbw);
             System.out.println(sbw.toString());
         }
@@ -210,7 +210,7 @@ public class JU_FromXML {
             }
             report.glean(trans,Env.XML);
         } while (report.go());
-        
+    
         report.report(sbw);
         System.out.println(sbw.toString());    }
 

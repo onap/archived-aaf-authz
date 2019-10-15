@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Hash {
     private static char hexDigit[] = "0123456789abcdef".toCharArray();
-    
+
 /////////////////////////////////
 // MD5
 /////////////////////////////////
@@ -61,7 +61,7 @@ public class Hash {
 
     /**
      * Convenience Function: Encrypt MD5 from String to String Hex representation 
-     * 
+     *
      * @param input
      * @return
      * @throws NoSuchAlgorithmException
@@ -98,10 +98,10 @@ public class Hash {
         md.update(input,offset,length); 
         return md.digest();
     }
-    
+
     /**
      * Convenience Function: Hash from String to String Hex representation
-     * 
+     *
      * @param input
      * @return
      * @throws NoSuchAlgorithmException
@@ -112,7 +112,7 @@ public class Hash {
 
     /**
      * Convenience Function: Hash from String to String Hex representation
-     * 
+     *
      * @param input
      * @return
      * @throws NoSuchAlgorithmException
@@ -124,7 +124,7 @@ public class Hash {
         bb.put(input.getBytes());
         return toHex(Hash.hashSHA256(bb.array()));
     }
-    
+
     /**
      * Compare two byte arrays for equivalency
      * @param ba1
@@ -166,7 +166,7 @@ public class Hash {
          }
          return sb.toString();
     }
-    
+
     public static String toHex(byte[] ba, int start, int length) {
         StringBuilder sb = new StringBuilder("0x");
          for (int i=start;i<length;++i) {
@@ -176,7 +176,7 @@ public class Hash {
          return sb.toString();
     }
 
-    
+
     public static byte[] fromHex(String s)  throws CadiException{
         if (!s.startsWith("0x")) {
             throw new CadiException("HexString must start with \"0x\"");
@@ -212,7 +212,7 @@ public class Hash {
     /**
      * Does not expect to start with "0x"
      * if Any Character doesn't match, it returns null;
-     * 
+     *
      * @param s
      * @return
      */

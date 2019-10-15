@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,9 +57,9 @@ public class URApprovalSet extends ApprovalSet {
             expires.setTime(urdd.expires);
         }
         setExpires(expires);
-        setTargetKey(urdd.user+'|'+urdd.role);
+        setTargetKey(urdd.user + '|' + urdd.role);
         setTargetDate(urdd.expires);
-        
+    
         Result<RoleDAO.Data> r = dv.roleByName(trans, urdd.role);
         if(r.notOKorIsEmpty()) {
             throw new CadiException(r.errorString());
@@ -81,10 +81,10 @@ public class URApprovalSet extends ApprovalSet {
         if(found==null) {
             throw new CadiException(String.format("User '%s' in Role '%s' does not exist", urdd.user,urdd.role));
         }
-        
+    
         // Primarily, Owners are responsible, unless it's owned by self
         boolean isOwner = false;
-        Result<List<UserRoleDAO.Data>> owners = dv.ursByRole(trans, urdd.ns+".owner");
+        Result<List<UserRoleDAO.Data>> owners = dv.ursByRole(trans, urdd.ns + ".owner");
         if(owners.isOK()) {
             for(UserRoleDAO.Data owner : owners.value) {
                 if(urdd.user.equals(owner.user)) {
@@ -114,7 +114,7 @@ public class URApprovalSet extends ApprovalSet {
             }
         }
     }
-    
+
     private void setTargetDate(Date expires) {
         fdd.target_date = expires;
     }
