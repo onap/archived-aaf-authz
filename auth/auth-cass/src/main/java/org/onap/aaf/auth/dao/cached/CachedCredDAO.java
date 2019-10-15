@@ -38,7 +38,7 @@ public class CachedCredDAO extends CachedDAO<AuthzTrans, CredDAO, CredDAO.Data> 
 
     public CachedCredDAO(CredDAO dao, CIDAO<AuthzTrans> info, long expiresIn) {
         super(dao, info, CredDAO.CACHE_SEG, expiresIn);
-        if(FileGetter.isLoaded) {
+        if(FileGetter.isLoaded()) {
             readID = new ReadID() {
                 @Override
                 public Result<List<Data>> read(AuthzTrans trans, final String id) {

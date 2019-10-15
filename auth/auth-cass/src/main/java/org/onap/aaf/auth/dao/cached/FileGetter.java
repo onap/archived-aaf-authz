@@ -43,9 +43,9 @@ import org.onap.aaf.cadi.util.CSV;
 
 public class FileGetter {
     private static final String AAF_FILEGETTER = "aaf_filegetter";
-    public static boolean isLoaded = false;
+    private static boolean isLoaded = false;
     private static FileGetter singleton;
-
+    private static List<CredDAO.Data> EMPTY = new ArrayList<>();
     private Map<String,List<CredDAO.Data>> data;
     private SimpleDateFormat sdf;
     private FileGetter(Access access) {
@@ -110,12 +110,12 @@ public class FileGetter {
             singleton = new FileGetter(access);
         }
         return singleton;
-
     }
+
     public Getter<CredDAO.Data> getter(String id) {
         return new FGetter(id);
     }
-    private static List<CredDAO.Data> EMPTY = new ArrayList<>();
+    
     public class FGetter implements Getter<CredDAO.Data> {
         private final List<CredDAO.Data> lcdd;
         public FGetter(final String id) {
@@ -141,6 +141,10 @@ public class FileGetter {
                 }
             }
         }
+    }
+
+    public static boolean isLoaded() {
+        return isLoaded;
     }
 }
 
