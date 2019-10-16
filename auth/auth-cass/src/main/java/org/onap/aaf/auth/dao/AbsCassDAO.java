@@ -73,7 +73,7 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
 //    private static Slot sessionSlot; // not used since 2015
     private static final ArrayList<AbsCassDAO<? extends TransStore,?>.PSInfo> psinfos = new ArrayList<>();
     private static final List<Object> EMPTY = new ArrayList<>(0);
-    private static final Deque<ResetRequest> resetDeque = new ConcurrentLinkedDeque<ResetRequest>();
+    private static final Deque<ResetRequest> resetDeque = new ConcurrentLinkedDeque<>();
     private static boolean resetTrigger = false;
     private static long nextAvailableReset = 0;
 
@@ -96,10 +96,6 @@ public abstract class AbsCassDAO<TRANS extends TransStore,DATA> {
         this.dataClass = dataClass;
     }
 
-// Not used since 2015
-//    public static void setSessionSlot(Slot slot) {
-//        sessionSlot = slot;
-//    }
 
     //Note: Lower case ON PURPOSE. These names used to create History Messages
     public enum CRUD {
