@@ -58,7 +58,7 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
         init(trans);
     }
 
-    public ArtiDAO(AuthzTrans trans, HistoryDAO hDao, CacheInfoDAO ciDao) {
+    public ArtiDAO(AuthzTrans trans, HistoryDAO hDao) {
         super(trans, ArtiDAO.class.getSimpleName(),hDao, Data.class,TABLE, readConsistency(trans,TABLE), writeConsistency(trans,TABLE));
         historyDAO = hDao;
         init(trans);
@@ -144,8 +144,8 @@ public class ArtiDAO extends CassDAOImpl<AuthzTrans,ArtiDAO.Data> {
 
         @Override
         protected void key(final Data data, final int idx, Object[] obj) {
-            int i;
-            obj[i=idx] = data.mechid;
+            int i=idx;
+            obj[i] = data.mechid;
             obj[++i] = data.machine;
         }
 
