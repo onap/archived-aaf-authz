@@ -488,14 +488,14 @@ public class AAFSSO {
     }
 
     public void close() {
-        if (close != null) {
-            try {
-                close.invoke(null);
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+    //    if (close != null) {
+    //        try {
+    //            close.invoke(null);
+    //        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 // nothing to do here.
-            }
-            close = null;
-        }
+    //        }
+    //        close = null;
+    //    }
     }
 
     private List<String> parseArgs(String[] args)
