@@ -152,7 +152,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         }
     }
 
-    public static synchronized <T extends Trans> void startUpdate(AuthzEnv env, HMangr hman, SecuritySetter<HttpURLConnection> ss, String ip, int port) {
+    public static synchronized void startUpdate(AuthzEnv env, HMangr hman, SecuritySetter<HttpURLConnection> ss, String ip, int port) {
         if (cacheUpdate==null) {
             cacheUpdate = new CacheUpdate(env,hman,ss, ip,port);
             Thread t= new Thread(cacheUpdate,"CacheInfo Update Thread");
@@ -161,14 +161,14 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
         }
     }
 
-    public static<T extends Trans> void stopUpdate() {
+    public static void stopUpdate() {
         if (cacheUpdate!=null) {
             cacheUpdate.go=false;
         }
     }
 
     private static final class CacheUpdate extends Thread {
-        public static BlockingQueue<Transfer> notifyDQ = new LinkedBlockingQueue<Transfer>(2000);
+        public static BlockingQueue<Transfer> notifyDQ = new LinkedBlockingQueue<>(2000);
 
         private static final String VOID_CT="application/Void+json;q=1.0;charset=utf-8;version=2.0,application/json;q=1.0;version=2.0,*/*;q=1.0";
         private AuthzEnv env;
@@ -187,7 +187,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
 
         private static class Transfer {
             public String table;
-            public int segs[];
+            public int[] segs;
             public Transfer(String table, int[] segs)  {
                 this.table = table;
                 this.segs = segs;
@@ -227,7 +227,7 @@ public class CacheInfoDAO extends CassDAOImpl<AuthzTrans,CacheInfoDAO.Data> impl
             private int[] raw;
             HashSet<Integer> set;
 
-            public IntHolder(int ints[]) {
+            public IntHolder(int[] ints) {
                 raw = ints;
                 set = null;
             }
