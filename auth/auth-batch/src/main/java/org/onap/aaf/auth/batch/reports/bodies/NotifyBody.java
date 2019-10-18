@@ -80,7 +80,6 @@ public abstract class NotifyBody {
                 if(row.size()>3) {
                     escalation = Integer.parseInt(row.get(3));
                 }
-                return;
             } else if(type.equals(row.get(0))) {
                 String user = user(row);
                 if(user!=null) {
@@ -180,42 +179,46 @@ public abstract class NotifyBody {
         String path = pkg.getName().replace('.', '/');
         URL url = cl.getResource(path);
         List<String> classNames = new ArrayList<>();
-        String urlString = url.toString();
-        if(urlString.startsWith("jar:file:")) {
-            int exclam = urlString.lastIndexOf('!');
-            JarFile jf = new JarFile(urlString.substring(9,exclam));
-            try {
-                Enumeration<JarEntry> jfe = jf.entries();
-                while(jfe.hasMoreElements()) {
-                    String name = jfe.nextElement().getName();
-                    if(name.startsWith(path) && name.endsWith(".class")) {
-                        classNames.add(name.substring(0,name.length()-6).replace('/', '.'));
+        String urlString;
+        if (url != null) {
+            urlString = url.toString();
+            if (urlString.startsWith("jar:file:")) {
+                int exclam = urlString.lastIndexOf('!');
+                JarFile jf = new JarFile(urlString.substring(9, exclam));
+                try {
+                    Enumeration<JarEntry> jfe = jf.entries();
+                    while (jfe.hasMoreElements()) {
+                        String name = jfe.nextElement().getName();
+                        if (name.startsWith(path) && name.endsWith(".class")) {
+                            classNames.add(name.substring(0, name.length() - 6).replace('/', '.'));
+                        }
+                    }
+                } finally {
+                    jf.close();
+                }
+            } else {
+                File dir = new File(url.getFile());
+                String[] dirs = dir.list();
+                if (dirs != null) {
+                    for (String f : dirs) {
+                        if (f.endsWith(".class")) {
+                            classNames.add(pkg.getName() + '.' + f.substring(0, f.length() - 6));
+                        }
                     }
                 }
-            } finally {
-                jf.close();
             }
-        } else {
-            File dir = new File(url.getFile());
-            for( String f : dir.list()) {
-                if(f.endsWith(".class")) {
-                    classNames.add(pkg.getName() + '.' + f.substring(0,f.length() - 6));
+            for (String cls : classNames) {
+                try {
+                    Class<?> c = cl.loadClass(cls);
+                    if ((c != null) && (!Modifier.isAbstract(c.getModifiers()))) {
+                        Constructor<?> cst = c.getConstructor(Access.class);
+                        NotifyBody nb = (NotifyBody) cst.newInstance(access);
+                        bodyMap.put("info|" + nb.name, nb);
+                        bodyMap.put(nb.type + '|' + nb.name, nb);
+                    }
+                } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    e.printStackTrace();
                 }
-            }
-        }
-        for(String cls : classNames) {
-            try {
-                Class<?> c = cl.loadClass(cls);
-                if((c!=null)&&(!Modifier.isAbstract(c.getModifiers()))) {
-                       Constructor<?> cst = c.getConstructor(Access.class);
-                        NotifyBody nb = (NotifyBody)cst.newInstance(access);
-                        if(nb!=null) {
-                            bodyMap.put("info|" + nb.name, nb);
-                            bodyMap.put(nb.type+'|' + nb.name, nb);
-                          }
-                }
-            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                e.printStackTrace();
             }
         }
     }
