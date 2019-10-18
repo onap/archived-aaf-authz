@@ -193,40 +193,46 @@ public class Page extends HTMLCacheGen {
                     themes = new TreeMap<>();
                     File themeD = new File("theme");
                     if(themeD.exists() && themeD.isDirectory()) {
-                        for (File t : themeD.listFiles()) {
-                            if(t.isDirectory()) {
-                                List<String> la = new ArrayList<>();
-                                for(File f : t.listFiles()) {
-                                    if(f.isFile()) {
-                                        if(f.getName().endsWith(".props")) {
-                                            Properties props;
-                                            if(themeProps == null) {
-                                                themeProps = new TreeMap<>();
-                                                props = null;
-                                            } else {
-                                                props = themeProps.get(t.getName());
-                                            }
-                                            if(props==null) {
-                                                props = new Properties();
-                                                themeProps.put(t.getName(), props);
-                                            }
+                        File[] themeDfiles = themeD.listFiles();
+                        if (themeDfiles != null) {
+                            for (File t : themeDfiles) {
+                                if (t.isDirectory()) {
+                                    List<String> la = new ArrayList<>();
+                                    File[] tFiles = t.listFiles();
+                                    if (tFiles != null) {
+                                        for (File f : tFiles) {
+                                            if (f.isFile()) {
+                                                if (f.getName().endsWith(".props")) {
+                                                    Properties props;
+                                                    if (themeProps == null) {
+                                                        themeProps = new TreeMap<>();
+                                                        props = null;
+                                                    } else {
+                                                        props = themeProps.get(t.getName());
+                                                    }
+                                                    if (props == null) {
+                                                        props = new Properties();
+                                                        themeProps.put(t.getName(), props);
+                                                    }
 
-                                            try {
-                                                FileInputStream fis = new FileInputStream(f);
-                                                try {
-                                                    props.load(fis);
-                                                } finally {
-                                                    fis.close();
+                                                    try {
+                                                        FileInputStream fis = new FileInputStream(f);
+                                                        try {
+                                                            props.load(fis);
+                                                        } finally {
+                                                            fis.close();
+                                                        }
+                                                    } catch (IOException e) {
+                                                        env.error().log(e);
+                                                    }
+                                                } else {
+                                                    la.add(f.getName());
                                                 }
-                                            } catch (IOException e) {
-                                                env.error().log(e);
                                             }
-                                        } else {
-                                            la.add(f.getName());
                                         }
                                     }
+                                    themes.put(t.getName(), la);
                                 }
-                                themes.put(t.getName(),la);
                             }
                         }
                     }
