@@ -366,11 +366,9 @@ public class CMService {
                             Collection<? extends Certificate> certs = Factory.toX509Certificate(cdd.x509);
                             for(Iterator<? extends Certificate> iter = certs.iterator(); iter.hasNext();) {
                                 X509Certificate x509 = (X509Certificate)iter.next();
-                                if(x509.getNotAfter().after(now) && x509.getSubjectDN().getName().contains(cn)) {
-                                    if(++count>max_509s) {
+                                if((x509.getNotAfter().after(now) && x509.getSubjectDN().getName().contains(cn))&&(++count>max_509s)) {
                                         break;
-                                    }
-                                }
+                                     }
                             }
                         }
                         if(count>max_509s) {
