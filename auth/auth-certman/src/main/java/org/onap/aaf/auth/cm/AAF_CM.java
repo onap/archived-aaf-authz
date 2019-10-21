@@ -243,7 +243,8 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
             new DirectRegistrar(access,locateDAO,port)
         };
     }
-
+    
+    @Override
     public void destroy() {
         Cache.stopTimer();
         locateDAO.close(env.newTransNoAvg());
