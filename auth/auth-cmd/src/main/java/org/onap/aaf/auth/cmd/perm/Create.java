@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,7 +150,8 @@ public class Create extends Cmd {
     public void detailedHelp(int _indent, StringBuilder sb) {
             int indent = _indent;
         detailLine(sb,indent,"Create a Permission with:");
-        detailLine(sb,indent+=2,"type     - A Namespace qualified identifier identifying the kind of");
+        indent=indent+2;
+        detailLine(sb,indent,"type     - A Namespace qualified identifier identifying the kind of");
         detailLine(sb,indent+11,"resource to be protected");
         detailLine(sb,indent,"instance - A name that distinguishes a particular instance of resource");
         detailLine(sb,indent,"action   - What kind of action is allowed");
