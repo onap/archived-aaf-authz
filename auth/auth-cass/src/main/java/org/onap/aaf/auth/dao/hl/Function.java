@@ -297,7 +297,8 @@ public class Function {
         }
 
         // VALIDATIONS done... Add NS
-        if ((rq = q.nsDAO().create(trans, namespace.data())).notOK()) {
+        rq = q.nsDAO().create(trans, namespace.data());
+        if (rq.notOK()) {
             return Result.err(rq);
         }
 
