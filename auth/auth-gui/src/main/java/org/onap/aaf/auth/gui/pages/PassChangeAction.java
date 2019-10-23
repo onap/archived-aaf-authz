@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +70,7 @@ public class PassChangeAction extends Page {
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
+                    	private static final String CLASS = "greenbutton";
                         @Override
                         public void code(final AAF_GUI gui, final AuthzTrans trans,final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                             final String id = trans.get(sID,null);
@@ -195,12 +197,12 @@ public class PassChangeAction extends Page {
                         }
                         hgen.br();
                         if (fail) {
-                            hgen.incr(HTMLGen.A,true,"class=greenbutton","href="+PassChangeForm.HREF+"?id="+id).text("Try again").end();
+                            hgen.incr(HTMLGen.A,true,CLASS,"href="+PassChangeForm.HREF+"?id="+id).text("Try again").end();
                         } else {
                             if (ns==null) {
-                                hgen.incr(HTMLGen.A,true,"class=greenbutton","href="+Home.HREF).text("Back").end();
+                                hgen.incr(HTMLGen.A,true,CLASS,"href="+Home.HREF).text("Back").end();
                             } else {
-                                hgen.incr(HTMLGen.A,true,"class=greenbutton","href="+CredDetail.HREF+"?id="+id+"&ns="+ns).text("Back").end();
+                                hgen.incr(HTMLGen.A,true,CLASS,"href="+CredDetail.HREF+"?id="+id+"&ns="+ns).text("Back").end();
                             }
                         }
                     }
