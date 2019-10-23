@@ -125,7 +125,7 @@ public class PendingRequestsShow extends Page {
      *
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
-        final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
+        final static long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
         private final Slot sAsUser;
         private static final String[] headers = new String[] {"Request Date","Status","Memo","Approver"};
 
@@ -167,7 +167,6 @@ public class PendingRequestsShow extends Page {
                                     String prevTicket = null;
                                     for (Approval a : approvals) {
                                         String approver = a.getApprover();
-//                                        String approverShort = approver.substring(0,approver.indexOf('@'));
 
                                         AbsCell tsCell = null;
                                         String ticket = a.getTicket();
