@@ -58,7 +58,7 @@ public class FileGetter {
                     try {
                         access.log(Level.INIT, "Loading Filebased Cred from",filename);
                         csv.visit(row -> {
-                            if(row.size()<1) {
+                            if(row.size().isEmpty()) {
                                 access.log(Level.INIT, "Bad Row");
                             }
                             int type;
