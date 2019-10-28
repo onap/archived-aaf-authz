@@ -959,12 +959,11 @@ public class Function {
         }
 
         // Does Child exist?
-        if (!trans.requested(REQD_TYPE.force)) {
-            if (q.permDAO().read(trans, perm).isOKhasData()) {
+        if ((!trans.requested(REQD_TYPE.force))&&(q.permDAO().read(trans, perm).isOKhasData())) {
                 return Result.err(Status.ERR_ConflictAlreadyExists,
                         "Permission [%s.%s|%s|%s] already exists.", perm.ns,
                         perm.type, perm.instance, perm.action);
-            }
+            
         }
 
         // Attempt to add perms to roles, creating as possible
