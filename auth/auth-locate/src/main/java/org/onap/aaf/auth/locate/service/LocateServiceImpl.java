@@ -32,7 +32,6 @@ import org.onap.aaf.auth.locate.AAF_Locate;
 import org.onap.aaf.auth.locate.mapper.Mapper;
 import org.onap.aaf.auth.locate.validation.LocateValidator;
 import org.onap.aaf.cadi.aaf.AAFPermission;
-import org.onap.aaf.misc.env.APIException;
 
 import locate.v1_0.Endpoints;
 import locate.v1_0.MgmtEndpoint;
