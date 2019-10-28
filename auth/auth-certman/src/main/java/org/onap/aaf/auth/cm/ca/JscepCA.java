@@ -225,10 +225,7 @@ public class JscepCA extends CA {
             try {
                 String[] info = Split.split('/', urlinfo);
                 Client c = new Client(new URL(JscepCA.CA_PREFIX + info[0] + JscepCA.CA_POSTFIX),
-                        cert -> {
-                            //TODO checkIssuer
-                            return true;
-                        }
+                        cert -> true
                 );
                 // Map URL to Client, because Client doesn't expose Connection
                 mxcwiC.put(c, mxcwiS.get(urlinfo));
