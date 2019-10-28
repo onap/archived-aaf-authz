@@ -40,7 +40,6 @@ public class LoginLandingAction extends Page {
             new BreadCrumbs(breadcrumbs),
             new NamedCode(true,"content") {
                 final Slot sID = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[0]);
-//                final Slot sPassword = gui.env.slot(LoginLanding.NAME+'.'+LoginLanding.fields[1]);
 
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
