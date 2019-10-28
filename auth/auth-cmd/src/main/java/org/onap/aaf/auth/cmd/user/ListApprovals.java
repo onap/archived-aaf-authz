@@ -41,7 +41,7 @@ import aaf.v2_0.Approvals;
  */
 public class ListApprovals extends Cmd {
     private static final String HEADER = "List Approvals";
-    private final static String[] options = {"user","approver","ticket"};
+    private static final String[] options = {"user","approver","ticket"};
     public ListApprovals(List parent) {
         super(parent,"approvals",
                 new Param(optionsToString(options),true),
