@@ -133,7 +133,7 @@ public class Namespace implements Bytification {
      */
     @Override
     public String toString() {
-        return name.toString();
+        return name;
     }
 
     /* (non-Javadoc)
