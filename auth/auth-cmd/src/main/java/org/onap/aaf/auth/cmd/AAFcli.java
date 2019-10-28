@@ -549,15 +549,15 @@ public class AAFcli {
                                     while ((line = reader.readLine()) != null) {
                                         showDetails = (line.contains("-d"));
 
-                                        if (line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("q") || line.equalsIgnoreCase("exit")) {
+                                        if ("quit".equalsIgnoreCase(line) || "q".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                                             break;
-                                        } else if (line.equalsIgnoreCase("--help -d") || line.equalsIgnoreCase("help -d")
-                                                || line.equalsIgnoreCase("help")) {
+                                        } else if ("--help -d".equalsIgnoreCase(line) || "help -d".equalsIgnoreCase(line)
+                                                || "help".equalsIgnoreCase(line)) {
                                             line = "--help";
-                                        } else if (line.equalsIgnoreCase("cls")) {
+                                        } else if ("cls".equalsIgnoreCase(line)) {
                                             reader.clearScreen();
                                             continue;
-                                        } else if (line.equalsIgnoreCase("?")) {
+                                        } else if ("?".equalsIgnoreCase(line)) {
                                             keyboardHelp();
                                             continue;
                                         }
