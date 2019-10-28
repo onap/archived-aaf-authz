@@ -417,7 +417,8 @@ public class Function {
 
                         pdd.ns = delP1;
                         pdd.type = delP2;
-                        if ((rq = q.permDAO().delete(trans, pdd, false)).notOK()) {
+                        rq = q.permDAO().delete(trans, pdd, false);
+                        if (rq .notOK()) {
                             eb.log(rq);
                             // Need to invalidate directly, because we're
                             // switching places in NS, not normal cache behavior
@@ -505,7 +506,8 @@ public class Function {
         boolean move = trans.requested(REQD_TYPE.move);
         // 1) Validate
         Result<List<NsDAO.Data>> nsl;
-        if ((nsl = q.nsDAO().read(trans, ns)).notOKorIsEmpty()) {
+        nsl = q.nsDAO().read(trans, ns);
+        if (nsl.notOKorIsEmpty()) {
             return Result.err(Status.ERR_NsNotFound, "%s does not exist", ns);
         }
         NsDAO.Data nsd = nsl.value.get(0);
