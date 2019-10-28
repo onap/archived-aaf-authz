@@ -98,10 +98,7 @@ public class DirectAAFLocator extends AbsAAFLocator<AuthzTrans> {
         if (rl.isOK()) {
             LinkedList<EP> epl = new LinkedList<>();
             for (Data d : rl.value) {
-//                if (myhostname!=null && d.port==myport && d.hostname.equals(myhostname)) {
-//                    continue;
-//                }
-                if ((major<0 || major==d.major) &&
+         if ((major<0 || major==d.major) &&
                    (minor<0 || minor<=d.minor) &&
                    (patch<0 || patch==d.patch) &&
                    (pkg<0   || pkg  ==d.pkg)) {
