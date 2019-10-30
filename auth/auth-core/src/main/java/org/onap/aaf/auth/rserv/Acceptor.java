@@ -45,7 +45,7 @@ class Acceptor<TRANS extends Trans>  {
     }
 
     private boolean eval(HttpCode<TRANS,?> code, String str, List<String> props) {
-//        int plus = str.indexOf('+');
+
 //        if (plus<0) {
         boolean ok = false;
         boolean any = false;
@@ -93,9 +93,9 @@ class Acceptor<TRANS extends Trans>  {
         if (type.y!=null) {
             for (Pair<String,Object> prop : type.y.y){
                 if (tag.equals(prop.x)) {
-                    if (tag.equals("charset")) {
+                    if ("charset".equals(tag)) {
                         return prop.x==null?false:prop.y.equals(value.toLowerCase()); // return True if Matched
-                    } else if (tag.equals("version")) {
+                    } else if ("version".equals(tag)) {
                         return prop.y.equals(new Version(value)); // Note: Version Class knows Minor Version encoding
                     } else if (tag.equals(Content.Q)) { // replace Q value
                         try {

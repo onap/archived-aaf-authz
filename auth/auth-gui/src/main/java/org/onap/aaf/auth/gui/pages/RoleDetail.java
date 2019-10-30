@@ -88,7 +88,8 @@ public class RoleDetail extends Page {
      */
     private static class Model extends TableData<AAF_GUI,AuthzTrans> {
         private static final String ACCESS = "access";
-        private Slot sRoleName,sRole,sUserRole,sMayWrite,sMayApprove,sMark,sNS;
+        private Slot sRoleName;
+        sRole,sUserRole,sMayWrite,sMayApprove,sMark,sNS;
         public Model(AuthzEnv env) {
             sRoleName = env.slot(NAME+".role");
             sRole = env.slot(NAME+".data.role");
@@ -106,8 +107,8 @@ public class RoleDetail extends Page {
         public void prefix(final AAF_GUI gui, final AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) {
             final String pRole = trans.get(sRoleName, null);
             Validator v = new Validator();
-            if(!v.isNull("Role",pRole).err()) {
-                if(!pRole.startsWith(trans.user())) {
+            if(!v.isNull("Role",pRole).err()) || (!pRole.startsWith(trans.user())) {
+               
                     v.role(pRole);
                 }
             }
