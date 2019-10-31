@@ -188,7 +188,8 @@ public class CredDetail extends Page {
                                 }
                                 lmu = users.get(u.getId());
                                 if (lmu==null) {
-                                    users.put(u.getId(),lmu=new ArrayList<>());
+                                    lmu=new ArrayList<>();
+                                    users.put(u.getId(),lmu);
                                 }
                                 mu=null;
                                 for (Map<Integer,List<User>> xmu : lmu) {
@@ -198,12 +199,14 @@ public class CredDetail extends Page {
                                 }
 
                                 if (mu==null) {
-                                    lmu.add(mu=new HashMap<>());
+                                    mu=new HashMap<>();
+                                    lmu.add(mu);
                                 }
 
                                 lu = mu.get(u.getType());
                                 if (lu==null) {
-                                    mu.put(u.getType(),lu = new ArrayList<>());
+                                    lu = new ArrayList<>();
+                                    mu.put(u.getType(),lu);
                                 }
                                 lu.add(u);
                             }
