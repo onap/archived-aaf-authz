@@ -75,7 +75,8 @@ public class TextIndex {
         long lhash;
         int curr;
         while ((max-min)>100) {
-            ttok.pos((curr=(min+(max-min)/2))*REC_SIZE);
+            curr=(min+(max-min)/2);
+            ttok.pos(curr*REC_SIZE);
             tib.rewind();
             lhash = hashToLong(tib.get());
             if (lhash<hash) {
