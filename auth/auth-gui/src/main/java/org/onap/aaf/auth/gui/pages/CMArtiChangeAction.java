@@ -149,7 +149,8 @@ public class CMArtiChangeAction extends Page {
                                                     break;
                                                 case CMArtiChangeForm.UPDATE:
                                                     Future<Artifacts> fu = client.update("/cert/artifacts", gui.artifactsDF, artifacts);
-                                                    if ((rv=fu).get(AAFcli.timeout())) {
+                                                    rv=fu;
+                                                    if(rv.get(AAFcli.timeout())) {
                                                         hgen.p("Artifact " + arti.getMechid() + " on " + arti.getMachine() + " is updated");
                                                         ok.set(true);
                                                     }
