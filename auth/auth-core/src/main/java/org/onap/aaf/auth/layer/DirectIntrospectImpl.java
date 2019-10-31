@@ -21,6 +21,6 @@
 
 package org.onap.aaf.auth.layer;
 
-public class DirectIntrospectImpl {
+public interface DirectIntrospectImpl {
 
 }
