@@ -264,8 +264,7 @@ public abstract class Batch {
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
-            env.warn().log("Unable to get hostname");
+            env.warn().log("Unable to get hostname : "+e.getMessage());
             return (0);
         }
 
@@ -545,7 +544,7 @@ public abstract class Batch {
             if(cluster!=null && !cluster.isClosed()) {
                 cluster.close();
             }
-            e.printStackTrace(System.err);
+            env.warn().log(System.err);
         }
     }
 
