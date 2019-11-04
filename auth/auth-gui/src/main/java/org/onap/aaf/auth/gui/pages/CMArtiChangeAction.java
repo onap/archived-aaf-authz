@@ -132,8 +132,8 @@ public class CMArtiChangeAction extends Page {
                                 try {
                                     final Artifacts artifacts = new Artifacts();
                                     artifacts.getArtifact().add(arti);
-                                    final Holder<Boolean> ok = new Holder<Boolean>(false);
-                                    final Holder<Boolean> deleted = new Holder<Boolean>(false);
+                                    final Holder<Boolean> ok = new Holder<>(false);
+                                    final Holder<Boolean> deleted = new Holder<>(false);
                                     Future<?> f = gui.cmClientAsUser(trans.getUserPrincipal(), new Retryable<Future<?>>() {
                                         @Override
                                         public Future<?> code(Rcli<?> client)throws CadiException, ConnectException, APIException {
