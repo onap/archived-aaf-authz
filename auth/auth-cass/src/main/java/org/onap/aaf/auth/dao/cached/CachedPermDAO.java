@@ -40,6 +40,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
 
     public Result<List<Data>> readNS(AuthzTrans trans, final String ns) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
+        @Override
             public Result<List<Data>> call() {
                 return dao.readNS(trans, ns);
             }
@@ -51,14 +52,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
         } else {
 
         }
-//        if (getter.result==null) {
-//            if (lurd==null) {
-                return Result.err(Status.ERR_PermissionNotFound,"No Permission found - " + lurd.details);
-//            } else {
-//                return Result.ok(lurd);
-//            }
-//        }
-//        return getter.result;
+        return Result.err(Status.ERR_PermissionNotFound,"No Permission found - " + lurd.details);
     }
 
     public Result<List<Data>> readChildren(AuthzTrans trans, final String ns, final String type) {
@@ -74,6 +68,7 @@ public class CachedPermDAO extends CachedDAO<AuthzTrans,PermDAO, PermDAO.Data> {
      */
     public Result<List<Data>> readByType(AuthzTrans trans, final String ns, final String type) {
         DAOGetter getter = new DAOGetter(trans,dao()) {
+        @Override
             public Result<List<Data>> call() {
                 return dao.readByType(trans, ns, type);
             }
