@@ -275,7 +275,9 @@ public class Function {
             // NSs
             if (namespace.admin != null) {
                 for (String u : namespace.admin) {
-                    if ((r = checkValidID(trans, now, u)).notOK()) {
+                  // if ((r = checkValidID(trans, now, u)).notOK()) {
+                    	r= checkValidID(trans, now, u);
+                    	if(r.notOK())
                         return r;
                     }
                 }
