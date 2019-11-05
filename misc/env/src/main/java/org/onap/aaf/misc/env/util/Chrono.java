@@ -63,6 +63,8 @@ public class Chrono {
         niceUTCDateFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
         iso8601Fmt =  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
         batchFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss+SSSS");
+        // Note: DB and thus Batch conversions should always be in UTC Time
+        batchFmt.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
     
 

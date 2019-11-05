@@ -94,7 +94,14 @@ public class Remove extends Batch {
                 remove.add(new File(logDir, args()[i]));
             }
         } else {
-            remove.add(new File(logDir,"Delete"+Chrono.dateOnlyStamp()+".csv"));
+        	final String ending = Chrono.dateOnlyStamp()+".csv";
+        	for (File file : logDir.listFiles(f -> {
+	        		String name = f.getName();
+					return name.endsWith(ending) && (
+							name.startsWith("Delete") || name.startsWith("Clean."));
+	        		}))  {
+        		remove.add(file);
+        	};
         }
 
         for(File f : remove) {

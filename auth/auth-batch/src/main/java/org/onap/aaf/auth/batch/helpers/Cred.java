@@ -316,7 +316,7 @@ public class Cred  {
     }
 
     public static void batchDelete(StringBuilder sb, List<String> row) {
-        Long l = Long.parseLong(row.get(5));
+        long l = Long.parseLong(row.get(5));
         String date = Chrono.batchFmt.format(new Date(l));
         sb.append("DELETE from authz.cred WHERE id='");
         sb.append(row.get(1));
@@ -326,9 +326,6 @@ public class Cred  {
         sb.append(" AND expires='");
         sb.append(date);
         sb.append("';\n");
-//        sb.append(" AND expires=dateof(maxtimeuuid(");
-//        sb.append(row.get(5));
-//        sb.append("));\n");
 
     }
 
