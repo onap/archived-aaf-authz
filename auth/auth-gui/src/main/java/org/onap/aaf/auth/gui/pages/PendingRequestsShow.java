@@ -167,7 +167,6 @@ public class PendingRequestsShow extends Page {
                                     String prevTicket = null;
                                     for (Approval a : approvals) {
                                         String approver = a.getApprover();
-//                                        String approverShort = approver.substring(0,approver.indexOf('@'));
 
                                         AbsCell tsCell = null;
                                         String ticket = a.getTicket();
