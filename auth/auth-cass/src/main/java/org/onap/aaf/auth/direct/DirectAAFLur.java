@@ -47,8 +47,7 @@ public class DirectAAFLur implements Lur {
 
     public DirectAAFLur(AuthzEnv env, Question question/*, TokenMgr tm*/) {
         this.env = env;
-        this.question = question;
-//        oauth = new OAuth2Lur(null);
+        this.question = question
     }
 
     @Override
@@ -148,7 +147,9 @@ public class DirectAAFLur implements Lur {
                                 return true;
             } else{
                 String[] lp = p.getKey().split("\\|");
-                if (lp.length<3)return false;
+                if (lp.length<3) {
+                    return false;
+                }
                 if (data.fullType().equals(lp[0]))
                     if (data.instance!=null && (data.instance.equals(lp[1]) || "*".equals(data.instance)))
                         if (data.action!=null && (data.action.equals(lp[2]) || "*".equals(data.action)))
