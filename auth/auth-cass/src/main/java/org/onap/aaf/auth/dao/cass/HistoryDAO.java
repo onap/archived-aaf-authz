@@ -117,7 +117,6 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
             obj[++idx]=data.target;
             obj[++idx]=data.subject;
             obj[++idx]=data.memo;
-//            obj[++idx]=data.detail;
             obj[++idx]=data.reconstruct;
         }
     };
@@ -139,9 +138,8 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
                         }
                     },writeConsistency)
                 );
-//        disable(CRUD.Create);
 
-        replace(CRUD.read, new PSInfo(trans, SELECT_SP +  helpers[FIELD_COMMAS] +
+       replace(CRUD.read, new PSInfo(trans, SELECT_SP +  helpers[FIELD_COMMAS] +
                 " FROM history WHERE id = ?", defLoader,readConsistency)
 //                new HistLoader(2) {
 //                    @Override
@@ -227,7 +225,7 @@ public class HistoryDAO extends CassDAOImpl<AuthzTrans, HistoryDAO.Data> {
 
     private class YYYYMM implements Accept<Data> {
         private int[] yyyymm;
-        public YYYYMM(int yyyymm[]) {
+        public YYYYMM(int[] yyyymm) {
             this.yyyymm = yyyymm;
         }
         @Override
