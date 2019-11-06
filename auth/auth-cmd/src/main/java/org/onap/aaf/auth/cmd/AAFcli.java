@@ -264,7 +264,8 @@ public class AAFcli {
                 } else if ("set".equalsIgnoreCase(largs[idx])) {
                     while (largs.length > ++idx) {
                         int equals = largs[idx].indexOf('=');
-                        String tag, value;
+                        String tag;
+                        String value;
                         if (equals < 0) {
                             tag = largs[idx];
                             value = access.getProperty(Config.AAF_APPPASS,null);
