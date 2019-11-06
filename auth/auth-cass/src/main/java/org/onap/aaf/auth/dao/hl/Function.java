@@ -96,10 +96,10 @@ public class Function {
         E("Executed"),D("Denied"),P("Pending"),L("Lapsed");
 
         private String desc;
-        public final static Result<OP_STATUS> RE = Result.ok(OP_STATUS.E);
-        public final static Result<OP_STATUS> RD = Result.ok(OP_STATUS.D);
-        public final static Result<OP_STATUS> RP = Result.ok(OP_STATUS.P);
-        public final static Result<OP_STATUS> RL = Result.ok(OP_STATUS.L);
+        public static final Result<OP_STATUS> RE = Result.ok(OP_STATUS.E);
+        public static final Result<OP_STATUS> RD = Result.ok(OP_STATUS.D);
+        public static final Result<OP_STATUS> RP = Result.ok(OP_STATUS.P);
+        public static final Result<OP_STATUS> RL = Result.ok(OP_STATUS.L);
 
         private OP_STATUS(String desc) {
             this.desc = desc;
