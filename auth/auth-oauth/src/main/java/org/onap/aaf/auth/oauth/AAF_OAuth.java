@@ -79,9 +79,6 @@ public class AAF_OAuth extends AbsService<AuthzEnv,AuthzTrans> {
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
      *
      * @param env
-     * @param si
-     * @param dm
-     * @param decryptor
      * @throws APIException
      */
     public AAF_OAuth(final AuthzEnv env) throws Exception {

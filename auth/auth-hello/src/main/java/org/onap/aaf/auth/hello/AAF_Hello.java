@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 
-import org.onap.aaf.auth.cache.Cache.Dated;
 import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.env.AuthzTransFilter;
@@ -49,7 +48,6 @@ import org.onap.aaf.misc.env.Env;
 
 public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
     public enum API{TOKEN_REQ, TOKEN,INTROSPECT, ERROR,VOID};
-    public Map<String, Dated> cacheUser;
     public AAFAuthn<?> aafAuthn;
     public AAFLurPerm aafLurPerm;
 
@@ -57,9 +55,6 @@ public class AAF_Hello extends AbsService<AuthzEnv,AuthzTrans> {
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
      *
      * @param env
-     * @param si
-     * @param dm
-     * @param decryptor
      * @throws APIException
      */
     public AAF_Hello(final AuthzEnv env) throws Exception {
