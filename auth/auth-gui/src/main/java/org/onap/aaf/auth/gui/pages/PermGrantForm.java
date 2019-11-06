@@ -77,7 +77,6 @@ public class PermGrantForm extends Page {
                         hgen.js(copyRoleJS);
                         hgen.text("function copyRole(role) {");
                         hgen.text("var txtRole = document.querySelector(\"#role\");");
-//                        hgen.text("if (role==;");
                         hgen.text("txtRole.value=role;");
                         hgen.text("}");
                         hgen.end(copyRoleJS);
