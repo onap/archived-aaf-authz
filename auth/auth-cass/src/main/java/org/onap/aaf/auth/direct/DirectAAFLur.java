@@ -47,7 +47,7 @@ public class DirectAAFLur implements Lur {
 
     public DirectAAFLur(AuthzEnv env, Question question/*, TokenMgr tm*/) {
         this.env = env;
-        this.question = question
+        this.question = question;
     }
 
     @Override
