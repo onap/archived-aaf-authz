@@ -128,7 +128,8 @@ public class OAuthService {
         odd.refresh = AAFToken.toToken(UUID.randomUUID());
         odd.active = true;
         long exp;
-        odd.expires = new Date(exp=(System.currentTimeMillis()+TOK_EXP));
+        exp=(System.currentTimeMillis()+TOK_EXP);
+        odd.expires = new Date(exp);
         odd.exp_sec = exp/1000;
         odd.req_ip = trans.ip();
 
