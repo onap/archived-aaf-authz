@@ -56,7 +56,7 @@ public class Route<TRANS extends Trans> {
         content.add(code, others);
     }
 
-    public HttpCode<TRANS,?> getCode(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    public HttpCode<TRANS,?> getCode(TRANS trans, HttpServletRequest req, HttpServletResponse resp) {
         // Type is associated with Accept for GET (since it is what is being returned
         // We associate the rest with ContentType.
         // FYI, thought about this a long time before implementing this way.
