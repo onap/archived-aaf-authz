@@ -3,6 +3,7 @@
  * org.onap.aaf
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2019 IBM.
  * ===========================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,14 +44,14 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 import aaf.v2_0.CredRequest;
 
 public class PassDeleteAction extends Page {
-    public static final String NAME = "PassDeleteAction";
+    public static final String CLASS = "PassDeleteAction";
     public static final String HREF = "/gui/passdelete";
-    private static enum Params{id,date,ns,type};
+    private enum Params{id,date,ns,type};
 
     public PassDeleteAction(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
-        super(gui.env,NAME,HREF,Params.values(),
+        super(gui.env,CLASS,HREF,Params.values(),
             new BreadCrumbs(breadcrumbs),
-            new SlotCode<AuthzTrans>(true,gui.env,NAME,Params.values()) {
+            new SlotCode<AuthzTrans>(true,gui.env,CLASS,Params.values()) {
                 @Override
                 public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                     cache.dynamic(hgen, new DynamicCode<HTMLGen,AAF_GUI, AuthzTrans>() {
