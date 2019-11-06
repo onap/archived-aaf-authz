@@ -47,7 +47,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
     private final String[] columns;
     private final Rows rows;
     private Code<HTMLGen> other;
-//    private DynamicCode<HTMLGen, AuthGUI, AuthzTrans> prefix,postfix;
+
 
     public Table(String title, TRANS trans, Data<S,TRANS> data, Code<HTMLGen> other, String name, String ... attrs)  {
         this(title,trans,data,name, attrs);
@@ -56,7 +56,6 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
 
     public Table(String title, TRANS trans, Data<S,TRANS> data, String name, String ... attrs)  {
         super(true,name);
-//        prefix=postfix=null;
         for (String a : attrs) {
             addAttr(false, a);
         }
