@@ -30,7 +30,6 @@ public class PermEval {
     public static final char ALT_START_INST_KEY_CHAR='/';
 
     public static final char LIST_SEP = ',';
-    public static final String INST_KEY_REGEX = new StringBuilder().append(START_INST_KEY_CHAR).toString();
     public static final String ASTERIX = "*";
 
     /**
@@ -47,7 +46,7 @@ public class PermEval {
         if (sInst == null || pInst == null) {
             return false;
         }
-        if (sInst == "" || pInst == "") {
+        if (sInst.equals("") || pInst.equals("")) {
             return false;
         }
         if (ASTERIX.equals(sInst)) {
@@ -137,8 +136,8 @@ public class PermEval {
      * Action is not quite as complex.  But we write it in this function so it can be consistent
      */
     public static boolean evalAction(String sAction,String pAction) {
-        if (ASTERIX.equals(sAction))return true;               // If Server's String is "*", then it accepts every Action
-        if (pAction == "") return false;
+        if (ASTERIX.equals(sAction)) return true;               // If Server's String is "*", then it accepts every Action
+        if (pAction.equals("")) return false;
         for (String sItem : Split.split(LIST_SEP,sAction)) {         // allow for "," definition in Action
             if (pAction.charAt(0)==START_REGEX_CHAR?       // First char
                     sItem.matches(pAction.substring(1)):   // Evaluate as Regular Expression
