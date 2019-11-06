@@ -302,15 +302,16 @@ public class Examples {
         Ns ns;
 
         Nss nss = new Nss();
-        nss.getNs().add(ns = new Nss.Ns());
+        ns = new Nss.Ns();
+        nss.getNs().add(ns);
         ns.setName("org.osaaf.myns");
         ns.getResponsible().add("ab1234@people.osaaf.org");
         ns.getResponsible().add("cd5678@people.osaaf.org");
         ns.getAdmin().add("zy9876@people.osaaf.org");
         ns.getAdmin().add("xw5432@people.osaaf.org");
         ns.setDescription("This is my Namespace to set up");
-
-        nss.getNs().add(ns = new Nss.Ns());
+        ns = new Nss.Ns();
+        nss.getNs().add(ns);
         ns.setName("org.osaaf.myOtherNs");
         ns.getResponsible().add("ab1234@people.osaaf.org");
         ns.getResponsible().add("cd5678@people.osaaf.org");
