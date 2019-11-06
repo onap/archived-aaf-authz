@@ -77,10 +77,6 @@ public class ExpireRange {
                 lcred.add(new Range(TWO_MONTH,1,-1,-1,GregorianCalendar.MONTH,1,GregorianCalendar.MONTH,2));
 
                 lur.add(  new Range(ONE_MONTH,1,-1,-1,0,0,GregorianCalendar.MONTH,1));
-                // Comment out until we can get some more clear actions in place for GUI
-                // lur.add(  new Range(ONE_MONTH,1,-1,-1,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
-                // lur.add(  new Range(ONE_WEEK,2,-1,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
-
                 lx509.add(new Range(ONE_MONTH,1,-1,-1,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
             }
     }
