@@ -146,7 +146,7 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
             msg = "No Data Found";
         }
 
-        public Cells(ArrayList<AbsCell[]> arrayCells, String msg) {
+        public Cells(List<AbsCell[]> arrayCells, String msg) {
             cells = new AbsCell[arrayCells.size()][];
             arrayCells.toArray(cells);
             this.msg = msg;
@@ -215,14 +215,5 @@ public class Table<S extends State<Env>, TRANS extends TransStore> extends Named
         }
     }
 
-//    public Table<S,TRANS> setPrefix(DynamicCode<HTMLGen, AuthGUI, AuthzTrans> dynamicCode) {
-//        prefix = dynamicCode;
-//        return this;
-//    }
-//
-//    public Table<S,TRANS> setPostfix(DynamicCode<HTMLGen, AuthGUI, AuthzTrans> dynamicCode) {
-//        postfix = dynamicCode;
-//        return this;
-//    }
 
 }
