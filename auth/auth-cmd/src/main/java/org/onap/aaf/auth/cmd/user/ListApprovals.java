@@ -53,7 +53,7 @@ public class ListApprovals extends Cmd {
             int idx = _idx;
         final String type = args[idx++];
         int option = whichOption(options,type);
-        String value = args[idx++];
+        String value = args[idx];
         final String fullValue;
         if (option != 2) {
             fullValue = fullID(value);
