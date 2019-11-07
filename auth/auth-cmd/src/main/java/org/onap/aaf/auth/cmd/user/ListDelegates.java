@@ -50,9 +50,8 @@ public class ListDelegates extends Cmd {
     @Override
     public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
         int idx = _idx;
-         final String key = args[idx++];
-        //int option = whichOption(options,key);
-        final String id = fullID(args[idx++]);
+        final String key = args[idx++];
+        final String id = fullID(args[idx]);
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
