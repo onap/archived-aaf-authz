@@ -47,8 +47,7 @@ public class ListForRoles extends Cmd {
 
     @Override
     public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
-        final String role = args[idx++];
+        final String role = args[_idx];
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
