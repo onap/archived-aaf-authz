@@ -140,8 +140,7 @@ public class DirectAAFLur implements Lur {
             PermDAO.Data pd;
             if (p instanceof DirectAAFLur.PermPermission) {
                 pd = ((DirectAAFLur.PermPermission)p).data;
-                if (data.ns.equals(pd.ns))
-                    if (data.type.equals(pd.type))
+                if ((data.ns.equals(pd.ns)) && (data.type.equals(pd.type)))
                         if (data.instance!=null && (data.instance.equals(pd.instance) || "*".equals(data.instance)))
                             if (data.action!=null && (data.action.equals(pd.action) || "*".equals(data.action)))
                                 return true;
