@@ -64,7 +64,7 @@ public class ListForPermission extends Cmd {
                 String type = args[idx++];
                 String instance = args[idx++];
                 if ("\\*".equals(instance))instance="*";
-                String action = args[idx++];
+                String action = args[idx];
                 if ("\\*".equals(action))action="*";
                 try {
                     Future<Users> fp = client.read(
