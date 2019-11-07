@@ -28,6 +28,7 @@ import org.onap.aaf.auth.layer.Result;
  * @author Jonathan
  *
  */
+@F
 public interface MayChange {
     public Result<?> mayChange();
 }
