@@ -65,7 +65,7 @@ public class Rename extends Cmd {
                 PermRequest pr = new PermRequest();
                 pr.setType(args[idx++]);
                 pr.setInstance(args[idx++]);
-                pr.setAction(args[idx++]);
+                pr.setAction(args[idx]);
 
                 // Set Start/End commands
                 setStartEnd(pr);

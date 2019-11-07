@@ -51,8 +51,7 @@ public class ListActivity extends Cmd {
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
-                int idx = index;
-                String type = args[idx++];
+                String type = args[index];
                 Future<History> fp = client.read(
                         "/authz/hist/perm/"+type,
                         getDF(History.class)
