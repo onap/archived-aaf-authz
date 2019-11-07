@@ -131,13 +131,13 @@ public class OrganizationFactory {
                 }
                 env.init().printf("Instantiated %s with %s%s",orgNS,orgClass,(isDefault?" as default":""));
             }
-            if (org==null) {
-                if (defaultOrg!=null) {
+            if ( (org==null) && (defaultOrg!=null)){
+                
                     org=defaultOrg;
                     orgs.put(orgNS, org);
                 }
             }
-        }
+        
 
         return org;
     }
