@@ -55,19 +55,11 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
 public class API_AAFAccess {
-//    private static String service, version, envContext;
+
 
     private static final String GET_PERMS_BY_USER = "Get Perms by User";
     private static final String USER_HAS_PERM ="User Has Perm";
-//    private static final String USER_IN_ROLE ="User Has Role";
 
-    /**
-     * Normal Init level APIs
-     *
-     * @param gwAPI
-     * @param facade
-     * @throws Exception
-     */
     public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
 
 
