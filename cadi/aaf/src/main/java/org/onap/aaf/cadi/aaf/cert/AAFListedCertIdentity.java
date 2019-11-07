@@ -67,7 +67,7 @@ public class AAFListedCertIdentity implements CertIdentity {
 
     private static Map<String,Set<String>> trusted =null;
 
-    public AAFListedCertIdentity(Access access, AAFCon<?> aafcon) throws APIException {
+    public AAFListedCertIdentity(Access access, AAFCon<?> aafcon) {
         synchronized(AAFListedCertIdentity.class) {
             if (certIDs==null) {
                 String cip = access.getProperty(Config.AAF_CERT_IDS, null);
