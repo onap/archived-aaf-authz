@@ -67,7 +67,7 @@ public class Role extends Cmd {
                 if (args.length < 5) {
                     throw new CadiException(build(new StringBuilder("Too few args: "), null).toString());
                 }
-                String[] roles = args[idx++].split(",");
+                String[] roles = args[idx].split(",");
                 for (String role : roles) {
                     String verb = null,participle=null;
                     urr.setRole(role);
