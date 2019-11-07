@@ -2507,9 +2507,8 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         }
                     case Status.ACC_Now:
                         try {
-                            if (firstID) {
+                            if ((firstID) && (!ques.isOwner(trans,trans.user(),cdd.ns))) {
                                 // OK, it's a first ID, and not by NS Owner
-                                if(!ques.isOwner(trans,trans.user(),cdd.ns)) {
                                     // Admins are not allowed to set first Cred, but Org has already
                                     // said entity MAY create, typically by Permission
                                     // We can't know which reason they are allowed here, so we
@@ -2523,7 +2522,6 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                                         rcred.value.expires = org.expiration(null, Expiration.TempPassword).getTime();
                                     }
                                 }
-                            }
                         } catch (Exception e) {
                             trans.error().log(e, "While setting expiration to TempPassword");
                         }
