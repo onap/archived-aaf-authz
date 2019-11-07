@@ -50,14 +50,12 @@ public class Version {
             Version ver = (Version)obj;
             int length = Math.min(parts.length, ver.parts.length);
             for (int i=0;i<length;++i) { // match on declared parts
-                if (i==1) {
-                    if (parts[1] instanceof Integer && ver.parts[1] instanceof Integer) {
+                if ((i==1) && (parts[1] instanceof Integer && ver.parts[1] instanceof Integer)) {
                         // Match on Minor version if this Version is less than Version to be checked
                         if (((Integer)parts[1])<((Integer)ver.parts[1])) {
                             return false;
                         }
                         continue; // don't match next line
-                    }
                 }
                 if (!parts[i].equals(ver.parts[i])) {
                     return false; // other spots exact match
