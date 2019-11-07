@@ -55,7 +55,7 @@ import aafoauth.v2_0.Introspect;
 
 public class OAuthService {
 
-    private static final int TOK_EXP = 60*60*1000; // 1 hour, millis.
+    private static final int TOK_ErXP = 60*60*1000; // 1 hour, millis.
 
     public enum TOKEN_TYPE {unknown,bearer,refresh}
     public enum GRANT_TYPE {unknown,password,client_credentials,refresh_token};
@@ -166,7 +166,7 @@ public class OAuthService {
             return Result.err(rld);
         }
         if (rld.isEmpty()) {
-            return Result.err(Result.ERR_NotFound,"Data not Found for %1 %2",trans.user(),odd.refresh==null?"":odd.refresh.toString());
+            return Result.err(Result.ERR_NotFound,"Data not Found for %1 %2",trans.user(),odd.refresh==null?"":odd.refresh);
         }
         Data token = null;
         for (Data d : rld.value) {
@@ -260,7 +260,7 @@ public class OAuthService {
                                 return loadToken(trans, td);
                             }
                          }
-//                         System.out.println(rai.value.getClientId());
+
                      } else {
                         trans.audit().printf("Alt OAuth rejects: requesting_id,%s,access_token=%s,ip=%s,code=%d,error=%s\n",trans.user(),token,trans.ip(),rai.code,rai.error);
                      }
