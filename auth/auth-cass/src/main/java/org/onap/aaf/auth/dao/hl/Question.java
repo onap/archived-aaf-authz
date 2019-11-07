@@ -868,17 +868,14 @@ public class Question {
         Result<List<PermDAO.Data>> perms = getPermsByUser(trans, user, false);
         if (perms.isOK()) {
             for (PermDAO.Data pd : perms.value) {
-                if (ns.equals(pd.ns)) {
-                    if (type.equals(pd.type)) {
-                        if (PermEval.evalInstance(pd.instance, instance)) {
-                            if (PermEval.evalAction(pd.action, action)) { // don't return action here, might miss other action
+                if ((ns.equals(pd.ns)) && (type.equals(pd.type))) {
+                        if ((PermEval.evalInstance(pd.instance, instance)) && (PermEval.evalAction(pd.action, action))) {
+                        	// don't return action here, might miss other action
                                 return true;
                             }
                         }
                     }
                 }
-            }
-        }
         return false;
     }
 
