@@ -197,12 +197,10 @@ public class CMArtifactShow extends Page {
                                 Date last = null;
                                 if (lc!=null) {
                                     for (X509Certificate xc : lc) {
-                                        if (xc.getSubjectDN().getName().contains("CN="+arti.getMachine())) {
-                                            if (last==null || last.before(xc.getNotAfter())) {
+                                        if ((xc.getSubjectDN().getName().contains("CN="+arti.getMachine())) && (last==null || last.before(xc.getNotAfter()))) {
                                                 last = xc.getNotAfter();
                                             }
                                         }
-                                    }
                                 }
                                 GregorianCalendar renew;
                                 if (last!=null) {
