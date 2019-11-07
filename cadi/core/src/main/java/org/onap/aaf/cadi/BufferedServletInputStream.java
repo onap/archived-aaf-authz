@@ -84,12 +84,12 @@ public class BufferedServletInputStream extends ServletInputStream {
         }
         return value;
     }
-
+    @Override
     public int read(byte[] b) throws IOException {
         return read(b,0,b.length);
     }
 
-
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int count = -1;
         if (capacitor==null) {
@@ -121,7 +121,7 @@ public class BufferedServletInputStream extends ServletInputStream {
         }
         return count;
     }
-
+    @Override
     public long skip(long n) throws IOException {
         long skipped = capacitor.skip(n);
         if (skipped<n) {
@@ -130,10 +130,11 @@ public class BufferedServletInputStream extends ServletInputStream {
         return skipped;
     }
 
-
+   @Override
     public int available() throws IOException {
         int count = is.available();
-        if (capacitor!=null)count+=capacitor.available();
+        if (capacitor!=null)
+        	count+=capacitor.available();
         return count;
     }
 
@@ -145,7 +146,7 @@ public class BufferedServletInputStream extends ServletInputStream {
         return capacitor.available();
     }
 
-
+    @Override
     public void close() throws IOException {
         if (capacitor!=null) {
             capacitor.done();
@@ -159,6 +160,7 @@ public class BufferedServletInputStream extends ServletInputStream {
      * Note: Readlimit is ignored in this implementation, because the need was for unknown buffer size which wouldn't
      * require allocating and dumping huge chunks of memory every use, or risk overflow.
      */
+    @Override
     public synchronized void mark(int readlimit) {
         switch(state) {
             case NONE:
@@ -179,6 +181,7 @@ public class BufferedServletInputStream extends ServletInputStream {
      * the data read in since Mark has been called.  The data integrity is only valid if you have not continued to read past what is stored.
      *
      */
+    @Override
     public synchronized void reset() throws IOException {
         switch(state) {
             case STORE:
@@ -193,7 +196,7 @@ public class BufferedServletInputStream extends ServletInputStream {
         }
     }
 
-
+    @Override
     public boolean markSupported() {
         return true;
     }
