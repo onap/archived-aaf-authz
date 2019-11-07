@@ -41,7 +41,7 @@ class CodeSetter<TRANS extends Trans> {
         this.resp = resp;
 
     }
-    public boolean matches(Route<TRANS> route) throws IOException, ServletException {
+    public boolean matches(Route<TRANS> route) {
         // Find best Code in Route based on "Accepts (Get) or Content-Type" (if exists)
         return (code = route.getCode(trans, req, resp))!=null;
     }
