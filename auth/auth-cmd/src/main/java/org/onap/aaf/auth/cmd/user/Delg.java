@@ -72,7 +72,7 @@ public class Delg extends BaseCmd<User> {
                     if (option<2 && args.length>idx) {
                         Date date;
                         try {
-                            date = Chrono.dateOnlyFmt.parse(args[idx++]);
+                            date = Chrono.dateOnlyFmt.parse(args[idx]);
                         } catch (ParseException e) {
                             throw new CadiException(e);
                         }
