@@ -236,15 +236,13 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         Content c = content.get(key);
         long systime = System.currentTimeMillis();
         File f=null;
-        if (c!=null) {
+        if ((c!=null) && (c.date < systime + timeCheck)) {
             // Don't check every hit... only after certain time value
-            if (c.date < systime + timeCheck) {
                 f = new File(fileName);
                 if (f.lastModified()>c.date) {
                     c=null;
                 }
             }
-        }
         if (c==null) {
             if (logTarget!=null) {
                 logTarget.log("File Read: ",key);
