@@ -227,7 +227,6 @@ public class Function {
         if (rparent.notOK()) {
             return Result.err(rparent);
         }
-        parent = rparent.value.parent;
         if (!fromApproval) {
             rparent = q.mayUser(trans, user, rparent.value, Access.write);
             if (rparent.notOK()) {
