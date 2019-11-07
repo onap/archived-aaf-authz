@@ -45,8 +45,7 @@ class Acceptor<TRANS extends Trans>  {
     }
 
     private boolean eval(HttpCode<TRANS,?> code, String str, List<String> props) {
-//        int plus = str.indexOf('+');
-//        if (plus<0) {
+
         boolean ok = false;
         boolean any = false;
         for (Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> type : types) {
@@ -61,23 +60,7 @@ class Acceptor<TRANS extends Trans>  {
                 }
             }
         }
-//        } else { // Handle Accepts with "+" as in application/xaml+xml
-//            int prev = str.indexOf('/')+1;
-//            String first = str.substring(0,prev);
-//            String nstr;
-//            while (prev!=0) {
-//                nstr = first + (plus<0?str.substring(prev):str.substring(prev,plus));
-//
-//                for (Pair<String, Pair<HttpCode<TRANS,?>, List<Pair<String, Object>>>> type : types) {
-//                    if (type.x.equals(nstr)) {
-//                        acceptable.add(type);
-//                        return type;
-//                    }
-//                }
-//                prev = plus+1;
-//                plus=str.indexOf('+', prev);
-//            };
-//        }
+
         return any;
     }
 
@@ -93,9 +76,9 @@ class Acceptor<TRANS extends Trans>  {
         if (type.y!=null) {
             for (Pair<String,Object> prop : type.y.y){
                 if (tag.equals(prop.x)) {
-                    if (tag.equals("charset")) {
+                    if ( "charset".equals(tag)) {
                         return prop.x==null?false:prop.y.equals(value.toLowerCase()); // return True if Matched
-                    } else if (tag.equals("version")) {
+                    } else if ("version".equals(tag)) {
                         return prop.y.equals(new Version(value)); // Note: Version Class knows Minor Version encoding
                     } else if (tag.equals(Content.Q)) { // replace Q value
                         try {
