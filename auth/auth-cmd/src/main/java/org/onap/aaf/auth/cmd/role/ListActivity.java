@@ -47,9 +47,8 @@ public class ListActivity extends Cmd {
     }
 
     @Override
-    public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
-        final String role = args[idx++];
+    public int _exec(final int idx, final String ... args) throws CadiException, APIException, LocatorException {
+        final String role = args[idx];
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
