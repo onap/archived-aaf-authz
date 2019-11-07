@@ -39,8 +39,8 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
-public abstract class RServlet<TRANS extends Trans> implements Servlet {
-    private Routes<TRANS> routes = new Routes<TRANS>();
+public abstract class RServlet implements Servlet {
+    private Routes<TRANS> routes = new Routes<>();
 
     private ServletConfig config;
 
@@ -79,7 +79,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
         try {
             // routes have multiple code sets.  This object picks the best code set
             // based on Accept or Content-Type
-            CodeSetter<TRANS> codesetter = new CodeSetter<TRANS>(trans,request,response);
+            CodeSetter<TRANS> codesetter = new CodeSetter<>(trans,request,response);
             // Find declared route
             route = routes.derive(request, codesetter);
             if (route==null) {
@@ -87,7 +87,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
                 trans.checkpoint("No Route matches "+ method + ' ' + request.getPathInfo());
                 response.setStatus(404); // Not Found
             } else {
-                // Find best Code in Route based on "Accepts (Get) or Content-Type" (if exists)
+               )
                 code = codesetter.code();// route.getCode(trans, request, response);
             }
         } finally {
