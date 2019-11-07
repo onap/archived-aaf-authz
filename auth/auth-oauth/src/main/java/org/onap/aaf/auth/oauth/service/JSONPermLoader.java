@@ -28,6 +28,7 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.APIException;
 
+@FunctionalInterface
 public interface JSONPermLoader {
     public Result<String> loadJSONPerms(AuthzTrans trans, String user, Set<String> scopes) throws APIException, CadiException;
 
