@@ -21,7 +21,7 @@
 
 package org.onap.aaf.cadi;
 
-
+@FunctionalInterface
 public interface Revalidator<TRANS> {
     /**
      * Re-Validate Credential
