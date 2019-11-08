@@ -52,7 +52,7 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
         supports = con.access.getProperty(Config.AAF_DOMAIN_SUPPORT, Config.AAF_DOMAIN_SUPPORT_DEF).split("\\s*:\\s*");
     }
 
-    public AbsAAFLur(AAFCon<?> con, AbsUserCache<PERM> auc) throws APIException {
+    public AbsAAFLur(AAFCon<?> con, AbsUserCache<PERM> auc)  {
         super(auc);
         aaf = con;
         setLur(this);
@@ -77,8 +77,8 @@ public abstract class AbsAAFLur<PERM extends Permission> extends AbsUserCache<PE
 
     @Override
     public final boolean handles(Principal principal) {
-        if (preemptiveLur!=null) {
-            if (preemptiveLur.handles(principal)) {
+        if ((preemptiveLur!=null) && (preemptiveLur.handles(principal)) (){
+            
                 return true;
             }
         }
