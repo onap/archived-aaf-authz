@@ -50,7 +50,7 @@ import java.io.Writer;
  * @param <T>
  */
 public interface Data<T> {
-    static enum TYPE {XML,JSON,JAXB,RAW,DEFAULT};
+     enum TYPE {XML,JSON,JAXB,RAW,DEFAULT};
     // can & with 0xFFFF;
 //    public static final int XML = 0x1;
 //    public static final int JSON = 0x2;
