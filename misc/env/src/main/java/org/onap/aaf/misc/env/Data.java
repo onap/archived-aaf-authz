@@ -51,13 +51,11 @@ import java.io.Writer;
  */
 public interface Data<T> {
     static enum TYPE {XML,JSON,JAXB,RAW,DEFAULT};
-    // can & with 0xFFFF;
 //    public static final int XML = 0x1;
 //    public static final int JSON = 0x2;
 //    public static final int JAXB = 0x4;
 //    public static final int RAW = 0x1000;
     
-    // can & with 0xF00000;
     public static final int PRETTY = 0x100000;
     public static final int FRAGMENT = 0x200000;
 
