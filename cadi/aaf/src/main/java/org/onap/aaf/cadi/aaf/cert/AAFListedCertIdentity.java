@@ -67,7 +67,7 @@ public class AAFListedCertIdentity implements CertIdentity {
 
     private static Map<String,Set<String>> trusted =null;
 
-    public AAFListedCertIdentity(Access access, AAFCon<?> aafcon) throws APIException {
+    public AAFListedCertIdentity(Access access, AAFCon<?> aafcon)  {
         synchronized(AAFListedCertIdentity.class) {
             if (certIDs==null) {
                 String cip = access.getProperty(Config.AAF_CERT_IDS, null);
@@ -88,8 +88,10 @@ public class AAFListedCertIdentity implements CertIdentity {
     }
 
     public TaggedPrincipal identity(HttpServletRequest req, X509Certificate cert,    byte[] certBytes) throws CertificateException {
-        if (cert==null && certBytes==null)return null;
-        if (certBytes==null)certBytes = cert.getEncoded();
+        if (cert==null && certBytes==null)
+        	return null;
+        if (certBytes==null)
+        	certBytes = cert.getEncoded();
         byte[] fingerprint = X509Taf.getFingerPrint(certBytes);
         String id = certs.get(new ByteArrayHolder(fingerprint));
         if (id!=null) { // Caller is Validated
