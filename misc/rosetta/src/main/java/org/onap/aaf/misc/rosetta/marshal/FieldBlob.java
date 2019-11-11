@@ -31,8 +31,6 @@ public abstract class FieldBlob<T> extends FieldMarshal<T>{
     @Override
     protected boolean data(T t, StringBuilder sb) {
         return false;
-        // unimplemented
-        //return DataWriter.BYTE_ARRAY.write(data(t),sb);
     }
 
 }
