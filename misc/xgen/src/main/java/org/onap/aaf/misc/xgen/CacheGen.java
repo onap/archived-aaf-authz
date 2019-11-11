@@ -48,7 +48,7 @@ public abstract class CacheGen<G extends XGen<G>> {
 
     public CacheGen(int flags, Code<G> code) throws APIException, IOException {
         this.flags = flags;
-        final XGenBuff<G> buff = new XGenBuff<G>(flags,this);
+        final XGenBuff<G> buff = new XGenBuff<>(flags,this);
         // Run to gather Strings and Code Class Segments
         buff.run(new Cache<G>() {
                 @Override
