@@ -111,7 +111,7 @@ public class Remove extends Batch {
         final Holder<Boolean> ur = new Holder<>(false);
         final Holder<Boolean> cred = new Holder<>(false);
         final Holder<Boolean> x509 = new Holder<>(false);
-        final Holder<String> memoFmt = new Holder<String>("");
+        final Holder<String> memoFmt = new Holder<>("");
         final HistoryDAO.Data hdd = new HistoryDAO.Data();
         final String orgName = trans.org().getName();
 
