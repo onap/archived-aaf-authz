@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
+
 package org.onap.aaf.auth.cm.cmpv2client.api;
 
 import java.security.cert.Certificate;
 import java.util.Date;
+import java.util.Optional;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
 import org.onap.aaf.auth.cm.cmpv2client.impl.CAOfflineException;
 import org.onap.aaf.auth.cm.cmpv2client.impl.CmpClientException;
@@ -46,7 +48,7 @@ public interface CmpClient {
      * @throws CmpClientException if client error occurs.
      */
     Certificate createCertRequest(String caName, String profile, CSRMeta csrMeta, Certificate csr,
-        Date notBefore, Date notAfter)
+        Optional<Date> notBefore, Optional<Date> notAfter)
         throws CAOfflineException, CmpClientException;
 
     /**

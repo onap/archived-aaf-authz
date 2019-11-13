@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
+
 package org.onap.aaf.auth.cm.cmpv2client.impl;
 
 /**
@@ -38,5 +39,19 @@ public class CAOfflineException extends Exception {
      */
     public CAOfflineException(String msg) {
         super(msg);
+    }
+
+    /**
+     * Creates a new instance with detail Throwable cause.
+     */
+    public CAOfflineException(Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * Creates a new instance with detail message and Throwable cause.
+     */
+    public CAOfflineException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
