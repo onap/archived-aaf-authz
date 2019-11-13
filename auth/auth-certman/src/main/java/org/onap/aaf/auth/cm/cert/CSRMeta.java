@@ -40,6 +40,7 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -61,10 +62,16 @@ public class CSRMeta {
     private String environment;
     private String email;
     private String challenge;
+    private String issuerCn;
+    private String issuerEmail;
+    private String password;
+    private String externalCaUrl;
     private List<RDN> rdns;
     private ArrayList<String> sanList = new ArrayList<>();
     private KeyPair keyPair;
-    private X500Name name = null;
+    private X500Name name;
+    private X500Name issuerName;
+    private Certificate certificate;
     private SecureRandom random = new SecureRandom();
 
     public CSRMeta(List<RDN> rdns) {
@@ -89,6 +96,18 @@ public class CSRMeta {
             name = xnb.build();
         }
         return name;
+    }
+
+    public X500Name issuerx500Name() {
+        if (issuerName == null) {
+            X500NameBuilder xnb = new X500NameBuilder();
+            xnb.addRDN(BCStyle.CN,issuerCn);
+            if(issuerEmail != null){
+                xnb.addRDN(BCStyle.E, issuerEmail);
+            }
+            issuerName = xnb.build();
+        }
+        return issuerName;
     }
 
 
@@ -188,6 +207,14 @@ public class CSRMeta {
         return keyPair;
     }
 
+    public KeyPair keyPair() {
+        return keyPair;
+    }
+
+    public void keyPair(KeyPair keyPair) {
+        this.keyPair = keyPair;
+    }
+
     /**
      * @return the cn
      */
@@ -264,4 +291,43 @@ public class CSRMeta {
         this.challenge = challenge;
     }
 
+    public void password(String password) {
+        this.password = password;
+    }
+
+    public String password() {
+        return password;
+    }
+
+    public void certificate(Certificate certificate) {
+        this.certificate = certificate;
+    }
+
+    public Certificate certificate() {
+        return certificate;
+    }
+
+    public void externalCaUrl(String externalCaUrl) {
+        this.externalCaUrl = externalCaUrl;
+    }
+
+    public String externalCaUrl() {
+        return externalCaUrl;
+    }
+
+    public void issuerCn(String issuerCn) {
+        this.issuerCn = issuerCn;
+    }
+
+    public String issuerCn() {
+        return issuerCn;
+    }
+
+    public String issuerEmail() {
+      return issuerEmail;
+    }
+
+    public void issuerEmail(String issuerEmail) {
+      this.issuerEmail = issuerEmail;
+    }
 }
