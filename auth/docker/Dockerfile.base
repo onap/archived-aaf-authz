@@ -19,6 +19,9 @@
 #
 # Use dbuild.sh input parameter to set registry
 FROM ${REGISTRY}/openjdk:8-jre-alpine
+#FROM openjdk:12-jdk-alpine
+#FROM openjdk:13-jdk-alpine
+
 MAINTAINER AAF Team, AT&T 2018
 
 LABEL description="aaf_base"

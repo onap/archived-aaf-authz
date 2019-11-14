@@ -42,6 +42,10 @@
       	<include>org.onap.aaf.authz:aaf-misc-env</include>
       	<include>org.onap.aaf.authz:aaf-misc-rosetta</include>
       	<include>jline:jline</include>
+      	<include>javax.xml.bind:jaxb-api</include>
+      	<include>org.glassfish.jaxb:jaxb-runtime</include>
+      	<include>com.sun.istack:istack-commons-runtime</include>
+      	<include>javax.activation:javax.activation-api</include>
       </includes>
     </dependencySet>
 

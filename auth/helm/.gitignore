@@ -2,3 +2,6 @@ aaf.orig/
 pause/
 aaf.new/
 aaf.props
+.DS_Store
+current
+*.tgz
