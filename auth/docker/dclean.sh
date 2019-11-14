@@ -23,7 +23,7 @@
 DOCKER=${DOCKER:=docker}
 
 if [ "$1" == "" ]; then
-    AAF_COMPONENTS="$(cat components) config core agent "
+    AAF_COMPONENTS="$(cat components) config core agent base "
 else
     AAF_COMPONENTS="$@"
 fi

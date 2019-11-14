@@ -21,7 +21,7 @@
 # This script is run when starting client Container.
 #  It needs to cover the cases where the initial data doesn't exist, and when it has already been configured (don't overwrite)
 #
-JAVA=/usr/bin/java
+JAVA=${JAVA_HOME}/bin/java
 AAF_INTERFACE_VERSION=2.1
 
 # Extract Name, Domain and NS from FQI

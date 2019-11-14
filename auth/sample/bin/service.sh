@@ -39,7 +39,7 @@ cadi_longitude=${cadi_longitude:-"${LONGITUDE}"}
 cadi_x509_issuers=${cadi_x509_issuers:-"${CADI_X509_ISSUERS}"}
 aaf_locate_url=${aaf_locate_url:-"https://${HOSTNAME}:8095"}
 
-JAVA=/usr/bin/java
+JAVA=${JAVA_HOME}/bin/java
 
 OSAAF=/opt/app/osaaf
 LOCAL=$OSAAF/local
