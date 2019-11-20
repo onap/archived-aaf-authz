@@ -61,22 +61,6 @@
                 <role>Lead Developer</role>
             </roles>
         </developer>
-        <developer>
-            <name>Gabe Maurer</name>
-            <email>gabe.maurer@att.com</email>
-            <organization>ATT</organization>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Ian Howell</name>
-            <email>ian.howell@att.com</email>
-            <organization>ATT</organization>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </developer>
     </developers>
     
     <dependencies>

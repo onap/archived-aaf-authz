@@ -129,7 +129,7 @@ public class FileGetter {
 
     public static void main(String[] args) {
         PropAccess access = new PropAccess(args);
-        access.setProperty(AAF_FILEGETTER,"/Users/jg1555/cred.dat");
+        access.setProperty(AAF_FILEGETTER,"/opt/app/aaf/data/cred.dat");
         FileGetter fg = FileGetter.singleton(access);
 
         for(String id : new String[] {"m01891@aaf.att.com","bogus"}) {
