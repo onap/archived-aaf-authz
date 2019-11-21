@@ -50,10 +50,10 @@ public class ListApprovals extends Cmd {
 
     @Override
     public int _exec(int _idx, final String ... args) throws CadiException, APIException, LocatorException {
-            int idx = _idx;
+        int idx = _idx;
         final String type = args[idx++];
         int option = whichOption(options,type);
-        String value = args[idx++];
+        String value = args[idx];
         final String fullValue;
         if (option != 2) {
             fullValue = fullID(value);
