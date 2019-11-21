@@ -60,7 +60,7 @@ public class ListForCreds extends Cmd {
             int idx = idxParam;
         final int option = whichOption(options, args[idx++]);
         final String which = options[option];
-        final String value = args[idx++];
+        final String value = args[idx];
         return same(new Retryable<Integer>() {
             @Override
             public Integer code(Rcli<?> client) throws CadiException, APIException {
