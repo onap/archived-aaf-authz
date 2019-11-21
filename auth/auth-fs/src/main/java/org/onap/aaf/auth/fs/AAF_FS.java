@@ -44,7 +44,7 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.cadi.register.RemoteRegistrant;
-import org.onap.aaf.misc.env.APIException;
+
 
 
 public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
@@ -58,7 +58,7 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
             // creates StaticSlot, needed for CachingFileAccess, and sets to public Dir
             env.staticSlot(CachingFileAccess.CFA_WEB_PATH,"aaf_public_dir");
 
-            CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
+            CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<>(env);
             route(env,GET,"/:key*", cfa);
             final String aaf_locate_url = Config.getAAFLocateUrl(access);
             if (aaf_locate_url == null) {
