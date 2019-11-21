@@ -59,7 +59,7 @@ public class API_Proxy {
      * @param facade
      * @throws Exception
      */
-    public static void init(final AAF_Locate gwAPI, LocateFacade facade) throws Exception {
+    public static void init(final AAF_Locate gwAPI, LocateFacade facade) {
 
         String aafurl = gwAPI.access.getProperty(Config.AAF_URL,null);
         if (aafurl!=null) {
