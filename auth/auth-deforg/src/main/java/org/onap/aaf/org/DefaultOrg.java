@@ -637,6 +637,25 @@ public class DefaultOrg implements Organization {
         }
         return false;
     }
+    
+	@Override
+	public String supportedDomain(String user) {
+		if(user!=null) {
+			int after_at = user.indexOf('@')+1;
+			if(after_at<user.length()) {
+				String ud = FQI.reverseDomain(user);
+				if(ud.startsWith(getDomain())) {
+					return getDomain();
+				}
+				for(String s : supportedRealms) {
+					if(ud.startsWith(s)) {
+						return FQI.reverseDomain(s);
+					}
+				}
+			}
+		}
+		return null;
+	}
 
     @Override
     public synchronized void addSupportedRealm(final String r) {

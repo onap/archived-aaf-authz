@@ -32,6 +32,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.onap.aaf.cadi.CadiException;

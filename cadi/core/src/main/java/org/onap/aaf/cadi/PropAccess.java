@@ -181,7 +181,7 @@ public class PropAccess implements Access {
                                 String value = es.getValue().toString();
                                 props.put(key, value);
                                 if(key.contains("pass")) {
-                                    value = "XXXXXXX";
+                                    value = "vi XX";
                                 }
                                 printf(Level.DEBUG,"  %s=%s",key,value);
                             }

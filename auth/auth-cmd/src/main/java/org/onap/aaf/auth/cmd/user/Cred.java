@@ -132,11 +132,22 @@ public class Cred extends Cmd {
 
                     // IMPORTANT! We do this backward, because it is looking for string
                     // %1 or %13.  If we replace %1 first, that messes up %13
+                    String var;
                     for(int i=vars.size()-1;i>0;--i) {
-                        text = text.replace("%"+(i+1), (i<10?" ":"") + i+") " + vars.get(i));
+                    	var = vars.get(i);
+                    	if(aafcli.isTest()) {
+                    		int type = var.indexOf("U/P");
+                    		if(type>0) {
+                    			var = var.substring(0,type+4) + "  XXXX/XX/XX XX:XX UTC  XXXXXXXXXXXXXXXXXX";
+                    		}
+                    	}
+                        text = text.replace("%"+(i+1), (i<10?" ":"") + i+") " + var);
                     }
 
                     text = text.replace("%1",vars.get(0));
+                    if(aafcli.isTest()) {
+                    	
+                    }
                     pw().println(text);
                 } else if (fp.code()==406 && option==1) {
                         pw().println("You cannot delete this Credential");

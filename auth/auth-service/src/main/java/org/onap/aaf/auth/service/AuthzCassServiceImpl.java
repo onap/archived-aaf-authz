@@ -2346,10 +2346,11 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                 }
                 switch(action) {
                     case DELETE:
+                    	String why;
                         if(ques.isOwner(trans, user,ns) ||
-                                ques.isAdmin(trans, user,ns) ||
-                                ques.isGranted(trans, user, ROOT_NS,"password",company,DELETE)) {
-                                     return Result.ok();
+                        		ques.isAdmin(trans, user,ns) ||
+                        		ques.isGranted(trans, user, ROOT_NS,"password",company,DELETE)) {
+                        	return Result.ok();
                         }
                         break;
                     case RESET:
@@ -2509,13 +2510,16 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
                         try {
                             if (firstID) {
                                 // OK, it's a first ID, and not by NS Owner
-                                if(!ques.isOwner(trans,trans.user(),cdd.ns)) {
+                            	String user = trans.user();
+                                if(!ques.isOwner(trans,user,cdd.ns)) {
                                     // Admins are not allowed to set first Cred, but Org has already
                                     // said entity MAY create, typically by Permission
                                     // We can't know which reason they are allowed here, so we
                                     // have to assume that any with Special Permission would not be
                                     // an Admin.
-                                    if(ques.isAdmin(trans, trans.user(), cdd.ns)) {
+                                	String domain = org.supportedDomain(user);
+                                    if((domain!=null && !ques.isGranted(trans, user, ROOT_NS, "mechid", domain, Question.CREATE)) &&
+                                    		ques.isAdmin(trans, user, cdd.ns)) {
                                         return Result.err(Result.ERR_Denied,
                                             "Only Owners may create first passwords in their Namespace. Admins may modify after one exists" );
                                     } else {
@@ -3900,6 +3904,10 @@ public class AuthzCassServiceImpl    <NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         }
 
         final DelegateDAO.Data dd = rd.value;
+        
+        if(dd.user.contentEquals(dd.delegate) && !trans.requested(force)) {
+        	return Result.err(Status.ERR_InvalidDelegate,dd.user + " cannot delegate to self");
+        }
 
         Result<List<DelegateDAO.Data>> ddr = ques.delegateDAO().read(trans, dd);
         if (access==Access.create && ddr.isOKhasData()) {

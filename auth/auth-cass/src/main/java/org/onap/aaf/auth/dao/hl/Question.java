@@ -786,11 +786,17 @@ public class Question {
                     return Result.err(Status.ERR_BadData,
                             "[%s] cannot be a delegate for self", dd.user);
                 }
-                if (!isUser    && !isGranted(trans, trans.user(), ROOT_NS,DELG,
-                                org.getDomain(), Question.CREATE)) {
-                    return Result.err(Status.ERR_Denied,
+                if (!isUser) {
+                	String supportedDomain = org.supportedDomain(dd.user);
+                	if(supportedDomain==null) {
+                        return Result.err(Status.ERR_Denied,
+                                "[%s] may not create a delegate for the domain for [%s]",
+                                trans.user(), dd.user);
+                	} else if(!isGranted(trans, trans.user(), ROOT_NS,DELG,supportedDomain,Question.CREATE)) {
+                		return Result.err(Status.ERR_Denied,
                             "[%s] may not create a delegate for [%s]",
                             trans.user(), dd.user);
+                	}
                 }
                 break;
             case read:

@@ -95,7 +95,16 @@ public interface Organization {
 
     public void addSupportedRealm(String r);
 
-    public String getDomain();
+    /**
+     * If Supported, returns Realm, ex: org.onap
+     * ELSE returns null
+     * 
+     * @param user
+     * @return
+     */
+    public String supportedDomain(String user);
+
+	public String getDomain();
 
     /**
      * Get Identity information based on userID
@@ -419,6 +428,11 @@ public interface Organization {
 
         @Override
         public void addSupportedRealm(String r) {
+        }
+        
+        @Override
+        public String supportedDomain(String r) {
+        	return null;
         }
 
         @Override
