@@ -63,7 +63,7 @@ public class User extends Cmd {
 
                 Future<?> fp = null;
 
-                String[] ids = args[idx++].split(",");
+                String[] ids = args[idx].split(",");
                 String verb=null,participle=null;
                 // You can request to be added or removed from role.
                 setQueryParamsOn(client);
