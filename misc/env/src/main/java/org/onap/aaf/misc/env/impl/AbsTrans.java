@@ -122,7 +122,8 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
     @Override
     public Metric auditTrail(LogTarget lt, int indent, StringBuilder sb, int ... flags) {
         Metric metric = new Metric();
-        int last = (metric.entries = trail.size()) -1;
+        metric.entries = trail.size();
+        int last = (metric.entries) -1;
         metric.buckets = flags.length==0?EMPTYF:new float[flags.length];
         if (last>=0) {
             TimeTaken first = trail.get(0);
@@ -159,7 +160,7 @@ public abstract class AbsTrans<ENV extends Env> implements TransStore {
                 }
             }            
         } else {
-            Stack<Long> stack = new Stack<Long>();
+            Stack<Long> stack = new Stack<>();
             for (TimeTaken tt : trail) {
                 // Create Indentation based on SUB
                 while (!stack.isEmpty() && tt.end()>stack.peek()) {
