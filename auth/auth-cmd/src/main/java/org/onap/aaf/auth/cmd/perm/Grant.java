@@ -74,7 +74,7 @@ public class Grant extends Cmd {
 
                 Future<RolePermRequest> frpr = null;
 
-                String[] roles = args[idx++].split(",");
+                String[] roles = args[idx].split(",");
                 String strA;
                 String strB;
                 for (String role : roles) {
@@ -110,7 +110,6 @@ public class Grant extends Cmd {
                             pw().println(" Accepted, but requires Approvals before actualizing");
                         } else {
                             error(frpr);
-                            idx=Integer.MAX_VALUE;
                         }
                     }
                 }
