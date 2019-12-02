@@ -61,7 +61,7 @@ public class Create extends Cmd {
         }
         String[] admin;
         if (args.length>idx) {
-            admin = args[idx++].split(COMMA);
+            admin = args[idx].split(COMMA);
         } else {
             admin = responsible;
         }
