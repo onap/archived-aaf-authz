@@ -49,7 +49,7 @@ public class Owner extends BaseCmd<NS> {
 
         final int option = whichOption(options, args[idx++]);
         final String ns = args[idx++];
-        final String ids[] = args[idx++].split(",");
+        final String ids[] = args[idx].split(",");
 
         return same(new Retryable<Integer>() {
             @Override

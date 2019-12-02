@@ -57,7 +57,7 @@ public class Delete extends Cmd {
                 PermRequest pk = new PermRequest();
                 pk.setType(args[idx++]);
                 pk.setInstance(args[idx++]);
-                pk.setAction(args[idx++]);
+                pk.setAction(args[idx]);
 
                 if(pk.getType().contains("@")) { // User Perm deletion... Must remove from hidden role
                     client.setQueryParams("force");
