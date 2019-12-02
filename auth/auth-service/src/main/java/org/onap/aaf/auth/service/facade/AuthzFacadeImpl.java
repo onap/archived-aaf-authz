@@ -135,7 +135,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         (nssDF                 = env.newDataFactory(service.mapper().getClass(API.NSS))).in(dataType).out(dataType);
         (permRequestDF         = env.newDataFactory(service.mapper().getClass(API.PERM_REQ))).in(dataType).out(dataType);
         (permsDF             = env.newDataFactory(service.mapper().getClass(API.PERMS))).in(dataType).out(dataType);
-//        (permKeyDF            = env.newDataFactory(service.mapper().getClass(API.PERM_KEY))).in(dataType).out(dataType);
+
         (roleDF             = env.newDataFactory(service.mapper().getClass(API.ROLES))).in(dataType).out(dataType);
         (roleRequestDF         = env.newDataFactory(service.mapper().getClass(API.ROLE_REQ))).in(dataType).out(dataType);
         (usersDF             = env.newDataFactory(service.mapper().getClass(API.USERS))).in(dataType).out(dataType);
@@ -174,7 +174,7 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
         if (result.variables==null || result.variables.length<1) {
             detail = new String[1];
         } else {
-            List<String> dlist = new ArrayList<String>();
+            List<String> dlist = new ArrayList<>();
             dlist.add(null);
             String os;
             for(Object s : result.variables) {
@@ -185,8 +185,6 @@ public abstract class AuthzFacadeImpl<NSS,PERMS,PERMKEY,ROLES,USERS,USERROLES,DE
             detail = new String[dlist.size()];
             dlist.toArray(detail);
         }
-        //int httpstatus;
-
         switch(result.status) {
             case ERR_ActionNotCompleted:
                 msgId = "SVC1202";
