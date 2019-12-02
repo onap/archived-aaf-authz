@@ -54,7 +54,7 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
         hman = new HMangr(access,Config.loadLocator(si, access.getProperty(Config.AAF_URL,null)));
     }
 
-    protected SecuritySetter<HttpURLConnection> bestSS(SecurityInfoC<HttpURLConnection> si) throws CadiException {
+    protected SecuritySetter<HttpURLConnection> bestSS(SecurityInfoC<HttpURLConnection> si) {
         return si.defSS;
     }
 
