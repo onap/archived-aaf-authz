@@ -117,7 +117,8 @@ public final class JAXBData<T> implements Data<T>{
         if (dataAsString!=null) {
             return dataAsString;
         } else {
-            return dataAsString = stringifier.stringify(env, dataAsObject);
+        	dataAsString = stringifier.stringify(env, dataAsObject);
+            return dataAsString;
         }
     }
 
@@ -134,7 +135,8 @@ public final class JAXBData<T> implements Data<T>{
         if (dataAsString!=null) {
             return dataAsString;
         } else {
-            return dataAsString = stringifier.stringify(creatingEnv, dataAsObject,options);
+            dataAsString = stringifier.stringify(creatingEnv, dataAsObject,options);
+            return dataAsString;
         }
     }
     
@@ -243,7 +245,8 @@ public final class JAXBData<T> implements Data<T>{
             return dataAsString;
         } else {
             try {
-                return dataAsString = stringifier.stringify(creatingEnv, dataAsObject);
+                dataAsString = stringifier.stringify(creatingEnv, dataAsObject);
+                return dataAsString;
             } catch (APIException e) {
                 return "ERROR - Can't Stringify from Object " + e.getLocalizedMessage();
             }
