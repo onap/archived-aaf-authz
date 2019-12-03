@@ -63,13 +63,6 @@ public class ApprovedRpt extends Batch {
 
         TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
         try {
-//            TimeTaken tt = trans.start("Connect to Cluster", Env.REMOTE);
-//            try {
-//                session = cluster.connect();
-//            } finally {
-//                tt.done();
-//            }
-
             now = new Date();
             String sdate = Chrono.dateOnlyStamp(now);
             File file = new File(logDir(),APPR_RPT + sdate +CSV);
