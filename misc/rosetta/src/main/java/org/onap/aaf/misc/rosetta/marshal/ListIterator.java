@@ -44,7 +44,8 @@ final class ListIterator<T> implements Iterator<T> {
 
     @Override
     public T next() {
-        return curr = delg.hasNext()?delg.next():null;
+        curr = delg.hasNext()?delg.next():null;
+        return curr;
     }
 
     public T peek() {
