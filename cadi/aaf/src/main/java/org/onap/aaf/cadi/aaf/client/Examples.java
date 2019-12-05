@@ -58,7 +58,7 @@ import aaf.v2_0.Users;
 import aaf.v2_0.Users.User;
 
 public class Examples {
-    public static <C> String print(RosettaEnv env, String nameOrContentType, boolean optional) throws APIException, SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    public static <C> String print(RosettaEnv env, String nameOrContentType, boolean optional) throws APIException,  NoSuchMethodException,  IllegalAccessException, InvocationTargetException {
         // Discover ClassName
         String className = null;
         String version = null;
@@ -134,7 +134,7 @@ public class Examples {
 
         @SuppressWarnings("unchecked")
         String rv = df.newData().load((C)data).out(type).asString();
-//        Object obj = df.newData().in(type).load(rv).asObject();
+
         return rv;
     }
 
@@ -146,7 +146,6 @@ public class Examples {
         req.setStart(Chrono.timeStamp(gc));
         gc.add(GregorianCalendar.MONTH, 6);
         req.setEnd(Chrono.timeStamp(gc));
-//        req.setForce("false");
 
     }
 
@@ -276,7 +275,9 @@ public class Examples {
         UserRoleRequest urr = new UserRoleRequest();
         urr.setRole("org.osaaf.myns.myRole");
         urr.setUser("ab1234@people.osaaf.org");
-        if (optional) setOptional(urr);
+        if (optional) { 
+           setOptional(urr);
+        }
         return urr;
     }
 
