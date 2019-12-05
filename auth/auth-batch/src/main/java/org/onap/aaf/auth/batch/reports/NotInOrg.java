@@ -99,7 +99,7 @@ public class NotInOrg extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
         try {
-            Map<String,Boolean> checked = new TreeMap<String, Boolean>();
+            Map<String,Boolean> checked = new TreeMap<>();
             trans.info().log("Process Organization Identities");
             trans.info().log("User Roles");
 
