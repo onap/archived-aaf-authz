@@ -27,7 +27,7 @@ import org.onap.aaf.auth.dao.cass.OAuthTokenDAO;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.oauth.service.OCreds;
 import org.onap.aaf.auth.oauth.service.OAuthService.GRANT_TYPE;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.oauth.OAuth2Principal;
 
 public interface Mapper<TOKEN_REQ,TOKEN,INTROSPECT,ERROR> extends MapperIntrospect<INTROSPECT>

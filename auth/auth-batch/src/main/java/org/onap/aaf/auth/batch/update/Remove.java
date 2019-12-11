@@ -47,7 +47,7 @@ import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;

@@ -27,8 +27,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.Holder;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +38,7 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.cadi.util.CSV.Visitor;
 import org.onap.aaf.cadi.util.CSV.Writer;
+import org.onap.aaf.cadi.util.Holder;
 
 public class JU_CSV {
 
@@ -110,7 +109,8 @@ public class JU_CSV {
             public void visit(List<String> row) {
                 for(String s: row) {
 //                    System.out.println(hi.value + ") " + s);
-                    Assert.assertEquals(expected.get(hi.value++),s);
+                    Assert.assertEquals(expected.get(hi.get()),s);
+                    hi.set(hi.get()+1); // increment
                 }
             }
         });

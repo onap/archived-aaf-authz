@@ -69,7 +69,7 @@ import org.onap.aaf.misc.env.util.Chrono;
 
 
 public class Analyze extends Batch {
-    private static final int unknown=0;
+	private static final int unknown=0;
     private static final int owner=1;
     private static final int supervisor=2;
     private static final int total=0;
@@ -82,6 +82,7 @@ public class Analyze extends Batch {
     private static final String EXPIRED_OWNERS = "ExpiredOwners";
     private static final String CSV = ".csv";
     private static final String INFO = "info";
+    private static final String NOT_COMPLIANT = "NotCompliant";
     private int minOwners;
     private Map<String, CSV.Writer> writerList;
     private ExpireRange expireRange;
@@ -89,6 +90,7 @@ public class Analyze extends Batch {
     private CSV.Writer deleteCW;
     private CSV.Writer needApproveCW;
     private CSV.Writer extendCW;
+    private CSV.Writer notCompliantCW;
     private Range futureRange;
     private final String sdate;
     private LastNotified ln;
@@ -146,6 +148,12 @@ public class Analyze extends Batch {
             extendCW.row(INFO,EXTEND,sdate,1);
             writerList.put(EXTEND,extendCW);
 
+            // Setup NotCompliant Writer for Apps
+            file = new File(logDir(),NOT_COMPLIANT + sdate + CSV);
+            CSV ncCSV = new CSV(env.access(),file);
+            notCompliantCW = ncCSV.writer();
+            writerList.put(NOT_COMPLIANT, notCompliantCW);
+            
             // Load full data of the following
             ln = new LastNotified(session);
 

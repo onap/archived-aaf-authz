@@ -64,7 +64,7 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
 import org.onap.aaf.cadi.Symm;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;

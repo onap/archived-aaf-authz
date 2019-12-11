@@ -43,7 +43,7 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.CredVal.Type;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.oauth.AAFToken;
 import org.onap.aaf.cadi.oauth.TokenClient;

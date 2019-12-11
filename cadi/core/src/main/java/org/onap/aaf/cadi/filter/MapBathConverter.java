@@ -29,14 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.ws.Holder;
-
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.util.CSV;
 import org.onap.aaf.cadi.util.CSV.Visitor;
+import org.onap.aaf.cadi.util.Holder;
 
 /**
  * This Filter is designed to help MIGRATE users from systems that don't match the FQI style.
@@ -119,7 +118,7 @@ public class MapBathConverter {
                 throw new CadiException("Invalid Authentication Credential for " + cred);
             }
             if(hpass!=null) {
-                hpass.value = cred.substring(colon+1);
+                hpass.set(cred.substring(colon+1));
             }
             return cred.substring(0, colon);
         } else {
@@ -144,7 +143,7 @@ public class MapBathConverter {
         Holder<String> hpass=null;
         try {
             if(bath.startsWith(BASIC)) {
-                cred = idFromBasic(bath,(hpass=new Holder<String>()));
+                cred = idFromBasic(bath,(hpass=new Holder<String>(null)));
                 if(rv==null) {
                     rv = map.get(cred);
                 }
@@ -161,7 +160,7 @@ public class MapBathConverter {
                 } else {
                     if(hpass!=null) {
                         tcred = rv;
-                        rv = BASIC + Symm.base64noSplit.encode(rv+':'+hpass.value);
+                        rv = BASIC + Symm.base64noSplit.encode(rv+':'+hpass.get());
                     }
                 }
                 if(tcred != null) {

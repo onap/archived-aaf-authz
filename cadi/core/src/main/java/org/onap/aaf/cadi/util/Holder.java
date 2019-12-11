@@ -19,7 +19,7 @@
  *
  */
 
-package org.onap.aaf.cadi.client;
+package org.onap.aaf.cadi.util;
 
 /**
  * Use to set Variables outside of Anonymous classes.

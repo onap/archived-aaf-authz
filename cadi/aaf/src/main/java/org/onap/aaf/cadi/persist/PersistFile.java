@@ -43,7 +43,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.Access.Level;
 import org.onap.aaf.cadi.Symm.Encryption;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;

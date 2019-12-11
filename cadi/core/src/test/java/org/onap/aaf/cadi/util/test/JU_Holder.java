@@ -20,13 +20,13 @@
  * *
  ******************************************************************************/
 
-package org.onap.aaf.cadi.client.test;
+package org.onap.aaf.cadi.util.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
-
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 
 public class JU_Holder {
 

@@ -43,7 +43,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.PropAccess;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.persist.PersistFile;
 import org.onap.aaf.misc.env.APIException;

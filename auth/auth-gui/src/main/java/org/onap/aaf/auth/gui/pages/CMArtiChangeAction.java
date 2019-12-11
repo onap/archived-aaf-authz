@@ -32,7 +32,7 @@ import org.onap.aaf.auth.gui.NamedCode;
 import org.onap.aaf.auth.gui.Page;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.client.Future;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.cadi.util.Vars;

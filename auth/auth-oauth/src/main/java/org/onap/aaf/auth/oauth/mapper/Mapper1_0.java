@@ -34,7 +34,7 @@ import org.onap.aaf.auth.oauth.service.OAuthService;
 import org.onap.aaf.auth.oauth.service.OCreds;
 import org.onap.aaf.auth.oauth.service.OAuthService.CLIENT_TYPE;
 import org.onap.aaf.auth.oauth.service.OAuthService.GRANT_TYPE;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.oauth.OAuth2Principal;
 import org.onap.aaf.cadi.util.Vars;
 import org.onap.aaf.misc.env.util.Split;

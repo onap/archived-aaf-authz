@@ -135,7 +135,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
         );
     }
 
-    private static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
+    public static void load(Trans trans, Session session, Creator<UserRole> creator, String where, Visitor<UserRole> visitor) {
         String query = creator.query(where);
         trans.debug().log( "query: " + query );
         TimeTaken tt = trans.start("Read UserRoles", Env.REMOTE);

@@ -41,7 +41,7 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.auth.oauth.mapper.Mapper.API;
 import org.onap.aaf.auth.oauth.service.OAuthService.GRANT_TYPE;
 import org.onap.aaf.auth.oauth.service.OCreds;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.oauth.OAuth2Principal;
 
 import aaf.v2_0.Error;

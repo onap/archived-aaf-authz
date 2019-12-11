@@ -29,7 +29,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.xml.ws.Holder;
+
+import org.onap.aaf.cadi.util.Holder;
 
 /**
  * Add various Filters by CADI Property not in the official Chain
@@ -53,20 +54,20 @@ public class SideChain {
         FilterChain truth = new FilterChain() {
             @Override
             public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-               hbool.value=Boolean.TRUE;
+               hbool.set(Boolean.TRUE);
             }
             public String toString() {
-                return hbool.value.toString();
+                return hbool.get().toString();
             }
         };
         for(Filter f : sideChain) {
-            hbool.value=Boolean.FALSE;
+            hbool.set(Boolean.FALSE);
             f.doFilter(request, response, truth);
-            if(!hbool.value) {
+            if(!hbool.get()) {
                 return;
             }
         }
-        if(hbool.value) {
+        if(hbool.get()) {
             chain.doFilter(request, response);
         }
     }

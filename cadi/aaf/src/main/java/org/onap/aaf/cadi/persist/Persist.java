@@ -40,7 +40,7 @@ import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.LocatorException;
 import org.onap.aaf.cadi.Access.Level;
-import org.onap.aaf.cadi.client.Holder;
+import org.onap.aaf.cadi.util.Holder;
 import org.onap.aaf.cadi.client.Result;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.util.Chrono;
