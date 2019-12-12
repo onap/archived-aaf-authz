@@ -27,7 +27,9 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -94,8 +96,17 @@ public class JU_DNSLocator {
 
     @Test
     public void refreshTest() throws LocatorException {
-        DNSLocator dl = new DNSLocator(access, "https", "bogushost", "8100-8101");
-        assertThat(dl.refresh(), is(false));
+        DNSLocator dl = new DNSLocator(access, "https", "bogushost", "8100-8101",
+        	// Note: Lambda would be nice but need JDK 1.7 still
+        	// PowerMock couldn't do InetAddress
+        	new DNSLocator.DNSLookup() {
+				@Override
+				public InetAddress[] getAllByName(String host) throws UnknownHostException {
+ 					return new InetAddress[0];
+				}
+        	}
+        );
+        assertThat(dl.refresh(), is(true));
     }
 
     @Test(expected = LocatorException.class)

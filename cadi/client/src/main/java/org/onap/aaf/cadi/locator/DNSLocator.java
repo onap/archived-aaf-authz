@@ -23,8 +23,10 @@ package org.onap.aaf.cadi.locator;
 
 import java.io.IOException;
 import java.net.InetAddress;
+//import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.Access.Level;
@@ -39,13 +41,21 @@ public class DNSLocator implements SizedLocator<URI> {
     private Host[] hosts;
     private int startPort, endPort;
     private String suffix;
+    // Added for JUnit Purposes.  Force correct responses in odd situations on tests
+    private final DNSLookup dnsLookup;
 
     private int size = 1; // initial, until refreshed.
 
     public DNSLocator(Access access, String protocol, String host, String range) {
+    	this(access, protocol, host, range, DNSLookup.dflt);
+    }
+    
+    public DNSLocator(Access access, String protocol, String host, String range, DNSLookup dnsLookup) {
         this.host = host;
         this.protocol = protocol;
         this.access = access;
+        this.dnsLookup = dnsLookup;
+         
         int dash = range.indexOf('-');
         if (dash<0) {
             startPort = endPort = Integer.parseInt(range);
@@ -57,7 +67,12 @@ public class DNSLocator implements SizedLocator<URI> {
     }
 
     public DNSLocator(Access access, String aaf_locate) throws LocatorException {
+    	this(access, aaf_locate, DNSLookup.dflt);
+    }
+    
+    public DNSLocator(Access access, String aaf_locate, DNSLookup dnsLookup) throws LocatorException {
         this.access = access;
+        this.dnsLookup = dnsLookup;
         if (aaf_locate==null) {
             throw new LocatorException("Null passed into DNSLocator constructor");
         }
@@ -148,7 +163,7 @@ public class DNSLocator implements SizedLocator<URI> {
     @Override
     public boolean refresh() {
         try {
-            InetAddress[] ias = InetAddress.getAllByName(host);
+            InetAddress[] ias = dnsLookup.getAllByName(host);
             Host[] temp = new Host[ias.length * (1 + endPort - startPort)];
             int cnt = -1;
             for (int j=startPort; j<=endPort; ++j) {
@@ -214,7 +229,24 @@ public class DNSLocator implements SizedLocator<URI> {
 
         return host;
     }
-
+    
+    /**
+     * 
+     * Some ISPs return InetEntries for bogus entries, making JUnit Testing difficult.
+     * We add this interface to force validly empty responses.
+     * We don't use Lambda at this point, so we can continue to support JKD 1.7 
+     * a while longer.
+     *
+     */
+    public interface DNSLookup {
+    	InetAddress[] getAllByName(String host) throws UnknownHostException;
+    	public static final DNSLookup dflt = new DNSLookup() {
+    		public InetAddress[] getAllByName(String host) throws UnknownHostException {
+    			return InetAddress.getAllByName(host);
+    		}
+    	};
+    }
+    
     private class Host {
         private URI uri;
         private InetAddress ia;
