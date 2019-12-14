@@ -21,17 +21,14 @@
 
 package org.onap.aaf.auth.batch.reports;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.onap.aaf.auth.batch.Batch;
 import org.onap.aaf.auth.batch.helpers.NS;
@@ -101,9 +98,31 @@ public class MassMail extends Batch {
 		}
 
 		subject = readIn(subdir, "subject");
-		head = readIn(subdir, "html.head");
+		if(subject==null) {
+			throw new IOException("MassMail needs a 'subject' file in your mailing directory");
+		} else {
+			subject = subject.replace("%ENV%", batchEnv);
+		}
+		String temp = readIn(subdir, "html.head");
+		if(temp==null) {
+			File f = new File(trans.getProperty("HEADER_HTML"));
+			if(!f.exists()) {
+				throw new IOException("No 'html.head' found in mailing dir, or default HEADER_HTML property");
+			}
+			temp = readIn(f.getParentFile(),f.getName());
+		}
+		head = temp;
+		
 		content = readIn(subdir,"html.content");
-		tail = readIn(subdir,"html.tail");
+		temp = readIn(subdir,"html.tail");
+		if(temp==null) {
+			File f = new File(trans.getProperty("FOOTER_HTML"));
+			if(!f.exists()) {
+				throw new IOException("No 'html.tail' found in mailing dir, or default FOOTER_HTML property");
+			}
+			temp = readIn(f.getParentFile(),f.getName());
+		}
+		tail = temp;
 		
 		trans.info().log("Starting Connection Process");
 		TimeTaken tt0 = trans.start("Cassandra Initialization", Env.SUB);
@@ -120,8 +139,6 @@ public class MassMail extends Batch {
 
 			NS.load(trans, session, NS.v2_0_11);
 			UserRole.load(trans, session, UserRole.v2_0_11);
-//            now = new Date();
-//            String sdate = Chrono.dateOnlyStamp(now);
 		} finally {
 			tt0.done();
 		}
@@ -129,19 +146,22 @@ public class MassMail extends Batch {
 
 	private String readIn(File subdir, String name) throws IOException {
 		File file = new File(subdir, name);
-		byte[] bytes = new byte[(int) file.length()];
-		FileInputStream fis = new FileInputStream(file);
-		try {
-			fis.read(bytes);
-			return new String(bytes);
-		} finally {
-			fis.close();
+		if(file.exists()) {
+			byte[] bytes = new byte[(int) file.length()];
+			FileInputStream fis = new FileInputStream(file);
+			try {
+				fis.read(bytes);
+				return new String(bytes);
+			} finally {
+				fis.close();
+			}
+		} else {
+			return null;
 		}
 	}
 
 	@Override
 	protected void run(AuthzTrans trans) {
-//        try {
 		trans.info().log("Create a Mass Mailing");
 
 		final AuthzTrans transNoAvg = trans.env().newTransNoAvg();
@@ -168,13 +188,15 @@ public class MassMail extends Batch {
 				if (bOwners) {
 					StringBuilder o = to;
 					List<UserRole> owners = UserRole.getByRole().get(ns.ndd.name + ".owner");
-					if (owners.isEmpty()) {
+					if (owners==null || owners.isEmpty()) {
 						trans.error().log(ns.ndd.name, "has no owners!");
 					} else {
 						for (UserRole owner : owners) {
 							try {
 								Identity identity = org.getIdentity(transNoAvg, owner.user());
-								if (identity.isPerson()) {
+								if(identity==null) {
+									trans.error().log(owner.user() + " is not a valid Identity in " + org.getName());
+								} else if (identity.isPerson()) {
 									if (o.length() > 0) {
 										o.append(',');
 										greet.append(',');
@@ -201,19 +223,24 @@ public class MassMail extends Batch {
 
 				if (bAdmins) {
 					StringBuilder a;
-					if (bOwners) {
+					if ( bOwners && to.length()>0 ) {
 						a = cc;
 					} else {
 						a = to;
 					}
 					List<UserRole> admins = UserRole.getByRole().get(ns.ndd.name + ".admin");
-					if (admins.isEmpty()) {
+					if (admins==null || admins.isEmpty()) {
 						trans.warn().log(ns.ndd.name, "has no admins!");
 					} else {
 						for (UserRole admin : admins) {
+							if(to.indexOf(admin.user())>0) {
+								continue;
+							}
 							try {
 								Identity identity = org.getIdentity(transNoAvg, admin.user());
-								if (identity.isPerson()) {
+								if(identity==null) {
+									trans.error().log(admin.user() + " is not a valid Identity in " + org.getName());
+								} else if (identity.isPerson()) {
 									if (a.length() > 0) {
 										a.append(',');
 									}
@@ -257,37 +284,13 @@ public class MassMail extends Batch {
 					} finally {
 						ps.close();
 					}
+
 				} catch (IOException e) {
 					trans.error().log(e);
 				}
 
 			}
-//            	UserRole.load(transNoAvg, session, UserRole.v2_0_11, ur -> {
-//	            	if("owner".equals(ur.rname())) {
-//	            		try {
-//							Identity identity = org.getIdentity(transNoAvg, ur.user());
-//							if(identity.isPerson()) {
-//								System.out.println("Emailing " + identity.email());
-//							}
-//						} catch (OrganizationException e) {
-//		                    trans.error().log(e, "Error Reading Organization");
-//						}
-//	            	}
-//                    Organization org = trans.org();
-//                        Identity identity = org.getIdentity(trans, ur.row);
-//
-//                    if(!check(transNoAvg, checked, ur.user())) {
-//                        ur.row(whichWriter(transNoAvg,ur.user()),UserRole.UR);
-//                    }
-//                } catch (OrganizationException e) {
-//                    trans.error().log(e, "Error Decrypting X509");
-//                }
-//            	});
 		}
-
-//        } catch (OrganizationException e) {
-//            trans.info().log(e);
-
 	}
 
 	@Override
