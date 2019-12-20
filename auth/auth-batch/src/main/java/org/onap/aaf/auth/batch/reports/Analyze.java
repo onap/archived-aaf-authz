@@ -219,11 +219,13 @@ public class Analyze extends Batch {
                         // for users and approvers still valid
                         String user = appr.getUser();
 
-                        if(org.isRevoked(noAvg, appr.getApprover())) {
-                            deleteCW.comment("Approver ID is revoked");
+                        Date revokedAppr = org.isRevoked(noAvg, appr.getApprover());
+                        Date revokedUser = org.isRevoked(noAvg, user);
+                        if(revokedAppr!=null) {
+                            deleteCW.comment("Approver ID is revoked on " + revokedAppr);
                             Approval.row(deleteCW, appr);
-                        } else if(user!=null && !user.isEmpty() && org.isRevoked(noAvg, user)) {
-                            deleteCW.comment("USER ID is revoked");
+                        } else if(user!=null && !user.isEmpty() && revokedUser!=null) {
+                            deleteCW.comment("USER ID is revoked on " + revokedUser);
                             Approval.row(deleteCW, appr);
                         } else {
                             ticket.approvals.add(appr); // add to found Ticket
@@ -393,14 +395,15 @@ public class Analyze extends Batch {
                                     }
                                     return;
                                 }
-                                if(org.isRevoked(trans, ur.user())) {
+                                Date revoked = org.isRevoked(trans, ur.user());
+                                if(revoked!=null) {
                                 	GregorianCalendar gc = new GregorianCalendar();
-                                	gc.setTime(ur.expires());
+                                	gc.setTime(revoked);
                                 	GregorianCalendar gracePeriodEnds = org.expiration(gc, Expiration.RevokedGracePeriodEnds, ur.user());
                                 	if(now.after(gracePeriodEnds.getTime())) {
                                         ur.row(deleteCW, UserRole.UR,"Revoked ID, no grace period left");
                                 	} else {
-                                		ur.row(notCompliantCW, UserRole.UR, "Revoked ID: WARNING! GracePeriod Ends " + gracePeriodEnds.toString());
+                                		ur.row(notCompliantCW, UserRole.UR, "Revoked ID: WARNING! GracePeriod Ends " + Chrono.dateOnlyStamp(gracePeriodEnds));
                                 	}
                                 	return;
                                 }

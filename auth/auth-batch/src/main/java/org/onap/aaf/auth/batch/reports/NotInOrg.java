@@ -134,7 +134,8 @@ public class NotInOrg extends Batch {
     private Writer whichWriter(AuthzTrans transNoAvg, String id) {
         Writer w = whichWriter.get(id);
         if(w==null) {
-            w = org.isRevoked(transNoAvg, id)?
+        	Date revoked = org.isRevoked(transNoAvg, id); 
+            w = revoked != null?
                     notInOrgDeleteW:
                     notInOrgW;
             whichWriter.put(id,w);

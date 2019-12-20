@@ -124,7 +124,7 @@ public interface Organization {
      * feed with a "Deleted ID" feed.
      *
      */
-    public boolean isRevoked(AuthzTrans trans, String id);
+    public Date isRevoked(AuthzTrans trans, String id);
 
 
     /**
@@ -575,9 +575,9 @@ public interface Organization {
         }
 
         @Override
-        public boolean isRevoked(AuthzTrans trans, String id) {
+        public Date isRevoked(AuthzTrans trans, String id) {
             // provide a corresponding feed that indicates that an ID has been intentionally removed from identities.dat table.
-            return false;
+            return null;
         }
 
         @Override

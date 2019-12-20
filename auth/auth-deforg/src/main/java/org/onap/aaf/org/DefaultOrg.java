@@ -41,6 +41,7 @@ import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.Env;
+import org.onap.aaf.org.Identities.Data;
 
 public class DefaultOrg implements Organization {
     private static final String AAF_DATA_DIR = "aaf_data_dir";
@@ -172,7 +173,7 @@ public class DefaultOrg implements Organization {
      * If the ID isn't in the revoked file, if it exists, it is revoked.
      */
     @Override
-    public boolean isRevoked(AuthzTrans trans, String key) {
+    public Date isRevoked(AuthzTrans trans, String key) {
         if(revoked!=null) {
             try {
                 revoked.open(trans, DefaultOrgIdentity.TIMEOUT);
@@ -185,7 +186,8 @@ public class DefaultOrg implements Organization {
                     } else {
                         search = key;
                     }
-                    return revoked.find(search, r)!=null;
+                    Data revokedData = revoked.find(search, r);
+                    return revokedData==null?null:new Date();
                 } finally {
                     revoked.close(trans);
                 }
@@ -193,7 +195,7 @@ public class DefaultOrg implements Organization {
                 trans.error().log(e);
             }
         }
-        return false;
+        return null;
     }
 
     /* (non-Javadoc)
