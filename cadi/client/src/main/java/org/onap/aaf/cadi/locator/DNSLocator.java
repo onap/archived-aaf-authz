@@ -103,10 +103,12 @@ public class DNSLocator implements SizedLocator<URI> {
 
     @Override
     public boolean hasItems() {
-        for (Host h : hosts) {
+        if(hosts!=null) {
+          for (Host h : hosts) {
             if (h.status==Status.OK) {
                 return true;
             }
+          }
         }
         return false;
     }
@@ -239,11 +241,11 @@ public class DNSLocator implements SizedLocator<URI> {
      *
      */
     public interface DNSLookup {
-    	InetAddress[] getAllByName(String host) throws UnknownHostException;
-    	public static final DNSLookup dflt = new DNSLookup() {
-    		public InetAddress[] getAllByName(String host) throws UnknownHostException {
-    			return InetAddress.getAllByName(host);
-    		}
+        InetAddress[] getAllByName(String host) throws UnknownHostException;
+        public static final DNSLookup dflt = new DNSLookup() {
+        public InetAddress[] getAllByName(String host) throws UnknownHostException {
+        return InetAddress.getAllByName(host);
+        }
     	};
     }
     
