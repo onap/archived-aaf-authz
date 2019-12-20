@@ -73,6 +73,8 @@ public class Config {
     private static final String AAF_V2_0 = "org.onap.aaf.cadi.aaf.v2_0";
     private static final String AAF_V2_0_AAFCON = AAF_V2_0+".AAFCon";
     private static final String AAF_V2_0_AAF_LUR_PERM = AAF_V2_0+".AAFLurPerm";
+    public static final String AAF_V2_0_AAF_CON_HTTP = AAF_V2_0+".AAFConHttp";
+
     private static final String OAUTH = "org.onap.auth.oauth";
     private static final String OAUTH_TOKEN_MGR = OAUTH+".TokenMgr";
     private static final String OAUTH_HTTP_TAF = OAUTH+".OAuth2HttpTaf";
@@ -256,7 +258,6 @@ public class Config {
     public static final String AAF_ALT_CLIENT_SECRET = "aaf_alt_oauth2_client_secret";
     public static final String AAF_OAUTH2_HELLO_URL = "aaf_oauth2_hello_url";
 
-    private static final String AAF_V2_0_AAF_CON_HTTP = "org.onap.aaf.cadi.aaf.v2_0.AAFConHttp";
 
 
     public static void setDefaultRealm(Access access) {
@@ -782,7 +783,8 @@ public class Config {
         return false;
     }
 
-    public static Object loadAAFConnector(SecurityInfoC<HttpURLConnection> si, String aafURL) {
+    @SuppressWarnings("unchecked")
+	public static Object loadAAFConnector(SecurityInfoC<?> si, String aafURL) {
         Access access = si.access;
         Object aafcon = null;
         Class<?> aafConClass = null;
@@ -799,7 +801,7 @@ public class Config {
                                 if (pc.equals(Access.class)) {
                                     lo.add(access);
                                 } else if (pc.equals(Locator.class)) {
-                                    lo.add(loadLocator(si, aafURL));
+                                    lo.add(loadLocator((SecurityInfoC<HttpURLConnection>)si, aafURL));
                                 }
                             }
                             if (c.getParameterTypes().length != lo.size()) {

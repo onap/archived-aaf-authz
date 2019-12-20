@@ -57,6 +57,7 @@ import org.onap.aaf.auth.batch.helpers.X509;
 import org.onap.aaf.auth.dao.cass.CredDAO;
 import org.onap.aaf.auth.dao.cass.UserRoleDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
+import org.onap.aaf.auth.org.Organization.Expiration;
 import org.onap.aaf.auth.org.Organization.Identity;
 import org.onap.aaf.auth.org.OrganizationException;
 import org.onap.aaf.cadi.configure.Factory;
@@ -392,12 +393,33 @@ public class Analyze extends Batch {
                                     }
                                     return;
                                 }
+                                if(org.isRevoked(trans, ur.user())) {
+                                	GregorianCalendar gc = new GregorianCalendar();
+                                	gc.setTime(ur.expires());
+                                	GregorianCalendar gracePeriodEnds = org.expiration(gc, Expiration.RevokedGracePeriodEnds, ur.user());
+                                	if(now.after(gracePeriodEnds.getTime())) {
+                                        ur.row(deleteCW, UserRole.UR,"Revoked ID, no grace period left");
+                                	} else {
+                                		ur.row(notCompliantCW, UserRole.UR, "Revoked ID: WARNING! GracePeriod Ends " + gracePeriodEnds.toString());
+                                	}
+                                	return;
+                                }
                                 ur.row(deleteCW, UserRole.UR,"Not in Organization");
                                 return;
                             } else if(Role.byName.get(ur.role())==null) {
                                 ur.row(deleteCW, UserRole.UR,String.format("Role %s does not exist", ur.role()));
                                 return;
+                            // Make sure owners can still be owners.
+                            } else if(ur.role().endsWith(".owner")) {
+                            	String err = identity.mayOwn(); 
+                            	if(err!=null) {
+                            		ur.row(deleteCW, UserRole.UR,String.format("%s may not be an owner: %s",ur.user(),err));
+                            		return;
+                            	}
                             }
+                            
+                            
+                            
                             // Just let expired UserRoles sit until deleted
                             if(futureRange.inRange(ur.expires())&&(!mur.containsKey(ur.user() + '|' + ur.role()))) {
                                     // Cannot just delete owners, unless there is at least one left. Process later

@@ -515,6 +515,10 @@ public class DefaultOrg implements Organization {
                 now.add(GregorianCalendar.MONTH, 6);
                 rv = now;
                 break;
+            case RevokedGracePeriodEnds:
+            	now.add(GregorianCalendar.DATE, 3);
+            	rv = now;
+            	break;
             default:
                 // Unless other wise set, 6 months is default
                 now.add(GregorianCalendar.MONTH, 6);

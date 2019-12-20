@@ -214,7 +214,8 @@ public interface Organization {
         Future,
         UserInRole,
         UserDelegate,
-        ExtendPassword
+        ExtendPassword,
+        RevokedGracePeriodEnds
     }
 
     public enum Policy {
