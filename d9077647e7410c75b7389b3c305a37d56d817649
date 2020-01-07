@@ -104,6 +104,23 @@
     },
     {
       "key": {
+        "uuid": "ef1b7b83_bbb6b93a",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CmpSendHttpRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5775
+      },
+      "writtenOn": "2020-01-07T12:43:11Z",
+      "side": 1,
+      "message": "This line may also throw exception so it should be handled here explicitly",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9724294c_19b3c7b3",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/impl/CmpClientException.java",
         "patchSetId": 1
@@ -118,6 +135,23 @@
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ab3e463_50f9b7a4",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/impl/CmpClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5775
+      },
+      "writtenOn": "2020-01-07T12:43:11Z",
+      "side": 1,
+      "message": "Loggers uses to technical language (e.g. null)",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
