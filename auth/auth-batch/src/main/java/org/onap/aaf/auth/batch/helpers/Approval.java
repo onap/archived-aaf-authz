@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -35,6 +36,7 @@ import org.onap.aaf.auth.dao.cass.ApprovalDAO;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.util.CSV;
+import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
@@ -50,16 +52,16 @@ public class Approval implements CacheChange.Data  {
     public static final String RE_VALIDATE_ADMIN = "Revalidate as Admin of AAF Namespace [";
     public static final String RE_VALIDATE_OWNER = "Revalidate as Owner of AAF Namespace [";
 
-    public static TreeMap<String,List<Approval>> byApprover = new TreeMap<>();
-    public static TreeMap<String,List<Approval>> byUser = new TreeMap<>();
-    public static TreeMap<UUID,List<Approval>> byTicket = new TreeMap<>();
-    public static List<Approval> list = new LinkedList<>();
+    public static final SortedMap<String,List<Approval>> byApprover = new TreeMap<>();
+    public static final SortedMap<String,List<Approval>> byUser = new TreeMap<>();
+    public static final SortedMap<UUID,List<Approval>> byTicket = new TreeMap<>();
+    public static final List<Approval> list = new LinkedList<>();
     private static final CacheChange<Approval> cache = new CacheChange<>();
 
     public final ApprovalDAO.Data add;
     private String role;
 
-    public static Creator<Approval> v2_0_17 = new Creator<Approval>() {
+    public static final Creator<Approval> v2_0_17 = new Creator<Approval>() {
         @Override
         public Approval create(Row row) {
             return new Approval(row.getUUID(0), row.getUUID(1), row.getString(2),
@@ -73,7 +75,7 @@ public class Approval implements CacheChange.Data  {
         }
     };
 
-    public static Visitor<Approval> FullLoad = new Visitor<Approval>() {
+    public static final Visitor<Approval> FullLoad = new Visitor<Approval>() {
         @Override
         public void visit(Approval app) {
             List<Approval> ln;
@@ -134,19 +136,24 @@ public class Approval implements CacheChange.Data  {
             int second = memo.indexOf(']', ++first);
             if (second>=0) {
                 String role = memo.substring(first, second);
-                if (memo.startsWith(RE_VALIDATE_ADMIN)) {
-                    return role + ".admin";
-                } else if (memo.startsWith(RE_VALIDATE_OWNER)) {
-                    return role + ".owner";
-                } else {
-                    first = memo.indexOf('[',second);
-                    if(first>=0) {
-                        second = memo.indexOf(']', ++first);
-                        if(second>=0 && (memo.startsWith(RE_APPROVAL_IN_ROLE) ||
-                                memo.startsWith(ADD_USER_TO_ROLE))) {
-                                return  memo.substring(first, second);
-                        }
-                    }
+                return getRoleString(role, memo, second);
+            }
+        }
+        return null;
+    }
+
+    public static String getRoleString(String role, String memo, int second) {
+        if (memo.startsWith(RE_VALIDATE_ADMIN)) {
+            return role + ".admin";
+        } else if (memo.startsWith(RE_VALIDATE_OWNER)) {
+            return role + ".owner";
+        } else {
+            int secondString = memo.indexOf('[',second);
+            if(secondString>=0) {
+                second = memo.indexOf(']', ++secondString);
+                if(second>=0 && (memo.startsWith(RE_APPROVAL_IN_ROLE) ||
+                                         memo.startsWith(ADD_USER_TO_ROLE))) {
+                    return  memo.substring(secondString, second);
                 }
             }
         }
@@ -186,7 +193,7 @@ public class Approval implements CacheChange.Data  {
     }
 
     private static int call(Trans trans, Session session, String query, Creator<Approval> creator, Visitor<Approval> visitor) {
-        TimeTaken tt = trans.start("DB Query", Trans.REMOTE);
+        TimeTaken tt = trans.start("DB Query", Env.REMOTE);
         ResultSet results;
         try {
             Statement stmt = new SimpleStatement( query );

@@ -44,7 +44,7 @@ public class    NS implements Comparable<NS> {
 
     public NsDAO.Data ndd;
 
-    public static Creator<NS> v2_0_11 = new Creator<NS> () {
+    public static final Creator<NS> v2_0_11 = new Creator<NS> () {
         @Override
         public NS create(Row row) {
             return new NS(row.getString(0),row.getString(1), row.getString(2),row.getInt(3),row.getInt(4));

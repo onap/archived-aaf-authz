@@ -23,6 +23,7 @@
 package org.onap.aaf.auth.batch.helpers;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class ExpireRange {
         ranges = new HashMap<>();
         intervalDates = new HashMap<>();
         int i=0;
-        approveDelete = new Range(DELETE,0,0,0,-1,0,GregorianCalendar.DAY_OF_YEAR,-100);
+        approveDelete = new Range(DELETE,0,0,0,-1,0, Calendar.DAY_OF_YEAR,-100);
         String prop = access.getProperty(AAF_BATCH_RANGE + i,null);
         if(prop==null && i==0) {
                 List<Range> lcred = getRangeList("cred");
@@ -66,23 +67,23 @@ public class ExpireRange {
                    Interval of 0 means none
                    Interval > 0 means only X number of Days.
                 */
-                delRange = new Range(DELETE,0,0,0,-1,0,GregorianCalendar.WEEK_OF_MONTH,-2);
+                delRange = new Range(DELETE,0,0,0,-1,0,Calendar.WEEK_OF_MONTH,-2);
                 lur.add(delRange);
                 lcred.add(delRange);
                 lx509.add(delRange);
 
-                lcred.add(new Range(ONE_WEEK ,3,-1,1,0,0,GregorianCalendar.WEEK_OF_MONTH,1));
-                lcred.add(new Range(TWO_WEEK ,2,-1,-1,GregorianCalendar.WEEK_OF_MONTH,1,GregorianCalendar.WEEK_OF_MONTH,2));
-                lcred.add(new Range(ONE_MONTH,1,7,7,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
-                lcred.add(new Range(TWO_MONTH,1,-1,-1,GregorianCalendar.MONTH,1,GregorianCalendar.MONTH,2));
+                lcred.add(new Range(ONE_WEEK ,3,-1,1,0,0,Calendar.WEEK_OF_MONTH,1));
+                lcred.add(new Range(TWO_WEEK ,2,-1,-1,Calendar.WEEK_OF_MONTH,1,Calendar.WEEK_OF_MONTH,2));
+                lcred.add(new Range(ONE_MONTH,1,7,7,Calendar.WEEK_OF_MONTH,2,Calendar.MONTH,1));
+                lcred.add(new Range(TWO_MONTH,1,-1,-1,Calendar.MONTH,1,Calendar.MONTH,2));
 
-                lur.add(  new Range(ONE_MONTH,1,-1,-1,0,0,GregorianCalendar.MONTH,1));
-                lx509.add(new Range(ONE_MONTH,1,-1,-1,GregorianCalendar.WEEK_OF_MONTH,2,GregorianCalendar.MONTH,1));
+                lur.add(  new Range(ONE_MONTH,1,-1,-1,0,0,Calendar.MONTH,1));
+                lx509.add(new Range(ONE_MONTH,1,-1,-1,Calendar.WEEK_OF_MONTH,2,Calendar.MONTH,1));
             }
     }
 
     public Range newFutureRange() {
-        return new Range("Approval",7,7,1,0,0,GregorianCalendar.MONTH,1);
+        return new Range("Approval",7,7,1,0,0,Calendar.MONTH,1);
     }
 
     public Set<String> names() {
@@ -103,6 +104,8 @@ public class ExpireRange {
             ranges.put(key, rv);
         }
         return rv;
+
+
     }
 
     public class Range {
@@ -123,9 +126,9 @@ public class ExpireRange {
             this.reportingLevel = reportingLevel;
             this.peopleInterval = peopleInterval;
             this.appInterval = appInterval;
-            GregorianCalendar gc = new GregorianCalendar();
+            Calendar gc = new GregorianCalendar();
             if(startGCType<0) {
-                gc.set(GregorianCalendar.YEAR, 1);
+                gc.set(Calendar.YEAR, 1);
             } else {
                 gc.setTime(now);
                 gc.add(startGCType, startQty);
@@ -133,7 +136,7 @@ public class ExpireRange {
             start = gc.getTime();
 
             if(endGCType<0) {
-                gc.set(GregorianCalendar.YEAR, 1);
+                gc.set(Calendar.YEAR, 1);
             } else {
                 gc.setTime(now);
                 gc.add(endGCType, endQty);
@@ -142,7 +145,7 @@ public class ExpireRange {
 
 
             if(endGCType<0) {
-                gc.set(GregorianCalendar.YEAR, -1);
+                gc.set(Calendar.YEAR, -1);
             } else {
                 gc.setTime(now);
                 gc.add(endGCType, endQty * -1);
@@ -175,7 +178,7 @@ public class ExpireRange {
                 if(rv==null) {
                     GregorianCalendar gc = new GregorianCalendar();
                     gc.setTime(now);
-                    gc.add(GregorianCalendar.DAY_OF_YEAR, -1*interval);
+                    gc.add(Calendar.DAY_OF_YEAR, -1*interval);
                     rv = gc.getTime();
                     intervalDates.put(interval, rv);
                 }

@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.onap.aaf.auth.dao.cass.RoleDAO;
@@ -42,9 +43,9 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Role implements Comparable<Role> {
-    public static final TreeMap<Role,Set<String>> data = new TreeMap<>();
-    public static final TreeMap<String,Role> keys = new TreeMap<>();
-    public static final TreeMap<String,Role> byName = new TreeMap<>();
+    protected static final SortedMap<Role,Set<String>> data = new TreeMap<>();
+    protected static final SortedMap<String,Role> keys = new TreeMap<>();
+    public static final SortedMap<String,Role> byName = new TreeMap<>();
     private static List<Role> deleteRoles = new ArrayList<>();
 
     public RoleDAO.Data rdd;
