@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3820c63_6bf1b3c1",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "By default variable is null",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8ef0b9c_263e27a1",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "There will be a problem when few threads at the same time will try to invoke issuerx500Name method. Few instances will be created. Pls mark method as synchronized",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4b95fc3_da4f346d",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "if parameters are required, then it will be better to mark them as final",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6437a0d_2292abca",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "Optional type present in java 8 can be used here",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30155417_75b541d5",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "This method is too complex. It will be better to split it to smaller parts.",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2ba3798_dec0c870",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CmpSendHttpRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "what will happen when some error occurs before this method call?",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9724294c_19b3c7b3",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/impl/CmpClientException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "why did you commit empty line?",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd26ad81_abe9961e",
+        "filename": "auth/auth-certman/src/test/java/org/onap/aaf/auth/cm/cmpv2client/Cmpv2ClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "I don\u0027t understand this test. Why did you check that certificate is null?",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e944331_12d1563e",
+        "filename": "auth/auth-certman/src/test/java/org/onap/aaf/auth/cm/cmpv2client/Cmpv2ClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2020-01-07T12:22:21Z",
+      "side": 1,
+      "message": "It will be better to check the reason of exception, rather that only a type of exception.\nPls see here: https://stackoverflow.com/questions/156503/how-do-you-assert-that-a-certain-exception-is-thrown-in-junit-4-tests",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
