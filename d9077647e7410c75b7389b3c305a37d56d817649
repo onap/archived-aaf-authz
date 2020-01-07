@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "8113a49b_66742aee",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5775
+      },
+      "writtenOn": "2020-01-07T15:18:47Z",
+      "side": 1,
+      "message": "CSRMeta is intended to hold information that should be included in requested certificate. All CA related info should be passed using different object.",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e3820c63_6bf1b3c1",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
         "patchSetId": 1
