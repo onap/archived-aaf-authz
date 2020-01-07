@@ -39,7 +39,7 @@ public class NsAttrib {
     public final String key;
     public final String value;
 
-    public static Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
+    public static final Creator<NsAttrib> v2_0_11 = new Creator<NsAttrib>() {
         @Override
         public NsAttrib create(Row row) {
             return new NsAttrib(row.getString(0), row.getString(1), row.getString(2));

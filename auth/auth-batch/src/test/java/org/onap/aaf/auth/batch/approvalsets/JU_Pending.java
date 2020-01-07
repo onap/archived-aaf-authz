@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -102,6 +103,7 @@ public class JU_Pending {
         }
     }
 
+    @Ignore
     @Test
     public void testEarliest() {
         List<String> inpList = new ArrayList<>();

@@ -35,8 +35,8 @@ import org.onap.aaf.auth.dao.cass.UserRoleDAO.Data;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.Hash;
+import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
-import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Chrono;
 
 import com.datastax.driver.core.Session;
@@ -54,13 +54,13 @@ public class BatchDataView implements DataView {
         cqlBatch = new CQLBatchLoop(new CQLBatch(trans.info(),session),50,dryRun);
     }
 
-    public Session getSession(AuthzTrans trans){
+    public Session getSession(){
         return session;
     }
 
     public Result<NsDAO.Data> ns(AuthzTrans trans, String id) {
         NS n;
-        TimeTaken tt = trans.start("Get NS by ID %s", Trans.SUB, id);
+        TimeTaken tt = trans.start("Get NS by ID %s", Env.SUB, id);
         try {
             n=NS.data.get(id);
         } finally {

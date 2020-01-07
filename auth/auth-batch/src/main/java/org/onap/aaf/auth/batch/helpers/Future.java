@@ -49,14 +49,14 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Future implements CacheChange.Data, Comparable<Future> {
-    public static final Map<UUID,Future> data = new TreeMap<>();
-    public static final Map<String,List<Future>> byRole = new TreeMap<>();
+    protected static final Map<UUID,Future> data = new TreeMap<>();
+    protected static final Map<String,List<Future>> byRole = new TreeMap<>();
 
     public final FutureDAO.Data fdd;
     public final String role; // derived
     private static final CacheChange<Future> cache = new CacheChange<>();
 
-    public static Creator<Future> v2_0_17 = new Creator<Future>() {
+    public static final Creator<Future> v2_0_17 = new Creator<Future>() {
         @Override
         public Future create(Row row) {
             return new Future(row.getUUID(0),row.getString(1),row.getString(2),
@@ -69,7 +69,7 @@ public class Future implements CacheChange.Data, Comparable<Future> {
         }
     };
 
-    public static Creator<Future> withConstruct = new Creator<Future>() {
+    public static final Creator<Future> withConstruct = new Creator<Future>() {
         @Override
         public String select() {
             return "select id,memo,target,start,expires,construct from authz.future";

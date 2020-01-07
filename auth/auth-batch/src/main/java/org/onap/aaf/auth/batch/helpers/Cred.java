@@ -23,12 +23,14 @@
 package org.onap.aaf.auth.batch.helpers;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.onap.aaf.auth.dao.cass.CredDAO;
@@ -46,8 +48,8 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Cred  {
-    public static final TreeMap<String,Cred> data = new TreeMap<>();
-    public static final TreeMap<String,List<Cred>> byNS = new TreeMap<>();
+    public static final SortedMap<String,Cred> data = new TreeMap<>();
+    protected static final SortedMap<String,List<Cred>> byNS = new TreeMap<>();
 
     public final String id;
     public final List<Instance> instances;
@@ -61,7 +63,8 @@ public class Cred  {
 
     public static class Instance {
         public final int type;
-        public final Date expires,written;
+        public final Date expires;
+        public final Date written;
         public final Integer other;
         public final String tag;
         public List<Note> notes;
@@ -238,33 +241,33 @@ public class Cred  {
     }
 
     public static class CredCount {
-        public int raw[];
-        public int basic_auth[];
-        public int basic_auth_256[];
-        public int cert[];
-        public int x509Added[];
-        public int x509Expired[];
-        public Date dates[];
+        public int [] raw;
+        public int [] basicAuth;
+        public int [] basicAuth256;
+        public int [] cert;
+        public int [] x509Added;
+        public int [] x509Expired;
+        public Date [] dates;
 
         public CredCount(int numbuckets) {
             raw = new int[numbuckets];
-            basic_auth = new int[numbuckets];
-            basic_auth_256 = new int[numbuckets];
+            basicAuth = new int[numbuckets];
+            basicAuth256 = new int[numbuckets];
             cert = new int[numbuckets];
             x509Added = new int[numbuckets];
             x509Expired = new int[numbuckets];
             dates = new Date[numbuckets];
             GregorianCalendar gc = new GregorianCalendar();
             dates[0]=gc.getTime(); // now
-            gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-            gc.set(GregorianCalendar.HOUR, 0);
-            gc.set(GregorianCalendar.MINUTE, 0);
-            gc.set(GregorianCalendar.SECOND,0);
-            gc.set(GregorianCalendar.MILLISECOND,0);
-            gc.add(GregorianCalendar.MILLISECOND, -1); // last milli of month
+            gc.set(Calendar.DAY_OF_MONTH, 1);
+            gc.set(Calendar.HOUR, 0);
+            gc.set(Calendar.MINUTE, 0);
+            gc.set(Calendar.SECOND,0);
+            gc.set(Calendar.MILLISECOND,0);
+            gc.add(Calendar.MILLISECOND, -1); // last milli of month
             for (int i = 1; i < numbuckets; ++i) {
                 dates[i] = gc.getTime();
-                gc.add(GregorianCalendar.MONTH, -1);
+                gc.add(Calendar.MONTH, -1);
             }
 
         }
@@ -281,10 +284,10 @@ public class Cred  {
                                 ++raw[i];
                                 break;
                             case CredDAO.BASIC_AUTH:
-                                ++basic_auth[i];
+                                ++basicAuth[i];
                                 break;
                             case CredDAO.BASIC_AUTH_SHA256:
-                                ++basic_auth_256[i];
+                                ++basicAuth256[i];
                                 break;
                             case CredDAO.CERT_SHA256_RSA:
                                 ++cert[i];
@@ -296,12 +299,14 @@ public class Cred  {
         }
 
         public long authCount(int idx) {
-            return (long)basic_auth[idx] + basic_auth_256[idx];
+            return (long)basicAuth[idx] + basicAuth256[idx];
         }
 
         public long x509Count(int idx) {
             return cert[idx];
         }
+
+
 
     }
 
@@ -380,4 +385,7 @@ public class Cred  {
         data.clear();
         byNS.clear();
     }
+
+
+
 }
