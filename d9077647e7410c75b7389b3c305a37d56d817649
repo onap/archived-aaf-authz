@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0f7662a6_a708a3e7",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "We\u0027re using this issuerCn string as a placeholder so we can construct our issuerName below in a similar manner to how the X500Name is constructed, so it should be ok...",
+      "parentUuid": "8113a49b_66742aee",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e3820c63_6bf1b3c1",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5666cd6_39aa02ae",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3820c63_6bf1b3c1",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "05aed646_3f3c501f",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cert/CSRMeta.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "at the moment aaf handles cert requests in a single thread , so it doesn\u0027t need to be synchronized. If we did want to make the handles of certificate requests handled in a multi-threaded way, we\u0027d have to rewrite much of aaf-certman in a similar way, since there are several methods (like x500Name above) that would also have to be synchronized.",
+      "parentUuid": "d8ef0b9c_263e27a1",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f4b95fc3_da4f346d",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
         "patchSetId": 1
@@ -67,6 +121,24 @@
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ee63ecf_b7750002",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f4b95fc3_da4f346d",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "b7467900_670b51a3",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6437a0d_2292abca",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30155417_75b541d5",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
         "patchSetId": 1
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "f62f6dc4_b18e8b91",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CertificateRequestMessageGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30155417_75b541d5",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c2ba3798_dec0c870",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CmpSendHttpRequest.java",
         "patchSetId": 1
@@ -118,6 +226,24 @@
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c3000cb_df4fdde8",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CmpSendHttpRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2ba3798_dec0c870",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -156,6 +282,24 @@
     },
     {
       "key": {
+        "uuid": "43e0772e_c654f7be",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/CmpSendHttpRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "027bfdb2_eb7ce814",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9724294c_19b3c7b3",
         "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/impl/CmpClientException.java",
         "patchSetId": 1
@@ -167,6 +311,24 @@
       "writtenOn": "2020-01-07T12:22:21Z",
       "side": 1,
       "message": "why did you commit empty line?",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9585646_b6308d27",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/impl/CmpClientException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "part of the code style check in aaf, there should be a space between the license and the package declaration",
+      "parentUuid": "9724294c_19b3c7b3",
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -208,6 +370,24 @@
     },
     {
       "key": {
+        "uuid": "3df6f7aa_4b39fda7",
+        "filename": "auth/auth-certman/src/main/java/org/onap/aaf/auth/cm/cmpv2client/impl/CmpClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f822c7f_05fde13d",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fd26ad81_abe9961e",
         "filename": "auth/auth-certman/src/test/java/org/onap/aaf/auth/cm/cmpv2client/Cmpv2ClientTest.java",
         "patchSetId": 1
@@ -219,6 +399,24 @@
       "writtenOn": "2020-01-07T12:22:21Z",
       "side": 1,
       "message": "I don\u0027t understand this test. Why did you check that certificate is null?",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "866cc791_56afb274",
+        "filename": "auth/auth-certman/src/test/java/org/onap/aaf/auth/cm/cmpv2client/Cmpv2ClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "currently the cmp client will send a request and recieve a response - but we have further code to push up as a part of a seperate commit that will decrypt the response and return it aaf-certman - so at the moment the \u0027correct\u0027 run through should end with the cmp client returning a null certificate. when the code is updated to handle decryption, we can change the test to check the cert returned is correct.",
+      "parentUuid": "fd26ad81_abe9961e",
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -239,6 +437,24 @@
       "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc324436_c16c2bd2",
+        "filename": "auth/auth-certman/src/test/java/org/onap/aaf/auth/cm/cmpv2client/Cmpv2ClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 4439
+      },
+      "writtenOn": "2020-01-10T15:56:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e944331_12d1563e",
+      "revId": "d9077647e7410c75b7389b3c305a37d56d817649",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
