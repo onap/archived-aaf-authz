@@ -64,29 +64,27 @@ public class WebCommand extends Page {
                     @Override
                     public void code(AAF_GUI state, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen)
                             throws APIException, IOException {
-                        String image_root = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
-                        hgen.img(image_root + "/options_down.png", "onclick=handleDivHiding('options',this);",
+                        String imageRoot = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
+                        hgen.img(imageRoot + "/options_down.png", "onclick=handleDivHiding('options',this);",
                                 "id=options_img", "alt=Options", "title=Options")
                             .end(); //options_link
 
                         hgen.divID("options");
 
                         switch(browser(trans,trans.env().slot(getBrowserType()))) {
-                            case ie:
-                            case ieOld:
+                            case IE:
+                            case IEOLD:
                                 // IE doesn't support file save
                                 break;
                             default:
-                                xgen.img(image_root+"/AAF_download.png", "onclick=saveToFile();",
+                                xgen.img(imageRoot+"/AAF_download.png", "onclick=saveToFile();",
                                         "alt=Save log to file", "title=Save log to file");
                         }
-//                        xgen.img("src=../../"+gui.theme+"/AAF_email.png", "onclick=emailLog();",
-//                                "alt=Email log to me", "title=Email log to me");
-                        xgen.img(image_root+"/AAF_font_size.png", "onclick=handleDivHiding('text_slider',this);",
+                        xgen.img(imageRoot+"/AAF_font_size.png", "onclick=handleDivHiding('text_slider',this);",
                                 "id=fontsize_img", "alt=Change text size", "title=Change text size");
-                        xgen.img(image_root+"/AAF_details.png", "onclick=selectOption(this,0);",
+                        xgen.img(imageRoot+"/AAF_details.png", "onclick=selectOption(this,0);",
                                 "id=details_img", "alt=Turn on/off details mode", "title=Turn on/off details mode");
-                        xgen.img(image_root+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
+                        xgen.img(imageRoot+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
                                 "id=maximize_img", "alt=Maximize Console Window", "title=Maximize Console Window");
                     }
                 });

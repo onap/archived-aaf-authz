@@ -22,7 +22,7 @@
 package org.onap.aaf.auth.gui;
 
 public abstract class NamedCode implements ContentCode {
-    private final boolean no_cache;
+    private final boolean noCache;
     private String name;
     private String[] idattrs;
 
@@ -32,11 +32,11 @@ public abstract class NamedCode implements ContentCode {
     public NamedCode(final boolean no_cache, final String name) {
         this.name = name;
         idattrs = new String[] {name};
-        this.no_cache = no_cache;
+        this.noCache = no_cache;
     }
 
-    public NamedCode(boolean no_cache, NamedCode content) {
-        this.no_cache = no_cache;
+    public NamedCode(boolean noCache, NamedCode content) {
+        this.noCache = noCache;
         name=content.name;
         idattrs = content.idattrs;
     }
@@ -61,7 +61,7 @@ public abstract class NamedCode implements ContentCode {
         idattrs = temp;
     }
 
-    public boolean no_cache() {
-        return no_cache;
+    public boolean noCache() {
+        return noCache;
     }
 }

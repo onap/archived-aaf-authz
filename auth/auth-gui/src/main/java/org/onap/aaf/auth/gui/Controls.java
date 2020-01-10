@@ -28,6 +28,7 @@ import org.onap.aaf.misc.xgen.Cache;
 import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class Controls extends NamedCode {
+    public static final String INPUT = "input";
     public Controls() {
         super(false,"controls");
     }
@@ -35,10 +36,10 @@ public class Controls extends NamedCode {
     @Override
     public void code(final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
         hgen.incr("form","method=post")
-            .incr("input", true, "type=checkbox", "name=vehicle", "value=Bike").text("I have a bike").end()
+            .incr(INPUT , true, "type=checkbox", "name=vehicle", "value=Bike").text("I have a bike").end()
             .text("Password: ")
-            .incr("input", true, "type=password", "id=password1").end()
-            .tagOnly("input", "type=submit", "value=Submit")
+            .incr(INPUT , true, "type=password", "id=password1").end()
+            .tagOnly(INPUT , "type=submit", "value=Submit")
             .end();
     }
 

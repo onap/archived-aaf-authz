@@ -78,20 +78,22 @@ public class Page extends HTMLCacheGen {
     public static final String AAF_URL_CADI_HELP = "aaf_url.cadi_help";
     public static final String PERM_CA_TYPE = "certman";
     public static final String PERM_NS = Define.ROOT_NS();
+    public static final String HREF = "href=";
 
-    public static enum BROWSER {iPhone,html5,ie,ieOld};
+    public enum BROWSER {IPHONE,HTML5,IE, IEOLD};
 
     public static final int MAX_LINE = 20;
     protected static final String[] NO_FIELDS = new String[0];
     private static final String BROWSER_TYPE = "BROWSER_TYPE";
 
-    private final String bcName, bcUrl;
+    private final String bcName;
+    private final String bcUrl;
     private final String[] fields;
 
-    public final boolean no_cache;
+    public final boolean noCache;
 
     // Note: Only access is synchronized in "getPerm"
-    private final static Map<String,Map<String,Permission>> perms = new HashMap<>();
+    private static final Map<String,Map<String,Permission>> perms = new HashMap<>();
 
     /*
      *      Relative path, Menu Name, Full Path
@@ -133,14 +135,14 @@ public class Page extends HTMLCacheGen {
         bcName = name;
         bcUrl = url;
         // Mark which fields must be "no_cache"
-        boolean no_cacheTemp=false;
+        boolean noCacheTemp=false;
         for (NamedCode nc : content) {
-            if (nc.no_cache()) {
-                no_cacheTemp=true;
+            if (nc.noCache()) {
+                noCacheTemp=true;
                 break;
             }
         }
-        no_cache=no_cacheTemp;
+        noCache =noCacheTemp;
     }
     public Page(AuthzEnv env, String name, String url, String [] fields, final NamedCode ... content) throws APIException,IOException {
         this(env,name,url,1,fields,content);
@@ -156,14 +158,14 @@ public class Page extends HTMLCacheGen {
         bcName = name;
         bcUrl = url;
         // Mark which fields must be "no_cache"
-        boolean no_cacheTemp=false;
+        boolean noCacheTemp=false;
         for (NamedCode nc : content) {
-            if (nc.no_cache()) {
-                no_cacheTemp=true;
+            if (nc.noCache()) {
+                noCacheTemp=true;
                 break;
             }
         }
-        no_cache=no_cacheTemp;
+        noCache =noCacheTemp;
     }
 
 
@@ -243,11 +245,11 @@ public class Page extends HTMLCacheGen {
                         imp.js(prefix + f);
                     } else if(f.endsWith(".css")) {
                         if(f.endsWith("iPhone.css")) {
-                            if(BROWSER.iPhone.equals(browser)) {
+                            if(BROWSER.IPHONE.equals(browser)) {
                                 imp.css(prefix + f);
                             }
                         } else if (f.endsWith("Desktop.css")){
-                            if(!BROWSER.iPhone.equals(browser)) {
+                            if(!BROWSER.IPHONE.equals(browser)) {
                                 imp.css(prefix + f);
                             }
                         // Make Console specific to Console page
@@ -267,8 +269,8 @@ public class Page extends HTMLCacheGen {
                     @Override
                     public void code(AAF_GUI state, AuthzTrans trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
                         switch(browser(trans,browserSlot)) {
-                            case ieOld:
-                            case ie:
+                            case IEOLD:
+                            case IE:
                                 hgen.directive("!DOCTYPE html");
                                 hgen.directive("meta", "http-equiv=X-UA-Compatible","content=IE=11");
                             default:
@@ -314,6 +316,7 @@ public class Page extends HTMLCacheGen {
                                     throw new APIException("Theme " + theme + " does not exist.");
                                 }
                                 Cookie cookie = new Cookie(AAF_GUI_THEME,theme);
+                                cookie.setHttpOnly(true);
                                 cookie.setMaxAge(604_800); // one week
                                 trans.hresp().addCookie(cookie);
                             }
@@ -321,8 +324,8 @@ public class Page extends HTMLCacheGen {
 
                             hgen.imports(getImports(env,theme,backdots,browser));
                             switch(browser) {
-                                case ie:
-                                case ieOld:
+                                case IE:
+                                case IEOLD:
                                     hgen.js().text("document.createElement('header');")
                                             .text("document.createElement('nav');")
                                             .done();
@@ -342,13 +345,14 @@ public class Page extends HTMLCacheGen {
                                 throws APIException, IOException {
                             // Obtain Server Info, and print
                             // AT&T Only
-                            String env = trans.getProperty(Config.AAF_ENV,"N/A");
-                            xgen.leaf(H1).text(title + " on " + env).end();
+                            String environment = trans.getProperty(Config.AAF_ENV,"N/A");
+                            xgen.leaf(H1).text(title + " on " + environment).end();
                             xgen.leaf("p","id=version").text("AAF Version: " + state.deployedVersion).end();
 
                             // Obtain User Info, and print
                             TaggedPrincipal p = trans.getUserPrincipal();
-                            String user,secured;
+                            String user;
+                            String secured;
                             if (p==null) {
                                 user = "please choose a Login Authority";
                                 secured = "NOT Secure!";
@@ -363,8 +367,8 @@ public class Page extends HTMLCacheGen {
                                 .text("</sup>").end();
 
                             switch(browser(trans,browserSlot)) {
-                                case ieOld:
-                                case ie:
+                                case IEOLD:
+                                case IE:
                                     xgen.incr("h5").text("This app is Mobile First HTML5.  Internet Explorer "
                                             + " does not support all HTML5 standards. Old, non TSS-Standard versions may not function correctly.").br()
                                             .text("  For best results, use a highly compliant HTML5 browser like Firefox.")
@@ -435,12 +439,10 @@ public class Page extends HTMLCacheGen {
                                 props = themeProps==null?null:themeProps.get(theme);
                             }
 
-                            if(props!=null) {
-                                if("TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav"))) {
+                            if((props!=null) && ("TRUE".equalsIgnoreCase(props.getProperty("main_menu_in_nav")))) {
                                     xgen.incr("h2").text("Navigation").end();
                                     Mark mark = new Mark();
                                     boolean selected = isSelected(trans.path(),Home.HREF);
-                                            //trans.path().endsWith("home");
                                     xgen.incr(mark,HTMLGen.UL)
                                         .incr(HTMLGen.LI,selected?"class=selected":"")
                                         .incr(HTMLGen.A, "href=home")
@@ -448,7 +450,6 @@ public class Page extends HTMLCacheGen {
                                         .end(2);
                                     boolean noSelection = !selected;
                                     for(String[] mi : MENU_ITEMS) {
-                                        //selected = trans.path().endsWith(mi[0]);
                                         if(noSelection) {
                                             selected = isSelected(trans.path(),mi[2]);
                                             noSelection = !selected;
@@ -456,12 +457,11 @@ public class Page extends HTMLCacheGen {
                                             selected = false;
                                         }
                                         xgen.incr(HTMLGen.LI,selected?"class=selected":"")
-                                            .incr(HTMLGen.A, "href="+mi[2])
+                                            .incr(HTMLGen.A, HREF + mi[2])
                                             .text(mi[1])
                                             .end(2);
                                     }
                                     xgen.end(mark);
-                                }
                             }
                         }
 
@@ -488,21 +488,21 @@ public class Page extends HTMLCacheGen {
                     });
                     hgen.incr("h2").text("Related Links").end();
                     hgen.incr(UL);
-                    String aaf_help = env.getProperty(AAF_URL_AAF_HELP,null);
-                    if (aaf_help!=null) {
-                        hgen.leaf(LI).leaf(A,"href="+env.getProperty(AAF_URL_AAF_HELP),"target=_blank").text("AAF WIKI").end(2);
+                    String aafHelp = env.getProperty(AAF_URL_AAF_HELP,null);
+                    if (aafHelp!=null) {
+                        hgen.leaf(LI).leaf(A,HREF + env.getProperty(AAF_URL_AAF_HELP),"target=_blank").text("AAF WIKI").end(2);
                         String sub = env.getProperty(AAF_URL_AAF_HELP+".sub");
                         if (sub!=null) {
                             hgen.incr(UL,"style=margin-left:5%");
                             for (String s : Split.splitTrim(',', sub)) {
-                                hgen.leaf(LI).leaf(A,"href="+env.getProperty(AAF_URL_AAF_HELP+".sub."+s),"target=_blank").text(s.replace('+', ' ')).end(2);
+                                hgen.leaf(LI).leaf(A,HREF + env.getProperty(AAF_URL_AAF_HELP+".sub."+s),"target=_blank").text(s.replace('+', ' ')).end(2);
                             }
                             hgen.end();
                         }
                     }
-                    aaf_help = env.getProperty(AAF_URL_CADI_HELP,null);
-                    if (aaf_help!=null) {
-                        hgen.leaf(LI).leaf(A,"href="+aaf_help,"target=_blank").text("CADI WIKI").end(2);
+                    aafHelp = env.getProperty(AAF_URL_CADI_HELP,null);
+                    if (aafHelp!=null) {
+                        hgen.leaf(LI).leaf(A,HREF + aafHelp,"target=_blank").text("CADI WIKI").end(2);
                     }
                     String tools = env.getProperty(AAFURL_TOOLS);
                     if (tools!=null) {
@@ -511,7 +511,7 @@ public class Page extends HTMLCacheGen {
                              .leaf(HTMLGen.H3).text("Related Tools").end();
 
                         for (String tool : Split.splitTrim(',',tools)) {
-                            hgen.leaf(LI).leaf(A,"href="+env.getProperty(AAF_URL_TOOL_DOT+tool),"target=_blank").text(tool.replace('+', ' ')).end(2);
+                            hgen.leaf(LI).leaf(A,HREF + env.getProperty(AAF_URL_TOOL_DOT+tool),"target=_blank").text(tool.replace('+', ' ')).end(2);
                         }
                         hgen.end();
                     }
@@ -563,19 +563,19 @@ public class Page extends HTMLCacheGen {
             String agent = trans.agent();
             int msie;
             if (agent.contains("iPhone") /* other phones? */) {
-                br=BROWSER.iPhone;
+                br=BROWSER.IPHONE;
             } else if ((msie = agent.indexOf("MSIE"))>=0) {
                 msie+=5;
-                int end = agent.indexOf(";",msie);
+                int end = agent.indexOf(';',msie);
                 float ver;
                 try {
                     ver = Float.valueOf(agent.substring(msie,end));
-                    br = ver<8f?BROWSER.ieOld:BROWSER.ie;
+                    br = ver<8f?BROWSER.IEOLD :BROWSER.IE;
                 } catch (Exception e) {
-                    br = BROWSER.ie;
+                    br = BROWSER.IE;
                 }
             } else {
-                br = BROWSER.html5;
+                br = BROWSER.HTML5;
             }
             trans.put(slot,br);
         }
@@ -603,7 +603,7 @@ public class Page extends HTMLCacheGen {
      }
 
     protected static String getSingleParam(HttpServletRequest req, String tag) {
-        String values[] = req.getParameterValues(tag);
+        String[] values = req.getParameterValues(tag);
         return values.length<1?null:values[0];
     }
 

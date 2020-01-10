@@ -1,3 +1,4 @@
+
 /**
  * ============LICENSE_START====================================================
  * org.onap.aaf
@@ -37,7 +38,7 @@ public class Display {
     public Display(final AAF_GUI gui, final HttpMethods meth, final Page page) {
         get = page;
         final String[] fields = page.fields();
-        final Slot slots[] = new Slot[fields.length];
+        final Slot[] slots = new Slot[fields.length];
         String prefix = page.name() + '.';
         for (int i=0;i<slots.length;++i) {
             slots[i] = gui.env.slot(prefix + fields[i]);
@@ -56,7 +57,7 @@ public class Display {
                 new HttpCode<AuthzTrans,AAF_GUI>(gui,page.name()) {
                     @Override
                     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-                        trans.put(gui.slot_httpServletRequest, req);
+                        trans.put(gui.slotHttpServletRequest, req);
                         for (int i=0; i<fields.length;++i) {
                             int idx = fields[i].indexOf("[]");
                             if (idx<0) { // single value
@@ -89,13 +90,13 @@ public class Display {
 
         } else {
             // Transfer whether Page shouldn't be cached to local Final var.
-            final boolean no_cache = page.no_cache;
+            final boolean noCache = page.noCache;
 
             gui.route(gui.env, meth, page.url(),
                 new HttpCode<AuthzTrans,AAF_GUI>(gui,page.name()) {
                     @Override
                     public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-                        trans.put(gui.slot_httpServletRequest, req);
+                        trans.put(gui.slotHttpServletRequest, req);
                         for (int i=0; i<slots.length;++i) {
                             int idx = fields[i].indexOf("[]");
                             if (idx<0) { // single value
@@ -140,7 +141,7 @@ public class Display {
 
                     @Override
                     public boolean no_cache() {
-                        return no_cache;
+                        return noCache;
                     }
                 }, "text/html","*/*");
         }
