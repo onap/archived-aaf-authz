@@ -73,17 +73,17 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
             aafcli= new AAFcli(gui.access,gui.env, pw,
                     aafcon.hman(),
                     aafcon.securityInfo(),
-                    new HTransferSS(p,AAF_GUI.app,
+                    new HTransferSS(p,AAF_GUI.APP,
                             aafcon.securityInfo()));
             aafcli.verbose(false);
             aafcli.gui(true);
 
             String cmdStr = cmd.toString();
             if (cmdStr.contains("--help")) {
-                cmdStr = cmdStr.replaceAll("--help", "help");
+                cmdStr = cmdStr.replace("--help", "help");
             }
             if (cmdStr.contains("--version")) {
-                cmdStr = cmdStr.replaceAll("--version", "version");
+                cmdStr = cmdStr.replace("--version", "version");
             }
             try {
                 aafcli.eval(cmdStr);

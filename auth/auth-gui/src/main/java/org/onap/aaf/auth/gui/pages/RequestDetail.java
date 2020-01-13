@@ -103,7 +103,7 @@ public class RequestDetail extends Page {
                                     } else {
                                         if (!(trans.user().equals(app.getUser()) ||
                                               trans.user().equals(app.getApprover()))) {
-                                            HttpServletRequest req = trans.get(gui.slot_httpServletRequest,null);
+                                            HttpServletRequest req = trans.get(gui.slotHttpServletRequest,null);
                                             if(req==null || !req.isUserInRole(Define.ROOT_NS()+"|access|*|*")) {
                                                 return Cells.EMPTY;
                                             }

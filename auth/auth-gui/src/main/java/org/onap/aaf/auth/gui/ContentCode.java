@@ -32,5 +32,5 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 public interface ContentCode extends Code<HTMLGen> {
     public String[] idattrs();
     public void addAttr(boolean first, String attr);
-    public boolean no_cache();
+    public boolean noCache();
 }
