@@ -89,7 +89,7 @@ public class Display {
 
         } else {
             // Transfer whether Page shouldn't be cached to local Final var.
-            final boolean no_cache = page.no_cache;
+            final boolean noCache = page.no_cache;
 
             gui.route(gui.env, meth, page.url(),
                 new HttpCode<AuthzTrans,AAF_GUI>(gui,page.name()) {
@@ -139,8 +139,8 @@ public class Display {
                     }
 
                     @Override
-                    public boolean no_cache() {
-                        return no_cache;
+                    public boolean noCache() {
+                        return noCache;
                     }
                 }, "text/html","*/*");
         }

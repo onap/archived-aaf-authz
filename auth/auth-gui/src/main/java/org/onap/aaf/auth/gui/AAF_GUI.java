@@ -133,7 +133,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         }
 
         slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
-        deployedVersion = app_version;
+        deployedVersion = appVersion;
 
         // Certificate Manager
         String aaf_url_cm = env.getProperty(Config.AAF_URL_CM,Config.AAF_URL_CM_DEF);

@@ -91,25 +91,9 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
             // Want Q percentage is to be first in the array everytime.  If not listed, 1.0 is default
             props.add(new Pair<String,Object>(Q,1f));
             Pair<HttpCode<TRANS,?>, List<Pair<String,Object>>> cl = new Pair<HttpCode<TRANS,?>, List<Pair<String,Object>>>(code, props);
-//            // breakup "plus" stuff, i.e. application/xaml+xml
-//            int plus = str.indexOf('+');
-//            if (plus<0) {
                 type = new Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String,Object>>>>(str, cl);
                 types.add(type);
                 return type;
-//            } else {
-//                int prev = str.indexOf('/')+1;
-//                String first = str.substring(0,prev);
-//                String nstr;
-//                while (prev!=0) {
-//                    nstr = first + (plus>-1?str.substring(prev,plus):str.substring(prev));
-//                    type = new Pair<String, Pair<HttpCode<TRANS,?>,List<Pair<String,Object>>>>(nstr, cl);
-//                    types.add(type);
-//                    prev = plus+1;
-//                    plus = str.indexOf('+',prev);
-//                }
-//            return type;
-//            }
         }
 
         @Override
@@ -146,8 +130,6 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                     if (accepted) {
                         switch(acc.acceptable.size()) {
                             case 0:
-//                                // TODO best Status Code?
-//                                resp.setStatus(HttpStatus.NOT_ACCEPTABLE_406);
                                 break;
                             case 1:
                                 rv = acc.acceptable.get(0);
@@ -163,9 +145,6 @@ public class TypedCode<TRANS extends Trans> extends Content<TRANS> {
                                     }
                                 }
                                 if (bestT!=null) {
-                                    // When it is a GET, the matched type is what is returned, so set ContentType
-//                                    if (isGet)resp.setContentType(bestT.x); // set ContentType of Code<TRANS,?>
-//                                    rv = bestT.y.x;
                                     rv = bestT;
                                 }
                         }

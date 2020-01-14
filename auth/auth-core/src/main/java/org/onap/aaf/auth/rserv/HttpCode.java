@@ -111,7 +111,7 @@ public abstract class HttpCode<TRANS extends Trans, CONTEXT> {
         return false;
     }
 
-    public boolean no_cache() {
+    public boolean noCache() {
         return false;
     }
 

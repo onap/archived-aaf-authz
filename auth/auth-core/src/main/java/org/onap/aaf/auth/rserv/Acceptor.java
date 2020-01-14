@@ -106,10 +106,14 @@ class Acceptor<TRANS extends Trans>  {
      * @return
      */
     protected boolean parse(HttpCode<TRANS, ?> code, String cntnt) {
-        byte bytes[] = cntnt.getBytes();
+        byte[] bytes = cntnt.getBytes();
 
-        int cis,cie=-1,cend;
-        int sis,sie,send;
+        int cis;
+        int cie=-1;
+        int cend;
+        int sis;
+        int sie;
+        int send;
         String name;
         ArrayList<String> props = new ArrayList<>();
         do {

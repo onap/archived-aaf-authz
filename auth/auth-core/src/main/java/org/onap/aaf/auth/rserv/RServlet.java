@@ -88,7 +88,7 @@ public abstract class RServlet<TRANS extends Trans> implements Servlet {
                 response.setStatus(404); // Not Found
             } else {
                 // Find best Code in Route based on "Accepts (Get) or Content-Type" (if exists)
-                code = codesetter.code();// route.getCode(trans, request, response);
+                code = codesetter.code();
             }
         } finally {
             tt.done();

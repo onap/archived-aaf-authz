@@ -47,7 +47,9 @@ public class Validator {
     private final Pattern actionChars;
     private final Pattern instChars;
     private StringBuilder msgs;
-
+    public static final String PERM_TYPE = "Perm Type [";
+    public static final String IS_INVALID = "] is invalid.";
+    public static final String ROLE_STR = "Role [";
     static {
         nsKeywords = new ArrayList<>();
         nsKeywords.add(".access");
@@ -145,7 +147,7 @@ public class Validator {
 
     public final Validator permType(String type) {
         if (nob(type,NAME_CHARS)) {
-            msg("Perm Type [" +type + "] is invalid.");
+            msg(PERM_TYPE +type + IS_INVALID);
         }
         return this;
     }
@@ -158,7 +160,7 @@ public class Validator {
         } else {
             if(!(type.startsWith(user) && type.endsWith(":id"))) {
               if(nob(type,NAME_CHARS)) {
-                msg("Perm Type [" + type + "] is invalid.");
+                msg(PERM_TYPE + type + IS_INVALID);
               }
             }
         }
@@ -171,14 +173,14 @@ public class Validator {
         } else if (ns==null) {
             msg("Perm NS is null");
         } else if (nob(type,NAME_CHARS)) {
-            msg("Perm Type [" + (ns+(type.length()==0?"":'.')) + type + "] is invalid.");
+            msg(PERM_TYPE + (ns+(type.length()==0?"":'.')) + type + IS_INVALID);
         }
         return this;
     }
 
     public final Validator permInstance(String instance) {
         if(!"/".equals(instance) && nob(instance,instChars)) {
-            msg("Perm Instance [" + instance + "] is invalid.");
+            msg("Perm Instance [" + instance + IS_INVALID);
         }
         return this;
     }
@@ -186,7 +188,7 @@ public class Validator {
     public final Validator permAction(String action) {
         // TODO check for correct Splits?  Type|Instance|Action ?
         if (nob(action, actionChars)) {
-            msg("Perm Action [" + action + "] is invalid.");
+            msg("Perm Action [" + action + IS_INVALID);
         }
         return this;
     }
@@ -204,10 +206,10 @@ public class Validator {
         if(!quit) {
             if(role.startsWith(user) && role.endsWith(":user")) {
                 if(!(role.length() == user.length() + 5)) {
-                    msg("Role [" + role + "] is invalid.");
+                    msg(ROLE_STR + role + IS_INVALID);
                 }
             } else if (nob(role, NAME_CHARS)) {
-                msg("Role [" + role + "] is invalid.");
+                msg(ROLE_STR + role + IS_INVALID);
             }
         }
         return this;
@@ -216,7 +218,7 @@ public class Validator {
 
     public final Validator role(String role) {
         if (nob(role, NAME_CHARS)) {
-            msg("Role [" + role + "] is invalid.");
+            msg(ROLE_STR + role + IS_INVALID);
         }
         return this;
     }
@@ -226,7 +228,7 @@ public class Validator {
             msg("NS is null");
             return this;
         } else if (nob(ns,NAME_CHARS)) {
-            msg("NS [" + ns + "] is invalid.");
+            msg("NS [" + ns + IS_INVALID);
         }
         for (String s : nsKeywords) {
             if (ns.endsWith(s)) {

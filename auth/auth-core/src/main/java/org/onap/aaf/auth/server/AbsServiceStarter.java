@@ -40,7 +40,7 @@ import org.onap.aaf.misc.rosetta.env.RosettaEnv;
 
 public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> implements ServiceStarter {
     private Registrar<ENV> registrar;
-    private boolean do_register;
+    private boolean doRegister;
     protected AbsService<ENV,TRANS> service;
     protected String hostname;
     protected final boolean secure;
@@ -57,7 +57,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         }
         // do_register - this is used for specialty Debug Situations.  Developer can create an Instance for a remote system
         // for Debugging purposes without fear that real clients will start to call your debug instance
-        do_register = !"TRUE".equalsIgnoreCase(access().getProperty("aaf_locate_no_register",null));
+        doRegister = !"TRUE".equalsIgnoreCase(access().getProperty("aaf_locate_no_register",null));
         hostname = access().getProperty(Config.HOSTNAME, null);
         if (hostname==null) {
             try {
@@ -91,7 +91,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
         Runtime.getRuntime().addShutdownHook(new Thread() {
           @Override
           public void run() {
-              absSS.access().printf(Level.INIT, "Shutting down %s:%s\n",absSS.service.app_name, absSS.service.app_version);
+              absSS.access().printf(Level.INIT, "Shutting down %s:%s\n",absSS.service.appName, absSS.service.appVersion);
               absSS.shutdown();
               app.cancel(true);
           }
@@ -112,7 +112,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
 
     @SafeVarargs
     public final synchronized void register(final Registrant<ENV> ... registrants) {
-        if (do_register) {
+        if (doRegister) {
             if (registrar==null) {
                 registrar = new Registrar<ENV>(env(),false);
             }
@@ -142,12 +142,12 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
             File status = new File("/opt/app/aaf/status/");
             boolean deleted = false;
             if(status.exists()) {
-                int lastdot = service.app_name.lastIndexOf("aaf.");
+                int lastdot = service.appName.lastIndexOf("aaf.");
                 String fname;
                 if(lastdot<0) {
-                    fname = service.app_name + '-' + hostname;
+                    fname = service.appName + '-' + hostname;
                 } else {
-                    fname = service.app_name.substring(lastdot).replace('.', '-')
+                    fname = service.appName.substring(lastdot).replace('.', '-')
                             + '-' + hostname;
                 }
                 status = new File(status, fname);

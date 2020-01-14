@@ -66,15 +66,15 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
 
     private CadiHTTPManip cadi;
 
-    private final String[] no_authn;
+    private final String[] noAuthn;
 
     public TransFilter(Access access, Connector con, TrustChecker tc, Object ... additionalTafLurs) throws CadiException, LocatorException {
         cadi = new CadiHTTPManip(access, con, tc, additionalTafLurs);
         String no = access.getProperty(Config.CADI_NOAUTHN, null);
         if (no!=null) {
-            no_authn = Split.split(':', no);
+            noAuthn = Split.split(':', no);
         } else {
-            no_authn=null;
+            noAuthn =null;
         }
     }
 
@@ -103,8 +103,8 @@ public abstract class TransFilter<TRANS extends TransStore> implements Filter {
         try {
             request.setAttribute(TRANS_TAG, trans);
 
-            if (no_authn!=null) {
-                for (String prefix : no_authn) {
+            if (noAuthn !=null) {
+                for (String prefix : noAuthn) {
                     if (req.getPathInfo().startsWith(prefix)) {
                         chain.doFilter(request, response);
                         return;

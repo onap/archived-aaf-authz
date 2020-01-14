@@ -72,20 +72,20 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         }
     }
 
-    private static String MAX_AGE = "max-age=3600"; // 1 hour Caching
+    private static String maxAge = "max-age=3600"; // 1 hour Caching
     private final Map<String,String> typeMap;
     private final NavigableMap<String,Content> content;
     private final Set<String> attachOnly;
-    public final static String CFA_WEB_PATH = "aaf_cfa_web_path";
+    public static final  String CFA_WEB_PATH = "aaf_cfa_web_path";
     // when to re-validate from file
     // Re validating means comparing the Timestamp on the disk, and seeing it has changed.  Cache is not marked
     // dirty unless file has changed, but it still makes File IO, which for some kinds of cached data, i.e.
     // deployed GUI elements is unnecessary, and wastes time.
     // This parameter exists to cover the cases where data can be more volatile, so the user can choose how often the
     // File IO will be accessed, based on probability of change.  "0", of course, means, check every time.
-    private final static String CFA_CACHE_CHECK_INTERVAL = "aaf_cfa_cache_check_interval";
-    private final static String CFA_MAX_SIZE = "aaf_cfa_max_size"; // Cache size limit
-    private final static String CFA_CLEAR_COMMAND = "aaf_cfa_clear_command";
+    private static final String CFA_CACHE_CHECK_INTERVAL = "aaf_cfa_cache_check_interval";
+    private static final String CFA_MAX_SIZE = "aaf_cfa_max_size"; // Cache size limit
+    private static final String CFA_CLEAR_COMMAND = "aaf_cfa_clear_command";
 
     // Note: can be null without a problem, but included
     // to tie in with existing Logging.
@@ -93,12 +93,14 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     public long checkInterval; // = 600000L; // only check if not hit in 10 mins by default
     public int maxItemSize; // = 512000; // max file 500k
     private Timer timer;
-    private String web_path;
+    private String webPath;
     // A command key is set in the Properties, preferably changed on deployment.
     // it is compared at the beginning of the path, and if so, it is assumed to issue certain commands
     // It's purpose is to protect, to some degree the command, even though it is HTTP, allowing
     // local batch files to, for instance, clear caches on resetting of files.
-    private String clear_command;
+    private String clearCommand;
+
+    public static final String TEXT_PLAIN = "text/plain";
 
     public CachingFileAccess(EnvJAXB env, String ... args) throws IOException {
         super(null,"Caching File Access");
@@ -112,7 +114,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         typeMap.put("html","text/html");
         typeMap.put("css","text/css");
         typeMap.put("js","text/javascript");
-        typeMap.put("txt","text/plain");
+        typeMap.put("txt", TEXT_PLAIN);
         typeMap.put("xml","text/xml");
         typeMap.put("xsd","text/xml");
         attachOnly.add("xsd");
@@ -128,7 +130,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         typeMap.put("jar","application/x-java-applet");
         typeMap.put("jnlp", "application/x-java-jnlp-file");
         typeMap.put("class", "application/java");
-        typeMap.put("props", "text/plain");
+        typeMap.put("props", TEXT_PLAIN);
         typeMap.put("jks", "application/octet-stream");
 
         // Fonts
@@ -141,8 +143,8 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         timer.schedule(new Cleanup(content,500),60000,60000);
 
         // Property params
-        web_path = env.get(env.staticSlot(CFA_WEB_PATH));
-        env.init().log("CachingFileAccess path: " + new File(web_path).getCanonicalPath());
+        webPath = env.get(env.staticSlot(CFA_WEB_PATH));
+        env.init().log("CachingFileAccess path: " + new File(webPath).getCanonicalPath());
         Object obj;
         obj = env.get(env.staticSlot(CFA_CACHE_CHECK_INTERVAL),600000L);  // Default is 10 mins
         if (obj instanceof Long) {
@@ -158,7 +160,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
           maxItemSize =Integer.parseInt((String)obj);
         }
 
-         clear_command = env.getProperty(CFA_CLEAR_COMMAND,null);
+         clearCommand = env.getProperty(CFA_CLEAR_COMMAND,null);
     }
 
 
@@ -167,7 +169,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
     public void handle(TRANS trans, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String key = pathParam(req, ":key");
         int slash = key.indexOf('/');
-        if(key.length()>2 && slash>=0 && key.substring(0,slash).equals(clear_command)) {
+        if(key.length()>2 && slash>=0 && key.substring(0,slash).equals(clearCommand)) {
             resp.setHeader("Content-Type",typeMap.get("txt"));
             if ("clear".equals(key.substring(slash+1))) {
                 content.clear();
@@ -177,7 +179,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
             }
             return;
         }
-        Content c = load(logT , web_path,key, null, checkInterval);
+        Content c = load(logT , webPath,key, null, checkInterval);
         if (c.attachmentOnly) {
             resp.setHeader("Content-disposition", "attachment");
         }
@@ -188,7 +190,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 
 
     public String webPath() {
-        return web_path;
+        return webPath;
     }
 
     /**
@@ -308,7 +310,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         @Override
         public void setHeader(HttpServletResponse resp) {
             resp.setStatus(404/*NOT_FOUND_404*/);
-            resp.setHeader("Content-type","text/plain");
+            resp.setHeader("Content-type",TEXT_PLAIN);
         }
 
         @Override
@@ -321,7 +323,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
 
     };
 
-    private static abstract class Content {
+    private abstract static class Content {
         private long date;   // date of the actual artifact (i.e. File modified date)
         private long access; // last accessed
 
@@ -331,7 +333,7 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
         public void setHeader(HttpServletResponse resp) {
             resp.setStatus(200/*OK_200*/);
             resp.setHeader("Content-Type",contentType);
-            resp.setHeader("Cache-Control", MAX_AGE);
+            resp.setHeader("Cache-Control", maxAge);
         }
 
         public abstract void write(Writer writer) throws IOException;
@@ -526,16 +528,10 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                 }
                 Collections.sort(scont);
                 int end = size - ((maxSize/4)*3); // reduce to 3/4 of max size
-                //System.out.println("------ Cleanup Cycle ------ " + new Date().toString() + " -------");
                 for (int i=0;i<end;++i) {
                     Entry<String, Content> entry = scont.get(i).entry;
                     content.remove(entry.getKey());
-                    //System.out.println("removed Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
                 }
-//                for (int i=end;i<size;++i) {
-//                    Entry<String, Content> entry = scont.get(i).entry;
-//                    //System.out.println("remaining Cache Item " + entry.getKey() + "/" + new Date(entry.getValue().access).toString());
-//                }
             }
         }
     }
