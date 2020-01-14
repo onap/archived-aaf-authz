@@ -61,7 +61,6 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
 
     @Override
     public void _propertyAdjustment() {
-//        System.setProperty("com.sun.management.jmxremote.port", "8081");
         Properties props = access().getProperties();
         Object httpproto = null;
         // Critical - if no Security Protocols set, then set it.  We'll just get messed up if not
@@ -123,11 +122,6 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             // Want to use Client Certificates, if they exist.
             sslContextFactory.setWantClientAuth(true);
 
-            // Optional future checks.
-            //   sslContextFactory.setValidateCerts(true);
-            //     sslContextFactory.setValidatePeerCerts(true);
-            //     sslContextFactory.setEnableCRLDP(false);
-            //     sslContextFactory.setEnableOCSP(false);
             String certAlias = access().getProperty(Config.CADI_ALIAS, null);
             if (certAlias!=null) {
                 sslContextFactory.setCertAlias(certAlias);
@@ -145,17 +139,6 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
                 );
         }
         service.setProtocol(protocol);
-
-
-        // Setup JMX
-        // TODO trying to figure out how to set up/log ports
-//        MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-//        MBeanContainer mbContainer=new MBeanContainer(mbeanServer);
-//        server.addEventListener(mbContainer);
-//        server.addBean(mbContainer);
-
-        // Add loggers MBean to server (will be picked up by MBeanContainer above)
-//        server.addBean(Log.getLog());
 
         conn.setHost(hostname);
         conn.setPort(port);
@@ -197,17 +180,17 @@ public class JettyServiceStarter<ENV extends RosettaEnv, TRANS extends Trans> ex
             }
         }
         try {
-            String no_register = env().getProperty("aaf_no_register",null);
-            if(no_register==null) {
+            String noRegister = env().getProperty("aaf_no_register",null);
+            if(noRegister==null) {
                 register(service.registrants(port));
             } else {
-                access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.app_name);
+                access().printf(Level.INIT,"'aaf_no_register' is set.  %s will not be registered with Locator", service.appName);
             }
-            access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.app_name,service.app_version,protocol,hostname,port);
+            access().printf(Level.INIT, "Starting Jetty Service for %s, version %s, on %s://%s:%d", service.appName,service.appVersion,protocol,hostname,port);
 
             rserv.postStartup(hostname, port);
         } catch (Exception e) {
-            access().log(e,"Error registering " + service.app_name);
+            access().log(e,"Error registering " + service.appName);
             String doExit = access().getProperty("cadi_exitOnFailure", "true");
             if (doExit == "true") {
                 System.exit(1);

@@ -65,10 +65,15 @@ public abstract class Content<TRANS extends Trans> {
      * @return
      */
     protected boolean parse(HttpCode<TRANS,?> code, String cntnt) {
-        byte bytes[] = cntnt.getBytes();
-        boolean contType=false,contProp=true;
-        int cis,cie=-1,cend;
-        int sis,sie,send;
+        byte[] bytes = cntnt.getBytes();
+        boolean contType=false;
+        boolean contProp=true;
+        int cis;
+        int cie=-1;
+        int cend;
+        int sis;
+        int sie;
+        int send;
         do {
             cis = cie+1;
             cie = cntnt.indexOf(',',cis);
@@ -82,7 +87,6 @@ public abstract class Content<TRANS extends Trans> {
                 send = sie>cend || sie<0?cend:sie;
                 if (me==null) {
                     String semi = new String(bytes,sis,send-sis);
-                    // trans.checkpoint(semi);
                     // Look at first entity within comma group
                     // Is this an acceptable Type?
                     me=types(code, semi);
@@ -98,7 +102,6 @@ public abstract class Content<TRANS extends Trans> {
                     if (eq>sis && eq<send) {
                         String tag = new String(bytes,sis,eq-sis);
                         String value = new String(bytes,eq+1,send-(eq+1));
-                        // trans.checkpoint("    Prop " + tag + "=" + value);
                         boolean bool =  props(me,tag,value);
                         if (!bool) {
                             contProp=false;

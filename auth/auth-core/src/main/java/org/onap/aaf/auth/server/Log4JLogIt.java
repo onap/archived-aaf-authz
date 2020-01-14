@@ -49,10 +49,10 @@ public class Log4JLogIt implements LogIt {
 
     public Log4JLogIt(final String[] args, final String root) throws APIException {
         String propsFile = getArgOrVM(AAF_LOG4J_PREFIX, args, "org.osaaf.aaf")+".log4j.props";
-        String log_dir = getArgOrVM(Config.CADI_LOGDIR,args,"/opt/app/osaaf/logs");
-        String etc_dir = getArgOrVM(Config.CADI_ETCDIR,args,"/opt/app/osaaf/etc");
-        String log_level = getArgOrVM(Config.CADI_LOGLEVEL,args,"INFO");
-        File logs = new File(log_dir);
+        String logDir = getArgOrVM(Config.CADI_LOGDIR,args,"/opt/app/osaaf/logs");
+        String etcDir = getArgOrVM(Config.CADI_ETCDIR,args,"/opt/app/osaaf/etc");
+        String logLevel = getArgOrVM(Config.CADI_LOGLEVEL,args,"INFO");
+        File logs = new File(logDir);
         if (!logs.isDirectory()) {
             logs.delete();
         }
@@ -61,9 +61,9 @@ public class Log4JLogIt implements LogIt {
         }
 
         if (System.getProperty("log4j.configuration")==null) {
-            System.setProperty("log4j.configuration", etc_dir+'/'+propsFile);
+            System.setProperty("log4j.configuration", etcDir+'/'+propsFile);
         }
-        LogFileNamer lfn = new LogFileNamer(log_dir,root);
+        LogFileNamer lfn = new LogFileNamer(logDir,root);
         try {
             service=lfn.setAppender("service"); // when name is split, i.e. authz|service, the Appender is "authz", and "service"
             audit=lfn.setAppender("audit");     // is part of the log-file name
@@ -75,7 +75,7 @@ public class Log4JLogIt implements LogIt {
             linit = Logger.getLogger(init);
             ltrace = Logger.getLogger(trace);
 
-            lfn.configure(etc_dir,propsFile, log_level);
+            lfn.configure(etcDir,propsFile, logLevel);
         } catch (IOException e) {
             throw new APIException(e);
         }

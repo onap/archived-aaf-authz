@@ -81,7 +81,7 @@ public class JU_TypedCode {
         HttpCode<?, ?> code = mock(HttpCode.class);
         code.pathParam(null, null);
         code.isAuthorized(null); //Testing httpcode, currently not working
-        code.no_cache();
+        code.noCache();
         code.toString();
 
         typedCode.add(code , "");

@@ -89,6 +89,7 @@ public class Display {
 
         } else {
             // Transfer whether Page shouldn't be cached to local Final var.
+
             final boolean noCache = page.noCache;
 
             gui.route(gui.env, meth, page.url(),
@@ -139,7 +140,8 @@ public class Display {
                     }
 
                     @Override
-                    public boolean no_cache() {
+                    public boolean noCache() {
+
                         return noCache;
                     }
                 }, "text/html","*/*");

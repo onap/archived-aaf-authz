@@ -52,13 +52,13 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
     public final ENV env;
     private AAFConHttp aafCon;
 
-    public final String app_name;
-    public final String app_version;
-    public final String ROOT_NS;
+    public final String appName;
+    public final String appVersion;
+    public final String rootNs;
 
     public AbsService(final Access access, final ENV env) throws CadiException {
         Define.set(access);
-        ROOT_NS = Define.ROOT_NS();
+        rootNs = Define.ROOT_NS();
         this.access = access;
         this.env = env;
 
@@ -67,16 +67,16 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
         if(scomp.length==0) {
             throw new CadiException(Config.AAF_LOCATOR_ENTRIES + " must be defined.");
         } else {
-            str = ROOT_NS + '.' + scomp[0];
+            str = rootNs + '.' + scomp[0];
         }
-        app_name = str;
+        appName = str;
 
         str = access.getProperty(Config.AAF_LOCATOR_VERSION, null);
         if(str==null) {
             str = Defaults.AAF_VERSION;
             env.setProperty(Config.AAF_LOCATOR_VERSION, str);
         }
-        app_version = access.getProperty(Config.AAF_DEPLOYED_VERSION, str);
+        appVersion = access.getProperty(Config.AAF_DEPLOYED_VERSION, str);
 
         // Print Cipher Suites Available
         if (access.willLog(Level.DEBUG)) {
@@ -159,11 +159,11 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
 
     public Rcli<?> clientAsUser(TaggedPrincipal p) throws CadiException {
         return aafCon.client().forUser(
-                new HTransferSS(p,app_name, aafCon.securityInfo()));
+                new HTransferSS(p, appName, aafCon.securityInfo()));
     }
 
     public<RET> RET clientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
-            return aafCon.hman().best(new HTransferSS(p,app_name, aafCon.securityInfo()), retryable);
+            return aafCon.hman().best(new HTransferSS(p, appName, aafCon.securityInfo()), retryable);
     }
 
     protected static final String loadFromArgOrSystem(final Properties props, final String tag, final String args[], final String def) {

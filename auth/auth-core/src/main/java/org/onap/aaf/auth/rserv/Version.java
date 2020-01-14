@@ -32,7 +32,7 @@ public class Version {
     private Object[] parts;
 
     public Version(String v) {
-        String sparts[] = v.split("\\.");
+        String[] sparts = v.split("\\.");
         parts = new Object[sparts.length];
         System.arraycopy(sparts, 0, parts, 0, sparts.length);
         if (parts.length>1) { // has at least a minor

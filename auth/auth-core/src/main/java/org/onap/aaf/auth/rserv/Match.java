@@ -35,8 +35,8 @@ import java.util.Set;
  */
 public class Match {
     private Map<String, Integer> params;
-    private byte[]     values[];
-    private Integer vars[];
+    private byte[][] values;
+    private Integer[] vars;
     private boolean wildcard;
 
 
@@ -50,7 +50,6 @@ public class Match {
      * a multi-field option, i.e. ending with a wild-card.
      */
     public Match(String path) {
-        // IF DEBUG: System.out.print("\n[" + path + "]");
         params = new HashMap<>();
         if (path!=null) {
             String[] pa = path.split("/");
@@ -87,7 +86,6 @@ public class Match {
                             vars[i]=0; // this is actually a variable, if it only contains a "*"
                         }
                     }
-                    // vars[i]=null;
                 }
             }
         }
@@ -148,8 +146,7 @@ public class Match {
 
         int lastField = values.length;
         int lastByte = pabytes.length;
-        boolean fieldMatched = false; // = lastByte>0?(pabytes[0]=='/'):false;
-        // IF DEBUG: System.out.println("\n -- " + path + " --");
+        boolean fieldMatched = false;
         for (int i=0;rv && i<lastByte;++i) {
             if (field>=lastField) { // checking here allows there to be a non-functional ending /
                 rv = false;
@@ -163,7 +160,6 @@ public class Match {
                 if (end==0)end=start+1;
                 int k = i;
                 for (int j=start; j<end && k<lastByte; ++k) {
-                    // IF DEBUG: System.out.print((char)pabytes[k]);
                     if (pabytes[k]=='/') {
                         ++field;
                         ++j;
@@ -175,7 +171,6 @@ public class Match {
                 fieldMatched = false; // reset
                 fieldIdx = 0;
             } else {
-                // IF DEBUG: System.out.print((char)pabytes[i]);
                 if (pabytes[i]=='/') { // end of field, eval if Field is matched
                     // if double slash, check if supposed to be empty
                     if (fieldIdx==0 && values[field].length==0) {
