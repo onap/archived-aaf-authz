@@ -49,7 +49,7 @@ import com.datastax.driver.core.Statement;
 
 public class Cred  {
     public static final SortedMap<String,Cred> data = new TreeMap<>();
-    protected static final SortedMap<String,List<Cred>> byNS = new TreeMap<>();
+    public static final SortedMap<String,List<Cred>> byNS = new TreeMap<>();
 
     public final String id;
     public final List<Instance> instances;

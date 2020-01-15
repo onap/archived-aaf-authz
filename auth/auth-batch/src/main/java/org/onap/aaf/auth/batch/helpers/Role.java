@@ -43,8 +43,8 @@ import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
 
 public class Role implements Comparable<Role> {
-    protected static final SortedMap<Role,Set<String>> data = new TreeMap<>();
-    protected static final SortedMap<String,Role> keys = new TreeMap<>();
+    public static final SortedMap<Role,Set<String>> data = new TreeMap<>();
+    public static final SortedMap<String,Role> keys = new TreeMap<>();
     public static final SortedMap<String,Role> byName = new TreeMap<>();
     private static List<Role> deleteRoles = new ArrayList<>();
 
