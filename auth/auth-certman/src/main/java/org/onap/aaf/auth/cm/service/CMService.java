@@ -93,6 +93,8 @@ public class CMService {
 
     private static final String[] NO_NOTES = new String[0];
     private final Permission root_read_permission;
+	private final String aaf_ns;
+
     private final CertDAO certDAO;
     private final CredDAO credDAO;
     private final ArtiDAO artiDAO;
@@ -114,8 +116,9 @@ public class CMService {
 
         this.certManager = certman;
 
+        aaf_ns = trans.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF);
         root_read_permission=new AAFPermission(
-                trans.getProperty(Config.AAF_ROOT_NS, Config.AAF_ROOT_NS_DEF),
+                aaf_ns,
                 ACCESS,
                 "*",
                 "read"
@@ -149,11 +152,15 @@ public class CMService {
 
             List<String> notes = null;
             List<String> fqdns;
+            boolean dynamic_sans = trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS));
+            boolean ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
             boolean domain_based = false;
-            boolean dynamic_sans = false;
 
+            // Note: Many Cert Impls require FQDN in "CN=" to be in the SANS as well.  Therefore, the "fqdn" variable
+            // includes main ID plus ADDITIONAL SANS at all times.
             if(req.value.fqdns.isEmpty()) {
                 fqdns = new ArrayList<>();
+                fqdns.add(key);
             } else {
                 // Only Template or Dynamic permitted to pass in FQDNs
                 if (req.value.fqdns.get(0).startsWith("*")) { // Domain set
@@ -163,13 +170,6 @@ public class CMService {
                         return Result.err(Result.ERR_Denied,
                               "Domain based Authorizations (" + req.value.fqdns.get(0) + ") requires Exception");
                     }
-                } else {
-                    if(trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS))) {
-                        dynamic_sans = true;
-                    } else {
-                        return Result.err(Result.ERR_Denied,
-                            "Dynamic SANs for (" + req.value.mechid + ") requires Permission");
-                    }
                 }
                 fqdns = new ArrayList<>(req.value.fqdns);
             }
@@ -178,15 +178,6 @@ public class CMService {
 
             try {
                 Organization org = trans.org();
-
-                boolean ignoreIPs;
-                if(allowIgnoreIPs) {
-                    ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
-                } else {
-                    ignoreIPs = false;
-                }
-
-
                 InetAddress primary = null;
                 // Organize incoming information to get to appropriate Artifact
                 if (!fqdns.isEmpty()) { // Passed in FQDNS, validated above
@@ -220,7 +211,8 @@ public class CMService {
                                     Set<String> potentialSanNames = new HashSet<>();
                                     for (InetAddress ia1 : ias) {
                                         InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
-                                        if (primary == null && ias.length == 1 && trans.ip().equals(ia1.getHostAddress())) {
+                                        String ip = trans.ip();
+                                        if (primary == null && ip.equals(ia1.getHostAddress())) {
                                             primary = ia1;
                                         } else if (!cn.equals(ia1.getHostName())
                                                 && !ia2.getHostName().equals(ia2.getHostAddress())) {
@@ -296,16 +288,16 @@ public class CMService {
 
                 // Policy 3: MechID must be current
                 Identity muser = org.getIdentity(trans, add.mechid);
-                if (muser == null) {
-                    return Result.err(Result.ERR_Policy, "MechID must exist in %s", org.getName());
+                if (muser == null || !muser.isFound()) {
+                    return Result.err(Result.ERR_Policy, "AppID '%s' must exist in %s",add.mechid,org.getName());
                 }
 
                 // Policy 4: Sponsor must be current
                 Identity ouser = muser.responsibleTo();
-                if (ouser == null) {
+                if (ouser == null || !ouser.isFound()) {
                     return Result.err(Result.ERR_Policy, "%s does not have a current sponsor at %s", add.mechid,
                             org.getName());
-                } else if (!ouser.isFound() || ouser.mayOwn() != null) {
+                } else if (ouser.mayOwn() != null) {
                     return Result.err(Result.ERR_Policy, "%s reports that %s cannot be responsible for %s",
                             org.getName(), trans.user());
                 }
@@ -327,7 +319,18 @@ public class CMService {
                             trans.user(), mechNS);
                 }
 
+                // Policy 8: IP Addresses allowed in Certs only by Permission
+                if(!trans.fish(new AAFPermission(aaf_ns,CERTMAN, ca.getName(), "ip"))) {
+                	for(String fqdn : fqdns) {
+                    	if(CA.IPV4_PATTERN.matcher(fqdn).matches() || CA.IPV6_PATTERN.matcher(fqdn).matches()) {
+                            return Result.err(Status.ERR_Denied,
+                                    "Machines include a IP Address.  IP Addresses are not allowed except by Permission");
+                    	}
+                	}
+                }
+
                 // Make sure Primary is the first in fqdns
+
                 if (fqdns.size() > 1) {
                     for (int i = 0; i < fqdns.size(); ++i) {
                         if (primary==null && !ignoreIPs) {

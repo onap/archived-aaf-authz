@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.security.KeyPair;
@@ -251,7 +250,7 @@ public class Agent {
                         System.out.println("   update       <FQI> [<machine>]");
                         System.out.println("   delete       <FQI> [<machine>]");
                         System.out.println("   copy         <FQI> <machine> <newmachine>[,<newmachine>]*");
-                        System.out.println("   place        <FQI> [<machine>]");
+                        System.out.println("   place        <FQI> [<machine>[,<san>]*");
                         System.out.println("   showpass     <FQI> [<machine>]");
                         System.out.println("   check        <FQI> [<machine>]");
                         System.out.println("   keypairgen   <FQI>");
@@ -712,6 +711,7 @@ public class Agent {
             machine = fqdns[1];
         } else {
             key = machine;
+            fqdns = machines(cmds);
         }
 
         TimeTaken tt = trans.start("Place Artifact", Env.REMOTE);
@@ -728,8 +728,11 @@ public class Agent {
                             CertificateRequest cr = new CertificateRequest();
                             cr.setMechid(a.getMechid());
                             cr.setSponsor(a.getSponsor());
+                            cr.getFqdns().add(machine);
                             for (int i=0;i<fqdns.length;++i) {
-                                cr.getFqdns().add(fqdns[i]);
+                            	if(!machine.equals(fqdns[i])) {
+                            		cr.getFqdns().add(fqdns[i]);
+                            	}
                             }
                             Future<String> f = aafcon.client(CM_VER)
                                     .updateRespondString("/cert/" + a.getCa()+"?withTrust",reqDF, cr);

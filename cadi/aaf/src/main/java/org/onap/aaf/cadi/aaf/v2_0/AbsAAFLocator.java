@@ -237,7 +237,7 @@ public abstract class AbsAAFLocator<TRANS extends Trans> implements Locator<URI>
     public Item best() throws LocatorException {
         if (!hasItems()) {
             throw new LocatorException(String.format("No Entries found for '%s/%s:%s'",
-                    (aaf_locator_uri==null?aaf_locator_host:aaf_locator_uri.toString()),
+                    (aaf_locator_uri==null?(aaf_locator_host+"/locate"):aaf_locator_uri.toString()),
                     name,
                     version));
         }

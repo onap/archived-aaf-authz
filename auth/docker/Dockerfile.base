@@ -18,7 +18,8 @@
 #  ============LICENSE_END====================================================
 #
 # Use dbuild.sh input parameter to set registry
-FROM ${REGISTRY}/openjdk:8-jre-alpine
+#FROM ${REGISTRY}/openjdk:11.0.5-jre-slim
+FROM ${REGISTRY}/openjdk:8-jdk-alpine
 #FROM openjdk:12-jdk-alpine
 #FROM openjdk:13-jdk-alpine
 

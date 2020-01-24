@@ -72,7 +72,6 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
 
 public class LocalCA extends CA {
-
     private final static BigInteger ONE = new BigInteger("1");
     // Extensions
     private static final KeyPurposeId[] ASN_WebUsage = new KeyPurposeId[] {
@@ -226,8 +225,14 @@ public class LocalCA extends CA {
 //                    new SubjectPublicKeyInfo(ASN1Sequence.getInstance(caCert.getPublicKey().getEncoded()))
                     );
             List<GeneralName> lsan = new ArrayList<>();
+            // Email
+            lsan.add(new GeneralName(GeneralName.rfc822Name,csrmeta.email()));
             for (String s : csrmeta.sans()) {
-                lsan.add(new GeneralName(GeneralName.dNSName,s));
+        		if(IPV4_PATTERN.matcher(s).matches() || IPV6_PATTERN.matcher(s).matches()) {
+            		lsan.add(new GeneralName(GeneralName.iPAddress,s));
+        		} else {            	
+        			lsan.add(new GeneralName(GeneralName.dNSName,s));
+        		}
             }
             GeneralName[] sans = new GeneralName[lsan.size()];
             lsan.toArray(sans);

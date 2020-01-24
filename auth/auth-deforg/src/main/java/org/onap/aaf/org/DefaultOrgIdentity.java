@@ -120,10 +120,14 @@ public class DefaultOrgIdentity implements Identity {
 
     @Override
     public Identity responsibleTo() throws OrganizationException {
-        if ("".equals(identity.responsibleTo) && isFound()) { // cover the situation of Top Dog... reports to no-one.
-            return this;
+    	if(isFound()) {
+	        if ("".equals(identity.responsibleTo)) { // cover the situation of Top Dog... reports to no-one.
+	            return this;
+	        } else {
+	            return org.getIdentity(trans, identity.responsibleTo);
+	        }
         } else {
-            return org.getIdentity(trans, identity.responsibleTo);
+        	throw new OrganizationException("Identity doesn't exist");
         }
     }
 

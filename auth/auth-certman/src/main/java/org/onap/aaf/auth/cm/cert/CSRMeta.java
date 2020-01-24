@@ -75,7 +75,8 @@ public class CSRMeta {
         if (name==null) {
             X500NameBuilder xnb = new X500NameBuilder();
             xnb.addRDN(BCStyle.CN,cn);
-            xnb.addRDN(BCStyle.E,email);
+            // Add as Subject Alternate Name, email
+            // xnb.addRDN(BCStyle.E,email);
             if (mechID!=null) {
                 if (environment==null) {
                     xnb.addRDN(BCStyle.OU,mechID);

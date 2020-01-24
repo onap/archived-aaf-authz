@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.onap.aaf.auth.cm.cert.CSRMeta;
@@ -42,6 +43,10 @@ import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.env.util.Split;
 
 public abstract class CA {
+    public static final Pattern IPV4_PATTERN = Pattern.compile("\\A(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z");
+    public static final Pattern IPV6_PATTERN = Pattern.compile("\\A(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\z");
+    
+
     private static final String MUST_EXIST_TO_CREATE_CSRS_FOR = " must exist to create CSRs for ";
     //TODO figuring out what is an Issuing CA is a matter of convention.  Consider SubClassing for Open Source
     public static final String ISSUING_CA = "Issuing CA";

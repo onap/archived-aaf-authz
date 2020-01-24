@@ -154,7 +154,11 @@ public class AAF_CM extends AbsService<AuthzEnv, AuthzTrans> {
                             CA ca = cons.newInstance(pinst);
                             certAuths.put(ca.getName(),ca);
                         } catch (InvocationTargetException e) {
-                            access.log(e, "Loading", segs[0]);
+                        	if(e.getLocalizedMessage()==null) {
+                        		access.log((Exception)e.getTargetException(), "Loading", segs[0]);
+                        	} else {
+                        		access.log(e, "Loading", segs[0]);
+                        	}
                         }
                     }
                 }
