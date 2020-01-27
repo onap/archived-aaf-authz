@@ -52,9 +52,10 @@ public class BreadCrumbs extends NamedCode {
             cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, TransStore>() {
                 @Override
                 public void code(AAF_GUI gui, TransStore trans, final Cache<HTMLGen> cache, final HTMLGen hgen) throws APIException, IOException {
-                    HttpServletRequest req = trans.get(gui.slot_httpServletRequest, null);
+                    HttpServletRequest req = trans.get(gui.slotHttpServletRequest, null);
                     StringBuilder key = new StringBuilder();
-                    String value, hidden;
+                    String value;
+                    String hidden;
                     for (Page p : breadcrumbs) {
                         hidden="";
                         // Add keys for page from commandline, where possible.

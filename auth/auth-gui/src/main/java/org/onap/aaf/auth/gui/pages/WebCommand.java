@@ -38,6 +38,8 @@ import org.onap.aaf.misc.xgen.html.HTMLGen;
 
 public class WebCommand extends Page {
     public static final String HREF = "/gui/cui";
+    public static final String INPUT = "input";
+    public static final String TYPE_BUTTON = "type=button";
 
     public WebCommand(final AAF_GUI gui, final Page ... breadcrumbs) throws APIException, IOException {
         super(gui.env, "Web Command Client",HREF, NO_FIELDS,
@@ -64,47 +66,45 @@ public class WebCommand extends Page {
                     @Override
                     public void code(AAF_GUI state, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen)
                             throws APIException, IOException {
-                        String image_root = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
-                        hgen.img(image_root + "/options_down.png", "onclick=handleDivHiding('options',this);",
+                        String imageRoot = "src=../../"+state.env.get(sThemeWebPath).toString() + '/' + state.env.get(sTheme) + "/images/icons";
+                        hgen.img(imageRoot + "/options_down.png", "onclick=handleDivHiding('options',this);",
                                 "id=options_img", "alt=Options", "title=Options")
                             .end(); //options_link
 
                         hgen.divID("options");
 
                         switch(browser(trans,trans.env().slot(getBrowserType()))) {
-                            case ie:
-                            case ieOld:
+                            case IE:
+                            case IEOLD:
                                 // IE doesn't support file save
                                 break;
                             default:
-                                xgen.img(image_root+"/AAF_download.png", "onclick=saveToFile();",
+                                xgen.img(imageRoot+"/AAF_download.png", "onclick=saveToFile();",
                                         "alt=Save log to file", "title=Save log to file");
                         }
-//                        xgen.img("src=../../"+gui.theme+"/AAF_email.png", "onclick=emailLog();",
-//                                "alt=Email log to me", "title=Email log to me");
-                        xgen.img(image_root+"/AAF_font_size.png", "onclick=handleDivHiding('text_slider',this);",
+                        xgen.img(imageRoot+"/AAF_font_size.png", "onclick=handleDivHiding('text_slider',this);",
                                 "id=fontsize_img", "alt=Change text size", "title=Change text size");
-                        xgen.img(image_root+"/AAF_details.png", "onclick=selectOption(this,0);",
+                        xgen.img(imageRoot+"/AAF_details.png", "onclick=selectOption(this,0);",
                                 "id=details_img", "alt=Turn on/off details mode", "title=Turn on/off details mode");
-                        xgen.img(image_root+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
+                        xgen.img(imageRoot+"/AAF_maximize.png", "onclick=maximizeConsole(this);",
                                 "id=maximize_img", "alt=Maximize Console Window", "title=Maximize Console Window");
                     }
                 });
                 hgen.divID("text_slider");
-                hgen.tagOnly("input", "type=button", "class=change_font", "onclick=buttonChangeFontSize('dec')", "value=-")
-                    .tagOnly("input", "id=text_size_slider", "type=range", "min=75", "max=200", "value=100",
+                hgen.tagOnly(INPUT, TYPE_BUTTON, "class=change_font", "onclick=buttonChangeFontSize('dec')", "value=-")
+                    .tagOnly(INPUT, "id=text_size_slider", "type=range", "min=75", "max=200", "value=100",
                         "oninput=changeFontSize(this.value)", "onchange=changeFontSize(this.value)", "title=Change Text Size")
-                    .tagOnly("input", "type=button", "class=change_font", "onclick=buttonChangeFontSize('inc')", "value=+")
+                    .tagOnly(INPUT, TYPE_BUTTON, "class=change_font", "onclick=buttonChangeFontSize('inc')", "value=+")
                     .end(); //text_slider
 
                 hgen.end(); //options
                 hgen.end(); //console_and_options
 
                 hgen.divID("input_area");
-                hgen.tagOnly("input", "type=text", "id=command_field",
+                hgen.tagOnly(INPUT, "type=text", "id=command_field",
                         "autocomplete=off", "autocorrect=off", "autocapitalize=off", "spellcheck=false",
                         "onkeypress=keyPressed()", "placeholder=Type your AAFCLI commands here", "autofocus")
-                    .tagOnly("input", "id=submit", "type=button", "value=Submit",
+                    .tagOnly(INPUT, "id=submit", TYPE_BUTTON, "value=Submit",
                             "onclick=http('put','../../gui/cui',getCommand(),callCUI);")
                     .end();
 

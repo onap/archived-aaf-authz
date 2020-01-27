@@ -55,7 +55,7 @@ public class LoginLanding extends Page {
                 cache.dynamic(hgen, new DynamicCode<HTMLGen, AAF_GUI, AuthzTrans>() {
                     @Override
                     public void code(AAF_GUI authGUI, AuthzTrans trans, Cache<HTMLGen> cache, HTMLGen xgen) throws APIException, IOException {
-                        HttpServletRequest req = trans.get(gui.slot_httpServletRequest, null);
+                        HttpServletRequest req = trans.get(gui.slotHttpServletRequest, null);
                         if (req!=null) {
                             String query = req.getQueryString();
                             if (query!=null) {
@@ -68,47 +68,7 @@ public class LoginLanding extends Page {
                         xgen.leaf(HTMLGen.A, "href=gui/home?Authentication=BasicAuth").text("AAF Basic Auth").end();
                     }
                 });
-//                hgen.leaf("a", "href=#","onclick=divVisibility('cso');").text("Global Login").end()
-//                    .incr("p", "id=cso","style=display:none").text("this will redirect to global login").end()
-//                    .leaf("a", "href=#","onclick=divVisibility('tguard');").text("tGuard").end()
-//                    .incr("p", "id=tguard","style=display:none").text("this will redirect to tGuard login").end()
-//                hgen.leaf("a", "href=#","onclick=divVisibility('basicauth');").text("AAF Basic Auth").end();
                 hgen.end(loginPaths);
-
-//                    hgen.incr("form","method=post","style=display:none","id=basicauth","gui/home?Authentication=BasicAuth");
-//                    Mark table = new Mark(TABLE);
-//                    hgen.incr(table);
-//                    cache.dynamic(hgen, new DynamicCode<HTMLGen, AuthGUI, AuthzTrans>() {
-//                        @Override
-//                        public void code(final AuthGUI gui, final AuthzTrans trans,    final Cache<HTMLGen> cache, final HTMLGen hgen)
-//                                throws APIException, IOException {
-//                            hgen
-//                            .input(fields[0],"Username",true)
-//                            .input(fields[1],"Password",true, "type=password");
-//                        Mark selectRow = new Mark();
-//                        hgen
-//                        .incr(selectRow, "tr")
-//                        .incr("td")
-//                        .incr("label", "for=envs", "required").text("Environment").end()
-//                        .end()
-//                        .incr("td")
-//                        .incr("select", "name=envs", "id=envs", "required")
-//                        .incr("option", "value=").text("Select Environment").end();
-//                        for (String env : envs) {
-//                            hgen.incr("option", "value="+env).text(env).end();
-//                        }
-//                        hgen
-//                        .end(selectRow)
-
-//                        hgen.end();
-//                        }
-//                    });
-//                    hgen.end();
-//                    hgen.tagOnly("input", "type=submit", "value=Submit")
-//                        .tagOnly("input", "type=reset", "value=Reset")
-//                    .end();
-
-
             }
         });
     }

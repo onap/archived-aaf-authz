@@ -73,7 +73,7 @@ public class CUI extends HttpCode<AuthzTrans, Void> {
             aafcli= new AAFcli(gui.access,gui.env, pw,
                     aafcon.hman(),
                     aafcon.securityInfo(),
-                    new HTransferSS(p,AAF_GUI.app,
+                    new HTransferSS(p,AAF_GUI.APP,
                             aafcon.securityInfo()));
             aafcli.verbose(false);
             aafcli.gui(true);

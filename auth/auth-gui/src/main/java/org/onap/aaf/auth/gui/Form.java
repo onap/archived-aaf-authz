@@ -31,8 +31,8 @@ public class Form extends NamedCode {
     private String preamble;
     private NamedCode content;
 
-    public Form(boolean no_cache, NamedCode content) {
-        super(no_cache,content);
+    public Form(boolean noCache, NamedCode content) {
+        super(noCache,content);
         this.content = content;
         preamble=null;
     }

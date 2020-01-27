@@ -103,7 +103,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     public static final String AAF_GUI_COPYRIGHT = "aaf_gui_copyright";
     public static final String HTTP_SERVLET_REQUEST = "HTTP_SERVLET_REQUEST";
     public static final int TIMEOUT = 60000;
-    public static final String app = "AAF GUI";
+    public static final String APP = "AAF GUI";
 
     // AAF API
 
@@ -115,7 +115,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     public final AAFConHttp aafCon;
     public final AAFLurPerm lur;
 
-    public final Slot slot_httpServletRequest;
+    public final Slot slotHttpServletRequest;
     protected final String deployedVersion;
     private StaticSlot sThemeWebPath;
     private StaticSlot sDefaultTheme;
@@ -132,12 +132,12 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
             env.put(sThemeWebPath,"theme");
         }
 
-        slot_httpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
+        slotHttpServletRequest = env.slot(HTTP_SERVLET_REQUEST);
         deployedVersion = app_version;
 
         // Certificate Manager
-        String aaf_url_cm = env.getProperty(Config.AAF_URL_CM,Config.AAF_URL_CM_DEF);
-        cmCon =  new AAFConHttp(env.access(),aaf_url_cm);
+        String aafUrlCm = env.getProperty(Config.AAF_URL_CM,Config.AAF_URL_CM_DEF);
+        cmCon =  new AAFConHttp(env.access(),aafUrlCm);
         artifactsDF = env.newDataFactory(Artifacts.class);
         certInfoDF  = env.newDataFactory(CertInfo.class);
 
@@ -231,7 +231,6 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         // WebContent Handler
         ///////////////////////
         CachingFileAccess<AuthzTrans> cfa = new CachingFileAccess<AuthzTrans>(env);
-        //route(env,GET,"/"+env.get(sThemeWebPath)+"/:key*", cfa);
         route(env,GET,"/theme/:key*", cfa);
         ///////////////////////
         aafCon = aafCon();
@@ -254,7 +253,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
     }
 
     public<RET> RET cmClientAsUser(TaggedPrincipal p,Retryable<RET> retryable) throws APIException, LocatorException, CadiException  {
-            return cmCon.hman().best(new HTransferSS(p,app, aafCon.securityInfo()), retryable);
+            return cmCon.hman().best(new HTransferSS(p, APP, aafCon.securityInfo()), retryable);
     }
 
     @Override
