@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Gerard Nugent <gerard.nugent@est.tech>
+Code-Review+2: Jonathan Gathman <jgonap@stl.gathman.org>
+Submitted-by: Jonathan Gathman <jgonap@stl.gathman.org>
+Submitted-at: Tue, 28 Jan 2020 15:07:01 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aaf/authz/+/100285
+Project: aaf/authz
+Branch: refs/heads/master
