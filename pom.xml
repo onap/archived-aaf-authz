@@ -55,6 +55,10 @@
         <mockito.version>1.9.5</mockito.version>
         <project.interfaceVersion>${project.version}</project.interfaceVersion>
         <project.jettyVersion>9.4.12.v20180830</project.jettyVersion>
+        <!--
+            This version requires changes in how to start Jetty  
+        	<project.jettyVersion>9.4.26.v20200117</project.jettyVersion>
+        -->
         <project.cassVersion>3.6.0</project.cassVersion>
         <project.jaxbVersion>2.3.1</project.jaxbVersion>
         <project.glassfishJaxbVersion>3.0-b71</project.glassfishJaxbVersion>
@@ -243,16 +247,37 @@
                 <version>3.0.1</version>
             </dependency>
 
-            <!-- JettyVersion is partly covered in "OParent" dependency> <groupId>org.eclipse.jetty</groupId> 
-                <artifactId>jetty-servlet</artifactId> <version>${project.jettyVersion}</version> 
-                </dependency><dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-server</artifactId> 
-                <version>${project.jettyVersion}</version> </dependency> <dependency> <groupId>org.eclipse.jetty</groupId> 
-                <artifactId>jetty-http</artifactId> <version>${project.jettyVersion}</version> 
-                </dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-io</artifactId> 
-                <version>${project.jettyVersion}</version> </dependency> <dependency> <groupId>org.eclipse.jetty</groupId> 
-                <artifactId>jetty-security</artifactId> <version>${project.jettyVersion}</version> 
-                </dependency> <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-util</artifactId> 
-                <version>${project.jettyVersion}</version> </dependency> -->
+			            <!-- JettyVersion is partly covered in "OParent" dependency> -->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-http</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-io</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-security</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-util</artifactId>
+				<version>${project.jettyVersion}</version>
+			</dependency> 
 
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -349,6 +374,12 @@
             </dependency>
 
           <!-- Javax removed as of JDK 9 -->
+          <!--  Annotation MAY not be needed -->
+          <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+          </dependency>
           <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -364,7 +395,18 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>${project.jaxbVersion}</version>
           </dependency>
-          
+          <!-- 
+          <dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-impl</artifactId>
+		    <version>2.2.11</version>
+		  </dependency>
+		  <dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.2.11</version>
+		   </dependency>
+		    -->
         </dependencies>
     </dependencyManagement>
 
