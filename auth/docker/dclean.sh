@@ -36,4 +36,5 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
       $DOCKER image rm $DOCKER_REPOSITORY/$ORG/$PROJECT/aaf_$AAF_COMPONENT:latest
     fi
 done
+
 echo "Y" | $DOCKER image prune

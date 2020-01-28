@@ -25,7 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLServerSocketFactory;
 import javax.servlet.Filter;
 
 import org.onap.aaf.auth.common.Define;
@@ -86,7 +86,7 @@ public abstract class AbsService<ENV extends BasicEnv, TRANS extends Trans> exte
             } catch (NoSuchAlgorithmException e) {
                 throw new CadiException("SSLContext issue",e);
             }
-            SSLSocketFactory sf = context.getSocketFactory();
+            SSLServerSocketFactory sf = context.getServerSocketFactory();
             StringBuilder sb = new StringBuilder("Available Cipher Suites: ");
             boolean first = true;
             int count=0;
