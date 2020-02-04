@@ -1,5 +1,3 @@
-/_static/
-/etc/
-/.tox/
-/conf.py
-/tox.ini
+/.tox
+/_build/*
+/__pycache__/*
