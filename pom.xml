@@ -54,11 +54,14 @@
         <powermock.version>1.5.1</powermock.version>
         <mockito.version>1.9.5</mockito.version>
         <project.interfaceVersion>${project.version}</project.interfaceVersion>
-        <project.jettyVersion>9.4.12.v20180830</project.jettyVersion>
+	<project.jettyVersion>9.4.12.v20180830</project.jettyVersion>
         <!--
+            This version needs work.
+        	<project.jettyVersion>9.4.17.v20190418</project.jettyVersion>
             This version requires changes in how to start Jetty  
         	<project.jettyVersion>9.4.26.v20200117</project.jettyVersion>
         -->
+        
         <project.cassVersion>3.6.0</project.cassVersion>
         <project.jaxbVersion>2.3.1</project.jaxbVersion>
         <project.glassfishJaxbVersion>3.0-b71</project.glassfishJaxbVersion>
