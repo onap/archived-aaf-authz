@@ -1,0 +1,17 @@
+distribution_type: 'container'
+container_release_tag: '2.1.17'
+project: 'aaf-authz'
+container_pull_registry: nexus3.onap.org:10003
+container_push_registry: nexus3.onap.org:10002
+ref: add60903781f8bb4cbe59555bf79181cb5f73b8c
+containers:
+    - name: 'onap/aaf/aaf-base'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'onap/aaf/aaf-core'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'onap/aaf/aaf-config'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'onap/aaf/aaf-agent'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'onap/aaf/aaf-hello'
+      version: '2.1.17-SNAPSHOT'
