@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71a758c4_bb2abc89",
+        "filename": "releases/2.1.17-container.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2020-03-04T17:28:22Z",
+      "side": 1,
+      "message": "the urls are wrong. \nplease correct them to \"nexus3.onap.org\" instead of \"nexus.onap.org\"",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 45
+      },
+      "revId": "23a1725c2dacc20a5b03b7a02e9c7fa8a51c7a67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
