@@ -23,7 +23,7 @@ PROJECT=aaf
 # Note: Override can happen on dbuild.sh Commandline, -r <registry>
 DOCKER_PULL_REGISTRY=nexus3.onap.org:10001
 DOCKER_REPOSITORY=nexus3.onap.org:10003
-VERSION=2.1.17-SNAPSHOT
+VERSION=2.1.18-SNAPSHOT
 CONF_ROOT_DIR=/opt/app/osaaf
 # For local builds, set PREFIX=   
 PREFIX="$DOCKER_REPOSITORY/"

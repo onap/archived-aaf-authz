@@ -1,0 +1,16 @@
+distribution_type: 'container'
+container_release_tag: '2.1.17'
+project: 'aaf-authz'
+log_dir: 'aaf-authz-maven-stage-master/271/'
+ref: add60903781f8bb4cbe59555bf79181cb5f73b8c
+containers:
+    - name: 'aaf-base'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'aaf-core'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'aaf-config'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'aaf-agent'
+      version: '2.1.17-SNAPSHOT'
+    - name: 'aaf-hello'
+      version: '2.1.17-SNAPSHOT'
