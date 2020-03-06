@@ -1,0 +1,19 @@
+distribution_type: 'container'
+container_release_tag: '2.1.18'
+project: 'aaf-authz'
+container_pull_registry: nexus3.onap.org:10003
+container_push_registry: nexus3.onap.org:10002
+ref: 'a555e21d6f23e3c892db86fc9d27960c4b9d6cf4'
+containers:
+    - name: 'aaf/aaf_base'
+      version: '2.1.18-SNAPSHOT'
+    - name: 'aaf/aaf_cass'
+      version: '2.1.18-SNAPSHOT'
+    - name: 'aaf/aaf_core'
+      version: '2.1.18-SNAPSHOT'
+    - name: 'aaf/aaf_config'
+      version: '2.1.18-SNAPSHOT'
+    - name: 'aaf/aaf_agent'
+      version: '2.1.18-SNAPSHOT'
+    - name: 'aaf/aaf_hello'
+      version: '2.1.18-SNAPSHOT'
