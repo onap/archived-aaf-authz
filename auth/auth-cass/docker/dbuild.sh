@@ -38,7 +38,7 @@ echo "$0: DOCKER_PULL_REGISTRY=${DOCKER_REGISTRY}"
 
 DIR=$(pwd)
 cd ..
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+sed -e 's/${AAF_VERSION}/'${VERSION/-SNAPSHOT/}'/g' \
     -e 's/${USER}/'${USER}'/g' \
     -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
     $DIR/Dockerfile.cass > Dockerfile
@@ -46,8 +46,8 @@ cd ..
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
 pwd
-ls -ltr auth-batch/target
-cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass
+cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass/aaf-auth-batch-${VERSION/-SNAPSHOT/}-full.jar
+ls -l auth-cass/*full.jar
 
 echo "$0: $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass"
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
@@ -58,6 +58,6 @@ cd -
 rm Dockerfile
 rm -Rf cass_data
 rm sample.identities.dat
-rm aaf-auth-batch-$VERSION-full.jar
+rm aaf-auth-batch-*-full.jar
 cd $DIR
 
