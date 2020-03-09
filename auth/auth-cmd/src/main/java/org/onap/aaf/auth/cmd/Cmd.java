@@ -49,11 +49,13 @@ import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 
+
 import aaf.v2_0.Error;
 import aaf.v2_0.History;
 import aaf.v2_0.History.Item;
 import aaf.v2_0.Request;
 
+import org.owasp.encoder.Encode;
 
 public abstract class Cmd {
     // Sonar claims DateFormat is not thread safe.  Leave as Instance Variable.
@@ -272,7 +274,7 @@ public abstract class Cmd {
             sb.append(", ");
             sb.append(desc);
         }
-        pw().println(sb);
+        pw().println(Encode.forJava(sb.toString()));
     }
 
 

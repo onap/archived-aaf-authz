@@ -24,6 +24,8 @@ package org.onap.aaf.misc.rosetta;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.owasp.encoder.Encode;
+
 public class OutRaw extends Out{
 
     @Override
@@ -31,7 +33,7 @@ public class OutRaw extends Out{
         Parsed<S> p = prs.newParsed();
 
         while ((p = prs.parse(in,p.reuse())).valid()) {
-            writer.append(p.toString());
+            writer.append(Encode.forJava(p.toString()));
             writer.append('\n');
         }
     }

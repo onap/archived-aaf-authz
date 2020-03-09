@@ -31,6 +31,7 @@ import java.util.Stack;
 
 import org.onap.aaf.misc.env.util.IndentPrintWriter;
 import org.onap.aaf.misc.env.util.StringBuilderWriter;
+import org.owasp.encoder.Encode;
 
 public class OutXML extends Out{
     private static final String XMLNS_XSI = "xmlns:xsi";
@@ -117,7 +118,7 @@ public class OutXML extends Out{
                     if (p.hasData())
                         closeTag = tag(writer,writer,pretty,false,p.name, XmlEscape.convert(p.sb));
                     if (pretty)ipw.dec();
-                    writer.append(level.sbw.getBuffer());
+                    writer.append(Encode.forJava(level.sbw.getBuffer().toString()));
                     level = stack.pop();
                     break;
                 case Parse.START_ARRAY:
@@ -138,7 +139,7 @@ public class OutXML extends Out{
                     break;
             }
         }
-        writer.append(level.sbw.getBuffer());
+        writer.append(Encode.forJava(level.sbw.getBuffer().toString()));
         writer.flush();
     }
 
@@ -175,16 +176,16 @@ public class OutXML extends Out{
     }
 
     private boolean tag(Writer fore, Writer aft, boolean pretty, boolean returns, String tag, String data) throws IOException {
-        fore.append('<');
+        fore.append(Encode.forJava("<"));
         fore.append(tag);
         if (data!=null) {
-            fore.append('>'); // if no data, it may need some attributes...
+            fore.append(Encode.forJava(">")); // if no data, it may need some attributes...
             fore.append(data);
             if (returns)fore.append('\n');
         }
-        aft.append("</");
+        aft.append(Encode.forJava("</"));
         aft.append(tag);
-        aft.append(">");
+        aft.append(Encode.forJava(">"));
         if (pretty)aft.append('\n');
         return data==null;
     }
@@ -192,7 +193,7 @@ public class OutXML extends Out{
     private void attrib(Writer fore, boolean pretty, String tag, String value, Level level) throws IOException {
         String realTag = tag.startsWith("__")?tag.substring(2):tag; // remove __
         if (realTag.equals(Parsed.EXTENSION_TAG)) { // Convert Derived name into XML defined Inheritance
-            fore.append(" xsi:type=\"");
+            fore.append(Encode.forJava(" xsi:type=\" "));
             fore.append(value);
             fore.append('"');
             if (!level.hasPrinted(XMLNS_XSI, XML_SCHEMA_INSTANCE,true)) {
@@ -210,7 +211,7 @@ public class OutXML extends Out{
             }
             fore.append(' ');
             fore.append(realTag);
-            fore.append("=\"");
+            fore.append(" =\" ");
             fore.append(value);
             fore.append('"');
         }

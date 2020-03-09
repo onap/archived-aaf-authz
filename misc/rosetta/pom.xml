@@ -86,6 +86,12 @@
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>jaxb-runtime</artifactId>
         </dependency>
+	
+	<dependency>
+  		<groupId>org.owasp.encoder</groupId>
+		<artifactId>encoder-parent</artifactId>
+		<version>1.2.1</version>
+	</dependency>
     </dependencies>
 
             

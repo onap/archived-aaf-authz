@@ -26,6 +26,7 @@ import java.io.Writer;
 import java.util.Stack;
 
 import org.onap.aaf.misc.env.util.IndentPrintWriter;
+import org.owasp.encoder.Encode;
 
 public class OutJson extends Out {
 
@@ -130,7 +131,7 @@ public class OutJson extends Out {
                 if (p.hasName()) {
                     writer.append('"');
                     if (p.event==3)writer.append("__");
-                    writer.append(p.name);
+                    writer.append(Encode.forJava(p.name));
                     writer.append("\":");
                 }
                 if (p.hasData()) {
