@@ -25,6 +25,19 @@ if [ -e ../../docker/d.props ]; then
   . ../../docker/d.props
 fi
 DOCKER=${DOCKER:-docker}
+ 
+function SCP() {
+  SANS=${1/-SNAPSHOT/}
+  echo $1 = $SANS
+  if [ -e $SANS ]; then
+    cp $SANS $2
+  else
+
+    ln $1 $SANS
+    cp $SANS $2
+    rm $SANS
+  fi
+}
 
 echo "$0: Building aaf_cass Container for aaf_cass:$VERSION"
 
@@ -43,11 +56,10 @@ sed -e 's/${AAF_VERSION}/'${VERSION/-SNAPSHOT/}'/g' \
     -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
     $DIR/Dockerfile.cass > Dockerfile
 cd ..
+pwd
 cp -Rf sample/cass_data auth-cass/cass_data
 cp sample/data/sample.identities.dat auth-cass
-pwd
-cp auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass/aaf-auth-batch-${VERSION/-SNAPSHOT/}-full.jar
-ls -l auth-cass/*full.jar
+SCP auth-batch/target/aaf-auth-batch-$VERSION-full.jar auth-cass
 
 echo "$0: $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass"
 $DOCKER build -t ${ORG}/${PROJECT}/aaf_cass:${VERSION} auth-cass
