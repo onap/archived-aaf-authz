@@ -299,49 +299,44 @@ public class Agent {
                         }
 
 
-
                         String cmd = cmds.removeFirst();
                         switch(cmd) {
                             case "place":
-                                placeCerts(trans,aafcon(access),cmds);
+                            	exitCode = placeCerts(trans,aafcon(access),cmds);
                                 break;
                             case "create":
-                                createArtifact(trans, aafcon(access),cmds);
+                            	exitCode = createArtifact(trans, aafcon(access),cmds);
                                 break;
                             case "read":
-                                readArtifact(trans, aafcon(access), cmds);
+                            	exitCode = readArtifact(trans, aafcon(access), cmds);
                                 break;
                             case "copy":
-                                copyArtifact(trans, aafcon(access), cmds);
+                            	exitCode = copyArtifact(trans, aafcon(access), cmds);
                                 break;
                             case "update":
-                                updateArtifact(trans, aafcon(access), cmds);
+                            	exitCode = updateArtifact(trans, aafcon(access), cmds);
                                 break;
                             case "delete":
-                                deleteArtifact(trans, aafcon(access), cmds);
+                            	exitCode = deleteArtifact(trans, aafcon(access), cmds);
                                 break;
                             case "showpass":
-                                showPass(trans, aafcon(access), cmds);
+                            	exitCode = showPass(trans, aafcon(access), cmds);
                                 break;
                             case "keypairgen":
-                                keypairGen(trans, access, cmds);
+                            	exitCode = keypairGen(trans, access, cmds);
                                 break;
                             case "config":
-                                config(trans,access,args,cmds);
+                            	exitCode = config(trans,access,args,cmds);
                                 break;
                             case "validate":
-                                validate(access);
+                            	exitCode = validate(access);
                                 break;
                             case "check":
-                                try {
-                                    exitCode = check(trans,aafcon(access),cmds);
-                                } catch (Exception e) {
-                                    exitCode = 1;
-                                    throw e;
-                                }
+                                exitCode = check(trans,aafcon(access),cmds);
                                 break;
                             default:
                                 AAFSSO.cons.printf("Unknown command \"%s\"\n", cmd);
+                                break;
                         }
                     } finally {
                         StringBuilder sb = new StringBuilder();
@@ -356,9 +351,10 @@ public class Agent {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                exitCode = 1;
             }
         }
-        if (exitCode != 0 && doExit) {
+        if (doExit) {
             System.exit(exitCode);
         }
     }
@@ -478,7 +474,8 @@ public class Agent {
         return Split.split(',', machines);
     }
 
-    private static void createArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    private static int createArtifact(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    	boolean success = false;
         final String mechID = fqi(cmds);
         final String machine = machine(cmds);
 
@@ -506,18 +503,20 @@ public class Agent {
         arti.setRenewDays(Integer.parseInt(AAFSSO.cons.readLine("Renewal Days (%s):", "30")));
         arti.setNotification(toNotification(AAFSSO.cons.readLine("Notification (mailto owner):", "")));
 
-        TimeTaken tt = trans.start("Create Artifact", Env.REMOTE);
+        TimeTaken tt = transitiveInfo.start("Create Artifact", Env.REMOTE);
         try {
             Future<Artifacts> future = aafcon.client(CM_VER).create("/cert/artifacts", artifactsDF, artifacts);
             if (future.get(TIMEOUT)) {
-                trans.info().printf("Call to AAF Certman successful %s, %s",arti.getMechid(), arti.getMachine());
+                transitiveInfo.info().printf("Call to AAF Certman successful %s, %s",arti.getMechid(), arti.getMachine());
+                success = true;
             } else {
-                trans.error().printf("Call to AAF Certman failed, %s",
+                transitiveInfo.error().printf("Call to AAF Certman failed, %s",
                     errMsg.toMsg(future));
             }
         } finally {
             tt.done();
         }
+        return success ? 0 : 1;
     }
 
     private static String toNotification(String notification) {
@@ -531,19 +530,27 @@ public class Agent {
         return notification;
     }
 
-
-    private static void readArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit cocde for shell
+     * @throws Exception
+     */
+    private static int readArtifact(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
         String mechID = fqi(cmds);
         String machine = machine(cmds);
+        boolean success = false;
 
-        TimeTaken tt = trans.start("Read Artifact", Env.SUB);
+        TimeTaken tt = transitiveInfo.start("Read Artifact", Env.SUB);
         try {
             Future<Artifacts> future = aafcon.client(CM_VER)
-                    .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF,"Authorization","Bearer " + trans.getProperty("oauth_token"));
+                    .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF,"Authorization","Bearer " + transitiveInfo.getProperty("oauth_token"));
 
             if (future.get(TIMEOUT)) {
-                boolean printed = false;
-                for (Artifact a : future.value.getArtifact()) {
+            	List<Artifact> artifacts = future.value.getArtifact();
+                for (Artifact a : artifacts) {
                     AAFSSO.cons.printf("AppID:          %s\n",a.getMechid());
                     AAFSSO.cons.printf("  Sponsor:       %s\n",a.getSponsor());
                     AAFSSO.cons.printf("Machine:         %s\n",a.getMachine());
@@ -561,64 +568,83 @@ public class Agent {
                     AAFSSO.cons.printf("O/S User:        %s\n",a.getOsUser());
                     AAFSSO.cons.printf("Renew Days:      %d\n",a.getRenewDays());
                     AAFSSO.cons.printf("Notification     %s\n",a.getNotification());
-                    printed = true;
                 }
-                if (!printed) {
+                if (artifacts.isEmpty()) {
                     AAFSSO.cons.printf("Artifact for %s %s does not exist\n", mechID, machine);
+                } else {
+                    success = true;
                 }
             } else {
-                trans.error().log(errMsg.toMsg(future));
+                transitiveInfo.error().log(errMsg.toMsg(future));
             }
         } finally {
             tt.done();
         }
+        return success ? 0 : 1;
     }
 
-    private static void copyArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit code for shell
+     * @throws Exception
+     */
+    private static int copyArtifact(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    	boolean success = false;
         String mechID = fqi(cmds);
         String machine = machine(cmds);
         String[] newmachs = machines(cmds);
         if (machine==null || newmachs == null) {
-            trans.error().log("No machines listed to copy to");
+            transitiveInfo.error().log("No machines listed to copy to");
         } else {
-            TimeTaken tt = trans.start("Copy Artifact", Env.REMOTE);
+            TimeTaken tt = transitiveInfo.start("Copy Artifact", Env.REMOTE);
             try {
                 Future<Artifacts> future = aafcon.client(CM_VER)
                         .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
 
                 if (future.get(TIMEOUT)) {
-                    boolean printed = false;
                     for (Artifact a : future.value.getArtifact()) {
                         for (String m : newmachs) {
                             a.setMachine(m);
                             Future<Artifacts> fup = aafcon.client(CM_VER).update("/cert/artifacts", artifactsDF, future.value);
                             if (fup.get(TIMEOUT)) {
-                                trans.info().printf("Copy of %s %s successful to %s",mechID,machine,m);
+                                transitiveInfo.info().printf("Copy of %s %s successful to %s",mechID,machine,m);
+                                success = true;
                             } else {
-                                trans.error().printf("Call to AAF Certman failed, %s",
+                                transitiveInfo.error().printf("Call to AAF Certman failed, %s",
                                     errMsg.toMsg(fup));
                             }
-
-                            printed = true;
                         }
                     }
-                    if (!printed) {
+                    if (!success) {
                         AAFSSO.cons.printf("Artifact for %s %s does not exist", mechID, machine);
                     }
                 } else {
-                    trans.error().log(errMsg.toMsg(future));
+                    transitiveInfo.error().log(errMsg.toMsg(future));
                 }
             } finally {
                 tt.done();
             }
         }
+        return success ? 0 : 1;
     }
 
-    private static void updateArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit code for shell
+     * @throws Exception
+     */
+    private static int updateArtifact(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    	boolean success = false;
         String mechID = fqi(cmds);
         String machine = machine(cmds);
 
-        TimeTaken tt = trans.start("Update Artifact", Env.REMOTE);
+        TimeTaken tt = transitiveInfo.start("Update Artifact", Env.REMOTE);
         try {
             Future<Artifacts> fread = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
@@ -663,45 +689,65 @@ public class Agent {
                 } else {
                     Future<Artifacts> fup = aafcon.client(CM_VER).update("/cert/artifacts", artifactsDF, artifacts);
                     if (fup.get(TIMEOUT)) {
-                        trans.info().printf("Call to AAF Certman successful %s, %s",mechID,machine);
+                        transitiveInfo.info().printf("Call to AAF Certman successful %s, %s",mechID,machine);
+                        success = true;
                     } else {
-                        trans.error().printf("Call to AAF Certman failed, %s",
+                        transitiveInfo.error().printf("Call to AAF Certman failed, %s",
                             errMsg.toMsg(fup));
                     }
                 }
             } else {
-                trans.error().printf("Call to AAF Certman failed, %s %s, %s",
+                transitiveInfo.error().printf("Call to AAF Certman failed, %s %s, %s",
                         errMsg.toMsg(fread),mechID,machine);
             }
         } finally {
             tt.done();
         }
+        return success ? 0 : 1;
     }
 
-    private static void deleteArtifact(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit code for shell
+     * @throws Exception
+     */
+    private static int deleteArtifact(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    	boolean success = false;
         String mechid = fqi(cmds);
         String machine = machine(cmds);
 
-        TimeTaken tt = trans.start("Delete Artifact", Env.REMOTE);
+        TimeTaken tt = transitiveInfo.start("Delete Artifact", Env.REMOTE);
         try {
             Future<Void> future = aafcon.client(CM_VER)
                     .delete("/cert/artifacts/"+mechid+"/"+machine,"application/json" );
 
             if (future.get(TIMEOUT)) {
-                trans.info().printf("Call to AAF Certman successful %s, %s",mechid,machine);
+                transitiveInfo.info().printf("Call to AAF Certman successful %s, %s",mechid,machine);
+                success = true;
             } else {
-                trans.error().printf("Call to AAF Certman failed, %s %s, %s",
+                transitiveInfo.error().printf("Call to AAF Certman failed, %s %s, %s",
                     errMsg.toMsg(future),mechid,machine);
             }
         } finally {
             tt.done();
         }
+        return success ? 0 : 1;
     }
 
 
-
-    private static boolean placeCerts(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
-        boolean rv = false;
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit code for shell
+     * @throws Exception
+     */
+    private static int placeCerts(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+        boolean success = false;
         String mechID = fqi(cmds);
         String machine = machine(cmds);
         String[] fqdns = Split.split(':', machine);
@@ -714,7 +760,7 @@ public class Agent {
             fqdns = machines(cmds);
         }
 
-        TimeTaken tt = trans.start("Place Artifact", Env.REMOTE);
+        TimeTaken tt = transitiveInfo.start("Place Artifact", Env.REMOTE);
         try {
             Future<Artifacts> acf = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+key, artifactsDF);
@@ -741,38 +787,44 @@ public class Agent {
                                 for (String type : a.getType()) {
                                     PlaceArtifact pa = placeArtifact.get(type);
                                     if (pa!=null) {
-                                        if (rv = pa.place(trans, capi, a,machine)) {
-                                            notifyPlaced(a,rv);
-                                        }
+                                        pa.place(transitiveInfo, capi, a,machine);
+                                        success = true;
                                     }
                                 }
                                 // Cover for the above multiple pass possibilities with some static Data, then clear per Artifact
                             } else {
-                                trans.error().log(errMsg.toMsg(f));
+                                transitiveInfo.error().log(errMsg.toMsg(f));
                             }
                         } else {
-                            trans.error().log("You must be OS User \"" + a.getOsUser() +"\" to place Certificates on this box");
+                            transitiveInfo.error().log("You must be OS User \"" + a.getOsUser() +"\" to place Certificates on this box");
                         }
                     }
                 }
                 PropHolder.writeAll();
             } else {
-                trans.error().log(errMsg.toMsg(acf));
+                transitiveInfo.error().log(errMsg.toMsg(acf));
             }
         } finally {
             tt.done();
         }
-        return rv;
+        return success ? 0 : 1;
     }
 
-    private static void notifyPlaced(Artifact a, boolean rv) {
-    }
 
-    private static void showPass(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit code for shell
+     * @throws Exception
+     */
+    private static int showPass(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    	boolean success = false;
         String mechID = fqi(cmds);
         String machine = machine(cmds);
 
-        TimeTaken tt = trans.start("Show Password", Env.REMOTE);
+        TimeTaken tt = transitiveInfo.start("Show Password", Env.REMOTE);
         try {
             Future<Artifacts> acf = aafcon.client(CM_VER)
                     .read("/cert/artifacts/"+mechID+'/'+machine, artifactsDF);
@@ -794,7 +846,7 @@ public class Agent {
                             if (pf.get(TIMEOUT)) {
                                 allowed = true;
                             } else {
-                                trans.error().log(errMsg.toMsg(pf));
+                                transitiveInfo.error().log(errMsg.toMsg(pf));
                             }
                         }
                         if (allowed) {
@@ -823,23 +875,34 @@ public class Agent {
                                         System.out.printf("%s=%s\n", en.getKey(), symm.depass(en.getValue().toString()));
                                     }
                                 }
+                                success = true;
                             } else {
-                                trans.error().printf("%s.keyfile must exist to read passwords for %s on %s",
+                                transitiveInfo.error().printf("%s.keyfile must exist to read passwords for %s on %s",
                                         f.getAbsolutePath(),a.getMechid(), a.getMachine());
                             }
                         }
                     }
                 }
             } else {
-                trans.error().log(errMsg.toMsg(acf));
+                transitiveInfo.error().log(errMsg.toMsg(acf));
             }
         } finally {
             tt.done();
         }
+        return success ? 0 : 1;
 
     }
 
-    private static void keypairGen(final Trans trans, final PropAccess access, final Deque<String> cmds) throws IOException {
+
+    /**
+     * 
+     * @param transitiveInfo
+     * @param aafcon
+     * @param cmds
+     * @return exit code for shell
+     * @throws IOException
+     */
+    private static int keypairGen(final Trans transitiveInfo, final PropAccess access, final Deque<String> cmds) throws IOException {
         final String fqi = fqi(cmds);
         final String ns = FQI.reverseDomain(fqi);
         File dir = new File(access.getProperty(Config.CADI_ETCDIR,".")); // default to current Directory
@@ -849,21 +912,32 @@ public class Agent {
             String line = AAFSSO.cons.readLine("%s exists. Overwrite? (y/n): ", f.getCanonicalPath());
             if (!"Y".equalsIgnoreCase(line)) {
                 System.out.println("Canceling...");
-                return;
+                return 0;
             }
         }
 
-        KeyPair kp = Factory.generateKeyPair(trans);
-        ArtifactDir.write(f, Chmod.to400, Factory.toString(trans, kp.getPrivate()));
+        KeyPair kp = Factory.generateKeyPair(transitiveInfo);
+        ArtifactDir.write(f, Chmod.to400, Factory.toString(transitiveInfo, kp.getPrivate()));
         System.out.printf("Wrote %s\n", f.getCanonicalFile());
 
         f=new File(dir,ns+".pubkey");
-        ArtifactDir.write(f, Chmod.to644, Factory.toString(trans, kp.getPublic()));
+        ArtifactDir.write(f, Chmod.to644, Factory.toString(transitiveInfo, kp.getPublic()));
         System.out.printf("Wrote %s\n", f.getCanonicalFile());
+        return 0;
     }
 
-    private static void config(Trans trans, PropAccess propAccess, String[] args, Deque<String> cmds) throws Exception {
-        TimeTaken tt = trans.start("Get Configuration", Env.REMOTE);
+    /**
+     * 
+     * @param transitiveInfo
+     * @param propAccess
+     * @param args
+     * @param cmds
+     * @return exit code for shell
+     * @throws Exception
+     */
+    private static int config(Trans transitiveInfo, PropAccess propAccess, String[] args, Deque<String> cmds) throws Exception {
+    	boolean success = true;
+        TimeTaken tt = transitiveInfo.start("Get Configuration", Env.REMOTE);
         try {
             final String fqi = fqi(cmds);
             Artifact arti = new Artifact();
@@ -881,7 +955,7 @@ public class Agent {
             app.add(Config.CADI_PROP_FILES, loc.getPath()+':'+cred.getPath());
 
             for (String tag : LOC_TAGS) {
-                loc.add(tag, getProperty(propAccess, trans, false, tag, "%s: ",tag));
+                loc.add(tag, getProperty(propAccess, transitiveInfo, false, tag, "%s: ",tag));
             }
 
             String keyfile = cred.getKeyPath();
@@ -1001,7 +1075,7 @@ public class Agent {
                 } else {
                     aafcon = aafcon(propAccess);
                     if (aafcon!=null) { // get Properties from Remote AAF
-                        for (Props props : aafProps(trans,aafcon,getProperty(propAccess,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: "),fqi)) {
+                        for (Props props : aafProps(transitiveInfo,aafcon,getProperty(propAccess,aafcon.env,false,Config.AAF_LOCATE_URL,"AAF Locator URL: "),fqi)) {
                             PropHolder ph = CRED_TAGS.contains(props.getTag())?cred:app;
                             if(props.getTag().endsWith("_password")) {
                                 ph.addEnc(props.getTag(), props.getValue());
@@ -1018,29 +1092,39 @@ public class Agent {
         } finally {
             tt.done();
         }
+        return success ? 0 : 1;
     }
 
-    public static List<Props> aafProps(Trans trans, AAFCon<?> aafcon, String locator, String fqi) throws CadiException, APIException, LocatorException {
+    public static List<Props> aafProps(Trans transitiveInfo, AAFCon<?> aafcon, String locator, String fqi) throws CadiException, APIException, LocatorException {
         Future<Configuration> acf = aafcon.client(new SingleEndpointLocator(locator))
                 .read("/configure/"+fqi+"/aaf", configDF);
         if (acf.get(TIMEOUT)) {
             return acf.value.getProps();
         } else if (acf.code()==401){
-            trans.error().log("Bad Password sent to AAF");
+            transitiveInfo.error().log("Bad Password sent to AAF");
         } else if (acf.code()==404){
-            trans.error().log("This version of AAF does not support remote Properties");
+            transitiveInfo.error().log("This version of AAF does not support remote Properties");
         } else {
-            trans.error().log(errMsg.toMsg(acf));
+            transitiveInfo.error().log(errMsg.toMsg(acf));
         }
         return new ArrayList<>();
     }
 
-    private static void validate(final PropAccess pa) throws LocatorException, CadiException, APIException {
+    /**
+     * 
+     * @param pa
+     * @return exit code for shell
+     * @throws LocatorException
+     * @throws CadiException
+     * @throws APIException
+     */
+    private static int validate(final PropAccess pa) throws LocatorException, CadiException, APIException {
         System.out.println("Validating Configuration...");
         final AAFCon<?> aafcon = new AAFConHttp(pa,Config.AAF_URL,new SecurityInfoC<HttpURLConnection>(pa));
-        aafcon.best(new Retryable<Void>() {
+        return aafcon.best(new Retryable<Integer>() {
             @Override
-            public Void code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+            public Integer code(Rcli<?> client) throws CadiException, ConnectException, APIException {
+            	boolean success = false;
                 Future<Perms> fc = client.read("/authz/perms/user/"+aafcon.defID(),permDF);
                 if (fc.get(aafcon.timeout)) {
                     System.out.print("Success connecting to ");
@@ -1055,10 +1139,11 @@ public class Agent {
                         System.out.print('|');
                         System.out.println(p.getAction());
                     }
+                    success = true;
                 } else {
                     System.err.println("Error: " + fc.code() + ' ' + fc.body());
                 }
-                return null;
+                return success ? 0 : 1;
             }
         });
     }
@@ -1066,23 +1151,23 @@ public class Agent {
     /**
      * Check returns Error Codes, so that Scripts can know what to do
      *
-     *   0 - Check Complete, nothing to do
-     *   1 - General Error
-     *   2 - Error for specific Artifact - read check.msg
-     *   10 - Certificate Updated - check.msg is email content
+     * <ul>0 - Check Complete, nothing to do</ul>
+     * <ul>1 - General Error</ul>
+     * <ul>2 - Error for specific Artifact - read check.msg</ul>
+     * <ul>10 - Certificate Updated - check.msg is email content</ul>
      *
-     * @param trans
+     * @param transitiveInfo
      * @param aafcon
      * @param cmds
      * @return
      * @throws Exception
      */
-    private static int check(Trans trans, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
+    private static int check(Trans transitiveInfo, AAFCon<?> aafcon, Deque<String> cmds) throws Exception {
         int exitCode=1;
         String mechID = fqi(cmds);
         String machine = machine(cmds);
 
-        TimeTaken tt = trans.start("Check Certificate", Env.REMOTE);
+        TimeTaken tt = transitiveInfo.start("Check Certificate", Env.REMOTE);
         try {
 
             Future<Artifacts> acf = aafcon.client(CM_VER)
@@ -1109,15 +1194,15 @@ public class Agent {
                             String prop;
                             File f;
 
-                            if ((prop=trans.getProperty(Config.CADI_KEYFILE))==null ||
+                            if ((prop=transitiveInfo.getProperty(Config.CADI_KEYFILE))==null ||
                                 !(f=new File(prop)).exists()) {
-                                    trans.error().printf("Keyfile must exist to check Certificates for %s on %s",
+                                    transitiveInfo.error().printf("Keyfile must exist to check Certificates for %s on %s",
                                         a.getMechid(), a.getMachine());
                             } else {
-                                String ksf = trans.getProperty(Config.CADI_KEYSTORE);
-                                String ksps = trans.getProperty(Config.CADI_KEYSTORE_PASSWORD);
+                                String ksf = transitiveInfo.getProperty(Config.CADI_KEYSTORE);
+                                String ksps = transitiveInfo.getProperty(Config.CADI_KEYSTORE_PASSWORD);
                                 if (ksf==null || ksps == null) {
-                                    trans.error().printf("Properties %s and %s must exist to check Certificates for %s on %s",
+                                    transitiveInfo.error().printf("Properties %s and %s must exist to check Certificates for %s on %s",
                                             Config.CADI_KEYSTORE, Config.CADI_KEYSTORE_PASSWORD,a.getMechid(), a.getMachine());
                                 } else {
                                     Symm symm = ArtifactDir.getSymm(f);
@@ -1136,7 +1221,7 @@ public class Agent {
                                     if (cert==null) {
                                         msg = String.format("X509Certificate does not exist for %s on %s in %s",
                                                 a.getMechid(), a.getMachine(), ksf);
-                                        trans.error().log(msg);
+                                        transitiveInfo.error().log(msg);
                                         exitCode = 2;
                                     } else {
                                         GregorianCalendar renew = new GregorianCalendar();
@@ -1145,14 +1230,14 @@ public class Agent {
                                         if (renew.after(now)) {
                                             msg = String.format("X509Certificate for %s on %s has been checked on %s. It expires on %s; it will not be renewed until %s.\n",
                                                     a.getMechid(), a.getMachine(),Chrono.dateOnlyStamp(now),cert.getNotAfter(),Chrono.dateOnlyStamp(renew));
-                                            trans.info().log(msg);
+                                            transitiveInfo.info().log(msg);
                                             exitCode = 0; // OK
                                         } else {
-                                            trans.info().printf("X509Certificate for %s on %s expiration, %s, needs Renewal.\n",
+                                            transitiveInfo.info().printf("X509Certificate for %s on %s expiration, %s, needs Renewal.\n",
                                                     a.getMechid(), a.getMachine(),cert.getNotAfter());
                                             cmds.offerLast(mechID);
                                             cmds.offerLast(machine);
-                                            if (placeCerts(trans,aafcon,cmds)) {
+                                            if (placeCerts(transitiveInfo,aafcon,cmds) == 0) {
                                                 msg = String.format("X509Certificate for %s on %s has been renewed. Ensure services using are refreshed.\n",
                                                         a.getMechid(), a.getMachine());
                                                 exitCode = 10; // Refreshed
@@ -1178,7 +1263,7 @@ public class Agent {
                     }
                 }
             } else {
-                trans.error().log(errMsg.toMsg(acf));
+                transitiveInfo.error().log(errMsg.toMsg(acf));
                 exitCode=1;
             }
         } finally {
