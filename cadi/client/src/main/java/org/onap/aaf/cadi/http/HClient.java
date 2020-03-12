@@ -47,6 +47,7 @@ import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.util.Pool.Pooled;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
+import org.owasp.encoder.Encode;
 
 /**
  * Low Level Http Client Mechanism. Chances are, you want the high level "HRcli"
@@ -396,8 +397,10 @@ public class HClient implements EClient<HttpURLConnection> {
                     // reuse Buffers
                     Pooled<byte[]> pbuff = Rcli.buffPool.get();
                     try {
+                    	String strTemp; 
                         while ((read=is.read(pbuff.content))>=0) {
-                            os.write(pbuff.content,0,read);
+                        	strTemp = new String(pbuff.content,0,read);
+                        	os.write(Encode.forJava(strTemp).getBytes());
                         }
                     } finally {
                         pbuff.done();
@@ -412,8 +415,11 @@ public class HClient implements EClient<HttpURLConnection> {
                         errContent = new StringBuilder();
                         Pooled<byte[]> pbuff = Rcli.buffPool.get();
                         try {
+                        	String strTemp; 
                             while ((read=is.read(pbuff.content))>=0) {
-                                os.write(pbuff.content,0,read);
+                                //os.write(pbuff.content,0,read);
+                            	strTemp = new String(pbuff.content,0,read);
+                            	os.write(Encode.forJava(strTemp).getBytes());
                             }
                         } finally {
                             pbuff.done();

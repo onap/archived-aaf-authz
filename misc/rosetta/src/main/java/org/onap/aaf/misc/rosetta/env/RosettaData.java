@@ -38,6 +38,7 @@ import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.rosetta.Out;
 import org.onap.aaf.misc.rosetta.Parse;
 import org.onap.aaf.misc.rosetta.Saved;
+import org.owasp.encoder.Encode;
 
 public class RosettaData<T> implements Data<T>{
     private Env trans;
@@ -203,9 +204,9 @@ public class RosettaData<T> implements Data<T>{
         TimeTaken tt = trans.start(out.logName(),df.logType(outType)); // determine from Out.. without dependency on Env?
         try {
             if (outType==TYPE.XML && xml!=null) {
-                os.write(xml.getBytes());
+                os.write(Encode.forJava(xml).getBytes());
             } else if (outType==TYPE.JSON && json!=null) {
-                os.write(json.getBytes());
+            	os.write(Encode.forJava(json).getBytes());
             } else {
                 out.extract(null, os, saved, options);
             }
