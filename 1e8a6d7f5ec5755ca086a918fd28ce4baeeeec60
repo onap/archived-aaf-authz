@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "969ebf62_a5e9f294",
+        "filename": "cadi/aaf/src/main/java/org/onap/aaf/cadi/configure/Agent.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 5775
+      },
+      "writtenOn": "2020-03-16T12:36:33Z",
+      "side": 1,
+      "message": "Maybe you should put here different exitCode to differentiate exitCode 1 from application processing and uncaught by business logic exception.",
+      "revId": "1e8a6d7f5ec5755ca086a918fd28ce4baeeeec60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
