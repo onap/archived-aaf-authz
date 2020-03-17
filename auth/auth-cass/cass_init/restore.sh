@@ -4,7 +4,7 @@
 echo `date`
 ENV=DOCKER
 
-CQLSH="cqlsh -k authz"
+CQLSH="${CQLSH:=/opt/cassandra/bin/cqlsh} -k authz"
 
 cd dats
 if [ "$*" = "" ]; then
