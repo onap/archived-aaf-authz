@@ -37,5 +37,5 @@ RUN mkdir -p /opt/app/osaaf &&\
       && chown ${DUSER}:${DUSER} /opt/app/osaaf \
       && chown -R ${DUSER}:${DUSER} /opt/app/aaf;\
     fi
-
+USER ${DUSER}
 CMD []

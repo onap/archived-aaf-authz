@@ -85,6 +85,10 @@ public class Upload extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
         List<File> files = new ArrayList<>();
+        for(String s : args()) {
+        	trans.init().log(s);
+        }
+        
         if(args().length>0) {
             File dir = new File(args()[0]);
             if(dir.isDirectory()) {
@@ -105,6 +109,7 @@ public class Upload extends Batch {
                 }
             }
         }
+        
         for(File file : files) {
             String f = file.getName();
             final Feed feed = feeds.get(f.substring(0,f.length()-4));
