@@ -39,7 +39,7 @@ echo "$0: DOCKER_PULL_REGISTRY=${DOCKER_REGISTRY}"
 DIR=$(pwd)
 cd ..
 sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-    -e 's/${USER}/'${USER}'/g' \
+    -e 's/${DUSER}/'${DUSER}'/g' \
     -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
     $DIR/Dockerfile.cass > Dockerfile
 cd ..
