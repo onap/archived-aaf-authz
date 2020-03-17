@@ -33,10 +33,12 @@ COPY cass_data/*.dat /opt/app/aaf/cass_init/dats/
 COPY sample.identities.dat /opt/app/aaf/cass_init/data/identites.dat
 
 RUN mkdir -p /opt/app/aaf/status && chmod 777 /opt/app/aaf/status && \
-    addgroup ${USER} && adduser --no-create-home --ingroup ${USER} --disabled-password --gecos "" --shell /bin/bash ${USER} && \
-    chown -R ${USER}:${USER} /opt/app/aaf/cass_init
+    addgroup ${DUSER} && adduser --no-create-home --ingroup cassandra --disabled-password --gecos "" --shell /bin/bash ${DUSER} && \
+    chown -R ${DUSER}:cassandra /opt/app/aaf/cass_init &&\
+    chown -R ${DUSER}:cassandra /etc/cassandra &&\
+    chown -R ${DUSER}:cassandra /opt/cassandra/data
 
-
+USER ${DUSER}
 ENTRYPOINT ["/bin/bash","/opt/app/aaf/cass_init/cmd.sh"]
 CMD ["start"]
 # Default is to start up with CQL setup only
