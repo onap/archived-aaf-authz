@@ -25,7 +25,7 @@ if [ -e ../../docker/d.props ]; then
   . ../../docker/d.props
 fi
 DOCKER=${DOCKER:-docker}
- 
+
 function SCP() {
   SANS=${1/-SNAPSHOT/}
   echo $1 = $SANS
@@ -52,7 +52,7 @@ echo "$0: DOCKER_PULL_REGISTRY=${DOCKER_REGISTRY}"
 DIR=$(pwd)
 cd ..
 sed -e 's/${AAF_VERSION}/'${VERSION/-SNAPSHOT/}'/g' \
-    -e 's/${USER}/'${USER}'/g' \
+    -e 's/${DUSER}/'${DUSER}'/g' \
     -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
     $DIR/Dockerfile.cass > Dockerfile
 cd ..

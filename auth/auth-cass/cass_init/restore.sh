@@ -4,7 +4,7 @@
 echo `date`
 ENV=DOCKER
 
-CQLSH="/usr/bin/cqlsh -k authz"
+CQLSH="/opt/cassandra/bin/cqlsh -k authz"
 
 cd dats
 if [ "$*" = "" ]; then
@@ -52,7 +52,7 @@ done
 
 if [ ! "$UPLOAD" = "" ]; then
   cd dats
-  java -Dcadi_prop_files=../authBatch.props -DCASS_ENV=$ENV -jar ../aaf-auth-batch-*-full.jar Upload $UPLOAD
+  java -Dcadi_prop_files=../authBatch.props -DCASS_ENV=$ENV -jar ../aaf-auth-batch-*-full.jar Upload $UPLOAD 2>&1 logs/stdout
   cd -
 fi
 
