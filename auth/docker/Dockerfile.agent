@@ -31,5 +31,5 @@ COPY bin/aaf-cadi-servlet-sample-*-sample.jar /opt/app/aaf_config/bin/
 COPY cert/*trust*.b64 /opt/app/aaf_config/cert/
 RUN chmod 755 /opt/app/aaf_config/bin/* &&\
     if [ -n "${DUSER}" ]; then chown -R ${DUSER}:${DUSER} /opt/app/aaf_config; fi
-
+USER ${DUSER}
 CMD []
