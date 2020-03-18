@@ -26,6 +26,22 @@ global:
   persistence:
     enabled: true
 
+image:
+  ###  FOR RELEASED VERSION ###
+  # When using Docker Repo, add, and include trailing "/"
+  #  For Released Versions (both Repo and remove "-SNAPSHOT" from version)
+  # repository: nexus3.onap.org:10001/
+  # version: 2.1.18
+
+  ###  FOR SNAPSHOTS, DEVELOPMENT, ETC ###
+  # When using Locally built images, comment out "repository"
+  # repository: nexus3.onap.org:10001/
+  #  For your own Repo
+  # repository: localhost:5000/
+  # When using locally built Docker Container, set Repository to ""
+  repository: ""
+  version: 2.1.18-SNAPSHOT
+
 services:
   aaf_env: "DEV"
   aaf_id: "aaf@aaf.osaaf.org"
@@ -97,14 +113,6 @@ persistence:
     size: 2Gi
     mountSubPath: "config"
     storageClass: "manual"
-
-image:
-  # When using locally built Docker Container, set Repository to ""
-  repository: ""
-  # When using Docker Repo, add, and include trailing "/"
-  # repository: nexus3.onap.org:10003/
-  # repository: localhost:5000/
-  version: 2.1.18-SNAPSHOT
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
