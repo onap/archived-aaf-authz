@@ -23,6 +23,6 @@ appVersion: "1.0"
 description: AAF Helm Chart
 name: aaf
 ## Use this to pull Released Version
-# version: 2.1.18
+# version: 2.1.19
 
-version: 2.1.18-SNAPSHOT
+version: 2.1.19-SNAPSHOT

@@ -71,7 +71,7 @@ function wait_start {
 function wait_cql {
    status wait for keyspace to be initialized
    for CNT in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-     if [ -n "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)"  ]; then
+     if [ -n "$(cqlsh -e 'describe keyspaces' | grep authz)"  ]; then
 	break
      else
         echo "Waiting for Keyspaces to be loaded... Sleep 10"
@@ -96,11 +96,11 @@ function wait_ready {
 function install_cql {
     wait_start cassandra responsive   
     # Now, make sure data exists
-    if [ ! -e $INSTALLED_VERSION ] && [ -n "$(/usr/bin/cqlsh -e 'describe keyspaces' | grep authz)" ]; then
-      /usr/bin/cqlsh --request-timeout=60 -e 'DROP KEYSPACE authz' 
+    if [ ! -e $INSTALLED_VERSION ] && [ -n "$(cqlsh -e 'describe keyspaces' | grep authz)" ]; then
+      cqlsh --request-timeout=60 -e 'DROP KEYSPACE authz' 
     fi
 
-    if [ -z "`/usr/bin/cqlsh --request-timeout 60 -e 'describe keyspaces' | grep authz`" ]; then
+    if [ -z "`cqlsh --request-timeout 60 -e 'describe keyspaces' | grep authz`" ]; then
         status install 
         echo "Initializing Cassandra DB" 
         echo "Docker Installed Basic Cassandra on aaf.cass.  Executing the following "
@@ -109,10 +109,10 @@ function install_cql {
         echo " cd /opt/app/aaf/cass_init"
         cd /opt/app/aaf/cass_init
         echo " cqlsh -f keyspace.cql"
-        /usr/bin/cqlsh --request-timeout=100 -f keyspace.cql
+        cqlsh --request-timeout=100 -f keyspace.cql
 	status keyspace installed
         echo " cqlsh -f init.cql"
-        /usr/bin/cqlsh --request-timeout=100 -f init.cql
+        cqlsh --request-timeout=100 -f init.cql
 	status data initialized
         echo ""
         echo "The following will give you a temporary identity with which to start working, or emergency"
