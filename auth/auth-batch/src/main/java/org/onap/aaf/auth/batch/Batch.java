@@ -501,7 +501,6 @@ public abstract class Batch {
                         if (cls != null) {
                             Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
                             batch = (Batch) cnst.newInstance(trans);
-                            System.out.println(batch.getClass().getCanonicalName());
                             env.info().log("Begin", classifier, toolName);
                         }
 
@@ -516,9 +515,6 @@ public abstract class Batch {
                     }
                     if (batch != null) {
                         try {
-                        	for(String s : batchArgs) {
-                        		System.out.println(s);
-                        	}
                             batch.run(trans);
                         } catch (Exception e) {
                         	trans.error().log(e);
