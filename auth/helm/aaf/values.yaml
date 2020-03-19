@@ -31,7 +31,7 @@ image:
   # When using Docker Repo, add, and include trailing "/"
   #  For Released Versions (both Repo and remove "-SNAPSHOT" from version)
   # repository: nexus3.onap.org:10001/
-  # version: 2.1.19
+  # version: 2.1.20
 
   ###  FOR SNAPSHOTS, DEVELOPMENT, ETC ###
   # When using Locally built images, comment out "repository"
@@ -40,7 +40,7 @@ image:
   # repository: localhost:5000/
   # When using locally built Docker Container, set Repository to ""
   repository: ""
-  version: 2.1.19-SNAPSHOT
+  version: 2.1.20-SNAPSHOT
 
 services:
   aaf_env: "DEV"
