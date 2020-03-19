@@ -55,7 +55,6 @@ import org.onap.aaf.cadi.PropAccess;
 import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
-import org.onap.aaf.misc.env.StaticSlot;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.util.Chrono;
 import org.onap.aaf.misc.env.util.Split;
@@ -68,9 +67,6 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 
 public abstract class Batch {
-
-    private static StaticSlot ssargs;
-
     protected static final String STARS = "*****";
 
     protected static Cluster cluster;
@@ -82,6 +78,8 @@ public abstract class Batch {
     protected static String batchEnv;
 
     private static File logdir;
+
+	private static String[] batchArgs;
 
     public static final String CASS_ENV = "CASS_ENV";
     public static final String LOG_DIR = "LOG_DIR";
@@ -157,7 +155,7 @@ public abstract class Batch {
     protected void _close(AuthzTrans trans) {}
 
     public String[] args() {
-        return env.get(ssargs);
+        return batchArgs;
     }
 
     public boolean isDryRun()
@@ -380,11 +378,12 @@ public abstract class Batch {
         // Use a StringBuilder to save off logs until a File can be setup
         StringBuilderOutputStream sbos = new StringBuilderOutputStream();
         PropAccess access = new PropAccess(new PrintStream(sbos),args);
-        access.log(Level.INIT, "------- Starting Batch ------\n  Args: ");
+        access.log(Level.INFO, "------- Starting Batch ------\n  Args: ");
         for(String s: args) {
             sbos.getBuffer().append(s);
             sbos.getBuffer().append(' ');
         }
+        sbos.getBuffer().append('\n');
 
         InputStream is = null;
         String filename;
@@ -454,13 +453,10 @@ public abstract class Batch {
                         len -= 1;
                         if (len < 0)
                             len = 0;
-                        String nargs[] = new String[len];
+                        batchArgs = new String[len];
                         if (len > 0) {
-                            System.arraycopy(args, 1, nargs, 0, len);
+                            System.arraycopy(args, 1, batchArgs, 0, len);
                         }
-
-                        env.put(ssargs = env.staticSlot("ARGS"), nargs);
-
                         /*
                          * Add New Batch Programs (inherit from Batch) here
                          */
@@ -505,6 +501,7 @@ public abstract class Batch {
                         if (cls != null) {
                             Constructor<?> cnst = cls.getConstructor(AuthzTrans.class);
                             batch = (Batch) cnst.newInstance(trans);
+                            System.out.println(batch.getClass().getCanonicalName());
                             env.info().log("Begin", classifier, toolName);
                         }
 
@@ -519,8 +516,12 @@ public abstract class Batch {
                     }
                     if (batch != null) {
                         try {
+                        	for(String s : batchArgs) {
+                        		System.out.println(s);
+                        	}
                             batch.run(trans);
                         } catch (Exception e) {
+                        	trans.error().log(e);
                             if(cluster!=null && !cluster.isClosed()) {
                                 cluster.close();
                             }
@@ -536,6 +537,8 @@ public abstract class Batch {
                     trans.auditTrail(4, sb, AuthzTrans.SUB, AuthzTrans.REMOTE);
                     trans.info().log(sb);
                 }
+            } catch (Exception e) {
+            	env.warn().log(e);
             } finally {
                 batchLog.close();
             }

@@ -1,24 +1,21 @@
-aaf_data_dir=/opt/app/aaf/data
+aaf_data_dir=/opt/app/aaf/cass_init/data
 aaf_root_ns=org.osaaf.aaf
 cadi_latitude=38.0
 cadi_longitude=-72.0
+cadi_loglevel=INFO
 
 ## Supported Plugin Organizational Units
 Organization.att.com=org.onap.aaf.org.DefaultOrg
 
 DRY_RUN=false
-CASS_ENV=DOCKER
-
-UNKNOWN.LOG_DIR=logs/DOCKER
 
 ## Cassandra Configurations, when commented out, uses LocalHost (non authenticated) and default ports
-DOCKER.cassandra.clusters=127.0.0.1
-DOCKER.cassandra.clusters.port=9042
-DOCKER.cassandra.clusters.user=cassandra
-DOCKER.cassandra.clusters.password=cassandra
-DOCKER.VERSION=3.1.0
-DOCKER.GUI_URL=https://mithrilcsp.sbc.com:8095/gui
-DOCKER.MAX_EMAILS=3
-DOCKER.SPECIAL_NAMES=aaf@aaf.osaaf.org
+cassandra.clusters=127.0.0.1
+cassandra.clusters.port=9042
+cassandra.clusters.user=cassandra
+cassandra.clusters.password=cassandra
 
-cadi_loglevel=AUDIT
+GUI_URL=https://aaf-gui.onap:8095/gui
+MAX_EMAILS=3
+SPECIAL_NAMES=aaf@aaf.osaaf.org
+

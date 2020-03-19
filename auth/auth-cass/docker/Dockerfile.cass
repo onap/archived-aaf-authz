@@ -30,6 +30,7 @@ COPY cass_init/*.sh /opt/app/aaf/cass_init/
 COPY cass_init/*.props /opt/app/aaf/cass_init/
 COPY aaf-auth-batch-*-full.jar /opt/app/aaf/cass_init/
 COPY cass_data/*.dat /opt/app/aaf/cass_init/dats/
+COPY sample.identities.dat /opt/app/aaf/cass_init/data/identites.dat
 
 RUN mkdir -p /opt/app/aaf/status && chmod 777 /opt/app/aaf/status && \
     addgroup ${USER} && adduser --no-create-home --ingroup ${USER} --disabled-password --gecos "" --shell /bin/bash ${USER} && \

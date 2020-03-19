@@ -55,9 +55,6 @@
     </developers>
 
     <properties>
-    
-
-
         <maven.test.failure.ignore>false</maven.test.failure.ignore>
         <!--  SONAR  -->
         <!-- <sonar.skip>true</sonar.skip> -->

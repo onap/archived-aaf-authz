@@ -32,29 +32,6 @@
     <dependencySet>
       <unpack>true</unpack>
       <scope>compile</scope>
-      <!-- includes>
-        <include>org.onap.aaf.authz:aaf-auth-batch</include>
-      	<include>org.onap.aaf.authz:aaf-auth-core</include>
-      	<include>org.onap.aaf.authz:aaf-cadi-core</include>
-      	<include>org.onap.aaf.authz:aaf-misc-env</include>
-      	<include>org.onap.aaf.authz:aaf-misc-rosetta</include>
-      	<include>javax.xml.bind:jaxb-api</include>
-      	<include>org.glassfish.jaxb:jaxb-runtime</include>
-      </includes -->
-      <includes>
-        <include>org.onap.aaf.authz:aaf-auth-batch</include>
-      	<include>org.onap.aaf.authz:aaf-auth-core</include>
-      	<include>org.onap.aaf.authz:aaf-cadi-core</include>
-      	<include>org.onap.aaf.authz:aaf-auth-cass</include>
-      	<include>org.onap.aaf.authz:aaf-misc-env</include>
-      	<include>org.onap.aaf.authz:aaf-misc-rosetta</include>
-      	<include>com.datastax.cassandra:cassandra-driver-core</include>
-      	<include>javax.xml.bind:jaxb-api</include>
-      	<include>org.glassfish.jaxb:jaxb-runtime</include>
-      	<include>com.sun.istack:istack-commons-runtime</include>
-      	<include>javax.activation:javax.activation-api</include>
-      	<include>log4j:log4j</include>
-      </includes>
     </dependencySet>
   </dependencySets>
 </assembly>

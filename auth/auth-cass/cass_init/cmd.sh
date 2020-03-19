@@ -135,7 +135,8 @@ function install_onap {
       status prep data 
       bash prep.sh
       status push data to cassandra
-      bash push.sh
+      # bash push.sh
+      echo "YES" | bash restore.sh
       cd -
       echo $(date) > $AAF_INIT_DATA
     fi
