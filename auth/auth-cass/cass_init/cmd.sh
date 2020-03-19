@@ -117,7 +117,7 @@ function install_cql {
         echo ""
         echo "The following will give you a temporary identity with which to start working, or emergency"
         echo " cqlsh -f temp_identity.cql"
-        echo "casablanca" > $INSTALLED_VERSION
+        echo "frankfurt" > $INSTALLED_VERSION
     else 
       echo "Cassandra DB already includes 'authz' keyspace"
     fi
