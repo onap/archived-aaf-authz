@@ -54,6 +54,8 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
+import org.owasp.encoder.Encode;
+
 public class API_AAFAccess {
 //    private static String service, version, envContext;
 
@@ -104,7 +106,7 @@ public class API_AAFAccess {
                                         ServletOutputStream sos;
                                         try {
                                             sos = resp.getOutputStream();
-                                            sos.print(fp.value);
+                                            sos.print(Encode.forJava(fp.value));
                                         } catch (IOException e) {
                                             throw new CadiException(e);
                                         }
@@ -122,7 +124,7 @@ public class API_AAFAccess {
                         User u = (User)d.data.get(0);
                         resp.setStatus(u.code);
                         ServletOutputStream sos = resp.getOutputStream();
-                        sos.print(u.resp);
+                        sos.print(Encode.forJava(u.resp));
                     }
                 } finally {
                     tt.done();
