@@ -12,16 +12,6 @@
     <dependencySet>
       <unpack>true</unpack>
       <scope>compile</scope>
-      <includes>
-      	<include>org.onap.aaf.authz:aaf-auth-client</include>
-      	<include>org.onap.aaf.authz:aaf-cadi-aaf</include>
-      	<include>org.onap.aaf.authz:aaf-cadi-core</include>
-      	<include>org.onap.aaf.authz:aaf-cadi-client</include>
-      	<include>org.onap.aaf.authz:aaf-misc-env</include>
-      	<include>org.onap.aaf.authz:aaf-misc-rosetta</include>
-      	<include>javax.xml.bind:jaxb-api</include>
-      	<include>org.glassfish.jaxb:jaxb-runtime</include>
-      </includes>
     </dependencySet>
 
   </dependencySets>

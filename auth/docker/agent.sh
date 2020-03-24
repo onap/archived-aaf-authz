@@ -111,8 +111,9 @@ function run_it() {
   fi
   $DOCKER run  -it  --rm \
     ${USER_LINE} \
-    -v "${VOLUME}:/opt/app/osaaf" \
+    -v "${VOLUME}:/opt/app/osaaf/local" \
     --add-host="$AAF_FQDN:$AAF_FQDN_IP" \
+    $USER_LINE \
     --env AAF_FQDN=${AAF_FQDN} \
     --env DEPLOY_FQI=${DEPLOY_FQI} \
     --env DEPLOY_PASSWORD=${DEPLOY_PASSWORD} \
@@ -138,6 +139,7 @@ function reset_sso {
     mkdir -p ~/.aaf
     > $HOME/.aaf/sso.props
     sso aaf_locate_url "https://$AAF_FQDN:8095"
+    sso aaf_url_cm "https://$AAF_FQDN:8150"
     sso cadi_latitude "$LATITUDE"
     sso cadi_longitude "$LONGITUDE"
     sso cadi_loglevel "DEBUG"

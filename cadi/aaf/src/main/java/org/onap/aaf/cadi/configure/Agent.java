@@ -190,10 +190,15 @@ public class Agent {
                 }
 
                 if(access==null) {
+                	boolean createOutsideForLoop = false;
                     for(Entry<Object, Object> es : System.getProperties().entrySet()) {
                         if(Config.CADI_PROP_FILES.equals(es.getKey())) {
-                            access = new PropAccess();
+                            createOutsideForLoop = true;
+                            break;
                         }
+                    }
+                    if(createOutsideForLoop) {
+                    	access = new PropAccess();
                     }
                 }
 
@@ -762,7 +767,12 @@ public class Agent {
             machine = fqdns[1];
         } else {
             key = machine;
-            fqdns = machines(cmds);
+            if(cmds.size()>0) {
+            	fqdns = machines(cmds);
+            } else {
+            	// make sure machine is also in SANS
+            	fqdns = new String[] {machine};
+            }
         }
 
         TimeTaken tt = transitiveInfo.start("Place Artifact", Env.REMOTE);

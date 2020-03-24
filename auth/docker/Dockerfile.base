@@ -18,19 +18,20 @@
 #  ============LICENSE_END====================================================
 #
 # Use dbuild.sh input parameter to set registry
-#FROM ${REGISTRY}/openjdk:11-jre-slim
 #FROM ${REGISTRY}/openjdk:8-jdk-alpine
 FROM ${REGISTRY}/alpine
-#FROM openjdk:12-jdk-alpine
-#FROM openjdk:13-jdk-alpine
 
 MAINTAINER AAF Team, AT&T 2018
 
 LABEL description="aaf_base"
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk
-RUN apk --no-cache add openjdk11 &&\
-    apk add --no-cache bash &&\
+
+RUN apk add --no-cache bash &&\
+    apk --no-cache add openjdk11 &&\
     apk add --no-cache openssl &&\
-    apk add --no-cache curl &&\
-    if [ -n "${DUSER}" ]; then addgroup ${DUSER} && adduser ${DUSER} -G ${DUSER} -D -s /bin/bash; fi
+    apk add --no-cache curl 
+
+#  mkdir -p /opt/app/aaf/status
+#  addgroup ${DUSER} && adduser ${DUSER} -G ${DUSER} -D -s /bin/bash 
+# Note: User added if in d.props
 

@@ -27,15 +27,16 @@ LABEL version=${AAF_VERSION}
 COPY bin/pod_wait.sh /opt/app/aaf/bin/
 COPY lib /opt/app/aaf/lib
 COPY bin/hello /opt/app/aaf/bin/
-COPY etc /opt/app/aaf/etc
-COPY logs /opt/app/aaf/logs
+COPY etc /opt/app/osaaf/etc
+COPY logs /opt/app/osaaf/logs
 
-RUN mkdir -p /opt/app/osaaf &&\
-    mkdir -p /opt/app/aaf/status &&\
-    chmod 755 /opt/app/aaf/bin/* &&\
-    if [ -n "${DUSER}" ]; then  chown ${DUSER}:${DUSER} /opt/app/aaf/status \
-      && chown ${DUSER}:${DUSER} /opt/app/osaaf \
-      && chown -R ${DUSER}:${DUSER} /opt/app/aaf;\
+RUN mkdir -p /opt/app/aaf /opt/app/osaaf/logs/hello /opt/app/osaaf/local && \
+    if [ -n "${DUSER}" ]; then \
+      addgroup ${DUSER} && adduser ${DUSER} -G ${DUSER} -D -s /bin/bash ;\
+      chown -R ${DUSER}:${DUSER} /opt/app/aaf /opt/app/osaaf;\
+      chmod 774 /opt/app/aaf/bin/* ;\
     fi
-USER ${DUSER}
+
 CMD []
+
+# Note: User added if in d.props

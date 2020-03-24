@@ -34,6 +34,14 @@ else
     AAF_COMPONENTS="$@"
 fi
 
+# All the NORMAL services use common directory
+#  remove this for Hello, which we want non shared
+CONFIG="-v aaf_config:$CONF_ROOT_DIR"
+if [ -n "${DUSER}" ]; then
+  THE_USER="--user $DUSER"
+fi
+IMAGE="${PREFIX}${ORG}/${PROJECT}/aaf_core:${VERSION}"
+
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     LINKS=""
     CMD_LINE=""
@@ -75,17 +83,40 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
 	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-fs aaf-locate && exec bin/fs"
         ;;
     "hello")
-        PUBLISH="--publish 8130:8130"
         LINKS="--link aaf-service --link aaf-locate --link aaf-oauth --link aaf-cm"
-	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-hello aaf-locate && exec bin/hello"
+	CONFIG="-v aaf_hello_config:/opt/app/osaaf/local"
+
+	# Since Helm based element have init-containers, take the same approach here.
+        if [ -z "$(docker volume ls | grep aaf_hello_config)" ]; then
+            echo Init Hello Config Container
+
+  	    echo -n "Creating Volume: "
+            $DOCKER volume create -d local aaf_hello_config
+
+	    $DOCKER run --rm --name aaf_hello_config ${LINKS} \
+		$CONFIG \
+		--env AAF_FQDN=$HOSTNAME \
+		--env DEPLOY_FQI=deployer@people.osaaf.org \
+		--env DEPLOY_PASSWORD=demo123456! \
+		--env APP_FQI=aaf@aaf.osaaf.org \
+		--env APP_FQDN=aaf-hello \
+		--env LATITUDE=$LATITUDE \
+		--env LONGITUDE=$LONGITUDE \
+    		--env aaf_locator_container_ns=onap \
+    		--env aaf_locator_container=docker \
+		$LINKS \
+	        "${PREFIX}${ORG}/${PROJECT}/aaf_agent:${VERSION}" \
+ 		bash -c "bash /opt/app/aaf_config/bin/agent.sh && chown -R ${DUSER}:${DUSER} /opt/app/osaaf/local"
+	fi
+
+        PUBLISH="--publish 8130:8130"
+	#CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-hello aaf-locate aaf-cm && sleep 240"
+	CMD_LINE="cd /opt/app/aaf && /bin/bash bin/pod_wait.sh aaf-hello aaf-locate aaf-cm && exec bin/hello"
+	IMAGE="${PREFIX}${ORG}/${PROJECT}/aaf_hello:${VERSION}"
         ;;
     esac
 
     echo Starting aaf-$AAF_COMPONENT...
-    if [ -n "${DUSER}" ]; then
-       THE_USER="--user $DUSER"
-    fi
-
 
     $DOCKER run  \
         -d \
@@ -104,9 +135,10 @@ for AAF_COMPONENT in ${AAF_COMPONENTS}; do
         --env CASSANDRA_USER=${CASSANDRA_USER} \
         --env CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD} \
         --env CASSANDRA_PORT=${CASSANDRA_PORT} \
-        $PUBLISH \
-        -v "aaf_config:$CONF_ROOT_DIR" \
         -v "aaf_status:/opt/app/aaf/status" \
-        ${PREFIX}${ORG}/${PROJECT}/aaf_core:${VERSION} \
+        $PUBLISH \
+	$CONFIG \
+	$IMAGE \
 	/bin/bash -c "$CMD_LINE"
+
 done

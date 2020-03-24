@@ -31,6 +31,19 @@ fi
 # Remove "SNAPSHOT" from AAF Jars in Containers
 JAR_VERSION=${VERSION/-SNAPSHOT/}
 
+function SCP() {
+  SANS=${1/-SNAPSHOT/}
+  echo $1 = $SANS
+  if [ -e $SANS ]; then
+    cp $SANS $2
+  else 
+ 
+    ln $1 $SANS
+    cp $SANS $2
+    rm $SANS
+  fi
+}
+
 # process input. originally, an optional positional parameter is used to designate a component.
 # A flagged parameter has been added to optionally indicate docker pull registry. Ideally, options
 # would be flagged but we're avoiding ripple effect of changing original usage
@@ -46,6 +59,7 @@ if [ $# -gt 0 ]; then
             else
                 DOCKER_PULL_REGISTRY=$3
             fi
+	   shift
         fi
     fi
 fi
@@ -54,80 +68,81 @@ grep -v '#' d.props | grep '=' | grep -v -e "=$"
 
 DOCKER=${DOCKER:=docker}
 
-echo "Building Containers for aaf components, version $VERSION"
-# AAF_cass now needs a version...
-echo "### Build Cass"
-cd ../auth-cass/docker
-pwd
-bash ./dbuild.sh $DOCKER_PULL_REGISTRY
-cd -
-
 ########
-# First, build a AAF Base version - set the core image, etc
-echo "### Build Base"
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
-    -e 's/${DUSER}/'${DUSER}'/g' \
-    -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
-    Dockerfile.base > Dockerfile
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_base:${VERSION} .
-$DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:${VERSION}
-$DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:latest
-rm Dockerfile
+# Preliminary: if Cass exists, build that first
+if [[ -z "$1" || "$1" = "cass" ]]; then
+  echo "#### Delegate to Cassandra build"
+  echo "Building Containers for aaf components, version $VERSION"
+  # AAF_cass now needs a version...
+  echo "### Build Cass"
+  cd ../auth-cass/docker
+  bash ./dbuild.sh $DOCKER_PULL_REGISTRY
+  cd -
+fi
 
-function SCP() {
-  SANS=${1/-SNAPSHOT/}
-  echo $1 = $SANS
-  if [ -e $SANS ]; then
-    cp $SANS $2
-  else 
-
-    ln $1 $SANS
-    cp $SANS $2
-    rm $SANS
-  fi
-}
-
-########
-# Second, Create the AAF Config (Security) Images
+if [[ -z "$1" || "$1" = "base" ]]; then
+  ########
+  # First, build a AAF Base version - set the core image, etc
+  echo "### Build Base"
+  sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+      -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
+      -e 's/${DUSER}/'${DUSER}'/g' \
+      -e 's/${REGISTRY}/'${DOCKER_PULL_REGISTRY}'/g' \
+      Dockerfile.base > Dockerfile
+  $DOCKER build -t ${ORG}/${PROJECT}/aaf_base:${VERSION} .
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:${VERSION}
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_base:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_base:latest
+  rm Dockerfile
+fi  
+  
+# Common copies
 cd ..
-# Note: only 2 jars each in Agent/Config
-SCP auth-cmd/target/aaf-auth-cmd-$VERSION-full.jar sample/bin
-SCP auth-batch/target/aaf-auth-batch-$VERSION-full.jar sample/bin
 SCP ../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar sample/bin
-SCP ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
-cp -Rf ../conf/CA sample
 
-# AAF Config image (for AAF itself)
-echo "### Build Config"
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
-    -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
-    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
-    -e 's/${DUSER}/'${DUSER}'/g' \
-    docker/Dockerfile.config > sample/Dockerfile
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
-$DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
-$DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:latest
+if [[ -z "$1" || "$1" = "config" ]]; then
+  ########
+  # Second, Create the AAF Config (Security) Images
+  # Note: only 2 jars each in Agent/Config
+  SCP auth-cmd/target/aaf-auth-cmd-$VERSION-full.jar sample/bin
+  SCP auth-batch/target/aaf-auth-batch-$VERSION-full.jar sample/bin
+  SCP ../cadi/servlet-sample/target/aaf-cadi-servlet-sample-${VERSION}-sample.jar sample/bin
+  cp -Rf ../conf/CA sample
+  
+  # AAF Config image (for AAF itself)
+  echo "### Build Config"
+  sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+      -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
+      -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+      -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+      -e 's/${DUSER}/'${DUSER}'/g' \
+      docker/Dockerfile.config > sample/Dockerfile
+  # Note: do Config as Root, to get directories correct
+  $DOCKER build -t ${ORG}/${PROJECT}/aaf_config:${VERSION} sample
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:${VERSION}
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_config:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_config:latest
+fi  
 
+if [[ -z "$1" || "$1" = "agent" ]]; then
+  # AAF Agent Image (for Clients)
+  echo "### Build Agent"
+  sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+      -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
+      -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+      -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+      -e 's/${DUSER}/'${DUSER}'/g' \
+      docker/Dockerfile.agent > sample/Dockerfile
+  #if [ -n "$DUSER" ]; then
+  # echo "USER $DUSER" >> sample/Dockerfile
+  #fi
+  $DOCKER build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
 
-# AAF Agent Image (for Clients)
-echo "### Build Agent"
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
-    -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
-    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
-    -e 's/${DUSER}/'${DUSER}'/g' \
-    docker/Dockerfile.agent > sample/Dockerfile
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_agent:${VERSION} sample
-$DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:${VERSION}
-$DOCKER tag ${ORG}/${PROJECT}/aaf_agent:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_agent:latest
+fi
 
 # Clean up 
-rm sample/Dockerfile sample/bin/aaf-*-*.jar 
-rm -Rf sample/CA
+rm -Rf sample/Dockerfile sample/bin/aaf-*-*.jar sample/CA
 cd -
-
 
 ########
 # Third Copy AAF Executables to a BUILD Directory, for easy Cleanup
@@ -155,53 +170,65 @@ if [ ! "$VERSION" = "$JAR_VERSION" ]; then
   done
   cd ${START_DIR}
 fi
-
-########
-# Third, build a core Docker Image to be used for all AAF Components
 cp ../sample/bin/pod_wait.sh  ../aaf_DBUILD/bin
-# Apply currrent Properties to Docker file, and put in place.
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
-    -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
-    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
-    -e 's/${DUSER}/'${DUSER}'/g' \
-    Dockerfile.core >../aaf_DBUILD/Dockerfile
-cd ..
 
-echo "### Building Core"
-# Don't need "Hello" App in core
-mv aaf_DBUILD/lib/aaf-auth-hello-${JAR_VERSION}* /tmp
+if [[ -z "$1" || "$1" = "core" ]]; then
+  ########
+  # Fourth, build a core Docker Image to be used for all AAF Components
+  # Apply currrent Properties to Docker file, and put in place.
+  sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+      -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
+      -e 's/${AAF_COMPONENT}/'${AAF_COMPONENT}'/g' \
+      -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+      -e 's/${DUSER}/'${DUSER}'/g' \
+      Dockerfile.core >../aaf_DBUILD/Dockerfile
+  if [ -n "$DUSER" ]; then
+    echo "USER $DUSER" >> ../aaf_DBUILD/Dockerfile
+  fi
+  cd ..
 
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_DBUILD
-$DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
-$DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
-rm aaf_DBUILD/Dockerfile
-mv /tmp/aaf-auth-hello-${JAR_VERSION}* aaf_DBUILD/lib
+  $DOCKER build -t ${ORG}/${PROJECT}/aaf_core:${VERSION} aaf_DBUILD
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:${VERSION}
+  $DOCKER tag ${ORG}/${PROJECT}/aaf_core:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_core:latest
+  rm aaf_DBUILD/Dockerfile
+ 
+  cd -
+fi
 
-########
-# Fourth, do Hello
-# Apply currrent Properties to Docker file, and put in place.
-echo "### Building Hello"
-cd -
-sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
-    -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
-    -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
-    -e 's/${DUSER}/'${DUSER}'/g' \
-    Dockerfile.hello >../aaf_DBUILD/Dockerfile
-cd ..
+if [[ -z "$1" || "$1" = "hello" ]]; then
+  ########
+  # Fifth, do Hello
+  # Apply currrent Properties to Docker file, and put in place.
+  echo "### Building Hello"
+  cp ../sample/bin/client.sh  ../aaf_DBUILD/bin
+  cp ../sample/hello/init.sh  ../aaf_DBUILD/bin/hello_init.sh
+  SCP ../../cadi/aaf/target/aaf-cadi-aaf-${VERSION}-full.jar ../aaf_DBUILD/bin
 
-cp -Rf sample/etc aaf_DBUILD
-cp -Rf sample/logs aaf_DBUILD
+  sed -e 's/${AAF_VERSION}/'${VERSION}'/g' \
+      -e 's/${JAR_VERSION}/'${JAR_VERSION}'/g' \
+      -e 's/${DOCKER_REPOSITORY}/'${DOCKER_REPOSITORY}'/g' \
+      -e 's/${DUSER}/'${DUSER}'/g' \
+      Dockerfile.hello >../aaf_DBUILD/Dockerfile
+  #if [ -n "$DUSER" ]; then
+  #  echo "USER $DUSER" >> ../aaf_DBUILD/Dockerfile
+  #fi
 
-for C in cass certman cmd deforg fs gui locate oauth service; do
-   rm aaf_DBUILD/lib/aaf-auth-$C-*
-done
+  cd ..
+  cp -Rf sample/etc aaf_DBUILD
+  cp -Rf sample/logs aaf_DBUILD
+  cp -Rf sample/cert aaf_DBUILD
+  
+  for C in cass certman cmd deforg fs gui locate oauth service; do
+     rm aaf_DBUILD/lib/aaf-auth-$C-*
+  done
 
-$DOCKER build -t ${ORG}/${PROJECT}/aaf_hello:${VERSION} aaf_DBUILD
-$DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:${VERSION}
-$DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:latest
-
+  $DOCKER build -t ${ORG}/${PROJECT}/aaf_hello:${VERSION} aaf_DBUILD
+  if [ -n ${DOCKER_REPOSITORY} ]; then
+    $DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:${VERSION}
+    $DOCKER tag ${ORG}/${PROJECT}/aaf_hello:${VERSION} ${DOCKER_REPOSITORY}/${ORG}/${PROJECT}/aaf_hello:latest
+  fi
+  cd -
+fi
 # Final cleanup
-rm -Rf aaf_DBUILD
+rm -Rf ../aaf_DBUILD
 
-cd -

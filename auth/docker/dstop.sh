@@ -22,7 +22,11 @@
 . ./d.props
 
 DOCKER=${DOCKER:=docker}
-if [ "$1" == "" ]; then
+if [ "$1" = "all" ]; then
+  AAF_COMPONENTS="cass"
+  shift
+fi
+if [ -z "$1" ]; then
     for C in $(cat components); do 
       AAF_COMPONENTS="$C $AAF_COMPONENTS"
    done
@@ -33,3 +37,4 @@ fi
 for AAF_COMPONENT in ${AAF_COMPONENTS}; do
     $DOCKER stop aaf-$AAF_COMPONENT 
 done
+

@@ -22,6 +22,10 @@
 . ./d.props
 DOCKER=${DOCKER:=docker}
 
+if [ "$1" == "all" ]; then
+  AAF_COMPONENTS=cass
+  shift
+fi
 if [ "$1" == "" ]; then
     AAF_COMPONENTS="$(cat components) config core agent base "
 else

@@ -24,7 +24,7 @@
 DIR="/opt/app/aaf/status"
 INSTALLED_VERSION=/var/lib/cassandra/AAF_VERSION
 AAF_INIT_DATA=/var/lib/cassandra/AAF_INIT_DATA
-CQLSH=${CQLSH:=/opt/cassandra/bin/cqlsh}
+CQLSH=${CQLSH:=/usr/bin/cqlsh}
 
 if [ ! -e /aaf_cmd ]; then
   ln -s /opt/app/aaf/cass_init/cmd.sh /aaf_cmd
@@ -137,7 +137,7 @@ function install_onap {
       bash prep.sh
       status push data to cassandra
       # bash push.sh
-      echo "YES" | bash restore.sh
+      bash push.sh
       cd -
       echo $(date) > $AAF_INIT_DATA
     fi

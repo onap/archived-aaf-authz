@@ -56,23 +56,11 @@ spec:
           persistentVolumeClaim:
             claimName: aaf-hello-pvc
       initContainers:
-        - command:
-            - /bin/sh
-            - -c
-            - |
-              chmod -R 775 /opt/app/osaaf
-              chown -R 1000:1000 /opt/app/osaaf
-          image: busybox:1.28
-          imagePullPolicy: {{ .Values.global.pullPolicy | default .Values.pullPolicy }}
-          name: init-sysctl
-          volumeMounts:
-            - mountPath: /opt/app/osaaf
-              name: aaf-hello-vol
         - name: aaf-hello-config
           image: "{{ .Values.image.repository }}{{ .Values.service.agentImage }}"
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: "/opt/app/osaaf"
+            - mountPath: "/opt/app/osaaf/local"
               name: aaf-hello-vol
           command: ["bash","-c","exec /opt/app/aaf_config/bin/agent.sh"]
           env:
@@ -106,7 +94,7 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ["bash","-c","cd /opt/app/aaf && if [ ! -d /opt/app/osaaf/etc ]; then cp -Rf etc logs /opt/app/osaaf; fi && exec bin/hello"]
         volumeMounts:
-        -  mountPath: "/opt/app/osaaf"
+        -  mountPath: "/opt/app/osaaf/local"
            name: aaf-hello-vol
         ports:
         -  name: aaf-hello

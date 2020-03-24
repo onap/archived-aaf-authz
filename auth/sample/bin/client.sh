@@ -55,12 +55,13 @@ function sso_encrypt() {
    $JAVA_AGENT cadi digest ${1} $DOT_AAF/keyfile
 }
 
-# Setup Bash, first time only
-if [ ! -e "$HOME/.bashrc" ] || [ -z "$(grep agent $HOME/.bashrc)" ]; then
-  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" >>$HOME/.bashrc
+# Setup Bash, first time only, Agent only
+if [ -n "$HOME/.bashrc" ] || [ -z "$(grep agent $HOME/.bashrc)" ]; then
+  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" > $HOME/.bashrc
   chmod a+x $CONFIG_BIN/agent.sh
   . $HOME/.bashrc
 fi
+
 if [ ! -e "$DOT_AAF/truststoreONAPall.jks" ]; then
     mkdir -p $DOT_AAF
     base64 -d $CONFIG/cert/truststoreONAPall.jks.b64 > $DOT_AAF/truststoreONAPall.jks
@@ -133,13 +134,22 @@ if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION 2> /dev/null)" ]; then
   echo "Clean up directory ${LOCAL}"
   rm -Rf ${LOCAL}/*
 fi
+
+# update client info
 echo "${VERSION}" > $LOCAL/VERSION
+cp $AGENT_JAR $LOCAL
+echo "#!/bin/bash" > $LOCAL/agent
+     echo 'java -jar aaf-cadi-aaf-*-full.jar $*' >> $LOCAL/agent
+echo "#!/bin/bash" > $LOCAL/cadi
+     echo 'java -jar aaf-cadi-aaf-*-full.jar cadi $*' >> $LOCAL/cadi
+chmod 755 $LOCAL/agent $LOCAL/cadi
 
 echo "Namespace is ${NS}"
 # Only initialize once, automatically...
-if [ ! -e $LOCAL/${NS}.props ]; then
+if [ -n $LOCAL/${NS}.props ]; then
     echo "#### Create Configuration files "
-    $JAVA_AGENT config $APP_FQI $APP_FQDN 
+    > $LOCAL/$NS
+    $JAVA_AGENT config $APP_FQI $APP_FQDN --nopasswd
     cat $LOCAL/$NS.props
 
     echo
@@ -153,7 +163,7 @@ if [ ! -e $LOCAL/${NS}.props ]; then
         $JAVA_AGENT place $APP_FQI $APP_FQDN
     
         if [ -z "$(grep cadi_alias $NS.cred.props)" ]; then
-	    echo "FAILED to get Certificate"
+	  echo "FAILED to get Certificate"
           INITIALIZED="false"
         else 
           echo "Obtained Certificates"
@@ -284,7 +294,7 @@ else
 	;;
     testConnectivity|testconnectivity)
         echo "--- Test Connectivity ---"
-        $JAVA -cp $CONFIG_BIN/aaf-auth-cmd-*-full.jar org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/org.osaaf.aaf.props 
+        $JAVA -cp $AGENT_JAR org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/org.osaaf.aaf.props 
 	;;
     --help | -?)
         case "$1" in
@@ -320,7 +330,7 @@ else
     ### Possible Dublin
     # sample)
     #    echo "--- run Sample Servlet App ---"
-    #    $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $CONFIG_BIN/aaf-auth-cmd-*-full.jar:$CONFIG_BIN/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
+    #    $JAVA -Dcadi_prop_files=$LOCAL/${NS}.props -cp $AGENT_JAR:$CONFIG_BIN/aaf-cadi-servlet-sample-*-sample.jar org.onap.aaf.sample.cadi.jetty.JettyStandalone ${NS}.props
     #    ;;
     *)
         $JAVA_AGENT "$CMD" "$@"
