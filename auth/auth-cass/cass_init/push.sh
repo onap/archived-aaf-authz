@@ -22,6 +22,9 @@
 # These are obtained from "gzipped" files, or pre-placed (i.e. initialization) 
 #   in the "dats" directory
 #
+
+CQLSH="${CQLSH:=/usr/bin/cqlsh} -k authz"
+
 DIR=/opt/app/aaf/cass_init
 cd $DIR
 if [ ! -e dats ]; then
@@ -35,7 +38,7 @@ fi
 cd dats
 for T in $(ls *.dat); do
   if [ -s $T ]; then
-    cqlsh --request-timeout=100 -e "COPY authz.${T/.dat/} FROM '$T' WITH DELIMITER='|';";
+    $CQLSH --request-timeout=100 -e "COPY authz.${T/.dat/} FROM '$T' WITH DELIMITER='|';";
   fi
 done
 cd $DIR

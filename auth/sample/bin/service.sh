@@ -193,6 +193,10 @@ if [ ! -e $LOCAL/org.osaaf.aaf.props ]; then
     fi
     echo "Created AAF Initial Configurations"
     INITIALIZED="true"
+    if [ -n ${DUSER} ]; then
+      mkdir -p /opt/app/osaaf/logs
+      chown -R 1000:1000 /opt/app/aaf /opt/app/osaaf
+    fi
 fi
 
 
