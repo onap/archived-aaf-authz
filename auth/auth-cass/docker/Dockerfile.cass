@@ -34,11 +34,12 @@ COPY sample.identities.dat /opt/app/aaf/cass_init/data/identites.dat
 
 RUN mkdir -p /opt/app/aaf/status &&\
     chmod 777 /opt/app/aaf/status && \
-    addgroup ${DUSER} && adduser --ingroup cassandra --disabled-password --gecos "" --shell /bin/bash ${DUSER} && \
-    chown -R ${DUSER}:cassandra /opt/app/aaf/cass_init &&\
-    chown -R ${DUSER}:cassandra /etc/cassandra &&\
-    mkdir -p /var/lib/cassandra/data && chown -R ${DUSER}:cassandra /var/lib/cassandra &&\
-    chown -R ${DUSER}:cassandra /var/log/cassandra &&\
+    if [ ! -z "${DUSER}" ]; then \
+      addgroup --gid 1000 ${DUSER}; \
+      adduser --ingroup ${DUSER} --disabled-password --gecos "" --shell /bin/bash -u 1000 ${DUSER} ; \
+      mkdir -p /var/lib/cassandra/data /var/log/cassandra ; \
+      chown -R 1000:1000 /opt/app/aaf /etc/cassandra /var/log/cassandra /var/lib/cassandra ; \
+      fi && \
     ln -s /opt/app/aaf/cass_init/cmd.sh /aaf_cmd && chmod a+x /aaf_cmd
 
 USER ${DUSER}
