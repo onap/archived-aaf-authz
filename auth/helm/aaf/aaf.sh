@@ -1,5 +1,5 @@
-. ../../docker/aaf.props
-IMAGE=onap/aaf/aaf_config:$VERSION
+. ../../docker/d.props
+IMAGE=$DOCKER_REPOSITORY/onap/aaf/aaf_config:$VERSION
 
 kubectl -n onap run -it --rm aaf-config-$USER --image=$IMAGE --overrides='
 {
