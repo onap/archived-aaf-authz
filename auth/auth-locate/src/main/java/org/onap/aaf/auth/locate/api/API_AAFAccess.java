@@ -53,6 +53,8 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 public class API_AAFAccess {
 //    private static String service, version, envContext;
@@ -256,7 +258,7 @@ public class API_AAFAccess {
         });
     }
 
-    private static void redirect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, LocateFacade context, Locator<URI> loc, String path) throws IOException {
+    private static void redirect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, LocateFacade context, Locator<URI> loc, String path) throws IOException, AccessControlException {
         try {
             if (loc.hasItems()) {
                 Item item = loc.best();
@@ -270,7 +272,9 @@ public class API_AAFAccess {
                     redirectURL.append(str);
                 }
                 trans.info().log("Redirect to",redirectURL);
-                resp.sendRedirect(redirectURL.toString());
+                DefaultHTTPUtilities util = new DefaultHTTPUtilities();
+                util.sendRedirect(redirectURL.toString());                
+                //resp.sendRedirect(redirectURL.toString());
             } else {
                 context.error(trans, resp, Result.err(Result.ERR_NotFound,"No Locations found for redirection"));
             }
