@@ -54,6 +54,8 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+
 public class API_AAFAccess {
 //    private static String service, version, envContext;
 
@@ -270,7 +272,8 @@ public class API_AAFAccess {
                     redirectURL.append(str);
                 }
                 trans.info().log("Redirect to",redirectURL);
-                resp.sendRedirect(redirectURL.toString());
+                DefaultHTTPUtilities util = new DefaultHTTPUtilities();
+                util.sendRedirect(redirectURL.toString()); 
             } else {
                 context.error(trans, resp, Result.err(Result.ERR_NotFound,"No Locations found for redirection"));
             }
