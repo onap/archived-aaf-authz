@@ -45,6 +45,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -165,6 +166,8 @@ public class JAXBumar {
     public<O> O unmarshal(LogTarget env, Node node) throws JAXBException, APIException {
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             return s.content.get(schema).unmarshal(node,(Class<O>)cls).getValue();
         } finally {
             s.done();
@@ -177,6 +180,8 @@ public class JAXBumar {
         if (xml==null) throw new JAXBException("Null Input for String unmarshal");
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                 return (O)s.content.get(schema).unmarshal(
                     new StreamSource(new StringReader(xml))
                     ,(Class<O>)cls).getValue();
@@ -189,6 +194,8 @@ public class JAXBumar {
     public<O> O unmarshal(LogTarget env, File xmlFile) throws JAXBException, APIException {
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             return (O)s.content.get(schema).unmarshal(xmlFile);
         } finally {
             s.done();
@@ -200,6 +207,8 @@ public class JAXBumar {
     public<O> O unmarshal(LogTarget env,InputStream is) throws JAXBException, APIException {
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             return (O)s.content.get(schema).unmarshal(is);
         } finally {
             s.done();
@@ -210,6 +219,8 @@ public class JAXBumar {
     public<O> O unmarshal(LogTarget env, Reader rdr) throws JAXBException, APIException {
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             return (O)s.content.get(schema).unmarshal(rdr);
         } finally {
             s.done();
@@ -220,6 +231,8 @@ public class JAXBumar {
     public<O> O unmarshal(LogTarget env, XMLStreamReader xsr) throws JAXBException, APIException {
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             return (O)s.content.get(schema).unmarshal(xsr,(Class<O>)cls).getValue();
         } finally {
             s.done();
@@ -230,6 +243,8 @@ public class JAXBumar {
     public<O> O unmarshal(LogTarget env, XMLEventReader xer) throws JAXBException, APIException {
         Pooled<SUnmarshaller> s = mpool.get(env);
         try {
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        	s.content.get(schema).setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             return (O)s.content.get(schema).unmarshal(xer,(Class<O>)cls).getValue();
         } finally {
             s.done();
