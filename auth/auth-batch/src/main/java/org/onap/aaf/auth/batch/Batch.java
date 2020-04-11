@@ -69,12 +69,12 @@ import com.datastax.driver.core.Statement;
 public abstract class Batch {
     protected static final String STARS = "*****";
 
-    protected static Cluster cluster;
+    protected Cluster cluster;
     protected static AuthzEnv env;
     protected static Session session;
-    protected static Set<String> specialNames;
-    protected static List<String> specialDomains;
-    protected static boolean dryRun;
+    protected Set<String> specialNames;
+    protected List<String> specialDomains;
+    protected boolean dryRun;
     protected static String batchEnv;
 
     private static File logdir;
@@ -88,7 +88,7 @@ public abstract class Batch {
     public static final String GUI_URL="GUI_URL";
 
     protected final Organization org;
-    protected String version;
+    protected String versionValue;
     protected static final Date now = new Date();
     protected static final Date never = new Date(0);
 
@@ -140,7 +140,7 @@ public abstract class Batch {
             env.info().log("Loading SPECIAL_NAMES");
             for (String s :names.split(",") ) {
                 env.info().log("\tspecial: " + s );
-                if(s.indexOf('@')>0) {
+                if(s.indexOf('@')>=0) {
                     specialNames.add( s.trim() );
                 } else {
                     specialDomains.add(s.trim());
@@ -148,7 +148,7 @@ public abstract class Batch {
             }
         }
 
-        version = env.getProperty(VERSION,Config.AAF_DEFAULT_API_VERSION);
+        versionValue = env.getProperty(VERSION,Config.AAF_DEFAULT_API_VERSION);
     }
 
     protected abstract void run(AuthzTrans trans);
