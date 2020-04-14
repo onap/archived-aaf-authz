@@ -83,6 +83,7 @@ public class TestConnectivity {
 
                     SecuritySetter<HttpURLConnection> ss = si.defSS;
                     permTest(locator,ss);
+                    basicAuthTest(locator,ss);
                 } else {
                     /////////
                     print(true,"Test Connections driven by AAFLocator");

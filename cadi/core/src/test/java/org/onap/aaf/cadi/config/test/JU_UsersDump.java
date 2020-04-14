@@ -56,12 +56,12 @@ public class JU_UsersDump {
         "  <role rolename=\"groupB\"/>\n" +
         "  <role rolename=\"groupA\"/>\n" +
         "  \n" +
-        "  <user username=\"yourname@none\" roles=\"admin\"/>\n" +
-        "  <user username=\"m1234@none\" roles=\"suser\"/>\n" +
-        "  <user username=\"hisname@none\" roles=\"suser\"/>\n" +
-        "  <user username=\"hername@none\" roles=\"suser\"/>\n" +
+        "  <user username=\"yourname@people.osaaf.org\" roles=\"admin\"/>\n" +
+        "  <user username=\"m1234@people.osaaf.org\" roles=\"suser\"/>\n" +
+        "  <user username=\"hisname@people.osaaf.org\" roles=\"suser\"/>\n" +
+        "  <user username=\"hername@people.osaaf.org\" roles=\"suser\"/>\n" +
         "  <user username=\"myname\" roles=\"groupB,groupA\"/>\n" +
-        "  <user username=\"myname@none\" roles=\"admin\"/>\n" +
+        "  <user username=\"myname@people.osaaf.org\" roles=\"admin\"/>\n" +
         "</tomcat-users>\n";
 
     private final static String groups = "myname:groupA,groupB";

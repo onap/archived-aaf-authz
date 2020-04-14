@@ -25,11 +25,19 @@ import java.net.URISyntaxException;
 import java.util.Date;
 
 import org.onap.aaf.cadi.LocatorException;
+import org.onap.aaf.cadi.config.SecurityInfoC;
 
 public class SingleEndpointLocator implements SizedLocator<URI> {
     private final URI uri;
     private final static Item item = new Item() {};
     private Date noRetryUntil;
+
+    /**
+     * New constructor that works with the Config.loadLocator function
+     */
+    public SingleEndpointLocator(final SecurityInfoC<?> sec, final URI uri) throws LocatorException {
+        this.uri = uri;
+    }
 
     public SingleEndpointLocator(final URI uri) {
         this.uri = uri;

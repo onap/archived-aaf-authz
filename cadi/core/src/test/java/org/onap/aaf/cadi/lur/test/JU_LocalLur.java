@@ -90,7 +90,7 @@ public class JU_LocalLur {
         lur = new LocalLur(access, "user1%" + encrypted, null);
         info = lur.dumpInfo();
         assertThat(info.size(), is(1));
-        assertThat(info.get(0).user, is("user1@none"));
+        assertThat(info.get(0).user, is("user1@people.osaaf.org"));
 
         lur.clearAll();
         assertThat(lur.dumpInfo().size(), is(0));

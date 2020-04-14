@@ -263,6 +263,7 @@ public class CadiFilter implements Filter {
         float code=0f, validate=0f;
         String user = "n/a";
         String tag = "";
+        TafResp tresp = null;
         try {
             HttpServletRequest hreq = (HttpServletRequest)request;
             if (noAuthn(hreq)) {
@@ -272,7 +273,7 @@ public class CadiFilter implements Filter {
             } else {
                 HttpServletResponse hresp = (HttpServletResponse)response;
                 startValidate=System.nanoTime();
-                TafResp tresp = httpChecker.validate(hreq, hresp, hreq);
+                tresp = httpChecker.validate(hreq, hresp, hreq);
                 validate = Timing.millis(startValidate);
                 if (tresp.isAuthenticated()==RESP.IS_AUTHENTICATED) {
                     user = tresp.getPrincipal().personalName();
@@ -288,9 +289,15 @@ public class CadiFilter implements Filter {
         } catch (ClassCastException e) {
             throw new ServletException("CadiFilter expects Servlet to be an HTTP Servlet",e);
         } finally {
-            access.printf(Level.WARN, "Trans: user=%s[%s],ip=%s,ms=%f,validate=%f,code=%f",
-                user,tag,request.getRemoteAddr(),
-                Timing.millis(startAll),validate,code);
+            if (tresp != null) {
+                access.printf(Level.INFO, "Trans: user=%s[%s],ip=%s,ms=%f,validate=%f,code=%f,result=%s",
+                    user,tag,request.getRemoteAddr(),
+                    Timing.millis(startAll),validate,code,tresp.isAuthenticated().toString());
+            } else {
+                access.printf(Level.INFO, "Trans: user=%s[%s],ip=%s,ms=%f,validate=%f,code=%f,result=FAIL",
+                    user,tag,request.getRemoteAddr(),
+                    Timing.millis(startAll),validate,code);
+            }
         }
     }
 

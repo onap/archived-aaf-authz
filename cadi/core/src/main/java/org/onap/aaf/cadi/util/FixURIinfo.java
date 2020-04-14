@@ -46,6 +46,15 @@ public class FixURIinfo {
                 } else {
                     host = auth;
                     port = uri.getPort();
+                    if (port < 1) {
+                        if ("http".equals(uri.getScheme())) {
+                            port = 80;
+                        } else if ("https".equals(uri.getScheme())) {
+                            port = 443;
+                        } else {
+                            throw new RuntimeException ("Invalid scheme provided for URI " + uri);
+                        }
+                    }
                 }
                 auth=null;
             }
