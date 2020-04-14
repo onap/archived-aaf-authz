@@ -8,3 +8,8 @@
 /cadisample/
 .classpath
 /bin/
+.vscode/
+cadi/core/src/test/resources/keystore.p12
+cadi/core/src/test/resources/output_key
+cadi/core/src/test/resources/truststore.jks
+.vscode/launch.json

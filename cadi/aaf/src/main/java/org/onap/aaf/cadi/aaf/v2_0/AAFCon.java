@@ -181,8 +181,7 @@ public abstract class AAFCon<CLIENT> implements Connector {
             usageRefreshTriggerCount = Integer.parseInt(access.getProperty(Config.AAF_USER_EXPIRES, Config.AAF_USER_EXPIRES_DEF).trim())-1; // zero based
 
             app=FQI.reverseDomain(si.defSS.getID());
-            //TODO Get Realm from AAF
-            realm="people.osaaf.org";
+            realm = access.getProperty(Config.AAF_DEFAULT_REALM, Config.getDefaultRealm());
 
             env = new RosettaEnv();
             permsDF = env.newDataFactory(Perms.class);
