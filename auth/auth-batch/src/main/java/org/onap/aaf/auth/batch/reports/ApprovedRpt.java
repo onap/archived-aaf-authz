@@ -48,7 +48,7 @@ public class ApprovedRpt extends Batch {
     private Date now;
     private Writer approvedW;
     private CSV historyR;
-    private static String yr_mon;
+    private static String yearMon;
 
     public ApprovedRpt(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -64,7 +64,7 @@ public class ApprovedRpt extends Batch {
 
             historyR = new CSV(env.access(),args()[1]).setDelimiter('|');
 
-            yr_mon = args()[0];
+            yearMon = args()[0];
         } finally {
             tt0.done();
         }
@@ -73,34 +73,12 @@ public class ApprovedRpt extends Batch {
     @Override
     protected void run(AuthzTrans trans) {
         try {
-//            ResultSet results;
-//            Statement stmt = new SimpleStatement( "select dateof(id), approver, status, user, type, memo from authz.approved;" );
-//            results = session.execute(stmt);
-//            Iterator<Row> iter = results.iterator();
-//            Row row;
-            /*
-             *             while (iter.hasNext()) {
-                ++totalLoaded;
-                row = iter.next();
-                d = row.getTimestamp(0);
-                if(d.after(begin)) {
-                    approvedW.row("aprvd",
-                            Chrono.dateOnlyStamp(d),
-                            row.getString(1),
-                            row.getString(2),
-                            row.getString(3),
-                            row.getString(4),
-                            row.getString(5)
-                    );
-                }
-            }
-             */
             GregorianCalendar gc = new GregorianCalendar();
             gc.add(GregorianCalendar.MONTH, -2);
             approvedW.comment("date, approver, status, user, role, memo");
             historyR.visit(row -> {
                 String s = row.get(7);
-                if(s.equals(yr_mon)) {
+                if(s.equals(yearMon)) {
                     String target = row.get(5);
                     if("user_role".equals(target)) {
                         String action = row.get(1);
