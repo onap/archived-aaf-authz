@@ -41,7 +41,6 @@ import org.onap.aaf.misc.env.Trans;
  */
 public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extends Cacheable>
         extends Cached<TRANS,DATA> implements DAO_RO<TRANS,DATA>{
-//    private final String dirty_str;
 
     private final D dao;
 
@@ -50,8 +49,6 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
 
         // Instantiate a new Cache per DAO name (so separate instances use the same cache)
         this.dao = dao;
-        //read_str = "Cached READ for " + dao.table();
-//        dirty_str = "Cache DIRTY on " + dao.table();
         if (dao instanceof CassDAOImpl) {
             ((CassDAOImpl<?,?>)dao).cache = this;
         }
@@ -68,15 +65,6 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         list.add(data);
         super.add(key,list);
     }
-
-//    public void invalidate(TRANS trans, Object ... objs)  {
-//        TimeTaken tt = trans.start(dirty_str, Env.SUB);
-//        try {
-//            super.invalidate(keyFromObjs(objs));
-//        } finally {
-//            tt.done();
-//        }
-//    }
 
     public static String keyFromObjs(Object ... objs) {
         String key;
@@ -134,11 +122,6 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
         @Override
         public final Result<List<DATA>> get() {
             return call();
-//            if (result.isOKhasData()) { // Note, given above logic, could exist, but stale
-//                return result.value;
-//            } else {
-//                return null;
-//            }
         }
     }
 
@@ -146,28 +129,12 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
     public Result<List<DATA>> read(final TRANS trans, final Object ... objs) {
         DAOGetter getter = new DAOGetter(trans,dao,objs);
         return get(trans, keyFromObjs(objs),getter);
-//        if (ld!=null) {
-//            return Result.ok(ld);//.emptyList(ld.isEmpty());
-//        }
-//        // Result Result if exists
-//        if (getter.result==null) {
-//            return Result.err(Status.ERR_NotFound, "No Cache or Lookup found on [%s]",dao.table());
-//        }
-//        return getter.result;
     }
 
     // Slight Improved performance available when String and Obj versions are known.
     public Result<List<DATA>> read(final String key, final TRANS trans, final Object[] objs) {
         DAOGetter getter = new DAOGetter(trans,dao,objs);
         return get(trans, key, getter);
-//        if (ld!=null) {
-//            return Result.ok(ld);//.emptyList(ld.isEmpty());
-//        }
-//        // Result Result if exists
-//        if (getter.result==null) {
-//            return Result.err(Status.ERR_NotFound, "No Cache or Lookup found on [%s]",dao.table());
-//        }
-//        return getter.result;
     }
 
     @Override
@@ -189,8 +156,6 @@ public class CachedDAO<TRANS extends Trans,D extends DAO<TRANS,DATA>,DATA extend
             Result<List<DATA>> rd = read(trans,data);
             if (rd.notOK()) {
                 return Result.err(rd);
-//            } else {
-//                trans.error().log(rd.errorString());
             }
             if (rd.isEmpty()) {
                 data.invalidate(this);

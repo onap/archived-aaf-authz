@@ -69,8 +69,8 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
         public String       memo;
         public Date         start;
         public Date         expires;
-        public String        target_key;
-        public Date            target_date;
+        public String       targetKey;
+        public Date         targetDate;
         public ByteBuffer   construct;  //   this is a blob in cassandra
     }
 
@@ -90,8 +90,8 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
             data.memo         = row.getString(2);
             data.start        = row.getTimestamp(3);
             data.expires      = row.getTimestamp(4);
-            data.target_key   = row.getString(5);
-            data.target_date  = row.getTimestamp(6);
+            data.targetKey   = row.getString(5);
+            data.targetDate  = row.getTimestamp(6);
             data.construct    = row.getBytes(7);
             return data;
         }
@@ -109,8 +109,8 @@ public class FutureDAO extends CassDAOImpl<AuthzTrans,FutureDAO.Data> {
             obj[++idx] = data.memo;
             obj[++idx] = data.start;
             obj[++idx] = data.expires;
-            obj[++idx] = data.target_key;
-            obj[++idx] = data.target_date;
+            obj[++idx] = data.targetKey;
+            obj[++idx] = data.targetDate;
             obj[++idx] = data.construct;
         }
     }
