@@ -162,7 +162,7 @@ public class JU_BatchDataViewTest {
         Result<FutureDAO.Data> retVal = batchDataViewObj.insert(trans, dataObj);
         assertTrue(retVal.status == 0);
 
-        dataObj.target_key = "memo";
+        dataObj.targetKey = "memo";
         retVal = batchDataViewObj.insert(trans, dataObj);
         assertTrue(retVal.status == 0);
     }
