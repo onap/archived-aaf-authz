@@ -318,7 +318,7 @@ public class Analyze extends Batch {
                         }
                     } finally {
                         if("user_role".equals(ticket.f.fdd.target)) {
-                            String key = ticket.f.fdd.target_key;
+                            String key = ticket.f.fdd.targetKey;
                             if(key!=null) {
                                 mur.put(key, ticket);
                             }

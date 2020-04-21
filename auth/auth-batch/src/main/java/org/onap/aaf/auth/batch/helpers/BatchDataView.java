@@ -167,14 +167,14 @@ public class BatchDataView implements DataView {
         sb.append(Chrono.utcStamp(fdd.expires));
         sb.append(QUOTE_COMMA_QUOTE);
         sb.append(fdd.target);
-        if(fdd.target_key==null) {
+        if(fdd.targetKey==null) {
             sb.append("',,'");
         } else {
             sb.append(QUOTE_COMMA_QUOTE);
-            sb.append(fdd.target_key==null?"":fdd.target_key);
+            sb.append(fdd.targetKey==null?"":fdd.targetKey);
             sb.append(QUOTE_COMMA_QUOTE);
         }
-        sb.append(Chrono.utcStamp(fdd.target_date));
+        sb.append(Chrono.utcStamp(fdd.targetDate));
         sb.append(QUOTE_PAREN_SEMI);
         return Result.ok(fdd);
     }

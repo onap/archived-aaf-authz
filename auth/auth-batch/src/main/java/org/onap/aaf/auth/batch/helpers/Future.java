@@ -97,8 +97,8 @@ public class Future implements CacheChange.Data, Comparable<Future> {
             UserRoleDAO.Data urdd = new UserRoleDAO.Data();
             try {
                 urdd.reconstitute(construct);
-                fdd.target_key = urdd.user + '|' + urdd.role;
-                fdd.target_date = urdd.expires;
+                fdd.targetKey = urdd.user + '|' + urdd.role;
+                fdd.targetDate = urdd.expires;
                 role = urdd.role;
             } catch (IOException e) {
                 e.printStackTrace(System.err);

@@ -116,11 +116,11 @@ public class URApprovalSet extends ApprovalSet {
     }
 
     private void setTargetDate(Date expires) {
-        fdd.target_date = expires;
+        fdd.targetDate = expires;
     }
 
     private void setTargetKey(String key) {
-        fdd.target_key = key;
+        fdd.targetKey = key;
     }
 
     private ApprovalDAO.Data newApproval(UserRoleDAO.Data urdd) {
