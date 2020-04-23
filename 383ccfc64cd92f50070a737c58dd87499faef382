@@ -22,6 +22,30 @@
       "revId": "383ccfc64cd92f50070a737c58dd87499faef382",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92312e46_2ba2a7b7",
+        "filename": "version.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2020-04-23T20:23:33Z",
+      "side": 1,
+      "message": "i think as long as the number matches the pom, we should be ok\n\nprevious issues were because there was a .19 here and .20 in the pom\n\n\nhere is an example from another repo \nhttps://github.com/onap/aai-aai-common",
+      "parentUuid": "d5a88abe_fbc35ec1",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 17
+      },
+      "revId": "383ccfc64cd92f50070a737c58dd87499faef382",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
