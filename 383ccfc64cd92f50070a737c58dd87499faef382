@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5a88abe_fbc35ec1",
+        "filename": "version.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2020-04-23T20:19:19Z",
+      "side": 1,
+      "message": "not sure about \"-SNAPSHOT\" here. I think we only need the number since line 36 adds the right suffix",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 17
+      },
+      "revId": "383ccfc64cd92f50070a737c58dd87499faef382",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
