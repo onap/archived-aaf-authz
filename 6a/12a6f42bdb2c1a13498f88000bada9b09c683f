@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Jessica Wagantall <jwagantall@linuxfoundation.org>
+Code-Review+2: Paweł Baniewski <pawel.baniewski@nokia.com>
+Submitted-by: Paweł Baniewski <pawel.baniewski@nokia.com>
+Submitted-at: Fri, 24 Apr 2020 07:31:49 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aaf/authz/+/106564
+Project: aaf/authz
+Branch: refs/heads/master
