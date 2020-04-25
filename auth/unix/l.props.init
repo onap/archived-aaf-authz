@@ -1,0 +1,24 @@
+# Properties about your machine
+ROOT_NS=org.test.aaf
+AAF_ID=aaf@aaf.test.org
+ORG_DIR=/opt/app/test
+INSTALL_DIR=/opt/app/aaf
+ORG_DIR=/opt/app/osaaf
+VERSION=2.1.20-SNAPSHOT
+
+# Add Debugging Messages
+# DEBUG=true
+
+# If you need a Locator URL that isn't this HOSTNAME, then set here
+# AAF_LOCATE_URL=https://<vanity>:8095
+
+# Note: If you do not know your machine's GPS Coord, http://bing.com/maps shows by directory
+LATITUDE=38.0
+LONGITUDE=-90.0
+
+# CASSANDRA - Assumes out-of-the-box Passwords until changed, or adding CADI Security
+#CASSANDRA_CLUSTERS=
+CASSANDRA_CLUSTERS_PORT=9042
+CASSANDRA_CLUSTERS_USER=cassandra
+CASSANDRA_CLUSTERS_PASSWORD=cassandra
+

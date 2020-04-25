@@ -129,6 +129,7 @@
                             <commandLineArguments>
                                 <commandLineArgument>cadi_prop_files=${project.ext_root_dir}/etc/org.osaaf.aaf.cm.props</commandLineArgument>
                                 <commandLineArgument>cadi_log_dir=${project.ext_root_dir}/logs/cm</commandLineArgument>
+                                <commandLineArgument>cadi_etc_dir=${project.ext_root_dir}/etc</commandLineArgument>
                             </commandLineArguments>
                         </program>
                     </programs>
