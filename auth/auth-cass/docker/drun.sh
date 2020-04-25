@@ -23,8 +23,22 @@ if [ -e ../../docker/d.props ]; then
   . ../../docker/d.props
 fi
 DOCKER=${DOCKER:-docker}
-
-if [ "$1" = "publish" ]; then
+if [ "$DOCKER" = "podman" ]; then
+  PODNAME=aaf-cass.onap
+  if $(podman pod exists $PODNAME); then
+     echo "Using existing 'podman' pod $PODNAME"
+     POD="--pod $PODNAME "
+  else
+     echo "Create new 'podman' pod $PODNAME"
+     # Note: Cassandra needs "infra" to work
+     #  Keep in separate pod
+     #podman pod create --infra=true -n $PODNAME --publish 9042:9042
+     podman pod create --infra=false -n $PODNAME 
+     #POD="--pod new:$PODNAME "
+     POD="--pod $PODNAME "
+     PUBLISH='--publish 9042:9042 '
+  fi
+else
   PUBLISH='--publish 9042:9042 '
 fi
 
@@ -47,6 +61,7 @@ if [ "`$DOCKER ps -a | grep aaf-cass`" == "" ]; then
     -e CASSANDRA_CLUSTER_NAME=osaaf \
     -v "aaf_cass_data:/var/lib/cassandra" \
     -v "aaf_status:/opt/app/aaf/status" \
+    ${POD} \
     $PUBLISH \
     -d ${PREFIX}${ORG}/${PROJECT}/aaf_cass:${VERSION} "onap"
 else 
