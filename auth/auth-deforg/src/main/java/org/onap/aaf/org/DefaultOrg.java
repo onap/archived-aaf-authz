@@ -68,13 +68,12 @@ public class DefaultOrg implements Organization {
         root_ns = env.getProperty(Config.AAF_ROOT_NS,Config.AAF_ROOT_NS_DEF);
 
         try {
-            String defFile;
-            String temp=env.getProperty(defFile = (getClass().getName()+".file"));
+            String temp=env.getProperty(realm +".file");
             File fIdentities=null;
             if (temp==null) {
                 temp = env.getProperty(AAF_DATA_DIR);
                 if (temp!=null) {
-                    env.warn().log(defFile, " is not defined. Using default: ",temp+"/identities.dat");
+                    env.warn().log("Datafile for " + realm + " is not defined. Using default: ",temp+"/identities.dat");
                     File dir = new File(temp);
                     fIdentities=new File(dir,"identities.dat");
 

@@ -157,7 +157,7 @@ public abstract class AbsServiceStarter<ENV extends RosettaEnv, TRANS extends Tr
             }
             if(deleted) {
                 service.access.log(Level.INIT, "Deleted Status",status.getAbsolutePath());
-            } else {
+            } else if(status.exists()) {
                 service.access.log(Level.INIT, "Status not deleted: ",status.getAbsolutePath());
             }
             service.destroy();
