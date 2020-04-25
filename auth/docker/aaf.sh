@@ -21,9 +21,18 @@
 
 . ./d.props
 
-DOCKER=${DOCKER:=docker}
-# if something, may not want CASS attached all the tim
-#LINKS="--link $CASSANDRA_DOCKER"
+DOCKER=${DOCKER:-docker}
+if [ "$DOCKER" = "podman" ]; then
+  PODNAME=${PODNAME:-$HOSTNAME}
+  if $(podman pod exists $PODNAME); then
+     echo "Using existing 'podman' pod $PODNAME"
+     LINKS="--pod $PODNAME "
+  #else
+     #echo "Create new 'podman' pod $PODNAME"
+     #podman pod create --infra=true -n $PODNAME --publish 8100:8100
+  fi
+  LINKS="--pod $PODNAME "
+fi
 
 # DOCKER doesn't have DNS out of the box, only links.  
 # so we add cm_always_ignore_ips in --env
