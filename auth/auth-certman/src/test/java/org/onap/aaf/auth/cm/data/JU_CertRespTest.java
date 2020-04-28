@@ -136,5 +136,8 @@ public class JU_CertRespTest {
         assertEquals("caIssuer", resp.caIssuerDNs()[0]);
         assertEquals("trustedCAs", resp.trustCAs()[0]);
         assertEquals("Env", resp.env());
+        String cert="<[-----BEGIN CERTIFICATE-----eDUwOUNlcnRpZmljYXRl-----END CERTIFICATE-----]>";
+        CertResp resp1=new CertResp(cert);
+        assertEquals(cert,resp1.asCertString());
     }
 }
