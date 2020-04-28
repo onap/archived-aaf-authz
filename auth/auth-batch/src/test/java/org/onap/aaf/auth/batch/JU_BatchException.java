@@ -20,7 +20,7 @@
  */
 
 
-package org.onap.aaf.auth.batch.test;
+package org.onap.aaf.auth.batch;
 
 import static org.junit.Assert.*;
 import org.junit.After;
@@ -51,9 +51,14 @@ public class JU_BatchException {
     public void testBatchException() {
         bExcept1 = new BatchException();
         bExcept2 = new BatchException("test");
+        assertEquals(bExcept2.getMessage(),"test");
         bExcept3 = new BatchException(throwable);
         bExcept4 = new BatchException("test", throwable);
+        assertEquals(bExcept4.getMessage(),"test");
         bExcept5 = new BatchException("test", throwable,true,true);
+        assertEquals(bExcept5.getMessage(),"test");
+        assertNotNull(bExcept5.getSuppressed());
+        assertNotNull(bExcept5.getStackTrace());
     }
 
 }
