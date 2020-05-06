@@ -21,24 +21,53 @@
 # This script is run when starting client Container.
 #  It needs to cover the cases where the initial data doesn't exist, and when it has already been configured (don't overwrite)
 #
+
+#
+# error handling.  REQUIRED: if this script fails, it must give non-zero exit value
+#
+# We exit non-zero with an explanation echod to standard
+# out in some situations, like bad input or failed keygen.
+# We exit non-zero without explanation in other situations
+# like command not found, or file access perms error.
+#
+# exit without explaining to stdout if some error
+set -e
+
+[ -z "$JAVA_HOME" ] && { echo FAILURE: JAVA_HOME is not set; exit 1;}
 JAVA=${JAVA_HOME}/bin/java
+
+[ -e ${JAVA_HOME} ] || { echo FAILURE: java home does not exist: ${JAVA_HOME}; exit 1;}
+[ -e ${JAVA} ]      || { echo FAILURE: java executable does not exist: ${JAVA}; exit 1;}
+
 AAF_INTERFACE_VERSION=2.1
 
 # Extract Name, Domain and NS from FQI
+[ -z "$APP_FQI" ] && { echo FAILURE: APP_FQI is not set; exit 1; }
+
 FQIA=($(echo ${APP_FQI} | tr '@' '\n'))
 FQI_SHORT=${FQIA[0]}
 FQI_DOMAIN=${FQIA[1]}
+[ -z "$FQI_SHORT" ] && { echo FAILURE: malformed APP_FQI, should be like email form: name@domain; exit 1; }
+[ -z "$FQI_DOMAIN" ] && { echo FAILURE: malformed APP_FQI, should be like email form: name@domain; exit 1; }
+
 #   Reverse DOMAIN for NS
 FQIA_E=($(echo ${FQI_DOMAIN} | tr '.' '\n'))
 for (( i=( ${#FQIA_E[@]} -1 ); i>0; i-- )); do
    NS=${NS}${FQIA_E[i]}'.'
 done
 NS=${NS}${FQIA_E[0]}
-CONFIG="/opt/app/aaf_config"
-OSAAF="/opt/app/osaaf"
-LOCAL="$OSAAF/local"
-DOT_AAF="$HOME/.aaf"
+CONFIG=${CONFIG:-"/opt/app/aaf_config"}
+
+#  perhaps AAF HOME? (root of aaf installation)
+OSAAF=${OSAAF:-"/opt/app/osaaf"}
+
+# this is the 'place' operation's destination
+LOCAL=${LOCAL:-"$OSAAF/local"}
+DOT_AAF=${DOT_AAF:-"${HOME}/.aaf"}
 SSO="$DOT_AAF/sso.props"
+
+# for *backup files
+backupDir=${BACKUP_DIR:-${LOCAL}}
 
 if [ -e "$CONFIG" ]; then
   CONFIG_BIN="$CONFIG/bin" 
@@ -50,14 +79,28 @@ AGENT_JAR="$CONFIG_BIN/aaf-cadi-aaf-*-full.jar"
 
 JAVA_AGENT="$JAVA -Dcadi_loglevel=DEBUG -Dcadi_etc_dir=${LOCAL} -Dcadi_log_dir=${LOCAL} -jar $AGENT_JAR "
 
+function backup() {
+  # any backup files?
+  if stat -t *.backup > /dev/null 2>&1; then
+    # move them somewhere else?
+    if [ "${backupDir}" != "${LOCAL}" ]; then
+      mkdir -p ${backupDir}
+      mv -f ${LOCAL}/*.backup ${backupDir}
+    fi
+  fi
+}
+
 # Setup SSO info for Deploy ID
 function sso_encrypt() {
-   $JAVA_AGENT cadi digest ${1} $DOT_AAF/keyfile
+   $JAVA_AGENT cadi digest ${1} $DOT_AAF/keyfile || {
+      echo agent fails to digest password
+      exit 1
+   }
 }
 
 # Setup Bash, first time only, Agent only
-if [ -n "$HOME/.bashrc" ] || [ -z "$(grep agent $HOME/.bashrc)" ]; then
-  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" > $HOME/.bashrc
+if [ ! -f "$HOME/.bashrc" ] || [ -z "$(grep agent $HOME/.bashrc)" ]; then
+  echo "alias agent='$CONFIG_BIN/agent.sh agent \$*'" >> $HOME/.bashrc
   chmod a+x $CONFIG_BIN/agent.sh
   . $HOME/.bashrc
 fi
@@ -69,8 +112,18 @@ fi
 
 # Create Deployer Info, located at /root/.aaf
 if [ ! -e "$DOT_AAF/keyfile" ]; then
-    $JAVA_AGENT cadi keygen $DOT_AAF/keyfile
+
+    $JAVA_AGENT cadi keygen $DOT_AAF/keyfile || {
+       echo "Cannot create $DOT_AAF/keyfile"
+       exit 1
+    }
+
     chmod 400 $DOT_AAF/keyfile
+
+fi
+
+if [ ! -e "${SSO}" ]; then
+    echo Creating and adding content to ${SSO}
     echo "cadi_keyfile=$DOT_AAF/keyfile" > ${SSO}
 
     # Add Deployer Creds to Root's SSO
@@ -87,7 +140,7 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
         echo "aaf_url_cm=https://aaf-cm:8150" >> ${SSO}
         echo "aaf_url=https://aaf-service:8100" >> ${SSO}
     else 
-        echo "aaf_locate_url=https://$aaf-locator.${CONTAINER_NS}:8095" >> ${SSO}
+        echo "aaf_locate_url=https://${aaf_locator_fqdn}:8095" >> ${SSO}
         echo "aaf_url_cm=https://AAF_LOCATE_URL/%CNS.%NS.cm:2.1" >> ${SSO}
         echo "aaf_url=https://AAF_LOCATE_URL/%CNS.%NS.service:2.1" >> ${SSO}
     fi
@@ -112,7 +165,6 @@ if [ ! -e "$DOT_AAF/keyfile" ]; then
 
     . ${SSO}
     echo "Caller Properties Initialized"
-    INITIALIZED="true"
     echo "cat SSO"
     cat ${SSO}
 fi
@@ -129,47 +181,64 @@ cd $LOCAL
 echo "Existing files in $LOCAL"
 ls -l
 
-# Should we clean up?
+# Should we refresh the client version??
 if [ "${VERSION}" != "$(cat ${LOCAL}/VERSION 2> /dev/null)" ]; then
   echo "Clean up directory ${LOCAL}"
   rm -Rf ${LOCAL}/*
+
+  echo "${VERSION}" > $LOCAL/VERSION
+  cp $AGENT_JAR $LOCAL
+  echo "#!/bin/bash" > $LOCAL/agent
+     echo 'java -jar aaf-cadi-aaf-*-full.jar $*' >> $LOCAL/agent
+  echo "#!/bin/bash" > $LOCAL/cadi
+     echo 'java -jar aaf-cadi-aaf-*-full.jar cadi $*' >> $LOCAL/cadi
+  chmod 755 $LOCAL/agent $LOCAL/cadi
 fi
 
-# update client info
-echo "${VERSION}" > $LOCAL/VERSION
-cp $AGENT_JAR $LOCAL
-echo "#!/bin/bash" > $LOCAL/agent
-     echo 'java -jar aaf-cadi-aaf-*-full.jar $*' >> $LOCAL/agent
-echo "#!/bin/bash" > $LOCAL/cadi
-     echo 'java -jar aaf-cadi-aaf-*-full.jar cadi $*' >> $LOCAL/cadi
-chmod 755 $LOCAL/agent $LOCAL/cadi
-
 echo "Namespace is ${NS}"
+
 # Only initialize once, automatically...
-if [ -n $LOCAL/${NS}.props ]; then
+if [ ! -f $LOCAL/${NS}.props ]; then
+    [ -z "$APP_FQDN" ] && { echo FAILURE: APP_FQDN is not set; exit 1; }
+
     echo "#### Create Configuration files "
     > $LOCAL/$NS
-    $JAVA_AGENT config $APP_FQI $APP_FQDN --nopasswd
+    $JAVA_AGENT config $APP_FQI $APP_FQDN --nopasswd || {
+        echo Cannot create config files
+        exit 1
+    }
     cat $LOCAL/$NS.props
 
     echo
     echo "#### Certificate Authorization Artifact"
     # TMP=$(mktemp)
     TMP=$LOCAL/agent.log
-    $JAVA_AGENT read ${APP_FQI} ${APP_FQDN} | tee $TMP
+
+
+    $JAVA_AGENT read ${APP_FQI} ${APP_FQDN} | tee $TMP ;  [ ${PIPESTATUS[0]} -eq 0 ] || {
+        echo Cannot read artificate;
+        exit 1;
+    }
+
 
     if [ -n "$(grep 'Namespace:' $TMP)" ]; then
         echo "#### Place Certificates (by deployer)"
-        $JAVA_AGENT place $APP_FQI $APP_FQDN
+        $JAVA_AGENT place $APP_FQI $APP_FQDN || {
+          echo Failed to obtain new certificate
+          exit 1
+
+        }
     
-        if [ -z "$(grep cadi_alias $NS.cred.props)" ]; then
-	  echo "FAILED to get Certificate"
-          INITIALIZED="false"
+        if [ -z "$(grep cadi_alias ${LOCAL}/$NS.cred.props)" ]; then
+	  echo "FAILED to get Certificate, cadi_alias is not defined."
+          exit 1
         else 
           echo "Obtained Certificates"
           echo "#### Validate Configuration and Certificate with live call"
-          $JAVA_AGENT validate cadi_prop_files=${NS}.props
-          INITIALIZED="true"
+          $JAVA_AGENT validate cadi_prop_files=${NS}.props || {
+              echo Failed to validate new certificate
+              exit 1
+          }
         fi
     else
 	echo "#### Certificate Authorization Artifact must be valid to continue"
@@ -179,19 +248,16 @@ else
     INITIALIZED="true"
 fi
 
-# Now run a command
-CMD=$2
-if [ -z "$CMD" ]; then
-    if [ -n "$INITIALIZED" ]; then
-      echo "Initialization complete"
-    fi
+if [ -z "$*" ]; then
+    echo "Initialization complete"
 else 
-    shift
+    # Now run a command
+    CMD=$1
     shift
     case "$CMD" in
     ls)
         echo ls requested
-        find /opt/app/osaaf -depth
+        find ${OSAAF} -depth
         ;;
     cat)
         if [ "$1" = "" ]; then
@@ -210,33 +276,53 @@ else
         ;;
     read)
         echo "## Read Artifacts"
-        $JAVA_AGENT read $APP_FQI $APP_FQDN cadi_prop_files=${SSO} cadi_loglevel=INFO
+        $JAVA_AGENT read $APP_FQI $APP_FQDN cadi_prop_files=${SSO} cadi_loglevel=INFO || {
+           echo Command faile, cannot read artifacts
+           exit 1
+        }
         ;;
     showpass)
         echo "## Show Passwords"
-        $JAVA_AGENT showpass $APP_FQI $APP_FQDN cadi_prop_files=${SSO} cadi_loglevel=ERROR
+        $JAVA_AGENT showpass $APP_FQI $APP_FQDN cadi_prop_files=${SSO} cadi_loglevel=ERROR || {
+           echo Failure showing password
+           exit 1
+        }
         ;;
     check)
         echo "## Check Certificate"
         echo "$JAVA_AGENT check $APP_FQI $APP_FQDN cadi_prop_files=${LOCAL}/${NS}.props"
-        $JAVA_AGENT check $APP_FQI $APP_FQDN cadi_prop_files=${LOCAL}/${NS}.props
+	# inspects and repots on certificate validation and renewal date
+        $JAVA_AGENT check $APP_FQI $APP_FQDN cadi_prop_files=${LOCAL}/${NS}.props || {
+           echo Checking certificate fails.
+           exit 1
+        }
         ;;
     validate)
         echo "## validate requested"
-        $JAVA_AGENT validate $APP_FQI $APP_FQDN
+	# attempt to send request to aaf; authenticate with this local certificate
+        $JAVA_AGENT validate $APP_FQI $APP_FQDN || {
+           echo Validation fails.
+           exit 1
+        }
         ;;
     place)
         echo "## Renew Certificate"
-        $JAVA_AGENT place $APP_FQI $APP_FQDN cadi_prop_files=${SSO}
+        $JAVA_AGENT place $APP_FQI $APP_FQDN cadi_prop_files=${SSO} || {
+           echo Placing certificate fails.
+           exit 1
+        }
         ;;
     renew)
         echo "## Renew Certificate"
-        $JAVA_AGENT place $APP_FQI $APP_FQDN
+        $JAVA_AGENT place $APP_FQI $APP_FQDN || {
+           echo Failure renewing certificate
+           exit 1
+        }
         ;;
     bash)
         shift
         cd $LOCAL || exit
-        exec bash "$@"
+        exec bash "$@" 
         ;;
     setProp)
         cd $LOCAL || exit
@@ -290,11 +376,14 @@ else
         done
         ;;
     taillog) 
-	sh /opt/app/osaaf/logs/taillog
+	sh ${OSAAF}/logs/taillog
 	;;
     testConnectivity|testconnectivity)
         echo "--- Test Connectivity ---"
-        $JAVA -cp $AGENT_JAR org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/org.osaaf.aaf.props 
+        $JAVA -cp $AGENT_JAR org.onap.aaf.cadi.aaf.TestConnectivity $LOCAL/${NS}.props  || {
+           echo Failure while testing connectivity
+           exit 1
+        }
 	;;
     --help | -?)
         case "$1" in
@@ -337,3 +426,5 @@ else
         ;;
     esac
 fi
+
+backup
