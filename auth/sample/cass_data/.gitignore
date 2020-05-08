@@ -1,3 +1,5 @@
+# these dat files are transient, for runtime only
+# they are not initialization data.
 cert.dat
 history.dat
 delegate.dat
@@ -6,5 +8,10 @@ future.dat
 approved.dat
 notify.dat
 x509.dat
+cache.dat
+locate.dat
+locate_ports.dat
+oauth_token.dat
+run_lock.dat
 dats/
 *.gz
