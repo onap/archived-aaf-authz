@@ -29,12 +29,11 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.util.Log;
 import org.onap.aaf.cadi.util.Pool;
 import org.onap.aaf.cadi.util.Pool.*;
 
 public class JU_Pool {
-
-    private StringBuilder sb = new StringBuilder();
 
     private class IntegerCreator implements Creator<Integer> {
         private int current = 0;
@@ -59,59 +58,147 @@ public class JU_Pool {
         }
     }
 
+    // Used for CustomLogger Testing
+    private StringBuilder sb = new StringBuilder();
+
     private class CustomLogger implements Log {
         @Override
-        public void log(Object... o) {
+        public void log(Log.Type type, Object... o) {
             for (Object item : o) {
                 sb.append(item.toString());
             }
         }
     }
 
-    @Test
-    public void getTest() throws CadiException {
-        Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
+    /**
+	 * Enter variable amount in this order 
+	 * 
+	 *   count, used, max_range, max_objects
+	 * @param intPool
+	 * @param ints
+	 */
+	private void check(Pool<Integer> intPool, int ... ints) {
+		String rpt = intPool.toString();
+		// Fallthrough on purpose, to process only the ints entered, but in the right order.
+		switch(ints.length) {
+			case 4:
+		    	assertTrue(rpt.contains(String.format("max_objects(%d)", ints[3])));
+			case 3:
+		    	assertTrue(rpt.contains(String.format("max_range(%d)", ints[2])));
+			case 2:
+		    	assertTrue(rpt.contains(String.format("used(%d)", ints[1])));
+			case 1:
+				assertTrue(rpt.contains(String.format("count(%d)", ints[0])));
+		}
+	}
 
-        List<Pooled<Integer>> gotten = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            gotten.add(intPool.get());
-            assertThat(gotten.get(i).content, is(i));
-        }
+	@Test
+    public void settings() throws CadiException {
+    	Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
+    	check(intPool,0,0,Pool.MAX_RANGE,Pool.MAX_OBJECTS);
 
-        gotten.get(9).done();
-        gotten.set(9, intPool.get());
-        assertThat(gotten.get(9).content, is(9));
+    	// Check MaxObjects, min is 0
+    	intPool.setMaxObjects(-10);
+    	check(intPool,0,0,Pool.MAX_RANGE,0);
 
-        for (int i = 0; i < 10; i++) {
-            gotten.get(i).done();
-        }
+    	intPool.setMaxObjects(10);
+    	check(intPool,0,0,Pool.MAX_RANGE,10);
 
-        for (int i = 0; i < 10; i++) {
-            gotten.set(i, intPool.get());
-            if (i < 5) {
-                assertThat(gotten.get(i).content, is(i));
-            } else {
-                assertThat(gotten.get(i).content, is(i + 5));
-            }
-        }
+    	// Check MaxRange, min is 0
+    	intPool.setMaxRange(-10);
+    	check(intPool,0,0,0,10);
 
-        for (int i = 0; i < 10; i++) {
-            gotten.get(i).toss();
-            // Coverage calls
-            gotten.get(i).toss();
-            gotten.get(i).done();
+    	intPool.setMaxRange(2);
+    	check(intPool,0,0,2,10);
 
-            // only set some objects to null -> this is for the finalize coverage test
-            if (i < 5) {
-                gotten.set(i, null);
-            }
-        }
-
-        // Coverage of finalize()
-        System.gc();
+    	// Validate Priming
+    	intPool.prime(3);
+    	check(intPool,3,3,2,10);
+    	
+    	// Drain 
+    	intPool.drain();
+    	check(intPool,0,0,2,10);
     }
-
+    
     @Test
+    public void range() throws CadiException {
+    	Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
+    	intPool.setMaxRange(2); 
+    	check(intPool,0,0,2);
+    	
+    	// Prime
+    	intPool.prime(3);
+    	check(intPool,3,3,2);
+    	
+    	// Using 3 leaves count (in Pool) and Used (by System) 3
+    	List<Pooled<Integer>> using = new ArrayList<>();
+    	for(int i=0;i<3;++i) {
+    		using.add(intPool.get());
+    	}
+    	check(intPool,0,3,2);
+
+    	// Using 3 more creates more Objects, and uses immediately
+    	for(int i=0;i<3;++i) {
+    		using.add(intPool.get());
+    	}
+    	check(intPool,0,6,2);
+    	
+    	// Clean out all Objects in possession, but there are 6 Objects not returned yet.
+    	intPool.drain();
+    	check(intPool,0,6,2);
+    	
+    	// Returning Objects 
+    	for(Pooled<Integer> i : using)  {
+    		i.done();
+    	}
+    	
+    	// Since Range is 2, keep only 2, and destroy the rest
+    	check(intPool,2,2,2);
+
+    	// Shutdown (helpful for stopping Services) involves turning off range
+    	intPool.setMaxRange(0).drain();
+    	check(intPool,0,0,0);
+    }
+    
+    @Test
+	public void tooManyObjects() throws CadiException {
+    	/*
+    	 * It should be noted that "tooManyObjects" isn't enforced by the Pool, because Objects are not 
+    	 * tracked (other than used) once they leave the pool.  
+    	 * 
+    	 * It is information that using entities, like Thread Pools, can use to limit creations of expensive objects
+    	 */
+		Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
+		intPool.setMaxObjects(10).setMaxRange(2);
+		check(intPool,0,0,2,10);
+
+		assertFalse(intPool.tooManyObjects());
+
+		// Obtain up to maxium Objects
+		List<Pooled<Integer>> using = new ArrayList<>();
+		for(int i=0;i<10;++i) {
+			using.add(intPool.get());
+		}
+		
+		check(intPool,0,10,2,10);
+		assertFalse(intPool.tooManyObjects());
+		
+		using.add(intPool.get());
+		check(intPool,0,11,2,10);
+		assertTrue(intPool.tooManyObjects());
+		
+    	// Returning Objects 
+    	for(Pooled<Integer> i : using)  {
+    		i.done();
+    	}
+    	
+    	// Returning Objects puts Pool back in range
+		check(intPool,2,2,2,10);
+		assertFalse(intPool.tooManyObjects());
+
+	}
+
+	@Test
     public void bulkTest() throws CadiException {
         Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
 
@@ -136,23 +223,14 @@ public class JU_Pool {
     }
 
     @Test
-    public void setMaxTest() {
-        Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
-        intPool.setMaxRange(10);
-        assertThat(intPool.getMaxRange(), is(10));
-        intPool.setMaxRange(-10);
-        assertThat(intPool.getMaxRange(), is(0));
-    }
-
-    @Test
     public void loggingTest() {
         Pool<Integer> intPool = new Pool<Integer>(new IntegerCreator());
 
         // Log to Log.NULL for coverage
-        intPool.log("Test log output");
+        intPool.log(Log.Type.info,"Test log output");
 
         intPool.setLogger(new CustomLogger());
-        intPool.log("Test log output");
+        intPool.log(Log.Type.info,"Test log output");
 
         assertThat(sb.toString(), is("Test log output"));
     }

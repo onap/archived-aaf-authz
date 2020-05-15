@@ -102,40 +102,61 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
         super(tag, props);
     }
 
-
-
-    // @Override
+    @Override
     public LogTarget fatal() {
         return fatal;
     }
 
-    // @Override
+    public void fatal(LogTarget lt) {
+        fatal = lt;
+    }
+
+    @Override
     public LogTarget error() {
         return error;
     }
 
+    public void error(LogTarget lt) {
+        error = lt;
+    }
     
-    // @Override
+    @Override
     public LogTarget audit() {
         return audit;
     }
 
-    // @Override
+    public void audit(LogTarget lt) {
+        audit = lt;
+    }
+
+    @Override
     public LogTarget init() {
         return init;
     }
 
-    // @Override
+    public void init(LogTarget lt) {
+        init = lt;
+    }
+
+    @Override
     public LogTarget warn() {
         return warn;
     }
 
-    // @Override
+    public void warn(LogTarget lt) {
+        warn = lt;
+    }
+
+    @Override
     public LogTarget info() {
         return info;
     }
 
-    // @Override
+    public void info(LogTarget lt) {
+        info = lt;
+    }
+
+    @Override
     public LogTarget debug() {
         return debug;
     }
@@ -144,9 +165,13 @@ public class BasicEnv extends StoreImpl implements EnvJAXB, TransCreate<TransJAX
         debug = lt;
     }
 
-    // @Override
+    @Override
     public LogTarget trace() {
         return trace;
+    }
+
+    public void trace(LogTarget lt) {
+        trace = lt;
     }
 
     @Override
