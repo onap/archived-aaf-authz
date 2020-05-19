@@ -22,15 +22,17 @@
 
 package org.onap.aaf.cadi.test;
 
-import org.junit.Test;
-import org.onap.aaf.cadi.CadiException;
-import org.onap.aaf.cadi.Hash;
-
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
-
-import static org.hamcrest.CoreMatchers.*;
+import org.junit.Test;
+import org.onap.aaf.cadi.Hash;
 
 public class JU_Hash {
     // Some common test vectors
@@ -63,7 +65,7 @@ public class JU_Hash {
     private String numbersDec = "1234567890";
     private String numbersHex = "0x31323334353637383930";
     private String numbersHexNo0x = "31323334353637383930";
-
+        
     @SuppressWarnings("unused")
     @BeforeClass
     public static void getCoverage() {
@@ -179,22 +181,11 @@ public class JU_Hash {
         assertEquals(lowersDec, new String(Hash.fromHex(lowersHex)));
         assertEquals(numbersDec, new String(Hash.fromHex(numbersHex)));
 
-        try {
-            // This string doesn't begin with "0x"
-            Hash.fromHex("0X65");
-            fail("Should have thrown CadiException");
-        } catch (CadiException e) {
-            assertEquals("HexString must start with \"0x\"", e.getMessage());
-        }
+        // This string doesn't begin with "0x"
+        assertNull(Hash.fromHex("0X65"));
 
-        try {
             // This string has invalid hex characters
-            Hash.fromHex("0xQ");
-            fail("Should have thrown CadiException");
-        } catch (CadiException e) {
-            // 81 is dec(Q)
-            assertEquals("Invalid char '81' in HexString", e.getMessage());
-        }
+        assertNull(Hash.fromHex("0xQ"));
     }
 
     @Test
@@ -203,16 +194,32 @@ public class JU_Hash {
         assertEquals(lowersDec, new String(Hash.fromHexNo0x(lowersHexNo0x1)));
         assertEquals(uppersDec, new String(Hash.fromHexNo0x(uppersHexNo0x2)));
         assertEquals(lowersDec, new String(Hash.fromHexNo0x(lowersHexNo0x2)));
-        assertEquals(numbersDec, new String(Hash.fromHexNo0x(numbersHexNo0x)));
         byte[] output = Hash.fromHexNo0x("ABC");
-        assertEquals(new String(new byte[] {(byte)0x0A, (byte)0xB0}), new String(output));
+        assertEquals(new String(new byte[] {(byte)0x0A, (byte)0xBC}), new String(output));
         assertNull(Hash.fromHexNo0x("~~"));
     }
-//
-//    @Test
-//    public void aaf_941() throws Exception {
-//        // User notes: From reported error "aaf" not coded right
-//
-//
-//    }
+    
+    @Test
+    public void aaf_941() throws Exception {
+        // User notes: From reported error "aaf" not coded right for odd digits
+    	// Note:  In the original concept, this isn't a valid Hex digit.  It has to do with whether to assume an initial 
+    	// char of "0" if left out.
+    	
+    	String sample = "aaf";
+    	byte[] bytes = Hash.fromHexNo0x(sample);
+    	String back = Hash.toHexNo0x(bytes);
+    	// Note: We don't presume to know that someone left off leading 0 on start.
+    	assertEquals("0aaf", back);
+    	
+    	sample = "0x0aaf";
+    	bytes = Hash.fromHex(sample);
+    	back = Hash.toHex(bytes);
+    	assertEquals(sample, back);
+    	
+    	// Assumed leading zero.  Note, we ALWAYS translate back with leading zero.  
+    	bytes = Hash.fromHex("0xaaf");
+    	back = Hash.toHex(bytes);
+    	assertEquals(sample, back);
+
+    }
 }

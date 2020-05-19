@@ -71,12 +71,19 @@ public class FileGetter {
                             if(CredDAO.CERT_SHA256_RSA == type) {
                                 return;
                             }
+                            byte ba[];
                             CredDAO.Data cdd = new CredDAO.Data();
                             cdd.id=row.get(0);
                             cdd.type = type;
                             try {
                                 cdd.expires = sdf.parse(row.get(2));
-                                cdd.cred = ByteBuffer.wrap(Hash.fromHex(row.get(3)));
+                                // Note: Note sure this can be null, but throwing was
+                                // part of original "fromHex" method.  Remove if you can
+                                // prove ba will never be null J - May 19,2020
+                                if((ba=Hash.fromHex(row.get(3)))==null) {
+                                	throw new CadiException("Invalid Cred");
+                                }
+                                cdd.cred = ByteBuffer.wrap(ba);
                                 cdd.notes= row.get(4);
                                 cdd.ns = row.get(5);
                                 cdd.other = Integer.parseInt(row.get(6));
