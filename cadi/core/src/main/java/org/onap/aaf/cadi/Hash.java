@@ -25,6 +25,12 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * 
+ * 
+ * @author Jonathan
+ *
+ */
 public class Hash {
     private static char hexDigit[] = "0123456789abcdef".toCharArray();
 
@@ -149,6 +155,10 @@ public class Hash {
         return compare;
     }
 
+    /**
+     * @param ba
+     * @return
+     */
     public static String toHexNo0x(byte[] ba) {
         StringBuilder sb = new StringBuilder();
          for (byte b : ba) {
@@ -158,6 +168,10 @@ public class Hash {
          return sb.toString();
     }
 
+    /**
+     * @param ba
+     * @return
+     */
     public static String toHex(byte[] ba) {
         StringBuilder sb = new StringBuilder("0x");
          for (byte b : ba) {
@@ -177,14 +191,17 @@ public class Hash {
     }
 
 
-    public static byte[] fromHex(String s)  throws CadiException{
-        if (!s.startsWith("0x")) {
-            throw new CadiException("HexString must start with \"0x\"");
-        }
-        boolean high = true;
-        int c;
+    public static byte[] fromHex(String s) {
+    	if(!s.startsWith("0x")) {
+    		return fromHexNo0x(s);
+    	}
         byte b;
-        byte[] ba = new byte[(s.length()-2)/2];
+        int c;
+        byte[] ba;
+        int extra = s.length()%2; // odd requires extra
+        ba = new byte[(s.length()-2)/2 + extra];
+        boolean high = extra==0;
+        
         int idx;
         for (int i=2;i<s.length();++i) {
             c = s.charAt(i);
@@ -195,9 +212,9 @@ public class Hash {
             } else if (c>=0x41 && c<=0x46) {
                 b=(byte)(c-0x37);
             } else {
-                throw new CadiException("Invalid char '" + c + "' in HexString");
+                return null;
             }
-            idx = (i-2)/2;
+            idx = (i-2+extra)/2;
             if (high) {
                 ba[idx]=(byte)(b<<4);
                 high = false;
@@ -208,7 +225,7 @@ public class Hash {
         }
         return ba;
     }
-
+    
     /**
      * Does not expect to start with "0x"
      * if Any Character doesn't match, it returns null;
@@ -217,23 +234,16 @@ public class Hash {
      * @return
      */
     public static byte[] fromHexNo0x(String s) {
-        int c;
         byte b;
+        int c;
         byte[] ba;
-        boolean high;
-        int start;
-        if (s.length()%2==0) {
-            ba = new byte[s.length()/2];
-            high=true;
-            start=0;
-        } else {
-            ba = new byte[(s.length()/2)+1];
-            high = false;
-            start=1;
-        }
+        int extra = s.length()%2; // odd requires extra byte to store
+        ba = new byte[(s.length())/2 + extra];
+        boolean high = extra==0;
+        
         int idx;
-        for (int i=start;i<s.length();++i) {
-            c = s.charAt((i-start));
+        for (int i=0;i<s.length();++i) {
+            c = s.charAt(i);
             if (c>=0x30 && c<=0x39) {
                 b=(byte)(c-0x30);
             } else if (c>=0x61 && c<=0x66) {
@@ -243,7 +253,7 @@ public class Hash {
             } else {
                 return null;
             }
-            idx = i/2;
+            idx = (i+extra)/2;
             if (high) {
                 ba[idx]=(byte)(b<<4);
                 high = false;
@@ -254,5 +264,4 @@ public class Hash {
         }
         return ba;
     }
-
 }
