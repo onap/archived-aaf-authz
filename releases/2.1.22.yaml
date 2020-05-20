@@ -1,0 +1,4 @@
+distribution_type: 'maven'
+version: '2.1.22'
+project: 'aaf-authz'
+log_dir: 'aaf-authz-maven-stage-frankfurt/16/'
