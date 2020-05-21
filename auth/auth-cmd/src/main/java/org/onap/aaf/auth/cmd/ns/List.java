@@ -39,7 +39,7 @@ import aaf.v2_0.Users.User;
 
 public class List extends BaseCmd<NS> {
 
-    private static final String cformat = "        %-30s %-6s %-24s\n";
+    private static final String cformat = "        %-30s %-6s %-24s %-20s\n";
     private static final String pformat = "        %-30s %-24s %-15s\n";
     private static final String sformat = "        %-72s\n";
     protected static final String kformat = "  %-72s\n";
@@ -152,7 +152,7 @@ public class List extends BaseCmd<NS> {
                 if (this.aafcli.isTest()) {
                     pw().format(sformat,u.getId());
                 } else {
-                    pw().format(cformat,u.getId(),getType(u),Chrono.niceDateStamp(u.getExpires()));
+                	pw().format(cformat,u.getId(),getType(u),Chrono.niceDateStamp(u.getExpires()),u.getTag());
                 }
             }
         }

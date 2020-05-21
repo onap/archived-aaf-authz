@@ -285,7 +285,7 @@ public class CredDetail extends Page {
                                                     }
                                                     first=false;
                                                     hgen.end().leaf(HTMLGen.TD,cls,STYLE_WIDTH_70)
-                                                        .text(Chrono.niceDateStamp(u.getExpires()))
+                                                    	.text(Chrono.niceDateStamp(u.getExpires()) + ", TAG ID: " + u.getTag())
                                                         .end();
 
                                                     hgen.end(uRow);
