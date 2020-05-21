@@ -438,7 +438,12 @@ public class Analyze extends Batch {
                                         if(r!=null) {
                                             Approval existing = findApproval(ur);
                                             if(existing==null) {
-                                                ur.row(needApproveCW,UserRole.APPROVE_UR);
+                                                if (org.isUserExpireExempt(ur.user())) {
+                                                    ur.row(notCompliantCW, UserRole.UR);
+                                                } else {
+                                                    ur.row(needApproveCW, UserRole.APPROVE_UR,
+                                                            "Expired user role! Membership expired " + Chrono.dateOnlyStamp(ur.expires()));
+                                                }
                                             }
                                         }
                                     }

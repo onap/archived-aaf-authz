@@ -348,6 +348,15 @@ public interface Organization {
 
     public void setTestMode(boolean dryRun);
 
+    /**
+     * Evaluates a user to determine if they are exempt from role expiration.
+     * Returns true if true, false is false. Default implementation is always false.
+     *
+     * @param user
+     * @return
+     */
+    public boolean isUserExpireExempt(String user);
+
     public static final Organization NULL = new Organization()
     {
         private final GregorianCalendar gc = new GregorianCalendar(1900, 1, 1);
@@ -584,6 +593,11 @@ public interface Organization {
         public List<Identity> getIDs(AuthzTrans trans, String user, int escalate) throws OrganizationException {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        @Override
+        public boolean isUserExpireExempt(String user) {
+            return false;
         }
 
     };
