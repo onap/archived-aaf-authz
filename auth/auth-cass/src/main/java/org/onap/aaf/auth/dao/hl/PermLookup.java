@@ -82,7 +82,7 @@ public class PermLookup {
                 List<UserRoleDAO.Data> lurdd = new ArrayList<>();
                 Date now = new Date();
                 for (UserRoleDAO.Data urdd : userRoles.value) {
-                    if (urdd.expires.after(now)) { // Remove Expired
+                    if (urdd.expires.after(now) || trans.org().isUserExpireExempt(user, urdd.expires)) { // Remove Expired
                         lurdd.add(urdd);
                     }
                 }

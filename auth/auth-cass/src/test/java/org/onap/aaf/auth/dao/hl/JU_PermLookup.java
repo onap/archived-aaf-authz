@@ -49,6 +49,7 @@ import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.misc.env.LogTarget;
+import org.onap.aaf.org.DefaultOrg;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -130,13 +131,17 @@ public class JU_PermLookup {
         Result<List<UserRoleDAO.Data>> retVal1 = Mockito.mock(Result.class);
         retVal1.value = new ArrayList<UserRoleDAO.Data>();
         UserRoleDAO.Data dataObj = Mockito.mock( UserRoleDAO.Data.class);
-
         dataObj.expires = new Date();
 
         retVal1.value.add(dataObj);
         Mockito.doReturn(true).when(retVal1).isOKhasData();
+
         Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
-        PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
+
+        DefaultOrg org = Mockito.mock(DefaultOrg.class);
+        when(trans.org()).thenReturn(org);
+
+        PermLookup cassExecutorObj = PermLookup.get(trans, q,"");
         Result<List<UserRoleDAO.Data>> userRoles = cassExecutorObj.getUserRoles();
 
         //System.out.println(""+userRoles.status);
@@ -151,7 +156,11 @@ public class JU_PermLookup {
 
         Mockito.doReturn(false).when(retVal1).isOKhasData();
         Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
-        PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
+
+        DefaultOrg org = Mockito.mock(DefaultOrg.class);
+        when(trans.org()).thenReturn(org);
+
+        PermLookup cassExecutorObj = PermLookup.get(trans, q,"");
         Result<List<UserRoleDAO.Data>> userRoles = cassExecutorObj.getUserRoles();
 
 //        System.out.println("output is"+userRoles.status);
@@ -174,7 +183,11 @@ public class JU_PermLookup {
         retVal1.value.add(dataObj);
         Mockito.doReturn(true).when(retVal1).isOKhasData();
         Mockito.doReturn(retVal1).when(userRoleDAO).readByUser(trans,"");
-        PermLookup cassExecutorObj =PermLookup.get(trans, q,"");
+
+        DefaultOrg org = Mockito.mock(DefaultOrg.class);
+        when(trans.org()).thenReturn(org);
+
+        PermLookup cassExecutorObj = PermLookup.get(trans, q,"");
         Result<List<UserRoleDAO.Data>> userRoles = cassExecutorObj.getUserRoles();
 
         //System.out.println(userRoles.status);

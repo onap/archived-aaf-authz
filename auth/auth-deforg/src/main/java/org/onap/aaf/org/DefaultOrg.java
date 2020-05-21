@@ -705,4 +705,9 @@ public class DefaultOrg implements Organization {
             return 0;
         }
     }
+
+    @Override
+    public boolean isUserExpireExempt(String user, Date expires) {
+        return false;
+    }
 }
