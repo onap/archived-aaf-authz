@@ -1,0 +1,8 @@
+Code-Review+1: Raviteja Cherughattu <rc835m@att.com>
+Code-Review+2: John Franey <john.franey@att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: John Franey <john.franey@att.com>
+Submitted-at: Thu, 21 May 2020 19:05:22 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aaf/authz/+/108083
+Project: aaf/authz
+Branch: refs/heads/master
