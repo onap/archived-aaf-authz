@@ -127,6 +127,7 @@ public class AAF_GUI extends AbsService<AuthzEnv, AuthzTrans> implements State<E
         String defTheme = env.getProperty(AAF_GUI_THEME,"onap");
         env.put(sDefaultTheme, defTheme);
 
+        
         sThemeWebPath = env.staticSlot(CachingFileAccess.CFA_WEB_PATH);
         if(env.get(sThemeWebPath)==null) {
             env.put(sThemeWebPath,"theme");
