@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: John Franey <john.franey@att.com>
+Code-Review+2: Jonathan Gathman <jgonap@stl.gathman.org>
+Submitted-by: John Franey <john.franey@att.com>
+Submitted-at: Fri, 22 May 2020 21:17:22 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/aaf/authz/+/108146
+Project: aaf/authz
+Branch: refs/heads/master
