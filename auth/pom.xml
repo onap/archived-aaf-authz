@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.onap.aaf.authz</groupId>
         <artifactId>parent</artifactId>
-        <version>2.1.22-SNAPSHOT</version>
+        <version>2.1.23-SNAPSHOT</version>
     </parent>
     <artifactId>authparent</artifactId>
     <name>AAF Auth Parent</name>
@@ -144,7 +144,6 @@
                         <repositoryLayout>flat</repositoryLayout>
                     </configuration>
                 </plugin>
-                
                 <!-- Build Docker Image -->
                 <plugin>
                     <groupId>com.spotify</groupId>
