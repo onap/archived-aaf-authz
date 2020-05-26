@@ -137,32 +137,36 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         }
 
         public Resp revalidate(Object state) {
-            try {
-                Miss missed = missed(getName(),getCred());
-                if (missed==null || missed.mayContinue()) {
-                    CredRequest cr = new CredRequest();
-                    cr.setId(getName());
-                    cr.setPassword(new String(getCred()));
-                    Future<String> fp = con.client().readPost("/authn/validate", con.credReqDF, cr);
-                    //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
-                    //Future<String> fp = client.read(
-                    //        "/authn/basicAuth",
-                    //        "text/plain"
-                    //       );
-                     if (fp.get(con.timeout)) {
-                        expires = System.currentTimeMillis() + timeToLive;
-                        addUser(new User<AAFPermission>(this, expires));
-                        return Resp.REVALIDATED;
+            for (int retries = 0;; retries++) {
+                try {
+                    Miss missed = missed(getName(), getCred());
+                    if (missed == null || missed.mayContinue()) {
+                        CredRequest cr = new CredRequest();
+                        cr.setId(getName());
+                        cr.setPassword(new String(getCred()));
+                        Future<String> fp = con.client().readPost("/authn/validate", con.credReqDF, cr);
+                        //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
+                        //Future<String> fp = client.read(
+                        //        "/authn/basicAuth",
+                        //        "text/plain"
+                        //       );
+                        if (fp.get(con.timeout)) {
+                            expires = System.currentTimeMillis() + timeToLive;
+                            addUser(new User<AAFPermission>(this, expires));
+                            return Resp.REVALIDATED;
+                        } else {
+                            addMiss(getName(), getCred());
+                            return Resp.UNVALIDATED;
+                        }
                     } else {
-                        addMiss(getName(), getCred());
                         return Resp.UNVALIDATED;
                     }
-                } else {
-                    return Resp.UNVALIDATED;
+                } catch (Exception e) {
+                    con.access.log(e);
+                    if (retries > 2) {
+                        return Resp.INACCESSIBLE;
+                    }
                 }
-            } catch (Exception e) {
-                con.access.log(e);
-                return Resp.INACCESSIBLE;
             }
         }
 
