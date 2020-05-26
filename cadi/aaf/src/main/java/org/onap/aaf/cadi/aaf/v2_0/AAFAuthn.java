@@ -22,6 +22,9 @@
 package org.onap.aaf.cadi.aaf.v2_0;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.onap.aaf.cadi.AbsUserCache;
 import org.onap.aaf.cadi.CachedPrincipal;
@@ -29,6 +32,7 @@ import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.User;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.client.Future;
+import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.lur.ConfigPrincipal;
 
 import aaf.v2_0.CredRequest;
@@ -137,32 +141,43 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         }
 
         public Resp revalidate(Object state) {
-            try {
-                Miss missed = missed(getName(),getCred());
-                if (missed==null || missed.mayContinue()) {
-                    CredRequest cr = new CredRequest();
-                    cr.setId(getName());
-                    cr.setPassword(new String(getCred()));
-                    Future<String> fp = con.client().readPost("/authn/validate", con.credReqDF, cr);
-                    //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
-                    //Future<String> fp = client.read(
-                    //        "/authn/basicAuth",
-                    //        "text/plain"
-                    //       );
-                     if (fp.get(con.timeout)) {
-                        expires = System.currentTimeMillis() + timeToLive;
-                        addUser(new User<AAFPermission>(this, expires));
-                        return Resp.REVALIDATED;
+            List<URI> attemptedUris = new ArrayList<>();
+            URI thisUri = null;
+            for (int retries = 0;; retries++) {
+                try {
+                    Miss missed = missed(getName(), getCred());
+                    if (missed == null || missed.mayContinue()) {
+                        CredRequest cr = new CredRequest();
+                        cr.setId(getName());
+                        cr.setPassword(new String(getCred()));
+                        Rcli<CLIENT> client = con.clientIgnoreAlreadyAttempted(attemptedUris);
+                        thisUri = client.getURI();
+                        Future<String> fp = client.readPost("/authn/validate", con.credReqDF, cr);
+                        //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
+                        //Future<String> fp = client.read(
+                        //        "/authn/basicAuth",
+                        //        "text/plain"
+                        //       );
+                        if (fp.get(con.timeout)) {
+                            expires = System.currentTimeMillis() + timeToLive;
+                            addUser(new User<AAFPermission>(this, expires));
+                            return Resp.REVALIDATED;
+                        } else {
+                            addMiss(getName(), getCred());
+                            return Resp.UNVALIDATED;
+                        }
                     } else {
-                        addMiss(getName(), getCred());
                         return Resp.UNVALIDATED;
                     }
-                } else {
-                    return Resp.UNVALIDATED;
+                } catch (Exception e) {
+                    if (thisUri != null)  {
+                        attemptedUris.add(thisUri);
+                    }
+                    con.access.log(e);
+                    if (retries > 2) {
+                        return Resp.INACCESSIBLE;
+                    }
                 }
-            } catch (Exception e) {
-                con.access.log(e);
-                return Resp.INACCESSIBLE;
             }
         }
 

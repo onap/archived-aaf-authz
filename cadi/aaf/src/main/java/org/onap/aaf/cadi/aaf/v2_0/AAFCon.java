@@ -23,6 +23,7 @@ package org.onap.aaf.cadi.aaf.v2_0;
 
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -265,6 +266,24 @@ public abstract class AAFCon<CLIENT> implements Connector {
     }
 
 
+    /**
+     * Use this call to get the appropriate client based on configuration (HTTP, future),
+     * ignoring those already attempted, using the default api version
+     *
+     * @param attemptedClients
+     * @return
+     * @throws CadiException
+     */
+    public Rcli<CLIENT> clientIgnoreAlreadyAttempted(List<URI> attemptedClients) throws CadiException {
+        Rcli<CLIENT> client = rclient(attemptedClients, si.defSS);
+        client.apiVersion(apiVersion)
+                .readTimeout(connTimeout);
+        clients.put(apiVersion, client);
+
+        return client;
+    }
+
+
     public RosettaEnv env() {
         return env;
     }
@@ -335,6 +354,8 @@ public abstract class AAFCon<CLIENT> implements Connector {
     }
 
     protected abstract Rcli<CLIENT> rclient(URI uri, SecuritySetter<CLIENT> ss) throws CadiException;
+
+    protected abstract Rcli<CLIENT> rclient(List<URI> uris, SecuritySetter<CLIENT> ss) throws CadiException;
 
     public abstract Rcli<CLIENT> rclient(Locator<URI> loc, SecuritySetter<CLIENT> ss) throws CadiException;
 
