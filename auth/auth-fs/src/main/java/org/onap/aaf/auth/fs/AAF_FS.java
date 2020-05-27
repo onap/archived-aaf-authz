@@ -45,7 +45,7 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.register.Registrant;
 import org.onap.aaf.cadi.register.RemoteRegistrant;
 
-
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
 
@@ -82,7 +82,8 @@ public class AAF_FS extends AbsService<AuthzEnv, AuthzTrans>  {
         @Override
         public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
             trans.info().printf("Redirecting %s to HTTP/S %s", req.getRemoteAddr(), req.getLocalAddr());
-            resp.sendRedirect(url);
+            DefaultHTTPUtilities util = new DefaultHTTPUtilities();        	
+            util.sendRedirect(url);
         }
     };
 

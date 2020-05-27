@@ -59,6 +59,7 @@ import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
 import org.onap.aaf.misc.rosetta.env.RosettaData;
+import org.owasp.encoder.Encode;
 
 import locate_local.v1_0.Api;
 
@@ -266,7 +267,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
         TimeTaken tt = trans.start(API_EXAMPLE, Env.SUB);
         try {
             String content =Examples.print(apiDF.getEnv(), nameOrContentType, optional);
-            resp.getOutputStream().print(content);
+            resp.getOutputStream().print(Encode.forJava(content));
             setContentType(resp,content.contains("<?xml")?TYPE.XML:TYPE.JSON);
             return Result.ok();
         } catch (Exception e) {
@@ -311,7 +312,7 @@ public abstract class LocateFacadeImpl<IN,OUT,ENDPOINTS,MGMT_ENDPOINTS,CONFIGURA
                     }
                 }
             }
-            resp.getOutputStream().println(output);
+            resp.getOutputStream().println(Encode.forJava(output));
             setContentType(resp,epDF.getOutType());
             return Result.ok();
         } catch (Exception e) {
