@@ -28,6 +28,7 @@ import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.Trans;
 import org.onap.aaf.misc.xgen.html.State;
+import org.owasp.encoder.Encode;
 
 public class Section<G extends XGen<G>> {
     protected int indent;
@@ -48,11 +49,11 @@ public class Section<G extends XGen<G>> {
     }
 
     public void forward(Writer w) throws IOException {
-        w.write(forward);
+    	w.write(Encode.forJava(forward));
     }
     
     public void back(Writer w) throws IOException {
-        w.write(backward);
+    	w.write(Encode.forJava(backward));
     }
     
     public String toString() {

@@ -54,6 +54,7 @@ import aaf.v2_0.History;
 import aaf.v2_0.History.Item;
 import aaf.v2_0.Request;
 
+import org.owasp.encoder.Encode;
 
 public abstract class Cmd {
     // Sonar claims DateFormat is not thread safe.  Leave as Instance Variable.
@@ -272,7 +273,7 @@ public abstract class Cmd {
             sb.append(", ");
             sb.append(desc);
         }
-        pw().println(sb);
+        pw().println(Encode.forJava(sb.toString()));
     }
 
 
