@@ -53,6 +53,9 @@ import org.onap.aaf.cadi.client.Retryable;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+import org.owasp.encoder.Encode;
 
 public class API_AAFAccess {
 //    private static String service, version, envContext;
@@ -104,7 +107,7 @@ public class API_AAFAccess {
                                         ServletOutputStream sos;
                                         try {
                                             sos = resp.getOutputStream();
-                                            sos.print(fp.value);
+                                            sos.print(Encode.forJava(fp.value));
                                         } catch (IOException e) {
                                             throw new CadiException(e);
                                         }
@@ -122,7 +125,7 @@ public class API_AAFAccess {
                         User u = (User)d.data.get(0);
                         resp.setStatus(u.code);
                         ServletOutputStream sos = resp.getOutputStream();
-                        sos.print(u.resp);
+                        sos.print(Encode.forJava(u.resp));
                     }
                 } finally {
                     tt.done();
@@ -256,7 +259,7 @@ public class API_AAFAccess {
         });
     }
 
-    private static void redirect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, LocateFacade context, Locator<URI> loc, String path) throws IOException {
+    private static void redirect(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, LocateFacade context, Locator<URI> loc, String path) throws IOException, AccessControlException {
         try {
             if (loc.hasItems()) {
                 Item item = loc.best();
@@ -270,7 +273,9 @@ public class API_AAFAccess {
                     redirectURL.append(str);
                 }
                 trans.info().log("Redirect to",redirectURL);
-                resp.sendRedirect(redirectURL.toString());
+                DefaultHTTPUtilities util = new DefaultHTTPUtilities();            	
+                util.sendRedirect(redirectURL.toString());                
+                //resp.sendRedirect(redirectURL.toString());
             } else {
                 context.error(trans, resp, Result.err(Result.ERR_NotFound,"No Locations found for redirection"));
             }
