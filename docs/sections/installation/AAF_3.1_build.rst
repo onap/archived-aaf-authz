@@ -17,7 +17,7 @@ Choose the directory you wish to start in... This process will create an "authz"
 
 Use 'git' to 'clone' the master code::
  
-  $ git clone https://gerrit.onap.org/r/aaf/authz
+  $ git clone --depth 1 https://gerrit.onap.org/r/aaf/authz
 
 Change to that directory::
 
