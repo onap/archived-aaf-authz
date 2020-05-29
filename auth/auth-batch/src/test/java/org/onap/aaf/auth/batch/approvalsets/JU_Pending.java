@@ -20,8 +20,7 @@
  */
 
 package org.onap.aaf.auth.batch.approvalsets;
-
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
@@ -83,11 +82,11 @@ public class JU_Pending {
         try {
             Pending pendingObj = new Pending(inpList);
             pendingObj.inc();
-            assertTrue(11 == pendingObj.qty());
+			assertEquals(11, pendingObj.qty());
 
             Pending tempPending = new Pending(inpList);
             pendingObj.inc(tempPending);
-            assertTrue(21 == pendingObj.qty());
+			assertEquals(21, pendingObj.qty());
 
             tempPending.earliest = new Date();
             pendingObj.earliest = new Date();
@@ -124,7 +123,7 @@ public class JU_Pending {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 1);
             pendingObj.earliest(calendar.getTime());
-            assertTrue(119 == pendingObj.earliest().getYear());
+			assertEquals(119, pendingObj.earliest().getYear());
             assertTrue(pendingObj.newApprovals());
         } catch (ParseException e) {
             // TODO Auto-generated catch block
