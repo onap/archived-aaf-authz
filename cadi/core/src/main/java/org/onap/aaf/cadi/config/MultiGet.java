@@ -24,7 +24,7 @@ package org.onap.aaf.cadi.config;
 public class MultiGet implements Get {
     private Get[] getters;
 
-    public MultiGet(Get ... getters) {
+    public MultiGet(Get ... getters){
         this.getters = getters;
     }
 
