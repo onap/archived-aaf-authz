@@ -110,7 +110,7 @@ public class JU_ApprovalSetTest {
         rs1 = new Result<FutureDAO.Data>(null,1,"test",new Object[0]);
         Mockito.doReturn(rs1).when(dv).insert(Mockito.any(AuthzTrans.class), Mockito.any(ApprovalDAO.Data.class));
         retVal = actionObj.write(trans);
-        assertTrue("Security - test".equals(retVal.details));
+		assertEquals("Security - test",retVal.details);
 
         actionObj.ladd.add(dataObj);
         retVal = actionObj.write(trans);
@@ -139,12 +139,12 @@ public class JU_ApprovalSetTest {
     @Test
     public void testApprovers() {
         Set<String> retVal = actionObj.approvers();
-        assertTrue(retVal.size() == 0);
+		assertEquals(0,retVal.size());
 
         ApprovalDAO.Data dataObj = new ApprovalDAO.Data();
         actionObj.ladd.add(dataObj);
         retVal = actionObj.approvers();
-        assertTrue(retVal.size() == 1);
+		assertEquals(1,retVal.size());
 
     }
 }
