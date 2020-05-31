@@ -4,6 +4,9 @@
  * * ===========================================================================
  * * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
  * * ===========================================================================
+ * * Modification Copyright © 2020 IBM.
+ * *===========================================================================
+ * *
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
@@ -126,7 +129,7 @@ public class JU_DefaultOrg {
         }
 
 
-        assertTrue(data.toString() != null);
+        assertNotNull(data.toString());
 
     }
 
@@ -136,7 +139,7 @@ public class JU_DefaultOrg {
     public void testDefOrg_returnDefOrgEntity()  {
 
 
-        assertTrue(defaultOrg != null);
+        assertNotNull(defaultOrg);
 
     }
 
@@ -147,15 +150,15 @@ public class JU_DefaultOrg {
         summary = "Approval";
         Boolean urgent = false;
         DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.Approval, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-        assertEquals(response.name(), "OK");
+        assertEquals("OK", response.name());
 
     }
 
     @Test
     public void testDefOrgPasswords() {
-        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2You!", "Pilgrim"),"");
-        assertEquals(defaultOrg.isValidPassword(authzTransMock, null, "new2you!", "Pilgrim"),"");
-        assertNotSame(defaultOrg.isValidPassword(authzTransMock, null, "newtoyou", "Pilgrim"),"");
+        assertEquals(defaultOrg.isValidPassword("", authzTransMock, null, "new2You!", "Pilgrim"));
+        assertEquals(defaultOrg.isValidPassword("", authzTransMock, null, "new2you!", "Pilgrim"));
+        assertNotSame(defaultOrg.isValidPassword("", authzTransMock, null, "newtoyou", "Pilgrim"));
     }
 
     @Test
@@ -164,7 +167,7 @@ public class JU_DefaultOrg {
         summary = "PasswordExpiration";
         Boolean urgent = false;
         DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.PasswordExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-        assertEquals(response.name(), "OK");
+        assertEquals("OK", response.name());
 
     }
 
@@ -174,7 +177,7 @@ public class JU_DefaultOrg {
         summary = "RoleExpiration";
         Boolean urgent = false;
         DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-        assertEquals(response.name(), "OK");
+        assertEquals("OK", response.name());
     }
 
     @Test
@@ -184,7 +187,7 @@ public class JU_DefaultOrg {
         Boolean urgent = true;
         when(authzTransMock.info()).thenReturn(logTargetMock);
         DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-        assertEquals(response.name(), "OK");
+        assertEquals("OK", response.name());
 
     }
 
@@ -196,7 +199,7 @@ public class JU_DefaultOrg {
         when(authzTransMock.info()).thenReturn(logTargetMock);
         defaultOrg.setTestMode(true);
         DefaultOrg.Response response = defaultOrg.notify(authzTransMock, DefaultOrg.Notify.RoleExpiration, URL, IDENT.split("\\|"), CCS.split("\\|"), summary, urgent);
-        assertEquals(response.name(), "OK");
+        assertEquals("OK", response.name());
 
     }
 
@@ -218,7 +221,7 @@ public class JU_DefaultOrg {
     public void testGetIdentityTypes() throws OrganizationException{
         Set<String> identityTypes = defaultOrg.getIdentityTypes();
         System.out.println("value of IdentityTypes:  " + identityTypes);
-        assertTrue(identityTypes.size() == 4);
+        assertEquals(4, identityTypes.size());
     }
 
 
@@ -226,7 +229,7 @@ public class JU_DefaultOrg {
     public void testGetRealm() throws OrganizationException{
         String realmTest = defaultOrg.getRealm();
         System.out.println("value of realm:  " + realmTest);
-        assertTrue(realmTest == REALM);
+        assertEquals(REALM, realmTest);
     }
 
     public void supportsRealm() {
@@ -238,7 +241,7 @@ public class JU_DefaultOrg {
     public void testGetName() throws OrganizationException{
         String testName = defaultOrg.getName();
         System.out.println("value of name:  " + testName);
-        assertTrue(testName == NAME);
+        assertEquals(NAME, testName);
     }
 
 
@@ -246,7 +249,7 @@ public class JU_DefaultOrg {
     public void testGetDomain() throws OrganizationException{
         String testDomain = defaultOrg.getDomain();
         System.out.println("value of domain:  " + testDomain);
-        assertTrue(testDomain == DOMAIN);
+        assertEquals(DOMAIN, testDomain);
     }
 
     // @Test
@@ -260,7 +263,7 @@ public class JU_DefaultOrg {
     public void testResponsible() throws OrganizationException {
         Identity id = defaultOrg.getIdentity(authzTransMock, "osaaf");
         Identity rt = id.responsibleTo();
-        assertTrue(rt.id().equals("bdevl"));
+        assertEquals("bdevl", rt.id());
 
     }
 
