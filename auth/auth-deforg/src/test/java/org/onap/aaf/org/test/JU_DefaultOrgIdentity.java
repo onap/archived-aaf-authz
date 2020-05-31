@@ -4,6 +4,9 @@
  * * ===========================================================================
  * * Copyright © 2017 AT&T Intellectual Property. All rights reserved.
  * * ===========================================================================
+ * * Modification Copyright © 2020 IBM.
+ * *===========================================================================
+ * *
  * * Licensed under the Apache License, Version 2.0 (the "License");
  * * you may not use this file except in compliance with the License.
  * * You may obtain a copy of the License at
@@ -23,7 +26,10 @@
 package org.onap.aaf.org.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +89,7 @@ public class JU_DefaultOrgIdentity {
     @Test
     public void testIdentify_returnIdentifiedEntity()  {
 
-        assertTrue(defaultOrgIdentity.id() != null);
+        assertNotNull(defaultOrgIdentity.id());
 
     }
 
@@ -93,7 +99,7 @@ public class JU_DefaultOrgIdentity {
         when(defaultOrgMock.identities.find(eq(key),any(Reuse.class))).thenReturn(null);
 
         DefaultOrgIdentity defaultOrgIdentityDataNull = new DefaultOrgIdentity(authzTransMock, key, defaultOrgMock);
-        assertTrue(defaultOrgIdentityDataNull.id() != null);
+        assertNotNull(defaultOrgIdentityDataNull.id());
 
     }
 
@@ -111,20 +117,20 @@ public class JU_DefaultOrgIdentity {
     public void testEquals_returnTrue() {
 
         Object b = defaultOrgIdentity;
-        assertTrue(defaultOrgIdentity.equals(b) == true );
+        assertEquals(true, defaultOrgIdentity.equals(b));
     }
 
     @Test
     public void testStatus_returnUnknown() {
 
-        assertEquals(defaultOrgIdentity.type(), "Unknown");
+        assertEquals("Unknown", defaultOrgIdentity.type());
 
     }
 
     @Test
     public void testHash_returnHashCode() {
 
-        assertTrue(defaultOrgIdentity.hashCode() != 0 );
+        assertNotEquals(0, defaultOrgIdentity.hashCode());
 
     }
 
