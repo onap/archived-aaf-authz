@@ -4,6 +4,9 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modification Copyright © 2020 IBM.
+ * ===========================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +24,7 @@
 
 package org.onap.aaf.auth.dao.cass;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
@@ -50,7 +52,7 @@ public class JU_Namespace {
         NsDAO.Data data = new NsDAO.Data();
         data.name = "name";
         namespace = new Namespace(data);
-        assertTrue(namespace.name.equals("name"));
+        assertEquals( "name", namespace.name);
         data.attrib = new HashMap<>();
         namespace = new Namespace(data);
         data.attrib.put("test", "test");
@@ -67,14 +69,14 @@ public class JU_Namespace {
         List<String> owner = new ArrayList<>();
         List<String> admin = new ArrayList<>();;
         namespace = new Namespace(data,owner, admin);
-        assertTrue(namespace.name.equals("name"));
+		assertEquals( "name", namespace.name);
         data.attrib = new HashMap<>();
         namespace = new Namespace(data,owner, admin);
         data.attrib.put("test", "test");
         namespace = new Namespace(data ,owner, admin);
 
         NsDAO.Data retData = namespace.data();
-        assertTrue(retData.name.equals("name"));
+        assertEquals( "name", retData.name);
 
     }
     @Test
@@ -96,10 +98,10 @@ public class JU_Namespace {
         NsDAO.Data data = new NsDAO.Data();
         data.name = "name";
         Namespace nameObj = null;
-        assertFalse(namespace.equals(nameObj));
-        assertFalse(namespace.equals(data));
+        assertNotEquals(namespace, nameObj);
+        assertNotEquals(namespace, data);
         nameObj = new Namespace(data);
-        assertTrue(namespace.equals(nameObj));
+        assertEquals(nameObj, namespace);
     }
 
 }

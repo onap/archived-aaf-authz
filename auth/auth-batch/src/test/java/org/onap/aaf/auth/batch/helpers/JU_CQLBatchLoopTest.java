@@ -4,6 +4,9 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modification Copyright © 2020 IBM.
+ * ===========================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +24,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
@@ -69,7 +72,7 @@ public class JU_CQLBatchLoopTest {
         try {
             f = CQLBatchLoop.class.getDeclaredField("showProgress");
             f.setAccessible(true);
-            assertTrue(cqlBatchLoopObj.total() == 0);
+            assertEquals(cqlBatchLoopObj.total(), 0);
             assertTrue(f.getBoolean(tempLoopObj));
         } catch (NoSuchFieldException e) {
             // TODO Auto-generated catch block
@@ -90,7 +93,7 @@ public class JU_CQLBatchLoopTest {
     public void testInc() {
         StringBuilder sb = cqlBatchLoopObj.inc();
         sb = cqlBatchLoopObj.inc();
-        assertTrue(cqlBatchLoopObj.batches() == 1);
+        assertEquals(1, cqlBatchLoopObj.batches());
         Field f;
         try {
             f = CQLBatchLoop.class.getDeclaredField("showProgress");
@@ -110,7 +113,7 @@ public class JU_CQLBatchLoopTest {
             e.printStackTrace();
         }
         cqlBatchLoopObj.inc();
-        assertTrue(cqlBatchLoopObj.batches() == 2);
+        assertEquals(2, cqlBatchLoopObj.batches());
         System.out.println(sb.toString());
     }
 
@@ -171,7 +174,7 @@ public class JU_CQLBatchLoopTest {
     @Test
     public void testReset() {
         cqlBatchLoopObj.reset();
-        assertTrue(cqlBatchLoopObj.batches() == 0);
+        assertEquals(0, cqlBatchLoopObj.batches());
         System.out.println(cqlBatchLoopObj.toString());
     }
 }

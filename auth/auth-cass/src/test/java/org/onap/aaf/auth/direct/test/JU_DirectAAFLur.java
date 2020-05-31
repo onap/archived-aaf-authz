@@ -4,6 +4,9 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modification Copyright © 2020 IBM.
+ * ===========================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +23,7 @@
  */
 package org.onap.aaf.auth.direct.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.security.Principal;
@@ -164,7 +166,7 @@ public class JU_DirectAAFLur {
         Result<List<Data>> rs = new Result<List<Data>>(rsVal,0,"test",new Object[0]);
         Mockito.when(question.getPermsByUser(env.newTrans(), bait.getName(), false)).thenReturn(rs);
         aafLurObj.fishAll(bait, permissions);
-        assertTrue(permissions.size() == 2);
+        assertEquals(2, permissions.size());
 
         rs = new Result<List<Data>>(rsVal,1,"test",new Object[0]);
         Mockito.when(question.getPermsByUser(env.newTrans(), bait.getName(), false)).thenReturn(rs);
