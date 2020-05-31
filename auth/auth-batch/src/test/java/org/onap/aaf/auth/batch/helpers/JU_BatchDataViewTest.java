@@ -71,12 +71,12 @@ public class JU_BatchDataViewTest {
     @Test
     public void testNs() {
         Result<NsDAO.Data> retVal = batchDataViewObj.ns(trans, "test");
-        assertTrue(retVal.status == 9);
+	assertTrue(retVal.status == 9);
 
         NS n = new NS("test1", "test2", "test3", 1, 2);
         NS.data.put("test", n);
         retVal = batchDataViewObj.ns(trans, "test");
-        assertTrue(retVal.status == 0);
+	assertTrue(retVal.status == 0);
     }
 
     @Test
