@@ -4,6 +4,9 @@
  * ===========================================================================
  * Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
  * ===========================================================================
+ * Modification Copyright © 2020 IBM.
+ * ===========================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +24,7 @@
 
 package org.onap.aaf.auth.batch.helpers;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
@@ -71,57 +74,57 @@ public class JU_BatchDataViewTest {
     @Test
     public void testNs() {
         Result<NsDAO.Data> retVal = batchDataViewObj.ns(trans, "test");
-        assertTrue(retVal.status == 9);
+		assertEquals(9,retVal.status);
 
         NS n = new NS("test1", "test2", "test3", 1, 2);
         NS.data.put("test", n);
         retVal = batchDataViewObj.ns(trans, "test");
-        assertTrue(retVal.status == 0);
+		assertEquals(0,retVal.status);
     }
 
     @Test
     public void testRoleByName() {
         Result<RoleDAO.Data> retVal = batchDataViewObj.roleByName(trans,
                 "test");
-        assertTrue(retVal.status == 9);
+        assertEquals(9,retVal.status);
 
         Role n = new Role("test1");
         n.rdd = new RoleDAO.Data();
         Role.byName.put("test", n);
         retVal = batchDataViewObj.roleByName(trans, "test");
-        assertTrue(retVal.status == 0);
+        assertEquals(0,retVal.status);
 
         n.rdd = null;
         Role.byName.put("test", n);
         retVal = batchDataViewObj.roleByName(trans, "test");
-        assertTrue(retVal.status == 9);
+        assertEquals(9,retVal.status);
     }
     @Test
     public void testUrsByRole() {
         Result<List<UserRoleDAO.Data>> retVal = batchDataViewObj
                 .ursByRole(trans, "test");
-        assertTrue(retVal.status == 9);
+        assertEquals(9,retVal.status);
 
         Role n = new Role("test1");
         n.rdd = new RoleDAO.Data();
         UserRole ur = new UserRole("user", "role", "ns", "rname", new Date());
         (new UserRole.DataLoadVisitor()).visit(ur);
         retVal = batchDataViewObj.ursByRole(trans, "role");
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status,0);
 
     }
     @Test
     public void testUrsByUser() {
         Result<List<UserRoleDAO.Data>> retVal = batchDataViewObj
                 .ursByUser(trans, "test");
-        assertTrue(retVal.status == 9);
+        assertEquals(retVal.status,9);
 
         Role n = new Role("test1");
         n.rdd = new RoleDAO.Data();
         UserRole ur = new UserRole("user", "role", "ns", "rname", new Date());
         (new UserRole.DataLoadVisitor()).visit(ur);
         retVal = batchDataViewObj.ursByUser(trans, "user");
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status,0);
 
     }
     @Test
@@ -129,7 +132,7 @@ public class JU_BatchDataViewTest {
         FutureDAO.Data dataObj = new FutureDAO.Data();
         dataObj.id = new UUID(1000L, 1000L);
         Result<FutureDAO.Data> retVal = batchDataViewObj.delete(trans, dataObj);
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status,0);
 
     }
     @Test
@@ -138,7 +141,7 @@ public class JU_BatchDataViewTest {
         dataObj.id = new UUID(1000L, 1000L);
         Result<ApprovalDAO.Data> retVal = batchDataViewObj.delete(trans,
                 dataObj);
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status, 0);
 
     }
 
@@ -150,7 +153,7 @@ public class JU_BatchDataViewTest {
         dataObj.ticket = new UUID(1000L, 1000L);
         Result<ApprovalDAO.Data> retVal = batchDataViewObj.insert(trans,
                 dataObj);
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status, 0);
 
     }
     @Test
@@ -160,11 +163,11 @@ public class JU_BatchDataViewTest {
         dataObj.memo = "memo";
         dataObj.construct = ByteBuffer.allocate(1000);
         Result<FutureDAO.Data> retVal = batchDataViewObj.insert(trans, dataObj);
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status, 0);
 
         dataObj.target_key = "memo";
         retVal = batchDataViewObj.insert(trans, dataObj);
-        assertTrue(retVal.status == 0);
+        assertEquals(retVal.status, 0);
     }
     @Test
     public void testFlush() {
