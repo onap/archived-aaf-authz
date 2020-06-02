@@ -24,6 +24,7 @@ package org.onap.aaf.misc.rosetta.test;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.LogTarget;
@@ -76,6 +77,7 @@ public class JU_FromXML {
 
         new OutRaw().extract(rdr, sbw, inXML);
         System.out.println(sbw.getBuffer());
+        Assert.assertNotNull(inXML);
     }
 
 
@@ -104,6 +106,7 @@ public class JU_FromXML {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        Assert.assertNotNull(inXML);
     }
 
     @Test
@@ -131,6 +134,7 @@ public class JU_FromXML {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        Assert.assertNotNull(inXML);
     }
 
 
@@ -174,6 +178,7 @@ public class JU_FromXML {
 
             report.report(sbw);
             System.out.println(sbw.toString());
+            Assert.assertNotNull(jaxbUmar);
         }
     }
     @Test
@@ -212,7 +217,9 @@ public class JU_FromXML {
         } while (report.go());
 
         report.report(sbw);
-        System.out.println(sbw.toString());    }
+        System.out.println(sbw.toString());
+        Assert.assertNotNull(jaxbUmar);
+    }
 
     @Test
     public void xml2jaxb2PrettyXml() throws Exception {
@@ -254,6 +261,7 @@ public class JU_FromXML {
             System.out.println(sbw.getBuffer());
         }
         System.out.println(ITERATIONS + " entries, Total Time: " + m.total + "ms, Avg Time: " + m.total/ITERATIONS + "ms");
+        Assert.assertNotNull(jaxbUmar);
     }
 
 }

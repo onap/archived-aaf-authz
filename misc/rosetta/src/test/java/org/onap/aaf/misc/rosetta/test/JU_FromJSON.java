@@ -57,6 +57,7 @@ public class JU_FromJSON {
         StringBuilderWriter sbw = new StringBuilderWriter();
         new OutRaw().extract(new StringReader(str),sbw,inJSON);
         System.out.println(sbw.getBuffer());
+        org.junit.Assert.assertNotNull(sbw);
     }
 
     @Test
@@ -68,6 +69,8 @@ public class JU_FromJSON {
         new OutDump().extract(new StringReader(str), sbw, inJSON);
 
         System.out.println(sbw.getBuffer());
+        org.junit.Assert.assertNotNull(sbw);
+
     }
 
     @Test
@@ -124,6 +127,7 @@ public class JU_FromJSON {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        org.junit.Assert.assertNotNull(sbw);
     }
 
     @Test
@@ -151,6 +155,7 @@ public class JU_FromJSON {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        org.junit.Assert.assertNotNull(sbw);
     }
 
     @Test
@@ -179,6 +184,7 @@ public class JU_FromJSON {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        org.junit.Assert.assertNotNull(report);
     }
 
 
@@ -222,6 +228,7 @@ public class JU_FromJSON {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        org.junit.Assert.assertNotNull(report);
     }
 
     @Test
