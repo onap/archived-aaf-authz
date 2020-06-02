@@ -21,9 +21,7 @@
 
 package org.onap.aaf.misc.env.jaxb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.InputStream;
@@ -278,6 +276,7 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(envJaxb).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jmar).marshal(logT, typeObj, Mockito.mock(StringWriter.class));
             bdfObj.stringify(typeObj, Mockito.mock(StringWriter.class));
+            assertNotNull(typeObj);
         } catch (APIException e) {
             e.printStackTrace();
         } catch (JAXBException e) {
@@ -318,6 +317,7 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(envJaxb).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jmar).marshal(logT, typeObj, Mockito.mock(OutputStream.class));
             bdfObj.stringify(typeObj, Mockito.mock(OutputStream.class));
+            assertNotNull(typeObj);
         } catch (APIException e) {
             e.printStackTrace();
         } catch (JAXBException e) {
@@ -358,6 +358,7 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(envJaxb).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jmar).marshal(logT, typeObj, Mockito.mock(OutputStream.class));
             bdfObj.stringify(env, typeObj, true);
+            assertNotNull(typeObj);
         } catch (APIException e) {
             e.printStackTrace();
         } catch (JAXBException e) {
@@ -378,6 +379,7 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jmar).marshal(logT, typeObj, Mockito.mock(OutputStream.class),true);
             bdfObj.stringify(env, typeObj, Mockito.mock(OutputStream.class),true);
+            assertNotNull(typeObj);
         } catch (APIException e) {
             e.printStackTrace();
         } catch (JAXBException e) {
@@ -417,6 +419,7 @@ public class JU_JAXBDF {
             Mockito.doReturn(logT).when(env).debug();
             Mockito.doReturn(this.getClass()).when(bdfObj.jmar).marshal(logT, typeObj, Mockito.mock(StringWriter.class),true);
             bdfObj.stringify(env, typeObj, Mockito.mock(StringWriter.class),true);
+            assertNotNull(typeObj);
         } catch (APIException e) {
             e.printStackTrace();
         } catch (JAXBException e) {

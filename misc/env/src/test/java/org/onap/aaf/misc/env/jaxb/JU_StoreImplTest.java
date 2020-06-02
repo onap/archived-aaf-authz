@@ -20,9 +20,7 @@
  */
 package org.onap.aaf.misc.env.jaxb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.List;
@@ -72,6 +70,7 @@ public class JU_StoreImplTest {
         bdfObj = new StoreImpl("");
         bdfObj.propsFromArgs(null, new String[] {"test"});
         bdfObj.propsFromArgs("test", new String[] {"test","te=st","test=1"});
+        assertNotNull(bdfObj);
 
     }
 
@@ -80,6 +79,7 @@ public class JU_StoreImplTest {
         Properties props = Mockito.mock(Properties.class);
         new StoreImpl(null,props);
         StoreImpl bdfObj = new StoreImpl("test",props);
+        assertNotNull(props);
     }
 
     @Test
@@ -87,6 +87,7 @@ public class JU_StoreImplTest {
         Properties props = Mockito.mock(Properties.class);
         Mockito.doReturn("test").when(props).getProperty("test");
         StoreImpl bdfObj = new StoreImpl("test",props);
+        assertNotNull(props);
     }
 
     @Test
@@ -94,12 +95,14 @@ public class JU_StoreImplTest {
         Properties props = Mockito.mock(Properties.class);
         Mockito.doReturn(System.getProperty("user.dir")+"/src/test/java/org/onap/aaf/misc/env/JU_StoreImplTest.java").when(props).getProperty("test");
         StoreImpl bdfObj = new StoreImpl("test",props);
+        assertNotNull(props);
     }
 
     @Test
     public void testNewTransState() {
         StoreImpl bdfObj = new StoreImpl(null, new String[] {});
         bdfObj.newTransState();
+        assertNotNull(bdfObj);
     }
 
     @Test

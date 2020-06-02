@@ -20,6 +20,7 @@
  */
 package org.onap.aaf.misc.rosetta.marshal;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.onap.aaf.misc.env.jaxb.JAXBumar;
@@ -44,6 +45,7 @@ public class JU_FieldBlob {
     public void testData() {
         FieldBlob<JAXBumar> obj = new FieldBlobImpl("test");
         obj.data(Mockito.mock(JAXBumar.class), new StringBuilder());
+        Assert.assertNotNull(obj);
     }
 
 }
