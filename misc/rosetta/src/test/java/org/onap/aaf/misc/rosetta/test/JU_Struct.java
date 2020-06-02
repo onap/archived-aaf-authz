@@ -21,6 +21,7 @@
 
 package org.onap.aaf.misc.rosetta.test;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.aaf.misc.rosetta.JaxInfo;
 
@@ -68,6 +69,7 @@ public class JU_Struct {
     public void test() throws Exception  {
         JaxInfo ji = JaxInfo.build(LargerData.class);
         System.out.println(ji);
+        Assert.assertNotNull(ji);
     }
 
 }

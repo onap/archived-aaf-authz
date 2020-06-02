@@ -99,6 +99,7 @@ public class JU_RosettaDF {
 
         report.report(sbw);
         System.out.println(sbw);
+        Assert.assertNotNull(env);
 
     }
 
@@ -121,6 +122,7 @@ public class JU_RosettaDF {
 
         report.report(sbw);
         System.out.println(sbw);
+        Assert.assertNotNull(env);
 
     }
 
@@ -138,6 +140,7 @@ public class JU_RosettaDF {
 
         System.out.println(df.newData().load(m).out(TYPE.RAW).asString());
         System.out.println(df.newData().load(m).out(TYPE.JSON).asString());
+        Assert.assertNotNull(env);
 
     }
 

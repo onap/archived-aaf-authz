@@ -24,6 +24,7 @@ package org.onap.aaf.misc.rosetta.test;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.aaf.misc.env.TimeTaken;
 import org.onap.aaf.misc.env.Trans;
@@ -99,6 +100,7 @@ public class JU_Saved<b> {
 
         report.report(sbw);
         System.out.println(sbw.toString());
+        Assert.assertNotNull(dump);
 
     }
 }

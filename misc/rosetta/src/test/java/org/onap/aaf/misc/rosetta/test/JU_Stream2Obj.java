@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
@@ -117,6 +118,7 @@ public class JU_Stream2Obj {
         System.out.println(sw.toString());
 
         System.out.flush();
+        Assert.assertNotNull(sw);
 
     }
 

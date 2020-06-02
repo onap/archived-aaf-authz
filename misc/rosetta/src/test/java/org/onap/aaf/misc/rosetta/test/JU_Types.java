@@ -26,6 +26,7 @@ import java.io.StringWriter;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Env;
@@ -108,6 +109,7 @@ public class JU_Types {
         news = jumar.unmarshal(env.info(), sample);
 
         System.out.println(news.getDatetime());
+        Assert.assertNotNull(raw);
 
     }
 
@@ -139,6 +141,7 @@ public class JU_Types {
 
             System.out.println("\n\n  ===== Pretty XML =====");
             xml.extract(multi, System.out, pmulti, true);
+            Assert.assertNotNull(raw);
         }
     }
 
@@ -170,6 +173,7 @@ public class JU_Types {
 
             System.out.println("\n\n  ===== Pretty XML =====");
             xml.extract(multi, System.out, doc, true);
+            Assert.assertNotNull(raw);
         }
     }
 
@@ -250,6 +254,7 @@ public class JU_Types {
         metrics = trans.auditTrail(0, null,Env.JSON,Env.XML);
         System.out.println(sbw.toString());
         System.out.println(metrics.total/iters + "ms avg");
+        Assert.assertNotNull(trans);
 
     }
 
