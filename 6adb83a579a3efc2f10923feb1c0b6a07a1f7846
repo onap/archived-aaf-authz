@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f27dd494_e63ab966",
+        "filename": "docs/sections/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5775
+      },
+      "writtenOn": "2020-06-02T12:41:46Z",
+      "side": 1,
+      "message": "Add following:\n\nVersion: 2.1.23 (Frankfurt, 6.0.0)\n---------------------------------------------\n\n:Release Date: 2020-06-05\n\n**New Features**\nCertificate Management Protocol Version 2 (CMPv2) support was added to retrieve X.509 certificates from servers which supports CMPv2 over HTTP. SDNC as first ONAP component was integrated to enroll certificate from CMPv2 server to protect traffic between SDNC and Network Functions (xNFs). \nMore details about CMPv2 support in ONAP can be found on a dedicated page. \n\n\n**Bug Fixes**\n\t- `AAF-383 \u003chttps://jira.onap.org/browse/AAF-383\u003e`_ AAF aaf-sms chart should use nodePortPrefix variable\n\t- `AAF-783 \u003chttps://jira.onap.org/browse/AAF-783\u003e`_ Consul container is outdated\n        - `AAF-784 \u003chttps://jira.onap.org/browse/AAF-784\u003e`_ Vault container is outdated\n\n**Known Issues - solve in Guilin**\n        - `AAF-1087 \u003chttps://jira.onap.org/browse/AAF-1087\u003e`_ AAF init containers init with exit 0 even if failing",
+      "revId": "6adb83a579a3efc2f10923feb1c0b6a07a1f7846",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
