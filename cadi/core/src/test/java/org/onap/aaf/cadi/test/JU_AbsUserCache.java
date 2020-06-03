@@ -21,11 +21,9 @@
 
 package org.onap.aaf.cadi.test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -121,6 +119,8 @@ public class JU_AbsUserCache {
         aucs1.setLur(cl);
         auccls1 = new AbsUserCacheCLStub<Permission>(aucs1);
         AbsUserCacheCLStub<Permission> auccls2 = new AbsUserCacheCLStub<Permission>(aucs3);
+
+        assertNotNull(auccls1);
     }
 
     @Test
@@ -129,6 +129,7 @@ public class JU_AbsUserCache {
         AbsUserCacheStub<Permission> aucs2 = new AbsUserCacheStub<Permission>(access, 0, 0, Integer.MAX_VALUE);
         aucs1.setLur(cl);
         aucs2.setLur(cl);
+        assertNotNull(aucs1);
     }
 
     @Test

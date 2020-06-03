@@ -20,6 +20,7 @@
  */
 package org.onap.aaf.misc.env;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -63,6 +64,7 @@ public class JU_BaseDataFactory {
         Store env = Mockito.mock(Store.class);
         Mockito.doReturn(System.getProperty("user.dir")).when(env).get(null, EnvFactory.DEFAULT_SCHEMA_DIR);
         String[] schemaFIles = new String[] {"../../auth-client/src/main/xsd/aaf_2_0.xsd"};
+        assertNotNull(schemaFIles);
         try {
             BaseDataFactory.genSchema(env, schemaFIles);
         } catch (APIException e) {

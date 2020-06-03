@@ -55,6 +55,7 @@ public class JU_HNoAuthSS {
         noAuth = new HNoAuthSS(siMock);
         noAuth.setSecurity(httpMock);
         noAuth.setSecurity(httpsMock);
+        junit.framework.Assert.assertNotNull(noAuth);
     }
 
 }

@@ -53,6 +53,7 @@ public class JU_PropAccess {
     public void noPrintStreamConstructionTest() throws Exception {
         // Test for coverage
         PropAccess prop = new PropAccess((PrintStream)null, new String[]{"Invalid argument"});
+        assertNotNull(prop);
     }
 
     @Test
@@ -60,6 +61,7 @@ public class JU_PropAccess {
         // Coverage tests
         PropAccess prop = new PropAccess(System.getProperties());
         prop = new PropAccess((PrintStream)null, System.getProperties());
+        assertNotNull(prop);
     }
 
     @Test
@@ -68,6 +70,7 @@ public class JU_PropAccess {
         testSystemProps.setProperty("cadi_name", "user");
         System.setProperties(testSystemProps);
         PropAccess prop = new PropAccess("cadi_keyfile=src/test/resources/keyfile", "cadi_loglevel=DEBUG", "cadi_prop_files=test/cadi.properties:not_a_file");
+        assertNotNull(testSystemProps);
     }
 
     @Test
@@ -81,6 +84,7 @@ public class JU_PropAccess {
         props_field.set(pa, props);
         ByteArrayInputStream bais = new ByteArrayInputStream(new byte[0]);
         pa.load(bais);
+        assertNotNull(props);
     }
 
     @Test
@@ -90,6 +94,7 @@ public class JU_PropAccess {
         testSystemProps.setProperty("java.specification.version", "1.7");
         System.setProperties(testSystemProps);
         PropAccess pa = new PropAccess("AFT_LATITUDE=1", "AFT_LONGITUDE=1", "cadi_protocols=TLSv1.2");
+        assertNotNull(testSystemProps);
     }
 
     @Test

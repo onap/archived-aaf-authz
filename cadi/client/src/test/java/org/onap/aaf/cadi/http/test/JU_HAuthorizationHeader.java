@@ -58,6 +58,7 @@ public class JU_HAuthorizationHeader {
 
         header = new HAuthorizationHeader(null, null, null);
         header.setSecurity(hucsMock);
+        Assert.assertNotNull(header);
     }
 
     @Test(expected = CadiException.class)

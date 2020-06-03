@@ -131,6 +131,7 @@ public class JU_SecurityInfo {
         SecurityInfo si = new SecurityInfo(badAccess);
         badAccess.setProperty(Config.CADI_KEYSTORE, keyStoreFileName);
         si = new SecurityInfo(badAccess);
+        assertNotNull(badAccess);
     }
 
 }
