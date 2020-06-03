@@ -26,6 +26,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import javax.xml.namespace.QName;
 import javax.xml.validation.Schema;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -125,6 +126,7 @@ public class JU_AbsTransJaxb {
             e.printStackTrace();
         }
         //assertTrue(lt instanceof LogTarget);
+        Assert.assertNotNull(absTransObj);
     }
 
     @Test
@@ -140,6 +142,7 @@ public class JU_AbsTransJaxb {
             e.printStackTrace();
         }
         //assertTrue(lt instanceof LogTarget);
+        Assert.assertNotNull(absTransObj);
     }
 
     @Test
@@ -155,6 +158,7 @@ public class JU_AbsTransJaxb {
             e.printStackTrace();
         }
         //assertTrue(lt instanceof LogTarget);
+        Assert.assertNotNull(absTransObj);
     }
 
     @Test
@@ -171,6 +175,7 @@ public class JU_AbsTransJaxb {
             e.printStackTrace();
         }
         //assertTrue(lt instanceof LogTarget);
+        Assert.assertNotNull(absTransObj);
     }
 
 

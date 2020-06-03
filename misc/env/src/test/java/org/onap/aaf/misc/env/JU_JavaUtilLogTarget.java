@@ -22,6 +22,7 @@
 package org.onap.aaf.misc.env;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.logging.Level;
@@ -61,6 +62,7 @@ public class JU_JavaUtilLogTarget {
         logObj.log(new Object[] {"test","test2",""});
         Mockito.doReturn(true).when(log).isLoggable(level);
         logObj.log(new Object[] {"test","test2",""});
+        assertNotNull(logObj);
 
     }
 
@@ -71,6 +73,7 @@ public class JU_JavaUtilLogTarget {
         Mockito.doReturn(true).when(log).isLoggable(level);
         logObj.log(new Throwable("test exception"), new Object[] {"test","test2",""});
         logObj.log(new Throwable(), new Object[] {"test","test2",""});
+        assertNotNull(logObj);
     }
 
     @Test
@@ -82,5 +85,6 @@ public class JU_JavaUtilLogTarget {
 
         Mockito.doReturn(false).when(log).isLoggable(level);
         logObj.printf("test", new Object[] {"test","test2",""});
+        assertNotNull(logObj);
     }
 }

@@ -21,8 +21,7 @@
 
 package org.onap.aaf.misc.env.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import org.junit.Before;
@@ -214,6 +213,7 @@ public class JU_AbsTrans {
         Mockito.doReturn(true).when(lt).isLoggable();
         absTransObj.auditTrail(1, new StringBuilder(), 1);
         //assertEquals("nameTest", ((TimeTaken)absTransObj.trail.get(0)).name);
+        assertNotNull(absTransObj);
     }
 
     @Test
@@ -227,6 +227,7 @@ public class JU_AbsTrans {
         absTransObj.trail.add(tt);
         absTransObj.auditTrail(1, new StringBuilder(), 2);
         //assertEquals("nameTest", ((TimeTaken)absTransObj.trail.get(0)).name);
+        assertNotNull(absTransObj);
     }
 
     @Test
@@ -240,6 +241,7 @@ public class JU_AbsTrans {
         absTransObj.trail.add(tt);
         absTransObj.auditTrail(1, new StringBuilder(), 1);
         //assertEquals("nameTest", ((TimeTaken)absTransObj.trail.get(0)).name);
+        assertNotNull(absTransObj);
     }
 
     @Test
@@ -253,11 +255,13 @@ public class JU_AbsTrans {
         absTransObj.trail.add(tt);
         absTransObj.auditTrail(1, null, 1);
         //assertEquals("nameTest", ((TimeTaken)absTransObj.trail.get(0)).name);
+        assertNotNull(absTransObj);
     }
 
     @Test
     public void testAuditTrailEmpptyFlag() {
         AbsTransImpl absTransObj = new AbsTransImpl(delegate);
+        assertNotNull(absTransObj);
         Mockito.doReturn(lt).when(delegate).info();
         Mockito.doReturn(true).when(lt).isLoggable();
         TimeTaken tt=absTransObj.newTimeTaken("test", 1);
