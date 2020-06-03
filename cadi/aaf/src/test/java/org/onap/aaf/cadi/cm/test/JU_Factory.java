@@ -22,10 +22,9 @@
 
 package org.onap.aaf.cadi.cm.test;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
@@ -292,7 +291,7 @@ public class JU_Factory {
     @Test
     public void base64ISTest() throws Exception {
         KeyPair kp = Factory.generateKeyPair(transMock);
-
+        assertNotNull(kp);
         String privateKeyString = Factory.toString(transMock, kp.getPrivate());
         String cleaned = cleanupString(privateKeyString);
         writeToFile(privateKeyFile, cleaned, null);

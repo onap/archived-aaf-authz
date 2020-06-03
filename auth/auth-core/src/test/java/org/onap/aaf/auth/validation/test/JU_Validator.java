@@ -70,6 +70,7 @@ public class JU_Validator {
     @Test
     public void testDescription() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class c = validator.getClass();
+        assertNotNull(c);
         Class[] cArg = new Class[2];
         cArg[0] = String.class;
         cArg[1] = String.class;        //Steps to test a protected method
@@ -168,6 +169,7 @@ public class JU_Validator {
     @Test
     public void testIntRange() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class c = validator.getClass();
+        assertNotNull(c);
         Class[] cArg = new Class[4];
         cArg[0] = String.class;
         cArg[1] = int.class;
@@ -184,6 +186,7 @@ public class JU_Validator {
     @Test
     public void testFloatRange() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Class c = validator.getClass();
+        assertNotNull(c);
         Class[] cArg = new Class[4];
         cArg[0] = String.class;
         cArg[1] = float.class;

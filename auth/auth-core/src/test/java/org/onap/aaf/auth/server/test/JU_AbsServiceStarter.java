@@ -27,6 +27,7 @@ import java.io.PrintStream;
 import javax.servlet.Filter;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.aaf.auth.rserv.RServlet;
@@ -111,6 +112,7 @@ public class JU_AbsServiceStarter {
         absServiceStub = new AbsServiceStub(prop, bEnv);
 
         absServiceStarterStub = new AbsServiceStarterStub(absServiceStub,true);
+        Assert.assertNotNull(bEnv);
     }
 
 //    @Test

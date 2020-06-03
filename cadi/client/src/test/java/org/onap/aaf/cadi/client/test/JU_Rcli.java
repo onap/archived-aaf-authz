@@ -22,6 +22,7 @@
 package org.onap.aaf.cadi.client.test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -91,6 +92,7 @@ public class JU_Rcli {
     public void createTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
         rcli.type(Data.TYPE.XML);
+        assertNotNull(rcli);
 
         rcli.create(null, contentType, dfMock, conMock);
         rcli.create("No question mark", contentType, dfMock, conMock);
@@ -116,6 +118,7 @@ public class JU_Rcli {
     @Test
     public void postFormTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
+        assertNotNull(rcli);
 
         rcli.type(Data.TYPE.DEFAULT);
         rcli.postForm(null, dfMock);
@@ -133,6 +136,7 @@ public class JU_Rcli {
     @Test
     public void readPostTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
+        assertNotNull(rcli);
         rcli.type(Data.TYPE.DEFAULT);
 
         rcli.readPost(null, dfMock, conMock);
@@ -149,6 +153,7 @@ public class JU_Rcli {
     @Test
     public void readTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
+        assertNotNull(rcli);
         rcli.type(Data.TYPE.DEFAULT);
 
         rcli.read("First string", "Second string", "Third string", "Fourth string");
@@ -160,6 +165,7 @@ public class JU_Rcli {
     @Test
     public void updateTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
+        assertNotNull(rcli);
         rcli.type(Data.TYPE.DEFAULT);
 
         rcli.update("First string", "Second string", dfMock, conMock);
@@ -173,6 +179,7 @@ public class JU_Rcli {
     public void deleteTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
         rcli.type(Data.TYPE.DEFAULT);
+        assertNotNull(rcli);
 
         rcli.delete("First string", "Second string", dfMock, conMock);
         rcli.delete("First string", dfMock, conMock);
@@ -185,6 +192,7 @@ public class JU_Rcli {
     public void transferTest() throws APIException, CadiException {
         RcliStub rcli = new RcliStub(uri);
         rcli.type(Data.TYPE.DEFAULT);
+        assertNotNull(rcli);
 
         when(reqMock.getRequestURI()).thenReturn(uriString);
         when(reqMock.getHeaderNames()).thenReturn(enumeration);
