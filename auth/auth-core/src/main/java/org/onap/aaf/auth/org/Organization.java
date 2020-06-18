@@ -349,8 +349,8 @@ public interface Organization {
     public void setTestMode(boolean dryRun);
 
     /**
-     * Evaluates a user to determine if they are exempt from role expiration.
-     * Returns true if true, false is false. Default implementation is always false.
+     * Evaluates a user to determine if they are exempt from role and cred expiration.
+     * Returns true if true, false if false. Default implementation is always false.
      *
      * @param user
      * @param expires

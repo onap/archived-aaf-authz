@@ -759,7 +759,7 @@ public class Function {
             }
 
             for (CredDAO.Data cd : cdr.value) {
-                if (cd.expires.after(now)) {
+                if (cd.expires.after(now) || trans.org().isUserExpireExempt(cd.id, cd.expires)) {
                     return Result.ok();
                 }
             }
@@ -1440,7 +1440,7 @@ public class Function {
         List<UserRoleDAO.Data> list = rurdd.value;
         List<String> rv = new ArrayList<>(list.size()); // presize
         for (UserRoleDAO.Data urdd : rurdd.value) {
-            if (includeExpired || urdd.expires.after(now)) {
+            if (includeExpired || urdd.expires.after(now) || trans.org().isUserExpireExempt(urdd.user, urdd.expires)) {
                 rv.add(urdd.user);
             }
         }

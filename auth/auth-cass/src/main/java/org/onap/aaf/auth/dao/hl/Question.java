@@ -938,7 +938,7 @@ public class Question {
                     if (!cdd.id.equals(user)) {
                         trans.error().log("doesUserCredMatch DB call does not match for user: " + user);
                     }
-                    if (cdd.expires.after(now)) {
+                    if (cdd.expires.after(now) || trans.org().isUserExpireExempt(cdd.id, cdd.expires)) {
                         byte[] dbcred = cdd.cred.array();
 
                         try {
@@ -1273,7 +1273,7 @@ public class Question {
         if (rur.isOKhasData()) {
             Date now = new Date();
             for (UserRoleDAO.Data urdd : rur.value){
-                if (urdd.expires.after(now)) {
+                if (urdd.expires.after(now) || trans.org().isUserExpireExempt(urdd.user, urdd.expires)) {
                     return true;
                 }
             }
@@ -1285,7 +1285,7 @@ public class Question {
         Result<List<UserRoleDAO.Data>> rur = userRoleDAO().read(trans, user,ns+DOT_OWNER);
         if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
             Date now = new Date();
-            if (urdd.expires.after(now)) {
+            if (urdd.expires.after(now) || trans.org().isUserExpireExempt(urdd.user, urdd.expires)) {
                 return true;
             }
         }};
@@ -1297,7 +1297,7 @@ public class Question {
         Date now = new Date();
         int count = 0;
         if (rur.isOKhasData()) {for (UserRoleDAO.Data urdd : rur.value){
-            if (urdd.expires.after(now)) {
+            if (urdd.expires.after(now) || trans.org().isUserExpireExempt(urdd.user, urdd.expires)) {
                 ++count;
             }
         }};
