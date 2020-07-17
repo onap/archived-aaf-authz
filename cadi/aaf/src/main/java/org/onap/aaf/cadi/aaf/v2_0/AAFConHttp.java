@@ -24,6 +24,7 @@ package org.onap.aaf.cadi.aaf.v2_0;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.List;
 
 import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CadiException;
@@ -131,6 +132,34 @@ public class AAFConHttp extends AAFCon<HttpURLConnection> {
         }
         try {
             return new HRcli(hman, hman.loc.best() ,ss);
+        } catch (Exception e) {
+            throw new CadiException(e);
+        }
+    }
+
+    protected Rcli<HttpURLConnection> rclient(List<URI> ignoredURIs, SecuritySetter<HttpURLConnection> ss) throws CadiException {
+        if (hman.loc==null) {
+            throw new CadiException("No Locator set in AAFConHttp");
+        }
+        try {
+            if (ignoredURIs.isEmpty()) {
+                return new HRcli(hman, hman.loc.best(), ss);
+            } else {
+                Item item = hman.loc.first();
+                HRcli currentClient = new HRcli(hman, item, ss);
+
+                item = hman.loc.next(item);
+
+                while (item != null) {
+                    if (!ignoredURIs.contains(currentClient.getURI())) {
+                        break;
+                    } else {
+                        currentClient = new HRcli(hman, item, ss);
+                    }
+                    item = hman.loc.next(item);
+                }
+                return currentClient;
+            }
         } catch (Exception e) {
             throw new CadiException(e);
         }
