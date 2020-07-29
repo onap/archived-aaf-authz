@@ -35,8 +35,6 @@ import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.misc.env.Env;
 import org.onap.aaf.misc.env.TimeTaken;
 
-import org.owasp.encoder.Encode;
-
 /**
  * API Apis
  * @author Jonathan
@@ -72,7 +70,7 @@ public class API_Hello {
                 String perm = pathParam(req, "perm");
                 if (perm!=null && perm.length()>0) {
                     os.print('(');
-                    os.print(Encode.forJava(req.getUserPrincipal().getName()));
+                    os.print(req.getUserPrincipal().getName());
                     TimeTaken tt = trans.start("Authorize perm", Env.REMOTE);
                     try {
                         if (req.isUserInRole(perm)) {
@@ -84,7 +82,7 @@ public class API_Hello {
                         tt.done();
                     }
                     os.print("Permission: ");
-                    os.print(Encode.forJava(perm));
+                    os.print(perm);
                     os.print(')');
                 }
                 os.println();
@@ -146,7 +144,7 @@ public class API_Hello {
                 }
                 sb.append("}");
                 ServletOutputStream os = resp.getOutputStream();
-                os.println(Encode.forJava(sb.toString()));
+                os.println(sb.toString());
                 trans.info().printf("Said 'RESTful Hello' to %s, Authentication type: %s",trans.getUserPrincipal().getName(),trans.getUserPrincipal().getClass().getSimpleName());
             }
         },APPLICATION_JSON);
@@ -166,7 +164,7 @@ public class API_Hello {
                 trans.info().printf("Content from %s: %s\n", pathParam(req, ":id"),content);
                 if (content.startsWith("{") && content.endsWith("}")) {
                     resp.setStatus(200 /* OK */);
-                    resp.getOutputStream().print(Encode.forJava(content));
+                    resp.getOutputStream().print(content);
                 } else {
                     resp.getOutputStream().write(NOT_JSON);
                     resp.setStatus(406);

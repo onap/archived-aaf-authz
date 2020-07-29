@@ -53,7 +53,6 @@ import org.onap.aaf.misc.env.EnvJAXB;
 import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.Store;
 import org.onap.aaf.misc.env.Trans;
-import org.owasp.encoder.Encode;
 /*
  * CachingFileAccess
  *
@@ -430,9 +429,9 @@ public class CachingFileAccess<TRANS extends Trans> extends HttpCode<TRANS, Void
                     w.append(name);
                     w.append('/');
                 }
-                w.append(Encode.forJava(f.getName()));
+                w.append(f.getName());
                 w.append("\">");
-                w.append(Encode.forJava(f.getName()));
+                w.append(f.getName());
                 w.append("</a></li>\n");
             }
             w.append(F);

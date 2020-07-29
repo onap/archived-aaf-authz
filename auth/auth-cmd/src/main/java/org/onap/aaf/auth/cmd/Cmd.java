@@ -54,8 +54,6 @@ import aaf.v2_0.History;
 import aaf.v2_0.History.Item;
 import aaf.v2_0.Request;
 
-import org.owasp.encoder.Encode;
-
 public abstract class Cmd {
     // Sonar claims DateFormat is not thread safe.  Leave as Instance Variable.
     private final DateFormat dateFmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
@@ -273,7 +271,7 @@ public abstract class Cmd {
             sb.append(", ");
             sb.append(desc);
         }
-        pw().println(Encode.forJava(sb.toString()));
+        pw().println(sb.toString());
     }
 
 

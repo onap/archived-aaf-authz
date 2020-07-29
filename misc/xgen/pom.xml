@@ -77,12 +77,7 @@
             <groupId>org.onap.aaf.authz</groupId>
             <artifactId>aaf-misc-env</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>		
-			<groupId>org.owasp.encoder</groupId>		
-			<artifactId>encoder</artifactId>		
-			<version>1.2.1</version>		
-		</dependency>        
+        </dependency>       
     </dependencies>
     
     <!-- ============================================================== -->

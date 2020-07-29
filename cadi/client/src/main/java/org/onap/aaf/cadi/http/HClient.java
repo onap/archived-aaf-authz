@@ -47,7 +47,6 @@ import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Data.TYPE;
 import org.onap.aaf.misc.env.util.Pool.Pooled;
 import org.onap.aaf.misc.rosetta.env.RosettaDF;
-import org.owasp.encoder.Encode;
 /**
  * Low Level Http Client Mechanism. Chances are, you want the high level "HRcli"
  * for Rosetta Object Translation
@@ -395,11 +394,9 @@ public class HClient implements EClient<HttpURLConnection> {
                     is = huc.getInputStream();
                     // reuse Buffers
                     Pooled<byte[]> pbuff = Rcli.buffPool.get();
-                    try {
-                    	String strTemp;
+                    try {                    	
                         while ((read=is.read(pbuff.content))>=0) {
-                        	strTemp = new String(pbuff.content,0,read);                        	
-                        	os.write(Encode.forJava(strTemp).getBytes());
+                        	os.write(pbuff.content,0,read);
                         }
                     } finally {
                         pbuff.done();
@@ -413,11 +410,9 @@ public class HClient implements EClient<HttpURLConnection> {
                     if (is!=null) {
                         errContent = new StringBuilder();
                         Pooled<byte[]> pbuff = Rcli.buffPool.get();
-                        try {
-                        	String strTemp; 
+                        try { 
                             while ((read=is.read(pbuff.content))>=0) {
-                            	strTemp = new String(pbuff.content,0,read);                            	
-                            	os.write(Encode.forJava(strTemp).getBytes());
+                            	os.write(pbuff.content,0,read);
                             }
                         } finally {
                             pbuff.done();
