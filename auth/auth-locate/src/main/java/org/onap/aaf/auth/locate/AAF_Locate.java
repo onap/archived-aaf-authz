@@ -90,6 +90,8 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
      * @param dm
      * @param decryptor
      * @throws APIException
+     * 
+     * This is test commit
      */
     public AAF_Locate(final AuthzEnv env) throws Exception {
         super(env.access(), env);
