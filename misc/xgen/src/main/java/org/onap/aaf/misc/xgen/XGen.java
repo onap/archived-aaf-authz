@@ -151,7 +151,9 @@ public class XGen<RT extends XGen<RT>> {
 
     @SuppressWarnings("unchecked")
     public RT text(String txt) {
-        forward.append(txt);
+    	if(txt!=null) {
+    		forward.append(txt);
+    	}
         return (RT)this;
     }
     
@@ -182,8 +184,12 @@ public class XGen<RT extends XGen<RT>> {
         for (int i=0;i<tabs;++i) {
             forward.append("  ");
         }
-        forward.append(txt);
-        if (pretty)forward.println();
+        if(txt!=null) {
+        	forward.append(txt);
+        }
+    	if (pretty) {
+    		forward.println();
+    	}
         return (RT)this;
     }
 

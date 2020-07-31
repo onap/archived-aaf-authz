@@ -32,7 +32,7 @@ public class HTML5Gen extends HTMLGen {
 
     @Override
     public HTMLGen html(String ... attrib) {
-        //forward.println("<!DOCTYPE html>");
+        forward.println("<!DOCTYPE html>");
         incr("html",attrib);
         return this;
     }
