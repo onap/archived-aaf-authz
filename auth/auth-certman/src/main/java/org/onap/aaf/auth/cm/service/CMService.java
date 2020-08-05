@@ -30,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -136,7 +137,7 @@ public class CMService {
         }
     }
 
-    public Result<CertResp> requestCert(final AuthzTrans trans, final Result<CertReq> req, final CA ca) {
+    public Result<CertResp> requestCertFunctional(final AuthzTrans trans, final Result<CertReq> req, final CA ca, String type, String remoteAddr) {
         if (req.isOK()) {
             if (req.value.fqdns.isEmpty()) {
                 return Result.err(Result.ERR_BadData, "No Machines passed in Request");
@@ -176,6 +177,14 @@ public class CMService {
 
             String email = null;
 
+            ArrayList<String> requesterWhitelist = new ArrayList<>();
+            if (type.equals(Config.CM_REQUEST_TYPE_SERVER)) {
+                String rawWhitelist = certManager.access.getProperty(Config.CM_REQUESTER_WHITELIST, null);
+                if (rawWhitelist != null && !rawWhitelist.isEmpty()) {
+                    requesterWhitelist.addAll(Arrays.asList(rawWhitelist.split(",")));
+                }
+            }
+
             try {
                 Organization org = trans.org();
                 InetAddress primary = null;
@@ -192,7 +201,7 @@ public class CMService {
                                 "Requests using domain require machine declaration");
                         }
 
-                        if (!ignoreIPs) {
+                        if (!ignoreIPs || !(type.equals(Config.CM_REQUEST_TYPE_SERVER) && requesterWhitelist.contains(remoteAddr))) {
                             InetAddress ia = InetAddress.getByName(fqdns.get(0));
                             if (ia == null) {
                                 return Result.err(Result.ERR_Denied,
@@ -204,7 +213,7 @@ public class CMService {
 
                     } else {
                         // Passed in FQDNs, but not starting with *
-                        if (!ignoreIPs) {
+                        if (!ignoreIPs || !(type.equals(Config.CM_REQUEST_TYPE_SERVER) && requesterWhitelist.contains(remoteAddr))) {
                             for (String cn : req.value.fqdns) {
                                 try {
                                     InetAddress[] ias = InetAddress.getAllByName(cn);
@@ -229,7 +238,7 @@ public class CMService {
                 }
 
                 final String host;
-                if (ignoreIPs) {
+                if (ignoreIPs || (type.equals(Config.CM_REQUEST_TYPE_SERVER) && requesterWhitelist.contains(remoteAddr))) {
                     host = req.value.fqdns.get(0);
                 } else if (primary == null) {
                     return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)", req.value.fqdns.get(0));
@@ -353,7 +362,19 @@ public class CMService {
 
             CSRMeta csrMeta;
             try {
-                csrMeta = BCFactory.createCSRMeta(ca, req.value.mechid, email, fqdns);
+                switch (type) {
+                    case Config.CM_REQUEST_TYPE_NORM:
+                        // default path, places the mechid in the OU
+                        csrMeta = BCFactory.createCSRMeta(ca, req.value.mechid, email, fqdns);
+                        break;
+                    case Config.CM_REQUEST_TYPE_SERVER:
+                        // server cert, we feed the OU a static for now
+                        // TODO evaluate ease of modifying the jar usage to include the actual OU
+                        csrMeta = BCFactory.createCSRMeta(ca, trans.org().getName(), email, fqdns);
+                        break;
+                    default:
+                        return Result.err(Result.ERR_BadData, "invalid request");
+                }
                 csrMeta.environment(ca.getEnv());
 
                 // Before creating, make sure they don't have too many
@@ -413,6 +434,14 @@ public class CMService {
         } else {
             return Result.err(req);
         }
+    }
+
+    public Result<CertResp> requestCert(final AuthzTrans trans, final Result<CertReq> req, final CA ca) {
+        return requestCertFunctional(trans, req, ca, Config.CM_REQUEST_TYPE_NORM, null);
+    }
+
+    public Result<CertResp> requestServerCert(final AuthzTrans trans, final Result<CertReq> req, String remoteAddr, final CA ca) {
+        return requestCertFunctional(trans, req, ca, Config.CM_REQUEST_TYPE_SERVER, remoteAddr);
     }
 
     public Result<CertResp> renewCert(AuthzTrans trans, Result<CertRenew> renew) {

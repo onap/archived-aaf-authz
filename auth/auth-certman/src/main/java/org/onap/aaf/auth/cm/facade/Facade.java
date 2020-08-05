@@ -90,6 +90,15 @@ public interface Facade<REQ,CERT,ARTIFACTS,ERROR> {
      * @param rservlet
      * @return
      */
+    public abstract Result<Void> requestServerCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca);
+
+    /**
+     *
+     * @param trans
+     * @param resp
+     * @param rservlet
+     * @return
+     */
     public abstract Result<Void> requestPersonalCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca);
 
 
