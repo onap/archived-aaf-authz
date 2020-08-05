@@ -28,8 +28,10 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,6 +48,9 @@ import org.onap.aaf.auth.cm.data.CertDrop;
 import org.onap.aaf.auth.cm.data.CertRenew;
 import org.onap.aaf.auth.cm.data.CertReq;
 import org.onap.aaf.auth.cm.data.CertResp;
+import org.onap.aaf.auth.cm.util.ArtiDaoDataAndResultPOJO;
+import org.onap.aaf.auth.cm.util.InetAddressAndResultPOJO;
+import org.onap.aaf.auth.cm.util.StringAndListStringAndResultPOJO;
 import org.onap.aaf.auth.cm.validation.CertmanValidator;
 import org.onap.aaf.auth.common.Define;
 import org.onap.aaf.auth.dao.CassAccess;
@@ -67,6 +72,7 @@ import org.onap.aaf.cadi.Hash;
 import org.onap.aaf.cadi.Permission;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.config.Config;
+import org.onap.aaf.cadi.configure.CertException;
 import org.onap.aaf.cadi.configure.Factory;
 import org.onap.aaf.cadi.util.FQI;
 import org.onap.aaf.misc.env.APIException;
@@ -136,214 +142,437 @@ public class CMService {
         }
     }
 
-    public Result<CertResp> requestCert(final AuthzTrans trans, final Result<CertReq> req, final CA ca) {
+    private boolean skipReverseDNS(String remoteAddr) {
+        List<String> requesterWhitelist = createWhitelist();
+        return requesterWhitelist.contains(remoteAddr);
+    }
+
+    private List<String> createWhitelist() {
+        ArrayList<String> requesterWhitelist = new ArrayList<>();
+        String rawWhitelist = certManager.access.getProperty(Config.CM_REQUESTER_WHITELIST, null);
+        if (rawWhitelist != null && !rawWhitelist.isEmpty()) {
+            requesterWhitelist.addAll(Arrays.asList(rawWhitelist.split(",")));
+        }
+        return requesterWhitelist;
+    }
+
+    private boolean wereMachinesPassedIntoRequest (List<String> fqdns) {
+        return !fqdns.isEmpty();
+    }
+
+    private boolean doesRequesterHaveChangePermissionInNamespaceRequested (String mechNS) {
+        // Policy 6: Requester must be granted Change permission in Namespace requested
+        // TODO this seems to have never been implemented and no such check is performed
+        return mechNS != null;
+    }
+
+    private List<String> populateFQDNS(List<String> fqdns, String key, AuthzTrans trans, CA ca) {
+        // Note: Many Cert Impls require FQDN in "CN=" to be in the SANS as well.  Therefore, the "fqdn" variable
+        // includes main ID plus ADDITIONAL SANS at all times.
+        // TODO this logic is muddled and the if case appears to never be reached, and if it did wouldn't work
+        // TODO anyway. Under a do no harm approach however, it was left as is.
+        if(fqdns.isEmpty()) {
+            fqdns = new ArrayList<>();
+            fqdns.add(key);
+        } else {
+            // Only Template or Dynamic permitted to pass in FQDNs
+            if (fqdns.get(0).startsWith("*")) { // Domain set
+                if (!trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(), DOMAIN))) {
+                    return null;
+                }
+            }
+        }
+        return fqdns;
+    }
+
+    private StringAndListStringAndResultPOJO setSponsor(AuthzTrans trans, List<String> fqdns, boolean domain_based,
+                                                        boolean ignoreIPs, boolean skipReverseDNS, String mechid,
+                                                        boolean dynamic_sans, String key, String mechNS, CA ca)
+            throws Exception {
+        StringAndListStringAndResultPOJO stringAndListStringOrResult = new StringAndListStringAndResultPOJO();
+        stringAndListStringOrResult.setResult(null);
+        stringAndListStringOrResult.setString(null);
+        stringAndListStringOrResult.setStringList(null);
+
+        Organization org = trans.org();
+
+        InetAddressAndResultPOJO primaryOrResult = findInetAddress(fqdns, domain_based, ignoreIPs, skipReverseDNS, trans);
+        InetAddress primary = primaryOrResult.getInetAddress();
+        if (primary == null && primaryOrResult.getResult() != null) {
+            stringAndListStringOrResult.setResult(primaryOrResult.getResult());
+            return stringAndListStringOrResult;
+        }
+
+        final String host = setHost(ignoreIPs, skipReverseDNS, fqdns, primary);
+        if (host == null) {
+            stringAndListStringOrResult.setResult(Result.err(Result.ERR_Denied,
+                    "Request not made from matching IP (%s)", fqdns.get(0)));
+            return stringAndListStringOrResult;
+        }
+
+        ArtiDaoDataAndResultPOJO dataOrResult = createAdd(trans, mechid, host, dynamic_sans, key, domain_based, fqdns);
+
+        ArtiDAO.Data add = dataOrResult.getData();
+        if (add == null) {
+            stringAndListStringOrResult.setResult(dataOrResult.getResult());
+            return stringAndListStringOrResult;
+        }
+
+        fqdns = addArtifactListedFQDNs(dynamic_sans, add, fqdns);
+
+        if (!isConfigNotYetExpired(add)) {
+            stringAndListStringOrResult.setResult(Result.err(Result.ERR_Policy, "Configuration for %s %s is expired %s",
+                    add.mechid, add.machine, Chrono.dateFmt.format(add.expires)));
+            return stringAndListStringOrResult;
+        }
+
+        Identity muser = org.getIdentity(trans, add.mechid);
+        if (!isMechIdCurrent(muser)) {
+            stringAndListStringOrResult.setResult(Result.err(Result.ERR_Policy, "AppID '%s' must exist in %s",
+                    add.mechid,org.getName()));
+            return stringAndListStringOrResult;
+        }
+
+        Identity ouser = muser.responsibleTo();
+        if (!isSponsorCurrent(ouser)) {
+            stringAndListStringOrResult.setResult(Result.err(Result.ERR_Policy, "%s does not have a current sponsor at %s",
+                    add.mechid, org.getName()));
+            return stringAndListStringOrResult;
+        } else if (!isSponsorResponsibleForMechId(ouser)) {
+            stringAndListStringOrResult.setResult(Result.err(Result.ERR_Policy, "%s reports that %s cannot be responsible for %s",
+                    org.getName(), trans.user()));
+            return stringAndListStringOrResult;
+        }
+
+        // Set Email from most current Sponsor
+        String email = ouser.email();
+
+        keepArtifactDataCurrent(ouser, add, trans);
+
+        if (!isCallerMechIdOrHasPermissions(trans, mechid, mechNS, ca)) {
+            stringAndListStringOrResult.setResult(Result.err(Status.ERR_Denied, "%s must have access to modify x509 certs in NS %s",
+                    trans.user(), mechNS));
+            return stringAndListStringOrResult;
+        }
+
+        if(!isIPAddressPermissionGranted(trans, ca, fqdns)) {
+            stringAndListStringOrResult.setResult(Result.err(Status.ERR_Denied,
+                    "Machines include a IP Address.  IP Addresses are not allowed except by Permission"));
+            return stringAndListStringOrResult;
+        }
+
+        // Make sure Primary is the first in fqdns
+        primaryIsFirstInFQDNS(fqdns, trans, primary, ignoreIPs, skipReverseDNS);
+
+        stringAndListStringOrResult.setString(email);
+        stringAndListStringOrResult.setStringList(fqdns);
+
+        return stringAndListStringOrResult;
+    }
+
+    private InetAddressAndResultPOJO findInetAddress(List<String> fqdns, boolean domain_based, boolean ignoreIPs,
+                                                     boolean skipReverseDNS, AuthzTrans trans) throws UnknownHostException {
+        InetAddressAndResultPOJO inetAddressOrResult = new InetAddressAndResultPOJO();
+        inetAddressOrResult.setInetAddress(null);
+        inetAddressOrResult.setResult(null);
+
+        InetAddress primary = null;
+        if (!fqdns.isEmpty()) { // Passed in FQDNS, validated above
+            // Accept domain wild cards, but turn into real machines
+            // Need *domain.com:real.machine.domain.com:san.machine.domain.com:...
+            if (domain_based) { // Domain set
+                // check for Permission in Add Artifact?
+                String domain = fqdns.get(0).substring(1); // starts with *, see above
+                fqdns.remove(0);
+                if (fqdns.isEmpty()) {
+                     inetAddressOrResult.setResult(Result.err(Result.ERR_Denied,
+                            "Requests using domain require machine declaration"));
+                }
+
+                if (!ignoreIPs && !skipReverseDNS) {
+                    InetAddress ia = InetAddress.getByName(fqdns.get(0));
+                    if (ia == null) {
+                        inetAddressOrResult.setResult(Result.err(Result.ERR_Denied,
+                                "Request not made from matching IP matching domain"));
+                    } else if (ia.getHostName().endsWith(domain)) {
+                        primary = ia;
+                    }
+                }
+            } else {
+                // Passed in FQDNs, but not starting with *
+                if (!ignoreIPs) {
+                    for (String cn : fqdns) {
+                        try {
+                            InetAddress[] ias = InetAddress.getAllByName(cn);
+                            Set<String> potentialSanNames = new HashSet<>();
+                            for (InetAddress ia1 : ias) {
+                                InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
+                                String ip = trans.ip();
+                                if (primary == null && ip.equals(ia1.getHostAddress())) {
+                                    primary = ia1;
+                                } else if (!cn.equals(ia1.getHostName())
+                                        && !ia2.getHostName().equals(ia2.getHostAddress())) {
+                                    potentialSanNames.add(ia1.getHostName());
+                                }
+                            }
+                        } catch (UnknownHostException e1) {
+                            trans.debug().log(e1);
+                            inetAddressOrResult.setResult(Result.err(Result.ERR_BadData, "There is no DNS lookup for %s", cn));
+                        }
+                    }
+                }
+            }
+        }
+        if (inetAddressOrResult.getResult() == null) {
+            inetAddressOrResult.setInetAddress(primary);
+        }
+        return inetAddressOrResult;
+    }
+
+    private String setHost(boolean ignoreIPs, boolean skipReverseDNS, List<String> fqdns, InetAddress primary) {
+        String host;
+        if (ignoreIPs || skipReverseDNS) {
+            host = fqdns.get(0);
+        } else if (primary == null) {
+            host = null;
+        } else {
+            String thost = primary.getHostName();
+            if (thost == null) {
+                host = primary.getHostAddress();
+            }  else {
+                host = thost;
+            }
+        }
+        return host;
+    }
+
+    private ArtiDaoDataAndResultPOJO createAdd(AuthzTrans trans, String mechid, String host, boolean dynamic_sans,
+                                               String key, boolean domain_based, List<String> fqdns) {
+        ArtiDaoDataAndResultPOJO artiDaoDataOrResult = new ArtiDaoDataAndResultPOJO();
+        artiDaoDataOrResult.setData(null);
+        artiDaoDataOrResult.setResult(null);
+
+        ArtiDAO.Data add = null;
+        Result<List<ArtiDAO.Data>> ra = artiDAO.read(trans, mechid, host);
+        if (ra.isOKhasData()) {
+            add = ra.value.get(0); // single key
+            if(dynamic_sans && (add.sans!=null && !add.sans.isEmpty())) { // do not allow both Dynamic and Artifact SANS
+                artiDaoDataOrResult.setResult(Result.err(Result.ERR_Denied,
+                        "Authorization must not include SANS when doing Dynamic SANS (%s, %s)", mechid, key));
+            }
+        } else {
+            if(domain_based) {
+                ra = artiDAO.read(trans, mechid, key);
+                if (ra.isOKhasData()) { // is the Template available?
+                    add = populateAddFields(ra, host, fqdns);
+                    Result<ArtiDAO.Data> rc = artiDAO.create(trans, add); // Create new Artifact from Template
+                    if (rc.notOK()) {
+                        artiDaoDataOrResult.setResult(Result.err(rc));
+                    }
+                } else {
+                    artiDaoDataOrResult.setResult(Result.err(Result.ERR_Denied,"No Authorization Template for %s, %s", mechid, key));
+                }
+            } else {
+                artiDaoDataOrResult.setResult(Result.err(Result.ERR_Denied,"No Authorization found for %s, %s", mechid, key));
+            }
+        }
+
+        if (artiDaoDataOrResult.getResult() == null) {
+            artiDaoDataOrResult.setData(add);
+        }
+        return artiDaoDataOrResult;
+    }
+
+    private ArtiDAO.Data populateAddFields(Result<List<ArtiDAO.Data>> ra, String host, List<String> fqdns) {
+        ArtiDAO.Data add = ra.value.get(0);
+        add.machine = host;
+        for (String s : fqdns) {
+            if (!s.equals(add.machine)) {
+                add.sans(true).add(s);
+            }
+        }
+        return add;
+    }
+
+    private List<String> addArtifactListedFQDNs(boolean dynamic_sans, ArtiDAO.Data add, List<String> fqdns) {
+        // Add Artifact listed FQDNs
+        if(!dynamic_sans) {
+            if (add.sans != null) {
+                for (String s : add.sans) {
+                    if (!fqdns.contains(s)) {
+                        fqdns.add(s);
+                    }
+                }
+            }
+        }
+        return fqdns;
+    }
+
+    private boolean isConfigNotYetExpired(ArtiDAO.Data add) {
+        // Policy 2: If Config marked as Expired, do not create or renew
+        Date now = new Date();
+        return add.expires == null || !now.after(add.expires);
+    }
+
+    private boolean isMechIdCurrent(Identity muser) {
+        // Policy 3: MechID must be current
+        return muser != null && muser.isFound();
+    }
+
+    private boolean isSponsorCurrent(Identity ouser) {
+        // Policy 4: Sponsor must be current
+        return ouser != null && ouser.isFound();
+    }
+
+    private boolean isSponsorResponsibleForMechId(Identity ouser) {
+        return ouser.mayOwn() == null;
+    }
+
+    private void keepArtifactDataCurrent(Identity ouser, ArtiDAO.Data add, AuthzTrans trans) throws OrganizationException {
+        // Policy 5: keep Artifact data current
+        if (!ouser.fullID().equals(add.sponsor)) {
+            add.sponsor = ouser.fullID();
+            artiDAO.update(trans, add);
+        }
+    }
+
+    private boolean isCallerMechIdOrHasPermissions(AuthzTrans trans, String mechid, String mechNS, CA ca) {
+        // Policy 7: Caller must be the MechID or have specifically delegated
+        // permissions
+        return trans.user().equals(mechid)
+                || trans.fish(new AAFPermission(mechNS, CERTMAN, ca.getName(), REQUEST));
+    }
+
+    private boolean isIPAddressPermissionGranted(AuthzTrans trans, CA ca, List<String> fqdns) {
+        // Policy 8: IP Addresses allowed in Certs only by Permission
+        if(!trans.fish(new AAFPermission(aaf_ns,CERTMAN, ca.getName(), "ip"))) {
+            for(String fqdn : fqdns) {
+                if(CA.IPV4_PATTERN.matcher(fqdn).matches() || CA.IPV6_PATTERN.matcher(fqdn).matches()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void primaryIsFirstInFQDNS(List<String> fqdns, AuthzTrans trans, InetAddress primary, boolean ignoreIPs, boolean skipReverseDNS) {
+        if (fqdns.size() > 1) {
+            for (int i = 0; i < fqdns.size(); ++i) {
+                if (primary == null && !ignoreIPs && !skipReverseDNS) {
+                    trans.error().log("CMService var primary is null");
+                } else {
+                    String fg = fqdns.get(i);
+                    if ((fg != null && primary != null && fg.equals(primary.getHostName()))&&(i != 0)) {
+                        String tmp = fqdns.get(0);
+                        fqdns.set(0, primary.getHostName());
+                        fqdns.set(i, tmp);
+                    }
+                }
+            }
+        }
+    }
+
+    private CSRMeta setCSRMeta(String type, CA ca, String mechid, String email, List<String> fqdns, AuthzTrans trans)
+            throws CertException {
+        CSRMeta csrMeta;
+        switch (type) {
+            case Config.CM_REQUEST_TYPE_NORM:
+                // default path, places the mechid in the OU
+                csrMeta = BCFactory.createCSRMeta(ca, mechid, email, fqdns);
+                break;
+            case Config.CM_REQUEST_TYPE_SERVER:
+                // server cert, we feed the OU a static for now
+                // TODO evaluate ease of modifying the jar usage to include the actual OU
+                csrMeta = BCFactory.createCSRMeta(ca, trans.org().getName(), email, fqdns);
+                break;
+            default:
+                return null;
+        }
+        csrMeta.environment(ca.getEnv());
+        return csrMeta;
+    }
+
+    private boolean canRequesterMakeMoreCerts(AuthzTrans trans, String mechid, String cn) throws CertificateException {
+        if(!trans.fish(limitOverridePerm)) {
+            Result<List<CertDAO.Data>> existing = certDAO.readID(trans, mechid);
+            if(existing.isOK()) {
+                int count = 0;
+                Date now = new Date();
+                for (CertDAO.Data cdd : existing.value) {
+                    Collection<? extends Certificate> certs = Factory.toX509Certificate(cdd.x509);
+                    for (Certificate cert : certs) {
+                        X509Certificate x509 = (X509Certificate) cert;
+                        if ((x509.getNotAfter().after(now) && x509.getSubjectDN().getName().contains(cn)) && (++count > max_509s)) {
+                            break;
+                        }
+                    }
+                }
+                return count <= max_509s;
+            }
+        }
+        return true;
+    }
+
+    private CertResp createCertificate(X509andChain x509ac, CA ca, String mechid, AuthzTrans trans, CSRMeta csrMeta, List<String> notes)
+            throws CertException, NoSuchAlgorithmException, IOException {
+        X509Certificate x509 = x509ac.getX509();
+        CertDAO.Data cdd = new CertDAO.Data();
+        cdd.ca = ca.getName();
+        cdd.serial = x509.getSerialNumber();
+        cdd.id = mechid;
+        cdd.x500 = x509.getSubjectDN().getName();
+        cdd.x509 = Factory.toString(trans, x509);
+
+        certDAO.create(trans, cdd);
+
+        CredDAO.Data crdd = new CredDAO.Data();
+        crdd.other = Question.random.nextInt();
+        crdd.cred = getChallenge256SaltedHash(csrMeta.challenge(), crdd.other);
+        crdd.expires = x509.getNotAfter();
+        crdd.id = mechid;
+        crdd.ns = Question.domain2ns(crdd.id);
+        crdd.type = CredDAO.CERT_SHA256_RSA;
+        crdd.tag = cdd.ca + '|' + cdd.serial.toString();
+        credDAO.create(trans, crdd);
+
+        return new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), compileNotes(notes));
+    }
+
+    private Result<CertResp> requestCertFunctional(final AuthzTrans trans, final Result<CertReq> req, final CA ca,
+                                                   boolean skipReverseDNS, String type) {
         if (req.isOK()) {
-            if (req.value.fqdns.isEmpty()) {
+            String key = req.value.fqdns.get(0);
+
+            String mechNS = FQI.reverseDomain(req.value.mechid);
+
+            List<String> notes = null;
+            List<String> fqdns = req.value.fqdns;
+            boolean dynamic_sans = trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS));
+            boolean ignoreIPs = trans.fish(new AAFPermission(mechNS, CERTMAN, ca.getName(), IGNORE_IPS));
+
+            if (!wereMachinesPassedIntoRequest(fqdns)) {
                 return Result.err(Result.ERR_BadData, "No Machines passed in Request");
             }
 
-            String key = req.value.fqdns.get(0);
-
-            // Policy 6: Requester must be granted Change permission in Namespace requested
-            String mechNS = FQI.reverseDomain(req.value.mechid);
-            if (mechNS == null) {
+            if (!doesRequesterHaveChangePermissionInNamespaceRequested(mechNS)) {
                 return Result.err(Status.ERR_Denied, "%s does not reflect a valid AAF Namespace", req.value.mechid);
             }
 
-            List<String> notes = null;
-            List<String> fqdns;
-            boolean dynamic_sans = trans.fish(new AAFPermission(null, ca.getPermType(), ca.getName(),DYNAMIC_SANS));
-            boolean ignoreIPs = trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), IGNORE_IPS));
-            boolean domain_based = false;
-
-            // Note: Many Cert Impls require FQDN in "CN=" to be in the SANS as well.  Therefore, the "fqdn" variable
-            // includes main ID plus ADDITIONAL SANS at all times.
-            if(req.value.fqdns.isEmpty()) {
-                fqdns = new ArrayList<>();
-                fqdns.add(key);
-            } else {
-                // Only Template or Dynamic permitted to pass in FQDNs
-                if (req.value.fqdns.get(0).startsWith("*")) { // Domain set
-                    if (trans.fish(new AAFPermission(null,ca.getPermType(), ca.getName(), DOMAIN))) {
-                        domain_based = true;
-                    } else {
-                        return Result.err(Result.ERR_Denied,
-                              "Domain based Authorizations (" + req.value.fqdns.get(0) + ") requires Exception");
-                    }
-                }
-                fqdns = new ArrayList<>(req.value.fqdns);
+            boolean domain_based = fqdns.get(0).startsWith("*");
+            fqdns = populateFQDNS(fqdns, key, trans, ca);
+            if (fqdns == null) {
+                return Result.err(Result.ERR_Denied,
+                        "Domain based Authorizations (" + req.value.fqdns.get(0) + ") requires Exception");
             }
 
-            String email = null;
-
+            String email;
             try {
-                Organization org = trans.org();
-                InetAddress primary = null;
-                // Organize incoming information to get to appropriate Artifact
-                if (!fqdns.isEmpty()) { // Passed in FQDNS, validated above
-                    // Accept domain wild cards, but turn into real machines
-                    // Need *domain.com:real.machine.domain.com:san.machine.domain.com:...
-                    if (domain_based) { // Domain set
-                        // check for Permission in Add Artifact?
-                        String domain = fqdns.get(0).substring(1); // starts with *, see above
-                        fqdns.remove(0);
-                        if (fqdns.isEmpty()) {
-                            return Result.err(Result.ERR_Denied,
-                                "Requests using domain require machine declaration");
-                        }
-
-                        if (!ignoreIPs) {
-                            InetAddress ia = InetAddress.getByName(fqdns.get(0));
-                            if (ia == null) {
-                                return Result.err(Result.ERR_Denied,
-                                     "Request not made from matching IP matching domain");
-                            } else if (ia.getHostName().endsWith(domain)) {
-                                primary = ia;
-                            }
-                        }
-
-                    } else {
-                        // Passed in FQDNs, but not starting with *
-                        if (!ignoreIPs) {
-                            for (String cn : req.value.fqdns) {
-                                try {
-                                    InetAddress[] ias = InetAddress.getAllByName(cn);
-                                    Set<String> potentialSanNames = new HashSet<>();
-                                    for (InetAddress ia1 : ias) {
-                                        InetAddress ia2 = InetAddress.getByAddress(ia1.getAddress());
-                                        String ip = trans.ip();
-                                        if (primary == null && ip.equals(ia1.getHostAddress())) {
-                                            primary = ia1;
-                                        } else if (!cn.equals(ia1.getHostName())
-                                                && !ia2.getHostName().equals(ia2.getHostAddress())) {
-                                            potentialSanNames.add(ia1.getHostName());
-                                        }
-                                    }
-                                } catch (UnknownHostException e1) {
-                                    trans.debug().log(e1);
-                                    return Result.err(Result.ERR_BadData, "There is no DNS lookup for %s", cn);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                final String host;
-                if (ignoreIPs) {
-                    host = req.value.fqdns.get(0);
-                } else if (primary == null) {
-                    return Result.err(Result.ERR_Denied, "Request not made from matching IP (%s)", req.value.fqdns.get(0));
-                } else {
-                    String thost = primary.getHostName();
-                    host = thost==null?primary.getHostAddress():thost;
-                }
-
-                ArtiDAO.Data add = null;
-                Result<List<ArtiDAO.Data>> ra = artiDAO.read(trans, req.value.mechid, host);
-                if (ra.isOKhasData()) {
-                    add = ra.value.get(0); // single key
-                    if(dynamic_sans && (add.sans!=null && !add.sans.isEmpty())) { // do not allow both Dynamic and Artifact SANS
-                        return Result.err(Result.ERR_Denied,"Authorization must not include SANS when doing Dynamic SANS (%s, %s)", req.value.mechid, key);
-                    }
-                } else {
-                    if(domain_based) {
-                        ra = artiDAO.read(trans, req.value.mechid, key);
-                        if (ra.isOKhasData()) { // is the Template available?
-                            add = ra.value.get(0);
-                            add.machine = host;
-                            for (String s : fqdns) {
-                                if (!s.equals(add.machine)) {
-                                    add.sans(true).add(s);
-                                }
-                            }
-                            Result<ArtiDAO.Data> rc = artiDAO.create(trans, add); // Create new Artifact from Template
-                            if (rc.notOK()) {
-                                return Result.err(rc);
-                            }
-                        } else {
-                            return Result.err(Result.ERR_Denied,"No Authorization Template for %s, %s", req.value.mechid, key);
-                        }
-                    } else {
-                        return Result.err(Result.ERR_Denied,"No Authorization found for %s, %s", req.value.mechid, key);
-                    }
-                }
-
-                // Add Artifact listed FQDNs
-                if(!dynamic_sans) {
-                    if (add.sans != null) {
-                        for (String s : add.sans) {
-                            if (!fqdns.contains(s)) {
-                                fqdns.add(s);
-                            }
-                        }
-                    }
-                }
-
-                // Policy 2: If Config marked as Expired, do not create or renew
-                Date now = new Date();
-                if (add.expires != null && now.after(add.expires)) {
-                    return Result.err(Result.ERR_Policy, "Configuration for %s %s is expired %s", add.mechid,
-                            add.machine, Chrono.dateFmt.format(add.expires));
-                }
-
-                // Policy 3: MechID must be current
-                Identity muser = org.getIdentity(trans, add.mechid);
-                if (muser == null || !muser.isFound()) {
-                    return Result.err(Result.ERR_Policy, "AppID '%s' must exist in %s",add.mechid,org.getName());
-                }
-
-                // Policy 4: Sponsor must be current
-                Identity ouser = muser.responsibleTo();
-                if (ouser == null || !ouser.isFound()) {
-                    return Result.err(Result.ERR_Policy, "%s does not have a current sponsor at %s", add.mechid,
-                            org.getName());
-                } else if (ouser.mayOwn() != null) {
-                    return Result.err(Result.ERR_Policy, "%s reports that %s cannot be responsible for %s",
-                            org.getName(), trans.user());
-                }
-
-                // Set Email from most current Sponsor
-                email = ouser.email();
-
-                // Policy 5: keep Artifact data current
-                if (!ouser.fullID().equals(add.sponsor)) {
-                    add.sponsor = ouser.fullID();
-                    artiDAO.update(trans, add);
-                }
-
-                // Policy 7: Caller must be the MechID or have specifically delegated
-                // permissions
-                if (!(trans.user().equals(req.value.mechid)
-                        || trans.fish(new AAFPermission(mechNS,CERTMAN, ca.getName(), REQUEST)))) {
-                    return Result.err(Status.ERR_Denied, "%s must have access to modify x509 certs in NS %s",
-                            trans.user(), mechNS);
-                }
-
-                // Policy 8: IP Addresses allowed in Certs only by Permission
-                if(!trans.fish(new AAFPermission(aaf_ns,CERTMAN, ca.getName(), "ip"))) {
-                	for(String fqdn : fqdns) {
-                    	if(CA.IPV4_PATTERN.matcher(fqdn).matches() || CA.IPV6_PATTERN.matcher(fqdn).matches()) {
-                            return Result.err(Status.ERR_Denied,
-                                    "Machines include a IP Address.  IP Addresses are not allowed except by Permission");
-                    	}
-                	}
-                }
-
-                // Make sure Primary is the first in fqdns
-
-                if (fqdns.size() > 1) {
-                    for (int i = 0; i < fqdns.size(); ++i) {
-                        if (primary==null && !ignoreIPs) {
-                            trans.error().log("CMService var primary is null");
-                        } else {
-                            String fg = fqdns.get(i);
-                            if ((fg!=null && primary!=null && fg.equals(primary.getHostName()))&&(i != 0)) {
-                                    String tmp = fqdns.get(0);
-                                    fqdns.set(0, primary.getHostName());
-                                    fqdns.set(i, tmp);
-                            }
-                        }
-                    }
+                StringAndListStringAndResultPOJO emailAndFQDNSOrResult = setSponsor(trans, fqdns, domain_based,
+                        ignoreIPs, skipReverseDNS, req.value.mechid,  dynamic_sans, key, mechNS, ca);
+                email = emailAndFQDNSOrResult.getString();
+                fqdns = emailAndFQDNSOrResult.getStringList();
+                if (email == null || fqdns == null) {
+                    return emailAndFQDNSOrResult.getResult();
                 }
             } catch (Exception e) {
                 trans.error().log(e);
@@ -353,29 +582,15 @@ public class CMService {
 
             CSRMeta csrMeta;
             try {
-                csrMeta = BCFactory.createCSRMeta(ca, req.value.mechid, email, fqdns);
-                csrMeta.environment(ca.getEnv());
+                csrMeta = setCSRMeta(type, ca, req.value.mechid, email, fqdns, trans);
+                if (csrMeta == null) {
+                    return Result.err(Result.ERR_BadData, "invalid request");
+                }
 
                 // Before creating, make sure they don't have too many
-                if(!trans.fish(limitOverridePerm)) {
-                    Result<List<CertDAO.Data>> existing = certDAO.readID(trans, req.value.mechid);
-                    if(existing.isOK()) {
-                        String cn = "CN=" + csrMeta.cn();
-                        int count = 0;
-                        Date now = new Date();
-                        for (CertDAO.Data cdd : existing.value) {
-                            Collection<? extends Certificate> certs = Factory.toX509Certificate(cdd.x509);
-                            for(Iterator<? extends Certificate> iter = certs.iterator(); iter.hasNext();) {
-                                X509Certificate x509 = (X509Certificate)iter.next();
-                                if((x509.getNotAfter().after(now) && x509.getSubjectDN().getName().contains(cn))&&(++count>max_509s)) {
-                                        break;
-                                     }
-                            }
-                        }
-                        if(count>max_509s) {
-                            return Result.err(Result.ERR_Denied, "There are too many Certificates generated for " + cn + " for " + req.value.mechid);
-                        }
-                    }
+                String cn = "CN=" + csrMeta.cn();
+                if (!canRequesterMakeMoreCerts(trans, req.value.mechid, cn)) {
+                    return Result.err(Result.ERR_Denied, "There are too many Certificates generated for " + cn + " for " + req.value.mechid);
                 }
                 // Here is where we send off to CA for Signing.
                 X509andChain x509ac = ca.sign(trans, csrMeta);
@@ -384,27 +599,7 @@ public class CMService {
                 }
                 trans.info().printf("X509 Subject: %s", x509ac.getX509().getSubjectDN());
 
-                X509Certificate x509 = x509ac.getX509();
-                CertDAO.Data cdd = new CertDAO.Data();
-                cdd.ca = ca.getName();
-                cdd.serial = x509.getSerialNumber();
-                cdd.id = req.value.mechid;
-                cdd.x500 = x509.getSubjectDN().getName();
-                cdd.x509 = Factory.toString(trans, x509);
-
-                certDAO.create(trans, cdd);
-
-                CredDAO.Data crdd = new CredDAO.Data();
-                crdd.other = Question.random.nextInt();
-                crdd.cred = getChallenge256SaltedHash(csrMeta.challenge(), crdd.other);
-                crdd.expires = x509.getNotAfter();
-                crdd.id = req.value.mechid;
-                crdd.ns = Question.domain2ns(crdd.id);
-                crdd.type = CredDAO.CERT_SHA256_RSA;
-                crdd.tag = cdd.ca + '|' + cdd.serial.toString();
-                credDAO.create(trans, crdd);
-
-                CertResp cr = new CertResp(trans, ca, x509, csrMeta, x509ac.getTrustChain(), compileNotes(notes));
+                CertResp cr = createCertificate(x509ac, ca, req.value.mechid, trans, csrMeta, notes);
                 return Result.ok(cr);
             } catch (Exception e) {
                 trans.debug().log(e);
@@ -413,6 +608,14 @@ public class CMService {
         } else {
             return Result.err(req);
         }
+    }
+
+    public Result<CertResp> requestCert(final AuthzTrans trans, final Result<CertReq> req, final CA ca) {
+        return requestCertFunctional(trans, req, ca, false, Config.CM_REQUEST_TYPE_NORM);
+    }
+
+    public Result<CertResp> requestServerCert(final AuthzTrans trans, final Result<CertReq> req, String remoteAddr, final CA ca) {
+        return requestCertFunctional(trans, req, ca, skipReverseDNS(remoteAddr), Config.CM_REQUEST_TYPE_SERVER);
     }
 
     public Result<CertResp> renewCert(AuthzTrans trans, Result<CertRenew> renew) {
