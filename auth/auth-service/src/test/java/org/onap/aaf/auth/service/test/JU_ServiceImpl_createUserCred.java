@@ -88,13 +88,15 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
         when(org.canHaveMultipleCreds(cr.getId())).thenReturn(true);
         when(org.getIdentity(trans, cr.getId())).thenReturn(orgIdentity);
         when(orgIdentity.isFound()).thenReturn(true);
+        when(org.supportedDomain(fqi)).thenReturn("org.onap");
         final String ns = "org.onap.sample";
         whenRole(trans,fqi,ns,"owner",false, 100);
         whenRole(trans,fqi,ns,"admin",true, 100);
-         when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
+        when(question.nsDAO().read(trans, ns)).thenReturn(Result.ok(nsData(ns)));
         when(question.credDAO().readID(trans, cr.getId())).thenReturn(Result.ok(emptyList(CredDAO.Data.class)));
         when(question.credDAO().create(any(AuthzTrans.class), any(CredDAO.Data.class) )).thenReturn(Result.ok(credDataFound(cr,100)));
         when(question.credDAO().readNS(trans, ns)).thenReturn(Result.ok(listOf(credDataFound(cr,100))));
+        doReturn(false).when(question).isGranted(any(AuthzTrans.class), any(String.class), any(String.class), any(String.class), any(String.class), any(String.class));
         Result<?> result = acsi.createUserCred(trans,cr);
         // Admins may not do FIRST Creds
         Assert.assertEquals(Result.ERR_Denied,result.status);
@@ -127,7 +129,7 @@ public class JU_ServiceImpl_createUserCred extends JU_BaseServiceImpl  {
         return cr;
     }
 
-   private CredDAO.Data credDataFound(CredRequest cr, int days) {
+    private CredDAO.Data credDataFound(CredRequest cr, int days) {
         CredDAO.Data cdd = new CredDAO.Data();
         cdd.id = cr.getId();
         cdd.ns = FQI.reverseDomain(cr.getId());
