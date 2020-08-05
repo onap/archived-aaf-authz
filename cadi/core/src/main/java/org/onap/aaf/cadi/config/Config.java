@@ -243,6 +243,11 @@ public class Config {
     // before creating.
     public static final String CM_ALWAYS_IGNORE_IPS = "cm_always_ignore_ips";
 
+    public static final String CM_REQUEST_TYPE_NORM = "norm";
+    public static final String CM_REQUEST_TYPE_SERVER = "server";
+    public static final String CM_REQUEST_TYPE_PERSONAL = "personal";
+    public static final String CM_REQUESTER_WHITELIST = "cm_requester_whitelist";
+
     public static final String PATHFILTER_URLPATTERN = "pathfilter_urlpattern";
     public static final String PATHFILTER_STACK = "pathfilter_stack";
     public static final String PATHFILTER_NS = "pathfilter_ns";

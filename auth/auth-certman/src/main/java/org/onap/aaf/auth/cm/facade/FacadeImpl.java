@@ -49,6 +49,7 @@ import org.onap.aaf.auth.env.AuthzEnv;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.layer.Result;
 import org.onap.aaf.cadi.aaf.AAFPermission;
+import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Data;
 import org.onap.aaf.misc.env.Env;
@@ -239,11 +240,7 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.att.auth.certman.facade.Facade#requestCert(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public Result<Void> requestCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca) {
+    private Result<Void> requestCertFunctional(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca, String type) {
         TimeTaken tt = trans.start(REQUEST_CERT, Env.SUB|Env.ALWAYS);
         String wt;
         boolean withTrust=(wt=req.getParameter("withTrust"))!=null || TRUE.equalsIgnoreCase(wt);
@@ -257,7 +254,22 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
                 return Result.err(Result.ERR_BadData,"Invalid Input");
             }
 
-            Result<CertResp> rcr = service.requestCert(trans,mapper.toReq(trans,request), ca);
+            Result<CertResp> rcr;
+
+            switch (type) {
+                case Config
+                        .CM_REQUEST_TYPE_NORM:
+                    rcr = service.requestCert(trans, mapper.toReq(trans, request), ca);
+                    break;
+                case Config.CM_REQUEST_TYPE_SERVER:
+                    rcr = service.requestServerCert(trans, mapper.toReq(trans, request), req.getRemoteAddr(), ca);
+                    break;
+                case Config.CM_REQUEST_TYPE_PERSONAL:
+                    return Result.err(Result.ERR_NotImplemented, "not implemented yet");
+                default:
+                    return Result.err(Result.ERR_BadData, "invalid request");
+            }
+
             if (rcr.notOK()) {
                 return Result.err(rcr);
             }
@@ -281,11 +293,27 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
     }
 
     /* (non-Javadoc)
+     * @see org.onap.aaf.auth.cm.facade.Facade#requestCert(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    public Result<Void> requestCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca) {
+        return requestCertFunctional(trans, req, resp, ca, Config.CM_REQUEST_TYPE_NORM);
+    }
+
+    /* (non-Javadoc)
+     * @see org.onap.aaf.auth.cm.facade.Facade#requestServerCert(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, boolean)
+     */
+    @Override
+    public Result<Void> requestServerCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca) {
+        return requestCertFunctional(trans, req, resp, ca, Config.CM_REQUEST_TYPE_SERVER);
+    }
+
+    /* (non-Javadoc)
      * @see org.onap.aaf.auth.cm.facade.Facade#requestPersonalCert(org.onap.aaf.auth.env.test.AuthzTrans, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, boolean)
      */
     @Override
     public Result<Void> requestPersonalCert(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp, CA ca) {
-        return Result.err(Result.ERR_NotImplemented, "not implemented yet");
+        return requestCertFunctional(trans, req, resp, ca, Config.CM_REQUEST_TYPE_PERSONAL);
     }
 
     @Override
@@ -318,7 +346,6 @@ public abstract class FacadeImpl<REQ,CERT,ARTIFACTS,ERROR> extends org.onap.aaf.
         } finally {
             tt.done();
         }
-
     }
 
     @Override

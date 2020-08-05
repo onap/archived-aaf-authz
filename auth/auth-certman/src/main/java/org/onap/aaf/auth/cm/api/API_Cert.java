@@ -77,6 +77,25 @@ public class API_Cert {
             }
         });
 
+        aafCM.route(HttpMethods.PUT,"/cert/server/:ca",API.CERT_REQ,new Code(aafCM,"Request Certificate") {
+            @Override
+            public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+                String key = pathParam(req, ":ca");
+                CA ca;
+                if ((ca = aafCM.getCA(key))==null) {
+                    context.error(trans,resp,Result.ERR_BadData,"CA %s is not supported",key);
+                } else {
+                    trans.put(sCertAuth, ca);
+                    Result<Void> r = context.requestServerCert(trans, req, resp, ca);
+                    if (r.isOK()) {
+                        resp.setStatus(HttpStatus.OK_200);
+                    } else {
+                        context.error(trans,resp,r);
+                    }
+                }
+            }
+        });
+
         aafCM.route(HttpMethods.GET,"/cert/:ca/personal",API.CERT,new Code(aafCM,"Request Personal Certificate") {
             @Override
             public void handle(AuthzTrans trans, HttpServletRequest req, HttpServletResponse resp) throws Exception {
