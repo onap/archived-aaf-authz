@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.http.HttpStatus;
+import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.env.AuthzTrans;
 import org.onap.aaf.auth.locate.AAF_Locate;
 import org.onap.aaf.auth.locate.BasicAuthCode;
@@ -35,6 +36,7 @@ import org.onap.aaf.auth.locate.facade.LocateFacade;
 import org.onap.aaf.auth.locate.mapper.Mapper.API;
 import org.onap.aaf.auth.rserv.HttpMethods;
 import org.onap.aaf.cadi.CadiException;
+import org.onap.aaf.cadi.Symm;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
 import org.onap.aaf.cadi.client.Retryable;
@@ -42,6 +44,7 @@ import org.onap.aaf.cadi.config.Config;
 import org.onap.aaf.cadi.oauth.OAuth2Principal;
 import org.onap.aaf.misc.env.APIException;
 import org.onap.aaf.misc.env.Env;
+import org.onap.aaf.misc.env.LogTarget;
 import org.onap.aaf.misc.env.TimeTaken;
 
 /**
@@ -59,7 +62,7 @@ public class API_Proxy {
      * @param facade
      * @throws Exception
      */
-    public static void init(final AAF_Locate gwAPI, LocateFacade facade) {
+    public static void init(final AAF_Locate gwAPI, LocateFacade facade, final Question question) {
 
         String aafurl = gwAPI.access.getProperty(Config.AAF_URL,null);
         if (aafurl!=null) {
@@ -72,6 +75,7 @@ public class API_Proxy {
             gwAPI.routeAll(HttpMethods.GET,"/proxy/:path*",API.VOID,new LocateCode(facade,"Proxy GET", true) {
                 @Override
                 public void handle(final AuthzTrans trans, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
+                	populateCredentialTag(trans, req, question);
                     if ("/proxy/authn/basicAuth".equals(req.getPathInfo()) && !(req.getUserPrincipal() instanceof OAuth2Principal)) {
                         bac.handle(trans, req, resp);
                     } else {
@@ -159,4 +163,29 @@ public class API_Proxy {
             });
         }
     }
+    
+    /**
+	 * Populates TAG value for the user from DB
+	 * 
+	 * @param trans
+	 * @param req
+	 * @param question
+	 */
+	private static void populateCredentialTag(AuthzTrans trans, HttpServletRequest req, Question question) {
+
+		try {
+			String authz = req.getHeader("Authorization");
+			String decoded = Symm.base64noSplit.decode(authz.substring(6));
+			int colon = decoded.indexOf(':');
+			// Update transaction object with TAG information from DB
+			question.doesUserCredMatch(trans, decoded.substring(0, colon), decoded.substring(colon + 1).getBytes());
+			String tag = trans.getTag();
+			if (null != tag) {
+				req.setAttribute("CRED_TAG", tag);
+			}
+		} catch (Exception e) {
+			LogTarget lt = trans.error();
+			lt.log("Exception occured while fetching TAG details from DB :" + e.getMessage());
+		}
+	}
 }

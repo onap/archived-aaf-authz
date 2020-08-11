@@ -33,6 +33,7 @@ import org.onap.aaf.auth.cache.Cache.Dated;
 import org.onap.aaf.auth.dao.CassAccess;
 import org.onap.aaf.auth.dao.cass.ConfigDAO;
 import org.onap.aaf.auth.dao.cass.LocateDAO;
+import org.onap.aaf.auth.dao.hl.Question;
 import org.onap.aaf.auth.direct.DirectLocatorCreator;
 import org.onap.aaf.auth.direct.DirectRegistrar;
 import org.onap.aaf.auth.env.AuthzEnv;
@@ -81,7 +82,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
     public final ConfigDAO configDAO;
     private Locator<URI> dal;
 
-
+    public final Question question;
     /**
      * Construct AuthzAPI with all the Context Supporting Routes that Authz needs
      *
@@ -121,6 +122,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
             }
         }
 
+        question = new Question(trans, cluster, CassAccess.KEYSPACE);
 
         ////////////////////////////////////////////////////////////////////////////
         // Time Critical
@@ -128,7 +130,7 @@ public class AAF_Locate extends AbsService<AuthzEnv, AuthzTrans> {
         ////////////////////////////////////////////////////////////////////////
         API_AAFAccess.init(this,facade);
         API_Find.init(this, facade);
-        API_Proxy.init(this, facade);
+        API_Proxy.init(this, facade, question);
 
         ////////////////////////////////////////////////////////////////////////
         // Management APIs
