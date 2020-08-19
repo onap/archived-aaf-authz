@@ -6,6 +6,20 @@
 Release Notes
 =============
 
+Version: 2.1.23 (Frankfurt Maintenance, 6.0.0)
+----------------------------------
+:Release Date:	2020-08-17
+
+Note : there is no new containers for this release as this was fixed by a patch in OOM repo (using Certinitializer to override certificates in container)
+
+**Bug Fixes**
+    - `AAF-1159 <https://jira.onap.org/browse/AAF-1159>`_ Certificate expired for AAF-SMS
+    - 'AAF-1175 <https://jira.onap.org/browse/AAF-1159>`_ Certificate between CertService client and CertService server has expired
+
+**Known Issues - solve in Guilin**
+
+    - `AAF-1087 <https://jira.onap.org/browse/AAF-1087>`_ AAF init containers init with exit 0 even if failing
+
 Version: 2.1.23 (Frankfurt, 6.0.0)
 ---------------------------------------------
 
@@ -24,6 +38,17 @@ More details about CMPv2 support in ONAP can be found on a dedicated page.
 
 **Known Issues - solve in Guilin**
     - `AAF-1087 <https://jira.onap.org/browse/AAF-1087>`_ AAF init containers init with exit 0 even if failing
+
+Version: 2.1.15 (El Alto Maintenance, 5.0.2)
+--------------------------------------------
+
+:Release Date: 2020-08-24
+
+Note : there is no new containers for this release as this was fixed by a patch in OOM repo (mounting replacement certificates through oom)
+
+**Bug Fixes**
+
+    - `AAF-1159 <https://jira.onap.org/browse/AAF-1159>`_ Certificate expired for AAF-SMS
 
 Version: 2.1.15 (El Alto, 5.0.1)
 ---------------------------------------------
