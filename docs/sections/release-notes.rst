@@ -5,6 +5,47 @@
 Release Notes
 =============
 
+Version: 2.1.23 (Frankfurt Maintenance, 6.0.0)
+----------------------------------
+:Release Date:	2020-08-17
+
+Note : there is no new containers for this release as this was fixed by a patch in OOM repo (using Certinitializer to override certificates in container)
+
+**Bug Fixes**
+    - `AAF-1159 <https://jira.onap.org/browse/AAF-1159>`_ Certificate expired for AAF-SMS
+
+**Known Issues - solve in Guilin**
+
+    - `AAF-1087 <https://jira.onap.org/browse/AAF-1087>`_ AAF init containers init with exit 0 even if failing
+
+Version: 2.1.23 (Frankfurt, 6.0.0)
+----------------------------------
+:Release Date:	2020-06-05
+
+**New Features**
+Certificate Management Protocol Version 2 (CMPv2) support was added to retrieve X.509 certificates from servers which supports CMPv2 over HTTP. SDNC as first ONAP component was integrated to enroll certificate from CMPv2 server to protect traffic between SDNC and Network Functions (xNFs). More details about CMPv2 support in ONAP can be found on a dedicated page.
+
+**Bug Fixes**
+    - `AAF-383 <https://jira.onap.org/browse/AAF-383>`_ AAF aaf-sms chart should use nodePortPrefix variable
+    - `AAF-783 <https://jira.onap.org/browse/AAF-783>`_ Consul container is outdated
+    - `AAF-784 <https://jira.onap.org/browse/AAF-784>`_ Vault container is outdated
+    - `AAF-1102 <https://jira.onap.org/browse/AAF-1102>`_ Pods still run as root
+
+**Known Issues - solve in Guilin**
+
+    - `AAF-1087 <https://jira.onap.org/browse/AAF-1087>`_ AAF init containers init with exit 0 even if failing
+
+Version: 2.1.15 (El Alto Maintenance, 5.0.2)
+--------------------------------------------
+
+:Release Date: 2020-08-24
+
+Note : there is no new containers for this release as this was fixed by a patch in OOM repo (mounting replacement certificates through oom)
+
+**Bug Fixes**
+
+    - `AAF-1159 <https://jira.onap.org/browse/AAF-1159>`_ Certificate expired for AAF-SMS
+
 Version: 2.1.15 (El Alto, 5.0.1)
 ---------------------------------------------
 
