@@ -5,6 +5,17 @@
 Release Notes
 =============
 
+Version: 2.1.15 (El Alto Maintenance, 5.0.2)
+--------------------------------------------
+
+:Release Date: 2020-08-24
+
+Note : there is no new containers for this release as this was fixed by a patch in OOM repo (mounting replacement certificates through oom)
+
+**Bug Fixes**
+
+    - `AAF-1159 <https://jira.onap.org/browse/AAF-1159>`_ Certificate expired for AAF-SMS
+
 Version: 2.1.15 (El Alto, 5.0.1)
 ---------------------------------------------
 
