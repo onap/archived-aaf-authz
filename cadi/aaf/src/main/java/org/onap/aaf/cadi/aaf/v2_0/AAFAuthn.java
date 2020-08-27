@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.onap.aaf.cadi.AbsUserCache;
+import org.onap.aaf.cadi.Access;
 import org.onap.aaf.cadi.CachedPrincipal;
 import org.onap.aaf.cadi.CadiException;
 import org.onap.aaf.cadi.User;
@@ -141,6 +142,14 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
         }
 
         public Resp revalidate(Object state) {
+            int maxRetries = 15;
+            try { // these SHOULD be AAFConHttp and AAFLocator objects, but put in a try anyway to be safe
+                AAFConHttp forceCastCon = (AAFConHttp) con;
+                AAFLocator forceCastLoc = (AAFLocator) forceCastCon.hman().loc;
+                maxRetries = forceCastLoc.maxIters();
+            } catch (Exception e) {
+                access.log(Access.Level.DEBUG, e);
+            }
             List<URI> attemptedUris = new ArrayList<>();
             URI thisUri = null;
             for (int retries = 0;; retries++) {
@@ -174,7 +183,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
                         attemptedUris.add(thisUri);
                     }
                     con.access.log(e);
-                    if (retries > 2) {
+                    if (retries > maxRetries) {
                         return Resp.INACCESSIBLE;
                     }
                 }

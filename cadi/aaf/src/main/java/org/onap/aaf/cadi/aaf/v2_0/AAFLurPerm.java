@@ -61,7 +61,7 @@ import aaf.v2_0.Perms;
  *
  */
 public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
-    private static final String ORG_OSAAF_CADI_OAUTH_O_AUTH2_LUR = "org.osaaf.cadi.oauth.OAuth2Lur";
+    private static final String ORG_ONAP_AAF_CADI_OAUTH_OAUTH_2_LUR = "org.onap.aaf.cadi.oauth.OAuth2Lur";
 
     /**
      *  Need to be able to transmutate a Principal into either Person or AppID, which are the only ones accepted at this
@@ -87,14 +87,14 @@ public class AAFLurPerm extends AbsAAFLur<AAFPermission> {
 
     private void attachOAuth2(AAFCon<?> con) throws APIException {
         String oauth2_url;
-        Class<?> tmcls = Config.loadClass(access,"org.osaaf.cadi.oauth.TokenMgr");
+        Class<?> tmcls = Config.loadClass(access,"org.onap.aaf.cadi.oauth.TokenMgr");
         if (tmcls!=null) {
             if ((oauth2_url = con.access.getProperty(Config.CADI_OAUTH2_URL,null))!=null) {
                 try {
                     Constructor<?> tmconst = tmcls.getConstructor(AAFCon.class,String.class);
                     Object tokMangr = tmconst.newInstance(con,oauth2_url);
                     @SuppressWarnings("unchecked")
-                    Class<Lur> oa2cls = (Class<Lur>)Config.loadClass(access,ORG_OSAAF_CADI_OAUTH_O_AUTH2_LUR);
+                    Class<Lur> oa2cls = (Class<Lur>)Config.loadClass(access, ORG_ONAP_AAF_CADI_OAUTH_OAUTH_2_LUR);
                     Constructor<Lur> oa2const = oa2cls.getConstructor(tmcls);
                     Lur oa2 = oa2const.newInstance(tokMangr);
                     setPreemptiveLur(oa2);
