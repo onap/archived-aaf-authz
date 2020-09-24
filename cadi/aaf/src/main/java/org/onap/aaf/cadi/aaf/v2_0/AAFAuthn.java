@@ -108,7 +108,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
             }
         }
 
-        AAFCachedPrincipal cp = new AAFCachedPrincipal(user, bytes, con.cleanInterval);
+        AAFCachedPrincipal cp = new AAFCachedPrincipal(user, bytes, con.userExpires);
         // Since I've relocated the Validation piece in the Principal, just revalidate, then do Switch
         // Statement
         switch(cp.revalidate(state)) {
@@ -116,13 +116,13 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
                 if (usr!=null) {
                     usr.principal = cp;
                 } else {
-                    addUser(new User<AAFPermission>(cp,con.timeout));
+                    addUser(new User<AAFPermission>(cp,con.userExpires));
                 }
                 return null;
             case INACCESSIBLE:
                 return "AAF Inaccessible";
             case UNVALIDATED:
-                addUser(new User<AAFPermission>(user,bytes,con.timeout));
+                addUser(new User<AAFPermission>(user,bytes,con.userExpires));
                 return "user/pass combo invalid for " + user;
             case DENIED:
                 return "AAF denies API for " + user;
@@ -169,7 +169,7 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
                         //       );
                         if (fp.get(con.timeout)) {
                             expires = System.currentTimeMillis() + timeToLive;
-                            addUser(new User<AAFPermission>(this, expires));
+                            addUser(new User<AAFPermission>(this, timeToLive));
                             return Resp.REVALIDATED;
                         } else {
                             addMiss(getName(), getCred());
