@@ -143,10 +143,14 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 
         public Resp revalidate(Object state) {
             int maxRetries = 15;
-            try { // these SHOULD be AAFConHttp and AAFLocator objects, but put in a try anyway to be safe
+            try { // these SHOULD be an AAFConHttp and a AAFLocator or SingleEndpointLocator objects, but put in a try to be safe
                 AAFConHttp forceCastCon = (AAFConHttp) con;
-                AAFLocator forceCastLoc = (AAFLocator) forceCastCon.hman().loc;
-                maxRetries = forceCastLoc.maxIters();
+				if (forceCastCon.hman().loc instanceof SingleEndpointLocator) {
+					maxRetries = 1; // we cannot retry the single LGW gateway!
+				} else {
+					AAFLocator forceCastLoc = (AAFLocator) forceCastCon.hman().loc;
+					maxRetries = forceCastLoc.maxIters();
+				}
             } catch (Exception e) {
                 access.log(Access.Level.DEBUG, e);
             }
