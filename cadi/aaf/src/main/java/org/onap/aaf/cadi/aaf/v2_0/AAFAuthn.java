@@ -34,6 +34,7 @@ import org.onap.aaf.cadi.User;
 import org.onap.aaf.cadi.aaf.AAFPermission;
 import org.onap.aaf.cadi.client.Future;
 import org.onap.aaf.cadi.client.Rcli;
+import org.onap.aaf.cadi.locator.SingleEndpointLocator;
 import org.onap.aaf.cadi.lur.ConfigPrincipal;
 
 import aaf.v2_0.CredRequest;
@@ -143,10 +144,14 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
 
         public Resp revalidate(Object state) {
             int maxRetries = 15;
-            try { // these SHOULD be AAFConHttp and AAFLocator objects, but put in a try anyway to be safe
+            try { // these SHOULD be an AAFConHttp and a AAFLocator or SingleEndpointLocator objects, but put in a try to be safe
                 AAFConHttp forceCastCon = (AAFConHttp) con;
-                AAFLocator forceCastLoc = (AAFLocator) forceCastCon.hman().loc;
-                maxRetries = forceCastLoc.maxIters();
+                if (forceCastCon.hman().loc instanceof SingleEndpointLocator) {
+                    maxRetries = 1; // we cannot retry the single LGW gateway!
+                } else {
+                    AAFLocator forceCastLoc = (AAFLocator) forceCastCon.hman().loc;
+                    maxRetries = forceCastLoc.maxIters();
+                }
             } catch (Exception e) {
                 access.log(Access.Level.DEBUG, e);
             }
