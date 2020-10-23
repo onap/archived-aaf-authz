@@ -23,8 +23,10 @@
 
 package org.onap.aaf.auth.batch.reports;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -357,6 +359,11 @@ public class Analyze extends Batch {
             pendingApprs = null;
         } finally {
         }
+        try {
+			pendingApproval();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
         /**
            Run through User Roles.
@@ -652,5 +659,33 @@ public class Analyze extends Batch {
             cw.close();
         }
     }
+    
+    /**
+	 * Writing the Pending Approval for Fortyportal Application
+	 **/
+
+	private void pendingApproval() throws IOException {
+		try {
+			String filePath = "/opt/app/aaf/backup/approval.dat";
+			String currentRow = null;
+			BufferedReader inputFile = new BufferedReader(new FileReader(filePath));
+			while ((currentRow = inputFile.readLine()) != null) {
+				String[] attributes = currentRow.split("\\|");
+				String approver = attributes[1];
+				String memo = attributes[3];
+				String status = attributes[5];
+				String type = attributes[7];
+				String user = attributes[8];
+				if (((memo.contains("Add User") && memo.contains("Role [com.att.fortyportal")
+						&& status.equalsIgnoreCase("pending")
+						&& (type.equalsIgnoreCase("supervisor") || type.equalsIgnoreCase("owner"))))) {
+					needApproveCW.row("urp", memo, status, type, approver, user);
+				}
+			}
+			inputFile.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

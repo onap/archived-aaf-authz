@@ -51,6 +51,7 @@ public class UserRole implements Cloneable, CacheChange.Data  {
 
     public static final String UR = "ur";
     public static final String APPROVE_UR = "ur";
+	public static final String PENDING_APPROVE_UR = "urp";
 
     private static final String SEPARATOR = "\",\"";
 
