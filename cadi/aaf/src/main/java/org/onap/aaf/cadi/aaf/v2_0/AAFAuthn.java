@@ -161,17 +161,12 @@ public class AAFAuthn<CLIENT> extends AbsUserCache<AAFPermission> {
                 try {
                     Miss missed = missed(getName(), getCred());
                     if (missed == null || missed.mayContinue()) {
-                        CredRequest cr = new CredRequest();
-                        cr.setId(getName());
-                        cr.setPassword(new String(getCred()));
-                        Rcli<CLIENT> client = con.clientIgnoreAlreadyAttempted(attemptedUris);
+                        Rcli<CLIENT> client = con.clientIgnoreAlreadyAttempted(attemptedUris).forUser(con.basicAuth(getName(), new String(getCred())));
                         thisUri = client.getURI();
-                        Future<String> fp = client.readPost("/authn/validate", con.credReqDF, cr);
-                        //Rcli<CLIENT> client = con.client().forUser(con.basicAuth(getName(), new String(getCred())));
-                        //Future<String> fp = client.read(
-                        //        "/authn/basicAuth",
-                        //        "text/plain"
-                        //       );
+                        Future<String> fp = client.read(
+                                "/authn/basicAuth",
+                                "text/plain"
+                               );
                         if (fp.get(con.timeout)) {
                             expires = System.currentTimeMillis() + timeToLive;
                             addUser(new User<AAFPermission>(this, timeToLive));
