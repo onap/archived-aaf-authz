@@ -59,10 +59,12 @@ public class Approvals extends Batch {
     private BatchDataView dataview;
     private List<CSV> csvList;
     private Writer napproveCW;
+	private Writer pendingapproveCW;
     private final GregorianCalendar now;
     private final String sdate;
     private static final String CSV = ".csv";
     private static final String APPROVALS_NEW = "ApprovalsNew";
+	private static final String PENDINGAPPROVALS_NEW = "PendingApprovalsNew";
 
     public Approvals(AuthzTrans trans) throws APIException, IOException, OrganizationException {
         super(trans.env());
@@ -101,6 +103,11 @@ public class Approvals extends Batch {
         CSV approveCSV = new CSV(env.access(),file);
         napproveCW = approveCSV.writer();
         napproveCW.row("info",APPROVALS_NEW,sdate,1);
+        
+        File filePending = new File(logDir(), PENDINGAPPROVALS_NEW + sdate + CSV);
+		CSV pendingApproveCSV = new CSV(env.access(), filePending);
+		pendingapproveCW = pendingApproveCSV.writer();
+		pendingapproveCW.row("info", PENDINGAPPROVALS_NEW, sdate, 1);
 
     }
 
@@ -141,6 +148,9 @@ public class Approvals extends Batch {
                                 trans.error().log(rw.errorString());
                             }
                             break;
+                        case Analyze.PENDING_APPROVE_UR:
+    						pendingapproveCW.row("remind", row.get(4), true, "", 1);
+    						break;
                     }
                 });
                 dataview.flush();

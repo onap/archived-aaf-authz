@@ -232,7 +232,7 @@ import org.onap.aaf.misc.env.util.Chrono;
              // all the new entries, etc.
              //
              List<CSV> csvList = new ArrayList<>();
-             for(String s : new String[] {"Approvals","ApprovalsNew"}) {
+             for(String s : new String[] {"Approvals","ApprovalsNew","PendingApprovalsNew"}) {
                  File f = new File(logDir(),String.format(fmt, s));
                  if(f.exists()) {
                      csvList.add(new CSV(access,f));
